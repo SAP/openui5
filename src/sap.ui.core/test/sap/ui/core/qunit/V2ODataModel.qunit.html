@@ -6320,7 +6320,8 @@
 		});
 	});
 
-	QUnit.test("test getETag", 3, function(assert){
+	QUnit.test("test getETag", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		oInput = new sap.m.Input();
 		oInput.setModel(oModel);

@@ -568,7 +568,8 @@
 				}, 0);
 			});
 
-			QUnit.test("sync/Promise reject/resolve", 4, function(assert) {
+			QUnit.test("sync/Promise reject/resolve", function(assert) {
+				assert.expect(4);
 				var bSyncOngoing = false,
 					done = assert.async(),
 					oError = new Error(),

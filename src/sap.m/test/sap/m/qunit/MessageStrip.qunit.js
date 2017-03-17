@@ -167,7 +167,8 @@
 	});
 
 
-	QUnit.test("Tapping on close button", 1, function(assert) {
+	QUnit.test("Tapping on close button", function(assert) {
+		assert.expect(1);
 		var done = assert.async();
 		this.oMessageStrip.attachClose(function() {
 			assert.ok(true, 'should trigger close event');
@@ -180,7 +181,8 @@
 
 	});
 
-	QUnit.test("Pressing enter on close button", 1, function(assert) {
+	QUnit.test("Pressing enter on close button", function(assert) {
+		assert.expect(1);
 		var done = assert.async();
 
 		this.oMessageStrip.attachClose(function() {
@@ -194,7 +196,8 @@
 		}, 0);
 	});
 
-	QUnit.test("Pressing space on close button", 1, function(assert) {
+	QUnit.test("Pressing space on close button", function(assert) {
+		assert.expect(1);
 		var done = assert.async();
 
 		this.oMessageStrip.attachClose(function() {

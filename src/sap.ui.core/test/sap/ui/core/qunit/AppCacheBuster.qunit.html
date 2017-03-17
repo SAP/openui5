@@ -356,7 +356,8 @@
 		}
 	});
 
-	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook", 4, function(assert) {
+	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook", function(assert) {
+		assert.expect(4);
 
 		var that = this;
 		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
@@ -378,7 +379,8 @@
 
 	});
 
-	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook (override)", 4, function(assert) {
+	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook (override)", function(assert) {
+		assert.expect(4);
 
 		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 		var sBaseUrl = "http://anyserver:4711/anyapp/";

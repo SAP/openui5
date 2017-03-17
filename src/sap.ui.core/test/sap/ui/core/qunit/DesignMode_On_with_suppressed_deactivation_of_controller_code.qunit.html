@@ -32,7 +32,8 @@
 <script src="AnyView.qunit.js"></script>
 
 <script>
-QUnit.test("Get Design Mode and Suppression of Deactivation of Controller Code", 2, function(assert) {
+QUnit.test("Get Design Mode and Suppression of Deactivation of Controller Code", function(assert) {
+	assert.expect(2);
 
 	var designMode = sap.ui.getCore().getConfiguration().getDesignMode();
 	assert.equal(designMode, true, "Design Mode is on");
@@ -42,7 +43,8 @@ QUnit.test("Get Design Mode and Suppression of Deactivation of Controller Code",
 
 });
 
-QUnit.test("Create an HTMLView instance and check controller methods are not replaced by empty ones", 6, function(assert){
+QUnit.test("Create an HTMLView instance and check controller methods are not replaced by empty ones", function(assert){
+	assert.expect(6);
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
 	var oController = oView.getController();
@@ -60,7 +62,8 @@ QUnit.test("Create an HTMLView instance and check controller methods are not rep
 	oView.destroy();
 });
 
-QUnit.test("Create an HTMLView instance and check controller methods from base class(es) were not replaced", 1, function(assert){
+QUnit.test("Create an HTMLView instance and check controller methods from base class(es) were not replaced", function(assert){
+	assert.expect(1);
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
 	//assert.equal(designMode, true, "Custom Data set properly");

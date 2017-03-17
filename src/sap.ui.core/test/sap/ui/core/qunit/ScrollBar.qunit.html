@@ -122,7 +122,8 @@
 	});
 
 
-	QUnit.test("Scroll Event", 3, function(assert) {
+	QUnit.test("Scroll Event", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 
 		var bScrolled = false;
@@ -141,7 +142,8 @@
 		}, 100);
 	});
 
-	QUnit.test("Scroll Scrollbars", 1, function(assert) {
+	QUnit.test("Scroll Scrollbars", function(assert) {
+		assert.expect(1);
 		var done = assert.async();
 		vSB.setScrollPosition(8);
 		jQuery("#horiSB-sb").scrollLeft(155);
@@ -156,7 +158,8 @@
 	});
 
 
-	QUnit.test("Scroll Huge Scrollbars", 1, function(assert) {
+	QUnit.test("Scroll Huge Scrollbars", function(assert) {
+		assert.expect(1);
 		var done = assert.async();
 		// Suport of Huge number of steps
 		vSB.setSteps(1000000); //8000000px in Chrom
@@ -203,7 +206,8 @@
 		}
 	});
 
-	QUnit.test("Touch Scrolling", 2, function(assert) {
+	QUnit.test("Touch Scrolling", function(assert) {
+		assert.expect(2);
 		var done = assert.async();
 		this.oVSB._handleTouchScroll(0,192);
 		this.oHSB._handleTouchScroll(155,0);

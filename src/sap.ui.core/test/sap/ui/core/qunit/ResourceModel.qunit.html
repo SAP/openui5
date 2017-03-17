@@ -52,7 +52,8 @@
 	});
 
 	//model created
-	QUnit.test("Model instantiated successful", 2, function(assert){
+	QUnit.test("Model instantiated successful", function(assert){
+		assert.expect(2);
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{TEST_TEXT}"});
 		oLabel.placeAt("target1");
 
@@ -62,7 +63,8 @@
 	});
 
 	//getProperty()
-	QUnit.test("test model getProperty", 1, function(assert){
+	QUnit.test("test model getProperty", function(assert){
+		assert.expect(1);
 		var value = oModel.getProperty("TEST_TEXT");
 		assert.equal(value, "A text en");
 	});
@@ -73,7 +75,8 @@
 	});
 
 	//getProperty()/binding
-	QUnit.test("test model getProperty", 2, function(assert){
+	QUnit.test("test model getProperty", function(assert){
+		assert.expect(2);
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
@@ -95,7 +98,8 @@
 	});
 
 	//model created
-	QUnit.test("Model instantiated successful", 2, function(assert){
+	QUnit.test("Model instantiated successful", function(assert){
+		assert.expect(2);
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 
@@ -105,7 +109,8 @@
 	});
 
 	//getProperty()
-	QUnit.test("test model getProperty", 1, function(assert){
+	QUnit.test("test model getProperty", function(assert){
+		assert.expect(1);
 		var value = oModel.getProperty("TEST_TEXT");
 		assert.equal(value, "A text en");
 	});
@@ -116,7 +121,8 @@
 	});
 
 	//getProperty()/binding
-	QUnit.test("test model getProperty", 2, function(assert){
+	QUnit.test("test model getProperty", function(assert){
+		assert.expect(2);
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
@@ -137,7 +143,8 @@
 		}
 	});
 	//model created
-	QUnit.test("Model instantiated successful", 5, function(assert){
+	QUnit.test("Model instantiated successful", function(assert){
+		assert.expect(5);
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 
@@ -151,7 +158,8 @@
 		oLabel.destroy();
 	});
 	//getProperty()
-	QUnit.test("test model getProperty", 1, function(assert){
+	QUnit.test("test model getProperty", function(assert){
+		assert.expect(1);
 		var value = oModel.getProperty("TEST_TEXT");
 		assert.equal(value, "A text en");
 	});
@@ -160,7 +168,8 @@
 		assert.ok(!oModel.setProperty,"set Property method should not be defined");
 	});
 	//getProperty()/binding
-	QUnit.test("test model getProperty", 2, function(assert){
+	QUnit.test("test model getProperty", function(assert){
+		assert.expect(2);
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
@@ -169,7 +178,8 @@
 		oLabel.destroy();
 	});
 	//CompositeBinding
-	QUnit.test("test composite bindings", 2, function(assert){
+	QUnit.test("test composite bindings", function(assert){
+		assert.expect(2);
 		oLabel2 = new sap.ui.testlib.TestButton("myLabel2",{text:{parts:[{path:"i18n>TEST_TEXT"},{path:"i18n>TEST_TEXT"}]}});
 		oLabel2.placeAt("target1");
 
@@ -178,7 +188,8 @@
 		oLabel2.destroy();
 	});
 	//origin info
-	QUnit.test("test model origin info", 3, function(assert){
+	QUnit.test("test model origin info", function(assert){
+		assert.expect(3);
 		var value = oModel.getProperty("TEST_TEXT"),
 			info = value.originInfo;
 		assert.equal(info.source, "Resource Bundle");

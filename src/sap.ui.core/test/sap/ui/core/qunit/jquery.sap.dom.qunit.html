@@ -364,7 +364,8 @@
 			assert.ok(oParentWithAttributeTrue, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'true') should be not null");
 		});
 
-		QUnit.test("OwnerWindow", 0, function (assert) {
+		QUnit.test("OwnerWindow", function (assert) {
+			assert.expect(0);
 			// tests not easily possible, as there is no defined, stable environment with different windows
 		});
 

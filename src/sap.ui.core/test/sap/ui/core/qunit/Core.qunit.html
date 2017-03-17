@@ -67,7 +67,7 @@
 			this.ok(jQuery.sap.getObject(libName), "namespace for " + libName + " should exist");
 			this.ok(sap.ui.getCore().getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
 		};
-		
+
 		// used to get access to the non-public core parts
 		var oRealCore;
 		var TestCorePlugin = function() {};
@@ -192,7 +192,8 @@
 			assert.equal(corePath, "http://third.preconfig.com/ui5-themes/sap/ui/core/themes/my_third_preconfigured_theme/", "path should be as configured");
 		});
 
-		QUnit.test("Browser Version Test", 4, function(assert) {
+		QUnit.test("Browser Version Test", function(assert) {
+			assert.expect(4);
 			var browser = sap.ui.Device.browser;
 			var ua = navigator.userAgent;
 			var value = jQuery("html").attr("data-sap-ui-browser");
@@ -276,26 +277,26 @@
 		/*
 		 * Scenario1:
 		 *
-		 *   lib1 (js) 
+		 *   lib1 (js)
 		 *     -> lib3 (js), lib4 (js, json), lib5 (json)
-		 *   lib2 (json) 
+		 *   lib2 (json)
 		 *     -> lib4 (js, json), lib1 (js), lib6 (js, lazy), lib7 (none)
 		 */
 		QUnit.test("multiple libraries (async, preloads are active)", function(assert) {
 
 			// NOTE:
-			// The assertions below that are marked with "TODO (sync initLibrary)" should be fulfilled 
-			// once the dependency resolution during the 'require' phase of loadLibrary/loadLibraries 
-			// is done asynchronously, based on the manifest. 
+			// The assertions below that are marked with "TODO (sync initLibrary)" should be fulfilled
+			// once the dependency resolution during the 'require' phase of loadLibrary/loadLibraries
+			// is done asynchronously, based on the manifest.
 			// Currently, it is still done synchronously in initLibrary based on initLibrary data.
-			
+
 			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 
 			this.spy(jQuery.sap, '_loadJSResourceAsync');
 			this.spy(jQuery.sap, 'require');
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui, 'requireSync');
-			
+
 			// make lib3 already loaded
 			sap.ui.predefine('testlibs/scenario1/lib3/library', [], function() {
 				sap.ui.getCore().initLibrary({
@@ -442,7 +443,7 @@
 		 * load async lib1, lib3
 		 *      -> lib1 pending (async)
 		 *      -> lib3 pending (async)
-		 
+
 		 * load sync lib2
 		 *      -> load lib2 sync
 		 *      -> load lib3 sync (conflict with async load)
@@ -471,9 +472,9 @@
 			assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario5.lib1'], "lib1 should not have been loaded yet");
 			assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario5.lib4'], "lib4 should not have been loaded yet");
 			sinon.assert.calledWith(jQuery.sap.log.warning, sinon.match(/request to load.*while async loading is pending/));
-			
+
 			sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib4']);
-			
+
 			return vResult.then(function() {
 				assert.isLibLoaded('testlibs.scenario5.lib1');
 				assert.isLibLoaded('testlibs.scenario5.lib4');
@@ -485,9 +486,9 @@
 		/*
 		 * Scenario6:
 		 *
-		 *   lib1 (json) 
+		 *   lib1 (json)
 		 *     -> none
-		 *   lib2 (json) 
+		 *   lib2 (json)
 		 *     -> none
 		 */
 		QUnit.test("suppress access to js file by configuration", function(assert) {
@@ -504,7 +505,7 @@
 				assert.isLibLoaded('testlibs.scenario6.lib2');
 				sinon.assert.notCalled(jQuery.sap._loadJSResourceAsync);
 			});
-			
+
 		});
 
 		// ---------------------------------------------------------------------------
@@ -527,7 +528,7 @@
 		 *	lib1 -> no dependencies
 		 */
 		QUnit.test("async (config object)", function(assert) {
-			
+
 			this.stub(jQuery.sap, "_loadJSResourceAsync" , function() {
 				jQuery.sap.declare('testlibs.scenario9.lib1.library');
 				sap.ui.getCore().initLibrary({
@@ -544,7 +545,7 @@
 			assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
 			assert.ok(jQuery.sap._loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario9\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 			assert.equal(jQuery.sap.getResourcePath('testlibs/scenario9/lib1'), "./some/fancy/path", "path should have been registered");
-			
+
 			return loaded;
 		});
 
@@ -553,7 +554,7 @@
 		 *	lib1 -> no dependencies
 		 */
 		QUnit.test("async (convenience shortcut)", function(assert) {
-			
+
 			this.stub(jQuery.sap, "_loadJSResourceAsync" , function() {
 				jQuery.sap.declare('testlibs.scenario10.lib1.library');
 				sap.ui.getCore().initLibrary({
@@ -575,7 +576,7 @@
 		 *	lib1 -> preload does not exist
 		 */
 		QUnit.test("async (missing preload)", function(assert) {
-			
+
 			this.stub(jQuery.sap, "_loadJSResourceAsync", function() {
 				return Promise.reject(new Error());
 			});
@@ -608,7 +609,7 @@
 		 *	lib1 -> does not exist
 		 */
 		QUnit.test("async (missing library)", function(assert) {
-			
+
 			this.stub(jQuery.sap, "_loadJSResourceAsync", function() {
 				return Promise.reject(new Error());
 			});
@@ -647,7 +648,7 @@
 						"libs": {
 						}
 					}
-				}	
+				}
 			};
 			return JSON.stringify(manifest);
 		}

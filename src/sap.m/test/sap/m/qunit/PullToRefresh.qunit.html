@@ -63,7 +63,8 @@
 	qutils.delayTestStart(2000);
 
 	QUnit.module("Properties");
-	QUnit.test("Default values", 3, function(assert) {
+	QUnit.test("Default values", function(assert) {
+		assert.expect(3);
 		assert.strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
 		assert.strictEqual(oP2R.getDescription(), sDescription, "Description value");
 		assert.ok(!oP2R.getCustomIcon(), "Custom icon is not set");

@@ -567,7 +567,8 @@ sap.ui.core.mvc.Controller</title>
 		assert.strictEqual(this.View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
 	});
 
-	QUnit.test("sync / no execution", 1, function(assert) {
+	QUnit.test("sync / no execution", function(assert) {
+		assert.expect(1);
 		var bCalled,
 			preprocessorSpy = sinon.spy();
 
@@ -581,12 +582,14 @@ sap.ui.core.mvc.Controller</title>
 		sinon.assert.notCalled(preprocessorSpy);
 	});
 
-	QUnit.test("sync: assignment of preprocessor results", 1, function(assert) {
+	QUnit.test("sync: assignment of preprocessor results", function(assert) {
+		assert.expect(1);
 		var oView = this.createView();
 		assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
 	});
 
-	QUnit.test("async: assignment of preprocessor results", 1, function(assert) {
+	QUnit.test("async: assignment of preprocessor results", function(assert) {
+		assert.expect(1);
 		return this.createView(true).loaded().then(function(oView) {
 			assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
 		}.bind(this));

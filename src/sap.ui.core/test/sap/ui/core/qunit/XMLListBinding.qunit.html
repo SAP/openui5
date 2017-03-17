@@ -149,7 +149,8 @@
 		assert.equal(contexts.diff.length, 2, "Delta information is available");
 	});
 
-	QUnit.test("ListBinding refresh", 3, function(assert) {
+	QUnit.test("ListBinding refresh", function(assert) {
+		assert.expect(3);
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");
 		oBinding.initialize();
@@ -163,7 +164,8 @@
 		assert.equal(oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	QUnit.test("ListBinding refresh with getContexts", 1, function(assert) {
+	QUnit.test("ListBinding refresh with getContexts", function(assert) {
+		assert.expect(1);
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");
 		oBinding.initialize();
@@ -177,7 +179,8 @@
 		oBinding.refresh();
 	});
 
-	QUnit.test("ListBinding refresh with getContexts und length change", 3, function(assert) {
+	QUnit.test("ListBinding refresh with getContexts und length change", function(assert) {
+		assert.expect(3);
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");
 		var aContexts = oBinding.getContexts(0,5);

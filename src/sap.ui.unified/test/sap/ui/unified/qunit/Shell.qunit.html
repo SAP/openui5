@@ -280,7 +280,8 @@
 			checkToggle(true, true, true, "true");
 		});
 
-		QUnit.test("Clear UI", 0, function(assert) {
+		QUnit.test("Clear UI", function(assert) {
+			assert.expect(0);
 			jQuery("#uiArea1").remove();
 		});
 

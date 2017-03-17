@@ -157,7 +157,8 @@
 		afterEach: destroyTable
 	});
 
-	QUnit.test("Properties", 8, function(assert) {
+	QUnit.test("Properties", function(assert) {
+		assert.expect(8);
 		assert.equal(oTable.$().find(".sapUiTableHdr").text(), "TABLEHEADER", "Title of Table is correct!");
 		assert.equal(jQuery.sap.byId("__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
 		assert.equal(oTable.$().find(".sapUiTableFtr").text(), "Footer", "Title of Table is correct!");
@@ -290,12 +291,14 @@
 		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi and _enableLegacyMultiSelection was set!");
 	});
 
-	QUnit.test("SelectedIndex", 1, function(assert) {
+	QUnit.test("SelectedIndex", function(assert) {
+		assert.expect(1);
 		oTable.setSelectedIndex(8);
 		assert.equal(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
 	});
 
-	QUnit.test("Check Selection of Last fixedBottomRow", 1, function(assert) {
+	QUnit.test("Check Selection of Last fixedBottomRow", function(assert) {
+		assert.expect(1);
 		oTable.setFixedBottomRowCount(3);
 		var aRows = oTable.getRows();
 		var oLastRow = aRows[aRows.length - 1];
@@ -306,7 +309,8 @@
 		}
 	});
 
-	QUnit.test("VisibleRowCount", 6, function(assert) {
+	QUnit.test("VisibleRowCount", function(assert) {
+		assert.expect(6);
 		var fnError = sinon.spy(jQuery.sap.log, "error");
 		oTable.setVisibleRowCount(8);
 		assert.equal( oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
@@ -321,12 +325,14 @@
 		fnError.restore(); // restoring original jQuery.sap.log.error() method, else exception is thrown
 	});
 
-	QUnit.test("EnableColumnReordering", 1, function(assert) {
+	QUnit.test("EnableColumnReordering", function(assert) {
+		assert.expect(1);
 		oTable.setEnableColumnReordering(true);
 		assert.equal(oTable.getEnableColumnReordering(),true,"Reordering is allowed");
 	});
 
-	QUnit.test("FirstVisibleRow", 4, function(assert) {
+	QUnit.test("FirstVisibleRow", function(assert) {
+		assert.expect(4);
 		assert.equal(oTable.getFirstVisibleRow(), 5, "FirstVisibleRow row is: 5");
 
 		oTable.setFirstVisibleRow(4, false);
@@ -343,7 +349,8 @@
 		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex, "FirstVisibleRow has been set to: " + iMaxRowIndex);
 	});
 
-	QUnit.test("ColumnHeaderHeight", 2, function(assert) {
+	QUnit.test("ColumnHeaderHeight", function(assert) {
+		assert.expect(2);
 		oTable.setColumnHeaderHeight(100);
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").height(), 100, "ColumnHeaderHeight ok");
@@ -352,7 +359,8 @@
 		assert.ok(oTable.$().find(".sapUiTableColHdrCnt").height() < 100, "ColumnHeaderHeight ok");
 	});
 
-	QUnit.test("ColumnHeaderVisible", 2, function(assert) {
+	QUnit.test("ColumnHeaderVisible", function(assert) {
+		assert.expect(2);
 		oTable.setColumnHeaderVisible(false);
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), false, "ColumnHeaderVisible ok");
@@ -361,7 +369,8 @@
 		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), true, "ColumnHeaderVisible ok");
 	});
 
-	QUnit.test("RowHeight", 2, function(assert) {
+	QUnit.test("RowHeight", function(assert) {
+		assert.expect(2);
 		oTable.setRowHeight(50);
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTable.$().find("tr[data-sap-ui-rowindex]").height(), 50, "RowHeight ok");
@@ -370,7 +379,8 @@
 		assert.ok(oTable.$().find("tr[data-sap-ui-rowindex]").height() < 100, "RowHeight ok");
 	});
 
-	QUnit.test("TableExtensions", 6, function(assert) {
+	QUnit.test("TableExtensions", function(assert) {
+		assert.expect(6);
 		assert.ok(oTable._bExtensionsInitialized, "Extensions initialized");
 		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for PointerExtension");
 		assert.ok(typeof oTable._getAccExtension === "function", "Getter for AccExtension");
@@ -483,7 +493,8 @@
 		}
 	});
 
-	QUnit.test("ColumnMenu", 5, function(assert) {
+	QUnit.test("ColumnMenu", function(assert) {
+		assert.expect(5);
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
 		assert.ok(oMenu !== null, "Column menu is not null");
@@ -531,7 +542,8 @@
 		oColumn.detachColumnMenuOpen(fnHandlerPreventDefault);
 	});
 
-	QUnit.test("ColumnVisibilityEvent", 4, function(assert) {
+	QUnit.test("ColumnVisibilityEvent", function(assert) {
+		assert.expect(4);
 		oTable.setShowColumnVisibilityMenu(true);
 
 		oTable.attachColumnVisibility(function(oEvent) {
@@ -567,7 +579,8 @@
 
 	});
 
-	QUnit.test("CustomColumnMenu", 1, function(assert) {
+	QUnit.test("CustomColumnMenu", function(assert) {
+		assert.expect(1);
 		var oCustomMenu = new sap.ui.commons.Menu("custom-menu");
 		var oColumn = oTable.getColumns()[1];
 		oCustomMenu.addItem(new sap.ui.commons.MenuItem({
@@ -589,7 +602,8 @@
 		afterEach: destroyTable
 	});
 
-	QUnit.test("Menu & initial filter: references", 4, function(assert) {
+	QUnit.test("Menu & initial filter: references", function(assert) {
+		assert.expect(4);
 		var oColumn = oTable.getColumns()[0];
 		var oMenu = oColumn.getMenu();
 		assert.ok(oMenu !== null, "Column menu is not null");
@@ -997,11 +1011,13 @@
 		}
 	});
 
-	QUnit.test("Headers", 1, function(assert) {
+	QUnit.test("Headers", function(assert) {
+		assert.expect(1);
 		assert.equal(jQuery.sap.byId("table").find(".sapUiTableColHdrTr .sapUiTableCol").length, 6, "Total count of headers");
 	});
 
-	QUnit.test("Equal widths", 3, function(assert) {
+	QUnit.test("Equal widths", function(assert) {
+		assert.expect(3);
 		var $Table = jQuery.sap.byId("table");
 		var $Head1 = $Table.find(".sapUiTableColHdrTr:eq(0)");
 		var $Head2 = $Table.find(".sapUiTableColHdrTr:eq(1)");
@@ -1010,7 +1026,8 @@
 		assert.equal($Head1.find(".sapUiTableCol:eq(2)").width(), $Head2.find(".sapUiTableCol:eq(2)").width(), "Third column headers have equal width");
 	});
 
-	QUnit.test("Equal heights", 6, function(assert) {
+	QUnit.test("Equal heights", function(assert) {
+		assert.expect(6);
 		var $Table = jQuery.sap.byId("table");
 
 		$Table.find(".sapUiTableColHdrTr").each(function(index, row) {
@@ -1468,7 +1485,8 @@
 		afterEach: destroyTable
 	});
 
-	QUnit.test("RowSelectionChange", 42, function(assert) {
+	QUnit.test("RowSelectionChange", function(assert) {
+		assert.expect(42);
 		var sTestCase = "";
 		var fnHandler = function(oEvent) {
 			switch(sTestCase) {
@@ -1553,7 +1571,8 @@
 		oTable.setSelectedIndex(0);
 	});
 
-	QUnit.test("Select All on Binding Change", 4, function(assert) {
+	QUnit.test("Select All on Binding Change", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
 		var oModel;
 		oTable.attachRowSelectionChange(function(){

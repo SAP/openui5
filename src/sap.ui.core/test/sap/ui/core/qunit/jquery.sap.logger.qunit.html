@@ -72,7 +72,8 @@
 			assert.strictEqual(oMyLogEntry.level, jQuery.sap.log.Level.DEBUG, "log level is wrong");
 		});
 
-		QUnit.test("ChangeLogLevel", 0, function (assert) {
+		QUnit.test("ChangeLogLevel", function (assert) {
+			assert.expect(0);
 			// set log level and count messages
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
 			var aLog1 = jQuery.sap.log.getLogEntries();

@@ -893,7 +893,8 @@
 		afterEach : function () { sinon.config.useFakeTimers = true; }
 	});
 
-	QUnit.test("SegmentedButton in Dialog's header", 3, function(assert) {
+	QUnit.test("SegmentedButton in Dialog's header", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		// Arrange
 		var oButton1 = new sap.m.Button(),

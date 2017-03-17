@@ -22,7 +22,8 @@
 
 		QUnit.module("Performance");
 
-		QUnit.test("Simple Measurement", 10, function(assert) {
+		QUnit.test("Simple Measurement", function(assert) {
+			assert.expect(10);
 			var done = assert.async();
 			jQuery.sap.measure.clear();
 			var oMeasurement = jQuery.sap.measure.start("qUnit_Test_1", "This is the first test measure");
@@ -55,7 +56,8 @@
 
 		});
 
-		QUnit.test("Measurement with break", 11, function(assert) {
+		QUnit.test("Measurement with break", function(assert) {
+			assert.expect(11);
 			var done = assert.async();
 			oMeasurement = jQuery.sap.measure.pause("qUnit_Test_2");
 			assert.equal(oMeasurement.id, "qUnit_Test_2", "Measurement found for pause");
@@ -88,7 +90,8 @@
 			setTimeout(delayedCall, 100);
 		});
 
-		QUnit.test("Measurement with 2 breaks", 11, function(assert) {
+		QUnit.test("Measurement with 2 breaks", function(assert) {
+			assert.expect(11);
 			var done = assert.async();
 			oMeasurement = jQuery.sap.measure.pause("qUnit_Test_3");
 			assert.equal(oMeasurement.id, "qUnit_Test_3", "Measurement found for pause");
@@ -119,7 +122,8 @@
 			setTimeout(delayedCall, 100);
 		});
 
-		QUnit.test("add measurement", 12, function(assert) {
+		QUnit.test("add measurement", function(assert) {
+			assert.expect(12);
 			var oMeasurement = jQuery.sap.measure.add("qUnit_Test_5", "This is the fifth test measure", 1335420000000, 1335420060000, 60000, 500);
 			assert.equal(oMeasurement.id, "qUnit_Test_5", "ID in add set");
 			assert.equal(oMeasurement.info, "This is the fifth test measure", "Text in add set");
@@ -137,7 +141,8 @@
 			assert.equal(oMeasurement.duration, 500, "Duration time stored");
 		});
 
-		QUnit.test("Get results", 15, function(assert) {
+		QUnit.test("Get results", function(assert) {
+			assert.expect(15);
 			jQuery.sap.measure.remove("qUnit_Test_4");
 			var aMeasurements = jQuery.sap.measure.getAllMeasurements();
 			assert.equal(aMeasurements.length, 4, "Number of measurements");
@@ -162,7 +167,8 @@
 
 		QUnit.module("test measure rendering");
 
-		QUnit.test("render Button", 7, function(assert) {
+		QUnit.test("render Button", function(assert) {
+			assert.expect(7);
 			var oButton = new sap.ui.commons.Button("B1",{text:"Test"}).placeAt("target1");
 			sap.ui.getCore().applyChanges();
 			var aMeasurements = jQuery.sap.measure.getAllMeasurements();

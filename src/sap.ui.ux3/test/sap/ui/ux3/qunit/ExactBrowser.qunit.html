@@ -175,7 +175,8 @@
 			assert.ok(!oExactBrowser1._rootList.$().hasClass("sapUiUx3ExactLstTopActive"), "Header menu not visible");
 		});
 
-		QUnit.test("Level", 4, function(assert) {
+		QUnit.test("Level", function(assert) {
+			assert.expect(4);
 			function checkLevel(oList, iLevel){
 				assert.equal(oList._iLevel, iLevel, "Level ("+iLevel+") of List "+oList.getId());
 				var aLists = oList.getSubLists();

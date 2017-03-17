@@ -53,7 +53,8 @@ sap.ui.core.mvc.Controller</title>
 
 	QUnit.module("Custom Tests");
 
-	QUnit.test("Embedded HTML", 13, function(assert) {
+	QUnit.test("Embedded HTML", function(assert) {
+		assert.expect(13);
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -63,7 +64,8 @@ sap.ui.core.mvc.Controller</title>
 		oView.destroy();
 	});
 
-	QUnit.test("Assocations", 13, function(assert) {
+	QUnit.test("Assocations", function(assert) {
+		assert.expect(13);
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -75,7 +77,8 @@ sap.ui.core.mvc.Controller</title>
 		oView.destroy();
 	});
 
-	QUnit.test("Custom Data", 12, function(assert) {
+	QUnit.test("Custom Data", function(assert) {
+		assert.expect(12);
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();

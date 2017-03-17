@@ -1252,7 +1252,8 @@
 		});
 	});
 
-	QUnit.test("test bindElement", 2, function(assert){
+	QUnit.test("test bindElement", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1270,7 +1271,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 2", 2, function(assert){
+	QUnit.test("test bindElement 2", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1288,7 +1290,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement - set ParentContext null", 5, function(assert){
+	QUnit.test("test bindElement - set ParentContext null", function(assert){
+		assert.expect(5);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1314,7 +1317,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 3", 2, function(assert){
+	QUnit.test("test bindElement 3", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1332,7 +1336,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 4", 2, function(assert){
+	QUnit.test("test bindElement 4", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
@@ -1349,7 +1354,8 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	QUnit.test("test bindElement 5 - change parentContext", 3, function(assert){
+	QUnit.test("test bindElement 5 - change parentContext", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
@@ -1377,7 +1383,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 6 - change parentContext with propagation", 3, function(assert){
+	QUnit.test("test bindElement 6 - change parentContext with propagation", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
@@ -1405,7 +1412,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test bindElement 7 - checkUpdate", 2, function(assert){
+	QUnit.test("test bindElement 7 - checkUpdate", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
@@ -1435,7 +1443,8 @@
 		}
 	});
 
-	QUnit.test("test getBindingContext", 4, function(assert){
+	QUnit.test("test getBindingContext", function(assert){
+		assert.expect(4);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oODataModel = initModel(sURI, {json:false});
@@ -1458,7 +1467,8 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
-	QUnit.test("test data events for bindElement",3, function(assert){
+	QUnit.test("test data events for bindElement", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
@@ -1480,7 +1490,8 @@
 		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
 	});
 
-	QUnit.test("test data events for bindElement 204", 3, function(assert){
+	QUnit.test("test data events for bindElement 204", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, false, "Categories");
@@ -1502,7 +1513,8 @@
 		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
 	});
 
-	QUnit.test("test refresh(true) - dependant bindings should reload data",3, function(assert){
+	QUnit.test("test refresh(true) - dependant bindings should reload data", function(assert){
+		assert.expect(3);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
@@ -1533,7 +1545,8 @@
 		oTable.getBinding("rows").attachDataReceived(oHandler);
 	});
 
-	QUnit.test("test bindElement with batchGroupId", 2, function(assert){
+	QUnit.test("test bindElement with batchGroupId", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
@@ -1581,7 +1594,8 @@
 		oBinding.attachChange(handler);
 	});
 
-	QUnit.test("test model bindAggregation on Listbox events", 2, function(assert){
+	QUnit.test("test model bindAggregation on Listbox events", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
@@ -4466,7 +4480,8 @@
 
 	QUnit.module("Soft State Header Support");
 
-	QUnit.test("Soft State Support for CSRF-, Single- and Batchrequests", 9, function(assert){
+	QUnit.test("Soft State Support for CSRF-, Single- and Batchrequests", function(assert){
+		assert.expect(9);
 		var done = assert.async();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var sPath = "/Categories";

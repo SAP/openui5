@@ -187,7 +187,8 @@
 		});
 
 
-		QUnit.test("CamelCase", 2, function(assert) {
+		QUnit.test("CamelCase", function(assert) {
+			assert.expect(2);
 			var sCamelCase = jQuery.sap.camelCase("this-is-an-camel-case-string");
 			assert.equal(sCamelCase, "thisIsAnCamelCaseString", "CamelCase function returns the right value");
 
@@ -223,7 +224,8 @@
 			assert.equal(jQuery.sap.formatMessage("Say '{0}'", "Hello"), "Say {0}", "quoted placeholder should be ignored");
 		});
 
-		QUnit.test("pattern syntax errors", 5, function(assert) {
+		QUnit.test("pattern syntax errors", function(assert) {
+			assert.expect(5);
 			try {
 				jQuery.sap.formatMessage("Say }", [12.4]);
 			} catch (e) {

@@ -81,13 +81,15 @@
 			// TEST functions
 
 			QUnit.module("Properties");
-			QUnit.test("Default values", 3, function(assert) {
+			QUnit.test("Default values", function(assert) {
+				assert.expect(3);
 				assert.strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
 				assert.strictEqual(oP2R.getDescription(), sDescription, "Description value");
 				assert.ok(!oP2R.getCustomIcon(), "Custom icon is not set");
 			});
 
-			QUnit.test("Invisible PullToRefresh", 2, function(assert) {
+			QUnit.test("Invisible PullToRefresh", function(assert) {
+				assert.expect(2);
 				assert.strictEqual(oP2RHidden.getVisible(), false, "Hidden control should have visiblity false");
 				assert.ok(!oP2RHidden._oBusyIndicator, "Hidden PullToRefresh does not have a BusyIndicator");
 			});

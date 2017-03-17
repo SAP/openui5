@@ -69,7 +69,8 @@
 	// require the mock server before testing
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 
-	QUnit.test("Basic", 11, function(assert) {
+	QUnit.test("Basic", function(assert) {
+		assert.expect(11);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -135,7 +136,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Test entity read with boolean key property (invalid)", 3, function(assert) {
+	QUnit.test("Test entity read with boolean key property (invalid)", function(assert) {
+		assert.expect(3);
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -161,7 +163,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Test entity read with boolean key property (true)", 4, function(assert) {
+	QUnit.test("Test entity read with boolean key property (true)", function(assert) {
+		assert.expect(4);
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -188,7 +191,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Test entity read with boolean key property (false)", 4, function(assert) {
+	QUnit.test("Test entity read with boolean key property (false)", function(assert) {
+		assert.expect(4);
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -215,7 +219,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Test URL parameters with ampersand in value", 4, function(assert) {
+	QUnit.test("Test URL parameters with ampersand in value", function(assert) {
+		assert.expect(4);
 
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -242,7 +247,8 @@
 
 
 
-	QUnit.test("Path with RegExp Pattern", 3, function(assert) {
+	QUnit.test("Path with RegExp Pattern", function(assert) {
+		assert.expect(3);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -269,7 +275,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Path with placeholder", 3, function(assert) {
+	QUnit.test("Path with placeholder", function(assert) {
+		assert.expect(3);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -296,7 +303,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Test assertion: Missing method", 1, function(assert) {
+	QUnit.test("Test assertion: Missing method", function(assert) {
+		assert.expect(1);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -315,7 +323,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Test assertion: Missing path", 1, function(assert) {
+	QUnit.test("Test assertion: Missing path", function(assert) {
+		assert.expect(1);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -334,7 +343,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Test assertion: Missing response", 1, function(assert) {
+	QUnit.test("Test assertion: Missing response", function(assert) {
+		assert.expect(1);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -349,7 +359,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("Two server", 10, function(assert) {
+	QUnit.test("Two server", function(assert) {
+		assert.expect(10);
 		var oMockServer1 = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -422,7 +433,8 @@
 		oMockServer2.destroy();
 	});
 
-	QUnit.test("Clean up", 15, function(assert) {
+	QUnit.test("Clean up", function(assert) {
+		assert.expect(15);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -481,7 +493,8 @@
 		assert.equal(jQuery.inArray(oMockServer, sap.ui.core.util.MockServer._aServers), -1, "Mock server is not registered anymore");
 	});
 
-	QUnit.test("Start / Stop / Destroy all", 8, function(assert) {
+	QUnit.test("Start / Stop / Destroy all", function(assert) {
+		assert.expect(8);
 		var oMockServer1 = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -533,7 +546,8 @@
 		assert.ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
 	});
 
-	QUnit.test("Test Config: autoRespondAfter & async", 3, function(assert) {
+	QUnit.test("Test Config: autoRespondAfter & async", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		sap.ui.core.util.MockServer.config({
 			autoRespondAfter : 1000
@@ -576,7 +590,8 @@
 		});
 	});
 
-	QUnit.test("Test Config: autoRespond false & async", 2, function(assert) {
+	QUnit.test("Test Config: autoRespond false & async", function(assert) {
+		assert.expect(2);
 		var done = assert.async();
 		sap.ui.core.util.MockServer.config({
 			autoRespond : false
@@ -616,7 +631,8 @@
 		}, 1000);
 	});
 
-	QUnit.test("xhr.respondJSON", 3, function(assert) {
+	QUnit.test("xhr.respondJSON", function(assert) {
+		assert.expect(3);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -645,7 +661,8 @@
 		return oXmlNode.textContent || oXmlNode.text;
 	};
 
-	QUnit.test("xhr.respondXML", 3, function(assert) {
+	QUnit.test("xhr.respondXML", function(assert) {
+		assert.expect(3);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -670,7 +687,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("xhr.respondFile", 5, function(assert) {
+	QUnit.test("xhr.respondFile", function(assert) {
+		assert.expect(5);
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice",
 			requests : [ {
@@ -3905,7 +3923,8 @@
 		oModel.submitChanges();
 	});
 
-	QUnit.test("test mock data in one file", 10, function(assert) {
+	QUnit.test("test mock data in one file", function(assert) {
+		assert.expect(10);
 		var done = assert.async();
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -3944,7 +3963,8 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("test mock data generation", 10, function(assert) {
+	QUnit.test("test mock data generation", function(assert) {
+		assert.expect(10);
 		var done = assert.async();
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"

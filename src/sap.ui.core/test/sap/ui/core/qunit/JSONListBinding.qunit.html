@@ -236,7 +236,8 @@
 		}
 	});
 
-	QUnit.test("method", 3, function(assert) {
+	QUnit.test("method", function(assert) {
+		assert.expect(3);
 		assert.equal(this.oBinding.getLength(), 7, "ListBinding returns correct length");
 		this.oBinding.attachChange(function() {
 			assert.ok(true, "ListBinding fires change event when changed");
@@ -246,7 +247,8 @@
 		assert.equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	QUnit.test("getContexts", 1, function(assert) {
+	QUnit.test("getContexts", function(assert) {
+		assert.expect(1);
 		var aContexts = this.oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		this.oBinding.attachChange(function() {
@@ -256,7 +258,8 @@
 		this.oBinding.refresh();
 	});
 
-	QUnit.test("extended change detection and getContexts", 1, function(assert) {
+	QUnit.test("extended change detection and getContexts", function(assert) {
+		assert.expect(1);
 		this.oBinding.enableExtendedChangeDetection();
 		var aContexts = this.oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
@@ -267,7 +270,8 @@
 		this.oBinding.refresh();
 	});
 
-	QUnit.test("getContexts und length change", 3, function(assert) {
+	QUnit.test("getContexts und length change", function(assert) {
+		assert.expect(3);
 		var aContexts = this.oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		this.oBinding.attachChange(function() {
@@ -278,7 +282,8 @@
 		assert.equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	QUnit.test("extended change detection, getContexts und length change", 3, function(assert) {
+	QUnit.test("extended change detection, getContexts und length change", function(assert) {
+		assert.expect(3);
 		this.oBinding.enableExtendedChangeDetection();
 		var aContexts = this.oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
