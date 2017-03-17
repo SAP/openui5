@@ -251,7 +251,7 @@
 		assert.strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
 		oRating0.setValue(99); // too large
 		assert.strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
-		throws(function () {
+		assert.throws(function () {
 			oRating0.setValue("Querstromzerspaner")
 		}, /expected float/, "Passing in a wrong type should throw an error")
 		assert.strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);

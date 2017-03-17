@@ -328,7 +328,7 @@ QUnit.module("Aggregation");
 
 QUnit.test("Validate aggregation", function(assert){
 
-	throws(function () {
+	assert.throws(function () {
 		var oTreeItem = new sap.m.StandardListItem();
 		var oTree = new sap.m.Tree();
 		oTree.addItem(oTreeItem);

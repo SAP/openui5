@@ -179,12 +179,12 @@
 		};
 
 		//invalid testcases
-		throws(function(){ fnTestCase(1)},/expected string for property "minScreenWidth" of /,"raised error because it expects a string");
-		throws(function(){ fnTestCase("random string")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("eightpx")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize")
-		throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("5%")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase(1)},/expected string for property "minScreenWidth" of /,"raised error because it expects a string");
+		assert.throws(function(){ fnTestCase("random string")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("eightpx")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize")
+		assert.throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("5%")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
 
 		//valid ones
 		fnTestCase("8px");

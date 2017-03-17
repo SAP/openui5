@@ -241,7 +241,7 @@ sap.ui.require([
     var badStringError = "simpleGherkinParser.parse: parameter 'sText' must be a valid string";
     var badFilenameError = "simpleGherkinParser.parseFile: parameter 'sPath' must be a valid string";
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parse();
     }, function(error) {
       return error.message === badStringError;
@@ -249,7 +249,7 @@ sap.ui.require([
       "'parse' called with no parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parse(/this is not a string/i);
     }, function(error) {
       return error.message === badStringError;
@@ -257,7 +257,7 @@ sap.ui.require([
       "'parse' called with invalid parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parseFile();
     }, function(error) {
       return error.message === badFilenameError;
@@ -265,7 +265,7 @@ sap.ui.require([
       "'parseFile' called with no parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parseFile(/this is not a string/i);
     }, function(error) {
       return error.message === badFilenameError;
@@ -273,7 +273,7 @@ sap.ui.require([
       "'parseFile' called with invalid parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parseFile("this file does not exist");
     }, function(error) {
       return !!error.message.match(/^simpleGherkinParser\.parseFile\: error loading URL\: /);
