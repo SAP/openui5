@@ -233,6 +233,16 @@
 		assert.strictEqual(bHasAutocorrect, true, "Should be rendered when on Safari");
 	});
 
+	QUnit.test("When refresh button is added invisible text should be set", function (assert) {
+		// arrange
+		var ariaDescribedByAttr = this.SearchField.$("I").attr('aria-describedby');
+		var f5Text = this.SearchField._sAriaF5LabelId;
+		var isF5TextSet = ariaDescribedByAttr.indexOf(f5Text) >= 0;
+
+		// assert
+		assert.strictEqual(isF5TextSet, true, 'The "Pres F5 to refresh" text should be set as aria-describedby');
+	});
+
 </script>
 
 </head>
