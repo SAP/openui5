@@ -33,6 +33,7 @@ sap.ui.define([
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId("fcl"),
 				oSettings = {
+					defaultTwoColumnLayoutType: sap.f.LayoutType.TwoColumnsMidExpanded,
 					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded
 				};
 
