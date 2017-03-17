@@ -1059,12 +1059,12 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert: default in constructor
-		strictEqual (oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem");
+		assert.strictEqual(oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem");
 
 		// assert: setter false
 		oObjectHeader.setCondensed(false);
 		sap.ui.getCore().applyChanges();
-		strictEqual (oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem again");
+		assert.strictEqual(oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem again");
 
 		// cleanup
 		oObjectHeader.destroy();

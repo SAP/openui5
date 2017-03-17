@@ -168,7 +168,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Scenario Outline should generate the scenario with concrete values");
   });
 
@@ -301,7 +301,7 @@ sap.ui.require([
     assert.strictEqual(featureTest.wip, true, "@wip tag on feature 03");
     assert.strictEqual(featureTest.testScenarios.length, 2, "@wip tag on feature 04");
 
-    strictEqual(featureTest.testScenarios[0].name,
+    assert.strictEqual(featureTest.testScenarios[0].name,
       "(WIP) Scenario Outline: Coffee changes peoples moods if you are ready #1", "@wip tag on feature 05");
     assert.strictEqual(featureTest.testScenarios[0].wip, true, "@wip tag on feature 06");
     assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "@wip tag on feature 07");
@@ -354,11 +354,11 @@ sap.ui.require([
     assert.strictEqual(featureTest.wip, false, "@wip tag on scenario 02");
     assert.strictEqual(featureTest.testScenarios.length, 2, "@wip tag on scenario 03");
 
-    strictEqual(featureTest.testScenarios[0].name, "Scenario: Buy expensive coffee when the barista is alive",
+    assert.strictEqual(featureTest.testScenarios[0].name, "Scenario: Buy expensive coffee when the barista is alive",
       "@wip tag on scenario 04");
     assert.strictEqual(featureTest.testScenarios[0].wip, false, "@wip tag on scenario 05");
     assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 2, "@wip tag on scenario 06");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "that quantum phenomena exist at the macroscopic level",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "that quantum phenomena exist at the macroscopic level",
       "@wip tag on scenario 07");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "alive background isMatch");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "alive background skip");
@@ -412,33 +412,33 @@ sap.ui.require([
     assert.strictEqual(featureTest.testScenarios.length, 1, "Parameters and tables are parsed and passed 01");
     assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Parameters and tables are parsed and passed 02");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "these awesome Users:",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "these awesome Users:",
       "Parameters and tables are parsed and passed 03");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].parameters.length, 2,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].parameters.length, 2,
       "Parameters and tables are parsed and passed 04");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].parameters[0], "awesome",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].parameters[0], "awesome",
       "Parameters and tables are parsed and passed 05");
-    deepEqual(featureTest.testScenarios[0].testSteps[0].parameters[1], [
+    assert.deepEqual(featureTest.testScenarios[0].testSteps[0].parameters[1], [
       ["Name", "Date of Birth"],
       ["Michael Jackson","August 29, 1958"],
       ["Elvis", "January 8, 1935"],
       ["John Lennon", "October 9, 1940"]
     ], "date of birth table is correct");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "when I give them the coffee price list:",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "when I give them the coffee price list:",
       "Parameters and tables are parsed and passed 06");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].parameters.length, 1,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].parameters.length, 1,
       "Parameters and tables are parsed and passed 07");
-    deepEqual(featureTest.testScenarios[0].testSteps[1].parameters[0], [
+    assert.deepEqual(featureTest.testScenarios[0].testSteps[1].parameters[0], [
       ["Coffee Blend", "Price"],
       ["Dark", "$18"],
       ["Moka", "$23"],
       ["Columbian", "$1400"]
     ], "coffee blend table is correct");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[2].text, "they should be happy",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].text, "they should be happy",
       "Parameters and tables are parsed and passed 08");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].parameters.length, 2,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].parameters.length, 2,
       "Parameters and tables are parsed and passed 09");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[0], "they", "correct person");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[1], "happy", "correct emotion");
@@ -488,12 +488,12 @@ sap.ui.require([
     assert.strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 007");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 008");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[2].text,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].text,
       "(NOT FOUND) I encounter a person whose feet are very dirty", "Test 009");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 010");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 011");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[3].text,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].text,
       "(SKIPPED) they are classified as a 'Category 3 Unwashed Mass'", "Test 012");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[3].isMatch, true, "Test 013");
     assert.strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "skip unwashed mass");
@@ -1047,7 +1047,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Scenario Outline should generate the scenario with single-column concrete values");
   });
 
@@ -1148,7 +1148,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Background should run before each execution of the Scenario Outline");
   });
 
@@ -1263,7 +1263,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Given missing Background definition + Scenario Outline then all tests skipped");
   });
 
@@ -1315,7 +1315,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Given nested variables, Scenario Outline should re-write multiple times");
   });
 

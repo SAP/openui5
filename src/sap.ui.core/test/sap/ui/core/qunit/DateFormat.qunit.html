@@ -508,23 +508,23 @@
 		assert.equal(DateFormat.calculateWeekNumber(oDate, {UTC: true}), 24, "week number with UTC Date");
 
 		oDate = new Date(Date.UTC(2000, 0, 1));
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			baseYear: 2000
 		}), 1, "01.01.2000 baseYear 2000 is in week 1");
 
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			baseYear: 1999
 		}), 53, "01.01.2000 baseYear 1999 is in week 53");
 
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			locale: "de",
 			baseYear: 1999
 		}), 52, "01.01.2000 in 'de' locale is in week 52");
 
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			locale: "de",
 			baseYear: 2000
@@ -532,33 +532,33 @@
 
 		oDate = new Date(Date.UTC(2001, 0, 1));
 
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			baseYear: 2001
 		}), 1, "01.01.2001 baseYear 2001 is in week 1");
 
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			baseYear: 2000
 		}), 54, "01.01.2001 baseYear 2000 is in week 54");
 
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			locale: "de"
 		}), 1, "01.01.2001 in 'de' locale is in week 1");
 
 		oDate - new Date(Date.UTC(2000, 11, 31));
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			baseYear: 2001
 		}), 1, "31.12.2000 baseYear 2001 is in week 1");
 
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			baseYear: 2000
 		}), 54, "31.12.2000 baseYear 2000 is in week 54");
 
-		equal(DateFormat.calculateWeekNumber(oDate, {
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
 			UTC: true,
 			locale: "de"
 		}), 1, "31.12.2000 in 'de' locale is in week 1");

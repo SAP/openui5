@@ -402,7 +402,7 @@
 
 
 		var mLabelAnnotation = oMetadata._getAnnotationObject(mEntityType, mObject, "sap:label")
-		deepEqual(
+		assert.deepEqual(
 			mLabelAnnotation,
 			{ name: "label", value: "Airline", namespace: "http://www.sap.com/Protocols/SAPData" },
 			"Label Annotation correctly resolved"

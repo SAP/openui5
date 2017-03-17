@@ -591,7 +591,7 @@
 			assert.equal(hasError, true, 'Error is properly thrown when reserved tab id is used.');
 		});
 
-		test("Back button on filter detail should work after reopen.", function (assert) {
+		QUnit.test("Back button on filter detail should work after reopen.", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
 				sId = this.oVSD.getId(),
@@ -626,7 +626,7 @@
 
 		// this test is important because the 'content' aggregation of custom tabs is
 		// being set to the vsd page instance and then back to the custom tab
-		test("Make sure right content is loaded upon reopening a dialog with single custom tab.", function (assert) {
+		QUnit.test("Make sure right content is loaded upon reopening a dialog with single custom tab.", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
 				sTitle = 'taxi-settings',
@@ -649,7 +649,7 @@
 			}, delay);
 		});
 
-		test("Test model data binding", function (assert) {
+		QUnit.test("Test model data binding", function (assert){
 			var delay = 1000,
 				done = assert.async(),
 				that = this;

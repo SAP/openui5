@@ -1488,7 +1488,7 @@
 
 				if (sRemoveListId) {
 					assert.strictEqual(oFF._buttons[sRemoveListId], undefined, "Button entry in buttons map should be deleted");
-					strictEqual(oFF._removeFacetIcons[sRemoveListId], undefined,
+					assert.strictEqual(oFF._removeFacetIcons[sRemoveListId], undefined,
 							"Icon entry in removeFacetIcons map should be deleted");
 				}
 			}
@@ -2764,57 +2764,54 @@
 			openPopover(oFF, 0);
 		});
 
-		QUnit.test(
-				"FacetFilter.showReset",
-				function() {
+		QUnit.test("FacetFilter.showReset", function(assert) {
+			var oFF = new sap.m.FacetFilter();
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-					var oFF = new sap.m.FacetFilter();
-					oFF.placeAt("content");
-					sap.ui.getCore().applyChanges();
+			// First test the reset button with a FacetFilter of Simple type
+			assert.ok(
+					oFF.$().hasClass("sapMFFResetSpacer"),
+					"FacetFilter container should have spacer class to insure reset button does not overlay facet buttons when type is Simple");
 
-					// First test the reset button with a FacetFilter of Simple type
-					ok(
-							oFF.$().hasClass("sapMFFResetSpacer"),
-							"FacetFilter container should have spacer class to insure reset button does not overlay facet buttons when type is Simple");
+			var $div = oFF.$().find(".sapMFFResetDiv");
+			assert.equal($div.length, 1,
+					"There should be a container element around the reset button having the correct style class");
+			assert.ok($div.is("div"), "The container is a div");
+			var $button = $div.find("button");
+			assert.ok($button, "There should be a button element within the container element");
+			oFF.setShowReset(false);
+			sap.ui.getCore().applyChanges();
 
-					var $div = oFF.$().find(".sapMFFResetDiv");
-					equal($div.length, 1,
-							"There should be a container element around the reset button having the correct style class");
-					assert.ok($div.is("div"), "The container is a div");
-					var $button = $div.find("button");
-					assert.ok($button, "There should be a button element within the container element");
-					oFF.setShowReset(false);
-					sap.ui.getCore().applyChanges();
+			assert.ok(
+					!oFF.$().hasClass("sapMFFResetSpacer"),
+					"FacetFilter container should not have spacer class to insure reset button does not overlay facet buttons when type is Simple");
+			assert.equal(oFF.$().find(".sapMFFResetDiv").length, 0, "There should not be a div container");
+			assert.equal(oFF.$().find(".sapMFF > button").length, 0, "There should not be a button");
 
-					ok(
-							!oFF.$().hasClass("sapMFFResetSpacer"),
-							"FacetFilter container should not have spacer class to insure reset button does not overlay facet buttons when type is Simple");
-					assert.equal(oFF.$().find(".sapMFFResetDiv").length, 0, "There should not be a div container");
-					assert.equal(oFF.$().find(".sapMFF > button").length, 0, "There should not be a button");
+			destroyFF(oFF);
 
-					destroyFF(oFF);
+			// Now test when the reset button is displayed in the summary bar
+			var oFF = new sap.m.FacetFilter({
+				showSummaryBar : true
+			});
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-					// Now test when the reset button is displayed in the summary bar
-					var oFF = new sap.m.FacetFilter({
-						showSummaryBar : true
-					});
-					oFF.placeAt("content");
-					sap.ui.getCore().applyChanges();
+			testResetInSummaryBar(oFF, true);
 
-					testResetInSummaryBar(oFF, true);
+			oFF.setShowReset(false);
+			sap.ui.getCore().applyChanges();
 
-					oFF.setShowReset(false);
-					sap.ui.getCore().applyChanges();
+			testResetInSummaryBar(oFF, false);
 
-					testResetInSummaryBar(oFF, false);
+			 oFF.setShowReset(true);
+			sap.ui.getCore().applyChanges();
 
-					 oFF.setShowReset(true);
-					sap.ui.getCore().applyChanges();
+			testResetInSummaryBar(oFF, true);
 
-					testResetInSummaryBar(oFF, true);
-
-					destroyFF(oFF);
-				});
+			destroyFF(oFF);
+		});
 
 		QUnit.test("FacetFilter.showSummaryBar", function(assert) {
 
@@ -3463,7 +3460,7 @@
 		});
 
 		QUnit.test("FacetFilterList._isItemSelected",
-				function() {
+				function(assert) {
 					var oFF = oSCHelper.createFFWithModel();
 					var oFFL = oFF.getLists()[0];
 
@@ -3472,16 +3469,16 @@
 					oFFL._addSelectedKey("key2", "text2");
 					oFFL._addSelectedKey("", "text3");
 
-					strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem({
+					assert.strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem({
 						key : 'key1'
 					})), true, 'Item with key only is selected');
-					strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem({
+					assert.strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem({
 						key : 'key2'
 					})), true, 'Item with key and text is selected');
-					strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem({
+					assert.strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem({
 						text : 'text2'
 					})), false, 'Item cannot be selected by text if the key is specified');
-					strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem({
+					assert.strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem({
 						text : 'text3'
 					})), true, 'Item with text only is selected');
 					assert.strictEqual(oFFL._isItemSelected(new sap.m.FacetFilterItem()), false,
@@ -3618,7 +3615,7 @@
 
 			var oItem = oFFL.getItems()[0];
 			oItem.setSelected(true);
-			strictEqual(oFFL._oSelectedItem, oItem,
+			assert.strictEqual(oFFL._oSelectedItem, oItem,
 					"ListBase.onItemSetSelected should have been called so that single selection state is maintained");
 
 			destroyFF(oFF);
@@ -3907,7 +3904,7 @@
 				}
 			}
 			// Assert
-			equal(oSpy.callCount, counter,
+			assert.equal(oSpy.callCount, counter,
 					"Group headers have '_bGroupHeader' property set to true and they don't have to be selected");
 
 		});
@@ -4134,7 +4131,7 @@
 				assert.equal(oSummaryBar.getContent().length, 3,
 						"The summary bar should have 3 controls in its content when the reset button is displayed");
 				var oToolbarSpacer = oSummaryBar.getContent()[1];
-				ok(
+				assert.ok(
 						oToolbarSpacer instanceof sap.m.ToolbarSpacer,
 						"The second control in the summary bar content should be a spacer so that the reset button is displayed on the right side of the toolbar");
 				var oResetButton = oSummaryBar.getContent()[2];

@@ -310,7 +310,7 @@
 
 	function defineGenericTests() {
 
-		test("Metadata API", function(assert) {
+		QUnit.test("Metadata API", function(assert) {
 
 			assert.equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 			assert.equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
@@ -596,7 +596,7 @@
 		}
 	});
 
-	test("Metadata API", function(assert) {
+	QUnit.test("Metadata API", function(assert) {
 
 		assert.equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 		assert.equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
@@ -681,7 +681,7 @@
 		}
 	});
 
-	test("Metadata API", function(assert) {
+	QUnit.test("Metadata API", function(assert){
 
 		assert.equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 		assert.equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
@@ -743,7 +743,7 @@
 		}
 	});
 
-	test("relative", function(assert) {
+	QUnit.test("relative", function(assert){
 		this.assertResolvedUri("local/uri",                           "path/to/base/",          "path/to/base/local/uri");
 		this.assertResolvedUri("./local/uri",                         "path/to/base/",          "path/to/base/local/uri");
 		this.assertResolvedUri("../relative/1/uri",                   "path/to/base/",          "path/to/relative/1/uri");
@@ -763,7 +763,7 @@
 		this.assertResolvedUri("../../../../../../relative/6/uri",    "../../../path/to/base/", "../../../../../../relative/6/uri");
 	});
 
-	test("absolute", function(assert) {
+	QUnit.test("absolute", function(assert){
 		this.assertResolvedUri("http://absolute:1234/uri", "path/to/base/",          "http://absolute:1234/uri");
 		this.assertResolvedUri("//absolute:1234/uri",      "path/to/base/",          "//absolute:1234/uri");
 		this.assertResolvedUri("/server-absolute/uri",     "path/to/base/",          "/server-absolute/uri");
@@ -803,7 +803,7 @@
 		}
 	});
 
-	test("MinVersion gt Version", function(assert) {
+	QUnit.test("MinVersion gt Version", function(assert){
 		this.oVersionInfo.version = "1.20.0";
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
@@ -828,7 +828,7 @@
 		}, 200);
 	});
 
-	test("MinVersion eq Version", function(assert) {
+	QUnit.test("MinVersion eq Version", function(assert){
 		this.oVersionInfo.version = "1.22.5";
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
@@ -847,7 +847,7 @@
 		}, 200);
 	});
 
-	test("MinVersion lt Version", function(assert) {
+	QUnit.test("MinVersion lt Version", function(assert){
 		this.oVersionInfo.version = "1.31.0";
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;

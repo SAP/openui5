@@ -165,20 +165,20 @@
 				// Wait for the last events to be fired, then call the funtion that evaluates
 				// whether the numbers are correct.
 				setTimeout(function() {
-					ok(
+					assert.ok(
 						mCounter.open === iRepetitions,
 						"Callout was opened " + mCounter.open + " times. (Should be "+ iRepetitions +")"
 					);
-					ok(
+					assert.ok(
 						mCounter.close === iRepetitions,
 						"Callout was closed " +  mCounter.close + " times. (Should be "+ iRepetitions +")"
 					);
 
-					ok(
+					assert.ok(
 						mCounter.open === mCounter.opened,
 						"Opened event fired as often as open occurred. ("+ mCounter.open +"/"+ mCounter.opened +")"
 					);
-					ok(
+					assert.ok(
 						mCounter.close === mCounter.closed,
 						"Closed event fired as often as close occurred. ("+ mCounter.close +"/"+ mCounter.closed +")"
 					);

@@ -93,7 +93,7 @@
 				var arrowPos = arrow.offsetLeft + (arrow.offsetWidth/2);
 				firstPos = arrowPos;
 
-				ok(arrowPos > left && arrowPos < right, "arrow position (" + arrowPos
+				assert.ok(arrowPos > left && arrowPos < right, "arrow position (" + arrowPos
 						+ ") should be around the center of the selected item (between " + left + " and " + right + ")");
 				done();
 			}, 600);
@@ -117,7 +117,7 @@
 					left = left + 2*width/5;
 
 					assert.ok(newArrowPos > arrowPos, "arrow should have moved further to the right after the animation (from " + arrowPos + ", now " + newArrowPos + ")");
-					ok(newArrowPos > left && newArrowPos < right, "arrow position (" + newArrowPos
+					assert.ok(newArrowPos > left && newArrowPos < right, "arrow position (" + newArrowPos
 							+ ") should be around the center of the newly selected item (between " + left + " and " + right + ")");
 					done();
 				}, 400);

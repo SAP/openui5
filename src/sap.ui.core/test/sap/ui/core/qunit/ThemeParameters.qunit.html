@@ -176,7 +176,7 @@
 
 			var oParamResult = sap.ui.core.theming.Parameters.get(aParams);
 
-			deepEqual(oParamResult, oExpected,
+			assert.deepEqual(oParamResult, oExpected,
 					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
 		});
 
@@ -195,7 +195,7 @@
 
 			var oParamResult = sap.ui.core.theming.Parameters.get(aParams, oElement);
 
-			deepEqual(oParamResult, oExpected,
+			assert.deepEqual(oParamResult, oExpected,
 					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
 		});
 
@@ -209,7 +209,7 @@
 
 			var oParamResult = sap.ui.core.theming.Parameters.get(aParams);
 
-			deepEqual(oParamResult, oExpected,
+			assert.deepEqual(oParamResult, oExpected,
 					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
 		});
 

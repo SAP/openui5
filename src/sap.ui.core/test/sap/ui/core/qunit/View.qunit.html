@@ -474,7 +474,7 @@
 		assert.expect(2);
 
 		// templating preprocessor set by default
-		deepEqual(
+		assert.deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors,
 			{
 				"XML": {
@@ -491,7 +491,7 @@
 
 		sap.ui.core.mvc.View.registerPreprocessor("controls", this.oPreprocessor, "test", true, this.mSettings);
 		// now a preprocessor is set
-		deepEqual(
+		assert.deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors["test"]["controls"],
 			[{_onDemand: false, preprocessor: this.oPreprocessor, _syncSupport: true, _settings: this.mSettings}],
 			"preprocessor stored at view"

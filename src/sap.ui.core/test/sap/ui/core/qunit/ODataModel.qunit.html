@@ -136,7 +136,7 @@
 		assert.deepEqual(oModel.aUrlParams, [], 'serviceUrlParams');
 		assert.equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata', 'metadataUrlParams');
 		assert.equal(oModel.sDefaultCountMode, 'Both', 'defaultCountMode');
-		deepEqual(oModel.oServiceData.oMetadata.mNamespaces, {
+		assert.deepEqual(oModel.oServiceData.oMetadata.mNamespaces, {
 			sap:"http://www.sap.com/Protocols/SAPData",
 			m:"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
 			"":"http://schemas.microsoft.com/ado/2007/06/edmx"

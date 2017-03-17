@@ -69,40 +69,33 @@
 
 	QUnit.module("ObjectPageConfig");
 
-	QUnit
-		.test(
-		"load first visible sections",
-		function (assert) {
+	QUnit.test("load first visible sections", function (assert) {
+		var oComponentContainer = oView
+			.byId("objectPageContainer");
+		var oObjectPageLayout = oComponentContainer
+			.getObjectPageLayoutInstance();
 
-			var oComponentContainer = oView
-				.byId("objectPageContainer");
-			var oObjectPageLayout = oComponentContainer
-				.getObjectPageLayoutInstance();
+		var oData = oConfigModel.getData();
+		_loadBlocksData(oData);
 
-			var oData = oConfigModel.getData();
-			_loadBlocksData(oData);
+		oConfigModel.setData(oData);
+		sap.ui.getCore().applyChanges();
 
-			oConfigModel.setData(oData);
-			sap.ui.getCore().applyChanges();
+		var done = assert.async();
+		setTimeout(function() {
+			var oFirstSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
+			assert.strictEqual(oFirstSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
 
-			var done = assert.async();
-			setTimeout(function() {
-				var oFirstSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
-				assert.strictEqual(oFirstSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
+			var oSecondSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
+			assert.strictEqual(oSecondSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
 
-				var oSecondSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
-				assert.strictEqual(oSecondSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
-
-				var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
-				assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
-				done();
-			}, iLoadingDelay);
+			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
+			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
+			done();
+		}, iLoadingDelay);
 	});
 
-	QUnit
-	.test(
-	"load scrolled sections",
-	function (assert) {
+	QUnit.test("load scrolled sections", function (assert) {
 
 		var oComponentContainer = oView
 			.byId("objectPageContainer");
@@ -124,10 +117,7 @@
 		}, iLoadingDelay);
 });
 
-	QUnit
-	.test(
-	"model mapping for scrolled sections",
-	function (assert) {
+	QUnit.test("model mapping for scrolled sections", function (assert) {
 
 		var oComponentContainer = oView
 			.byId("objectPageContainer");

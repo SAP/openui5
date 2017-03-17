@@ -1346,7 +1346,7 @@
 		});
 
 		// in case of testrunner does not put the focus to the document it is not neccessary to make this test
-		document.hasFocus() && test("Focusing an item in the ListItemBase should change the focus index of item navigation", function() {
+		document.hasFocus() && QUnit.test("Focusing an item in the ListItemBase should change the focus index of item navigation", function(assert) {
 			var oInput = new sap.m.Input();
 			var oListItem0 = new sap.m.InputListItem({
 				label: "Input",
@@ -1502,7 +1502,7 @@
 			oContainer.destroy();
 		});
 
-		document.hasFocus() && test("KeybordMode", function () {
+		document.hasFocus() && QUnit.test("KeybordMode", function (assert) {
 			var fnDetailPressSpy = this.spy(),
 				fnItemPressSpy = this.spy(),
 				fnPressSpy = this.spy(),

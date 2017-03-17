@@ -433,12 +433,12 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok (oIconTabBar.$().hasClass("sapMITB"), "IconTabBar has class sapMITB");
+				assert.ok(oIconTabBar.$().hasClass("sapMITB"), "IconTabBar has class sapMITB");
 				assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
 				assert.ok(!oIconTabBar.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
 				assert.ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
 				assert.ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
-				ok (oIconTabBar.$("content").hasClass("sapMITBContent"), "IconTabBar content is rendered");
+				assert.ok(oIconTabBar.$("content").hasClass("sapMITBContent"), "IconTabBar content is rendered");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -540,7 +540,7 @@
 				//Assert
 				// Verify that a filter without content shows the IconTabBar content
 				var $itbf = oIconTabBar.$("content");
-				equal ($itbf.children(0).text(), "info info info", "showing default IconTabBar content");
+				assert.equal($itbf.children(0).text(), "info info info", "showing default IconTabBar content");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -568,7 +568,7 @@
 				//Assert
 				// Verify that the newly added content is rendered and overwrites the IconTabBar content
 				var $itbf = oIconTabBar.$("content");
-				equal ($itbf.children(0).text(), "icon tab filter content", "showing the IconTabFilter content");
+				assert.equal($itbf.children(0).text(), "icon tab filter content", "showing the IconTabFilter content");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -628,7 +628,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok (oIconTabHeader.$().hasClass("sapMITH"), "oIconTabHeader has class sapMITH");
+				assert.ok(oIconTabHeader.$().hasClass("sapMITH"), "oIconTabHeader has class sapMITH");
 				assert.ok(oIconTabHeader.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
 				assert.ok(!oIconTabHeader.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
 				assert.ok(oIconTabHeader.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
@@ -689,7 +689,7 @@
 				oList.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				ok (jQuery('.sapMITBFilter').length > 0, 'IconTabFilters are rendered')
+				assert.ok(jQuery('.sapMITBFilter').length > 0, 'IconTabFilters are rendered')
 			});
 
 			QUnit.test("disabled tab", function(assert) {
@@ -742,11 +742,11 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterDefault"), "color should be default");
-				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
-				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
-				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
-				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+				assert.ok($itbf.hasClass("sapMITBFilterDefault"), "color should be default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -771,11 +771,11 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterPositive"), "color should be positive");
-				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
-				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
-				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
-				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				assert.ok($itbf.hasClass("sapMITBFilterPositive"), "color should be positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -800,11 +800,11 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterNegative"), "color should be negative");
-				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
-				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
-				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
-				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				assert.ok($itbf.hasClass("sapMITBFilterNegative"), "color should be negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -829,11 +829,11 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterNeutral"), "color should be neutral");
-				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
-				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
-				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
-				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+				assert.ok($itbf.hasClass("sapMITBFilterNeutral"), "color should be neutral");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -858,11 +858,11 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterCritical"), "color should be critical");
-				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
-				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
-				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
-				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				assert.ok($itbf.hasClass("sapMITBFilterCritical"), "color should be critical");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -935,7 +935,7 @@
 
 				// Verify that the new text is rendered
 				var $itbf = oIconTabBar.$("content");
-				equal ($itbf.children(0).text(), "new button", "the text is \"new button\"");
+				assert.equal($itbf.children(0).text(), "new button", "the text is \"new button\"");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -1366,7 +1366,7 @@
 				oResizeHandlerStub.callArg(1);
 
 				// Assert
-				ok (oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar is scrollable");
+				assert.ok(oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar is scrollable");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -1398,7 +1398,7 @@
 				oResizeHandlerStub.callArg(1);
 
 				// Assert
-				ok (!oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar2 is not scrollable");
+				assert.ok(!oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar2 is not scrollable");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -1447,9 +1447,9 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
-				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
-				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
-				ok ($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
 				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
 				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
 
@@ -1505,9 +1505,9 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
-				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (last selected)");
-				ok ($itbh.hasClass("sapMITBNoScrollForward"), "Scroll forward arrow is not shown, (last selected)");
-				ok ($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (last selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (last selected)");
+				assert.ok($itbh.hasClass("sapMITBNoScrollForward"), "Scroll forward arrow is not shown, (last selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (last selected)");
 				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "hidden", "Right arrow is not visible");
 				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
 
@@ -1560,9 +1560,9 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
-				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (middle selected)");
-				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (middle selected)");
-				ok ($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (middle selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (middle selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (middle selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (middle selected)");
 				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
 				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
 
@@ -1611,9 +1611,9 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
-				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
-				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
-				ok ($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
 				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
 				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
 
@@ -2296,13 +2296,13 @@
 				var $tab = jQuery('#tabReorder1');
 				var mOffset = $tab.offset();
 
-				ok (oIconTabBar.getItems()[0].getText() == 'First tab', 'First Tab is "First Tab"');
+				assert.ok(oIconTabBar.getItems()[0].getText() == 'First tab', 'First Tab is "First Tab"');
 
 				qutils.triggerMouseEvent($tab, "mousedown", 0, 0, mOffset.left + 10, mOffset.top + 10);
 				qutils.triggerMouseEvent($tab, "mousemove", 0, 0, mOffset.left + 200, mOffset.top + 10);
 				qutils.triggerMouseEvent($tab, "mouseup");
 
-				ok (oIconTabBar.getItems()[0].getText() != 'First tab', 'First Tab is not "First Tab"');
+				assert.ok(oIconTabBar.getItems()[0].getText() != 'First tab', 'First Tab is not "First Tab"');
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -2341,7 +2341,7 @@
 				}
 			});
 
-			test("Rendering", function (assert) {
+			QUnit.test("Rendering", function (assert) {
 				assert.strictEqual(this.oIconTabBar.$().find('.sapMBtn').length, 1, "Overflow button is rendered");
 
 				var oButton = this.oIconTabBar.$().find('.sapMBtn');
@@ -2352,7 +2352,7 @@
 				assert.strictEqual(jQuery('.sapMITBSelectList').length, 1, "Select list is open");
 			});
 
-			test("Selection", function (assert) {
+			QUnit.test("Selection", function (assert) {
 				this.oIconTabBar.setSelectedKey('3');
 
 				sap.ui.getCore().applyChanges();

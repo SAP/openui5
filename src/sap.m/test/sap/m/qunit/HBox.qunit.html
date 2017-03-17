@@ -125,7 +125,7 @@
 					assert.equal(jQuery("#hbox1").css(sVendorPrefix + 'flex-direction'), "row", "HBox " + sVendorPrefix + "flex-direction property should be set correctly in standard-compatible browsers");
 					assert.equal(jQuery("#hbox2").css(sVendorPrefix + 'flex-direction'), "row-reverse", "HBox " + sVendorPrefix + "flex-direction property should be set correctly in standard-compatible browsers");
 				});
-// 				test("flex-wrap", function() {
+// 				QUnit.test("flex-wrap", function(assert) {
 //					// skip nowrap for Chrome as it has a bug in some versions where it returns "none" instead
 // 					assert.equal(jQuery("#hbox1").css(sVendorPrefix + 'flex-wrap'), "wrap", "HBox " + sVendorPrefix + "flex-wrap property should be set correctly in standard-compatible browsers");
 // 					if(!jQuery.browser.webkit) equal(jQuery("#hbox2").css(sVendorPrefix + 'flex-wrap'), "nowrap", "HBox " + sVendorPrefix + "flex-wrap property should be set correctly in standard-compatible browsers");

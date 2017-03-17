@@ -83,12 +83,11 @@
 		}
 	});
 
-	test("Rendering of Standard tree",
-		function() {
-			assert.notEqual(jQuery.sap.domById("tree"), null,	"Tree is rendered.");
-			assert.notEqual(jQuery.sap.domById("tree" + "-Header"), null,	"Tree header is there.");
-			assert.notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
-		});
+	QUnit.test("Rendering of Standard tree", function(assert) {
+		assert.notEqual(jQuery.sap.domById("tree"), null,	"Tree is rendered.");
+		assert.notEqual(jQuery.sap.domById("tree" + "-Header"), null,	"Tree header is there.");
+		assert.notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
+	});
 
 	QUnit.module("Selection Mode 'Single'", {
 		beforeEach: function() {

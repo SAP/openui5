@@ -2533,7 +2533,7 @@
 			equals(eventParams.endDate.getDate(), 1, 'end date is 1st day of the month');
 
 			equals(eventParams.subInterval, false, 'selected interval is not a sub-interval');
-			ok(!bIntervalSelect,
+			assert.ok(!bIntervalSelect,
 					"intervalSelect was not fired because the click was on the next month's first days and this serves as navigation, not selection");
 		});
 

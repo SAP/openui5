@@ -164,7 +164,7 @@
 			}
 		});
 
-		test("Auto focus enabled", function (assert) {
+		QUnit.test("Auto focus enabled", function (assert) {
 			this.sinon.stub(nc, "getAutoFocus").returns(true);
 
 			nc._applyAutoFocus({
@@ -211,7 +211,7 @@
 			assert.ok(!this.spy.calledWith(this.pageId));
 		});
 
-		test("Auto focus disabled", function (assert) {
+		QUnit.test("Auto focus disabled", function (assert) {
 			this.sinon.stub(nc, "getAutoFocus").returns(false);
 			nc._applyAutoFocus({
 				isTo: true,
@@ -224,7 +224,7 @@
 			assert.ok(!this.spy.calledWith(this.pageId));
 		});
 
-		test("Auto focus should't be used when inside a popup", function (assert){
+		QUnit.test("Auto focus should't be used when inside a popup", function (assert) {
 			var oNavContainer = new sap.m.NavContainer();
 			new sap.m.Popover({content: new sap.m.Page({content: [oNavContainer]})});
 			assert.ok(oNavContainer._isInsideAPopup(), "NavContainer detects that it's nested inside a popup");

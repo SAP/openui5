@@ -154,7 +154,7 @@
 					var oP = oModel
 							.getProperty("/ProductSet('HT-1000')");
 					assert.ok(oP, "one entry loaded");
-					ok(oP.Name === "Notebook Basic 15",
+					assert.ok(oP.Name === "Notebook Basic 15",
 							"one entry loaded");
 					done();
 				},
@@ -1808,7 +1808,7 @@
 							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 							assert.equal(oRequest.data.Name, "xy", "request payload name");
 							assert.equal(oRequest.data.Price, "4445.6", "request payload price");
-							equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
+							assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
 							"Should be also here because price is a currency and has sap:unit = currency code");
 							var iCount = 0;
 							jQuery.each(oRequest.data, function(iIndex, oValue){
@@ -1893,7 +1893,7 @@
 						assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 						assert.equal(oRequest.data.Name, "xy", "request payload name");
 						assert.equal(oRequest.data.Price, "4445.6", "request payload price");
-						equal(oRequest.data.CurrencyCode, "USD", "request payload currencyCode." +
+						assert.equal(oRequest.data.CurrencyCode, "USD", "request payload currencyCode." +
 								"Should be also here because price is a currency and has sap:unit = currency code");
 						var iCount = 0;
 						jQuery.each(oRequest.data, function(iIndex, oValue) {
@@ -1976,7 +1976,7 @@
 				assert.equal(oRequest.requestUri, "/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "xy", "request payload name");
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
-				equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
+				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
 				"Should be also here because price is a currency and has sap:unit = currency code");
 				var iCount2 = 0;
 				jQuery.each(oRequest.data, function(iIndex, oValue){
@@ -2129,7 +2129,7 @@
 							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 							assert.equal(oRequest.data.Name, "xy", "request payload name");
 							assert.equal(oRequest.data.Price, "4445.6", "request payload price");
-							equal(oRequest.data.CurrencyCode, "EUR",
+							assert.equal(oRequest.data.CurrencyCode, "EUR",
 									"request payload currency code should be there and not changed!!!");
 							var iCount = 0;
 							jQuery.each(oRequest.data, function(iIndex, oValue) {

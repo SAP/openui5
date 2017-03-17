@@ -944,8 +944,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
-		QUnit.test(
-				"_getObject: queries instead of indexes, log = " + bIsLoggable, function (assert) {
+		QUnit.test("_getObject: queries instead of indexes, log = " + bIsLoggable, function (assert) {
 			var oLogMock = this.oLogMock;
 
 			jQuery.sap.log.setLevel(bIsLoggable
@@ -1146,7 +1145,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("_getObject: warning with sap.ui.model.Context, log = " + bWarn,
-			function (assert) {
+			function (assert){
 				var oLogMock = this.oLogMock;
 
 				oLogMock.expects("isLoggable")
@@ -2268,7 +2267,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataValueLists: Metadata loaded completely, ValueList w/o qualifier",
-		function (assert) {
+		function (assert){
 			return withMetaModel(assert, function (oMetaModel) {
 				var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/Category"),
 					oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
@@ -2308,7 +2307,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataValueLists: Metadata loaded completely, multiple ValueLists",
-		function (assert) {
+		function (assert){
 			return withGivenAnnotations(assert,
 				["/GWSAMPLE_BASIC/annotations", "/fake/multipleValueLists"],
 				function (oMetaModel) {
@@ -2330,7 +2329,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataValueLists: Metadata loaded w/o annot., separate value list load",
-		function (assert) {
+		function (assert){
 			return withGivenService(
 					assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 				var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
@@ -2527,8 +2526,7 @@ sap.ui.require([
 	// Note: rejecting a promise in _sendBundledRequest() cannot realistically throw errors
 
 	//*********************************************************************************************
-	QUnit.test(
-			"getODataValueLists: Merge metadata with separate value list load", function (assert) {
+	QUnit.test("getODataValueLists: Merge metadata with separate value list load", function (assert) {
 		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 				oItemSetLabel = oMetaModel.getODataEntitySet("Items")

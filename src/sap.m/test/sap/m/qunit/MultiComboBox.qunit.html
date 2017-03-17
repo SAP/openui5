@@ -204,8 +204,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("constructor - selectedItems : [Item], items : [Item], setSelectedKey programatically - check fired events",
-			function() {
+	QUnit.test("constructor - selectedItems : [Item], items : [Item], setSelectedKey programatically - check fired events", function(assert) {
 
 				// system under test
 				var oItem;
@@ -234,7 +233,7 @@
 			});
 
 	QUnit.test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey programatically - check fired events",
-			function() {
+			function(assert) {
 
 				// system under test
 				var oItem;
@@ -264,7 +263,7 @@
 	});
 
 	QUnit.test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
-		function() {
+		function(assert) {
 
 			// system under test
 			var oModel = new sap.ui.model.json.JSONModel({
@@ -1419,7 +1418,7 @@
 		// assertions
 		assert.strictEqual(fnErrorSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
 		assert.strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
-		strictEqual(fnSetAssociationSpy.callCount, 0,
+		assert.strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 		//assert.strictEqual(oMultiComboBox.getSelectedItemId(), "");
@@ -1482,7 +1481,7 @@
 
 		// assertions
 		assert.strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
-		strictEqual(fnSetAssociationSpy.callCount, 0,
+		assert.strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 		//assert.strictEqual(oMultiComboBox.getSelectedItemId(), "");
@@ -1947,7 +1946,7 @@
 	});
 
 	QUnit.test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
-		function() {
+		function(assert) {
 
 			// system under test
 			var oModel = new sap.ui.model.json.JSONModel({
@@ -1989,7 +1988,7 @@
 			assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection change event was fired");
 			assert.strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
 					"The selection change event parameter was passed");
-			strictEqual(fnFireSelectionChangeSpy.args[0][0].selected, true,
+			assert.strictEqual(fnFireSelectionChangeSpy.args[0][0].selected, true,
 					"The selection change event parameter was passed");
 			assert.deepEqual(fnFireSelectionFinishSpy.args[0][0].selectedItems, oMultiComboBox.getSelectedItems());
 
@@ -2026,7 +2025,7 @@
 		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem2), oItem3);
 		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem3), null);
 		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(null), null);
-		deepEqual(oMultiComboBox._getNextVisibleItemOf(new sap.ui.core.Item({
+		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(new sap.ui.core.Item({
 			key : "dummy"
 		})), null);
 		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(), null);
@@ -2061,7 +2060,7 @@
 		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem2), oItem1);
 		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem3), oItem2);
 		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(null), null);
-		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(new sap.ui.core.Item({
+		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(new sap.ui.core.Item({
 			key : "dummy"
 		})), null);
 		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(), null);
@@ -2074,7 +2073,7 @@
 	// DisabledListItem              //
 	// ----------------------------- //
 	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - constructor",
-			function() {
+			function(assert) {
 
 				// system under test
 				var oItem1, oItem2, oItem3;
@@ -3797,9 +3796,7 @@
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test(
-			"Scenario OPEN_SUGGEST_SPACE: Pushing SPACE on item in suggest list - suggest list is closing first and complete list is opening then",
-			function() {
+	QUnit.test("Scenario OPEN_SUGGEST_SPACE: Pushing SPACE on item in suggest list - suggest list is closing first and complete list is opening then", function() {
 
 				var oSystem = {
 					desktop : true,
@@ -3851,7 +3848,7 @@
 			});
 
 	QUnit.test("Scenario OPEN_SUGGEST_ARROW: Pushing twice ALT+DOWN etc. in suggest list - suggest list is closing first and complete list is opening then",
-			function() {
+			function(assert) {
 
 				var oSystem = {
 					desktop : true,
@@ -5050,7 +5047,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, 'Only one token should be shown');
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, 'Only one token should be shown');
 
 		// cleanup
 		oMultiComboBox.destroy();

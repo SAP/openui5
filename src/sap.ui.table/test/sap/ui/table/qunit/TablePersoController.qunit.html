@@ -128,14 +128,14 @@
 		try {
 			oController.setPersoService(123);
 		} catch(ex) {
-			equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
+			assert.equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
 				"\"getPersData\", \"setPersData\" and \"delPersData\".", "setPersoService with string should throw an error");
 		}
 
 		try {
 			oController.setPersoService("abc");
 		} catch(ex) {
-			equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
+			assert.equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
 				"\"getPersData\", \"setPersData\" and \"delPersData\".", "setPersoService with string should throw an error");
 		}
 
@@ -144,7 +144,7 @@
 				setPersData: function() {}
 			});
 		} catch(ex) {
-			equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
+			assert.equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
 				"\"getPersData\", \"setPersData\" and \"delPersData\".", "setPersoService: object should contain all required methods");
 		}
 
@@ -200,7 +200,7 @@
 					return oDeferred.promise();
 				},
 				setPersData: function(oBundle) {
-					deepEqual(oBundle, {
+					assert.deepEqual(oBundle, {
 						_persoSchemaVersion: "1.0",
 						aColumns: [
 							{ id: "table-Name", order: 0,  visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
@@ -281,7 +281,7 @@
 					return oDeferred.promise();
 				},
 				setPersData: function(oBundle) {
-					deepEqual(oBundle, {
+					assert.deepEqual(oBundle, {
 						_persoSchemaVersion: "1.0",
 						aColumns: [
 							{ id: "table-Name", order: 0,  visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
@@ -369,7 +369,7 @@
 					return oDeferred.promise();
 				},
 				setPersData: function(oBundle) {
-					deepEqual(oBundle, {
+					assert.deepEqual(oBundle, {
 						_persoSchemaVersion: "1.0",
 						aColumns: [
 							{ id: "table-Number", order: 0, visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
@@ -443,7 +443,7 @@
 					return oDeferred.promise();
 				},
 				setPersData: function(oBundle) {
-					deepEqual(oBundle, {
+					assert.deepEqual(oBundle, {
 						_persoSchemaVersion: "1.0",
 						aColumns: [
 							{ id: "P13N_table-P13N_Number", order: 0, visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },

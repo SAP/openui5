@@ -1057,8 +1057,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
-		QUnit.test(
-				"binding resolution: interface to formatter, debug = " + bDebug, function (assert) {
+		QUnit.test("binding resolution: interface to formatter, debug = " + bDebug, function (assert) {
 			var oModel = new JSONModel({
 					"somewhere" : {
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {

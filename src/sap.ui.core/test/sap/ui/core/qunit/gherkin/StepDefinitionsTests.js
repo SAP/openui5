@@ -134,7 +134,7 @@ sap.ui.require([
 
     var data = [["Hello", "World"], ["Goodbye", "Cruel", "World"]];
 
-    deepEqual(this.stepDefs._generateTestStep({
+    assert.deepEqual(this.stepDefs._generateTestStep({
       text: "Yet another regex",
       data: data
     }), {
@@ -154,7 +154,7 @@ sap.ui.require([
 
     var data = [["Hello", "World"], ["Goodbye", "Cruel", "World"]];
 
-    deepEqual(this.stepDefs._generateTestStep({
+    assert.deepEqual(this.stepDefs._generateTestStep({
       text: "Regex # 42",
       data: data
     }), {

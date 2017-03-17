@@ -109,7 +109,7 @@
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, "200", "Response status is right");
-		deepEqual(oResponse.data, [ {
+		assert.deepEqual(oResponse.data, [ {
 			"id" : "323233"
 		} ], "Response is right");
 
@@ -129,7 +129,7 @@
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, "200", "Response status is right");
-		deepEqual(oResponse.data, [ {
+		assert.deepEqual(oResponse.data, [ {
 			"id" : "323233"
 		} ], "Response is right");
 
@@ -406,7 +406,7 @@
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, "200", "Response status is right");
-		deepEqual(oResponse.data, [ {
+		assert.deepEqual(oResponse.data, [ {
 			"id" : "323233"
 		} ], "Response is right");
 
@@ -2055,9 +2055,7 @@
 
 	});
 
-	test(
-			"test OData get single entry",
-			function() {
+	QUnit.test("test OData get single entry", function(assert) {
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
@@ -2239,7 +2237,7 @@
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 100, "navigation to collection with OData query");
-		equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
+		assert.equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
 				"navigation to collection with OData query returns flight");
 		assert.equal(countProperties(oResponse.data.d.results[0]), 3, "navigation to collection with OData query returns only 2 properties ");
 
@@ -2413,347 +2411,344 @@
 		oMockServer.destroy();
 	});
 
-	test(
-			"test OData $filter",
-			function() {
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : "/myservice/"
-				});
-				var sMetadataUrl = "testdata/DataModel.xml"
-				var sMockdataBaseUrl = "testdata/"
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				assert.ok(oMockServer.isStarted(), "Mock server is started");
+	QUnit.test("test OData $filter", function(assert){
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml"
+		var sMockdataBaseUrl = "testdata/"
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-				//test for filtering while sample data contains null values
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=substringof('e', organizationunit)",
+		//test for filtering while sample data contains null values
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=substringof('e', organizationunit)",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock didn't crash on null");
+		assert.equal(oResponse.data.d.results.length, 2, "");
+
+		//test for filtering by comma
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=substringof(',', type)",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results.length, 0, "");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "A or B");
+		assert.equal(oResponse.data.d.results.length, 2, "A or B");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "(A or B)");
+		assert.equal(oResponse.data.d.results.length, 2, "(A or B)");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection/$count?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "$count on (A or B)");
+		assert.equal(oResponse.data, 2, "(A or B)");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')",
+			dataType : "json"
+		});
+		assert.ok(!oResponse.success, "(((A or B)");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave' or type eq 'Unpaid Leave'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "A or B or C");
+		assert.equal(oResponse.data.d.results.length, 3, "A or B or C");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or ",
+			dataType : "json"
+		});
+		assert.ok(!oResponse.success, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "malformed: A or ");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and type eq 'Sick Leave'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "A and B");
+		assert.equal(oResponse.data.d.results.length, 0, "A and B");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and type eq 'Sick Leave' or type eq 'Vacation'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "A and B or C");
+		assert.equal(oResponse.data.d.results.length, 1, "A and B or C");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave' and type eq 'Sick Leave'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "A or B and C");
+		assert.equal(oResponse.data.d.results.length, 1, "A or B and C");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation')",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "(A)");
+		assert.equal(oResponse.data.d.results.length, 1, "(A)");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and (type eq 'Sick Leave' or type eq 'Vacation')",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "A op (B op C)");
+		assert.equal(oResponse.data.d.results.length, 1, "A op (B op C)");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and (type eq 'Sick Leave') or type eq 'Vacation'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "A op (B) op C");
+		assert.equal(oResponse.data.d.results.length, 1, "A op (B) op C");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' and type eq 'Sick Leave') or type eq 'Vacation'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "(A op B) op C");
+		assert.equal(oResponse.data.d.results.length, 1, "(A op B) op C");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' and type eq 'Sick Leave') or (type eq 'Vacation')",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "(A op B) op (C)");
+		assert.equal(oResponse.data.d.results.length, 1, "(A op B) op (C)");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=((type eq 'Vacation' and type eq 'Sick Leave') or type eq 'Vacation')",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "((A op B) op C)");
+		assert.equal(oResponse.data.d.results.length, 1, "((A op B) op C)");
+
+		oResponse = jQuery.sap
+				.sjax({
+					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or ( type eq 'Sick Leave' and  substringof('elina', type))",
 					dataType : "json"
 				});
-				ok(oResponse.success, "Mock didn't crash on null");
-				equal(oResponse.data.d.results.length, 2, "");
+		assert.ok(oResponse.success, "A op (B)");
+		assert.equal(oResponse.data.d.results.length, 1, "A op (B)");
 
-				//test for filtering by comma
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=substringof(',', type)",
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=substringof('ac', type)",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter substringof('ac', type)");
+
+		oResponse = jQuery.sap
+				.sjax({
+					url : "/myservice/LeaveHeaderCollection?$skip=0&$top=4&$filter=(substringof('',type)%20or%20substringof('Pink%20Straits%20Corp.',type))",
 					dataType : "json"
 				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(oResponse.data.d.results.length, 0, "");
+		assert.ok(oResponse.success, "(substringof() op substringof())");
 
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "A or B");
-				assert.equal(oResponse.data.d.results.length, 2, "A or B");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=startswith(type, 'Va')",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter startswith(type, 'Va')");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "(A or B)");
-				assert.equal(oResponse.data.d.results.length, 2, "(A or B)");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=endswith(type, 've')",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection/$count?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "$count on (A or B)");
-				assert.equal(oResponse.data, 2, "(A or B)");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "filter endswith(type, 've')");
+		assert.equal(oResponse.data.d.results.length, 2, "filter endswith(type, 've')");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')",
-					dataType : "json"
-				});
-				assert.ok(!oResponse.success, "(((A or B)");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave' or type eq 'Unpaid Leave'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "A or B or C");
-				assert.equal(oResponse.data.d.results.length, 3, "A or B or C");
+		assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter type eq 'Vacation'");
+		assert.equal(oResponse.data.d.results.length, 1, "filter type eq 'Vacation'");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or ",
-					dataType : "json"
-				});
-				assert.ok(!oResponse.success, "Mock server responded");
-				assert.equal(oResponse.statusCode, 400, "malformed: A or ");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type ne 'Vacation'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and type eq 'Sick Leave'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "A and B");
-				assert.equal(oResponse.data.d.results.length, 0, "A and B");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "filter type ne 'Vacation'");
+		assert.equal(oResponse.data.d.results.length, 2, "filter type ne 'Vacation'");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and type eq 'Sick Leave' or type eq 'Vacation'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "A and B or C");
-				assert.equal(oResponse.data.d.results.length, 1, "A and B or C");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection?$filter=itemid gt 6",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave' and type eq 'Sick Leave'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "A or B and C");
-				assert.equal(oResponse.data.d.results.length, 1, "A or B and C");
+		assert.equal(oResponse.data.d.results[0].type, "Unpaid Leave", "filter itemid gt 6'");
+		assert.equal(oResponse.data.d.results.length, 1, "itemid gt 6'");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation')",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "(A)");
-				assert.equal(oResponse.data.d.results.length, 1, "(A)");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection?$filter=itemid lt 6",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results.length, 5, "itemid lt 6");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and (type eq 'Sick Leave' or type eq 'Vacation')",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "A op (B op C)");
-				assert.equal(oResponse.data.d.results.length, 1, "A op (B op C)");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection?$filter=itemid ge 6",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results.length, 2, "itemid le 6");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and (type eq 'Sick Leave') or type eq 'Vacation'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "A op (B) op C");
-				assert.equal(oResponse.data.d.results.length, 1, "A op (B) op C");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection?$filter=itemid le 6",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results.length, 6, "itemid le 6");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' and type eq 'Sick Leave') or type eq 'Vacation'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "(A op B) op C");
-				assert.equal(oResponse.data.d.results.length, 1, "(A op B) op C");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection?$filter=itemid lfde 6",
+			dataType : "json"
+		});
+		assert.ok(!oResponse.success, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "filter option doesn't exist");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' and type eq 'Sick Leave') or (type eq 'Vacation')",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "(A op B) op (C)");
-				assert.equal(oResponse.data.d.results.length, 1, "(A op B) op (C)");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection?$filter=itemidFood le 6",
+			dataType : "json"
+		});
+		assert.ok(!oResponse.success, "Mock server responded");
+		assert.equal(oResponse.statusCode, 400, "filter path doesn't exist");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=((type eq 'Vacation' and type eq 'Sick Leave') or type eq 'Vacation')",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "((A op B) op C)");
-				assert.equal(oResponse.data.d.results.length, 1, "((A op B) op C)");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection?$filter=itemid%20le%206",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results.length, 6, "itemid%20le%206");
 
-				oResponse = jQuery.sap
-						.sjax({
-							url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or ( type eq 'Sick Leave' and  substringof('elina', type))",
-							dataType : "json"
-						});
-				assert.ok(oResponse.success, "A op (B)");
-				assert.equal(oResponse.data.d.results.length, 1, "A op (B)");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveHeaderCollection?$filter=type%20ne%20%27Vacation%27",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=substringof('ac', type)",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter substringof('ac', type)");
+		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "type%20ne%20%27Vacation%27");
+		assert.equal(oResponse.data.d.results.length, 2, "type%20ne%20%27Vacation%27");
+		oMockServer.destroy();
 
-				oResponse = jQuery.sap
-						.sjax({
-							url : "/myservice/LeaveHeaderCollection?$skip=0&$top=4&$filter=(substringof('',type)%20or%20substringof('Pink%20Straits%20Corp.',type))",
-							dataType : "json"
-						});
-				assert.ok(oResponse.success, "(substringof() op substringof())");
+		oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=startswith(type, 'Va')",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter startswith(type, 'Va')");
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection?$filter=flightDetails/cityFrom eq 'cityFrom 1'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=endswith(type, 've')",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
+		oMockServer.destroy();
 
-				assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "filter endswith(type, 've')");
-				assert.equal(oResponse.data.d.results.length, 2, "filter endswith(type, 've')");
+		oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/northwind/metadata.xml"
+		oMockServer.simulate(sMetadataUrl, {
+			'sMockdataBaseUrl' : "testdata/northwind/",
+			'bGenerateMissingMockData' : true
+		});
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/Products?$filter=Discontinued eq true",
+			dataType : "json"
+		});
+		assert.equal(oResponse.data.d.results.length, 3, "$filter=Discontinued eq true");
 
-				assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter type eq 'Vacation'");
-				assert.equal(oResponse.data.d.results.length, 1, "filter type eq 'Vacation'");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Products?$top=1&$orderby=ProductID desc",
+			dataType : "json"
+		});
+		assert.equal(oResponse.data.d.results[0].ProductID, 20, "$filter=Discontinued eq 1");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type ne 'Vacation'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Products?$filter=UnitsInStock lt 40",
+			dataType : "json"
+		});
+		assert.equal(oResponse.data.d.results.length, 15, "$filter=UnitsInStock lt 40");
 
-				assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "filter type ne 'Vacation'");
-				assert.equal(oResponse.data.d.results.length, 2, "filter type ne 'Vacation'");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Products?$filter=(UnitsInStock eq 120)",
+			dataType : "json"
+		});
+		assert.equal(oResponse.data.d.results.length, 1, "$filter=(UnitsInStock eq 120)");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveItemCollection?$filter=itemid gt 6",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Products(5)/Category",
+			dataType : "json"
+		});
+		assert.ok(oResponse.data.d.CategoryName, "Products(5)/Category");
 
-				assert.equal(oResponse.data.d.results[0].type, "Unpaid Leave", "filter itemid gt 6'");
-				assert.equal(oResponse.data.d.results.length, 1, "itemid gt 6'");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Products?$filter=UnitsInStock eq (120)",
+			dataType : "json"
+		});
+		assert.equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveItemCollection?$filter=itemid lt 6",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(oResponse.data.d.results.length, 5, "itemid lt 6");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Order_Details?$filter=UnitPrice le 100M",
+			dataType : "json"
+		});
+		assert.ok(oResponse, "$filter=UnitPrice le 100M");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveItemCollection?$filter=itemid ge 6",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(oResponse.data.d.results.length, 2, "itemid le 6");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Order_Details?$filter=UnitPrice le 100m",
+			dataType : "json"
+		});
+		assert.ok(oResponse, "$filter=UnitPrice le 100m");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveItemCollection?$filter=itemid le 6",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(oResponse.data.d.results.length, 6, "itemid le 6");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "$filter=Category/CategoryName eq 'Beverages'");
+		assert.ok(!oResponse.data.d.results[0].Category.CategoryName);
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveItemCollection?$filter=itemid lfde 6",
-					dataType : "json"
-				});
-				assert.ok(!oResponse.success, "Mock server responded");
-				assert.equal(oResponse.statusCode, 400, "filter option doesn't exist");
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category");
+		assert.equal(oResponse.data.d.results[0].Category.CategoryName, "Beverages");
 
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveItemCollection?$filter=itemidFood le 6",
-					dataType : "json"
-				});
-				assert.ok(!oResponse.success, "Mock server responded");
-				assert.equal(oResponse.statusCode, 400, "filter path doesn't exist");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveItemCollection?$filter=itemid%20le%206",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(oResponse.data.d.results.length, 6, "itemid%20le%206");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/LeaveHeaderCollection?$filter=type%20ne%20%27Vacation%27",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-
-				assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "type%20ne%20%27Vacation%27");
-				assert.equal(oResponse.data.d.results.length, 2, "type%20ne%20%27Vacation%27");
-				oMockServer.destroy();
-
-				oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : "/myservice/"
-				});
-				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
-				oMockServer.simulate(sMetadataUrl);
-				oMockServer.start();
-
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/FlightCollection?$filter=flightDetails/cityFrom eq 'cityFrom 1'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
-
-				oMockServer.destroy();
-
-				oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : "/myservice/"
-				});
-				var sMetadataUrl = "testdata/northwind/metadata.xml"
-				oMockServer.simulate(sMetadataUrl, {
-					'sMockdataBaseUrl' : "testdata/northwind/",
-					'bGenerateMissingMockData' : true
-				});
-				oMockServer.start();
-				assert.ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/Products?$filter=Discontinued eq true",
-					dataType : "json"
-				});
-				assert.equal(oResponse.data.d.results.length, 3, "$filter=Discontinued eq true");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Products?$top=1&$orderby=ProductID desc",
-					dataType : "json"
-				});
-				assert.equal(oResponse.data.d.results[0].ProductID, 20, "$filter=Discontinued eq 1");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Products?$filter=UnitsInStock lt 40",
-					dataType : "json"
-				});
-				assert.equal(oResponse.data.d.results.length, 15, "$filter=UnitsInStock lt 40");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Products?$filter=(UnitsInStock eq 120)",
-					dataType : "json"
-				});
-				assert.equal(oResponse.data.d.results.length, 1, "$filter=(UnitsInStock eq 120)");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Products(5)/Category",
-					dataType : "json"
-				});
-				assert.ok(oResponse.data.d.CategoryName, "Products(5)/Category");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Products?$filter=UnitsInStock eq (120)",
-					dataType : "json"
-				});
-				assert.equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Order_Details?$filter=UnitPrice le 100M",
-					dataType : "json"
-				});
-				assert.ok(oResponse, "$filter=UnitPrice le 100M");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Order_Details?$filter=UnitPrice le 100m",
-					dataType : "json"
-				});
-				assert.ok(oResponse, "$filter=UnitPrice le 100m");
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "$filter=Category/CategoryName eq 'Beverages'");
-				assert.ok(!oResponse.data.d.results[0].Category.CategoryName);
-
-				oResponse = jQuery.sap.sjax({
-					url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category",
-					dataType : "json"
-				});
-				assert.ok(oResponse.success, "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category");
-				assert.equal(oResponse.data.d.results[0].Category.CategoryName, "Beverages");
-
-				oMockServer.destroy();
-
-			});
+		oMockServer.destroy();
+	});
 
 	QUnit.test("test OData $select", function(assert) {
 		var oMockServer = new sap.ui.core.util.MockServer({
@@ -2847,8 +2842,7 @@
 		oMockServer.destroy();
 	});
 
-	test("test OData $expand",
-		function() {
+	QUnit.test("test OData $expand", function(assert){
 			var oMockServer = new sap.ui.core.util.MockServer({
 				rootUri : "/myservice/"
 			});
@@ -2908,13 +2902,13 @@
 				dataType : "json"
 			});
 			assert.ok(oResponse.success, "Mock server responded");
-			equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Carrier",
+			assert.equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Carrier",
 					"Expand on carrier collection with deepDown, result of type carrier collection");
-			equal(oResponse.data.d.results[0].carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
+			assert.equal(oResponse.data.d.results[0].carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
 					"Expand deepDown first level, entry of type Flight");
 			assert.ok(!jQuery.isEmptyObject(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings),
 					"Expand deepDown second level, flightBookings not in expand, not empty");
-			ok(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings.__deferred,
+			assert.ok(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings.__deferred,
 					"Expand deepDown second level, flightBookings not in expand, not expanded");
 
 			oResponse = jQuery.sap.sjax({
@@ -2922,13 +2916,13 @@
 				dataType : "json"
 			});
 			assert.ok(oResponse.success, "Mock server responded");
-			equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier",
+			assert.equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier",
 					"Expand on carrier entry with deepDown, result of type carrier ");
-			equal(oResponse.data.d.carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
+			assert.equal(oResponse.data.d.carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
 					"Expand deepDown first level, entry of type Flight");
 			assert.ok(!jQuery.isEmptyObject(oResponse.data.d.carrierFlights.results[0].flightBookings),
 					"Expand deepDown second level, flightBookings not in expand, not empty");
-			ok(oResponse.data.d.carrierFlights.results[0].flightBookings.__deferred,
+			assert.ok(oResponse.data.d.carrierFlights.results[0].flightBookings.__deferred,
 					"Expand deepDown second level, flightBookings not in expand, not expanded");
 
 			oResponse = jQuery.sap.sjax({
@@ -3306,423 +3300,411 @@
 
 	});
 
-	test(
-			"test mock data state changer",
-			14,
-			function() {
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/?sap-client=001"
+	QUnit.test("test mock data state changer", function(assert) {
+		assert.expect(14);
+
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/?sap-client=001"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/$metadata?sap-client=001",
+			dataType : "xml"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
+
+		var oPostResponse = jQuery.sap
+				.sjax({
+					url : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
+					type : 'POST',
+					data : '{"type":"Vacation","from":"2013-09-26","to":"2013-09-27","length":"1 day","state":"Pending"}'
 				});
-				var sMetadataUrl = "testdata/DataModel.xml";
-				oMockServer.simulate(sMetadataUrl);
-				oMockServer.start();
-				assert.ok(oMockServer.isStarted(), "Mock server is started");
+		assert.ok(oPostResponse.success, "Mock server responded the POST resquest");
+		assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
+		assert.ok(oPostResponse.data.uri, "resource uri available");
 
-				var oResponse = jQuery.sap.sjax({
-					url : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/$metadata?sap-client=001",
-					dataType : "xml"
-				});
-				assert.ok(oResponse.success, "Mock server responded");
-				assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
+		var oPutResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'PUT',
+			data : '{"type":"Vacation","from":"2013-10-26","to":"2013-10-27","length":"1 day","state":"Pending"}'
+		});
+		assert.ok(oPutResponse.success, "Mock server responded the POST resquest");
+		assert.equal(oPutResponse.statusCode, 204, "resource successfully created");
 
-				var oPostResponse = jQuery.sap
-						.sjax({
-							url : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
-							type : 'POST',
-							data : '{"type":"Vacation","from":"2013-09-26","to":"2013-09-27","length":"1 day","state":"Pending"}'
-						});
-				assert.ok(oPostResponse.success, "Mock server responded the POST resquest");
-				assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
-				assert.ok(oPostResponse.data.uri, "resource uri available");
+		// read the just created resource again
+		var oGetResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'GET',
+		});
+		assert.ok(oGetResponse.success, "Mock server responded the GET request");
+		assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
 
-				var oPutResponse = jQuery.sap.sjax({
-					url : oPostResponse.data.uri,
-					type : 'PUT',
-					data : '{"type":"Vacation","from":"2013-10-26","to":"2013-10-27","length":"1 day","state":"Pending"}'
-				});
-				assert.ok(oPutResponse.success, "Mock server responded the POST resquest");
-				assert.equal(oPutResponse.statusCode, 204, "resource successfully created");
+		var oDelResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'DELETE',
+		});
+		assert.ok(oDelResponse.success, "Mock server responded the DELETE request");
+		assert.equal(oDelResponse.statusCode, 204, "resource successfully deleted");
+		// Try to read the just delted resource -this shall fail
+		var oGetAgainResponse = jQuery.sap.sjax({
+			url : oPostResponse.data.uri,
+			type : 'GET',
+		});
+		assert.equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
+		assert.equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
 
-				// read the just created resource again
-				var oGetResponse = jQuery.sap.sjax({
-					url : oPostResponse.data.uri,
-					type : 'GET',
-				});
-				assert.ok(oGetResponse.success, "Mock server responded the GET request");
-				assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+		oMockServer.destroy();
+	});
 
-				var oDelResponse = jQuery.sap.sjax({
-					url : oPostResponse.data.uri,
-					type : 'DELETE',
-				});
-				assert.ok(oDelResponse.success, "Mock server responded the DELETE request");
-				assert.equal(oDelResponse.statusCode, 204, "resource successfully deleted");
-				// Try to read the just delted resource -this shall fail
-				var oGetAgainResponse = jQuery.sap.sjax({
-					url : oPostResponse.data.uri,
-					type : 'GET',
-				});
-				assert.equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
-				assert.equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
+	QUnit.test("$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST)", function(assert){
+		var sUri = "/mock/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sUri
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-				oMockServer.destroy();
-
-			});
-
-	test(
-			"$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST)",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml";
-				var sMockdataBaseUrl = "testdata/";
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				assert.ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+		var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
 // 				var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
 
-				oModel.setUseBatch(true);
+		oModel.setUseBatch(true);
 
-				var aBatchReadOperations = [];
-				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchReadOperations.push(oFirstGetOp);
+		var aBatchReadOperations = [];
+		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+		aBatchReadOperations.push(oFirstGetOp);
 
-				var oSecGetOp = oModel.createBatchOperation("/LeaveItemCollection?$top=2", "GET");
-				aBatchReadOperations.push(oSecGetOp);
+		var oSecGetOp = oModel.createBatchOperation("/LeaveItemCollection?$top=2", "GET");
+		aBatchReadOperations.push(oSecGetOp);
 
-				var aBatchChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchChangeOperations.push(oPutOp);
+		var aBatchChangeOperations = [];
+		var oPutOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+						{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchChangeOperations.push(oPutOp);
 
-				var oPutOp2 = oModel
-						.createBatchOperation(
-								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-								"PUT",
-								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchChangeOperations.push(oPutOp2);
+		var oPutOp2 = oModel
+				.createBatchOperation(
+						"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+						"PUT",
+						{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchChangeOperations.push(oPutOp2);
 
-				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
-						null);
-				aBatchChangeOperations.push(oDeleteOp);
+		var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
+				null);
+		aBatchChangeOperations.push(oDeleteOp);
 
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchChangeOperations.push(oPostOp);
+		var oPostOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection", "POST",
+						{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchChangeOperations.push(oPostOp);
 
-				var fnSuccess = function(oData, oResponse) {
-					assert.equal(oResponse.statusCode, 202, "batch completed");
-					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
-					assert.equal(oData.__batchResponses[1].statusCode, 200, "oData second read succeeded");
-					assert.equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
+		var fnSuccess = function(oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
+			assert.equal(oData.__batchResponses[1].statusCode, 200, "oData second read succeeded");
+			assert.equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
 
-					assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 204, "oData put succeeded");
-					assert.equal(oData.__batchResponses[2].__changeResponses[2].statusCode, 204, "oData delete succeeded");
-					assert.equal(oData.__batchResponses[2].__changeResponses[3].statusCode, 201, "oData post succeeded");
-				};
+			assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 204, "oData put succeeded");
+			assert.equal(oData.__batchResponses[2].__changeResponses[2].statusCode, 204, "oData delete succeeded");
+			assert.equal(oData.__batchResponses[2].__changeResponses[3].statusCode, 201, "oData post succeeded");
+		};
 
-				var fnError = function(oError) {
-					assert.ok(oData.__batchResponses[0], "fnError - batch failed");
-				};
+		var fnError = function(oError) {
+			assert.ok(oData.__batchResponses[0], "fnError - batch failed");
+		};
 
-				oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchChangeOperations);
-				oModel.submitBatch(fnSuccess, fnError, false);
+		oModel.addBatchReadOperations(aBatchReadOperations);
+		oModel.addBatchChangeOperations(aBatchChangeOperations);
+		oModel.submitBatch(fnSuccess, fnError, false);
 
-				oMockServer.destroy();
+		oMockServer.destroy();
+	});
+
+	QUnit.test("$batch Multiple ChangeSets", function(assert){
+		var sUri = "/mock/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sUri
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+		oModel.setUseBatch(true);
+
+		var aBatchReadOperations = [];
+		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+		aBatchReadOperations.push(oFirstGetOp);
+
+		var aBatchFirstChangeOperations = [];
+		var oPutOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+						{"type":"Vacation","employeeid":"Gal Roter1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPutOp);
+
+		var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
+				null);
+		aBatchFirstChangeOperations.push(oDeleteOp);
+
+		var oPostOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection", "POST",
+						{"type":"Sick Leave","employeeid":"LIDOR1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPostOp);
+
+		var aBatchSecondChangeOperations = [];
+		var oPutOp_2 = oModel
+				.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+						{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchSecondChangeOperations.push(oPutOp_2);
+
+		var oPostOp_2 = oModel
+				.createBatchOperation("/LeaveHeaderCollection", "POST",
+						{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchSecondChangeOperations.push(oPostOp_2);
+
+		var fnSuccess = function(oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
+			assert.equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
+
+			assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData put succeeded");
+			assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 204, "oData delete succeeded");
+			assert.equal(oData.__batchResponses[1].__changeResponses[2].statusCode, 201, "oData post succeeded");
+
+			assert.equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+			assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
+		};
+
+		var fnError = function(oError) {
+			assert.ok(oData.__batchResponses[0], "fnError - batch failed");
+		};
+
+		oModel.addBatchReadOperations(aBatchReadOperations);
+		oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
+		oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
+		oModel.submitBatch(fnSuccess, fnError, false);
+
+		oMockServer.destroy();
+	});
+
+	QUnit.test("$batch first changeset rollback (second changeset succeed)", function(assert){
+		var sUri = "/mock/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sUri
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+		oModel.setUseBatch(true);
+
+		var aBatchReadOperations = [];
+		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+		aBatchReadOperations.push(oFirstGetOp);
+
+		var aBatchFirstChangeOperations = [];
+		var oPutOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+						{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPutOp);
+
+		var oPutOp2 = oModel
+				.createBatchOperation(
+						"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+						"PUT",
+						{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPutOp2);
+
+		var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
+		aBatchFirstChangeOperations.push(oDeleteOp);
+
+		var oPostOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection", "POST",
+						{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPostOp);
+
+		var aBatchSecondChangeOperations = [];
+		var oPutOp_2 = oModel
+				.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+						{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchSecondChangeOperations.push(oPutOp_2);
+
+		var oPostOp_2 = oModel
+				.createBatchOperation("/LeaveHeaderCollection", "POST",
+						{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchSecondChangeOperations.push(oPostOp_2);
+
+		var fnSuccess = function(oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+			assert.equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
+			assert.equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated");
+			// read to verify no changes made
+			var oGetResponse = jQuery.sap.sjax({
+				url : '/mock/LeaveHeaderCollection',
+				type : 'GET',
 			});
+			assert.ok(oGetResponse.success, "Mock server responded the GET request");
+			assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+			assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
 
-	test(
-			"$batch Multiple ChangeSets",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml";
-				var sMockdataBaseUrl = "testdata/";
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				assert.ok(oMockServer.isStarted(), "Mock server is started");
+			assert.equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+			assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
+		};
 
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
+		var fnError = function(oError) {
+			assert.ok(oData.__batchResponses[0], "fnError - batch failed");
+		};
 
-				var aBatchReadOperations = [];
-				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchReadOperations.push(oFirstGetOp);
+		oModel.addBatchReadOperations(aBatchReadOperations);
+		oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
+		oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
+		oModel.submitBatch(fnSuccess, fnError, false);
 
-				var aBatchFirstChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								{"type":"Vacation","employeeid":"Gal Roter1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPutOp);
+		oMockServer.destroy();
+	});
 
-				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
-						null);
-				aBatchFirstChangeOperations.push(oDeleteOp);
+	QUnit.test("$batch second changeset rollback (first changeset succeed)", function(assert){
+		var sUri = "/mock/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sUri
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								{"type":"Sick Leave","employeeid":"LIDOR1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPostOp);
+		var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+		oModel.setUseBatch(true);
 
-				var aBatchSecondChangeOperations = [];
-				var oPutOp_2 = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchSecondChangeOperations.push(oPutOp_2);
+		var aBatchReadOperations = [];
+		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+		aBatchReadOperations.push(oFirstGetOp);
 
-				var oPostOp_2 = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchSecondChangeOperations.push(oPostOp_2);
+		var aBatchFirstChangeOperations = [];
+		var oPutOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+						{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPutOp);
 
-				var fnSuccess = function(oData, oResponse) {
-					assert.equal(oResponse.statusCode, 202, "batch completed");
-					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
-					assert.equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
+		var oPostOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection", "POST",
+						{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPostOp);
 
-					assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData put succeeded");
-					assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 204, "oData delete succeeded");
-					assert.equal(oData.__batchResponses[1].__changeResponses[2].statusCode, 201, "oData post succeeded");
+		var aBatchSecondChangeOperations = [];
+		var oPutOp1 = oModel
+				.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+						{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchSecondChangeOperations.push(oPutOp1);
 
-					assert.equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
-				};
+		var oPutOp2 = oModel
+				.createBatchOperation(
+						"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+						"PUT",
+						{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchSecondChangeOperations.push(oPutOp2);
 
-				var fnError = function(oError) {
-					assert.ok(oData.__batchResponses[0], "fnError - batch failed");
-				};
+		var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
+		aBatchSecondChangeOperations.push(oDeleteOp);
 
-				oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-				oModel.submitBatch(fnSuccess, fnError, false);
+		var oPostOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection", "POST",
+						{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchSecondChangeOperations.push(oPostOp);
 
-				oMockServer.destroy();
+		var fnSuccess = function(oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+			assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+			assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
+			// read to verify no changes made
+			var oGetResponse = jQuery.sap.sjax({
+				url : '/mock/LeaveHeaderCollection',
+				type : 'GET',
 			});
+			assert.ok(oGetResponse.success, "Mock server responded the GET request");
+			assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+			assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
 
-	test(
-			"$batch first changeset rollback (second changeset succeed)",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml";
-				var sMockdataBaseUrl = "testdata/";
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				assert.ok(oMockServer.isStarted(), "Mock server is started");
+			assert.equal(oData.__batchResponses[2].message, "HTTP request failed", "HTTP request failed");
 
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
+		};
 
-				var aBatchReadOperations = [];
-				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchReadOperations.push(oFirstGetOp);
+		var fnError = function(oError) {
+			assert.ok(oData.__batchResponses[0], "fnError - batch failed");
+		};
 
-				var aBatchFirstChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPutOp);
+		oModel.addBatchReadOperations(aBatchReadOperations);
+		oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
+		oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
 
-				var oPutOp2 = oModel
-						.createBatchOperation(
-								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-								"PUT",
-								{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPutOp2);
+		oModel.submitBatch(fnSuccess, fnError, false);
 
-				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
-				aBatchFirstChangeOperations.push(oDeleteOp);
+		oMockServer.destroy();
+	});
 
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPostOp);
+	QUnit.test("$batch GET in ChangeSet", function(assert){
+		var sUri = "/mock/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sUri
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-				var aBatchSecondChangeOperations = [];
-				var oPutOp_2 = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchSecondChangeOperations.push(oPutOp_2);
+		var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+		oModel.setUseBatch(true);
 
-				var oPostOp_2 = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchSecondChangeOperations.push(oPostOp_2);
+		var aBatchFirstChangeOperations = [];
+		var oPutOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
+						{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPutOp);
 
-				var fnSuccess = function(oData, oResponse) {
-					assert.equal(oResponse.statusCode, 202, "batch completed");
-					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					assert.equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
-					assert.equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
-					assert.equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated");
-					// read to verify no changes made
-					var oGetResponse = jQuery.sap.sjax({
-						url : '/mock/LeaveHeaderCollection',
-						type : 'GET',
-					});
-					assert.ok(oGetResponse.success, "Mock server responded the GET request");
-					assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-					assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
+		var oFakeGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
+		aBatchFirstChangeOperations.push(oFakeGetOp);
 
-					assert.equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
-				};
+		var oPostOp = oModel
+				.createBatchOperation("/LeaveHeaderCollection", "POST",
+						{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
+		aBatchFirstChangeOperations.push(oPostOp);
 
-				var fnError = function(oError) {
-					assert.ok(oData.__batchResponses[0], "fnError - batch failed");
-				};
+		var fnSuccess = function(oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+			assert.equal(oData.__batchResponses[1].statusCode, 204, "oData  read succeeded");
+		};
 
-				oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-				oModel.submitBatch(fnSuccess, fnError, false);
+		var fnError = function(oError) {
+			assert.equal(oError.response.statusCode, 400,
+					"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
+		};
 
-				oMockServer.destroy();
-			});
+		//                oModel.addBatchReadOperations(aBatchReadOperations);
+		oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
 
-	test(
-			"$batch second changeset rollback (first changeset succeed)",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml";
-				var sMockdataBaseUrl = "testdata/";
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				assert.ok(oMockServer.isStarted(), "Mock server is started");
+		oModel.submitBatch(fnSuccess, fnError, false);
 
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
-
-				var aBatchReadOperations = [];
-				var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchReadOperations.push(oFirstGetOp);
-
-				var aBatchFirstChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPutOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPostOp);
-
-				var aBatchSecondChangeOperations = [];
-				var oPutOp1 = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchSecondChangeOperations.push(oPutOp1);
-
-				var oPutOp2 = oModel
-						.createBatchOperation(
-								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-								"PUT",
-								{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchSecondChangeOperations.push(oPutOp2);
-
-				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
-				aBatchSecondChangeOperations.push(oDeleteOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchSecondChangeOperations.push(oPostOp);
-
-				var fnSuccess = function(oData, oResponse) {
-					assert.equal(oResponse.statusCode, 202, "batch completed");
-					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-					assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
-					// read to verify no changes made
-					var oGetResponse = jQuery.sap.sjax({
-						url : '/mock/LeaveHeaderCollection',
-						type : 'GET',
-					});
-					assert.ok(oGetResponse.success, "Mock server responded the GET request");
-					assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-					assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
-
-					assert.equal(oData.__batchResponses[2].message, "HTTP request failed", "HTTP request failed");
-
-				};
-
-				var fnError = function(oError) {
-					assert.ok(oData.__batchResponses[0], "fnError - batch failed");
-				};
-
-				oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-				oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-
-				oModel.submitBatch(fnSuccess, fnError, false);
-
-				oMockServer.destroy();
-			});
-
-	test(
-			"$batch GET in ChangeSet",
-			function() {
-				var sUri = "/mock/";
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri : sUri
-				});
-				var sMetadataUrl = "testdata/DataModel.xml";
-				var sMockdataBaseUrl = "testdata/";
-				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-				oMockServer.start();
-				assert.ok(oMockServer.isStarted(), "Mock server is started");
-
-				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
-				oModel.setUseBatch(true);
-
-				var aBatchFirstChangeOperations = [];
-				var oPutOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPutOp);
-
-				var oFakeGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-				aBatchFirstChangeOperations.push(oFakeGetOp);
-
-				var oPostOp = oModel
-						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
-				aBatchFirstChangeOperations.push(oPostOp);
-
-				var fnSuccess = function(oData, oResponse) {
-					assert.equal(oResponse.statusCode, 202, "batch completed");
-					assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-					assert.equal(oData.__batchResponses[1].statusCode, 204, "oData  read succeeded");
-				};
-
-				var fnError = function(oError) {
-					equal(oError.response.statusCode, 400,
-							"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
-				};
-
-				//                oModel.addBatchReadOperations(aBatchReadOperations);
-				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-
-				oModel.submitBatch(fnSuccess, fnError, false);
-
-				oMockServer.destroy();
-			});
+		oMockServer.destroy();
+	});
 
 	QUnit.test("$batch GET Operation not succeed", function(assert) {
 		var sUri = "/mock/";
@@ -3753,7 +3735,7 @@
 		};
 
 		var fnError = function(oError) {
-			equal(oError.response.statusCode, 400,
+			assert.equal(oError.response.statusCode, 400,
 					"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
 		};
 
@@ -3765,7 +3747,7 @@
 		oMockServer.destroy();
 	});
 
-	test("$batch GET Operation with dfferent status codes", function(assert) {
+	QUnit.test("$batch GET Operation with dfferent status codes", function(assert){
 
 		var done = assert.async();
 		var sUri = "/mock/";
@@ -3859,7 +3841,7 @@
 		oModel.submitChanges();
 	});
 
-	test("$batch: cusotm headers of contained requests", function(assert) {
+	QUnit.test("$batch: cusotm headers of contained requests", function(assert){
 
 		var done = assert.async();
 		var sUri = "/mock/";

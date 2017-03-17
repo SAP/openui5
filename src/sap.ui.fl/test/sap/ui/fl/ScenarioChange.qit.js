@@ -1,4 +1,4 @@
-/*global module, asyncTest, start, sinon, Promise, ok, equal*/
+/*global sinon, Promise*/
 
 jQuery.sap.require("sap.ui.fl.FlexController");
 jQuery.sap.require("sap.ui.fl.FlexControllerFactory");

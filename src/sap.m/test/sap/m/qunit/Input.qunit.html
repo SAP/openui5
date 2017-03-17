@@ -180,13 +180,13 @@
 			}
 		});
 		oInput.attachSuggestionItemSelected(function (oEvent) {
-			ok (!bChangeEventCalled, "Change event is not called yet when SuggestionItemSelectedEvent is called");
-			ok (!bSuggestionItemSelectedEventCalled, "SuggestionItemSelected event is called once");
+			assert.ok(!bChangeEventCalled, "Change event is not called yet when SuggestionItemSelectedEvent is called");
+			assert.ok(!bSuggestionItemSelectedEventCalled, "SuggestionItemSelected event is called once");
 			bSuggestionItemSelectedEventCalled = true;
 		});
 		oInput.attachChange(function (oEvent) {
-			ok (bSuggestionItemSelectedEventCalled, "SuggestionItemSelected event has been called before the change event");
-			ok (!bChangeEventCalled, "Change event is called once");
+			assert.ok(bSuggestionItemSelectedEventCalled, "SuggestionItemSelected event has been called before the change event");
+			assert.ok(!bChangeEventCalled, "Change event is called once");
 			bChangeEventCalled = true;
 		});
 

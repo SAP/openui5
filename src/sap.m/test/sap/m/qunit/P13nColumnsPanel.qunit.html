@@ -1465,7 +1465,7 @@
 
 		});
 
-		test("Shall check onBeforeNavigationFrom", function(assert) {
+		QUnit.test("Shall check onBeforeNavigationFrom", function(assert) {
 			assert.ok(oP13nColumnsPanel.onBeforeNavigationFrom, "Method does not exist");
 
 			// CUT -> method shall be executed -> threshold is not defined -> BeforeNavigationFrom shall result in true
@@ -1473,7 +1473,7 @@
 			assert.strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
 		});
 
-		test("Shall check onBeforeNavigationFromAsync", function(assert) {
+		QUnit.test("Shall check onBeforeNavigationFromAsync", function(assert) {
 
 			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in true as threshold is not reached
 			oP13nColumnsPanel.setVisibleItemsThreshold(10);
@@ -1484,7 +1484,7 @@
 			assert.strictEqual(oP13nColumnsPanel.onBeforeNavigationFrom(), true, "navigation validation shall not be influenced as threshold is not reached");
 		});
 
-		test("Shall check onBeforeNavigationFromAsync", function(assert) {
+		QUnit.test("Shall check onBeforeNavigationFromAsync", function(assert) {
 
 			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in false as threshold is exceeded
 			oP13nColumnsPanel.setVisibleItemsThreshold(10);

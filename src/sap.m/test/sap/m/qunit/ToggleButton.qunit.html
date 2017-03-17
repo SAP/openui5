@@ -203,7 +203,7 @@
 		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("Icon.search"), "Description");
 		oButton.setPressed(true);
 		oInfo = oButton.getAccessibilityInfo();
-		strictEqual(oInfo.description,
+		assert.strictEqual(oInfo.description,
 				sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("Icon.search") + " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PRESSED"),
 				"Description");
 		oButton.destroy();
