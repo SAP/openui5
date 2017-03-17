@@ -333,17 +333,15 @@
 				});
 
 				QUnit.test("select event", function (oAssert) {
-					// Arrange
-
 					// Mock getWidth method to return a fixed number
 					this.oCPBox.getWidth = function () {return 100};
 					this.oCPBox.attachSelect(function (oEvent) {
 						// Assert
 						oAssert.ok(true, "Select event is fired");
-						oAssert.ok(Number.isInteger(oEvent.getParameter("value")),
+						oAssert.ok(jQuery.isNumeric(oEvent.getParameter("value")),
 							"The returned event has a parameter 'value' and it's a number");
 
-						oAssert.ok(Number.isInteger(oEvent.getParameter("saturation")),
+						oAssert.ok(jQuery.isNumeric(oEvent.getParameter("saturation")),
 							"The returned event has a parameter 'saturation' and it's a number");
 					});
 
