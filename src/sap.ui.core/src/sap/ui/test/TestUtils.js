@@ -87,9 +87,9 @@ sap.ui.define("sap/ui/test/TestUtils", [
 	function pushDeeplyContains(oActual, oExpected, sMessage, bExpectSuccess) {
 		try {
 			deeplyContains(oActual, oExpected, "/");
-			QUnit.push(bExpectSuccess, oActual, oExpected, sMessage);
+			QUnit.assert.push(bExpectSuccess, oActual, oExpected, sMessage);
 		} catch (ex) {
-			QUnit.push(!bExpectSuccess, oActual, oExpected,
+			QUnit.assert.push(!bExpectSuccess, oActual, oExpected,
 				(sMessage || "") + " failed because of " + ex.message);
 		}
 	}

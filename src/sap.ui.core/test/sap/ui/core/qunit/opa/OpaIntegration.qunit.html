@@ -8,14 +8,13 @@
 <script src="../../shared-config.js"></script>
 <script src="../../../../../../resources/sap-ui-core.js">
 </script>
+<script src="../_includeQUnit.js"></script>
 
 <script>
-jQuery.sap.require("sap.ui.thirdparty.qunit");
 QUnit.config.autostart = false;
 sap.ui.require([
 		"sap/ui/test/Opa",
 		"sap/ui/test/opaQunit",
-		"sap/ui/qunit/qunit-css",
 		"sap/ui/qunit/qunit-junit",
 		"sap/ui/qunit/qunit-coverage"
 	],
@@ -96,7 +95,7 @@ sap.ui.require([
 </script>
 </head>
 <body>
-	<ol id="qunit-tests"></ol>
+	<div id="qunit"></div>
 	<div id="qunit-fixture"></div>
 </body>
 </html>
