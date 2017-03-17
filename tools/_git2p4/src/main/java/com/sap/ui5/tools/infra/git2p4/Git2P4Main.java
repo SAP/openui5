@@ -58,6 +58,7 @@ public class Git2P4Main {
   private static final String UPDATE_ONLY_CORE_FILTER_NAME = "update-only-core";
   private static final String RELEASE_NOTES = "release-notes"; 
   private static final String TOOLS_VERSION_HELPER_CORE_VERSION = "tools/_git2p4/sapui5-core-version";
+  private static final String VERSION_CHANGE_ONLY = "VERSION CHANGE ONLY";
   static final GitClient git = new GitClient();
   static final P4Client p4 = new P4Client();
   static final Git2P4 git2p4 = new Git2P4(git, p4);
@@ -92,6 +93,8 @@ public class Git2P4Main {
     public boolean htmlOutput = false;
     public String range = null;
     public String branch = null;
+    public String gitUrl = null;
+    public String repositoryName = null;
     public boolean preview = false;
     public boolean noFetch = false;
     public List<Mapping> mappings = null;
@@ -303,13 +306,12 @@ public class Git2P4Main {
       } else if ( !branch.equals("master") && !toVersion.endsWith("-SNAPSHOT") && !toVersion.endsWith(".0") ) {
         label = "patch";
       }
-     
+
       if(op == ReleaseOperation.ChangeObjectId){    	  
     	  git.commit("[INTERNAL] Update ObjectIdsjson file with " + new Version(fromVersion).increasedPatchVersion());
       } else {
-    	  git.commit("VERSION CHANGE ONLY\n\nUpdate versions to next " + label + " version " + toVersion);  
-      }
-      
+    	  git.commit(VERSION_CHANGE_ONLY + "\n\nUpdate versions to next " + label + " version " + toVersion);
+      }      
 
       git.log(1);
 
@@ -472,7 +474,7 @@ private static File extractSnapshotVersionJs() throws IOException {
   }
 
   public static class Mapping {
-    public String giturl;
+    public String giturl = context.gitUrl;
     File gitRepository;
     String p4path;
     String targetIncludes;
@@ -650,6 +652,10 @@ private static File extractSnapshotVersionJs() throws IOException {
 	        ));
 	  }
 
+static void createMappings(File repositoryRoot, String p4depotPrefix, String branch, String includes, String excludes){
+  mappings.clear();
+  mappings.add(new Mapping(context.gitUrl, new File(repositoryRoot, context.repositoryName), p4depotPrefix, includes, excludes));
+}
   private static String getPerforceCodelineForBranch(String branch) {
     
     Matcher m = Pattern.compile("((?:stage/)?rel-)?([0-9]+\\.[0-9]+(\\.[0-9]+)?)|master").matcher(branch);
@@ -772,8 +778,9 @@ private static File extractSnapshotVersionJs() throws IOException {
   }
 
   public static void main0(String[] args) throws IOException {
-	final String objectIdChange= "objectId-change";
-	String sp = File.separator;
+    final String objectIdChange = "objectId-change";
+    final String patchVersionIncrement = "patchVersionIncrement";
+	  String sp = File.separator;
     String template = null;
     String command = "transfer";
     boolean autoResume = true;
@@ -782,7 +789,6 @@ private static File extractSnapshotVersionJs() throws IOException {
     String branch = null;
     String mappingSet = "runtime";
     File gitDir = new File(".");
-    String gitRepository = null;
     ReleaseOperation op = null;
     boolean useLastCommit = true;
     String fileAddress = null;
@@ -839,8 +845,8 @@ private static File extractSnapshotVersionJs() throws IOException {
         if ( "runtime".equals(mappingSet) ) {
           mappingSet = null;
         }
-      } else if ( "--git-repository".equals(args[i]) ) {
-        gitRepository = args[++i];
+      } else if("--mappings-repository-name".equals(args[i])){
+        context.repositoryName = args[++i];
       } else if("--file".equals(args[i])){    	  
     	  fileAddress =args[++i];
       } else if ( "--includes".equals(args[i]) ) {
@@ -914,7 +920,10 @@ private static File extractSnapshotVersionJs() throws IOException {
       }  else if (objectIdChange.equals(args[i])) {
     	  command = objectIdChange;
     	  op = ReleaseOperation.ChangeObjectId;
-      }else if ( "tag".equals(args[i]) ) {
+      } else if(patchVersionIncrement.equals(args[i])){
+        command = "version-change";
+        op = ReleaseOperation.PatchVersionIncrement;
+      } else if ( "tag".equals(args[i]) ) {
         command = "tag";
       } else if ( "--fromVersion".equals(args[i]) ) {
         fromVersion = args[++i];
@@ -934,6 +943,8 @@ private static File extractSnapshotVersionJs() throws IOException {
           git.setSShSuffix(args[++i]);
       } else if ( "--git-https-port".equals(args[i]) ) {
         git.setGitHttpsPort(args[++i]);
+      } else if("--mappings-git-url".equals(args[i])){
+        context.gitUrl = args[++i];
       } else if ( "--rebuild".equals(args[i]) ) {
         command = "noop";
        } else if ( args[i].startsWith("-") ) {
@@ -984,8 +995,7 @@ private static File extractSnapshotVersionJs() throws IOException {
     }
 
     if ( (mappingSet == null || "manual".equals(mappingSet)) && gitDir != null ) {
-      mappings.clear();
-      mappings.add(new Mapping(gitRepository, gitDir, p4depotPath, null, null));
+        createMappings(gitDir, p4depotPath, branch,null,null);
     } else if ( "runtime".equals(mappingSet) ) {
       createUI5Mappings(gitDir, p4depotPath, branch);
     } else if ( "dist".equals(mappingSet) ) {
@@ -1013,7 +1023,7 @@ private static File extractSnapshotVersionJs() throws IOException {
     	for(Mapping repoMapping : mappings) {
     	      updateRepository(repoMapping);
     	    }
-
+	
     	    if ( "version-change".equals(command) || objectIdChange.equals(command)) {    	    	
     	      modifyVersions(op, branch, fromVersion, toVersion);
     	      return;
