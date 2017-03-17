@@ -173,7 +173,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	};
 
 	/**
-	 * @description Closes SelectionDetails if open.
+	 * Closes SelectionDetails if open.
 	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
 	 * @public
 	 */
@@ -182,6 +182,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		if (oPopover) {
 			oPopover.close();
 		}
+		return this;
+	};
+
+	/**
+	 * Wraps the given content in {@link sap.m.Page page}, adds it to existing {@link sap.m.NavContainer NavContainer} and navigates to this newly created page.
+	 * Has no effect if the SelectionDetails is closed.
+	 * @param {string} title The title property of the {@link sap.m.Page page} control to which the navigation should occur.
+	 * @param {sap.ui.core.Control} content The content of the control to which the navigation should occur.
+	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 * @public
+	 */
+	SelectionDetails.prototype.navTo = function(title, content) {
+		var oPopover, oNavContainer, oPage, sPageId, fnPageClass;
+		if (!this.isOpen()) {
+			return;
+		}
+		oPopover = this.getAggregation("_popover");
+		oNavContainer = oPopover.getContent()[0];
+		fnPageClass = sap.ui.require('sap/m/Page');
+		sPageId = this.getId() + "-page-for-" + content.getId();
+		oPage = new fnPageClass(sPageId, {
+			title: title,
+			content: [content]
+		});
+		// The logic in the overwritten addPage method of navContainer has to be executed.
+		oNavContainer.addPage(oPage);
+		oNavContainer.to(sPageId);
 		return this;
 	};
 
