@@ -191,6 +191,46 @@
 				oDialog.open();
 			});
 
+			QUnit.module("Content resize", {
+				beforeEach: function() {
+					var that = this;
+
+					this.SCROLL_TOP = 1000;
+					this.dialog = new sap.m.Dialog({
+						content: [
+							new sap.m.ScrollContainer({width: "200px", height: "1000px"}),
+							new sap.m.ScrollContainer({width: "200px", height: "1000px"}),
+							new sap.m.ScrollContainer({width: "200px", height: "1000px"}),
+							new sap.m.ScrollContainer({width: "200px", height: "1000px"}),
+							new sap.m.ScrollContainer("lastSC", {width: "200px", height: "1000px", visible: false})
+						]
+					});
+					this.button = new sap.m.Button({
+						press: function() {
+							that.dialog.open();
+						}
+					});
+				},
+				afterEach: function() {
+					this.dialog.destroy();
+					this.button.destroy();
+				}
+			});
+
+			QUnit.test("Dialog scroll position", function(assert) {
+				// act
+				this.dialog.open();
+				this.clock.tick(500);
+				this.dialog.$('cont').scrollTop(1000);
+				this.clock.tick(500);
+				sap.ui.getCore().byId("lastSC").setVisible(true);
+				this.dialog._onResize();
+
+				// assert
+				assert.equal(this.dialog.$('cont').scrollTop(), this.SCROLL_TOP, "Content's scroll position should be preserved");
+
+			});
+
 			QUnit.module("Open and Close");
 
 			QUnit.test("Open Dialog", function (assert) {
