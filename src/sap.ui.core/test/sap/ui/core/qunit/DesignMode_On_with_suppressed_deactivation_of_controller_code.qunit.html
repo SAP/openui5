@@ -68,7 +68,7 @@ QUnit.test("Create an HTMLView instance and check controller methods from base c
 
 	//as example, try "byId"
 	var oButton = oController.byId("Button01");
-	notEqual(typeof oButton, "undefined", "Tested method byId");
+	assert.notEqual(typeof oButton, "undefined", "Tested method byId");
 });
 
 </script>

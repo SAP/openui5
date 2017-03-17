@@ -330,7 +330,7 @@
 						oSplitContainer.hideMaster();
 					},
 					afterMasterClose: function(){
-						notEqual(oInput.getFocusDomRef(), document.activeElement, "Focus should be removed from the master area after master is closed");
+						assert.notEqual(oInput.getFocusDomRef(), document.activeElement, "Focus should be removed from the master area after master is closed");
 						oSplitContainer.destroy();
 						done();
 					}
@@ -400,7 +400,7 @@
 				sap.ui.getCore().applyChanges();
 
 				oSplitContainer.toDetail("page2");
-				notEqual(oSplitContainer._handleNavigationEvent.callCount, 0, "Events work on the phone also.");
+				assert.notEqual(oSplitContainer._handleNavigationEvent.callCount, 0, "Events work on the phone also.");
 
 				oSplitContainer.destroy();
 				sap.ui.Device.system = oOldSystem;
@@ -549,8 +549,8 @@
 						detailPages: oPage
 					});
 
-				notEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be overwritten");
-				notEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be overwritten");
+				assert.notEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be overwritten");
+				assert.notEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be overwritten");
 
 				oSC.removeDetailPage(oPage);
 
@@ -703,8 +703,8 @@
 					}),
 					oNavContainer = new sap.m.NavContainer();
 
-				notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is already overwritten");
-				notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already overwritten");
+				assert.notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is already overwritten");
+				assert.notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already overwritten");
 
 
 				oNavContainer.addPage(oDetailPage);
@@ -715,8 +715,8 @@
 
 				oSplitContainer.addDetailPage(oDetailPage);
 
-				notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is overwritten again");
-				notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is overwritten again");
+				assert.notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is overwritten again");
+				assert.notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is overwritten again");
 
 				oNavContainer.destroy();
 				oSplitContainer.destroy();

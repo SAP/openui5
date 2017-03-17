@@ -628,7 +628,7 @@ function runODataAnnotationsV2Tests() {
 		oModel.attachAnnotationsLoaded(function() {
 			bAnnotationsLoaded = true;
 			assert.ok(mService.serviceValid, "Service annotations loaded");
-			notEqual(mService.annotationsValid, "none", "Service annotations loaded");
+			assert.notEqual(mService.annotationsValid, "none", "Service annotations loaded");
 		});
 
 		oModel.attachMetadataLoaded(function() {

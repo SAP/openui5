@@ -85,9 +85,9 @@
 
 	test("Rendering of Standard tree",
 		function() {
-			notEqual(jQuery.sap.domById("tree"), null,	"Tree is rendered.");
-			notEqual(jQuery.sap.domById("tree" + "-Header"), null,	"Tree header is there.");
-			notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
+			assert.notEqual(jQuery.sap.domById("tree"), null,	"Tree is rendered.");
+			assert.notEqual(jQuery.sap.domById("tree" + "-Header"), null,	"Tree header is there.");
+			assert.notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
 		});
 
 	QUnit.module("Selection Mode 'Single'", {

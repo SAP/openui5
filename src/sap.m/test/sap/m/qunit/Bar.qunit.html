@@ -322,8 +322,8 @@
 				function check (sMsgPrefix) {
 					oBarWidths = getBarContentStyles(sut);
 					assert.equal("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must be set to 100%");
-					notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
-					notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
 				}
 
 				//Arrange
@@ -351,9 +351,9 @@
 				//Assert
 				function check (sMsgPrefix) {
 					oBarWidths = getBarContentStyles(sut);
-					notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
 					assert.equal("width:100%",oBarWidths.mid, sMsgPrefix + " Middle Content width must be set to 100%");
-					notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
 				}
 
 				//Arrange
@@ -381,8 +381,8 @@
 				//Assert
 				function check (sMsgPrefix) {
 					oBarWidths = getBarContentStyles(sut);
-					notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
-					notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
 					assert.equal("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must be set to 100%");
 				}
 

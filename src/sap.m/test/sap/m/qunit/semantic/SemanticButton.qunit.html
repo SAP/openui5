@@ -253,7 +253,7 @@
 			var oRetrievedBtn = sap.ui.getCore().byId("editBtn");
 
 			// Assert
-			notEqual(oRetrievedBtn, undefined, "the button is retrieved by id");
+			assert.notEqual(oRetrievedBtn, undefined, "the button is retrieved by id");
 			assert.strictEqual(oRetrievedBtn.getId(), "editBtn", "control has the expected id");
 
 			oEditButton.destroy();
@@ -419,7 +419,7 @@
 			// Act
 			var $ref = oEditButton.getDomRef();
 			// Assert
-			notEqual($ref, null, "reference to dom returned");
+			assert.notEqual($ref, null, "reference to dom returned");
 			assert.strictEqual($ref, oEditButton._getControl().getDomRef(), "correct reference to dom returned");
 
 			// Clean up

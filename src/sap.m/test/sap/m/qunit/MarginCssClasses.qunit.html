@@ -210,7 +210,7 @@
 		assert.equal(oRestrictedWidthPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
 		if(bHorizontal) {
 			//Check if 'sapUiForceWidthAuto' changes the width property as expected
-			notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+			assert.notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
 			oRestrictedWidthPanel.removeStyleClass('sapUiForceWidthAuto');
 			assert.equal(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
 

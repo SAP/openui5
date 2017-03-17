@@ -629,7 +629,7 @@
 			assert.ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
 			assert.equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
 			assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
-			notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
+			assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
 			jQuery.sap.byId("area6").empty();
 
@@ -654,7 +654,7 @@
 			assert.ok(!$icon1.hasClass("sapUiIconMirrorInRTL"), "icon doesn't have sapUiIconMirrorInRTL as a CSS class");
 			assert.equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
 			assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
-			notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
+			assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
 			jQuery.sap.byId("area6").empty();
 		});

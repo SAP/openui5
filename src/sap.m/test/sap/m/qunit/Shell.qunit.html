@@ -263,8 +263,8 @@
 				$Dom = oShell.$("BG");
 
 				//assert
-				notEqual($Dom.css("opacity"), sExampleInvalidOpacity, "dom is not modified");
-				notEqual(oShell.getBackgroundOpacity(), sExampleInvalidOpacity, "property is not changed");
+				assert.notEqual($Dom.css("opacity"), sExampleInvalidOpacity, "dom is not modified");
+				assert.notEqual(oShell.getBackgroundOpacity(), sExampleInvalidOpacity, "property is not changed");
 
 				assert.equal(oSetPropertySpy.callCount, 0, "setProperty is not called");
 

@@ -353,7 +353,7 @@
 		QUnit.test("ParentByAttribute", function (assert) {
 			var oDomRef = jQuery.sap.domById('control2');
 			var oParentWithAttribute = jQuery(oDomRef).parentByAttribute("data-sap-ui-test");
-			notEqual(oParentWithAttribute, null, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test') is null)");
+			assert.notEqual(oParentWithAttribute, null, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test') is null)");
 
 			assert.equal(oParentWithAttribute.getAttribute('data-sap-ui-test'), "true", "jQuery(oDomRef).parentByAttribute('data-sap-ui-test').getAttribute('data-sap-ui-test') should be 'true'");
 

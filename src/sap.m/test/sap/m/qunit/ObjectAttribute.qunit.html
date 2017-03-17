@@ -98,9 +98,9 @@
 
 	QUnit.test("AttributesRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
-		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
-		notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
 	});
 
 	QUnit.test("Screen reader", function(assert) {

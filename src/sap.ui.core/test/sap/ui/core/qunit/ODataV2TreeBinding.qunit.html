@@ -1719,7 +1719,7 @@
 				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
 
 				assert.equal(aContexts.length, 5, "Correct child count on level 1");
-				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				assert.notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
 				assert.equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
 
 				//Level: 2
@@ -1777,7 +1777,7 @@
 				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
 
 				assert.equal(aContexts.length, 5, "Correct child count on level 1");
-				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				assert.notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
 				assert.equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
 
 				//Level: 2
@@ -1859,7 +1859,7 @@
 				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
 
 				assert.equal(aContexts.length, 5, "Correct child count on level 1");
-				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				assert.notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
 				assert.equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
 
 				//Level: 2

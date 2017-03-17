@@ -79,11 +79,11 @@
 		QUnit.module("Rendering All Fields");
 
 		QUnit.test("ControlRendered", function(assert) {
-			notEqual(jQuery.sap.domById(tileBasicId), null, "tileBasic should be rendered.");
+			assert.notEqual(jQuery.sap.domById(tileBasicId), null, "tileBasic should be rendered.");
 		});
 
 		QUnit.test("IconRendered", function(assert) {
-			notEqual(jQuery.sap.domById(tileBasicId + "-img"), null, "tileBasic icon should be rendered.");
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-img"), null, "tileBasic icon should be rendered.");
 		});
 
 		QUnit.test("IconFontRendered", function(assert) {
@@ -91,19 +91,19 @@
 		});
 
 		QUnit.test("NumberRendered", function(assert) {
-			notEqual(jQuery.sap.domById(tileBasicId + "-number"), null, "tileBasic number should be rendered.");
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-number"), null, "tileBasic number should be rendered.");
 		});
 
 		QUnit.test("NumberUnitRendered", function(assert) {
-			notEqual(jQuery.sap.domById(tileBasicId + "-numberUnit"), null, "tileBasic number unit should be rendered.");
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-numberUnit"), null, "tileBasic number unit should be rendered.");
 		});
 
 		QUnit.test("TitleRendered", function(assert) {
-			notEqual(jQuery.sap.domById(tileBasicId + "-title"), null, "tileBasic title should be rendered.");
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-title"), null, "tileBasic title should be rendered.");
 		});
 
 		QUnit.test("DescriptionRendered", function(assert) {
-			notEqual(jQuery.sap.domById(tileBasicId + "-info"), null, "tileBasic info should be rendered.");
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-info"), null, "tileBasic info should be rendered.");
 		});
 
 		QUnit.test("ShouldRenderAddIconIfTypeIsCreate", function(assert) {

@@ -371,7 +371,7 @@
 				assert.deepEqual(oContextJanet1, oContextJanet2, "Janets contexts are the same");
 
 				//nodes however should have different node ids
-				notEqual(oBinding.findNode(3).groupID, oBinding.findNode(7).groupID, "Janets groupIDs are different");
+				assert.notEqual(oBinding.findNode(3).groupID, oBinding.findNode(7).groupID, "Janets groupIDs are different");
 
 				done();
 			}

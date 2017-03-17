@@ -496,7 +496,7 @@
 
 	QUnit.test("parse time format with am/pm appearing at the beginning", function(assert) {
 		var oTimeStart = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "ah:mm:ss"});
-		notEqual(oTimeStart.parse("PM12:22:52").getTime(), oTimeStart.parse("AM12:22:52").getTime(), "PM/AM info should be correctly considered");
+		assert.notEqual(oTimeStart.parse("PM12:22:52").getTime(), oTimeStart.parse("AM12:22:52").getTime(), "PM/AM info should be correctly considered");
 	});
 
 

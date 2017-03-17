@@ -237,21 +237,21 @@
 
 		QUnit.test("Rendering of Standard tree", function(assert) {
 
-			notEqual(jQuery.sap.domById(sStandardTreeId), null, "Tree is rendered.");
+			assert.notEqual(jQuery.sap.domById(sStandardTreeId), null, "Tree is rendered.");
 
-			notEqual(jQuery.sap.domById(sStandardTreeId+ "-Header"), null, "Tree header is there.");
+			assert.notEqual(jQuery.sap.domById(sStandardTreeId+ "-Header"), null, "Tree header is there.");
 
-			notEqual(jQuery.sap.domById(sStandardTreeId+ "-TreeCont"), null, "Tree content is there");
+			assert.notEqual(jQuery.sap.domById(sStandardTreeId+ "-TreeCont"), null, "Tree content is there");
 
 		});
 
 		QUnit.test("Rendering of transparent tree", function(assert) {
 
-			notEqual(jQuery.sap.domById(sTransparentTreeId), null, "Tree is rendered.");
+			assert.notEqual(jQuery.sap.domById(sTransparentTreeId), null, "Tree is rendered.");
 
 			assert.equal(jQuery.sap.domById(sTransparentTreeId+ "-Header"), null, "Tree header is not there.");
 
-			notEqual(jQuery.sap.domById(sTransparentTreeId+ "-TreeCont"), null, "Tree content is there");
+			assert.notEqual(jQuery.sap.domById(sTransparentTreeId+ "-TreeCont"), null, "Tree content is there");
 		});
 
 		QUnit.module("Nodes public methods");

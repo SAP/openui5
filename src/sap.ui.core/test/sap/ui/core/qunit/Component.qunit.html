@@ -114,7 +114,7 @@
 		var components =  ["samples.components.styledbutton"];
 		assert.equal(oComp.getMetadata().getVersion(), "1.0", "Version retrieved");
 		assert.deepEqual(oComp.getMetadata().getIncludes(), includes, "Includes Array retrieved");
-		notEqual(oComp.getMetadata().getDependencies(), null, "Dependencies retrieved");
+		assert.notEqual(oComp.getMetadata().getDependencies(), null, "Dependencies retrieved");
 		assert.deepEqual(oComp.getMetadata().getComponents(), components, "Child components retrieved");
 		assert.equal(oComp.getMetadata().getUI5Version(), "1.13.0", "UI5 Version retrieved");
 	});

@@ -1027,7 +1027,7 @@
 					subHeader = this.oVSD._subHeader;
 
 				// check if all internal controls are not initialized yet
-				notEqual(sortList, undefined, "sort list was initialized");
+				assert.notEqual(sortList, undefined, "sort list was initialized");
 				assert.strictEqual(ariaSortListInvisibleText, undefined, "sort list aria label is not initialized yet");
 				assert.strictEqual(sortOrderList, undefined, "sort order list is not initialized yet");
 				assert.strictEqual(ariaSortOrderInvisibleText, undefined, "sort order list aria label is not initialized yet");
