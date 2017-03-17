@@ -244,7 +244,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 		oAdaptOptions = this._applyRules(oAdaptOptions, oNode); //apply semantic rules specific to controls
 
-		if (!oNode || !this._isAdaptationRequired(oAdaptOptions) || (iSearchDepth <= 0)) {
+		if (!this._isAdaptationRequired(oNode, oAdaptOptions) || (iSearchDepth <= 0)) {
 			return;
 		}
 
@@ -603,7 +603,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 
 
-	Fiori20Adapter._isAdaptationRequired = function(oAdaptOptions) {
+	Fiori20Adapter._isAdaptationRequired = function(oNode, oAdaptOptions) {
+		if (!oNode || this._isNonAdaptableControl(oNode)) {
+			return false;
+		}
+
 		for (var sOption in oAdaptOptions) {
 			if (oAdaptOptions.hasOwnProperty(sOption)
 			&& ((oAdaptOptions[sOption] === true) || (oAdaptOptions[sOption] === "initialPage"))) {
@@ -613,16 +617,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		return false;
 	};
 
+	Fiori20Adapter._isNonAdaptableControl = function(oControl) {
+		return isListBasedControl(oControl);
+	};
 
 	// utility function
 	function isTextualControl (oControl) {
-		if (!oControl) {
-			return false;
+		return isInstanceOfGroup(oControl, ["sap/m/Label", "sap/m/Text", "sap/m/Title"]);
+	}
+
+	function isListBasedControl (oControl) {
+		return isInstanceOfGroup(oControl, ["sap/m/List", "sap/m/Table", "sap/ui/table/Table", "sap/ui/table/TreeTable"]);
+	}
+
+	function isInstanceOfGroup(oControl, aTypes) {
+		if (!oControl || !aTypes) {
+			return;
 		}
 
-		return isInstanceOf(oControl, "sap/m/Label") ||
-				isInstanceOf(oControl, "sap/m/Text") ||
-				isInstanceOf(oControl, "sap/m/Title");
+		return aTypes.some(function(sType) {
+			return isInstanceOf(oControl, sType);
+		});
 	}
 
 	function isInstanceOf (oControl, sType) {

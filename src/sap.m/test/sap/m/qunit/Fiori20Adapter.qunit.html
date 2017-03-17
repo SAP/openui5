@@ -1155,6 +1155,89 @@
                 Fiori20Adapter.detachViewChange(fnTitleListener);
             });
 
+            QUnit.test("Blacklisted non-adaptable content is skipped", function (assert) {
+
+                var oBlacklistedControl = new sap.m.Table(),
+                    oPage = new sap.m.Page({title: "Page Title", content:[oBlacklistedControl]});
+
+                this.oApp.addPage(oPage);
+
+                var oAdaptOptions = {bMoveTitle: true},
+                    oTitleInfo,
+                    fnTitleListener = function (oEvent) {
+                        oTitleInfo = oEvent.getParameter("oTitleInfo");
+                    },
+                    oViewChangeSpy = sinon.spy(fnTitleListener),
+                    oProcessNodeSpy = sinon.spy(Fiori20Adapter, "_processNode");
+
+                Fiori20Adapter.attachViewChange(oViewChangeSpy);
+                Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(oTitleInfo.text === "Page Title", "the correct title is shown");
+                ok(oViewChangeSpy.calledOnce, "view change called once");
+                ok(oProcessNodeSpy.calledThrice, "3 nodes processed");
+                ok(oProcessNodeSpy.calledWith, this.oApp);
+                ok(oProcessNodeSpy.calledWith, oPage);
+                ok(oProcessNodeSpy.calledWith, oPage._getInternalHeader());
+                ok(oProcessNodeSpy.neverCalledWith,oBlacklistedControl);
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(fnTitleListener);
+            });
+
+            QUnit.module("Utils", {
+                beforeEach: function () {
+                },
+                afterEach: function () {
+                }
+            });
+
+            QUnit.test("Adaptation is not required for list-based-controls", function(assert) {
+
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                    oNode = new sap.m.Table();
+
+                var bRequired = Fiori20Adapter._isAdaptationRequired(oNode, oAdaptOptions);
+
+                // Assert
+                assert.strictEqual(bRequired, false, "adaptation is not required");
+            });
+
+            QUnit.test("Adaptation is not required if all disabled", function(assert) {
+
+                var oAdaptOptions = {bMoveTitle: false, bHideBackButton: false, bCollapseHeader: false},
+                    oNode = new sap.m.Page({title: "Page Title"});
+
+                var bRequired = Fiori20Adapter._isAdaptationRequired(oNode, oAdaptOptions);
+
+                // Assert
+                assert.strictEqual(bRequired, false, "adaptation is not required");
+            });
+
+            QUnit.test("Adaptation is not required if all options disabled", function(assert) {
+
+                var oAdaptOptions = {bMoveTitle: false, bHideBackButton: false, bCollapseHeader: false},
+                    oNode = new sap.m.Page({title: "Page Title"});
+
+                var bRequired = Fiori20Adapter._isAdaptationRequired(oNode, oAdaptOptions);
+
+                // Assert
+                assert.strictEqual(bRequired, false, "adaptation is not required");
+            });
+
+            QUnit.test("Adaptation is required if any options enabled", function(assert) {
+
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: false, bCollapseHeader: false},
+                    oNode = new sap.m.Page({title: "Page Title"});
+
+                var bRequired = Fiori20Adapter._isAdaptationRequired(oNode, oAdaptOptions);
+
+                // Assert
+                assert.strictEqual(bRequired, true, "adaptation is required");
+            });
+
 		</script>
 
 	<style>
