@@ -973,7 +973,7 @@
 
 			// Assert
 			assert.notOk(oClone === oOriginal, "Clone object is not a reference to original object");
-			notDeepEqual(oOriginal, oClone, "Clone object is different from original object");
+			assert.notDeepEqual(oOriginal, oClone, "Clone object is different from original object");
 			assert.strictEqual(oClone.hasOwnProperty("keyOne"), false, "KeyOne does not exist in cloned object");
 			assert.strictEqual(oClone.hasOwnProperty("keyTwo"), true, "keyTwo exist in cloned object");
 			assert.strictEqual(oClone.hasOwnProperty("keyThree"), true, "keyThree exist in cloned object");
