@@ -341,10 +341,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @public
 			 */
 			stop : function () {
-				// save the hash in order to decide whether to parse the hash
-				// when initialize is called again
-				this._sLastHashBeforeStop = this.oHashChanger.getHash();
-
 				if (!this._bIsInitialized) {
 					jQuery.sap.log.warning("Router is not initialized. But it got stopped", this);
 				}
