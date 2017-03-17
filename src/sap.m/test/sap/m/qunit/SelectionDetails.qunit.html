@@ -434,6 +434,55 @@
 		assert.notOk(this.oDummyControl.mEventRegistry.myEventName, "Event detached on listener object");
 	});
 
+	QUnit.module("Selection change handling", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Selection data is saved", function(assert) {
+		//Arrange
+		var oExpected = {
+			data: [{
+				data: [],
+				displayData: []
+			},{
+				data: [],
+				displayData: []
+			}]
+		};
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oExpected.data;
+			}
+		});
+		//Assert
+		assert.equal(this.oSelectionDetails._oSelectionData, oExpected.data, "Event data is saved");
+	});
+
+	QUnit.test("Missleading event parameters end's in nothing", function(assert) {
+		//Arrange
+		var oExpected = {
+			otto: [],
+			karl: []
+		};
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oExpected;
+			}
+		});
+		//Assert
+		assert.notOk(this.oSelectionDetails._oSelectionData, "Missleading event parameter object end's in nothing");
+	});
+
 </script>
 </head>
 <body class="sapUiBody">
