@@ -94,6 +94,23 @@
 					oObjectHeader.destroy();
 				});
 
+				QUnit.test("Tooltip rendering", function(assert) {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						tooltip: "Test tooltip for the header"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					equal(jQuery("#" + sControlId).attr("title"), "Test tooltip for the header", "Tooltip should is rendered.");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 				QUnit.test("Title text div is not rendered when there is no text for the title", function (assert){
 					// Arrange
 					var oObjectHeader = createObjectHeader({
