@@ -11,36 +11,32 @@ UI5 content is developed in an environment based on node.js, used as server, wit
 
 1. Install node.js (get it from  [nodejs.org](http://nodejs.org/)); this includes npm, the node package manager.
   * If working behind an HTTP proxy, you need to configure it properly: set the environment variables in the operating system settings or on the command line. The following example is for the Windows command line. You may have to adapt the settings according to your specific proxy configuration):
-  ```
+```
 @SET HTTP_PROXY=http://proxy:8080
 @SET HTTPS_PROXY=http://proxy:8080
 @SET FTP_PROXY=http://proxy:8080
 @SET NO_PROXY=localhost,127.0.0.1,.mycompany.corp
 ```
 2. Install grunt-cli globally
-
-   ```
+```
 npm install grunt-cli -g
 ```
 3. Clone the UI5 git repository (you can download and install Git from  [git-scm.com](http://git-scm.com/download))
-
-   ```
+```
 git clone https://github.com/SAP/openui5.git
 ```
 4. Install all npm dependencies locally (execute this inside the "openui5" directory)
-
-   ```
+```
 cd openui5
 npm install
 ```
 5. Start the server
-
-   ```
+```
  grunt serve
 ```
 6. Point your browser to this server running UI5: [http://localhost:8080/testsuite/](http://localhost:8080/testsuite/)  - done!
 
-```grunt serve``` has various configuration options, e.g. you can give the parameter ```--port=9090``` to use a different HTTP port.
+`grunt serve` has various configuration options, e.g. you can give the parameter `--port=9090` to use a different HTTP port.
  See the [documentation](tools.md) for more details.
 
 
@@ -58,7 +54,7 @@ This build-free development process does not deliver optimized runtime performan
 
 ### Building UI5
 
-Grunt is used to build a production version of UI5. The build result is located inside the directory ```target/openui5```.
+Grunt is used to build a production version of UI5. The build result is located inside the directory `target/openui5`.
 
 Usage:
 ```
@@ -79,7 +75,7 @@ The build is responsible for the following tasks:
 
 #### Troubleshooting
 
-If you encounter errors like the one below, re-do the ```npm install``` command: there might be new build tools required which need to be downloaded first.
+If you encounter errors like the one below, re-do the `npm install` command: there might be new build tools required which need to be downloaded first.
 
 ```
 jit-grunt: Plugin for the "replace" task not found.
@@ -132,7 +128,7 @@ To execute all available visual tests, navigate to the root of the repository an
 grunt visualtest
 ```
 
-NOTE: by default this command executes all available visual tests for all libraries in Chrome browser. 
+NOTE: by default this command executes all available visual tests for all libraries in Chrome browser.
 
 By giving parameters you can change this default behavior:
 
@@ -145,7 +141,7 @@ grunt test --browsers="firefox"   # run tests of all libraries on Firefox
 
 
 #### Troubleshooting proxy issues
-```grunt test``` will download the "selenium-server-standalone" when run for the first time. If you are working behind a proxy and have no environment variables set for the proxy, this will fail for the first time:
+`grunt test` will download the "selenium-server-standalone" when run for the first time. If you are working behind a proxy and have no environment variables set for the proxy, this will fail for the first time:
 
 ```
 selenium-server-standalone.jar not found. Downloading...
