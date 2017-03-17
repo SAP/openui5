@@ -774,7 +774,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 						});
 					}
 				}
-				this.cancelPendingSuggest();
+
+				if (aAddedTokens.length) {
+					this.cancelPendingSuggest();
+				}
 			}
 		}.bind(this), 0);
 
