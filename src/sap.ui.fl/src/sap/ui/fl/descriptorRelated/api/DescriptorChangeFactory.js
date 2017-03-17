@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
-	"sap/ui/fl/descriptorRelated/api/Settings"
+	"sap/ui/fl/registry/Settings"
 ], function(ChangePersistenceFactory, ChangePersistence, Change, Utils, Settings) {
 	"use strict";
 
@@ -35,7 +35,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mChangeFile change file
 	 * @param {sap.ui.fl.descriptorRelated.api.DescriptorInlineChange} oInlineChange inline change object
-	 * @param {sap.ui.fl.descriptorRelated.api.Settings} oSettings settings
+	 * @param {sap.ui.fl.registry.Settings} oSettings settings
 	 *
 	 * @constructor
 	 * @alias sap.ui.fl.descriptorRelated.api.DescriptorChange
@@ -184,8 +184,8 @@ sap.ui.define([
 		}
 
 		var mChangeFile = Change.createInitialFileContent(mPropertyBag );
-
-		return Settings.getInstance().then(function(oSettings) {
+		//TODO: add a correct application component name
+		return Settings.getInstance("dummy").then(function(oSettings) {
 			return Promise.resolve( new DescriptorChange(mChangeFile, oInlineChange, oSettings) );
 		});
 	};

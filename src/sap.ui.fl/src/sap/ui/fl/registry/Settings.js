@@ -54,7 +54,7 @@ sap.ui.define([
 		changeModeUpdated: "changeModeUpdated"
 	};
 
-	Settings._instances = {};
+	Settings._instance = undefined;
 	Settings._bFlexChangeMode = true;
 	Settings._bFlexibilityAdaptationButtonAllowed = false;
 	Settings._oEventProvider = new EventProvider();
@@ -99,32 +99,31 @@ sap.ui.define([
 	 * Returns a settings instance after reading the settings from the back end if not already done. There is only one instance of settings during a
 	 * session.
 	 *
-	 * @param {string} sComponentName current UI5 component name
-	 * @param {map} mPropertyBag - (optional) contains additional data that are needed for reading of changes
-	 * - appDescriptor that belongs to actual component
-	 * - siteId that belongs to actual component
+	 * @param {string} sComponentName - Current UI5 component name
+	 * @param {map} [mPropertyBag] - Contains additional data that are needed for reading of changes
+	 * @param {object} [mPropertyBag.appDescriptor] - <code>appDescriptor<code> that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] - <code>siteId<code> that belongs to actual component
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @public
 	 */
 	Settings.getInstance = function(sComponentName, mPropertyBag) {
-		if (Settings._instances[sComponentName]) {
-			return Promise.resolve(Settings._instances[sComponentName]);
+		if (Settings._instance) {
+			return Promise.resolve(Settings._instance);
 		}
 
 		return Cache.getChangesFillingCache(LrepConnector.createConnector(), sComponentName, mPropertyBag)
-			.then(Settings._storeInstance.bind(Settings, sComponentName));
+			.then(Settings._storeInstance.bind(Settings));
 	};
 
 	/**
 	 * Writes the data received from the back end or cache into an internal map and then returns the settings object within a Promise.
 	 *
-	 * @param sComponentName - current SAPUI5 component name
-	 * @param oFileContent - data received from the back end or cache for the given component
+	 * @param oFileContent - data received from the back end or cache
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @protected
 	 *
 	 */
-	Settings._storeInstance = function(sComponentName, oFileContent) {
+	Settings._storeInstance = function(oFileContent) {
 		var oSettings;
 
 		if (oFileContent.changes && oFileContent.changes.settings) {
@@ -133,7 +132,7 @@ sap.ui.define([
 			oSettings = new Settings({});
 		}
 
-		Settings._instances[sComponentName] = oSettings;
+		Settings._instance = oSettings;
 		return oSettings;
 	};
 
@@ -141,14 +140,13 @@ sap.ui.define([
 	 * Returns a settings instance from the local instance cache. There is only one instance of settings during a session. If no instance has been
 	 * created before, undefined will be returned.
 	 *
-	 * @param {string} sComponentName current UI5 component name
 	 * @returns {sap.ui.fl.registry.Settings} instance or undefined if no instance has been created so far.
 	 * @public
 	 */
-	Settings.getInstanceOrUndef = function(sComponentName) {
+	Settings.getInstanceOrUndef = function() {
 		var oSettings;
-		if (Settings._instances[sComponentName]) {
-			oSettings = Settings._instances[sComponentName];
+		if (Settings._instance) {
+			oSettings = Settings._instance;
 		}
 		return oSettings;
 	};

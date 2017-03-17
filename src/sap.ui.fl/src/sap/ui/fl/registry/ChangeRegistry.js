@@ -379,15 +379,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the Flex Settings for a UI5 component.
+	 * Retrieves the Flex Settings.
 	 *
-	 * @param {string} sComponentName the UI5 component name for which settings are requested;
-	 * 				   if not provided, hardcoded settings will be used.
 	 *
 	 * @private
 	 */
-	ChangeRegistry.prototype.initSettings = function(sComponentName) {
-		this._oSettings = Settings.getInstanceOrUndef(sComponentName);
+	ChangeRegistry.prototype.initSettings = function() {
+		this._oSettings = Settings.getInstanceOrUndef();
 		if (!this._oSettings) {
 			this._oSettings = new Settings({});
 		}

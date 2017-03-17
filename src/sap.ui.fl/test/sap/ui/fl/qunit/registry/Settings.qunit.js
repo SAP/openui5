@@ -29,7 +29,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 			Settings._bFlexChangeMode = bPresetFlexChangeMode;
 			Settings._bFlexibilityAdaptationButtonAllowed = bFlexibilityAdaptationButtonAllowed;
 
-			delete Settings._instances['testcomponent'];
+			Settings._instance = undefined;
 
 			// detach all events
 			jQuery.each(Settings._oEventProvider.mEventRegistry, function (sEventKey, aEvents) {
@@ -100,11 +100,11 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		Cache._entries['testcomponent'] = {
 			promise: Promise.resolve(oFileContent)
 		};
-		var oSettings0 = Settings.getInstanceOrUndef('testcomponent');
+		var oSettings0 = Settings.getInstanceOrUndef();
 		QUnit.ok(!oSettings0);
 		Settings.getInstance('testcomponent').then(function(oSettings1) {
 			QUnit.ok(oSettings1);
-			var oSettings2 = Settings.getInstanceOrUndef('testcomponent');
+			var oSettings2 = Settings.getInstanceOrUndef();
 			QUnit.equal(oSettings1, oSettings2);
 			done();
 		});
