@@ -1,8 +1,6 @@
 <mvc:View
 	controllerName="sap.m.sample.TableViewSettingsDialog.C"
 	xmlns:l="sap.ui.layout"
-	xmlns:model="sap.ui.model"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
@@ -13,16 +11,16 @@
 				<headerToolbar>
 					<Toolbar>
 						<Title text="Products" level="H2"/>
-						<ToolbarSpacer></ToolbarSpacer>
+						<ToolbarSpacer/>
 						<Button tooltip="View Settings" icon="sap-icon://drop-down-list" press="handleViewSettingsDialogButtonPressed" />
 					</Toolbar>
 				</headerToolbar>
 				<columns>
 					<Column width="12em"><Text text="Product" /></Column>
 					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>
-					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Right"><Text text="Dimensions" /></Column>
+					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Dimensions" /></Column>
 					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center"><Text text="Weight" /></Column>
-					<Column hAlign="Right"><Text text="Price" /></Column>
+					<Column hAlign="End"><Text text="Price" /></Column>
 				</columns>
 				<items>
 					<ColumnListItem>

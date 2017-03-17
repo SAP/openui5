@@ -1,6 +1,7 @@
-<core:FragmentDefinition xmlns="sap.m"
-	xmlns:custom="sap.m.sample.P13nDialogWithCustomPanel" xmlns:core="sap.ui.core"
-	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:custom="sap.m.sample.P13nDialogWithCustomPanel"
+	xmlns:core="sap.ui.core">
 	<P13nDialog ok="handleOK" cancel="handleCancel" showReset="true"
 		reset="handleReset" initialVisiblePanelType="custom1">
 		<panels>
@@ -18,8 +19,8 @@
 			<P13nColumnsPanel visible="true" addColumnsItem="onAddColumnsItem"
 				changeColumnsItems="onChangeColumnsItem" type="columns"
 				items="{
-                    path: '/ColumnCollection'
-                }">
+					path: '/ColumnCollection'
+				}">
 				<items>
 					<P13nItem columnKey="{path}" text="{text}" visible="{visible}" />
 				</items>

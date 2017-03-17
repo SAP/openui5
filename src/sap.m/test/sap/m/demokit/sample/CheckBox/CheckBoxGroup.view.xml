@@ -16,9 +16,9 @@
 	</VBox>
 	<f:SimpleForm
 		editable="true"
-	  	layout="ResponsiveGridLayout"
-	  	labelSpanL="4"
-	  	labelSpanM="4">
+		layout="ResponsiveGridLayout"
+		labelSpanL="4"
+		labelSpanM="4">
 		<f:content>
 			<Label text="Clearing with Customer" />
 			<CheckBox text="Option" />

@@ -46,7 +46,7 @@
 				<Property Name="Name" Type="Edm.String" Nullable="false"
 					sap:creatable="false" sap:updatable="false" sap:sortable="false"
 					sap:filterable="false" />
-				<Property Name="Attribute" Type="Edm.String"  Nullable="false"
+				<Property Name="Attribute" Type="Edm.String" Nullable="false"
 					MaxLength="40" sap:creatable="false" sap:updatable="false"
 					sap:sortable="false" sap:filterable="false" />
 				<Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false"
@@ -59,17 +59,17 @@
 			</EntityType>
 
 			 <Association Name="FK_Object_LineItems">
-		        <End Role="LineItems" Type="Master_Detail.LineItem" Multiplicity="*" />
-		        <End Role="Objects" Type="Master_Detail.Object" Multiplicity="1" />
-		        <ReferentialConstraint>
-		          <Principal Role="Objects">
-		            <PropertyRef Name="ObjectID" />
-		          </Principal>
-		          <Dependent Role="LineItems">
-		            <PropertyRef Name="ObjectID" />
-		          </Dependent>
-		        </ReferentialConstraint>
-		     </Association>
+				<End Role="LineItems" Type="Master_Detail.LineItem" Multiplicity="*" />
+				<End Role="Objects" Type="Master_Detail.Object" Multiplicity="1" />
+				<ReferentialConstraint>
+					<Principal Role="Objects">
+					<PropertyRef Name="ObjectID" />
+					</Principal>
+					<Dependent Role="LineItems">
+					<PropertyRef Name="ObjectID" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
 
 			<EntityContainer Name="Master_Detail_ENTITIES"
 				m:IsDefaultEntityContainer="true">
@@ -83,9 +83,9 @@
 					sap:pageable="false" sap:content-version="1"
 					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
 				 <AssociationSet Name="Master_Detail.FK_Object_LineItems" Association="Master_Detail.FK_Object_LineItems">
-		          <End Role="LineItems" EntitySet="LineItems" />
-		          <End Role="Objects" EntitySet="Objects" />
-		         </AssociationSet>
+					<End Role="LineItems" EntitySet="LineItems" />
+					<End Role="Objects" EntitySet="Objects" />
+				</AssociationSet>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

@@ -5,19 +5,19 @@
 	xmlns="sap.m">
 
 	<Panel class="sapUiSmallMarginBottom">
-	    <content>
-	      	<Text text="This panel has a 16px (1rem) bottom margin."/>
-	    </content>
+		<content>
+				<Text text="This panel has a 16px (1rem) bottom margin."/>
+		</content>
 	</Panel>
 	<Panel width="auto" class="sapUiSmallMargin">
 		<content>
-		  	<Text text="This panel has a 16px margin all around. As you can see, the margins do not add to the margins of the bottom or top panel."/>
+				<Text text="This panel has a 16px margin all around. As you can see, the margins do not add to the margins of the bottom or top panel."/>
 		</content>
 	</Panel>
-	<Panel  class="sapUiSmallMarginTop">
-	    <content>
-	      	<Text text="This panel has a 16px top margin." />
+	<Panel	class="sapUiSmallMarginTop">
+		<content>
+				<Text text="This panel has a 16px top margin." />
 
-	    </content>
+		</content>
 	</Panel>
 </mvc:View>

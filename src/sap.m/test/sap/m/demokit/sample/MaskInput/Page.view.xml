@@ -35,7 +35,7 @@
 
 							<Label text = "Numeric only" class = "sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip = "Numeric only"/>
 							<MaskInput mask = "999999" placeholderSymbol = "_" placeholder =
-                                    "Enter a six digit number"/>
+									"Enter a six digit number"/>
 
 					</form:SimpleForm>
 				</VBox>

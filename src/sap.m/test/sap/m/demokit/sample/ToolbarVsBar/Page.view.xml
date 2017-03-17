@@ -13,13 +13,13 @@
 		<subHeader>
 			<Toolbar>
 				<Button type="Back" />
-				<ToolbarSpacer></ToolbarSpacer>
-				<Title text="Toolbar center" level="H3"></Title>
-				<ToolbarSpacer></ToolbarSpacer>
+				<ToolbarSpacer/>
+				<Title text="Toolbar center" level="H3"/>
+				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>
 		<content>
-            <MessageStrip text="A Toolbar's centering technique will be slightly off the center if there is a button on the left." class="sapUiTinyMargin" />
+			<MessageStrip text="A Toolbar's centering technique will be slightly off the center if there is a button on the left." class="sapUiTinyMargin" />
 			<Toolbar>
 				<Label text="Toolbar can shrink content in case of overflow.">
 					<layoutData>
@@ -48,50 +48,50 @@
 				</Button>
 			</Toolbar>
 
-            <Label/>
+			<Label/>
 
 			<Bar>
 				<contentLeft>
-					<Label text="Bar cannot really handle overflow it just cuts the content."></Label>
+					<Label text="Bar cannot really handle overflow it just cuts the content."/>
 				</contentLeft>
 				<contentMiddle>
 					<Button text="Accept" type="Accept" />
-					<Label text="Bar is not very performant."></Label>
+					<Label text="Bar is not very performant."/>
 					<Button text="Reject" type="Reject" />
 					<Button text="Edit" />
 					<Button text="Big Big Big Big Big Big Big Big Button" />
 				</contentMiddle>
 			</Bar>
 
-            <Label/>
+			<Label/>
 
-            <OverflowToolbar>
-                <Label text="OverflowToolbar provides a See more (...) button for overflow.">
-                    <layoutData>
-                        <ToolbarLayoutData shrinkable="false" />
-                    </layoutData>
-                </Label>
-                <Button text="Accept" type="Accept">
-                    <layoutData>
-                        <ToolbarLayoutData shrinkable="true" />
-                    </layoutData>
-                </Button>
-                <Label text="This is a long non-shrinkable label">
-                    <layoutData>
-                        <ToolbarLayoutData shrinkable="false" />
-                    </layoutData>
-                </Label>
-                <Button text="Reject" type="Reject">
-                    <layoutData>
-                        <ToolbarLayoutData shrinkable="true" />
-                    </layoutData>
-                </Button>
-                <Button text="Big Big Big Big Big Big Big Big Button">
-                    <layoutData>
-                        <ToolbarLayoutData shrinkable="true" />
-                    </layoutData>
-                </Button>
-            </OverflowToolbar>
+			<OverflowToolbar>
+				<Label text="OverflowToolbar provides a See more (...) button for overflow.">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="false" />
+					</layoutData>
+				</Label>
+				<Button text="Accept" type="Accept">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="true" />
+					</layoutData>
+				</Button>
+				<Label text="This is a long non-shrinkable label">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="false" />
+					</layoutData>
+				</Label>
+				<Button text="Reject" type="Reject">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="true" />
+					</layoutData>
+				</Button>
+				<Button text="Big Big Big Big Big Big Big Big Button">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="true" />
+					</layoutData>
+				</Button>
+			</OverflowToolbar>
 
 		</content>
 		<footer>

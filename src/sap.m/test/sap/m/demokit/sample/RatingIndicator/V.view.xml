@@ -5,20 +5,20 @@
 	<l:VerticalLayout
 		class="sapUiContentPadding">
 		<Label text="Rating Indicator with size L" labelFor="RI_L"/>
-		<RatingIndicator id="RI_L" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="32px"   tooltip="Rating Tooltip" />
+		<RatingIndicator id="RI_L" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="32px" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with size M" labelFor="RI_M"/>
-		<RatingIndicator id="RI_M" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="22px"   tooltip="Rating Tooltip" />
+		<RatingIndicator id="RI_M" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="22px" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with size S" labelFor="RI_S"/>
-		<RatingIndicator id="RI_S" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="16px"   tooltip="Rating Tooltip" />
+		<RatingIndicator id="RI_S" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="16px" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with size XS" labelFor="RI_XS"/>
-		<RatingIndicator id="RI_XS" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="12px"   tooltip="Rating Tooltip" />
+		<RatingIndicator id="RI_XS" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="12px" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with active state" labelFor="RI_EnabledTrue"/>
-		<RatingIndicator id="RI_EnabledTrue" maxValue="5" enabled= "true" class="sapUiSmallMarginBottom" value="4" iconSize="12px"   tooltip="Rating Tooltip" />
+		<RatingIndicator id="RI_EnabledTrue" maxValue="5" enabled= "true" class="sapUiSmallMarginBottom" value="4" iconSize="12px" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with non active state" labelFor="RI_EnabledFalse"/>
-		<RatingIndicator id="RI_EnabledFalse" maxValue="5" enabled= "false" class="sapUiSmallMarginBottom" value="4" iconSize="12px"   tooltip="Rating Tooltip" />
-		<RatingIndicator maxValue="8" class="sapUiSmallMarginBottom" value="4"   tooltip="Rating Tooltip" />
+		<RatingIndicator id="RI_EnabledFalse" maxValue="5" enabled= "false" class="sapUiSmallMarginBottom" value="4" iconSize="12px" tooltip="Rating Tooltip" />
+		<RatingIndicator maxValue="8" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip" />
 		<RatingIndicator maxValue="7" class="sapUiSmallMarginBottom" value="3.5" tooltip="Rating Tooltip" />
-		<RatingIndicator maxValue="6" class="sapUiSmallMarginBottom" value="3"   tooltip="Rating Tooltip" />
+		<RatingIndicator maxValue="6" class="sapUiSmallMarginBottom" value="3" tooltip="Rating Tooltip" />
 		<RatingIndicator maxValue="5" class="sapUiSmallMarginBottom" value="2.5" />
 		<RatingIndicator maxValue="4" class="sapUiSmallMarginBottom" value="2" />
 	</l:VerticalLayout>

@@ -24,7 +24,7 @@
 			<Label/>
 
 			<Table
-                id="idProductsTable"
+				id="idProductsTable"
 				items="{/ProductCollection}">
 				<headerToolbar>
 					<OverflowToolbar id="otbSubheader">
@@ -40,8 +40,8 @@
 				<columns>
 					<Column width="12em"><Text text="Product" /></Column>
 					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>
-					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Right"><Text text="Dimensions" /></Column>
-					<Column hAlign="Right"><Text text="Price" /></Column>
+					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Dimensions" /></Column>
+					<Column hAlign="End"><Text text="Price" /></Column>
 				</columns>
 				<items>
 					<ColumnListItem>

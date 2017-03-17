@@ -1,6 +1,6 @@
 <mvc:View height="100%" controllerName="sap.m.sample.MultiInputMultiLine.Page"
-		  xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
-		  xmlns="sap.m">
+		xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
 	<VBox>
 			<items>
 			<Label text="MultiInput in MultiLine Display Mode" labelFor="multiInput1"/>
@@ -62,7 +62,7 @@
 				</suggestionRows>
 			</MultiInput>
 
-			<Label text="MultiInput  with suggestion list items in MultiLine Mode Display" labelFor="multiInput4"/>
+			<Label text="MultiInput with suggestion list items in MultiLine Mode Display" labelFor="multiInput4"/>
 			<MultiInput id="multiInput4"
 				width="100%"
 				enableMultiLineMode="true"

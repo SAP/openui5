@@ -4,7 +4,7 @@
 		xmlns="sap.m">
 
 	<Table id="idTable"
-		   items="{
+			items="{
 				path: '/modelData'
 			}">
 		<columns>
