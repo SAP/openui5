@@ -796,7 +796,7 @@
 
 			//press
 			oIcon.firePress();
-			notOk(oIcon._bPress, "A flag indicated press on icon " + oIcon.getId() + " should exist");
+			assert.notOk(oIcon._bPress, "A flag indicated press on icon " + oIcon.getId() + " should exist");
 			assert.ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
 			destroyFF(oFF);
 			done();
