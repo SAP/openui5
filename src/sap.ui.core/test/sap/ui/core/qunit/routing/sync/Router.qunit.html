@@ -93,6 +93,17 @@
 			router.destroy();
 		});
 
+		QUnit.test("Should not raise any exeception when stop is called before initialize", function(assert) {
+			assert.expect(0)
+			var router = new sap.ui.core.routing.Router();
+
+			// call stop shouldn't raise any exception
+			router.stop();
+
+			//Cleanup
+			router.destroy();
+		});
+
 		QUnit.test("Should parse the hash when initialize doesn't suppress the hash parsing", function(assert) {
 			var router = new sap.ui.core.routing.Router();
 			var parseSpy = this.spy(router, "parse");

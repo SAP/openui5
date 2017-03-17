@@ -114,6 +114,17 @@
 				router.destroy();
 			});
 
+			QUnit.test("Should not raise any exeception when stop is called before initialize", function(assert) {
+				assert.expect(0)
+				var router = fnCreateRouter();
+
+				// call stop shouldn't raise any exception
+				router.stop();
+
+				//Cleanup
+				router.destroy();
+			});
+
 			QUnit.test("Should parse the hash again when second initialize doesn't suppress hash parsing", function(assert) {
 				var router = fnCreateRouter();
 				var parseSpy = this.spy(router, "parse");
