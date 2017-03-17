@@ -23,60 +23,26 @@ sap.ui.define([
 		if (!oSettings) {
 			throw new Error("no flex settings provided");
 		}
-		if (!oSettings.features) {
-			// hardcoded list of flex features (change types) and their valid "writable layer"
-			oSettings.features = {
-				//addField is not listed so it remains always enabled for compatibility reasons, although currently only addFields is used
-				"addFields": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"addGroup": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"removeField": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"removeGroup": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"hideControl": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"unhideControl": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"stashControl": [
-				  "CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"unstashControl": [
-				  "CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"renameField": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"renameGroup": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"moveFields": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"moveGroups": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"moveElements": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"moveControls": [
-					"CUSTOMER", "CUSTOMER_BASE", "VENDOR"
-				],
-				"propertyChange": [
-					 "CUSTOMER_BASE", "VENDOR"
-				],
-				"propertyBindingChange": [
-					 "CUSTOMER_BASE", "VENDOR"
-				]
+		// Defaults layers used for standard changes, such as 'move' or 'add'
+		if (!oSettings.defaultLayerPermissions) {
+			oSettings.defaultLayerPermissions = {
+				"VENDOR": true,
+				"CUSTOMER_BASE": true,
+				"CUSTOMER": true,
+				"USER": false
 			};
 		}
+
+		// These are the permissions for the Developer Mode Changes, e.g. 'propertyChange', 'propertyBindingChange'
+		if (!oSettings.developerModeLayerPermissions) {
+			oSettings.developerModeLayerPermissions = {
+				"VENDOR": true,
+				"CUSTOMER_BASE": true,
+				"CUSTOMER": false,
+				"USER": false
+			};
+		}
+
 		this._oSettings = oSettings;
 		this._hasMergeErrorOccured = false;
 	};
@@ -355,34 +321,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if a change type is enabled for the current writable layer
-	 *
-	 * @param {string} sChangeType change type to be checked
-	 * @param {string} sActiveLayer active layer name; if not provided "USER" is the default.
-	 * @returns {boolean} true if the change type is enabled, false if not supported.
-	 * @public
-	 */
-	Settings.prototype.isChangeTypeEnabled = function(sChangeType, sActiveLayer) {
-		if (!sActiveLayer) {
-			sActiveLayer = 'USER';
-		}
-		var bIsEnabled = false;
-		if (!this._oSettings.features[sChangeType]) {
-			// if the change type is not in the feature list, the change type is not check relevant and therefore always enabled.
-			// if a change type should be disabled for all layers, an entry in the feature map has to exist with an empty array.
-			bIsEnabled = true;
-		} else {
-			var iArrayPos = jQuery.inArray(sActiveLayer, this._oSettings.features[sChangeType]);
-			if (iArrayPos < 0) {
-				bIsEnabled = false;
-			} else {
-				bIsEnabled = true;
-			}
-		}
-		return bIsEnabled;
-	};
-
-	/**
 	 * Checks whether the current system is defined as a productive system.
 	 *
 	 * @public
@@ -404,6 +342,20 @@ sap.ui.define([
 	 */
 	Settings.prototype.hasMergeErrorOccured = function() {
 		return this._hasMergeErrorOccured;
+	};
+
+	/**
+	 * Getter for the default Layer-Permissions
+	 */
+	Settings.prototype.getDefaultLayerPermissions = function() {
+		return this._oSettings.defaultLayerPermissions;
+	};
+
+	/**
+	 * Getter for the Developer Mode Layer-Permissions
+	 */
+	Settings.prototype.getDeveloperModeLayerPermissions = function() {
+		return this._oSettings.developerModeLayerPermissions;
 	};
 
 	return Settings;

@@ -34,6 +34,7 @@ sap.ui.define([
 
 		this._name = mParam.name;
 		this._changeHandler = mParam.changeHandler;
+		this._layers = mParam.layers;
 
 		if (mParam.labelKey) {
 			this._labelKey = mParam.labelKey;
@@ -51,6 +52,7 @@ sap.ui.define([
 
 	ChangeTypeMetadata.prototype._name = "";
 	ChangeTypeMetadata.prototype._changeHandler = "";
+	ChangeTypeMetadata.prototype._layers = [];
 	ChangeTypeMetadata.prototype._sortIndex = 0;
 	ChangeTypeMetadata.prototype._labelKey = "";
 	ChangeTypeMetadata.prototype._tooltipKey = "";
@@ -72,6 +74,15 @@ sap.ui.define([
 	 */
 	ChangeTypeMetadata.prototype.getChangeHandler = function() {
 		return this._changeHandler;
+	};
+
+	/**
+	 * Gets the list of layers and the information whether or not they are enabled
+	 * @returns {Object} Returns the list of layers
+	 * @public
+	 */
+	ChangeTypeMetadata.prototype.getLayers = function() {
+		return this._layers;
 	};
 
 	/**
