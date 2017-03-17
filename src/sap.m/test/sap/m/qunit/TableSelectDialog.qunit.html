@@ -347,13 +347,13 @@
 
 			oTableSelectDialog1._executeSearch("", "fakesesearch");
 
-			equals(oTable.getSelectedItems().length, 2, "Two items selected before cancelling");
+			assert.equal(oTable.getSelectedItems().length, 2, "Two items selected before cancelling");
 
 			oTableSelectDialog1._onCancel();
 
 			oTableSelectDialog1.open();
 
-			equals(oTable.getSelectedItems().length, 0, "Selection after search should be reset nevertheless");
+			assert.equal(oTable.getSelectedItems().length, 0, "Selection after search should be reset nevertheless");
 
 			oTableSelectDialog1._onCancel();
 		});
@@ -498,11 +498,11 @@
 			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
 			var aItems = oTable.getItems();
 			aItems[2].setSelected(true);
-			equals(aItems[0].getModeControl().getSelected(), false, "SingleSelection: Item 0 should not be selected");
-			equals(aItems[1].getModeControl().getSelected(), false, "SingleSelection: Item 1 should not be selected");
-			equals(aItems[2].getModeControl().getSelected(), true, "SingleSelection: Item 2 should be selected");
-			equals(aItems[3].getModeControl().getSelected(), false, "SingleSelection: Item 3 should not be selected");
-			equals(aItems[4].getModeControl().getSelected(), false, "SingleSelection: Item 4 should not be selected");
+			assert.equal(aItems[0].getModeControl().getSelected(), false, "SingleSelection: Item 0 should not be selected");
+			assert.equal(aItems[1].getModeControl().getSelected(), false, "SingleSelection: Item 1 should not be selected");
+			assert.equal(aItems[2].getModeControl().getSelected(), true, "SingleSelection: Item 2 should be selected");
+			assert.equal(aItems[3].getModeControl().getSelected(), false, "SingleSelection: Item 3 should not be selected");
+			assert.equal(aItems[4].getModeControl().getSelected(), false, "SingleSelection: Item 4 should not be selected");
 			oTable.fireSelect({ listItem : aItems[2] });
 		});
 
@@ -668,7 +668,7 @@
 
 		QUnit.test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function(assert) {
 			oButton1.firePress();
-			equals(oTableSelectDialog1._oTable.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
+			assert.equal(oTableSelectDialog1._oTable.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
 			oTableSelectDialog1._oCancelButton.firePress()
 		});
 

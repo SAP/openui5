@@ -3938,7 +3938,7 @@
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI);
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
 			OData.request.restore();
 			done();
 		});
@@ -3948,7 +3948,7 @@
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI+'?test=x');
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
 			OData.request.restore();
 			done();
 		});
@@ -3958,7 +3958,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
 			OData.request.restore();
 			done();
 		});
@@ -3968,7 +3968,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
 			done();
 		});
@@ -3979,7 +3979,7 @@
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
 			OData.request.restore();
 			done();
 		});
@@ -3990,7 +3990,7 @@
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
 			OData.request.restore();
 			done();
 		});
@@ -4001,7 +4001,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
 			OData.request.restore();
 			done();
 		});
@@ -4011,7 +4011,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
 			done();
 		});
@@ -4023,7 +4023,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
 			spy = sinon.spy(OData, "request");
 			oModel.read("/Categories", {success: function(oData, oResponse) {
@@ -4043,7 +4043,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			equals(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
 			spy = sinon.spy(OData, "request");
 			oModel.read("/Categories", {success: function(oData, oResponse) {
@@ -4411,13 +4411,13 @@
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
 			success: function() {
-				equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF Request sent");
-				equals(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
+				assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF Request sent");
+				assert.equal(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
 
 				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
-						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF request replied to");
+						assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF request replied to");
 						assert.ok(refreshSpy.calledOnce, "No additional token request");
 						done();
 					}
@@ -4432,14 +4432,14 @@
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
 			success: function() {
-				equals(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests sent");
-				equals(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
-				equals(window.odataFakeServiceData.csrfRequests[1], "GET", "CSRF-Token requested using GET method");
+				assert.equal(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests sent");
+				assert.equal(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
+				assert.equal(window.odataFakeServiceData.csrfRequests[1], "GET", "CSRF-Token requested using GET method");
 
 				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
-						equals(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests replied to");
+						assert.equal(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests replied to");
 						assert.ok(refreshSpy.calledOnce, "No additional token request");
 						done();
 					}
@@ -4463,13 +4463,13 @@
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
 			success: function() {
-				equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests sent");
-				equals(window.odataFakeServiceData.csrfRequests[0], "GET", "CSRF-Token requested using GET method");
+				assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests sent");
+				assert.equal(window.odataFakeServiceData.csrfRequests[0], "GET", "CSRF-Token requested using GET method");
 
 				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
-						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests replied to");
+						assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests replied to");
 						assert.ok(refreshSpy.calledOnce, "No additional token request");
 						done();
 					}
@@ -5281,13 +5281,13 @@
 
 
 		readProduct().then(function() {
-			equals(oButton.getText(), "oh so very old", "Text correctly set from first response header");
-			equals(oButton2.getText(), "oh so very old ", "Text correctly set from first response header");
+			assert.equal(oButton.getText(), "oh so very old", "Text correctly set from first response header");
+			assert.equal(oButton2.getText(), "oh so very old ", "Text correctly set from first response header");
 
 			return readProduct();
 		}).then(function() {
-			equals(oButton.getText(), "oh so very old", "Text correctly set from second response header");
-			equals(oButton2.getText(), "oh so very old ", "Text correctly set from second response header");
+			assert.equal(oButton.getText(), "oh so very old", "Text correctly set from second response header");
+			assert.equal(oButton2.getText(), "oh so very old ", "Text correctly set from second response header");
 
 			oModelSingle.destroy();
 			oModelBatch.destroy();
@@ -5321,17 +5321,17 @@
 		}
 
 		oModel.metadataLoaded().then(function(mData) {
-			equals(mData.lastModified, "Tue, 15 Nov 1994 12:45:26 GMT", "Metadata loaded promise contains lastModified property");
+			assert.equal(mData.lastModified, "Tue, 15 Nov 1994 12:45:26 GMT", "Metadata loaded promise contains lastModified property");
 
 			return read("/SpecialHeaders");
 		}).then(function(mHeaders) {
-			equals(mHeaders["Last-Modified"], "morgen frueh", "Standard header is normalized and contains correct value");
-			equals(mHeaders["X-CuStOm-HeAdEr"], "case-sensitive", "Special header is not normalized and contains correct value");
+			assert.equal(mHeaders["Last-Modified"], "morgen frueh", "Standard header is normalized and contains correct value");
+			assert.equal(mHeaders["X-CuStOm-HeAdEr"], "case-sensitive", "Special header is not normalized and contains correct value");
 
 			return read("/SpecialHeadersError");
 		}).then(function(mHeaders) {
-			equals(mHeaders["Last-Modified"], "morgen frueh", "Standard header is normalized and contains correct value");
-			equals(mHeaders["X-CuStOm-HeAdEr"], "case-sensitive", "Special header is not normalized and contains correct value");
+			assert.equal(mHeaders["Last-Modified"], "morgen frueh", "Standard header is normalized and contains correct value");
+			assert.equal(mHeaders["X-CuStOm-HeAdEr"], "case-sensitive", "Special header is not normalized and contains correct value");
 
 			oModel.destroy();
 			done();
@@ -5348,12 +5348,12 @@
 			var spy = sinon.spy(oModel, "createCustomParams");
 			var oContext = oModel.createBindingContext("/Categories(1)", null, {custom: {"test":undefined}}, function() {
 				assert.ok(true, "should not break");
-				equals(spy.callCount, 1 , "custom Params created");
-				equals(spy.returnValues[0], "test" , "params created correctly");
+				assert.equal(spy.callCount, 1 , "custom Params created");
+				assert.equal(spy.returnValues[0], "test" , "params created correctly");
 				var oContext2 = oModel.createBindingContext("/Categories(1)", null, {custom: {"hubel": "dubel","test":undefined}}, function() {
 					assert.ok(true, "should not break");
-					equals(spy.callCount, 2 , "custom Params created");
-					equals(spy.returnValues[1], "hubel=dubel&test" , "params created correctly");
+					assert.equal(spy.callCount, 2 , "custom Params created");
+					assert.equal(spy.returnValues[1], "hubel=dubel&test" , "params created correctly");
 					oModel.createCustomParams.restore();
 					done();
 				}, true);

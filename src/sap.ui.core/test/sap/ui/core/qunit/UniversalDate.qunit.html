@@ -300,8 +300,8 @@
 			var ud1 = new sap.ui.core.date.UniversalDate(2015, 0);
 			var ud2 = new sap.ui.core.date.UniversalDate();
 			ud2.setFullYear(2016);
-			equals(ud1.getFullYear(), 2015, "Verify year");
-			equals(ud2.getFullYear(), 2016, "Verify year");
+			assert.equal(ud1.getFullYear(), 2015, "Verify year");
+			assert.equal(ud2.getFullYear(), 2016, "Verify year");
 		});
 
 		//--- helpers ----------------------------------------------------------------------------------------------

@@ -379,15 +379,15 @@
 			//assert
 			// trim because the framework formatter has no leading space,
 			// but the tp now has a leading space for for h:mm, H:mm format
-			equals(jQuery("#" + tp.getId() + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
+			assert.equal(jQuery("#" + tp.getId() + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
 
-			equals(tp.getValue(), oExpectedValues["expValue"], "getValue() ok");
+			assert.equal(tp.getValue(), oExpectedValues["expValue"], "getValue() ok");
 
 			var oDateValue = tp.getDateValue();
 			oDateValue.setFullYear(oExpectedValues["expDateValue"].getFullYear());
 			oDateValue.setMonth(oExpectedValues["expDateValue"].getMonth());
 			oDateValue.setDate(oExpectedValues["expDateValue"].getDate());
-			equals(oDateValue.toString(), oExpectedValues["expDateValue"].toString(), "getDateValue ok");
+			assert.equal(oDateValue.toString(), oExpectedValues["expDateValue"].toString(), "getDateValue ok");
 
 			//cleanup
 			tp.destroy();
@@ -1355,10 +1355,10 @@
 				.placeAt("qunit-fixture");
 
 			oModelV2.attachRequestCompleted(function () {
-				equals(view.byId("tp1")._$input.val(), "11:33:55 AM", "TP1 has coorect value!");
-				equals(view.byId("tp2")._$input.val(), "11:33:55 AM", "TP2 has coorect value!");
-				equals(view.byId("tp3")._$input.val(), "11:33 AM", "TP3 has coorect value!");
-				equals(view.byId("tp4")._$input.val(), "11:33", "TP4 has coorect value!");
+				assert.equal(view.byId("tp1")._$input.val(), "11:33:55 AM", "TP1 has coorect value!");
+				assert.equal(view.byId("tp2")._$input.val(), "11:33:55 AM", "TP2 has coorect value!");
+				assert.equal(view.byId("tp3")._$input.val(), "11:33 AM", "TP3 has coorect value!");
+				assert.equal(view.byId("tp4")._$input.val(), "11:33", "TP4 has coorect value!");
 				done();
 			});
 		});
@@ -1545,7 +1545,7 @@
 			this.clock.tick(160);
 
 			//assert
-			equals(oSliderHours.getSelectedValue(), "15", "slider's value changed by 1");
+			assert.equal(oSliderHours.getSelectedValue(), "15", "slider's value changed by 1");
 
 			//act again
 			oEvent = this._createMouseWheelEvent(-2);
@@ -1553,7 +1553,7 @@
 			this.clock.tick(160);
 
 			//assert
-			equals(oSliderHours.getSelectedValue(), "17", "slider's value changed by 2 in the other direction");
+			assert.equal(oSliderHours.getSelectedValue(), "17", "slider's value changed by 2 in the other direction");
 
 			//cleanup
 			tp.destroy();
@@ -1629,14 +1629,14 @@
 			//render
 
 			//assert
-			equals(jQuery("#" + tpId + "-inner").val(), "17:27", "$input.val() ok");
-			equals(tp.getValue(), this._defaultFormatter.format(getDate(17, 27, 43)), "getValue() ok");
+			assert.equal(jQuery("#" + tpId + "-inner").val(), "17:27", "$input.val() ok");
+			assert.equal(tp.getValue(), this._defaultFormatter.format(getDate(17, 27, 43)), "getValue() ok");
 
 			var oDateValue = tp.getDateValue();
 			oDateValue.setFullYear(expDateValue.getFullYear());
 			oDateValue.setMonth(expDateValue.getMonth());
 			oDateValue.setDate(expDateValue.getDate());
-			equals(oDateValue.toString(), expDateValue.toString(), "getDateValue ok");
+			assert.equal(oDateValue.toString(), expDateValue.toString(), "getDateValue ok");
 
 			//cleanup
 			tp.destroy();
@@ -1966,7 +1966,7 @@
 				triggerMultipleKeypress(tp, sInput);
 
 				//assert
-				equals(jQuery("#" + tp.getId() + "-inner").val(), sExpectedValue, "$input.val() ok");
+				assert.equal(jQuery("#" + tp.getId() + "-inner").val(), sExpectedValue, "$input.val() ok");
 
 				//cleanup
 				tp.destroy();
@@ -2160,7 +2160,7 @@
 			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
 
 			//assert
-			equals(jQuery("#" + oTp.getId() + "-inner").val(), "15:00:00", "$input.val() ok");
+			assert.equal(jQuery("#" + oTp.getId() + "-inner").val(), "15:00:00", "$input.val() ok");
 
 			//cleanup
 			oTp.destroy();
@@ -2180,7 +2180,7 @@
 			triggerMultipleKeypress(oTp, "151");
 			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
 			//assert
-			equals(jQuery("#" + oTp.getId() + "-inner").val(), "15:01:00", "$input.val() ok");
+			assert.equal(jQuery("#" + oTp.getId() + "-inner").val(), "15:01:00", "$input.val() ok");
 
 			//cleanup
 			oTp.destroy();
@@ -2205,7 +2205,7 @@
 			triggerMultipleKeypress(oTp, "7");
 			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
 			//assert
-			equals(jQuery("#" + oTp.getId() + "-inner").val(), "07:00 AM", "$input.val() ok");
+			assert.equal(jQuery("#" + oTp.getId() + "-inner").val(), "07:00 AM", "$input.val() ok");
 
 			//cleanup
 			oTp.destroy();
@@ -2230,12 +2230,12 @@
 			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
 			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.BACKSPACE);
 
-			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 A-", "$input.val() correctly preset");
+			assert.equal(jQuery("#" + tp.getId() + "-inner").val(), "12 A-", "$input.val() correctly preset");
 
 			triggerMultipleKeypress(tp, "y");
 
 			//assert
-			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 AM", "$input.val() ok");
+			assert.equal(jQuery("#" + tp.getId() + "-inner").val(), "12 AM", "$input.val() ok");
 
 			//cleanup
 			tp.destroy();
@@ -2256,7 +2256,7 @@
 			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
 
 			//assert
-			equals(jQuery("#" + oTp.getId() + "-inner").val(), "15", "$input.val() ok");
+			assert.equal(jQuery("#" + oTp.getId() + "-inner").val(), "15", "$input.val() ok");
 
 			//cleanup
 			oTp.destroy();
@@ -2280,12 +2280,12 @@
 			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
 			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.BACKSPACE);
 
-			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 P-", "$input.val() correctly preset");
+			assert.equal(jQuery("#" + tp.getId() + "-inner").val(), "12 P-", "$input.val() correctly preset");
 
 			triggerMultipleKeypress(tp, "b");
 
 			//assert
-			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 PM", "$input.val() ok");
+			assert.equal(jQuery("#" + tp.getId() + "-inner").val(), "12 PM", "$input.val() ok");
 
 			//cleanup
 			tp.destroy();
@@ -2303,7 +2303,7 @@
 
 			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("y", 4, "12 P-");
 
-			equals(sCharReplaced, "M", "replaceChar replaces correctly");
+			assert.equal(sCharReplaced, "M", "replaceChar replaces correctly");
 
 			//cleanup
 			tp.destroy();
@@ -2324,7 +2324,7 @@
 
 			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("v", 3, "12 ------");
 
-			equals(sCharReplaced, "vorm. ", "replaceChar completes with spaces");
+			assert.equal(sCharReplaced, "vorm. ", "replaceChar completes with spaces");
 
 			//cleanup
 			tp.destroy();
@@ -2345,7 +2345,7 @@
 
 			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 3, "12 --");
 
-			equals(sCharReplaced, "M", "replaceChar completes to the first difference");
+			assert.equal(sCharReplaced, "M", "replaceChar completes to the first difference");
 
 			//cleanup
 			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
@@ -2367,7 +2367,7 @@
 
 			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 4, "12 M---");
 
-			equals(sCharReplaced, "b", "replaceChar does not replace invalid char");
+			assert.equal(sCharReplaced, "b", "replaceChar does not replace invalid char");
 
 			//cleanup
 			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
@@ -2389,7 +2389,7 @@
 
 			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("A", 4, "12 M---");
 
-			equals(sCharReplaced, "ABC", "replaceChar completes when difference is in the middle");
+			assert.equal(sCharReplaced, "ABC", "replaceChar completes when difference is in the middle");
 
 			//cleanup
 			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
@@ -2411,7 +2411,7 @@
 
 			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("a", 3, "12 --");
 
-			equals(sCharReplaced, "AM", "replaceChar is not case sensitive");
+			assert.equal(sCharReplaced, "AM", "replaceChar is not case sensitive");
 
 			//cleanup
 			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
@@ -2511,7 +2511,7 @@
 			tp._initMask();
 
 			//assert
-			equals(oSpyDestroy.callCount, 1, "When initMask is called, the old instance of semanticmask helper is destroyed");
+			assert.equal(oSpyDestroy.callCount, 1, "When initMask is called, the old instance of semanticmask helper is destroyed");
 		});
 
 
@@ -2561,7 +2561,7 @@
 			tp._handleInputChange("13 15");
 			tp._handleInputChange("13 15");
 
-			equals(spy.callCount, 2, "changed event fired only twice");
+			assert.equal(spy.callCount, 2, "changed event fired only twice");
 
 			spy = null;
 			tp.destroy();
@@ -2592,7 +2592,7 @@
 			tp._handleInputChange("11 28");
 
 			//assert
-			equals(spy.callCount, 2, "changed event fired twice");
+			assert.equal(spy.callCount, 2, "changed event fired twice");
 
 			spy = null;
 			tp.destroy();
@@ -2605,21 +2605,21 @@
 			triggerMultipleKeypress(this.oTp, "09");
 			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
 
-			equals(this.oSpy.callCount, 1, "changed event fired when the value is set");
+			assert.equal(this.oSpy.callCount, 1, "changed event fired when the value is set");
 
 			while (oTpFocusDomRef.val() !== "-- --") {
 				qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.BACKSPACE);
 			}
 			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
 
-			equals(this.oSpy.callCount, 2, "changed event fired when the value is reset");
+			assert.equal(this.oSpy.callCount, 2, "changed event fired when the value is reset");
 		});
 
 		QUnit.test("upon enter, change event fires only once", function(assert) {
 			//act
 			triggerMultipleKeypress(this.oTp, "09");
 			qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
-			equals(this.oSpy.callCount, 1, "changed event must be fired only once");
+			assert.equal(this.oSpy.callCount, 1, "changed event must be fired only once");
 		});
 
 		QUnit.test("upon focusin of timepicker input, no picker should be visible", function (assert) {
@@ -2674,7 +2674,7 @@
 			triggerMultipleKeypress(this.oTp, "09");
 			jQuery(oTp2.getFocusDomRef()).focus();
 
-			equals(this.oSpy.callCount, 1, "changed event must be fired only once");
+			assert.equal(this.oSpy.callCount, 1, "changed event must be fired only once");
 
 			oTp2.destroy();
 		});
@@ -2693,7 +2693,7 @@
 			jQuery(this.oTp.getFocusDomRef()).focus();
 			jQuery(oTp2.getFocusDomRef()).focus();
 
-			equals(this.oSpy.callCount, 0, "changed event must not be fired");
+			assert.equal(this.oSpy.callCount, 0, "changed event must not be fired");
 
 			oTp2.destroy();
 		});

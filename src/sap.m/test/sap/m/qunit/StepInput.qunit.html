@@ -41,7 +41,7 @@
 			//assert
 			var $stepInput = this.stepInput.$();
 			assert.ok($stepInput.length > 0, "The control was successfully rendered");
-			equals($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
+			assert.equal($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
 		});
 
 		QUnit.test("incrementButton", function (assert) {

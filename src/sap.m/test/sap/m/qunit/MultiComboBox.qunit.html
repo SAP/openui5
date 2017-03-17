@@ -2095,11 +2095,11 @@
 				this.clock.tick(500);
 
 				// assertions
-				equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+				assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 						'The first Listitem should not be shown');
-				equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+				assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 						'The second Listitem should be shown');
-				equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+				assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 						'The third Listitem should be shown');
 				assert.ok(!oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).hasClass(
 						"sapMComboBoxBaseItemDisabled"),
@@ -2139,11 +2139,11 @@
 
 		// assertions
 		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 0,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 0,
 				'The third Listitem should not be shown');
 
 		// cleanup
@@ -2184,11 +2184,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2223,11 +2223,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 0,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 0,
 				'The third Listitem should not be shown');
 
 		// cleanup
@@ -2261,11 +2261,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2298,11 +2298,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2336,11 +2336,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2375,11 +2375,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2412,11 +2412,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2449,11 +2449,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2487,11 +2487,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2527,11 +2527,11 @@
 		this.clock.tick(500);
 
 		// assertions
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		equals(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -3940,7 +3940,7 @@
 
 		// assertions
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		equals(oMultiComboBox.getFocusDomRef().id, document.activeElement.id, "Input field has focus");
+		assert.equal(oMultiComboBox.getFocusDomRef().id, document.activeElement.id, "Input field has focus");
 
 		// cleanup
 		oMultiComboBox.destroy();

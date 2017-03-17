@@ -195,9 +195,9 @@
 		oMessageManager.addMessages([oMessage,oMessage2,oMessage3]);
 		assert.ok(jQuery.isArray(oMessageModel.getObject('/')), 'Message added to Model');
 		assert.ok(oMessageModel.getObject('/').length === 3, 'MessageModel holds three Message');
-		equals(oMessageModel.getObject('/')[0].message,'mt1', 'MessageModel: message1 instance ok');
-		equals(oMessageModel.getObject('/')[1].message,'mt2', 'MessageModel: message2 instance ok');
-		equals(oMessageModel.getObject('/')[2].message,'mt3', 'MessageModel: message3 instance ok');
+		assert.equal(oMessageModel.getObject('/')[0].message,'mt1', 'MessageModel: message1 instance ok');
+		assert.equal(oMessageModel.getObject('/')[1].message,'mt2', 'MessageModel: message2 instance ok');
+		assert.equal(oMessageModel.getObject('/')[2].message,'mt3', 'MessageModel: message3 instance ok');
 
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oInput1, function(sName, oDataState) {

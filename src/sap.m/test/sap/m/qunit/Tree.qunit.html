@@ -137,34 +137,34 @@ QUnit.test("Overview rendered", function(assert){
 QUnit.module("Indentation");
 QUnit.test("indentation1", function(assert){
 	this.clock.tick(100);
-	equals(oTree.getDeepestLevel(), 0, "deepestLevel");
+	assert.equal(oTree.getDeepestLevel(), 0, "deepestLevel");
 
 	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-1").$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
 	this.clock.tick(100);
 
-	equals(oTree.getDeepestLevel(), 1, "deepestLevel");
-	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "24px", "padding");
+	assert.equal(oTree.getDeepestLevel(), 1, "deepestLevel");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "24px", "padding");
 
 	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
 	this.clock.tick(100);
 
-	equals(oTree.getDeepestLevel(), 2, "deepestLevel");
-	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "16px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "32px", "padding");
+	assert.equal(oTree.getDeepestLevel(), 2, "deepestLevel");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "16px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "32px", "padding");
 
 	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-3").$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
 	this.clock.tick(100);
 
-	equals(oTree.getDeepestLevel(), 3, "deepestLevel");
-	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "8px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "16px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "24px", "padding");
+	assert.equal(oTree.getDeepestLevel(), 3, "deepestLevel");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "8px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "16px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "24px", "padding");
 
 	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-4").$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
@@ -178,13 +178,13 @@ QUnit.test("indentation1", function(assert){
 	oArrowDomRef.trigger("click");
 	this.clock.tick(100);
 
-	equals(oTree.getDeepestLevel(), 6, "deepestLevel");
-	equals(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "8px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "12px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-5").$().css("padding-left"), "16px", "padding");
-	equals(sap.ui.getCore().byId("__item0-__tree0-6").$().css("padding-left"), "20px", "padding");
+	assert.equal(oTree.getDeepestLevel(), 6, "deepestLevel");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "8px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "12px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-5").$().css("padding-left"), "16px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-6").$().css("padding-left"), "20px", "padding");
 
 	// collapse
 	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
@@ -196,7 +196,7 @@ QUnit.test("indentation1", function(assert){
 	oArrowDomRef.trigger("click");
 	this.clock.tick(100);
 
-	equals(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
+	assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
 
 	oTree.collapseAll();
 });
@@ -232,8 +232,8 @@ QUnit.test("Expand", function(assert){
 
 	assert.ok(oTree.getItems(), 4, "four nodes displayed after tree expanding");
 
-	equals(oTree.getItems()[0].getLevel(), 0, "first level node is in level 0");
-	equals(oTree.getItems()[1].getLevel(), 1, "second node is in level 1");
+	assert.equal(oTree.getItems()[0].getLevel(), 0, "first level node is in level 0");
+	assert.equal(oTree.getItems()[1].getLevel(), 1, "second node is in level 1");
 });
 
 QUnit.test("Collapse", function(assert){
@@ -250,13 +250,13 @@ QUnit.test("Collapse", function(assert){
 QUnit.test("Expand to level", function(assert){
 	oTree.expandToLevel(3);
 	assert.ok(oTree.getItems()[0].getExpanded(),"node is expanded");
-	equals(oTree.getItems()[4].getLevel(), 3, "expand to level 3");
+	assert.equal(oTree.getItems()[4].getLevel(), 3, "expand to level 3");
 });
 
 QUnit.test("Collapse all", function(assert){
 	oTree.collapseAll();
 	assert.ok(!oTree.getItems()[0].getExpanded(),"node is expanded");
-	equals(oTree.getItems().length, 2, "node is collapsed");
+	assert.equal(oTree.getItems().length, 2, "node is collapsed");
 });
 
 QUnit.module("Node structure");

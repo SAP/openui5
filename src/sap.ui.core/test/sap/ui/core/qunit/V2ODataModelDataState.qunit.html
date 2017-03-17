@@ -1617,8 +1617,8 @@
 		}
 
 		pSet.then(function() {
-			equals(iCounter1, 2, "PropertyBinding Formatter called twice (undefined and value)");
-			equals(iCounter2, 3, "CompositeBinding Formatter called three times (undefined/undefined, value/undefined and value/value)");
+			assert.equal(iCounter1, 2, "PropertyBinding Formatter called twice (undefined and value)");
+			assert.equal(iCounter2, 3, "CompositeBinding Formatter called three times (undefined/undefined, value/undefined and value/value)");
 
 			oJsonModel.destroy();
 
@@ -1646,8 +1646,8 @@
 				}
 
 				pSet.then(function() {
-					equals(iCounter1, 3, "PropertyBinding Formatter called three times (values: undefined, server and setProperty)");
-					equals(iCounter2, 5, "CompositeBinding Formatter called five times (values: undefined/undefined, undefined/server, server/server, setProperty/server and setProperty/setProperty)");
+					assert.equal(iCounter1, 3, "PropertyBinding Formatter called three times (values: undefined, server and setProperty)");
+					assert.equal(iCounter2, 5, "CompositeBinding Formatter called five times (values: undefined/undefined, undefined/server, server/server, setProperty/server and setProperty/setProperty)");
 					oModel2.destroy();
 					done();
 				});

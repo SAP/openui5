@@ -304,7 +304,7 @@
 			assert.equal(oDialog.getContentHeight(), "500px", "Dialog height should be fixed on desktop");
 		}
 
-		equals(oFF._getFacetDialog(), oDialog, "There should be only one dialog instance created");
+		assert.equal(oFF._getFacetDialog(), oDialog, "There should be only one dialog instance created");
 		oFF.destroy();
 	});
 
@@ -999,8 +999,8 @@
 		oFFL.getItems()[2].setSelected(true);
 		oFF._setButtonText(oFFL);
 
-		equals(oButton.getText(), "List (All)", "Button should contain the 'All' if all items are selected");
-		equals(oButton.getTooltip(), "List (All)", "Button tooltip should contain the 'All' if all items are selected");
+		assert.equal(oButton.getText(), "List (All)", "Button should contain the 'All' if all items are selected");
+		assert.equal(oButton.getTooltip(), "List (All)", "Button tooltip should contain the 'All' if all items are selected");
 
 		//More than one(but not all) items are selected
 		oFFL.getItems()[0].setSelected(true);
@@ -1769,7 +1769,7 @@
 			oFacetFilterList._setSearchValue(sPredefinedSearchValue);
 
 			//Assert
-			equals(oFacetFilterList._getSearchValue(), sPredefinedSearchValue, "sets the correct _searchValue");
+			assert.equal(oFacetFilterList._getSearchValue(), sPredefinedSearchValue, "sets the correct _searchValue");
 		});
 
 		QUnit.test("_searchValue is reset before popover opens", function(assert) {

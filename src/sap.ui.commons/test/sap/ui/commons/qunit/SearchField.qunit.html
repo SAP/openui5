@@ -104,7 +104,7 @@
 			}
 			var bEventHandlerCalled = false;
 			var handler = function(oControlEvent){
-				equals(oControlEvent.getParameter("query"), "SapUi5", "Value of search event:");
+				assert.equal(oControlEvent.getParameter("query"), "SapUi5", "Value of search event:");
 				oSearchField.detachSearch(handler);
 				bEventHandlerCalled = true;
 			};
@@ -150,7 +150,7 @@
 		triggerInputSequence(oSearchField, 2, true);
 		setTimeout(function(){
 			oSearchField.detachSuggest(handler);
-			equals(sSuggestValue, "INITIAL", "No suggestions when input has not yet reach configured 'startSuggestion' value");
+			assert.equal(sSuggestValue, "INITIAL", "No suggestions when input has not yet reach configured 'startSuggestion' value");
 			sSuggestValue = "INITIAL";
 			oSearchField.attachSuggest(handler);
 			triggerInputSequence(oSearchField, 3, false);
@@ -165,7 +165,7 @@
 				if(oSearchField.getEnableListSuggest()){
 					var bEventHandlerCalled = false;
 					var handler2 = function(oControlEvent){
-						equals(oControlEvent.getParameter("query"), "b", "Value of search event:");
+						assert.equal(oControlEvent.getParameter("query"), "b", "Value of search event:");
 						oSearchField.detachSearch(handler2);
 						bEventHandlerCalled = true;
 					};
@@ -193,25 +193,25 @@
 		QUnit.module("Properties and Aggregations");
 
 		QUnit.test("Default Values", function(assert) {
-			equals(oSearch1.getEnableListSuggest(), true, "Default 'enableListSuggest'");
-			equals(oSearch1.getShowListExpander(), true, "Default 'showListExpander'");
-			equals(oSearch1.getEnableClear(), false, "Default 'enableClear'");
-			equals(oSearch1.getShowExternalButton(), false, "Default 'showExternalButton'");
-			equals(oSearch1.getValue(), "", "Default 'value'");
-			equals(oSearch1.getWidth(), "", "Default 'width'");
-			equals(oSearch1.getEnabled(), true, "Default 'enabled'");
-			equals(oSearch1.getEditable(), true, "Default 'editable'");
-			equals(oSearch1.getVisible(), true, "Default 'visible'");
-			equals(oSearch1.getEnableFilterMode(), false, "Default 'enableFilterMode'");
-			equals(oSearch1.getMaxLength(), 0, "Default 'maxLength'");
-			equals(oSearch1.getPlaceholder(), "", "Default 'placeholder'");
-			equals(oSearch1.getValueState(), sap.ui.core.ValueState.None, "Default 'valueState'");
-			equals(oSearch1.getTextAlign(), "Begin", "Default 'textAlign'");
-			equals(oSearch1.getVisibleItemCount(), 20, "Default 'visibleItemCount'");
-			equals(oSearch1.getStartSuggestion(), 3, "Default 'startSuggestion'");
-			equals(oSearch1.getMaxSuggestionItems(), 10, "Default 'maxSuggestionItems'");
-			equals(oSearch1.getMaxHistoryItems(), 0, "Default 'maxHistoryItems'");
-			equals(oSearch1.getSearchProvider(), null, "Default aggregation 'searchProvider'");
+			assert.equal(oSearch1.getEnableListSuggest(), true, "Default 'enableListSuggest'");
+			assert.equal(oSearch1.getShowListExpander(), true, "Default 'showListExpander'");
+			assert.equal(oSearch1.getEnableClear(), false, "Default 'enableClear'");
+			assert.equal(oSearch1.getShowExternalButton(), false, "Default 'showExternalButton'");
+			assert.equal(oSearch1.getValue(), "", "Default 'value'");
+			assert.equal(oSearch1.getWidth(), "", "Default 'width'");
+			assert.equal(oSearch1.getEnabled(), true, "Default 'enabled'");
+			assert.equal(oSearch1.getEditable(), true, "Default 'editable'");
+			assert.equal(oSearch1.getVisible(), true, "Default 'visible'");
+			assert.equal(oSearch1.getEnableFilterMode(), false, "Default 'enableFilterMode'");
+			assert.equal(oSearch1.getMaxLength(), 0, "Default 'maxLength'");
+			assert.equal(oSearch1.getPlaceholder(), "", "Default 'placeholder'");
+			assert.equal(oSearch1.getValueState(), sap.ui.core.ValueState.None, "Default 'valueState'");
+			assert.equal(oSearch1.getTextAlign(), "Begin", "Default 'textAlign'");
+			assert.equal(oSearch1.getVisibleItemCount(), 20, "Default 'visibleItemCount'");
+			assert.equal(oSearch1.getStartSuggestion(), 3, "Default 'startSuggestion'");
+			assert.equal(oSearch1.getMaxSuggestionItems(), 10, "Default 'maxSuggestionItems'");
+			assert.equal(oSearch1.getMaxHistoryItems(), 0, "Default 'maxHistoryItems'");
+			assert.equal(oSearch1.getSearchProvider(), null, "Default aggregation 'searchProvider'");
 		});
 
 		QUnit.test("Custom Values", function(assert) {
@@ -235,25 +235,25 @@
 			oSearch1.setMaxHistoryItems(5);
 			oSearch1.setSearchProvider(new sap.ui.core.search.OpenSearchProvider("search1_provider"));
 
-			equals(oSearch1.getEnableListSuggest(), false, "Custom 'enableListSuggest'");
-			equals(oSearch1.getShowListExpander(), false, "Custom 'showListExpander'");
-			equals(oSearch1.getEnableClear(), true, "Custom 'enableClear'");
-			equals(oSearch1.getShowExternalButton(), true, "Custom 'showExternalButton'");
-			equals(oSearch1.getValue(), "Hello", "Custom 'value'");
-			equals(oSearch1.getWidth(), "200px", "Custom 'width'");
-			equals(oSearch1.getEnabled(), false, "Custom 'enabled'");
-			equals(oSearch1.getEditable(), false, "Custom 'editable'");
-			equals(oSearch1.getVisible(), false, "Custom 'visible'");
-			equals(oSearch1.getEnableFilterMode(), true, "Custom 'enableFilterMode'");
-			equals(oSearch1.getMaxLength(), 5, "Custom 'maxLength'");
-			equals(oSearch1.getPlaceholder(), "Click to search", "Custom 'placeholder'");
-			equals(oSearch1.getValueState(), sap.ui.core.ValueState.Error, "Custom 'valueState'");
-			equals(oSearch1.getTextAlign(), "End", "Custom 'textAlign'");
-			equals(oSearch1.getVisibleItemCount(), 10, "Custom 'visibleItemCount'");
-			equals(oSearch1.getStartSuggestion(), 5, "Custom 'startSuggestion'");
-			equals(oSearch1.getMaxSuggestionItems(), 5, "Custom 'maxSuggestionItems'");
-			equals(oSearch1.getMaxHistoryItems(), 5, "Custom 'maxHistoryItems'");
-			equals(oSearch1.getSearchProvider().getId(), "search1_provider", "Custom aggregation 'searchProvider'");
+			assert.equal(oSearch1.getEnableListSuggest(), false, "Custom 'enableListSuggest'");
+			assert.equal(oSearch1.getShowListExpander(), false, "Custom 'showListExpander'");
+			assert.equal(oSearch1.getEnableClear(), true, "Custom 'enableClear'");
+			assert.equal(oSearch1.getShowExternalButton(), true, "Custom 'showExternalButton'");
+			assert.equal(oSearch1.getValue(), "Hello", "Custom 'value'");
+			assert.equal(oSearch1.getWidth(), "200px", "Custom 'width'");
+			assert.equal(oSearch1.getEnabled(), false, "Custom 'enabled'");
+			assert.equal(oSearch1.getEditable(), false, "Custom 'editable'");
+			assert.equal(oSearch1.getVisible(), false, "Custom 'visible'");
+			assert.equal(oSearch1.getEnableFilterMode(), true, "Custom 'enableFilterMode'");
+			assert.equal(oSearch1.getMaxLength(), 5, "Custom 'maxLength'");
+			assert.equal(oSearch1.getPlaceholder(), "Click to search", "Custom 'placeholder'");
+			assert.equal(oSearch1.getValueState(), sap.ui.core.ValueState.Error, "Custom 'valueState'");
+			assert.equal(oSearch1.getTextAlign(), "End", "Custom 'textAlign'");
+			assert.equal(oSearch1.getVisibleItemCount(), 10, "Custom 'visibleItemCount'");
+			assert.equal(oSearch1.getStartSuggestion(), 5, "Custom 'startSuggestion'");
+			assert.equal(oSearch1.getMaxSuggestionItems(), 5, "Custom 'maxSuggestionItems'");
+			assert.equal(oSearch1.getMaxHistoryItems(), 5, "Custom 'maxHistoryItems'");
+			assert.equal(oSearch1.getSearchProvider().getId(), "search1_provider", "Custom aggregation 'searchProvider'");
 		});
 
 
@@ -277,7 +277,7 @@
 				oSearch1.setEnableListSuggest(bSuggList);
 				oSearch1.setShowExternalButton(bWithButton);
 				sap.ui.getCore().applyChanges();
-				equals(jQuery(oSearch1.getDomRef()).outerWidth(true), 200, "Width for SearchField (with suggestion list:"+bSuggList+", with Button: "+bWithButton+")");
+				assert.equal(jQuery(oSearch1.getDomRef()).outerWidth(true), 200, "Width for SearchField (with suggestion list:"+bSuggList+", with Button: "+bWithButton+")");
 			};
 
 			checkWidth(false, false);
@@ -466,17 +466,17 @@
 		var getProviderTest = function(oSearchControl){
 			return function(){
 				checkSuggestion(oSearchControl, function(sSuggestValue, aItems){
-					equals(sSuggestValue, "INITIAL", "No suggest event when search provider connected");
-					equals(aItems.length, 2, "Number of suggestions correct");
-					equals(aItems[0].getText(), "a", "First suggestion item correct");
-					equals(aItems[1].getText(), "b", "Second suggestion item correct");
+					assert.equal(sSuggestValue, "INITIAL", "No suggest event when search provider connected");
+					assert.equal(aItems.length, 2, "Number of suggestions correct");
+					assert.equal(aItems[0].getText(), "a", "First suggestion item correct");
+					assert.equal(aItems[1].getText(), "b", "Second suggestion item correct");
 				});
 			};
 		};
 
 		QUnit.test("Textfield mode (no suggestion list)", function(assert) {
 			checkSuggestion(oSearch7, function(sSuggestValue, aItems){
-				equals(sSuggestValue, "SaSap", "Suggest value");
+				assert.equal(sSuggestValue, "SaSap", "Suggest value");
 			});
 		});
 
@@ -486,10 +486,10 @@
 
 		QUnit.test("Combobox mode (with suggestion list)", function(assert) {
 			checkSuggestion(oSearch10, function(sSuggestValue, aItems){
-				equals(sSuggestValue, "SaSap", "Suggest value");
-				equals(aItems.length, 2, "Number of suggestions correct");
-				equals(aItems[0].getText(), "a", "First suggestion item correct");
-				equals(aItems[1].getText(), "b", "Second suggestion item correct");
+				assert.equal(sSuggestValue, "SaSap", "Suggest value");
+				assert.equal(aItems.length, 2, "Number of suggestions correct");
+				assert.equal(aItems[0].getText(), "a", "First suggestion item correct");
+				assert.equal(aItems[1].getText(), "b", "Second suggestion item correct");
 			});
 		});
 
@@ -512,7 +512,7 @@
 
 			var bEventHandlerCalled = false;
 			var handler = function(oControlEvent){
-				equals(oControlEvent.getParameter("query"), "", "Value of search event is empty:");
+				assert.equal(oControlEvent.getParameter("query"), "", "Value of search event is empty:");
 				bEventHandlerCalled = true;
 			};
 			oSearch11.attachSearch(handler);

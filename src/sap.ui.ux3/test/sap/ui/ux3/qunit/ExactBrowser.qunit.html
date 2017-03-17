@@ -78,17 +78,17 @@
 				if(!sAttId){
 					assert.ok(!oControlEvent.getParameter("attribute"), "No selected attribute:");
 				}else{
-					equals(oControlEvent.getParameter("attribute").getId(), sAttId, "Id of (de-)selected attribute:");
-					equals(oControlEvent.getParameter("attribute").getSelected(), bSelected, "Selection state of selected attribute:");
+					assert.equal(oControlEvent.getParameter("attribute").getId(), sAttId, "Id of (de-)selected attribute:");
+					assert.equal(oControlEvent.getParameter("attribute").getSelected(), bSelected, "Selection state of selected attribute:");
 				}
-				equals(oControlEvent.getParameter("allAttributes").length, iTotalSelectedAtts, "Number of selected attributes (Event):");
-				equals(calculateSelectionCount(oExactBrowser1._attributeRoot), iTotalSelectedAtts, "Number of selected attributes (Attributes):");
+				assert.equal(oControlEvent.getParameter("allAttributes").length, iTotalSelectedAtts, "Number of selected attributes (Event):");
+				assert.equal(calculateSelectionCount(oExactBrowser1._attributeRoot), iTotalSelectedAtts, "Number of selected attributes (Attributes):");
 
 				setTimeout(function(){
 					var aSubLists = oExactBrowser1._rootList.getSubLists();
-					equals(aSubLists.length, aVisibleFirstLevelLists.length, "Number of visible 1st level lists:");
+					assert.equal(aSubLists.length, aVisibleFirstLevelLists.length, "Number of visible 1st level lists:");
 					for(var i=0; i<aVisibleFirstLevelLists.length; i++){
-						equals(aSubLists[i].getData(), aVisibleFirstLevelLists[i], "List at position "+i+":");
+						assert.equal(aSubLists[i].getData(), aVisibleFirstLevelLists[i], "List at position "+i+":");
 					}
 					start();
 				}, 1000);
@@ -145,20 +145,20 @@
 		});
 
 		QUnit.test("Aggregation 'attributes'", function(assert) {
-			equals(oExactBrowser2.getAttributes().length, 0, "Initial number of attributes");
+			assert.equal(oExactBrowser2.getAttributes().length, 0, "Initial number of attributes");
 			oExactBrowser2.addAttribute(new sap.ui.ux3.ExactAttribute("aggtest1"));
-			equals(oExactBrowser2.getAttributes().length, 1, "Number of attributes after add");
+			assert.equal(oExactBrowser2.getAttributes().length, 1, "Number of attributes after add");
 			oExactBrowser2.insertAttribute(new sap.ui.ux3.ExactAttribute("aggtest2"), 0);
-			equals(oExactBrowser2.getAttributes().length, 2, "Number of attributes after insert");
-			equals(oExactBrowser2.getAttributes()[0].getId(), "aggtest2", "First Attribute");
-			equals(oExactBrowser2.getAttributes()[1].getId(), "aggtest1", "Second Attribute");
+			assert.equal(oExactBrowser2.getAttributes().length, 2, "Number of attributes after insert");
+			assert.equal(oExactBrowser2.getAttributes()[0].getId(), "aggtest2", "First Attribute");
+			assert.equal(oExactBrowser2.getAttributes()[1].getId(), "aggtest1", "Second Attribute");
 			var oAttAt0 = oExactBrowser2.removeAttribute(0);
 			oAttAt0.destroy();
-			equals(oExactBrowser2.getAttributes().length, 1, "Number of attributes after remove");
-			equals(oExactBrowser2.getAttributes()[0].getId(), "aggtest1", "First Attribute");
+			assert.equal(oExactBrowser2.getAttributes().length, 1, "Number of attributes after remove");
+			assert.equal(oExactBrowser2.getAttributes()[0].getId(), "aggtest1", "First Attribute");
 			var aAttRest = oExactBrowser2.removeAllAttributes();
 			jQuery.each(aAttRest, function(i,$) { $.destroy();});
-			equals(oExactBrowser2.getAttributes().length, 0, "Number of attributes after removeAll");
+			assert.equal(oExactBrowser2.getAttributes().length, 0, "Number of attributes after removeAll");
 		});
 
 		QUnit.module("Visual appearence");
@@ -195,16 +195,16 @@
 		QUnit.module("List Interaction");
 
 		QUnit.test("Initial State", function(assert) {
-			equals(oExactBrowser1.getAttributes().length, 4, "Number of top level attributes:");
+			assert.equal(oExactBrowser1.getAttributes().length, 4, "Number of top level attributes:");
 			var aSubLists = oExactBrowser1._rootList.getSubLists();
-			equals(aSubLists.length, 2, "Number of visible 1st level lists:");
-			equals(aSubLists[0].getData(), "att1", "List at position 0:");
-			equals(aSubLists[1].getData(), "att2", "List at position 1:");
+			assert.equal(aSubLists.length, 2, "Number of visible 1st level lists:");
+			assert.equal(aSubLists[0].getData(), "att1", "List at position 0:");
+			assert.equal(aSubLists[1].getData(), "att2", "List at position 1:");
 			for(var i=0; i<aSubLists.length; i++){
 				var aSubSubLists = aSubLists[i].getSubLists();
 				if(i==0){
 					assert.ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
-					equals(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
+					assert.equal(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
 				}else{
 					assert.ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
 				}
@@ -227,8 +227,8 @@
 				setTimeout(function(){
 					start();
 					var aSubLists = oExactBrowser1._rootList.getSubLists();
-					equals(aSubLists.length, 0, "Number of visible 1st level lists after API reset:");
-					equals(calculateSelectionCount(oExactBrowser1._attributeRoot), 0, "Number of selected attributes (Attributes) after API reset:");
+					assert.equal(aSubLists.length, 0, "Number of visible 1st level lists after API reset:");
+					assert.equal(calculateSelectionCount(oExactBrowser1._attributeRoot), 0, "Number of selected attributes (Attributes) after API reset:");
 				}, 1000);
 			}, 1000);
 
@@ -247,8 +247,8 @@
 					setTimeout(function(){
 						start();
 						var aSubLists = oExactBrowser1._rootList.getSubLists();
-						equals(aSubLists.length, 0, "Number of visible 1st level lists after API reset:");
-						equals(calculateSelectionCount(oExactBrowser1._attributeRoot), 0, "Number of selected attributes (Attributes) after API reset:");
+						assert.equal(aSubLists.length, 0, "Number of visible 1st level lists after API reset:");
+						assert.equal(calculateSelectionCount(oExactBrowser1._attributeRoot), 0, "Number of selected attributes (Attributes) after API reset:");
 					}, 1000);
 				}, 1000);
 			}, 1000);
@@ -413,9 +413,9 @@
 
 			setTimeout(function(){
 				start();
-				equals(calculateSelectionCount(oExactBrowser1._attributeRoot), 2, "Number of selected attributes (Attributes):");
+				assert.equal(calculateSelectionCount(oExactBrowser1._attributeRoot), 2, "Number of selected attributes (Attributes):");
 				var aSubLists = oExactBrowser1._rootList.getSubLists();
-				equals(aSubLists.length, 1, "Number of visible 1st level lists:");
+				assert.equal(aSubLists.length, 1, "Number of visible 1st level lists:");
 			}, 1000);
 		});
 
@@ -426,9 +426,9 @@
 
 			setTimeout(function(){
 				start();
-				equals(calculateSelectionCount(oExactBrowser1._attributeRoot), 0, "Number of selected attributes (Attributes):");
+				assert.equal(calculateSelectionCount(oExactBrowser1._attributeRoot), 0, "Number of selected attributes (Attributes):");
 				var aSubLists = oExactBrowser1._rootList.getSubLists();
-				equals(aSubLists.length, 0, "Number of visible 1st level lists:");
+				assert.equal(aSubLists.length, 0, "Number of visible 1st level lists:");
 			}, 1000);
 		});
 
@@ -556,7 +556,7 @@
 			oExactBrowser1.destroy();
 			oExactBrowser2.destroy();
 			oExactBrowser3.destroy();
-			equals(fnGetElementIds().length, aElementsBefore.length, "Number of controls after destroy must match number before creation");
+			assert.equal(fnGetElementIds().length, aElementsBefore.length, "Number of controls after destroy must match number before creation");
 		});
 
 	</script>

@@ -62,7 +62,7 @@
 			QUnit.module("Appearance");
 
 			QUnit.test("OverlayContainer exists", function (assert) {
-				equals(true, true, "...");
+				assert.equal(true, true, "...");
 				var oDomRef = jQuery.sap.domById(oOverlayContainer.getId());
 				assert.ok(oDomRef, "Rendered OverlayContainer should exist in the page");
 				assert.equal(oDomRef.className, "sapUiUx3OC sapUiUx3Overlay", "Rendered OverlayContainer should have the classes 'sapUiUx3OC' and 'sapUiUx3Overlay'");

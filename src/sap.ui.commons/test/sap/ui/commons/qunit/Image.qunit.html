@@ -113,8 +113,8 @@
 		QUnit.test("Offset Dimensions", function(assert) {
 			// test the initial dimensions
 			var oDomRef = jQuery.sap.domById("i1");
-			equals(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
-			equals(oDomRef.offsetHeight, parseInt(i1.getHeight()), "i1.offsetHeight should equal parseInt(i1.getHeight())");
+			assert.equal(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
+			assert.equal(oDomRef.offsetHeight, parseInt(i1.getHeight()), "i1.offsetHeight should equal parseInt(i1.getHeight())");
 		});
 
 
@@ -123,8 +123,8 @@
 			var oImage = jQuery.sap.byId("imageNoSourceNoHeight");
 			assert.ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSourceNoHeight has the right class 'sapUiImgNoSource' set");
 			var oDomRef = jQuery.sap.domById("imageNoSourceNoHeight");
-			equals(oDomRef.offsetWidth, 0, "imageNoSourceNoHeight has the right width of 0px");
-			equals(oDomRef.offsetHeight, 0, "imageNoSourceNoHeight has the right height of 0px");
+			assert.equal(oDomRef.offsetWidth, 0, "imageNoSourceNoHeight has the right width of 0px");
+			assert.equal(oDomRef.offsetHeight, 0, "imageNoSourceNoHeight has the right height of 0px");
 		});
 
 
@@ -133,8 +133,8 @@
 			var oImage = jQuery.sap.byId("imageNoSource");
 			assert.ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSource has the right class 'sapUiImgNoSource' set");
 			var oDomRef = jQuery.sap.domById("imageNoSource");
-			equals(oDomRef.offsetWidth, 100, "imageNoSource has the right width of 100px");
-			equals(oDomRef.offsetHeight, 100, "imageNoSource has the right height of 100px");
+			assert.equal(oDomRef.offsetWidth, 100, "imageNoSource has the right width of 100px");
+			assert.equal(oDomRef.offsetHeight, 100, "imageNoSource has the right height of 100px");
 		});
 
 		QUnit.test("Dimension Changes", function(assert) {
@@ -145,8 +145,8 @@
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
 				oDomRef = window.document.getElementById("i2");
-				equals(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
-				equals(oDomRef.offsetHeight, 292, "i2.offsetHeight should equal 292");
+				assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
+				assert.equal(oDomRef.offsetHeight, 292, "i2.offsetHeight should equal 292");
 				done();
 			}, 10);
 		});
@@ -159,8 +159,8 @@
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
 				oDomRef = window.document.getElementById("i2");
-				equals(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
-				equals(oDomRef.offsetHeight, 144, "i2.offsetHeight should equal 144");
+				assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
+				assert.equal(oDomRef.offsetHeight, 144, "i2.offsetHeight should equal 144");
 				done();
 			}, 10);
 		});
@@ -173,8 +173,8 @@
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
 				oDomRef = window.document.getElementById("i2");
-				equals(oDomRef.offsetWidth, 73, "i2.offsetWidth should equal 73");
-				equals(oDomRef.offsetHeight, 36, "i2.offsetHeight should equal 36");
+				assert.equal(oDomRef.offsetWidth, 73, "i2.offsetWidth should equal 73");
+				assert.equal(oDomRef.offsetHeight, 36, "i2.offsetHeight should equal 36");
 				done();
 			}, 10);
 		});

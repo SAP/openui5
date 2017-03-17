@@ -86,29 +86,29 @@
 
 	QUnit.test("Default Values", function(assert) {
 		var oRating = oRatings["oRating1"];
-		equals(oRating.getValue(), 0, "Default 'value':");
-		equals(oRating.getAverageValue(), 0, "Default 'averageValue':");
-		equals(oRating.getMaxValue(), 5, "Default 'maxValue':");
-		equals(oRating.getVisible(), true, "Default 'visible':");
-		equals(oRating.getEditable(), true, "Default 'editable':");
-		equals(oRating.getIconSelected(), "", "Default 'iconSelected':");
-		equals(oRating.getIconUnselected(), "", "Default 'iconUnselected':");
-		equals(oRating.getIconHovered(), "", "Default 'iconHovered':");
-		equals(oRating.getVisualMode(), "Half", "Default 'visualMode':");
-		equals(oRating.getTooltip(), null, "Default 'tooltip':");
+		assert.equal(oRating.getValue(), 0, "Default 'value':");
+		assert.equal(oRating.getAverageValue(), 0, "Default 'averageValue':");
+		assert.equal(oRating.getMaxValue(), 5, "Default 'maxValue':");
+		assert.equal(oRating.getVisible(), true, "Default 'visible':");
+		assert.equal(oRating.getEditable(), true, "Default 'editable':");
+		assert.equal(oRating.getIconSelected(), "", "Default 'iconSelected':");
+		assert.equal(oRating.getIconUnselected(), "", "Default 'iconUnselected':");
+		assert.equal(oRating.getIconHovered(), "", "Default 'iconHovered':");
+		assert.equal(oRating.getVisualMode(), "Half", "Default 'visualMode':");
+		assert.equal(oRating.getTooltip(), null, "Default 'tooltip':");
 	 });
 
 	QUnit.test("Custom Values", function(assert) {
 		var oRating = oRatings["oRating2"];
-		equals(oRating.getValue(), 3, "Custom 'value':");
-		equals(oRating.getMaxValue(), 6, "Custom 'maxValue':");
-		equals(oRating.getVisible(), true, "Custom 'visible':");
-		equals(oRating.getEditable(), false, "Custom 'editable':");
-		equals(oRating.getIconSelected(), "../images/rating/star_selected.png", "Custom 'iconSelected':");
-		equals(oRating.getIconUnselected(), "../images/rating/star_unselected.png", "Custom 'iconUnselected':");
-		equals(oRating.getIconHovered(), "../images/rating/star_hover.png", "Custom 'iconHovered':");
-		equals(oRating.getVisualMode(), "Half", "Custom 'visualMode':");
-		equals(oRatings["oRating4"].getTooltip(), "Custom Tooltip", "Custom 'tooltip':");
+		assert.equal(oRating.getValue(), 3, "Custom 'value':");
+		assert.equal(oRating.getMaxValue(), 6, "Custom 'maxValue':");
+		assert.equal(oRating.getVisible(), true, "Custom 'visible':");
+		assert.equal(oRating.getEditable(), false, "Custom 'editable':");
+		assert.equal(oRating.getIconSelected(), "../images/rating/star_selected.png", "Custom 'iconSelected':");
+		assert.equal(oRating.getIconUnselected(), "../images/rating/star_unselected.png", "Custom 'iconUnselected':");
+		assert.equal(oRating.getIconHovered(), "../images/rating/star_hover.png", "Custom 'iconHovered':");
+		assert.equal(oRating.getVisualMode(), "Half", "Custom 'visualMode':");
+		assert.equal(oRatings["oRating4"].getTooltip(), "Custom Tooltip", "Custom 'tooltip':");
 	});
 
 
@@ -122,19 +122,19 @@
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_LEFT");
 		qutils.triggerKeyboardEvent("oRating1", "SPACE");
-		equals(oRating.getValue(), 2, "Value after saved keyboard input:");
+		assert.equal(oRating.getValue(), 2, "Value after saved keyboard input:");
 
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oRating1", "ESCAPE");
-		equals(oRating.getValue(), 2, "Value after reset keyboard input:");
+		assert.equal(oRating.getValue(), 2, "Value after reset keyboard input:");
 
 		qutils.triggerKeyboardEvent("oRating1", "END");
 		qutils.triggerKeyboardEvent("oRating1", "SPACE");
-		equals(oRating.getValue(), oRating.getMaxValue(), "Value after saved keyboard input:");
+		assert.equal(oRating.getValue(), oRating.getMaxValue(), "Value after saved keyboard input:");
 
 		qutils.triggerKeyboardEvent("oRating1", "HOME");
 		qutils.triggerKeyboardEvent("oRating1", "SPACE");
-		equals(oRating.getValue(), 1, "Value after saved keyboard input:");
+		assert.equal(oRating.getValue(), 1, "Value after saved keyboard input:");
 
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
@@ -143,20 +143,20 @@
 		var oEvent = jQuery.Event("focusout");
 		oEvent.target = oRating.getDomRef();
 		oRating.onfocusout(oEvent);
-		equals(oRating.getValue(), 2, "Value after saved keyboard input:");
+		assert.equal(oRating.getValue(), 2, "Value after saved keyboard input:");
 	});
 
 	QUnit.test("Click", function(assert) {
 		var oRating = oRatings["oRating1"];
 		qutils.triggerEvent("click", "oRating1-itm-3");
-		equals(oRating.getValue(), 3, "Value after click:");
+		assert.equal(oRating.getValue(), 3, "Value after click:");
 	});
 
 	QUnit.test("Change Event - Keyboard SPACE", function(assert) {
 		var done = assert.async();
 		var oRating = oRatings["oRating1"];
 		var handler = function(oControlEvent){
-			equals(oControlEvent.getParameter("value"), 4, "Value of change event after keyboard SPACE:");
+			assert.equal(oControlEvent.getParameter("value"), 4, "Value of change event after keyboard SPACE:");
 			oRating.detachChange(handler);
 			done();
 		};
@@ -170,7 +170,7 @@
 		var done = assert.async();
 		var oRating = oRatings["oRating1"];
 		var handler = function(oControlEvent){
-			equals(oControlEvent.getParameter("value"), 3, "Value of change event after keyboard BLUR:");
+			assert.equal(oControlEvent.getParameter("value"), 3, "Value of change event after keyboard BLUR:");
 			oRating.detachChange(handler);
 			done();
 		};
@@ -186,7 +186,7 @@
 		var done = assert.async();
 		var oRating = oRatings["oRating1"];
 		var handler = function(oControlEvent){
-			equals(oControlEvent.getParameter("value"), 4, "Value of change event after click:");
+			assert.equal(oControlEvent.getParameter("value"), 4, "Value of change event after click:");
 			oRating.detachChange(handler);
 			done();
 		};
@@ -208,19 +208,19 @@
 	QUnit.module("Visual Appearence");
 
 	QUnit.test("Visibility", function(assert) {
-		equals(jQuery("#oRating3").get(0), undefined, "Invisible:");
+		assert.equal(jQuery("#oRating3").get(0), undefined, "Invisible:");
 		assert.ok(jQuery("#oRating1").get(0), "Visible: expected defined");
 	});
 
 	QUnit.test("#Symbols", function(assert) {
-		equals(jQuery("#oRating1").children().size(), 5, "#Symbols:");
-		equals(jQuery("#oRating2").children().size(), oRatings["oRating2"].getMaxValue(), "#Symbols:");
+		assert.equal(jQuery("#oRating1").children().size(), 5, "#Symbols:");
+		assert.equal(jQuery("#oRating2").children().size(), oRatings["oRating2"].getMaxValue(), "#Symbols:");
 	});
 
 	QUnit.test("ItemValue Properties", function(assert) {
 		var oSymbols = jQuery("#oRating1").children();
 		oSymbols.each(function(index){
-			equals(jQuery(this).attr("itemvalue"), ""+(index+1), "Item Value of item "+(index+1)+":");
+			assert.equal(jQuery(this).attr("itemvalue"), ""+(index+1), "Item Value of item "+(index+1)+":");
 		});
 	});
 
@@ -228,7 +228,7 @@
 		var oSymbols = jQuery("#oRating4").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
-			equals(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			assert.equal(oChilds.size(), 2, "# DOM Childs of Symbol:");
 			var oOverflow = jQuery(oChilds.get(1));
 			var overflowStyle = oOverflow.attr("style");
 			if(index < 3) ok(overflowStyle.toLowerCase().indexOf("width: 0%") != -1 || overflowStyle.toLowerCase().indexOf("width:0%") != -1, "FULL - Overflow width of full selected symbol "+(index+1)+" ("+overflowStyle+"): expected 0%");
@@ -241,7 +241,7 @@
 		var oSymbols = jQuery("#oRating5").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
-			equals(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			assert.equal(oChilds.size(), 2, "# DOM Childs of Symbol:");
 			var oOverflow = jQuery(oChilds.get(1));
 			var overflowStyle = oOverflow.attr("style");
 			if(index < 3) ok(overflowStyle.toLowerCase().indexOf("width: 0%") != -1 || overflowStyle.toLowerCase().indexOf("width:0%") != -1, "HALF - Overflow width of full selected symbol "+(index+1)+" ("+overflowStyle+"): expected 0%");
@@ -254,7 +254,7 @@
 		var oSymbols = jQuery("#oRating6").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
-			equals(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			assert.equal(oChilds.size(), 2, "# DOM Childs of Symbol:");
 			var oOverflow = jQuery(oChilds.get(1));
 			var overflowStyle = oOverflow.attr("style");
 			if(index < 3) ok(overflowStyle.toLowerCase().indexOf("width: 0%") != -1 || overflowStyle.toLowerCase().indexOf("width:0%") != -1, "CONT - Overflow width of full selected symbol "+(index+1)+" ("+overflowStyle+"): expected 0%");
@@ -267,13 +267,13 @@
 		qutils.triggerEvent("mouseover", "oRating1-itm-4");
 		var oSymbols = jQuery("#oRating1").children();
 		oSymbols.each(function(index){
-			equals(jQuery(this).hasClass("sapUiRatingItmHov"), true, "HOVER: Symbol "+(index+1)+" hovered:");
+			assert.equal(jQuery(this).hasClass("sapUiRatingItmHov"), true, "HOVER: Symbol "+(index+1)+" hovered:");
 			assert.ok(jQuery.sap.endsWith(jQuery(this).children("img").attr("src"), index<4 ? "hover.png" : "unselected.png"), "HOVER: Correct Hover Symbol for "+(index+1)+": "+jQuery(this).children("img").attr("src"));
 		});
 		qutils.triggerEvent("mouseout", "oRating1-itm-4");
 		oSymbols = jQuery("#oRating1").children();
 		oSymbols.each(function(index){
-			equals(jQuery(this).hasClass("sapUiRatingItmHov"), false, "UNHOVER: Symbol "+(index+1)+" not hovered:");
+			assert.equal(jQuery(this).hasClass("sapUiRatingItmHov"), false, "UNHOVER: Symbol "+(index+1)+" not hovered:");
 		});
 	});
 
@@ -281,14 +281,14 @@
 		var oSymbols = jQuery("#oRating6").children();
 		oSymbols.each(function(index){
 			var oSymbol = jQuery(this);
-			equals(oSymbol.children("img").attr("src"), "../images/rating/star_selected.png", "Custom icon set on symbol "+(index+1)+":");
+			assert.equal(oSymbol.children("img").attr("src"), "../images/rating/star_selected.png", "Custom icon set on symbol "+(index+1)+":");
 			var oOverflow = jQuery(oSymbol.children().get(1));
-			equals(oOverflow.children("img").attr("src"), "../images/rating/star_unselected.png", "Custom icon set on symbol overflow "+(index+1)+":");
+			assert.equal(oOverflow.children("img").attr("src"), "../images/rating/star_unselected.png", "Custom icon set on symbol overflow "+(index+1)+":");
 		});
 
 		qutils.triggerEvent("mouseover", "oRating6-itm-1");
 		var oSymbol = jQuery("#oRating6-itm-1");
-		equals(oSymbol.children("img").attr("src"), "../images/rating/star_hover.png", "Custom hover icon set on symbol 1:");
+		assert.equal(oSymbol.children("img").attr("src"), "../images/rating/star_hover.png", "Custom hover icon set on symbol 1:");
 		qutils.triggerEvent("mouseout", "oRating6-itm-1");
 	});
 
@@ -298,11 +298,11 @@
 			return !sValue ? "" : sValue;
 		};
 		var checkTooltip = function(sControlId, sText, sExpectedOnRoot, fExpectedOnSymbolCallback){
-			equals(attr(jQuery("#"+sControlId), "title"), sExpectedOnRoot, sText+" on root tag:");
+			assert.equal(attr(jQuery("#"+sControlId), "title"), sExpectedOnRoot, sText+" on root tag:");
 			var oSymbols = jQuery("#"+sControlId).children();
 			oSymbols.each(function(index){
 				var oSymbol = jQuery(this);
-				equals(attr(oSymbol, "title"), fExpectedOnSymbolCallback(oRatings[sControlId], index, oSymbol) , sText+" on symbol tag "+(index+1)+":");
+				assert.equal(attr(oSymbol, "title"), fExpectedOnSymbolCallback(oRatings[sControlId], index, oSymbol) , sText+" on symbol tag "+(index+1)+":");
 			});
 		};
 

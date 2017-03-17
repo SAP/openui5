@@ -361,7 +361,7 @@
 
 			assert.equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after remove of 5.Tab :");
 			assert.ok(!jQuery("#tab4").get(0), "1.Tab is Invisible: expected undefined");
-			equals(oTabStrip1.getTabs().length, 4, "Only 4 tabs assigned to TabStrip");
+			assert.equal(oTabStrip1.getTabs().length, 4, "Only 4 tabs assigned to TabStrip");
 			var bFound = false;
 			for(var i = 1; i  < oTabStrip1.getTabs().length; i++){
 				if(oTabStrip1.getTabs()[i] == oTab4){

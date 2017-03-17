@@ -151,23 +151,23 @@
 				}
 
 				var ws = new sap.ui.core.ws.WebSocket("ws://localhost:3001");
-				equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CONNECTING, "readyState is CONNECTING");
+				assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.CONNECTING, "readyState is CONNECTING");
 
 				ws.send("foo");
 
 				ws.attachOpen(function() {
-					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.OPEN, "readyState is OPEN");
+					assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.OPEN, "readyState is OPEN");
 				});
 
 				ws.attachMessage(function(oEvent) {
-					equals(oEvent.getParameter("data"), "foo", "Correct message received.");
+					assert.equal(oEvent.getParameter("data"), "foo", "Correct message received.");
 
 					ws.close();
-					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSING, "readyState is CLOSING");
+					assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSING, "readyState is CLOSING");
 				});
 
 				ws.attachClose(function() {
-					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
+					assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
 
 					done();
 				});
@@ -192,7 +192,7 @@
 				ws.send("foo");
 
 				ws.attachMessage(function(oEvent) {
-					equals(oEvent.getParameter("data"), "foo", "Correct message received.");
+					assert.equal(oEvent.getParameter("data"), "foo", "Correct message received.");
 
 					ws.close();
 					done();
@@ -219,12 +219,12 @@
 
 				ws.attachClose(function(oEvent) {
 
-					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
+					assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
 
 					// check close event parameters
-					equals(oEvent.getParameter("code"), 1000, "Correct error code");
-					equals(oEvent.getParameter("reason"), "closed from server", "Correct error reason");
-					equals(oEvent.getParameter("wasClean"), true, "Correct wasClean flag");
+					assert.equal(oEvent.getParameter("code"), 1000, "Correct error code");
+					assert.equal(oEvent.getParameter("reason"), "closed from server", "Correct error reason");
+					assert.equal(oEvent.getParameter("wasClean"), true, "Correct wasClean flag");
 
 					done();
 				});
@@ -246,7 +246,7 @@
 				var ws = new sap.ui.core.ws.WebSocket("ws://localhost:3001", "my-protocol");
 
 				ws.attachOpen(function(oEvent) {
-					equals(ws.getProtocol(), "my-protocol", "protocol is correct");
+					assert.equal(ws.getProtocol(), "my-protocol", "protocol is correct");
 					done();
 				});
 

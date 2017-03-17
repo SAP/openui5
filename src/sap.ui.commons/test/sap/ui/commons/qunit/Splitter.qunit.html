@@ -80,18 +80,18 @@
         oSplitter = sap.ui.getCore().getControl("mySplitter");
         oSplitter1 = sap.ui.getCore().getControl("mySplitter2");
         QUnit.test("basic splitter examples", function(assert) {
-	        equals( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
-	        equals( oSplitter.getSplitterPosition(), "15%", "We expect value to be 15%" );
-	        equals( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
-	        equals( oSplitter.getMinSizeSecondPane(), "0%", "We expect value to be 0%" );
-	        equals( oSplitter.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter.getHeight(), "300px", "We expect value to be 300px" );
-	        equals( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
-	        equals( oSplitter1.getSplitterPosition(), "50%", "We expect value to be 50%" );
-	        equals( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
-	        equals( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
-	        equals( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
+	        assert.equal( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
+	        assert.equal( oSplitter.getSplitterPosition(), "15%", "We expect value to be 15%" );
+	        assert.equal( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
+	        assert.equal( oSplitter.getMinSizeSecondPane(), "0%", "We expect value to be 0%" );
+	        assert.equal( oSplitter.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter.getHeight(), "300px", "We expect value to be 300px" );
+	        assert.equal( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
+	        assert.equal( oSplitter1.getSplitterPosition(), "50%", "We expect value to be 50%" );
+	        assert.equal( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
+	        assert.equal( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
+	        assert.equal( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
       	});
 
        QUnit.test("resize splitter bar1", function(assert) {
@@ -105,19 +105,19 @@
     	   // check if ghost bar is there
     	   var ghost = jQuery.sap.domById(oSplitter.getId() + "_ghost");
     	   assert.ok(ghost, "Ghost bar check");
-    	   equals(ghost.offsetLeft, pageX, "Ghost bar X position");
-    	   equals(ghost.offsetTop, pageY, "Ghost bar Y position");
+    	   assert.equal(ghost.offsetLeft, pageX, "Ghost bar X position");
+    	   assert.equal(ghost.offsetTop, pageY, "Ghost bar Y position");
     	   qutils.triggerMouseEvent(oSplitter.splitterBar, "mouseup", 1, 1, pageX, pageY );
     	   // check if ghost bar is removed again
     	   var ghost = jQuery.sap.domById(oSplitter.getId() + "_ghost");
-    	   equals(ghost, null, "Ghost bar check");
+    	   assert.equal(ghost, null, "Ghost bar check");
     	   // check splitter pos
-    	   	equals( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
-	        equals( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "updated splitter pos " );
-	        equals( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
-	        equals( oSplitter.getMinSizeSecondPane(), "0%", "We expect value to be 0%" );
-	        equals( oSplitter.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter.getHeight(), "300px", "We expect value to be 300px" );
+    	   	assert.equal( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
+	        assert.equal( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "updated splitter pos " );
+	        assert.equal( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
+	        assert.equal( oSplitter.getMinSizeSecondPane(), "0%", "We expect value to be 0%" );
+	        assert.equal( oSplitter.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter.getHeight(), "300px", "We expect value to be 300px" );
 	    	assert.ok(oldPosPercent < oSplitter.sBarPosition, "bar position comparison");
 	    	assert.ok(oldWidthFP < jQuery(oSplitter.firstPane).width(), "pane width comparison");
 	    	assert.ok(oldWidthSP > jQuery(oSplitter.secondPane).width(), "pane width comparison");
@@ -134,19 +134,19 @@
     	   // check if ghost bar is there
     	   var ghost = jQuery.sap.domById(oSplitter1.getId() + "_ghost");
     	   assert.ok(ghost, "Ghost bar check");
-    	   equals(ghost.offsetLeft, pageX, "Ghost bar X position");
-    	   equals(ghost.offsetTop, pageY, "Ghost bar Y position");
+    	   assert.equal(ghost.offsetLeft, pageX, "Ghost bar X position");
+    	   assert.equal(ghost.offsetTop, pageY, "Ghost bar Y position");
     	   qutils.triggerMouseEvent(oSplitter1.splitterBar, "mouseup", 1, 1, pageX, pageY );
     	   // check if ghost bar is removed again
     	   var ghost = jQuery.sap.domById(oSplitter1.getId() + "_ghost");
-    	   equals(ghost, null, "Ghost bar check");
+    	   assert.equal(ghost, null, "Ghost bar check");
     	   // check splitter pos
-	        equals( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "updated splitter pos " );
-	        equals( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
-	        equals( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
-	        equals( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
-	        equals( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
+	        assert.equal( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "updated splitter pos " );
+	        assert.equal( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
+	        assert.equal( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
+	        assert.equal( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
+	        assert.equal( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
 	    	assert.ok(oldPosPercent > oSplitter1.sBarPosition, "bar position comparison");
 	    	assert.ok(oldHeightFP > jQuery(oSplitter1.firstPane).height(), "pane height comparison");
 	    	assert.ok(oldHeightSP < jQuery(oSplitter1.secondPane).height(), "pane height comparison");
@@ -160,19 +160,19 @@
     	   // check if ghost bar is there
     	   var ghost = jQuery.sap.domById(oSplitter1.getId() + "_ghost");
     	   assert.ok(ghost, "Ghost bar check");
-    	   equals(ghost.offsetLeft, pageX, "Ghost bar X position");
-    	   equals(ghost.offsetTop, pageY-300, "Ghost bar Y position");
+    	   assert.equal(ghost.offsetLeft, pageX, "Ghost bar X position");
+    	   assert.equal(ghost.offsetTop, pageY-300, "Ghost bar Y position");
     	   qutils.triggerMouseEvent(oSplitter1.splitterBar, "mouseup", 1, 1, pageX, pageY );
     	   // check if ghost bar is removed again
     	   var ghost = jQuery.sap.domById(oSplitter1.getId() + "_ghost");
-    	   equals(ghost, null, "Ghost bar check");
-	        equals( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
-	        equals( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
-	        equals( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
-	        equals( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
+    	   assert.equal(ghost, null, "Ghost bar check");
+	        assert.equal( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
+	        assert.equal( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
+	        assert.equal( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
+	        assert.equal( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
     	   // check splitter pos should be 100 - min size second pane
-	        equals( oSplitter1.getSplitterPosition(), "60%", "updated splitter pos" );
+	        assert.equal( oSplitter1.getSplitterPosition(), "60%", "updated splitter pos" );
        });
 
        QUnit.test("hide splitter bar", function(assert) {
@@ -184,12 +184,12 @@
     	   assert.ok(!oSplitter.getSplitterBarVisible(), "splitter bar invisible");
 
     	   // check splitter pos
-    	   	equals( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
-	        equals( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "updated splitter pos " );
-	        equals( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
-	        equals( oSplitter.getMinSizeSecondPane(), "0%", "We expect value to be 0%" );
-	        equals( oSplitter.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter.getHeight(), "300px", "We expect value to be 300px" );
+    	   	assert.equal( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
+	        assert.equal( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "updated splitter pos " );
+	        assert.equal( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
+	        assert.equal( oSplitter.getMinSizeSecondPane(), "0%", "We expect value to be 0%" );
+	        assert.equal( oSplitter.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter.getHeight(), "300px", "We expect value to be 300px" );
 	    	assert.ok(oldPosPercent == oSplitter.sBarPosition, "bar position comparison");
 	    	assert.ok(oldWidthFP == jQuery(oSplitter.firstPane).width(), "pane width comparison");
 	    	assert.ok(oldWidthSP == jQuery(oSplitter.secondPane).width(), "pane width comparison");
@@ -198,12 +198,12 @@
 	    	assert.ok(oSplitter.getSplitterBarVisible(), "splitter bar visible");
 
 	    	   // check splitter pos
-    	   	equals( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
-	        equals( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "updated splitter pos " );
-	        equals( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
-	        equals( oSplitter.getMinSizeSecondPane(), "0%", "We expect value to be 0%" );
-	        equals( oSplitter.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter.getHeight(), "300px", "We expect value to be 300px" );
+    	   	assert.equal( oSplitter.getSplitterOrientation(), sap.ui.commons.Orientation.Vertical, "We expect value to be vertical" );
+	        assert.equal( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "updated splitter pos " );
+	        assert.equal( oSplitter.getMinSizeFirstPane(), "0%", "We expect value to be 0%" );
+	        assert.equal( oSplitter.getMinSizeSecondPane(), "0%", "We expect value to be 0%" );
+	        assert.equal( oSplitter.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter.getHeight(), "300px", "We expect value to be 300px" );
 	    	assert.ok(oldPosPercent == oSplitter.sBarPosition, "bar position comparison");
 	    	assert.ok(oldWidthFP == jQuery(oSplitter.firstPane).width(), "pane width comparison");
 	    	assert.ok(oldWidthSP == jQuery(oSplitter.secondPane).width(), "pane width comparison");
@@ -219,12 +219,12 @@
     	   assert.ok(!oSplitter.getSplitterBarVisible(), "splitter bar invisible");
 
     	   // check splitter pos
-	        equals( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "updated splitter pos " );
-	        equals( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
-	        equals( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
-	        equals( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
-	        equals( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
+	        assert.equal( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "updated splitter pos " );
+	        assert.equal( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
+	        assert.equal( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
+	        assert.equal( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
+	        assert.equal( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
 	    	assert.ok(oldPosPercent = oSplitter1.sBarPosition, "bar position comparison");
 	    	assert.ok(oldHeightFP = jQuery(oSplitter1.firstPane).height(), "pane height comparison");
 	    	assert.ok(oldHeightSP = jQuery(oSplitter1.secondPane).height(), "pane height comparison");
@@ -233,27 +233,27 @@
 	    	assert.ok(oSplitter.getSplitterBarVisible(), "splitter bar visible");
 
 	    	   // check splitter pos
-	        equals( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "updated splitter pos " );
-	        equals( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
-	        equals( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
-	        equals( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
-	        equals( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
-	        equals( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
+	        assert.equal( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "updated splitter pos " );
+	        assert.equal( oSplitter1.getSplitterOrientation(), sap.ui.commons.Orientation.Horizontal, "We expect value to be horizontal" );
+	        assert.equal( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
+	        assert.equal( oSplitter1.getMinSizeSecondPane(), "40%", "We expect value to be 40%" );
+	        assert.equal( oSplitter1.getWidth(), "100%", "We expect value to be 100%" );
+	        assert.equal( oSplitter1.getHeight(), "300px", "We expect value to be 300px" );
 	    	assert.ok(oldPosPercent = oSplitter1.sBarPosition, "bar position comparison");
 	    	assert.ok(oldHeightFP = jQuery(oSplitter1.firstPane).height(), "pane height comparison");
 	    	assert.ok(oldHeightSP = jQuery(oSplitter1.secondPane).height(), "pane height comparison");
        });
 
        QUnit.test("keyboard Home check splitterBar", function(assert) {
-    	   equals( oSplitter1.getSplitterPosition(), "60%", "current splitter pos" );
+    	   assert.equal( oSplitter1.getSplitterPosition(), "60%", "current splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.HOME, false, false, false);
-    	   equals( oSplitter1.getSplitterPosition(), "20%", "updated splitter pos" );
+    	   assert.equal( oSplitter1.getSplitterPosition(), "20%", "updated splitter pos" );
        });
 
        QUnit.test("keyboard End check splitterBar", function(assert) {
-    	   equals( oSplitter1.getSplitterPosition(), "20%", "current splitter pos" );
+    	   assert.equal( oSplitter1.getSplitterPosition(), "20%", "current splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.END, false, false, false);
-    	   equals( oSplitter1.getSplitterPosition(), "60%", "updated splitter pos" );
+    	   assert.equal( oSplitter1.getSplitterPosition(), "60%", "updated splitter pos" );
        });
 
        QUnit.test("keyboard shift left right check splitterBar", function(assert) {
@@ -262,22 +262,22 @@
     	   var oldPosPercent = oSplitter.sBarPosition;
     	   var oldWidthFP = jQuery(oSplitter.firstPane).width();
     	   var oldWidthSP = jQuery(oSplitter.secondPane).width();
-    	   equals( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "current splitter pos" );
+    	   assert.equal( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "current splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter.splitterBar, jQuery.sap.KeyCodes.ARROW_LEFT, true, false, false);
     	   newPos = jQuery(oSplitter.splitterBar).offset().left;
-    	   equals( Math.round(oldPos - newPos), 10, "updated splitter pos" );
+    	   assert.equal( Math.round(oldPos - newPos), 10, "updated splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter.splitterBar, jQuery.sap.KeyCodes.ARROW_LEFT, true, false, false);
     	   newPos = jQuery(oSplitter.splitterBar).offset().left;
-    	   equals( Math.round(oldPos - newPos), 20, "updated splitter pos" );
+    	   assert.equal( Math.round(oldPos - newPos), 20, "updated splitter pos" );
     	   assert.ok(oldPosPercent > oSplitter.sBarPosition, "bar position comparison");
     	   assert.ok(oldWidthFP > jQuery(oSplitter.firstPane).width(), "pane width comparison");
     	   assert.ok(oldWidthSP < jQuery(oSplitter.secondPane).width(), "pane width comparison");
     	   qutils.triggerKeyboardEvent(oSplitter.splitterBar, jQuery.sap.KeyCodes.ARROW_RIGHT, true, false, false);
     	   newPos = jQuery(oSplitter.splitterBar).offset().left;
-    	   equals( Math.round(oldPos - newPos), 10, "updated splitter pos" );
+    	   assert.equal( Math.round(oldPos - newPos), 10, "updated splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter.splitterBar, jQuery.sap.KeyCodes.ARROW_RIGHT, true, false, false);
     	   newPos = jQuery(oSplitter.splitterBar).offset().left;
-    	   equals( Math.round(oldPos - newPos), 0, "updated splitter pos" );
+    	   assert.equal( Math.round(oldPos - newPos), 0, "updated splitter pos" );
        });
 
        QUnit.test("keyboard shift up down check splitterBar", function(assert) {
@@ -286,22 +286,22 @@
     	   var oldPosPercent = oSplitter1.sBarPosition;
     	   var oldHeightFP = jQuery(oSplitter1.firstPane).height();
     	   var oldHeightSP = jQuery(oSplitter1.secondPane).height();
-    	   equals( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "current splitter pos" );
+    	   assert.equal( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "current splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
     	   newPos = jQuery(oSplitter1.splitterBar).offset().top;
-    	   equals( Math.round(oldPos - newPos), 10, "updated splitter pos" );
+    	   assert.equal( Math.round(oldPos - newPos), 10, "updated splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
     	   newPos = jQuery(oSplitter1.splitterBar).offset().top;
-    	   equals( Math.round(oldPos - newPos), 20, "updated splitter pos" );
+    	   assert.equal( Math.round(oldPos - newPos), 20, "updated splitter pos" );
     	   assert.ok(oldPosPercent > oSplitter1.sBarPosition, "bar position comparison");
     	   assert.ok(oldHeightFP > jQuery(oSplitter1.firstPane).height(), "pane height comparison");
     	   assert.ok(oldHeightSP < jQuery(oSplitter1.secondPane).height(), "pane height comparison");
     	   qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
     	   newPos = jQuery(oSplitter1.splitterBar).offset().top;
-    	   equals( Math.round(oldPos - newPos), 10, "updated splitter pos" );
+    	   assert.equal( Math.round(oldPos - newPos), 10, "updated splitter pos" );
     	   qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
     	   newPos = jQuery(oSplitter1.splitterBar).offset().top;
-    	   equals( Math.round(oldPos - newPos), 0, "updated splitter pos" );
+    	   assert.equal( Math.round(oldPos - newPos), 0, "updated splitter pos" );
        });
 
     </script>

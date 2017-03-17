@@ -132,21 +132,21 @@
             //Act
             result = jQuery(sut.getDomRef()).find(".sapMStdTileNumS .sapMStdTileNumM");
             //Assert
-            equals(result.length, 0);
+            assert.equal(result.length, 0);
 
             //Act
             sut.setNumber("7000000");
             core.applyChanges();
             result = jQuery(sut.getDomRef()).find(".sapMStdTileNumM");
             //Assert
-            equals(result.length, 1);
+            assert.equal(result.length, 1);
 
             //Act
             sut.setNumber("80000000");
             core.applyChanges();
             result = jQuery(sut.getDomRef()).find(".sapMStdTileNumS");
             //Assert
-            equals(result.length, 1);
+            assert.equal(result.length, 1);
 
             sut.destroy();
         });
@@ -176,7 +176,7 @@
 		QUnit.test("PressOk", function(assert) {
 			tileBasic.firePress();
 			jQuery.sap.log.info("Pressed tile id=" + pressedTileId);
-			equals(pressedTileId, tileBasicId, "tileBasic was pressed");
+			assert.equal(pressedTileId, tileBasicId, "tileBasic was pressed");
 		});
 
 		QUnit.test("ShouldDestroyTheImageIfTileGetsDestroyed", function(assert) {

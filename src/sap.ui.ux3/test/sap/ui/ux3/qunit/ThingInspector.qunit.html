@@ -181,7 +181,7 @@
 			var facet;
 
 			QUnit.test("ThingInspector exists", function(assert) {
-				equals(true, true, "...");
+				assert.equal(true, true, "...");
 				var oDomRef = jQuery.sap.domById(oThingInspector.getId());
 				assert.ok(oDomRef, "Rendered ThingInspector should exist in the page");
 				assert.equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");

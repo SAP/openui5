@@ -1214,7 +1214,7 @@
 				var sText = bRtl ? "(10) Text 1" : "Text 1 (10)";
 
 				assert.ok(oIconTabBar.$().find(".sapMITBCount").length == 0, '"counts" texts are not displayed');
-				equals(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text(), sText, "The count is attached to the text");
+				assert.equal(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text(), sText, "The count is attached to the text");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -1450,8 +1450,8 @@
 				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
 				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
 				assert.ok($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
-				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
-				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -1508,8 +1508,8 @@
 				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (last selected)");
 				assert.ok($itbh.hasClass("sapMITBNoScrollForward"), "Scroll forward arrow is not shown, (last selected)");
 				assert.ok($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (last selected)");
-				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "hidden", "Right arrow is not visible");
-				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "hidden", "Right arrow is not visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -1560,11 +1560,11 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
+				assert.equal(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
 				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (middle selected)");
 				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (middle selected)");
 				assert.ok($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (middle selected)");
-				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
-				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -1611,11 +1611,11 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
+				assert.equal(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
 				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
 				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
 				assert.ok($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
-				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
-				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
 
 				// Clean up
 				oIconTabBar.destroy();

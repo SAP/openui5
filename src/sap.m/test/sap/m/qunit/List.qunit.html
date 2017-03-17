@@ -1146,7 +1146,7 @@
 				assert.ok(oContainer instanceof HTMLElement, "Swipe Content is rendered");
 				swipeContentList.swipeOut(function(li, swpcnt){
 					var oContainer = jQuery.sap.domById(swipeContentList.getId() + "-swp");
-					equals(oContainer, null, "Swipe Content is removed");
+					assert.equal(oContainer, null, "Swipe Content is removed");
 					swipeContentList.setSwipeContent(swpcnt.setText("Disapprove").setType("Reject"));
 					done();
 				});
@@ -1161,47 +1161,47 @@
 
 	QUnit.test("selectionList singleSelection Item 1", function(assert) {
 		setSelectionItem1();
-		equals(checkSingleSelectionItem1(), true, "SingleSelection: Item 1 should be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), true, "SingleSelection: Item 1 should be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList singleSelection Item 2", function(assert) {
 		setSelectionItem2();
-		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), true, "SingleSelection: Item 2 should be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), true, "SingleSelection: Item 2 should be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList singleSelection Item 3", function(assert) {
 		setSelectionItem3();
-		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), true, "SingleSelection: Item 3 should be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), true, "SingleSelection: Item 3 should be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList singleSelection Item 4", function(assert) {
 		setSelectionItem4();
-		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), true, "SingleSelection: Item 4 should be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), true, "SingleSelection: Item 4 should be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList singleSelection Item 5", function(assert) {
 		setSelectionItem5();
-		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), true, "SingleSelection: Item 5 should be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), true, "SingleSelection: Item 5 should be selected");
 	});
 
 	QUnit.test("selectionList singleSelection item check by tap event on Item 1", function(assert) {
@@ -1307,54 +1307,54 @@
 
 	QUnit.test("selectionList switch to SingleSelectionLeft", function(assert) {
 		switchModeSingleLeft();
-		equals(oListSelection.getMode(), sap.m.ListMode.SingleSelectLeft, "Switch to SingleSelectionLeft: Ok");
+		assert.equal(oListSelection.getMode(), sap.m.ListMode.SingleSelectLeft, "Switch to SingleSelectionLeft: Ok");
 		sap.ui.getCore().applyChanges();
 
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 1", function(assert) {
 		setSelectionItem1();
-		equals(checkSingleSelectionItem1(), true, "SingleSelectionLeft: Item 1 should be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), true, "SingleSelectionLeft: Item 1 should be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 2", function(assert) {
 		setSelectionItem2();
-		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), true, "SingleSelectionLeft: Item 2 should be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), true, "SingleSelectionLeft: Item 2 should be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 3", function(assert) {
 		setSelectionItem3();
-		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), true, "SingleSelectionLeft: Item 3 should be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), true, "SingleSelectionLeft: Item 3 should be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 4", function(assert) {
 		setSelectionItem4();
-		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), true, "SingleSelectionLeft: Item 4 should be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), true, "SingleSelectionLeft: Item 4 should be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 5", function(assert) {
 		setSelectionItem5();
-		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), true, "SingleSelectionLeft: Item 5 should be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), true, "SingleSelectionLeft: Item 5 should be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 1", function(assert) {
@@ -1460,7 +1460,7 @@
 
 	QUnit.test("selectionList switch to multiSelection", function(assert) {
 		switchModeMulti();
-		equals(oListSelection.getMode(), sap.m.ListMode.MultiSelect, "Switch to MultiSelection: Ok");
+		assert.equal(oListSelection.getMode(), sap.m.ListMode.MultiSelect, "Switch to MultiSelection: Ok");
 		sap.ui.getCore().applyChanges();
 
 	});
@@ -1470,30 +1470,30 @@
 		setSelectionItem1();
 		setSelectionItem3();
 		setSelectionItem5();
-		equals(checkMultiSelectionItem1(), true, "MultiSelection: Item 1 should be selected");
-		equals(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
-		equals(checkMultiSelectionItem3(), true, "MultiSelection: Item 3 should be selected");
-		equals(checkMultiSelectionItem4(), false, "MultiSelection: Item 4 should not be selected");
-		equals(checkMultiSelectionItem5(), true, "MultiSelection: Item 5 should be selected");
+		assert.equal(checkMultiSelectionItem1(), true, "MultiSelection: Item 1 should be selected");
+		assert.equal(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
+		assert.equal(checkMultiSelectionItem3(), true, "MultiSelection: Item 3 should be selected");
+		assert.equal(checkMultiSelectionItem4(), false, "MultiSelection: Item 4 should not be selected");
+		assert.equal(checkMultiSelectionItem5(), true, "MultiSelection: Item 5 should be selected");
 	});
 
 	QUnit.test("selectionList multiSelection: remove all selections", function(assert) {
 		removeSelection();
-		equals(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
-		equals(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
-		equals(checkMultiSelectionItem3(), false, "MultiSelection: Item 3 should not be selected");
-		equals(checkMultiSelectionItem4(), false, "MultiSelection: Item 4 should not be selected");
-		equals(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should not be selected");
+		assert.equal(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
+		assert.equal(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
+		assert.equal(checkMultiSelectionItem3(), false, "MultiSelection: Item 3 should not be selected");
+		assert.equal(checkMultiSelectionItem4(), false, "MultiSelection: Item 4 should not be selected");
+		assert.equal(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList multiSelection item check (2,4)", function(assert) {
 		setSelectionItem2();
 		setSelectionItem4();
-		equals(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
-		equals(checkMultiSelectionItem2(), true, "MultiSelection: Item 2 should be selected");
-		equals(checkMultiSelectionItem3(), false, "MultiSelection: Item 3 should not be selected");
-		equals(checkMultiSelectionItem4(), true, "MultiSelection: Item 4 should be selected");
-		equals(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should be selected");
+		assert.equal(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
+		assert.equal(checkMultiSelectionItem2(), true, "MultiSelection: Item 2 should be selected");
+		assert.equal(checkMultiSelectionItem3(), false, "MultiSelection: Item 3 should not be selected");
+		assert.equal(checkMultiSelectionItem4(), true, "MultiSelection: Item 4 should be selected");
+		assert.equal(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should be selected");
 	});
 
 	QUnit.test("selectionList multiSelection item check by tap event (1,3,5)", function(assert) {
@@ -1522,7 +1522,7 @@
 
 	QUnit.test("selectionList switch to delete", function(assert) {
 		switchModeDelete();
-		equals(oListSelection.getMode(), sap.m.ListMode.Delete, "Switch to Delete: Ok");
+		assert.equal(oListSelection.getMode(), sap.m.ListMode.Delete, "Switch to Delete: Ok");
 	});
 
 
@@ -1613,7 +1613,7 @@
 
 		oStdLI.setTitleTextDirection(sap.ui.core.TextDirection.RTL);
 		// Assert
-		equals(oStdLI.getTitleTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		assert.equal(oStdLI.getTitleTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
 
 		// Clean up
 		oList.destroy();
@@ -1632,7 +1632,7 @@
 
 		oStdLI.setInfoTextDirection(sap.ui.core.TextDirection.RTL);
 		// Assert
-		equals(oStdLI.getInfoTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		assert.equal(oStdLI.getInfoTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
 
 		// Clean up
 		oList.destroy();
@@ -1653,7 +1653,7 @@
 
 		var oTitle = oStdLI.$().find(".sapMSLITitleDiv").children(0);
 		// Assert
-		equals(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
+		assert.equal(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
 
 		// Clean up
 		oList.destroy();
@@ -1675,7 +1675,7 @@
 
 		var oInfo = oStdLI.$().find(".sapMSLIInfo");
 		// Assert
-		equals(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
+		assert.equal(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
 
 		// Clean up
 		oList.destroy();

@@ -177,12 +177,12 @@
 			var oMetadata = oModel.oMetadata;
 
 			var mEntityType = oMetadata._getEntityTypeByName(this.flightEntity.fullName)
-			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
-			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+			assert.equal(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+			assert.equal(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
 
 			var mEntitySet = oMetadata._getEntitySetByType(mEntityType);
-			equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
-			equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+			assert.equal(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+			assert.equal(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
 			done();
 		},
 
@@ -192,13 +192,13 @@
 
 			// The rest is tested in testcase "_getEntitySetByType method" already
 			var oNull = oMetadata._getEntityTypeByName("");
-			equals(oNull, null, "Method returns null for empty path");
+			assert.equal(oNull, null, "Method returns null for empty path");
 
 			var oInvalidMetadata = new sap.ui.model.odata.ODataMetadata("INVALID", {});
 			oNull = oInvalidMetadata._getEntityTypeByName(this.flightEntity.fullName);
-			equals(oNull, null, "Method returns null when metadata is not loaded path");
+			assert.equal(oNull, null, "Method returns null when metadata is not loaded path");
 			oInvalidMetadata.destroy();
-			equals(oInvalidMetadata.oMetadata, undefined, "Internal metadata object deleted");
+			assert.equal(oInvalidMetadata.oMetadata, undefined, "Internal metadata object deleted");
 
 			done();
 		},
@@ -208,12 +208,12 @@
 			var oMetadata = oModel.oMetadata;
 
 			var mEntitySet = oMetadata._getEntitySetByPath(this.flightEntity.path);
-			equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
-			equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+			assert.equal(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+			assert.equal(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
 
 			var mEntityType = oMetadata._getEntityTypeByName(mEntitySet.entityType)
-			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
-			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+			assert.equal(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+			assert.equal(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
 
 			done();
 		},
@@ -223,38 +223,38 @@
 			var oMetadata = oModel.oMetadata;
 
 			var mEntityType = oMetadata._getEntityTypeByPath(this.flightEntity.path);
-			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
-			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+			assert.equal(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+			assert.equal(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
 
 			var mEntitySet = oMetadata._getEntitySetByType(mEntityType);
-			equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
-			equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+			assert.equal(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+			assert.equal(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
 
 			var oNull = oMetadata._getEntityTypeByPath("");
-			equals(oNull, null, "Method returns null for empty path");
+			assert.equal(oNull, null, "Method returns null for empty path");
 
 			var oInvalidMetadata = new sap.ui.model.odata.ODataMetadata("INVALID", {});
 			oNull = oInvalidMetadata._getEntityTypeByPath(this.flightEntity.path);
-			equals(oNull, null, "Method returns null when metadata is not loaded path");
+			assert.equal(oNull, null, "Method returns null when metadata is not loaded path");
 			oInvalidMetadata.destroy();
-			equals(oInvalidMetadata.oMetadata, undefined, "Internal metadata object deleted");
+			assert.equal(oInvalidMetadata.oMetadata, undefined, "Internal metadata object deleted");
 
 			var mNavigEntityType = oMetadata._getEntityTypeByPath(this.flightEntity.path + "/FlightCarrier");
-			equals(mNavigEntityType.namespace, this.carrierEntity.namespace, "Entity namespace has correct value");
-			equals(mNavigEntityType.name, this.carrierEntity.name, "Entity name has correct value");
+			assert.equal(mNavigEntityType.namespace, this.carrierEntity.namespace, "Entity namespace has correct value");
+			assert.equal(mNavigEntityType.name, this.carrierEntity.name, "Entity name has correct value");
 
 			var mNavigEntitySet = oMetadata._getEntitySetByType(mNavigEntityType);
-			equals(mNavigEntitySet.entityType, this.carrierEntity.fullName, "Full Entity name in EntitySet has correct value");
-			equals(mNavigEntitySet.name, this.carrierEntity.setName, "EntitySet name has correct value");
+			assert.equal(mNavigEntitySet.entityType, this.carrierEntity.fullName, "Full Entity name in EntitySet has correct value");
+			assert.equal(mNavigEntitySet.name, this.carrierEntity.setName, "EntitySet name has correct value");
 
 			// TODO: Only "Validate2" works here because it has an EntitySet
 			var mFunctionEntityType = oMetadata._getEntityTypeByPath("/Validate2");
-			equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
-			equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+			assert.equal(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+			assert.equal(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
 
 			var mFunctionEntitySet = oMetadata._getEntitySetByType(mFunctionEntityType);
-			equals(mFunctionEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
-			equals(mFunctionEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+			assert.equal(mFunctionEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+			assert.equal(mFunctionEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
 
 			done();
 		},
@@ -291,23 +291,23 @@
 				var mFunction = this.functionImports[i];
 				var mFunctionInfo = oMetadata._getFunctionImportMetadata(mFunction.path, mFunction.method);
 
-				equals(mFunctionInfo.returnType, mFunction.returnType, "ReturnType is correctly set");
-				equals(mFunctionInfo.httpMethod, mFunction.method, "Method is correctly set");
+				assert.equal(mFunctionInfo.returnType, mFunction.returnType, "ReturnType is correctly set");
+				assert.equal(mFunctionInfo.httpMethod, mFunction.method, "Method is correctly set");
 
 				for (var n = 0; n < mFunction.parameter.length; ++n) {
-					equals(mFunctionInfo.parameter[n].mode, mFunction.parameter[n].mode, "Parameter " + (n + 1) + " mode is correctly set");
-					equals(mFunctionInfo.parameter[n].name, mFunction.parameter[n].name, "Parameter " + (n + 1) + " name is correctly set");
-					equals(mFunctionInfo.parameter[n].type, mFunction.parameter[n].type, "Parameter " + (n + 1) + " type is correctly set");
+					assert.equal(mFunctionInfo.parameter[n].mode, mFunction.parameter[n].mode, "Parameter " + (n + 1) + " mode is correctly set");
+					assert.equal(mFunctionInfo.parameter[n].name, mFunction.parameter[n].name, "Parameter " + (n + 1) + " name is correctly set");
+					assert.equal(mFunctionInfo.parameter[n].type, mFunction.parameter[n].type, "Parameter " + (n + 1) + " type is correctly set");
 				}
 
 				// All function imports always work on RMTSAMPLEFLIGHT_2.Flight
 				var mEntityType = fnGetEntityType(mFunctionInfo);
-				equals(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
-				equals(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
+				assert.equal(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
+				assert.equal(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
 
 				var mEntitySet = oMetadata._getEntitySetByType(mEntityType);
-				equals(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
-				equals(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+				assert.equal(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
+				assert.equal(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
 			}
 
 			done();
@@ -355,33 +355,33 @@
 		assert.expect(12);
 		var oMetadata = oModel.oMetadata;
 
-		equals(
+		assert.equal(
 			oMetadata._getAnnotation("/FlightCollection(1)/AirLineID/#@sap:label"),
 			"Airline",
 			"Airline label annotation correctly read"
 		);
-		equals(
+		assert.equal(
 			oMetadata._getAnnotation("/FlightCollection(1)/TotalBookingsSum/#@sap:unit"),
 			"LocalCurrencyCode",
 			"Total Bookings Sum unit annotation correctly read"
 		);
-		equals(
+		assert.equal(
 			oMetadata._getAnnotation("/FlightCollection(1)/FlightConnectionID/#@maxLength"),
 			"4",
 			"Flight Connection ID MaxLength attribute correctly read"
 		);
 
-		equals(
+		assert.equal(
 			oMetadata._getAnnotation("/#Flight/AirLineID/@sap:label"),
 			"Airline",
 			"Airline label annotation correctly read"
 		);
-		equals(
+		assert.equal(
 			oMetadata._getAnnotation("/#Flight/TotalBookingsSum/@sap:unit"),
 			"LocalCurrencyCode",
 			"Total Bookings Sum unit annotation correctly read"
 		);
-		equals(
+		assert.equal(
 			oMetadata._getAnnotation("/#Flight/FlightConnectionID/@maxLength"),
 			"4",
 			"Flight Connection ID MaxLength attribute correctly read"
@@ -395,10 +395,10 @@
 		assert.ok(!!mAnnotation, "Annotation object found");
 		assert.ok(!!mAnnotation.extensions, "Annotation extension object found");
 		assert.ok(Array.isArray(mAnnotation.extensions) && !!mAnnotation.extensions.length > 0, "Filled annotation extension array found");
-		equals(mAnnotation.extensions[0].value, "AirLineID Annotation", "Correct value for AirLineID annotation");
+		assert.equal(mAnnotation.extensions[0].value, "AirLineID Annotation", "Correct value for AirLineID annotation");
 
 		mAnnotation = oMetadata._getV4AnnotationObject(mEntityType, mObject, ["AirLineID", "com.sap.test.ui5"]);
-		equals(mAnnotation, undefined, "No annotation object for multiple parts");
+		assert.equal(mAnnotation, undefined, "No annotation object for multiple parts");
 
 
 		var mLabelAnnotation = oMetadata._getAnnotationObject(mEntityType, mObject, "sap:label")

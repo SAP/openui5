@@ -92,10 +92,10 @@
 			//Testcase 1: Default values
 			QUnit.test("Default Values [Control 1]: ", function(assert) {
 				assert.expect(4);
-				equals(oTaskCircle1.getValue(), 0 , "Default value: ");
-				equals(oTaskCircle1.getMaxValue(), 100 , "Default maximum value: ");
-				equals(oTaskCircle1.getMinValue(), 0 , "Default minimum value: ");
-				equals(oTaskCircle1.getColor(), sap.ui.suite.TaskCircleColor.Gray , "Default color: ");
+				assert.equal(oTaskCircle1.getValue(), 0 , "Default value: ");
+				assert.equal(oTaskCircle1.getMaxValue(), 100 , "Default maximum value: ");
+				assert.equal(oTaskCircle1.getMinValue(), 0 , "Default minimum value: ");
+				assert.equal(oTaskCircle1.getColor(), sap.ui.suite.TaskCircleColor.Gray , "Default color: ");
 			});
 
 
@@ -112,7 +112,7 @@
 						oTaskCircle1.firePress();
 						fail("exception should have been thrown!");
 				} catch (e) {
-						equals(sPressMessage, e, "Press Event triggered");
+						assert.equal(sPressMessage, e, "Press Event triggered");
 				}
 			});
 
@@ -140,7 +140,7 @@
 			//Testcase 9: Manually set Tooltip
 			QUnit.test("Manual Tooltip [Control 4]: ", function(assert) {
 				assert.expect(1);
-				equals(sTooltip, oTaskCircle4.getTooltip(), "Manual Tooltip");
+				assert.equal(sTooltip, oTaskCircle4.getTooltip(), "Manual Tooltip");
 			});
 
 			//Testcase 10: Automatic Tooltip
@@ -151,7 +151,7 @@
 								}
 				AriaValue = this.oThis.attr('aria-valuenow');
 				Tooltip   = this.oThis.attr('title');
-				equals(AriaValue, Tooltip, "Automatic Tooltip");
+				assert.equal(AriaValue, Tooltip, "Automatic Tooltip");
 			});
 
 
@@ -169,9 +169,9 @@
 				ValueNow = this.oThis.attr('aria-valuenow');
 				ValueMax = this.oThis.attr('aria-valuemax');
 				ValueMin = this.oThis.attr('aria-valuemin');
-				equals(ValueNow, "0",   "Default ARIA-value: ");
-				equals(ValueMax, "100",   "Maximum ARIA-value: ");
-				equals(ValueMin, "0",     "Minimum ARIA-value: ");
+				assert.equal(ValueNow, "0",   "Default ARIA-value: ");
+				assert.equal(ValueMax, "100",   "Maximum ARIA-value: ");
+				assert.equal(ValueMin, "0",     "Minimum ARIA-value: ");
 			});
 
 			//Testcase 12: ARIA-Value for positive values
@@ -183,9 +183,9 @@
 				ValueNow2   = this.oThis2.attr('aria-valuenow');
 				ValueNow4   = this.oThis4.attr('aria-valuenow');
 				ValueNow6   = this.oThis6.attr('aria-valuenow');
-				equals(ValueNow2, "30",   "ARIA-value for 30 percent: ");
-				equals(ValueNow4, "100",   "ARIA-value for 100 percent: ");
-				equals(ValueNow6, "111",   "ARIA-value for 111 percent: ");
+				assert.equal(ValueNow2, "30",   "ARIA-value for 30 percent: ");
+				assert.equal(ValueNow4, "100",   "ARIA-value for 100 percent: ");
+				assert.equal(ValueNow6, "111",   "ARIA-value for 111 percent: ");
 			});
 
 
@@ -194,7 +194,7 @@
 				assert.expect(1);
 				this.oThis5 = jQuery.sap.byId(sCtrlId + "5");
 		      	ValueNow5   = this.oThis5.attr('aria-valuenow');
-		      	equals(ValueNow5, "0",   "ARIA-value for -30 percent: ");
+		      	assert.equal(ValueNow5, "0",   "ARIA-value for -30 percent: ");
 			});
 
 

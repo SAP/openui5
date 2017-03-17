@@ -437,7 +437,7 @@
 			sap.ui.getCore().applyChanges();
 			oMessageBox = sap.ui.getCore().byId(sMessageBoxId);
 			oMessageTextContainer = oMessageBox.$().find("span.sapMText");
-			equals(jQuery(oMessageTextContainer).attr("dir"), "rtl", "Attribute 'dir' for Text Direction is set to RTL");
+			assert.equal(jQuery(oMessageTextContainer).attr("dir"), "rtl", "Attribute 'dir' for Text Direction is set to RTL");
 			oMessageBox.destroy();
 
 			// LTR
@@ -452,7 +452,7 @@
 			sap.ui.getCore().applyChanges();
 			oMessageBox = sap.ui.getCore().byId(sMessageBoxId);
 			oMessageTextContainer = oMessageBox.$().find("span.sapMText");
-			equals(jQuery(oMessageTextContainer).attr("dir"), "ltr", "Attribute 'dir' for Text Direction is set to LTR");
+			assert.equal(jQuery(oMessageTextContainer).attr("dir"), "ltr", "Attribute 'dir' for Text Direction is set to LTR");
 			oMessageBox.destroy();
 		});
 

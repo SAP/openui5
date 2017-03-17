@@ -303,13 +303,13 @@
 
 			sMessagePrefix+= ": expected dates: " + sExpectedDateRange;
 
-			equals(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
+			assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
 			if (aDates.length >= 2 && oFirstDate.getMonth() !== oLastDate.getMonth()) {
 				sExpectedMonthName =  sIntervalPattern.replace(/\{0\}/, oMonthDateFormat.format(oFirstDate)).replace(/\{1\}/, oMonthDateFormat.format(oLastDate));
 			} else {
 				sExpectedMonthName = oMonthDateFormat.format(oFirstDate);
 			}
-			equals(_getChangeMonthButtonText.call(this, oPC), sExpectedMonthName, sMessagePrefix + ": Change month button should have certain text of " +
+			assert.equal(_getChangeMonthButtonText.call(this, oPC), sExpectedMonthName, sMessagePrefix + ": Change month button should have certain text of " +
 				sExpectedMonthName + ", current text: " + _getChangeMonthButtonText.call(this, oPC));
 
 			aDates.forEach(function (oDate) {
@@ -346,7 +346,7 @@
 				sExpectedDateRange = _formatDateHour.call(this, aDates[0]) + "-" + _formatDateHour.call(this, aDates[aDates.length-1]);
 
 			sMessagePrefix+= ": expected hours: " + sExpectedDateRange;
-			equals(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of hours: ");
+			assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of hours: ");
 
 			aDates.forEach(function (oDate) {
 				_assertHourIsVisible.call(this, oDate, oPC, sMessagePrefix);
@@ -2456,28 +2456,28 @@
 
 		QUnit.test('interval shows 31 days', function(assert) {
 			//assert
-			equals(this.oPCInterval.getStartDate().getMonth(), 8, 'it is september');
-			equals(this.oPCInterval.getDays(), 31, 'interval has 31 days in september');
+			assert.equal(this.oPCInterval.getStartDate().getMonth(), 8, 'it is september');
+			assert.equal(this.oPCInterval.getDays(), 31, 'interval has 31 days in september');
 
 			//act - change to february
 			_switchToMonth.call(this, this.oPC, 1);
 
 			//assert
-			equals(this.oPCInterval.getStartDate().getMonth(), 1, 'it is february');
-			equals(this.oPCInterval.getDays(), 31, 'interval has 31 days in february');
+			assert.equal(this.oPCInterval.getStartDate().getMonth(), 1, 'it is february');
+			assert.equal(this.oPCInterval.getDays(), 31, 'interval has 31 days in february');
 		});
 
 		QUnit.test('start day is the first day of the month', function(assert) {
 			//assert
-			equals(this.oPCInterval.getStartDate().getMonth(), 8, 'it is september');
-			equals(this.oPCInterval.getStartDate().getDate(), 1, 'interval starts at 1st of september');
+			assert.equal(this.oPCInterval.getStartDate().getMonth(), 8, 'it is september');
+			assert.equal(this.oPCInterval.getStartDate().getDate(), 1, 'interval starts at 1st of september');
 
 			//act - change to june
 			_switchToMonth.call(this, this.oPC, 5);
 
 			//assert
-			equals(this.oPCInterval.getStartDate().getMonth(), 5, 'it is june');
-			equals(this.oPCInterval.getStartDate().getDate(), 1, 'interval starts at 1st of june');
+			assert.equal(this.oPCInterval.getStartDate().getMonth(), 5, 'it is june');
+			assert.equal(this.oPCInterval.getStartDate().getDate(), 1, 'interval starts at 1st of june');
 		});
 
 		QUnit.test('last days belong to the next month', function(assert) {
@@ -2526,13 +2526,13 @@
 			this._clickInterval(oRow, 31); //click first row of next month's first day - 1 Oct 2016
 
 			//assert
-			equals(eventParams.startDate.getMonth(), 9, 'start date is in october');
-			equals(eventParams.startDate.getDate(), 1, 'start date is 1st day of the month');
+			assert.equal(eventParams.startDate.getMonth(), 9, 'start date is in october');
+			assert.equal(eventParams.startDate.getDate(), 1, 'start date is 1st day of the month');
 
-			equals(eventParams.endDate.getMonth(), 9, 'end date is in october');
-			equals(eventParams.endDate.getDate(), 1, 'end date is 1st day of the month');
+			assert.equal(eventParams.endDate.getMonth(), 9, 'end date is in october');
+			assert.equal(eventParams.endDate.getDate(), 1, 'end date is 1st day of the month');
 
-			equals(eventParams.subInterval, false, 'selected interval is not a sub-interval');
+			assert.equal(eventParams.subInterval, false, 'selected interval is not a sub-interval');
 			assert.ok(!bIntervalSelect,
 					"intervalSelect was not fired because the click was on the next month's first days and this serves as navigation, not selection");
 		});
@@ -2554,8 +2554,8 @@
 			this._clickAppointment(oAppointment1July2014);
 
 			//assert
-			equals(eventParams.appointment, oAppointment1July2014, 'appointment is the same that was clicked');
-			equals(eventParams.multiSelect, false, 'multiSelect is correct');
+			assert.equal(eventParams.appointment, oAppointment1July2014, 'appointment is the same that was clicked');
+			assert.equal(eventParams.multiSelect, false, 'multiSelect is correct');
 		});
 
 		QUnit.test('last days intervals navigate to the next month', function(assert) {
@@ -2563,7 +2563,7 @@
 			this._clickInterval(this._getFirstRow(this.oPC), 31); //click first row of next month's first day - 1 Oct 2016
 
 			//assert
-			equals(this.oPC.getStartDate().getMonth(), 9, 'month changed to october');
+			assert.equal(this.oPC.getStartDate().getMonth(), 9, 'month changed to october');
 		});
 
 		QUnit.test('navigate backward with the arrows', function(assert) {
@@ -2571,8 +2571,8 @@
 			_navBackward.call(this, this.oPC);
 
 			//assert
-			equals(this.oPC.getStartDate().getMonth(), 7, 'month changed to august');
-			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
+			assert.equal(this.oPC.getStartDate().getMonth(), 7, 'month changed to august');
+			assert.equal(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
 		});
 
 		QUnit.test('navigate forward with the arrows', function(assert) {
@@ -2580,8 +2580,8 @@
 			_navForward.call(this, this.oPC);
 
 			//assert
-			equals(this.oPC.getStartDate().getMonth(), 9, 'month changed to october');
-			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
+			assert.equal(this.oPC.getStartDate().getMonth(), 9, 'month changed to october');
+			assert.equal(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
 		});
 
 		QUnit.test('change of year keeps month', function(assert) {
@@ -2589,8 +2589,8 @@
 			_switchToYear.call(this, this.oPC, 2017);
 
 			//assert
-			equals(this.oPC.getStartDate().getMonth(), 8, 'month is unchanged');
-			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
+			assert.equal(this.oPC.getStartDate().getMonth(), 8, 'month is unchanged');
+			assert.equal(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
 		});
 
 		QUnit.test('today button is disabled when today is visible', function(assert) {
@@ -2598,14 +2598,14 @@
 			var oTodayBtn = _getTodayButton.call(this, this.oPC);
 
 			//assert
-			equals(oTodayBtn.getEnabled(), true, 'today button is enabled');
+			assert.equal(oTodayBtn.getEnabled(), true, 'today button is enabled');
 
 			//act
 			_switchToYear.call(this, this.oPC, oToday.getFullYear());
 			_switchToMonth.call(this, this.oPC, oToday.getMonth());
 
 			//assert
-			equals(oTodayBtn.getEnabled(), false, 'today button is disabled when today is visible');
+			assert.equal(oTodayBtn.getEnabled(), false, 'today button is disabled when today is visible');
 		});
 
 		QUnit.test('clicking today navigates to todays month', function(assert) {
@@ -2615,9 +2615,9 @@
 			_clickTodayButton.call(this, this.oPC);
 
 			//assert
-			equals(this.oPC.getStartDate().getFullYear(), oToday.getFullYear(), 'year is correct');
-			equals(this.oPC.getStartDate().getMonth(), oToday.getMonth(), 'month is correct');
-			equals(this.oPC.getStartDate().getDate(), 1, 'date is correct');
+			assert.equal(this.oPC.getStartDate().getFullYear(), oToday.getFullYear(), 'year is correct');
+			assert.equal(this.oPC.getStartDate().getMonth(), oToday.getMonth(), 'month is correct');
+			assert.equal(this.oPC.getStartDate().getDate(), 1, 'date is correct');
 		});
 
 		QUnit.test('switch to hours view shows the first hours of the month', function(assert) {
@@ -2625,10 +2625,10 @@
 			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Hour, this.oPC);
 
 			//assert
-			equals(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
-			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
-			equals(this.oPC.getStartDate().getDate(), 1, 'date is 1st');
-			equals(this.oPC.getStartDate().getHours(), 0, 'starts from midnight');
+			assert.equal(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
+			assert.equal(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
+			assert.equal(this.oPC.getStartDate().getDate(), 1, 'date is 1st');
+			assert.equal(this.oPC.getStartDate().getHours(), 0, 'starts from midnight');
 		});
 
 		QUnit.test('switch to days view starts from 1st', function(assert) {
@@ -2636,9 +2636,9 @@
 			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Day, this.oPC);
 
 			//assert
-			equals(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
-			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
-			equals(this.oPC.getStartDate().getDate(), 1, 'date is 1st');
+			assert.equal(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
+			assert.equal(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
+			assert.equal(this.oPC.getStartDate().getDate(), 1, 'date is 1st');
 		});
 
 		QUnit.test('switch to month view starts from the same month', function(assert) {
@@ -2646,8 +2646,8 @@
 			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Month, this.oPC);
 
 			//assert
-			equals(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
-			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
+			assert.equal(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
+			assert.equal(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
 		});
 
 		QUnit.module("OneMonth view (size S)", {

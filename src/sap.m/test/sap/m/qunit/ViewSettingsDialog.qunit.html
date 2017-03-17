@@ -1301,14 +1301,14 @@
 			aSelectedItems = this.oVSD.getSelectedFilterItems();
 
 			//assert
-			equals(Object.getOwnPropertyNames(this.oVSD.getSelectedFilterCompoundKeys()).length, 2, "right number of selected keys");
-			equals(Object.getOwnPropertyNames(this.oVSD.getSelectedFilterCompoundKeys()["myNameFilter"]).length, 2, "right number of selected keys");
-			equals(aSelectedItems[0].getKey(), "name1");
-			equals(aSelectedItems[0].getParent().getKey(), "myNameFilter");
-			equals(aSelectedItems[1].getKey(), "name2");
-			equals(aSelectedItems[1].getParent().getKey(), "myNameFilter");
-			equals(aSelectedItems[2].getKey(), "name1");
-			equals(aSelectedItems[2].getParent().getKey(), "mySecondNameFilter");
+			assert.equal(Object.getOwnPropertyNames(this.oVSD.getSelectedFilterCompoundKeys()).length, 2, "right number of selected keys");
+			assert.equal(Object.getOwnPropertyNames(this.oVSD.getSelectedFilterCompoundKeys()["myNameFilter"]).length, 2, "right number of selected keys");
+			assert.equal(aSelectedItems[0].getKey(), "name1");
+			assert.equal(aSelectedItems[0].getParent().getKey(), "myNameFilter");
+			assert.equal(aSelectedItems[1].getKey(), "name2");
+			assert.equal(aSelectedItems[1].getParent().getKey(), "myNameFilter");
+			assert.equal(aSelectedItems[2].getKey(), "name1");
+			assert.equal(aSelectedItems[2].getParent().getKey(), "mySecondNameFilter");
 		});
 
 		QUnit.test("Select and deselect a filter detail item works correctly", function (assert) {
@@ -2419,7 +2419,7 @@
 					oModel = new sap.ui.model.json.JSONModel({ data: sData});
 
 			oVSD.setModel(oModel);
-			equals(oVSD._getDialog().getModel().oData["data"], sData, "the model is propagated to the dialog");
+			assert.equal(oVSD._getDialog().getModel().oData["data"], sData, "the model is propagated to the dialog");
 		});
 
 		QUnit.module("Accessibility", {
