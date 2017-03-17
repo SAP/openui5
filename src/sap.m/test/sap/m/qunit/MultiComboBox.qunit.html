@@ -61,9 +61,9 @@
 		assert.strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
 		assert.strictEqual(oMultiComboBox.getMaxWidth(), "100%",
 				'By default the "max-width" of the MultiComboBox control is "100%"');
-		deepEqual(oMultiComboBox.getSelectedItems(), [],
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [],
 				"By default the selected items of the MultiComboBox control is null");
-		deepEqual(oMultiComboBox.getSelectedKeys(), [], 'By default the selected keys of the MultiComboBox control is ""');
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [], 'By default the selected keys of the MultiComboBox control is ""');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -106,9 +106,9 @@
 		assert.strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
 		assert.strictEqual(oMultiComboBox.getMaxWidth(), "100%",
 				'By default the "max-width" of the MultiComboBox control is "100%"');
-		deepEqual(oMultiComboBox.getSelectedItems(), [],
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [],
 				"By default the selected items of the MultiComboBox control is null");
-		deepEqual(oMultiComboBox.getSelectedKeys(), [], 'By default the selected keys of the MultiComboBox control is ""');
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [], 'By default the selected keys of the MultiComboBox control is ""');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -133,9 +133,9 @@
 		assert.strictEqual(oMultiComboBox.getValue(), "", 'By default the "value" of the MultiComboBox control is ""');
 		assert.strictEqual(oMultiComboBox.getMaxWidth(), "100%",
 				'By default the "max-width" of the MultiComboBox control is "100%"');
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem],
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem],
 				"By default the selected items of the MultiComboBox control is null");
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()],
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()],
 				'By default the selected keys of the MultiComboBox control is ""');
 
 		// cleanup
@@ -155,8 +155,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -176,8 +176,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -197,8 +197,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["", ""]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["", ""]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -226,8 +226,8 @@
 				// assertions
 				assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
 				assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
-				deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
-				deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+				assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
+				assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
 				// cleanup
 				oMultiComboBox.destroy();
@@ -256,8 +256,8 @@
 				// assertions
 				assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The change event was not fired");
 				assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
-				deepEqual(oMultiComboBox.getSelectedKeys(), []);
-				deepEqual(oMultiComboBox.getSelectedItems(), []);
+				assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+				assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 				// cleanup
 				oMultiComboBox.destroy();
@@ -338,60 +338,60 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		oMultiComboBox.setSelectedKeys(["0"]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
+		assert.deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		assert.deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["0", "1"]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["0", "1"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0, oItem1]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem1));
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0", "1"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0, oItem1]);
+		assert.deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		assert.deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem1));
+		assert.deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(null); // enforce default value
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["0"]);
 		oMultiComboBox.setSelectedKeys(["dummy"]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["dummy"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["dummy"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["0"]);
 		oMultiComboBox.setSelectedKeys([""]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem3]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem3]);
+		assert.deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["0", "1"]);
 		oMultiComboBox.removeSelectedKeys(["1"]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
+		assert.deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		assert.deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.removeSelectedKeys(["dummy"]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
+		assert.deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		assert.deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		assert.deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -414,43 +414,43 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		oMultiComboBox.setSelectedItems([oItem0]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
 
 		oMultiComboBox.setSelectedItems([oItem0, oItem1]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["", ""]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0, oItem1]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["", ""]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0, oItem1]);
 
 		oMultiComboBox.setSelectedItems([null]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		oMultiComboBox.setSelectedItems([oItem2, null, oItem1]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["", ""]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem2, oItem1]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["", ""]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem2, oItem1]);
 
 		oMultiComboBox.setSelectedItems([oItem0]);
 		oMultiComboBox.setSelectedItems([oItemDummy]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItemDummy]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItemDummy]);
 
 		oMultiComboBox.setSelectedItems([oItem0]);
 		oMultiComboBox.setSelectedItems([""]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		oMultiComboBox.setSelectedItems([oItem0, oItem1]);
 		oMultiComboBox.removeSelectedItem(oItem1);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
 
 		oMultiComboBox.removeSelectedKeys(["dummy"]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -522,8 +522,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -545,8 +545,8 @@
 		})]);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItemDummy]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItemDummy.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItemDummy]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItemDummy.getKey()]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -566,8 +566,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -602,8 +602,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem, oItem2]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey(), oItem2.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem, oItem2]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey(), oItem2.getKey()]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -644,8 +644,8 @@
 		//sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -682,8 +682,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -697,8 +697,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -731,8 +731,8 @@
 		//sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -762,8 +762,8 @@
 		oMultiComboBox.addSelectedItem(oItem);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -796,10 +796,10 @@
 		ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
 		ok(fnAddItemSpy.returned(oMultiComboBox));
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		equal(oMultiComboBox.getItems()[0].getKey(), "0", "key is not empty");
 		equal(oMultiComboBox.getItems()[0].getText(), "item 0", "text is not empty");
 
@@ -829,10 +829,10 @@
 		ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
 		ok(fnAddItemSpy.returned(oMultiComboBox));
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		equal(oMultiComboBox.getItems()[0].getKey(), "", "key is empty");
 		equal(oMultiComboBox.getItems()[0].getText(), "item 0", "text is not empty");
 
@@ -860,10 +860,10 @@
 		ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
 		ok(fnAddItemSpy.returned(oMultiComboBox));
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		equal(oMultiComboBox.getItems()[0].getKey(), "", "key is empty");
 		equal(oMultiComboBox.getItems()[0].getText(), "", "text is empty");
 
@@ -895,10 +895,10 @@
 		ok(fnListAddAggregationSpy.calledWith("items", oMultiComboBox.getListItem(oItem)),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
 		ok(fnAddItemSpy.returned(oMultiComboBox));
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getItems(), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -923,10 +923,10 @@
 		ok(fnListAddAggregationSpy.calledWith("items", null),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
 		ok(fnAddItemSpy.returned(oMultiComboBox));
-		deepEqual(oMultiComboBox.getAggregation("items"), null);
-		deepEqual(oMultiComboBox.getItems(), []);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), null);
+		assert.deepEqual(oMultiComboBox.getItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -951,10 +951,10 @@
 
 		// assertions
 		assert.strictEqual(oItemRemoved, oItem);
-		deepEqual(oMultiComboBox.getAggregation("items"), []);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -976,10 +976,10 @@
 
 		// assertions
 		assert.strictEqual(oItemRemoved, null);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1001,10 +1001,10 @@
 
 		// assertions
 		assert.strictEqual(oItemRemoved, null);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1025,11 +1025,11 @@
 		aItems = oMultiComboBox.removeAllItems();
 
 		// assertions
-		deepEqual(aItems, [oItem]);
-		deepEqual(oMultiComboBox.getAggregation("items"), []);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(aItems, [oItem]);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1051,10 +1051,10 @@
 
 		// assertions
 		assert.strictEqual(oItem, oItemRemoved);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1076,10 +1076,10 @@
 
 		// assertions
 		assert.strictEqual(oItemRemoved, null);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1101,10 +1101,10 @@
 
 		// assertions
 		assert.strictEqual(oItemRemoved, null);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1127,10 +1127,10 @@
 
 		// assertions
 		assert.strictEqual(oItemRemoved, oItem);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["dummyKey"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["dummyKey"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1151,11 +1151,11 @@
 		aIds = oMultiComboBox.removeAllSelectedItems();
 
 		// assertions
-		deepEqual(aIds, [oItem.getId()]);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(aIds, [oItem.getId()]);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1177,11 +1177,11 @@
 		aIds = oMultiComboBox.removeAllSelectedItems();
 
 		// assertions
-		deepEqual(aIds, [oItem.getId()]);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["dummyKey"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(aIds, [oItem.getId()]);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["dummyKey"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1202,11 +1202,11 @@
 		oMultiComboBox.clearSelection();
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1227,11 +1227,11 @@
 		oMultiComboBox.destroyItems();
 
 		// assertions
-		deepEqual(oMultiComboBox.getItems(), []);
-		deepEqual(oMultiComboBox.getAggregation("items"), []);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getItems(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1423,8 +1423,8 @@
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 		//assert.strictEqual(oMultiComboBox.getSelectedItemId(), "");
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
 				'sap.m.MultiComboBox.prototype.setSelectedItems() method return the "this" reference');
 
@@ -1459,7 +1459,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2], "Should have both items");
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2], "Should have both items");
 		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 2, "should have two item");
 
 		// cleanup
@@ -1486,8 +1486,8 @@
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 		//assert.strictEqual(oMultiComboBox.getSelectedItemId(), "");
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		ok(fnSetSelectedKeysSpy.returned(oMultiComboBox),
 				'sap.m.MultiComboBox.prototype.setSelectedKeys() method return the "this" reference');
 
@@ -1534,8 +1534,8 @@
 		ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
 				'sap.m.MultiComboBox.prototype.setSelectedItems() method return the "this" reference');
 
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
@@ -1579,8 +1579,8 @@
 		ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
 				'sap.m.MultiComboBox.prototype.setSelectedItems() method return the "this" reference');
 
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
 		//sap.ui.getCore().applyChanges();
@@ -1624,8 +1624,8 @@
 		// assertion
 		// 1. the popup should not be closed
 		// 2. new selection should be took over
-		deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1642,7 +1642,7 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1677,7 +1677,7 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["2"]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["2"]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1712,7 +1712,7 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["3"]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["3"]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1726,7 +1726,7 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1755,8 +1755,8 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1771,8 +1771,8 @@
 		oMultiComboBox.setSelectedKeys(["01"]);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["01"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["01"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1801,8 +1801,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["01"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["01"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1832,8 +1832,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["01", "02"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2]);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["01", "02"]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1894,7 +1894,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
 
 		// assertions
-		deepEqual(oModel.getData().selected, ["AR", "BH", "AL"]);
+		assert.deepEqual(oModel.getData().selected, ["AR", "BH", "AL"]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1939,7 +1939,7 @@
 		oMultiComboBox.destroyItems();
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1991,7 +1991,7 @@
 					"The selection change event parameter was passed");
 			strictEqual(fnFireSelectionChangeSpy.args[0][0].selected, true,
 					"The selection change event parameter was passed");
-			deepEqual(fnFireSelectionFinishSpy.args[0][0].selectedItems, oMultiComboBox.getSelectedItems());
+			assert.deepEqual(fnFireSelectionFinishSpy.args[0][0].selectedItems, oMultiComboBox.getSelectedItems());
 
 			// cleanup
 			oMultiComboBox.destroy();
@@ -2022,14 +2022,14 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem1), oItem2);
-		deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem2), oItem3);
-		deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem3), null);
-		deepEqual(oMultiComboBox._getNextVisibleItemOf(null), null);
+		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem1), oItem2);
+		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem2), oItem3);
+		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem3), null);
+		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(null), null);
 		deepEqual(oMultiComboBox._getNextVisibleItemOf(new sap.ui.core.Item({
 			key : "dummy"
 		})), null);
-		deepEqual(oMultiComboBox._getNextVisibleItemOf(), null);
+		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(), null);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2057,14 +2057,14 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem1), null);
-		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem2), oItem1);
-		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem3), oItem2);
-		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(null), null);
+		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem1), null);
+		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem2), oItem1);
+		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem3), oItem2);
+		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(null), null);
 		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(new sap.ui.core.Item({
 			key : "dummy"
 		})), null);
-		deepEqual(oMultiComboBox._getNextVisibleItemOf(), null);
+		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(), null);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2757,7 +2757,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
@@ -2790,7 +2790,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
@@ -2833,7 +2833,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
@@ -2877,7 +2877,7 @@
 			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
 			assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
-			deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+			assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
 			// cleanup
 			oMultiComboBox.destroy();
@@ -2999,7 +2999,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE); // delete selected token
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
@@ -3033,7 +3033,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.DELETE); // delete selected token
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
@@ -3073,7 +3073,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.DELETE); // delete selected tokens
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		assert.strictEqual(fnFireChangeSpy.callCount, 3, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 3, "The selection change event was fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 3, "The selection finish event was fired");
@@ -3108,7 +3108,7 @@
 		sap.ui.test.qunit.triggerEvent("click", oTokenIcon);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
@@ -3145,7 +3145,7 @@
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		assert.strictEqual(oMultiComboBox.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
@@ -3193,7 +3193,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
 
 		// cleanup
@@ -3235,7 +3235,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem2]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem2]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3276,7 +3276,7 @@
 		this.clock.tick(500);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [], "should not select anything");
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [], "should not select anything");
 		assert.strictEqual(oMultiComboBox.getValue(), "al", "Value should not be deleted");
 
 		// cleanup
@@ -3324,7 +3324,7 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");
@@ -3381,7 +3381,7 @@
 		});
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");

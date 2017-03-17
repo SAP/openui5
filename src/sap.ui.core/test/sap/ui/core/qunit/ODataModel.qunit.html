@@ -125,7 +125,7 @@
 		equal(oModel.bJSON, true, 'json');
 		equal(oModel.sUser, 'user', 'user');
 		equal(oModel.sPassword, 'pa$$w0rd', 'password');
-		deepEqual(oModel.mCustomHeaders, { foo: 'bar' }, 'headers');
+		assert.deepEqual(oModel.mCustomHeaders, { foo: 'bar' }, 'headers');
 		equal(oModel.bTokenHandling, false, 'tokenHandling');
 		equal(oModel.bWithCredentials, true, 'withCredentials');
 		equal(oModel.bLoadMetadataAsync, true, 'loadMetadataAsync');
@@ -133,7 +133,7 @@
 	function assertLegacyArguments(oModel) {
 		// expect default values as they can't be set with as legacy arguments
 		equal(oModel.bLoadAnnotationsJoined, true, 'loadAnnotationsJoined');
-		deepEqual(oModel.aUrlParams, [], 'serviceUrlParams');
+		assert.deepEqual(oModel.aUrlParams, [], 'serviceUrlParams');
 		equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata', 'metadataUrlParams');
 		equal(oModel.sDefaultCountMode, 'Both', 'defaultCountMode');
 		deepEqual(oModel.oServiceData.oMetadata.mNamespaces, {
@@ -145,10 +145,10 @@
 	function assertObjectArguments(oModel) {
 		// can only be set with parameters object => expect different values
 		equal(oModel.bLoadAnnotationsJoined, false, 'loadAnnotationsJoined');
-		deepEqual(oModel.aUrlParams, [ 'foo=bar' ], 'serviceUrlParams');
+		assert.deepEqual(oModel.aUrlParams, [ 'foo=bar' ], 'serviceUrlParams');
 		equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata?bar=foo', 'metadataUrlParams');
 		equal(oModel.sDefaultCountMode, 'None', 'defaultCountMode');
-		deepEqual(oModel.oServiceData.oMetadata.mNamespaces, { 'foo': 'bar' }, 'metadataNamespaces');
+		assert.deepEqual(oModel.oServiceData.oMetadata.mNamespaces, { 'foo': 'bar' }, 'metadataNamespaces');
 	}
 
 	QUnit.test("constructor: legacy arguments", function(assert) {

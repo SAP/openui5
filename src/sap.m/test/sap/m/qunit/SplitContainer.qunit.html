@@ -846,13 +846,13 @@
 				var page = new sap.m.Page(MASTER_PAGE_ID);
 				this.sut.addMasterPage(page);
 				this.sut.to(MASTER_PAGE_ID);
-				deepEqual(this.sut.getCurrentMasterPage(), page, "Current page should be master3");
+				assert.deepEqual(this.sut.getCurrentMasterPage(), page, "Current page should be master3");
 
 				//test detail page navigation
 				page = new sap.m.Page(DETAIL_PAGE_ID);
 				this.sut.addDetailPage(page);
 				this.sut.to(DETAIL_PAGE_ID);
-				deepEqual(this.sut.getCurrentDetailPage(), page, "Current page should be detail3");
+				assert.deepEqual(this.sut.getCurrentDetailPage(), page, "Current page should be detail3");
 			});
 
 			QUnit.test("Test backToPage ", function(assert) {

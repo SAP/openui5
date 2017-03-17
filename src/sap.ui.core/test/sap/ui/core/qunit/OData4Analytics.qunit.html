@@ -100,7 +100,7 @@
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
 
 		ok(oQueryResult, "Query result 'ActualPlannedCostsResults' could be found.");
-		deepEqual(oQueryResult, mQueryResults["ActualPlannedCostsResults"], "Query Result 'ActualPlannedCostsResults' was fetched by name.");
+		assert.deepEqual(oQueryResult, mQueryResults["ActualPlannedCostsResults"], "Query Result 'ActualPlannedCostsResults' was fetched by name.");
 	});
 
 	QUnit.module("Introspection");
@@ -159,7 +159,7 @@
 		assert.strictEqual(oDimensionByAccess.getName(), "Currency", "Introspection check on dimensionByAccess.");
 		assert.strictEqual(oDimensionByName.getKeyProperty().name, "Currency", "Introspection check on dimensionByAccess.");
 
-		deepEqual(oDimensionByName, oDimensionByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
+		assert.deepEqual(oDimensionByName, oDimensionByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
 	});
 
 	QUnit.test("Getting attribute names from Dimensions", function(assert) {
@@ -200,7 +200,7 @@
 		assert.strictEqual(oMeasureByAccess.getName(), "ActualCosts", "Introspection check on measureByAccess.");
 		assert.strictEqual(oMeasureByName.getUnitProperty().name, "Currency", "Introspection check on measureByAccess.");
 
-		deepEqual(oMeasureByName, oMeasureByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
+		assert.deepEqual(oMeasureByName, oMeasureByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
 	});
 
 	QUnit.test("Get all attribute names", function(assert) {
@@ -226,7 +226,7 @@
 		assert.strictEqual(oAttributeByAccess.getName(), "ControllingAreaText", "Introspection check on attributeByAccess.");
 		assert.strictEqual(oAttributeByName.getName(), "ControllingAreaText", "Introspection check on attributeByName.");
 
-		deepEqual(oAttributeByName, oAttributeByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
+		assert.deepEqual(oAttributeByName, oAttributeByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
 	});
 
 	QUnit.test("Determine which properties of a query result are updatable", function(assert) {
@@ -360,13 +360,13 @@
 			"ControllingArea", "CostCenter"
 		];
 		var aDimNames = oQueryResultRequest.getAggregationLevel();
-		deepEqual(aDimNames, aRefDimNames, "Aggregation levels correctly set.");
+		assert.deepEqual(aDimNames, aRefDimNames, "Aggregation levels correctly set.");
 
 		var aRefMeasNames = [
 			"ActualCosts", "PlannedCosts", "ActualPlannedCostsDifference", "ActualPlannedCostsPercentage"
 		];
 		var aMeasNames = oQueryResultRequest.getMeasureNames();
-		deepEqual(aMeasNames, aRefMeasNames, "Measures correctly set.");
+		assert.deepEqual(aMeasNames, aRefMeasNames, "Measures correctly set.");
 	});
 
 	QUnit.test("Create filter expressions on the query result", function(assert) {

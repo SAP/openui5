@@ -539,7 +539,7 @@
 	        ok(p instanceof P);
 
 	        p.then(function(val) {
-	            deepEqual([], val);
+	            assert.deepEqual([], val);
 	            done();
 	        }, function(val) {
 	        	ok(false, "Fail should not be called");

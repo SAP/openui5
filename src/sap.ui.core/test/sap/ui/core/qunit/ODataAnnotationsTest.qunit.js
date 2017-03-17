@@ -1361,7 +1361,7 @@ function runODataAnnotationTests() {
 			}
 		};
 
-		deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
+		assert.deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
 
 		oModel.destroy();
 	});
@@ -1457,7 +1457,7 @@ function runODataAnnotationTests() {
 				}
 			};
 
-			deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
+			assert.deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
 
 			oModel.destroy();
 			done();

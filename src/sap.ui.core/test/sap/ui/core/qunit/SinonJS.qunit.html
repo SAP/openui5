@@ -90,7 +90,7 @@
 
 			    jQuery.ajax({
 			        success: function (data) {
-			            deepEqual(data, [1, 2, 3], "Right data set");
+			            assert.deepEqual(data, [1, 2, 3], "Right data set");
 			        }
 			    });
 

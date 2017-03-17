@@ -34,27 +34,27 @@ QUnit.test("Selection", function(assert){
 
 			oBinding.setSelectionInterval(2, 4);
 			equal(oBinding.getSelectedIndex(), 4, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [2,3,4], "Selected indices are [2,3,4]");
+			assert.deepEqual(oBinding.getSelectedIndices(), [2,3,4], "Selected indices are [2,3,4]");
 
 			oBinding.addSelectionInterval(5, 0);
 			equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [0,1,2,3,4,5], "Selected indices are [0,1,2,3,4,5]");
+			assert.deepEqual(oBinding.getSelectedIndices(), [0,1,2,3,4,5], "Selected indices are [0,1,2,3,4,5]");
 
 			oBinding.removeSelectionInterval(1,1);
 			equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [0,2,3,4,5], "Selected indices are [0,2,3,4,5]");
+			assert.deepEqual(oBinding.getSelectedIndices(), [0,2,3,4,5], "Selected indices are [0,2,3,4,5]");
 
 			// 1. select a parent and two of its children
 			// 2. collapse parent and expand it again
 			// 3. check whether the two children are deselected
 			oBinding.setSelectionInterval(1, 3);
 			equal(oBinding.getSelectedIndex(), 3, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [1,2,3], "Selected indices are [1,2,3]");
+			assert.deepEqual(oBinding.getSelectedIndices(), [1,2,3], "Selected indices are [1,2,3]");
 			oBinding.collapse(1);
 			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
 			oBinding.expand(1);
 			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
-			deepEqual(oBinding.getSelectedIndices(), [1], "Only the parent should be selected");
+			assert.deepEqual(oBinding.getSelectedIndices(), [1], "Only the parent should be selected");
 
 			// 1. select a parent's children on different level
 			// 2. collapse parent and expand it again
@@ -62,11 +62,11 @@ QUnit.test("Selection", function(assert){
 			oBinding.setSelectionInterval(2,3);
 			oBinding.addSelectionInterval(8,9);
 			equal(oBinding.getSelectedIndex(), 9, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [2,3,8,9], "Selected indices are [2,3,8,9]");
+			assert.deepEqual(oBinding.getSelectedIndices(), [2,3,8,9], "Selected indices are [2,3,8,9]");
 			oBinding.collapse(0);
 			oBinding.expand(0);
 			equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
-			deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
+			assert.deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
 
 			// 1. manually expand a node
 			// 2. select manually loaded nodes and nodes on other level
@@ -81,11 +81,11 @@ QUnit.test("Selection", function(assert){
 			oBinding.setSelectedIndex(2);
 			oBinding.addSelectionInterval(4, 6);
 			equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [2,4,5,6], "Selected indices are [2,4,6]");
+			assert.deepEqual(oBinding.getSelectedIndices(), [2,4,5,6], "Selected indices are [2,4,6]");
 			oBinding.collapse(1);
 			oBinding.expand(1);
 			equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
-			deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
+			assert.deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
 
 			// 1. select a node which is after the node that will be expanded in the next step
 			// 2. expand a node before the selected node
@@ -102,10 +102,10 @@ QUnit.test("Selection", function(assert){
 
 			oBinding.addSelectionInterval(4, 6);
 			equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [4,5,6,67], "Selected indices are [4,5,6,67]");
+			assert.deepEqual(oBinding.getSelectedIndices(), [4,5,6,67], "Selected indices are [4,5,6,67]");
 			oBinding.collapse(3);
 			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
-			deepEqual(oBinding.getSelectedIndices(), [4], "Selected indices are [4]");
+			assert.deepEqual(oBinding.getSelectedIndices(), [4], "Selected indices are [4]");
 
 			done();
 		}
@@ -497,7 +497,7 @@ QUnit.test("getSelectedIndices with initially collapsed (expanded) node and deep
 
 			oBinding.setSelectedIndex(8);
 
-			deepEqual(oBinding.getSelectedIndices(), [8], "Selected indices are correct after expand of initially collapsed node.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [8], "Selected indices are correct after expand of initially collapsed node.");
 
 			oBinding.expand(5);
 
@@ -507,7 +507,7 @@ QUnit.test("getSelectedIndices with initially collapsed (expanded) node and deep
 		var handler3 = function () {
 			oBinding.detachChange(handler3);
 
-			deepEqual(oBinding.getSelectedIndices(), [11], "Selected indices are correct after expand of deep node.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [11], "Selected indices are correct after expand of deep node.");
 
 			done();
 		};
@@ -554,7 +554,7 @@ QUnit.test("getSelectedIndices with deep node (expanded) node and deep node (sel
 			// 1642
 			oBinding.setSelectedIndex(9);
 
-			deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct initially.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct initially.");
 
 			// 1630
 			oBinding.expand(5);
@@ -565,11 +565,11 @@ QUnit.test("getSelectedIndices with deep node (expanded) node and deep node (sel
 		var handler4 = function () {
 			oBinding.detachChange(handler4);
 
-			deepEqual(oBinding.getSelectedIndices(), [12], "Selected indices of deep node is correct after expanding a previous deep node.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [12], "Selected indices of deep node is correct after expanding a previous deep node.");
 
 			// 1630
 			oBinding.collapse(5);
-			deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct after collapse a previous expanded deep node.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct after collapse a previous expanded deep node.");
 
 			done();
 		};

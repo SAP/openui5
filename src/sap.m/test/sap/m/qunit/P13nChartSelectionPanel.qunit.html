@@ -57,10 +57,10 @@
 		assert.strictEqual(oChartSelectionPanel.getTitleLarge(), "");
 		assert.strictEqual(oChartSelectionPanel.getType(), sap.m.P13nPanelType.dimeasure);
 		assert.strictEqual(oChartSelectionPanel.getChartTypeKey(), "");
-		deepEqual(oChartSelectionPanel.getAvailableChartTypes(), []);
-		deepEqual(oChartSelectionPanel.getItems(), []);
-		deepEqual(oChartSelectionPanel.getSelectionItems(), []);
-		deepEqual(oChartSelectionPanel._getInternalModel().getData().items, []);
+		assert.deepEqual(oChartSelectionPanel.getAvailableChartTypes(), []);
+		assert.deepEqual(oChartSelectionPanel.getItems(), []);
+		assert.deepEqual(oChartSelectionPanel.getSelectionItems(), []);
+		assert.deepEqual(oChartSelectionPanel._getInternalModel().getData().items, []);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -94,7 +94,7 @@
 
 		// assertions
 		assert.strictEqual(oChartSelectionPanel.getItems().length, 3);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -135,7 +135,7 @@
 
 		// assertions
 		assert.strictEqual(oChartSelectionPanel.getItems().length, 3);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -179,7 +179,7 @@
 
 		// assertions
 		assert.strictEqual(oChartSelectionPanel.getItems().length, 3);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -222,9 +222,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oItem, oItemB);
+		assert.deepEqual(oItem, oItemB);
 		assert.strictEqual(oChartSelectionPanel.getItems().length, 2);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
@@ -267,7 +267,7 @@
 		// assertions
 		assert.strictEqual(oItem, null);
 		assert.strictEqual(oChartSelectionPanel.getItems().length, 2);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C

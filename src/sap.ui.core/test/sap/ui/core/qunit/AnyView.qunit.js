@@ -230,7 +230,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 	// 	var oPromise = view.loaded()
 	// 	ok(oPromise instanceof Promise, "loaded() should return a promise");
 	// 	oView.loaded().then(function(oViewLoaded) {
-	// 		deepEqual(oView, oViewLoaded, "view returned and view resolved with should equal");
+	// 		assert.deepEqual(oView, oViewLoaded, "view returned and view resolved with should equal");
 	// 		start();
 	// 	});
 	// });

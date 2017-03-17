@@ -66,7 +66,7 @@
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
-		deepEqual(oView.mPreprocessors, {"foo":[]}, "no preprocessors stored at view");
+		assert.deepEqual(oView.mPreprocessors, {"foo":[]}, "no preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
 		equal(oView.runPreprocessor("xml", oSource, true), oSource);
 	});
@@ -254,7 +254,7 @@
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
-		deepEqual(oView.mPreprocessors, {"foo":[]}, "empty preprocessors stored at view");
+		assert.deepEqual(oView.mPreprocessors, {"foo":[]}, "empty preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
 
 		oView.runPreprocessor("xml", oSource).then(function(vSource) {
@@ -716,7 +716,7 @@
 		ok(oPromise instanceof Promise, "Promise returned");
 
 		oPromise.then(function(oViewLoaded) {
-			deepEqual(oView, oViewLoaded, "Views equal deeply");
+			assert.deepEqual(oView, oViewLoaded, "Views equal deeply");
 			done();
 		});
 	});

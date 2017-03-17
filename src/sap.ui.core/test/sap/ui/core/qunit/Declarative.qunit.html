@@ -147,7 +147,7 @@
 	 	equal(oLabel.getLabelFor(), "message", "Assocation id is set right");
 	 	var oNavigationBar = oPanel.getContent()[2];
 	 	equal(oNavigationBar.getAssociatedItems().length, 3, "Number of associated controls is right");
-	 	deepEqual(oNavigationBar.getAssociatedItems(), ["navitem1", "navitem2", "navitem3"],"Number of associated controls is right", "Assocation IDs are set right");
+	 	assert.deepEqual(oNavigationBar.getAssociatedItems(), ["navitem1", "navitem2", "navitem3"],"Number of associated controls is right", "Assocation IDs are set right");
 	});
 
 

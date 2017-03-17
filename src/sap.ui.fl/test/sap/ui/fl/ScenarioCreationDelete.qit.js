@@ -309,7 +309,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		}
 
 		function checkChangesAndBackendCalls(secondChanges) {
-			//deepEqual(firstChangesRetrieved, secondChanges, 'List of changes is the same'); //deepEqual seems to have problems comparing the two maps
+			//assert.deepEqual(firstChangesRetrieved, secondChanges, 'List of changes is the same'); //deepEqual seems to have problems comparing the two maps
 			var aKeysFirst = Object.keys(firstChangesRetrieved);
 			var aKeysSecond = Object.keys(secondChanges);
 			equal(aKeysSecond.length, 1);

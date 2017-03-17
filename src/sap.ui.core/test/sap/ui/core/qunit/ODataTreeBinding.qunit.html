@@ -436,9 +436,9 @@
 
 			oBinding.attachChange(handler2);
 			oBinding.refresh();
-			deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
-			deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
-			deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
+			assert.deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
+			assert.deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
+			assert.deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
 		};
 
 		var handler2 = function(oEvent) {

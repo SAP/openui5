@@ -245,7 +245,7 @@ sap.ui.getCore().attachInit(function () {
 			ok(Opa.config.actions[sPageName].iCanDoOtherThings, "Page Object actions are added");
 			ok(!Opa.config.actions[sPageName].iCanSeeIt, "Page Object assertions are not added to the actions");
 
-			deepEqual(Opa.config.arrangements[sPageName], Opa.config.actions[sPageName], "Page Object actions can be uses as Opa arrangements and actions");
+			assert.deepEqual(Opa.config.arrangements[sPageName], Opa.config.actions[sPageName], "Page Object actions can be uses as Opa arrangements and actions");
 		}
 		function assertStandardAssertionsRegisteredFor(sPageName){
 			ok(Opa.config.assertions[sPageName], "Page Object is added to the assertions");

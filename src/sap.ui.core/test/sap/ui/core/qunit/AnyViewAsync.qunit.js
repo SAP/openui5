@@ -116,7 +116,7 @@ function asyncTestsuite(sCaption, oConfig) {
 		var that = this;
 		oPromise.then(function(oViewLoaded) {
 			ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
-			deepEqual(that.oView, oViewLoaded, "Views equal deeply");
+			assert.deepEqual(that.oView, oViewLoaded, "Views equal deeply");
 			done();
 		});
 	});
@@ -132,7 +132,7 @@ function asyncTestsuite(sCaption, oConfig) {
 		var that = this;
 		oPromise.then(function(oViewLoaded) {
 			ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
-			deepEqual(that.oView, oViewLoaded, "Views equal deeply");
+			assert.deepEqual(that.oView, oViewLoaded, "Views equal deeply");
 			done();
 		});
 	});

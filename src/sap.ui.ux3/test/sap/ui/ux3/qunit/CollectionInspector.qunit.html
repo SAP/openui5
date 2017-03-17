@@ -201,9 +201,9 @@
 				oCollection2.addSelectedItem(oCollection2.getItems()[0]);
 				oCollection2.addSelectedItem(oCollection2.getItems()[1]);
 				oCollection2.addSelectedItem(oCollection2.getItems()[2]);
-				deepEqual(oCollection2.getSelectedItems(), [oCollection2.getItems()[0].getId(),oCollection2.getItems()[1].getId(),oCollection2.getItems()[2].getId()]);
+				assert.deepEqual(oCollection2.getSelectedItems(), [oCollection2.getItems()[0].getId(),oCollection2.getItems()[1].getId(),oCollection2.getItems()[2].getId()]);
 				oCollection2.setMultiSelection(false);
-				deepEqual(oCollection2.getSelectedItems(), [oCollection2.getItems()[0].getId()]);
+				assert.deepEqual(oCollection2.getSelectedItems(), [oCollection2.getItems()[0].getId()]);
 			});
 
 	test(

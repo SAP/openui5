@@ -1176,7 +1176,7 @@
 
 		function checkSelection(oControl, iExpectedStartPosition, iExpectedEndPosition, sMessagePrefix) {
 			var oSelection = getCurrentSelection(oControl);
-			deepEqual(oSelection, {iFrom: iExpectedStartPosition, iTo: iExpectedEndPosition}, sMessagePrefix +": selection start check");
+			assert.deepEqual(oSelection, {iFrom: iExpectedStartPosition, iTo: iExpectedEndPosition}, sMessagePrefix +": selection start check");
 		}
 
 		function getCursorSelectionWebkit(oControl) {

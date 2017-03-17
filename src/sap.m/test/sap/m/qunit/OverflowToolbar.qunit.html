@@ -729,7 +729,7 @@
 				oButtonLowPriority2.getId(),
 			]
 
-			deepEqual(aPopoverButtonsIDs, aExpectedOrder, "The elements order matches");
+			assert.deepEqual(aPopoverButtonsIDs, aExpectedOrder, "The elements order matches");
 
 			oOverflowTB.destroy();
 		});

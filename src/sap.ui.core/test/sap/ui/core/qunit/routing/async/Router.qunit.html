@@ -670,7 +670,7 @@
 					assert.strictEqual(beforeCallCount, 2, "Did call the callback function twice");
 					assert.strictEqual(callCount, 2, "Did call the callback function twice");
 					assert.strictEqual(patternCallCount, 1, "Did call the patternMatched function once");
-					deepEqual(aArguments.foo, "foo", "Did pass foo as parameter it was: " + aArguments.foo);
+					assert.deepEqual(aArguments.foo, "foo", "Did pass foo as parameter it was: " + aArguments.foo);
 					ok(bParentCallFirst, "Parent route was called first");
 
 					//Cleanup

@@ -60,10 +60,10 @@
 		assert.strictEqual(oDimMeasurePanel.getTitleLarge(), "");
 		assert.strictEqual(oDimMeasurePanel.getType(), sap.m.P13nPanelType.dimeasure);
 		assert.strictEqual(oDimMeasurePanel.getChartTypeKey(), "");
-		deepEqual(oDimMeasurePanel.getAvailableChartTypes(), []);
-		deepEqual(oDimMeasurePanel.getItems(), []);
-		deepEqual(oDimMeasurePanel.getDimMeasureItems(), []);
-		deepEqual(oDimMeasurePanel._getInternalModel().getData().items, []);
+		assert.deepEqual(oDimMeasurePanel.getAvailableChartTypes(), []);
+		assert.deepEqual(oDimMeasurePanel.getItems(), []);
+		assert.deepEqual(oDimMeasurePanel.getDimMeasureItems(), []);
+		assert.deepEqual(oDimMeasurePanel._getInternalModel().getData().items, []);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
@@ -97,7 +97,7 @@
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
-		deepEqual(oDimMeasurePanel.getItems(), [
+		assert.deepEqual(oDimMeasurePanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -138,7 +138,7 @@
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
-		deepEqual(oDimMeasurePanel.getItems(), [
+		assert.deepEqual(oDimMeasurePanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -182,7 +182,7 @@
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
-		deepEqual(oDimMeasurePanel.getItems(), [
+		assert.deepEqual(oDimMeasurePanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
@@ -225,9 +225,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oItem, oItemB);
+		assert.deepEqual(oItem, oItemB);
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 2);
-		deepEqual(oDimMeasurePanel.getItems(), [
+		assert.deepEqual(oDimMeasurePanel.getItems(), [
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
@@ -270,7 +270,7 @@
 		// assertions
 		assert.strictEqual(oItem, null);
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 2);
-		deepEqual(oDimMeasurePanel.getItems(), [
+		assert.deepEqual(oDimMeasurePanel.getItems(), [
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C

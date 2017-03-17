@@ -423,10 +423,10 @@
 	QUnit.test("currency parseValue", function(assert) {
 		var currencyType = new sap.ui.model.type.Currency();
 
-		deepEqual(currencyType.parseValue("3333", "string"), [3333, undefined], "parse test");
-		deepEqual(currencyType.parseValue("USD" + "\xa0" + "3333.555", "string"), [3333.555, "USD"], "parse test");
-		deepEqual(currencyType.parseValue("EUR3.555", "string"), [3.555, "EUR"], "parse test");
-		deepEqual(currencyType.parseValue("¥-3.555", "string"), [-3.555, "JPY"], "parse test");
+		assert.deepEqual(currencyType.parseValue("3333", "string"), [3333, undefined], "parse test");
+		assert.deepEqual(currencyType.parseValue("USD" + "\xa0" + "3333.555", "string"), [3333.555, "USD"], "parse test");
+		assert.deepEqual(currencyType.parseValue("EUR3.555", "string"), [3.555, "EUR"], "parse test");
+		assert.deepEqual(currencyType.parseValue("¥-3.555", "string"), [-3.555, "JPY"], "parse test");
 
 		raises(function(){currencyType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){currencyType.parseValue(true, "boolean")}, sap.ui.model.ParseException, "parse test");

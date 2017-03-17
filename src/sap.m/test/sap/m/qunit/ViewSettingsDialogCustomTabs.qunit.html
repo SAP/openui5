@@ -390,21 +390,21 @@
 
 			var aVsd10ValidPageIds 	= [];
 			sSuccessMsg 			= 'No valid page ids correctly determined.';
-			deepEqual(this.oVSD._fetchValidPagesIds(), aVsd10ValidPageIds, sSuccessMsg);
+			assert.deepEqual(this.oVSD._fetchValidPagesIds(), aVsd10ValidPageIds, sSuccessMsg);
 
 
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId, bEmptyContent));
 			aVsd10ValidPageIds 	= [sFirstCustomTabId].sort();
 			sSuccessMsg 		= 'Only one custom tab valid page id correctly determined.';
-			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+			assert.deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
 			this.oVSD.destroyAggregation('customTabs');
 
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
 			aVsd10ValidPageIds 	= [sFirstCustomTabId, sSecondCustomTabId].sort();
 			sSuccessMsg			= 'All custom tabs valid page ids correctly determined.';
-			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+			assert.deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
 			this.oVSD.destroyAggregation('customTabs');
 
 			oVsdConfig.addSortItems(this.oVSD);
@@ -415,7 +415,7 @@
 			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
 			aVsd10ValidPageIds 	= ['sort', 'group', 'filter', sFirstCustomTabId, sSecondCustomTabId].sort();
 			sSuccessMsg			= 'All valid page ids are correctly determined.';
-			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+			assert.deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
 		});
 
 		QUnit.test("Check the _determineValidPageId method for correctness.", function (assert) {

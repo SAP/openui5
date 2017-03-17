@@ -179,12 +179,12 @@
 
 		QUnit.test("ariaDescribedBy", function(assert) {
 			ok(isEmpty(t1.getAriaDescribedBy()), "t1.getAriaDescribedBy()");
-			deepEqual(t2.getAriaDescribedBy(), aAriaDescribedBy, "t2.getAriaDescribedBy()");
+			assert.deepEqual(t2.getAriaDescribedBy(), aAriaDescribedBy, "t2.getAriaDescribedBy()");
 		});
 
 		QUnit.test("ariaLabelledBy", function(assert) {
 			ok(isEmpty(t1.getAriaLabelledBy()), "t1.getAriaLabelledBy()");
-			deepEqual(t2.getAriaLabelledBy(), aAriaLabelledBy, "t2.getAriaLabelledBy()");
+			assert.deepEqual(t2.getAriaLabelledBy(), aAriaLabelledBy, "t2.getAriaLabelledBy()");
 		});
 
 		// test event handlers

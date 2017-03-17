@@ -113,9 +113,9 @@
 		var includes = ["css/vlayout.css","/js/includeme.js"];
 		var components =  ["samples.components.styledbutton"];
 		equal(oComp.getMetadata().getVersion(), "1.0", "Version retrieved");
-		deepEqual(oComp.getMetadata().getIncludes(), includes, "Includes Array retrieved");
+		assert.deepEqual(oComp.getMetadata().getIncludes(), includes, "Includes Array retrieved");
 		notEqual(oComp.getMetadata().getDependencies(), null, "Dependencies retrieved");
-		deepEqual(oComp.getMetadata().getComponents(), components, "Child components retrieved");
+		assert.deepEqual(oComp.getMetadata().getComponents(), components, "Child components retrieved");
 		equal(oComp.getMetadata().getUI5Version(), "1.13.0", "UI5 Version retrieved");
 	});
 
@@ -135,7 +135,7 @@
 		jQuery.sap.require("samples.components.loadfromfile.Component");
 		var oMetadata = samples.components.loadfromfile.Component.getMetadata();
 
-		deepEqual(oMetadata.getIncludes(), ["css/includeme.css", "js/includeme.js"], "Includes are available.");
+		assert.deepEqual(oMetadata.getIncludes(), ["css/includeme.css", "js/includeme.js"], "Includes are available.");
 		ok(oMetadata.hasProperty("prop1"), "Property 'prop1' available.");
 	});
 

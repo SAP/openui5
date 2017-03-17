@@ -69,7 +69,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest, "Smoke test 'generate' method");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Smoke test 'generate' method");
   });
 
 
@@ -253,7 +253,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest, "Background gets run before every scenario in the feature");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Background gets run before every scenario in the feature");
   });
 
 

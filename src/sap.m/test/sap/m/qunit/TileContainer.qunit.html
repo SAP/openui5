@@ -483,12 +483,12 @@
 				// Assert that all tiles have aria-posinset attribute with proper values:
 				// no duplicates and proper numeric order
 
-				deepEqual(aInsetPositions, aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+				assert.deepEqual(aInsetPositions, aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
 
 				// Assert that all tiles have aria-posinset attribute with proper values
 				// after a tile has changed its position from left to right
 				this.sut.moveTile(this.sut.getTiles()[0], 3);
-				deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+				assert.deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
 				// Assert that the tile was actually moved
 				equal(this.sut.getTiles()[3].getId(), 'first', 'first, first; equal success');
 
@@ -496,7 +496,7 @@
 				// Assert that all tiles have aria-posinset attribute with proper values
 				// after a tile has changed its position from right to left
 				this.sut.moveTile(this.sut.getTiles()[4], 1);
-				deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
+				assert.deepEqual(this.getAriaPosInSetValues(), aExpectedAriaPosInSetValues, "Checking the 'aria-posinset' for exact values");
 
 				// Assert that the tile was actually moved
 				equal(this.sut.getTiles()[1].getId(), 'fifth', 'fifth, fifth; equal success');
@@ -510,7 +510,7 @@
 
 			setTimeout(function(){
 				this.sut.deleteTile(oTile2);
-				deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+				assert.deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
 				oTile2.destroy();
 				done();
 			}.bind(this), delay);
@@ -520,13 +520,13 @@
 			var oNewTile = new sap.m.StandardTile();
 			this.sut.insertTile(oNewTile, 4);
 
-			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+			assert.deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
 		});
 
 		QUnit.test("Add of tile updates the aria-posinset and aria-setsize attributes", function(assert) {
 			var oNewTile = new sap.m.StandardTile();
 			this.sut.addTile(oNewTile);
-			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+			assert.deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
 		});
 
 		QUnit.module("Data Binding", {
