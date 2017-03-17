@@ -332,7 +332,7 @@
 		oList.done(function () {
 			var sPosition = oList.$().css("position");
 			// Assert
-			notStrictEqual(sPosition, "static", "position was not static but: " + sPosition);
+			assert.notStrictEqual(sPosition, "static", "position was not static but: " + sPosition);
 
 			// cleanup
 			oMockServer.stop();

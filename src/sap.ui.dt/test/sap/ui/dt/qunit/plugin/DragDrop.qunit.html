@@ -439,7 +439,7 @@
 				$PageContentOverlay.get(0).dispatchEvent(oEvent);
 
 				$PageContent.one("scroll", function() {
-					notStrictEqual($PageContent.scrollTop(), 0, "page content is scrolled after drag event");
+					assert.notStrictEqual($PageContent.scrollTop(), 0, "page content is scrolled after drag event");
 					done();
 				});
 

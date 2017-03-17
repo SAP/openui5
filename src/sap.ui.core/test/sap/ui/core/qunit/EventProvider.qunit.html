@@ -228,14 +228,14 @@
 			var oEventInfo = globalEvents.shift();
 			assert.strictEqual(oEventInfo.id, "Fire4", "id of the received event");
 			assert.strictEqual(oEventInfo.listener, oObject, "listener object should be the EventProvider instance")
-			notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
-			notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
+			assert.notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
+			assert.notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
 			assert.strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function", "additional (static) data should be present");
 			oEventInfo = globalEvents.shift();
 			assert.strictEqual(oEventInfo.id, "Fire4", "id of the received event");
 			assert.strictEqual(oEventInfo.listener, listenerD, "listener object should be the event listener object")
-			notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
-			notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
+			assert.notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
+			assert.notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
 			assert.strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function on listener object", "additional (static) data should be present");
 
 		});

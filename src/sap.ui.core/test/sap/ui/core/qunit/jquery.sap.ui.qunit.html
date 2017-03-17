@@ -86,8 +86,8 @@
 
 			var oCore = sap.ui.getCore();
 			var oUIArea = oCore.getUIArea("uiArea1");
-			notStrictEqual(oUIArea, null, "UI Area should have been created.");
-			notStrictEqual(oUIArea, undefined, "UI Area should have been created.");
+			assert.notStrictEqual(oUIArea, null, "UI Area should have been created.");
+			assert.notStrictEqual(oUIArea, undefined, "UI Area should have been created.");
 		});
 
 		QUnit.test("MultipleRootOk", function(assert) {
@@ -96,12 +96,12 @@
 			var oCore = sap.ui.getCore();
 
 			var oUIArea = oCore.getUIArea("uiArea2");
-			notStrictEqual(oUIArea, null, "UI Area 2 should have been created.");
-			notStrictEqual(oUIArea, undefined, "UI Area 2 should have been created.");
+			assert.notStrictEqual(oUIArea, null, "UI Area 2 should have been created.");
+			assert.notStrictEqual(oUIArea, undefined, "UI Area 2 should have been created.");
 
 			oUIArea = oCore.getUIArea("uiArea3");
-			notStrictEqual(oUIArea, null, "UI Area 3 should have been created.");
-			notStrictEqual(oUIArea, undefined, "UI Area 3 should have been created.");
+			assert.notStrictEqual(oUIArea, null, "UI Area 3 should have been created.");
+			assert.notStrictEqual(oUIArea, undefined, "UI Area 3 should have been created.");
 		});
 
 		QUnit.test("MultipleRootAndSliceOk", function(assert) {
@@ -115,8 +115,8 @@
 			assert.strictEqual(iNo2, iNo1 + 3, "Exaclty three UIAreas should have been created.");
 
 			var oUIArea = oCore.getUIArea("uiArea4");
-			notStrictEqual(oUIArea, null, "UI Area 4 should have been created.");
-			notStrictEqual(oUIArea, undefined, "UI Area 4 should have been created.");
+			assert.notStrictEqual(oUIArea, null, "UI Area 4 should have been created.");
+			assert.notStrictEqual(oUIArea, undefined, "UI Area 4 should have been created.");
 
 			var iNo3 = oTestPlugin.getNoOfUIAreas();
 			assert.strictEqual(iNo3, iNo2, "No additional UIArea should have been created.");
@@ -127,7 +127,7 @@
 		QUnit.test("RootWithControlOk", function(assert) {
 			jQuery("#uiAreaTarget").root(new sap.jsunittest.Test("testControl"));
 			sap.ui.getCore().applyChanges();
-			notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
+			assert.notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
 			assert.ok(sap.ui.getCore().byId("testControl") !== null, "Control should be available");
 			assert.ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
 		});

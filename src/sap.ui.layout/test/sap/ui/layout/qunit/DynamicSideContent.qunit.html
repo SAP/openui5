@@ -737,7 +737,7 @@
 				});
 
 				QUnit.test("Listeners are created / removed",function(assert) {
-					notStrictEqual(this._oDSC._sContainerResizeListener, undefined, "Container resize listener is registered if there is container query");
+					assert.notStrictEqual(this._oDSC._sContainerResizeListener, undefined, "Container resize listener is registered if there is container query");
 					this._oDSC.destroy();
 					assert.strictEqual(this._oDSC._sContainerResizeListener, null, "Container resize listener is null if there is container query");
 				});
