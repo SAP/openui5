@@ -22,7 +22,7 @@
 		<script>
 
 		QUnit.test("domById", function(assert) {
-			ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
+			assert.ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
 			assert.equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
 
 			//this is a test for the weird IE behavior of getElementById that looks case insensitive for name and id attributes
@@ -116,7 +116,7 @@
 			var result = jQuery.sap.focus(invisibleDiv);
 
 			// result will be "false" in IE8 and "true" in other browsers, as they have no error
-			ok(true, "jQuery.sap.focus() may not have caused an error for invisible elements"); // would never be reached in case of error
+			assert.ok(true, "jQuery.sap.focus() may not have caused an error for invisible elements"); // would never be reached in case of error
 		});
 
 		QUnit.test("SetGetCursorPos", function (assert) {
@@ -282,19 +282,19 @@
 			}
 
 			var sOuterHTML = jQuery("#control3").outerHTML().toUpperCase(); //Uppercase needed for cross browser consistency (IE returns uppercase tags, Firefox lowercase)
-			ok(sOuterHTML === getExpected(false) || sOuterHTML === getExpected(true), "outerHTML is wrong, Current: '"+sOuterHTML+"'")
+			assert.ok(sOuterHTML === getExpected(false) || sOuterHTML === getExpected(true), "outerHTML is wrong, Current: '"+sOuterHTML+"'")
 		});
 
 		QUnit.test("ContainsOrEquals", function (assert) {
 			var oDomRef3 = jQuery.sap.domById('control3');
 			var oDomRef1 = jQuery.sap.domById('control1');
-			ok(jQuery.sap.containsOrEquals(oDomRef1,oDomRef3), "jQuery.sap.containsOrEquals(oDomRef1,oDomRef3) control3 is contained in control1");
-			ok(jQuery.sap.containsOrEquals(document.body,oDomRef1), "jQuery.sap.containsOrEquals(document.body,oDomRef1) control1 is contained in body");
-			ok(jQuery.sap.containsOrEquals(oDomRef3,oDomRef3), "jQuery.sap.containsOrEquals(oDomRef3,oDomRef3) control3 is contained in control3");
-			ok(jQuery.sap.containsOrEquals(document.body,document.body), "jQuery.sap.containsOrEquals(document.body,document.body) body is contained in body");
+			assert.ok(jQuery.sap.containsOrEquals(oDomRef1,oDomRef3), "jQuery.sap.containsOrEquals(oDomRef1,oDomRef3) control3 is contained in control1");
+			assert.ok(jQuery.sap.containsOrEquals(document.body,oDomRef1), "jQuery.sap.containsOrEquals(document.body,oDomRef1) control1 is contained in body");
+			assert.ok(jQuery.sap.containsOrEquals(oDomRef3,oDomRef3), "jQuery.sap.containsOrEquals(oDomRef3,oDomRef3) control3 is contained in control3");
+			assert.ok(jQuery.sap.containsOrEquals(document.body,document.body), "jQuery.sap.containsOrEquals(document.body,document.body) body is contained in body");
 			// text nodes are no longer supported!  ok(jQuery.sap.containsOrEquals(oDomRef3,oDomRef3.firstChild),"jQuery.sap.containsOrEquals(control3,control3.firstChild) control3s text node is contained in control3");
-			ok(!jQuery.sap.containsOrEquals(oDomRef3,document.body), "jQuery.sap.containsOrEquals(control3,document.body) body is not contained in control3");
-			ok(!jQuery.sap.containsOrEquals(oDomRef3,oDomRef1), "jQuery.sap.containsOrEquals(control3,control1) control1 is not contianed in control3");
+			assert.ok(!jQuery.sap.containsOrEquals(oDomRef3,document.body), "jQuery.sap.containsOrEquals(control3,document.body) body is not contained in control3");
+			assert.ok(!jQuery.sap.containsOrEquals(oDomRef3,oDomRef1), "jQuery.sap.containsOrEquals(control3,control1) control1 is not contianed in control3");
 		});
 
 		QUnit.test("Rect", function (assert) {
@@ -306,8 +306,8 @@
 		});
 
 		QUnit.test("HasTabIndex", function (assert) {
-			ok(!jQuery("#control2").hasTabIndex(), "control2 does actually not have a tabindex");
-			ok(jQuery("#control3").hasTabIndex(), "control3 does actually have a tabindex");
+			assert.ok(!jQuery("#control2").hasTabIndex(), "control2 does actually not have a tabindex");
+			assert.ok(jQuery("#control3").hasTabIndex(), "control3 does actually have a tabindex");
 		});
 
 		QUnit.module("focusable dom refs");
@@ -358,10 +358,10 @@
 			assert.equal(oParentWithAttribute.getAttribute('data-sap-ui-test'), "true", "jQuery(oDomRef).parentByAttribute('data-sap-ui-test').getAttribute('data-sap-ui-test') should be 'true'");
 
 			var oParentWithAttributeFalse = jQuery(oDomRef).parentByAttribute("data-sap-ui-test", "false");
-			ok(!oParentWithAttributeFalse, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'false') should be undefined");
+			assert.ok(!oParentWithAttributeFalse, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'false') should be undefined");
 
 			var oParentWithAttributeTrue = jQuery(oDomRef).parentByAttribute("data-sap-ui-test", "true");
-			ok(oParentWithAttributeTrue, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'true') should be not null");
+			assert.ok(oParentWithAttributeTrue, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'true') should be not null");
 		});
 
 		QUnit.test("OwnerWindow", 0, function (assert) {
@@ -376,24 +376,24 @@
 
 		QUnit.test("ScrollbarSize", function (assert) {
 			var size = jQuery.sap.scrollbarSize(true);
-			ok(size, "No size for scroll bar returned");
-			ok(typeof size.width === "number", "No width for scroll bar returned");
-			ok(typeof size.height === "number", "No height for scroll bar returned");
+			assert.ok(size, "No size for scroll bar returned");
+			assert.ok(typeof size.width === "number", "No width for scroll bar returned");
+			assert.ok(typeof size.height === "number", "No height for scroll bar returned");
 
 			var size = jQuery.sap.scrollbarSize(null, true);
-			ok(size, "No size for scroll bar returned");
-			ok(typeof size.width === "number", "No width for scroll bar returned");
-			ok(typeof size.height === "number", "No height for scroll bar returned");
+			assert.ok(size, "No size for scroll bar returned");
+			assert.ok(typeof size.width === "number", "No width for scroll bar returned");
+			assert.ok(typeof size.height === "number", "No height for scroll bar returned");
 
 			var size = jQuery.sap.scrollbarSize("someclass", true);
-			ok(size, "No size for scroll bar returned");
-			ok(typeof size.width === "number", "No width for scroll bar returned");
-			ok(typeof size.height === "number", "No height for scroll bar returned");
+			assert.ok(size, "No size for scroll bar returned");
+			assert.ok(typeof size.width === "number", "No width for scroll bar returned");
+			assert.ok(typeof size.height === "number", "No height for scroll bar returned");
 
 			var size = jQuery.sap.scrollbarSize("someclass");
-			ok(size, "No size for scroll bar returned");
-			ok(typeof size.width === "number", "No width for scroll bar returned");
-			ok(typeof size.height === "number", "No height for scroll bar returned");
+			assert.ok(size, "No size for scroll bar returned");
+			assert.ok(typeof size.width === "number", "No width for scroll bar returned");
+			assert.ok(typeof size.height === "number", "No height for scroll bar returned");
 		});
 
 		QUnit.test("disableSelection", function(assert) {
@@ -497,14 +497,14 @@
 
 			// test the patch
 			assert.strictEqual(jQuery.sap.replaceDOM($Ref[0], $New.outerHTML(), true), true, "Should apply the patch");
-			ok($Ref[0].isEqualNode($New[0]), "Patch is applied correctly");
+			assert.ok($Ref[0].isEqualNode($New[0]), "Patch is applied correctly");
 			assert.strictEqual($Ref._sapTest_dataEvents(), undefined, "Events are removed while patching");
 
 			// test replace
 			$Ref.append("<div></div>");
 			assert.strictEqual(jQuery.sap.replaceDOM($Ref[0], $New[0]), false, "Should replace the reference DOM");
 			$Ref = jQuery("#id"); // get it again since it is replaced
-			ok($Ref[0].isEqualNode($New[0]), "Replace is done correctly");
+			assert.ok($Ref[0].isEqualNode($New[0]), "Replace is done correctly");
 
 			$Ref.remove();
 		});

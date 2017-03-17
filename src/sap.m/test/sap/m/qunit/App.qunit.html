@@ -57,8 +57,8 @@
 
 
 		QUnit.test("App rendered", function(assert) {
-			ok(jQuery.sap.domById("myFirstApp"), "App should be rendered");
-			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+			assert.ok(jQuery.sap.domById("myFirstApp"), "App should be rendered");
+			assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
 		});
 
 		QUnit.test("Home Icon Tag", function(assert) {
@@ -79,7 +79,7 @@
 			QUnit.test("orientationChange event", function(assert) {
 				assert.equal(landscape, undefined, "handler for orientationChange should not have been called yet");
 				app._handleOrientationChange();
-				ok(landscape !== undefined, "handler for orientationChange should have been called");
+				assert.ok(landscape !== undefined, "handler for orientationChange should have been called");
 
 				var isLandscape = jQuery(window).width() > jQuery(window).height();
 				assert.equal(landscape, isLandscape, "'landscape' parameter should contain the current orientation");
@@ -97,11 +97,11 @@
 		QUnit.test("destroy", function(assert) {
 			app.destroy();
 			assert.equal(jQuery.sap.domById("page1"), undefined, "Page 1 should not exist anymore in the DOM");
-			ok(sap.ui.getCore().byId("page1") === undefined, "Page 1 should not exist anymore as control");
+			assert.ok(sap.ui.getCore().byId("page1") === undefined, "Page 1 should not exist anymore as control");
 			assert.equal(jQuery.sap.domById("page2"), undefined, "Page 2 should not exist anymore in the DOM");
-			ok(sap.ui.getCore().byId("page2") === undefined, "Page 2 should not exist anymore as control");
+			assert.ok(sap.ui.getCore().byId("page2") === undefined, "Page 2 should not exist anymore as control");
 			assert.equal(jQuery.sap.domById("page3"), undefined, "Page 3 should not exist anymore in the DOM");
-			ok(sap.ui.getCore().byId("page3") === undefined, "Page 3 should not exist anymore as control");
+			assert.ok(sap.ui.getCore().byId("page3") === undefined, "Page 3 should not exist anymore as control");
 		});
 
     </script>

@@ -124,8 +124,8 @@
 
 				sap.ui.getCore().applyChanges();
 
-				ok(rb1, "rb1 should not be null");
-				ok(rb2, "rb2 should not be null");
+				assert.ok(rb1, "rb1 should not be null");
+				assert.ok(rb2, "rb2 should not be null");
 			},
 			afterEach : function() {
 				rb1 = null;
@@ -190,7 +190,7 @@
 			rb1.detachSelect(foo);
 			try {
 				rb1.fireSelect();
-				ok(true, "No event and thus no exception should be triggered!");
+				assert.ok(true, "No event and thus no exception should be triggered!");
 			} catch (e) {
  				fail("should not occur");
 			}
@@ -212,16 +212,16 @@
 
 		QUnit.test("MetadataOk", function(assert) {
 			var oMetadata = rb1.getMetadata();
-			ok(oMetadata, "rb1.getMetadata() should not be null");
-			ok(oMetadata.getParent(), "rb1.getMetadata().getParent() should not be null");
-			ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
+			assert.ok(oMetadata, "rb1.getMetadata() should not be null");
+			assert.ok(oMetadata.getParent(), "rb1.getMetadata().getParent() should not be null");
+			assert.ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
 			assert.strictEqual(oMetadata.getProperties()["text"]["type"], "string");
-			ok(isEmpty(oMetadata.getAggregations()));
+			assert.ok(isEmpty(oMetadata.getAggregations()));
 			var oAssociations = oMetadata.getAssociations();
 			assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
-			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
+			assert.ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
 			assert.strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
-			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
+			assert.ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
 		QUnit.test("OffsetWidthOk", function(assert) {
@@ -252,28 +252,28 @@
 		QUnit.test("CssClassesOk", function(assert) {
 			var sClasses = window.document.getElementById("rb1").className;
 			notStrictEqual(sClasses, null, "sClasses is null");
-			ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
-			ok(sClasses.indexOf("sapUiRbStd") == -1, "rb1 className is containing 'sapUiRbStd'");
-			ok(sClasses.indexOf("sapUiRbDis") > -1, "rb1 className is missing 'sapUiRbDis'");
-			ok(sClasses.indexOf("sapUiRbRo") == -1, "rb1 className is containing 'sapUiRbRo'");
+			assert.ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
+			assert.ok(sClasses.indexOf("sapUiRbStd") == -1, "rb1 className is containing 'sapUiRbStd'");
+			assert.ok(sClasses.indexOf("sapUiRbDis") > -1, "rb1 className is missing 'sapUiRbDis'");
+			assert.ok(sClasses.indexOf("sapUiRbRo") == -1, "rb1 className is containing 'sapUiRbRo'");
 
 			rb1.setEnabled(true);
 			sap.ui.getCore().applyChanges();
 			sClasses = window.document.getElementById("rb1").className; // after re-rendering it is a NEW HTML element!!
 
-			ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
-			ok(sClasses.indexOf("sapUiRbStd") > -1, "rb1 className is missing 'sapUiRbStd'");
-			ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
-			ok(sClasses.indexOf("sapUiRbRo") == -1, "rb1 className is containing 'sapUiRbRo'");
+			assert.ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
+			assert.ok(sClasses.indexOf("sapUiRbStd") > -1, "rb1 className is missing 'sapUiRbStd'");
+			assert.ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
+			assert.ok(sClasses.indexOf("sapUiRbRo") == -1, "rb1 className is containing 'sapUiRbRo'");
 
 			rb1.setEditable(false);
 			sap.ui.getCore().applyChanges();
 			sClasses = window.document.getElementById("rb1").className; // after re-rendering it is a NEW HTML element!!
 
-			ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
-			ok(sClasses.indexOf("sapUiRbStd") == -1, "rb1 className is containing 'sapUiRbStd'");
-			ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
-			ok(sClasses.indexOf("sapUiRbRo") > -1, "rb1 className is missing 'sapUiRbRo'");
+			assert.ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
+			assert.ok(sClasses.indexOf("sapUiRbStd") == -1, "rb1 className is containing 'sapUiRbStd'");
+			assert.ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
+			assert.ok(sClasses.indexOf("sapUiRbRo") > -1, "rb1 className is missing 'sapUiRbRo'");
 		});
 
 			QUnit.module("GroupName");

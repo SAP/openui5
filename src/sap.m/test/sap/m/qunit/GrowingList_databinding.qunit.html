@@ -70,7 +70,7 @@
 
 		gl.addEventDelegate({
 			onAfterRendering: function(){
-				ok("Complete rendering happened");
+				assert.ok("Complete rendering happened");
 			}
 		})
 
@@ -126,7 +126,7 @@
 			assert.expect(10); // incl. rendering
 			app.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("gl"), "GrowingList should be rendered");
+			assert.ok(jQuery.sap.domById("gl"), "GrowingList should be rendered");
 			assert.equal($ul().length, 1, "GrowingList should have its list rendered");
 			assert.equal($ul().children().length, 4, "GrowingList should have one header and three items rendered");
 

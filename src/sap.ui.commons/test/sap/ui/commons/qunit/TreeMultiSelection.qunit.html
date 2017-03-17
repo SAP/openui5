@@ -105,27 +105,27 @@
 	QUnit.test("Node selection", function(assert) {
 		var firstSelection = sap.ui.getCore().getControl("node1");
 		firstSelection.select();
-		ok(firstSelection.getIsSelected(), "Node 1 is selected");
+		assert.ok(firstSelection.getIsSelected(), "Node 1 is selected");
 		var secondSelection = sap.ui.getCore().getControl("node2");
 		secondSelection.select();
-		ok(secondSelection.getIsSelected(), "Node 2 is now selected");
-		ok(!firstSelection.getIsSelected(), "Node 1 is not selected anymore");
+		assert.ok(secondSelection.getIsSelected(), "Node 2 is now selected");
+		assert.ok(!firstSelection.getIsSelected(), "Node 1 is not selected anymore");
 	});
 
 	QUnit.test("Node selection and collapsing (old)", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
 		assert.equal(tree.getSelectionMode(), "Legacy", "SelectionMode should be 'Legacy' by default");
 		var node1 = sap.ui.getCore().getControl("node1");
-		ok(node1.getExpanded(), "Node 1 is expanded");
+		assert.ok(node1.getExpanded(), "Node 1 is expanded");
 		var node11 = sap.ui.getCore().getControl("node11");
 		node11.select();
-		ok(node11.getIsSelected(), "Node 1.1 is selected");
+		assert.ok(node11.getIsSelected(), "Node 1.1 is selected");
 		node1.collapse();
-		ok(!node1.getExpanded(), "Node 1 is now collapsed");
-		ok(node11.getIsSelected(), "Node 1.1 selected");
+		assert.ok(!node1.getExpanded(), "Node 1 is now collapsed");
+		assert.ok(node11.getIsSelected(), "Node 1.1 selected");
 		node1.expand();
-		ok(node1.getExpanded(), "Node 1 is expanded");
-		ok(node11.getIsSelected(), "Node 1.1 is selected");
+		assert.ok(node1.getExpanded(), "Node 1 is expanded");
+		assert.ok(node11.getIsSelected(), "Node 1.1 is selected");
 	});
 
 	QUnit.module("Selection Mode 'Multi'", {
@@ -146,11 +146,11 @@
 		assert.equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
 		var node1 = sap.ui.getCore().getControl("node1");
 		node1.select();
-		ok(node1.getIsSelected(), "Node 1 is selected");
+		assert.ok(node1.getIsSelected(), "Node 1 is selected");
 		var node2 = sap.ui.getCore().getControl("node2");
 		node2.select();
-		ok(node2.getIsSelected(), "Node 2 is selected");
-		ok(!node1.getIsSelected(), "Node 1 is not selected");
+		assert.ok(node2.getIsSelected(), "Node 2 is selected");
+		assert.ok(!node1.getIsSelected(), "Node 1 is not selected");
 	});
 
 	QUnit.test("Node selection and collapsing (new)", function(assert) {
@@ -158,15 +158,15 @@
 		tree.setSelectionMode("Multi");
 		assert.equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
 		var node1 = sap.ui.getCore().getControl("node1");
-		ok(node1.getExpanded(), "Node 1 is expanded");
+		assert.ok(node1.getExpanded(), "Node 1 is expanded");
 		var node11 = sap.ui.getCore().getControl("node11");
 		node11.select();
-		ok(node11.getIsSelected(), "Node 1.1 is selected");
+		assert.ok(node11.getIsSelected(), "Node 1.1 is selected");
 		node1.collapse();
-		ok(!node1.getExpanded(), "Node 1 is now collapsed");
+		assert.ok(!node1.getExpanded(), "Node 1 is now collapsed");
 		node1.expand();
-		ok(node1.getExpanded(), "Node 1 is expanded");
-		ok(node11.getIsSelected(), "Node 1.1 is selected");
+		assert.ok(node1.getExpanded(), "Node 1 is expanded");
+		assert.ok(node11.getIsSelected(), "Node 1.1 is selected");
 	});
 
 	QUnit.module("Multiselect interactions", {

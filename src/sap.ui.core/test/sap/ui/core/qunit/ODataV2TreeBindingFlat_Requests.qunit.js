@@ -557,14 +557,14 @@ QUnit.test("Request Creation - Refresh after Success - Event-Timing", function(a
 			//    1. when the refresh is forced by the model
 			//    2. when the batch returns with successfully performed changes (refresh triggered by the binding)
 			oBinding.attachRefresh(function () {
-				ok(bSuccessBeforeRefresh, "Refresh fired after successful submitChanges.");
+				assert.ok(bSuccessBeforeRefresh, "Refresh fired after successful submitChanges.");
 				done();
 			});
 
 			// check the application's success handler call
 			oBinding.submitChanges({
 				success: function (oBatchResponse) {
-					ok("Application success handler called for submitted change-request");
+					assert.ok("Application success handler called for submitted change-request");
 					equals(oBatchResponse.__batchResponses[0].__changeResponses[0].statusCode, "201", "Status-Code 201: Successful CREATE/POST request.");
 					equals(oBatchResponse.__batchResponses[0].__changeResponses[1].statusCode, "204", "Status-Code 204: Successful DELETE request.");
 
@@ -640,10 +640,10 @@ QUnit.test("Request Creation - No Refresh after Error - Event-Timing", function(
 			// check the application's success handler call
 			oBinding.submitChanges({
 				success: function (oBatchResponse) {
-					ok("Application success handler called for submitted change-request");
+					assert.ok("Application success handler called for submitted change-request");
 					equals(oBatchResponse.__batchResponses[0].response.statusCode, "404", "Error returned by the MockServer");
 
-					ok(bNoRefresh, "No Refresh was fired after a broken change-request");
+					assert.ok(bNoRefresh, "No Refresh was fired after a broken change-request");
 					done();
 				}
 			});

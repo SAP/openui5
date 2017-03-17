@@ -29,7 +29,7 @@
 				iScrollTop=0;
 
 		function selectEventHandler() {
-			ok(true, "This text means the select event handler has been executed."); // this test tests by just being counted in the respective test
+			assert.ok(true, "This text means the select event handler has been executed."); // this test tests by just being counted in the respective test
 		}
 
 		var oCtrl = new sap.ui.commons.ListBox("ListBox1", {
@@ -63,10 +63,10 @@
 		});
 
 		QUnit.test("Initial Check", function(assert) {
-  		ok(oCtrl, "ListBox should exist after creating");
+  		assert.ok(oCtrl, "ListBox should exist after creating");
 
   		oDomRef = jQuery.sap.domById("ListBox1");
-  		ok(oDomRef, "ListBox root element should exist");
+  		assert.ok(oDomRef, "ListBox root element should exist");
   	});
 
 
@@ -418,11 +418,11 @@
 
 		QUnit.test("GetSelectedItem", function(assert) {
 			var item = oCtrl.getSelectedItem();
-			ok(item == null, "oCtrl.getSelectedItem() with no selection is wrong");
+			assert.ok(item == null, "oCtrl.getSelectedItem() with no selection is wrong");
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 			item = oCtrl.getSelectedItem();
-			ok(item == oItem0, "oCtrl.getSelectedItem() is wrong");
+			assert.ok(item == oItem0, "oCtrl.getSelectedItem() is wrong");
 		});
 
 		/**
@@ -434,15 +434,15 @@
 			oCtrl.addSelectedIndex(0);
 
 			assert.equal(oCtrl.getSelectedItems().length, 2, "number of selected items returned by oCtrl.getSelectedItems is wrong");
-			ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
-			ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
+			assert.ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
+			assert.ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
 		});
 
 
 		QUnit.test("GetItems", function(assert) {
 			assert.equal(oCtrl.getItems().length, 2, "oCtrl.getItems() with no selection is wrong");
-			ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
-			ok(oCtrl.getItems()[1] == oItem1, "second returned item is wrong");
+			assert.ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
+			assert.ok(oCtrl.getItems()[1] == oItem1, "second returned item is wrong");
 		});
 
 		QUnit.test("AddItem", function(assert) {
@@ -455,14 +455,14 @@
 
 			// test the items
 			assert.equal(oCtrl.getItems().length, 3, "oCtrl.getItems() after adding a third item is wrong");
-			ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
-			ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
-			ok(oCtrl.getItems()[2] == oItem2, "third returned item is wrong");
+			assert.ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
+			assert.ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
+			assert.ok(oCtrl.getItems()[2] == oItem2, "third returned item is wrong");
 
 			// test the adoption of the selection
 			assert.equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding third item is wrong");
-			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
-			ok(oCtrl.getSelectedIndices()[1] == 1, "second selected index after third item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[1] == 1, "second selected index after third item is wrong");
 		});
 
 		QUnit.test("InsertItem", function(assert) {
@@ -475,14 +475,14 @@
 
 			// test the items
 			assert.equal(oCtrl.getItems().length, 3, "oCtrl.getItems() after adding a third item is wrong");
-			ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
-			ok(oCtrl.getItems()[1] == oItem2, "second returned item is wrong");
-			ok(oCtrl.getItems()[2] == oItem1, "third returned item is wrong");
+			assert.ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
+			assert.ok(oCtrl.getItems()[1] == oItem2, "second returned item is wrong");
+			assert.ok(oCtrl.getItems()[2] == oItem1, "third returned item is wrong");
 
 			// test the adoption of the selection
 			assert.equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding third item is wrong");
-			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
-			ok(oCtrl.getSelectedIndices()[1] == 2, "second selected index after third item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[1] == 2, "second selected index after third item is wrong");
 		});
 
 		QUnit.test("RemoveItem", function(assert) {
@@ -493,11 +493,11 @@
 
 			// test the items
 			assert.equal(oCtrl.getItems().length, 1, "oCtrl.getItems() after removing an item is wrong");
-			ok(oCtrl.getItems()[0] == oItem1, "first returned item is wrong");
+			assert.ok(oCtrl.getItems()[0] == oItem1, "first returned item is wrong");
 
 			// test the adoption of the selection
 			assert.equal(oCtrl.getSelectedIndices().length, 1, "number of selected indices after removing an item is wrong");
-			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after removing an item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after removing an item is wrong");
 		});
 
 		QUnit.test("RemoveAllItems", function(assert) {

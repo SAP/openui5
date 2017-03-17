@@ -87,7 +87,7 @@
 
 	QUnit.test("Visibility", function(assert) {
 		// Visible
-		ok(jQuery("#textView1").get(0), "Visible, expected defined");
+		assert.ok(jQuery("#textView1").get(0), "Visible, expected defined");
 		equals(jQuery("#textView1-__clone0").get(0), undefined, "Invisible");
 	});
 
@@ -95,7 +95,7 @@
 		var placeHolderPattern = new RegExp("\<embed data-index=\"([0-9]*[0-9])\">", "gim");
 		var oTVDom = jQuery.sap.domById('textView1');
 		var renderedText = jQuery(oTVDom).text();
-		ok((placeHolderPattern.exec(renderedText) == null), "All placeholders correctly replaced");
+		assert.ok((placeHolderPattern.exec(renderedText) == null), "All placeholders correctly replaced");
 
 	});
 
@@ -123,7 +123,7 @@
 		catch(e){
 			controlAdded = false;
 		}
-		ok(controlAdded, "Button is not an allowed control within FormattedTextView");
+		assert.ok(controlAdded, "Button is not an allowed control within FormattedTextView");
 	});
 
 	QUnit.test("Content with html and embed placeholder is rendered", function(assert) {
@@ -132,8 +132,8 @@
 		sap.ui.getCore().applyChanges();
 
 		var renderedHTML = sap.ui.getCore().byId('textView4').getDomRef().innerHTML;
-		ok(~renderedHTML.indexOf('<div'), 'The div is rendered');
-		ok(~renderedHTML.indexOf('<a'), 'The link is rendered');
+		assert.ok(~renderedHTML.indexOf('<div'), 'The div is rendered');
+		assert.ok(~renderedHTML.indexOf('<a'), 'The link is rendered');
 	});
 
 </script>

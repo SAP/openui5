@@ -108,7 +108,7 @@
 			assert.equal(oDropdown.getInputDomRef().value, sCheckText, "Default value / text should be in the HTML and accessible via getDomRef.");
 
 			// in jQuery 1.6.2 this has changed
-			ok((jQuery("#" + sDropdownId + "2 > input").attr("readonly"))||(jQuery("#" + sDropdownId + "2 > input").prop("readonly")) , "Second DropdownBox should be read only.");
+			assert.ok((jQuery("#" + sDropdownId + "2 > input").attr("readonly"))||(jQuery("#" + sDropdownId + "2 > input").prop("readonly")) , "Second DropdownBox should be read only.");
 
 			assert.equal(jQuery("#" + sDropdownId + "3").length, 0, "Third (invisible) DropdownBox should not be rendered at all.");
 
@@ -257,12 +257,12 @@
 
 		QUnit.test("TestPageDownOK", function(assert){
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
-			ok(true, "Implementation pending. Specification prio 3");
+			assert.ok(true, "Implementation pending. Specification prio 3");
 		});
 
 		QUnit.test("TestPageUpOK", function(assert){
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
-			ok(true, "Implementation pending. Specification prio 3");
+			assert.ok(true, "Implementation pending. Specification prio 3");
 		});
 
 		QUnit.test("TestEscape", function(assert){
@@ -297,16 +297,16 @@
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
 
 		});
 
@@ -314,10 +314,10 @@
 			resetBeforeTest();
 
 			qutils.triggerEvent("click", sDropdownIconId);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
 
 			qutils.triggerEvent("click", sDropdownIconId);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
 
 		});
 
@@ -333,7 +333,7 @@
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the DropdownBox
 			handleChange: function(){
-				ok(true, "DropdownBox event handler change was triggered.");
+				assert.ok(true, "DropdownBox event handler change was triggered.");
 			}
 		});
 
@@ -341,22 +341,22 @@
 			assert.expect(12); // two from reset, 8 from this method and 2 from the event handler (initiated via click events)
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerEvent("click", "si-txt");
 			assert.equal(oDropdown.getValue(), "second item", "DropdownBox' second item should have been selected.");
 			assert.equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' selected value should be shown in HTML.");
 
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerEvent("click", "li-txt");
 			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' second item should have been selected.");
 			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' selected value should be shown in HTML.");
 
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be visible after item selection");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be visible after item selection");
 
 		});
 
@@ -375,7 +375,7 @@
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.END, false, false, false);
 			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
@@ -387,7 +387,7 @@
 			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
 			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
 			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
 
@@ -402,7 +402,7 @@
 			oDropdown.setValue("last item"); // reset value to the one from the test method before
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
 			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' value should not have changed.");
@@ -414,7 +414,7 @@
 			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
 			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' value should not have changed.");
 			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
 
@@ -436,7 +436,7 @@
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the DropdownBox
 			handleChange: function(oEvent){
-				ok(true, "DropdownBox event handler change was triggered.");
+				assert.ok(true, "DropdownBox event handler change was triggered.");
 			}
 		});
 
@@ -531,22 +531,22 @@
 		});
 
 		QUnit.test("TestCleanUp", function(assert) {
-			ok(!!sap.ui.getCore().byId("fi"), "fi must exist");
-			ok(!!sap.ui.getCore().byId("si"), "si must exist");
-			ok(!!sap.ui.getCore().byId("ti"), "ti must exist");
-			ok(!!sap.ui.getCore().byId("li"), "li must exist");
+			assert.ok(!!sap.ui.getCore().byId("fi"), "fi must exist");
+			assert.ok(!!sap.ui.getCore().byId("si"), "si must exist");
+			assert.ok(!!sap.ui.getCore().byId("ti"), "ti must exist");
+			assert.ok(!!sap.ui.getCore().byId("li"), "li must exist");
 			oDropdown.destroy();
-			ok(!sap.ui.getCore().byId("fi"), "fi must no longer exist");
-			ok(!sap.ui.getCore().byId("si"), "si must no longer exist");
-			ok(!sap.ui.getCore().byId("ti"), "ti must no longer exist");
-			ok(!sap.ui.getCore().byId("li"), "li must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-shi"), "search help item must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-0"), "history item 0 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-1"), "history item 1 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-2"), "history item 2 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-3"), "history item 3 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-4"), "history item 4 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-separator"), "history separator must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("fi"), "fi must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("si"), "si must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ti"), "ti must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("li"), "li must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-shi"), "search help item must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-0"), "history item 0 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-1"), "history item 1 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-2"), "history item 2 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-3"), "history item 3 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-4"), "history item 4 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-separator"), "history separator must no longer exist");
 		});
 
 		function resetBeforeTest(){
@@ -600,11 +600,11 @@
 			setTimeout( function(){
 
 				qutils.triggerEvent("click", "ddb4_shi-txt");
-				ok(bSearchHelpFired, "Click on Search help item - serachHelp event fired");
+				assert.ok(bSearchHelpFired, "Click on Search help item - serachHelp event fired");
 				bSearchHelpFired = false;
 
 				qutils.triggerKeyboardEvent("ddb4-input", jQuery.sap.KeyCodes.F4, false, false, false);
-				ok(bSearchHelpFired, "F4 on input field - serachHelp event fired");
+				assert.ok(bSearchHelpFired, "F4 on input field - serachHelp event fired");
 				bSearchHelpFired = false;
 				done();
 			},100);

@@ -70,8 +70,8 @@
 		function finalize() {
 			clearTimeout(testTimer);
 			oShellOverlay1.detachClosed(onClosed);
-			ok(!checkVisibility(), "Overlay initially hidden");
-			ok(!!eventFired, "Closed event was fired");
+			assert.ok(!checkVisibility(), "Overlay initially hidden");
+			assert.ok(!!eventFired, "Closed event was fired");
 		QUnit.start();
 		}
 
@@ -81,7 +81,7 @@
 		}
 
 		oShellOverlay1.attachClosed(onClosed);
-		ok(checkVisibility(), "Overlay visible");
+		assert.ok(checkVisibility(), "Overlay visible");
 		if(bViaAPI){
 			oShellOverlay1.close();
 		}else{
@@ -127,11 +127,11 @@
 		});
 
 		QUnit.test("Aggregation 'search'", function(assert) {
-			ok(!oShellOverlay0.getSearch(), "Initially no search control");
+			assert.ok(!oShellOverlay0.getSearch(), "Initially no search control");
 			oShellOverlay0.setSearch(new my.Test());
-			ok(!!oShellOverlay0.getSearch(), "Search control available after set");
+			assert.ok(!!oShellOverlay0.getSearch(), "Search control available after set");
 			oShellOverlay0.setSearch(null);
-			ok(!oShellOverlay0.getSearch(), "No search control again");
+			assert.ok(!oShellOverlay0.getSearch(), "No search control again");
 		});
 
 
@@ -139,11 +139,11 @@
 
 		QUnit.test("Open Overlay", function(assert) {
 			var done = assert.async();
-			ok(!checkVisibility(), "Overlay initially hidden");
+			assert.ok(!checkVisibility(), "Overlay initially hidden");
 			oShellOverlay1.open();
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Overlay visible");
+				assert.ok(checkVisibility(), "Overlay visible");
 				done();
 			}, 600);
 		});
@@ -155,13 +155,13 @@
 
 		QUnit.test("Rendering", function(assert) {
 			var done = assert.async();
-			ok(!checkVisibility(), "Overlay initially hidden");
+			assert.ok(!checkVisibility(), "Overlay initially hidden");
 			oShellOverlay1.open();
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Overlay visible");
-				ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-hdr-center"), jQuery.sap.domById("search1")), "Search rendered correctly");
-				ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-cntnt"), jQuery.sap.domById("content")), "Content rendered correctly");
+				assert.ok(checkVisibility(), "Overlay visible");
+				assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-hdr-center"), jQuery.sap.domById("search1")), "Search rendered correctly");
+				assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-cntnt"), jQuery.sap.domById("content")), "Content rendered correctly");
 				done();
 			}, 600);
 		});

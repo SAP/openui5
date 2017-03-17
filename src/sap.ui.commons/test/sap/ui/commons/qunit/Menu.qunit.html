@@ -30,11 +30,11 @@
 			var oItem1 = new sap.ui.commons.MenuItem();
 			var oItem2 = new sap.ui.commons.MenuTextFieldItem();
 
-			ok(sap.ui.commons.MenuItemBase === sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuItemBase = sap.ui.unified.MenuItemBase");
-			ok(oItem1 instanceof sap.ui.commons.MenuItemBase, "sap.ui.commons.MenuItem is a sap.ui.commons.MenuItemBase");
-			ok(oItem1 instanceof sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuItem is a sap.ui.unified.MenuItemBase");
-			ok(oItem2 instanceof sap.ui.commons.MenuItemBase, "sap.ui.commons.MenuTextFieldItem is a sap.ui.commons.MenuItemBase");
-			ok(oItem2 instanceof sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuTextFieldItem is a sap.ui.unified.MenuItemBase");
+			assert.ok(sap.ui.commons.MenuItemBase === sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuItemBase = sap.ui.unified.MenuItemBase");
+			assert.ok(oItem1 instanceof sap.ui.commons.MenuItemBase, "sap.ui.commons.MenuItem is a sap.ui.commons.MenuItemBase");
+			assert.ok(oItem1 instanceof sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuItem is a sap.ui.unified.MenuItemBase");
+			assert.ok(oItem2 instanceof sap.ui.commons.MenuItemBase, "sap.ui.commons.MenuTextFieldItem is a sap.ui.commons.MenuItemBase");
+			assert.ok(oItem2 instanceof sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuTextFieldItem is a sap.ui.unified.MenuItemBase");
 		 });
 
 	</script>

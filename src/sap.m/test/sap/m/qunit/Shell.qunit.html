@@ -31,7 +31,7 @@
 			logo: "../images/SAPLogo.jpg",
 			logout: function(){
 				window.loggedOut = true;
-				ok(true, "Logging out");
+				assert.ok(true, "Logging out");
 			}
 		});
 
@@ -58,9 +58,9 @@
 		});
 
 		QUnit.test("Shell rendered", function(assert) {
-			ok(jQuery.sap.domById("myShell"), "Shell should be rendered");
-			ok(jQuery.sap.domById("myApp"), "App should be rendered");
-			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+			assert.ok(jQuery.sap.domById("myShell"), "Shell should be rendered");
+			assert.ok(jQuery.sap.domById("myApp"), "App should be rendered");
+			assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
 		});
 
 
@@ -92,7 +92,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// act
-			ok(!sap.ui.getCore().byId(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
+			assert.ok(!sap.ui.getCore().byId(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
 
 			// clean up
 			oShellNoTitle.destroy();
@@ -119,9 +119,9 @@
 
 				assert.equal(bgDiv.length, 1, "Background image div should be rendered");
 				if(sBgVariant == "Variant1"){
-					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
+					assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
 				}else{
-					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
+					assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
 				}
 
 				assert.equal(style.backgroundRepeat, "repeat", "Background should be repeated");
@@ -140,7 +140,7 @@
 					style = window.getComputedStyle(bgDiv[0]);
 
 				assert.equal(bgDiv.length, 1, "Background image div should be rendered");
-				ok(style.backgroundImage.indexOf("test/x.png") > -1, "Custom background image should be applied");
+				assert.ok(style.backgroundImage.indexOf("test/x.png") > -1, "Custom background image should be applied");
 				assert.equal(style.backgroundRepeat, "no-repeat", "Background should not be repeated");
 				assert.equal(window.getComputedStyle(bgDiv[0].parentNode).backgroundColor, "rgb(0, 255, 0)", "Background should be green");
 				assert.equal(style.opacity, "0.5", "Background opacity should be set");
@@ -160,9 +160,9 @@
 
 				assert.equal(bgDiv.length, 1, "Background image div should be rendered");
 				if(sBgVariant == "Variant1"){
-					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
+					assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
 				}else{
-					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
+					assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
 				}
 				assert.equal(style.backgroundRepeat, "repeat", "Background should be repeated");
 				assert.equal(style.opacity, "1", "Background opacity should be set");

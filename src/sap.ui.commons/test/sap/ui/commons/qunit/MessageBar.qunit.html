@@ -95,9 +95,9 @@
 
 	QUnit.test("Delete all messages", function (assert) {
 		msgBar.addMessages(aMeliMelos);
-		ok(msgBar.aErrors.length > 0, "The errors should be greater than 0");
-		ok(msgBar.aWarnings.length > 0, "The warnings should be greater than 0");
-		ok(msgBar.aSuccesses.length > 0, "The successes should be greater than 0");
+		assert.ok(msgBar.aErrors.length > 0, "The errors should be greater than 0");
+		assert.ok(msgBar.aWarnings.length > 0, "The warnings should be greater than 0");
+		assert.ok(msgBar.aSuccesses.length > 0, "The successes should be greater than 0");
 
 		msgBar.deleteAllMessages();
 		equals(msgBar.aErrors.length, 0, "The errors should be 0");
@@ -107,10 +107,10 @@
 
 	QUnit.test("Toggle the list", function (assert) {
 		msgBar.toggleList();
-		ok(msgBar.oList instanceof sap.ui.commons.MessageList, "The list should be an instance of sap.ui.commons.MessageList");
-		ok(msgBar.$().hasClass("sapUiMsgBarOpen"));
+		assert.ok(msgBar.oList instanceof sap.ui.commons.MessageList, "The list should be an instance of sap.ui.commons.MessageList");
+		assert.ok(msgBar.$().hasClass("sapUiMsgBarOpen"));
 		msgBar.toggleList();
-		ok(!msgBar.$().hasClass("sapUiMsgBarOpen"));
+		assert.ok(!msgBar.$().hasClass("sapUiMsgBarOpen"));
 	});
 
 	QUnit.test("Hide the MessageBar", function (assert) {

@@ -160,7 +160,7 @@
 			layout4._originalRerender = layout4.rerender;
 			layout4.rerender = function() {
 				this._originalRerender.apply(this);
-				ok(false, "Rerender should never be called");
+				assert.ok(false, "Rerender should never be called");
 			}
 
 			assert.equal(layout4.getContent().length, 2, "Initial # of children:");
@@ -245,7 +245,7 @@
 			}catch(e){
 				bErrorThrown = true;
 			}
-			ok(bErrorThrown, "Error thrown when given position attribute is no CSS size.");
+			assert.ok(bErrorThrown, "Error thrown when given position attribute is no CSS size.");
 
 			layout2.removeAllContent();
 
@@ -284,7 +284,7 @@
 
 		QUnit.test("Stretching Form Controls", function(assert) {
 			for(var i=10; i<14; i++){
-				ok(jQuery("#test"+i).width() > jQuery("#layout3").width()-50-50/*left+right+some buffer*/, "Control test"+i+" is stretched: " + jQuery("#test"+i).width());
+				assert.ok(jQuery("#test"+i).width() > jQuery("#layout3").width()-50-50/*left+right+some buffer*/, "Control test"+i+" is stretched: " + jQuery("#test"+i).width());
 			}
 		});
 
@@ -313,11 +313,11 @@
 			oPosition.setCenterHorizontally(true);
 			var jContainer = jQuery(oPosition.getDomRef());
 			assert.equal(jContainer.css("margin-left"), "-100px", "Margin of horizontally centered Position container:");
-			ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
+			assert.ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
 
 			oPosition.setCenterVertically(true);
 			assert.equal(jContainer.css("margin-top"), "-50px", "Margin of vertically centered Position container:");
-			ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
+			assert.ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
 		});
 
 		QUnit.test("Suppressed Rerendering - Container.setControl", function(assert) {
@@ -341,7 +341,7 @@
 			oPosition.setControl(new test.WidthHeight("test14b"));
 			assert.equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom after setControl(<someControl>)");
 			checkControl("test14b", null, null, "10", null, "10", null);
-			ok(jQuery.sap.byId(layout4.getId()).children()[0] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
+			assert.ok(jQuery.sap.byId(layout4.getId()).children()[0] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
 
 			oPosition = layout4.getPositions()[1];
 
@@ -380,13 +380,13 @@
 			layout4.insertPosition(oPosition, 2);
 			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 3, "# of containers in layout after insertPosition with position with control");
 			checkControl("test14e", null, null, "0", null, "15", "15");
-			ok(jQuery.sap.byId(layout4.getId()).children()[0] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
+			assert.ok(jQuery.sap.byId(layout4.getId()).children()[0] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
 
 			oPosition = new sap.ui.commons.layout.PositionContainer({top: "20px", bottom: "20px", control: new test.WidthHeight("test14f")});
 			layout4.insertPosition(oPosition, 3);
 			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 4, "# of containers in layout after insertPosition with position with control");
 			checkControl("test14f", null, null, "0", null, "20", "20");
-			ok(jQuery.sap.byId(layout4.getId()).children()[1] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
+			assert.ok(jQuery.sap.byId(layout4.getId()).children()[1] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
 
 			layout4.removePosition(1);
 			assert.equal(jQuery.sap.byId(layout4.getId()).children().length, 4, "# of containers in layout after removePosition of position without control");
@@ -402,14 +402,14 @@
 			var done = assert.async();
 			setupRerenderingCheck();
 
-			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXHidden"), "Horizontal Scrolling Mode 'Hidden' of the layout before setVerticalScrolling");
-			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYHidden"), "Vertical Scrolling Mode 'Hidden' of the layout before setVerticalScrolling");
+			assert.ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXHidden"), "Horizontal Scrolling Mode 'Hidden' of the layout before setVerticalScrolling");
+			assert.ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYHidden"), "Vertical Scrolling Mode 'Hidden' of the layout before setVerticalScrolling");
 			layout4.setVerticalScrolling("Scroll");
-			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXHidden"), "Horizontal Scrolling Mode 'Hidden' of the layout after setVerticalScrolling");
-			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYScroll"), "Vertical Scrolling Mode 'Scroll' of the layout after setVerticalScrolling");
+			assert.ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXHidden"), "Horizontal Scrolling Mode 'Hidden' of the layout after setVerticalScrolling");
+			assert.ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYScroll"), "Vertical Scrolling Mode 'Scroll' of the layout after setVerticalScrolling");
 			layout4.setHorizontalScrolling("Scroll");
-			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXScroll"), "Horizontal Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
-			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYScroll"), "Vertical Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
+			assert.ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXScroll"), "Horizontal Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
+			assert.ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYScroll"), "Vertical Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
 
 			assert.equal(jQuery.sap.byId(layout4.getId()).css("width"), jQuery("#uiArea4").css("width"), "Height of the layout before setWidth");
 			assert.equal(jQuery.sap.byId(layout4.getId()).css("height"), jQuery("#uiArea4").css("height"), "Height of the layout before setWidth");
@@ -438,21 +438,21 @@
 
 			oPosition.setCenterHorizontally(true);
 			assert.equal(jContainer.css("margin-left"), "-100px", "Margin of horizontally centered Position container:");
-			ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
+			assert.ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
 
 			oPosition.setCenterVertically(true);
 			assert.equal(jContainer.css("margin-top"), "-50px", "Margin of vertically centered Position container:");
-			ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
+			assert.ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
 
 			oControl.setWidth("400px");
 			oControl.setHeight("200px");
 
 			setTimeout(function(){
 				assert.equal(jContainer.css("margin-left"), "-200px", "Margin of horizontally centered Position container:");
-				ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
+				assert.ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
 
 				assert.equal(jContainer.css("margin-top"), "-100px", "Margin of vertically centered Position container:");
-				ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
+				assert.ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
 				done();
 			}, 1000);
 		});

@@ -138,9 +138,9 @@
 		});
 
 		QUnit.test("Cast", function(assert) {
-			ok(jQuery.sap.Version(v1) === v1, "jQuery.sap.Version(v1) === v1");
+			assert.ok(jQuery.sap.Version(v1) === v1, "jQuery.sap.Version(v1) === v1");
 			var v = jQuery.sap.Version(v1.toString());
-			ok(jQuery.sap.Version(v1) != v, "jQuery.sap.Version(v1) != jQuery.sap.Version(v1.toString())");
+			assert.ok(jQuery.sap.Version(v1) != v, "jQuery.sap.Version(v1) != jQuery.sap.Version(v1.toString())");
 			equals(v1.toString(), v.toString(), "jQuery.sap.Version(v1).toString() != jQuery.sap.Version(v1.toString()).toString()");
 		});
 
@@ -179,8 +179,8 @@
 					argsOk = types[j].makeArgs(vOk);
 					argsWrong = types[j].makeArgs(vWrong);
 					text = " - "+types[j].name+" - "+part[i];
-					ok(v1.compareTo.apply(v1, argsOk) === 0, "Check = (ok)"+text + JSON.stringify(argsOk));
-					ok(v1.compareTo.apply(v1, argsWrong) != 0, "Check = (not ok)"+text);
+					assert.ok(v1.compareTo.apply(v1, argsOk) === 0, "Check = (ok)"+text + JSON.stringify(argsOk));
+					assert.ok(v1.compareTo.apply(v1, argsWrong) != 0, "Check = (not ok)"+text);
 				}
 			}
 		});
@@ -199,8 +199,8 @@
 					argsOk=types[j].makeArgs(vOk);
 					argsWrong = types[j].makeArgs(vWrong);
 					text = " - "+types[j].name+" - "+part[i];
-					ok(v1.compareTo.apply(v1, argsOk) < 0, "Check < (ok)"+text);
-					ok(v1.compareTo.apply(v1, argsWrong) > 0, "Check < (not ok)"+text);
+					assert.ok(v1.compareTo.apply(v1, argsOk) < 0, "Check < (ok)"+text);
+					assert.ok(v1.compareTo.apply(v1, argsWrong) > 0, "Check < (not ok)"+text);
 				}
 			}
 		});
@@ -219,8 +219,8 @@
 					argsOk=types[j].makeArgs(vOk);
 					argsWrong = types[j].makeArgs(vWrong);
 					text = " - "+types[j].name+" - "+part[i];
-					ok(v1.compareTo.apply(v1, argsOk) > 0, "Check > (ok)"+text);
-					ok(v1.compareTo.apply(v1, argsWrong) < 0, "Check > (not ok)"+text);
+					assert.ok(v1.compareTo.apply(v1, argsOk) > 0, "Check > (ok)"+text);
+					assert.ok(v1.compareTo.apply(v1, argsWrong) < 0, "Check > (not ok)"+text);
 				}
 			}
 		});
@@ -239,7 +239,7 @@
 				for(var j=1; j<types.length; j++){ // array, instance, string
 					args = [types[j].makeArgs(start)[0], types[j].makeArgs(end)[0]];
 					res = checkVersion[i].inRange.apply(checkVersion[i], args);
-					ok(res && isOk || !res && !isOk, "Test ("+(isOk?"":"Not ")+"Ok): "+types[j].name+" - "+rangeCheck[i]);
+					assert.ok(res && isOk || !res && !isOk, "Test ("+(isOk?"":"Not ")+"Ok): "+types[j].name+" - "+rangeCheck[i]);
 				}
 			}
 		});

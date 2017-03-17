@@ -507,14 +507,14 @@
 
 					this._oDSC._changeGridState();
 
-					ok(!$mainContent.hasClass("test1"), "Main content should not have 'test1' class");
-					ok(!$mainContent.hasClass("test2"), "Main content should not have 'test2' class");
+					assert.ok(!$mainContent.hasClass("test1"), "Main content should not have 'test1' class");
+					assert.ok(!$mainContent.hasClass("test2"), "Main content should not have 'test2' class");
 
-					ok(!$sideContent.hasClass("test1"), "Side content should not have 'test1' class");
-					ok(!$sideContent.hasClass("test2"), "Side content should not have 'test2' class");
+					assert.ok(!$sideContent.hasClass("test1"), "Side content should not have 'test1' class");
+					assert.ok(!$sideContent.hasClass("test2"), "Side content should not have 'test2' class");
 
-					ok($mainContent.hasClass("sapUiDSCSpan" + this._oDSC._iMcSpan), "Main content has class 'sapUiDSCSpan" + this._oDSC._iMcSpan + "' if both main and side content are visible");
-					ok($sideContent.hasClass("sapUiDSCSpan" + this._oDSC._iScSpan), "Side content has class 'sapUiDSCSpan" + this._oDSC._iScSpan + "' if both main and side content are visible");
+					assert.ok($mainContent.hasClass("sapUiDSCSpan" + this._oDSC._iMcSpan), "Main content has class 'sapUiDSCSpan" + this._oDSC._iMcSpan + "' if both main and side content are visible");
+					assert.ok($sideContent.hasClass("sapUiDSCSpan" + this._oDSC._iScSpan), "Side content has class 'sapUiDSCSpan" + this._oDSC._iScSpan + "' if both main and side content are visible");
 
 					// both main and side content are hidden
 					this._oDSC._SCVisible = false;
@@ -522,8 +522,8 @@
 
 					this._oDSC._changeGridState();
 
-					ok($mainContent.hasClass(HIDDEN_CLASS), "Main content has class '" + HIDDEN_CLASS + "' if both main and side content are hidden");
-					ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "' if both main and side content are hidden");
+					assert.ok($mainContent.hasClass(HIDDEN_CLASS), "Main content has class '" + HIDDEN_CLASS + "' if both main and side content are hidden");
+					assert.ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "' if both main and side content are hidden");
 
 					// only main content is visible
 					this._oDSC._SCVisible = false;
@@ -533,11 +533,11 @@
 
 					this._oDSC._changeGridState();
 
-					ok(!$mainContent.hasClass("test1"), "Main content should not have 'test1' class");
-					ok(!$mainContent.hasClass("test2"), "Main content should not have 'test2' class");
+					assert.ok(!$mainContent.hasClass("test1"), "Main content should not have 'test1' class");
+					assert.ok(!$mainContent.hasClass("test2"), "Main content should not have 'test2' class");
 
-					ok($mainContent.hasClass(SPAN_SIZE_12_CLASS), "Main content has class '" + SPAN_SIZE_12_CLASS + "' if only main content is visible");
-					ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "' if side content is hidden");
+					assert.ok($mainContent.hasClass(SPAN_SIZE_12_CLASS), "Main content has class '" + SPAN_SIZE_12_CLASS + "' if only main content is visible");
+					assert.ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "' if side content is hidden");
 
 					// only side content is visible
 					this._oDSC._SCVisible = true;
@@ -547,11 +547,11 @@
 
 					this._oDSC._changeGridState();
 
-					ok(!$sideContent.hasClass("test1"), "Side content should not have 'test1' class");
-					ok(!$sideContent.hasClass("test2"), "Side content should not have 'test2' class");
+					assert.ok(!$sideContent.hasClass("test1"), "Side content should not have 'test1' class");
+					assert.ok(!$sideContent.hasClass("test2"), "Side content should not have 'test2' class");
 
-					ok($mainContent.hasClass(HIDDEN_CLASS), "Main content has class '" + HIDDEN_CLASS + "' if side content is hidden");
-					ok($sideContent.hasClass(SPAN_SIZE_12_CLASS), "Side content has class '" + SPAN_SIZE_12_CLASS + "' if only side content is visible");
+					assert.ok($mainContent.hasClass(HIDDEN_CLASS), "Main content has class '" + HIDDEN_CLASS + "' if side content is hidden");
+					assert.ok($sideContent.hasClass(SPAN_SIZE_12_CLASS), "Side content has class '" + SPAN_SIZE_12_CLASS + "' if only side content is visible");
 
 					this._oDSC._SCVisible = true;
 					this._oDSC._MCVisible = true;
@@ -560,8 +560,8 @@
 
 					this._oDSC._changeGridState();
 
-					ok($mainContent.hasClass(MC_FIXED_CLASS), "Main content has class '" + MC_FIXED_CLASS + "' if side content is fixed size");
-					ok($sideContent.hasClass(SC_FIXED_CLASS), "Side content has class '" + SC_FIXED_CLASS + "' if main content is fixed size");
+					assert.ok($mainContent.hasClass(MC_FIXED_CLASS), "Main content has class '" + MC_FIXED_CLASS + "' if side content is fixed size");
+					assert.ok($sideContent.hasClass(SC_FIXED_CLASS), "Side content has class '" + SC_FIXED_CLASS + "' if main content is fixed size");
 
 				});
 
@@ -570,35 +570,35 @@
 					this._oDSC._iMcSpan = SPAN_SIZE_6;
 					this._oDSC._MCVisible = true;
 					this._oDSC._SCVisible = true;
-					ok(this._oDSC._shouldSetHeight(), "Height should be set if MCSpan and SCSPan equal 12 spans and both main and side content are visible.");
+					assert.ok(this._oDSC._shouldSetHeight(), "Height should be set if MCSpan and SCSPan equal 12 spans and both main and side content are visible.");
 
 					this._oDSC._iScSpan = SPAN_SIZE_3;
 					this._oDSC._iMcSpan = SPAN_SIZE_6;
 					this._oDSC._MCVisible = true;
 					this._oDSC._SCVisible = true;
-					ok(!this._oDSC._shouldSetHeight(), "Height should not be set if MCSpan and SCSPan do not equal 12 spans.");
+					assert.ok(!this._oDSC._shouldSetHeight(), "Height should not be set if MCSpan and SCSPan do not equal 12 spans.");
 
 					this._oDSC._iScSpan = SPAN_SIZE_6;
 					this._oDSC._iMcSpan = SPAN_SIZE_6;
 					this._oDSC._MCVisible = false;
 					this._oDSC._SCVisible = true;
-					ok(this._oDSC._shouldSetHeight(), "Height should be set if either main or side is visible.");
+					assert.ok(this._oDSC._shouldSetHeight(), "Height should be set if either main or side is visible.");
 
 					this._oDSC._iScSpan = SPAN_SIZE_6;
 					this._oDSC._iMcSpan = SPAN_SIZE_6;
 					this._oDSC._MCVisible = true;
 					this._oDSC._SCVisible = false;
-					ok(this._oDSC._shouldSetHeight(), "Height should be set if either main or side is visible.");
+					assert.ok(this._oDSC._shouldSetHeight(), "Height should be set if either main or side is visible.");
 
 					this._oDSC._bFixedSideContent = true;
 					this._oDSC._MCVisible = true;
 					this._oDSC._SCVisible = true;
-					ok(this._oDSC._shouldSetHeight(), "Height should be set if fixed side content is set.");
+					assert.ok(this._oDSC._shouldSetHeight(), "Height should be set if fixed side content is set.");
 
 					this._oDSC.setSideContentVisibility(sap.ui.layout.SideContentVisibility.NeverShow);
 					this._oDSC._MCVisible = true;
 					this._oDSC._SCVisible = true;
-					ok(this._oDSC._shouldSetHeight(), "Height should be set if side content and main content visible " +
+					assert.ok(this._oDSC._shouldSetHeight(), "Height should be set if side content and main content visible " +
 							"but side content visibility is set to NeverShow.");
 				});
 
@@ -648,7 +648,7 @@
 				});
 
 				QUnit.test("Current breakpoint is set",function(assert) {
-					ok(this._oDSC.getCurrentBreakpoint(), "The current breakpoint of the page is set");
+					assert.ok(this._oDSC.getCurrentBreakpoint(), "The current breakpoint of the page is set");
 				});
 
 				QUnit.test("Calculate the size of the main and side content according to the current breakpoint",function(assert) {
@@ -660,8 +660,8 @@
 				});
 
 				QUnit.test("Main content and Side content sliders are initialized",function(assert) {
-					ok(this._oDSC._oMCScroller, "Main content slider is set");
-					ok(this._oDSC._oSCScroller, "Side content slider is set");
+					assert.ok(this._oDSC._oMCScroller, "Main content slider is set");
+					assert.ok(this._oDSC._oSCScroller, "Side content slider is set");
 				});
 
 				QUnit.test("dispose",function(assert) {
@@ -688,40 +688,40 @@
 					this._oDSC._currentBreakpoint = XL;
 					this._oDSC.setShowSideContent(false);
 
-					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden");
+					assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden");
 
 					this._oDSC._currentBreakpoint = L;
 					this._oDSC._changeGridState();
-					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to L breakpoint");
+					assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to L breakpoint");
 
 					this._oDSC._currentBreakpoint = M;
 					this._oDSC._changeGridState();
-					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to M breakpoint");
+					assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to M breakpoint");
 
 					this._oDSC._currentBreakpoint = S;
 					this._oDSC._changeGridState();
-					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to S breakpoint");
+					assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to S breakpoint");
 
 					this._oDSC._currentBreakpoint = M;
 					this._oDSC._changeGridState();
-					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden after switching to M breakpoint");
+					assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden after switching to M breakpoint");
 
 					this._oDSC._currentBreakpoint = S;
 					this._oDSC._changeGridState();
 					this._oDSC.toggle();
-					ok(this._oDSC.getShowSideContent(), "Side content should be now visible when changing to S breakpoint and toggling");
-					ok(!this._oDSC.getShowMainContent(), "Main content should be now hidden when changing to S breakpoint and toggling");
+					assert.ok(this._oDSC.getShowSideContent(), "Side content should be now visible when changing to S breakpoint and toggling");
+					assert.ok(!this._oDSC.getShowMainContent(), "Main content should be now hidden when changing to S breakpoint and toggling");
 
 					this._oDSC._currentBreakpoint = M;
 					this._oDSC._changeGridState();
-					ok(this._oDSC.getShowSideContent(), "Side content should be now visible after switching to M breakpoint after toggling on S breakpoint");
+					assert.ok(this._oDSC.getShowSideContent(), "Side content should be now visible after switching to M breakpoint after toggling on S breakpoint");
 
 					this._oDSC._currentBreakpoint = S;
 					this._oDSC._changeGridState();
 					this._oDSC.toggle();
 					this._oDSC.setShowSideContent(false);
-					ok(!this._oDSC.getShowSideContent(), "Side content should be now hidden when changing to S breakpoint, toggling and closing the side content");
-					ok(this._oDSC.getShowMainContent(), "Main content should be now visible when changing to S breakpoint, toggling and closing the side content");
+					assert.ok(!this._oDSC.getShowSideContent(), "Side content should be now hidden when changing to S breakpoint, toggling and closing the side content");
+					assert.ok(this._oDSC.getShowMainContent(), "Main content should be now visible when changing to S breakpoint, toggling and closing the side content");
 
 				});
 
@@ -782,7 +782,7 @@
 					this._oDSC.invalidate();
 					sap.ui.getCore().applyChanges();
 
-					ok(this._oDSC.$(SC_GRID_CELL_SELECTOR).hasClass(HIDDEN_CLASS), "Side content in invisible");
+					assert.ok(this._oDSC.$(SC_GRID_CELL_SELECTOR).hasClass(HIDDEN_CLASS), "Side content in invisible");
 				});
 
 			})(jQuery);

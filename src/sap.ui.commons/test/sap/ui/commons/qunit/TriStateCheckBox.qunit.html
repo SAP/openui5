@@ -84,13 +84,13 @@
 		});
 
 		QUnit.test("Visibility", function(assert) {
-			ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
+			assert.ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
 			tcb1.setVisible(false);
 			sap.ui.getCore().applyChanges();
 			assert.equal(jQuery.sap.domById("tcb1"), null, "TriStateCheckBox 1 should not be rendered when set to invisible");
 			tcb1.setVisible(true);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
+			assert.ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
 		});
 
 		QUnit.test("Width", function(assert) {
@@ -115,12 +115,12 @@
 			var sSpan = jQuery.sap.domById("tcb1");
 			var sClasses = sSpan.className;
 			notStrictEqual(sClasses, null, "sClasses is null");
-			ok(sClasses.indexOf("sapUiTriCb") > -1, "c1 className is missing 'sapUiTriCb'");
+			assert.ok(sClasses.indexOf("sapUiTriCb") > -1, "c1 className is missing 'sapUiTriCb'");
 			sSpan = sSpan.firstChild;
 			sClasses = sSpan.className;
-			ok(sClasses.indexOf("sapUiTriCbInner") > -1, "className of child is not containing 'sapUiTriCbInner'");
-			ok(sClasses.indexOf("sapUiTriCbDis") == -1, "className of child is containing 'sapUiTriCbDis'");
-			ok(sClasses.indexOf("sapUiTriCbRo") == -1, "className of child is containing 'sapUiTriCbRo'");
+			assert.ok(sClasses.indexOf("sapUiTriCbInner") > -1, "className of child is not containing 'sapUiTriCbInner'");
+			assert.ok(sClasses.indexOf("sapUiTriCbDis") == -1, "className of child is containing 'sapUiTriCbDis'");
+			assert.ok(sClasses.indexOf("sapUiTriCbRo") == -1, "className of child is containing 'sapUiTriCbRo'");
 
 			tcb1.setEnabled(false);
 			tcb1.setEditable(false);
@@ -128,30 +128,30 @@
 			sap.ui.getCore().applyChanges();
 			var sSpan = jQuery.sap.domById("tcb1").firstChild;
 			sClasses = sSpan.className;
-			ok(sClasses.indexOf("sapUiTriCbDis") > -1, "className of child is missing 'sapUiTriCbDis'");
-			ok(sClasses.indexOf("sapUiTriCbRo") > -1, "className of child is missing 'sapUiTriCbRo'");
+			assert.ok(sClasses.indexOf("sapUiTriCbDis") > -1, "className of child is missing 'sapUiTriCbDis'");
+			assert.ok(sClasses.indexOf("sapUiTriCbRo") > -1, "className of child is missing 'sapUiTriCbRo'");
 
 			tcb1.toggle("Mixed");
 			sap.ui.getCore().applyChanges();
 			var sSpan = jQuery.sap.domById("tcb1").firstChild;
 			sClasses = sSpan.className;
-			ok(sClasses.indexOf("sapUiTriCbMix") > -1, "className of child is missing 'sapUiTriCbMix'");
-			ok(sClasses.indexOf("sapUiTriCbRo") > -1, "className of child is missing 'sapUiTriCbRo after toggle'");
+			assert.ok(sClasses.indexOf("sapUiTriCbMix") > -1, "className of child is missing 'sapUiTriCbMix'");
+			assert.ok(sClasses.indexOf("sapUiTriCbRo") > -1, "className of child is missing 'sapUiTriCbRo after toggle'");
 
 			tcb1.setEditable(true);
 			tcb1.setEnabled(true);
 			sap.ui.getCore().applyChanges();
 			var sSpan = jQuery.sap.domById("tcb1").firstChild;
 			sClasses = sSpan.className;
-			ok(sClasses.indexOf("sapUiTriCbDis") == -1, "tcb1 className is containing 'sapUiCbDis' after being reenabled");
-			ok(sClasses.indexOf("sapUiTriCbRo") == -1, "tcb1 className is containing 'sapUiCbRo' after switching back to editable");
+			assert.ok(sClasses.indexOf("sapUiTriCbDis") == -1, "tcb1 className is containing 'sapUiCbDis' after being reenabled");
+			assert.ok(sClasses.indexOf("sapUiTriCbRo") == -1, "tcb1 className is containing 'sapUiCbRo' after switching back to editable");
  		});
 
 		QUnit.test("AriaOK", function(assert) {
 			assert.equal(jQuery("#tcb1").attr("role"), "checkbox", "Role of the TriStateCheckBox");
 			assert.equal(jQuery("#tcb1").attr("aria-checked"), "mixed", "ARIA-Checked of 1. Checkbox");
 			assert.equal(jQuery("#tcb1").children(".sapUiTriCbInner").attr("aria-labelledby"), "sapUiAriaLabeltcb1", "ARIA-LabelledBy of 1. Checkbox");
-			ok(jQuery("#tcb1").find("#sapUiAriaLabeltcb1").length > 0, "Aria-Labelling span for checkbox");
+			assert.ok(jQuery("#tcb1").find("#sapUiAriaLabeltcb1").length > 0, "Aria-Labelling span for checkbox");
 		});
 
 		</script>

@@ -100,7 +100,7 @@
 			});
 
 			var oTarget = this.oTargets.getTarget("newTarget");
-			ok(oTarget, "new target object is created");
+			assert.ok(oTarget, "new target object is created");
 			assert.strictEqual(oTarget._oOptions.name, "newTarget", "target name should be correct");
 			assert.strictEqual(oTarget._oParent, this.oTargets.getTarget("myParent"), "correct parent should be set");
 		});
@@ -352,7 +352,7 @@
 							assert.strictEqual(object1[sPropertyName], object2[sPropertyName], "the property " + sPropertyName + " is equal");
 						}
 					} else {
-						ok(false, JSON.stringify(object1) + " has a property " + sPropertyName + " the second object does not have " + JSON.stringify(object2));
+						assert.ok(false, JSON.stringify(object1) + " has a property " + sPropertyName + " the second object does not have " + JSON.stringify(object2));
 					}
 
 
@@ -739,13 +739,13 @@
 			oTargets.destroy();
 
 			// Assert
-			ok(oTargets.bIsDestroyed, "Did flag the targets as destroyed");
-			ok(oFirstTarget.bIsDestroyed, "Did destroy the first target");
-			ok(oSecondTarget.bIsDestroyed, "Did destroy the second target");
+			assert.ok(oTargets.bIsDestroyed, "Did flag the targets as destroyed");
+			assert.ok(oFirstTarget.bIsDestroyed, "Did destroy the first target");
+			assert.ok(oSecondTarget.bIsDestroyed, "Did destroy the second target");
 			assert.strictEqual(oTargets._oViews, null, "Did free the views reference");
 			assert.strictEqual(oTargets._mTargets, null, "Did free the targets map reference");
 			assert.strictEqual(oTargets._oConfig, null, "Did free the config reference");
-			ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
+			assert.ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
 
 			// Cleanup
 			oViews.destroy();

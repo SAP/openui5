@@ -317,10 +317,10 @@
 				var oEvent = {
 					target: this.oCarousel1.$().find(".sapUiCrslScl").lastFocusableDomRef(),
 					preventDefault: function() {
-						ok(true, "preventDefault is executed");
+						assert.ok(true, "preventDefault is executed");
 					},
 					stopPropagation: function() {
-						ok(true, "stopPropagation is executed")
+						assert.ok(true, "stopPropagation is executed")
 					}
 				}
 

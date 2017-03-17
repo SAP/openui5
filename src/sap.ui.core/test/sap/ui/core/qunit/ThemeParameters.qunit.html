@@ -37,8 +37,8 @@
 
 
    	QUnit.test("InitialCheck", function(assert) {
-   		ok(sap.ui.core.theming.Parameters, "sap.ui.core.theming.Parameters must exist");
-   		ok(sap.ui.core.theming.Parameters.get, "sap.ui.core.theming.Parameters.get() must exist");
+   		assert.ok(sap.ui.core.theming.Parameters, "sap.ui.core.theming.Parameters must exist");
+   		assert.ok(sap.ui.core.theming.Parameters.get, "sap.ui.core.theming.Parameters.get() must exist");
    	});
 
    	QUnit.test("Read single parameters", function(assert) {
@@ -66,14 +66,14 @@
 
    	QUnit.test("All parameters", function(assert) {
    		var mAllParams = sap.ui.core.theming.Parameters.get();
-   		ok(mAllParams, "A map of parameters should be returned when get is called without parameter name");
+   		assert.ok(mAllParams, "A map of parameters should be returned when get is called without parameter name");
 
    		var count = 0;
    		for (var property in mAllParams) {
    			assert.equal(typeof mAllParams[property], "string", "Parameter '" + property + "' should be a string");
    			count++;
    		}
-   		ok(count > 10, "The map of parameters should have quite some entries");
+   		assert.ok(count > 10, "The map of parameters should have quite some entries");
    	});
 
    	QUnit.test("Parameter from Unknown Library", function(assert) {

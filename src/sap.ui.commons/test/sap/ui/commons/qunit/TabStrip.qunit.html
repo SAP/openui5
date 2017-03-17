@@ -99,29 +99,29 @@
 		QUnit.test("Visibility", function(assert) {
 			var firstTabId = "#" + oTabStrip1.getTabs()[0].getId();
 
-			ok(jQuery(firstTabId), "1.Tab is Visible: expected defined");
-			ok(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(jQuery(firstTabId), "1.Tab is Visible: expected defined");
+			assert.ok(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
 			notOk(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
 			notOk(jQuery(firstTabId).hasClass("sapUiTabDsbl"), "1.Tab is enabled - has no Class sapUiTabDsbl");
 			notOk(jQuery(firstTabId).children(":has(.sapUiTabClose)").get(0), "1.Tab has no close icon");
 			notOk(jQuery(firstTabId).find(".sapUiTabIco").get(0), "1.Tab has no icon");
 			assert.equal(jQuery(firstTabId).text(), "First tab", "Text of 1.tab");
 			notOk(jQuery(firstTabId).attr("title"), "1.tab - no tooltip");
-			ok(jQuery("#button1").get(0), "Button 1 rendered");
+			assert.ok(jQuery("#button1").get(0), "Button 1 rendered");
 
-			ok(jQuery("#tab1").get(0), "2.Tab is Visible: expected defined");
+			assert.ok(jQuery("#tab1").get(0), "2.Tab is Visible: expected defined");
 			notOk(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is not Selected - has no Class sapUiTabSel");
-			ok(jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is not Selected - has Class sapUiTab");
+			assert.ok(jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is not Selected - has Class sapUiTab");
 			notOk(jQuery("#tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled - has no Class sapUiTabDsbl");
-			ok(jQuery("#tab1").children(".sapUiTabClose").get(0), "2.Tab has close icon");
-			ok(jQuery("#tab1").find(".sapUiTabIco").get(0), "2.Tab has an icon");
+			assert.ok(jQuery("#tab1").children(".sapUiTabClose").get(0), "2.Tab has close icon");
+			assert.ok(jQuery("#tab1").find(".sapUiTabIco").get(0), "2.Tab has an icon");
 			assert.equal(jQuery("#tab1").text(), "Second tab", "Text of 2.tab");
 			notOk(jQuery("#tab1").attr("title"), "2.tab - no tooltip");
 
-			ok(jQuery("#tab2").get(0), "3.Tab is Visible: expected defined");
+			assert.ok(jQuery("#tab2").get(0), "3.Tab is Visible: expected defined");
 			notOk(jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
 			notOk(jQuery("#tab2").hasClass("sapUiTab"), "3.Tab is disabled - has no Class sapUiTab");
-			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is disabled - has Class sapUiTabDsbl");
+			assert.ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is disabled - has Class sapUiTabDsbl");
 			notOk(jQuery("#tab2").children(":has(.sapUiTabClose)").get(0), "3.Tab has no close icon");
 			notOk(jQuery("#tab2").find(".sapUiTabIco").get(0), "3.Tab has no icon");
 			assert.equal(jQuery("#tab2").text(), "Third tab", "Text of 3.tab");
@@ -129,7 +129,7 @@
 
 			notOk(jQuery("#tab3").get(0), "4.Tab is Invisible: expected undefined");
 
-			ok(jQuery("#tab4").get(0), "5.Tab is Visible: expected defined");
+			assert.ok(jQuery("#tab4").get(0), "5.Tab is Visible: expected defined");
 			assert.equal(jQuery("#tab4").text(), "5. tab", "Text of 5.tab");
 			assert.equal(jQuery("#tab4").attr("title"), "Tooltip4", "5.tab - tooltip");
 		});
@@ -191,9 +191,9 @@
 			iIndex = -1;
 
 			notOk(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
-			ok(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
+			assert.ok(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
 			assert.equal(jQuery(firstTabId).attr("aria-selected"), "false", "ARIA-SELECTED of 1. tab");
-			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
 			notOk(jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			assert.equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
 
@@ -207,11 +207,11 @@
 			iEvent = 0;
 			iIndex = -1;
 
-			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
 			notOk(jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			assert.equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
 			notOk(jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
-			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
+			assert.ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
 			assert.equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
 
 			// click on close icon -> get DOM of it
@@ -236,11 +236,11 @@
 			assert.equal(iIndex, 0, "event index after SPACE on 1. Tab :");
 			iEvent = 0;
 			iIndex = -1;
-			ok(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
 			notOk(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
 			assert.equal(jQuery(firstTabId).attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
 			notOk(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is not Selected - has no Class sapUiTabSel");
-			ok(jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is not Selected - has Class sapUiTab");
+			assert.ok(jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is not Selected - has Class sapUiTab");
 			assert.equal(jQuery("#tab1").attr("aria-selected"), "false", "ARIA-SELECTED of 2. tab");
 
 			qutils.triggerKeyboardEvent("tab2", "SPACE"); // disabled tab
@@ -253,11 +253,11 @@
 			iEvent = 0;
 			iIndex = -1;
 
-			ok(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
 			notOk(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
 			assert.equal(jQuery(firstTabId).attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
 			notOk(jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
-			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
+			assert.ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
 			assert.equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
 
 			qutils.triggerKeyboardEvent("tab1", "DELETE");
@@ -287,11 +287,11 @@
 			iEvent = 0;
 			iIndex = -1;
 
-			ok(!jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
-			ok(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
+			assert.ok(!jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
+			assert.ok(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
 			assert.equal(jQuery(firstTabId).attr("aria-selected"), "false", "ARIA-SELECTED of 1. tab");
-			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
-			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
+			assert.ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			assert.equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
 
 			//select disabled tab
@@ -302,11 +302,11 @@
 			assert.equal(iIndex, -1, "event index after SetSelectedIndex to 3. Tab :");
 			iEvent = 0;
 			iIndex = -1;
-			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
-			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
+			assert.ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			assert.equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
-			ok(!jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
-			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
+			assert.ok(!jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
+			assert.ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
 			assert.equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
 
 			//select invisible tab
@@ -317,8 +317,8 @@
 			assert.equal(iIndex, -1, "event index after SetSelectedIndex to 4. Tab(invisible) :");
 			iEvent = 0;
 			iIndex = -1;
-			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
-			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
+			assert.ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			assert.equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
 
 		});
@@ -330,15 +330,15 @@
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 
 			assert.equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after close of 1.Tab :");
-			ok(jQuery(firstTabId).get(0), "1.Tab is Visible: expected defined");
+			assert.ok(jQuery(firstTabId).get(0), "1.Tab is Visible: expected defined");
 			notOk(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
-			ok(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
+			assert.ok(jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
 
 			oTabStrip1.closeTab(1);
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 
 			assert.equal(oTabStrip1.getSelectedIndex(), 4, "Selection index after close of 2.Tab :");
-			ok(jQuery("#tab4").hasClass("sapUiTabSel"), "5.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(jQuery("#tab4").hasClass("sapUiTabSel"), "5.Tab is Selected - has Class sapUiTabSel");
 			notOk(jQuery("#tab4").hasClass("sapUiTab"), "5.Tab is Selected - has no Class sapUiTab");
 			notOk(jQuery("#tab1").get(0), "2.Tab is Invisible: expected undefined");
 			assert.equal(jQuery(firstTabId).attr("aria-selected"), "false", "ARIA-SELECTED of 1. tab");
@@ -360,7 +360,7 @@
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 
 			assert.equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after remove of 5.Tab :");
-			ok(!jQuery("#tab4").get(0), "1.Tab is Invisible: expected undefined");
+			assert.ok(!jQuery("#tab4").get(0), "1.Tab is Invisible: expected undefined");
 			equals(oTabStrip1.getTabs().length, 4, "Only 4 tabs assigned to TabStrip");
 			var bFound = false;
 			for(var i = 1; i  < oTabStrip1.getTabs().length; i++){
@@ -368,9 +368,9 @@
 					bFound = true;
 					}
 			}
-			ok(!bFound, "5.Tab is not assignet to Tabstrip");
-			ok(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
-			ok(!jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
+			assert.ok(!bFound, "5.Tab is not assignet to Tabstrip");
+			assert.ok(jQuery(firstTabId).hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
+			assert.ok(!jQuery(firstTabId).hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
 			assert.equal(jQuery(firstTabId).attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
 			assert.equal(jQuery(firstTabId).attr("aria-setsize"), "2", "ARIA-SETSIZE of 1. tab");
 			assert.equal(jQuery(firstTabId).attr("aria-posinset"), "1", "ARIA-POSINSET of 1. tab");
@@ -381,9 +381,9 @@
 		});
 
 		QUnit.test("toggling tabs enabled", function(assert) {
-			ok(!jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is enabled");
-			ok(jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is selected");
-			ok(!jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled");
+			assert.ok(!jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is enabled");
+			assert.ok(jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is selected");
+			assert.ok(!jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled");
 
 			var oTab0 = sap.ui.getCore().byId("T2-tab0");
 			var oTab1 = sap.ui.getCore().byId("T2-tab1");
@@ -391,41 +391,41 @@
 			// disable 1.Tab
 			oTab0.setEnabled(false);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is disabled");
+			assert.ok(jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is disabled");
 
 			// disable 2.Tab -> no tab must be selected and no content must be displayed
 			oTab1.setEnabled(false);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is disabled");
-			ok(!jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is not selected");
+			assert.ok(jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is disabled");
+			assert.ok(!jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is not selected");
 			assert.equal(oTabStrip2.getSelectedIndex(), -1, "No tab is selected");
-			ok(jQuery("#tabstrip2-panel").get(0), "Dummy panel rendered");
+			assert.ok(jQuery("#tabstrip2-panel").get(0), "Dummy panel rendered");
 			assert.equal(jQuery("#tabstrip2-panel").children().length, 0, "Dummy panel has no content");
 
 			// enable 1.Tab -> it must be selected and it's content must be displayed
 			oTab0.setEnabled(true);
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is enabled");
-			ok(jQuery("#T2-tab0").hasClass("sapUiTabSel"), "1.Tab is selected");
+			assert.ok(!jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is enabled");
+			assert.ok(jQuery("#T2-tab0").hasClass("sapUiTabSel"), "1.Tab is selected");
 			assert.equal(oTabStrip2.getSelectedIndex(), 0, "1.tab is selected");
-			ok(jQuery("#T2-tab0-panel").get(0), "Tab1 - panel rendered");
+			assert.ok(jQuery("#T2-tab0-panel").get(0), "Tab1 - panel rendered");
 			assert.equal(jQuery("#T2-tab0-panel").children().length, 1, "Panel has content");
 			assert.equal(jQuery(jQuery("#T2-tab0-panel").children()[0]).text(), "Test 1", "Text 1 is rendered");
 
 			// enable 2.Tab
 			oTab1.setEnabled(true);
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled");
-			ok(!jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is not selected");
+			assert.ok(!jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled");
+			assert.ok(!jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is not selected");
 
 			// disable 1.tab -> 2.Tab must be selected and it's content must be displayed
 			oTab0.setEnabled(false);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is disabled");
-			ok(!jQuery("#T2-tab0").hasClass("sapUiTabSel"), "1.Tab is not selected");
-			ok(jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is selected");
+			assert.ok(jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is disabled");
+			assert.ok(!jQuery("#T2-tab0").hasClass("sapUiTabSel"), "1.Tab is not selected");
+			assert.ok(jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is selected");
 			assert.equal(oTabStrip2.getSelectedIndex(), 1, "2.tab is selected");
-			ok(jQuery("#T2-tab1-panel").get(0), "Tab2 - panel rendered");
+			assert.ok(jQuery("#T2-tab1-panel").get(0), "Tab2 - panel rendered");
 			assert.equal(jQuery("#T2-tab1-panel").children().length, 1, "Panel has content");
 			assert.equal(jQuery(jQuery("#T2-tab1-panel").children()[0]).text(), "Test 2", "Text 2 is rendered");
 		});
@@ -534,7 +534,7 @@
 
 		QUnit.test("size changing", function(assert) {
 
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollable") == false, "TabStrip is not scrollable");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollable") == false, "TabStrip is not scrollable");
 
 			oTabStrip.setWidth('300px');
 
@@ -542,9 +542,9 @@
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(1000);
 
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollable"), "TabStrip is scrollable");
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollable"), "TabStrip is scrollable");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
 
 			oTabStrip.setWidth('700px');
 
@@ -552,7 +552,7 @@
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(1000);
 
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollable") == false, "TabStrip is not scrollable");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollable") == false, "TabStrip is not scrollable");
 		});
 
 		QUnit.test("select item", function(assert) {
@@ -564,8 +564,8 @@
 			// forcing updating, because of the ScrollEnablement
 			oTabStrip._updateScrollingAppearance();
 
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
 		});
 
 		QUnit.test("keyboard navigation", function(assert) {
@@ -577,8 +577,8 @@
 			// forcing updating, because of the ScrollEnablement
 			oTabStrip._updateScrollingAppearance();
 
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
 
 			qutils.triggerKeyboardEvent(oTab.getId(), "END");
 
@@ -586,8 +586,8 @@
 			// forcing updating, because of the ScrollEnablement
 			oTabStrip._updateScrollingAppearance();
 
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward") == false, "sapUiTabStripScrollForward class not is set");
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward") == false, "sapUiTabStripScrollForward class not is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
 		});
 
 		QUnit.test("mouse click", function(assert) {
@@ -598,8 +598,8 @@
 			// forcing updating, because of the ScrollEnablement
 			oTabStrip._updateScrollingAppearance();
 
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
 
 			var $rightArrow = oTabStrip.$().find('.sapUiTabStripRightScrollIcon');
 			qutils.triggerMouseEvent($rightArrow, 'click');
@@ -608,8 +608,8 @@
 			// forcing updating, because of the ScrollEnablement
 			oTabStrip._updateScrollingAppearance();
 
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward") == false, "sapUiTabStripScrollForward class not is set");
-			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward") == false, "sapUiTabStripScrollForward class not is set");
+			assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
 
 			oTabStrip.destroy();
 		});

@@ -161,9 +161,9 @@
 			var oCheckFunctionResult = fActionCallback(rm);
 			assert.equal(rm.aBuffer.join(""), sExpectedResult, "Writer function produce expected output.");
 			if(bExpectReturnsRM){
-				ok(rm === oCheckFunctionResult, "Writer function returns RenderManager again for chaining.");
+				assert.ok(rm === oCheckFunctionResult, "Writer function returns RenderManager again for chaining.");
 			}else{
-				ok(rm != oCheckFunctionResult, "Writer function does not return RenderManager for chaining.");
+				assert.ok(rm != oCheckFunctionResult, "Writer function does not return RenderManager for chaining.");
 			}
 			assert.equal(rm.aRenderedControls.length, iExpectedNumberOfControls, "Writer function rendered expected number of controls.");
 			if(fCheckCallBack) fCheckCallBack(rm);
@@ -188,13 +188,13 @@
 
 		QUnit.test("RenderManager.getConfiguration", function(assert) {
 			var rm = new sap.ui.core.RenderManager();
-			ok(rm.getConfiguration() === sap.ui.getCore().getConfiguration(), "getConfiguration returns the same like Core.getConfiguration");
+			assert.ok(rm.getConfiguration() === sap.ui.getCore().getConfiguration(), "getConfiguration returns the same like Core.getConfiguration");
 		});
 
 		QUnit.test("Core.getRenderManager/createRenderManager", function(assert) {
 			var c = sap.ui.getCore();
-			ok(c.getRenderManager() != c.getRenderManager(), "Core.getRenderManager always returns a new RenderManager instance");
-			ok(c.createRenderManager() != c.createRenderManager(), "Core.createRenderManager always returns a new RenderManager instance");
+			assert.ok(c.getRenderManager() != c.getRenderManager(), "Core.getRenderManager always returns a new RenderManager instance");
+			assert.ok(c.createRenderManager() != c.createRenderManager(), "Core.createRenderManager always returns a new RenderManager instance");
 		});
 
 		QUnit.module("Interfaces");
@@ -209,7 +209,7 @@
 			var rm = sap.ui.getCore().createRenderManager();
 			var aAllFunctions = aCommonFunctions.concat(aNonRendererFunctions);
 			for(s in rm){
-				ok(jQuery.inArray(s, aAllFunctions) >= 0, "Full Interface provides function '"+s+"'.");
+				assert.ok(jQuery.inArray(s, aAllFunctions) >= 0, "Full Interface provides function '"+s+"'.");
 			}
 		});
 
@@ -218,7 +218,7 @@
 			var oControl0 = new TestControl("TestContr0");
 			fCheckRendererInterface = function(rmIf){
 				for(s in rmIf){
-					ok(jQuery.inArray(s, aCommonFunctions) >= 0, "Renderer Interface provides function '"+s+"'.");
+					assert.ok(jQuery.inArray(s, aCommonFunctions) >= 0, "Renderer Interface provides function '"+s+"'.");
 				}
 			};
 			rm.renderControl(oControl0);
@@ -278,18 +278,18 @@
 				rm.renderControl(oControl1);
 				return rm.renderControl(oControl2);
 			}, function(rm){
-				ok(rm.aRenderedControls[0] === oControl1, "First control is in rendered controls list");
-				ok(rm.aRenderedControls[1] === oControl2, "Second control is in rendered controls list");
+				assert.ok(rm.aRenderedControls[0] === oControl1, "First control is in rendered controls list");
+				assert.ok(rm.aRenderedControls[1] === oControl2, "Second control is in rendered controls list");
 			});
 		});
 
 		QUnit.test("RenderManager.addStyle", function(assert) {
 			checkRMWriter("", true, 0, function(rm){
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure initially not available.");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure initially not available.");
 				rm.addStyle("att1");
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure still not available after call without value.");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure still not available after call without value.");
 				rm.addStyle("att1", "val1");
-				ok(!!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure now initialized");
+				assert.ok(!!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure now initialized");
 				return rm.addStyle("att2", "val2");
 			});
 		});
@@ -300,17 +300,17 @@
 				rm.addStyle("att2", "val2");
 				return rm.writeStyles();
 			}, function(rm){
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure is reset");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aStyle, "Style infrastructure is reset");
 			});
 		});
 
 		QUnit.test("RenderManager.addClass", function(assert) {
 			checkRMWriter("", true, 0, function(rm){
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure initially not available.");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure initially not available.");
 				rm.addClass();
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure still not available after call without value.");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure still not available after call without value.");
 				rm.addClass("Class1");
-				ok(!!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure now initialized");
+				assert.ok(!!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure now initialized");
 				return rm.addClass("Class2");
 			});
 		});
@@ -321,8 +321,8 @@
 				rm.addClass("Class2");
 				return rm.writeClasses();
 			}, function(rm){
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure is reset");
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aCustomStyleClasses, "CustomClass infrastructure is reset");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure is reset");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aCustomStyleClasses, "CustomClass infrastructure is reset");
 			});
 
 			var oControl3 = new TestControl("TestContr3");
@@ -339,8 +339,8 @@
 				TestControlRenderer.doAdditionalThings = function(oRM, oControl){};
 				return rm.writeClasses();
 			}, function(rm){
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure is reset");
-				ok(!rm.aStyleStack[rm.aStyleStack.length-1].aCustomStyleClasses, "CustomClass infrastructure is reset");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aClasses, "Class infrastructure is reset");
+				assert.ok(!rm.aStyleStack[rm.aStyleStack.length-1].aCustomStyleClasses, "CustomClass infrastructure is reset");
 			});
 		});
 
@@ -358,14 +358,14 @@
 			});
 
 			function checkACCOutput(sOutput, sValue){
-				ok(sOutput.indexOf(sValue) >= 0, "Output contains "+sValue+" ('"+sOutput+"')");
+				assert.ok(sOutput.indexOf(sValue) >= 0, "Output contains "+sValue+" ('"+sOutput+"')");
 			}
 
 			//Check defaults
 			var rm = new sap.ui.core.RenderManager();
-			ok(rm === rm.writeAccessibilityState(oControl1), "Writer function returns RenderManager again for chaining.");
+			assert.ok(rm === rm.writeAccessibilityState(oControl1), "Writer function returns RenderManager again for chaining.");
 			var sOutput = rm.aBuffer.join("");
-			ok(sOutput.length == 0, "No output for defaults: "+sOutput);
+			assert.ok(sOutput.length == 0, "No output for defaults: "+sOutput);
 
 			//Check auto-generation
 			rm = new sap.ui.core.RenderManager();
@@ -396,7 +396,7 @@
 				"labelledby" : null
 			});
 			sOutput = rm.aBuffer.join("");
-			ok(sOutput.length == 0, "No output for reset values: "+sOutput);
+			assert.ok(sOutput.length == 0, "No output for reset values: "+sOutput);
 
 			//Check custom attributes only
 			rm = new sap.ui.core.RenderManager();
@@ -447,11 +447,11 @@
 			var rm = new sap.ui.core.RenderManager();
 			var oControl4 = new TestControl("TestContr4");
 			rm.renderControl(oControl4);
-			ok(rm.aBuffer.length != 0, "HTML Buffer is filled after some writing");
-			ok(rm.aRenderedControls != 0, "Rendered Control Buffer is filled after some writing");
+			assert.ok(rm.aBuffer.length != 0, "HTML Buffer is filled after some writing");
+			assert.ok(rm.aRenderedControls != 0, "Rendered Control Buffer is filled after some writing");
 			rm.destroy();
-			ok(rm.aBuffer.length == 0, "HTML Buffer cleared after destroy");
-			ok(rm.aRenderedControls == 0, "Rendered Control Buffer cleared after destroy");
+			assert.ok(rm.aBuffer.length == 0, "HTML Buffer cleared after destroy");
+			assert.ok(rm.aRenderedControls == 0, "Rendered Control Buffer cleared after destroy");
 		});
 
 		asyncTest("RenderManager.render (Initial Rendering)", function() {
@@ -619,14 +619,14 @@
 			rm.destroy();
 
 			var $icon1 = jQuery.sap.byId("icon1");
-			ok($icon1[0], "icon should be rendered");
-			ok($icon1.is("span"), "Icon URI should be rendered as a span");
+			assert.ok($icon1[0], "icon should be rendered");
+			assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
 			assert.equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
 			assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
-			ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
-			ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
-			ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
-			ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
+			assert.ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
+			assert.ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
+			assert.ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
+			assert.ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
 			assert.equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
 			assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
 			notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
@@ -644,14 +644,14 @@
 			rm.destroy();
 
 			$icon1 = jQuery.sap.byId("icon1");
-			ok($icon1[0], "icon should be rendered");
-			ok($icon1.is("span"), "Icon URI should be rendered as a span");
+			assert.ok($icon1[0], "icon should be rendered");
+			assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
 			assert.equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
 			assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
-			ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
-			ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
-			ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
-			ok(!$icon1.hasClass("sapUiIconMirrorInRTL"), "icon doesn't have sapUiIconMirrorInRTL as a CSS class");
+			assert.ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
+			assert.ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
+			assert.ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
+			assert.ok(!$icon1.hasClass("sapUiIconMirrorInRTL"), "icon doesn't have sapUiIconMirrorInRTL as a CSS class");
 			assert.equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
 			assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
 			notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
@@ -674,7 +674,7 @@
 			var $icon1 = jQuery.sap.byId("icon1"),
 				$invisibleText = jQuery.sap.byId("icon1-label");
 
-			ok($icon1[0], "icon should be rendered");
+			assert.ok($icon1[0], "icon should be rendered");
 			assert.equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
 			assert.equal($icon1.attr("aria-labelledby"), undefined, "Attribute aria-labelledby should not be set");
 			assert.equal($invisibleText.length, 0, "No invisible text is rendered");
@@ -697,7 +697,7 @@
 			var $icon1 = jQuery.sap.byId("icon1"),
 				$invisibleText = jQuery.sap.byId("icon1-label"),
 				sText = $invisibleText.text();
-			ok($icon1[0], "icon should be rendered");
+			assert.ok($icon1[0], "icon should be rendered");
 
 			assert.equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
 			assert.equal($icon1.attr("aria-labelledby"), "foo icon1-label", "Attribute aria-labelledby should contain both the given id and the id of the invisible text");
@@ -718,10 +718,10 @@
 			rm.destroy();
 
 			var $img1 = jQuery.sap.byId("img1");
-			ok($img1[0], "icon should be rendered");
-			ok($img1.is("img"), "Image URI should be rendered as a img");
-			ok($img1.hasClass("classA"), "img has classA as a CSS class");
-			ok($img1.hasClass("classB"), "img has classB as a CSS class");
+			assert.ok($img1[0], "icon should be rendered");
+			assert.ok($img1.is("img"), "Image URI should be rendered as a img");
+			assert.ok($img1.hasClass("classA"), "img has classA as a CSS class");
+			assert.ok($img1.hasClass("classB"), "img has classB as a CSS class");
 			assert.equal($img1.attr("propertyA"), "valueA", "Attribute should be set");
 			assert.equal($img1.attr("propertyB"), "valueB", "Attribute should be set");
 			assert.equal($img1.attr("role"), "presentation", "Default attribute should be set");
@@ -739,10 +739,10 @@
 			rm.destroy();
 
 			$img1 = jQuery.sap.byId("img1");
-			ok($img1[0], "icon should be rendered");
-			ok($img1.is("img"), "Image URI should be rendered as a img");
-			ok($img1.hasClass("classA"), "img has classA as a CSS class");
-			ok($img1.hasClass("classB"), "img has classB as a CSS class");
+			assert.ok($img1[0], "icon should be rendered");
+			assert.ok($img1.is("img"), "Image URI should be rendered as a img");
+			assert.ok($img1.hasClass("classA"), "img has classA as a CSS class");
+			assert.ok($img1.hasClass("classB"), "img has classB as a CSS class");
 			assert.equal($img1.attr("role"), "", "Attribute should be changed");
 			assert.equal($img1.attr("alt"), "test alt message", "Attribute should be changed");
 		});
@@ -760,8 +760,8 @@
 			var oRenderer = oControl.getRenderer();
 
 			// check for an invalid renderer (preconditions)
-			ok(!!oRenderer, "A renderer object should be provided");
-			ok(!oRenderer.render, "Invalid renderer should not provide a render function");
+			assert.ok(!!oRenderer, "A renderer object should be provided");
+			assert.ok(!oRenderer.render, "Invalid renderer should not provide a render function");
 
 			// spy the jQuery.sap.log.error function
 			var oSpy = sinon.spy(jQuery.sap.log, "error");

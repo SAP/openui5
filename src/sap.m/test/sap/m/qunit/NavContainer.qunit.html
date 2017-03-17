@@ -143,14 +143,14 @@
 			assert.equal(window.mPage3EventLog.beforeHide, 0, "Lifecycle event invocation count page3 beforeHide should be correct");
 			assert.equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
 
-			ok(jQuery.sap.domById("myNC"), "NavContainer should be rendered");
-			ok(!jQuery.sap.domById("nc2"), "NavContainer 2 should not be rendered");
-			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+			assert.ok(jQuery.sap.domById("myNC"), "NavContainer should be rendered");
+			assert.ok(!jQuery.sap.domById("nc2"), "NavContainer 2 should not be rendered");
+			assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
 			assert.equal(nc.getCurrentPage().getId(), "page1", "getCurrentPage should return Page1");
 			assert.equal(nc._pageStack.length, 1, "the page stack size should be 1");
 
 			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 		QUnit.module("AutoFocus tests", {
@@ -257,7 +257,7 @@
 
 			assert.equal(nc.currentPageIsTopPage(), false, "current page should not be considered the top page");
 
-			ok(nc._bNavigating === true, "NavContainer should be navigating");
+			assert.ok(nc._bNavigating === true, "NavContainer should be navigating");
 
 			assert.equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
 			assert.equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
@@ -280,13 +280,13 @@
 			assert.equal(window.mPage1EventLog.data, null, "Data given to page1 should be correct");
 			assert.equal(window.mPage1EventLog.backData, null, "BackData given to page1 should be correct");
 			assert.equal(window.mPage2EventLog.data.transferData, "test123", "Data given to page2 should be correct");
-			ok(!!window.mPage2EventLog.backData, "BackData given to page2 should be correct");
+			assert.ok(!!window.mPage2EventLog.backData, "BackData given to page2 should be correct");
 			assert.equal(window.mPage3EventLog.data, null, "Data given to page3 should be correct");
 			assert.equal(window.mPage3EventLog.backData, null, "BackData given to page3 should be correct");
 
 			setTimeout(function() {
-				ok(jQuery.sap.domById("page1"), "Page 1 should still be in DOM");
-				ok(jQuery.sap.domById("page2"), "Page 2 should now be rendered");
+				assert.ok(jQuery.sap.domById("page1"), "Page 1 should still be in DOM");
+				assert.ok(jQuery.sap.domById("page2"), "Page 2 should now be rendered");
 				assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
 				assert.equal(nc._pageStack.length, 2, "the page stack size should be 2");
 
@@ -312,9 +312,9 @@
 
 					assert.equal(jQuery("#page1").css("display"), "none", "Page 1 should be hidden");
 					assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-					ok(nc._bNavigating === false, "NavContainer should not be navigating");
-					ok(!page1.$().hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
-					ok(!page2.$().hasClass("sapMNavItemSliding"), "Page 2 classes should be cleaned up");
+					assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
+					assert.ok(!page1.$().hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
+					assert.ok(!page2.$().hasClass("sapMNavItemSliding"), "Page 2 classes should be cleaned up");
 					done();
 				}, 600);
 			}, 100);
@@ -324,7 +324,7 @@
 			var done = assert.async();
 			assert.expect(30); // including the "navigate" event
 
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 			window.expectedNav = {
 					fromId: "page2",
@@ -344,12 +344,12 @@
 			// more data checks
 			assert.equal(window.mPage1EventLog.data, null, "Data given to page1 should be correct");
 			assert.equal(window.mPage1EventLog.backData, null, "BackData given to page1 should be correct");
-			ok(!!window.mPage3EventLog.data, "Data given to page3 should be correct");
-			ok(!!window.mPage3EventLog.backData, "BackData given to page3 should be correct");
+			assert.ok(!!window.mPage3EventLog.data, "Data given to page3 should be correct");
+			assert.ok(!!window.mPage3EventLog.backData, "BackData given to page3 should be correct");
 
 			setTimeout(function() {
-				ok(jQuery.sap.domById("page2"), "Page 2 should still be in DOM");
-				ok(jQuery.sap.domById("page3"), "Page 3 should now be rendered");
+				assert.ok(jQuery.sap.domById("page2"), "Page 2 should still be in DOM");
+				assert.ok(jQuery.sap.domById("page3"), "Page 3 should now be rendered");
 				assert.equal(nc.getCurrentPage().getId(), "page3", "getCurrentPage should return Page 3");
 				assert.equal(nc._pageStack.length, 3, "the page stack size should be 3");
 
@@ -357,8 +357,8 @@
 					assert.equal(jQuery("#page2").css("display"), "none", "Page 2 should be hidden");
 					assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 
-					ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
-					ok(!page2.$().hasClass("sapMNavItemFading"), "Page 2 classes should be cleaned up");
+					assert.ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
+					assert.ok(!page2.$().hasClass("sapMNavItemFading"), "Page 2 classes should be cleaned up");
 					done();
 				}, 600);
 			}, 100);
@@ -385,7 +385,7 @@
 			};
 
 			nc.back({transferData:"test456"});
-			ok(nc._bNavigating === true, "NavContainer should be navigating");
+			assert.ok(nc._bNavigating === true, "NavContainer should be navigating");
 
 			assert.equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
 			assert.equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
@@ -413,8 +413,8 @@
 			assert.equal(window.mPage3EventLog.backData, null, "BackData given to page3 should be correct");
 
 			setTimeout(function() {
-				ok(jQuery.sap.domById("page3"), "Page 3 should still be in DOM");
-				ok(jQuery.sap.domById("page2"), "Page 2 should now be visible");
+				assert.ok(jQuery.sap.domById("page3"), "Page 3 should still be in DOM");
+				assert.ok(jQuery.sap.domById("page2"), "Page 2 should now be visible");
 				assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
 				assert.equal(nc._pageStack.length, 2, "getStackLevel should return 2");
 
@@ -439,9 +439,9 @@
 
 					assert.equal(jQuery("#page3").css("display"), "none", "Page 3 should be hidden");
 					assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-					ok(nc._bNavigating === false, "NavContainer should not be navigating");
-					ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
-					ok(!page2.$().hasClass("sapMNavItemFading"), "Page 2 classes should be cleaned up");
+					assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
+					assert.ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
+					assert.ok(!page2.$().hasClass("sapMNavItemFading"), "Page 2 classes should be cleaned up");
 					done();
 				}, 600);
 			}, 100);
@@ -469,7 +469,7 @@
 
 			assert.equal(!!sap.m.NavContainer.transitions["c_testTrans"], true, "custom animation should be defined now");
 			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 		QUnit.test("Custom Transition Definition (static)", function(assert) {
@@ -494,7 +494,7 @@
 
 			assert.equal(!!sap.m.NavContainer.transitions["c_testTrans2"], true, "custom animation should be defined now");
 			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 		QUnit.test("Custom Transition To", function(assert) {
@@ -570,7 +570,7 @@
 			assert.equal(nc.getCurrentPage().getId(), "page1", "getCurrentPage should return Page 1");
 			assert.equal(nc._pageStack.length, 1, "the NavContainer page stack should have one page");
 			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 			window.expectedNav = {
 					fromId: "page1",
@@ -589,7 +589,7 @@
 			nc.detachNavigate(handleNavEvent);
 			nc.detachAfterNavigate(handleNavEvent);
 			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 
@@ -609,7 +609,7 @@
 			ncDom = jQuery.sap.domById("myNC");
 			var ww = document.documentElement.clientWidth || window.innerWidth; // depending on the browser
 			assert.equal(ncDom.offsetWidth, ww, "width should be the complete window width");
-			ok((ncDom.offsetHeight === window.innerHeight || ncDom.offsetHeight === document.documentElement.clientHeight),
+			assert.ok((ncDom.offsetHeight === window.innerHeight || ncDom.offsetHeight === document.documentElement.clientHeight),
 					"height should be the complete window height");
 		});
 
@@ -654,7 +654,7 @@
 			nc.detachNavigate(handleNavEvent);
 
 			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 
@@ -681,7 +681,7 @@
 			assert.equal(pageRenderCounter, 2, "still, only two page renderings should have happened");
 
 			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 
@@ -690,13 +690,13 @@
 			assert.expect(8);
 
 			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 			nc.to("page3");
 
 			setTimeout(function() {
 				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0 after navigation");
-				ok(nc._bNavigating === false, "NavContainer should not be navigating");
+				assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 				assert.equal(pageRenderCounter, 3, "three page renderings should have happened");
 				nc.to("page2");
@@ -706,7 +706,7 @@
 
 					sap.m.PageRenderer.render = realPageRender; // restore original renderer
 					assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-					ok(nc._bNavigating === false, "NavContainer should not be navigating");
+					assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 					done();
 				}, 1600);
 			}, 1600);
@@ -717,7 +717,7 @@
 			var done = assert.async();
 			if (jQuery.support.cssTransitions) {
 				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-				ok(nc._bNavigating === false, "NavContainer should not be navigating");
+				assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 				nc.addPage(new sap.m.Page("pageTransFlip", {
 					title: "Page Flip"
@@ -733,36 +733,36 @@
 				assert.equal($flipPage.length, 1, "Flip page should be rendered now");
 
 				setTimeout(function() {
-					ok($flipPage.hasClass("sapMNavItemFlipNext"), "Flip page should be prepared for flipping now");
+					assert.ok($flipPage.hasClass("sapMNavItemFlipNext"), "Flip page should be prepared for flipping now");
 
 					setTimeout(function() {
 
-						ok($flipPage.hasClass("sapMNavItemFlipping"), "Flip page should be flipping now");
+						assert.ok($flipPage.hasClass("sapMNavItemFlipping"), "Flip page should be flipping now");
 
-						ok($page2.hasClass("sapMNavItemFlipping"), "Page 2 should be flipping now");
-						ok($page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 should be flipping now");
+						assert.ok($page2.hasClass("sapMNavItemFlipping"), "Page 2 should be flipping now");
+						assert.ok($page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 should be flipping now");
 
 						setTimeout(function() {
 
-							ok(!$flipPage.hasClass("sapMNavItemFlipping"), "Flip page should not be flipping now");
-							ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 should not be flipping now");
+							assert.ok(!$flipPage.hasClass("sapMNavItemFlipping"), "Flip page should not be flipping now");
+							assert.ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 should not be flipping now");
 
 							nc.back();
 
 							setTimeout(function() {
 
-								ok($flipPage.hasClass("sapMNavItemFlipping"), "Flip page should be flipping now");
-								ok($page2.hasClass("sapMNavItemFlipping"), "Page 2 should be flipping now");
+								assert.ok($flipPage.hasClass("sapMNavItemFlipping"), "Flip page should be flipping now");
+								assert.ok($page2.hasClass("sapMNavItemFlipping"), "Page 2 should be flipping now");
 
 								setTimeout(function() {
-									ok(!$flipPage.hasClass("sapMNavItemFlipping"), "Flip page classes should be cleaned up");
-									ok(!$flipPage.hasClass("sapMNavItemFlipNext"), "Flip page classes should be cleaned up");
-									ok(!$flipPage.hasClass("sapMNavItemFlipPrevious"), "Flip page classes should be cleaned up");
-									ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 classes should be cleaned up");
-									ok(!$page2.hasClass("sapMNavItemFlipNext"), "Page 2 classes should be cleaned up");
-									ok(!$page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 classes should be cleaned up");
+									assert.ok(!$flipPage.hasClass("sapMNavItemFlipping"), "Flip page classes should be cleaned up");
+									assert.ok(!$flipPage.hasClass("sapMNavItemFlipNext"), "Flip page classes should be cleaned up");
+									assert.ok(!$flipPage.hasClass("sapMNavItemFlipPrevious"), "Flip page classes should be cleaned up");
+									assert.ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 classes should be cleaned up");
+									assert.ok(!$page2.hasClass("sapMNavItemFlipNext"), "Page 2 classes should be cleaned up");
+									assert.ok(!$page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 classes should be cleaned up");
 									assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-									ok(nc._bNavigating === false, "NavContainer should not be navigating");
+									assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 									done();
 								}, 600);
@@ -789,27 +789,27 @@
 				var $page1 = jQuery("#page1");
 				var $page2 = jQuery("#page2");
 
-				ok($page1.hasClass("sapMNavItemLeft"), "Page 1 should have left class");
-				ok(!$page2.hasClass("sapMNavItemRight"), "Page 2 should have no right class");
+				assert.ok($page1.hasClass("sapMNavItemLeft"), "Page 1 should have left class");
+				assert.ok(!$page2.hasClass("sapMNavItemRight"), "Page 2 should have no right class");
 
 				setTimeout(function() {
 					$page1 = jQuery("#page1");
 					$page2 = jQuery("#page2");
 
-					ok($page1.hasClass("sapMNavItemSliding"), "Page 1 should be sliding now"); // slide transition was the last one used
-					ok($page2.hasClass("sapMNavItemSliding"), "Page 2 should be sliding now");
+					assert.ok($page1.hasClass("sapMNavItemSliding"), "Page 1 should be sliding now"); // slide transition was the last one used
+					assert.ok($page2.hasClass("sapMNavItemSliding"), "Page 2 should be sliding now");
 
-					ok(!$page1.hasClass("sapMNavItemLeft"), "Page 2 should have no left class");
-					ok($page2.hasClass("sapMNavItemRight"), "Page 1 should have right class");
+					assert.ok(!$page1.hasClass("sapMNavItemLeft"), "Page 2 should have no left class");
+					assert.ok($page2.hasClass("sapMNavItemRight"), "Page 1 should have right class");
 
 					setTimeout(function() {
 						nc.back();
-						ok(!$page1.hasClass("sapMNavItemSliding"), "Page 2 classes should be cleaned up");
-						ok(!$page1.hasClass("sapMNavItemRight"), "Page 2 classes should be cleaned up");
-						ok(!$page1.hasClass("sapMNavItemLeft"), "Page 2 classes should be cleaned up");
-						ok(!$page2.hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
-						ok(!$page2.hasClass("sapMNavItemRight"), "Page 1 classes should be cleaned up");
-						ok(!$page2.hasClass("sapMNavItemLeft"), "Page 1 classes should be cleaned up");
+						assert.ok(!$page1.hasClass("sapMNavItemSliding"), "Page 2 classes should be cleaned up");
+						assert.ok(!$page1.hasClass("sapMNavItemRight"), "Page 2 classes should be cleaned up");
+						assert.ok(!$page1.hasClass("sapMNavItemLeft"), "Page 2 classes should be cleaned up");
+						assert.ok(!$page2.hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
+						assert.ok(!$page2.hasClass("sapMNavItemRight"), "Page 1 classes should be cleaned up");
+						assert.ok(!$page2.hasClass("sapMNavItemLeft"), "Page 1 classes should be cleaned up");
 
 						done();
 					}, 600);
@@ -1672,7 +1672,7 @@
 
 			// Arrange
 			var afterNavigate = function(evt) {
-				ok(localNc._mFocusObject, "_mFocusObject should be set before destroy()");
+				assert.ok(localNc._mFocusObject, "_mFocusObject should be set before destroy()");
 				localNc.destroy();
 				assert.strictEqual(localNc._mFocusObject, null, "_mFocusObject should be nulled after destroy()"); // this is nulled for memory reasons
 				// this also checks whether the NavContainer can handle being destroyed within the afterNavigate (because there is further code in afterNavigate, which may not access destroyed parts)

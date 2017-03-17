@@ -64,58 +64,58 @@
 
 				// Act
 				setTimeout(function() {
-					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
+					assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
 
 					// act + assert loading is started case
 					oGrowingDelegate._updateTrigger(true);
 
-					ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
-					ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
-					ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+					assert.ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+					assert.ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+					assert.ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
 					assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
 					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
-					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert loading is finished case for growingScrollToLoad=false
 					oGrowingDelegate._updateTrigger(false);
-					ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
-					ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+					assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+					assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
 					assert.strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
 					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
-					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert growingScrollToLoad=true
 					oList.setGrowingScrollToLoad(true);
 					sap.ui.getCore().applyChanges();
-					ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
+					assert.ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
 
 					// act + assert loading is started case for growingScrollToLoad=true
 					oGrowingDelegate._updateTrigger(true);
-					ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
-					ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
-					ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+					assert.ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+					assert.ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+					assert.ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
 					assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
 					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
-					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert loading is finished case for growingScrollToLoad=true
 					oGrowingDelegate._updateTrigger(false);
-					ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
-					ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-					ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
-					ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
-					ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
+					assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+					assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+					assert.ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
+					assert.ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
+					assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
 
 					// act + assert growingScrollToLoad=true
 					oList.setGrowingScrollToLoad(false);
 					sap.ui.getCore().applyChanges();
 
 					setTimeout(function() {
-						ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
+						assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
 						oGrowingDelegate.requestNewPage();
 
 						setTimeout(function() {
-							ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
+							assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
 							oPage.destroy();
 							oModel.destroy();
 							done();
@@ -157,7 +157,7 @@
 				sap.ui.getCore().applyChanges();
 
 				//Act + Assert
-				ok(sut._getHasScrollbars(), "The list has scrollbars");
+				assert.ok(sut._getHasScrollbars(), "The list has scrollbars");
 
 				page.destroy();
 				oModel.destroy();
@@ -178,7 +178,7 @@
 				sap.ui.getCore().applyChanges();
 
 				//Act + Assert
-				ok(!sut._getHasScrollbars(), "The list has no scrollbars");
+				assert.ok(!sut._getHasScrollbars(), "The list has no scrollbars");
 
 				sut.destroy();
 				oList.destroy();
@@ -200,7 +200,7 @@
 				sap.ui.getCore().applyChanges();
 
 				//Act + Assert
-				ok(!!oList.getDomRef(), "DomRef OK");
+				assert.ok(!!oList.getDomRef(), "DomRef OK");
 
 				window.setTimeout(function() {
 					oList.destroy();

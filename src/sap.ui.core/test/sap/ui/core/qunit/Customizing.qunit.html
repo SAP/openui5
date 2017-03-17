@@ -64,7 +64,7 @@
 	QUnit.test("sap.ui.core.CustomizingConfiguration available", function(assert) {
 		assert.expect(1);
 
-		ok(sap.ui.core.CustomizingConfiguration, "sap.ui.core.CustomizingConfiguration should be available now without requiring it");
+		assert.ok(sap.ui.core.CustomizingConfiguration, "sap.ui.core.CustomizingConfiguration should be available now without requiring it");
 	});
 
 	QUnit.test("sap.ui.core.CustomizingConfiguration returning the customizing data", function(assert) {
@@ -97,18 +97,18 @@
 	// View Replacement
 
 	QUnit.test("View Replacement", function(assert) {
-		ok(jQuery.sap.domById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
-		ok(!jQuery.sap.domById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
+		assert.ok(jQuery.sap.domById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
+		assert.ok(!jQuery.sap.domById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
 	});
 
 
 	// View Extension
 	QUnit.test("View Extension", function(assert) {
-		ok(jQuery.sap.domById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
-		ok(jQuery.sap.domById("buttonWithCustomerAction"), "JSView Extension should be rendered");
+		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
+		assert.ok(jQuery.sap.domById("buttonWithCustomerAction"), "JSView Extension should be rendered");
 		// extension within extension
-		ok(jQuery.sap.domById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
-		ok(jQuery.sap.domById("theComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
+		assert.ok(jQuery.sap.domById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
+		assert.ok(jQuery.sap.domById("theComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
 	});
 
 
@@ -145,16 +145,16 @@
 
 		// check members
 		var oController = sap.ui.getCore().byId("theComponent---mainView--sub2View").getController();
-		ok(oController, "Extended Sub2 View should have a Controller");
-		ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
-		ok(oController.customerAction, "Extended Sub2 controller should have a customerAction method");
+		assert.ok(oController, "Extended Sub2 View should have a Controller");
+		assert.ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
+		assert.ok(oController.customerAction, "Extended Sub2 controller should have a customerAction method");
 		assert.equal(oController.originalSAPAction(), "ext", "originalSAPAction method of extended controller should return 'ext'");
 	});
 
 	QUnit.test("Controller Extension (sap.ui.controller)", function(assert) {
 		oComp.runAsOwner(function() {
 			var oController = sap.ui.controller("testdata.customizing.sap.Sub2");
-			ok(oController.isExtended, "Controller has been extended with sap.ui.controller factory function!");
+			assert.ok(oController.isExtended, "Controller has been extended with sap.ui.controller factory function!");
 		});
 	});
 
@@ -195,11 +195,11 @@
 	QUnit.test("ExtensionPoint default content", function(assert) {
 		var oFirstItem = sap.ui.getCore().byId("__item0-theComponent---mainView--sub2View--lb-0");
 
-		ok(oFirstItem, "First ListItem should exist");
-		ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
+		assert.ok(oFirstItem, "First ListItem should exist");
+		assert.ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
 		assert.equal(oFirstItem.getText(), "(Customer's replacement ListItem)", "First ListItem should be the customized one");
-		ok(sap.ui.getCore().byId("__jsview0--defaultContentTextView"), "JS extension point 1 should contain default content");
-		ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
+		assert.ok(sap.ui.getCore().byId("__jsview0--defaultContentTextView"), "JS extension point 1 should contain default content");
+		assert.ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
 
 	QUnit.module("Controller Customizing via Hook", {
@@ -245,12 +245,12 @@
 
 							// trigger original action
 							qutils.triggerEvent("click", "theComponent---mainView--sub2View--standardBtnWithStandardAction");
-							ok(bOriginalSAPActionCalled, "ControllerExtension custom event handler 'originalSAPAction' called!");
+							assert.ok(bOriginalSAPActionCalled, "ControllerExtension custom event handler 'originalSAPAction' called!");
 							assert.equal(iStandardSub2ControllerCalled, 0, "Original event handler 'originalSAPAction' is not called!");
 
 							// trigger custom action
 							qutils.triggerEvent("click", "theComponent---mainView--sub2View--customFrag1BtnWithCustAction");
-							ok(bCustomerActionCalled, "ControllerExtension custom event handler 'customerAction' called!");
+							assert.ok(bCustomerActionCalled, "ControllerExtension custom event handler 'customerAction' called!");
 							assert.equal(iCustomSub2ControllerCalled, 0, "Original event handler 'customerAction' is not called!");
 
 							setTimeout(function() {

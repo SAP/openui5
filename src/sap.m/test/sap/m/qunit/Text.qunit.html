@@ -66,7 +66,7 @@
 
 		QUnit.test("Visibility", function(assert) {
 			// test if visible
-			ok(jQuery("#Text1").get(0), "Text 1 Visible");
+			assert.ok(jQuery("#Text1").get(0), "Text 1 Visible");
 			// test if invisible
 			equals(jQuery("#Text3").get(0), undefined, "Text 3 Invisible");
 		});
@@ -173,8 +173,8 @@
 
 			setTimeout(function() {
 				// need to wait ellipsis is correctly calculated
-				ok(t5.$("inner").css("max-height") && t5.$("inner").css("max-height") != "none", "Text has max-height");
-				ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis(" + t5.ellipsis + ")");
+				assert.ok(t5.$("inner").css("max-height") && t5.$("inner").css("max-height") != "none", "Text has max-height");
+				assert.ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis(" + t5.ellipsis + ")");
 
 				t5.setWidth(Math.pow(10, 5) + "px");
 				oCore.applyChanges();
@@ -184,7 +184,7 @@
 
 				setTimeout(function() {
 					t5.clampText();
-					ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis (" + t5.ellipsis + ") after dom changed");
+					assert.ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis (" + t5.ellipsis + ") after dom changed");
 
 					t5.setMaxLines(1);	// should use native textoverflow ellipsis
 					oCore.applyChanges();
@@ -203,28 +203,28 @@
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Text({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			ok(sut.$().hasClass("sapMTextMaxWidth"), "Text has max width restriction for the trunctation.");
+			assert.ok(sut.$().hasClass("sapMTextMaxWidth"), "Text has max width restriction for the trunctation.");
 
 			sut.setWidth("10rem");
 			sap.ui.getCore().applyChanges();
-			ok(!sut.$().hasClass("sapMTextMaxWidth"), "Text has width and does not have max width restriction.");
+			assert.ok(!sut.$().hasClass("sapMTextMaxWidth"), "Text has width and does not have max width restriction.");
 			sut.destroy();
 		});
 
 		QUnit.test("getTextDomRef should respect maxlines", function(assert) {
 			var sut = new sap.m.Text({text : "line1\nline2\nline3", maxLines: 2}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			ok(sut.getDomRef("inner") === sut.getTextDomRef(), "TextDomRef is the inner wrapper.");
+			assert.ok(sut.getDomRef("inner") === sut.getTextDomRef(), "TextDomRef is the inner wrapper.");
 
 			sut.setMaxLines(1);
 			sap.ui.getCore().applyChanges();
-			ok(sut.getDomRef() === sut.getTextDomRef(), "TextDomRef is the controls dom ref.");
+			assert.ok(sut.getDomRef() === sut.getTextDomRef(), "TextDomRef is the controls dom ref.");
 			sut.destroy();
 		});
 
 		QUnit.test("text should be shrinkable", function(assert) {
 			var oText = new sap.m.Text;
-			ok(oText.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Text control implements IShrinkable interface");
+			assert.ok(oText.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Text control implements IShrinkable interface");
 			oText.destroy();
 		});
 
@@ -240,9 +240,9 @@
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oControl = new sap.m.Text({text: "Text"});
-			ok(!!oControl.getAccessibilityInfo, "Text has a getAccessibilityInfo function");
+			assert.ok(!!oControl.getAccessibilityInfo, "Text has a getAccessibilityInfo function");
 			var oInfo = oControl.getAccessibilityInfo();
-			ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 			assert.strictEqual(oInfo.role, undefined, "AriaRole");
 			assert.strictEqual(oInfo.type, undefined, "Type");
 			assert.strictEqual(oInfo.description, "Text", "Description");

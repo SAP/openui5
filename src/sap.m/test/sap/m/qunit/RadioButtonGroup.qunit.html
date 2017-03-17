@@ -96,7 +96,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			ok(!oRBGroup.getDomRef(), "visible=true: RadioButtonGroup should not have been rendered");
+			assert.ok(!oRBGroup.getDomRef(), "visible=true: RadioButtonGroup should not have been rendered");
 
 			// cleanup
 			oRBGroup.destroyButtons();
@@ -158,7 +158,7 @@
 			for (var i = 0; i < aRadioButtons.length; i++) {
 				bEnabled = bEnabled || aRadioButtons[i].getEnabled();
 			}
-			ok(!oRBGroup.getEnabled(), "enabled=" + bEnabled + ": RadioButtonGroup should be disabled");
+			assert.ok(!oRBGroup.getEnabled(), "enabled=" + bEnabled + ": RadioButtonGroup should be disabled");
 			assert.strictEqual(oRBGroup.$().find(".sapMRbDis").length, oRBGroup.getButtons().length, "Disabled radios count should equal all items count");
 
 			// cleanup

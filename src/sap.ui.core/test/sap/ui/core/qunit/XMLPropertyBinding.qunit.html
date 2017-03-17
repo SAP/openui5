@@ -86,7 +86,7 @@
 		var oBinding = oModel.bindProperty("/name");
 		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
 		oBinding.attachChange(function() {
-			ok("Property Binding fires change event when changed");
+			assert.ok("Property Binding fires change event when changed");
 		});
 		oModel.getData().firstChild.firstChild.firstChild.nodeValue = "Jonas";
 		oBinding.refresh();
@@ -151,7 +151,7 @@
 		});
 		oInput.placeAt("target1");
 		oInput.attachChange(function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 		var oBinding = oInput.getBinding("value");
 		oBinding.attachChange(function() {
@@ -162,7 +162,7 @@
 			oInput.destroy();
 			done();
 		});
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
 		oBinding.suspend();
 		oInput.setValue("Petre");
@@ -182,7 +182,7 @@
 		});
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 		var oBinding = oInput.getBinding("value");
 		oBinding.attachChange(function() {
@@ -193,7 +193,7 @@
 			oInput.destroy();
 			done();
 		});
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
 		assert.equal(oInput.getValue(), "Peter", "Input field returns value");
 		oBinding.suspend();
@@ -214,7 +214,7 @@
 		});
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 		var oBinding = oInput.getBinding("value");
 		oBinding.attachChange(function() {
@@ -225,7 +225,7 @@
 			oInput.destroy();
 			done();
 		});
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
 		assert.equal(oInput.getValue(), "Peter", "Input field returns value");
 		oBinding.suspend();
@@ -254,7 +254,7 @@
 		});
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 		var oBinding = oInput.getBinding("value");
 		oBinding.attachChange(function() {
@@ -265,7 +265,7 @@
 			oInput.destroy();
 			done();
 		});
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
 		assert.equal(oInput.getValue(), "Peter", "Input field returns value");
 		oBinding.suspend();
@@ -302,7 +302,7 @@
 			done();
 		});
 		var oBinding = oInput.getBinding("value");
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		// should not trigger event
 		oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 		// should trigger event
@@ -330,7 +330,7 @@
 		});
 		oInput.bindObject("/teamMembers/member/1");
 		var oBinding = oInput.getBinding("value");
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		// should not trigger event
 		oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 		// should trigger event
@@ -367,7 +367,7 @@
 		});
 		oInput.bindObject("/teamMembers/member/1");
 		var oBinding = oInput.getBinding("value");
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		// should trigger event
 		oInput.setValue("blubb");
 		oInput.destroy();

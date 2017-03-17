@@ -54,8 +54,8 @@
 	 	image1 = sap.ui.getCore().getControl("i1");
 		map1 = sap.ui.getCore().getControl("m1");
 
-		ok((image1 !== undefined) && (image1 != null), "Image1 should not be null or undefined");
-		ok((map1 !== undefined) && (map1 != null), "Map1 should not be null or undefined");
+		assert.ok((image1 !== undefined) && (image1 != null), "Image1 should not be null or undefined");
+		assert.ok((map1 !== undefined) && (map1 != null), "Map1 should not be null or undefined");
 
 	});
 
@@ -63,7 +63,7 @@
 
 		if (map1) {
 			areas = map1.getAreas();
-		ok((areas !== undefined) && (areas != null) && (areas.length > 0), "Areas are not defined");
+		assert.ok((areas !== undefined) && (areas != null) && (areas.length > 0), "Areas are not defined");
 		}
 	});
 
@@ -73,7 +73,7 @@
 
 
 	QUnit.test("Image Map Properties", function(assert) {
-		ok(((map1.getName() !== undefined) && (areas != null)), "should not be null or undefined");
+		assert.ok(((map1.getName() !== undefined) && (areas != null)), "should not be null or undefined");
 		equals(map1.getName(), "Map1", "The name of the map that is referenced within the image");
 	});
 

@@ -204,10 +204,10 @@
 			var oIslamicDate;
 
 			oIslamicDate = new sap.ui.core.date.Islamic("invalid islamic date timestamp");
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as timestamp must return an invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as timestamp must return an invalid date");
 
 			oIslamicDate = new sap.ui.core.date.Islamic(new Object());
-			ok(isInvalid(oIslamicDate), "Constructor with object as parameter must return an invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with object as parameter must return an invalid date");
 
 			oIslamicDate = new sap.ui.core.date.Islamic(0); //1, January 1970 = 22 Shawwal 1389(22.10.1389)
 			var now = new Date(0);
@@ -232,50 +232,50 @@
 			var oIslamicDate = null;
 
 			oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, "alabala");
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as day must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as day must return invalid date");
 
 			oIslamicDate = new sap.ui.core.date.Islamic(new Object(), 0)
-			ok(isInvalid(oIslamicDate), "Constructor with object as year must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with object as year must return invalid date");
 
 			oIslamicDate = new sap.ui.core.date.Islamic(1430, new Object());
-			ok(isInvalid(oIslamicDate), "Constructor with object as month must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with object as month must return invalid date");
 
 			oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, new Object());
-			ok(isInvalid(oIslamicDate), "Constructor with object as day must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with object as day must return invalid date");
 
 			oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, 1, new Object());
-			ok(isInvalid(oIslamicDate), "Constructor with object as hours must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with object as hours must return invalid date");
 
 			oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, 1, 0, new Object());
-			ok(isInvalid(oIslamicDate), "Constructor with object as minutes must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with object as minutes must return invalid date");
 
 			oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, 1, 0, 0, new Object());
-			ok(isInvalid(oIslamicDate), "Constructor with object as seconds must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with object as seconds must return invalid date");
 
 			oIslamicDate = oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, 1, 0, 0, 0, new Object());
-			ok(isInvalid(oIslamicDate), "Constructor with object as milliseconds must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with object as milliseconds must return invalid date");
 
 			// ------------- string -----------------------------
 			oIslamicDate = oIslamicDate = new sap.ui.core.date.Islamic("a", 0);
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as year must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as year must return invalid date");
 
 			oIslamicDate = oIslamicDate = new sap.ui.core.date.Islamic("1430", "a");
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as month must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as month must return invalid date");
 
 			oIslamicDate = oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, "a");
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as month must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as month must return invalid date");
 
 			oIslamicDate = oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, 1, "a");
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as hours must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as hours must return invalid date");
 
 			oIslamicDate = oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, 1, 0, "a");
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as minutes must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as minutes must return invalid date");
 
 			oIslamicDate = oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, 1, 0, 0, "a");
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as seconds must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as seconds must return invalid date");
 
 			oIslamicDate = oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, 1, 0, 0, 0, "a");
-			ok(isInvalid(oIslamicDate), "Constructor with invalid string as milliseconds must return invalid date");
+			assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as milliseconds must return invalid date");
 		});
 
 		QUnit.test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {
@@ -540,7 +540,7 @@
 						oIslamicDate.setUTCDate(iDateStartFrom);
 					}
 					iOrigHours = oIslamicDate.getUTCHours();
-					ok(oIslamicDate.setUTCFullYear(iYear, iMonth, iDate), "setUTCFullYear must return value");
+					assert.ok(oIslamicDate.setUTCFullYear(iYear, iMonth, iDate), "setUTCFullYear must return value");
 				} else {
 					oIslamicDate = new sap.ui.core.date.Islamic();
 					if (arguments.length >= 5) {
@@ -553,7 +553,7 @@
 						oIslamicDate.setDate(iDateStartFrom);
 					}
 					iOrigHours = oIslamicDate.getHours();
-					ok(oIslamicDate.setFullYear(iYear, iMonth, iDate), "setFullYear must return value");
+					assert.ok(oIslamicDate.setFullYear(iYear, iMonth, iDate), "setFullYear must return value");
 				}
 
 				equals(bUTC ? oIslamicDate.getUTCFullYear() : oIslamicDate.getFullYear(), iYear, ": year");
@@ -575,7 +575,7 @@
 						oIslamicDate.setUTCDate(iDateStartFrom);
 					}
 					iOrigHours = oIslamicDate.getUTCHours();
-					ok(oIslamicDate.setUTCMonth(iMonth, iDate), "setUTCMonth must return value");
+					assert.ok(oIslamicDate.setUTCMonth(iMonth, iDate), "setUTCMonth must return value");
 				} else {
 					oIslamicDate = new sap.ui.core.date.Islamic();
 					if (arguments.length >= 4) {
@@ -585,7 +585,7 @@
 						oIslamicDate.setDate(iDateStartFrom);
 					}
 					iOrigHours = oIslamicDate.getHours();
-					ok(oIslamicDate.setMonth(iMonth, iDate), "setUTCMonth must return value");
+					assert.ok(oIslamicDate.setMonth(iMonth, iDate), "setUTCMonth must return value");
 				}
 
 				equals(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
@@ -598,10 +598,10 @@
 
 				if (bUTC) {
 					oIslamicDate = new sap.ui.core.date.Islamic(sap.ui.core.date.Islamic.now());
-					ok(oIslamicDate.setUTCHours(iHours, iMinutes, iSeconds, iMilliseconds), "setUTCHours must return value");
+					assert.ok(oIslamicDate.setUTCHours(iHours, iMinutes, iSeconds, iMilliseconds), "setUTCHours must return value");
 				} else {
 					oIslamicDate = new sap.ui.core.date.Islamic();
-					ok(oIslamicDate.setHours(iHours, iMinutes, iSeconds, iMilliseconds), "setUTCHours must return value");
+					assert.ok(oIslamicDate.setHours(iHours, iMinutes, iSeconds, iMilliseconds), "setUTCHours must return value");
 				}
 
 				equals(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iHours, ": hours");
@@ -615,10 +615,10 @@
 
 				if (bUTC) {
 					oIslamicDate = new sap.ui.core.date.Islamic(sap.ui.core.date.Islamic.now());
-					ok(oIslamicDate.setUTCMinutes(iMinutes, iSeconds, iMilliseconds), "setUTCMinutes must return value");
+					assert.ok(oIslamicDate.setUTCMinutes(iMinutes, iSeconds, iMilliseconds), "setUTCMinutes must return value");
 				} else {
 					oIslamicDate = new sap.ui.core.date.Islamic();
-					ok(oIslamicDate.setMinutes(iMinutes, iSeconds, iMilliseconds), "setMinutes must return value");
+					assert.ok(oIslamicDate.setMinutes(iMinutes, iSeconds, iMilliseconds), "setMinutes must return value");
 				}
 
 				equals(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes, ": minutes");
@@ -631,10 +631,10 @@
 
 				if (bUTC) {
 					oIslamicDate = new sap.ui.core.date.Islamic(sap.ui.core.date.Islamic.now());
-					ok(oIslamicDate.setUTCSeconds(iSeconds, iMilliseconds), "setUTCSeconds must return value");
+					assert.ok(oIslamicDate.setUTCSeconds(iSeconds, iMilliseconds), "setUTCSeconds must return value");
 				} else {
 					oIslamicDate = new sap.ui.core.date.Islamic();
-					ok(oIslamicDate.setSeconds(iSeconds, iMilliseconds), "setSeconds must return value");
+					assert.ok(oIslamicDate.setSeconds(iSeconds, iMilliseconds), "setSeconds must return value");
 				}
 
 				equals(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");

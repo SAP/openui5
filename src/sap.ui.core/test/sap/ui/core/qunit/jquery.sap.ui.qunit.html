@@ -128,8 +128,8 @@
 			jQuery("#uiAreaTarget").root(new sap.jsunittest.Test("testControl"));
 			sap.ui.getCore().applyChanges();
 			notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
-			ok(sap.ui.getCore().byId("testControl") !== null, "Control should be available");
-			ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
+			assert.ok(sap.ui.getCore().byId("testControl") !== null, "Control should be available");
+			assert.ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
 		});
 
 		QUnit.test("RootReturnsAllRelevantUIAreasOk", function(assert) {
@@ -156,7 +156,7 @@
 			var oCheckCtrl = sap.ui.getCore().byId("testControl2");
 			var oCtrl = jQuery("#testControl2").control()[0];
 
-			ok(oCheckCtrl === oCtrl, "Created control should be returned");
+			assert.ok(oCheckCtrl === oCtrl, "Created control should be returned");
 		});
 
 		QUnit.test("ControlOnInnerDomRefOk", function(assert) {
@@ -166,7 +166,7 @@
 			var oCheckCtrl = sap.ui.getCore().byId("testControl3");
 			var oCtrl = jQuery("#testControl3 > .inner").control()[0];
 
-			ok(oCheckCtrl === oCtrl, "Created control should be returned when queried for inner node");
+			assert.ok(oCheckCtrl === oCtrl, "Created control should be returned when queried for inner node");
 		});
 
 		QUnit.test("MultipleControlsOk", function(assert) {
@@ -191,7 +191,7 @@
 
 			jQuery.each(aUIAreas, function(idx, aUIArea){
 				// as we cannot check directly via instanceof (our interface concept prevents that), do it differently
-				ok(sap.ui.getCore().getUIArea(aUIArea.getId()) === aUIArea, "each UIArea returned by jQuery(???).uiarea() must also be accessible by Core's.getUIArea method");
+				assert.ok(sap.ui.getCore().getUIArea(aUIArea.getId()) === aUIArea, "each UIArea returned by jQuery(???).uiarea() must also be accessible by Core's.getUIArea method");
 			});
 		});
 
@@ -202,8 +202,8 @@
 
 			var aUIRoots = jQuery(".presetup").root();
 			assert.strictEqual(aUIRoots.length, 2, "Two 'UI-roots' of the controls should be returned");
-			ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup1"), aUIRoots) >= 0, "pre setup UIArea 1 should be returned");
-			ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup2"), aUIRoots) >= 0, "pre setup UIArea 2 should be returned");
+			assert.ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup1"), aUIRoots) >= 0, "pre setup UIArea 1 should be returned");
+			assert.ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup2"), aUIRoots) >= 0, "pre setup UIArea 2 should be returned");
 		});
 		</script>
 	</head>

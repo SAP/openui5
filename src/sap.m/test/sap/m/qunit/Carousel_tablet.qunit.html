@@ -81,7 +81,7 @@ QUnit.test("SplitContainer containing carousel should not show hidden master pag
 	oSplitApp.ontouchstart(touchStartEvent);
 	oSplitApp.onswiperight(swipeRightEvent);
 	setTimeout(function() {
-		ok(!oSplitApp.isMasterShown(), "Master page must not be shown after swipe right");
+		assert.ok(!oSplitApp.isMasterShown(), "Master page must not be shown after swipe right");
 		oSplitApp.destroy();
 		done();
 	}, 600);

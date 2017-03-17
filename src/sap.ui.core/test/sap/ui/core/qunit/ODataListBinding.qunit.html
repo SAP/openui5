@@ -46,7 +46,7 @@
 
 		var handler = function() {
 			assert.equal(oBinding.getPath(), "/Categories", "ListBinding path");
-			ok(oBinding.getModel() == oModel, "ListBinding model");
+			assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 			assert.equal(oBinding.getLength(), 8, "length of items");
 			assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 			jQuery(oBinding.getContexts()).each(function(i, context){
@@ -93,7 +93,7 @@
 			iCount++;
 			if (iCount == 1) {
 				assert.equal(oBinding.getPath(), "Products", "ListBinding path");
-				ok(oBinding.getModel() == oModel, "ListBinding model");
+				assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 				assert.equal(oBinding.getLength(), 5, "length of items");
 				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.setContext(null);
@@ -122,7 +122,7 @@
 
 		var handler = function() {
 			assert.equal(oBinding.getPath(), "/Regions", "ListBinding path");
-			ok(oBinding.getModel() == oModel, "ListBinding model");
+			assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 
 			jQuery(oBinding.getContexts()).each(function(i, context){
 				assert.equal(context.getPath(), "/Regions(" + (i + 1) + ")", "ListBinding context");
@@ -134,7 +134,7 @@
 			assert.equal(oBinding2.isLengthFinal(), true, "isLengthFinal");
 
 			var handler2 = function() {
-				ok(false, "should not land here");
+				assert.ok(false, "should not land here");
 				oBinding2.detachChange(handler2);
 
 			}
@@ -147,7 +147,7 @@
 			assert.equal(oBinding3.isLengthFinal(), true, "isLengthFinal");
 
 			var handler3 = function() {
-				ok(false, "should not land here");
+				assert.ok(false, "should not land here");
 				oBinding3.detachChange(handler3);
 
 			}
@@ -262,7 +262,7 @@
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
 			assert.equal(oContext.getPath(), "/Categories(1)", "Context path");
-			ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
+			assert.ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
 			done(); // resume normal testing
 		};
 		oBinding.attachChange(handler);
@@ -334,7 +334,7 @@
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
-			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
@@ -536,17 +536,17 @@
 
 		var fnChange = function(oEvent) {
 			bChanged = true;
-			ok(bDataRequested && !bDataReceived,"change fired");
+			assert.ok(bDataRequested && !bDataReceived,"change fired");
 		};
 
 		var fnDataRequested = function(oEvent) {
 			bDataRequested = true;
-			ok(!bDataReceived && !bChanged,"dataRequested fired");
+			assert.ok(!bDataReceived && !bChanged,"dataRequested fired");
 		};
 
 		var fnDataReceived = function(oEvent) {
 			bDataReceived = true;
-			ok(bChanged && bDataRequested,"dataRecieved fired");
+			assert.ok(bChanged && bDataRequested,"dataRecieved fired");
 			done();
 		};
 
@@ -642,7 +642,7 @@
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
-			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{

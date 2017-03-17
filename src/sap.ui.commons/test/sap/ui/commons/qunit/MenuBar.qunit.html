@@ -74,12 +74,12 @@
 	var checkMenuOpenedAndClosed = function(oMenuBar, oItem, bShouldBeOpen, sAction){
 		var oMenu = oItem == "ovrflw" ? oMenuBar.oOvrFlwMnu : oMenuBar.getItems()[oItem-1].getSubmenu();
 		if(bShouldBeOpen){
-			ok(oMenu.bOpen, "Menu is opened on "+sAction);
+			assert.ok(oMenu.bOpen, "Menu is opened on "+sAction);
 			var sId = oItem == "ovrflw" ? oMenuBar.oOvrFlwMnu.getItems()[1].getId() : oMenuBar.getId()+"_item"+oItem+"_menuitem";
 			qutils.triggerKeyboardEvent(sId, "ESCAPE"); //Close the menu
-			ok(!oMenu.bOpen, "Menu is closed on Escape");
+			assert.ok(!oMenu.bOpen, "Menu is closed on Escape");
 		}else{
-			ok(!oMenu.bOpen, "Menu is not opened on "+sAction);
+			assert.ok(!oMenu.bOpen, "Menu is not opened on "+sAction);
 		}
 
 
@@ -134,34 +134,34 @@
 	});
 
 	QUnit.test("Enablement", function(assert) {
-		ok(!jQuery("#menubar1").hasClass("sapUiMnuBarDsbl"), "Enabled MenuBar has no special CSS class");
-		ok(jQuery("#menubar4").hasClass("sapUiMnuBarDsbl"), "Disabled MenuBar has special CSS class");
+		assert.ok(!jQuery("#menubar1").hasClass("sapUiMnuBarDsbl"), "Enabled MenuBar has no special CSS class");
+		assert.ok(jQuery("#menubar4").hasClass("sapUiMnuBarDsbl"), "Disabled MenuBar has special CSS class");
 		//All items (incl. overflow) are disabled
 		var jItems = jQuery("#menubar6-area").children();
 		jItems.each(function(iIdx){
-			ok(jQuery(this).hasClass("sapUiMnuBarItmDsbl"), "Item "+iIdx+" disabled on disabled MenuBar");
+			assert.ok(jQuery(this).hasClass("sapUiMnuBarItmDsbl"), "Item "+iIdx+" disabled on disabled MenuBar");
 		});
 
-		ok(jQuery("#menubar1_item4").hasClass("sapUiMnuBarItmDsbl"), "Item 4 disabled on enabled MenuBar");
+		assert.ok(jQuery("#menubar1_item4").hasClass("sapUiMnuBarItmDsbl"), "Item 4 disabled on enabled MenuBar");
 	});
 
 	QUnit.test("Design", function(assert) {
-		ok(!jQuery("#menubar1").hasClass("sapUiMnuBarHeader"), "Standard MenuBar has no special CSS class");
+		assert.ok(!jQuery("#menubar1").hasClass("sapUiMnuBarHeader"), "Standard MenuBar has no special CSS class");
 		jQuery("#menubar1").get(0).focus();
 		qutils.triggerKeyboardEvent("menubar1_item1", "SPACE"); //Open the menu
-		ok(!jQuery("#menubar1_item1_menu").hasClass("sapUiMnuBarHeader"), "Standard Menu has no special CSS class");
+		assert.ok(!jQuery("#menubar1_item1_menu").hasClass("sapUiMnuBarHeader"), "Standard Menu has no special CSS class");
 		qutils.triggerKeyboardEvent("menubar1_item1_menuitem", "ESCAPE"); //Close the menu
 
-		ok(jQuery("#menubar2").hasClass("sapUiMnuBarHeader"), "Header MenuBar has special CSS class");
+		assert.ok(jQuery("#menubar2").hasClass("sapUiMnuBarHeader"), "Header MenuBar has special CSS class");
 		jQuery("#menubar2").get(0).focus();
 		qutils.triggerKeyboardEvent("menubar2_item1", "SPACE"); //Open the menu
-		ok(jQuery("#menubar2_item1_menu").hasClass("sapUiMnuTop"), "Header Menu has special CSS class");
+		assert.ok(jQuery("#menubar2_item1_menu").hasClass("sapUiMnuTop"), "Header Menu has special CSS class");
 		qutils.triggerKeyboardEvent("menubar2_item1_menuitem", "ESCAPE"); //Close the menu
 	});
 
 	QUnit.test("Overflow", function(assert) {
-		ok(!jQuery("#menubar1-ovrflw").is(":visible"), "Overflow hidden if enough space");
-		ok(jQuery("#menubar5-ovrflw").is(":visible"), "Overflow visible if not enough space");
+		assert.ok(!jQuery("#menubar1-ovrflw").is(":visible"), "Overflow hidden if enough space");
+		assert.ok(jQuery("#menubar5-ovrflw").is(":visible"), "Overflow visible if not enough space");
 		equals(oMenuBar5.oOvrFlwMnu.getItems().length, 4, "# Items in overflow menu");
 	});
 

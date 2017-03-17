@@ -115,8 +115,8 @@
 			result = sut.getIcon();
 
 			//Assert
-			ok(result,"result should not be undefined");
-			ok(result.indexOf("add") !== -1, result,"result should contain add");
+			assert.ok(result,"result should not be undefined");
+			assert.ok(result.indexOf("add") !== -1, result,"result should contain add");
 
 
 			sut.destroy();
@@ -185,7 +185,7 @@
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
 
-			ok(sut._oImageControl, "make sure the Tile has an image");
+			assert.ok(sut._oImageControl, "make sure the Tile has an image");
 
 			//Act
 			sut.destroy();

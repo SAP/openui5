@@ -177,7 +177,7 @@
 	function checkDataState(oDataState1, oDataState2, sComment) {
 		aCompareMethods = oDataState2._compareMethods;
 
-		ok(true, "Starting Test: " + sComment);
+		assert.ok(true, "Starting Test: " + sComment);
 
 		for (var i=0;i<aCompareMethods.length;i++) {
 			if (!jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]())) {
@@ -205,14 +205,14 @@
 						}
 					}
 				} else {
-					//ok(false, "method "+ aCompareMethods[i] + " not implemented");
+					//assert.ok(false, "method "+ aCompareMethods[i] + " not implemented");
 				}
 			} else {
 				assert.equal(jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected("+ oDataState2[aCompareMethods[i]]() +"): "+ sComment);
 			}
 		}
 
-		ok(true, "Ending Test: " + sComment);
+		assert.ok(true, "Ending Test: " + sComment);
 	};
 
 	QUnit.test("test DataState batch deferred",function(assert){
@@ -320,7 +320,7 @@
 				});
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
@@ -440,7 +440,7 @@
 					});
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
@@ -811,11 +811,11 @@
 		oModel.read("/ProductSet('HT-1000')", {
 			urlParameters: {$expand : "ToSalesOrderLineItems"},
 			success: function() {
-				ok(true, "request success");
+				assert.ok(true, "request success");
 				Promise.resolve().then(fnTest);
 			},
 			error: function() {
-				ok(false, "request failed");
+				assert.ok(false, "request failed");
 			}
 		});
 		var fnTest = function() {
@@ -833,16 +833,16 @@
 				},
 				"Setting a 'blabla2' to a string type binding"
 			);
-			ok(oModel.hasPendingChanges(), "model should have pending changes");
+			assert.ok(oModel.hasPendingChanges(), "model should have pending changes");
 			oModel.submitChanges(
 				{
 					success: function() {
-						ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+						assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 						var oOrigData = oModel.getOriginalProperty("/ProductSet('HT-1000')");
 						var oData = oModel.getProperty("/ProductSet('HT-1000')");
 						assert.equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('HT-1000')/Name"),"blabla2");
 						assert.equal(oData.Name,oModel.getProperty("/ProductSet('HT-1000')/Name"),"blabla2");
-						ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
+						assert.ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
 						testDataState (oNameBinding,
 							function() {
 								oModel.setProperty("/ProductSet('HT-1000')/Name","blabla3");
@@ -933,7 +933,7 @@
 				Promise.resolve().then(fnTest);
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 		var fnTest = function() {
@@ -1010,7 +1010,7 @@
 					});
 				},
 				error : function() {
-					ok(false,"request failed");
+					assert.ok(false,"request failed");
 				}
 			});
 		}
@@ -1141,7 +1141,7 @@
 				});
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
@@ -1283,7 +1283,7 @@
 					);
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
@@ -1364,7 +1364,7 @@
 					);
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});

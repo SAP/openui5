@@ -61,10 +61,10 @@
 			var oJapaneseDate;
 
 			oJapaneseDate = new sap.ui.core.date.Japanese("invalid Japanese date timestamp");
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as timestamp must return an invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as timestamp must return an invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese(new Object());
-			ok(isInvalid(oJapaneseDate), "Constructor with object as parameter must return an invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with object as parameter must return an invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese(0); //1, January 1970 = 1, January 45 Showa
 			var now = new Date(0);
@@ -89,56 +89,56 @@
 			var oJapaneseDate = null;
 
 			oJapaneseDate = new sap.ui.core.date.Japanese("blabla", 0, 23);
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as year must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as year must return invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese(null, 0, 23);
-			ok(isInvalid(oJapaneseDate), "Constructor with null as year must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with null as year must return invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, "alabala");
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as day must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as day must return invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese([235, new Object()], 0)
-			ok(isInvalid(oJapaneseDate), "Constructor with object as year must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with object as year must return invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], new Object());
-			ok(isInvalid(oJapaneseDate), "Constructor with object as month must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with object as month must return invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, new Object());
-			ok(isInvalid(oJapaneseDate), "Constructor with object as day must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with object as day must return invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, new Object());
-			ok(isInvalid(oJapaneseDate), "Constructor with object as hours must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with object as hours must return invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, new Object());
-			ok(isInvalid(oJapaneseDate), "Constructor with object as minutes must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with object as minutes must return invalid date");
 
 			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, 0, new Object());
-			ok(isInvalid(oJapaneseDate), "Constructor with object as seconds must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with object as seconds must return invalid date");
 
 			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, 0, 0, new Object());
-			ok(isInvalid(oJapaneseDate), "Constructor with object as milliseconds must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with object as milliseconds must return invalid date");
 
 			// ------------- string -----------------------------
 			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, "a"], 0);
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as year must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as year must return invalid date");
 
 			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, "1430"], "a");
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as month must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as month must return invalid date");
 
 			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, "a");
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as month must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as month must return invalid date");
 
 			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, "a");
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as hours must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as hours must return invalid date");
 
 			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, "a");
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as minutes must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as minutes must return invalid date");
 
 			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, 0, "a");
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as seconds must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as seconds must return invalid date");
 
 			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, 0, 0, "a");
-			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as milliseconds must return invalid date");
+			assert.ok(isInvalid(oJapaneseDate), "Constructor with invalid string as milliseconds must return invalid date");
 		});
 
 		QUnit.test("with era, year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {

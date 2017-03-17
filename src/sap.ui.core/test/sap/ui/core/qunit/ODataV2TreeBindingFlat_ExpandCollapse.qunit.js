@@ -22,7 +22,7 @@ QUnit.test("Manually expand a node", function(assert){
 
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
-			ok(!oBinding.isExpanded(3), "The node which is going to be expanded is currently collapsed");
+			assert.ok(!oBinding.isExpanded(3), "The node which is going to be expanded is currently collapsed");
 
 			oBinding.attachChange(handler2);
 			oBinding.expand(3, true);
@@ -35,7 +35,7 @@ QUnit.test("Manually expand a node", function(assert){
 				oChild, i;
 			for (i = 4 ; i < 10 ; i++) {
 				oChild = oBinding.findNode(i);
-				ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
+				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
 
 			oBinding.attachChange(handler3);
@@ -48,9 +48,9 @@ QUnit.test("Manually expand a node", function(assert){
 				oChild;
 
 			oChild = oBinding.findNode(65);
-			ok(oBinding._isInSubtree(oParent, oChild), "Child is loaded");
+			assert.ok(oBinding._isInSubtree(oParent, oChild), "Child is loaded");
 			oChild = oBinding.findNode(66);
-			ok(oBinding._isInSubtree(oParent, oChild), "Child is loaded");
+			assert.ok(oBinding._isInSubtree(oParent, oChild), "Child is loaded");
 
 			done();
 		}
@@ -73,7 +73,7 @@ QUnit.test("Manually expand and collapse a node multiple times", function(assert
 
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
-			ok(!oBinding.isExpanded(3), "The node which is going to be expanded is currently collapsed");
+			assert.ok(!oBinding.isExpanded(3), "The node which is going to be expanded is currently collapsed");
 
 			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 			oBinding.attachChange(handler2);
@@ -120,7 +120,7 @@ QUnit.test("Manually expand two levels and collapse the parent", function(assert
 
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
-			ok(!oBinding.isExpanded(4), "The node which is going to be expanded is currently collapsed");
+			assert.ok(!oBinding.isExpanded(4), "The node which is going to be expanded is currently collapsed");
 
 			oBinding.attachChange(handler2);
 			oBinding.expand(4, true);
@@ -133,7 +133,7 @@ QUnit.test("Manually expand two levels and collapse the parent", function(assert
 				oChild, i;
 			for (i = 5 ; i < 10 ; i++) {
 				oChild = oBinding.findNode(i);
-				ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
+				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
 
 			oBinding.attachChange(handler3);
@@ -147,11 +147,11 @@ QUnit.test("Manually expand two levels and collapse the parent", function(assert
 
 			for (i = 6 ; i < 9 ; i++) {
 				oChild = oBinding.findNode(i);
-				ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
+				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are loaded");
 			}
 
 			oBinding.collapse(4);
-			ok(oBinding.findNode(9).key.indexOf("1010") !== -1, "The index shifting is done correctly");
+			assert.ok(oBinding.findNode(9).key.indexOf("1010") !== -1, "The index shifting is done correctly");
 			done();
 		}
 
@@ -217,7 +217,7 @@ QUnit.test("Bug fix: when deepnode is collapsed, its parents' magnitude needs to
 
 		function handler2(oEvent) {
 			oBinding.detachChange(handler2);
-			ok(oBinding.findNode(5).key.indexOf("1630") !== -1, "The first child in 1005 is 1630");
+			assert.ok(oBinding.findNode(5).key.indexOf("1630") !== -1, "The first child in 1005 is 1630");
 
 			oBinding.attachChange(handler3);
 			// expand 1630
@@ -227,15 +227,15 @@ QUnit.test("Bug fix: when deepnode is collapsed, its parents' magnitude needs to
 		function handler3(oEvent) {
 			oBinding.detachChange(handler3);
 
-			ok(oBinding.findNode(6).key.indexOf("1638") !== -1, "The first child in 1630 is 1638");
+			assert.ok(oBinding.findNode(6).key.indexOf("1638") !== -1, "The first child in 1630 is 1638");
 
 			oBinding.collapse(5);
-			ok(oBinding.findNode(13).key.indexOf("1006") !== -1, "The sibling of 1005 is 1006");
+			assert.ok(oBinding.findNode(13).key.indexOf("1006") !== -1, "The sibling of 1005 is 1006");
 
 			// expand and collapse again
 			oBinding.expand(5);
 			oBinding.collapse(5);
-			ok(oBinding.findNode(12).key.indexOf("1637") !== -1, "The last child of 1005 is 1637");
+			assert.ok(oBinding.findNode(12).key.indexOf("1637") !== -1, "The last child of 1005 is 1637");
 			done();
 		}
 

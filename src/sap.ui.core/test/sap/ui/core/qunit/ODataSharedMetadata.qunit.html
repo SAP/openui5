@@ -88,11 +88,11 @@
 			});
 			clock.tick(1);
 			jQuery.when(metadataDfd).done(function(e){
-					ok(true, 'Metadata loaded fired at model only');
+					assert.ok(true, 'Metadata loaded fired at model only');
 					done();
 				}).fail(function(e){
 					jQuery.sap.log.debug("metadata promise failed");
-					ok(false, 'Metadata loaded fired at metadata object')
+					assert.ok(false, 'Metadata loaded fired at metadata object')
 					done();
 				});
 		});
@@ -105,13 +105,13 @@
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
+			assert.ok(oBinding.oEntityType, "entity type binding check");
 			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			ok(oEntityType, "get entity type check");
+			assert.ok(oEntityType, "get entity type check");
 			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-			ok(oPropMeta, "property type check");
+			assert.ok(oPropMeta, "property type check");
 			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
@@ -229,9 +229,9 @@
 		});
 
 		var handler = function() {
-			ok(true, "Metadata callback handler called");
+			assert.ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler);
-			ok(oModel.getServiceMetadata(), "get metadata check");
+			assert.ok(oModel.getServiceMetadata(), "get metadata check");
 			done();
 		}
 		oModel.attachMetadataLoaded(handler);
@@ -248,18 +248,18 @@
 		});
 
 		var handler = function() {
-			ok(true, "Metadata callback handler called");
+			assert.ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler); // handler is undefined at this point. This always causes the assertion inside to fail.
-			ok(oModel.getServiceMetadata(), "get metadata check");
+			assert.ok(oModel.getServiceMetadata(), "get metadata check");
 			var oBinding = oModel.bindList("/Categories");
 			var handler2 = function() { // delay the following test
-				ok(oBinding.oEntityType, "entity type binding check");
+				assert.ok(oBinding.oEntityType, "entity type binding check");
 				assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 				var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-				ok(oEntityType, "get entity type check");
+				assert.ok(oEntityType, "get entity type check");
 				assert.equal(oEntityType.name, "Category", "entity type name check");
 				var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-				ok(oPropMeta, "property type check");
+				assert.ok(oPropMeta, "property type check");
 				assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 				assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
@@ -285,13 +285,13 @@
 		// if not yet happened
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
+			assert.ok(oBinding.oEntityType, "entity type binding check");
 			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			ok(oEntityType, "get entity type check");
+			assert.ok(oEntityType, "get entity type check");
 			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-			ok(oPropMeta, "property type check");
+			assert.ok(oPropMeta, "property type check");
 			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 

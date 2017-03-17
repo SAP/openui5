@@ -349,7 +349,7 @@ sap.ui.define([
 		assert.strictEqual(fnMatcher.callCount, 2, "called the matcher twice");
 
 		// Assert
-		ok(fnCheckSpy1.calledBefore(fnCheckSpy2), "Checks executed in correct order");
+		assert.ok(fnCheckSpy1.calledBefore(fnCheckSpy2), "Checks executed in correct order");
 		assert.strictEqual(fnCheckSpy1.callCount, 1, "called first check");
 		assert.strictEqual(fnCheckSpy2.callCount, 1, "called last check");
 

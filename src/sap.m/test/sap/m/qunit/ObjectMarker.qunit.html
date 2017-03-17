@@ -69,7 +69,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().find(".sapMLnk").length, "The inner control is rendered as sap.m.Link when a press event is set.");
+			assert.ok(oMarker.$().find(".sapMLnk").length, "The inner control is rendered as sap.m.Link when a press event is set.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -86,7 +86,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().find(".sapMText").length, "The inner control is rendered as sap.m.Text when a press event is not set.");
+			assert.ok(oMarker.$().find(".sapMText").length, "The inner control is rendered as sap.m.Text when a press event is not set.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -105,8 +105,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(!oMarker.$().text().length, "Control text is not visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(!oMarker.$().text().length, "Control text is not visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -123,8 +123,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(!oMarker.$().text().length, "Control text is not visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(!oMarker.$().text().length, "Control text is not visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -141,8 +141,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -159,8 +159,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -177,8 +177,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -195,8 +195,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -213,8 +213,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -239,7 +239,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(!oMarker.$().text().length, "Control now does not show the text.");
+			assert.ok(!oMarker.$().text().length, "Control now does not show the text.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -261,8 +261,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible when visibility is set to IconAndText.");
-			ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconAndText.");
+			assert.ok(oMarker.$().text().length, "Control text is visible when visibility is set to IconAndText.");
+			assert.ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconAndText.");
 
 			// Act
 			oMarker.setVisibility(sap.m.ObjectMarkerVisibility.IconOnly);
@@ -270,8 +270,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(!oMarker.$().text().length, "Control text is not visible when visibility is set to IconOnly.");
-			ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconOnly.");
+			assert.ok(!oMarker.$().text().length, "Control text is not visible when visibility is set to IconOnly.");
+			assert.ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconOnly.");
 
 			// Act
 			oMarker.setVisibility(sap.m.ObjectMarkerVisibility.TextOnly);
@@ -279,8 +279,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible when visibility is set to TextOnly.");
-			ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible when visibility is set to TextOnly.");
+			assert.ok(oMarker.$().text().length, "Control text is visible when visibility is set to TextOnly.");
+			assert.ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible when visibility is set to TextOnly.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -304,7 +304,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().find(".sapMLnk").length, "The inner control is re-rendered as sap.m.Link when a press event is set.");
+			assert.ok(oMarker.$().find(".sapMLnk").length, "The inner control is re-rendered as sap.m.Link when a press event is set.");
 
 			// Act
 			oMarker.detachPress(fn);
@@ -312,7 +312,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().find(".sapMText").length, "The inner control is re-rendered as sap.m.Text when a press event is set.");
+			assert.ok(oMarker.$().find(".sapMText").length, "The inner control is re-rendered as sap.m.Text when a press event is set.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -325,7 +325,7 @@
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Draft,
 				press: function(oEvent) {
-					ok(true, "This should be executed when the link is triggered");
+					assert.ok(true, "This should be executed when the link is triggered");
 				}
 			});
 
@@ -430,7 +430,7 @@
 			oMarker.setType(sap.m.ObjectMarkerType.Flagged);
 
 			// Assert
-			ok(oMarker._getInnerControl(), "Inner control should be returned instead of null");
+			assert.ok(oMarker._getInnerControl(), "Inner control should be returned instead of null");
 		});
 
 		QUnit.test("_adjustControl private method", function (assert) {

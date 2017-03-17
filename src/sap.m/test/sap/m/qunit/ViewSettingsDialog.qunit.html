@@ -278,7 +278,7 @@
 			});
 
 			QUnit.test("Initialization", function (assert) {
-				ok(!jQuery.sap.domById(this.oVSD.getId()), "Dialog is not rendered before it's ever opened.");
+				assert.ok(!jQuery.sap.domById(this.oVSD.getId()), "Dialog is not rendered before it's ever opened.");
 				assert.strictEqual(this.oVSD.getTitle(), "", 'The default title is empty and will be filled by "' + this.oResourceBundle.getText("VIEWSETTINGS_TITLE") + '" later');
 				assert.strictEqual(this.oVSD.getSortDescending(), false, 'The default value for sortDescending should be "false"');
 				assert.strictEqual(this.oVSD.getGroupDescending(), false, 'The default value for groupDescending should be "false"');
@@ -379,7 +379,7 @@
 
 				// filters
 				this.oVSD.setSelectedFilterKeys(this.oFilterState);
-				ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+				assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 			});
 
 			QUnit.test("setSelectedSortItem via string key throws error if the key is wrong, but does not prevent dialog open", function (assert) {
@@ -392,12 +392,12 @@
 				//assert
 				assert.strictEqual(oErrorLogSpy.callCount, 1, "Item could not be set");
 				sErrorMessage = oErrorLogSpy.args[0][0];
-				ok(sErrorMessage.indexOf(sNonExistentItemKey) > -1, "Error message shows the item key which is problematic");
+				assert.ok(sErrorMessage.indexOf(sNonExistentItemKey) > -1, "Error message shows the item key which is problematic");
 
 				//act
 				this.oVSD.open();
 				//assert
-				ok(this.oVSD._getDialog().isOpen(), "Dialog is still functional");
+				assert.ok(this.oVSD._getDialog().isOpen(), "Dialog is still functional");
 
 				//clean
 				jQuery.sap.log.error.restore();
@@ -522,17 +522,17 @@
 				var sId = this.oVSD.getId();
 				this.oVSD.open();
 
-				ok(jQuery.sap.domById(sId + "-dialog"), "Dialog should be rendered");
-				ok(jQuery.sap.domById(sId + "-navcontainer"), "Nav container should be rendered");
-				ok(jQuery.sap.domById(sId + "-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
-				ok(!jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should not be rendered");
-				ok(jQuery.sap.byId(sId + "-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' button should be selected");
+				assert.ok(jQuery.sap.domById(sId + "-dialog"), "Dialog should be rendered");
+				assert.ok(jQuery.sap.domById(sId + "-navcontainer"), "Nav container should be rendered");
+				assert.ok(jQuery.sap.domById(sId + "-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
+				assert.ok(!jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should not be rendered");
+				assert.ok(jQuery.sap.byId(sId + "-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' button should be selected");
 			});
 
 			QUnit.test("Open predefined tab", function(assert){
 				this.oVSD.open("filter");
 
-				ok(jQuery.sap.byId(this.oVSD.getId() + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
+				assert.ok(jQuery.sap.byId(this.oVSD.getId() + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
 			});
 
 			test("Close ViewSettingsDialog", function (assert) {
@@ -542,7 +542,7 @@
 				this.oVSD.open();
 				this.oVSD._dialog.close();
 				setTimeout(function() {
-					ok(!that.oVSD._dialog.isOpen(), "Dialog should be in closed state");
+					assert.ok(!that.oVSD._dialog.isOpen(), "Dialog should be in closed state");
 					done();
 				}, 1000);
 			});
@@ -640,25 +640,25 @@
 						oVSFilterItem2 = oVSFilterItem1.clone();
 
 				//Assert
-				ok(!oVSFilterItem1.hasListeners("itemPropertyChanged"), "Initially no 'itemPropertyChanged' event handler should be attached to the ViewSettingsFilterItem 1");
-				ok(!oVSFilterItem2.hasListeners("itemPropertyChanged"), "Initially no 'itemPropertyChanged' event handler should be attached to the ViewSettingsFilterItem 2");
+				assert.ok(!oVSFilterItem1.hasListeners("itemPropertyChanged"), "Initially no 'itemPropertyChanged' event handler should be attached to the ViewSettingsFilterItem 1");
+				assert.ok(!oVSFilterItem2.hasListeners("itemPropertyChanged"), "Initially no 'itemPropertyChanged' event handler should be attached to the ViewSettingsFilterItem 2");
 
-				ok(!oVSFilterItem1.hasListeners("filterDetailItemsAggregationChange"), "Initially no 'filterDetailItemsAggregationChange' event handler should be attached to the ViewSettingsFilterItem 1");
-				ok(!oVSFilterItem2.hasListeners("filterDetailItemsAggregationChange"), "Initially no 'filterDetailItemsAggregationChange' event handler should be attached to the ViewSettingsFilterItem 2");
+				assert.ok(!oVSFilterItem1.hasListeners("filterDetailItemsAggregationChange"), "Initially no 'filterDetailItemsAggregationChange' event handler should be attached to the ViewSettingsFilterItem 1");
+				assert.ok(!oVSFilterItem2.hasListeners("filterDetailItemsAggregationChange"), "Initially no 'filterDetailItemsAggregationChange' event handler should be attached to the ViewSettingsFilterItem 2");
 
 				//Act
 				oVSD.addFilterItem(oVSFilterItem1);
 
 				//Assert
-				ok(oVSFilterItem1.hasListeners("itemPropertyChanged"), "addFilterItem should attach 'itemPropertyChanged' event handler to the ViewSettingsFilterItem");
-				ok(oVSFilterItem1.hasListeners("filterDetailItemsAggregationChange"), "addFilterItem should attach 'filterDetailItemsAggregationChange' event handler to the ViewSettingsFilterItem");
+				assert.ok(oVSFilterItem1.hasListeners("itemPropertyChanged"), "addFilterItem should attach 'itemPropertyChanged' event handler to the ViewSettingsFilterItem");
+				assert.ok(oVSFilterItem1.hasListeners("filterDetailItemsAggregationChange"), "addFilterItem should attach 'filterDetailItemsAggregationChange' event handler to the ViewSettingsFilterItem");
 
 				//Act
 				oVSD.insertFilterItem(oVSFilterItem2);
 
 				//Assert
-				ok(oVSFilterItem2.hasListeners("itemPropertyChanged"), "insertFilterItem should attach 'itemPropertyChanged' event handler to the ViewSettingsFilterItem");
-				ok(oVSFilterItem2.hasListeners("filterDetailItemsAggregationChange"), "insertFilterItem should attach 'filterDetailItemsAggregationChange' event handler to the ViewSettingsFilterItem");
+				assert.ok(oVSFilterItem2.hasListeners("itemPropertyChanged"), "insertFilterItem should attach 'itemPropertyChanged' event handler to the ViewSettingsFilterItem");
+				assert.ok(oVSFilterItem2.hasListeners("filterDetailItemsAggregationChange"), "insertFilterItem should attach 'filterDetailItemsAggregationChange' event handler to the ViewSettingsFilterItem");
 
 				oVSD.destroy();
 			});
@@ -672,14 +672,14 @@
 							that = this,
 							fnChecks = function () {
 								// check if dialog is still in the previous state
-								ok(true, "Event cancel was fired");
+								assert.ok(true, "Event cancel was fired");
 								assert.strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '" + that.oSelectedSortItem.getId() + "'");
 								assert.strictEqual(core.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
 								assert.strictEqual(this.getSortDescending(), true, "sort descending should now be true");
 								assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '" + that.oSelectedGroupItem.getId() + "'");
 								assert.strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
 								assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
-								ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+								assert.ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 								this.detachCancel(fnChecks);
 								done();
 							};
@@ -714,14 +714,14 @@
 						done = assert.async(),
 						fnChecks = function () {
 							// check if dialog is still in the previous state
-							ok(true, "Event cancel was fired");
+							assert.ok(true, "Event cancel was fired");
 							assert.strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '"+ that.oSelectedSortItem.getId() +"'");
 							assert.strictEqual(core.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
 							assert.strictEqual(this.getSortDescending(), true, "sort descending should now be true");
 							assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '"+ that.oSelectedGroupItem.getId() +"'");
 							assert.strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
 							assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
-							ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+							assert.ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 							this.detachCancel(fnChecks);
 							done();
 						};
@@ -777,17 +777,17 @@
 					this.oVSD.open();
 					this.oVSD.attachConfirm(function(oEvent) {
 						var oParams = oEvent.getParameters();
-						ok(oParams, "Event applySettings was fired and has event parameters");
-						ok(oParams.sortItem, "Event has a sort item");
-						ok(oParams.groupItem, "Event has a group item");
-						ok(oParams.sortDescending, "Event has sort order true");
+						assert.ok(oParams, "Event applySettings was fired and has event parameters");
+						assert.ok(oParams.sortItem, "Event has a sort item");
+						assert.ok(oParams.groupItem, "Event has a group item");
+						assert.ok(oParams.sortDescending, "Event has sort order true");
 						assert.strictEqual(oParams.sortItem.getId(), that.oSelectedSortItem.getId(), "The selected sort item should be '"+ that.oSelectedSortItem.getId() +"'");
 						assert.strictEqual(oParams.sortDescending, true, "Sort descending should be true");
 						assert.strictEqual(oParams.groupItem.getId(), that.oSelectedGroupItem.getId(), "The selected group item should be '"+ that.oSelectedGroupItem.getId() +"'");
 						assert.strictEqual(oParams.groupDescending, true, "group descending should be true");
 						assert.strictEqual(oParams.selectedPresetFilterItem, undefined, "The selected preset filter item should be 'undefined'");
-						ok(compareFilterKeys(that.oFilterState, oParams.filterKeys), "The event filter keys should have the same structure as the passed one");
-						ok(oParams.filterString.length > 0, "The filter string is not empty");
+						assert.ok(compareFilterKeys(that.oFilterState, oParams.filterKeys), "The event filter keys should have the same structure as the passed one");
+						assert.ok(oParams.filterString.length > 0, "The filter string is not empty");
 						assert.strictEqual(oParams.filterItems.length, 8, "There are 8 selected filters");
 						done();
 					});
@@ -834,10 +834,10 @@
 			test("Grouping items selection", function (assert) {
 				var clock = sinon.useFakeTimers(),
 					fnOnConfirmObject = sinon.spy(function (oEvent) {
-						ok(typeof oEvent.getParameter("groupItem") == "object", "Group Item is an object");
+						assert.ok(typeof oEvent.getParameter("groupItem") == "object", "Group Item is an object");
 					}),
 					fnOnConfirmUndefined = sinon.spy(function (oEvent) {
-						ok(typeof oEvent.getParameter("groupItem") == "undefined", "'None' Item is undefined");
+						assert.ok(typeof oEvent.getParameter("groupItem") == "undefined", "'None' Item is undefined");
 					});
 
 				//Act
@@ -849,7 +849,7 @@
 				clock.tick(1000);
 
 				//Check
-				ok(fnOnConfirmObject.calledOnce, "Event handler is being called");
+				assert.ok(fnOnConfirmObject.calledOnce, "Event handler is being called");
 
 				// Act
 				this.oVSD.detachConfirm(fnOnConfirmObject);
@@ -861,7 +861,7 @@
 				clock.tick(1000);
 
 				//Check
-				ok(fnOnConfirmUndefined.calledOnce, "Event handler is being called");
+				assert.ok(fnOnConfirmUndefined.calledOnce, "Event handler is being called");
 
 				clock.restore();
 			});
@@ -1068,7 +1068,7 @@
 				oVSD.removeAllSortItems();
 
 				//assert
-				ok("Filter/Group/Sort items should be removed without throwing an exception");
+				assert.ok("Filter/Group/Sort items should be removed without throwing an exception");
 			});
 
 			QUnit.module ("Sort tab only checks", {
@@ -1117,12 +1117,12 @@
 				assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 
 				// Aria sort list and sort order list labels and ariaLabelledBy
-				ok(jQuery.sap.domById(this.oVSD.getId() + "-sortOrderLabel"), "Sort order list aria label should be rendered");
-				ok(jQuery.sap.domById(this.oVSD.getId() + "-sortListLabel"), "Sort list aria label should be rendered");
+				assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-sortOrderLabel"), "Sort order list aria label should be rendered");
+				assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-sortListLabel"), "Sort list aria label should be rendered");
 				assert.strictEqual(this.oVSD._sortOrderList.getAriaLabelledBy().length, 1, "Sort order list should have aria ariaLabelledBy set");
 				assert.strictEqual(this.oVSD._sortList.getAriaLabelledBy().length, 1, "Sort list should have aria ariaLabelledBy set");
 
-				ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+				assert.ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
 		QUnit.module ("Group tab only checks", {
@@ -1171,12 +1171,12 @@
 			assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 
 			// Aria sort list and sort order list labels and ariaLabelledBy
-			ok(jQuery.sap.domById(this.oVSD.getId() + "-groupOrderLabel"), "Group order list aria label should be rendered");
-			ok(jQuery.sap.domById(this.oVSD.getId() + "-groupListLabel"), "Group list aria label should be rendered");
+			assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-groupOrderLabel"), "Group order list aria label should be rendered");
+			assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-groupListLabel"), "Group list aria label should be rendered");
 			assert.strictEqual(this.oVSD._groupOrderList.getAriaLabelledBy().length, 1, "Group order list should have aria ariaLabelledBy set");
 			assert.strictEqual(this.oVSD._groupList.getAriaLabelledBy().length, 1, "Group list should have aria ariaLabelledBy set");
 
-			ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+			assert.ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
 		QUnit.module ("Preset Filter only checks", {
@@ -1219,7 +1219,7 @@
 			assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initalized and has two items");
 			assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 			assert.strictEqual(this.oVSD.getSelectedFilterItems().length, 0, "There are no selected filter items");
-			ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+			assert.ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
 		QUnit.module ("Filter details rendering", {
@@ -1260,9 +1260,9 @@
 			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 			setTimeout(function() {
-				ok(jQuery.sap.domById(that.oVSD.getId() + "-page2"), "Page 2 is rendered");
-				ok(jQuery.sap.domById(that.oVSD.getId() + "-detailresetbutton"), "Filter detail reset button should be rendered");
-				ok(jQuery.sap.domById(that.oVSD.getId() + "-backbutton"), "Back button should be rendered");
+				assert.ok(jQuery.sap.domById(that.oVSD.getId() + "-page2"), "Page 2 is rendered");
+				assert.ok(jQuery.sap.domById(that.oVSD.getId() + "-detailresetbutton"), "Filter detail reset button should be rendered");
+				assert.ok(jQuery.sap.domById(that.oVSD.getId() + "-backbutton"), "Back button should be rendered");
 				done();
 			}, 1000);
 
@@ -1362,7 +1362,7 @@
 					]
 				}));
 
-				ok(!bAllSelected, "Not all list items are selected at first");
+				assert.ok(!bAllSelected, "Not all list items are selected at first");
 
 				//Act
 				oSelectAllCheckbox.setSelected(true);
@@ -1371,7 +1371,7 @@
 				bAllSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return oItem.getSelected(); });
 
 				//Assert
-				ok(bAllSelected, "After check select all - all list items are selected");
+				assert.ok(bAllSelected, "After check select all - all list items are selected");
 
 				//Act
 				oSelectAllCheckbox.setSelected(false);
@@ -1379,7 +1379,7 @@
 
 				bNoItemsSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return !oItem.getSelected(); })
 				//Assert
-				ok(bNoItemsSelected, "After uncheck select all - no items are selected");
+				assert.ok(bNoItemsSelected, "After uncheck select all - no items are selected");
 
 				done();
 			}, 1000);
@@ -1478,19 +1478,19 @@
 			var fnStringFilter = this.oVSD._getStringFilter();
 
 			//Assert
-			ok(!fnStringFilter("ab", ""), "filtering an empty string is always false");
-			ok(!fnStringFilter("ab"), "filtering an empty string is always false");
-			ok(!fnStringFilter("ab", null), "filtering an empty string is always false");
-			ok(fnStringFilter("", ""), "unless the query is also empty");
+			assert.ok(!fnStringFilter("ab", ""), "filtering an empty string is always false");
+			assert.ok(!fnStringFilter("ab"), "filtering an empty string is always false");
+			assert.ok(!fnStringFilter("ab", null), "filtering an empty string is always false");
+			assert.ok(fnStringFilter("", ""), "unless the query is also empty");
 
 			this.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.AnyWordStartsWith);
 			fnStringFilter = this.oVSD._getStringFilter();
 
 			//Assert
-			ok(fnStringFilter("mou", "mousepad"), "'anywordstartswith' matches correctly the beginning of the first word");
-			ok(fnStringFilter("mou", "optical mouse"), "'anywordstartswith' matches correctly the beginning of the second word");
-			ok(!fnStringFilter("ou", "mousepad"), "'anywordstartswith' does not match strings in the middle of the first word");
-			ok(!fnStringFilter("ou", "mousepad mousepad"), "'anywordstartswith' does not match strings in the middle of the second word");
+			assert.ok(fnStringFilter("mou", "mousepad"), "'anywordstartswith' matches correctly the beginning of the first word");
+			assert.ok(fnStringFilter("mou", "optical mouse"), "'anywordstartswith' matches correctly the beginning of the second word");
+			assert.ok(!fnStringFilter("ou", "mousepad"), "'anywordstartswith' does not match strings in the middle of the first word");
+			assert.ok(!fnStringFilter("ou", "mousepad mousepad"), "'anywordstartswith' does not match strings in the middle of the second word");
 		});
 
 		QUnit.test("setFilterSearchCallback", function(assert){
@@ -1547,12 +1547,12 @@
 				var oSearchField = that.oVSD._filterSearchField,
 					oSelectAllCheckbox = that.oVSD._selectAllCheckBox;
 
-				ok(!oSelectAllCheckbox.getSelected(), "At first the select all checkbox is not selected.");
+				assert.ok(!oSelectAllCheckbox.getSelected(), "At first the select all checkbox is not selected.");
 
 				//Act
 				oSearchField.fireLiveChange({ newValue: "H" }); // Matches: Headphone
 				//Assert
-				ok(oSelectAllCheckbox.getSelected(), "After filter search with selected results only, the select all checkbox is also selected.");
+				assert.ok(oSelectAllCheckbox.getSelected(), "After filter search with selected results only, the select all checkbox is also selected.");
 
 				done();
 			}, 1000);
@@ -1629,7 +1629,7 @@
 
 			this.oVSD.removeFilterItem(0);
 
-			ok(true, "removeFilterItem does not throw errors when called with item index");
+			assert.ok(true, "removeFilterItem does not throw errors when called with item index");
 			assert.strictEqual(this.oVSD.getFilterItems().length, iFilterItemsCount - 1, "a filter item is removed");
 		});
 
@@ -1651,8 +1651,8 @@
 			assert.strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
 			assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initialized and has two items");
 			assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Sub-header with segmented button is not set on first page");
-			ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-			ok(jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should be rendered");
+			assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+			assert.ok(jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should be rendered");
 			assert.strictEqual(this.oVSD._filterList.getItems()[0].getCounter(), 4, "Filter counter for name is 4");
 
 			this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[2]); // value details page
@@ -1666,24 +1666,24 @@
 			// add + has
 			this.oVSD.addStyleClass(sCustomStyleClass);
 			this.oVSD.open();
-			ok(this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog now has style class "' + sCustomStyleClass + '"');
-			ok(this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog now has style class "' + sCustomStyleClass + '"');
+			assert.ok(this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog now has style class "' + sCustomStyleClass + '"');
+			assert.ok(this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog now has style class "' + sCustomStyleClass + '"');
 
 			// remove
 			this.oVSD.removeStyleClass(sCustomStyleClass);
-			ok(!this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog does not have style class "' + sCustomStyleClass + '" after remove');
-			ok(!this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog does not have style class "' + sCustomStyleClass + '" after remove');
+			assert.ok(!this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog does not have style class "' + sCustomStyleClass + '" after remove');
+			assert.ok(!this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog does not have style class "' + sCustomStyleClass + '" after remove');
 
 			// toggle
 			this.oVSD.toggleStyleClass(sCustomStyleClass);
-			ok(this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog has style class "' + sCustomStyleClass + '" after toggle');
-			ok(this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog has style class "' + sCustomStyleClass + '" after toggle');
+			assert.ok(this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog has style class "' + sCustomStyleClass + '" after toggle');
+			assert.ok(this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog has style class "' + sCustomStyleClass + '" after toggle');
 		});
 
 		QUnit.test("Check $ and getDomRef methods", function (assert) {
 			this.oVSD.open();
-			ok(this.oVSD.$().length === 1, "The inner dialogs jQuery object is returned");
-			ok(this.oVSD.getDomRef().id === this.oVSD.getId() + "-dialog", "The inner dialogs DOM reference is returned");
+			assert.ok(this.oVSD.$().length === 1, "The inner dialogs jQuery object is returned");
+			assert.ok(this.oVSD.getDomRef().id === this.oVSD.getId() + "-dialog", "The inner dialogs DOM reference is returned");
 		});
 
 		QUnit.module("Re-rendering after changing selections", {
@@ -1734,12 +1734,12 @@
 				listOfSortItems._oSingleSelectControl.fireSelect({selected : true});
 				vsdSortDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
 
-				ok(spySortItem.calledWithExactly('selected', true, true, false), "Set sort item as selected should be called with suppress Invalidation flag=true and bFireEvent=false");
-				ok(spySortItem.calledOnce, "setSelected should be called only once");
+				assert.ok(spySortItem.calledWithExactly('selected', true, true, false), "Set sort item as selected should be called with suppress Invalidation flag=true and bFireEvent=false");
+				assert.ok(spySortItem.calledOnce, "setSelected should be called only once");
 
-				ok(spyVsd.calledWithExactly('sortDescending', true, true), "Set sort item as as selected should be called with suppress Invalidation flag=true");
+				assert.ok(spyVsd.calledWithExactly('sortDescending', true, true), "Set sort item as as selected should be called with suppress Invalidation flag=true");
 
-				ok(spyVsd.calledOnce, "setSelected should be called only once");
+				assert.ok(spyVsd.calledOnce, "setSelected should be called only once");
 
 				that.oVSD._switchToPage(1);
 				setTimeout(function () {
@@ -1753,12 +1753,12 @@
 					listOfGroupItems._oSingleSelectControl.fireSelect({selected : true});
 					vsdGroupDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
 
-					ok(spyGroupItem.calledWithExactly('selected', true, true), "Set group item as selected should be called with suppress Invalidation flag=true");
-					ok(spyGroupItem.calledTwice, "setSelected should be called twice");
+					assert.ok(spyGroupItem.calledWithExactly('selected', true, true), "Set group item as selected should be called with suppress Invalidation flag=true");
+					assert.ok(spyGroupItem.calledTwice, "setSelected should be called twice");
 
-					ok(spyVsd.calledWithExactly('groupDescending', true, true), "Set group item as as selected should be called with suppress Invalidation flag=true");
+					assert.ok(spyVsd.calledWithExactly('groupDescending', true, true), "Set group item as as selected should be called with suppress Invalidation flag=true");
 
-					ok(spyVsd.calledTwice, "setSelected should be called twice");
+					assert.ok(spyVsd.calledTwice, "setSelected should be called twice");
 
 					done1();
 
@@ -2410,7 +2410,7 @@
 			});
 
 			var oClone = oViewSettingsCustomItem.clone();
-			ok(!!oClone.getCustomControl(), "Custom control is cloned");
+			assert.ok(!!oClone.getCustomControl(), "Custom control is cloned");
 		});
 
 		QUnit.test("model is propagated to the dialog", function(assert){

@@ -26,9 +26,9 @@
 
 	  		QUnit.module("JSON Native Support basics");
 	  			QUnit.test("JSON object", function(assert) {
-	  				ok( JSON, "JSON object exists");
-	  				ok( JSON.stringify, "JSON.stringify is defined");
-	  				ok( JSON.parse, "JSON.parse is defined");
+	  				assert.ok( JSON, "JSON object exists");
+	  				assert.ok( JSON.stringify, "JSON.stringify is defined");
+	  				assert.ok( JSON.parse, "JSON.parse is defined");
 	  			});
 
 	  		QUnit.module("JSON Stringify/Parse");

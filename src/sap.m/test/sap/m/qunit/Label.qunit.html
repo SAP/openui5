@@ -78,9 +78,9 @@
 
 				sap.ui.getCore().applyChanges();
 
-				ok(l1, "l1 should not be null");
-				ok(l2, "l2 should not be null");
-				ok(!jQuery.sap.domById("l3"), "l3 should not be rendered");
+				assert.ok(l1, "l1 should not be null");
+				assert.ok(l2, "l2 should not be null");
+				assert.ok(!jQuery.sap.domById("l3"), "l3 should not be rendered");
 			},
 			afterEach : function() {
 				l1 = null;
@@ -119,11 +119,11 @@
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Label({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			ok(sut.$().hasClass("sapMLabelMaxWidth"), "Label has max width restriction for the trunctation.");
+			assert.ok(sut.$().hasClass("sapMLabelMaxWidth"), "Label has max width restriction for the trunctation.");
 
 			sut.setWidth("100%");
 			sap.ui.getCore().applyChanges();
-			ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
+			assert.ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
 		});
 
 		QUnit.module("tooltip");
@@ -191,25 +191,25 @@
 
 		QUnit.test("Label should be shrinkable", function(assert) {
 			var oLabel = new sap.m.Label;
-			ok(oLabel.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Label control implements IShrinkable interface");
+			assert.ok(oLabel.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Label control implements IShrinkable interface");
 			oLabel.destroy();
 		});
 
 		QUnit.test("Label should get required from labeled control", function(assert) {
 
-			ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
+			assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 			oInput.setRequired(false);
 			sap.ui.getCore().applyChanges();
-			ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
+			assert.ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
 			oInput.setRequired(true);
 			sap.ui.getCore().applyChanges();
-			ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
+			assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 			oLabel4.setLabelFor();
 			sap.ui.getCore().applyChanges();
-			ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
+			assert.ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
 			oLabel4.setLabelFor("I1");
 			sap.ui.getCore().applyChanges();
-			ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
+			assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 
 		});
 
@@ -217,9 +217,9 @@
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oControl = new sap.m.Label({text: "Text"});
-			ok(!!oControl.getAccessibilityInfo, "Label has a getAccessibilityInfo function");
+			assert.ok(!!oControl.getAccessibilityInfo, "Label has a getAccessibilityInfo function");
 			var oInfo = oControl.getAccessibilityInfo();
-			ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 			assert.strictEqual(oInfo.role, undefined, "AriaRole");
 			assert.strictEqual(oInfo.type, undefined, "Type");
 			assert.strictEqual(oInfo.description, "Text", "Description");

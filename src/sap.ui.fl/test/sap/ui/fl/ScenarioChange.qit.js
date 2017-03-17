@@ -90,7 +90,7 @@ jQuery.sap.require('sap.ui.core.mvc.View');
 			}, function(error) {
 				return 0;
 			}).then(finalSteps)['catch'](function(err) {
-				ok(false, err);
+				assert.ok(false, err);
 				done();
 			});
 			var that = this;

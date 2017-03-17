@@ -152,7 +152,7 @@
 			contexts,
 			context;
 
-		ok(treeBinding instanceof sap.ui.model.xml.XMLTreeBinding, "treeBinding class check");
+		assert.ok(treeBinding instanceof sap.ui.model.xml.XMLTreeBinding, "treeBinding class check");
 		contexts = treeBinding.getRootContexts();
 		assert.equal(contexts.length, 1, "TreeBinding rootContexts length");
 

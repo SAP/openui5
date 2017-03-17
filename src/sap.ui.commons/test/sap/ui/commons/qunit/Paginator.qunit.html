@@ -46,15 +46,15 @@
 
 		QUnit.test("Initial Check", function(assert) {
 			assert.expect(2);
-			ok(oCtrl, "Paginator should exist after creating");
+			assert.ok(oCtrl, "Paginator should exist after creating");
   		var oDomRef = jQuery.sap.domById(sId);
-  		ok(oDomRef, "Paginator root element should exist in the page");
+  		assert.ok(oDomRef, "Paginator root element should exist in the page");
 		});
 
 		QUnit.test("Last Page Link", function(assert) {
 			assert.expect(2);
   		var oDomRef = jQuery.sap.domById(sId + "--lastPageLink");
-  		ok(oDomRef, "'Last Page' link should exist in the page");
+  		assert.ok(oDomRef, "'Last Page' link should exist in the page");
   		assert.equal(jQuery(oDomRef).text(), oResourceBundle.getText("PAGINATOR_OTHER_PAGE", [110]), "'Last Page' link should display 'Page 110'");
 		});
 
@@ -64,11 +64,11 @@
   		assert.equal($pages.length, 1, "pages ul tag should exist in the page");
   		assert.equal($pages.children().length, 5, "pages ul tag should have five children");
   		assert.equal($pages.children(":eq(0)").text(), "1", "first page link should say '1'");
-  		ok($pages.children(":eq(0)").hasClass("sapUiPagPage"), "first page link should be a page link");
-  		ok($pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should be current");
+  		assert.ok($pages.children(":eq(0)").hasClass("sapUiPagPage"), "first page link should be a page link");
+  		assert.ok($pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should be current");
   		assert.equal($pages.children(":eq(1)").text(), "2", "second page link should say '1'");
-  		ok($pages.children(":eq(1)").hasClass("sapUiPagPage"), "second page link should be a page link");
-  		ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
+  		assert.ok($pages.children(":eq(1)").hasClass("sapUiPagPage"), "second page link should be a page link");
+  		assert.ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
 		});
 
 		QUnit.test("Change Current Page", function(assert) {
@@ -77,8 +77,8 @@
 			sap.ui.getCore().applyChanges();
   		var $pages = jQuery.sap.byId(sId + "-pages");
   		assert.equal($pages.children().length, 5, "pages ul tag should have five children");
-  		ok($pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should be current");
-  		ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
+  		assert.ok($pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should be current");
+  		assert.ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
 		});
 
 		QUnit.test("Change Current Page To The Middle", function(assert) {
@@ -91,10 +91,10 @@
   		assert.equal($pages.children(":eq(1)").text(), "49", "second page link should say '49'");
   		assert.equal($pages.children(":eq(2)").text(), "50", "middle page link should say '50'");
   		assert.equal($pages.children(":eq(4)").text(), "52", "last page link should say '52'");
-  		ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
-  		ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
-  		ok($pages.children(":eq(2)").hasClass("sapUiPagCurrentPage"), "middle page link should be current");
-  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
+  		assert.ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
+  		assert.ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
+  		assert.ok($pages.children(":eq(2)").hasClass("sapUiPagCurrentPage"), "middle page link should be current");
+  		assert.ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
 		});
 
 		QUnit.test("Change Current Page Close To The End", function(assert) {
@@ -106,8 +106,8 @@
   		assert.equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
   		assert.equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
   		assert.equal($pages.children(":eq(4)").text(), "110", "last page link should say '110'");
-  		ok($pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should be current");
-  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
+  		assert.ok($pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should be current");
+  		assert.ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
 		});
 
 		QUnit.test("Trigger Forward (mouse)", function(assert) {
@@ -126,8 +126,8 @@
   		assert.equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
   		assert.equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
   		assert.equal($pages.children(":eq(4)").text(), "110", "last page link should say '110'");
-  		ok($pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should be current");
-  		ok(!$pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should not be current");
+  		assert.ok($pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should be current");
+  		assert.ok(!$pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should not be current");
 
   		// another forward click even though we are already at the end
   		target = jQuery.sap.domById(sId + "--forwardLink");
@@ -138,8 +138,8 @@
   		assert.equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
   		assert.equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
   		assert.equal($pages.children(":eq(4)").text(), "110", "last page link should say '110'");
-  		ok($pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should be current");
-  		ok(!$pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should not be current");
+  		assert.ok($pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should be current");
+  		assert.ok(!$pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should not be current");
 		});
 
 		QUnit.test("Trigger Back (mouse)", function(assert) {
@@ -171,9 +171,9 @@
 	  		assert.equal($pages.children(":eq(2)").text(), "105", "middle page link should say '105'");
 	  		assert.equal($pages.children(":eq(4)").text(), "107", "last page link should say '107'");
 
-	  		ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
-	  		ok($pages.children(":eq(2)").hasClass("sapUiPagCurrentPage"), "middle page link should be current");
-	  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
+	  		assert.ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
+	  		assert.ok($pages.children(":eq(2)").hasClass("sapUiPagCurrentPage"), "middle page link should be current");
+	  		assert.ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
 	  		done();
 			}, 600);
 		});
@@ -199,9 +199,9 @@
 	  		assert.equal($pages.children(":eq(2)").text(), "3", "middle page link should say '3'");
 	  		assert.equal($pages.children(":eq(4)").text(), "5", "last page link should say '5'");
 
-	  		ok($pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should be current");
-	  		ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
-	  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
+	  		assert.ok($pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should be current");
+	  		assert.ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
+	  		assert.ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
 	  		done();
 			}, 600);
 		});

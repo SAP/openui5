@@ -64,10 +64,10 @@
 		}
 
 		QUnit.test("Initial Check", function(assert) {
-  		ok(oCtrl, "Panel should exist after creating");
+  		assert.ok(oCtrl, "Panel should exist after creating");
 
   		oDomRef = jQuery.sap.domById("Panel");
-  		ok(oDomRef, "Panel div should exist");
+  		assert.ok(oDomRef, "Panel div should exist");
   	});
 
 
@@ -201,7 +201,7 @@
 			// disable the Panel
 			oCtrl.setEnabled(false);
 			var oDomRef2 = jQuery.sap.domById(oCtrl.getId());
-			ok(-1 != oDomRef2.className.indexOf("sapUiPanelDis"), "disabled Panel must have the 'sapUiPanelDis' class");
+			assert.ok(-1 != oDomRef2.className.indexOf("sapUiPanelDis"), "disabled Panel must have the 'sapUiPanelDis' class");
 
 			// re-enable the Panel
 			oCtrl.setEnabled(true);
@@ -249,7 +249,7 @@
 			var $title = jQuery.sap.byId(oCtrl.getId() + "-title");
 			var titleWidth = $title.outerWidth();
 			var height = $tb.height();
-			ok(height>18 && height<30, "toolbar with one button should have a certain, reasonable height (between 18 and 30 px) - current height is: " + height);
+			assert.ok(height>18 && height<30, "toolbar with one button should have a certain, reasonable height (between 18 and 30 px) - current height is: " + height);
 
 			// add Buttons to Toolbar to cause wrapping
 			oCtrl.addButton(new sap.ui.commons.Button({text:"My second Button with a longer title"}));
@@ -258,8 +258,8 @@
 
 			$tb = jQuery.sap.byId(oCtrl.getId() + "-tb");
 			var newHeight = $tb.height();
-			ok(newHeight>height, "toolbar with three buttons should due to wrapping be taller than with one button only (current height: " + newHeight + ", previous height: " + height +")");
-			ok(newHeight>40 && newHeight<60, "toolbar with three buttons should have a certain, reasonable height (between 40 and 60 px) - current height is: " + newHeight);
+			assert.ok(newHeight>height, "toolbar with three buttons should due to wrapping be taller than with one button only (current height: " + newHeight + ", previous height: " + height +")");
+			assert.ok(newHeight>40 && newHeight<60, "toolbar with three buttons should have a certain, reasonable height (between 40 and 60 px) - current height is: " + newHeight);
 
 			// make the Panel smaller to cause additional wrapping
 			oCtrl.setWidth("380px");
@@ -270,12 +270,12 @@
 				var headerHeight = $hdr.outerHeight();
 				$tb = jQuery.sap.byId(oCtrl.getId() + "-tb");
 				var newHeight2 = $tb.height();
-				ok(newHeight2>newHeight, "toolbar with three buttons when made smaller should due to wrapping be taller than before (current height: " + newHeight2 + ", previous height: " + newHeight +")");
+				assert.ok(newHeight2>newHeight, "toolbar with three buttons when made smaller should due to wrapping be taller than before (current height: " + newHeight2 + ", previous height: " + newHeight +")");
 
-				ok(newHeight2>60 && newHeight2<85, "toolbar with three buttons should have a certain, reasonable height (between 60 and 85 px) - current height is: " + newHeight2);
+				assert.ok(newHeight2>60 && newHeight2<85, "toolbar with three buttons should have a certain, reasonable height (between 60 and 85 px) - current height is: " + newHeight2);
 
 				// ensure the toolbar fits into the Panel Header
-				ok(headerHeight>newHeight2, "toolbar must be smaller or equal in height compared wih the header (toolbar height: " + newHeight2 + ", header height: " + headerHeight +")");
+				assert.ok(headerHeight>newHeight2, "toolbar must be smaller or equal in height compared wih the header (toolbar height: " + newHeight2 + ", header height: " + headerHeight +")");
 
 				// ensure the Panel has the original size
 				$panel = jQuery.sap.byId(oCtrl.getId());
@@ -308,13 +308,13 @@
 			var oContDomRef = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
 			// make sure the initial design is "Fill"
-			ok(oRootDomRef.className.indexOf("sapUiPanelAreaDesignFill") > -1, "Panel must by default have AreaDesign.Fill");
+			assert.ok(oRootDomRef.className.indexOf("sapUiPanelAreaDesignFill") > -1, "Panel must by default have AreaDesign.Fill");
 			assert.equal(oRootDomRef.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must by default not have AreaDesign.Plain");
 
 			// make sure it is actually filled
 			var sColor = jQuery(oContDomRef).css("backgroundColor");
 			if (sap.ui.Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 9)) {
-				ok(sColor === "#f2f2f2", "Panel must by default be filled with a white color (Actual: "+sColor+")");
+				assert.ok(sColor === "#f2f2f2", "Panel must by default be filled with a white color (Actual: "+sColor+")");
 			} else {
 				assert.equal(sColor, "rgba(255, 255, 255, 0.8)",	"Panel must by default be filled with a white color");
 			}
@@ -325,11 +325,11 @@
 			var oRootDomRef2 = jQuery.sap.domById(oCtrl.getId());
 			var oContDomRef2 = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
-			ok(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignPlain") > -1, "Panel should now have AreaDesign.Plain");
+			assert.ok(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignPlain") > -1, "Panel should now have AreaDesign.Plain");
 			assert.equal(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignFill"), -1, "Panel must not anymore have AreaDesign.Fill");
 			sColor = jQuery(oContDomRef2).css("backgroundColor");
 			if (sap.ui.Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 9)) {
-				ok(sColor === "white" || sColor === "#ffffff", "Panel should now be filled with a white color (Actual: "+sColor+")");
+				assert.ok(sColor === "white" || sColor === "#ffffff", "Panel should now be filled with a white color (Actual: "+sColor+")");
 			} else {
 				assert.equal(sColor, "rgb(255, 255, 255)", "Panel should now be filled with a white color");
 			}
@@ -340,7 +340,7 @@
 			var oRootDomRef3 = jQuery.sap.domById(oCtrl.getId());
 			var oContDomRef3 = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
-			ok(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignTransparent") > -1, "Panel should now have AreaDesign.Transparent");
+			assert.ok(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignTransparent") > -1, "Panel should now have AreaDesign.Transparent");
 			assert.equal(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must not anymore have AreaDesign.Plain");
 			if (sap.ui.Device.browser.internet_explorer) {
 				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
@@ -355,7 +355,7 @@
 			var oRootDomRef = jQuery.sap.domById(oCtrl.getId());
 
 			// make sure the initial design is "Box"
-			ok(oRootDomRef.className.indexOf("sapUiPanelBorderDesignBox") > -1, "Panel must by default have BorderDesign.Box");
+			assert.ok(oRootDomRef.className.indexOf("sapUiPanelBorderDesignBox") > -1, "Panel must by default have BorderDesign.Box");
 			assert.equal(oRootDomRef.className.indexOf("sapUiPanelBorderDesignNone"), -1, "Panel must by default not have BorderDesign.None");
 
 			// make sure it is actually boxed
@@ -369,7 +369,7 @@
 			sap.ui.getCore().applyChanges();
 			var oRootDomRef2 = jQuery.sap.domById(oCtrl.getId());
 
-			ok(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignNone") > -1, "Panel must now have BorderDesign.None");
+			assert.ok(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignNone") > -1, "Panel must now have BorderDesign.None");
 			assert.equal(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignBox"), -1, "Panel must not anymore have BorderDesign.Box");
 			assert.equal(jQuery(oRootDomRef2).css("borderLeftStyle"), "none", "Panel content must not have a border");
 			assert.equal(jQuery(oRootDomRef2).css("borderRightStyle"), "none", "Panel content must not have a border");
@@ -397,17 +397,17 @@
 		});
 
 		QUnit.test("Clone", function(assert) {
-			ok(!!oCore, "ref to oCore is required");
+			assert.ok(!!oCore, "ref to oCore is required");
 			oCtrl.setTitle(null);
 			var n=sizeof(oCore.mElements);
 			var oClone1 = oCtrl.clone("-0");
-			ok(n < sizeof(oCore.mElements), "Clone 1 created");
+			assert.ok(n < sizeof(oCore.mElements), "Clone 1 created");
 			oClone1.setText("Some Title");
 			oClone1.setTitle(new sap.ui.core.Title({text:"Some other Title"}));
 			oClone1.destroy();
 			assert.equal(sizeof(oCore.mElements), n, "Clone 1 destroyed");
 			var oClone2 = oCtrl.clone("-0");
-			ok(n < sizeof(oCore.mElements), "Clone 2 created");
+			assert.ok(n < sizeof(oCore.mElements), "Clone 2 created");
 			oClone2.destroy();
 			assert.equal(sizeof(oCore.mElements), n, "Clone 2 destroyed");
 		});

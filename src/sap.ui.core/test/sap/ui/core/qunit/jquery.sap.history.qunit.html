@@ -41,8 +41,8 @@
 			}
 
 			function newDefaultHanlder(oObject){
-				ok(true, "there are two ok assertion just to test if the new default handler is set correctly");
-				ok(true, "there are two ok assertion just to test if the new default handler is set correctly");
+				assert.ok(true, "there are two ok assertion just to test if the new default handler is set correctly");
+				assert.ok(true, "there are two ok assertion just to test if the new default handler is set correctly");
 			}
 
 			function prepareHistoryState(){
@@ -77,7 +77,7 @@
 					}
 				}],
 				defaultHandler: function(){
-					ok(true, "Counter for seeing if the default handler is called or not");
+					assert.ok(true, "Counter for seeing if the default handler is called or not");
 				}
 			});
 
@@ -90,7 +90,7 @@
 					}
 				}],
 				defaultHandler: function(){
-					ok(true, "Counter for seeing if the default handler is called or not");
+					assert.ok(true, "Counter for seeing if the default handler is called or not");
 				}
 			});
 
@@ -100,7 +100,7 @@
 
 			//first
 			QUnit.test("Initial Check", function(assert) {
-				ok((jQuery.sap.history !== undefined) && (jQuery.sap.history != null), "History object should not be null");
+				assert.ok((jQuery.sap.history !== undefined) && (jQuery.sap.history != null), "History object should not be null");
 			});
 
 
@@ -121,7 +121,7 @@
 				var done = assert.async();
 				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
-				ok(rSkipRegex.test(window.location.hash), "Current hash is a skippable hash");
+				assert.ok(rSkipRegex.test(window.location.hash), "Current hash is a skippable hash");
 				setTimeout(function(){
 					jQuery.sap.history.back();
 				}, 50);
@@ -131,7 +131,7 @@
 				}, 100);
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Stay in the current history because there's no non skippable history ahead");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Stay in the current history because there's no non skippable history ahead");
 					done();
 				}, 150);
 			});
@@ -150,10 +150,10 @@
 
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back directly to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back directly to the first non skippable history");
 					window.history.go(1);
 					setTimeout(function(){
-						ok(!rSkipRegex.test(window.location.hash), "Cannot navigate to the skippable hash when there's no normal history ahead");
+						assert.ok(!rSkipRegex.test(window.location.hash), "Cannot navigate to the skippable hash when there's no normal history ahead");
 						done();
 					}, 100);
 				}, 200);
@@ -175,12 +175,12 @@
 
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back directly to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back directly to the first non skippable history");
 					window.history.go(1);
 					currentData = data1;
 
 					setTimeout(function(){
-						ok(!rSkipRegex.test(window.location.hash), "Navigate directly to the first non skippable history");
+						assert.ok(!rSkipRegex.test(window.location.hash), "Navigate directly to the first non skippable history");
 						done();
 					}, 100);
 				}, 200);
@@ -199,10 +199,10 @@
 
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
 					window.history.go(1);
 					setTimeout(function(){
-						ok(!rSkipRegex.test(window.location.hash), "Stay in the current history because there's no non skippable history ahead");
+						assert.ok(!rSkipRegex.test(window.location.hash), "Stay in the current history because there's no non skippable history ahead");
 						done();
 					}, 100);
 				}, 200);
@@ -223,11 +223,11 @@
 
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
 					window.history.go(1);
 					currentData = data2;
 					setTimeout(function(){
-						ok(!rSkipRegex.test(window.location.hash), "Navigate to the next non skippable history");
+						assert.ok(!rSkipRegex.test(window.location.hash), "Navigate to the next non skippable history");
 						done();
 					}, 100);
 				}, 200);
@@ -239,7 +239,7 @@
 				jQuery.sap.history.addHistory(sHistoryPath, data1);
 
 				setTimeout(function(){
-					ok(/\|id-[0-9]+-[0-9]+/.test(window.location.hash), "There's a id added to the hash");
+					assert.ok(/\|id-[0-9]+-[0-9]+/.test(window.location.hash), "There's a id added to the hash");
 					done();
 				}, 100);
 			});
@@ -257,7 +257,7 @@
 				}, 100);
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
 					done();
 				}, 200);
 			});
@@ -306,7 +306,7 @@
 				}, 300);
 
 				setTimeout(function(){
-					ok(window.location.href.split("#")[1].indexOf(window.encodeURIComponent(sHistoryPath)) === 0, "back to the first hash with the prefix");
+					assert.ok(window.location.href.split("#")[1].indexOf(window.encodeURIComponent(sHistoryPath)) === 0, "back to the first hash with the prefix");
 					done();
 				}, 600);
 			});

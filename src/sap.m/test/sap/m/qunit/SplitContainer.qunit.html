@@ -114,10 +114,10 @@
 				var done = assert.async();
 				var oSplitContainer = new sap.m.SplitContainer({
 					detailNavigate: function(){
-						ok(this._oShowMasterBtn.bIsDestroyed, "showMasterBtn is destroyed with the customHeader together");
+						assert.ok(this._oShowMasterBtn.bIsDestroyed, "showMasterBtn is destroyed with the customHeader together");
 					},
 					afterDetailNavigate: function(){
-						ok(!this._oShowMasterBtn.bIsDestroyed, "showMasterBtn should be recreated after page navigation");
+						assert.ok(!this._oShowMasterBtn.bIsDestroyed, "showMasterBtn should be recreated after page navigation");
 						this.destroy();
 						done();
 					}
@@ -281,7 +281,7 @@
 						var toId = oEvent.getParameter("toId"),
 							isBack = oEvent.getParameter("isBack");
 						if (toId === "page1" && isBack) {
-							ok(oSplitContainer._oShowMasterBtn.$().hasClass("sapMSplitContainerMasterBtnHidden"), "Master button should be hidden how");
+							assert.ok(oSplitContainer._oShowMasterBtn.$().hasClass("sapMSplitContainerMasterBtnHidden"), "Master button should be hidden how");
 							oSplitContainer.destroy();
 							// restore the stubs
 							sap.ui.Device.orientation = oOldOrientation;
@@ -439,7 +439,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert Button is shown
-				ok(!oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is shown");
+				assert.ok(!oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is shown");
 
 
 				// Act 2 - change orientation
@@ -447,7 +447,7 @@
 				oSplitContainer._fnResize();
 
 				// Asset Button is removed
-				ok(oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is hidden");
+				assert.ok(oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is hidden");
 
 				oSplitContainer.destroy();
 			});
@@ -476,13 +476,13 @@
 				oSplitContainer.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
+				assert.ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
 
 				var oHeader = new sap.m.Bar();
 				oPage.setCustomHeader(oHeader);
 				sap.ui.getCore().applyChanges();
 
-				ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
+				assert.ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
 
 				oSplitContainer.removeDetailPage(oPage);
 				assert.strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");
@@ -529,7 +529,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oPage._getAnyHeader(), "Header is in page");
+				assert.ok(oPage._getAnyHeader(), "Header is in page");
 				assert.strictEqual(oPage._getAnyHeader().getContentLeft()[0], oSC._oShowMasterBtn, "Master button is inserted into the page in nav container");
 
 				oSC.destroy();
@@ -600,12 +600,12 @@
 				oSC.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				ok(oSC._oShowMasterBtn.$().is(":visible"), "Master button is shown");
+				assert.ok(oSC._oShowMasterBtn.$().is(":visible"), "Master button is shown");
 
 				oPage.setShowNavButton(true);
 				sap.ui.getCore().applyChanges();
 
-				ok(oSC._oShowMasterBtn.$().is(":hidden"), "Master button is now hidden");
+				assert.ok(oSC._oShowMasterBtn.$().is(":hidden"), "Master button is now hidden");
 
 				oSC.destroy();
 			});
@@ -690,8 +690,8 @@
 
 				var oMasterButton = oSC._oShowMasterBtn;
 
-				ok(oMasterButton, "Hamburger button is created");
-				ok(oMasterButton.$().closest("#dp1").length, "master button is in detail page");
+				assert.ok(oMasterButton, "Hamburger button is created");
+				assert.ok(oMasterButton.$().closest("#dp1").length, "master button is in detail page");
 
 				oSC.destroy();
 			});
@@ -749,18 +749,18 @@
 				oSplitContainer.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
-				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
-				ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
+				assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+				assert.ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
 
 				oSplitContainer.setMode(sap.m.SplitAppMode.HideMode);
-				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class is set to master after switching to HideMode");
-				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "visible class is removed from master after switching to HideMode");
-				ok(!oSplitContainer._bMasterisOpen, "flag of whether master is open is correctly maintained after switching to HideMode");
+				assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class is set to master after switching to HideMode");
+				assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "visible class is removed from master after switching to HideMode");
+				assert.ok(!oSplitContainer._bMasterisOpen, "flag of whether master is open is correctly maintained after switching to HideMode");
 
 				oSplitContainer.showMaster();
-				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
-				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+				assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
 
 				oSplitContainer.attachAfterMasterOpen(function() {
 					var oOldOrientation = sap.ui.Device.orientation;
@@ -769,8 +769,8 @@
 
 					oSplitContainer.setMode(sap.m.SplitAppMode.ShowHideMode);
 					qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
-					ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
-					ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
+					assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
+					assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
 
 					oSplitContainer.destroy();
 					sap.ui.Device.orientation = oOldOrientation;
@@ -804,14 +804,14 @@
 				oSplitContainer.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				ok(oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be added as a control style class");
-				ok(oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be output to the DOM node");
+				assert.ok(oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be added as a control style class");
+				assert.ok(oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be output to the DOM node");
 
 				this.stub(sap.ui.Device, "orientation", oLandscape);
 				oSplitContainer._handleResize();
 
-				ok(!oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from control style class");
-				ok(!oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from the DOM node");
+				assert.ok(!oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from control style class");
+				assert.ok(!oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from the DOM node");
 
 				oSplitContainer.destroy();
 			});
@@ -825,7 +825,7 @@
 				this.sut.placeAt('content');
 				sap.ui.getCore().applyChanges();
 
-				ok(this.sut._oShowMasterBtn.getTooltip() == oTooltip, 'Tooltip is correct');
+				assert.ok(this.sut._oShowMasterBtn.getTooltip() == oTooltip, 'Tooltip is correct');
 			});
 
 			QUnit.module("SplitContainer Navigation test", {

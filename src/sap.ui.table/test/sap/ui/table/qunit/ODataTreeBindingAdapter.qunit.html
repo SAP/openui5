@@ -90,7 +90,7 @@
 		});
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert){
@@ -442,9 +442,9 @@
 				oBinding.collapse(4);
 				oBinding.getContexts(0, 10); //rebuild tree
 
-				ok(oBinding._mTreeState.expanded["/Employees(2)/"], "Andrew is expanded in Expanded Map");
-				ok(oBinding._mTreeState.collapsed["/Employees(2)/Employees(5)/"], "Steven is collapsed in Collapsed Map");
-				ok(oBinding._mTreeState.selected["/Employees(2)/Employees(5)/"], "Steven is selected in Selected Map");
+				assert.ok(oBinding._mTreeState.expanded["/Employees(2)/"], "Andrew is expanded in Expanded Map");
+				assert.ok(oBinding._mTreeState.collapsed["/Employees(2)/Employees(5)/"], "Steven is collapsed in Collapsed Map");
+				assert.ok(oBinding._mTreeState.selected["/Employees(2)/Employees(5)/"], "Steven is selected in Selected Map");
 
 				assert.equal(oBinding._iPageSize, 10, "Default page size should be 10");
 
@@ -525,7 +525,7 @@
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
 				navigation: {}
 			});
-			ok(oBinding.findNode, "Check if ODataTreeBinding was enhanced by the Adapter.");
+			assert.ok(oBinding.findNode, "Check if ODataTreeBinding was enhanced by the Adapter.");
 			assert.equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
 			assert.equal(oBinding.iRootLevel, 0, "Root Level should be 0 by default");
 			assert.equal(oBinding.iNumberOfExpandedLevels, 0, "number of expanded levels should be 0 by default");
@@ -895,10 +895,10 @@
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001193", "HierarchyNode check (0.9.0.1)");
 				assert.equal(oModel.getProperty("ParentNode", oContext), "001181", "ParentNode check (0.9.0.1)");
 
-				ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
-				ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded");
-				ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
-				ok(oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node should be expanded");
+				assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
+				assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded");
+				assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
+				assert.ok(oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node should be expanded");
 
 				assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
 
@@ -907,12 +907,12 @@
 
 				aContexts = oBinding.getContexts(0, 100); //rebuild the tree, as usual
 
-				ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
-				ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded");
-				ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
-				ok(!oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node is NOT in the expanded map");
+				assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
+				assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded");
+				assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
+				assert.ok(!oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node is NOT in the expanded map");
 
-				ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is now in the collapsed map");
+				assert.ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is now in the collapsed map");
 
 				//finally collapse the whole tree
 				oBinding.collapseToLevel(0);
@@ -922,13 +922,13 @@
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "HierarchyNode check for root node, everything is still there");
 				assert.equal(oBinding.isExpanded(0), false, "Root node is also collapsed now");
 
-				ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
-				ok(!oBinding._mTreeState.expanded["/000001/"], "1st Level node should NOT be expanded");
+				assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
+				assert.ok(!oBinding._mTreeState.expanded["/000001/"], "1st Level node should NOT be expanded");
 				//this node is still expanded, because collapseRecursive is set to false
-				ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should still be expanded (collapseRecursive = false)");
+				assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should still be expanded (collapseRecursive = false)");
 
-				ok(oBinding._mTreeState.collapsed["/000001/"], "Root node is now in the collapsed map");
-				ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is still in the collapsed map");
+				assert.ok(oBinding._mTreeState.collapsed["/000001/"], "Root node is now in the collapsed map");
+				assert.ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is still in the collapsed map");
 
 				// switch on collapseRecursive mode
 				oBinding.setCollapseRecursive(true);
@@ -951,10 +951,10 @@
 
 				aContexts = oBinding.getContexts(0, 100); //rebuild the tree, as usual
 
-				ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
-				ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded again");
+				assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
+				assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded again");
 				//this node is still expanded, because collapseRecursive is set to false
-				ok(!oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should NOT be expanded (collapseRecursive = true)");
+				assert.ok(!oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should NOT be expanded (collapseRecursive = true)");
 
 				oBinding.attachChange(fnChangeHandler5);
 				oBinding.expand(1);
@@ -1651,8 +1651,8 @@
 			function fnRefreshHandler() {
 				oBinding.detachRefresh(fnRefreshHandler);
 
-				ok(oBinding._mTreeState.expanded["/000682/"], "NodeState for 000682 still there.");
-				ok(oBinding._mTreeState.expanded["/000002/"], "NodeState for 000002 still there.");
+				assert.ok(oBinding._mTreeState.expanded["/000682/"], "NodeState for 000682 still there.");
+				assert.ok(oBinding._mTreeState.expanded["/000002/"], "NodeState for 000002 still there.");
 				assert.equal(oBinding._mTreeState.expanded["/000682/"].expanded, true, "Node 000682 is still expanded after sorting.");
 				assert.equal(oBinding._mTreeState.expanded["/000002/"].expanded, true, "Node 000002 is still expanded after sorting.");
 
@@ -1676,14 +1676,14 @@
 
 			var fnChangeHandler1 = function() {
 				oBinding.getContexts(0, 10);
-				ok(!oBinding.findNode(0).nodeState.expanded, "node is initially collapsed");
+				assert.ok(!oBinding.findNode(0).nodeState.expanded, "node is initially collapsed");
 				oBinding.detachChange(fnChangeHandler1);
 
 				// clear the _aRowIndexMap internally
 				oBinding.getContexts(10, 20);
 
 				oBinding.toggleIndex(0);
-				ok(oBinding.findNode(0).nodeState.expanded, "node is now expanded");
+				assert.ok(oBinding.findNode(0).nodeState.expanded, "node is now expanded");
 				done();
 			};
 
@@ -1758,7 +1758,7 @@
 			// change handler called after the $count returns
 			function countChangeHandler () {
 				oBinding.detachChange(countChangeHandler);
-				ok(oBinding.bClientOperation, "Binding is internally running in Client-Mode");
+				assert.ok(oBinding.bClientOperation, "Binding is internally running in Client-Mode");
 
 				// trigger data request
 				oBinding.attachChange(dataChangeHandler);
@@ -1826,7 +1826,7 @@
 			oBinding.toggleIndex(999);
 			oBinding.setNodeSelection({});
 
-			ok(true, "No exceptions thrown");
+			assert.ok(true, "No exceptions thrown");
 		});
 	});
 

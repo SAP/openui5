@@ -123,7 +123,7 @@
 		var aList = oTrigger._oEventBus._defaultChannel.mEventRegistry[id];
 		var bTest = aList.length === iListeners ? true : false;
 
-		ok(bTest, "All " + iListeners + " listeners successfully registered within EventProvider");
+		assert.ok(bTest, "All " + iListeners + " listeners successfully registered within EventProvider");
 	});
 
 	QUnit.test("Test triggering", function(assert) {
@@ -140,7 +140,7 @@
 			newColorIsGreen = aListeners[0]._bGreenBG;
 
 			bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
-			ok(bTest, "Triggering occured");
+			assert.ok(bTest, "Triggering occured");
 
 			// stop triggering
 			oTrigger.setInterval(0);
@@ -149,7 +149,7 @@
 				stillIsGreen = aListeners[0]._bGreenBG;
 				bTest = newColorIsGreen === stillIsGreen ? true : false;
 
-				ok(bTest, "Triggering stopped but listeners still registered");
+				assert.ok(bTest, "Triggering stopped but listeners still registered");
 
 				done();
 			}, 500);
@@ -165,7 +165,7 @@
 		var aList = oTrigger._oEventBus._defaultChannel.mEventRegistry[id];
 		var bTest = aList.length === (iListeners - 2) ? true : false;
 
-		ok(bTest, "2 listeners successfully removed from EventProvider");
+		assert.ok(bTest, "2 listeners successfully removed from EventProvider");
 	});
 
 	QUnit.test("Removed listeners don't trigger", function(assert) {
@@ -185,7 +185,7 @@
 			newColorIsGreen = aListeners[0]._bGreenBG;
 
 			bTest = oldColorIsGreen === newColorIsGreen ? true : false;
-			ok(bTest, "Triggering didn't occure for removed listener");
+			assert.ok(bTest, "Triggering didn't occure for removed listener");
 
 			// stop triggering
 			oTrigger.setInterval(0);
@@ -194,7 +194,7 @@
 				otherNewColorIsGreen = aListeners[iOtherIndex]._bGreenBG;
 				bTest = otherOldColorIsGreen !== otherNewColorIsGreen ? true : false;
 
-				ok(bTest, "Triggering occured for other listeners");
+				assert.ok(bTest, "Triggering occured for other listeners");
 
 				done();
 			}, 500);
@@ -214,7 +214,7 @@
 			newColorIsGreen = aListeners[3]._bGreenBG;
 
 			bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
-			ok(bTest, "Trigger is running");
+			assert.ok(bTest, "Trigger is running");
 
 			// remove all listeners
 			for ( var i = 0; i < iListeners; i++) {
@@ -225,7 +225,7 @@
 				newColorIsGreen = aListeners[3]._bGreenBG;
 				bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
 
-				ok(bTest, "Trigger stopped due to no listeners available");
+				assert.ok(bTest, "Trigger stopped due to no listeners available");
 
 				done();
 			}, 250);

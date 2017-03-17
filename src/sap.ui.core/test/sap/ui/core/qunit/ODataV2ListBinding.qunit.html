@@ -71,7 +71,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var oBinding = oModel.bindList("/Categories");
 			var handler = function() {
 				assert.equal(oBinding.getPath(), "/Categories", "ListBinding path");
-				ok(oBinding.getModel() == oModel, "ListBinding model");
+				assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 				assert.equal(oBinding.getLength(), 8, "length of items");
 				jQuery(oBinding.getContexts()).each(function(i, context){
 					assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
@@ -94,7 +94,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: sap.ui.model.odata.CountMode.None} );
 			var handler = function() {
 				assert.equal(oBinding.getPath(), "/Categories", "ListBinding path");
-				ok(oBinding.getModel() == oModel, "ListBinding model");
+				assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 				assert.equal(oBinding.getLength(), 16, "length of items");
 				assert.equal(oBinding.isLengthFinal(), false, "length not final");
 				oBinding.detachChange(handler);
@@ -147,7 +147,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			iCount++;
 			if (iCount == 1) {
 				assert.equal(oBinding.getPath(), "Products", "ListBinding path");
-				ok(oBinding.getModel() == oModel, "ListBinding model");
+				assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 				assert.equal(oBinding.getLength(), 5, "length of items");
 				assert.equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.setContext(null);
@@ -180,7 +180,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			if (iCount == 1) {
 				// expanded entries will be filtered on the client
 				assert.equal(oBinding.getPath(), "Products", "ListBinding path");
-				ok(oBinding.getModel() == oModel, "ListBinding model");
+				assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 				assert.equal(oBinding.getLength(), 1, "length of items after filtering");
 				var oContext = oBinding.getContexts(0, 1)[0];
 				assert.equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
@@ -240,7 +240,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				assert.equal(aContexts[0].getProperty("ProductName"), "Uncle Bob's Organic Dried Pears", "Product name is available now");
 				done();
 			} else {
-				ok(false, "Must not change a third time.")
+				assert.ok(false, "Must not change a third time.")
 			}
 			iCount++;
 		}
@@ -516,8 +516,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 		var handler = function(oEvent){
 			oBinding.detachChange(handler);
-			ok(oBinding.bDataAvailable);
-			ok(jQuery.isArray(oBinding.aAllKeys) && oBinding.aAllKeys.length === 0, "AllKeys Array was correctly set to an empty array after an error from the GET request.");
+			assert.ok(oBinding.bDataAvailable);
+			assert.ok(jQuery.isArray(oBinding.aAllKeys) && oBinding.aAllKeys.length === 0, "AllKeys Array was correctly set to an empty array after an error from the GET request.");
 			done();
 		};
 
@@ -538,7 +538,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
 			assert.equal(oContext.getPath(), "/Categories(1)", "Context path");
-			ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
+			assert.ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
 			done(); // resume normal testing
 		};
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
@@ -603,7 +603,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
-			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
@@ -678,8 +678,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		};
 		var handler2 = function() {
 			// data requested and data received should only be called once
-			ok(oRequestedSpy.calledOnce, "fireDataRequested has only be called once");
-			ok(oReceivedSpy.calledOnce, "fireDataReceived has only be called once");
+			assert.ok(oRequestedSpy.calledOnce, "fireDataRequested has only be called once");
+			assert.ok(oReceivedSpy.calledOnce, "fireDataReceived has only be called once");
 			done();
 		}
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
@@ -820,7 +820,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 			var aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
-			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			// ORed filters
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
@@ -901,8 +901,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function(oEvent) {
-			ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial")
-			ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0")
+			assert.ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial")
+			assert.ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0")
 			assert.deepEqual(oBinding.getContexts(0, 8).diff, [
 				{ index: 2, type: "insert" },
 				{ index: 3, type: "insert" },
@@ -943,8 +943,8 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function(oEvent) {
-			ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial")
-			ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0")
+			assert.ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial")
+			assert.ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0")
 			assert.deepEqual(oBinding.getContexts(0, 8).diff, [
 				{ index: 2, type: "insert" },
 				{ index: 3, type: "insert" },
@@ -967,7 +967,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			], "2 deletes & 2 inserts");
 			var aContexts = oBinding.getCurrentContexts();
 			aContexts[0].getObject().CategoryName = "Other";
-			ok(oBinding.getContexts(4, 4).diff.length == 0, "No diff for property change")
+			assert.ok(oBinding.getContexts(4, 4).diff.length == 0, "No diff for property change")
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
 		}
@@ -988,17 +988,17 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 		var fnChange = function(oEvent) {
 			bChanged = true;
-			ok(bDataRequested && !bDataReceived,"change fired");
+			assert.ok(bDataRequested && !bDataReceived,"change fired");
 		};
 
 		var fnDataRequested = function() {
 			bDataRequested = true;
-			ok(!bDataReceived && !bChanged,"dataRequested fired");
+			assert.ok(!bDataReceived && !bChanged,"dataRequested fired");
 		};
 
 		var fnDataReceived = function() {
 			bDataReceived = true;
-			ok(bChanged && bDataRequested,"dataReceived fired");
+			assert.ok(bChanged && bDataRequested,"dataReceived fired");
 			done();
 		};
 		var fnChangeHandler = function() {
@@ -1087,7 +1087,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
-			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
 			oBinding.detachChange(handler4);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
@@ -1224,7 +1224,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			setTimeout(handler4, 50);
 		};
 		var handler3 = function() {
-			ok(false, "Must not be called")
+			assert.ok(false, "Must not be called")
 		};
 		var handler4 = function() {
 			oBinding.detachChange(handler3);
@@ -1334,7 +1334,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oModel.submitChanges({groupId: "changes", success: handler3});
 		};
 		var handler2 = function() {
-			ok(false, "Change handler must not be triggered by autorefresh");
+			assert.ok(false, "Change handler must not be triggered by autorefresh");
 		};
 		var handler3 = function() {
 			oBinding.detachChange(handler2);

@@ -151,7 +151,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		};
 
 		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(params)).then(checkComponentChangesReturnsVariantAndDelete(params, false)).then(checkDeleteSendToBackend(params)).then(checkLoadingComponentChangesReturnsNothing())['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			QUnit.start();
 		});
 
@@ -176,7 +176,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		};
 
 		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(params)).then(checkComponentChangesReturnsVariantAndDelete(params, true)).then(checkDeleteSendToBackend(params)).then(checkLoadingComponentChangesReturnsNothing())['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			QUnit.start();
 		});
 	});
@@ -197,7 +197,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		};
 
 		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(params)).then(checkLoadingComponentChangesReturnsVariant).then(checkReturnedVariantWithChangedText).then(checkDeleteSendToBackend(params)).then(checkLoadingComponentChangesReturnsNothing())['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			QUnit.start();
 		});
 

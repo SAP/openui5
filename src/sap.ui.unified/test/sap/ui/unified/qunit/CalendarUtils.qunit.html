@@ -202,8 +202,8 @@
 				oNotLastDateInTheMonth = new UniversalDate(Date.UTC(2015, 0, 15));
 
 			//assert
-			ok(oSut.isDateLastInMonth(oLastDateInTheMonth), "Jan 31st is the last date of the month");
-			ok(!oSut.isDateLastInMonth(oNotLastDateInTheMonth), "Jan 15th is not the last date of the month");
+			assert.ok(oSut.isDateLastInMonth(oLastDateInTheMonth), "Jan 31st is the last date of the month");
+			assert.ok(!oSut.isDateLastInMonth(oNotLastDateInTheMonth), "Jan 15th is not the last date of the month");
 		});
 	</script>
 

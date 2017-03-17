@@ -53,17 +53,17 @@
 				temp.ClassA.prototype.methodA_2 = function() { return "ClassA.methodA_2"; };
 
 				var oA1 = new temp.ClassA();
-				ok(typeof oA1.methodA_1 == "function" && oA1.methodA_1() == "ClassA.methodA_1", "instance oA1 inherits from prototype");
-				ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 inherits from prototype");
+				assert.ok(typeof oA1.methodA_1 == "function" && oA1.methodA_1() == "ClassA.methodA_1", "instance oA1 inherits from prototype");
+				assert.ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 inherits from prototype");
 				for(var key in temp.ClassA.prototype) {
 					assert.ok(typeof temp.ClassA.prototype[key] == "function", "prototype of A only contains functions");
 				};
 
 				var oA2 = new temp.ClassA();
-				ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "ClassA.methodA_2", "instance oA2 inherits from prototype");
+				assert.ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "ClassA.methodA_2", "instance oA2 inherits from prototype");
 				oA2.methodA_2 = function() { return "oA2.methodA_2"; };
-				ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "oA2.methodA_2", "instance oA2 overrides methodA_2");
-				ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 still inherits from prototype");
+				assert.ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "oA2.methodA_2", "instance oA2 overrides methodA_2");
+				assert.ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 still inherits from prototype");
 
 				temp.ClassB = function() {
 					temp.ClassA.apply(this);
@@ -203,10 +203,10 @@
 				}));
 
 				Promise.all(aPromises).then(function() {
-					ok(true, "includeScript checks work properly");
+					assert.ok(true, "includeScript checks work properly");
 					done();
 				}).catch(function(ex) {
-					ok(false, "includeScript must not fail here: " + ex);
+					assert.ok(false, "includeScript must not fail here: " + ex);
 					done();
 				});
 
@@ -412,10 +412,10 @@
 				}));
 
 				Promise.all(aPromises).then(function() {
-					ok(true, "includeStyleSheet checks work properly");
+					assert.ok(true, "includeStyleSheet checks work properly");
 					done();
 				}).catch(function(ex) {
-					ok(false, "includeStyleSheet must not fail here: " + ex);
+					assert.ok(false, "includeStyleSheet must not fail here: " + ex);
 					done();
 				});
 

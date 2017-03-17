@@ -263,30 +263,30 @@
 			var root1 = sap.ui.getCore().getControl("node11");
 			var tmp1 = oStandardTree.getNodes()[0];
 
-			ok( root1.getExpanded(), "Root 1 is expanded at first");
+			assert.ok( root1.getExpanded(), "Root 1 is expanded at first");
 			root1.collapse();
-			ok( !root1.getExpanded(), "Root 1 is now collapsed");
+			assert.ok( !root1.getExpanded(), "Root 1 is now collapsed");
 
 			//Expand
 			var node13 = sap.ui.getCore().getControl("node13");
-			ok( !node13.getExpanded(), "Node 1.1 is collapsed at first");
+			assert.ok( !node13.getExpanded(), "Node 1.1 is collapsed at first");
 			node13.expand();
-			ok( node13.getExpanded(), "Node 1.1 is now expanded");
+			assert.ok( node13.getExpanded(), "Node 1.1 is now expanded");
 		});
 
 		QUnit.test("Node selection legacy", function(assert) {
 			oStandardTree.expandAll();
 			var initialSelection = sap.ui.getCore().getControl("node13");
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
 
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 		});
 
 		QUnit.test("Node selection single", function(assert) {
@@ -295,16 +295,16 @@
 
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			initialSelection.select();
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
 
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( !newSelection.getIsSelected(), "Node 1.3 is not selected anymore");
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected again");
+			assert.ok( !newSelection.getIsSelected(), "Node 1.3 is not selected anymore");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected again");
 		});
 
 		QUnit.test("Node selection multi", function(assert) {
@@ -312,16 +312,16 @@
 			oStandardTree.setSelectionMode("Multi");
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			initialSelection.select();
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
 
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 		});
 
 		QUnit.test("Node selection legacy with context", function(assert) {
@@ -331,16 +331,16 @@
 			oStandardTree.setBindingContext(oContext);
 			oStandardTree.expandAll();
 			var initialSelection = sap.ui.getCore().getControl("node13");
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
 
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 			oStandardTree.setBindingContext(null);
 		});
 
@@ -354,16 +354,16 @@
 
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			initialSelection.select();
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
 
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( !newSelection.getIsSelected(), "Node 1.3 is not selected anymore");
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected again");
+			assert.ok( !newSelection.getIsSelected(), "Node 1.3 is not selected anymore");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected again");
 			oStandardTree.setBindingContext(null);
 		});
 
@@ -376,16 +376,16 @@
 			oStandardTree.setSelectionMode("Multi");
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			initialSelection.select();
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
 
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
-			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
+			assert.ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 			oStandardTree.setBindingContext(null);
 		});
 
@@ -395,28 +395,28 @@
 
 			var initialSelection = oBoundTree.getNodes()[0];
 			initialSelection.select();
-			ok( initialSelection.getIsSelected(), "Node 1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected");
 
 			var newSelection = oBoundTree.getNodes()[1];
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 2 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 2 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( !newSelection.getIsSelected(), "Node 2 is not selected anymore");
-			ok( initialSelection.getIsSelected(), "Node 1 is selected again");
+			assert.ok( !newSelection.getIsSelected(), "Node 2 is not selected anymore");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected again");
 
 			oBoundTree.getBinding("nodes").refresh();
 			initialSelection = oBoundTree.getNodes()[0];
 			newSelection = oBoundTree.getNodes()[1];
-			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
-			ok( !newSelection.getIsSelected(), "Node 2 is not selected after refresh");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
+			assert.ok( !newSelection.getIsSelected(), "Node 2 is not selected after refresh");
 
 			oBoundTree.getBinding("nodes").refresh();
 			initialSelection = oBoundTree.getNodes()[0];
 			newSelection = oBoundTree.getNodes()[1];
-			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
-			ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
+			assert.ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
 		});
 
 		QUnit.test("Node selection multi databinding", function(assert) {
@@ -424,28 +424,28 @@
 			oBoundTree.setSelectionMode("Multi");
 			var initialSelection = oBoundTree.getNodes()[0];
 			initialSelection.select();
-			ok( initialSelection.getIsSelected(), "Node 1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected");
 
 			var newSelection = oBoundTree.getNodes()[1];
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 2 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 2 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( newSelection.getIsSelected(), "Node 1 is now selected");
-			ok( initialSelection.getIsSelected(), "Node 2 is selected as well");
+			assert.ok( newSelection.getIsSelected(), "Node 1 is now selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 2 is selected as well");
 
 			oBoundTree.getBinding("nodes").refresh();
 			initialSelection = oBoundTree.getNodes()[0];
 			newSelection = oBoundTree.getNodes()[1];
-			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
-			ok( newSelection.getIsSelected(), "Node 2 is selected after refresh");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
+			assert.ok( newSelection.getIsSelected(), "Node 2 is selected after refresh");
 
 			oBoundTree.getBinding("nodes").refresh();
 			initialSelection = oBoundTree.getNodes()[0];
 			newSelection = oBoundTree.getNodes()[1];
-			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
-			ok( newSelection.getIsSelected(), "Node 2 is selected after second refresh");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
+			assert.ok( newSelection.getIsSelected(), "Node 2 is selected after second refresh");
 
 		});
 
@@ -455,28 +455,28 @@
 
 			var initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			initialSelection.select();
-			ok( initialSelection.getIsSelected(), "Node 1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected");
 
 			var newSelection = oBoundTreeNamedModel.getNodes()[1];
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 2 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 2 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( !newSelection.getIsSelected(), "Node 2 is not selected anymore");
-			ok( initialSelection.getIsSelected(), "Node 1 is selected again");
+			assert.ok( !newSelection.getIsSelected(), "Node 2 is not selected anymore");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected again");
 
 			oBoundTreeNamedModel.getBinding("nodes").refresh();
 			initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			newSelection = oBoundTreeNamedModel.getNodes()[1];
-			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
-			ok( !newSelection.getIsSelected(), "Node 2 is not selected after refresh");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
+			assert.ok( !newSelection.getIsSelected(), "Node 2 is not selected after refresh");
 
 			oBoundTreeNamedModel.getBinding("nodes").refresh();
 			initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			newSelection = oBoundTreeNamedModel.getNodes()[1];
-			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
-			ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
+			assert.ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
 		});
 
 		QUnit.test("Node selection multi databinding with named model", function(assert) {
@@ -484,28 +484,28 @@
 			oBoundTreeNamedModel.setSelectionMode("Multi");
 			var initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			initialSelection.select();
-			ok( initialSelection.getIsSelected(), "Node 1 is selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected");
 
 			var newSelection = oBoundTreeNamedModel.getNodes()[1];
 			newSelection.select();
-			ok( newSelection.getIsSelected(), "Node 2 is now selected");
-			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
+			assert.ok( newSelection.getIsSelected(), "Node 2 is now selected");
+			assert.ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
 
 			initialSelection.setIsSelected(true);
-			ok( newSelection.getIsSelected(), "Node 1 is now selected");
-			ok( initialSelection.getIsSelected(), "Node 2 is selected as well");
+			assert.ok( newSelection.getIsSelected(), "Node 1 is now selected");
+			assert.ok( initialSelection.getIsSelected(), "Node 2 is selected as well");
 
 			oBoundTreeNamedModel.getBinding("nodes").refresh();
 			initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			newSelection = oBoundTreeNamedModel.getNodes()[1];
-			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
-			ok( newSelection.getIsSelected(), "Node 2 is selected after refresh");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
+			assert.ok( newSelection.getIsSelected(), "Node 2 is selected after refresh");
 
 			oBoundTreeNamedModel.getBinding("nodes").refresh();
 			initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			newSelection = oBoundTreeNamedModel.getNodes()[1];
-			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
-			ok( newSelection.getIsSelected(), "Node 2 is selected after second refresh");
+			assert.ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
+			assert.ok( newSelection.getIsSelected(), "Node 2 is selected after second refresh");
 
 		});
 
@@ -523,9 +523,9 @@
 			oStandardTree.attachSelect(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0});
 			oStandardTree.detachSelect(handler);
-			ok( node16.getIsSelected(), "Node 1.2.1 is selected");
-			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( !node12.getIsSelected(), "Root 2 is not selected");
+			assert.ok( node16.getIsSelected(), "Node 1.2.1 is selected");
+			assert.ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
+			assert.ok( !node12.getIsSelected(), "Root 2 is not selected");
 
 			handler = function(oEvent) {
 				assert.equal(oEvent.getParameter("node").getId(), "node12", "Event parameter contains Root 2")
@@ -533,9 +533,9 @@
 			oStandardTree.attachSelect(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0});
 			oStandardTree.detachSelect(handler);
-			ok( !node16.getIsSelected(), "Node 1.2.1 is selected");
-			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( node12.getIsSelected(), "Root 2 is not selected");
+			assert.ok( !node16.getIsSelected(), "Node 1.2.1 is selected");
+			assert.ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
+			assert.ok( node12.getIsSelected(), "Root 2 is not selected");
 		});
 
 		QUnit.test("Node selection events multi", function(assert) {
@@ -549,24 +549,24 @@
 			node12.select();
 
 			handler = function(oEvent) {
-				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node16"]), "Selected nodes as expected");
+				assert.ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node16"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0});
 			oStandardTree.detachSelectionChange(handler);
-			ok( node16.getIsSelected(), "Node 1.2.1 is selected");
-			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( !node12.getIsSelected(), "Root 2 is not selected");
+			assert.ok( node16.getIsSelected(), "Node 1.2.1 is selected");
+			assert.ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
+			assert.ok( !node12.getIsSelected(), "Root 2 is not selected");
 
 			handler = function(oEvent) {
-				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
+				assert.ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0});
 			oStandardTree.detachSelectionChange(handler);
-			ok( !node16.getIsSelected(), "Node 1.2.1 is selected");
-			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( node12.getIsSelected(), "Root 2 is not selected");
+			assert.ok( !node16.getIsSelected(), "Node 1.2.1 is selected");
+			assert.ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
+			assert.ok( node12.getIsSelected(), "Root 2 is not selected");
 
 			// Selection with Ctrl-Key
 			node12.select();
@@ -577,62 +577,62 @@
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0, ctrlKey: true});
 			oStandardTree.detachSelectionChange(handler);
-			ok( !node16.getIsSelected(), "Node 1.2.1 is not selected");
-			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( !node12.getIsSelected(), "Root 2 is not selected");
+			assert.ok( !node16.getIsSelected(), "Node 1.2.1 is not selected");
+			assert.ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
+			assert.ok( !node12.getIsSelected(), "Root 2 is not selected");
 
 			handler = function(oEvent) {
-				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
+				assert.ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0, ctrlKey: true});
 			oStandardTree.detachSelectionChange(handler);
-			ok( !node16.getIsSelected(), "Node 1.2.1 is not selected");
-			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( node12.getIsSelected(), "Root 2 is selected");
+			assert.ok( !node16.getIsSelected(), "Node 1.2.1 is not selected");
+			assert.ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
+			assert.ok( node12.getIsSelected(), "Root 2 is selected");
 
 			handler = function(oEvent) {
-				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12", "node16"]), "Selected nodes as expected");
+				assert.ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12", "node16"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0, ctrlKey: true});
 			oStandardTree.detachSelectionChange(handler);
-			ok( node16.getIsSelected(), "Node 1.2.1 is selected");
-			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( node12.getIsSelected(), "Root 2 is selected");
+			assert.ok( node16.getIsSelected(), "Node 1.2.1 is selected");
+			assert.ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
+			assert.ok( node12.getIsSelected(), "Root 2 is selected");
 
 			// Selection with Shift-Key
 			node16.select();
 
 			handler = function(oEvent) {
-				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12","node16","node17"]), "Selected nodes as expected");
+				assert.ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12","node16","node17"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0, shiftKey: true});
 			oStandardTree.detachSelectionChange(handler);
-			ok( node16.getIsSelected(), "Node 1.2.1 is selected");
-			ok( node17.getIsSelected(), "Node 1.2.1.1 is selected");
-			ok( node12.getIsSelected(), "Root 2 is selected");
+			assert.ok( node16.getIsSelected(), "Node 1.2.1 is selected");
+			assert.ok( node17.getIsSelected(), "Node 1.2.1.1 is selected");
+			assert.ok( node12.getIsSelected(), "Root 2 is selected");
 
 			handler = function(oEvent) {
-				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
+				assert.ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0});
 			oStandardTree.detachSelectionChange(handler);
-			ok( !node16.getIsSelected(), "Node 1.2.1 is not selected");
-			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( node12.getIsSelected(), "Root 2 is selected");
+			assert.ok( !node16.getIsSelected(), "Node 1.2.1 is not selected");
+			assert.ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
+			assert.ok( node12.getIsSelected(), "Root 2 is selected");
 
 			handler = function(oEvent) {
-				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12","node16","node17"]), "Selected nodes as expected");
+				assert.ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12","node16","node17"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0, shiftKey: true});
 			oStandardTree.detachSelectionChange(handler);
-			ok( node16.getIsSelected(), "Node 1.2.1 is selected");
-			ok( node17.getIsSelected(), "Node 1.2.1.1 is selected");
-			ok( node12.getIsSelected(), "Root 2 is selected");
+			assert.ok( node16.getIsSelected(), "Node 1.2.1 is selected");
+			assert.ok( node17.getIsSelected(), "Node 1.2.1.1 is selected");
+			assert.ok( node12.getIsSelected(), "Root 2 is selected");
 
 		});
 
@@ -652,7 +652,7 @@
 					foundNodeExpanded = true;
 				}
 			}
-			ok( !foundNodeExpanded, "All nodes are now collapsed");
+			assert.ok( !foundNodeExpanded, "All nodes are now collapsed");
 		});
 
 		QUnit.test("Expand all", function(assert) {
@@ -668,7 +668,7 @@
 					foundNodeCollapsed = true;
 				}
 			}
-			ok( !foundNodeCollapsed, "All nodes are now expanded");
+			assert.ok( !foundNodeCollapsed, "All nodes are now expanded");
 		});
 
 		QUnit.module("Keyboard support");
@@ -714,11 +714,11 @@
 
 			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
 
-			ok( !sap.ui.getCore().getControl("node11").getExpanded(), "Root is collapsed");
+			assert.ok( !sap.ui.getCore().getControl("node11").getExpanded(), "Root is collapsed");
 
 			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
 
-			ok( sap.ui.getCore().getControl("node11").getExpanded(), "Root is expanded");
+			assert.ok( sap.ui.getCore().getControl("node11").getExpanded(), "Root is expanded");
 
 		});
 
@@ -735,7 +735,7 @@
 					foundNodeExpanded = true;
 				}
 			}
-			ok( !foundNodeExpanded, "All nodes are now collapsed");
+			assert.ok( !foundNodeExpanded, "All nodes are now collapsed");
 
 			qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.NUMPAD_ASTERISK, false, false, false);
 
@@ -748,7 +748,7 @@
 					foundNodeCollapsed = true;
 				}
 			}
-			ok( !foundNodeCollapsed, "All nodes are now expanded");
+			assert.ok( !foundNodeCollapsed, "All nodes are now expanded");
 
 		});
 
@@ -865,7 +865,7 @@
 
 			//Assert
 			assert.equal(oAdjustSelectionSpy.callCount, 1, "Selection is adjusted only once.");
-			ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from collapsed target node.");
+			assert.ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from collapsed target node.");
 
 			oAdjustSelectionSpy.restore();
 		});
@@ -882,7 +882,7 @@
 
 			//Assert
 			assert.equal(oAdjustSelectionSpy.callCount, 1, "Selection is adjusted only once.");
-			ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from expanded target node.");
+			assert.ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from expanded target node.");
 		});
 
 		QUnit.test("Animating only when collapse is not propagated to children", function(assert) {
@@ -972,7 +972,7 @@
 			oClone = this.oTree._removeItemFromObject(oOriginal, "keyOne");
 
 			// Assert
-			notOk(oClone === oOriginal, "Clone object is not a reference to original object");
+			assert.notOk(oClone === oOriginal, "Clone object is not a reference to original object");
 			notDeepEqual(oOriginal, oClone, "Clone object is different from original object");
 			assert.strictEqual(oClone.hasOwnProperty("keyOne"), false, "KeyOne does not exist in cloned object");
 			assert.strictEqual(oClone.hasOwnProperty("keyTwo"), true, "keyTwo exist in cloned object");
@@ -1125,10 +1125,10 @@
 				oTestIfNodesSelectionIsPreservedOnExpand;
 
 			oTestIfNodesSelectionIsPreservedOnExpand = function () {
-				ok(that.oNodes.node31.isVisible(), "Node 31 should be visible");
-				ok(that.oNodes.node32.isVisible(), "Node 32 should be visible");
-				ok(that.oNodes.node33.isVisible(), "Node 33 should be visible");
-				ok(that.oNodes.node33.getIsSelected(), "Node 33 should be selected");
+				assert.ok(that.oNodes.node31.isVisible(), "Node 31 should be visible");
+				assert.ok(that.oNodes.node32.isVisible(), "Node 32 should be visible");
+				assert.ok(that.oNodes.node33.isVisible(), "Node 33 should be visible");
+				assert.ok(that.oNodes.node33.getIsSelected(), "Node 33 should be selected");
 			};
 
 			// Mark node as selected
@@ -1165,12 +1165,12 @@
 			this.oTree.setSelectionMode(sap.ui.commons.TreeSelectionMode.Multi);
 
 			oTestIfNodesSelectionIsPreservedOnExpand = function () {
-					ok(that.oNodes.node31.isVisible(), "Node 31 should be visible");
-					ok(that.oNodes.node32.isVisible(), "Node 32 should be visible");
-					ok(that.oNodes.node33.isVisible(), "Node 33 should be visible");
-					ok(that.oNodes.node31.getIsSelected(), "Node 31 should be selected");
-					ok(!that.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
-					ok(that.oNodes.node33.getIsSelected(), "Node 33 should be selected");
+					assert.ok(that.oNodes.node31.isVisible(), "Node 31 should be visible");
+					assert.ok(that.oNodes.node32.isVisible(), "Node 32 should be visible");
+					assert.ok(that.oNodes.node33.isVisible(), "Node 33 should be visible");
+					assert.ok(that.oNodes.node31.getIsSelected(), "Node 31 should be selected");
+					assert.ok(!that.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
+					assert.ok(that.oNodes.node33.getIsSelected(), "Node 33 should be selected");
 			};
 
 			// Mark nodes as selected
@@ -1207,14 +1207,14 @@
 			this.applyFilter("False");
 
 			// Assert
-			ok(this.oNodes.node33.getIsSelected(), "Node 33 should remain selected");
+			assert.ok(this.oNodes.node33.getIsSelected(), "Node 33 should remain selected");
 
 			// Filter the model
 			this.applyFilter("True");
 			this.applyFilter("All");
 
 			// Assert
-			ok(!this.oNodes.node33.getIsSelected(), "Node 33 should not be selected");
+			assert.ok(!this.oNodes.node33.getIsSelected(), "Node 33 should not be selected");
 		});
 
 		QUnit.test("Selection is preserved on oDate model filtering with multiple selection", function (assert) {
@@ -1236,9 +1236,9 @@
 					"with reason filter. We destroy all old nodes on filtering to prevent memory leak and unpredictable " +
 					"selection behavior");
 
-			notOk(this.oNodes.hasOwnProperty("node31"), "Node 31 should be removed");
-			ok(this.oNodes.node32.getIsSelected(), "Node 32 should remain selected");
-			ok(this.oNodes.node33.getIsSelected(), "Node 33 should remain selected");
+			assert.notOk(this.oNodes.hasOwnProperty("node31"), "Node 31 should be removed");
+			assert.ok(this.oNodes.node32.getIsSelected(), "Node 32 should remain selected");
+			assert.ok(this.oNodes.node33.getIsSelected(), "Node 33 should remain selected");
 
 			// Deselect node 32
 			this.oNodes.node32.setIsSelected(false);
@@ -1247,9 +1247,9 @@
 			this.applyFilter("All");
 
 			// Assert
-			notOk(this.oNodes.node31.getIsSelected(), "Node 31 should not be selected");
-			notOk(this.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
-			ok(this.oNodes.node33.getIsSelected(), "Node 33 should be selected");
+			assert.notOk(this.oNodes.node31.getIsSelected(), "Node 31 should not be selected");
+			assert.notOk(this.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
+			assert.ok(this.oNodes.node33.getIsSelected(), "Node 33 should be selected");
 
 			// Cleanup
 			oNode31 = null;
@@ -1268,17 +1268,17 @@
 			this.applyFilter("True");
 
 			// Assert
-			ok(this.oNodes.node31.getIsSelected(), "Node 31 should remain selected");
-			notOk(this.oNodes.hasOwnProperty("node32"), "Node 32 should be removed");
-			notOk(this.oNodes.hasOwnProperty("node33"), "Node 33 should be removed");
+			assert.ok(this.oNodes.node31.getIsSelected(), "Node 31 should remain selected");
+			assert.notOk(this.oNodes.hasOwnProperty("node32"), "Node 32 should be removed");
+			assert.notOk(this.oNodes.hasOwnProperty("node33"), "Node 33 should be removed");
 
 			// Filter the model
 			this.applyFilter("All");
 
 			// Assert
-			ok(this.oNodes.node31.getIsSelected(), "Node 31 should be selected");
-			notOk(this.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
-			notOk(this.oNodes.node33.getIsSelected(), "Node 33 should not be selected");
+			assert.ok(this.oNodes.node31.getIsSelected(), "Node 31 should be selected");
+			assert.notOk(this.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
+			assert.notOk(this.oNodes.node33.getIsSelected(), "Node 33 should not be selected");
 		});
 
 		QUnit.module("Model filtering", {

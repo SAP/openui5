@@ -129,24 +129,24 @@
 
 	var fnChange = function(oEvent) {
 		bChanged = true;
-		ok(bDataRequested && !bDataReceived,"change fired");
+		assert.ok(bDataRequested && !bDataReceived,"change fired");
 	};
 
 	var fnDataRequested = function(oEvent) {
 		bDataRequested = true;
-		ok(!bDataReceived && !bChanged,"dataRequested fired");
+		assert.ok(!bDataReceived && !bChanged,"dataRequested fired");
 	};
 
 	var fnDataReceived = function(oEvent) {
 		bDataReceived = true;
-		ok(bChanged && bDataRequested,"dataRecieved fired");
+		assert.ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
 
 	QUnit.test("check datajs AMD shim", function(assert) {
-		ok(typeof define === "function" && define.amd, "precondition: AMD like define exists");
+		assert.ok(typeof define === "function" && define.amd, "precondition: AMD like define exists");
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
-		ok(!!window.datajs, "global datajs object should exist");
-		ok(!!window.OData, "global OData object should exist");
+		assert.ok(!!window.datajs, "global datajs object should exist");
+		assert.ok(!!window.OData, "global OData object should exist");
 	});
 
 	QUnit.test("test oDataModel - oMetadata shared across models", function(assert){
@@ -165,14 +165,14 @@
 		});
 
 		oModel.attachMetadataLoaded(function(){
-			ok(oModel.getServiceMetadata() != null, "First model: Service metadata is available");
+			assert.ok(oModel.getServiceMetadata() != null, "First model: Service metadata is available");
 			oModel.destroy();
 			oModel2 = initModel(sURI, mOptions, false);
 
 			var bFiredAtMetadata = false;
 
 			oModel2.oMetadata.attachLoaded(function() {
-				ok(false,'metadata loaded is fired on metadata');
+				assert.ok(false,'metadata loaded is fired on metadata');
 				bFiredAtMetadata = true;
 			});
 
@@ -180,11 +180,11 @@
 			//fail if event is fired at the metadata object
 			oModel2.attachMetadataLoaded(function() {
 				jQuery.sap.log.debug("metadata loaded is fired");
-				ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
+				assert.ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
 				if (!bFiredAtMetadata) {
-					ok(true, 'Metadata loaded fired at model only');
+					assert.ok(true, 'Metadata loaded fired at model only');
 				} else {
-					ok(false, 'Metadata loaded fired at metadata object')
+					assert.ok(false, 'Metadata loaded fired at metadata object')
 				}
 				done();
 			});
@@ -201,11 +201,11 @@
 			};
 		var oModel = initModel("/DOESNOTEXIST", mOptions);
  		var handleFailed = function(){
-			ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
-			ok(oModel.oMetadata.isFailed(), "Failed on metadata object has been set correctly");
+			assert.ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
+			assert.ok(oModel.oMetadata.isFailed(), "Failed on metadata object has been set correctly");
 			var oModel2 = initModel("/DOESNOTEXIST", mOptions);
 			oModel2.attachMetadataFailed(function(){
-				ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
+				assert.ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
 			});
 			oModel.detachMetadataFailed(handleFailed);
 			done();
@@ -544,22 +544,22 @@
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			ok(!oContext, "Reload needed for category expand");
+			assert.ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			ok(!oContext, "Reload needed for property select and category expand");
+			assert.ok(!oContext, "Reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			ok(!oContext, "Reload needed for property, expand property select and category expand");
+			assert.ok(!oContext, "Reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -578,22 +578,22 @@
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			ok(!oContext, "Reload needed for full entity");
+			assert.ok(!oContext, "Reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			ok(!oContext, "Reload needed for all properties");
+			assert.ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			ok(!oContext, "Reload needed for category expand");
+			assert.ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			ok(!oContext, "Reload needed for property select and category expand");
+			assert.ok(!oContext, "Reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			ok(!oContext, "Reload needed for property, expand property select and category expand");
+			assert.ok(!oContext, "Reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -612,22 +612,22 @@
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -646,22 +646,22 @@
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			ok(!oContext, "Reload needed for full entity");
+			assert.ok(!oContext, "Reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			ok(!oContext, "Reload needed for all properties");
+			assert.ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			ok(!oContext, "Reload needed for category expand");
+			assert.ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -680,22 +680,22 @@
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			ok(!oContext, "Reload needed for full entity");
+			assert.ok(!oContext, "Reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			ok(!oContext, "Reload needed for all properties");
+			assert.ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			ok(!oContext, "Reload needed for category expand");
+			assert.ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			ok(!oContext, "Reload needed for property select and category expand");
+			assert.ok(!oContext, "Reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -714,19 +714,19 @@
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName,Category", expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -745,28 +745,28 @@
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier", select: "*"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for unselected supplier expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for unselected supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products"});
-			ok(!oContext, "Reload needed for supplier/products expand");
+			assert.ok(!oContext, "Reload needed for supplier/products expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/*"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/Products"});
-			ok(!oContext, "Reload needed for supplier/products expand");
+			assert.ok(!oContext, "Reload needed for supplier/products expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -785,28 +785,28 @@
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier", select: "*"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for unselected supplier expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for unselected supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/*"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/Products"});
-			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -858,13 +858,13 @@
 
 		var oBinding = oModel.bindContext("/Products(3)", null, {});
 		oBinding.attachChange(function(oContext) {
-			ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
-			ok(oModel.oData["Products(3)"] === oModel.getProperty("/Products(3)"), "test object copy via getProperty");
+			assert.ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
+			assert.ok(oModel.oData["Products(3)"] === oModel.getProperty("/Products(3)"), "test object copy via getProperty");
 
 			var oValue = oModel.getObject("/Products(3)", {select : "ProductName, ProductID"});
 			assert.equal(oValue.ProductName, "Aniseed Syrup", "test getObject with select param");
 			assert.equal(oValue.ProductID, 3, "test getObject with select param");
-			ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
+			assert.ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
 
 			done();
 		});
@@ -901,7 +901,7 @@
 
 			var oValue = oModel.getObject("/Products(1)", {select : "ProductName"});
 			assert.equal(oValue.ProductName, "Chai", "test getObject with select param");
-			ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
+			assert.ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
 
 			oValue = oModel.getObject("/Products(1)", {expand : "Category"});
 			assert.equal(oValue.ProductName, "Chai", "test getObject with expand param");
@@ -910,7 +910,7 @@
 
 			oValue = oModel.getObject("/Products(1)", {select: "ProductName, Category, Category/CategoryName", expand : "Category"});
 			assert.equal(oValue.ProductName, "Chai", "test getObject with select and expand param");
-			ok(!oValue.hasOwnProperty('ProductID'), "test getObject with select and expand param");
+			assert.ok(!oValue.hasOwnProperty('ProductID'), "test getObject with select and expand param");
 			assert.equal(oValue.Category.CategoryID, 1, "test getObject with select and expand param");
 			assert.equal(oValue.Category.CategoryName, "Beverages", "test getObject with select and expand param");
 
@@ -932,12 +932,12 @@
 
 		var oBinding = oModel.bindContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
 		oBinding.attachChange(function(oContext) {
-			ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
-			ok(oModel.oData["Products(3)"] === oModel.getProperty("/Products(3)"), "test object copy via getProperty");
+			assert.ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
+			assert.ok(oModel.oData["Products(3)"] === oModel.getProperty("/Products(3)"), "test object copy via getProperty");
 
 			var oValue = oModel.getObject("/Products(3)");
 			assert.equal(oValue.ProductName, "Aniseed Syrup", "test getObject with no param");
-			ok(!oValue.hasOwnProperty('ProductID'), "test getObject with no param");
+			assert.ok(!oValue.hasOwnProperty('ProductID'), "test getObject with no param");
 			assert.equal(oValue.Category.__ref, "Categories(2)", "test getObject with no param contains __ref");
 
 			var oValue = oModel.getObject("/Products(3)", {expand:"Category"});
@@ -961,18 +961,18 @@
 
 		var oBinding = oModel.bindContext("/Categories(7)", null, {expand: "Products"});
 		oBinding.attachChange(function(oContext) {
-			ok(oModel.oData["Categories(7)"] !== oModel.getObject("/Categories(7)"), "test object copy via getObject");
-			ok(oModel.oData["Categories(7)"] === oModel.getProperty("/Categories(7)"), "test object copy via getProperty");
+			assert.ok(oModel.oData["Categories(7)"] !== oModel.getObject("/Categories(7)"), "test object copy via getObject");
+			assert.ok(oModel.oData["Categories(7)"] === oModel.getProperty("/Categories(7)"), "test object copy via getProperty");
 
 			var oValue = oModel.getObject("/Categories(7)");
 			assert.equal(oValue.CategoryName, "Produce", "test getObject with no param");
 			assert.equal(oValue.CategoryID, 7, "test getObject with no param");
-			ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
+			assert.ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
 
 			var oValue = oModel.getObject("/Categories(7)", {select: "CategoryName"});
 			assert.equal(oValue.CategoryName, "Produce", "test getObject with select param");
-			ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select param");
-			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
+			assert.ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select param");
+			assert.ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
 
 			var oValue = oModel.getObject("/Categories(7)", {expand: "Products"});
 			assert.equal(oValue.CategoryName, "Produce", "test getObject with expand param");
@@ -982,8 +982,8 @@
 
 			var oValue = oModel.getObject("/Categories(7)", {select: "CategoryName", expand: "Products"});
 			assert.equal(oValue.CategoryName, "Produce", "test getObject with select and expand param");
-			ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select and expand param");
-			ok(!oValue.hasOwnProperty('Products'), "test getObject with select and expand param");
+			assert.ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select and expand param");
+			assert.ok(!oValue.hasOwnProperty('Products'), "test getObject with select and expand param");
 			done();
 		});
 	});
@@ -997,30 +997,30 @@
 		var oBinding = oModel.bindContext("/Suppliers(7)", null, {select: "*,Products/*,Products/Supplier/*,Products/Category/CategoryID,Products/Category/CategoryName",
 			expand: "Products,Products/Supplier,Products/Category"});
 		oBinding.attachChange(function(oContext) {
-			ok(oModel.oData["Suppliers(7)"] !== oModel.getObject("/Suppliers(7)"), "test object copy via getObject");
-			ok(oModel.oData["Suppliers(7)"] === oModel.getProperty("/Suppliers(7)"), "test object copy via getProperty");
+			assert.ok(oModel.oData["Suppliers(7)"] !== oModel.getObject("/Suppliers(7)"), "test object copy via getObject");
+			assert.ok(oModel.oData["Suppliers(7)"] === oModel.getProperty("/Suppliers(7)"), "test object copy via getProperty");
 
 			var oValue = oModel.getObject("/Suppliers(7)");
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with no param");
-			ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
+			assert.ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "ContactName"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with select param");
-			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select param");
-			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
+			assert.ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select param");
+			assert.ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "*"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "*", expand: "Products"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
@@ -1029,9 +1029,9 @@
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
 			assert.equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Category.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products,Products/Supplier,Products/Category"});
 			assert.equal(oValue, undefined, "test getObject with expand returns undefined for incomplete data")
@@ -1046,13 +1046,13 @@
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
 			assert.equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with expand param");
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
-			ok(!oValue.Products[0].Category.hasOwnProperty('Description'), "test getObject with expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			assert.ok(!oValue.Products[0].Category.hasOwnProperty('Description'), "test getObject with expand param");
 
 			done();
 		});
@@ -1067,24 +1067,24 @@
 		var oBinding = oModel.bindContext("/Suppliers(7)", null, {
 			expand: "Products,Products/Supplier,Products/Category"});
 		oBinding.attachChange(function(oContext) {
-			ok(oModel.oData["Suppliers(7)"] !== oModel.getObject("/Suppliers(7)"), "test object copy via getObject");
-			ok(oModel.oData["Suppliers(7)"] === oModel.getProperty("/Suppliers(7)"), "test object copy via getProperty");
+			assert.ok(oModel.oData["Suppliers(7)"] !== oModel.getObject("/Suppliers(7)"), "test object copy via getObject");
+			assert.ok(oModel.oData["Suppliers(7)"] === oModel.getProperty("/Suppliers(7)"), "test object copy via getProperty");
 
 			var oValue = oModel.getObject("/Suppliers(7)");
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with no param");
-			ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
+			assert.ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "ContactName"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with select param");
-			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select param");
-			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
+			assert.ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select param");
+			assert.ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "*"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
@@ -1093,9 +1093,9 @@
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
 			assert.equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Category.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products,Products/Supplier,Products/Category"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
@@ -1106,21 +1106,21 @@
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
 			assert.equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with expand param");
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "Products/*", expand:"Products,Products/Supplier"});
-			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select and expand param");
+			assert.ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select and expand param");
 			assert.equal(oValue.Products.length, 5, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].ProductID, 16, "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with select and expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with select and expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products", expand:"Products,Products/Supplier,Products/Category"});
 			assert.equal(oValue.SupplierID, 7, "test getObject with select and expand param");
@@ -1130,21 +1130,21 @@
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with select and expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products/ProductName", expand:"Products,Products/Supplier,Products/Category"});
 			assert.equal(oValue.SupplierID, 7, "test getObject with select and expand param");
 			assert.equal(oValue.Products.length, 5, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
-			ok(!oValue.Products[0].hasOwnProperty('ProductID'), "test getObject with select and expand param");
-			ok(!oValue.Products[0].hasOwnProperty('Supplier'), "test getObject with select and expand param");
-			ok(!oValue.Products[0].hasOwnProperty('Category'), "test getObject with select and expand param");
+			assert.ok(!oValue.Products[0].hasOwnProperty('ProductID'), "test getObject with select and expand param");
+			assert.ok(!oValue.Products[0].hasOwnProperty('Supplier'), "test getObject with select and expand param");
+			assert.ok(!oValue.Products[0].hasOwnProperty('Category'), "test getObject with select and expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products/Supplier,Products/Category"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
@@ -1155,25 +1155,25 @@
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with select and expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products/ProductName", expand:"Products"});
-			ok(!oValue.hasOwnProperty('ContactName'), "test getObject with select and expand param");
+			assert.ok(!oValue.hasOwnProperty('ContactName'), "test getObject with select and expand param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with select and expand param");
 			assert.equal(oValue.Products.length, 5, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
-			ok(!oValue.Products[0].hasOwnProperty('ProductID'), "test getObject with select and expand param");
-			ok(!oValue.Products[0].hasOwnProperty('Category'), "test getObject with select and param");
-			ok(!oValue.Products[0].hasOwnProperty('Supplier'), "test getObject with select and param");
+			assert.ok(!oValue.Products[0].hasOwnProperty('ProductID'), "test getObject with select and expand param");
+			assert.ok(!oValue.Products[0].hasOwnProperty('Category'), "test getObject with select and param");
+			assert.ok(!oValue.Products[0].hasOwnProperty('Supplier'), "test getObject with select and param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products/ProductName, Products", expand:"Products"});
-			ok(!oValue.hasOwnProperty('ContactName'), "test getObject with select and expand param");
+			assert.ok(!oValue.hasOwnProperty('ContactName'), "test getObject with select and expand param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with select and expand param");
 			assert.equal(oValue.Products.length, 5, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
@@ -1259,7 +1259,7 @@
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("/Categories(2)");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -1277,7 +1277,7 @@
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -1295,7 +1295,7 @@
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -1303,9 +1303,9 @@
 			oLabel.setBindingContext(null);
 		}
 		var fnHandler2 = function() {
-			ok(!oLabel.getBindingContext(), "no bindingContext");
-			ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
-			ok(!oLabel.getElementBinding().getBoundContext(), "parent context must be reset");
+			assert.ok(!oLabel.getBindingContext(), "no bindingContext");
+			assert.ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
+			assert.ok(!oLabel.getElementBinding().getBoundContext(), "parent context must be reset");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.setBindingContext(null);
 			oLabel.unbindElement();
@@ -1321,7 +1321,7 @@
 		oLabel.bindElement("Category");
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -1339,7 +1339,7 @@
 		oLabel.bindElement("/Categories(2)");
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.setBindingContext(null);
@@ -1357,7 +1357,7 @@
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -1368,7 +1368,7 @@
 		}
 		var fnHandler2 = function(oEvent) {
 			var sUrl =  oEvent.getParameter("url");
-			ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
+			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
@@ -1385,7 +1385,7 @@
 		var oTestContext = oModel.getContext("/Products(2)");
 		oPanel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -1396,7 +1396,7 @@
 		}
 		var fnHandler2 = function(oEvent) {
 			var sUrl =  oEvent.getParameter("url");
-			ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
+			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
@@ -1444,15 +1444,15 @@
 		var oTestContextOData = oODataModel.getContext("/Products(2)");
 		var oTestContextJSON = oJSONModel.getContext("/");
 		oPanel.setBindingContext(oTestContextJSON);
-		ok(!oPanel.getBindingContext(), "Model is type OData, Context is type JSON so no context should be returned")
+		assert.ok(!oPanel.getBindingContext(), "Model is type OData, Context is type JSON so no context should be returned")
 		oPanel.setBindingContext(oTestContextOData);
-		ok(oPanel.getBindingContext(), "Context and model are the same type. Context returned");
+		assert.ok(oPanel.getBindingContext(), "Context and model are the same type. Context returned");
 		oLabel.bindElement("Category");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oPanel.setBindingContext(oTestContextJSON);
-			ok(!oPanel.getBindingContext(), "Model is type OData, Context is type JSON so no context should be returned")
+			assert.ok(!oPanel.getBindingContext(), "Model is type OData, Context is type JSON so no context should be returned")
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -1466,7 +1466,7 @@
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("/Categories(2)");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		//Currently no event fired on bind element
 		var fnRequestedHandler = function() {
 			assert.equal(true, true, "Data requested event was fired");
@@ -1488,7 +1488,7 @@
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("/Employees(2)/Employee1");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		//Currently no event fired on bind element
 		var fnRequestedHandler = function() {
 			assert.equal(true, true, "Data requested event was fired");
@@ -1553,7 +1553,7 @@
 		oModel.metadataLoaded().then(function() {
 			oLabel.getElementBinding().refresh();
 			setTimeout(function() {
-				ok(oModel.mDeferredRequests['test'].requests.length === 1, "request deferred");
+				assert.ok(oModel.mDeferredRequests['test'].requests.length === 1, "request deferred");
 				oModel.submitChanges("test");
 			}, 0);
 		});
@@ -1616,7 +1616,7 @@
 		var oModel = initModel(sURI, {json:false});
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			assert.equal(oContext.getPath(), "/Products(1)", "Context path");
-			ok(oContext.getProperty("Category"), "Category loaded");
+			assert.ok(oContext.getProperty("Category"), "Category loaded");
 			done();          // resume normal testing
 		});
 	});
@@ -1666,12 +1666,12 @@
 		oInput.setModel(oModel);
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 
 		oModel.attachRequestCompleted(this, function() {
 			var oBinding = oInput.getBinding("value");
-			ok(oBinding !== undefined, "binding check");
+			assert.ok(oBinding !== undefined, "binding check");
 			oBinding.attachChange(function() {
 				assert.equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
 				assert.equal(oBinding.oValue, "Condiments", "Property Binding internal value");
@@ -1704,12 +1704,12 @@
 		oInput.setModel(oModel);
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 
 		oModel.attachRequestCompleted(this, function() {
 			var oBinding = oInput.getBinding("value");
-			ok(oBinding !== undefined, "binding check");
+			assert.ok(oBinding !== undefined, "binding check");
 			oBinding.attachChange(function() {
 				assert.equal(oBinding.getValue(), "blubb", "Property Binding returns value");
 				assert.equal(oBinding.oValue, "blubb", "Property Binding internal value");
@@ -1742,12 +1742,12 @@
 		oInput.setModel(oModel);
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 
 		oModel.attachRequestCompleted(this, function() {
 			var oBinding = oInput.getBinding("value");
-			ok(oBinding !== undefined, "binding check");
+			assert.ok(oBinding !== undefined, "binding check");
 			oBinding.attachChange(function() {
 				assert.equal(oBinding.getValue(), "blubb", "Property Binding returns value");
 				assert.equal(oBinding.oValue, "blubb", "Property Binding internal value");
@@ -1790,12 +1790,12 @@
 		oInput.setModel(oModel);
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 
 		oModel.attachRequestCompleted(this, function() {
 			var oBinding = oInput.getBinding("value");
-			ok(oBinding !== undefined, "binding check");
+			assert.ok(oBinding !== undefined, "binding check");
 			oBinding.attachChange(function() {
 				assert.equal(oBinding.getValue(), "blubb", "Property Binding returns value");
 				assert.equal(oBinding.oValue, "blubb", "Property Binding internal value");
@@ -1840,19 +1840,19 @@
 		var handler1 = function() {
 			var oItem = oView.byId('myList').getItems()[0];
 			var oPropBinding = oItem.getContent()[0].getBinding('value');
-			ok(!oBinding.isSuspended(), "suspended flag should be false");
-			ok(oPropBinding.isSuspended(), "suspended flag should be true");
+			assert.ok(!oBinding.isSuspended(), "suspended flag should be false");
+			assert.ok(oPropBinding.isSuspended(), "suspended flag should be true");
 			oBinding.detachChange(handler1);
 			oView.destroy();
 			done();          // resume normal testing
 		};
 		var handler2 = function() {
-			ok(!oBinding.isSuspended(), "suspended flag should be false");
+			assert.ok(!oBinding.isSuspended(), "suspended flag should be false");
 			oBinding.detachChange(handler2);
 		};
 		oBinding.attachChange(this,handler1);
 		oBinding.attachRefresh(this,handler2);
-			ok(oBinding.isSuspended(), "suspended flag should be true");
+			assert.ok(oBinding.isSuspended(), "suspended flag should be true");
 			oBinding.resume();
 		oModel.attachMetadataLoaded(function(){
 		});
@@ -1882,7 +1882,7 @@
 				done();
 			});
 			var oBinding = oInput.getBinding("value");
-			ok(oBinding !== undefined, "binding check");
+			assert.ok(oBinding !== undefined, "binding check");
 			// should not trigger event
 			oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 			// should trigger event
@@ -1916,7 +1916,7 @@
 			});
 			oInput.bindObject("/Categories(2)");
 			var oBinding = oInput.getBinding("value");
-			ok(oBinding !== undefined, "binding check");
+			assert.ok(oBinding !== undefined, "binding check");
 			// should not trigger event
 			oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 			// should trigger event
@@ -1957,7 +1957,7 @@
 				}
 			});
 			var oBinding = oInput.getBinding("value");
-			ok(oBinding !== undefined, "binding check");
+			assert.ok(oBinding !== undefined, "binding check");
 			assert.equal(oBinding.getValue(), "Condiments", "property name check!");
 			oInput.setValue("blubb");
 			oInput.destroy();
@@ -2077,7 +2077,7 @@
 			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
 			var oComplextType = oModel.getProperty("/Suppliers(0)/Address");
-			ok(jQuery.isPlainObject(oComplextType), "get complext as object");
+			assert.ok(jQuery.isPlainObject(oComplextType), "get complext as object");
 			assert.equal(oComplextType.City, "Boston", "complex obj type property check");
 			assert.equal(oComplextType.Street, "150th", "complex obj type property check");
 			assert.equal(oComplextType.Plz, "88888", "complex obj type property check");
@@ -2118,7 +2118,7 @@
 			};
 			oModel.setProperty("/Suppliers(0)/Address/Street", "140th");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "140th", "set Property: complex type not updated");
-			ok(!oModel.hasPendingChanges(), "No pending changes");
+			assert.ok(!oModel.hasPendingChanges(), "No pending changes");
 			done();
 		});
 	});
@@ -2156,13 +2156,13 @@
 			};
 			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property: complex type updated");
-			ok(oModel.hasPendingChanges(), "Has pending changes");
+			assert.ok(oModel.hasPendingChanges(), "Has pending changes");
 			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property: complex type updated");
-			ok(oModel.hasPendingChanges(), "Has pending changes");
+			assert.ok(oModel.hasPendingChanges(), "Has pending changes");
 			oModel.setProperty("/Suppliers(0)/Address/Street", "140th");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "140th", "set Property: complex type updated");
-			ok(!oModel.hasPendingChanges(), "No pending changes");
+			assert.ok(!oModel.hasPendingChanges(), "No pending changes");
 			done();
 		});
 	});
@@ -2203,7 +2203,7 @@
 			};
 			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "1");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "1", "set Property: complex type not updated");
-			ok(!oModel.hasPendingChanges(), "No pending changes");
+			assert.ok(!oModel.hasPendingChanges(), "No pending changes");
 			done();
 		});
 	});
@@ -2244,13 +2244,13 @@
 			};
 			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "2");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "2", "set Property: complex type updated");
-			ok(oModel.hasPendingChanges(), "Has pending changes");
+			assert.ok(oModel.hasPendingChanges(), "Has pending changes");
 			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "2");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "2", "set Property: complex type updated");
-			ok(oModel.hasPendingChanges(), "Has pending changes");
+			assert.ok(oModel.hasPendingChanges(), "Has pending changes");
 			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "1");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "1", "set Property: complex type updated");
-			ok(!oModel.hasPendingChanges(), "No pending changes");
+			assert.ok(!oModel.hasPendingChanges(), "No pending changes");
 			done();
 		});
 	});
@@ -2260,15 +2260,15 @@
 		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
 		oModel.metadataLoaded().then(function() {
 			var oContext = oModel.createEntry("BusinessPartnerSet");
-			ok(oContext, "context should be created");
+			assert.ok(oContext, "context should be created");
 			var oData = oContext.getObject();
-			ok(oData, " check context data");
-			ok(oData.Address, " check context data");
-			ok(oData.Address.hasOwnProperty('AddressType'), " check context data");
-			ok(oData.Address.hasOwnProperty('Building'), " check context data");
-			ok(oData.Address.hasOwnProperty('City'), " check context data");
-			ok(oData.Address.hasOwnProperty('Country'), " check context data");
-			ok(oData.Address.hasOwnProperty('Street'), " check context data");
+			assert.ok(oData, " check context data");
+			assert.ok(oData.Address, " check context data");
+			assert.ok(oData.Address.hasOwnProperty('AddressType'), " check context data");
+			assert.ok(oData.Address.hasOwnProperty('Building'), " check context data");
+			assert.ok(oData.Address.hasOwnProperty('City'), " check context data");
+			assert.ok(oData.Address.hasOwnProperty('Country'), " check context data");
+			assert.ok(oData.Address.hasOwnProperty('Street'), " check context data");
 			oModel.destroy();
 			done();
 		}.bind(this))
@@ -2280,13 +2280,13 @@
 		var oModel = initModel(sURI, {json:false});
 		var oBinding = oModel.bindList("/Categories").initialize();
 		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
+			assert.ok(oBinding.oEntityType, "entity type binding check");
 			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			ok(oEntityType, "get entity type check");
+			assert.ok(oEntityType, "get entity type check");
 			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-			ok(oPropMeta, "property type check");
+			assert.ok(oPropMeta, "property type check");
 			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
@@ -2535,9 +2535,9 @@
 		}, true);
 
 		var handler = function() {
-			ok(true, "Metadata callback handler called");
+			assert.ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler);
-			ok(oModel.getServiceMetadata(), "get metadata check");
+			assert.ok(oModel.getServiceMetadata(), "get metadata check");
 			done();
 		}
 		oModel.attachMetadataLoaded(handler);
@@ -2553,18 +2553,18 @@
 		}, true);
 
 		var handler = function() {
-			ok(true, "Metadata callback handler called");
+			assert.ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler); // handler is undefined at this point. This always causes the assertion inside to fail.
-			ok(oModel.getServiceMetadata(), "get metadata check");
+			assert.ok(oModel.getServiceMetadata(), "get metadata check");
 			var oBinding = oModel.bindList("/Categories");
 			var handler2 = function() { // delay the following test
-				ok(oBinding.oEntityType, "entity type binding check");
+				assert.ok(oBinding.oEntityType, "entity type binding check");
 				assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 				var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-				ok(oEntityType, "get entity type check");
+				assert.ok(oEntityType, "get entity type check");
 				assert.equal(oEntityType.name, "Category", "entity type name check");
 				var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-				ok(oPropMeta, "property type check");
+				assert.ok(oPropMeta, "property type check");
 				assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 				assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
@@ -2590,13 +2590,13 @@
 		// if not yet happened
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
+			assert.ok(oBinding.oEntityType, "entity type binding check");
 			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			ok(oEntityType, "get entity type check");
+			assert.ok(oEntityType, "get entity type check");
 			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-			ok(oPropMeta, "property type check");
+			assert.ok(oPropMeta, "property type check");
 			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
@@ -2622,9 +2622,9 @@
 		var handler = function() { // delay the following test
 			var oContext = oModel.createEntry("Categories",{properties:{CategoryID:99,CategoryName:"Food",Description:"Food Desc"},
 				batchGroupId : "myId"});
-			ok(oContext, "context check");
+			assert.ok(oContext, "context check");
 			var oEntry = oModel.getProperty("", oContext);
-			ok(oEntry, "entry check");
+			assert.ok(oEntry, "entry check");
 
 			assert.equal(oEntry.CategoryName, "Food", "category name check");
 			assert.equal(oEntry.CategoryID, 99, "category ID check");
@@ -2632,8 +2632,8 @@
 
 			//oModel.setProperty("CategoryName", "test",oContext);
 
-			//ok(oModel.mDeferredRequests['myId'].changes['undefined'].length == 1, "queue check");
-			ok(oModel.mContexts[oContext.getPath()], "context check");
+			//assert.ok(oModel.mDeferredRequests['myId'].changes['undefined'].length == 1, "queue check");
+			assert.ok(oModel.mContexts[oContext.getPath()], "context check");
 			assert.equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
 
 			oModel.deleteCreatedEntry(oContext);
@@ -2643,9 +2643,9 @@
 
 			// check default values
 			oContext = oModel.createEntry("Categories");
-			ok(oContext, "context check");
+			assert.ok(oContext, "context check");
 			oEntry = oModel.getProperty("", oContext);
-			ok(oEntry, "entry check");
+			assert.ok(oEntry, "entry check");
 
 			assert.equal(oEntry.CategoryName, undefined, "category name check");
 			assert.equal(oEntry.CategoryID, undefined, "category ID check");
@@ -2653,7 +2653,7 @@
 			oSpy = sinon.spy(oModel, "_submitBatchRequest");
 			oModel.submitChanges();
 			jQuery.sap.delayedCall(0,this, function() {
-				ok(oSpy.callCount == 0, "No request sent");
+				assert.ok(oSpy.callCount == 0, "No request sent");
 				oSpy.restore();
 				oModel.destroy();
 				start()
@@ -2678,45 +2678,45 @@
 			var mParameters = oEvent.getParameters();
 			switch (sId) {
 				case "batchRequestSent":
-					ok(mParameters.requests, sId + " contains requests");
+					assert.ok(mParameters.requests, sId + " contains requests");
 					if (iBatchRequestSentCount !== undefined) {
 						assert.equal(mParameters.requests.length, iBatchRequestSentCount, "Event should contain " + iBatchRequestSentCount + " requests");
 					}
 				case "requestSent":
-					ok(mParameters.url, sId + " contains url");
-					ok(mParameters.method, sId + " contains method");
-					ok(mParameters.headers, sId + " contains headers");
+					assert.ok(mParameters.url, sId + " contains url");
+					assert.ok(mParameters.method, sId + " contains method");
+					assert.ok(mParameters.headers, sId + " contains headers");
 					break;
 				case "batchRequestFailed":
-					ok(mParameters.requests, sId + " contains requests");
+					assert.ok(mParameters.requests, sId + " contains requests");
 					if (iBatchRequestFailedCount !== undefined) {
 						assert.equal(mParameters.requests.length, iBatchRequestFailedCount, "Event should contain " + iBatchRequestFailedCount + " requests");
 					}
 				case "requestFailed":
-					ok(mParameters.url, sId + " contains url");
-					ok(mParameters.method, sId + " contains method");
-					ok(mParameters.headers, sId + " contains headers");
-					ok(mParameters.response, sId + " contains response");
-					ok(mParameters.response.statusCode !== undefined, sId + " contains response.statusCode");
-					ok(mParameters.response.statusText, sId + " contains response.statusText");
-					ok(mParameters.response.headers, sId + " contains response.headers");
-					ok(mParameters.response.responseText !== undefined, sId + " contains response.responseText");
+					assert.ok(mParameters.url, sId + " contains url");
+					assert.ok(mParameters.method, sId + " contains method");
+					assert.ok(mParameters.headers, sId + " contains headers");
+					assert.ok(mParameters.response, sId + " contains response");
+					assert.ok(mParameters.response.statusCode !== undefined, sId + " contains response.statusCode");
+					assert.ok(mParameters.response.statusText, sId + " contains response.statusText");
+					assert.ok(mParameters.response.headers, sId + " contains response.headers");
+					assert.ok(mParameters.response.responseText !== undefined, sId + " contains response.responseText");
 					break;
 				case "batchRequestCompleted":
-					ok(mParameters.requests, sId + " contains requests");
+					assert.ok(mParameters.requests, sId + " contains requests");
 					if (iBatchRequestCompletedCount !== undefined) {
 						assert.equal(mParameters.requests.length, iBatchRequestCompletedCount, "Event should contain " + iBatchRequestCompletedCount + " requests");
 					}
 				case "requestCompleted":
-					ok(mParameters.url, sId + " contains url");
-					ok(mParameters.method, sId + " contains method");
-					ok(mParameters.headers, sId + " contains headers");
-					ok(mParameters.response, sId + " contains response");
-					ok(mParameters.response.statusCode !== undefined, sId + " contains response.statusCode");
-					ok(mParameters.response.statusText, sId + " contains response.statusText");
-					ok(mParameters.response.headers, sId + " contains response.headers");
-					ok(mParameters.response.responseText !== undefined, sId + " contains response.responseText");
-					ok(mParameters.success !== undefined, sId + " contains success");
+					assert.ok(mParameters.url, sId + " contains url");
+					assert.ok(mParameters.method, sId + " contains method");
+					assert.ok(mParameters.headers, sId + " contains headers");
+					assert.ok(mParameters.response, sId + " contains response");
+					assert.ok(mParameters.response.statusCode !== undefined, sId + " contains response.statusCode");
+					assert.ok(mParameters.response.statusText, sId + " contains response.statusText");
+					assert.ok(mParameters.response.headers, sId + " contains response.headers");
+					assert.ok(mParameters.response.responseText !== undefined, sId + " contains response.responseText");
+					assert.ok(mParameters.success !== undefined, sId + " contains success");
 					break;
 			}
 		};
@@ -2747,7 +2747,7 @@
 			iRequestCount++;
 			iParallelCount++;
 			if (iParallelCount > 1) {
-				ok(false, "Must not send requests in parallel");
+				assert.ok(false, "Must not send requests in parallel");
 			}
 		}
 		window.fakeResponded = function() {
@@ -2761,7 +2761,7 @@
 			if (iCount == 3) {
 				_setTimeout(function() {
 					assert.equal(iRequestCount, 3, "Three HTTP requests have been sent");
-					ok("Three requests have been completed successfully")
+					assert.ok("Three requests have been completed successfully")
 					delete window.fakeRequested;
 					delete window.fakeResponsed;
 					oModel.destroy();
@@ -2786,7 +2786,7 @@
 			iRequestCount++;
 			iParallelCount++;
 			if (iParallelCount > 1) {
-				ok(false, "Must not send requests in parallel");
+				assert.ok(false, "Must not send requests in parallel");
 			}
 		}
 		window.fakeResponded = function() {
@@ -2805,7 +2805,7 @@
 			if (iCount == 4) {
 				_setTimeout(function() {
 					assert.equal(iRequestCount, 2, "Two HTTP requests have been sent");
-					ok("Four requests have been completed successfully")
+					assert.ok("Four requests have been completed successfully")
 					delete window.fakeRequested;
 					delete window.fakeResponsed;
 					oModel.destroy();
@@ -3206,7 +3206,7 @@
 				var oRequests = oEvent.getParameter('requests');
 				assert.equal(oRequests.length, 1, "1 requests");
 				assert.equal(oRequests[0].url, "Categories(4)", "request url check");
-				ok(oRequests[0].success, "request success check");
+				assert.ok(oRequests[0].success, "request success check");
 
 				setTimeout(function() {
 					assert.equal(oInfo.requestSent, 1, "One requests sent");
@@ -3247,7 +3247,7 @@
 				var oRequests = oEvent.getParameter('requests');
 				assert.equal(oRequests.length, 1, "1 requests");
 				assert.equal(oRequests[0].url, "Categories(1)", "request url check");
-				ok(oEvent.mParameters.success, "request success check");
+				assert.ok(oEvent.mParameters.success, "request success check");
 				setTimeout(function() {
 					assert.equal(oInfo.requestSent, 1, "One requests sent");
 					assert.equal(oInfo.requestFailed, 0, "No request failed");
@@ -3291,7 +3291,7 @@
 				var oRequests = oEvent.getParameter('requests');
 				assert.equal(oRequests.length, 3, "3 requests");
 				assert.equal(oRequests[0].url, "Categories(1)", "request url check");
-				ok(!oRequests[0].success, "request success check");
+				assert.ok(!oRequests[0].success, "request success check");
 				assert.equal(oRequests[0].response.statusCode, "0", "request aborted");
 				assert.equal(oRequests[0].response.statusText, "abort", "request aborted");
 
@@ -3339,7 +3339,7 @@
 				var oRequests = oEvent.getParameter('requests');
 				assert.equal(oRequests.length, 1, "1 requests");
 				assert.equal(oRequests[0].url, "Categories(1)", "request url check");
-				ok(!oRequests[0].success, "request success check");
+				assert.ok(!oRequests[0].success, "request success check");
 				assert.equal(oRequests[0].response.statusCode, "0", "request aborted");
 				assert.equal(oRequests[0].response.statusText, "abort", "request aborted");
 
@@ -3387,7 +3387,7 @@
 				var oRequests = oEvent.getParameter('requests');
 				assert.equal(oRequests.length, 1, "1 requests");
 				assert.equal(oRequests[0].url, "Categories(4)", "request url check");
-				ok(oRequests[0].success, "request success check");
+				assert.ok(oRequests[0].success, "request success check");
 
 				setTimeout(function() {
 					assert.equal(oInfo.requestSent, 1, "One requests sent");
@@ -3436,15 +3436,15 @@
 				var oRequests = oEvent.getParameter('requests');
 				assert.equal(oRequests.length, 3, "3 requests");
 				assert.equal(oRequests[0].url, "Categories(1)", "request url check");
-				ok(!oRequests[0].success, "request success check");
+				assert.ok(!oRequests[0].success, "request success check");
 				assert.equal(oRequests[0].response.statusCode, "0", "request aborted");
 				assert.equal(oRequests[0].response.statusText, "abort", "request aborted");
 				assert.equal(oRequests[1].url, "Categories(3)", "request url check");
-				ok(!oRequests[1].success, "request success check");
+				assert.ok(!oRequests[1].success, "request success check");
 				assert.equal(oRequests[1].response.statusCode, "0", "request aborted");
 				assert.equal(oRequests[1].response.statusText, "abort", "request aborted");
 				assert.equal(oRequests[2].url, "Categories(4)", "request url check");
-				ok(oRequests[2].success, "request success check");
+				assert.ok(oRequests[2].success, "request success check");
 
 				setTimeout(function() {
 					assert.equal(oInfo.requestSent, 3, "Three requests sent");
@@ -3502,7 +3502,7 @@
 					done();
 				}, 0);
 			} else {
-				ok(false, "More than two batch requests sent!");
+				assert.ok(false, "More than two batch requests sent!");
 			}
 		});
 	});
@@ -3546,7 +3546,7 @@
 					done();
 				}, 0);
 			} else {
-				ok(false, "More than two batch requests sent!");
+				assert.ok(false, "More than two batch requests sent!");
 			}
 		});
 	});
@@ -3594,7 +3594,7 @@
 					done();
 				}, 0);
 			} else {
-				ok(false, "More than two batch requests sent!");
+				assert.ok(false, "More than two batch requests sent!");
 			}
 		});
 	});
@@ -3642,7 +3642,7 @@
 					done();
 				}, 0);
 			} else {
-				ok(false, "More than two batch requests sent!");
+				assert.ok(false, "More than two batch requests sent!");
 			}
 		});
 	});
@@ -3691,7 +3691,7 @@
 					done();
 				}, 0);
 			} else {
-				ok(false, "More than two batch requests sent!");
+				assert.ok(false, "More than two batch requests sent!");
 			}
 		});
 	});
@@ -3739,7 +3739,7 @@
 					done();
 				}, 0);
 			} else {
-				ok(false, "More than two batch requests sent!");
+				assert.ok(false, "More than two batch requests sent!");
 			}
 		});
 	});
@@ -3752,7 +3752,7 @@
 		oLabel = new sap.ui.commons.Label();
 		oLabel.setModel(oModel);
 		var handler = function(oEvent) {
-			ok(true, "DataReceived fired");
+			assert.ok(true, "DataReceived fired");
 			oLabel.unbindElement();
 			bChanged = false;
 			bDataRequested = false;
@@ -3771,13 +3771,13 @@
 		oLabel = new sap.ui.commons.Label();
 		oLabel.setModel(oModel);
 		var handler = function(oEvent) {
-			ok(true, "DataReceived fired");
+			assert.ok(true, "DataReceived fired");
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
 			oLabel.getElementBinding().detachDataReceived(handler);
 			oLabel.getElementBinding().attachDataReceived(function() {
-				ok(true, "DataReceived fired");
+				assert.ok(true, "DataReceived fired");
 				oLabel.unbindElement();
 				bChanged = false;
 				bDataRequested = false;
@@ -3798,7 +3798,7 @@
 		oLabel.setModel(oModel);
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: fnDataReceived}});
 		var handler = function(oEvent) {
-			ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
 			oLabel.unbindElement();
 			bChanged = false;
 			bDataRequested = false;
@@ -3816,7 +3816,7 @@
 		oLabel = new sap.ui.commons.Label("myLabel3");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		var handler = function(oEvent) {
-			ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
@@ -3834,14 +3834,14 @@
 		oLabel = new sap.ui.commons.Label("myLabel4");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		var handler = function(oEvent) {
-			ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
 			var fnChange2 = function(oEvent) {
 				bChanged = true;
-				ok(!bDataRequested && !bDataReceived,"change fired");
-				ok(oLabel.getElementBinding(), "ContextBinding created")
+				assert.ok(!bDataRequested && !bDataReceived,"change fired");
+				assert.ok(oLabel.getElementBinding(), "ContextBinding created")
 				oLabel.unbindElement();
 				bChanged = false;
 				bDataRequested = false;
@@ -3860,7 +3860,7 @@
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		var handler = function(oEvent) {
-			ok(true, "Change event fired for unresolved binding")
+			assert.ok(true, "Change event fired for unresolved binding")
 			assert.equal(oBinding.getBoundContext(), null, "Bound context is null")
 			done(); // resume normal testing
 		}
@@ -3874,8 +3874,8 @@
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		var fnSuccess = function(oData) {
-			ok(true, "zero data loaded");
-			ok(oData === 0, "zero data loaded");
+			assert.ok(true, "zero data loaded");
+			assert.ok(oData === 0, "zero data loaded");
 			done();
 		}
 		oModel.read("/ZeroTest(1)", { success: fnSuccess});
@@ -3888,15 +3888,15 @@
 		var spy = this.spy(OData, "request");
 		var oModel = initModel(sURI, {json: true, loadMetadataAsync: true, useBatch: false }, true);
 		oModel.attachMetadataLoaded(this, function(oEvent) {
-			ok(false, "Metadata should not be loaded");
+			assert.ok(false, "Metadata should not be loaded");
 		})
 		sap.ui.getCore().setModel(oModel);
 
 		oModel.destroy();
-		ok(oModel.bDestroyed, "Model should be destroyed");
+		assert.ok(oModel.bDestroyed, "Model should be destroyed");
 
 		assert.equal(spy.callCount, 1, "number of requests");
-		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
+		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 		OData.request.restore();
 
 	});
@@ -3908,14 +3908,14 @@
 		var oModel = initModel(sURI, {json: true, loadMetadataAsync: true, useBatch: false }, true);
 
 		var oMetaModel = oModel.getMetaModel();
-		ok(oModel.oMetaModel, "Metamodel instance created");
-		ok(oModel.oAnnotations, "ODataAnnotations instance created");
-		ok(oModel.oMetadata, "ODataMetadata instance created");
+		assert.ok(oModel.oMetaModel, "Metamodel instance created");
+		assert.ok(oModel.oAnnotations, "ODataAnnotations instance created");
+		assert.ok(oModel.oMetadata, "ODataMetadata instance created");
 		oModel.destroy();
-		ok(oModel.bDestroyed, "Model should be destroyed");
-		ok(!oModel.oMetaModel, "Metamodel instance destroyed");
-		ok(!oModel.oAnnotations, "ODataAnnotations instance destroyed");
-		ok(!oModel.oMetadata, "ODataMetadata instance destroyed");
+		assert.ok(oModel.bDestroyed, "Model should be destroyed");
+		assert.ok(!oModel.oMetaModel, "Metamodel instance destroyed");
+		assert.ok(!oModel.oAnnotations, "ODataAnnotations instance destroyed");
+		assert.ok(!oModel.oMetadata, "ODataMetadata instance destroyed");
 	});
 
 	QUnit.test("test metadata url parameters: no parameters", function(assert) {
@@ -4013,12 +4013,12 @@
 			OData.request.restore();
 			spy = sinon.spy(OData, "request");
 			oModel.read("/Categories", {success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?test=x&hubel=dubel", "request uri with parameters");
 				OData.request.restore();
 				done();
 			}, error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 			}});
 		});
 	});
@@ -4033,12 +4033,12 @@
 			OData.request.restore();
 			spy = sinon.spy(OData, "request");
 			oModel.read("/Categories", {success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?hubel=dubel", "request uri with parameters");
 				OData.request.restore();
 				done();
 			}, error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 			}});
 		});
 	});
@@ -4050,7 +4050,7 @@
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
 		var handler1 = function() { // delay the following test
-			ok(false, "Data should not be loaded");
+			assert.ok(false, "Data should not be loaded");
 			oBinding.detachChange(handler1);
 			done();
 		};
@@ -4062,16 +4062,16 @@
 		oBinding.getContexts();
 
 		oModel.destroy();
-		ok(oModel.bDestroyed, "Model should be destroyed");
+		assert.ok(oModel.bDestroyed, "Model should be destroyed");
 
 		assert.equal(spy.callCount, 0, "number of requests");
-		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
+		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 
 		// fire new request
 		oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
 		oBinding.getContexts();
 		assert.equal(spy.callCount, 1, "number of requests");
-		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
+		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 
 		oBinding.detachChange(handler1);
 
@@ -4090,11 +4090,11 @@
 	/*QUnit.test("old syntax", function(assert) {
 	/*	var done = assert.async();
 		this.oModel.read("/Categories", {json:true, success: function(oData, oResponse) {
-			ok(true, "success handler called");
+			assert.ok(true, "success handler called");
 			assert.equal(oResponse.requestUri, sURI + "Categories", "request uri does not have parameters");
 			done();
 		}, error: function() {
-			ok(false, "error handler shouldn't be called");
+			assert.ok(false, "error handler shouldn't be called");
 			done();
 		}});
 	});*/
@@ -4103,11 +4103,11 @@
 		var done = assert.async();
 		var that = this;
 		that.oModel.read("/Categories", {urlParameters: { "horst": true }, json: true, success: function(oData, oResponse) {
-			ok(true, "success handler called");
+			assert.ok(true, "success handler called");
 			assert.equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
 			done();
 		}, error: function() {
-			ok(false, "error handler shouldn't be called");
+			assert.ok(false, "error handler shouldn't be called");
 			done();
 		}});
 	});
@@ -4125,12 +4125,12 @@
 			urlParameters: {"$skip": "0","$top":"8"},
 			sorters: aSorters,
 			success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8&$orderby=CategoryName%20desc", "request uri contains custom parameters and sorter");
 				done();
 			},
 			error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 				done();
 			}
 		});
@@ -4146,12 +4146,12 @@
 			urlParameters: {"$skip": "0","$top":"1"},
 			filters: aFilters,
 			success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27", "request uri contains custom parameters and filter");
 				done();
 			},
 			error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 				done();
 			}
 		});
@@ -4161,19 +4161,19 @@
 		var done = assert.async();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
-			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
-			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
-			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
+			assert.ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
+			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl(sURI+"$metadata?sap-value-list=all").then(function(oParams) {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-				ok(oModel.getServiceAnnotations(), "annotations loaded");
-				ok(oParams.entitySets, "array of entitySets returned");
-				ok(oParams.entitySets.length === 1, "1 entitySet added");
-				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
-				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
+				assert.ok(oParams.entitySets, "array of entitySets returned");
+				assert.ok(oParams.entitySets.length === 1, "1 entitySet added");
+				assert.ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				assert.ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				assert.ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
 				done();
 			});
 		});
@@ -4183,22 +4183,22 @@
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
-			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
-			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
-			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
+			assert.ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
+			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-				ok(oModel.getServiceAnnotations(), "annotations loaded");
-				ok(oParams.entitySets, "array of entitySets returned");
-				ok(oParams.entitySets.length === 2, "2 entitySet added");
-				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
-				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
-				ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
-				ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-				ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
+				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
+				assert.ok(oParams.entitySets, "array of entitySets returned");
+				assert.ok(oParams.entitySets.length === 2, "2 entitySet added");
+				assert.ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				assert.ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				assert.ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				assert.ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
+				assert.ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				assert.ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
 				done();
 			});
 		});
@@ -4211,38 +4211,38 @@
 
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
-			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
-			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
-			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
+			assert.ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
+			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-				ok(oModel.getServiceAnnotations(), "annotations loaded");
-				ok(oParams.entitySets, "array of entitySets returned");
-				ok(oParams.entitySets.length === 2, "2 entitySet added");
-				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
-				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
-				ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
-				ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-				ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
+				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
+				assert.ok(oParams.entitySets, "array of entitySets returned");
+				assert.ok(oParams.entitySets.length === 2, "2 entitySet added");
+				assert.ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				assert.ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				assert.ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				assert.ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
+				assert.ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				assert.ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
 				iEntitySetCount = oModel.getServiceMetadata().dataServices.schema[0].entityContainer[0].entitySet.length;
 				iEntityTypeCount = oModel.getServiceMetadata().dataServices.schema[0].entityType.length;
 				iAnnotationCount = oModel.getServiceMetadata().dataServices.schema[0].annotations.length;
 			}).then(function() {
 				oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test3"]).then(function(oParams) {
 					assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-					ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-					ok(oModel.getServiceAnnotations(), "annotations loaded");
-					ok(oParams.entitySets, "array of entitySets returned");
-					ok(oParams.entitySets.length === 1, "1 entitySet added");
-					ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
-					ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-					ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
-					ok(iEntitySetCount == oModel.getServiceMetadata().dataServices.schema[0].entityContainer[0].entitySet.length,"no EntitySet added");
-					ok(iEntityTypeCount == oModel.getServiceMetadata().dataServices.schema[0].entityType.length,"no EntityType added");
-					ok(iAnnotationCount < oModel.getServiceMetadata().dataServices.schema[0].annotations.length,"annotations added");
+					assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+					assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
+					assert.ok(oParams.entitySets, "array of entitySets returned");
+					assert.ok(oParams.entitySets.length === 1, "1 entitySet added");
+					assert.ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+					assert.ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+					assert.ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+					assert.ok(iEntitySetCount == oModel.getServiceMetadata().dataServices.schema[0].entityContainer[0].entitySet.length,"no EntitySet added");
+					assert.ok(iEntityTypeCount == oModel.getServiceMetadata().dataServices.schema[0].entityType.length,"no EntityType added");
+					assert.ok(iAnnotationCount < oModel.getServiceMetadata().dataServices.schema[0].annotations.length,"annotations added");
 					done();
 				});
 			});
@@ -4254,14 +4254,14 @@
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
-			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
-			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
-			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
+			assert.ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
+			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl("$metadata?sap-value-list=all").then(function() {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
 				done();
 			});
 		});
@@ -4293,7 +4293,7 @@
 				oModel.destroy();
 				done();
 			} else {
-				ok(false, "More than two batch requests sent!");
+				assert.ok(false, "More than two batch requests sent!");
 			}
 		});
 	});
@@ -4319,7 +4319,7 @@
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.read("/Categories(1)", {
 			success: function() {
-				ok(!refreshSpy.called, "No security token needed for GET requests")
+				assert.ok(!refreshSpy.called, "No security token needed for GET requests")
 				done();
 			}
 		});
@@ -4330,7 +4330,7 @@
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.read("/Categories(1)", {
 			success: function() {
-				ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
+				assert.ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
 				done();
 			}
 		});
@@ -4342,10 +4342,10 @@
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
 			success: function() {
-				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				assert.ok(refreshSpy.calledOnce, "Token requested for POST request")
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
-						ok(refreshSpy.calledOnce, "No additional token request")
+						assert.ok(refreshSpy.calledOnce, "No additional token request")
 						done();
 					}
 				});
@@ -4359,12 +4359,12 @@
 			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
 			success: function() {
-				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				assert.ok(refreshSpy.calledOnce, "Token requested for POST request")
 				updateCsrfToken();
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
-						ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
-						ok(refreshSpy.calledTwice, "Token was fetched again after update");
+						assert.ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
+						assert.ok(refreshSpy.calledTwice, "Token was fetched again after update");
 						done();
 					}
 				});
@@ -4378,13 +4378,13 @@
 			resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
 			success: function() {
-				ok(refreshSpy.calledOnce, "Token requested for POST request")
+				assert.ok(refreshSpy.calledOnce, "Token requested for POST request")
 				updateCsrfToken();
 				this.oModel.refreshSecurityToken();
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
-						ok(!resetSpy.called, "No reset, as token was explicitely refreshed before");
-						ok(refreshSpy.calledTwice, "Token was fetched in explicit refresh call");
+						assert.ok(!resetSpy.called, "No reset, as token was explicitely refreshed before");
+						assert.ok(refreshSpy.calledTwice, "Token was fetched in explicit refresh call");
 						done();
 					}
 				});
@@ -4400,11 +4400,11 @@
 				equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF Request sent");
 				equals(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
 
-				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
 						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF request replied to");
-						ok(refreshSpy.calledOnce, "No additional token request");
+						assert.ok(refreshSpy.calledOnce, "No additional token request");
 						done();
 					}
 				});
@@ -4422,11 +4422,11 @@
 				equals(window.odataFakeServiceData.csrfRequests[0], "HEAD", "CSRF-Token requested using HEAD method");
 				equals(window.odataFakeServiceData.csrfRequests[1], "GET", "CSRF-Token requested using GET method");
 
-				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
 						equals(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests replied to");
-						ok(refreshSpy.calledOnce, "No additional token request");
+						assert.ok(refreshSpy.calledOnce, "No additional token request");
 						done();
 					}
 				});
@@ -4452,11 +4452,11 @@
 				equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests sent");
 				equals(window.odataFakeServiceData.csrfRequests[0], "GET", "CSRF-Token requested using GET method");
 
-				ok(refreshSpy.calledOnce, "Token requested for POST request");
+				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
 						equals(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests replied to");
-						ok(refreshSpy.calledOnce, "No additional token request");
+						assert.ok(refreshSpy.calledOnce, "No additional token request");
 						done();
 					}
 				});
@@ -4475,7 +4475,7 @@
 			assert.equal(spy.getCall(0).args[0].headers["sap-contextid-accept"], "header", "Metadaten Request: Soft State Acceptance header was set.");
 			assert.equal(spy.getCall(1).args[0].headers["sap-contextid-accept"], "header", "CSRF Request: Soft State Acceptance header was set.");
 			var sCurrentContextSessionId = this.oModel.sSessionContextId;
-			ok(this.oModel.sSessionContextId,"CSRF Request: Soft State Context ID in response was set in Model.");
+			assert.ok(this.oModel.sSessionContextId,"CSRF Request: Soft State Context ID in response was set in Model.");
 			this.oModel.read(sPath, {
 				success: function() {
 					assert.equal(spy.getCall(2).args[0].headers["sap-contextid-accept"], "header", "Batch Request: Soft State Acceptance header was set.");
@@ -4569,13 +4569,13 @@
 
 				// Metamodel bindings trigger the creation of the metamodel, so we can wait for loaded() here
 				this.oModel.getMetaModel().loaded().then(function() {
-					ok(!propertySpy.called, "Property binding checkUpdate not called");
+					assert.ok(!propertySpy.called, "Property binding checkUpdate not called");
 					assert.equal(oPropertyBinding.getValue(), "Produce", "Property value returns correct value");
-					ok(!listSpy.called, "List binding checkUpdate not called");
+					assert.ok(!listSpy.called, "List binding checkUpdate not called");
 					assert.equal(oListBinding.getContexts().length, 5, "List binding returns right amount of contexts");
-					ok(metaRelativeSpy.calledOnce, "Relative metamodel binding checkUpdate called once");
+					assert.ok(metaRelativeSpy.calledOnce, "Relative metamodel binding checkUpdate called once");
 					assert.equal(oMetaBindingRelative.getValue(), "Category", "Relative metamodel binding returns correct value");
-					ok(metaAbsoluteSpy.calledOnce, "Absolute metamodel binding checkUpdate called once");
+					assert.ok(metaAbsoluteSpy.calledOnce, "Absolute metamodel binding checkUpdate called once");
 					assert.equal(oMetaBindingAbsolute.getValue(), "Category", "Absolute metamodel binding returns correct value");
 					done();
 				});
@@ -4599,9 +4599,9 @@
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, urlParameters: {'Fail500': true}});
 			var oProduct = this.oModel.getProperty('', oContext);
 			this.oModel.setProperty("Name", "test", oContext);
-			ok(oProduct, "Product created");
-			ok(oProduct.__metadata.created, "Product flagged as created");
-			ok(this.oModel.hasPendingChanges(), "Model should still have pending changes");
+			assert.ok(oProduct, "Product created");
+			assert.ok(oProduct.__metadata.created, "Product flagged as created");
+			assert.ok(this.oModel.hasPendingChanges(), "Model should still have pending changes");
 			done();
 		}.bind(this))
 	});
@@ -4611,33 +4611,33 @@
 		this.oModel.metadataLoaded().then(function() {
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, urlParameters: {'Fail500': true}});
 			var oProduct = this.oModel.getProperty('', oContext);
-			ok(oProduct, "Product created");
-			ok(oProduct.__metadata.created, "Product flagged as created");
+			assert.ok(oProduct, "Product created");
+			assert.ok(oProduct.__metadata.created, "Product flagged as created");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
-				ok(!oInfo.getParameter('success'), "request should fail");
-				ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+				assert.ok(!oInfo.getParameter('success'), "request should fail");
+				assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
 			};
 			var fnFailed = function(oInfo) {
 				that.oModel.detachRequestFailed(fnFailed);
-				ok(true, "request failed");
+				assert.ok(true, "request failed");
 				var oProduct = that.oModel.getProperty('', oContext);
-				ok(oProduct, "Product still exists");
-				ok(oProduct.__metadata.created, "Product still flagged as created");
-				ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+				assert.ok(oProduct, "Product still exists");
+				assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+				assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
 				that.oModel.attachRequestFailed(function(oInfo) {
 					that.oModel.detachRequestFailed(fnFailed);
-					ok(true, "request failed");
+					assert.ok(true, "request failed");
 					var oProduct = that.oModel.getProperty('', oContext);
-					ok(oProduct, "Product still exists");
-					ok(oProduct.__metadata.created, "Product still flagged as created");
-					ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+					assert.ok(oProduct, "Product still exists");
+					assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+					assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
 					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
-					ok(!oInfo.getParameter('success'), "request should fail");
-					ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+					assert.ok(!oInfo.getParameter('success'), "request should fail");
+					assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
 				});
 
 				that.oModel.submitChanges();
@@ -4653,41 +4653,41 @@
 		this.oModel.metadataLoaded().then(function() {
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, headers: {'test-header': 'test-header-value'}, urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
 			var oProduct = this.oModel.getProperty('', oContext);
-			ok(oProduct, "Product created");
-			ok(oProduct.__metadata.created, "Product flagged as created");
+			assert.ok(oProduct, "Product created");
+			assert.ok(oProduct.__metadata.created, "Product flagged as created");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
-				ok(!oInfo.getParameter('success'), "request should fail");
-				ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
-				ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
-				ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
+				assert.ok(!oInfo.getParameter('success'), "request should fail");
+				assert.ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
+				assert.ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
+				assert.ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
 			};
 			var fnFailed = function(oInfo) {
 				that.oModel.detachRequestFailed(fnFailed);
-				ok(true, "request failed");
+				assert.ok(true, "request failed");
 				var oProduct = that.oModel.getProperty('', oContext);
-				ok(oProduct, "Product still exists");
-				ok(oProduct.__metadata.created, "Product still flagged as created");
-				ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
-				ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
-				ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
+				assert.ok(oProduct, "Product still exists");
+				assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+				assert.ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
+				assert.ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
+				assert.ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
 				that.oModel.attachRequestFailed(function(oInfo) {
 					that.oModel.detachRequestFailed(fnFailed);
-					ok(true, "request failed");
+					assert.ok(true, "request failed");
 					var oProduct = that.oModel.getProperty('', oContext);
-					ok(oProduct, "Product still exists");
-					ok(oProduct.__metadata.created, "Product still flagged as created");
-						ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
-					ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
-					ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
+					assert.ok(oProduct, "Product still exists");
+					assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+						assert.ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
+					assert.ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
+					assert.ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
 					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
-					ok(!oInfo.getParameter('success'), "request should fail");
-					ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
-					ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
-					ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
+					assert.ok(!oInfo.getParameter('success'), "request should fail");
+					assert.ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
+					assert.ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
+					assert.ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
 				});
 
 				that.oModel.submitChanges();
@@ -4703,33 +4703,33 @@
 		this.oModel.metadataLoaded().then(function() {
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, eTag: 'testEtag', urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
 			var oProduct = this.oModel.getProperty('', oContext);
-			ok(oProduct, "Product created");
-			ok(oProduct.__metadata.created, "Product flagged as created");
+			assert.ok(oProduct, "Product created");
+			assert.ok(oProduct.__metadata.created, "Product flagged as created");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
-				ok(!oInfo.getParameter('success'), "request should fail");
-				ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
+				assert.ok(!oInfo.getParameter('success'), "request should fail");
+				assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
 			};
 			var fnFailed = function(oInfo) {
 				that.oModel.detachRequestFailed(fnFailed);
-				ok(true, "request failed");
+				assert.ok(true, "request failed");
 				var oProduct = that.oModel.getProperty('', oContext);
-				ok(oProduct, "Product still exists");
-				ok(oProduct.__metadata.created, "Product still flagged as created");
-				ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
+				assert.ok(oProduct, "Product still exists");
+				assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+				assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
 				that.oModel.attachRequestFailed(function(oInfo) {
 					that.oModel.detachRequestFailed(fnFailed);
-					ok(true, "request failed");
+					assert.ok(true, "request failed");
 					var oProduct = that.oModel.getProperty('', oContext);
-					ok(oProduct, "Product still exists");
-					ok(oProduct.__metadata.created, "Product still flagged as created");
-					ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
+					assert.ok(oProduct, "Product still exists");
+					assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+					assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
 					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
-					ok(!oInfo.getParameter('success'), "request should fail");
-					ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
+					assert.ok(!oInfo.getParameter('success'), "request should fail");
+					assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
 				});
 
 				that.oModel.submitChanges();
@@ -4746,7 +4746,7 @@
 		this.oModel.metadataLoaded().then(function() {
 			var fnSent = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnSent);
-				ok(oInfo.getParameter('headers')['If-Match'] === 'myEtag', 'header for eTag set correctly');
+				assert.ok(oInfo.getParameter('headers')['If-Match'] === 'myEtag', 'header for eTag set correctly');
 				done();
 			};
 			this.oModel.attachRequestSent(fnSent);
@@ -4766,36 +4766,36 @@
 				//set some etag
 				that.oModel.setProperty("/Categories(1)/__metadata/etag", "testETag");
 				var oCategory = that.oModel.getProperty("/Categories(1)");
-				ok(oCategory.__metadata.etag === "testETag", "eTag set correctly");
+				assert.ok(oCategory.__metadata.etag === "testETag", "eTag set correctly");
 				//change data
 				that.oModel.setProperty("/Categories(1)/CategoryName", "TestETag");
 				var fnCompl = function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
-				/*	ok(!oInfo.getParameter('success'), "request should fail");
-					ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');*/
+				/*	assert.ok(!oInfo.getParameter('success'), "request should fail");
+					assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');*/
 				};
 
 				var fnFailed = function(oInfo) {
 					that.oModel.detachRequestFailed(fnFailed);
-					ok(true, "request failed");
-					ok(oInfo.getParameter('headers')['If-Match'] === 'testETag', 'header for eTag set correctly');
-					ok(oInfo.getParameter('response').statusCode === 412, 'status code = 412');
+					assert.ok(true, "request failed");
+					assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testETag', 'header for eTag set correctly');
+					assert.ok(oInfo.getParameter('response').statusCode === 412, 'status code = 412');
 					var sKey = that.oModel.getKey(oInfo.getParameter('url'));
-					ok(sKey === "Categories(1)");
+					assert.ok(sKey === "Categories(1)");
 					that.oModel.forceEntityUpdate(sKey);
 					var oCategory = that.oModel.getProperty("/Categories(1)");
-					ok(oCategory.__metadata.etag === '*', "eTag set to *");
+					assert.ok(oCategory.__metadata.etag === '*', "eTag set to *");
 
 					that.oModel.attachRequestFailed(function(oInfo) {
 						that.oModel.detachRequestFailed(fnFailed);
-						ok(false, "request should be succesful");
+						assert.ok(false, "request should be succesful");
 					});
 
 					that.oModel.attachRequestCompleted(function(oInfo) {
 						that.oModel.detachRequestCompleted(fnCompl);
-						ok(oInfo.getParameter('success'), "request successful");
-						ok(oInfo.getParameter('response').statusCode === 204, 'status code = 204');
-						ok(oInfo.getParameter('headers')['If-Match'] === '*', 'header for eTag set correctly');
+						assert.ok(oInfo.getParameter('success'), "request successful");
+						assert.ok(oInfo.getParameter('response').statusCode === 204, 'status code = 204');
+						assert.ok(oInfo.getParameter('headers')['If-Match'] === '*', 'header for eTag set correctly');
 						done();
 					});
 					that.oModel.submitChanges();
@@ -4805,7 +4805,7 @@
 				that.oModel.submitChanges();
 			};
 			var fnReadFailed = function() {
-				ok(false, "Read of Category should not fail");
+				assert.ok(false, "Read of Category should not fail");
 			};
 			this.oModel.read("/Categories(1)", {error: function() {ok(false,"reading Category 1 failed")}});
 			that.oModel.attachRequestCompleted(fnReadCompleted);
@@ -4819,18 +4819,18 @@
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 			}
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, success: fnSuccess});
 			var oProduct = this.oModel.getProperty('', oContext);
-			ok(oProduct, "Product created");
-			ok(oProduct.__metadata.created, "Product flagged as created");
+			assert.ok(oProduct, "Product created");
+			assert.ok(oProduct.__metadata.created, "Product flagged as created");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
-				ok(oInfo.getParameter('success'), "request success");
+				assert.ok(oInfo.getParameter('success'), "request success");
 				var oProduct =  oContext.getObject();
-				ok(oProduct, "Product still exists");
-				ok(!oProduct.__metadata.created, "Product not flagged as created");
+				assert.ok(oProduct, "Product still exists");
+				assert.ok(!oProduct.__metadata.created, "Product not flagged as created");
 				done();
 			};
 			this.oModel.attachRequestCompleted(fnCompl);
@@ -4843,33 +4843,33 @@
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnError = function() {
-				ok(true, "error handler called");
+				assert.ok(true, "error handler called");
 			}
 			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, error: fnError, urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
 			var oProduct = this.oModel.getProperty('', oContext);
-			ok(oProduct, "Product created");
-			ok(oProduct.__metadata.created, "Product flagged as created");
+			assert.ok(oProduct, "Product created");
+			assert.ok(oProduct.__metadata.created, "Product flagged as created");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
-				ok(!oInfo.getParameter('success'), "request should fail");
+				assert.ok(!oInfo.getParameter('success'), "request should fail");
 			};
 			var fnFailed = function(oInfo) {
 				that.oModel.detachRequestFailed(fnFailed);
-				ok(true, "request failed");
+				assert.ok(true, "request failed");
 				var oProduct = that.oModel.getProperty('', oContext);
-				ok(oProduct, "Product still exists");
-				ok(oProduct.__metadata.created, "Product still flagged as created");
+				assert.ok(oProduct, "Product still exists");
+				assert.ok(oProduct.__metadata.created, "Product still flagged as created");
 				that.oModel.attachRequestFailed(function(oInfo) {
 					that.oModel.detachRequestFailed(fnFailed);
-					ok(true, "request failed");
+					assert.ok(true, "request failed");
 					var oProduct = that.oModel.getProperty('', oContext);
-					ok(oProduct, "Product still exists");
-					ok(oProduct.__metadata.created, "Product still flagged as created");
+					assert.ok(oProduct, "Product still exists");
+					assert.ok(oProduct.__metadata.created, "Product still flagged as created");
 					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
 					that.oModel.detachRequestCompleted(fnCompl);
-					ok(!oInfo.getParameter('success'), "request should fail");
+					assert.ok(!oInfo.getParameter('success'), "request should fail");
 				});
 
 				that.oModel.submitChanges();
@@ -4885,20 +4885,20 @@
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 			}
 			var oContext = this.oModel.createEntry("/Products(0)/Supplier", {properties: {Name: 'test'}, success: fnSuccess});
 			var oSupplier = this.oModel.getProperty('', oContext);
-			ok(oSupplier, "Supplier created");
-			ok(oSupplier.__metadata.created, "Supplier flagged as created");
-			ok(oSupplier.__metadata.created.key == "Products(0)/Supplier", "POST key ok");
-			ok(jQuery.sap.startsWith(oContext.getPath(),"/Suppliers("), "Data cache ok");
+			assert.ok(oSupplier, "Supplier created");
+			assert.ok(oSupplier.__metadata.created, "Supplier flagged as created");
+			assert.ok(oSupplier.__metadata.created.key == "Products(0)/Supplier", "POST key ok");
+			assert.ok(jQuery.sap.startsWith(oContext.getPath(),"/Suppliers("), "Data cache ok");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
-				ok(oInfo.getParameter('success'), "request success");
+				assert.ok(oInfo.getParameter('success'), "request success");
 				var oSupplier = oContext.getObject();
-				ok(oSupplier, "Supplier still exists");
-				ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
+				assert.ok(oSupplier, "Supplier still exists");
+				assert.ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
 				done();
 			};
 			this.oModel.attachRequestCompleted(fnCompl);
@@ -4912,14 +4912,14 @@
 		this.oModel.setUseBatch(true);
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function(oData) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				var oSupplier = oContext.getObject();
-				ok(oSupplier, "Supplier still exists");
-				ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
+				assert.ok(oSupplier, "Supplier still exists");
+				assert.ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
 				done();
 			}
 			var fnError = function() {
-				ok(true, "error handler called");
+				assert.ok(true, "error handler called");
 				//hack the model so next request would be ok
 				delete that.oModel.oData[oContext.getPath().substr(1)].__metadata.created.urlParameters;
 				delete that.oModel.mChangedEntities[oContext.getPath().substr(1)].__metadata.created.urlParameters;
@@ -4928,14 +4928,14 @@
 			}
 			var oContext = this.oModel.createEntry("/Products", {urlParameters: {'Fail500': true}, properties: {Name: 'test'}, success: fnSuccess, error:fnError});
 			var oProduct = this.oModel.getProperty('', oContext);
-			ok(oProduct, "Product created");
-			ok(oProduct.__metadata.created, "Product flagged as created");
+			assert.ok(oProduct, "Product created");
+			assert.ok(oProduct.__metadata.created, "Product flagged as created");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
-				ok(!oInfo.getParameter('success'), "request error");
+				assert.ok(!oInfo.getParameter('success'), "request error");
 				var oProduct =  oContext.getObject();
-				ok(oProduct, "Product still exists");
-				ok(oProduct.__metadata.created, "Product still flagged as created");
+				assert.ok(oProduct, "Product still exists");
+				assert.ok(oProduct.__metadata.created, "Product still flagged as created");
 			};
 			this.oModel.attachRequestCompleted(fnCompl);
 			this.oModel.submitChanges();
@@ -4948,7 +4948,7 @@
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
-				ok(false, "success handler must not be called");
+				assert.ok(false, "success handler must not be called");
 			}
 			var oCreatedContext = this.oModel.createEntry("/Products", {
 				properties: {Name: 'test'},
@@ -4956,21 +4956,21 @@
 			});
 			var oContextBinding = this.oModel.bindContext("Supplier", oCreatedContext);
 			oContextBinding.attachChange(function(){
-				ok(true, "ContextBinding change must be fired");
+				assert.ok(true, "ContextBinding change must be fired");
 				assert.equal(oContextBinding.getBoundContext(), null, "Bound context must be null");
 			});
 			oContextBinding.initialize();
 			var oListBinding = this.oModel.bindList("Items", oCreatedContext);
 			oListBinding.attachChange(function(){
-				ok(false, "ListBinding change must not be fired");
+				assert.ok(false, "ListBinding change must not be fired");
 			});
 			oListBinding.attachRefresh(function(){
 				oListBinding.getContexts(0,10);
-				ok(false, "ListBinding refresh must not be fired");
+				assert.ok(false, "ListBinding refresh must not be fired");
 			});
 			oListBinding.initialize();
 			this.oModel.attachRequestSent(function() {
-				ok(false, "No requests must be sent");
+				assert.ok(false, "No requests must be sent");
 			});
 			setTimeout(function() {
 				done();
@@ -4984,7 +4984,7 @@
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
-				ok(false, "success handler must not be called");
+				assert.ok(false, "success handler must not be called");
 			}
 			var oCreatedContext = this.oModel.createEntry("/Products", {
 				properties: {Name: 'test'},
@@ -4992,23 +4992,23 @@
 			});
 			var oContextBinding = this.oModel.bindContext("Supplier");
 			oContextBinding.attachChange(function(){
-				ok(true, "ContextBinding change must be fired");
+				assert.ok(true, "ContextBinding change must be fired");
 				assert.equal(oContextBinding.getBoundContext(), null, "Bound context must be null");
 			});
 			oContextBinding.initialize();
 			oContextBinding.setContext(oCreatedContext);
 			var oListBinding = this.oModel.bindList("Items");
 			oListBinding.attachChange(function(){
-				ok(false, "ListBinding change must not be fired");
+				assert.ok(false, "ListBinding change must not be fired");
 			});
 			oListBinding.attachRefresh(function(){
 				oListBinding.getContexts(0,10);
-				ok(false, "ListBinding refresh must not be fired");
+				assert.ok(false, "ListBinding refresh must not be fired");
 			});
 			oListBinding.initialize();
 			oListBinding.setContext(oCreatedContext);
 			this.oModel.attachRequestSent(function() {
-				ok(false, "No requests must be sent");
+				assert.ok(false, "No requests must be sent");
 			});
 			setTimeout(function() {
 				done();
@@ -5021,7 +5021,7 @@
 		assert.expect(6);
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
-				ok(false, "success handler must not be called");
+				assert.ok(false, "success handler must not be called");
 			}
 			var oCreatedContext = this.oModel.createEntry("/Products", {
 				properties: {Name: 'test'},
@@ -5029,21 +5029,21 @@
 			});
 			var oContextBinding = this.oModel.bindContext("/Suppliers(0)", oCreatedContext);
 			oContextBinding.attachChange(function(){
-				ok(true, "ContextBinding change most be fired");
+				assert.ok(true, "ContextBinding change most be fired");
 			});
 			oContextBinding.initialize();
 			var oListBinding = this.oModel.bindList("/Products", oCreatedContext);
 			oListBinding.attachChange(function(){
-				ok(true, "ListBinding change most be fired");
+				assert.ok(true, "ListBinding change most be fired");
 				done();
 			});
 			oListBinding.attachRefresh(function(){
 				oListBinding.getContexts(0,10);
-				ok(true, "ListBinding refresh most be fired");
+				assert.ok(true, "ListBinding refresh most be fired");
 			});
 			oListBinding.initialize();
 			this.oModel.attachRequestSent(function() {
-				ok(true, "Requests must be triggered");
+				assert.ok(true, "Requests must be triggered");
 			});
 		}.bind(this))
 	});
@@ -5054,10 +5054,10 @@
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
-					ok(false, "success handler must not be called");
+					assert.ok(false, "success handler must not be called");
 				},
 				fnRequestSent = function() {
-					ok(false, "no request must be triggered");
+					assert.ok(false, "no request must be triggered");
 				};
 
 			var oCreatedContext = this.oModel.createEntry("/Products", {
@@ -5065,7 +5065,7 @@
 			});
 			var oContextBinding = this.oModel.bindContext(oCreatedContext.getPath());
 			oContextBinding.attachChange(function(){
-				ok(true, "ContextBinding change must be fired");
+				assert.ok(true, "ContextBinding change must be fired");
 			});
 			this.oModel.attachRequestSent(fnRequestSent);
 			oContextBinding.initialize();
@@ -5090,12 +5090,12 @@
 
 		oModel.read("/SAML200", {
 			success: function() {
-				ok(false, "Success handler must not be called in case of SAML redirect");
+				assert.ok(false, "Success handler must not be called in case of SAML redirect");
 				done();
 			},
 			error: function(oError) {
-				ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
-				ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
+				assert.ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
+				assert.ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
 				done();
 			}
 		});
@@ -5113,12 +5113,12 @@
 
 		oModel.read("/SAML200", {
 			success: function() {
-				ok(false, "Success handler must not be called in case of SAML redirect");
+				assert.ok(false, "Success handler must not be called in case of SAML redirect");
 				done();
 			},
 			error: function(oError) {
-				ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
-				ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
+				assert.ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
+				assert.ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
 				done();
 			}
 		});
@@ -5132,14 +5132,14 @@
 		var oModel = initModel(sURI, {json:false, useBatch: true});
 		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
 			var oDeepEntry = oModel.getProperty("/Products(7)");
-			ok(oDeepEntry.Category.__ref, "check ref");
+			assert.ok(oDeepEntry.Category.__ref, "check ref");
 			assert.equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
 
 			oDeepEntry = oModel.getProperty("/Products(7)", null, true);
 			assert.equal(oDeepEntry.Category.CategoryID, 7, "check id");
 
 			oDeepEntry = oModel.getProperty("/Products(7)");
-			ok(oDeepEntry.Category.__ref, "check ref");
+			assert.ok(oDeepEntry.Category.__ref, "check ref");
 			assert.equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
 
 			done();
@@ -5152,7 +5152,7 @@
 		var oModel = initModel(sURI, {json:false, useBatch: true});
 		oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){
 			var oDeepEntry = oModel.getProperty("/Categories(7)");
-			ok(oDeepEntry.Products.__list, "check list");
+			assert.ok(oDeepEntry.Products.__list, "check list");
 			assert.equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
 
 			oDeepEntry = oModel.getProperty("/Categories(7)", null, true);
@@ -5161,7 +5161,7 @@
 			assert.equal(oDeepEntry.Products.results[0].ProductID, 7, "check product id");
 
 			var oDeepEntry = oModel.getProperty("/Categories(7)");
-			ok(oDeepEntry.Products.__list, "check list");
+			assert.ok(oDeepEntry.Products.__list, "check list");
 			assert.equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
 
 			done();
@@ -5176,7 +5176,7 @@
 			oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){
 
 				var oDeepEntry = oModel.getProperty("/Products(7)");
-				ok(oDeepEntry.Category.__ref, "check ref");
+				assert.ok(oDeepEntry.Category.__ref, "check ref");
 				assert.equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
 
 				oDeepEntry = oModel.getProperty("/Products(7)", null, true);
@@ -5184,11 +5184,11 @@
 				assert.equal(oDeepEntry.Category.Products.results[0].Category, oDeepEntry.Category, "check cycle");
 
 				oDeepEntry = oModel.getProperty("/Products(7)");
-				ok(oDeepEntry.Category.__ref, "check ref");
+				assert.ok(oDeepEntry.Category.__ref, "check ref");
 				assert.equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
 
 				var oDeepEntry = oModel.getProperty("/Categories(7)");
-				ok(oDeepEntry.Products.__list, "check list");
+				assert.ok(oDeepEntry.Products.__list, "check list");
 				assert.equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
 
 				oDeepEntry = oModel.getProperty("/Categories(7)", null, true);
@@ -5196,7 +5196,7 @@
 				assert.equal(oDeepEntry.Products.results[0].Category.Products.results[0], oDeepEntry.Products.results[0], "check cycle");
 
 				var oDeepEntry = oModel.getProperty("/Categories(7)");
-				ok(oDeepEntry.Products.__list, "check list");
+				assert.ok(oDeepEntry.Products.__list, "check list");
 				assert.equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
 
 				done();
@@ -5332,11 +5332,11 @@
 		oModel.metadataLoaded().then(function() {
 			var spy = sinon.spy(oModel, "createCustomParams");
 			var oContext = oModel.createBindingContext("/Categories(1)", null, {custom: {"test":undefined}}, function() {
-				ok(true, "should not break");
+				assert.ok(true, "should not break");
 				equals(spy.callCount, 1 , "custom Params created");
 				equals(spy.returnValues[0], "test" , "params created correctly");
 				var oContext2 = oModel.createBindingContext("/Categories(1)", null, {custom: {"hubel": "dubel","test":undefined}}, function() {
-					ok(true, "should not break");
+					assert.ok(true, "should not break");
 					equals(spy.callCount, 2 , "custom Params created");
 					equals(spy.returnValues[1], "hubel=dubel&test" , "params created correctly");
 					oModel.createCustomParams.restore();
@@ -5365,14 +5365,14 @@
 		oModel.read("/Current_Product_Lists", {
 			success: function() {
 				var sURI;
-				ok(oModel.getObject("/Current_Product_Lists(ProductID=1,ProductName='Chai')"), "Entity is returned");
-				ok(oModel.getObject("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')"), "Entity is returned");
-				ok(oModel.getObject("/Current_Product_Lists(ProductID=61,ProductName='Sirop%20d''%C3%A9rable')"), "Entity is returned");
-				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='Rh%C3%B6nbr%C3%A4u%20Klosterbier')"), "Entity is returned");
+				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=1,ProductName='Chai')"), "Entity is returned");
+				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')"), "Entity is returned");
+				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=61,ProductName='Sirop%20d''%C3%A9rable')"), "Entity is returned");
+				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='Rh%C3%B6nbr%C3%A4u%20Klosterbier')"), "Entity is returned");
 
-				ok(oModel.getObject("/" + oModel.createKey("Current_Product_Lists", {ProductID: 75, ProductName: "Rhönbräu Klosterbier"})), "Entity is returned, createKey");
-				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + encodeURIComponent("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
-				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + jQuery.sap.encodeURL("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
+				assert.ok(oModel.getObject("/" + oModel.createKey("Current_Product_Lists", {ProductID: 75, ProductName: "Rhönbräu Klosterbier"})), "Entity is returned, createKey");
+				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + encodeURIComponent("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
+				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + jQuery.sap.encodeURL("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
 
 				assert.equal(oModel.getProperty("/Current_Product_Lists(ProductID=1,ProductName='Chai')/ProductName"), "Chai", "Property is returned");
 				assert.equal(oModel.getProperty("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')/ProductName"), "Aniseed Syrup", "Property is returned");

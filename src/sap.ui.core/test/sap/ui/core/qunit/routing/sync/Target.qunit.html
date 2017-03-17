@@ -143,7 +143,7 @@
 			assert.strictEqual(this.oShell.getContent().length, 1, "only one button is inside of the the Shell");
 			assert.strictEqual(this.oShell.getContent()[0], oButton, "it is the displayed button");
 			//TODO: Should we destroy in this case? Is it a regression if we do so?
-			//ok(oExistingButton.bIsDestroyed, "the button got destroyed");
+			//assert.ok(oExistingButton.bIsDestroyed, "the button got destroyed");
 
 			// Cleanup
 			oButton.destroy();

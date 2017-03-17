@@ -43,13 +43,13 @@
 	QUnit.test("Avatar with press event only", function (assert) {
 		var $oAvatar = this.oAvatar.$();
 
-		ok(jQuery.sap.domById(sControlId), "Avatar is rendered in the DOM");
-		ok($oAvatar.hasClass("sapFAvatar"), "Avatar is rendered with the Avatar class.");
-		ok($oAvatar.hasClass("sapFAvatarS"), sPreAvatarSize + "S");
-		ok($oAvatar.hasClass("sapFAvatarCircle"), sPreAvatarShape +  "Circle");
-		ok($oAvatar.hasClass("sapFAvatarIcon"), sPreAvatarType + "Icon");
-		ok($oAvatar.hasClass("sapMPointer"), "The cursor becomes pointer when hovering over the avatar");
-		ok(($oAvatar !== undefined) && ($oAvatar != null), "Avatar should not be null");
+		assert.ok(jQuery.sap.domById(sControlId), "Avatar is rendered in the DOM");
+		assert.ok($oAvatar.hasClass("sapFAvatar"), "Avatar is rendered with the Avatar class.");
+		assert.ok($oAvatar.hasClass("sapFAvatarS"), sPreAvatarSize + "S");
+		assert.ok($oAvatar.hasClass("sapFAvatarCircle"), sPreAvatarShape +  "Circle");
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), sPreAvatarType + "Icon");
+		assert.ok($oAvatar.hasClass("sapMPointer"), "The cursor becomes pointer when hovering over the avatar");
+		assert.ok(($oAvatar !== undefined) && ($oAvatar != null), "Avatar should not be null");
 	});
 
 	QUnit.module("Rendering different sizes", {
@@ -62,7 +62,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarXS"), sPreAvatarSize + "XS");
+		assert.ok($oAvatar.hasClass("sapFAvatarXS"), sPreAvatarSize + "XS");
 	});
 
 	QUnit.test("Avatar with displaySize set to 'S'", function (assert) {
@@ -70,7 +70,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarS"), sPreAvatarSize + "S");
+		assert.ok($oAvatar.hasClass("sapFAvatarS"), sPreAvatarSize + "S");
 	});
 
 	QUnit.test("Avatar with displaySize set to 'M'", function (assert) {
@@ -78,7 +78,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarM"), sPreAvatarSize + "M");
+		assert.ok($oAvatar.hasClass("sapFAvatarM"), sPreAvatarSize + "M");
 	});
 
 	QUnit.test("Avatar with displaySize set to 'L'", function (assert) {
@@ -86,7 +86,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarL"), sPreAvatarSize + "L");
+		assert.ok($oAvatar.hasClass("sapFAvatarL"), sPreAvatarSize + "L");
 	});
 
 	QUnit.test("Avatar with displaySize set to 'XL'", function (assert) {
@@ -94,7 +94,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarXL"), sPreAvatarSize + "XL");
+		assert.ok($oAvatar.hasClass("sapFAvatarXL"), sPreAvatarSize + "XL");
 	});
 
 	QUnit.test("Avatar with displaySize set to 'Custom'", function (assert) {
@@ -102,7 +102,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarCustom"), sPreAvatarSize + "Custom");
+		assert.ok($oAvatar.hasClass("sapFAvatarCustom"), sPreAvatarSize + "Custom");
 	});
 
 	QUnit.module("Rendering different shapes", {
@@ -115,7 +115,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarCircle"), sPreAvatarShape + "Circle");
+		assert.ok($oAvatar.hasClass("sapFAvatarCircle"), sPreAvatarShape + "Circle");
 	});
 
 	QUnit.test("Avatar with displayShape set to 'Square'", function (assert) {
@@ -123,7 +123,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarSquare"), sPreAvatarShape + "Square");
+		assert.ok($oAvatar.hasClass("sapFAvatarSquare"), sPreAvatarShape + "Square");
 	});
 
 	QUnit.module("Rendering different types", {
@@ -136,7 +136,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarIcon"), sPreAvatarType + "Icon");
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), sPreAvatarType + "Icon");
 	});
 
 	QUnit.test("Avatar with src leading to an image", function (assert) {
@@ -144,7 +144,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarImage"), sPreAvatarType + "Image");
+		assert.ok($oAvatar.hasClass("sapFAvatarImage"), sPreAvatarType + "Image");
 	});
 
 	QUnit.test("Avatar with initials in valid format", function (assert) {
@@ -152,7 +152,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarInitials"), sPreAvatarType + "Initials");
+		assert.ok($oAvatar.hasClass("sapFAvatarInitials"), sPreAvatarType + "Initials");
 	});
 
 	QUnit.test("Avatar with initials consisting of three letters", function (assert) {
@@ -160,7 +160,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
 	});
 
 	QUnit.test("Avatar with initials consisting of no letters", function (assert) {
@@ -168,7 +168,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
 	});
 
 	QUnit.test("Avatar with initials consisting of non-latin letters", function (assert) {
@@ -176,7 +176,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
 	});
 
 	QUnit.module("Rendering different fit types", {
@@ -190,7 +190,7 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarImageCover"), sPreAvatarFitType + "Cover");
+		assert.ok($oAvatar.hasClass("sapFAvatarImageCover"), sPreAvatarFitType + "Cover");
 	});
 
 	QUnit.test("Avatar with imageFitType set to 'Contain'", function (assert) {
@@ -199,6 +199,6 @@
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		ok($oAvatar.hasClass("sapFAvatarImageContain"), sPreAvatarFitType + "Contain");
+		assert.ok($oAvatar.hasClass("sapFAvatarImageContain"), sPreAvatarFitType + "Contain");
 	});
 })();

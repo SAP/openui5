@@ -84,11 +84,11 @@
 
 			// assert
 			assert.strictEqual(oSF._oSuggest.isOpen(), true, "The suggestion popup opens");
-			ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
+			assert.ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
 
 			var popupId = jQuery(".sapMSuL:visible").parents(".sapMPopup-CTX").attr("id");
 			var popup = sap.ui.getCore().byId(popupId);
-			ok(!!popup, "popup exists");
+			assert.ok(!!popup, "popup exists");
 
 			if (!popup) {
 				return;
@@ -101,13 +101,13 @@
 			this.clock.tick(1000);
 
 			if (sap.ui.Device.system.phone) {
-				ok(popup.isOpen(), "Suggest(false) does not close the popup on phones");
+				assert.ok(popup.isOpen(), "Suggest(false) does not close the popup on phones");
 				popup.close();
 				this.clock.tick(1000);
 			}
 
-			ok(!jQuery(".sapMSuL").parents(".sapMPopup-CTX:visible").length, "The suggestions list is not visible after close");
-			ok(fnPopupSpy && fnPopupSpy.callCount, "Popup close was called");
+			assert.ok(!jQuery(".sapMSuL").parents(".sapMPopup-CTX:visible").length, "The suggestions list is not visible after close");
+			assert.ok(fnPopupSpy && fnPopupSpy.callCount, "Popup close was called");
 		});
 
 		QUnit.module("Aggregations");
@@ -161,7 +161,7 @@
 			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
 			sap.ui.test.qunit.triggerKeyup(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
 			this.clock.tick(1000);
-			ok(!oSF._oSuggest.isOpen(), "Picker is closed after ENTER");
+			assert.ok(!oSF._oSuggest.isOpen(), "Picker is closed after ENTER");
 		});
 
 		QUnit.test("Escape closes suggestions", function(assert) {
@@ -177,7 +177,7 @@
 
 			this.clock.tick(1000);
 
-			ok(!oSF._oSuggest.isOpen(), "Picker is closed after ESCAPE");
+			assert.ok(!oSF._oSuggest.isOpen(), "Picker is closed after ESCAPE");
 			assert.strictEqual(oSF.getValue(), "ABCD", "Escape closes suggestions and keeps the value");
 		});
 
@@ -304,7 +304,7 @@
 		QUnit.test("cleanup", function(assert){
 			oSF.destroy();
 			this.clock.tick(1000);
-			ok(!oSF.getDomRef(), "The search field is removed");
+			assert.ok(!oSF.getDomRef(), "The search field is removed");
 		});
 
 	</script>

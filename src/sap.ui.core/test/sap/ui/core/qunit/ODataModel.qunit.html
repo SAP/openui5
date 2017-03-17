@@ -99,24 +99,24 @@
 
 	var fnChange = function(oEvent) {
 		bChanged = true;
-		ok(bDataRequested && !bDataReceived,"change fired");
+		assert.ok(bDataRequested && !bDataReceived,"change fired");
 	};
 
 	var fnDataRequested = function(oEvent) {
 		bDataRequested = true;
-		ok(!bDataReceived && !bChanged,"dataRequested fired");
+		assert.ok(!bDataReceived && !bChanged,"dataRequested fired");
 	};
 
 	var fnDataReceived = function(oEvent) {
 		bDataReceived = true;
-		ok(bChanged && bDataRequested,"dataRecieved fired");
+		assert.ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
 
 	QUnit.test("check datajs AMD shim", function(assert) {
-		ok(typeof define === "function" && define.amd, "precondition: AMD like define exists");
+		assert.ok(typeof define === "function" && define.amd, "precondition: AMD like define exists");
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
-		ok(!!window.datajs, "global datajs object should exist");
-		ok(!!window.OData, "global OData object should exist");
+		assert.ok(!!window.datajs, "global datajs object should exist");
+		assert.ok(!!window.OData, "global OData object should exist");
 	});
 
 	// assertion methods for the next 3 constructor tests
@@ -228,7 +228,7 @@
 		});
 
 		oModel.attachMetadataLoaded(function(){
-			ok(oModel.getServiceMetadata() != null, "First model: Service metadata is available");
+			assert.ok(oModel.getServiceMetadata() != null, "First model: Service metadata is available");
 			oModel.destroy();
 			oModel2 = new sap.ui.model.odata.ODataModel(sURI, mOptions);
 
@@ -244,7 +244,7 @@
 			//fail if event is fired at the metadata object
 			oModel2.attachMetadataLoaded(function() {
 				jQuery.sap.log.debug("metadata loaded is fired");
-				ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
+				assert.ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
 				if (!bFiredAtMetadata) {
 					metadataDfd.resolve();
 				} else {
@@ -252,11 +252,11 @@
 				}
 			});
 			jQuery.when(metadataDfd).done(function(e){
-					ok(true, 'Metadata loaded fired at model only');
+					assert.ok(true, 'Metadata loaded fired at model only');
 					done();
 				}).fail(function(e){
 					jQuery.sap.log.debug("metadata promise failed");
-					ok(false, 'Metadata loaded fired at metadata object')
+					assert.ok(false, 'Metadata loaded fired at metadata object')
 				});
 		});
 	});
@@ -626,7 +626,7 @@
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("/Categories(2)");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -644,7 +644,7 @@
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -662,7 +662,7 @@
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -670,9 +670,9 @@
 			oLabel.setBindingContext(null);
 		}
 		var fnHandler2 = function() {
-			ok(!oLabel.getBindingContext(), "no bindingContext");
-			ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
-			ok(!oLabel.getElementBinding().getBoundContext(), "parent context must be reset");
+			assert.ok(!oLabel.getBindingContext(), "no bindingContext");
+			assert.ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
+			assert.ok(!oLabel.getElementBinding().getBoundContext(), "parent context must be reset");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.setBindingContext(null);
 			oLabel.unbindElement();
@@ -688,7 +688,7 @@
 		oLabel.bindElement("Category");
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -706,7 +706,7 @@
 		oLabel.bindElement("/Categories(2)");
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -724,7 +724,7 @@
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -735,7 +735,7 @@
 		}
 		var fnHandler2 = function(oEvent) {
 			var sUrl =  oEvent.getParameter("url");
-			ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
+			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
@@ -751,7 +751,7 @@
 		var oTestContext = oModel.getContext("/Products(2)");
 		oPanel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
@@ -762,7 +762,7 @@
 		}
 		var fnHandler2 = function(oEvent) {
 			var sUrl =  oEvent.getParameter("url");
-			ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
+			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
 			oLabel.setBindingContext(null);
@@ -792,7 +792,7 @@
 				dataReceived: fnRecievedHandler
 			}
 		});
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 	});
 
 	QUnit.test("test data events for bindElement 204", 3, function(assert){
@@ -816,7 +816,7 @@
 				dataReceived: fnRecievedHandler
 			}
 		});
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 	});
 
 	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
@@ -875,7 +875,7 @@
 		var oModel = initModel(sURI, false, "Categories");
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			assert.equal(oContext.getPath(), "/Products(1)", "Context path");
-			ok(oContext.getProperty("Category"), "Category loaded");
+			assert.ok(oContext.getProperty("Category"), "Category loaded");
 			done();          // resume normal testing
 		});
 	});
@@ -931,13 +931,13 @@
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
+			assert.ok(oBinding.oEntityType, "entity type binding check");
 			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			ok(oEntityType, "get entity type check");
+			assert.ok(oEntityType, "get entity type check");
 			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-			ok(oPropMeta, "property type check");
+			assert.ok(oPropMeta, "property type check");
 			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
@@ -1048,7 +1048,7 @@
 		oModel.read("/Categories", null, null, false); // sync call
 
 		assert.equal(spy.callCount, 1, "spy read count");
-		ok(spy.calledOnce, "spy called once");
+		assert.ok(spy.calledOnce, "spy called once");
 		assert.equal(spy.args[0][0].headers['myCustomHeader1'], "value1", "spy check custom header");
 		assert.equal(spy.args[0][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
 
@@ -1077,9 +1077,9 @@
 		});
 
 		var handler = function() {
-			ok(true, "Metadata callback handler called");
+			assert.ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler);
-			ok(oModel.getServiceMetadata(), "get metadata check");
+			assert.ok(oModel.getServiceMetadata(), "get metadata check");
 			done();
 		}
 		oModel.attachMetadataLoaded(handler);
@@ -1096,18 +1096,18 @@
 
 
 		var handler = function() {
-			ok(true, "Metadata callback handler called");
+			assert.ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler); // handler is undefined at this point. This always causes the assertion inside to fail.
-			ok(oModel.getServiceMetadata(), "get metadata check");
+			assert.ok(oModel.getServiceMetadata(), "get metadata check");
 			var oBinding = oModel.bindList("/Categories");
 			var handler2 = function() { // delay the following test
-				ok(oBinding.oEntityType, "entity type binding check");
+				assert.ok(oBinding.oEntityType, "entity type binding check");
 				assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 				var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-				ok(oEntityType, "get entity type check");
+				assert.ok(oEntityType, "get entity type check");
 				assert.equal(oEntityType.name, "Category", "entity type name check");
 				var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-				ok(oPropMeta, "property type check");
+				assert.ok(oPropMeta, "property type check");
 				assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 				assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
@@ -1134,13 +1134,13 @@
 
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
+			assert.ok(oBinding.oEntityType, "entity type binding check");
 			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			ok(oEntityType, "get entity type check");
+			assert.ok(oEntityType, "get entity type check");
 			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-			ok(oPropMeta, "property type check");
+			assert.ok(oPropMeta, "property type check");
 			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
@@ -1164,17 +1164,17 @@
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			var oContext = oModel.createEntry("Categories",{CategoryID:99,CategoryName:"Food",Description:"Food Desc"});
-			ok(oContext, "context check");
+			assert.ok(oContext, "context check");
 			var oEntry = oModel.getProperty("", oContext);
-			ok(oEntry, "entry check");
+			assert.ok(oEntry, "entry check");
 
 			assert.equal(oEntry.CategoryName, "Food", "category name check");
 			assert.equal(oEntry.CategoryID, 99, "category ID check");
 			assert.equal(oEntry.Description, "Food Desc", "category ID check");
-			ok(oEntry._bCreate, "check create flag");
+			assert.ok(oEntry._bCreate, "check create flag");
 
-			ok(oModel.oRequestQueue[oContext.getPath().substr(1)], "queue check");
-			ok(oModel.mContexts[oContext.getPath()], "context check");
+			assert.ok(oModel.oRequestQueue[oContext.getPath().substr(1)], "queue check");
+			assert.ok(oModel.mContexts[oContext.getPath()], "context check");
 			assert.equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
 			oModel.deleteCreatedEntry(oContext);
 			assert.equal(oModel.oRequestQueue[oContext.getPath().substr(1)], undefined, "queue check");
@@ -1183,14 +1183,14 @@
 
 			// check default values
 			oContext = oModel.createEntry("Categories");
-			ok(oContext, "context check");
+			assert.ok(oContext, "context check");
 			oEntry = oModel.getProperty("", oContext);
-			ok(oEntry, "entry check");
+			assert.ok(oEntry, "entry check");
 
 			assert.equal(oEntry.CategoryName, undefined, "category name check");
 			assert.equal(oEntry.CategoryID, undefined, "category ID check");
 			assert.equal(oEntry.Description, undefined, "category ID check");
-			ok(oEntry._bCreate, "check create flag");
+			assert.ok(oEntry._bCreate, "check create flag");
 
 			done();
 		};
@@ -1206,7 +1206,7 @@
 		oLabel.setModel(oModel);
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: fnDataReceived}});
 		var handler = function(oEvent) {
-			ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
 			oLabel.unbindElement();
 			bChanged = false;
 			bDataRequested = false;
@@ -1223,7 +1223,7 @@
 		oLabel = new sap.ui.commons.Label("myLabel3");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		var handler = function(oEvent) {
-			ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
@@ -1241,14 +1241,14 @@
 		oLabel = new sap.ui.commons.Label("myLabel4");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
 		var handler = function(oEvent) {
-			ok(oLabel.getElementBinding(), "ContextBinding created")
+			assert.ok(oLabel.getElementBinding(), "ContextBinding created")
 			bChanged = false;
 			bDataRequested = false;
 			bDataReceived = false;
 			var fnChange2 = function(oEvent) {
 				bChanged = true;
-				ok(!bDataRequested && !bDataReceived,"change fired");
-				ok(oLabel.getElementBinding(), "ContextBinding created")
+				assert.ok(!bDataRequested && !bDataReceived,"change fired");
+				assert.ok(oLabel.getElementBinding(), "ContextBinding created")
 				oLabel.unbindElement();
 				bChanged = false;
 				bDataRequested = false;
@@ -1269,15 +1269,15 @@
 		removeSharedServicedata(sURI);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: true });
 		oModel.attachMetadataLoaded(this, function(oEvent) {
-			ok(false, "Metadata should not be loaded");
+			assert.ok(false, "Metadata should not be loaded");
 		})
 		sap.ui.getCore().setModel(oModel);
 
 		oModel.destroy();
-		ok(oModel.bDestroyed, "Model should be destroyed");
+		assert.ok(oModel.bDestroyed, "Model should be destroyed");
 
 		assert.equal(spy.callCount, 1, "number of requests");
-		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
+		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 
 	});
 
@@ -1288,7 +1288,7 @@
 
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler1 = function() { // delay the following test
-			ok(false, "Data should not be loaded");
+			assert.ok(false, "Data should not be loaded");
 			oBinding.detachChange(handler1);
 			done();
 		};
@@ -1299,16 +1299,16 @@
 		oBinding.getContexts();
 
 		oModel.destroy();
-		ok(oModel.bDestroyed, "Model should be destroyed");
+		assert.ok(oModel.bDestroyed, "Model should be destroyed");
 
 		assert.equal(spy.callCount, 1, "number of requests");
-		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
+		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 
 		// fire new request
 		oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		oBinding.getContexts();
 		assert.equal(spy.callCount, 1, "number of requests");
-		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
+		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 
 		oBinding.detachChange(handler1);
 
@@ -1327,11 +1327,11 @@
 	QUnit.test("old syntax", function(assert) {
 		var done = assert.async();
 		this.oModel.read("/Categories", null, null, true, function(oData, oResponse) {
-			ok(true, "success handler called");
+			assert.ok(true, "success handler called");
 			assert.equal(oResponse.requestUri, sURI + "Categories", "request uri does not have parameters");
 			done();
 		}, function() {
-			ok(false, "error handler shouldn't be called");
+			assert.ok(false, "error handler shouldn't be called");
 			done();
 		});
 	});
@@ -1339,11 +1339,11 @@
 	QUnit.test("old syntax with url parameters (string)", function(assert) {
 		var done = assert.async();
 		this.oModel.read("/Categories", null, "$skip=0&$top=8", true, function(oData, oResponse) {
-			ok(true, "success handler called");
+			assert.ok(true, "success handler called");
 			assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
 			done();
 		}, function() {
-			ok(false, "error handler shouldn't be called");
+			assert.ok(false, "error handler shouldn't be called");
 			done();
 		});
 	});
@@ -1351,11 +1351,11 @@
 	QUnit.test("old syntax with url parameters (array)", function(assert) {
 		var done = assert.async();
 		this.oModel.read("/Categories", null, [ "$skip=0", "$top=8" ], true, function(oData, oResponse) {
-			ok(true, "success handler called");
+			assert.ok(true, "success handler called");
 			assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
 			done();
 		}, function() {
-			ok(false, "error handler shouldn't be called");
+			assert.ok(false, "error handler shouldn't be called");
 			done();
 		});
 	});
@@ -1363,11 +1363,11 @@
 	QUnit.test("old syntax with url parameters (object)", function(assert) {
 		var done = assert.async();
 		this.oModel.read("/Categories", null, { "horst": true }, true, function(oData, oResponse) {
-			ok(true, "success handler called");
+			assert.ok(true, "success handler called");
 			assert.equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
 			done();
 		}, function() {
-			ok(false, "error handler shouldn't be called");
+			assert.ok(false, "error handler shouldn't be called");
 			done();
 		});
 	});
@@ -1377,12 +1377,12 @@
 		this.oModel.read("/Categories", {
 			urlParameters: "$skip=0&$top=8",
 			success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
 				done();
 			},
 			error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 				done();
 			}
 		});
@@ -1393,12 +1393,12 @@
 		this.oModel.read("/Categories", {
 			urlParameters: [ "$skip=0", "$top=8" ],
 			success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8", "request uri contains custom parameters");
 				done();
 			},
 			error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 				done();
 			}
 		});
@@ -1409,12 +1409,12 @@
 		this.oModel.read("/Categories", {
 			urlParameters: { "horst": true },
 			success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?horst=true", "request uri contains custom parameters");
 				done();
 			},
 			error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 				done();
 			}
 		});
@@ -1433,12 +1433,12 @@
 			urlParameters: "$skip=0&$top=8",
 			sorters: aSorters,
 			success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=8&$orderby=CategoryName%20desc", "request uri contains custom parameters and sorter");
 				done();
 			},
 			error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 				done();
 			}
 		});
@@ -1454,12 +1454,12 @@
 			urlParameters: "$skip=0&$top=1",
 			filters: aFilters,
 			success: function(oData, oResponse) {
-				ok(true, "success handler called");
+				assert.ok(true, "success handler called");
 				assert.equal(oResponse.requestUri, sURI + "Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27", "request uri contains custom parameters and filter");
 				done();
 			},
 			error: function() {
-				ok(false, "error handler shouldn't be called");
+				assert.ok(false, "error handler shouldn't be called");
 				done();
 			}
 		});
@@ -1469,19 +1469,19 @@
 		var done = assert.async();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.oMetadata.loaded().then(function(){
-			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
-			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
-			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
+			assert.ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl(sURI+"$metadata?sap-value-list=all").then(function(oParams) {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-				ok(oModel.getServiceAnnotations(), "annotations loaded");
-				ok(oParams.entitySets, "array of entitySets returned");
-				ok(oParams.entitySets.length === 1, "1 entitySet added");
-				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
-				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
+				assert.ok(oParams.entitySets, "array of entitySets returned");
+				assert.ok(oParams.entitySets.length === 1, "1 entitySet added");
+				assert.ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				assert.ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				assert.ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
 				done();
 			});
 		});
@@ -1491,22 +1491,22 @@
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.oMetadata.loaded().then(function(){
-			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
-			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
-			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
+			assert.ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-				ok(oModel.getServiceAnnotations(), "annotations loaded");
-				ok(oParams.entitySets, "array of entitySets returned");
-				ok(oParams.entitySets.length === 2, "2 entitySet added");
-				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
-				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
-				ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
-				ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
-				ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
+				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
+				assert.ok(oParams.entitySets, "array of entitySets returned");
+				assert.ok(oParams.entitySets.length === 2, "2 entitySet added");
+				assert.ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				assert.ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				assert.ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				assert.ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
+				assert.ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				assert.ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
 				done();
 			});
 		});
@@ -1517,14 +1517,14 @@
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.oMetadata.loaded().then(function(){
-			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
-			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
-			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
+			assert.ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			assert.ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl("$metadata?sap-value-list=all").then(function() {
 				assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
-				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				assert.ok(oModel.getServiceAnnotations(), "annotations loaded");
 				done();
 			});
 		});
@@ -1549,7 +1549,7 @@
 			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 			this.oModel.read("/Categories(1)", {
 				success: function() {
-					ok(!refreshSpy.called, "No security token needed for GET requests")
+					assert.ok(!refreshSpy.called, "No security token needed for GET requests")
 					done();
 				}
 			});
@@ -1563,7 +1563,7 @@
 			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 			this.oModel.read("/Categories(1)", {
 				success: function() {
-					ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
+					assert.ok(refreshSpy.calledOnce, "Token requested for GET inside batch")
 					done();
 				}
 			});
@@ -1576,10 +1576,10 @@
 			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 			this.oModel.create("/Categories(1)", {}, {
 				success: function() {
-					ok(refreshSpy.calledOnce, "Token requested for POST request")
+					assert.ok(refreshSpy.calledOnce, "Token requested for POST request")
 					this.oModel.create("/Categories(1)", {}, {
 						success: function() {
-							ok(refreshSpy.calledOnce, "No additional token request")
+							assert.ok(refreshSpy.calledOnce, "No additional token request")
 							done();
 						}
 					});
@@ -1595,12 +1595,12 @@
 				resetSpy = sinon.spy(this.oModel, "resetSecurityToken");
 			this.oModel.create("/Categories(1)", {}, {
 				success: function() {
-					ok(refreshSpy.calledOnce, "Token requested for POST request")
+					assert.ok(refreshSpy.calledOnce, "Token requested for POST request")
 					updateCsrfToken();
 					this.oModel.create("/Categories(1)", {}, {
 						success: function() {
-							ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
-							ok(refreshSpy.calledTwice, "Token was fetched again after update");
+							assert.ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
+							assert.ok(refreshSpy.calledTwice, "Token was fetched again after update");
 							done();
 						}
 					});
@@ -1674,13 +1674,13 @@
 
 				// Metamodel bindings trigger the creation of the metamodel, so we can wait for loaded() here
 				this.oModel.getMetaModel().loaded().then(function() {
-					ok(!propertySpy.called, "Property binding checkUpdate not called");
+					assert.ok(!propertySpy.called, "Property binding checkUpdate not called");
 					assert.equal(oPropertyBinding.getValue(), "Produce", "Property value returns correct value");
-					ok(!listSpy.called, "List binding checkUpdate not called");
+					assert.ok(!listSpy.called, "List binding checkUpdate not called");
 					assert.equal(oListBinding.getContexts().length, 5, "List binding returns right amount of contexts");
-					ok(metaRelativeSpy.calledOnce, "Relative metamodel binding checkUpdate called once");
+					assert.ok(metaRelativeSpy.calledOnce, "Relative metamodel binding checkUpdate called once");
 					assert.equal(oMetaBindingRelative.getValue(), "Category", "Relative metamodel binding returns correct value");
-					ok(metaAbsoluteSpy.calledOnce, "Absolute metamodel binding checkUpdate called once");
+					assert.ok(metaAbsoluteSpy.calledOnce, "Absolute metamodel binding checkUpdate called once");
 					assert.equal(oMetaBindingAbsolute.getValue(), "Category", "Absolute metamodel binding returns correct value");
 					done();
 				});
@@ -1709,8 +1709,8 @@
 			});
 
 			oModel.attachMetadataLoaded(function() {
-				ok(bAnnotationsFailed, "Annotations failed event was fired before metadata loaded event");
-				ok(true, "Metadata loaded successfully");
+				assert.ok(bAnnotationsFailed, "Annotations failed event was fired before metadata loaded event");
+				assert.ok(true, "Metadata loaded successfully");
 
 
 				oModel.destroy();
@@ -1718,15 +1718,15 @@
 			});
 
 			oModel.attachMetadataFailed(function() {
-				ok(false, "Metadata should have been loaded");
+				assert.ok(false, "Metadata should have been loaded");
 			});
 
 			oModel.attachAnnotationsLoaded(function() {
-				ok(false, "Annotations should have failed");
+				assert.ok(false, "Annotations should have failed");
 			});
 
 			oModel.attachAnnotationsFailed(function() {
-				ok(true, "Annotations failed and event was fired asynchronously");
+				assert.ok(true, "Annotations failed and event was fired asynchronously");
 				bAnnotationsFailed = true;
 			});
 
@@ -1740,8 +1740,8 @@
 
 
 			oModel.attachMetadataLoaded(function() {
-				ok(bAnnotationsLoaded, "Annotations loaded event was fired before metadata loaded event");
-				ok(true, "Metadata loaded successfully");
+				assert.ok(bAnnotationsLoaded, "Annotations loaded event was fired before metadata loaded event");
+				assert.ok(true, "Metadata loaded successfully");
 
 
 				oModel.destroy();
@@ -1749,16 +1749,16 @@
 			});
 
 			oModel.attachMetadataFailed(function() {
-				ok(false, "Metadata should have been loaded");
+				assert.ok(false, "Metadata should have been loaded");
 			});
 
 			oModel.attachAnnotationsLoaded(function() {
-				ok(true, "Annotations loaded event was fired asynchronously");
+				assert.ok(true, "Annotations loaded event was fired asynchronously");
 				bAnnotationsLoaded = true;
 			});
 
 			oModel.attachAnnotationsFailed(function() {
-				ok(false, "Annotations should have loaded");
+				assert.ok(false, "Annotations should have loaded");
 			});
 
 		});

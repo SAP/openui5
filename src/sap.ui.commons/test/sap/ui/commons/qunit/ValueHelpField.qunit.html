@@ -66,7 +66,7 @@
 			assert.equal(jQuery.sap.domById("VHF3").offsetWidth, 200, "width of the field");
 
 			// other images
-			ok(jQuery.sap.byId("VHF4").children("img").get(0), "With URL: Icon image rendered");
+			assert.ok(jQuery.sap.byId("VHF4").children("img").get(0), "With URL: Icon image rendered");
 			assert.equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 
 		});
@@ -79,7 +79,7 @@
 			assert.equal(oVHFInput.attr("aria-labelledby"), "L1", "aria-labelledby");
 			assert.equal(oVHFInput.attr("aria-multiline"), "false", "aria-multiline");
 			assert.equal(oVHFInput.attr("aria-autocomplete"), "none", "aria-autocomplete");
-			ok(!oVHFInput.attr("aria-invalid"), "aria-invalid");
+			assert.ok(!oVHFInput.attr("aria-invalid"), "aria-invalid");
 			var oVHF = jQuery.sap.byId("VHF4");
 			var oVHFInput = jQuery("#VHF4 > input");
 			assert.equal(oVHFInput.attr("aria-invalid"), "true", "aria-invalid");
@@ -113,11 +113,11 @@
 			// disabled - regular image given - no disabled image -> regular image should be displayed (with opacity)
 			oVHF3.setIconURL("../images/save.png");
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class set");
+			assert.ok(jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class set");
 			// disabled image
 			oVHF3.setIconDisabledURL("../images/new.png");
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class not set");
+			assert.ok(!jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class not set");
 
 			// hover image change
 			oVHF5.setIconHoverURL("../images/personalize.gif");

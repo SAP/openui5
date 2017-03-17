@@ -525,7 +525,7 @@
 	QUnit.module("Horizontal: Visual Appearence");
 
 	QUnit.test("Visibility", function(assert) {
-		ok(jQuery("#oSli3").get(0), "Visible: expected defined");
+		assert.ok(jQuery("#oSli3").get(0), "Visible: expected defined");
 		assert.equal(jQuery("#oSli5").get(0), undefined, "Invisible:");
 
 		var oTick = jQuery.sap.domById('oSli2-tick2');
@@ -538,7 +538,7 @@
 		oTick = null;
 		oText = null;
 		oTick = jQuery.sap.domById('oSli3-tick3');
-		ok(oTick, "Ticks visible: expected defined");
+		assert.ok(oTick, "Ticks visible: expected defined");
 		assert.equal(oTick.offsetLeft, 299, "3. tick position:");
 		oText = jQuery.sap.domById('oSli3-text0');
 		assert.equal(oText, null, "No left Text:");
@@ -548,19 +548,19 @@
 		oTick = null;
 		oText = null;
 		oTick = jQuery.sap.domById('oSli4-tick4');
-		ok(oTick, "Ticks visible: expected defined");
+		assert.ok(oTick, "Ticks visible: expected defined");
 		assert.equal(oTick.offsetLeft, 249, "Middle tick position:");
 		oText = jQuery.sap.domById('oSli4-text0');
-		ok(oText, "left text visible: expected defined");
+		assert.ok(oText, "left text visible: expected defined");
 		assert.equal(jQuery(oText).text(), "10", "left text:");
 		oText = null;
 		oText = jQuery.sap.domById('oSli4-text4');
-		ok(oText, "middle text visible: expected defined");
+		assert.ok(oText, "middle text visible: expected defined");
 		assert.equal(jQuery(oText).text(), "110", "middle text:");
 		oText = null;
 		oText = jQuery.sap.domById('oSli4-text8');
 		assert.equal(jQuery(oText).text(), "210", "right text:");
-		ok(oText, "right text visible: expected defined");
+		assert.ok(oText, "right text visible: expected defined");
 	});
 
 	QUnit.module("Vertical: Properties");
@@ -985,7 +985,7 @@
 	QUnit.module("Vertical: Visual Appearence");
 
 	QUnit.test("Visibility", function(assert) {
-		ok(jQuery("#oSli8").get(0), "Visible: expected defined");
+		assert.ok(jQuery("#oSli8").get(0), "Visible: expected defined");
 		assert.equal(jQuery("#oSli10").get(0), undefined, "Invisible:");
 
 		var oTick = jQuery.sap.domById('oSli7-tick2');
@@ -998,7 +998,7 @@
 		oTick = null;
 		oText = null;
 		oTick = jQuery.sap.domById('oSli8-tick3');
-		ok(oTick, "Ticks visible: expected defined");
+		assert.ok(oTick, "Ticks visible: expected defined");
 		assert.equal(oTick.offsetTop, 200, "3. tick position:");
 		oText = jQuery.sap.domById('oSli8-text0');
 		assert.equal(oText, null, "No left Text:");
@@ -1008,19 +1008,19 @@
 		oTick = null;
 		oText = null;
 		oTick = jQuery.sap.domById('oSli9-tick4');
-		ok(oTick, "Ticks visible: expected defined");
+		assert.ok(oTick, "Ticks visible: expected defined");
 		assert.equal(oTick.offsetTop, 250, "Middle tick position:");
 		oText = jQuery.sap.domById('oSli9-text0');
-		ok(oText, "left text visible: expected defined");
+		assert.ok(oText, "left text visible: expected defined");
 		assert.equal(jQuery(oText).text(), "10", "left text:");
 		oText = null;
 		oText = jQuery.sap.domById('oSli9-text4');
-		ok(oText, "middle text visible: expected defined");
+		assert.ok(oText, "middle text visible: expected defined");
 		assert.equal(jQuery(oText).text(), "110", "middle text:");
 		oText = null;
 		oText = jQuery.sap.domById('oSli9-text8');
 		assert.equal(jQuery(oText).text(), "210", "right text:");
-		ok(oText, "right text visible: expected defined");
+		assert.ok(oText, "right text visible: expected defined");
 	});
 
 	QUnit.test("Set value via Slider's API", function (assert) {
@@ -1036,7 +1036,7 @@
 		sap.ui.getCore().applyChanges();
 		initialValue = oSlider.getDomRef("grip").style.top;
 
-		ok(initialValue, "Have adjusted slider's handler "+initialValue);
+		assert.ok(initialValue, "Have adjusted slider's handler "+initialValue);
 
 		oSlider.setValue(iValue);
 		assert.strictEqual(initialValue, oSlider.getDomRef("grip").style.top, "Slider's handle is at the same place");

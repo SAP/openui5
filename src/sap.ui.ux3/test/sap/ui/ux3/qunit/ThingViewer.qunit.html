@@ -58,7 +58,7 @@
 
 		//event handler for facet event, action and standard action events, for close and open event
 		function facetSelectedEventHandler(oEvent) {
-			ok(true, "facet select event handler has been executed."); // this test tests by just being counted in the respective test
+			assert.ok(true, "facet select event handler has been executed."); // this test tests by just being counted in the respective test
 			var id = oEvent.getParameter("id");
 			assert.equal(id, facet, facet + " Facet should be selected");
 			var oTG1 = new sap.ui.ux3.ThingGroup({
@@ -70,12 +70,12 @@
 			oThingViewer.addFacetContent(oTG1);
 		}
 		function actionSelectedEventHandler(oEvent) {
-			ok(true, "action select event handler has been executed."); // this test tests by just being counted in the respective test
+			assert.ok(true, "action select event handler has been executed."); // this test tests by just being counted in the respective test
 			var id = oEvent.getParameter("id");
 			assert.equal(id, action, action + " Action should be selected");
 		}
 		function feedSubmitEventHandler(oEvent) {
-			ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
+			assert.ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
 			var text = oEvent.getParameter("text");
 			assert.equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 		}
@@ -152,13 +152,13 @@
 		QUnit.test("ThingViewer exists", function(assert) {
 			oOverlayContainer.open();
 			var oDomRef = jQuery.sap.domById(oThingViewer.getId());
-			ok(oDomRef, "Rendered ThingViewer should exist in the page");
+			assert.ok(oDomRef, "Rendered ThingViewer should exist in the page");
 			assert.equal(oDomRef.className, "sapUiUx3TV", "Rendered ThingViewer should have the class 'sapUiUx3TV'");
 		});
 
 		QUnit.test("Swatch", function(assert) {
 			var oSwatch = jQuery.sap.domById(oThingViewer.getId() + "-swatch");
-			ok(oSwatch, "Rendered Swatch should exist in the page");
+			assert.ok(oSwatch, "Rendered Swatch should exist in the page");
 			assert.equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
 		});
 
@@ -167,17 +167,17 @@
 			var facets = oThingViewer.getFacets();
 			var $facets = jQuery(".sapUiUx3TVFacetBar");
 			for ( var i = 0; i < facets.length; i++) {
-				ok(jQuery.sap.domById(facets[i].sId), "Rendered ThingViewer Facet " + facets[i].sId + " should exist in the page");
+				assert.ok(jQuery.sap.domById(facets[i].sId), "Rendered ThingViewer Facet " + facets[i].sId + " should exist in the page");
 			}
 		});
 
 		QUnit.test("Toolbar",	function(assert) {
 			var oActionBar = oThingViewer.getActionBar();
-			ok(oActionBar, "ActionBar should exist");
-			ok(jQuery(".sapUiUx3ActionBar")[0], "ActionBar rendering ok");
+			assert.ok(oActionBar, "ActionBar should exist");
+			assert.ok(jQuery(".sapUiUx3ActionBar")[0], "ActionBar rendering ok");
 			oThingViewer.setActionBar();
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery(".sapUiUx3ActionBar")[0], "ActionBar should be destroyed");
+			assert.ok(!jQuery(".sapUiUx3ActionBar")[0], "ActionBar should be destroyed");
 			oThingViewer.setActionBar(oActionBar);
 		});
 
@@ -190,7 +190,7 @@
 			qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
 			setTimeout(
 					function() {
-						ok(jQuery.sap.domById(oThingViewer.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
+						assert.ok(jQuery.sap.domById(oThingViewer.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
 						+ " should exist in the page");
 						done();
 					}, 500);
@@ -201,7 +201,7 @@
 			oOverlayContainer.close();
 			sap.ui.getCore().applyChanges();
 			var oDomRef = jQuery.sap.domById(oThingViewer.getId());
-			ok(!oDomRef, "Rendered ThingViewer should not exist in the page after destruction");
+			assert.ok(!oDomRef, "Rendered ThingViewer should not exist in the page after destruction");
 		});
 
 		QUnit.module("Aggregation overrides", {

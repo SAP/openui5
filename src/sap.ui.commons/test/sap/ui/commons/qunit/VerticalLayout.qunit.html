@@ -64,8 +64,8 @@
 		var oImageDom = jQuery.sap.domById('I1');
 		equals(oButtonDom.offsetLeft, oTextDom.offsetLeft, "Left offset of Button same as for TextField");
 		equals(oButtonDom.offsetLeft, oImageDom.offsetLeft, "Left offset of Button same as for Image");
-		ok(oButtonDom.offsetTop < oTextDom.offsetTop, "Top offset of Button < TextField");
-		ok(oTextDom.offsetTop < oImageDom.offsetTop, "Top offset of TextField < Image");
+		assert.ok(oButtonDom.offsetTop < oTextDom.offsetTop, "Top offset of Button < TextField");
+		assert.ok(oTextDom.offsetTop < oImageDom.offsetTop, "Top offset of TextField < Image");
 
 		// width must fit to defined one even if content is larger
 		var oLayout2Dom = jQuery.sap.domById('Layout2');
@@ -77,9 +77,9 @@
 		equals(oSliderDom.offsetLeft, oTextADom.offsetLeft, "Left offset of Slider same as for TextArea");
 		equals(oSliderDom.offsetLeft, oRatingDom.offsetLeft, "Left offset of Slider same as for RatingIndicator");
 		equals(oSliderDom.offsetLeft, oCheckBDom.offsetLeft, "Left offset of Slider same as for CheckBox");
-		ok(oSliderDom.offsetTop < oTextADom.offsetTop, "Top offset of Slider < TextArea");
-		ok(oTextADom.offsetTop < oRatingDom.offsetTop, "Top offset of TextArea < RatingIndicator");
-		ok(oRatingDom.offsetTop < oCheckBDom.offsetTop, "Top offset of RatingIndicator < CheckBox");
+		assert.ok(oSliderDom.offsetTop < oTextADom.offsetTop, "Top offset of Slider < TextArea");
+		assert.ok(oTextADom.offsetTop < oRatingDom.offsetTop, "Top offset of TextArea < RatingIndicator");
+		assert.ok(oRatingDom.offsetTop < oCheckBDom.offsetTop, "Top offset of RatingIndicator < CheckBox");
 
 
 	});

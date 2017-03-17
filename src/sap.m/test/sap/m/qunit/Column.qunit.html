@@ -172,7 +172,7 @@
 			sut._validateMinWidth(width);
 
 			//Assert
-			ok(true,"valid minScreenWidth : " + width);
+			assert.ok(true,"valid minScreenWidth : " + width);
 
 			//Cleanup
 			sut.destroy();
@@ -225,7 +225,7 @@
 			sut._addMedia();
 
 			//Assert
-			ok(sut._media);
+			assert.ok(sut._media);
 			assert.strictEqual(sut._media.matches, matches);
 
 			//Cleanup
@@ -243,11 +243,11 @@
 
 		//Act
 		sut._addMedia();
-		ok(sut._media);
+		assert.ok(sut._media);
 		sut._clearMedia();
 
 		//Assert
-		ok(!sut._media);
+		assert.ok(!sut._media);
 
 		//Cleanup
 		sut.destroy();
@@ -264,12 +264,12 @@
 					columns : sut
 				});
 
-		ok(!mediaAttachSpy.called, "Media handler not attached initially");
+		assert.ok(!mediaAttachSpy.called, "Media handler not attached initially");
 
 		parent.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
+		assert.ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
 
 		parent.destroy();
 	});
@@ -285,7 +285,7 @@
 		parent.addColumn(sut);
 		sap.ui.getCore().applyChanges();
 
-		ok(mediaAttachSpy.called, "Media handler called immediately");
+		assert.ok(mediaAttachSpy.called, "Media handler called immediately");
 
 		parent.destroy();
 	});
@@ -311,12 +311,12 @@
 		sut._notifyResize({from: 240}); // this is the default value for minScreenWidth="phone"
 		this.clock.tick(1);
 
-		ok(!tableResizeSpy.called, "Table resize not called, if media is the same");
+		assert.ok(!tableResizeSpy.called, "Table resize not called, if media is the same");
 
 		sut._notifyResize({from: 0});
 		this.clock.tick(1);
 
-		ok(tableResizeSpy.called, "Table resize called, if media is different");
+		assert.ok(tableResizeSpy.called, "Table resize called, if media is different");
 
 		parent.destroy();
 	});
@@ -339,7 +339,7 @@
 		page.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1);
-		ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
 
 		// Set contextual width to a parent (as for tablet or above) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 600});
@@ -368,7 +368,7 @@
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1);
 
-		ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
 
 		// Set contextual width to a parent (as for phone) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 100});
@@ -410,7 +410,7 @@
 		page.addContent(parent);
 		this.clock.tick(1);
 
-		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
 
 		// Now change the contextual width significantly (tablet starts at 600) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 600});
@@ -441,7 +441,7 @@
 		// Place the table in a container that already has contextual settings
 		page.addContent(parent);
 		this.clock.tick(1);
-		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
 
 		// Now remove contextual settings - the table will be rerendered as for desktop
 		page._applyContextualSettings({});
@@ -471,7 +471,7 @@
 		// Place the table in a container that already has contextual settings
 		page.addContent(parent);
 		this.clock.tick(1);
-		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for tablet since contextual width is 1000 already");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for tablet since contextual width is 1000 already");
 
 		// Now remove contextual settings - the table will not be rerendered as it is already showing the column
 		page._applyContextualSettings({});
@@ -534,8 +534,8 @@
 		result = sut.getStyleClass(true);
 
 		//Assert
-		ok(result.indexOf(className) !== -1, "style class was present in: " + result);
-		ok(result.indexOf(media) !== -1, "media class was present in: " + result);
+		assert.ok(result.indexOf(className) !== -1, "style class was present in: " + result);
+		assert.ok(result.indexOf(media) !== -1, "media class was present in: " + result);
 	});
 
 	QUnit.test("ShouldApplyAlign", function(assert) {

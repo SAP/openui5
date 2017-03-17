@@ -56,7 +56,7 @@
 		assert.strictEqual($textarea.length, 1, "TextArea has InputBase class");
 
 		// check assigned
-		ok(sut instanceof sap.m.InputBase, "TextArea inherited from InputBase");
+		assert.ok(sut instanceof sap.m.InputBase, "TextArea inherited from InputBase");
 
 		//Cleanup
 		sut.destroy();
@@ -96,7 +96,7 @@
 					core.applyChanges();
 				});
 
-				ok(true, "Setters called corretly");
+				assert.ok(true, "Setters called corretly");
 			},
 			sut = new sap.m.TextArea(config);
 
@@ -147,7 +147,7 @@
 
 		// check touchstart
 		sut._onTouchStart(tsEvent);
-		ok(tsEvent.isMarked("swipestartHandled"), "Touch start event is marked for swipe handling in case of scrolling");
+		assert.ok(tsEvent.isMarked("swipestartHandled"), "Touch start event is marked for swipe handling in case of scrolling");
 
 		// scroll down in text area
 		$textarea[0].scrollTop = 1;
@@ -155,7 +155,7 @@
 		// vertical scrolling : move finger up (scroll down)
 		tmEvent.touches[0].pageY -= 1;
 		sut._onTouchMove(tmEvent);
-		ok(tmEvent.isMarked(), "Touch move event is marked for vertical scrolling");
+		assert.ok(tmEvent.isMarked(), "Touch move event is marked for vertical scrolling");
 
 		// scroll to inital position
 		$textarea[0].scrollTop = 0;
@@ -168,7 +168,7 @@
 			}]
 		});
 		sut._onTouchMove(tmEvent);
-		ok(tmEvent.isMarked(), "Touch move event is marked for horizontal scrolling");
+		assert.ok(tmEvent.isMarked(), "Touch move event is marked for horizontal scrolling");
 
 		//Cleanup
 		sut.destroy();
@@ -190,9 +190,9 @@
 
 		var $textarea = $("textarea");
 		if (jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0) {
-			ok($textarea.data("events").touchmove, "Textarea has touchmove event");
+			assert.ok($textarea.data("events").touchmove, "Textarea has touchmove event");
 		} else {
-			ok($textarea._sapTest_dataEvents().touchmove, "Textarea has touchmove event");
+			assert.ok($textarea._sapTest_dataEvents().touchmove, "Textarea has touchmove event");
 		}
 
 		var spy = this.spy(sut, "_onTouchStart");
@@ -396,7 +396,7 @@
 		sap.ui.getCore().applyChanges();
 
 		oTA.focus();
-		ok(oTA.getFocusDomRef().scrollHeight <= oTA.getFocusDomRef().offsetHeight, "No scrollbar. Whole content is visible");
+		assert.ok(oTA.getFocusDomRef().scrollHeight <= oTA.getFocusDomRef().offsetHeight, "No scrollbar. Whole content is visible");
 		oTA.destroy();
 	});
 
@@ -411,8 +411,8 @@
 		sap.ui.getCore().applyChanges();
 
 		oTA.focus();
-		ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
-		ok(jQuery(oTA.getFocusDomRef()).css("max-height"), "There is a max-height defined");
+		assert.ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
+		assert.ok(jQuery(oTA.getFocusDomRef()).css("max-height"), "There is a max-height defined");
 		oTA.destroy();
 	});
 

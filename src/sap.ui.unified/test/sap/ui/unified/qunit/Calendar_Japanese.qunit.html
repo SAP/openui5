@@ -74,21 +74,21 @@
 					sDate = $Day.attr("data-sap-day");
 
 					if (i < iExpectedDaysOfOtherMonthBefore || i >= aDays.length - iExpectedDaysOfOtherMonthAfter) {
-						ok($Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is not in current month.");
+						assert.ok($Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is not in current month.");
 					} else {
 						iCount++;
-						ok(!$Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is in current month.");
+						assert.ok(!$Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is in current month.");
 						assert.equal(sDate, oFormat.format(oDate.getJSDate(), true), "Item " + i + " (" + sDate + ") has correct date (data-sap-day).");
 						assert.equal(jQuery($Day.children(".sapUiCalItemText")[0]).text(), "" + iCount, "Item " + i + " (" + sDate + ") has correct date (text).");
 						oDate.setUTCDate(oDate.getUTCDate() + 1);
 					}
 
 					if (sSelectedDate == sDate) {
-						ok($Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is selected.");
+						assert.ok($Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is selected.");
 						assert.equal(jQuery($Day.children(".sapUiCalItemText")[0]).text(), "" + iExpectedDay, "Item " + i + " (" + sDate + ") has selected date (text).");
 						assert.equal(i, iExpectedIndex, "Date has expected index")
 					} else {
-						ok(!$Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is not selected.");
+						assert.ok(!$Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is not selected.");
 					}
 				}
 

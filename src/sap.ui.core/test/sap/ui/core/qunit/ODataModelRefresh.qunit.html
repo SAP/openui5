@@ -99,8 +99,8 @@
 					oBinding1.refresh();
 				}
 				if (iRequestCount == 4) {
-					ok(!bChanged2, "No change event on same entity (not needed for context binding)");
-					ok(!bChanged3, "No change event on different entity");
+					assert.ok(!bChanged2, "No change event on same entity (not needed for context binding)");
+					assert.ok(!bChanged3, "No change event on different entity");
 					done();
 				}
 			});
@@ -124,9 +124,9 @@
 					oBinding1.refresh();
 				}
 				if (iRequestCount == 5) {
-					ok(bChanged2, "ListBinding with contained entity must fire Change event");
-					ok(!bChanged3, "No change event on ListBinding with different subset");
-					ok(!bChanged4, "No change event on ListBinding on different collection");
+					assert.ok(bChanged2, "ListBinding with contained entity must fire Change event");
+					assert.ok(!bChanged3, "No change event on ListBinding with different subset");
+					assert.ok(!bChanged4, "No change event on ListBinding on different collection");
 					done();
 				}
 			});
@@ -150,9 +150,9 @@
 					oBinding1.refresh();
 				}
 				if (iRequestCount == 5) {
-					ok(!bChanged2, "No change event on same entity (not needed for context binding)");
-					ok(!bChanged3, "No change event on not contained entity");
-					ok(!bChanged4, "No change event on unrelated entity from different collection");
+					assert.ok(!bChanged2, "No change event on same entity (not needed for context binding)");
+					assert.ok(!bChanged3, "No change event on not contained entity");
+					assert.ok(!bChanged4, "No change event on unrelated entity from different collection");
 					done();
 				}
 			});
@@ -176,9 +176,9 @@
 					oBinding1.refresh();
 				}
 				if (iRequestCount == 5) {
-					ok(bChanged2, "ListBinding with intersecting entities must fire Change event");
-					ok(!bChanged3, "No change event if there are not shared entities");
-					ok(!bChanged4, "No change event if bound to unrelated collection");
+					assert.ok(bChanged2, "ListBinding with intersecting entities must fire Change event");
+					assert.ok(!bChanged3, "No change event if there are not shared entities");
+					assert.ok(!bChanged4, "No change event if bound to unrelated collection");
 					done();
 				}
 			});
@@ -217,8 +217,8 @@
 				});
 			}
 			if (iRequestCount == 3) {
-				ok(bChanged1, "ListBinding with contained entity must refresh");
-				ok(!bChanged2, "No change event if bound to unrelated collection");
+				assert.ok(bChanged1, "ListBinding with contained entity must refresh");
+				assert.ok(!bChanged2, "No change event if bound to unrelated collection");
 				done();
 			}
 		});

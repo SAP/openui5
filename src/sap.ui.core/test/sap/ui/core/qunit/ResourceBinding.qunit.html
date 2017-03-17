@@ -41,7 +41,7 @@
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 		// model stores the binding first when attach change was called
-		ok(oBinding, "binding instantiated");
+		assert.ok(oBinding, "binding instantiated");
 		assert.equal(oBinding.getPath(),"TEST_TEXT","Binding Path set properly");
 	});
 
@@ -64,16 +64,16 @@
 
 		// fire change event
 		oBinding._fireChange();
-		ok(attach, "call back method was attached");
-		ok(!detach, "call back method was not detached");
+		assert.ok(attach, "call back method was attached");
+		assert.ok(!detach, "call back method was not detached");
 
 		oBinding.detachChange(callBackOnChange);
 		attach = false;
 		detach = true;
 		//refire change event
 		oBinding._fireChange();
-		ok(!attach, "call back method was not attached");
-		ok(detach, "call back method was detached");
+		assert.ok(!attach, "call back method was not attached");
+		assert.ok(detach, "call back method was detached");
 		attach = false;
 		detach = true;
 

@@ -43,8 +43,8 @@ QUnit.test("Create an HTMLView instance and check controller methods are replace
 	var oView = sap.ui.htmlview("example.designmode.test01");
 	var oController = oView.getController();
 
-	ok(typeof oController !== "undefined", "Controller is not undefined");
-	ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
+	assert.ok(typeof oController !== "undefined", "Controller is not undefined");
+	assert.ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
 
 	oView.destroy();
 });
@@ -54,8 +54,8 @@ QUnit.test("Create a XMLView instance and check controller methods are replaced 
 	var oView = sap.ui.xmlview("example.designmode.test01");
 	var oController = oView.getController();
 
-	ok(typeof oController !== "undefined", "Controller is not undefined");
-	ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
+	assert.ok(typeof oController !== "undefined", "Controller is not undefined");
+	assert.ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
 
 	oView.destroy();
 });

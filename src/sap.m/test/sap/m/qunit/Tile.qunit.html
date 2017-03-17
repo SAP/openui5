@@ -114,7 +114,7 @@
 
 				// Assert
 
-				ok(sut.$().hasClass("sapMTileDrag"),"has drag class set");
+				assert.ok(sut.$().hasClass("sapMTileDrag"),"has drag class set");
 		});
 
 
@@ -155,8 +155,8 @@
 			sap.ui.test.qunit.triggerTouchEvent("touchstart",sut.getDomRef(),{clientX: 0, clientY: 0});
 
 			// Assert
-			ok(sut.$().hasClass("sapMTileActive"));
-			ok(sut.$().hasClass("sapMTileActive-CTX"));
+			assert.ok(sut.$().hasClass("sapMTileActive"));
+			assert.ok(sut.$().hasClass("sapMTileActive-CTX"));
 		});
 
 		QUnit.test("ShouldReactOnTouchEnd", function(assert) {
@@ -172,8 +172,8 @@
 			sap.ui.test.qunit.triggerTouchEvent("touchend",sut.getDomRef());
 
 			//Assert
-			ok(!sut.$().hasClass("sapMTileActive"));
-			ok(!sut.$().hasClass("sapMTileActive-CTX"))
+			assert.ok(!sut.$().hasClass("sapMTileActive"));
+			assert.ok(!sut.$().hasClass("sapMTileActive-CTX"))
 
 		});
 
@@ -189,8 +189,8 @@
 			sap.ui.test.qunit.triggerTouchEvent("touchmove",sut.getDomRef(), {clientX: 100, clientY: 100});
 
 			//Assert
-			ok(!sut.$().hasClass("sapMTileActive"));
-			ok(!sut.$().hasClass("sapMTileActive-CTX"))
+			assert.ok(!sut.$().hasClass("sapMTileActive"));
+			assert.ok(!sut.$().hasClass("sapMTileActive-CTX"))
 
 		});
 

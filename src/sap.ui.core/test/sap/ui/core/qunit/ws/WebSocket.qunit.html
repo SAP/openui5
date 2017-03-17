@@ -34,7 +34,7 @@
 				}
 
 				if (sap.ui.Device.support.websocket) {
-					ok(theEx === undefined, 'No exception was thrown.');
+					assert.ok(theEx === undefined, 'No exception was thrown.');
 				} else {
 					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
@@ -51,7 +51,7 @@
 				}
 
 				if (sap.ui.Device.support.websocket) {
-					ok(theEx === undefined, 'No exception was thrown.');
+					assert.ok(theEx === undefined, 'No exception was thrown.');
 				} else {
 					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
@@ -68,7 +68,7 @@
 				}
 
 				if (sap.ui.Device.support.websocket) {
-					ok(theEx === undefined, 'No exception was thrown.');
+					assert.ok(theEx === undefined, 'No exception was thrown.');
 				} else {
 					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
@@ -85,7 +85,7 @@
 					theEx = ex;
 				}
 
-				ok(theEx !== undefined, "No Url provided. Exception was raised.");
+				assert.ok(theEx !== undefined, "No Url provided. Exception was raised.");
 
 				if (sap.ui.Device.support.websocket) {
 					assert.equal(theEx.message, 'sUrl must be a string.', 'Correct exception message.');
@@ -105,7 +105,7 @@
 					theEx = ex;
 				}
 
-				ok(theEx !== undefined, "Wrong protocol parameter. Exception was raised.");
+				assert.ok(theEx !== undefined, "Wrong protocol parameter. Exception was raised.");
 
 				if (sap.ui.Device.support.websocket) {
 					assert.equal(theEx.message, 'aProtocols must be a string, array of strings or undefined.', 'Correct exception message.');

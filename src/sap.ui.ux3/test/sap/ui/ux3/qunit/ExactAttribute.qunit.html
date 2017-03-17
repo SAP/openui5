@@ -118,49 +118,49 @@
 			var fSupply = function(oEvent){
 				var oAttribute = oEvent.getParameter("attribute");
 				if(bSupplyFunctionCallExpected){
-					ok(oAtt.getSupplyActive(), "supplyActive must be set to true");
+					assert.ok(oAtt.getSupplyActive(), "supplyActive must be set to true");
 					equals(oAtt.getId(), oAttribute.getId(), "Parameter attribute of supply event is correct.");
 				}else{
-					ok(false, "Supply function must not be called");
+					assert.ok(false, "Supply function must not be called");
 				}
 			};
 
 			var fCheckSupply = function(fCallback){
 				bSupplyFunctionCallExpected = true;
 				fCallback();
-				ok(!oAtt.getSupplyActive(), "supplyActive must be set to false");
+				assert.ok(!oAtt.getSupplyActive(), "supplyActive must be set to false");
 				bSupplyFunctionCallExpected = false;
 				oAtt.getAttributes(); //No supply function should be called
 			};
 
-			ok(1, "--- SUPPLY DISABLED ---");
+			assert.ok(1, "--- SUPPLY DISABLED ---");
 			//There should be no further checks be visible in the result
 			oAtt = new sap.ui.ux3.ExactAttribute({supplyActive: false});
 			oAtt.attachSupplyAttributes(fSupply);
 			oAtt.setSelected(true);
 
-			ok(1, "--- SUPPLY ON GETATTRIBUTES ---");
+			assert.ok(1, "--- SUPPLY ON GETATTRIBUTES ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: false});
 			oAtt.attachSupplyAttributes(fSupply);
 			fCheckSupply(function(){ oAtt.getAttributes(); });
 
-			ok(1, "--- SUPPLY ON ATTACH ---");
+			assert.ok(1, "--- SUPPLY ON ATTACH ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: true});
 			fCheckSupply(function(){ oAtt.attachSupplyAttributes(fSupply); });
 
-			ok(1, "--- SUPPLY ON SELECT ---");
+			assert.ok(1, "--- SUPPLY ON SELECT ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: false});
 			oAtt.attachSupplyAttributes(fSupply);
 			fCheckSupply(function(){ oAtt.setSelected(true); });
 
-			ok(1, "--- NO AUTO SUPPLY ---");
+			assert.ok(1, "--- NO AUTO SUPPLY ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: false});
 			oAtt.attachSupplyAttributes(fSupply);
 			fCheckSupply(function(){ oAtt.setSelected(true); });
 			oAtt.setSelected(false);
 			oAtt.setSelected(true);
 
-			ok(1, "--- AUTO SUPPLY ---");
+			assert.ok(1, "--- AUTO SUPPLY ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: false, autoActivateSupply: true});
 			oAtt.attachSupplyAttributes(fSupply);
 			fCheckSupply(function(){ oAtt.setSelected(true); });
@@ -184,20 +184,20 @@
 			};
 			fCurrentTestFunction = fDefaultTestFunction;
 			var fFailTestFunction = function(oTestChangeListener, sType, oAttribute){
-				ok(false, "Change listener must not be called");
+				assert.ok(false, "Change listener must not be called");
 			};
 
-			ok(1, "--- INIT ---");
-			ok(!oAtt.getChangeListener(), "Initially no change listener is used");
-			ok(!oSubAtt.getChangeListener(), "Initially no change listener is used (Sub-Attribute)");
+			assert.ok(1, "--- INIT ---");
+			assert.ok(!oAtt.getChangeListener(), "Initially no change listener is used");
+			assert.ok(!oSubAtt.getChangeListener(), "Initially no change listener is used (Sub-Attribute)");
 
 			oAtt.setChangeListener(oTestChangeListener);
 
-			ok(oTestChangeListener === oAtt.getChangeListener(), "Change listener is used");
-			ok(!oSubAtt.getChangeListener(), "Sub attribute still uses no change listener");
+			assert.ok(oTestChangeListener === oAtt.getChangeListener(), "Change listener is used");
+			assert.ok(!oSubAtt.getChangeListener(), "Sub attribute still uses no change listener");
 
 			//Check attribute changes
-			ok(1, "--- ATTRIBUTES ---");
+			assert.ok(1, "--- ATTRIBUTES ---");
 			sExpectedType = "text";
 			oAtt.setText("X");
 			sExpectedType = "tooltip";
@@ -213,7 +213,7 @@
 			oAtt.setAutoActivateSupply(true);
 
 			//Check aggregation changes
-			ok(1, "--- ADD/INSERT ---");
+			assert.ok(1, "--- ADD/INSERT ---");
 			sExpectedType = "attributes";
 			fCurrentTestFunction = fDefaultTestFunction;
 
@@ -228,14 +228,14 @@
 				fCurrentTestFunction = fDefaultTestFunction;
 			};
 
-			ok(1, "--- REMOVE ---");
+			assert.ok(1, "--- REMOVE ---");
 			fCurrentTestFunction = fDefaultTestFunction;
 			sExpectedType = "attributes";
 			oAtt.removeAttribute(2);
 			oAtt.removeAttribute(1);
 			oAtt.removeAllAttributes();
 
-			ok(1, "--- GETATTRIBUTES ---");
+			assert.ok(1, "--- GETATTRIBUTES ---");
 			fCurrentTestFunction = fFailTestFunction;
 			oAtt.getAttributes();
 
@@ -243,32 +243,32 @@
 			oAtt.attachSupplyAttributes(function(){
 				sExpectedType = "attributes";
 				fCurrentTestFunction = function(oTestChangeListener, sType, oAttribute){
-					ok(!oTestChangeListener._bActive, "Change listener is not active");
+					assert.ok(!oTestChangeListener._bActive, "Change listener is not active");
 					equals(sType, sExpectedType, "Expected change type");
 					equals(oAttribute.getId(), oAtt.getId(), "Expected changed attribute");
 				};
 				oAtt.addAttribute(new sap.ui.ux3.ExactAttribute("att1_4"));
-				ok(!oAtt.getAttributes()[0].getChangeListener(), "Sub attribute uses no change listener");
+				assert.ok(!oAtt.getAttributes()[0].getChangeListener(), "Sub attribute uses no change listener");
 				fCurrentTestFunction = fDefaultTestFunction;
 			});
 			oAtt.getAttributes();
 
 			//Bubbling
-			ok(1, "--- BUBBLING ---");
+			assert.ok(1, "--- BUBBLING ---");
 			oSubAtt = oAtt.getAttributes()[0];
 			fCurrentTestFunction = function(oTestChangeListener, sType, oAttribute){
 				equals(sType, sExpectedType, "Expected change type");
 				equals(oAttribute.getId(), oSubAtt.getId(), "Expected changed attribute");
 			};
 			sExpectedType = "text";
-			ok(!oSubAtt.getChangeListener(), "Sub attribute still uses no change listener");
+			assert.ok(!oSubAtt.getChangeListener(), "Sub attribute still uses no change listener");
 			oSubAtt.setText("X");
 
 			//Check exit
-			ok(1, "--- EXIT ---");
+			assert.ok(1, "--- EXIT ---");
 			oAtt.setChangeListener();
-			ok(!oAtt.getChangeListener(), "No change listener is used");
-			ok(!oSubAtt.getChangeListener(), "Sub attribute uses also no change listener");
+			assert.ok(!oAtt.getChangeListener(), "No change listener is used");
+			assert.ok(!oSubAtt.getChangeListener(), "Sub attribute uses also no change listener");
 		});
 
 	</script>

@@ -161,7 +161,7 @@
 			QUnit.test("mandatory header properties", function(assert) {
 				this.start();
 				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(aFESR[0].length, 32, "root_context_id - length");
 				assert.strictEqual(aFESR[1].length, 32, "transaction_id - length");
@@ -180,7 +180,7 @@
 			QUnit.test("optional header properties", function(assert) {
 				this.start();
 				var sFESRopt = this.spy.args[1][1];
-				ok(sFESRopt, "optional header present");
+				assert.ok(sFESRopt, "optional header present");
 				var aFESRopt = sFESRopt.split(",");
 				assert.ok(aFESRopt[0].length <= 20, "application_name - length");
 				assert.ok(aFESRopt[1].length <= 20, "step_name - length");
@@ -211,7 +211,7 @@
 				this.start();
 
 				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 				assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
@@ -236,7 +236,7 @@
 				this.start();
 
 				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 				assert.strictEqual(parseInt(aFESR[3]), 4, "client_round_trip_time");
@@ -262,7 +262,7 @@
 				this.start();
 
 				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 				assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
@@ -287,7 +287,7 @@
 
 				// sixth call of setRequestHeader
 				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 				assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");

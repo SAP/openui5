@@ -53,7 +53,7 @@
 		if (!bSupportedEnv) {
 			QUnit.start();
 			QUnit.test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
-				ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
+				assert.ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
 			});
 		} else {
 			sap.ui.require(["sap/ui/core/cache/LRUPersistentCache"], function (classCacheManager) {
@@ -90,7 +90,7 @@
 							assert.deepEqual(result, parent, "Gotten value with a circular reference must be the same as the one that is previously set");
 						}).catch(function (e) {
 							oCache.stringify = JSON.stringify;
-							ok(false, "Test didn't go well: " + e)
+							assert.ok(false, "Test didn't go well: " + e)
 						});
 			});
 
@@ -279,11 +279,11 @@
 				}).then(function () {
 					return oCache.has("key1_1.36.1");
 				}).then(function (bHas) {
-					ok(bHas, "CacheManager must has() entry for key 'key1_1.36.1'");
+					assert.ok(bHas, "CacheManager must has() entry for key 'key1_1.36.1'");
 				}).then(function () {
 					return oCache.has("key2_1.36.1");
 				}).then(function (bHas) {
-					ok(bHas, "CacheManager must has() entry for key 'key2_1.36.1'");
+					assert.ok(bHas, "CacheManager must has() entry for key 'key2_1.36.1'");
 				});
 			});
 
@@ -303,11 +303,11 @@
 				}).then(function () {
 					return oCache.has("key1_1.36.1");
 				}).then(function (bHas) {
-					ok(!bHas, "CacheManager must not has() entry for key 'key1_1.36.1'");
+					assert.ok(!bHas, "CacheManager must not has() entry for key 'key1_1.36.1'");
 				}).then(function () {
 					return oCache.has("key2_1.36.1");
 				}).then(function (bHas) {
-					ok(!bHas, "CacheManager must not has() entry for key 'key2_1.36.2'");
+					assert.ok(!bHas, "CacheManager must not has() entry for key 'key2_1.36.2'");
 					return oCache.set("key1_1.36.2", "value");
 				}).then(function () {
 					return verifyCacheEntries({"key1_1.36.2": "value"}, null);
@@ -553,7 +553,7 @@
 					});
 
 					aNonExistingIndexes.forEach(function (iIndex) {
-						ok(!oCache._metadata.__byIndex__.hasOwnProperty(iIndex), "LRU map structure __byIndex__ should not contain key [" + iIndex + "]");
+						assert.ok(!oCache._metadata.__byIndex__.hasOwnProperty(iIndex), "LRU map structure __byIndex__ should not contain key [" + iIndex + "]");
 					});
 				},
 
@@ -599,7 +599,7 @@
 					mru = oCache._mru;
 
 					return oCache.set("password2", "mysecret").then(function () {
-						ok(!true, "Set of password2 should have failed. See the test mock!!!");
+						assert.ok(!true, "Set of password2 should have failed. See the test mock!!!");
 					}, function () {
 						return self.assertItemCount(1, "After failing to add item the item count doesn't change");
 					})
@@ -622,7 +622,7 @@
 					mru = oCache._mru;
 
 					return oCache.del("password2").then(function () {
-						ok(!true, "Delete of password2 should have failed. See the test mock!!!");
+						assert.ok(!true, "Delete of password2 should have failed. See the test mock!!!");
 					}, function () {
 						return self.assertItemCount(2, "After failing to delete item the item count doesn't change");
 					})
@@ -672,7 +672,7 @@
 						}).then(function () {
 							return oCache.set("d", "D");
 						}).then(function () {
-							ok(true, "Adding new element, that force space cleanup, should be successful");
+							assert.ok(true, "Adding new element, that force space cleanup, should be successful");
 							/* Usually the gives the chance of CM to update its
 							 / indexes(and item count) as this is happening asynchronously so the get does not involves any sets in the indexed db
 							 */

@@ -284,7 +284,7 @@
 			qutils.triggerKeyboardEvent(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB);
 
 			// assert
-			ok(jQuery.sap.byId('firstEnabledButton').is(":focus"), 'The first enabled button should be focused');
+			assert.ok(jQuery.sap.byId('firstEnabledButton').is(":focus"), 'The first enabled button should be focused');
 
 			// cleanup
 			oActionSelect.destroy();
@@ -340,7 +340,7 @@
 			qutils.triggerKeyboardEvent(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB, true, false, false);
 
 			// assert
-			ok(jQuery.sap.byId('lastEnabledButton').is(":focus"), 'The last enabled button should be focused');
+			assert.ok(jQuery.sap.byId('lastEnabledButton').is(":focus"), 'The last enabled button should be focused');
 
 			// cleanup
 			oActionSelect.destroy();

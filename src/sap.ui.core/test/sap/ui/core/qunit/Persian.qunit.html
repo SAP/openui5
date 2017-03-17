@@ -60,10 +60,10 @@
 			var oPersianDate;
 
 			oPersianDate = new sap.ui.core.date.Persian("invalid Persian date timestamp");
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as timestamp must return an invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as timestamp must return an invalid date");
 
 			oPersianDate = new sap.ui.core.date.Persian(new Object());
-			ok(isInvalid(oPersianDate), "Constructor with object as parameter must return an invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with object as parameter must return an invalid date");
 
 			oPersianDate = new sap.ui.core.date.Persian(0); //1, January 1970 = 11 Dey 1348 (11.10.1348)
 			var now = new Date(0);
@@ -88,50 +88,50 @@
 			var oPersianDate = null;
 
 			oPersianDate = new sap.ui.core.date.Persian(1430, 0, "alabala");
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as day must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as day must return invalid date");
 
 			oPersianDate = new sap.ui.core.date.Persian(new Object(), 0)
-			ok(isInvalid(oPersianDate), "Constructor with object as year must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with object as year must return invalid date");
 
 			oPersianDate = new sap.ui.core.date.Persian(1430, new Object());
-			ok(isInvalid(oPersianDate), "Constructor with object as month must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with object as month must return invalid date");
 
 			oPersianDate = new sap.ui.core.date.Persian(1430, 0, new Object());
-			ok(isInvalid(oPersianDate), "Constructor with object as day must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with object as day must return invalid date");
 
 			oPersianDate = new sap.ui.core.date.Persian(1430, 0, 1, new Object());
-			ok(isInvalid(oPersianDate), "Constructor with object as hours must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with object as hours must return invalid date");
 
 			oPersianDate = new sap.ui.core.date.Persian(1430, 0, 1, 0, new Object());
-			ok(isInvalid(oPersianDate), "Constructor with object as minutes must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with object as minutes must return invalid date");
 
 			oPersianDate = new sap.ui.core.date.Persian(1430, 0, 1, 0, 0, new Object());
-			ok(isInvalid(oPersianDate), "Constructor with object as seconds must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with object as seconds must return invalid date");
 
 			oPersianDate = oPersianDate = new sap.ui.core.date.Persian(1430, 0, 1, 0, 0, 0, new Object());
-			ok(isInvalid(oPersianDate), "Constructor with object as milliseconds must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with object as milliseconds must return invalid date");
 
 			// ------------- string -----------------------------
 			oPersianDate = oPersianDate = new sap.ui.core.date.Persian("a", 0);
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as year must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as year must return invalid date");
 
 			oPersianDate = oPersianDate = new sap.ui.core.date.Persian("1430", "a");
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as month must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as month must return invalid date");
 
 			oPersianDate = oPersianDate = new sap.ui.core.date.Persian(1430, 0, "a");
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as month must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as month must return invalid date");
 
 			oPersianDate = oPersianDate = new sap.ui.core.date.Persian(1430, 0, 1, "a");
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as hours must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as hours must return invalid date");
 
 			oPersianDate = oPersianDate = new sap.ui.core.date.Persian(1430, 0, 1, 0, "a");
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as minutes must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as minutes must return invalid date");
 
 			oPersianDate = oPersianDate = new sap.ui.core.date.Persian(1430, 0, 1, 0, 0, "a");
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as seconds must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as seconds must return invalid date");
 
 			oPersianDate = oPersianDate = new sap.ui.core.date.Persian(1430, 0, 1, 0, 0, 0, "a");
-			ok(isInvalid(oPersianDate), "Constructor with invalid string as milliseconds must return invalid date");
+			assert.ok(isInvalid(oPersianDate), "Constructor with invalid string as milliseconds must return invalid date");
 		});
 
 		QUnit.test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {

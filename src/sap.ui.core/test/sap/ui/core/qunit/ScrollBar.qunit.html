@@ -58,15 +58,15 @@
 	 	 vSB = sap.ui.getCore().getControl("vertSB");
 		 hSB = sap.ui.getCore().getControl("horiSB");
 
-		ok((vSB !== undefined) && (vSB != null), "vSB should not be null or undefined");
-		ok((hSB !== undefined) && (hSB != null), "hSB should not be null or undefined");
+		assert.ok((vSB !== undefined) && (vSB != null), "vSB should not be null or undefined");
+		assert.ok((hSB !== undefined) && (hSB != null), "hSB should not be null or undefined");
 
 	});
 
 	QUnit.test("Orientation", function(assert) {
-		ok(((vSB.getVertical() !== undefined)), "should not be null or undefined");
+		assert.ok(((vSB.getVertical() !== undefined)), "should not be null or undefined");
 		assert.equal(vSB.getVertical(), true, "This is vertical scrollbar");
-		ok(((hSB.getVertical() !== undefined)), "should not be null or undefined");
+		assert.ok(((hSB.getVertical() !== undefined)), "should not be null or undefined");
 		assert.equal(hSB.getVertical(), false, "This is horizontal scrollbar");
 	});
 

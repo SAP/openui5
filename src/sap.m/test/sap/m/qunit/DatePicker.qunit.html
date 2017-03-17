@@ -111,8 +111,8 @@
 			QUnit.module("initialization");
 
 			QUnit.test("Date formatter", function(assert) {
-				ok(!oDP1.getValue(), "DP1: no value");
-				ok(!oDP1.getDateValue(), "DP1: no DateValue");
+				assert.ok(!oDP1.getValue(), "DP1: no value");
+				assert.ok(!oDP1.getDateValue(), "DP1: no DateValue");
 				assert.equal(oDP2.getValue(), "2014-04-01", "DP2: Value in internal format set");
 				assert.equal(oDP2.getDateValue().getTime(), new Date("2014", "03", "01").getTime(), "DP2: DateValue set");
 				assert.equal(oDP3.getValue(), "4/1/14", "DP3: Value in internal format set");
@@ -126,9 +126,9 @@
 			});
 
 			QUnit.test("calendar and popup", function(assert) {
-				ok(!sap.ui.unified || !sap.ui.unified.Calendar, "sap.ui.unified.Calendar not loaded");
-				ok(!sap.ui.getCore().byId("DP1-cal"), "DP1: no calender exists");
-				ok(!oDP1._oPopup, "DP1: no popup exists");
+				assert.ok(!sap.ui.unified || !sap.ui.unified.Calendar, "sap.ui.unified.Calendar not loaded");
+				assert.ok(!sap.ui.getCore().byId("DP1-cal"), "DP1: no calender exists");
+				assert.ok(!oDP1._oPopup, "DP1: no popup exists");
 			});
 
 			QUnit.module("Rendering");
@@ -136,12 +136,12 @@
 			QUnit.test("styling", function(assert) {
 				assert.equal(jQuery("#DP1").css("width"), jQuery("body").css("width"), "Default width is 100%"); // comparision with 100% will not work, because with is returned in px
 				assert.equal(jQuery("#DP2").css("width"), "250px", "given width used");
-				ok(jQuery("#DP1-icon")[0], "Calendar icon rendered");
-				ok(!jQuery("#DP3-cal")[0], "no calendar rendered");
+				assert.ok(jQuery("#DP1-icon")[0], "Calendar icon rendered");
+				assert.ok(!jQuery("#DP3-cal")[0], "no calendar rendered");
 			});
 
 			QUnit.test("date format", function(assert) {
-				ok(!jQuery("#DP1").children("div.sapMInputDivWrapper").children("input").val(), "DP1 : empty date");
+				assert.ok(!jQuery("#DP1").children("div.sapMInputDivWrapper").children("input").val(), "DP1 : empty date");
 				assert.equal(jQuery("#DP2").children("div.sapMInputDivWrapper").children("input").val(), "01+04+2014", "DP2: defined output format used");
 				assert.equal(jQuery("#DP3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014", "DP3: defined output format used");
 				assert.equal(jQuery("#DP5").children("div.sapMInputDivWrapper").children("input").val(), "Safar 10, 1437 AH", "DP5: defined islamic output format used");
@@ -162,7 +162,7 @@
 				jQuery("#DP2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				assert.equal(sId, "DP2", "Change event fired");
 				assert.equal(sValue, "32+04+2014", "Value of event has entered value if invalid");
-				ok(!bValid, "Value is not valid");
+				assert.ok(!bValid, "Value is not valid");
 				assert.equal(oDP2.getValue(), "32+04+2014", "Value has entered value if invalid");
 				assert.equal(oDP2.getDateValue().getTime(), new Date("2014", "03", "01").getTime(), "DateValue not changed set");
 
@@ -176,7 +176,7 @@
 				jQuery("#DP2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				assert.equal(sId, "DP2", "Change event fired");
 				assert.equal(sValue, "2014-04-02", "Value in internal format priovided");
-				ok(bValid, "Value is valid");
+				assert.ok(bValid, "Value is valid");
 				assert.equal(oDP2.getValue(), "2014-04-02", "Value in internal format set");
 				assert.equal(oDP2.getDateValue().getTime(), new Date("2014", "03", "02").getTime(), "DateValue set");
 
@@ -190,8 +190,8 @@
 				jQuery("#DP6").children("div.sapMInputDivWrapper").children("input").val("13/23/2015");
 				qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DP6").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-				ok(bParseError, "parse error fired");
-				ok(!bValidationSuccess, "no validation success fired");
+				assert.ok(bParseError, "parse error fired");
+				assert.ok(!bValidationSuccess, "no validation success fired");
 				assert.equal(sId, "DP6", "ID of control");
 				assert.equal(sValue, "13/23/2015", "entered Value priovided");
 				assert.equal(oDP6.getValue(), "13/23/2015", "entered Value in set");
@@ -207,8 +207,8 @@
 				jQuery("#DP6").children("div.sapMInputDivWrapper").children("input").val("01/01/15");
 				qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DP6").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-				ok(!bParseError, "no parse error fired");
-				ok(bValidationSuccess, "validation success fired");
+				assert.ok(!bParseError, "no parse error fired");
+				assert.ok(bValidationSuccess, "validation success fired");
 				assert.equal(sId, "DP6", "ID of control");
 				assert.equal(sValue, "1/1/15", "Value in binding format priovided");
 				assert.equal(oDP6.getValue(), "1/1/15", "Value in internal format set");
@@ -309,11 +309,11 @@
 				sId = "";
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(sap.ui.unified.Calendar, "sap.ui.unified.Calendar now loaded");
-				ok(sap.ui.getCore().byId("DP3-cal"), "DP3: calender exists");
-				ok(oDP3._oPopup, "DP3: popup exists");
-				ok(jQuery("#DP3-cal")[0], "calendar rendered");
-				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				assert.ok(sap.ui.unified.Calendar, "sap.ui.unified.Calendar now loaded");
+				assert.ok(sap.ui.getCore().byId("DP3-cal"), "DP3: calender exists");
+				assert.ok(oDP3._oPopup, "DP3: popup exists");
+				assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 
 				var aDays = jQuery("#DP3-cal--Month0-days").find(".sapUiCalItem");
 				var oDay;
@@ -327,7 +327,7 @@
 
 				// use ENTER to not run into itemNavigation
 				qutils.triggerKeyboardEvent(oDay, jQuery.sap.KeyCodes.ENTER, false, false, false);
-				ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
+				assert.ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 				assert.equal(sId, "DP3", "Change event fired");
 				assert.equal(sValue, "4/10/14", "Value in internal format priovided");
 				assert.equal(oDP3.getValue(), "4/10/14", "Value in internal format set");
@@ -337,7 +337,7 @@
 				sap.ui.getCore().applyChanges();
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(!jQuery("#DP3-cal").is(":visible"), "Radonly DatePicker: calendar is not visible");
+				assert.ok(!jQuery("#DP3-cal").is(":visible"), "Radonly DatePicker: calendar is not visible");
 
 				oDP3.setEditable(true);
 				sap.ui.getCore().applyChanges();
@@ -368,7 +368,7 @@
 				jQuery("#DP3").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				assert.equal(sId, "DP3", "Change event fired");
 				assert.equal(sValue, "invalid", "Value of event has entered value if invalid");
-				ok(!bValid, "Value is not valid");
+				assert.ok(!bValid, "Value is not valid");
 				assert.equal(oDP3.getValue(), "invalid", "Value has entered value if invalid");
 				assert.equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue not changed set");
 				bChange = false;
@@ -376,14 +376,14 @@
 				bValid = true;
 				sId = "";
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(jQuery("#DP3-cal")[0], "calendar rendered");
-				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 				jQuery("#DP3-cal--Month0-20140410").focus();
 				qutils.triggerKeyboardEvent("DP3-cal--Month0-20140410", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
+				assert.ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 				assert.equal(sId, "DP3", "Change event fired");
 				assert.equal(sValue, "April 10, 2014", "Value in internal format priovided");
-				ok(bValid, "Value is valid");
+				assert.ok(bValid, "Value is valid");
 				assert.equal(oDP3.getValue(), "April 10, 2014", "Value in internal format set");
 				assert.equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue set");
 			});
@@ -392,49 +392,49 @@
 				var oMinDate = new Date(1,0,1);
 				oMinDate.setFullYear("0001");
 				var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
-				ok(!oDP3.getMinDate(), "DP3: no min date set");
-				ok(!oDP3.getMaxDate(), "DP3: no max date set");
-				ok(jQuery.sap.equal(oDP3._oMinDate, oMinDate), "DP3: default min date");
-				ok(jQuery.sap.equal(oDP3._oMaxDate, oMaxDate), "DP3: default max date");
+				assert.ok(!oDP3.getMinDate(), "DP3: no min date set");
+				assert.ok(!oDP3.getMaxDate(), "DP3: no max date set");
+				assert.ok(jQuery.sap.equal(oDP3._oMinDate, oMinDate), "DP3: default min date");
+				assert.ok(jQuery.sap.equal(oDP3._oMaxDate, oMaxDate), "DP3: default max date");
 
 				var oNewMinDate = new Date(2014,0,1);
 				var oNewMaxDate = new Date(2014,11,31);
 				oDP3.setMinDate(oNewMinDate);
 				oDP3.setMaxDate(oNewMaxDate);
 				sap.ui.getCore().applyChanges();
-				ok(jQuery.sap.equal(oDP3.getMinDate(), oNewMinDate), "DP3: new min date property");
-				ok(jQuery.sap.equal(oDP3.getMaxDate(), oNewMaxDate), "DP3: new max date property");
-				ok(jQuery.sap.equal(oDP3._oMinDate, oNewMinDate), "DP3: new min date");
-				ok(jQuery.sap.equal(oDP3._oMaxDate, oNewMaxDate), "DP3: new max date");
+				assert.ok(jQuery.sap.equal(oDP3.getMinDate(), oNewMinDate), "DP3: new min date property");
+				assert.ok(jQuery.sap.equal(oDP3.getMaxDate(), oNewMaxDate), "DP3: new max date property");
+				assert.ok(jQuery.sap.equal(oDP3._oMinDate, oNewMinDate), "DP3: new min date");
+				assert.ok(jQuery.sap.equal(oDP3._oMaxDate, oNewMaxDate), "DP3: new max date");
 
 				var oNewDate = new Date(2016, 1, 15);
 				oDP3.setDateValue(oNewDate);
-				ok(!jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new invalid date not set");
+				assert.ok(!jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new invalid date not set");
 				assert.equal(oDP3.getValue(), "", "DP3: new invalid date not displayed");
 
 				oDP3.setDateValue();
 				oDP3._fillDateRange();
 				var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
 				var oFocusedDate = oDP3._oCalendar._getFocusedDate().getJSDate();
-				ok(jQuery.sap.equal(oFocusedDate, oNewMinDateUTC), "DP3: focused date equals min date when current date is out of the min/max range");
+				assert.ok(jQuery.sap.equal(oFocusedDate, oNewMinDateUTC), "DP3: focused date equals min date when current date is out of the min/max range");
 
 				oNewDate = new Date(2014, 0, 1);
 				oDP3.setDateValue(oNewDate);
-				ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new valid date set");
+				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new valid date set");
 				assert.equal(oDP3.getValue(), "1/1/14", "DP3: new valid date displayed");
 
 				bChange = false;
 				oDP3.focus();
 				qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
-				ok(!bChange, "DP3: No change event fired by PAGE_DOWN");
-				ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: date not changed by PAGE_DOWN");
+				assert.ok(!bChange, "DP3: No change event fired by PAGE_DOWN");
+				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: date not changed by PAGE_DOWN");
 				assert.equal(oDP3.getValue(), "1/1/14", "DP3: value not changed by PAGE_DOWN");
 
 				bChange = false;
 				oDP3.focus();
 				qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
-				ok(bChange, "DP3: change event fired by PAGE_UP+shift+ctrl");
-				ok(jQuery.sap.equal(oDP3.getDateValue(), oNewMaxDate), "DP3: date changed by PAGE_DOWN+shift+ctrl");
+				assert.ok(bChange, "DP3: change event fired by PAGE_UP+shift+ctrl");
+				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewMaxDate), "DP3: date changed by PAGE_DOWN+shift+ctrl");
 				assert.equal(oDP3.getValue(), "12/31/14", "DP3: value changed by PAGE_DOWN+shift+ctrl");
 
 				bChange = false;
@@ -443,27 +443,27 @@
 				jQuery("#DP3").children("div.sapMInputDivWrapper").children("input").val("December 31, 2015");
 				qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DP3").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-				ok(bChange, "DP3: change event fired by typing invalid date");
-				ok(!bValid, "DP3: invalid typed date is not valid")
-				ok(jQuery.sap.equal(oDP3.getDateValue(), oNewMaxDate), "DP3: dateValue not changed by invalid typing");
+				assert.ok(bChange, "DP3: change event fired by typing invalid date");
+				assert.ok(!bValid, "DP3: invalid typed date is not valid")
+				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewMaxDate), "DP3: dateValue not changed by invalid typing");
 
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(jQuery.sap.equal(oDP3._oCalendar.getMinDate(), oDP3.getMinDate()), "Calendar has MinDate");
-				ok(jQuery.sap.equal(oDP3._oCalendar.getMaxDate(), oDP3.getMaxDate()), "Calendar has MaxDate");
+				assert.ok(jQuery.sap.equal(oDP3._oCalendar.getMinDate(), oDP3.getMinDate()), "Calendar has MinDate");
+				assert.ok(jQuery.sap.equal(oDP3._oCalendar.getMaxDate(), oDP3.getMaxDate()), "Calendar has MaxDate");
 				qutils.triggerEvent("click", "DP3-icon");
 
 				oDP3.setMinDate();
 				oDP3.setMaxDate();
 				sap.ui.getCore().applyChanges();
-				ok(!oDP3.getMinDate(), "DP3: no min date set");
-				ok(!oDP3.getMaxDate(), "DP3: no max date set");
-				ok(jQuery.sap.equal(oDP3._oMinDate, oMinDate), "DP3: default min date");
-				ok(jQuery.sap.equal(oDP3._oMaxDate, oMaxDate), "DP3: default max date");
+				assert.ok(!oDP3.getMinDate(), "DP3: no min date set");
+				assert.ok(!oDP3.getMaxDate(), "DP3: no max date set");
+				assert.ok(jQuery.sap.equal(oDP3._oMinDate, oMinDate), "DP3: default min date");
+				assert.ok(jQuery.sap.equal(oDP3._oMaxDate, oMaxDate), "DP3: default max date");
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(!oDP3._oCalendar.getMinDate(), "Calendar has no MinDate");
-				ok(!oDP3._oCalendar.getMaxDate(), "Calendar has no MaxDate");
+				assert.ok(!oDP3._oCalendar.getMinDate(), "Calendar has no MinDate");
+				assert.ok(!oDP3._oCalendar.getMaxDate(), "Calendar has no MaxDate");
 				qutils.triggerEvent("click", "DP3-icon");
 			});
 
@@ -471,37 +471,37 @@
 				var oDate = new Date(1, 0, 1);
 				oDate.setFullYear(1);
 				oDP3.setDateValue(oDate);
-				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 00010101 as valid date set");
+				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 00010101 as valid date set");
 				assert.equal(oDP3.getValue(), "1/1/01", "DP3: 00010101 displayed");
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(jQuery("#DP3-cal")[0], "calendar rendered");
-				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
-				ok(jQuery("#DP3-cal--Month0-00010101")[0], "00010101 rendered");
+				assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				assert.ok(jQuery("#DP3-cal--Month0-00010101")[0], "00010101 rendered");
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
 
 				oDate = new Date(1970, 0, 1);
 				oDP3.setDateValue(oDate);
-				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 19700101 as valid date set");
+				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 19700101 as valid date set");
 				assert.equal(oDP3.getValue(), "1/1/70", "DP3: 19700101 displayed");
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(jQuery("#DP3-cal")[0], "calendar rendered");
-				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
-				ok(jQuery("#DP3-cal--Month0-19700101")[0], "19700101 rendered");
+				assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				assert.ok(jQuery("#DP3-cal--Month0-19700101")[0], "19700101 rendered");
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
 
 				oDate = new Date(9999, 11, 31);
 				oDP3.setDateValue(oDate);
-				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 99991231 as valid date set");
+				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 99991231 as valid date set");
 				assert.equal(oDP3.getValue(), "12/31/99", "DP3: 99991231 displayed");
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(jQuery("#DP3-cal")[0], "calendar rendered");
-				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
-				ok(jQuery("#DP3-cal--Month0-99991231")[0], "99991231 rendered");
+				assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				assert.ok(jQuery("#DP3-cal--Month0-99991231")[0], "99991231 rendered");
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
 			});
@@ -547,7 +547,7 @@
 				oDP3.addSpecialDate(oSpecialDate);
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(jQuery("#DP3-cal--Month0-20160601").hasClass("sapUiCalItemType01"), "20160601 has Type01");
+				assert.ok(jQuery("#DP3-cal--Month0-20160601").hasClass("sapUiCalItemType01"), "20160601 has Type01");
 				assert.equal(oDP3.getSpecialDates().length, 1, "1 SpecialDate in Aggregation");
 				assert.equal(oDP3._oCalendar.getLegend(), oLegend.getId(), "Legend set at Calendar");
 
@@ -565,10 +565,10 @@
 				sap.ui.getCore().applyChanges();
 
 				setTimeout( function(){
-					ok(!jQuery("#DP3-cal--Month0-20160601").hasClass("sapUiCalItemType01"), "20160603 has no Type01");
-					ok(jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has Type02");
-					ok(jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has Type02");
-					ok(jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has Type03");
+					assert.ok(!jQuery("#DP3-cal--Month0-20160601").hasClass("sapUiCalItemType01"), "20160603 has no Type01");
+					assert.ok(jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has Type02");
+					assert.ok(jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has Type02");
+					assert.ok(jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has Type03");
 
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
@@ -582,17 +582,17 @@
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
 
-				ok(jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has Type02");
-				ok(jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has Type02");
-				ok(jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has Type03");
+				assert.ok(jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has Type02");
+				assert.ok(jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has Type02");
+				assert.ok(jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has Type03");
 				oDP3.removeAllSpecialDates();
 				assert.equal(oDP3.getSpecialDates().length, 0, "0 SpecialDates in Aggregation");
 				sap.ui.getCore().applyChanges();
 
 				setTimeout( function(){
-					ok(!jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has no Type02");
-					ok(!jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has no Type02");
-					ok(!jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has no Type03");
+					assert.ok(!jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has no Type02");
+					assert.ok(!jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has no Type02");
+					assert.ok(!jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has no Type03");
 
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
@@ -612,16 +612,16 @@
 				assert.equal(oDP3.getSpecialDates().length, 2, "2 SpecialDates in Aggregation");
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				ok(jQuery("#DP3-cal--Month0-20160605").hasClass("sapUiCalItemType04"), "20160603 has Type04");
-				ok(jQuery("#DP3-cal--Month0-20160606").hasClass("sapUiCalItemType05"), "20160603 has Type05");
+				assert.ok(jQuery("#DP3-cal--Month0-20160605").hasClass("sapUiCalItemType04"), "20160603 has Type04");
+				assert.ok(jQuery("#DP3-cal--Month0-20160606").hasClass("sapUiCalItemType05"), "20160603 has Type05");
 				oDP3.destroySpecialDates();
 				assert.equal(oDP3.getSpecialDates().length, 0, "0 SpecialDates in Aggregation");
-				ok(!sap.ui.getCore().byId("SD1"), "Special date control don't exits any more")
+				assert.ok(!sap.ui.getCore().byId("SD1"), "Special date control don't exits any more")
 				sap.ui.getCore().applyChanges();
 
 				setTimeout( function(){
-					ok(!jQuery("#DP3-cal--Month0-20160605").hasClass("sapUiCalItemType04"), "20160603 has no Type04");
-					ok(!jQuery("#DP3-cal--Month0-20160606").hasClass("sapUiCalItemType05"), "20160603 has no Type05");
+					assert.ok(!jQuery("#DP3-cal--Month0-20160605").hasClass("sapUiCalItemType04"), "20160603 has no Type04");
+					assert.ok(!jQuery("#DP3-cal--Month0-20160606").hasClass("sapUiCalItemType05"), "20160603 has no Type05");
 
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
@@ -691,9 +691,9 @@
 					tooltip: "Tooltip",
 					placeholder: "Placeholder"
 				});
-				ok(!!oInput.getAccessibilityInfo, "DatePicker has a getAccessibilityInfo function");
+				assert.ok(!!oInput.getAccessibilityInfo, "DatePicker has a getAccessibilityInfo function");
 				var oInfo = oInput.getAccessibilityInfo();
-				ok(!!oInfo, "getAccessibilityInfo returns a info object");
+				assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 				assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 				assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
 				assert.strictEqual(oInfo.description, "Value Placeholder Date Tooltip", "Description");
@@ -915,7 +915,7 @@
 
 			QUnit.test("_getVisibleDatesRange", function (assert) {
 				// Assert
-				ok(this.oDP._getVisibleDatesRange(new sap.ui.unified.Calendar()) instanceof sap.ui.unified.DateRange,
+				assert.ok(this.oDP._getVisibleDatesRange(new sap.ui.unified.Calendar()) instanceof sap.ui.unified.DateRange,
 					"The method should return sap.ui.unified.DateRange");
 			});
 
@@ -930,7 +930,7 @@
 				jQuery("#DP2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				assert.equal(sId, "DP2", "Change event fired");
 				assert.equal(sValue, "11/190/2016", "The new value is set to an invalid one");
-				ok(!bValid, "Value is not valid");
+				assert.ok(!bValid, "Value is not valid");
 				assert.equal(oDP2.getValue(), "11/190/2016", "Value in internal format set");
 			}
 
@@ -941,7 +941,7 @@
 				var $Date = jQuery("#DP2-cal--Month0-20140401");
 				$Date.focus();
 				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
-				ok(oDP2.getValue() !== "11/190/2016",
+				assert.ok(oDP2.getValue() !== "11/190/2016",
 					"The value has successfully changed after a selection from the calendar");
 			}
 

@@ -50,7 +50,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
 
 		var childrenTitle = $("#" + sut.getId()+"-title").children();
 		var childrenText = $("#" + sut.getId()+"-text").children();
@@ -58,9 +58,9 @@
 		assert.equal($(childrenTitle[1]).text(), sap.m.ObjectIdentifier.OI_ARIA_ROLE, "Aria is rendered.");
 		assert.equal($(childrenText[0]).text(), sText, "Text is rendered.");
 
-		ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
-		ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
-		ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
 
 		//Cleanup
 		sut.destroy();
@@ -103,7 +103,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
 
 		var childrenTitle = $("#" + sut.getId()+"-title").children();
 		var childrenText = $("#" + sut.getId()+"-text").children();
@@ -111,16 +111,16 @@
 		assert.equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
 		assert.equal($(childrenText[0]).text(), sText, "Text is rendered.");
 
-		ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
-		ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
-		ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
 
 		sut.destroy();
 
 		var sDestroyed = " should be destroyed";
-		ok(!sap.ui.getCore().byId(sut.getId() + "-attachments-icon"), "Attachments icon" + sDestroyed);
-		ok(!sap.ui.getCore().byId(sut.getId() + "-notes-icon"), "Notes icon" + sDestroyed);
-		ok(!sap.ui.getCore().byId(sut.getId() + "-people-icon"), "People icon" + sDestroyed);
+		assert.ok(!sap.ui.getCore().byId(sut.getId() + "-attachments-icon"), "Attachments icon" + sDestroyed);
+		assert.ok(!sap.ui.getCore().byId(sut.getId() + "-notes-icon"), "Notes icon" + sDestroyed);
+		assert.ok(!sap.ui.getCore().byId(sut.getId() + "-people-icon"), "People icon" + sDestroyed);
 
 		//Cleanup
 		sut.destroy();
@@ -172,7 +172,7 @@
 		// Assert
 		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		ok(!/.*<script>.*/.test(oObjectIdentifier.$().find(".sapMObjectIdentifierTitle").html()), "Did not contain an unescaped script tag");
+		assert.ok(!/.*<script>.*/.test(oObjectIdentifier.$().find(".sapMObjectIdentifierTitle").html()), "Did not contain an unescaped script tag");
 		assert.strictEqual(oObjectIdentifier.getTitle(), sTextToSet, "Did set the non encoded string as value");
 
 		//Cleanup
@@ -249,7 +249,7 @@
 		// Assert
 		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
+		assert.ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
 		assert.strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
 		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
@@ -412,14 +412,14 @@
 
 		// assertions for title
 		assert.strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
-		ok(oObjectIdentifierTitleControl === oObjectIdentifier.getAggregation("_titleControl"), 'The title control is present and properly assigned to its private aggregation');
-		ok(oObjectIdentifierTitleControl instanceof sap.m.Text, 'The default type of title control is correct');
+		assert.ok(oObjectIdentifierTitleControl === oObjectIdentifier.getAggregation("_titleControl"), 'The title control is present and properly assigned to its private aggregation');
+		assert.ok(oObjectIdentifierTitleControl instanceof sap.m.Text, 'The default type of title control is correct');
 		assert.strictEqual(oObjectIdentifierTitleControl.getVisible(), false, 'No title control is visible');
 		assert.strictEqual(oObjectIdentifierTitleText.length === 0, true, 'The title text is empty');
 		// assertions for text
-		ok(oObjectIdentifierTextControl === oObjectIdentifier.getAggregation("_textControl"), 'The text control is present and properly assigned to its private aggregation');
+		assert.ok(oObjectIdentifierTextControl === oObjectIdentifier.getAggregation("_textControl"), 'The text control is present and properly assigned to its private aggregation');
 		assert.strictEqual(oObjectIdentifierTextControl.getVisible(), false, 'No text control is visible');
-		ok(oObjectIdentifierTextControlText.length === 0, 'The text of ObjectIdentifier\'s text is empty');
+		assert.ok(oObjectIdentifierTextControlText.length === 0, 'The text of ObjectIdentifier\'s text is empty');
 
 		// cleanup
 		oObjectIdentifier.destroy();
@@ -632,7 +632,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), "Should have separator class");
+		assert.ok(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), "Should have separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -686,8 +686,8 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
-		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
+		assert.ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
+		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
 		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
 
 		//Cleanup
@@ -716,8 +716,8 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
-		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
+		assert.ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
+		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
 		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
 
 		//Cleanup
@@ -750,8 +750,8 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
-		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
+		assert.ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
+		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
 		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
 
 		//Cleanup
@@ -784,8 +784,8 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
-		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
+		assert.ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
+		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
 		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
 
 		//Cleanup

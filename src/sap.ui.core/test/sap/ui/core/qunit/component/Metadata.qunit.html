@@ -338,20 +338,20 @@
 
 		QUnit.test("ResourceRoots", function(assert) {
 			if (this.iExpectedMetadataVersion === 1) {
-				ok(true, "Metadata version 1 does not support 'resourceRoots'. Skipping tests...");
+				assert.ok(true, "Metadata version 1 does not support 'resourceRoots'. Skipping tests...");
 			} else {
-				ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
+				assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
 					.equals(new URI(jQuery.sap.getModulePath("x.y.z"))),
 					"ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-				ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+				assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
 					.equals(new URI(jQuery.sap.getModulePath("foo.bar"))),
 					"ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
 
 				// (server-)absolute resource roots are not allowed and therefore won't be registered!
-				ok(!new URI("http://absolute/uri")
+				assert.ok(!new URI("http://absolute/uri")
 					.equals(new URI(jQuery.sap.getModulePath("absolute"))),
 					"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-				ok(!new URI("/server/absolute/uri")
+				assert.ok(!new URI("/server/absolute/uri")
 					.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
 					"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 			}
@@ -622,16 +622,16 @@
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
+		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
 			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
 			.equals(new URI(jQuery.sap.getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
-		ok(!new URI("http://absolute/uri")
+		assert.ok(!new URI("http://absolute/uri")
 			.equals(new URI(jQuery.sap.getModulePath("absolute"))),
 			"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-		ok(!new URI("/server/absolute/uri")
+		assert.ok(!new URI("/server/absolute/uri")
 			.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
 			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 	});
@@ -709,16 +709,16 @@
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
+		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
 			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
 			.equals(new URI(jQuery.sap.getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
-		ok(!new URI("http://absolute/uri")
+		assert.ok(!new URI("http://absolute/uri")
 			.equals(new URI(jQuery.sap.getModulePath("absolute"))),
 			"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-		ok(!new URI("/server/absolute/uri")
+		assert.ok(!new URI("/server/absolute/uri")
 			.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
 			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 	});
@@ -818,9 +818,9 @@
 			// in case of debug mode is on the warning should be reported
 			// when it is turned off => no warning!
 			if (sap.ui.getCore().getConfiguration().getDebug()) {
-				ok(bFound, "Warning has been reported!");
+				assert.ok(bFound, "Warning has been reported!");
 			} else {
-				ok(!bFound, "Warning has not been reported!");
+				assert.ok(!bFound, "Warning has not been reported!");
 			}
 			moduleTeardown.call(that);
 			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
@@ -840,7 +840,7 @@
 					bFound = true;
 				}
 			}
-			ok(!bFound, "Warning has not been reported!");
+			assert.ok(!bFound, "Warning has not been reported!");
 			moduleTeardown.call(that);
 			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
 			oDone();
@@ -859,7 +859,7 @@
 					bFound = true;
 				}
 			}
-			ok(!bFound, "Warning has not been reported!");
+			assert.ok(!bFound, "Warning has not been reported!");
 			moduleTeardown.call(that);
 			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
 			oDone();

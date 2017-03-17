@@ -84,33 +84,33 @@
 				cacheAndInitializeDomRefs(oPage.getId());
 
 				// assertions
-				ok($Page.length, "The page HTML div element exists");
-				ok($PageSection.length, "The page section HTML element exists");
-				ok($Page.hasClass("sapMPage"), 'The page HTML Div element "must have" the CSS class "sapMPage"');
+				assert.ok($Page.length, "The page HTML div element exists");
+				assert.ok($PageSection.length, "The page section HTML element exists");
+				assert.ok($Page.hasClass("sapMPage"), 'The page HTML Div element "must have" the CSS class "sapMPage"');
 				assert.strictEqual($Page.css("position"), "absolute", 'The page HTML Div element is absolute positioned, "position: absolute"');
 
 				if (oPage.getShowHeader()) {
-					ok($PageHeader.length, "The page header HTML element exists");
-					ok($Page.hasClass("sapMPageWithHeader"), 'The page HTML Div element "must have" the CSS class "sapMPageWithHeader"');
+					assert.ok($PageHeader.length, "The page header HTML element exists");
+					assert.ok($Page.hasClass("sapMPageWithHeader"), 'The page HTML Div element "must have" the CSS class "sapMPageWithHeader"');
 				} else {
-					ok(!$PageHeader.length, "The page header HTML element do not exists");
-					ok(!$Page.hasClass("sapMPageWithHeader"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithHeader"');
+					assert.ok(!$PageHeader.length, "The page header HTML element do not exists");
+					assert.ok(!$Page.hasClass("sapMPageWithHeader"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithHeader"');
 				}
 
 				if (oPage.getSubHeader()) {
-					ok($PageSubHeader.length, "The page sub-header HTML element exists");
-					ok($Page.hasClass("sapMPageWithSubHeader"), 'The page HTML Div element "must have" the CSS class "sapMPageWithSubHeader"');
+					assert.ok($PageSubHeader.length, "The page sub-header HTML element exists");
+					assert.ok($Page.hasClass("sapMPageWithSubHeader"), 'The page HTML Div element "must have" the CSS class "sapMPageWithSubHeader"');
 				} else {
-					ok(!$PageSubHeader.length, "The page sub-header HTML element do not exists");
-					ok(!$Page.hasClass("sapMPageWithSubHeader"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithSubHeader"');
+					assert.ok(!$PageSubHeader.length, "The page sub-header HTML element do not exists");
+					assert.ok(!$Page.hasClass("sapMPageWithSubHeader"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithSubHeader"');
 				}
 
 				if (oPage.getFooter()) {
-					ok($PageFooter.length, "The page footer HTML element exists");
-					ok($Page.hasClass("sapMPageWithFooter"), 'The page HTML Div element "must have" the CSS class "sapMPageWithFooter"');
+					assert.ok($PageFooter.length, "The page footer HTML element exists");
+					assert.ok($Page.hasClass("sapMPageWithFooter"), 'The page HTML Div element "must have" the CSS class "sapMPageWithFooter"');
 				} else {
-					ok(!$PageFooter.length, "The page footer HTML element do not exists");
-					ok(!$Page.hasClass("sapMPageWithFooter"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithFooter"');
+					assert.ok(!$PageFooter.length, "The page footer HTML element do not exists");
+					assert.ok(!$Page.hasClass("sapMPageWithFooter"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithFooter"');
 				}
 
 				assert.strictEqual($Page.css("top"), "0px", 'The page HTML Div element is absolute positioned, "top: 0px"');

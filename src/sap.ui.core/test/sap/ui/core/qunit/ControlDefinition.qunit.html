@@ -34,13 +34,13 @@
 		}
 
 		QUnit.test("Extend function", function(assert) {
-			ok(sap.ui.base.Object.extend, "Object.extend() must exist");
+			assert.ok(sap.ui.base.Object.extend, "Object.extend() must exist");
 			assert.equal(typeof sap.ui.base.Object.extend, "function", "Object.extend() must be a function");
 
-			ok(sap.ui.core.Control.extend, "Control.extend() must exist");
+			assert.ok(sap.ui.core.Control.extend, "Control.extend() must exist");
 			assert.equal(typeof sap.ui.core.Control.extend, "function", "Control.extend() must be a function");
 
-			ok(sap.ui.commons.Button.extend, "Button.extend() must exist");
+			assert.ok(sap.ui.commons.Button.extend, "Button.extend() must exist");
 			assert.equal(typeof sap.ui.commons.Button.extend, "function", "Button.extend() must be a function");
 		});
 
@@ -100,7 +100,7 @@
 			});
 
 			// check control type
-			ok(my.lib.MyControl, "my.lib.MyControl should be defined now");
+			assert.ok(my.lib.MyControl, "my.lib.MyControl should be defined now");
 		});
 
 
@@ -110,15 +110,15 @@
 			myControl = new my.lib.MyControl("myControl", {
 				text : "test"
 			});
-			ok(myControl, "myControl should be a control instance now");
-			ok(myControl instanceof my.lib.MyControl, "myControl should be an instance of my.lib.MyControl");
-			ok(myControl instanceof sap.ui.core.Control, "myControl should inherit from sap.ui.Core.Control");
+			assert.ok(myControl, "myControl should be a control instance now");
+			assert.ok(myControl instanceof my.lib.MyControl, "myControl should be an instance of my.lib.MyControl");
+			assert.ok(myControl instanceof sap.ui.core.Control, "myControl should inherit from sap.ui.Core.Control");
 
 			// renderer should not be added as function...
 			assert.equal(myControl.renderer, undefined, "renderer should not be added as function");
 
 			// ...but a renderer should exist now
-			ok(my.lib.MyControlRenderer, "my.lib.MyControlRenderer should be defined"); // TODO: is this the case?
+			assert.ok(my.lib.MyControlRenderer, "my.lib.MyControlRenderer should be defined"); // TODO: is this the case?
 			assert.equal(typeof my.lib.MyControlRenderer.render, "function", "my.lib.MyControlRenderer.render must be a function");
 		});
 
@@ -127,9 +127,9 @@
 			assert.expect(7);
 
 			// test generation of setter and getter
-			ok(myControl.getText, "getter for property 'text' should be created");
+			assert.ok(myControl.getText, "getter for property 'text' should be created");
 			assert.equal(typeof myControl.getText, "function", "myControl.getText must be a function");
-			ok(myControl.setText, "setter for property 'text' should be created");
+			assert.ok(myControl.setText, "setter for property 'text' should be created");
 			assert.equal(typeof myControl.setText, "function", "myControl.setText must be a function");
 
 			// test setter and getter
@@ -141,7 +141,7 @@
 			try {
 				myControl.setRows("wrong type: string");
 			} catch (e) {
-				ok(true, "this check must be reached");
+				assert.ok(true, "this check must be reached");
 			}
 		});
 
@@ -205,32 +205,32 @@
 			assert.equal(keys(properties).length, 2, "there should be two local public properties");
 			var properties = md.getAllProperties();
 			assert.equal(keys(properties).length, 6, "there should be six public properties");
-			ok(properties.text, "there should be a 'text' property");
+			assert.ok(properties.text, "there should be a 'text' property");
 			assert.equal(properties.text.type, "string", "'text' should be a string property");
 
 			var methods = md.getAllPublicMethods();
-			ok(methods.length > 0, "there should be at least one public method");
-			ok(jQuery.inArray("add", methods) >= 0, "'add' should be one of the public method");
-			ok(jQuery.inArray("init", methods) < 0, "'init' must not be part of the public methods");
-			ok(jQuery.inArray("_secret", methods) < 0, "'_secret' must not be part of the public methods");
-			ok(jQuery.inArray("onfocusin", methods) < 0, "'onfocusin' must not be part of the public methods");
-			ok(jQuery.inArray("renderer", methods) < 0, "'renderer' must not be part of the public methods");
+			assert.ok(methods.length > 0, "there should be at least one public method");
+			assert.ok(jQuery.inArray("add", methods) >= 0, "'add' should be one of the public method");
+			assert.ok(jQuery.inArray("init", methods) < 0, "'init' must not be part of the public methods");
+			assert.ok(jQuery.inArray("_secret", methods) < 0, "'_secret' must not be part of the public methods");
+			assert.ok(jQuery.inArray("onfocusin", methods) < 0, "'onfocusin' must not be part of the public methods");
+			assert.ok(jQuery.inArray("renderer", methods) < 0, "'renderer' must not be part of the public methods");
 
 			var aggregations = md.getAggregations();
 			assert.equal(keys(aggregations).length, 2, "there should be one public aggregation");
-			ok(aggregations.dots, "there should be a 'dots' aggregation");
+			assert.ok(aggregations.dots, "there should be a 'dots' aggregation");
 			var aggregations = md.getAllAggregations();
 			assert.equal(keys(aggregations).length, 6, "there should be 6 public aggregations across the hierarchy");
-			ok(aggregations.dots, "there should be a 'dots' aggregation");
+			assert.ok(aggregations.dots, "there should be a 'dots' aggregation");
 
 			var associations = md.getAllAssociations();
 			assert.equal(keys(associations).length, 1, "there should be one public association");
-			ok(associations.assi, "there should be a 'assi' association");
+			assert.ok(associations.assi, "there should be a 'assi' association");
 			assert.equal(associations.assi.type, "sap.ui.commons.Button", "the 'assi' association should be of type Button");
 
 			var events = md.getAllEvents();
 			assert.equal(keys(events).length, 7, "there should be 7 public events");
-			ok(events.somethingHappened, "there should be a 'somethingHappened' event");
+			assert.ok(events.somethingHappened, "there should be a 'somethingHappened' event");
 		});
 
 		QUnit.test("Metadata singluar names", function(assert) {
@@ -302,11 +302,11 @@
 			sap.ui.getCore().applyChanges();
 
 			var $control = jQuery.sap.byId("myControl");
-			ok($control.length === 1, "myControl should be rendered to the page");
+			assert.ok($control.length === 1, "myControl should be rendered to the page");
 
 			// test rendered content
 			var html = $control.html();
-			ok(html.indexOf("test2") > -1, "the control value 'test2' should be written inside the control");
+			assert.ok(html.indexOf("test2") > -1, "the control value 'test2' should be written inside the control");
 		});
 
 
@@ -346,16 +346,16 @@
 					}
 				}
 			});
-			ok(typeof result !== "undefined", "result is not undefined");
+			assert.ok(typeof result !== "undefined", "result is not undefined");
 		});
 
 
 		QUnit.test("Instantiate MyTextField", function(assert) {
 			myTf = new my.lib.MyTextField("myTf", {value:"test"});
 
-			ok(myTf, "myTf should be a control instance now");
-			ok(myTf instanceof my.lib.MyTextField, "myTf should be an instance of my.lib.MyTextField");
-			ok(myTf instanceof sap.ui.commons.TextField, "myTf should inherit from sap.ui.commons.TextField");
+			assert.ok(myTf, "myTf should be a control instance now");
+			assert.ok(myTf instanceof my.lib.MyTextField, "myTf should be an instance of my.lib.MyTextField");
+			assert.ok(myTf instanceof sap.ui.commons.TextField, "myTf should inherit from sap.ui.commons.TextField");
 			assert.equal(myTf.getValue(), "test" + valueSuffix, "value should be modified by overridden method");
 		});
 
@@ -365,12 +365,12 @@
 			sap.ui.getCore().applyChanges();
 
 			var $control = jQuery.sap.byId("myTf");
-			ok($control.length === 1, "myTf should be rendered to the page");
+			assert.ok($control.length === 1, "myTf should be rendered to the page");
 
 			// test rendered content
 			var html = $control.html();
-			ok(html.toUpperCase().indexOf(htmlFragment.toUpperCase()) > -1, "renderOuterContent should have written the renderOuterContent inside the MyTextField");
-			ok(html.indexOf("test" + valueSuffix) > -1, "the normal TextFieldRenderer should have written the modified value inside the MyTextField");
+			assert.ok(html.toUpperCase().indexOf(htmlFragment.toUpperCase()) > -1, "renderOuterContent should have written the renderOuterContent inside the MyTextField");
+			assert.ok(html.indexOf("test" + valueSuffix) > -1, "the normal TextFieldRenderer should have written the modified value inside the MyTextField");
 		});
 
 
@@ -428,17 +428,17 @@
 
 			});
 
-			ok(typeof result !== "undefined", "result is not undefined");
+			assert.ok(typeof result !== "undefined", "result is not undefined");
 		});
 
 
 		QUnit.test("Instantiate inherited Object", function(assert) {
 			myObj = new my.lib.MyObject("myObj");
 
-			ok(myObj, "myObj should be an object instance now");
-			ok(myObj instanceof my.lib.MyObject, "myObj should be an instance of my.lib.MyObject");
-			ok(myObj instanceof sap.ui.base.Object, "myObj should be an instance of sap.ui.base.Object");
-			ok(!(myObj instanceof sap.ui.core.Control), "myObj should NOT inherit from sap.ui.core.Control");
+			assert.ok(myObj, "myObj should be an object instance now");
+			assert.ok(myObj instanceof my.lib.MyObject, "myObj should be an instance of my.lib.MyObject");
+			assert.ok(myObj instanceof sap.ui.base.Object, "myObj should be an instance of sap.ui.base.Object");
+			assert.ok(!(myObj instanceof sap.ui.core.Control), "myObj should NOT inherit from sap.ui.core.Control");
 
 			// renderer should be a function
 			assert.equal(typeof myObj.renderer, "function", "'renderer' should be added as normal function");

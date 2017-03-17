@@ -353,7 +353,7 @@
 						"'sap.ui.versioninfo' should be undefined before calling the function.");
 
 					sap.ui.getVersionInfo({ async: true }).then(function() {
-						ok(false, "Promise should not get resolved.");
+						assert.ok(false, "Promise should not get resolved.");
 					}, function(err) {
 
 						// Check if exception is correct
@@ -379,7 +379,7 @@
 						"'sap.ui.versioninfo' should be undefined before calling the function.");
 
 					sap.ui.getVersionInfo({ library: "sap.ui.core", async: true }).then(function() {
-						ok(false, "Promise should not get resolved.");
+						assert.ok(false, "Promise should not get resolved.");
 					}, function(err) {
 
 						// Check if exception is correct

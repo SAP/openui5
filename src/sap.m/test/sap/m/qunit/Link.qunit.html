@@ -24,7 +24,7 @@
 			target: "_blank",
 			width : "200px",
 			press:function() {
-				ok(true, "This should be executed when the link is triggered");
+				assert.ok(true, "This should be executed when the link is triggered");
 			}
 		}).placeAt("uiArea1");
 
@@ -67,23 +67,23 @@
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Link({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			ok(sut.$().hasClass("sapMLnkMaxWidth"), "Link has max width restriction for the trunctation.");
+			assert.ok(sut.$().hasClass("sapMLnkMaxWidth"), "Link has max width restriction for the trunctation.");
 
 			sut.setWidth("100px");
 			sap.ui.getCore().applyChanges();
-			ok(!sut.$().hasClass("sapMLnkMaxWidth"), "Link has width and does not have max width restriction.");
+			assert.ok(!sut.$().hasClass("sapMLnkMaxWidth"), "Link has width and does not have max width restriction.");
 		});
 
 		QUnit.test("Subtle", function(assert) {
 			oLink1.setSubtle(true);
 			sap.ui.getCore().applyChanges();
-			ok(oLink1.$().hasClass('sapMLnkSubtle'), "Link is subtle.");
+			assert.ok(oLink1.$().hasClass('sapMLnkSubtle'), "Link is subtle.");
 		});
 
 		QUnit.test("Emphasized", function(assert) {
 			oLink1.setEmphasized(true);
 			sap.ui.getCore().applyChanges();
-			ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
+			assert.ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
 			oLink1.destroy();
 		});
 
@@ -110,7 +110,7 @@
 			var oLinkRIS = new sap.m.Link({subtle: true});
 			oLinkRIS.placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
-			ok(oLinkRIS.$().hasClass('sapMLnkSubtle'), "Link should have the 'sapMLnkSubtle' CSS class.");
+			assert.ok(oLinkRIS.$().hasClass('sapMLnkSubtle'), "Link should have the 'sapMLnkSubtle' CSS class.");
 			oLinkRIS.destroy();
 		});
 
@@ -119,13 +119,13 @@
 			var oLinkRIE = new sap.m.Link({emphasized: true});
 			oLinkRIE.placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
-			ok(oLinkRIE.$().hasClass('sapMLnkEmphasized'), "Link should have the 'sapMLnkEmphasized' CSS class.");
+			assert.ok(oLinkRIE.$().hasClass('sapMLnkEmphasized'), "Link should have the 'sapMLnkEmphasized' CSS class.");
 			oLinkRIE.destroy();
 		});
 
 		QUnit.test("Link should be shrinkable", function(assert) {
 			var oLink = new sap.m.Link();
-			ok(oLink.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Link control implements IShrinkable interface");
+			assert.ok(oLink.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Link control implements IShrinkable interface");
 			oLink.destroy();
 		});
 
@@ -198,7 +198,7 @@
 				target: "_blank",
 				width : "200px",
 				press:function() {
-					ok(true, "This should be executed when the link is triggered");
+					assert.ok(true, "This should be executed when the link is triggered");
 				}
 			}).placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
@@ -304,15 +304,15 @@
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oControl = new sap.m.Link({text: "Text", href: "HRef"});
-			ok(!!oControl.getAccessibilityInfo, "Link has a getAccessibilityInfo function");
+			assert.ok(!!oControl.getAccessibilityInfo, "Link has a getAccessibilityInfo function");
 			var oInfo = oControl.getAccessibilityInfo();
-			ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 			assert.strictEqual(oInfo.role, "link", "AriaRole");
 			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"), "Type");
 			assert.strictEqual(oInfo.description, "Text", "Description");
 			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
-			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+			assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 			oControl.setText("");
 			oControl.setEnabled(false);
 			oInfo = oControl.getAccessibilityInfo();

@@ -43,8 +43,8 @@
 
 		QUnit.test("Output", function(assert) {
 
-			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
-			ok(jQuery.sap.byId("But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected");
+			assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
+			assert.ok(jQuery.sap.byId("But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected");
 
 			assert.equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card_hover.png", "Button selected: Use iconHovered instead of icon!");
 			assert.equal(jQuery.sap.byId("mySB-radiogroup").children("button").length, 6, "All Buttons rendered");
@@ -63,13 +63,13 @@
    		});
 
 		QUnit.test("Visibility", function(assert) {
-			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
+			assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 			oSegmentedButton.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery.sap.byId("mySB").get(0), "SegmentedButton not rendered");
+			assert.ok(!jQuery.sap.byId("mySB").get(0), "SegmentedButton not rendered");
 			oSegmentedButton.setVisible(true);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
+			assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 		});
 
 		QUnit.test("Icons", function(assert) {

@@ -377,7 +377,7 @@
 
 		oFileUploader._sendFilesWithXHR(aFiles);
 
-		ok(oSpy.called, "XHR request is made");
+		assert.ok(oSpy.called, "XHR request is made");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -390,7 +390,7 @@
 		});
 
 		//initial check cases
-		ok(oFileUploader._isFilenameTooLong("15_AppDev_Components_Exercises.pptx"), "Initial check: Filename should be too long");
+		assert.ok(oFileUploader._isFilenameTooLong("15_AppDev_Components_Exercises.pptx"), "Initial check: Filename should be too long");
 
 		//standard case
 		oFileUploader.setMaximumFilenameLength(20);

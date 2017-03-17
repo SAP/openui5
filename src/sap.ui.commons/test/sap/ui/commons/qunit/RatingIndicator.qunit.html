@@ -201,7 +201,7 @@
 			handlerCalled = true;
 		});
 		qutils.triggerEvent("click", "oRating1-itm-4");
-		ok(!handlerCalled, "Event should not be triggered.");
+		assert.ok(!handlerCalled, "Event should not be triggered.");
 	});
 
 
@@ -209,7 +209,7 @@
 
 	QUnit.test("Visibility", function(assert) {
 		equals(jQuery("#oRating3").get(0), undefined, "Invisible:");
-		ok(jQuery("#oRating1").get(0), "Visible: expected defined");
+		assert.ok(jQuery("#oRating1").get(0), "Visible: expected defined");
 	});
 
 	QUnit.test("#Symbols", function(assert) {
@@ -268,7 +268,7 @@
 		var oSymbols = jQuery("#oRating1").children();
 		oSymbols.each(function(index){
 			equals(jQuery(this).hasClass("sapUiRatingItmHov"), true, "HOVER: Symbol "+(index+1)+" hovered:");
-			ok(jQuery.sap.endsWith(jQuery(this).children("img").attr("src"), index<4 ? "hover.png" : "unselected.png"), "HOVER: Correct Hover Symbol for "+(index+1)+": "+jQuery(this).children("img").attr("src"));
+			assert.ok(jQuery.sap.endsWith(jQuery(this).children("img").attr("src"), index<4 ? "hover.png" : "unselected.png"), "HOVER: Correct Hover Symbol for "+(index+1)+": "+jQuery(this).children("img").attr("src"));
 		});
 		qutils.triggerEvent("mouseout", "oRating1-itm-4");
 		oSymbols = jQuery("#oRating1").children();
@@ -328,8 +328,8 @@
 			var fAverageValue = oRating.getAverageValue();
 
 
-			ok(oRating.getValue() == sap.ui.commons.RatingIndicator.NoValue, "No value set.");
-			ok(fAverageValue == 3.5, "Average value set.");
+			assert.ok(oRating.getValue() == sap.ui.commons.RatingIndicator.NoValue, "No value set.");
+			assert.ok(fAverageValue == 3.5, "Average value set.");
 
 			var $children = $Dom.children(".sapUiRatingItm");
 			$children.each(function(iIndex, oChild) {
@@ -345,7 +345,7 @@
 				var fPercent = Math.round(100 * fRest);
 
 				var $OverflowItem = jQuery(oChild).children(".sapUiRatingItmOvrflw");
-				ok(fPercent + "%" == $OverflowItem[0].style.width, "Correct star percentage");
+				assert.ok(fPercent + "%" == $OverflowItem[0].style.width, "Correct star percentage");
 			});
 		}
 

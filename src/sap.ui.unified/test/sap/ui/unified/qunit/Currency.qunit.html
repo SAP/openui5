@@ -347,7 +347,7 @@
 				// Act
 				this.aItems[0].setValue(undefined);
 				// Assert
-				ok($Item.hasClass("sapUiUfdCurrencyNoVal"), "Class sapUiUfdCurrencyNoVal is applied to control");
+				assert.ok($Item.hasClass("sapUiUfdCurrencyNoVal"), "Class sapUiUfdCurrencyNoVal is applied to control");
 			});
 
 			QUnit.test("Setting model value to null, unbindValue and set value", function (assert) {
@@ -531,9 +531,9 @@
 
 			QUnit.test("getAccessibilityInfo", function(assert) {
 				var oControl = new sap.ui.unified.Currency({value: 100, currency: "EUR", maxPrecision: 2});
-				ok(!!oControl.getAccessibilityInfo, "Currency has a getAccessibilityInfo function");
+				assert.ok(!!oControl.getAccessibilityInfo, "Currency has a getAccessibilityInfo function");
 				var oInfo = oControl.getAccessibilityInfo();
-				ok(!!oInfo, "getAccessibilityInfo returns a info object");
+				assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 				assert.strictEqual(oInfo.role, undefined, "AriaRole");
 				assert.strictEqual(oInfo.type, undefined, "Type");
 				assert.strictEqual(oInfo.description, "100.00 EUR", "Description");

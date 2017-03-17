@@ -51,7 +51,7 @@
 		result = sut.removePopin();
 
 		// Assert
-		ok(hasPopin, "did have a popin before deleting it");
+		assert.ok(hasPopin, "did have a popin before deleting it");
 		assert.equal(sut.$Popin().length, 0,"popin got removed from dom");
 
 		//Cleanup
@@ -120,7 +120,7 @@
 		core.applyChanges();
 
 		// Assert
-		ok(sut.hasPopin(), "Popin is generated");
+		assert.ok(sut.hasPopin(), "Popin is generated");
 		assert.strictEqual(sut._aClonedHeaders.length, 1, "Popin has cloned header");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 1, "Popin header is found in the dom");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 1, "Popin separator is found in the dom");
@@ -160,8 +160,8 @@
 		core.applyChanges();
 
 		// Assert
-		ok(sut.$().hasClass("sapMLIBFocusable"), "Outline class is added");
-		ok(!sut.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
+		assert.ok(sut.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		assert.ok(!sut.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
 
 		//Cleanup
 		table.destroy();

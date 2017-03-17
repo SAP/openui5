@@ -375,7 +375,7 @@
 			setTimeout(function () {
 				clickOverflowButton(oCtrl);
 				setTimeout(function () {
-					ok(isPopupVisible(oCtrl), "The popup must be visible");
+					assert.ok(isPopupVisible(oCtrl), "The popup must be visible");
 					var aPopupContent = getPopupContentIds(oCtrl);
 					assert.deepEqual(aPopupContent, aExpectedItemsInTheOverflow, "There must be just 1 items in the overflow -F");
 					done();
@@ -448,9 +448,9 @@
 
 		QUnit.test("Overflow menu in popup is deleted upon toolbar destroy", function (assert) {
 			oCtrl.handleOverflowButtonTriggered();
-			ok(getPopupDomRef(oCtrl), "Overflow menu must be part of the dom");
+			assert.ok(getPopupDomRef(oCtrl), "Overflow menu must be part of the dom");
 			oCtrl.destroy();
-			ok(!getPopupDomRef(oCtrl), "Once the toolbar is destroyed, the overflow menu must not be part of the dom");
+			assert.ok(!getPopupDomRef(oCtrl), "Once the toolbar is destroyed, the overflow menu must not be part of the dom");
 		});
 
 		QUnit.test("Overflow button is visible when toolbar is insdie sap.ui.layout.Splitter and there is not free space", function (assert) {
@@ -468,7 +468,7 @@
 			oSplitter.setWidth("500px"); //so the available space for the toolbar is 250px
 			oSplitter.placeAt("uiArea1");
 			setTimeout(function() {
-				ok(isOverflowVisible(oToolbar), "Overflow button must be visible");
+				assert.ok(isOverflowVisible(oToolbar), "Overflow button must be visible");
 				done();
 				oSplitter.destroy();
 			}, 500);

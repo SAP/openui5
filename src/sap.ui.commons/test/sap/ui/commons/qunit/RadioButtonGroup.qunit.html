@@ -218,15 +218,15 @@
 
 		QUnit.test("Visibility", function(assert) {
 			// Visible
-			ok(jQuery("#RBG1").get(0), "Visible, expected defined");
+			assert.ok(jQuery("#RBG1").get(0), "Visible, expected defined");
 			assert.equal(jQuery("#RBG2").get(0), undefined, "Invisible");
 		});
 
 		QUnit.test("Radio buttons rendered correctly", function (assert) {
-			ok(jQuery("#RBG1-0").get(0), "RadioButton 0, expected defined");
-			ok(jQuery("#RBG1-1").get(0), "RadioButton 1, expected defined");
-			ok(jQuery("#RBG1-2").get(0), "RadioButton 2, expected defined");
-			ok(jQuery("#RBG1-3").get(0), "RadioButton 3, expected defined");
+			assert.ok(jQuery("#RBG1-0").get(0), "RadioButton 0, expected defined");
+			assert.ok(jQuery("#RBG1-1").get(0), "RadioButton 1, expected defined");
+			assert.ok(jQuery("#RBG1-2").get(0), "RadioButton 2, expected defined");
+			assert.ok(jQuery("#RBG1-3").get(0), "RadioButton 3, expected defined");
 		});
 
 		QUnit.test("Output of RadioButtons in first group", function (assert) {
@@ -382,15 +382,15 @@
 		});
 
 		QUnit.test("TestCleanUp", function(assert) {
-			ok(!!sap.ui.getCore().byId("RBG1-0"), "RBG1-0 must exist");
-			ok(!!sap.ui.getCore().byId("RBG1-1"), "RBG1-1 must exist");
-			ok(!!sap.ui.getCore().byId("RBG1-2"), "RBG1-2 must exist");
-			ok(!!sap.ui.getCore().byId("RBG1-3"), "RBG1-3 must exist");
+			assert.ok(!!sap.ui.getCore().byId("RBG1-0"), "RBG1-0 must exist");
+			assert.ok(!!sap.ui.getCore().byId("RBG1-1"), "RBG1-1 must exist");
+			assert.ok(!!sap.ui.getCore().byId("RBG1-2"), "RBG1-2 must exist");
+			assert.ok(!!sap.ui.getCore().byId("RBG1-3"), "RBG1-3 must exist");
 			oRBGroup1.destroy();
-			ok(!sap.ui.getCore().byId("RBG1-0"), "RBG1-0 must no longer exist");
-			ok(!sap.ui.getCore().byId("RBG1-1"), "RBG1-1 must no longer exist");
-			ok(!sap.ui.getCore().byId("RBG1-2"), "RBG1-2 must no longer exist");
-			ok(!sap.ui.getCore().byId("RBG1-3"), "RBG1-3 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("RBG1-0"), "RBG1-0 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("RBG1-1"), "RBG1-1 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("RBG1-2"), "RBG1-2 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("RBG1-3"), "RBG1-3 must no longer exist");
 		});
 
 

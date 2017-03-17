@@ -155,38 +155,38 @@
 		assert.equal(oString.getValue(), "abc123", "String old value");
 		oData.string = "def456";
 		assert.equal(oString.getValue(), "def456", "String new value");
-		ok(bString, "String change event fired");
+		assert.ok(bString, "String change event fired");
 
 		assert.equal(oNumber.getValue(), 123, "Number old value");
 		oData.number = 456;
 		assert.equal(oNumber.getValue(), 456, "Number new value");
-		ok(bNumber, "Number change event fired");
+		assert.ok(bNumber, "Number change event fired");
 
 		assert.equal(oBool.getValue(), true, "Boolean old value");
 		oData.bool = false;
 		assert.equal(oBool.getValue(), false, "Boolean new value");
-		ok(bBool, "Boolean change event fired");
+		assert.ok(bBool, "Boolean change event fired");
 
 		assert.equal(oDate.getValue(), oData.date, "Date old value");
 		oData.date = new Date();
 		assert.equal(oDate.getValue(), oData.date, "Date new value");
-		ok(bDate, "Date change event fired");
+		assert.ok(bDate, "Date change event fired");
 
 		assert.equal(oObj.getValue(), oData.obj, "Object old value");
 		assert.equal(oObjName.getValue(), "value1", "Object name old value");
 		oData.obj = { name1 : "other1" };
 		assert.equal(oObj.getValue(), oData.obj, "Object new value");
 		assert.equal(oObjName.getValue(), "other1", "Object name new value");
-		ok(bObj, "Object change event fired");
-		ok(bObjName, "Object name change event fired");
+		assert.ok(bObj, "Object change event fired");
+		assert.ok(bObjName, "Object name change event fired");
 
 		assert.equal(oArr.getValue(), oData.arr, "Array old value");
 		assert.equal(oArrName.getValue(), "value1", "Array name old value");
 		oData.arr = [{ name : "other1" }];
 		assert.equal(oArr.getValue(), oData.arr, "Array new value");
 		assert.equal(oArrName.getValue(), "other1", "Array name new value");
-		ok(bArr, "Array change event fired");
-		ok(bArrName, "Array name change event fired");
+		assert.ok(bArr, "Array change event fired");
+		assert.ok(bArrName, "Array name change event fired");
 
 		assert.equal(iChangeCount, 8, "All 8 change handlers have been called once");
 
@@ -369,7 +369,7 @@
 			assert.equal(context.getPath(), "/root/test/subtest/name", "newContext");
 		});
 		oModel.createBindingContext("root/test/subtest/name", null, function(context){
-			ok(context == null, "newContext");
+			assert.ok(context == null, "newContext");
 		});
 		oContext = new sap.ui.model.Context(oModel, "/myContext");
 		// if spath starts with / ... context will be ignored, because path is absolute
@@ -391,7 +391,7 @@
 		oLabel.setModel(oModelChild);
 		oLabel.bindProperty("text", "/pets/0/type");
 		oLayout.addContent(oLabel);
-		ok(oLabel.getBindingContext() == undefined, "context undefined");
+		assert.ok(oLabel.getBindingContext() == undefined, "context undefined");
 		oContext = oModelChild.createBindingContext("/pets");
 		oLabel.setBindingContext(oContext);
 		assert.equal(oLabel.getBindingContext().getPath(), "/pets", "context set correctly");
@@ -456,9 +456,9 @@
 				assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
 				assert.equal(testModel.getProperty("/baz")[1], 97);
 			} else {
-				ok(!testModel.getProperty("/foo"), "deleted as no merge");
+				assert.ok(!testModel.getProperty("/foo"), "deleted as no merge");
 				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
-				ok(!testModel.getProperty("/baz"), "deleted as no merge");
+				assert.ok(!testModel.getProperty("/baz"), "deleted as no merge");
 				assert.equal(testModel.getProperty("/merged"), true);
 				done();
 			}
@@ -474,10 +474,10 @@
 		testModel.attachRequestCompleted(function(oInfo) {
 			loadCount++;
 			if (loadCount == 1) {
-				ok(oInfo.getParameter("url") == "/fake/testdata3.json", "first request");
+				assert.ok(oInfo.getParameter("url") == "/fake/testdata3.json", "first request");
 			} else {
 				// resume normal testing
-				ok(oInfo.getParameter("url") == "/fake/testdata4.json", "second request");
+				assert.ok(oInfo.getParameter("url") == "/fake/testdata4.json", "second request");
 				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
 				assert.equal(testModel.getProperty("/baz")[1], 97);
@@ -496,11 +496,11 @@
 		testModel.attachRequestCompleted(function(oInfo) {
 			loadCount++;
 			if (loadCount == 1) {
-				ok(oInfo.getParameter("success") == false, "request fails");
+				assert.ok(oInfo.getParameter("success") == false, "request fails");
 				throw 'fake';
 			} else {
 				// resume normal testing
-				ok(oInfo.getParameter("url") == "/fake/testdata4.json", "second request");
+				assert.ok(oInfo.getParameter("url") == "/fake/testdata4.json", "second request");
 				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
 				assert.equal(testModel.getProperty("/baz")[1], 97);
@@ -585,7 +585,7 @@
 			assert.equal(oEvent.sId, "parseError", "event type");
 		});
 		oModel.setJSON(sJSON,false);
-		ok(error, "error occurred");
+		assert.ok(error, "error occurred");
 
 	});
 
@@ -634,15 +634,15 @@
 	QUnit.test("test JSONModel destroy", function(assert) {
 		var testModel = new sap.ui.model.json.JSONModel();
 		testModel.attachRequestCompleted(function() {
-			ok(false, "Request should be aborted!");
+			assert.ok(false, "Request should be aborted!");
 		});
 		testModel.attachRequestFailed(function() {
-			ok(false, "Error handler should not be called when request is aborted via destroy!");
+			assert.ok(false, "Error handler should not be called when request is aborted via destroy!");
 		});
 		var spy = this.spy(jQuery, "ajax");
 		testModel.loadData("testdata.json");
 		testModel.destroy();
-		ok(testModel.bDestroyed, "Model should be destroyed");
+		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 
@@ -652,7 +652,7 @@
 	QUnit.test("test JSONModel loadData after destroy", function(assert) {
 		//var server = this.sandbox.useFakeServer();
 		//server.respondWith("data.json", function(xhr, id) {
-			//ok(false, "Request should not be sent after calling destroy!");
+			//assert.ok(false, "Request should not be sent after calling destroy!");
 			//xhr.respond(200, { "Content-Type": "application/json" }, '{ "test": "data" }');
 		//});
 
@@ -660,22 +660,22 @@
 		var testModel = new sap.ui.model.json.JSONModel();
 
 		testModel.attachRequestCompleted(function() {
-			ok(false, "Request should be aborted!");
+			assert.ok(false, "Request should be aborted!");
 		});
 		testModel.attachRequestFailed(function() {
-			ok(false, "Error handler should not be called when request is aborted via destroy!");
+			assert.ok(false, "Error handler should not be called when request is aborted via destroy!");
 		});
 
 		testModel.loadData("testdata.json", null, true);
 		testModel.destroy();
-		ok(testModel.bDestroyed, "Model should be destroyed");
+		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 
 		// call loaddata again
 		testModel.loadData("testdata.json", null, true);
 
-		ok(testModel.bDestroyed, "Model should be destroyed");
+		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 	});

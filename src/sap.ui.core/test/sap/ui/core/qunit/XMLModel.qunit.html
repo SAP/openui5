@@ -184,7 +184,7 @@
 		assert.equal(listItems.length, 7, "length of items");
 		var oBinding = oLB.getBinding("items");
 
-		ok(oBinding, "oBinding should not be null");
+		assert.ok(oBinding, "oBinding should not be null");
 		assert.equal(oBinding.getLength(), 7, "oBinding length");
 
 		jQuery(listItems).each( function(i, item){
@@ -218,7 +218,7 @@
 			assert.equal(context.getPath(), "/root/test/subtest/name", "newContext");
 		});
 		oModel.createBindingContext("root/test/subtest/name", null, function(context){
-			ok(context == null, "newContext");
+			assert.ok(context == null, "newContext");
 		});
 		var oContext = new sap.ui.model.Context(oModel, "/myContext");
 		// if spath starts with / ... context will be ignored, because path is absolute
@@ -240,7 +240,7 @@
 		oLabel.setModel(oModelChild);
 		oLabel.bindProperty("text", "/pet/0/@type");
 		oLayout.addContent(oLabel);
-		ok(oLabel.getBindingContext() == undefined, "context undefined");
+		assert.ok(oLabel.getBindingContext() == undefined, "context undefined");
 		oContext = oModelChild.createBindingContext("/pet");
 		oLabel.setBindingContext(oContext);
 		assert.equal(oLabel.getBindingContext().getPath(), "/pet", "context set correctly");
@@ -289,7 +289,7 @@
 			assert.equal(oEvent.sId, "parseError", "event type");
 		});
 		oModel.setXML(sXML);
-		ok(error, "error occurred");
+		assert.ok(error, "error occurred");
 
 	});
 
@@ -349,10 +349,10 @@
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setXML(testdata);
 		var oNode = oModel.getObject("/member/4/@lastName"); // direkt attribute access
-		ok(oNode);
+		assert.ok(oNode);
 		assert.equal(oNode, "Spring", "node attribute value");
 		oNode = oModel.getObject("/member/4/");
-		ok(oNode);
+		assert.ok(oNode);
 		assert.equal(oNode.nodeName, "member", "node text name");
 		assert.equal(oNode.getAttribute('firstName'), "Michael", "node attribute value");
 	});
@@ -360,15 +360,15 @@
 	QUnit.test("test XMLModel destroy", function(assert) {
 		var testModel = new sap.ui.model.xml.XMLModel();
 		testModel.attachRequestCompleted(function() {
-			ok(false, "Request should be aborted!");
+			assert.ok(false, "Request should be aborted!");
 		});
 		testModel.attachRequestFailed(function() {
-			ok(false, "Error handler should not be called when request is aborted via destroy!");
+			assert.ok(false, "Error handler should not be called when request is aborted via destroy!");
 		});
 		var spy = this.spy(jQuery, "ajax");
 		testModel.loadData("testdata.xml");
 		testModel.destroy();
-		ok(testModel.bDestroyed, "Model should be destroyed");
+		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 
@@ -378,7 +378,7 @@
 	QUnit.test("test XMLModel loadData after destroy", function(assert) {
 		//var server = this.sandbox.useFakeServer();
 		//server.respondWith("data.json", function(xhr, id) {
-			//ok(false, "Request should not be sent after calling destroy!");
+			//assert.ok(false, "Request should not be sent after calling destroy!");
 			//xhr.respond(200, { "Content-Type": "application/json" }, '{ "test": "data" }');
 		//});
 
@@ -386,22 +386,22 @@
 		var testModel = new sap.ui.model.xml.XMLModel();
 
 		testModel.attachRequestCompleted(function() {
-			ok(false, "Request should be aborted!");
+			assert.ok(false, "Request should be aborted!");
 		});
 		testModel.attachRequestFailed(function() {
-			ok(false, "Error handler should not be called when request is aborted via destroy!");
+			assert.ok(false, "Error handler should not be called when request is aborted via destroy!");
 		});
 
 		testModel.loadData("testdata.xml", null, true);
 		testModel.destroy();
-		ok(testModel.bDestroyed, "Model should be destroyed");
+		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 
 		// call loaddata again
 		testModel.loadData("testdata.xml", null, true);
 
-		ok(testModel.bDestroyed, "Model should be destroyed");
+		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 

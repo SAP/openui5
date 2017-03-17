@@ -40,7 +40,7 @@
 		QUnit.test("DOM", function (assert) {
 			//assert
 			var $stepInput = this.stepInput.$();
-			ok($stepInput.length > 0, "The control was successfully rendered");
+			assert.ok($stepInput.length > 0, "The control was successfully rendered");
 			equals($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
 		});
 
@@ -587,9 +587,9 @@
 			var $input = this.stepInput.$("input-inner");
 
 			assert.strictEqual($input.attr("role"), "spinbutton", "To have a proper role");
-			ok($input.attr("aria-valuenow"), "To have set a value");
-			ok($input.attr("aria-valuemin"), "To have set a min value");
-			ok($input.attr("aria-valuemax"), "To have set a max value");
+			assert.ok($input.attr("aria-valuenow"), "To have set a value");
+			assert.ok($input.attr("aria-valuemin"), "To have set a min value");
+			assert.ok($input.attr("aria-valuemax"), "To have set a max value");
 			assert.strictEqual($input.attr("aria-labelledby"), "__text0", "To have a label");
 		});
 

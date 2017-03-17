@@ -1095,7 +1095,7 @@
 
 		oFormat.format(1.23456);
 		assert.equal(oSpy.callCount, 1, "Custom rounding function is called");
-		ok(oSpy.calledWith(1.23456, 3), "Custom rounding function is called with correct parameters");
+		assert.ok(oSpy.calledWith(1.23456, 3), "Custom rounding function is called with correct parameters");
 	});
 
 	QUnit.test("Currency format with sMeasure", function(assert) {
@@ -1235,7 +1235,7 @@
 		assert.equal(oFormat.format(-.1234567), "-12.346%", ".1234567");
 		assert.equal(oFormat.format(.1234), "12.34%", ".1234");
 		assert.equal(oFormat.parse("-12.345%"), -0.12345, "-12.345%");
-		ok(isNaN(oFormat.parse("%12.345%")), "NaN", "%12.345%");
+		assert.ok(isNaN(oFormat.parse("%12.345%")), "NaN", "%12.345%");
 	});
 
 	QUnit.test("Percent format with specific locale tr-TR", function(assert) {
@@ -1244,7 +1244,7 @@
 
 		assert.equal(oFormat.format(.1234567), "%12,34567", ".1234567");
 		assert.equal(oFormat.parse("%12,34567"), 0.1234567, "%12,34567");
-		ok(isNaN(oFormat.parse("12,34567%")), "12,34567%");
+		assert.ok(isNaN(oFormat.parse("12,34567%")), "12,34567%");
 	});
 
 	QUnit.test("parse default format", function(assert) {
@@ -1327,7 +1327,7 @@
 		});
 
 		assert.equal(oIntegerFormat.parse("1S234S567"), 1234567, "1S234S567 is parsed as 1234567 with grouping separator set to 's'");
-		ok(isNaN(oIntegerFormat.parse("1s234s567")), "1s234s567 is parsed as NaN");
+		assert.ok(isNaN(oIntegerFormat.parse("1s234s567")), "1s234s567 is parsed as NaN");
 	});
 
 	QUnit.test("parse custom format", function(assert) {
@@ -1365,17 +1365,17 @@
 	QUnit.test("parse currency format",  function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
 		var aResult = oFormat.parse("-12,345.67 EUR");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], -12345.67, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("USD23.4567");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 23.4567, "Number is parsed correctly");
 		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR-1234567.89");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], -1234567.89, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
@@ -1383,17 +1383,17 @@
 		assert.equal(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("\u20ac" + " 1,234,567.89");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("$ 1234567.89");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
@@ -1414,7 +1414,7 @@
 		assert.equal(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
@@ -1423,22 +1423,22 @@
 		});
 
 		aResult = oFormat.parse("-12,345.67 EUR");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-00012,345.67 EUR");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12,345,678,901,123,456.78 EUR");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], "-12345678901123456.78", "Long number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78 EUR");
-		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		assert.equal(aResult[0], "-12345678901123456345678901123456.78", "Ridiculously long number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
@@ -1687,7 +1687,7 @@
 					}
 
 					if (nParsed !== nParsed) {
-						ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
+						assert.ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
 					} else {
 						assert.strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index2][index1]);
 					}

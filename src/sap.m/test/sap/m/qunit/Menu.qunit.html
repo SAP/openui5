@@ -381,7 +381,7 @@
             sutListItem = this.getListItemAtIndex(2);
 
             //Assert
-            ok(!!sutListItem, "There is a new ui item at the right place");
+            assert.ok(!!sutListItem, "There is a new ui item at the right place");
             equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
@@ -399,7 +399,7 @@
             sutListItem = this.getListItemAtIndex(2);
 
             //Assert
-            ok(!!sutListItem, "There is a new ui item at the right place");
+            assert.ok(!!sutListItem, "There is a new ui item at the right place");
             equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
@@ -430,7 +430,7 @@
             sutListItem = this.getListItemAtIndex(0);
 
             //Assert
-            ok(!!sutListItem, "There is a new ui item at the right place");
+            assert.ok(!!sutListItem, "There is a new ui item at the right place");
             equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
@@ -454,7 +454,7 @@
 
             //Assert
             equals(aPages.length, 1, "The menu has 1 page");
-            ok(!!oSutListItem, "There is a new ui item at the right place");
+            assert.ok(!!oSutListItem, "There is a new ui item at the right place");
             equals(oSutListItem.getTitle(), oItem.getText(), "UI item has the right text");
 
             sut.destroy();
@@ -564,7 +564,7 @@
 			this.sut.getBinding('items').filter(new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.EQ, 'world'));
 			sap.ui.getCore().applyChanges();
 
-			ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
+			assert.ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
 		});
 
         QUnit.module("[PHONE] Data binding", {
@@ -707,7 +707,7 @@
 
             //Assert
             assert.strictEqual(this.sut.getText(), sPropertyValue, "setProperty sets");
-            ok(oSpyFireEvent.calledWith("propertyChanged"), "propertyChanged fired");
+            assert.ok(oSpyFireEvent.calledWith("propertyChanged"), "propertyChanged fired");
         });
 
         QUnit.test("addAggregation", function(assert) {
@@ -724,7 +724,7 @@
             //Assert
             assert.strictEqual(this.sut.getItems().length, 3, "more items");
             assert.strictEqual(this.sut.getItems()[2].getId(), sNewItemId, "item added");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.test("insertAggregation", function(assert) {
@@ -738,7 +738,7 @@
             //Assert
             assert.strictEqual(this.sut.getItems().length, 3, "more items");
             assert.strictEqual(this.sut.getItems()[1].getId(), sNewItemId, "item inserted");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.test("removeAggregation", function(assert) {
@@ -751,7 +751,7 @@
             //Assert
             assert.strictEqual(this.sut.getItems().length, 1, "less items");
             assert.strictEqual(this.sut.getItems()[0].getId(), sSecondItemId, "item removed");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.test("removeAllAggregation", function(assert) {
@@ -765,7 +765,7 @@
             //Assert
             assert.strictEqual(aResult[0].getId(), aItems[0].getId(), "the items are not destroyed and are returned");
             assert.strictEqual(this.sut.getItems().length, 0, "no items");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.test("destroyAggregation", function(assert) {
@@ -776,9 +776,9 @@
             this.sut.destroyAggregation("items", true);
 
             //Assert
-            ok(!sap.ui.getCore().byId(oFirstItem.getId()), "the items are destroyed");
+            assert.ok(!sap.ui.getCore().byId(oFirstItem.getId()), "the items are destroyed");
             assert.strictEqual(this.sut.getItems().length, 0, "no items");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.module('MenuListItem', {
@@ -816,8 +816,8 @@
                 oImage = this.sut._getImage(this.sut.getId() + "-img", sImageStyleClass, this.sut.getIcon(), this.sut.getIconDensityAware());
 
             //Assert
-            ok(oImage, "image exists");
-            ok(this.sut._image, "image is cached");
+            assert.ok(oImage, "image exists");
+            assert.ok(this.sut._image, "image is cached");
             assert.strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
         });
 
@@ -825,8 +825,8 @@
             var oImage = this.sut._getIconArrowRight();
 
             //Assert
-            ok(oImage, "arrow image exists");
-            ok(this.sut._imageRightArrow, "arrow image is cached");
+            assert.ok(oImage, "arrow image exists");
+            assert.ok(this.sut._imageRightArrow, "arrow image is cached");
             assert.strictEqual(oImage.getSrc(), "sap-icon://slim-arrow-right", "image has right font symbol");
             assert.strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
         });

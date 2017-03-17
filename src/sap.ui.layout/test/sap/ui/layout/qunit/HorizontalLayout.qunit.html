@@ -34,17 +34,17 @@
 
 
 		QUnit.test("Children Rendered", function(assert) {
-			ok(jQuery.sap.domById('B1'), "Button should be rendered");
-			ok(jQuery.sap.domById('TF1'), "TextField should be rendered");
-			ok(jQuery.sap.domById('B2'), "Second button should be rendered");
+			assert.ok(jQuery.sap.domById('B1'), "Button should be rendered");
+			assert.ok(jQuery.sap.domById('TF1'), "TextField should be rendered");
+			assert.ok(jQuery.sap.domById('B2'), "Second button should be rendered");
 		});
 
 		QUnit.test("Layout", function(assert) {
 			var oButton = jQuery.sap.byId('B1');
 			var oText = jQuery.sap.byId('TF1');
 			var oImage = jQuery.sap.byId('B2');
-			ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
-			ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
+			assert.ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
+			assert.ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
 
 			// offset() returns fractional numbers on Firefox Mac, so use offsetLeft instead
 			assert.equal(oText[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "TextField should be exactly right of Button");
@@ -57,8 +57,8 @@
 			var oButton = jQuery.sap.byId('B1');
 			var oText = jQuery.sap.byId('TF1');
 			var oImage = jQuery.sap.byId('B2');
-			ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
-			ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
+			assert.ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
+			assert.ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
 		});
 
 		QUnit.test("Wrapping", function(assert) {
@@ -125,16 +125,16 @@
 					new sap.ui.layout.HorizontalLayout()
 				]
 			});
-			ok(!!oLayout.getAccessibilityInfo, "HorizontalLayout has a getAccessibilityInfo function");
+			assert.ok(!!oLayout.getAccessibilityInfo, "HorizontalLayout has a getAccessibilityInfo function");
 			var oInfo = oLayout.getAccessibilityInfo();
-			ok(!!oInfo, "getAccessibilityInfo returns a info object");
-			ok(oInfo.role === undefined || oInfo.editable === null, "AriaRole");
-			ok(oInfo.type === undefined || oInfo.editable === null, "Type");
-			ok(oInfo.description === undefined || oInfo.editable === null, "Description");
-			ok(oInfo.focusable === undefined || oInfo.editable === null, "Focusable");
-			ok(oInfo.enabled === undefined || oInfo.editable === null, "Enabled");
-			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
-			ok(oInfo.children && oInfo.children.length == 2, "Children");
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			assert.ok(oInfo.role === undefined || oInfo.editable === null, "AriaRole");
+			assert.ok(oInfo.type === undefined || oInfo.editable === null, "Type");
+			assert.ok(oInfo.description === undefined || oInfo.editable === null, "Description");
+			assert.ok(oInfo.focusable === undefined || oInfo.editable === null, "Focusable");
+			assert.ok(oInfo.enabled === undefined || oInfo.editable === null, "Enabled");
+			assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+			assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 			oLayout.destroy();
 		});
 

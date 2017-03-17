@@ -152,13 +152,13 @@
 				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");;
 
 			//assert
-			ok(oInvisibleTooltip, "There is a tooltip info label");
+			assert.ok(oInvisibleTooltip, "There is a tooltip info label");
 			assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
-			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
-			ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
+			assert.ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
+			assert.ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
 			assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
-			ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button does not have and need DOM title property");
-			ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button does not have DOM title property set to its Icon name");
+			assert.ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button does not have and need DOM title property");
+			assert.ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button does not have DOM title property set to its Icon name");
 		});
 
 		QUnit.test("MenuButton IconOnly in Split mode", function (assert) {
@@ -175,10 +175,10 @@
 				bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
 
 			//assert
-			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue, '"aria-labelledby" is present and has correct value');
+			assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue, '"aria-labelledby" is present and has correct value');
 
-			ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button do not have and need DOM title property");
-			ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button do not have DOM title property set to its Icon name");
+			assert.ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button do not have and need DOM title property");
+			assert.ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button do not have DOM title property set to its Icon name");
 		});
 
 		QUnit.test("MenuButton IconOnly with tooltip in Split mode", function (assert) {
@@ -195,10 +195,10 @@
 				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");
 
 			//assert
-			ok(oInvisibleTooltip, "There is an inner info label");
+			assert.ok(oInvisibleTooltip, "There is an inner info label");
 			assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
-			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
-			ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
+			assert.ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
+			assert.ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
 			assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 		});
 
@@ -216,8 +216,8 @@
 				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
 
 			//assert
-			ok(!oInvisibleTooltip, "There is no tooltip info label");
-			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
+			assert.ok(!oInvisibleTooltip, "There is no tooltip info label");
+			assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
 		QUnit.test("Semantic MenuButton with tooltip in Split mode", function (assert) {
@@ -237,11 +237,11 @@
 				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
 
 			//assert
-			ok(oInvisibleTooltip, "There is an inner info label");
+			assert.ok(oInvisibleTooltip, "There is an inner info label");
 			assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
-			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
+			assert.ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
 			assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
-			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
+			assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
 		QUnit.test("Semantic MenuButton IconOnly in Split mode", function (assert) {
@@ -259,7 +259,7 @@
 				bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 			//assert
-			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
+			assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
 		QUnit.test("Semantic MenuButton IconOnly with tooltip in Split mode", function (assert) {
@@ -279,8 +279,8 @@
 				bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"));
 
 			//assert
-			ok(oInnerButton._oInvisibleTooltipInfoLabel.getDomRef(), "There is tooltip info label and it is rendered");
-			ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');
+			assert.ok(oInnerButton._oInvisibleTooltipInfoLabel.getDomRef(), "There is tooltip info label and it is rendered");
+			assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');
 			assert.strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
 		});
 
@@ -449,7 +449,7 @@
 			this.sut.setProperty("type", sap.m.ButtonType.Back, true);
 
 			//Assert
-			ok(!oSpyControlSetProperty.called, "Control's setProperty not called because values are forbidden");
+			assert.ok(!oSpyControlSetProperty.called, "Control's setProperty not called because values are forbidden");
 
 			oSpyControlSetProperty.reset();
 
@@ -458,21 +458,21 @@
 			this.sut.setProperty("type", sap.m.ButtonType.Emphasized, true);
 
 			//Assert
-			ok(oSpyControlSetProperty.calledOn(this.sut), "Control's setProperty called on menu button");
-			ok(oSpyControlSetProperty.calledWith("type", sap.m.ButtonType.Emphasized, true), "Control's setProperty called");
+			assert.ok(oSpyControlSetProperty.calledOn(this.sut), "Control's setProperty called on menu button");
+			assert.ok(oSpyControlSetProperty.calledWith("type", sap.m.ButtonType.Emphasized, true), "Control's setProperty called");
 
 
 			//'textDirection' and other properties are propagated to the inner button
 			//while 'type' is not
 
 			//Assert
-			ok(!oSpyButtonSetProperty.called, "SplitButton's setProperty not called for type property");
+			assert.ok(!oSpyButtonSetProperty.called, "SplitButton's setProperty not called for type property");
 
 			//Act
 			this.sut.setProperty("textDirection", sap.ui.core.TextDirection.RTL);
 
 			//Assert
-			ok(oSpyButtonSetProperty.calledWith("textDirection", sap.ui.core.TextDirection.RTL), "SplitButton's setProperty called for textDirection property");
+			assert.ok(oSpyButtonSetProperty.calledWith("textDirection", sap.ui.core.TextDirection.RTL), "SplitButton's setProperty called for textDirection property");
 		});
 
 		QUnit.test("_getFocusDomRef", function(assert) {
@@ -487,10 +487,10 @@
 			this.sut._handleButtonPress(false);
 
 			//Assert
-			ok(oSpySetArrowState.calledOnce, "SplitButton's setArrowState called exactly once");
-			ok(oSpySetArrowState.calledWith(true), "SplitButton's setArrowState(true) called");
-			ok(oSpyMenuOpenBy.calledOnce, "Menu's openBy called exactly once");
-			ok(oSpyMenuOpenBy.calledWith(this.sut, false), "Menu's openBy(menubutton, false) called");
+			assert.ok(oSpySetArrowState.calledOnce, "SplitButton's setArrowState called exactly once");
+			assert.ok(oSpySetArrowState.calledWith(true), "SplitButton's setArrowState(true) called");
+			assert.ok(oSpyMenuOpenBy.calledOnce, "Menu's openBy called exactly once");
+			assert.ok(oSpyMenuOpenBy.calledWith(this.sut, false), "Menu's openBy(menubutton, false) called");
 
 			this.sut.destroyMenu();
 			oSpySetArrowState.reset();
@@ -500,8 +500,8 @@
 			this.sut._handleButtonPress(false);
 
 			//Assert
-			ok(!oSpySetArrowState.called, "SplitButton's setArrowState not called");
-			ok(!oSpyMenuOpenBy.called, "Menu's openBy not called");
+			assert.ok(!oSpySetArrowState.called, "SplitButton's setArrowState not called");
+			assert.ok(!oSpyMenuOpenBy.called, "Menu's openBy not called");
 		});
 
 		QUnit.test("_menuClosed", function(assert) {
@@ -509,8 +509,8 @@
 			this.sut._menuClosed();
 
 			//Assert
-			ok(oSpy.calledOnce, "SplitButton's setArrowState called exactly once");
-			ok(oSpy.calledWith(false), "SplitButton's setArrowState(false) called");
+			assert.ok(oSpy.calledOnce, "SplitButton's setArrowState called exactly once");
+			assert.ok(oSpy.calledWith(false), "SplitButton's setArrowState(false) called");
 		});
 
 		QUnit.test("SplitButton's setArrowState", function(assert) {
@@ -518,19 +518,19 @@
 				$SplitButtonArrow = oSplitButton._getArrowButton().$();
 
 			//Assert
-			ok(!$SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is not active");
+			assert.ok(!$SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is not active");
 
 			//Act
 			oSplitButton.setArrowState(true);
 
 			//Assert
-			ok($SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is active");
+			assert.ok($SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is active");
 
 			//Act
 			oSplitButton.setArrowState(false);
 
 			//Assert
-			ok(!$SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is not active");
+			assert.ok(!$SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is not active");
 		});
 
 		QUnit.test("rerendering in static area", function(assert) {
@@ -559,14 +559,14 @@
 			this.clock.tick(1000);
 
 			// check width after first rendering
-			ok(oMenuButton.$().width() > 1, "width is greater than 1");
+			assert.ok(oMenuButton.$().width() > 1, "width is greater than 1");
 
 			//act
 			oPopover.rerender();
 			sap.ui.getCore().applyChanges();
 
 			// check width after rerendering
-			ok(oMenuButton.$().width() > 1, "width is still greater than 1 after rerendering");
+			assert.ok(oMenuButton.$().width() > 1, "width is still greater than 1 after rerendering");
 
 			oPopover.destroy();
 			oButton.destroy();
@@ -594,14 +594,14 @@
 
 			//Assert
 			assert.strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
-			ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
+			assert.ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
 
 			//Act
 			this.sut.onsapspace();
 
 			//Assert
 			assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress called");
-			ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
+			assert.ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
 
 			//Act
 			this.sut.onsapup();

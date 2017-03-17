@@ -51,7 +51,7 @@
 			tooltip : "a tooltip text"
 		});
 		var oDolly = oButton.clone("some");
-		ok(oDolly instanceof sap.ui.testlib.TestButton, "clone must return an element");
+		assert.ok(oDolly instanceof sap.ui.testlib.TestButton, "clone must return an element");
 		assert.equal(oDolly.getText(), oButton.getText(), "property text must have equal values");
 		assert.equal(oDolly.getTooltip(), oButton.getTooltip(), "property tooltip must have equal values");
 	});

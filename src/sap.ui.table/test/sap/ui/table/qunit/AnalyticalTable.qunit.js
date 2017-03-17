@@ -414,8 +414,8 @@ QUnit.test("TreeAutoExpandMode", function (assert) {
 
 	sap.ui.require(["sap/ui/table/TreeAutoExpandMode"], function(oMode) {
 		checkMode(oMode, "Module sap/ui/table/TreeAutoExpandMode");
-		ok(sap.ui.table.TreeAutoExpandMode === oMode, "Namespace sap.ui.table.TreeAutoExpandMode");
-		ok(sap.ui.table.TreeAutoExpandMode === oExpandMode, "sap.ui.table.TreeAutoExpandMode === sap.ui.model.TreeAutoExpandMode");
+		assert.ok(sap.ui.table.TreeAutoExpandMode === oMode, "Namespace sap.ui.table.TreeAutoExpandMode");
+		assert.ok(sap.ui.table.TreeAutoExpandMode === oExpandMode, "sap.ui.table.TreeAutoExpandMode === sap.ui.model.TreeAutoExpandMode");
 		done();
 	});
 

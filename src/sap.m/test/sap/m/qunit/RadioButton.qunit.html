@@ -50,7 +50,7 @@
 			sap.ui.getCore().applyChanges()
 
 			// assertions
-			ok(oRadioButton1.$().hasClass('sapMRb'), true);
+			assert.ok(oRadioButton1.$().hasClass('sapMRb'), true);
 			assert.equal(oRadioButton2.$().hasClass('sapMRb'), false, 'The button should not have class sapMRb');
 
 			// cleanup
@@ -155,8 +155,8 @@
 			assert.equal(oRadioButton2.getSelected(),true, "The Radio Button should be selected");
 			assert.equal(oRadioButton2.$('RB').attr('checked'), 'checked', "The Radio Button should be selected");
 			assert.equal(oRadioButton1.$("RB").attr('checked'), null, "The Radio Button should not be selected");
-			ok(!(oRadioButton1.$().hasClass("sapMRbSel")), "Radio Button should not have class 'sapMRbSel'");
-			ok(oRadioButton2.$().hasClass("sapMRbSel"), "Radio Button should have class 'sapMRbSel'");
+			assert.ok(!(oRadioButton1.$().hasClass("sapMRbSel")), "Radio Button should not have class 'sapMRbSel'");
+			assert.ok(oRadioButton2.$().hasClass("sapMRbSel"), "Radio Button should have class 'sapMRbSel'");
 
 			// cleanup
 			oRadioButton1.destroy();
@@ -198,11 +198,11 @@
 			qutils.triggerEvent("tap", oRadioButton2.getId());
 
 			// assertions
-			ok(!oRadioButton1.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
-			ok(!oRadioButton3.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
-			ok(oRadioButton2.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
-			ok(oRadioButton4.getSelected(), "RadioButton4 should not be changed because it is in another group");
-			ok(!oRadioButton5.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
+			assert.ok(!oRadioButton1.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
+			assert.ok(!oRadioButton3.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
+			assert.ok(oRadioButton2.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
+			assert.ok(oRadioButton4.getSelected(), "RadioButton4 should not be changed because it is in another group");
+			assert.ok(!oRadioButton5.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
 
 			// cleanup
 			oRadioButton1.destroy();
@@ -389,7 +389,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			ok(oRadioButton1.$('label'), 'Label should be created');
+			assert.ok(oRadioButton1.$('label'), 'Label should be created');
 			assert.strictEqual(oRadioButton1.$('label').css('text-align'), "right", "The align of the RadioButton's label should be right");
 
 			// cleanup
@@ -506,7 +506,7 @@
 			var oFocusDomRef = oRadioButton.applyFocusInfo();
 
 			// assertions
-			ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+			assert.ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
 
 			// cleanup
 			oRadioButton.destroy();
@@ -526,8 +526,8 @@
 
 			// assertions
 			assert.strictEqual(oSelectSpy.callCount, 0, "The select event was not fired yet");
-			ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
-			ok(oRadioButton.getSelected(), "The radio button was selected");
+			assert.ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+			assert.ok(oRadioButton.getSelected(), "The radio button was selected");
 
 			//trigger timeout
 			this.clock.tick(1);
@@ -553,7 +553,7 @@
 			// assertions
 			assert.strictEqual(oRadioButton.$().attr("tabindex"), "0" , "'getTabindex' should return 0");
 			qutils.triggerEvent("tap", oRadioButton.getId());
-			ok(oSpy.notCalled, "Event 'select' should not have been fired");
+			assert.ok(oSpy.notCalled, "Event 'select' should not have been fired");
 			assert.equal(oRadioButton.getSelected(), false, "Radio button should not be selected");
 
 			// cleanup
@@ -573,7 +573,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+				assert.ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
 
 				// cleanup
 				oRadioButton.destroy();
@@ -598,7 +598,7 @@
 			sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
 
 			// assertions
-			ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
+			assert.ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
 
 			// cleanup
 			oRadioButton1.destroy();
@@ -616,13 +616,13 @@
 			sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
 
 			// assertions
-			ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
+			assert.ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
 
 			// act
 			sap.ui.test.qunit.triggerTouchEvent("touchend", oRadioButton1.getDomRef());
 
 			// assertions
-			ok(!oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should not have class sapMRbBTouched");
+			assert.ok(!oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should not have class sapMRbBTouched");
 
 			// cleanup
 			oRadioButton1.destroy();

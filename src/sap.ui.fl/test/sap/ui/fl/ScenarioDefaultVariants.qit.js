@@ -100,7 +100,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 				return deletionPersistence.saveAll();
 			}).then(finalSteps)['catch'](function(err) {
-				ok(false, err);
+				assert.ok(false, err);
 				done();
 			});
 
@@ -130,7 +130,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var secondChangeId = creationPersistence.addChange(oSecondChangeDefinition);
 
 		creationPersistence.saveAll().then(checkCreationAndSetDefaultVariantId).then(saveDefaultVariantChange).then(checkSaveAndGetDefaultVariantId).then(checkDefaultVariantId)['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			done();
 		});
 
@@ -177,7 +177,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var secondChangeId = creationPersistence.addChange(oSecondChangeDefinition);
 
 		creationPersistence.saveAll().then(checkCreationAndSetDefaultVariantId).then(saveDefaultVariantChange).then(checkSaveThenCreateAndSaveSecondDefaultVariantChange).then(checkSaveAndGetChanges).then(checkDefaultVariantChangesAndSave).then(checkDeletionAndGetChangesAgain).then(checkNumberOfDefaultVariantChanges)['catch'](function(err) {
-			ok(false, err);
+			assert.ok(false, err);
 			done();
 		});
 

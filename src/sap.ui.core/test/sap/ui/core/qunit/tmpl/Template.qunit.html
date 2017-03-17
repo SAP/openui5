@@ -40,23 +40,23 @@
 
 				// check the first template to be a valid template
 				var oTemplate = sap.ui.getCore().getTemplate("theTemplate");
-				ok(oTemplate !== undefined, "Template has been found!");
-				ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Template is a sap.ui.core.tmpl.Template!");
-				ok(oTemplate === sap.ui.template("theTemplate"), "Same instance retrieved by sap.ui.template!");
+				assert.ok(oTemplate !== undefined, "Template has been found!");
+				assert.ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Template is a sap.ui.core.tmpl.Template!");
+				assert.ok(oTemplate === sap.ui.template("theTemplate"), "Same instance retrieved by sap.ui.template!");
 
 				// check the second template to be ignored
 				oTemplate = sap.ui.getCore().getTemplate("theSecondTemplate");
-				ok(oTemplate === undefined, "Second Template has not been found!");
+				assert.ok(oTemplate === undefined, "Second Template has not been found!");
 
 				// check the first embedded template to be a valid template
 				oTemplate = sap.ui.getCore().getTemplate("theEmbeddedTemplate");
-				ok(oTemplate !== undefined, "Embedded Template has been found!");
-				ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Embedded Template is a sap.ui.core.tmpl.Template!");
-				ok(oTemplate === sap.ui.template("theEmbeddedTemplate"), "Same instance retrieved by sap.ui.template!");
+				assert.ok(oTemplate !== undefined, "Embedded Template has been found!");
+				assert.ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Embedded Template is a sap.ui.core.tmpl.Template!");
+				assert.ok(oTemplate === sap.ui.template("theEmbeddedTemplate"), "Same instance retrieved by sap.ui.template!");
 
 				// check the second embedded template to be ignored
 				oTemplate = sap.ui.getCore().getTemplate("theSecondTemplate");
-				ok(oTemplate === undefined, "Second Embedded Template has not been found!");
+				assert.ok(oTemplate === undefined, "Second Embedded Template has not been found!");
 
 			});
 
@@ -64,10 +64,10 @@
 
 				// lookup an existing template
 				var oTemplate = sap.ui.template("theTemplate");
-				ok(oTemplate !== undefined, "Template has been found!");
-				ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Template is a sap.ui.core.tmpl.Template!");
-				ok(oTemplate === sap.ui.template("theTemplate"), "Same instance retrieved by sap.ui.template!");
-				ok(oTemplate === sap.ui.getCore().getTemplate("theTemplate"), "Same instance retrieved by sap.ui.template!");
+				assert.ok(oTemplate !== undefined, "Template has been found!");
+				assert.ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Template is a sap.ui.core.tmpl.Template!");
+				assert.ok(oTemplate === sap.ui.template("theTemplate"), "Same instance retrieved by sap.ui.template!");
+				assert.ok(oTemplate === sap.ui.getCore().getTemplate("theTemplate"), "Same instance retrieved by sap.ui.template!");
 
 			});
 
@@ -85,7 +85,7 @@
 					theEx = ex;
 				}
 
-				ok(theEx !== undefined, "Unknown template type not found. Exception was raised!");
+				assert.ok(theEx !== undefined, "Unknown template type not found. Exception was raised!");
 			});
 
 			QUnit.module("Binding Template Tests");
@@ -124,7 +124,7 @@
 
 					setTimeout(function() {
 						var sResult = jQuery(document.getElementById("templateContent")).text()
-						ok(sResult === sTitle, "Binding resolved properly");
+						assert.ok(sResult === sTitle, "Binding resolved properly");
 						done();
 					}, 10);
 				}, 10);

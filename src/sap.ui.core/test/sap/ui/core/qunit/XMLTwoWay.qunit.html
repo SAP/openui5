@@ -80,10 +80,10 @@
 
 	QUnit.test("supported BindingModes", function(assert) {
 		setup();
-		ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.OneWay), "One Way supported");
-		ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.TwoWay), "Two Way supported");
-		ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.OneTime), "One Time supported");
-		ok(!oModel.isBindingModeSupported(sap.ui.model.BindingMode.Default), "Default not supported");
+		assert.ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.OneWay), "One Way supported");
+		assert.ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.TwoWay), "Two Way supported");
+		assert.ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.OneTime), "One Time supported");
+		assert.ok(!oModel.isBindingModeSupported(sap.ui.model.BindingMode.Default), "Default not supported");
 	});
 
 	QUnit.test("getDefaultBindingMode", function(assert) {
@@ -121,8 +121,8 @@
 			oTextField.setValue("ggg" + i);
 			// check model value
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			ok(oValue != null, "value null check");
-			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
 		assert.equal(counter, 7, "check amount");
@@ -143,8 +143,8 @@
 			oTextField.setValue("ggg" + i);
 			// check model value
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			ok(oValue != null, "value null check");
-			ok(oValue == "ggg" + i, "check value should have changed in model: " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue == "ggg" + i, "check value should have changed in model: " + oValue);
 			counter++;
 		});
 		assert.equal(counter, 7, "check amount");
@@ -162,8 +162,8 @@
 			oTextField.setValue("ggg" + i);
 			// check model value
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			ok(oValue != null, "value null check");
-			ok(oValue == "ggg" + i, "check value should have changed in model: " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue == "ggg" + i, "check value should have changed in model: " + oValue);
 			counter++;
 		});
 		assert.equal(counter, 7, "check amount");
@@ -182,8 +182,8 @@
 			oTextField.setValue("ggg" + i);
 			// check model value
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			ok(oValue != null, "value null check");
-			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
 		assert.equal(counter, 7, "check amount");
@@ -210,7 +210,7 @@
 		var oValue = oModel.getProperty("/clients/member/0/@lastName");
 		assert.equal(oValue, "Duck", "old value check");
 		var bEnabled = oModel2.getProperty("/test/0/enabled");
-		ok(bEnabled, "old value check");
+		assert.ok(bEnabled, "old value check");
 
 		// modify
 		oTextField.setValue("newValue");
@@ -220,7 +220,7 @@
 		var oValue = oModel.getProperty("/clients/member/0/@lastName");
 		assert.equal(oValue, "newValue", "new value check");
 		var bEnabled = oModel2.getProperty("/test/0/enabled");
-		ok(!bEnabled, "new value check");
+		assert.ok(!bEnabled, "new value check");
 
 	});
 
@@ -246,7 +246,7 @@
 		var oValue = oModel.getProperty("/clients/member/0/@lastName");
 		assert.equal(oValue, "Duck", "old value check");
 		var bEnabled = oModel2.getProperty("/test/0/enabled");
-		ok(bEnabled, "old value check");
+		assert.ok(bEnabled, "old value check");
 
 		// modify
 		oTextField.setValue("newValue");
@@ -256,7 +256,7 @@
 		var oValue = oModel.getProperty("/clients/member/0/@lastName");
 		assert.equal(oValue, "newValue", "new value check");
 		var bEnabled = oModel2.getProperty("/test/0/enabled");
-		ok(bEnabled, "new value check");
+		assert.ok(bEnabled, "new value check");
 
 	});
 
@@ -275,8 +275,8 @@
 			oTextField.setValue("ggg" + i);
 			// check model value
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			ok(oValue != null, "value null check");
-			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
 		assert.equal(counter, 7, "check amount");
@@ -291,8 +291,8 @@
 		jQuery(aTextFields).each(function (i, oTextField){
 			var oValue = oTextField.getValue();
 			// check model value
-			ok(oValue != null, "value null check");
-			ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
 			counter++;
 		});
 
@@ -309,8 +309,8 @@
 			oTextField.setValue("ggg" + i);
 			// check model value
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			ok(oValue != null, "value null check");
-			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
 		assert.equal(counter, 7, "check amount");
@@ -325,8 +325,8 @@
 		jQuery(aTextFields).each(function (i, oTextField){
 			var oValue = oTextField.getValue();
 			// check model value
-			ok(oValue != null, "value null check");
-			ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
 			counter++;
 		});
 
@@ -343,8 +343,8 @@
 			oTextField.setValue("ggg" + i);
 			// check model value
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			ok(oValue != null, "value null check");
-			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
 		assert.equal(counter, 7, "check amount");
@@ -359,8 +359,8 @@
 		jQuery(aTextFields).each(function (i, oTextField){
 			var oValue = oTextField.getValue();
 			// check model value
-			ok(oValue != null, "value null check");
-			ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
+			assert.ok(oValue != null, "value null check");
+			assert.ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
 			counter++;
 		});
 	});

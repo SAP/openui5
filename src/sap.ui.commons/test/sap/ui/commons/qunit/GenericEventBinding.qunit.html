@@ -31,30 +31,30 @@
 			oBtn2.placeAt("uiArea2");
 
 			function myHandler1() {
-				ok(true, "check in handler 1");
+				assert.ok(true, "check in handler 1");
 			}
 
 			function myHandler2() {
-				ok(true, "check in handler 2");
-				ok(true, "second check in handler 2");
+				assert.ok(true, "check in handler 2");
+				assert.ok(true, "second check in handler 2");
 			}
 
 
 			// make sure the methods exist
     	QUnit.test("InitialCheck", 4, function(assert) {
-    		ok(oBtn.attachBrowserEvent, "oBtn.attachBrowserEvent should be an existing function");
+    		assert.ok(oBtn.attachBrowserEvent, "oBtn.attachBrowserEvent should be an existing function");
     		assert.equal(typeof(oBtn.attachBrowserEvent), "function", "oBtn.attachBrowserEvent should be an existing function");
-    		ok(oBtn.detachBrowserEvent, "oBtn.detachBrowserEvent should be an existing function");
+    		assert.ok(oBtn.detachBrowserEvent, "oBtn.detachBrowserEvent should be an existing function");
     		assert.equal(typeof(oBtn.detachBrowserEvent), "function", "oBtn.detachBrowserEvent should be an existing function");
     	});
 
     	QUnit.test("Adding Handlers and Return Value", 6, function(assert) {
     		var result = oBtn.attachBrowserEvent("blur", myHandler1);
 
-    		ok(result, "oBtn.attachBrowserEvent must return something");
-    		ok((result === oBtn), "oBtn.attachBrowserEvent must return oBtn"); // equal does not work
+    		assert.ok(result, "oBtn.attachBrowserEvent must return something");
+    		assert.ok((result === oBtn), "oBtn.attachBrowserEvent must return oBtn"); // equal does not work
 
-    		ok(oBtn.aBindParameters, "oBtn.aBindParameters should exist");
+    		assert.ok(oBtn.aBindParameters, "oBtn.aBindParameters should exist");
     		assert.equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
     		assert.equal(oBtn.aBindParameters[0].sEventType, "blur", "oBtn.aBindParameters[0] event name should be 'blur'");
     		assert.equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
@@ -63,10 +63,10 @@
     	QUnit.test("Removing Handlers and Return Value", 4, function(assert) {
     		var result = oBtn.detachBrowserEvent("blur", myHandler1);
 
-    		ok(result, "oBtn.detachBrowserEvent must return something");
-    		ok((result === oBtn), "oBtn.detachBrowserEvent must return oBtn"); // equal does not work
+    		assert.ok(result, "oBtn.detachBrowserEvent must return something");
+    		assert.ok((result === oBtn), "oBtn.detachBrowserEvent must return oBtn"); // equal does not work
 
-    		ok(oBtn.aBindParameters, "oBtn.aBindParameters should exist");
+    		assert.ok(oBtn.aBindParameters, "oBtn.aBindParameters should exist");
     		assert.equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
     	});
 
@@ -148,7 +148,7 @@
     		oBtn.invalidate();
 			sap.ui.getCore().applyChanges();
 			var newBtn = oBtn.getDomRef();
-			//ok(oldBtn != newBtn, "Button should be re-rendered and replaced by a new DOM element");
+			//assert.ok(oldBtn != newBtn, "Button should be re-rendered and replaced by a new DOM element");
 
 			// now trigger the event
     		newBtn.focus();

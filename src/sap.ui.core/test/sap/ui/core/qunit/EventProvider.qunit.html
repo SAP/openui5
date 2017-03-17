@@ -25,7 +25,7 @@
 			var mEventRegistry = oObject.mEventRegistry;
 
 			for(var key in mEventRegistry) {
-				ok(typeof mEventRegistry[key] !== "object", "no data");
+				assert.ok(typeof mEventRegistry[key] !== "object", "no data");
 			};
 		});
 
@@ -144,7 +144,7 @@
 			oObject.attachEvent("Fire1", handler2);
 			globalEvents = [];
 			oObject.fireEvent("Fire1", {source:"testFireEventMultipleListeners"} );
-			ok(globalEvents.length == 3, "3 events received");
+			assert.ok(globalEvents.length == 3, "3 events received");
 			var mHandlers = { handler1 : false, handler2 : false, handler3 : false };
 			var oEventInfo = globalEvents.pop();
 			assert.strictEqual(oEventInfo.id, "Fire1", "correct event id");
@@ -155,9 +155,9 @@
 			oEventInfo = globalEvents.pop();
 			assert.strictEqual(oEventInfo.id, "Fire1", "object is the right");
 			mHandlers[oEventInfo.handler] = true;
-			ok(mHandlers['handler1'], "handler1 received info");
-			ok(mHandlers['handler1'], "handler2 received info");
-			ok(mHandlers['handler1'], "handler3 received info");
+			assert.ok(mHandlers['handler1'], "handler1 received info");
+			assert.ok(mHandlers['handler1'], "handler2 received info");
+			assert.ok(mHandlers['handler1'], "handler3 received info");
 		});
 
 		QUnit.test("FireEventDoubleRegistration", function(assert) {
@@ -224,7 +224,7 @@
 			oObject.attachEvent("Fire4", {info: "Test data for event-handler function on listener object"}, handler4, listenerD);
 			globalEvents = [];
 			oObject.fireEvent("Fire4", {source:"testFireEventWithAdditionalData"} );
-			ok(globalEvents.length == 2, "2 events received");
+			assert.ok(globalEvents.length == 2, "2 events received");
 			var oEventInfo = globalEvents.shift();
 			assert.strictEqual(oEventInfo.id, "Fire4", "id of the received event");
 			assert.strictEqual(oEventInfo.listener, oObject, "listener object should be the EventProvider instance")
@@ -248,9 +248,9 @@
 				oEvent.preventDefault();
 			});
 			bExecDefault = oObject.fireEvent("noprevent", true);
-			ok(bExecDefault, "If preventDefault is not called, default is true");
+			assert.ok(bExecDefault, "If preventDefault is not called, default is true");
 			bExecDefault = oObject.fireEvent("prevent", true);
-			ok(!(bExecDefault), "If preventDefault is called, this should return false");
+			assert.ok(!(bExecDefault), "If preventDefault is called, this should return false");
 		});
 
 		var oBubble1 = new sap.ui.base.EventProvider(),
@@ -275,7 +275,7 @@
 			// basic test
 			globalEvents = [];
 			oBubble3.fireEvent("test", false, true);
-			ok(globalEvents.length == 3, "three events due to bubbling");
+			assert.ok(globalEvents.length == 3, "three events due to bubbling");
 
 			oBubble1.detachEvent("test", handler1);
 			oBubble2.detachEvent("test", handler2);
@@ -291,21 +291,21 @@
 			oBubble1.attachEvent("test", cancelHandler);
 			globalEvents = [];
 			oBubble3.fireEvent("test", false, true);
-			ok(globalEvents.length == 3, "still three events, last handler cancels");
+			assert.ok(globalEvents.length == 3, "still three events, last handler cancels");
 			oBubble1.detachEvent("test", cancelHandler);
 
 			// second handler cancels
 			oBubble2.attachEvent("test", cancelHandler);
 			globalEvents = [];
 			oBubble3.fireEvent("test", false, true);
-			ok(globalEvents.length == 2, "only two events, as second handler cancels");
+			assert.ok(globalEvents.length == 2, "only two events, as second handler cancels");
 			oBubble1.detachEvent("test", cancelHandler);
 
 			// first handler cancels
 			oBubble3.attachEvent("test", cancelHandler);
 			globalEvents = [];
 			oBubble3.fireEvent("test", false, true);
-			ok(globalEvents.length == 1, "one event only, first handler cancels");
+			assert.ok(globalEvents.length == 1, "one event only, first handler cancels");
 			oBubble3.detachEvent("test", cancelHandler);
 
 			oBubble1.detachEvent("test", handler1);

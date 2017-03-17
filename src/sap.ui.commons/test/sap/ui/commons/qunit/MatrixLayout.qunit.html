@@ -175,9 +175,9 @@
 	});
 
 	QUnit.test("Clone", function(assert) {
-		ok(oML3.getWidths(), "original layout must have widths set");
+		assert.ok(oML3.getWidths(), "original layout must have widths set");
 		var oML3_clone = oML3.clone();
-		ok(oML3_clone.getWidths(), "clone must have widths as well");
+		assert.ok(oML3_clone.getWidths(), "clone must have widths as well");
 		assert.deepEqual(oML3_clone.getWidths(), oML3.getWidths(), "clone must have same widths");
 	})
 
@@ -295,7 +295,7 @@
 		assert.equal(oCellDom.offsetHeight, 25, "Height of Cell 0.0:");
 		assert.equal(oCellDom.offsetLeft, 0, "Left offset of Cell 0.0:");
 		assert.equal(oCellDom.offsetTop, 0, "Top offset of Cell 0.0:");
-		ok(oCellDom.lastChild.offsetTop > 0, "Top offset of content of Cell 0.0 > 0 (vertical-align:bottom):");
+		assert.ok(oCellDom.lastChild.offsetTop > 0, "Top offset of content of Cell 0.0 > 0 (vertical-align:bottom):");
 		assert.equal(oCellDom.lastChild.offsetTop + oCellDom.lastChild.offsetHeight, 25, "Top offset of content of Cell 0.0 + height = cell height (vertical-align:bottom):");
 
 		oCellDom = jQuery.sap.domById('Matrix4-0-2');

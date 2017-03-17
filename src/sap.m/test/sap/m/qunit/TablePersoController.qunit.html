@@ -211,7 +211,7 @@
 			oTPC.detachPersonalizationsDone(fnPersoDone);
 			bPersonalizationDoneTriggered = true;
 		} finally {
-			ok(bPersonalizationDoneTriggered, "'PersonalizationDone' event has been triggered");
+			assert.ok(bPersonalizationDoneTriggered, "'PersonalizationDone' event has been triggered");
 		}
 
 		// Status at this point should be:
@@ -331,15 +331,15 @@
  		oColumns.forEach(function(oColumn) {
 			switch (oColumn.getId()){
 				case "idName":
-					ok(oColumn.getVisible(), "Column Name visibility OK!");
+					assert.ok(oColumn.getVisible(), "Column Name visibility OK!");
 					assert.equal(oColumn.getOrder(), 2, "Column 2 (Name) order is correct");
 					break;
 				case "idColor":
-					ok(!oColumn.getVisible(), "Column Color visibility OK!");
+					assert.ok(!oColumn.getVisible(), "Column Color visibility OK!");
 					assert.equal(oColumn.getOrder(), 0, "Column 0 (Color) order is correct");
 					break;
 				case "idNumber":
-					ok(oColumn.getVisible(), "Column Number visibility OK!");
+					assert.ok(oColumn.getVisible(), "Column Number visibility OK!");
 					assert.equal(oColumn.getOrder(), 1, "Column 1 (Number) order is correct");
 					break;
 			};
@@ -350,12 +350,12 @@
 		var iDelegatesCount = oTable.aDelegates.length;
 		oTPC.destroy();
 
-		ok(!oTPC._mDelegateMap, null, "Delegate map is destroyed");
-		ok(!oTPC._oPersService, null, "Perso service is cleaned up");
-		ok(!oTPC._mTablePersMap, null, "Resource bundle is cleaned up");
-		ok(!oTPC._mInitialTableStateMap, null, "Model bundle is cleaned up");
-		ok(!oTPC.getTablePersoDialog(), null, "Dialog is cleaned up");
-		ok(oTable.aDelegates.length == (iDelegatesCount -1), null, "Table delegate has been removed");
+		assert.ok(!oTPC._mDelegateMap, null, "Delegate map is destroyed");
+		assert.ok(!oTPC._oPersService, null, "Perso service is cleaned up");
+		assert.ok(!oTPC._mTablePersMap, null, "Resource bundle is cleaned up");
+		assert.ok(!oTPC._mInitialTableStateMap, null, "Model bundle is cleaned up");
+		assert.ok(!oTPC.getTablePersoDialog(), null, "Dialog is cleaned up");
+		assert.ok(oTable.aDelegates.length == (iDelegatesCount -1), null, "Table delegate has been removed");
 	});
 </script>
 </head>

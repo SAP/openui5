@@ -55,7 +55,7 @@
 			// Assert
 			$oMessagePage = jQuery(".sapMMessagePage").length;
 
-			ok($oMessagePage, "messagePage is rendered.");
+			assert.ok($oMessagePage, "messagePage is rendered.");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -73,7 +73,7 @@
 			// Assert
 			$oMessagePageInnerPage = jQuery(".sapMMessagePage").children(0).length;
 
-			ok($oMessagePageInnerPage, "Inner page is rendered.");
+			assert.ok($oMessagePageInnerPage, "Inner page is rendered.");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -90,7 +90,7 @@
 
 			// Assert
 			$oMessagePageInnerPageText = jQuery(".sapMMessagePageDescription").length;
-			ok($oMessagePageInnerPageText, "Inner text is rendered.");
+			assert.ok($oMessagePageInnerPageText, "Inner text is rendered.");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -108,7 +108,7 @@
 			// Assert
 			$oMessagePageInnerDescription = jQuery(".sapMMessagePageDescription").length;
 
-			ok($oMessagePageInnerDescription, "Inner Description is rendered.");
+			assert.ok($oMessagePageInnerDescription, "Inner Description is rendered.");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -126,7 +126,7 @@
 			// Assert
 			$oMessagePageInnerIcon = jQuery("#" + oMessagePage.getId() + "-pageIcon.sapUiIcon").length;
 
-			ok($oMessagePageInnerIcon, "Inner icon is rendered.");
+			assert.ok($oMessagePageInnerIcon, "Inner icon is rendered.");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -147,7 +147,7 @@
 			// Assert
 			$oMessagePageInnerIcon = jQuery("#" + oMessagePage.getId() + "-pageIcon.sapMImg").length;
 
-			ok($oMessagePageInnerIcon, "Inner png icon is rendered.");
+			assert.ok($oMessagePageInnerIcon, "Inner png icon is rendered.");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -169,7 +169,7 @@
 			// Assert
 			$oMessagePageInnerButton = jQuery(".sapMMessagePage .sapMBarLeft .sapMBtn").length;
 
-			ok($oMessagePageInnerButton, "Inner nav button is rendered");
+			assert.ok($oMessagePageInnerButton, "Inner nav button is rendered");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -313,7 +313,7 @@
 
 			this.clock.tick(500);
 			iActualResult = jQuery("#" + messagePageId + " .sapMPageHeader").length;
-			ok(!iActualResult, "The header is not rendered");
+			assert.ok(!iActualResult, "The header is not rendered");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -334,23 +334,23 @@
 			oMessagePage.destroy();
 
 			iActualResult = jQuery(".sapMEmptyPagCustomIcon").length;
-			ok(!iActualResult, "The icon is destroyed");
+			assert.ok(!iActualResult, "The icon is destroyed");
 			assert.equal(oMessagePage._oPageIcon, null, "The custom icon should be null");
 
 			iActualResult = jQuery(".sapMMessagePageMainText").length;
-			ok(!iActualResult, "The text is destroyed");
+			assert.ok(!iActualResult, "The text is destroyed");
 			assert.equal(oMessagePage._oText, null, "The main text should be null");
 
 			iActualResult = jQuery(".sapMMessagePageDescription").length;
-			ok(!iActualResult, "The description  is destroyed");
+			assert.ok(!iActualResult, "The description  is destroyed");
 			assert.equal(oMessagePage._oDescription, null, "The description should be null");
 
 			iActualResult = jQuery(".sapMMessagePage").children(0).length;
-			ok(!iActualResult, "The inner page is destroyed");
+			assert.ok(!iActualResult, "The inner page is destroyed");
 			assert.equal(oMessagePage._oPage, null, "The inner page should be null");
 
 			iActualResult = jQuery("#" + messagePageId).length;
-			ok(!iActualResult, "The messagePage is destroyed");
+			assert.ok(!iActualResult, "The messagePage is destroyed");
 		});
 
 		QUnit.module("Custom aggregation");
@@ -371,7 +371,7 @@
 			sap.ui.getCore().applyChanges();
 
 			var iCustomText = jQuery('.sapMMessagePage .sapMLnk.sapMMessagePageMainText').length;
-			ok(iCustomText, "customText is rendered");
+			assert.ok(iCustomText, "customText is rendered");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -393,7 +393,7 @@
 			sap.ui.getCore().applyChanges();
 
 			var iCustomDescription = jQuery('.sapMMessagePage .sapMLnk.sapMMessagePageDescription').length;
-			ok(iCustomDescription, "customDescription is rendered");
+			assert.ok(iCustomDescription, "customDescription is rendered");
 
 			// Clean up
 			oMessagePage.destroy();

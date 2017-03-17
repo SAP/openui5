@@ -10594,7 +10594,7 @@
 			oComboBox._oList.fireItemPress({item: oComboBox.getItems()[1]});
 			oComboBox._oList.fireSelectionChange({selectedItem: oComboBox.getItems()[1]});
 
-			ok(oComboBox.getValue(), "ComboBox value to be filled in");
+			assert.ok(oComboBox.getValue(), "ComboBox value to be filled in");
 			assert.strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
 
 			oForm.destroy();

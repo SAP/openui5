@@ -68,8 +68,8 @@
 
 				renderingTest.call(this, function() {
 
-					ok(jQuery.sap.domById("myBar"), "Bar should be rendered");
-					ok(jQuery.sap.domById("myBar1"), "Bar1 should be rendered");
+					assert.ok(jQuery.sap.domById("myBar"), "Bar should be rendered");
+					assert.ok(jQuery.sap.domById("myBar1"), "Bar1 should be rendered");
 
 				});
 
@@ -91,12 +91,12 @@
 
 				renderingTest.call(this, function() {
 
-					ok(jQuery.sap.byId("CancelBtn").parent().hasClass("sapMBarLeft"), "header button should have class sapMBarLeft");
-					ok(jQuery.sap.byId("myIcon").parent().hasClass("sapMBarLeft"), "header icon should have class sapMBarLeft");
-					ok(jQuery.sap.byId("myLabel").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
-					ok(jQuery.sap.byId("myLabel1").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
-					ok(jQuery.sap.byId("EditBtn").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
-					ok(jQuery.sap.byId("EditBtn1").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
+					assert.ok(jQuery.sap.byId("CancelBtn").parent().hasClass("sapMBarLeft"), "header button should have class sapMBarLeft");
+					assert.ok(jQuery.sap.byId("myIcon").parent().hasClass("sapMBarLeft"), "header icon should have class sapMBarLeft");
+					assert.ok(jQuery.sap.byId("myLabel").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
+					assert.ok(jQuery.sap.byId("myLabel1").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
+					assert.ok(jQuery.sap.byId("EditBtn").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
+					assert.ok(jQuery.sap.byId("EditBtn1").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
 
 				});
 
@@ -115,8 +115,8 @@
 				var sExpectedClass = sap.m.BarRenderer.getContext(oBar);
 
 				// Assert
-				ok(oBar.$().hasClass(sExpectedClass), "the left button parent had the class " + sExpectedClass);
-				ok(oBar.$().hasClass(sBarBaseContext), "the left button parent had the class " + sBarBaseContext);
+				assert.ok(oBar.$().hasClass(sExpectedClass), "the left button parent had the class " + sExpectedClass);
+				assert.ok(oBar.$().hasClass(sBarBaseContext), "the left button parent had the class " + sBarBaseContext);
 
 				//Cleanup
 				oBar.destroy();
@@ -133,10 +133,10 @@
 
 				// Assert
 				assert.equal(Object.keys(oExpectedContexts).length, 4, "There are four contexts");
-				ok(oExpectedContexts["header"], "returned contexts has 'header' context");
-				ok(oExpectedContexts["subheader"], "returned contexts has 'subheader' context");
-				ok(oExpectedContexts["footer"], "returned contexts has 'footer' context");
-				ok(oExpectedContexts["dialogFooter"], "returned contexts has 'dialogFooter' context");
+				assert.ok(oExpectedContexts["header"], "returned contexts has 'header' context");
+				assert.ok(oExpectedContexts["subheader"], "returned contexts has 'subheader' context");
+				assert.ok(oExpectedContexts["footer"], "returned contexts has 'footer' context");
+				assert.ok(oExpectedContexts["dialogFooter"], "returned contexts has 'dialogFooter' context");
 
 				//Cleanup
 				oBar.destroy();
@@ -146,23 +146,23 @@
 
 				renderingTest.call(this, function() {
 
-					ok(jQuery.sap.byId("myBar").is("div"), "bar should be rendered as div");
-					ok(jQuery.sap.byId("myBar1").is("div"), "bar1 should be rendered as div");
+					assert.ok(jQuery.sap.byId("myBar").is("div"), "bar should be rendered as div");
+					assert.ok(jQuery.sap.byId("myBar1").is("div"), "bar1 should be rendered as div");
 
 					var bar = sap.ui.getCore().byId("myBar");
 					bar.setHTMLTag('Header');
 					bar.rerender();
-					ok(jQuery.sap.byId("myBar").is("header"), "bar should be rendered as header");
+					assert.ok(jQuery.sap.byId("myBar").is("header"), "bar should be rendered as header");
 
 					var bar1 = sap.ui.getCore().byId("myBar1");
 					bar1.setHTMLTag('Footer');
 					bar1.rerender();
-					ok(jQuery.sap.byId("myBar1").is("footer"), "bar1 should be rendered as footer");
+					assert.ok(jQuery.sap.byId("myBar1").is("footer"), "bar1 should be rendered as footer");
 
 					var bar2 = sap.ui.getCore().byId("myBar2");
 					bar2.setHTMLTag('H1');
 					bar2.rerender();
-					ok(jQuery.sap.byId("myBar2").is("H1"), "bar2 should be rendered as H1");
+					assert.ok(jQuery.sap.byId("myBar2").is("H1"), "bar2 should be rendered as H1");
 					assert.equal(bar2.getHTMLTag(), "H1", "Even when sap.m.Bar has HTML tag set with value different than header and footer, " +
 						"the getHTMLTag should behave in one and the same way- should return the tag value itself");
 				});
@@ -174,14 +174,14 @@
 				renderingTest.call(this, function() {
 
 					var bar2 = sap.ui.getCore().byId("myBar2");
-					ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
-					ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
+					assert.ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
+					assert.ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
 					bar2.setEnableFlexBox(false);
 
 					sap.ui.getCore().applyChanges();
 
-					ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
-					ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
+					assert.ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
+					assert.ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
 
 				});
 			});
@@ -445,7 +445,7 @@
 
 				} else {
 
-					ok(true, sElementName + " has no inline style");
+					assert.ok(true, sElementName + " has no inline style");
 
 				}
 			};
@@ -460,7 +460,7 @@
 
 				} else {
 
-					ok(true, sElementName + " has no inline style");
+					assert.ok(true, sElementName + " has no inline style");
 
 				}
 			}

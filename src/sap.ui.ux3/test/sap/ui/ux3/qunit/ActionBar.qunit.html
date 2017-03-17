@@ -62,7 +62,7 @@
 
 	//event handler for submitted feeds
 	oActionBar1.attachFeedSubmit(function(oEvent) {
-		ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
+		assert.ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
 		var text = oEvent.getParameter("text");
 		assert.equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 	});
@@ -80,7 +80,7 @@
 	//Test social action
 	QUnit.test("Set thing icon", function(assert) {
 		oActionBar1.setThingIconURI("../images/Account_48.png");
-		ok(oActionBar1.getThingIconURI() == "../images/Account_48.png", "Thin icon uri: " + oActionBar1.getThingIconURI());
+		assert.ok(oActionBar1.getThingIconURI() == "../images/Account_48.png", "Thin icon uri: " + oActionBar1.getThingIconURI());
 	});
 
 
@@ -89,7 +89,7 @@
 	//Test social action
 	QUnit.test("Count visible social actions", function(assert) {
 		var iVisibleChildCount = jQuery("#ActionBar0001-socialActions").children(":visible").size();
-		ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
+		assert.ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
 
 	QUnit.test("Open Feed and close it again", function(assert) {
@@ -113,7 +113,7 @@
 		assert.expect(4);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
-			ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered update popup should exist in the page");
+			assert.ok(jQuery.sap.domById(oActionBar1.getId() + "-UpdateActionPopup"), "Rendered update popup should exist in the page");
 			jQuery(jQuery(".sapUiFeederInput")[0]).focus();
 			setTimeout(function() {
 				jQuery(".sapUiFeederInput")[0].innerHTML = "my feed entry";
@@ -152,38 +152,38 @@
 		assert.equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Follow, "Follow State is sap.ui.ux3.FollowActionState.Follow");
 		// menu must exist after click
 		qutils.triggerMouseEvent(jQuery.sap.byId("ActionBar0001-Follow"), "click", 1, 1, 1, 1);
-		ok(jQuery.sap.domById(oActionBar1.getId() + "-followActionMenu"), "Rendered Follow Action menu should exist in the page");
+		assert.ok(jQuery.sap.domById(oActionBar1.getId() + "-followActionMenu"), "Rendered Follow Action menu should exist in the page");
 
 		setTimeout(function() {
 			// menu entries with unhold and unfollow must exist
-			ok(jQuery.sap.domById(oActionBar1.getId() + "-holdState"), "Rendered Follow Action menu with holdState should exist in the page");
-			ok(jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"), "Rendered Follow Action menu with unfollowState should exist in the page");
+			assert.ok(jQuery.sap.domById(oActionBar1.getId() + "-holdState"), "Rendered Follow Action menu with holdState should exist in the page");
+			assert.ok(jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"), "Rendered Follow Action menu with unfollowState should exist in the page");
 			// trigger hold
 			qutils.triggerMouseEvent(jQuery.sap.domById(oActionBar1.getId() + "-holdState"), "click", 1, 1, 1, 1);
 			assert.equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Hold, "Follow State is sap.ui.ux3.FollowActionState.Hold");
 			// menu must exist after click
 			qutils.triggerMouseEvent(jQuery.sap.byId("ActionBar0001-Follow"), "click", 1, 1, 1, 1);
-			ok(jQuery.sap.domById(oActionBar1.getId() + "-followActionMenu"), "Rendered Follow Action menu should exist in the page");
+			assert.ok(jQuery.sap.domById(oActionBar1.getId() + "-followActionMenu"), "Rendered Follow Action menu should exist in the page");
 
 			setTimeout(
 					function() {
 						// menu entries with unhold and unfollow must exist
-						ok(jQuery.sap.domById(oActionBar1.getId() + "-unholdState"),
+						assert.ok(jQuery.sap.domById(oActionBar1.getId() + "-unholdState"),
 								"Rendered Follow Action menu with unholdState should exist in the page");
-						ok(jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"),
+						assert.ok(jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"),
 								"Rendered Follow Action menu with unfollowState should exist in the page");
 						// trigger unfollow
 						qutils.triggerMouseEvent(jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"), "click", 1, 1, 1, 1);
-						ok(jQuery.sap.byId("ActionBar0001-Follow").hasClass("sapUiUx3ActionBarAction"), "Follow Icon has class sapUiUx3ActionBarAction");
+						assert.ok(jQuery.sap.byId("ActionBar0001-Follow").hasClass("sapUiUx3ActionBarAction"), "Follow Icon has class sapUiUx3ActionBarAction");
 						assert.equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 
 						setTimeout(function() {
 							// menu entries with hold, unhold and unfollow must not exist only follow
-							ok(!jQuery.sap.domById(oActionBar1.getId() + "-holdState"),
+							assert.ok(!jQuery.sap.domById(oActionBar1.getId() + "-holdState"),
 									"Rendered Follow Action menu with holdState should not exist in the page");
-							ok(!jQuery.sap.domById(oActionBar1.getId() + "-unholdState"),
+							assert.ok(!jQuery.sap.domById(oActionBar1.getId() + "-unholdState"),
 									"Rendered Follow Action menu with unholdState should not exist in the page");
-							ok(!jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"),
+							assert.ok(!jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"),
 									"Rendered Follow Action menu with unfollowState should not exist in the page");
 							done();
 						}, iTimeOut);
@@ -220,7 +220,7 @@
 
 	QUnit.test("Press \"Open Thing\" ", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-Open", "click");
-		ok(oEventData.action == "Open", "ActionId: " + oEventData.action);
+		assert.ok(oEventData.action == "Open", "ActionId: " + oEventData.action);
 	});
 
 
@@ -235,7 +235,7 @@
 		oActionBar1.setShowFavorite(false);
 		oActionBar1.setShowOpen(false);
 		var iVisibleChildCount = jQuery("#ActionBar0001-socialActions").children(":visible").size();
-		ok(iVisibleChildCount == 0, iVisibleChildCount + " social actions visible");
+		assert.ok(iVisibleChildCount == 0, iVisibleChildCount + " social actions visible");
 	});
 
 	QUnit.test("Show social actions using \"setShow...\" properties", function(assert) {
@@ -246,7 +246,7 @@
 		oActionBar1.setShowFavorite(true);
 		oActionBar1.setShowOpen(true);
 		var iVisibleChildCount = jQuery("#ActionBar0001-socialActions").children(":visible").size();
-		ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
+		assert.ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
 
 	QUnit.test("Press social actions programmatically using setter function", function(assert) {
@@ -258,11 +258,11 @@
 
 
 		setTimeout(function() {
-			ok(jQuery.sap.byId("ActionBar0001-Follow").hasClass("Follow"),
+			assert.ok(jQuery.sap.byId("ActionBar0001-Follow").hasClass("Follow"),
 					"Follow Icon is set");
-			ok(jQuery.sap.byId("ActionBar0001-Flag").hasClass("Selected"),
+			assert.ok(jQuery.sap.byId("ActionBar0001-Flag").hasClass("Selected"),
 				"Flag Icon is set");
-			ok(jQuery.sap.byId("ActionBar0001-Favorite").hasClass("Selected"),
+			assert.ok(jQuery.sap.byId("ActionBar0001-Favorite").hasClass("Selected"),
 				"Favorite Icon is set");
 			done();
 		}, iTimeOut);
@@ -276,15 +276,15 @@
 	QUnit.test("Test business action events", function(assert) {
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenu-MenuItem-create", "click");
-		ok(oEventData.action == "create", "ActionId: " + oEventData.action );
+		assert.ok(oEventData.action == "create", "ActionId: " + oEventData.action );
 
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenu-MenuItem-delete", "click");
-		ok(oEventData.action == "delete", "ActionId: " + oEventData.action );
+		assert.ok(oEventData.action == "delete", "ActionId: " + oEventData.action );
 
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenu-MenuItem-duplicate", "click");
-		ok(oEventData.action == "duplicate", "ActionId: " + oEventData.action );
+		assert.ok(oEventData.action == "duplicate", "ActionId: " + oEventData.action );
 
 	});
 
@@ -295,7 +295,7 @@
 		setTimeout(function() {
 			qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 			var bIsDisabled = jQuery("#ActionBar0001-MoreMenu-MenuItem-create").hasClass("sapUiMnuItmDsbl");
-			ok(bIsDisabled, "Create action is disabled");
+			assert.ok(bIsDisabled, "Create action is disabled");
 			done();
 		}, 500);
 	});
@@ -309,7 +309,7 @@
 		oActionBar1.setAlwaysShowMoreMenu(false);
 		setTimeout(function() {
 			var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
-			ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
+			assert.ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
 			done();
 		}, 500);
 	});
@@ -318,13 +318,13 @@
 		oActionBar1.removeBusinessAction(oCreateAction);
 		oActionBar1.removeBusinessAction('duplicate');
 		var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
-		ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
+		assert.ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
 	});
 
 	QUnit.test("Remove all business actions", function(assert) {
 		oActionBar1.removeAllBusinessActions();
 		var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
-		ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
+		assert.ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 	});
 
 	QUnit.test("Add three business actions", function(assert) {
@@ -333,7 +333,7 @@
 		oActionBar1.addBusinessAction(oDeleteAction);
 
 		var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
-		ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
+		assert.ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
 
 	});
 
@@ -344,7 +344,7 @@
 		oDeleteAction.setEnabled(false);
 		setTimeout(function() {
 			var bIsDisabled = jQuery("#ActionBar0001-deleteButton").hasClass("sapUiBtnDsbl");
-			ok(bIsDisabled, "Delete action is disabled");
+			assert.ok(bIsDisabled, "Delete action is disabled");
 			done();
 		}, 500);
 	});
@@ -356,9 +356,9 @@
 		oActionBar1.setAlwaysShowMoreMenu(true);
 		setTimeout(function() {
 			var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
-			ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
+			assert.ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
 			var bVisible = jQuery("#ActionBar0001-MoreMenuButton").is(":visible");
-			ok(bVisible, "More Menu Button is visible");
+			assert.ok(bVisible, "More Menu Button is visible");
 			done();
 		}, 500);
 	});
@@ -370,14 +370,14 @@
 		oActionBar1.destroyBusinessActions();
 		setTimeout(function() {
 			var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
-			ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
+			assert.ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 			done();
 		}, 500);
 	});
 
 	QUnit.test("Destroy actionBar", function(assert) {
 		oActionBar1.destroy();
-		ok(true, "Action Bar successfully destroyed");
+		assert.ok(true, "Action Bar successfully destroyed");
 
 	});
 

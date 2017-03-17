@@ -46,8 +46,8 @@
 			assert.strictEqual(oFT.getDomRef().style.height, "auto", "Height of the control is correct");
 			oFT.setWidth("").setHeight("");
 			sap.ui.getCore().applyChanges();
-			ok(!oFT.getDomRef().style.width, "The width css is cleared");
-			ok(!oFT.getDomRef().style.height, "The height css is cleared");
+			assert.ok(!oFT.getDomRef().style.width, "The width css is cleared");
+			assert.ok(!oFT.getDomRef().style.height, "The height css is cleared");
 		});
 
 		QUnit.test("tags", function(assert) {
@@ -56,7 +56,7 @@
 			setText("<h3>" + sFT + "</h3>");
 			assert.strictEqual(oFT.$().find("h3").text(), sFT, "The text of the h3 element is correct");
 			setText("<div>" + sFT + "</div>");
-			ok(!oFT.$().find("div").length, "The div element is not rendered");
+			assert.ok(!oFT.$().find("div").length, "The div element is not rendered");
 			setText("<a href=\"//www.sap.com\">" + sFT + "</a>");
 			assert.strictEqual(oFT.$().find("a").text(), sFT, "The text of the a element is correct");
 			setText("<ul><li>1</li><li>2</li><li>3</li></ul>");
@@ -68,7 +68,7 @@
 			var $a;
 			setText('<a id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 			$a = oFT.$().find("a");
-			ok(!$a.attr("id"), "id is not rendered");
+			assert.ok(!$a.attr("id"), "id is not rendered");
 			assert.strictEqual($a.attr("href"), sFT, "a::href is rendered");
 			assert.strictEqual($a[0].style.color, "red", "a::style is rendered");
 			assert.strictEqual($a.attr("target"), "_top", "a::target attribute _top");
@@ -77,11 +77,11 @@
 			assert.strictEqual($a.attr("target"), "_blank", "default a::target attribute is _blank");
 			setText('<span id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</span>');
 			$a = oFT.$().find("span");
-			ok(!$a.attr("id"), "id is not rendered");
-			ok(!$a.attr("href"), "span::href is not rendered");
+			assert.ok(!$a.attr("id"), "id is not rendered");
+			assert.ok(!$a.attr("href"), "span::href is not rendered");
 			assert.strictEqual($a.attr("class"), "aaa", "a::class is rendered");
 			assert.strictEqual($a[0].style.color, "red", "a::style is rendered");
-			ok(!$a.attr("target"), "span::target is not rendered");
+			assert.ok(!$a.attr("target"), "span::target is not rendered");
 		});
 
 		QUnit.test("css classes", function(assert) {
@@ -103,7 +103,7 @@
 		QUnit.test("cleanup", function(assert){
 			oFT.destroy();
 			this.clock.tick(1000);
-			ok(!oFT.getDomRef(), "The control is removed");
+			assert.ok(!oFT.getDomRef(), "The control is removed");
 		});
 
 	</script>

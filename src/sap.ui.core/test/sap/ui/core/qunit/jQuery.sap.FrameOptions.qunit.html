@@ -178,7 +178,7 @@ function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWith(fnCallback, false);
 
-		ok(jQuery.contains(document.body, this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
+		assert.ok(jQuery.contains(document.body, this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
 		equals(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 	});
 }
@@ -218,7 +218,7 @@ function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWith(fnCallback, false);
 
-		ok(jQuery.contains(document.body, this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
+		assert.ok(jQuery.contains(document.body, this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
 		equals(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 	});
 }

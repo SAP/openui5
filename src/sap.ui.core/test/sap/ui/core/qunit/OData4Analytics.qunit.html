@@ -73,7 +73,7 @@
 	QUnit.test("Create Model-Instance", function(assert) {
 		var oModel = getModelInstance();
 		// check if model could be wrapped
-		ok(oModel, "OData Model should be wrapped.");
+		assert.ok(oModel, "OData Model should be wrapped.");
 	});
 
 	QUnit.module("Results");
@@ -90,16 +90,16 @@
 		var oModel = getModelInstance(),
 		mQueryResults = oModel.getAllQueryResults();
 
-		ok(mQueryResults, "Query results object could be loaded.");
-		ok(mQueryResults["ActualPlannedCostsResults"], "Expected query results were loaded.");
-		ok(mQueryResults["ActualPlannedCostsResults"] instanceof odata4analytics.QueryResult, "Query Result 'ActualPlannedCosts' is an instance of odata4analytics.QueryResult.");
+		assert.ok(mQueryResults, "Query results object could be loaded.");
+		assert.ok(mQueryResults["ActualPlannedCostsResults"], "Expected query results were loaded.");
+		assert.ok(mQueryResults["ActualPlannedCostsResults"] instanceof odata4analytics.QueryResult, "Query Result 'ActualPlannedCosts' is an instance of odata4analytics.QueryResult.");
 	});
 
 	QUnit.test("Find query result by name", function(assert) {
 		var oModel = getModelInstance(), mQueryResults = oModel.getAllQueryResults(),
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
 
-		ok(oQueryResult, "Query result 'ActualPlannedCostsResults' could be found.");
+		assert.ok(oQueryResult, "Query result 'ActualPlannedCostsResults' could be found.");
 		assert.deepEqual(oQueryResult, mQueryResults["ActualPlannedCostsResults"], "Query Result 'ActualPlannedCostsResults' was fetched by name.");
 	});
 
@@ -111,7 +111,7 @@
 		oParameterization = oQueryResult.getParameterization(),
 		aParameterNames = oParameterization.getAllParameterNames();
 
-		ok(jQuery.isArray(aParameterNames), "Parameter names were loaded.");
+		assert.ok(jQuery.isArray(aParameterNames), "Parameter names were loaded.");
 		assert.strictEqual(aParameterNames.length, 3, "Number of Parameters should be 3.");
 	});
 
@@ -121,7 +121,7 @@
 		oParameterization = oQueryResult.getParameterization(),
 		oParameter = oParameterization.findParameterByName("P_CostCenter");
 
-		ok(oParameter instanceof odata4analytics.Parameter, "Parameter could be fetched by name.");
+		assert.ok(oParameter instanceof odata4analytics.Parameter, "Parameter could be fetched by name.");
 		assert.strictEqual(oParameter.getProperty().type, "Edm.String", "Parameter should be of type 'Edm.String'.");
 	});
 
@@ -130,10 +130,10 @@
 		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
 
 		var oParameter = oQueryResult.getParameterization().findParameterByName("P_CostCenter");
-		ok(oParameter.isIntervalBoundary(), "Parameter "+oParameter.getName()+" is correctly marked as interval boundary.");
+		assert.ok(oParameter.isIntervalBoundary(), "Parameter "+oParameter.getName()+" is correctly marked as interval boundary.");
 
 		var oPeerBoundaryIntervalParameter = oParameter.getPeerIntervalBoundaryParameter();
-		ok(oPeerBoundaryIntervalParameter, "Parameter "+oParameter.getName()+" has expected peer parameter "+oPeerBoundaryIntervalParameter.getName()+".");
+		assert.ok(oPeerBoundaryIntervalParameter, "Parameter "+oParameter.getName()+" has expected peer parameter "+oPeerBoundaryIntervalParameter.getName()+".");
 	});
 
 	QUnit.test("Get all dimension names", function(assert) {
@@ -141,7 +141,7 @@
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
 		aDimensionNames = oQueryResult.getAllDimensionNames();
 
-		ok(jQuery.isArray(aDimensionNames), "getAllDimensionNames returned an Array.");
+		assert.ok(jQuery.isArray(aDimensionNames), "getAllDimensionNames returned an Array.");
 		assert.strictEqual(aDimensionNames.length, 9, "Number of Dimensions should be '9'.");
 		assert.strictEqual(aDimensionNames[0], "ControllingArea", "Access to the dimension array returns the expected values (1/2).");
 		assert.strictEqual(aDimensionNames[8], "Currency", "Access to the dimension array returns the expected values (2/2).");
@@ -153,8 +153,8 @@
 		oDimensionByName = oQueryResult.findDimensionByName("Currency"),
 		oDimensionByAccess = oQueryResult.getAllDimensions()["Currency"];
 
-		ok(oDimensionByName instanceof odata4analytics.Dimension, "Check if Dimension object was retrieved.");
-		ok(oDimensionByAccess instanceof odata4analytics.Dimension, "Check if Dimension object was retrieved.");
+		assert.ok(oDimensionByName instanceof odata4analytics.Dimension, "Check if Dimension object was retrieved.");
+		assert.ok(oDimensionByAccess instanceof odata4analytics.Dimension, "Check if Dimension object was retrieved.");
 
 		assert.strictEqual(oDimensionByAccess.getName(), "Currency", "Introspection check on dimensionByAccess.");
 		assert.strictEqual(oDimensionByName.getKeyProperty().name, "Currency", "Introspection check on dimensionByAccess.");
@@ -168,7 +168,7 @@
 		oDimensionByName = oQueryResult.findDimensionByName("ControllingArea"),
 		aDimensionAttributeNames = oDimensionByName.getAllAttributeNames();
 
-		ok(jQuery.isArray(aDimensionAttributeNames), "Attribute names Array could be retrieved.");
+		assert.ok(jQuery.isArray(aDimensionAttributeNames), "Attribute names Array could be retrieved.");
 
 		assert.strictEqual(aDimensionAttributeNames[0], "ControllingAreaText", "Attribute ControllingAreaText found for ControllingArea.");
 
@@ -182,7 +182,7 @@
 		var oModel = getModelInstance(), oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
 		aMeasureNames = oQueryResult.getAllMeasureNames();
 
-		ok(jQuery.isArray(aMeasureNames), "getAllMeasureNames returned an Array.");
+		assert.ok(jQuery.isArray(aMeasureNames), "getAllMeasureNames returned an Array.");
 		assert.strictEqual(aMeasureNames.length, 4, "Number of Measures should be '4'.");
 		assert.strictEqual(aMeasureNames[0], "ActualCosts", "Access to the dimension array returns the expected values (1/2).");
 		assert.strictEqual(aMeasureNames[3], "ActualPlannedCostsPercentage", "Access to the dimension array returns the expected values (2/2).");
@@ -194,8 +194,8 @@
 		oMeasureByName = oQueryResult.findMeasureByName("ActualCosts"),
 		oMeasureByAccess = oQueryResult.getAllMeasures()["ActualCosts"];
 
-		ok(oMeasureByName instanceof odata4analytics.Measure, "Check if Measure object was retrieved.");
-		ok(oMeasureByAccess instanceof odata4analytics.Measure, "Check if Measure object was retrieved.");
+		assert.ok(oMeasureByName instanceof odata4analytics.Measure, "Check if Measure object was retrieved.");
+		assert.ok(oMeasureByAccess instanceof odata4analytics.Measure, "Check if Measure object was retrieved.");
 
 		assert.strictEqual(oMeasureByAccess.getName(), "ActualCosts", "Introspection check on measureByAccess.");
 		assert.strictEqual(oMeasureByName.getUnitProperty().name, "Currency", "Introspection check on measureByAccess.");
@@ -208,7 +208,7 @@
 		var oDimension = oQueryResult.findDimensionByName("ControllingArea");
 		var aAttributeNames = oDimension.getAllAttributeNames();
 
-		ok(jQuery.isArray(aAttributeNames), "getAllAttributeNames returned an Array.");
+		assert.ok(jQuery.isArray(aAttributeNames), "getAllAttributeNames returned an Array.");
 		assert.strictEqual(aAttributeNames.length, 1, "Number of Attributes should be '3'.");
 		assert.strictEqual(aAttributeNames[0], "ControllingAreaText", "Access to the dimension array returns the expected values.");
 	});
@@ -220,8 +220,8 @@
 		var oAttributeByName = oDimension.findAttributeByName("ControllingAreaText");
 		var oAttributeByAccess = oDimension.getAllAttributes()["ControllingAreaText"];
 
-		ok(oAttributeByName instanceof odata4analytics.DimensionAttribute, "Check if Attribute object was retrieved.");
-		ok(oAttributeByAccess instanceof odata4analytics.DimensionAttribute, "Check if Attribute object was retrieved.");
+		assert.ok(oAttributeByName instanceof odata4analytics.DimensionAttribute, "Check if Attribute object was retrieved.");
+		assert.ok(oAttributeByAccess instanceof odata4analytics.DimensionAttribute, "Check if Attribute object was retrieved.");
 
 		assert.strictEqual(oAttributeByAccess.getName(), "ControllingAreaText", "Introspection check on attributeByAccess.");
 		assert.strictEqual(oAttributeByName.getName(), "ControllingAreaText", "Introspection check on attributeByName.");
@@ -242,16 +242,16 @@
 			if ((oUpdatable = oQueryResult.findMeasureByName(sPropName))) {
 				// is a measure
 				if (oUpdatable.isUpdatable) {
-					ok(oUpdatable.isUpdatable, sPropName + " is an updatable measure.");
+					assert.ok(oUpdatable.isUpdatable, sPropName + " is an updatable measure.");
 					iMeasureCount++;
 				}
 			} else if ((oUpdatable = oQueryResult.findDimensionByName(sPropName))) {
 				// is a dimension
-				ok(oUpdatable, sPropName + " is an updatable dimension.");
+				assert.ok(oUpdatable, sPropName + " is an updatable dimension.");
 				iDimensionCount++;
 			} else {
 				// is only a property
-				ok(sPropName, sPropName + " is an updatable property.");
+				assert.ok(sPropName, sPropName + " is an updatable property.");
 				iPropertyCount++;
 			}
 		}
@@ -265,9 +265,9 @@
 		var sHierarchyDimensionName = "CostCenter";
 
 		var aHierPropNames = oQueryResult.getEntityType().getAllHierarchyPropertyNames();
-		ok(jQuery.isArray(aHierPropNames) &&  typeof aHierPropNames[0] === "string", "Hierarchy property names correctly fetched.");
+		assert.ok(jQuery.isArray(aHierPropNames) &&  typeof aHierPropNames[0] === "string", "Hierarchy property names correctly fetched.");
 		var oHierarchy = oQueryResult.getEntityType().getHierarchy("ControllingArea");
-		ok(!!oHierarchy, "Hierarchy correctly fetched.");
+		assert.ok(!!oHierarchy, "Hierarchy correctly fetched.");
 
 	});
 
@@ -278,15 +278,15 @@
 		var sOtherDimensionName = "ControllingArea";
 
 		var oDimension = oQueryResult.findDimensionByName(sHierarchyDimensionName);
-		ok(!!oDimension, "Dimension correctly fetched.");
+		assert.ok(!!oDimension, "Dimension correctly fetched.");
 		var oHierarchy = oDimension.getHierarchy("CostCenter");
-		ok(!!oHierarchy, "Hierarchy correctly fetched.");
+		assert.ok(!!oHierarchy, "Hierarchy correctly fetched.");
 
 		var oDimension = oQueryResult.findDimensionByName(sOtherDimensionName); // negative
 		// test
-		ok(!!oDimension, "Dimension correctly fetched.");
+		assert.ok(!!oDimension, "Dimension correctly fetched.");
 		var oHierarchy = oDimension.getHierarchy("ControllingArea");
-		ok(!!oHierarchy, "Hierarchy correctly fetched.");
+		assert.ok(!!oHierarchy, "Hierarchy correctly fetched.");
 
 	});
 
@@ -317,10 +317,10 @@
 		assert.strictEqual(sSetURI, sRefURI, "URI correctly constructed. ");
 
 		var aDimNames = oQueryResultRequest.getAggregationLevel();
-		ok(jQuery.isEmptyObject(aDimNames), "No aggregation level set.");
+		assert.ok(jQuery.isEmptyObject(aDimNames), "No aggregation level set.");
 
 		var aMeasNames = oQueryResultRequest.getMeasureNames();
-		ok(jQuery.isEmptyObject(aMeasNames), "No measues selected.");
+		assert.ok(jQuery.isEmptyObject(aMeasNames), "No measues selected.");
 	});
 
 	QUnit.module("Requesting")
@@ -382,7 +382,7 @@
 		var sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or (CostCenter ge %27100-1000%27 and CostCenter le %27200-3000%27)) and (Currency eq %27EUR%27 or Currency eq %27USD%27 or Currency eq %27GBP%27)";
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
 		assert.strictEqual(sSetURI, sRefSetURI, "FilterExpression URI correctly constructed.");
-		ok(sFilterOptionString.match(/CostCenter eq %27100-1000%27/g).length == 1, "Repeated input of equal filter expression is ignored.");
+		assert.ok(sFilterOptionString.match(/CostCenter eq %27100-1000%27/g).length == 1, "Repeated input of equal filter expression is ignored.");
 
 		var sRefSetURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results";
 		var sSetURI = oQueryResultRequest.getURIToQueryResultEntitySet();
@@ -398,9 +398,9 @@
 		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
 
 		var oParameter = oQueryResult.getParameterization().findParameterByName("P_CostCenter");
-		ok(oParameter, "Parameter was found.");
+		assert.ok(oParameter, "Parameter was found.");
 		//TODO fails with current metadata
-// 		ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
+// 		assert.ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
 
 		// 1. plain list
 		var oParamValueSetRequest = new odata4analytics.ParameterValueSetRequest(oParameter);
@@ -411,10 +411,10 @@
 
 		// 2. filtered list
 		var oBaseParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
-		ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");
+		assert.ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");
 
 		var oFilterExpression = oParamValueSetRequest.getFilterExpression();
-		ok(oFilterExpression, "Filter expression found.");
+		assert.ok(oFilterExpression, "Filter expression found.");
 		oFilterExpression.addCondition(oBaseParameter.getName(), sap.ui.model.FilterOperator.EQ, "US01");
 		var sRefFilterOptionString = "(P_ControllingArea eq %27US01%27)";
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
@@ -456,9 +456,9 @@
 		var oQueryResultRequest = getQueryResultRequest();
 
 		var oFilterExpression = oQueryResultRequest.getFilterExpression();
-		ok(oFilterExpression instanceof odata4analytics.FilterExpression, "FilterExpression instance created.");
+		assert.ok(oFilterExpression instanceof odata4analytics.FilterExpression, "FilterExpression instance created.");
 		var oSortExpression = oQueryResultRequest.getSortExpression();
-		ok(oSortExpression instanceof odata4analytics.SortExpression, "SortExpression instance created.");
+		assert.ok(oSortExpression instanceof odata4analytics.SortExpression, "SortExpression instance created.");
 
 		oQueryResultRequest.setAggregationLevel([
 			"ControllingArea", "CostCenter"
@@ -509,9 +509,9 @@
 		oQueryResultRequest.setParameterizationRequest(oParamRequest);
 
 		var oParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
-		ok(oParameter, "Parameter was found.");
+		assert.ok(oParameter, "Parameter was found.");
 		//TODO fails with current metadata
-// 		ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
+// 		assert.ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
 
 		// 1. plain list
 		var oParamValueSetRequest = new odata4analytics.ParameterValueSetRequest(oParameter);
@@ -522,7 +522,7 @@
 
 		// 2. sorted list
 		var oBaseParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
-		ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");
+		assert.ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");
 		//TODO make this work
 // 		var oSortExpression = oQueryResultRequest.getSortExpression();
 // 		oSortExpression.addSorter("P_ControllingArea", odata4analytics.SortOrder.Ascending);
@@ -603,7 +603,7 @@
 		]);
 
 		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
-		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+		assert.ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
 
 		var sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
@@ -628,7 +628,7 @@
 		]);
 
 		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
-		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+		assert.ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
 
 		var sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
@@ -657,7 +657,7 @@
 		]);
 
 		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
-		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+		assert.ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
 
 		var sRefFilterOptionString = "(ControllingArea eq %27US01%27) and (CostCenter eq %27100-1000%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
@@ -686,7 +686,7 @@
 		]);
 		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
 
-		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+		assert.ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
 
 		var sRefFilterOptionString = "(ControllingArea eq %27US01%27) and (CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
@@ -720,7 +720,7 @@
 		]);
 
 		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
-		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+		assert.ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
 
 		var sRefFilterOptionString = "(ControllingArea eq %27US01%27 or ControllingArea eq %27US02%27) and (CostCenter eq %27100-1100%27 or CostCenter eq %27100-1000%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();

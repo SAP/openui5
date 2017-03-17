@@ -382,7 +382,7 @@
 
 					// assertions
 					assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
-					ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
+					assert.ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
 					assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
 
 					// cleanup
@@ -479,7 +479,7 @@
 
 					// assertions
 					assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
-					ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
+					assert.ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
 					assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
 
 					// cleanup
@@ -656,7 +656,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
+				assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
 				assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
 
 				// cleanup
@@ -675,7 +675,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assertions
-				ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
+				assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
 				assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
 
 				// cleanup
@@ -713,7 +713,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					ok(oInput.$().hasClass(mSettings.output));
+					assert.ok(oInput.$().hasClass(mSettings.output));
 
 					// cleanup
 					oInput.destroy();
@@ -763,7 +763,7 @@
 					oInput.setValueState(mSettings.input);
 
 					// assertions
-					ok(oInput.$().hasClass(mSettings.output), "Input should have the class " + mSettings.output);
+					assert.ok(oInput.$().hasClass(mSettings.output), "Input should have the class " + mSettings.output);
 					assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValueState calls");
 
 					// cleanup
@@ -798,11 +798,11 @@
 				assert.strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state before rendering is converted to default value.");
 
 				oInput.setValueState(sap.ui.core.ValueState.Error);
-				ok(oInput.$().hasClass("sapMInputBaseState"), "Input has the state class before testing the invalid value.");
+				assert.ok(oInput.$().hasClass("sapMInputBaseState"), "Input has the state class before testing the invalid value.");
 
 				oInput.setValueState(undefined);
 				assert.strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state is converted to default value.");
-				ok(!oInput.$().hasClass("sapMInputBaseState"), "Input's state class is removed after setting the invalid value");
+				assert.ok(!oInput.$().hasClass("sapMInputBaseState"), "Input's state class is removed after setting the invalid value");
 
 				oInput.destroy();
 			});
@@ -1580,9 +1580,9 @@
 				// assertion - after escape
 				assert.strictEqual(oInput.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
 				assert.strictEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Dom value and value property are same after escape.");
-				ok(fnFireEventSpy.calledWith("liveChange"), "Private liveChange event is fired on escape");
+				assert.ok(fnFireEventSpy.calledWith("liveChange"), "Private liveChange event is fired on escape");
 				assert.strictEqual(fnFireEventSpy.callCount, 1, "LiveChange event is fired once");
-				ok(fnOnEscapeSpy.args[0][0].isMarked(), "Escape is marked as handled");
+				assert.ok(fnOnEscapeSpy.args[0][0].isMarked(), "Escape is marked as handled");
 
 				// reset spy
 				fnFireEventSpy.reset();
@@ -1999,7 +1999,7 @@
 				oInput.setTooltip("");
 
 				// assert
-				ok(oInput.$().attr("title") === undefined);
+				assert.ok(oInput.$().attr("title") === undefined);
 				assert.strictEqual(oInput.$("describedby").length, 0);
 
 				// cleanup
@@ -2031,7 +2031,7 @@
 				oInput.setTooltip("");
 
 				// assert
-				ok(oInput.$().attr("title") === undefined);
+				assert.ok(oInput.$().attr("title") === undefined);
 
 				// cleanup
 				oInput.destroy();
@@ -2160,16 +2160,16 @@
 				assert.strictEqual(fnOnTapSpy.callCount, 1, "tap event is catched from placeholder");
 				assert.strictEqual(fnFocusSpy.callCount, 1, "focus is called when placeholder is tapped ");
 
-				ok(document.activeElement === oInput.getFocusDomRef(), "input is focused when placeholder is tapped");
+				assert.ok(document.activeElement === oInput.getFocusDomRef(), "input is focused when placeholder is tapped");
 
 				oInput.destroy();
 			});
 
 			QUnit.test("getAccessibilityInfo", function(assert) {
 				var oInput = new sap.m.InputBase({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
-				ok(!!oInput.getAccessibilityInfo, "InputBase has a getAccessibilityInfo function");
+				assert.ok(!!oInput.getAccessibilityInfo, "InputBase has a getAccessibilityInfo function");
 				var oInfo = oInput.getAccessibilityInfo();
-				ok(!!oInfo, "getAccessibilityInfo returns a info object");
+				assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 				assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 				assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
 				assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
@@ -2214,7 +2214,7 @@
 			// This fix should be valid only for input tag elements
 			assert.strictEqual(oInput._getInputElementTagName(), "INPUT", "Input tag element is used");
 			assert.strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
-			ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
+			assert.ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
 
 			// cleanup
 			oInput.destroy();
@@ -2237,7 +2237,7 @@
 			sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
 
 			assert.strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
-			ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
+			assert.ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
 
 			// cleanup
 			oInput.destroy();

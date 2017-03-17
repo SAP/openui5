@@ -87,10 +87,10 @@
 	QUnit.test("select/deselect token", function(assert) {
 		token1.setSelected(false);
 		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
-		ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
+		assert.ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
 
 		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
-		ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
+		assert.ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
 	});
 
 	QUnit.test("setter / getter textDirection", function(assert) {

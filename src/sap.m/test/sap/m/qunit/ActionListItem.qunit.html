@@ -64,7 +64,7 @@
 			this.clock.tick(50);
 
 			assert.strictEqual(oSpy.callCount, 1, "Event 'press' should be fired");
-			ok(!oList.getItems()[0].getSelected(), "never selected");
+			assert.ok(!oList.getItems()[0].getSelected(), "never selected");
 			oList.destroy();// Clean up
 		});
 	}

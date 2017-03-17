@@ -24,7 +24,7 @@
 
 		QUnit.test("Element Creation", function(assert) {
 			element = new sap.ui.commons.CheckBox(); // dependency to commons lib, but a control with valueState is required
-			ok(element, "element must have been created");
+			assert.ok(element, "element must have been created");
 		});
 
 
@@ -34,9 +34,9 @@
 			warningText = rb.getText("VALUE_STATE_WARNING");
 			successText = rb.getText("VALUE_STATE_SUCCESS");
 
-			ok(errorText.length > 4, "There should be some error text available");
-			ok(warningText.length > 4, "There should be some warning text available");
-			ok(successText.length > 4, "There should be some success text available");
+			assert.ok(errorText.length > 4, "There should be some error text available");
+			assert.ok(warningText.length > 4, "There should be some warning text available");
+			assert.ok(successText.length > 4, "There should be some success text available");
 		});
 
 

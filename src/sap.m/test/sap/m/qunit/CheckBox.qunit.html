@@ -74,7 +74,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(oCheckBox.getDomRef(), "visible=true: CheckBox should have been rendered");
+		assert.ok(oCheckBox.getDomRef(), "visible=true: CheckBox should have been rendered");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -95,7 +95,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(!oCheckBox.getDomRef(), "visible=false: CheckBox should not have been rendered");
+		assert.ok(!oCheckBox.getDomRef(), "visible=false: CheckBox should not have been rendered");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -117,7 +117,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(!oCheckBox.$("CbBg").hasClass("sapMCbBgDis"), "enabled=" + bEnabled + ": CheckBox should not have class sapMCbBgDis");
+		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbBgDis"), "enabled=" + bEnabled + ": CheckBox should not have class sapMCbBgDis");
 		assert.strictEqual(oCheckBox.$("CB").attr("disabled"), undefined, "enabled=" + bEnabled + ": CheckBox should not have attribute 'disabled'");
 		var iTabindex = oCheckBox.getTabIndex();
 		assert.strictEqual(oCheckBox.$().attr("tabindex"), iTabindex.toString() , "enabled=" + bEnabled + ": CheckBox should have attribute 'tabindex=" + iTabindex +"'");
@@ -142,8 +142,8 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(!oCheckBox.$().hasClass("sapMPointer"), "enabled=" + bEnabled + ": CheckBox should not have class sapMPointer");
-		ok(oCheckBox.$().hasClass("sapMCbBgDis"), "enabled=" + bEnabled + ": CheckBox should have class sapMCbBgDis");
+		assert.ok(!oCheckBox.$().hasClass("sapMPointer"), "enabled=" + bEnabled + ": CheckBox should not have class sapMPointer");
+		assert.ok(oCheckBox.$().hasClass("sapMCbBgDis"), "enabled=" + bEnabled + ": CheckBox should have class sapMCbBgDis");
 		assert.strictEqual(oCheckBox.$("CB").attr("disabled"), "disabled", "enabled=" + bEnabled + ": CheckBox should have attribute 'disabled=disabled'");
 		assert.strictEqual(oCheckBox.$().attr("aria-disabled"), "true", "Property 'aria-disabled' should be 'true'");
 
@@ -190,8 +190,8 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=true: CheckBox should have class sapMCbMarkChecked");
-		ok(oCheckBox.$("CB").is(":checked"), "selected=false: CheckBox should have attribute 'checked'");
+		assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=true: CheckBox should have class sapMCbMarkChecked");
+		assert.ok(oCheckBox.$("CB").is(":checked"), "selected=false: CheckBox should have attribute 'checked'");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "true", "Property 'aria-checked': Default value should be 'true'");
 
 		// cleanup
@@ -213,8 +213,8 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(!oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=false: CheckBox should not have class sapMCbMarkChecked");
-		ok(!oCheckBox.$("CB").is(":checked"), "selected=false: CheckBox should not have attribute 'checked'");
+		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=false: CheckBox should not have class sapMCbMarkChecked");
+		assert.ok(!oCheckBox.$("CB").is(":checked"), "selected=false: CheckBox should not have attribute 'checked'");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
 
 		// cleanup
@@ -234,7 +234,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(oCheckBox.$().hasClass("sapMCbErr"), "The CheckBox has value state error css class.");
+		assert.ok(oCheckBox.$().hasClass("sapMCbErr"), "The CheckBox has value state error css class.");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -254,7 +254,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(oCheckBox.$().hasClass("sapMCbWarn"), "The CheckBox has value state warning css class.");
+		assert.ok(oCheckBox.$().hasClass("sapMCbWarn"), "The CheckBox has value state warning css class.");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -416,7 +416,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(oCheckBox.$("label").length);
+		assert.ok(oCheckBox.$("label").length);
 
 		// Cleanup
 		oCheckBox.destroy();
@@ -531,8 +531,8 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(oCheckBox.$().hasClass("sapMCb"), "CheckBox should have class sapMCb");
-		ok(oCheckBox.$("CbBg").hasClass("sapMCbBg"), "CheckBox should have class sapMCbBg");
+		assert.ok(oCheckBox.$().hasClass("sapMCb"), "CheckBox should have class sapMCb");
+		assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbBg"), "CheckBox should have class sapMCbBg");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -555,9 +555,9 @@ jQuery.sap.require("sap.ui.core.ValueState");
 
 		// assertions
 		if (bDesktop){
-			ok(oCheckBox.$("CbBg").hasClass("sapMCbHoverable"), sMessage);
+			assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbHoverable"), sMessage);
 		} else {
-			ok(!oCheckBox.$("CbBg").hasClass("sapMCbHoverable"), sMessage);
+			assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbHoverable"), sMessage);
 		}
 
 		// cleanup
@@ -607,17 +607,17 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
 
 		qutils.triggerEvent("tap", oCheckBox.getId());
-		ok(oSpy.calledOnce, "Event 'select' should have been fired");
+		assert.ok(oSpy.calledOnce, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), true, "CheckBox should be selected");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "true", "Property 'aria-checked': Default value should be 'true'");
 
 		qutils.triggerEvent("tap", oCheckBox.getId());
-		ok(oSpy.calledTwice, "Event 'select' should have been fired");
+		assert.ok(oSpy.calledTwice, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
 		oCheckBox.setEditable(false);
 		qutils.triggerEvent("tap", oCheckBox.getId());
-		ok(oSpy.calledTwice, "Event 'select' should have been fired");
+		assert.ok(oSpy.calledTwice, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
 		// cleanup
@@ -710,9 +710,9 @@ jQuery.sap.require("sap.ui.core.ValueState");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new sap.m.CheckBox({text: "Text"});
-		ok(!!oControl.getAccessibilityInfo, "CheckBox has a getAccessibilityInfo function");
+		assert.ok(!!oControl.getAccessibilityInfo, "CheckBox has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
 		assert.strictEqual(oInfo.description, "Text", "Description");

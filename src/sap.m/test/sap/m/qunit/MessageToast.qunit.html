@@ -51,7 +51,7 @@
 				var $MessageToast = jQuery(".sapMMessageToast").eq(0);
 
 				// assert
-				ok($MessageToast.length, "The message toast HTML DIV element exist");
+				assert.ok($MessageToast.length, "The message toast HTML DIV element exist");
 				assert.strictEqual($MessageToast[0].style.width, "15em", "Default MessageToast width is 15em");
 				assert.strictEqual($MessageToast.css("visibility"), "visible", "After calling the sap.m.MessageToast.show(): the MessageToast is visible");
 				assert.strictEqual($MessageToast.css("position"), "absolute", "Position absolute");
@@ -85,7 +85,7 @@
 					sap.m.MessageToast._isFiniteInteger(vValue);
 
 					// assert
-					ok(fnErrorSpy.calledOnce, '"duration" needs to be a finite positive nonzero integer, jQuery.sap.log.error() method must be called exactly once');
+					assert.ok(fnErrorSpy.calledOnce, '"duration" needs to be a finite positive nonzero integer, jQuery.sap.log.error() method must be called exactly once');
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -114,7 +114,7 @@
 				sap.m.MessageToast._validateWidth("16");
 
 				// assert
-				ok(fnErrorSpy.calledOnce, '"width" should be type of "sap.ui.core/CSSSize"');
+				assert.ok(fnErrorSpy.calledOnce, '"width" should be type of "sap.ui.core/CSSSize"');
 
 				// cleanup
 				fnErrorSpy.restore();
@@ -201,7 +201,7 @@
 				sap.m.MessageToast._validateOffset(50);
 
 				// assert
-				ok(fnErrorSpy.calledOnce, '"offset" should be type of "string"');
+				assert.ok(fnErrorSpy.calledOnce, '"offset" should be type of "string"');
 
 				// cleanup
 				fnErrorSpy.restore();
@@ -421,7 +421,7 @@
 					setTimeout(function() {
 
 						// assert
-						ok(fnCloseSpy.calledOn(sap.m.MessageToast), 'onClose callback was called with the correct context');
+						assert.ok(fnCloseSpy.calledOn(sap.m.MessageToast), 'onClose callback was called with the correct context');
 						hasEventListeners(window, "resize", false);
 						hasEventListeners(document, "mousedown", false);
 						hasEventListeners(document, "touchstart", false);

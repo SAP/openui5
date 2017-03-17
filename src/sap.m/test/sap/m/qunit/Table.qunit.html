@@ -80,11 +80,11 @@
 			sap.ui.getCore().applyChanges();
 
 			//Check if table has been added to dom tree
-			ok(sut.$().length > 0, "Table in DOM tree");
+			assert.ok(sut.$().length > 0, "Table in DOM tree");
 
 			sut.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			ok(sut.$().length === 0, "Table has been removed from DOM")
+			assert.ok(sut.$().length === 0, "Table has been removed from DOM")
 
 			//clean up
 			sut.destroy()
@@ -97,10 +97,10 @@
 
 			//Check table columns (should be three)
 			var aLabels = sut.$().find('th>label');
-			ok(aLabels.length === 3, "Table has three columns rendered");
-			ok(aLabels[0].textContent == "Name", "First column named 'Name'");
-			ok(aLabels[1].textContent == "Color", "First column named 'Color'");
-			ok(aLabels[2].textContent == "Number", "First column named 'Number'");
+			assert.ok(aLabels.length === 3, "Table has three columns rendered");
+			assert.ok(aLabels[0].textContent == "Name", "First column named 'Name'");
+			assert.ok(aLabels[1].textContent == "Color", "First column named 'Color'");
+			assert.ok(aLabels[2].textContent == "Number", "First column named 'Number'");
 
 			//Remove first column
 			var oFirstColumn = sut.removeColumn("__column0");
@@ -108,7 +108,7 @@
 
 			//Check table columns (should be two)
 			aLabels = sut.$().find('th>label');
-			ok(aLabels.length === 2, "Table has three columns" );
+			assert.ok(aLabels.length === 2, "Table has three columns" );
 
 			//Insert column again
 			sut.insertColumn(oFirstColumn, 1);
@@ -116,16 +116,16 @@
 
 			//Check table columns and their positions
 			aLabels = sut.$().find('th>label');
-			ok(aLabels.length === 3, "Table has three columns rendered");
-			ok(aLabels[1].textContent == "Name", "First column named 'Name'");
-			ok(aLabels[0].textContent == "Color", "First column named 'Color'");
-			ok(aLabels[2].textContent == "Number", "First column named 'Number'");
+			assert.ok(aLabels.length === 3, "Table has three columns rendered");
+			assert.ok(aLabels[1].textContent == "Name", "First column named 'Name'");
+			assert.ok(aLabels[0].textContent == "Color", "First column named 'Color'");
+			assert.ok(aLabels[2].textContent == "Number", "First column named 'Number'");
 
 			//remove all columns
 			sut.removeAllColumns();
 			sap.ui.getCore().applyChanges();
 			aLabels = sut.$().find('th>label');
-			ok(aLabels.length === 0, "Table has no more columns rendered");
+			assert.ok(aLabels.length === 0, "Table has no more columns rendered");
 
 			//clean up
 			sut.destroy();
@@ -138,7 +138,7 @@
 
 			//Check if header toolbar is in DOM
 			var oToolBar = sut.getHeaderToolbar();
-			ok(oToolBar.$().length > 0, "HeaderToolbar in DOM tree");
+			assert.ok(oToolBar.$().length > 0, "HeaderToolbar in DOM tree");
 
 			//clean up
 			sut.destroy();
@@ -162,7 +162,7 @@
 
 			var aNoDataRow = sut.$().find("#" + sut.getId() + "-nodata");
 
-			ok(aNoDataRow.length === 1, "Table displays 'No Data'")
+			assert.ok(aNoDataRow.length === 1, "Table displays 'No Data'")
 
 			//clean up
 			sut.destroy();
@@ -193,18 +193,18 @@
 
 			//Check if multiselct checkboxes are visible
 			var aSelectionChecks = sut.$().find(".sapMCb");
-			ok(aSelectionChecks.length === 4, "Table displays selection checkboxes");
+			assert.ok(aSelectionChecks.length === 4, "Table displays selection checkboxes");
 
 			//Check if checkboxes are initially not selected
 			var aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
-			ok(aSelectionChecksMarked.length === 0, "Selection checkboxes not checked");
+			assert.ok(aSelectionChecksMarked.length === 0, "Selection checkboxes not checked");
 
 			//Check if 'selectAll' marks all rows as selected
 			sut.selectAll();
 			sap.ui.getCore().applyChanges();
 
 			aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
-			ok(aSelectionChecksMarked.length === 4, "Selection checkboxes ALL checked");
+			assert.ok(aSelectionChecksMarked.length === 4, "Selection checkboxes ALL checked");
 
 			//clean up
 			sut.destroy();
@@ -261,40 +261,40 @@
 			oTable.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible by default");
+			assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible by default");
 			assert.strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "true", "Aria hidden set correctly");
 
 			oTable.getItems()[0].setType("Navigation");
 			sap.ui.getCore().applyChanges();
-			ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible when an item type is Navigation");
+			assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible when an item type is Navigation");
 
 			oTable.getItems()[0].setType("Active");
 			sap.ui.getCore().applyChanges();
-			notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since Active type does not need column");
+			assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since Active type does not need column");
 
 			oTable.getItems()[0].setType("Detail");
 			sap.ui.getCore().applyChanges();
-			ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible when an item type is Detail");
+			assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible when an item type is Detail");
 
 			oTable.getItems()[0].setVisible(false);
 			sap.ui.getCore().applyChanges();
-			notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since item is not visible");
+			assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since item is not visible");
 
 			var oClone = oTable.getItems()[1].clone().setType("DetailAndActive");
 			oTable.addItem(oClone);
 			sap.ui.getCore().applyChanges();
-			ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because new type is DetailAndActive");
+			assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because new type is DetailAndActive");
 
 			oClone.destroy();
 			sap.ui.getCore().applyChanges();
-			notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since new item is destroyed");
+			assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since new item is destroyed");
 
 			oTable.getItems()[0].setVisible(true);
 			sap.ui.getCore().applyChanges();
-			ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because first item with type detail is visible again");
+			assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because first item with type detail is visible again");
 
 			oTable.rerender();
-			ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible rerender did not change the visibility of the type column");
+			assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible rerender did not change the visibility of the type column");
 
 			oTable.destroy();
 		});

@@ -28,8 +28,8 @@
 			var oMeasurement = jQuery.sap.measure.start("qUnit_Test_1", "This is the first test measure");
 			assert.equal(oMeasurement.id, "qUnit_Test_1", "ID in start set");
 			assert.equal(oMeasurement.info, "This is the first test measure", "Text in start set");
-			ok(oMeasurement.start > 0, "Start time set");
-			ok(!isNaN(oMeasurement.start), "Start time is a number");
+			assert.ok(oMeasurement.start > 0, "Start time set");
+			assert.ok(!isNaN(oMeasurement.start), "Start time is a number");
 
 			jQuery.sap.measure.start("qUnit_Test_2", "This is the second test measure");
 			jQuery.sap.measure.start("qUnit_Test_3", "This is the third test measure");
@@ -42,12 +42,12 @@
 				oMeasurement = jQuery.sap.measure.end("qUnit_Test_1");
 				assert.equal(oMeasurement.id, "qUnit_Test_1", "Measurement found for end");
 				assert.equal(oMeasurement.start, iStart, "Start time still th same");
-				ok(oMeasurement.end > 0, "end time set");
+				assert.ok(oMeasurement.end > 0, "end time set");
 
 				oMeasurement = undefined;
 				oMeasurement = jQuery.sap.measure.getMeasurement("qUnit_Test_1");
 				assert.equal(oMeasurement.id, "qUnit_Test_1", "Measurement found for getMeasurement");
-				ok(oMeasurement.time > 0, "time > 0");
+				assert.ok(oMeasurement.time > 0, "time > 0");
 				assert.equal(oMeasurement.time, oMeasurement.duration, "time = duration");
 				done();
 			};
@@ -59,28 +59,28 @@
 			var done = assert.async();
 			oMeasurement = jQuery.sap.measure.pause("qUnit_Test_2");
 			assert.equal(oMeasurement.id, "qUnit_Test_2", "Measurement found for pause");
-			ok(oMeasurement.start > 0, "Start time set");
-			ok(oMeasurement.pause > 0, "Pause time set");
+			assert.ok(oMeasurement.start > 0, "Start time set");
+			assert.ok(oMeasurement.pause > 0, "Pause time set");
 
 			jQuery.sap.measure.pause("qUnit_Test_3");
 			var delayedCall = function(){
 				oMeasurement = jQuery.sap.measure.resume("qUnit_Test_2");
 				assert.equal(oMeasurement.id, "qUnit_Test_2", "Measurement found for resume");
-				ok(oMeasurement.resume > 0, "Resume time set");
+				assert.ok(oMeasurement.resume > 0, "Resume time set");
 
 				jQuery.sap.measure.resume("qUnit_Test_3");
 				oMeasurement = undefined;
 				var delayedCall2 = function(){
 					oMeasurement = jQuery.sap.measure.end("qUnit_Test_2");
 					assert.equal(oMeasurement.id, "qUnit_Test_2", "Measurement found for end");
-					ok(oMeasurement.end > 0, "end time set");
+					assert.ok(oMeasurement.end > 0, "end time set");
 
 					oMeasurement = undefined;
 					oMeasurement = jQuery.sap.measure.getMeasurement("qUnit_Test_2");
 					assert.equal(oMeasurement.id, "qUnit_Test_2", "Measurement found for getMeasurement");
-					ok(oMeasurement.time > 0, "time > 0");
-					ok(oMeasurement.duration > 0, "duration > 0");
-					ok(oMeasurement.time > oMeasurement.duration, "duration < time");
+					assert.ok(oMeasurement.time > 0, "time > 0");
+					assert.ok(oMeasurement.duration > 0, "duration > 0");
+					assert.ok(oMeasurement.time > oMeasurement.duration, "duration < time");
 					done();
 				};
 				setTimeout(delayedCall2, 100);
@@ -92,26 +92,26 @@
 			var done = assert.async();
 			oMeasurement = jQuery.sap.measure.pause("qUnit_Test_3");
 			assert.equal(oMeasurement.id, "qUnit_Test_3", "Measurement found for pause");
-			ok(oMeasurement.start > 0, "Start time set");
-			ok(oMeasurement.pause > 0, "Pause time set");
+			assert.ok(oMeasurement.start > 0, "Start time set");
+			assert.ok(oMeasurement.pause > 0, "Pause time set");
 
 			var delayedCall = function(){
 				oMeasurement = jQuery.sap.measure.resume("qUnit_Test_3");
 				assert.equal(oMeasurement.id, "qUnit_Test_3", "Measurement found for resume");
-				ok(oMeasurement.resume > 0, "Resume time set");
+				assert.ok(oMeasurement.resume > 0, "Resume time set");
 
 				oMeasurement = undefined;
 				var delayedCall2 = function(){
 					oMeasurement = jQuery.sap.measure.end("qUnit_Test_3");
 					assert.equal(oMeasurement.id, "qUnit_Test_3", "Measurement found for end");
-					ok(oMeasurement.end > 0, "end time set");
+					assert.ok(oMeasurement.end > 0, "end time set");
 
 					oMeasurement = undefined;
 					oMeasurement = jQuery.sap.measure.getMeasurement("qUnit_Test_3");
 					assert.equal(oMeasurement.id, "qUnit_Test_3", "Measurement found for getMeasurement");
-					ok(oMeasurement.time > 0, "time > 0");
-					ok(oMeasurement.duration > 0, "duration > 0");
-					ok(oMeasurement.time > oMeasurement.duration, "duration < time");
+					assert.ok(oMeasurement.time > 0, "time > 0");
+					assert.ok(oMeasurement.duration > 0, "duration > 0");
+					assert.ok(oMeasurement.time > oMeasurement.duration, "duration < time");
 					done();
 				};
 				setTimeout(delayedCall2, 100);
@@ -147,13 +147,13 @@
 			assert.equal(aMeasurements[0].info, "This is the first test measure", "Measurement 1 info");
 			assert.equal(aMeasurements[1].info, "This is the second test measure", "Measurement 1 info");
 			assert.equal(aMeasurements[2].info, "This is the third test measure", "Measurement 1 info");
-			ok(aMeasurements[0].end > aMeasurements[0].start, "Measurement 1 End > Start");
-			ok(aMeasurements[1].end > aMeasurements[0].start, "Measurement 2 End > Start");
-			ok(aMeasurements[2].end > aMeasurements[0].start, "Measurement 3 End > Start");
+			assert.ok(aMeasurements[0].end > aMeasurements[0].start, "Measurement 1 End > Start");
+			assert.ok(aMeasurements[1].end > aMeasurements[0].start, "Measurement 2 End > Start");
+			assert.ok(aMeasurements[2].end > aMeasurements[0].start, "Measurement 3 End > Start");
 			assert.equal(aMeasurements[0].time, aMeasurements[0].duration, "Measurement 1 time = duration");
-			ok(aMeasurements[0].time < aMeasurements[1].time, "time Measurement 1 < Measurement 2");
-			ok(aMeasurements[1].time < aMeasurements[2].time, "time Measurement 2 < Measurement 2");
-			ok(aMeasurements[1].duration < aMeasurements[2].duration, "duration Measurement 2 < Measurement 2");
+			assert.ok(aMeasurements[0].time < aMeasurements[1].time, "time Measurement 1 < Measurement 2");
+			assert.ok(aMeasurements[1].time < aMeasurements[2].time, "time Measurement 2 < Measurement 2");
+			assert.ok(aMeasurements[1].duration < aMeasurements[2].duration, "duration Measurement 2 < Measurement 2");
 
 			jQuery.sap.measure.clear();
 			aMeasurements = jQuery.sap.measure.getAllMeasurements();
@@ -166,28 +166,28 @@
 			var oButton = new sap.ui.commons.Button("B1",{text:"Test"}).placeAt("target1");
 			sap.ui.getCore().applyChanges();
 			var aMeasurements = jQuery.sap.measure.getAllMeasurements();
-			ok(aMeasurements.length > 0, "Number of measurements > 0");
+			assert.ok(aMeasurements.length > 0, "Number of measurements > 0");
 
 			oMeasurement = jQuery.sap.measure.getMeasurement("B1---renderControl");
-			ok(oMeasurement, "Measurement for Button renderer found");
+			assert.ok(oMeasurement, "Measurement for Button renderer found");
 			oMeasurement = jQuery.sap.measure.getMeasurement("B1---AfterRendering");
-			ok(oMeasurement, "Measurement for Button AfterRendering found");
+			assert.ok(oMeasurement, "Measurement for Button AfterRendering found");
 			oMeasurement = jQuery.sap.measure.getMeasurement("renderPendingUIUpdates");
-			ok(oMeasurement, "Measurement for rendering all UIAreas found");
+			assert.ok(oMeasurement, "Measurement for rendering all UIAreas found");
 			oMeasurement = jQuery.sap.measure.getMeasurement("target1---rerender");
-			ok(oMeasurement, "Measurement for rendering UIArea found");
+			assert.ok(oMeasurement, "Measurement for rendering UIArea found");
 			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button.js").absoluteTo(document.location.origin + document.location.pathname).href());
 			if (!oMeasurement){
 				// check if debug sources are used
 				oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
 			}
-			ok(oMeasurement, "Measurement for request for Button.js found");
+			assert.ok(oMeasurement, "Measurement for request for Button.js found");
 			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer.js").absoluteTo(document.location.origin + document.location.pathname).href());
 			if (!oMeasurement){
 				// check if debug sources are used
 				oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
 			}
-			ok(oMeasurement, "Measurement for request for ButtonRenderer.js found");
+			assert.ok(oMeasurement, "Measurement for request for ButtonRenderer.js found");
 
 		});
 
@@ -201,8 +201,8 @@
 			    jQuery.sap.measure.end("myId");
 			}
 			jQuery.sap.measure.end("myId2");
-			ok(jQuery.sap.measure.getMeasurement("myId").count === 1000, "1000 count processed for myId");
-			ok(jQuery.sap.measure.getMeasurement("myId2").count === 1000, "1000 count processed for myId2");
+			assert.ok(jQuery.sap.measure.getMeasurement("myId").count === 1000, "1000 count processed for myId");
+			assert.ok(jQuery.sap.measure.getMeasurement("myId2").count === 1000, "1000 count processed for myId2");
 		});
 
 		QUnit.test("registerMethod", function(assert) {
@@ -221,25 +221,25 @@
 				oObject.func(); //execute
 			}
 			//check
-			ok(jQuery.sap.measure.getMeasurement("oObject.func").count === 1000, "1000 count processed for oObject.func");
-			ok(oObject.func !== f , "function is overwritten");
+			assert.ok(jQuery.sap.measure.getMeasurement("oObject.func").count === 1000, "1000 count processed for oObject.func");
+			assert.ok(oObject.func !== f , "function is overwritten");
 
 			//unregister func
 			jQuery.sap.measure.unregisterMethod("oObject.func", oObject, "func");
-			ok(oObject.func === f , "function is reset");
+			assert.ok(oObject.func === f , "function is reset");
 
 			//register 2 functions
 			jQuery.sap.measure.registerMethod("oObject.func", oObject, "func");
 			jQuery.sap.measure.registerMethod("oObject.func2", oObject, "func2");
 
 			//check
-			ok(oObject.func !== f , "function is overwritten");
-			ok(oObject.func2 !== f , "function2 is overwritten");
+			assert.ok(oObject.func !== f , "function is overwritten");
+			assert.ok(oObject.func2 !== f , "function2 is overwritten");
 
 			//unregister 2 functions
 			jQuery.sap.measure.unregisterAllMethods();
-			ok(oObject.func === f , "function is reset");
-			ok(oObject.func2 === f , "function2 is reset");
+			assert.ok(oObject.func === f , "function is reset");
+			assert.ok(oObject.func2 === f , "function2 is reset");
 		});
 
 		QUnit.test("Categories/Filtering/Completed measuremtents", function(assert) {
@@ -357,20 +357,20 @@
 
 		QUnit.test("startInteraction", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
-			ok(!jQuery.sap.measure.getAllInteractionMeasurements().length, "No completed interaction");
+			assert.ok(!jQuery.sap.measure.getAllInteractionMeasurements().length, "No completed interaction");
 		});
 
 		QUnit.test("endInteraction", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-			ok(oMeasurement, "Measurement has been created");
+			assert.ok(oMeasurement, "Measurement has been created");
 		});
 
 		QUnit.test("getAllInteractionMeasurements", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
-			ok(Array.isArray(aMeasurements), "An array was returned");
+			assert.ok(Array.isArray(aMeasurements), "An array was returned");
 			assert.strictEqual(aMeasurements.length, 0, "Measurements count is correct");
 			jQuery.sap.measure.endInteraction(true);
 			aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
@@ -392,7 +392,7 @@
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			var aFilteredMeasurements = jQuery.sap.measure.filterInteractionMeasurements(jQuery.noop);
-			ok(Array.isArray(aFilteredMeasurements), "Array has been returned");
+			assert.ok(Array.isArray(aFilteredMeasurements), "Array has been returned");
 			assert.equal(aFilteredMeasurements.length, 0, "Array is empty");
 			aFilteredMeasurements = jQuery.sap.measure.filterInteractionMeasurements(function() {
 				return true;
@@ -407,7 +407,7 @@
 		QUnit.test("getPendingInteractionMeasurement", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oMeasurement = jQuery.sap.measure.getPendingInteractionMeasurement();
-			ok(oMeasurement, "Measuerement was returned");
+			assert.ok(oMeasurement, "Measuerement was returned");
 			assert.strictEqual(oMeasurement.end, 0, "Measurements has not been finalized yet");
 		});
 
@@ -421,17 +421,17 @@
 			assert.equal(oMeasurement.appVersion, "", "No app version could be found");
 			assert.equal(oMeasurement.requests.length, 0, "No requests");
 			assert.equal(oMeasurement.measurements.length, 0, "No measurements");
-			ok(oMeasurement.start !== 0, "Start is set");
-			ok(oMeasurement.end !== 0, "End is set");
-			ok(oMeasurement.start <= oMeasurement.end, "Start is before end");
-			ok(oMeasurement.duration <= oMeasurement.end - oMeasurement.start, "Duration is set");
-			ok(oMeasurement.navigation === 0, "No navigation");
-			ok(oMeasurement.roundtrip === 0, "No round trip");
-			ok(oMeasurement.processing === 0, "No processing");
-			ok(oMeasurement.requestTime === 0, "No round trip");
-			ok(oMeasurement.networkTime === 0, "No processing");
-			ok(oMeasurement.bytesSent === 0, "No round trip");
-			ok(oMeasurement.bytesReceived === 0, "No processing");
+			assert.ok(oMeasurement.start !== 0, "Start is set");
+			assert.ok(oMeasurement.end !== 0, "End is set");
+			assert.ok(oMeasurement.start <= oMeasurement.end, "Start is before end");
+			assert.ok(oMeasurement.duration <= oMeasurement.end - oMeasurement.start, "Duration is set");
+			assert.ok(oMeasurement.navigation === 0, "No navigation");
+			assert.ok(oMeasurement.roundtrip === 0, "No round trip");
+			assert.ok(oMeasurement.processing === 0, "No processing");
+			assert.ok(oMeasurement.requestTime === 0, "No round trip");
+			assert.ok(oMeasurement.networkTime === 0, "No processing");
+			assert.ok(oMeasurement.bytesSent === 0, "No round trip");
+			assert.ok(oMeasurement.bytesReceived === 0, "No processing");
 		});
 
 		QUnit.test("Performance API depending measures", function(assert) {
@@ -445,11 +445,11 @@
 			if(window.performance && window.performance.getEntries) {
 				assert.equal(oMeasurement.requests.length, 1, "One requests");
 				assert.equal(oMeasurement.measurements.length, 0, "No measurements");
-				ok(oMeasurement.navigation === oMeasurement.requests[0].requestStart - oMeasurement.requests[0].startTime, "Navigation correct");
-				ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].startTime, "Roundtrip correct");
-				ok(oMeasurement.processing <= oMeasurement.end - oMeasurement.start, "Processing plausible");
+				assert.ok(oMeasurement.navigation === oMeasurement.requests[0].requestStart - oMeasurement.requests[0].startTime, "Navigation correct");
+				assert.ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].startTime, "Roundtrip correct");
+				assert.ok(oMeasurement.processing <= oMeasurement.end - oMeasurement.start, "Processing plausible");
 			} else {
-				ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
+				assert.ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
 			}
 		});
 
@@ -464,11 +464,11 @@
 			if(window.performance && window.performance.getEntries) {
 				assert.equal(oMeasurement.requests.length, 1, "One requests");
 				assert.equal(oMeasurement.measurements.length, 0, "No measurements");
-				ok(oMeasurement.networkTime === 0, "No sap-perf-fesrec response header");
-				ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
-				ok(oMeasurement.bytesReceived === 0, "No bytes received when fesr is not active"); //parseInt(oReq.getResponseHeader("content-length"), 10)
+				assert.ok(oMeasurement.networkTime === 0, "No sap-perf-fesrec response header");
+				assert.ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
+				assert.ok(oMeasurement.bytesReceived === 0, "No bytes received when fesr is not active"); //parseInt(oReq.getResponseHeader("content-length"), 10)
 			} else {
-				ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
+				assert.ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
 			}
 		});
 
@@ -479,9 +479,9 @@
 			jQuery.sap.measure.endInteraction();
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-			ok(oMeasurement.measurements.length, "Measurements added");
+			assert.ok(oMeasurement.measurements.length, "Measurements added");
 			oMeasurement.measurements.forEach(function(oM) {
-				ok(oM.start > oMeasurement.start && oM.end < oMeasurement.end, "Measurements in interaction time range");
+				assert.ok(oM.start > oMeasurement.start && oM.end < oMeasurement.end, "Measurements in interaction time range");
 			});
 		});
 
@@ -516,7 +516,7 @@
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 
 			// assert
-			ok(oMeasurement.component === sComponentName, "Component name could be determined");
+			assert.ok(oMeasurement.component === sComponentName, "Component name could be determined");
 
 			// cleanup
 			oComp.destroy();

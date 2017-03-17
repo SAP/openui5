@@ -38,10 +38,10 @@
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oFF.getLists().length, 2, "There should be two lists in the 'lists' aggregation");
-		ok(oFF.getAggregation("addFacetButton"), "Add facet button aggregation should be created");
+		assert.ok(oFF.getAggregation("addFacetButton"), "Add facet button aggregation should be created");
 		assert.equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
 		assert.equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
-		ok(oFF.getAggregation("summaryBar"), "The summary bar aggregation should be created");
+		assert.ok(oFF.getAggregation("summaryBar"), "The summary bar aggregation should be created");
 		destroyFF(oFF);
 
 		// Now make sure we can create a new FF using the same IDs.  This will fail if any of the aggregated controls are is not destroyed properly.
@@ -82,7 +82,7 @@
 
 			//test
 			assert.equal(oFF.getLists().length, 105, "Expected 105 lists");
-			ok(jQuery("#__item0-__list1-104").size(), "There should be at element 105 rendered");
+			assert.ok(jQuery("#__item0-__list1-104").size(), "There should be at element 105 rendered");
 
 			destroyFF(oFF);
 
@@ -136,11 +136,11 @@
 		oFFS=oFF._enableTouchSupport();
 		// Verify the add facet button is created
 		var oAddFacetButton = oFF.getAggregation("addFacetButton");
-		ok(oAddFacetButton, "The add facet button is created");
+		assert.ok(oAddFacetButton, "The add facet button is created");
 
 		// Verify the summary bar is created
 		var oSummaryBar = oFF.getAggregation("summaryBar");
-		ok(oSummaryBar, "The summary bar is created");
+		assert.ok(oSummaryBar, "The summary bar is created");
 
 		jQuery.sap.touchEventMode === "ON"
 		oFF._enableTouchSupport();
@@ -157,18 +157,18 @@
 		oFF._getPopover();
 
 		var oPopover = oFF.getAggregation("popover");
-		ok(oPopover, "The popover is created");
+		assert.ok(oPopover, "The popover is created");
 		assert.equal(oPopover.getPlacement(), sap.m.PlacementType.Bottom, "Popover placement should be bottom");
 		assert.strictEqual(oPopover.getHorizontalScrolling(), false, "Horizontal scrolling should be disabled");
 		assert.strictEqual(oPopover, oFF._getPopover(), "There should only be one instance of Popover created while the popover aggregation is still valid");
-		ok(!oPopover.getFooter(), "Popover should not contain the OK button in the footer");
+		assert.ok(!oPopover.getFooter(), "Popover should not contain the OK button in the footer");
 
 		oFF.setShowPopoverOKButton(true);
 		oPopover = oFF._getPopover();
-		ok(oPopover.getFooter(), "Popover should contain the OK button in the footer");
+		assert.ok(oPopover.getFooter(), "Popover should contain the OK button in the footer");
 
 //		sap.ui.Device.browser.internet_explorer < 10
-		ok(oPopover.getContentWidth("30%"),"Popover width set to 30% for IE");
+		assert.ok(oPopover.getContentWidth("30%"),"Popover width set to 30% for IE");
 
 		oFF.destroy();
 	});
@@ -188,8 +188,8 @@
 
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function() {
-				ok(oPopover.isOpen(), "Popover should be open");
-				ok(oPopover.getContentWidth("30%"),"Popover width should be 30% if wordwrap is set to true");
+				assert.ok(oPopover.isOpen(), "Popover should be open");
+				assert.ok(oPopover.getContentWidth("30%"),"Popover width should be 30% if wordwrap is set to true");
 
 				destroyFF(oFF);
 				done();
@@ -217,9 +217,9 @@
 			oPopover.attachEventOnce("afterOpen", function() {
 
 				oPopover.attachEventOnce("afterClose", function() {
-					ok(!oPopover.isOpen(), "Popover should be closed");
+					assert.ok(!oPopover.isOpen(), "Popover should be closed");
 					if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-						ok(!oPopover.getSubHeader(), "Popover subheader should be destroyed");
+						assert.ok(!oPopover.getSubHeader(), "Popover subheader should be destroyed");
 					}
 					assert.equal(oPopover.getContent().length, 0, "Popover content should be destroyed");
 					destroyFF(oFF);
@@ -260,7 +260,7 @@
 
 			oFF._restoreListFromDisplayContainer(oContainer);
 
-			ok(!oFF.getAggregation("popover"), "The popover aggregation should be destroyed");
+			assert.ok(!oFF.getAggregation("popover"), "The popover aggregation should be destroyed");
 
 			assert.equal(oFF.indexOfAggregation("lists", oFFL1), 0, "List 1 should be at index 0");
 			assert.equal(oFF.indexOfAggregation("lists", oFFL2), 1, "List 2 should be at index 1");
@@ -285,14 +285,14 @@
 		var oFF = new sap.m.FacetFilter();
 		var oDialog = oFF.getAggregation("dialog");
 
-		ok(!oDialog, "Dialog should be created lazily");
+		assert.ok(!oDialog, "Dialog should be created lazily");
 
 		oDialog = oFF._getFacetDialog();
-		ok(oDialog instanceof sap.m.Dialog, "Should be an instance of sap.m.Dialog");
-		ok(oDialog, "Dialog should not be null");
-		ok(oFF.getAggregation("dialog"), "Dialog aggregation should be created");
+		assert.ok(oDialog instanceof sap.m.Dialog, "Should be an instance of sap.m.Dialog");
+		assert.ok(oDialog, "Dialog should not be null");
+		assert.ok(oFF.getAggregation("dialog"), "Dialog aggregation should be created");
 
-		ok(oDialog.getBeginButton(), "Dialog begin button should be created");
+		assert.ok(oDialog.getBeginButton(), "Dialog begin button should be created");
 		assert.strictEqual(oDialog.getShowHeader(), false, "Dialog header should not be shown");
 		assert.strictEqual(oDialog.getStretch(), sap.ui.Device.system.phone ? true : false, "Dialog stretch should be false on desktop and true on phone");
 
@@ -330,8 +330,8 @@
 		oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
 
 			oDialog.attachEventOnce("afterClose", function(oEvent) {
-				ok(oListCloseEvent, "List close event should have been fired");
-				ok(!oDialog.isOpen(), "Dialog should be closed");
+				assert.ok(oListCloseEvent, "List close event should have been fired");
+				assert.ok(!oDialog.isOpen(), "Dialog should be closed");
 				assert.equal(oDialog.getContent().length, 0, "Dialog nav container should be destroyed");
 
 				destroyFF(oFF);
@@ -355,7 +355,7 @@
 		sap.ui.getCore().applyChanges();
 
 		var oList = oFF._createFacetList();
-		ok(oList, "List should not be null");
+		assert.ok(oList, "List should not be null");
 		oList.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -385,20 +385,20 @@
 		var oFF = new sap.m.FacetFilter();
 		var oPage = oFF._createFacetPage();
 
-		ok(oPage.getEnableScrolling(), "Page scrolling should be enabled");
+		assert.ok(oPage.getEnableScrolling(), "Page scrolling should be enabled");
 
 		var oPageSubHeader = oPage.getSubHeader();
-		ok(oPageSubHeader, "Page should have a sub header");
-		ok(oPageSubHeader instanceof sap.m.Bar, "Page sub header should be a Bar");
+		assert.ok(oPageSubHeader, "Page should have a sub header");
+		assert.ok(oPageSubHeader instanceof sap.m.Bar, "Page sub header should be a Bar");
 
 		var oPageSubHeaderSearchField = oPageSubHeader.getContentMiddle()[0];
-		ok(oPageSubHeaderSearchField, "Page sub header should have content");
-		ok(oPageSubHeaderSearchField instanceof sap.m.SearchField, "Page sub header should be a SearchField");
+		assert.ok(oPageSubHeaderSearchField, "Page sub header should have content");
+		assert.ok(oPageSubHeaderSearchField instanceof sap.m.SearchField, "Page sub header should be a SearchField");
 		assert.equal(oPageSubHeaderSearchField.getWidth(), "100%", "Page search field width should be 100%");
 
 		var oFacetList = oPage.getContent()[0];
-		ok(oFacetList, "Page should have content");
-		ok(oFacetList instanceof sap.m.List, "Page content should be a List");
+		assert.ok(oFacetList, "Page should have content");
+		assert.ok(oFacetList instanceof sap.m.List, "Page content should be a List");
 		oFF.destroy();
 	});
 
@@ -407,8 +407,8 @@
 		var oFF = new sap.m.FacetFilter();
 		var oPage = oFF._createFilterItemsPage();
 
-		ok(oPage.getEnableScrolling(), "Page scrolling should be enabled");
-		ok(oPage.getShowNavButton(), "Filter items page should show the navigation button");
+		assert.ok(oPage.getEnableScrolling(), "Page scrolling should be enabled");
+		assert.ok(oPage.getShowNavButton(), "Filter items page should show the navigation button");
 
 		oFF.destroy();
 	});
@@ -419,11 +419,11 @@
 		var oFFL1 = new sap.m.FacetFilterList();
 		oFF.addList(oFFL1);
 		var oBar = oFF._createFilterItemsSearchFieldBar(oFFL1);
-		ok(oBar, "Bar should be created");
+		assert.ok(oBar, "Bar should be created");
 		var oSearchField = oBar.getContentMiddle()[0];
 
-		ok(oSearchField, "Bar should contain a search field placed in middle content");
-		ok(oSearchField.getTooltip(), "Search field has tooltip");
+		assert.ok(oSearchField, "Bar should contain a search field placed in middle content");
+		assert.ok(oSearchField.getTooltip(), "Search field has tooltip");
 		assert.equal(oSearchField.getWidth(), "100%", "Search field width should be 100%");
 
 		assert.equal(oFFL1.getAssociation("search"), oSearchField.getId(), "The list should have an association with the search field");
@@ -443,31 +443,31 @@
 		var oFFL1 = new sap.m.FacetFilterList();
 		oFFL1.addItem(new sap.m.FacetFilterItem());
 		var oCheckboxBar1 = oFF._createSelectAllCheckboxBar(oFFL1);
-		ok(oCheckboxBar1, "The checkbox bar is created");
-		ok(oCheckboxBar1 instanceof sap.m.Bar, "The checkbox bar should be a Bar");
+		assert.ok(oCheckboxBar1, "The checkbox bar is created");
+		assert.ok(oCheckboxBar1 instanceof sap.m.Bar, "The checkbox bar should be a Bar");
 		var oCheckBox1 = oCheckboxBar1.getContentLeft()[0];
-		ok(oCheckBox1, "A control is contained in the left content of the bar");
-		ok(oCheckBox1 instanceof sap.m.CheckBox, "The bar contains a CheckBox");
-		ok(oCheckBox1.getTooltip(),"CheckBox contain tooltip");
-		ok(!oCheckBox1.getSelected(), "Checkbox should be initially unchecked when the list is active and contains no selections");
+		assert.ok(oCheckBox1, "A control is contained in the left content of the bar");
+		assert.ok(oCheckBox1 instanceof sap.m.CheckBox, "The bar contains a CheckBox");
+		assert.ok(oCheckBox1.getTooltip(),"CheckBox contain tooltip");
+		assert.ok(!oCheckBox1.getSelected(), "Checkbox should be initially unchecked when the list is active and contains no selections");
 		oFFL1.destroy();
 
 		var oFFL2 = new sap.m.FacetFilterList();
 		oFFL2.addItem(new sap.m.FacetFilterItem({selected: true}));
 		var oCheckboxBar2 = oFF._createSelectAllCheckboxBar(oFFL2);
 		var oCheckBox2 = oCheckboxBar2.getContentLeft()[0];
-		ok(!oCheckBox2.getSelected(), "Checkbox should not be initially checked when the list contains selections");
+		assert.ok(!oCheckBox2.getSelected(), "Checkbox should not be initially checked when the list contains selections");
 		oFFL2.destroy();
 
 		var oFFL3 = new sap.m.FacetFilterList({active: false});
 		var oCheckboxBar3 = oFF._createSelectAllCheckboxBar(oFFL3);
 		var oCheckBox3 = oCheckboxBar3.getContentLeft()[0];
-		ok(!oCheckBox3.getSelected(), "Checkbox should not be initially checked when the list is inactive");
+		assert.ok(!oCheckBox3.getSelected(), "Checkbox should not be initially checked when the list is inactive");
 
 		oFFL3.destroy();
 
 		var oFFL4 = new sap.m.FacetFilterList({multiSelect: false});
-		ok(!oFF._createSelectAllCheckboxBar(oFFL4), "Checkbox bar should not be created when the list is not multi select");
+		assert.ok(!oFF._createSelectAllCheckboxBar(oFFL4), "Checkbox bar should not be created when the list is not multi select");
 		oFFL4.destroy();
 
 		oFF.destroy();
@@ -478,8 +478,8 @@
 
 		var oFF = new sap.m.FacetFilter();
 		var oNavContainer = oFF._getFacetDialogNavContainer();
-		ok(oNavContainer instanceof sap.m.NavContainer, "Should be an instance of sap.m.NavContainer");
-		ok(oNavContainer, "NavContainer should not be null");
+		assert.ok(oNavContainer instanceof sap.m.NavContainer, "Should be an instance of sap.m.NavContainer");
+		assert.ok(oNavContainer, "NavContainer should not be null");
 
 		assert.equal(oNavContainer.getPages().length, 1, "Nav container should contain one pages");
 		oFF.destroy();
@@ -514,14 +514,14 @@
 			assert.strictEqual(oFacetFilterListPage, oCurrentPage, "The current page should be the facet filter item page");
 
 			var oPageSubHeader = oCurrentPage.getSubHeader();
-			ok(oPageSubHeader, "Page should have a sub header");
-			ok(oPageSubHeader instanceof sap.m.Bar, "Page sub header should be a Bar");
+			assert.ok(oPageSubHeader, "Page should have a sub header");
+			assert.ok(oPageSubHeader instanceof sap.m.Bar, "Page sub header should be a Bar");
 
 			var oPageSubHeaderSearchField = oPageSubHeader.getContentMiddle()[0];
-			ok(oPageSubHeaderSearchField, "Page sub header should have content");
-			ok(oPageSubHeaderSearchField instanceof sap.m.SearchField, "Page sub header should be a SearchField");
+			assert.ok(oPageSubHeaderSearchField, "Page sub header should have content");
+			assert.ok(oPageSubHeaderSearchField instanceof sap.m.SearchField, "Page sub header should be a SearchField");
 			assert.equal(sList1Title, oCurrentPage.getTitle(), "Current page should display the first facet filter list");
-			ok(oFFL1.getItems()[0].getDomRef(), "Facet filter item should be rendered");
+			assert.ok(oFFL1.getItems()[0].getDomRef(), "Facet filter item should be rendered");
 
 			destroyFF(oFF);
 			done();
@@ -558,7 +558,7 @@
 				var oCurrentPage = oNavContainer.getCurrentPage();
 				assert.strictEqual(oFacetFilterListPage, oCurrentPage, "The current page should be the facet filter item page");
 				assert.equal(sList2Title, oCurrentPage.getTitle(), "Current page should display the second facet filter list");
-				ok(oFFL2.getItems()[0].getDomRef(), "Facet filter item should be rendered");
+				assert.ok(oFFL2.getItems()[0].getDomRef(), "Facet filter item should be rendered");
 
 				destroyFF(oFF);
 				done();
@@ -737,7 +737,7 @@
 
 		var oIcon = oFF.getAggregation("removeFacetIcons")[0];
 		assert.strictEqual(oFF._getFacetRemoveIcon(oFFL), oIcon, "There should be only one icon instance created per list");
-		ok(oIcon.getTooltip(),"Facet Remove icon has tooltip");
+		assert.ok(oIcon.getTooltip(),"Facet Remove icon has tooltip");
 		destroyFF(oFF);
 	});
 
@@ -756,9 +756,9 @@
 
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			oFF._displayRemoveIcon(false, oFFL);
-			ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
+			assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
 			oFF._displayRemoveIcon(true, oFFL);
-			ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should be displayed.");
+			assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should be displayed.");
 
 			destroyFF(oFF);
 			done();
@@ -786,18 +786,18 @@
 
 			//touch start
 			callIconDelegate("ontouchstart", oIcon);
-			ok(oIcon._bTouchStarted, "A flag indicated mousedown/touchstart on icon " + oIcon.getId() + " must present");
-			ok(oIcon.$().hasClass("sapMFFLVisibleRemoveIcon"),"The 'remove icon ' should be visible");
+			assert.ok(oIcon._bTouchStarted, "A flag indicated mousedown/touchstart on icon " + oIcon.getId() + " must present");
+			assert.ok(oIcon.$().hasClass("sapMFFLVisibleRemoveIcon"),"The 'remove icon ' should be visible");
 
 			//touch end
 			callIconDelegate("ontouchend", oIcon);
 			assert.strictEqual(false, oIcon._bTouchStarted, "A flag indicated mousedown/touchstart on icon " + oIcon.getId() + " must be reflected");
-			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
+			assert.ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
 
 			//press
 			oIcon.firePress();
 			notOk(oIcon._bPress, "A flag indicated press on icon " + oIcon.getId() + " should exist");
-			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
+			assert.ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
 			destroyFF(oFF);
 			done();
 		});
@@ -816,7 +816,7 @@
 		 sap.ui.getCore().applyChanges();
 		 var oPopover = oFF._getPopover();
 		 oPopover.attachEventOnce("afterOpen", function(oEvent) {
-			 ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should  be displayed.");
+			 assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should  be displayed.");
 			 destroyFF(oFF);
 			 done();
 		 });
@@ -834,7 +834,7 @@
 		 sap.ui.getCore().applyChanges();
 		 var oPopover = oFF._getPopover();
 		 oPopover.attachEventOnce("afterOpen", function(oEvent) {
-			 ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
+			 assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
 			 destroyFF(oFF);
 			 done();
 		 });
@@ -848,7 +848,7 @@
 		assert.strictEqual(oAddFacetButton, oFF._getAddFacetButton(), "There should only be one instance of the add facet button created for the lifetime of the FacetFilter");
 		assert.equal(oAddFacetButton.getIcon(), sap.ui.core.IconPool.getIconURI("add-filter"), "Button should have the add-filter icon URI");
 		assert.equal(oAddFacetButton.getType(), sap.m.ButtonType.Transparent, "Button type should be Transparent");
-		ok(oAddFacetButton.getTooltip(),"Add facet Button has tooltip");
+		assert.ok(oAddFacetButton.getTooltip(),"Add facet Button has tooltip");
 		destroyFF(oFF);
 	});
 
@@ -860,7 +860,7 @@
 
 		assert.equal(oResetButton.getIcon(), sap.ui.core.IconPool.getIconURI("undo"), "Button should have the undo icon URI");
 		assert.equal(oResetButton.getType(), sap.m.ButtonType.Transparent, "Button type should be Transparent");
-		ok(oResetButton.getTooltip(),"Reset Button has tooltip");
+		assert.ok(oResetButton.getTooltip(),"Reset Button has tooltip");
 
 		 oFF.addList(new sap.m.FacetFilterList("list1"));
 		 oFF.addList(new sap.m.FacetFilterList("list2"));
@@ -876,10 +876,10 @@
 
 		oFF._addOKButtonToPopover(oPopover);
 		var oButton = oPopover.getFooter();
-		ok(oButton, "Popover OK button should be created and added to the popover footer");
+		assert.ok(oButton, "Popover OK button should be created and added to the popover footer");
 		assert.equal(oButton.getWidth(), "100%", "Popover OK button width should be 100%");
-		ok(oButton.getText(), "Button text should be set");
-		ok(oButton.getTooltip(), "Button tooltip should be set");
+		assert.ok(oButton.getText(), "Button text should be set");
+		assert.ok(oButton.getTooltip(), "Button tooltip should be set");
 
 		oButton.firePress();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -898,8 +898,8 @@
 
 		assert.equal(oSummaryBar.getContent().length, 1, "Summary bar should have one control in its content");
 		var oText = oSummaryBar.getContent()[0];
-		ok(oText instanceof sap.m.Text, "Summary bar should have a Text control as its contents");
-		ok(!oSummaryBar.getActive(), "Summary bar should be inactive");
+		assert.ok(oText instanceof sap.m.Text, "Summary bar should have a Text control as its contents");
+		assert.ok(!oSummaryBar.getActive(), "Summary bar should be inactive");
 		assert.equal(oSummaryBar.getDesign(), sap.m.ToolbarDesign.Info, "Summary bar design should be Info");
 		assert.equal(oSummaryBar.getHeight(), "", "Toolbar height shouldn't be specified");
 
@@ -947,8 +947,8 @@
 		oFFL.setSelectedKeys({"4" : "Val4"});
 		oFFL.getItems()[2].setSelected(true);
 
-		ok(oFF._getSummaryText().indexOf("Val3") > -1, "Summary text contains the selected item");
-		ok(oFF._getSummaryText().indexOf("Val4") > -1, "Summary text contains the selected item");
+		assert.ok(oFF._getSummaryText().indexOf("Val3") > -1, "Summary text contains the selected item");
+		assert.ok(oFF._getSummaryText().indexOf("Val4") > -1, "Summary text contains the selected item");
 
 
 		destroyFF(oFF);
@@ -989,8 +989,8 @@
 		var oButton = oFF._getButtonForList(oFFL);
 		oFFL.getItems()[0].setSelected(true);
 		oFF._setButtonText(oFFL);
-		ok(oButton.getText().indexOf(sItemText1) !== -1, "Button should be updated with text for the first list item");
-		ok(oButton.getTooltip().indexOf(sItemText1) !== -1, "Button tooltip should be updated  for the first list item");
+		assert.ok(oButton.getText().indexOf(sItemText1) !== -1, "Button should be updated with text for the first list item");
+		assert.ok(oButton.getTooltip().indexOf(sItemText1) !== -1, "Button tooltip should be updated  for the first list item");
 
 		oFFL.setMultiSelect(true);
 		//all items are selected
@@ -1008,8 +1008,8 @@
 		oFFL.getItems()[2].setSelected(true);
 		oFF._setButtonText(oFFL);
 
-		ok(oButton.getText().indexOf("List (2)") !== -1, "Button should contain the count of selected items");
-		ok(oButton.getTooltip().indexOf("List (2)") !== -1, "Button tooltip should contain the count of selected items");
+		assert.ok(oButton.getText().indexOf("List (2)") !== -1, "Button should contain the count of selected items");
+		assert.ok(oButton.getTooltip().indexOf("List (2)") !== -1, "Button tooltip should contain the count of selected items");
 
 		destroyFF(oFF);
 	});
@@ -1261,7 +1261,7 @@
 				oSearch.focus();
 
 				var oCheckBox = getPopoverSelectAllCheckBox(oPopover);
-				ok(oCheckBox.getTooltip(),"Select All Checkbox for popover has tooltip");
+				assert.ok(oCheckBox.getTooltip(),"Select All Checkbox for popover has tooltip");
 				assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
 
 
@@ -1367,28 +1367,28 @@
 			var oFF = new sap.m.FacetFilter();
 
 			var oArrow = oFF._getScrollingArrow();
-			ok(!oArrow, "Arrow control is null if an invalid name is given");
+			assert.ok(!oArrow, "Arrow control is null if an invalid name is given");
 			oArrow = oFF._getScrollingArrow("left");
-			ok(oArrow, "Arrow control is created");
-			ok(oArrow instanceof sap.ui.core.Icon, "Arrow is an Icon");
+			assert.ok(oArrow, "Arrow control is created");
+			assert.ok(oArrow instanceof sap.ui.core.Icon, "Arrow is an Icon");
 			assert.equal(oArrow.getId(), oFF.getId() + "-arrowScrollLeft", "Icon id is correct");
-			ok(oArrow.hasStyleClass("sapMPointer"), "Style class is set");
-			ok(oArrow.hasStyleClass("sapMFFArrowScroll"), "Style class is set");
-			ok(oArrow.hasStyleClass("sapMFFArrowScrollLeft"), "Style class is set");
-			ok(oFF.getAggregation("arrowLeft"), "arrowLeft aggregation is set");
-			ok(oArrow.getTooltip(), "arrowLeft has tooltip");
+			assert.ok(oArrow.hasStyleClass("sapMPointer"), "Style class is set");
+			assert.ok(oArrow.hasStyleClass("sapMFFArrowScroll"), "Style class is set");
+			assert.ok(oArrow.hasStyleClass("sapMFFArrowScrollLeft"), "Style class is set");
+			assert.ok(oFF.getAggregation("arrowLeft"), "arrowLeft aggregation is set");
+			assert.ok(oArrow.getTooltip(), "arrowLeft has tooltip");
 			assert.strictEqual(oFF._getScrollingArrow("left"), oArrow, "Icon is created only once");
 
 
 			oArrow = oFF._getScrollingArrow("right");
-			ok(oArrow, "Arrow control is created");
-			ok(oArrow instanceof sap.ui.core.Icon, "Arrow is an Icon");
+			assert.ok(oArrow, "Arrow control is created");
+			assert.ok(oArrow instanceof sap.ui.core.Icon, "Arrow is an Icon");
 			assert.equal(oArrow.getId(), oFF.getId() + "-arrowScrollRight", "Icon id is correct");
-			ok(oArrow.hasStyleClass("sapMPointer"), "Style class is set");
-			ok(oArrow.hasStyleClass("sapMFFArrowScroll"), "Style class is set");
-			ok(oArrow.hasStyleClass("sapMFFArrowScrollRight"), "Style class is set");
-			ok(oFF.getAggregation("arrowRight"), "arrowLeft aggregation is set");
-			ok(oArrow.getTooltip(), "arrowRight has tooltip");
+			assert.ok(oArrow.hasStyleClass("sapMPointer"), "Style class is set");
+			assert.ok(oArrow.hasStyleClass("sapMFFArrowScroll"), "Style class is set");
+			assert.ok(oArrow.hasStyleClass("sapMFFArrowScrollRight"), "Style class is set");
+			assert.ok(oFF.getAggregation("arrowRight"), "arrowLeft aggregation is set");
+			assert.ok(oArrow.getTooltip(), "arrowRight has tooltip");
 			assert.strictEqual(oFF._getScrollingArrow("right"), oArrow, "Icon is created only once");
 
 			destroyFF(oFF);
@@ -1397,7 +1397,7 @@
 		QUnit.test("FacetFilterItem.init", function(assert) {
 			var oItem = new sap.m.FacetFilterItem();
 
-			ok(oItem.hasStyleClass("sapMFFLI"), "sapMFFLI style class set");
+			assert.ok(oItem.hasStyleClass("sapMFFLI"), "sapMFFLI style class set");
 			oItem.destroy();
 		});
 
@@ -1443,10 +1443,10 @@
 			oFF.openFilterDialog();
 
 			var oDialog = oFF.getAggregation("dialog")
-			ok(oDialog.isOpen(), "Dialog should be opened");
+			assert.ok(oDialog.isOpen(), "Dialog should be opened");
 			var aContent = oDialog.getContent();
 			assert.equal(aContent.length, 1, "Dialog contains one control in its content");
-			ok(aContent[0] instanceof sap.m.NavContainer, "The dialog content is a NavContainer");
+			assert.ok(aContent[0] instanceof sap.m.NavContainer, "The dialog content is a NavContainer");
 
 			destroyFF(oFF);
 		});
@@ -1666,7 +1666,7 @@
 			assert.equal(oFFL.getSelectedItem().getKey(), "1", "Item should be selected");
 
 			oFFL.setSelectedKeys({"3": "Val3"});
-			ok(oFFL.getSelectedItem(), "Item should be selected");
+			assert.ok(oFFL.getSelectedItem(), "Item should be selected");
 			oFFL.getSelectedItem() && equal(oFFL.getSelectedItem().getKey(), "3", "The correct item should be selected");
 
 			// Now the multi-select case
@@ -1687,7 +1687,7 @@
 			oFF.addList(oFFL);
 
 			oFFL.setSelectedKeys({"35": "Val35", "23": "Val23", "67": "Val16", "16": "Val16"});
-			ok(oFFL.getSelectedItem(), "Item should be selected");
+			assert.ok(oFFL.getSelectedItem(), "Item should be selected");
 			oFFL.getSelectedItem() && equal(oFFL.getSelectedItem().getKey(), "16", "The last added item should be selected when the list is multi-select");
 
 			destroyFF(oFF);
@@ -1802,7 +1802,7 @@
 
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
 				//Assert
-				ok(oResetSearchSpy.calledWith(""), "Search value is reset");
+				assert.ok(oResetSearchSpy.calledWith(""), "Search value is reset");
 				oFacetFilterList._setSearchValue.restore();
 				destroyFF(oFacetFilter);
 				done();
@@ -1837,10 +1837,10 @@
 			oFFL._handleSelectAllClick(true);
 
 			//assert
-			ok(oItemSetSelectedSpy.calledThrice, "setSelected called 3 times");
-			ok(oItemSetSelectedSpy.args[0][1], "1st time called with bDontNotifyParent: true");
-			ok(oItemSetSelectedSpy.args[1][1], "2nd time called with bDontNotifyParent: true");
-			ok(oItemSetSelectedSpy.args[2][1], "3rd time called with bDontNotifyParent: true");
+			assert.ok(oItemSetSelectedSpy.calledThrice, "setSelected called 3 times");
+			assert.ok(oItemSetSelectedSpy.args[0][1], "1st time called with bDontNotifyParent: true");
+			assert.ok(oItemSetSelectedSpy.args[1][1], "2nd time called with bDontNotifyParent: true");
+			assert.ok(oItemSetSelectedSpy.args[2][1], "3rd time called with bDontNotifyParent: true");
 
 			//clean
 			sap.m.ListItemBase.prototype.setSelected.restore();
@@ -1910,7 +1910,7 @@
 				title : "List"
 			});
 			oFFL.attachEventOnce("listOpen", function(oEvent) {
-				ok(oEvent, "List open event should exist");
+				assert.ok(oEvent, "List open event should exist");
 				oFF._closePopover();
 				done();
 			});
@@ -1935,7 +1935,7 @@
 				title : "List"
 			});
 			oFFL.attachListClose(function(oEvent) {
-				ok(oEvent, "Event should exist");
+				assert.ok(oEvent, "Event should exist");
 				var aSelectedItems = oEvent.getParameter("selectedItems");
 				assert.equal(aSelectedItems.length, 0, "No items should be selected");
 				var oSelectedKeys = oEvent.getParameter("selectedKeys");
@@ -1974,13 +1974,13 @@
 				title : "List"
 			});
 			oFFL.attachListClose(function(oEvent) {
-				ok(oEvent, "Event should exist");
+				assert.ok(oEvent, "Event should exist");
 				var aSelectedItems = oEvent.getParameter("selectedItems");
 				assert.equal(aSelectedItems.length, 2, "Two items should be selected");
 				assert.strictEqual(aSelectedItems[0].getKey(), oFFL.getItems()[0].getKey(), "The first item should be present in the event");
 				assert.strictEqual(aSelectedItems[1].getKey(), oFFL.getItems()[2].getKey(), "The last item should be present in the event");
-				ok(aSelectedItems[0].getSelected(), "The item should be selected");
-				ok(aSelectedItems[1].getSelected(), "The item should be selected");
+				assert.ok(aSelectedItems[0].getSelected(), "The item should be selected");
+				assert.ok(aSelectedItems[1].getSelected(), "The item should be selected");
 
 				var oSelectedKeys = oEvent.getParameter("selectedKeys");
 				assert.equal(Object.getOwnPropertyNames(oSelectedKeys).length, 2, "Two items should be selected");
@@ -2026,15 +2026,15 @@
 				title : "List"
 			});
 			oFFL.attachListClose(function(oEvent) {
-				ok(oEvent, "Event should exist");
+				assert.ok(oEvent, "Event should exist");
 				var aSelectedItems = oEvent.getParameter("selectedItems");
 				assert.equal(aSelectedItems.length, 3, "All items should be selected");
 				assert.strictEqual(aSelectedItems[0].getKey(), oFFL.getItems()[0].getKey(), "The first item should be present in the event");
 				assert.strictEqual(aSelectedItems[1].getKey(), oFFL.getItems()[1].getKey(), "The second item should be present in the event");
 				assert.strictEqual(aSelectedItems[2].getKey(), oFFL.getItems()[2].getKey(), "The last item should be present in the event");
-				ok(aSelectedItems[0].getSelected(), "The item should be selected");
-				ok(aSelectedItems[1].getSelected(), "The item should be selected");
-				ok(aSelectedItems[2].getSelected(), "The item should be selected");
+				assert.ok(aSelectedItems[0].getSelected(), "The item should be selected");
+				assert.ok(aSelectedItems[1].getSelected(), "The item should be selected");
+				assert.ok(aSelectedItems[2].getSelected(), "The item should be selected");
 				var bAllSelected = oEvent.getParameter("allSelected");
 				assert.strictEqual(bAllSelected, false, "allSelected parameter should be false");
 
@@ -2117,7 +2117,7 @@
 						callIconDelegate("ontouchend", oIcon);
 						break;
 					default:
-						ok(false, "Invalid parameter test scenario: " + sScenario);
+						assert.ok(false, "Invalid parameter test scenario: " + sScenario);
 				}
 				setTimeout(function () {
 					assert.equal(oListCloseSpy.callCount, 1, sSubtestName + "# calls");
@@ -2141,7 +2141,7 @@
 			sap.ui.getCore().applyChanges();
 
 			oFF.attachEventOnce("reset", function(oEvent) {
-				ok(oEvent, "Filter reset event triggered");
+				assert.ok(oEvent, "Filter reset event triggered");
 				destroyFF(oFF);
 				done();
 			});
@@ -2161,7 +2161,7 @@
 			sap.ui.getCore().applyChanges();
 
 			oFF.attachEventOnce("reset", function(oEvent) {
-				ok(oEvent, "Filter reset event triggered");
+				assert.ok(oEvent, "Filter reset event triggered");
 				destroyFF(oFF);
 				done();
 			});
@@ -2202,7 +2202,7 @@
 				// mark the listClose event is called
 				oFFL1.attachEventOnce("listClose", function(oEvent) {
 					// fail if the oFFL2.listOpen was called before
-					ok(!oFFL2ListOpenEvent, 'oFFL2.listOpen should not be called before oFFL1.listClose');
+					assert.ok(!oFFL2ListOpenEvent, 'oFFL2.listOpen should not be called before oFFL1.listClose');
 					if (oFFL2ListOpenEvent) {
 						destroyFF(oFF);
 						done();
@@ -2214,7 +2214,7 @@
 				// check that the prevoius list was closed before
 				oFFL2.attachEventOnce("listOpen", function(oEvent) {
 					// fail if the oFFL1.listClose wasn't called
-					ok(oFFL1ListCloseEvent, "oFFL1.listClose should be called before oFFL2.listOpen");
+					assert.ok(oFFL1ListCloseEvent, "oFFL1.listClose should be called before oFFL2.listOpen");
 					if (oFFL1ListCloseEvent) {
 						var oPopover = oFF._getPopover();
 						oPopover.attachEventOnce("afterOpen", function(oEvent) {
@@ -2237,15 +2237,15 @@
 			oFF.placeAt("content");
 
 			var iInitialItems = oFFL.getItems().length;
-			ok(iInitialItems > 0, "Items have been set");
+			assert.ok(iInitialItems > 0, "Items have been set");
 
 			oFFL._searchValue = "5";
 			oFFL._applySearch();
 			sap.ui.getCore().applyChanges();
-			ok(oFFL.getItems().length !== iInitialItems, "Items are being filtered");
+			assert.ok(oFFL.getItems().length !== iInitialItems, "Items are being filtered");
 
 			oResetButton.firePress();
-			ok(oFFL.getItems().length === iInitialItems, "Items filtering is being reset properly");
+			assert.ok(oFFL.getItems().length === iInitialItems, "Items filtering is being reset properly");
 
 			destroyFF(oFF);
 		});
@@ -2356,26 +2356,26 @@
 
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
-				ok(oPopover.getDomRef(), "Popover should be rendered");
-				ok(oPopover.$().hasClass("sapMFFPop"), "Popover is rendered with the correct CSS class");
+				assert.ok(oPopover.getDomRef(), "Popover should be rendered");
+				assert.ok(oPopover.$().hasClass("sapMFFPop"), "Popover is rendered with the correct CSS class");
 
-				ok(oFFL.getDomRef(), "List should be rendered");
-				ok(oFFI.getDomRef(), "List item should be rendered");
+				assert.ok(oFFL.getDomRef(), "List should be rendered");
+				assert.ok(oFFI.getDomRef(), "List item should be rendered");
 
 				// Search field bar
 				var oSearchFieldBar = oPopover.getCustomHeader();
-				ok(oSearchFieldBar.getDomRef(), "Popover custom header bar should be rendered");
+				assert.ok(oSearchFieldBar.getDomRef(), "Popover custom header bar should be rendered");
 				var oSearchField = oSearchFieldBar.getContentMiddle()[0];
-				ok(oSearchField.getDomRef(), "Popover search field should be rendered");
+				assert.ok(oSearchField.getDomRef(), "Popover search field should be rendered");
 
 				// Select all checkbox bar
 				var oCheckboxBar = oPopover.getSubHeader();
-				ok(oCheckboxBar.getDomRef(), "Popover subheader bar should be rendered");
+				assert.ok(oCheckboxBar.getDomRef(), "Popover subheader bar should be rendered");
 				var oCheckbox = oCheckboxBar.getContentLeft()[0];
-				ok(oCheckbox.getDomRef(), "Select all checkbox should be rendered");
+				assert.ok(oCheckbox.getDomRef(), "Select all checkbox should be rendered");
 
 				// Popover ok button
-				ok(oPopover.getFooter().getDomRef(), "Popover OK button should be rendered");
+				assert.ok(oPopover.getFooter().getDomRef(), "Popover OK button should be rendered");
 				destroyFF(oFF);
 				done();
 			});
@@ -2401,41 +2401,41 @@
 
 			var oDialog = oFF._getFacetDialog();
 			oDialog.attachEventOnce("afterOpen", function(oEvent) {
-				ok(oDialog.getDomRef(), "Dialog should be rendered");
-				ok(oDialog.$().hasClass("sapMFFDialog"), "Dialog is rendered with the correct CSS class");
+				assert.ok(oDialog.getDomRef(), "Dialog should be rendered");
+				assert.ok(oDialog.$().hasClass("sapMFFDialog"), "Dialog is rendered with the correct CSS class");
 
 				// Facet list page
 				var oSearchField = getDialogFacetSearch(oFF);
-				ok(oSearchField instanceof sap.m.SearchField, "Control should be an instance of SearchField");
-				ok(oSearchField.getTooltip(), "Dialog search field has tooltip");
-				ok(oSearchField.getDomRef(), "Facet search field should be rendered");
+				assert.ok(oSearchField instanceof sap.m.SearchField, "Control should be an instance of SearchField");
+				assert.ok(oSearchField.getTooltip(), "Dialog search field has tooltip");
+				assert.ok(oSearchField.getDomRef(), "Facet search field should be rendered");
 				var oFacetList = getDialogFacetList(oFF);
-				ok(oFacetList instanceof sap.m.List, "Control should be an instance of List");
-				ok(oFacetList.getDomRef(), "Dialog facet list should be rendered");
+				assert.ok(oFacetList instanceof sap.m.List, "Control should be an instance of List");
+				assert.ok(oFacetList.getDomRef(), "Dialog facet list should be rendered");
 				var oFacetListItem = oFacetList.getItems()[0];
-				ok(oFacetListItem.getDomRef(), "Facet list item should be rendered");
+				assert.ok(oFacetListItem.getDomRef(), "Facet list item should be rendered");
 
 				oFF._navToFilterItemsPage(oFacetListItem);
 
 				// Filter items page
 				var oFilterItemsPage = getDialogFilterItemsPage(oFF);
-				ok(oFilterItemsPage.getDomRef(), "Filter items page is rendered");
+				assert.ok(oFilterItemsPage.getDomRef(), "Filter items page is rendered");
 
 				var oSearchFieldBar = oFilterItemsPage.getSubHeader();
-				ok(oSearchFieldBar.getDomRef(), "Filter items page subheader bar should be rendered");
+				assert.ok(oSearchFieldBar.getDomRef(), "Filter items page subheader bar should be rendered");
 				var oSearchField = oSearchFieldBar.getContentMiddle()[0];
-				ok(oSearchField.getDomRef(), "Filter items page search field should be rendered");
+				assert.ok(oSearchField.getDomRef(), "Filter items page search field should be rendered");
 
 				var oCheckboxBar = oFilterItemsPage.getContent()[0];
-				ok(oCheckboxBar.getDomRef(), "Filter items page select all checkbox bar should be rendered");
+				assert.ok(oCheckboxBar.getDomRef(), "Filter items page select all checkbox bar should be rendered");
 				var oCheckbox = oCheckboxBar.getContentLeft()[0];
-				ok(oCheckbox.getDomRef(), "Select all checkbox should be rendered");
+				assert.ok(oCheckbox.getDomRef(), "Select all checkbox should be rendered");
 
 				var oFilterItemsList = getDialogFilterItemsList(oFF);
-				ok(oFilterItemsList instanceof sap.m.FacetFilterList, "Control should be an instance of FacetFilterList");
-				ok(oFilterItemsList.getDomRef(), "Filter items list is rendered");
+				assert.ok(oFilterItemsList instanceof sap.m.FacetFilterList, "Control should be an instance of FacetFilterList");
+				assert.ok(oFilterItemsList.getDomRef(), "Filter items list is rendered");
 
-				ok(oFilterItemsList.getItems()[0].getDomRef(), "Filter item is rendered");
+				assert.ok(oFilterItemsList.getItems()[0].getDomRef(), "Filter item is rendered");
 
 				destroyFF(oFF);
 				done();
@@ -2454,12 +2454,12 @@
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oFF.getVisible(), true, "Visibility should be enabled by default");
-			ok(getButtonCtrl(oFF, 0).getDomRef(), "Button should be rendered");
+			assert.ok(getButtonCtrl(oFF, 0).getDomRef(), "Button should be rendered");
 
 			oFF.setVisible(false);
 			sap.ui.getCore().applyChanges();
 
-			ok(!getButtonCtrl(oFF, 0).getDomRef(), "Button should not be rendered");
+			assert.ok(!getButtonCtrl(oFF, 0).getDomRef(), "Button should not be rendered");
 
 			destroyFF(oFF);
 		});
@@ -2523,16 +2523,16 @@
 			oFF.setShowPersonalization(true);
 			sap.ui.getCore().applyChanges();
 
-			ok(getAddFacetCtrl(oFF).getDomRef(), "Add button should be displayed");
+			assert.ok(getAddFacetCtrl(oFF).getDomRef(), "Add button should be displayed");
 			assert.equal(getAddFacetCtrl(oFF).$().find(".sapUiIcon").attr("data-sap-ui-icon-content").charCodeAt(0), 57430,
 					"The add icon should be the add-filter icon font.");
 
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
-				ok(getRemoveIconCtrl(oFF, 0).getDomRef(), "Facet filter remove icon should be rendered");
+				assert.ok(getRemoveIconCtrl(oFF, 0).getDomRef(), "Facet filter remove icon should be rendered");
 				assert.equal(getRemoveIconCtrl(oFF, 0).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57799,
 						"The remove icon should be the sys-cancel icon font.");
-				ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should be displayed.");
+				assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should be displayed.");
 
 				destroyFF(oFF);
 				done();
@@ -2564,31 +2564,31 @@
 					var oFFL2 = oFF.getLists()[1];
 
 					// Main facet filter container
-					ok(oFF.getDomRef(), "Facet filter container should be rendered");
-					ok(oFF.$().hasClass("sapMFF"), "Facet filter container is rendered with the correct CSS class");
+					assert.ok(oFF.getDomRef(), "Facet filter container should be rendered");
+					assert.ok(oFF.$().hasClass("sapMFF"), "Facet filter container is rendered with the correct CSS class");
 
 					// Popover buttons
-					ok(getButtonCtrl(oFF, 0).getDomRef(), "Facet filter button should be rendered");
-					ok(getButtonCtrl(oFF, 1).getDomRef(), "Facet filter button should be rendered");
-					ok(getButtonCtrl(oFF, 0).$().text().indexOf(oFFL1.getTitle()) !== -1,
+					assert.ok(getButtonCtrl(oFF, 0).getDomRef(), "Facet filter button should be rendered");
+					assert.ok(getButtonCtrl(oFF, 1).getDomRef(), "Facet filter button should be rendered");
+					assert.ok(getButtonCtrl(oFF, 0).$().text().indexOf(oFFL1.getTitle()) !== -1,
 							"Facet filter button text should be rendered");
-					ok(getButtonCtrl(oFF, 1).$().text().indexOf(oFFL2.getTitle()) !== -1,
+					assert.ok(getButtonCtrl(oFF, 1).$().text().indexOf(oFFL2.getTitle()) !== -1,
 							"Facet filter button text should be rendered");
 
 					// Personalization, add facet icon
-					ok(getAddFacetCtrl(oFF).getDomRef(), "The add facet button should be rendered");
+					assert.ok(getAddFacetCtrl(oFF).getDomRef(), "The add facet button should be rendered");
 					assert.equal(getAddFacetCtrl(oFF).$().find(".sapUiIcon").attr("data-sap-ui-icon-content").charCodeAt(0), 57430,
 							"The add icon should be the add-filter icon font.");
 
 					// Personalization, remove facet icons
-					ok(getRemoveIconCtrl(oFF, 0).getDomRef(), "Facet filter remove icon should be rendered");
-					ok(getRemoveIconCtrl(oFF, 1).getDomRef(), "Facet filter remove icon should be rendered");
+					assert.ok(getRemoveIconCtrl(oFF, 0).getDomRef(), "Facet filter remove icon should be rendered");
+					assert.ok(getRemoveIconCtrl(oFF, 1).getDomRef(), "Facet filter remove icon should be rendered");
 					assert.equal(getRemoveIconCtrl(oFF, 0).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57799,
 							"The remove icon should be the sys-cancel icon font.");
-					ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
+					assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
 					assert.equal(getRemoveIconCtrl(oFF, 1).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57799,
 							"The remove icon should be the sys-cancel icon font.");
-					ok(getRemoveIconCtrl(oFF, 1).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
+					assert.ok(getRemoveIconCtrl(oFF, 1).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
 				}
 
 
@@ -2613,12 +2613,12 @@
 
 			var fnTestLight = function(oFF) {
 				var oSummaryBar = oFF.getAggregation("summaryBar");
-				ok(oSummaryBar.getDomRef(), "Summary bar should be rendered");
-				ok(oSummaryBar.getActive(), "Summary bar should be active when type is Light");
+				assert.ok(oSummaryBar.getDomRef(), "Summary bar should be rendered");
+				assert.ok(oSummaryBar.getActive(), "Summary bar should be active when type is Light");
 				var oSummaryBarText = oSummaryBar.getContent()[0];
-				ok(oSummaryBarText.getDomRef(), "Summary bar text should be rendered");
-				ok(oSummaryBarText.getText(), "There should be text in the summary bar");
-				ok(oSummaryBarText.getTooltip(), "There should be tooltip for the text in the summary bar");
+				assert.ok(oSummaryBarText.getDomRef(), "Summary bar text should be rendered");
+				assert.ok(oSummaryBarText.getText(), "There should be text in the summary bar");
+				assert.ok(oSummaryBarText.getTooltip(), "There should be tooltip for the text in the summary bar");
 
 				testResetInSummaryBar(oFF, true);
 
@@ -2738,10 +2738,10 @@
 					assert.equal(aFilteredItems[1].getText(), "Val10");
 
 					// Now disable live search
-					ok(oFF.setLiveSearch(false), "setLiveSearch should support method chaining");
+					assert.ok(oFF.setLiveSearch(false), "setLiveSearch should support method chaining");
 
 					oFFL.attachEventOnce("updateFinished", function(oEvent) {
-						ok(false, "Live search should not have triggered a search");
+						assert.ok(false, "Live search should not have triggered a search");
 						destroyFF(oFF);
 						done();
 					});
@@ -2780,9 +2780,9 @@
 					var $div = oFF.$().find(".sapMFFResetDiv");
 					equal($div.length, 1,
 							"There should be a container element around the reset button having the correct style class");
-					ok($div.is("div"), "The container is a div");
+					assert.ok($div.is("div"), "The container is a div");
 					var $button = $div.find("button");
-					ok($button, "There should be a button element within the container element");
+					assert.ok($button, "There should be a button element within the container element");
 					oFF.setShowReset(false);
 					sap.ui.getCore().applyChanges();
 
@@ -2822,14 +2822,14 @@
 			oFF.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			ok(!oFF.getAggregation("summaryBar").getDomRef(), "Summary bar should not be displayed");
+			assert.ok(!oFF.getAggregation("summaryBar").getDomRef(), "Summary bar should not be displayed");
 
 			oFF.setShowSummaryBar(true);
 			sap.ui.getCore().applyChanges();
 
 			var oSummaryBar = oFF.getAggregation("summaryBar");
-			ok(oSummaryBar.getDomRef(), "Summary bar should be displayed");
-			ok(!oSummaryBar.getActive(), "Summary bar should be inactive when type is Simple");
+			assert.ok(oSummaryBar.getDomRef(), "Summary bar should be displayed");
+			assert.ok(!oSummaryBar.getActive(), "Summary bar should be inactive when type is Simple");
 			testResetInSummaryBar(oFF, true);
 			oFF.setShowSummaryBar(false);
 			sap.ui.getCore().applyChanges();
@@ -2860,13 +2860,13 @@
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oFFL.getActive(), true, "List active should be enabled by default");
-			ok(getButtonCtrl(oFF, 0).getDomRef(), "Button should be rendered");
+			assert.ok(getButtonCtrl(oFF, 0).getDomRef(), "Button should be rendered");
 
 			oFFL.setActive(false);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oFFL.getActive(), false, "List active should be disabled");
-			ok(!getButtonCtrl(oFF, 0).getDomRef(), "Button should not be rendered");
+			assert.ok(!getButtonCtrl(oFF, 0).getDomRef(), "Button should not be rendered");
 
 			destroyFF(oFF);
 		});
@@ -2875,7 +2875,7 @@
 
 			var oFFL = new sap.m.FacetFilterList();
 
-			ok(oFFL.setMultiSelect(false), "setMultiSelect should support method chaining");
+			assert.ok(oFFL.setMultiSelect(false), "setMultiSelect should support method chaining");
 			assert.strictEqual(oFFL.getMultiSelect(), false, "List multiSelect should be changed to false");
 			assert.strictEqual(oFFL.getMode(), sap.m.ListMode.SingleSelectMaster,
 					"List mode should be changed to SingleSelectMaster");
@@ -2886,7 +2886,7 @@
 
 			var oFFL = new sap.m.FacetFilterList();
 
-			ok(oFFL.setMode(sap.m.ListMode.SingleSelectMaster), "setMode should support method chaining");
+			assert.ok(oFFL.setMode(sap.m.ListMode.SingleSelectMaster), "setMode should support method chaining");
 			assert.strictEqual(oFFL.getMode(), sap.m.ListMode.SingleSelectMaster, "List mode should be SingleSelectMaster");
 			assert.strictEqual(oFFL.getMultiSelect(), false, "List multiSelect should be changed to false");
 
@@ -2911,14 +2911,14 @@
 			sap.ui.getCore().applyChanges();
 
 			assert.equal(oFFL.getTitle(), initialTitle, "List title should be set to the initial value");
-			ok(getButtonCtrl(oFF, 0).$().text().indexOf(oFFL.getTitle()) !== -1,
+			assert.ok(getButtonCtrl(oFF, 0).$().text().indexOf(oFFL.getTitle()) !== -1,
 					"Button label should be set to the initial value");
 
-			ok(oFFL.setTitle(changedTitle), "setTitle should support method chaining");
+			assert.ok(oFFL.setTitle(changedTitle), "setTitle should support method chaining");
 			sap.ui.getCore().applyChanges();
 
 			assert.equal(oFFL.getTitle(), changedTitle, "List title should be set to the changed value");
-			ok(getButtonCtrl(oFF, 0).$().text().indexOf(oFFL.getTitle()) !== -1,
+			assert.ok(getButtonCtrl(oFF, 0).$().text().indexOf(oFFL.getTitle()) !== -1,
 					"Button label should be set to the changed value");
 
 			destroyFF(oFF);
@@ -2926,7 +2926,7 @@
 
 		QUnit.test("FacetFilter should be shrinkable", function(assert) {
 			var oFF = new sap.m.FacetFilter();
-			ok(oFF.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Facet filter is shrinkable");
+			assert.ok(oFF.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Facet filter is shrinkable");
 			oFF.destroy();
 		});
 
@@ -2964,7 +2964,7 @@
 					sap.ui.getCore().applyChanges();
 					// var oButton = getButtonCtrl(oFF, 0);
 					var oButton = oFF._getButtonForList(oFFL);
-					ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
+					assert.ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
 					destroyFF(oFF);
 					done();
 				});
@@ -3007,8 +3007,8 @@
 					oDialog.attachEventOnce("afterClose", function(oEvent) {
 						sap.ui.getCore().applyChanges();
 						var oButton = getButtonCtrl(oFF, 0);
-						ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
-						ok(oButton.getTooltip().indexOf(sItem1Text) !== -1,
+						assert.ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
+						assert.ok(oButton.getTooltip().indexOf(sItem1Text) !== -1,
 								"Button tooltip should be updated with the selected value");
 						destroyFF(oFF);
 						done();
@@ -3026,230 +3026,230 @@
 	QUnit.test("Keyboard", function(assert) {
 
 		var oFF = createFF(oFF);
-		ok(oFF.$().find(":sapTabbable").length == 4, "Total 4 tabble fields");
+		assert.ok(oFF.$().find(":sapTabbable").length == 4, "Total 4 tabble fields");
 		var oEvent = new jQuery.Event();
 
 //home
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oFF.oItemNavigation.setFocusedIndex(0);
 		oFF.onsaphome(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
 
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		oFF.onsaphome(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
 
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oFF.onsaphome(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
 
 //onsapincreasemodifiers - page down
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
 		oFF.onsapincreasemodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
 		oFF.onsapincreasemodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
 		oFF.onsapincreasemodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
 
 //onsapdecreasemodifiers - page up
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
 		oFF.onsapdecreasemodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
 		oFF.onsapdecreasemodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
 		oFF.onsapdecreasemodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
 
 //onsapupmodifiers
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oFF.onsapupmodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		oFF.oItemNavigation.setFocusedIndex(1);
 		oFF.onsapupmodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oFF.onsapupmodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oFF.onsapdownmodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers tested - focus on Add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers tested - focus on Add button");
 
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oFF.onsapdownmodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers tested - focus on Add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers tested - focus on Add button");
 
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		oFF.onsapdownmodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers event tested - focus on Add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers event tested - focus on Add button");
 
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oFF.onsapdownmodifiers(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers event tested - focus on Add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers event tested - focus on Add button");
 
 //onsappagedow
 		var oFF = createFF(oFF);
 //  	var sapTabbable = oFF.$().find(":sapTabbable");
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oFF.oItemNavigation.setFocusedIndex(2);
-		ok(jQuery(oFF.onsappagedown(oEvent)), "keyboard onsappagedown tested - case 1");
+		assert.ok(jQuery(oFF.onsappagedown(oEvent)), "keyboard onsappagedown tested - case 1");
 
 		var oFF = createFF(oFF);
 		oFF.oItemNavigation.setFocusedIndex(0);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
-		ok(jQuery(oFF.onsappagedown(oEvent)), "keyboard onsappagedown tested - case 2");
+		assert.ok(jQuery(oFF.onsappagedown(oEvent)), "keyboard onsappagedown tested - case 2");
 
 //onsaptabnext
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
-		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 1");
+		assert.ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 1");
 
 		var oFF = createFF(oFF);
 		oFF._invalidateFlag = true;
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
-		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 2");
+		assert.ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 2");
 
 		var oFF = createFF(oFF);
 		oFF._closePopoverFlag = true;
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
-		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 3");
+		assert.ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 3");
 //onsapend
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oFF.onsapend(oEvent);
-//		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapend tested - focus on add button");
-		ok(jQuery(oFF.onsapend(oEvent)), "keyboard onsapend tested - case 1");
+//		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapend tested - focus on add button");
+		assert.ok(jQuery(oFF.onsapend(oEvent)), "keyboard onsapend tested - case 1");
 
 		var oFF = createFF(oFF);
 		oFF._addTarget = null;
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
-		ok(jQuery(oFF.onsapend(oEvent)), "keyboard onsapend tested - case 2");
+		assert.ok(jQuery(oFF.onsapend(oEvent)), "keyboard onsapend tested - case 2");
 
 //onsappageup
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF.onsappageup(oEvent);
-		ok(jQuery(oFF.onsappageup(oEvent)), "keyboard onsappageup tested");
+		assert.ok(jQuery(oFF.onsappageup(oEvent)), "keyboard onsappageup tested");
 
 //expand
 		oFF.oItemNavigation.setFocusedIndex(0);
 		oFF.onsapexpand(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapexpand tested - focus on List2");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapexpand tested - focus on List2");
 
 		var oFF = createFF(oFF);
 		oFF.oItemNavigation.setFocusedIndex(1);
 		oFF.onsapexpand(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapexpand tested - focus on Add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapexpand tested - focus on Add button");
 
 		var oFF = createFF(oFF);
 		oFF.oItemNavigation.setFocusedIndex(2);
 		oFF.onsapexpand(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapexpand tested - focus on Add button");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapexpand tested - focus on Add button");
 
 //collapse
 		var oFF = createFF(oFF);
 		oFF.oItemNavigation.setFocusedIndex(2);
 		oFF.onsapcollapse(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapcollapse tested - focus on List2");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapcollapse tested - focus on List2");
 
 		oFF.oItemNavigation.setFocusedIndex(1);
 		oFF.onsapcollapse(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapcollapse tested - focus on list 1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapcollapse tested - focus on list 1");
 
 		oFF.oItemNavigation.setFocusedIndex(0);
 		oFF.onsapcollapse(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapcollapse tested - focus on list 1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapcollapse tested - focus on list 1");
 
 //tabprev
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF.onsaptabprevious(oEvent);
-//		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaptabprevious tested");
-		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 1");
+//		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaptabprevious tested");
+		assert.ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF._previousTarget = oFF.$().find(":sapTabbable")[1];
 		oFF.onsaptabprevious(oEvent);
-//		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsaptabprevious tested");
-		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 2");
+//		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsaptabprevious tested");
+		assert.ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 2");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF._previousTarget = oFF.$().find(":sapTabbable")[0];
 		oFF.onsaptabprevious(oEvent);
-//		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaptabprevious tested");
-		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 3");
+//		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaptabprevious tested");
+		assert.ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 3");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF._previousTarget = oFF.$().find(":sapTabbable")[2];
 		oFF.onsaptabprevious(oEvent);
-//		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsaptabprevious tested");
-		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 4");
+//		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsaptabprevious tested");
+		assert.ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 4");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
-//		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested");
-		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 5");
+//		assert.ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested");
+		assert.ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 5");
 
 //down
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
-		ok(jQuery(oFF.onsapdown(oEvent)), "keyboard onsapdown tested - case 1");
+		assert.ok(jQuery(oFF.onsapdown(oEvent)), "keyboard onsapdown tested - case 1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
-		ok(jQuery(oFF.onsapdown(oEvent)), "keyboard onsapdown tested - case2 ");
+		assert.ok(jQuery(oFF.onsapdown(oEvent)), "keyboard onsapdown tested - case2 ");
 
 //onsapescape
 		oFF.oItemNavigation.setFocusedIndex(1);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
-		ok(jQuery(oFF.onsapescape(oEvent)), "keyboard onsapescape tested - case 1");
+		assert.ok(jQuery(oFF.onsapescape(oEvent)), "keyboard onsapescape tested - case 1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
-		ok(jQuery(oFF.onsapescape(oEvent)), "keyboard onsapescape tested - case2");
+		assert.ok(jQuery(oFF.onsapescape(oEvent)), "keyboard onsapescape tested - case2");
 
 //onsapup
 		//*why need to comment out oEvent.hover in facetfilter.js -?????
 		var oFF = createFF(oFF);
 		oFF.oItemNavigation.setFocusedIndex(1);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
-		ok(jQuery(oFF.onsapup(oEvent)), "keyboard onsapup tested - case 1");
+		assert.ok(jQuery(oFF.onsapup(oEvent)), "keyboard onsapup tested - case 1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
-		ok(jQuery(oFF.onsapup(oEvent)), "keyboard onsapup tested - case 2");
-//		ok(jQuery(oEvent.target).focus(), "keyboard onsapup tested");
+		assert.ok(jQuery(oFF.onsapup(oEvent)), "keyboard onsapup tested - case 2");
+//		assert.ok(jQuery(oEvent.target).focus(), "keyboard onsapup tested");
 
 //onsapleft
 		//*why need to comment out oEvent.hover in facetfilter.js -?????
@@ -3257,20 +3257,20 @@
 		oFF.oItemNavigation.setFocusedIndex(1);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		oFF.onsapleft(oEvent);
-		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapleft tested - case 1");
+		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapleft tested - case 1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
-		ok(jQuery(oFF.onsapleft(oEvent)), "keyboard onsapleft tested - case 2");
+		assert.ok(jQuery(oFF.onsapleft(oEvent)), "keyboard onsapleft tested - case 2");
 
 //onsapright
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
-		ok(jQuery(oFF.onsapright(oEvent)), "keyboard onsaprigh tested - case 1");
+		assert.ok(jQuery(oFF.onsapright(oEvent)), "keyboard onsaprigh tested - case 1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
-		ok(jQuery(oFF.onsapright(oEvent)), "keyboard onsaprigh tested - case 2");
+		assert.ok(jQuery(oFF.onsapright(oEvent)), "keyboard onsaprigh tested - case 2");
 
 //onsapdelete
 		var oFF = createFF(oFF);
@@ -3291,12 +3291,12 @@
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oFF.onsapdelete(oEvent);
-		ok(oFF.getAggregation("addFacetButton"), "keyboard onsapdelete tested - can't delete addFacetButton");
+		assert.ok(oFF.getAggregation("addFacetButton"), "keyboard onsapdelete tested - can't delete addFacetButton");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF.onsapdelete(oEvent);
-		ok(oFF.getAggregation("resetButton"), "keyboard onsapdelete tested - can't delete resetbutton");
+		assert.ok(oFF.getAggregation("resetButton"), "keyboard onsapdelete tested - can't delete resetbutton");
 
 		var oFF = createFF(oFF);
 		oFF.setShowPersonalization(false)
@@ -3329,7 +3329,7 @@
 		oFF.getLists()[1].setActive(false);
 		oFF.getLists()[0].setActive(false);
 		oFF.oItemNavigation.setFocusedIndex(0);
-		ok(jQuery(oFF.onsapdelete(oEvent)), "keyboard onsapdelete tested");
+		assert.ok(jQuery(oFF.onsapdelete(oEvent)), "keyboard onsapdelete tested");
 
 		destroyFF(oFF);
 
@@ -3655,8 +3655,8 @@
 				"1" : "Val1"
 			});
 			oFFL.setModel(oSCHelper.createModel());
-			ok(!!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length, "Selected keys are present");
-			ok(oFFL.getItems()[0].getSelected(), "Item is selected");
+			assert.ok(!!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length, "Selected keys are present");
+			assert.ok(oFFL.getItems()[0].getSelected(), "Item is selected");
 
 			oFFL.removeSelections(true);
 			assert.equal(Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length, 0, "Selected keys are removed");
@@ -3687,8 +3687,8 @@
 				})
 			});
 
-			ok(!!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length, "Selected keys are present");
-			ok(oFFL.getItems()[0].getSelected(), "Item is selected");
+			assert.ok(!!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length, "Selected keys are present");
+			assert.ok(oFFL.getItems()[0].getSelected(), "Item is selected");
 
 			oFFL.removeSelections(true);
 			assert.equal(Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length, 0, "Selected keys are removed");
@@ -3750,7 +3750,7 @@
 
 			oFFL.setModel(oSCHelper.createModel());
 
-			ok(!oCheckbox.getSelected(), "Select all checkbox should be unchecked because of preselected items");
+			assert.ok(!oCheckbox.getSelected(), "Select all checkbox should be unchecked because of preselected items");
 
 			oFFL.setSelectedKeys({
 				"1" : "Val1"
@@ -3783,8 +3783,8 @@
 			oAllCheckbox = sap.ui.getCore().byId(oFFL.getAssociation("allcheckbox"));
 
 			//assert
-			ok(oAllCheckbox, "all checkbox is created");
-			ok(!oAllCheckbox.getSelected(), "all checkbox is initially unchecked when created for a list with no items");
+			assert.ok(oAllCheckbox, "all checkbox is created");
+			assert.ok(!oAllCheckbox.getSelected(), "all checkbox is initially unchecked when created for a list with no items");
 
 			//clean
 			oFF.destroy();
@@ -3807,7 +3807,7 @@
 				selected : true
 			});
 			setTimeout(function() {
-				ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
+				assert.ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
 						"Selected keys should be cleared by making list inactive");
 				destroyFF(oFF);
 				done();
@@ -3867,14 +3867,14 @@
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
 				oCheckbox = getPopoverSelectAllCheckBox(oPopover);
 				//assert
-				ok(!oCheckbox.getSelected(), "Select all checkbox should be unchecked");
+				assert.ok(!oCheckbox.getSelected(), "Select all checkbox should be unchecked");
 
 				//act
 				oSpy = sinon.spy(oCheckbox,"setSelected");
 				oFFL._updateSelectAllCheckBox();
 
 				//assert
-				ok(oSpy.calledWith(false),
+				assert.ok(oSpy.calledWith(false),
 						"oCheckbox is called with setSelected(false) because the selected items < items.length");
 
 				//act
@@ -4006,13 +4006,13 @@
 
 				for (var i = 0; i < iListCount; i++) {
 					var sAriaDescribedByList = getButtonCtrl(this.oFF, i).$().attr("aria-describedby");
-					ok(sAriaDescribedByList, "There must be attribute 'aria-describedby' for List" + (i + 1));
+					assert.ok(sAriaDescribedByList, "There must be attribute 'aria-describedby' for List" + (i + 1));
 
 					var aAriaDescribedByList = sAriaDescribedByList.split(" ");
 					assert.equal(aAriaDescribedByList.length, 2, "There must be attribute 'aria-describedby' for List" + (i + 1));
 
 					var $InvisibleText0 = jQuery("#" + aAriaDescribedByList[0]);
-					ok($InvisibleText0.length, "'aria-describedby' must point to an existing static text");
+					assert.ok($InvisibleText0.length, "'aria-describedby' must point to an existing static text");
 					var sExpectedText = "Facet Filter " + (i + 1) + " of " + iListCount;
 					assert.equal($InvisibleText0.text(), sExpectedText, "Positioning info");
 
@@ -4138,7 +4138,7 @@
 						oToolbarSpacer instanceof sap.m.ToolbarSpacer,
 						"The second control in the summary bar content should be a spacer so that the reset button is displayed on the right side of the toolbar");
 				var oResetButton = oSummaryBar.getContent()[2];
-				ok(oResetButton instanceof sap.m.Button, "The third control in the summary bar content should be a button");
+				assert.ok(oResetButton instanceof sap.m.Button, "The third control in the summary bar content should be a button");
 			} else {
 
 				assert.equal(oSummaryBar.getContent().length, 1,

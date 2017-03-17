@@ -49,7 +49,7 @@
 		var doCheckPlaceAtResult = function(aCallResult, iExpectedLength, iExpectedIndex, sText){
 			sText = " after placeAt with '"+sText+"'";
 			var oContainer = aCallResult[1];
-			ok(oContainer, "Container available"+sText);
+			assert.ok(oContainer, "Container available"+sText);
 			if(oContainer){
 				assert.equal(oContainer.getContent().length, iExpectedLength, "# Container children"+sText);
 				assert.equal(oContainer.getContent()[iExpectedIndex].getId(), aCallResult[0], "Correct Position of child"+sText);
@@ -58,7 +58,7 @@
 
 		var doCheckSetRootResult = function(aCallResult){
 			var oContainer = aCallResult[1];
-			ok(oContainer, "Container available after setRoot");
+			assert.ok(oContainer, "Container available after setRoot");
 			if(oContainer){
 				assert.equal(oContainer.getContent().length, 1, "# Container children after setRoot");
 				assert.equal(oContainer.getContent()[0].getId(), aCallResult[0], "Correct Position of child after setRoot");

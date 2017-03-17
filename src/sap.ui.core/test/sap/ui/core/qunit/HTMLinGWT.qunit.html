@@ -113,12 +113,12 @@
   			QUnit.test("initialized", function(assert) {
   				var done = assert.async();
   				setTimeout(function() {
-	  				ok(jQuery("#uiArea1").children().length > 0, "Initialized!");
-					ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-					ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-					ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
-					ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
-					ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+	  				assert.ok(jQuery("#uiArea1").children().length > 0, "Initialized!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+					assert.ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+					assert.ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
 					done();
 				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
@@ -130,9 +130,9 @@
   				oBtn1.click();
 
 				setTimeout(function() {
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-					ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
-					ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
 					done();
 				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
@@ -144,9 +144,9 @@
   				oTabStrip.setSelectedIndex(1);
 
   				setTimeout(function() {
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-					ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn2.id, "TabStrip contains btn2!");
-					ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn2.id, "TabStrip contains btn2!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
 					done();
 				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
@@ -158,9 +158,9 @@
   				oTabStrip.setSelectedIndex(2);
 
   				setTimeout(function() {
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-					ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn3.id, "TabStrip contains btn3!");
-					ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn3.id, "TabStrip contains btn3!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
 					done();
 				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
@@ -186,11 +186,11 @@
   				oTabStrip.setSelectedIndex(0);
 
   				setTimeout(function() {
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-					ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
-					ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-					ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
-					ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					assert.ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+					assert.ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
 					done();
 				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
@@ -204,11 +204,11 @@
   				oBtn3.click();
 
   				setTimeout(function() {
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-					ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
-					ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-					ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
-					ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					assert.ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+					assert.ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
 					done();
 				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 

@@ -203,7 +203,7 @@
 			createTreeBindingAdapter("/bing/root", null, [], {});
 			assert.equal(oBinding.getPath(), "/bing/root", "TreeBinding path");
 			assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-			ok(oBinding instanceof sap.ui.model.ClientTreeBinding, "treeBinding class check");
+			assert.ok(oBinding instanceof sap.ui.model.ClientTreeBinding, "treeBinding class check");
 		});
 
 		QUnit.test("getRootContexts getNodeContexts", function(assert){
@@ -474,10 +474,10 @@
 			oContext = oBinding.getContextByIndex(6);
 			assert.equal(oContext.getProperty("name"), "Soundgarden", "Soundgarden Node OK");
 
-			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
-			ok(oBinding._mTreeState.expanded["/bing_root/"], "Artificial Root node should be expanded");
-			ok(oBinding._mTreeState.expanded["/bing_root/0/"], "1st Level node should be expanded");
-			ok(oBinding._mTreeState.expanded["/bing_root/0/0_2/"], "2nd Level node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/bing_root/"], "Artificial Root node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/bing_root/0/"], "1st Level node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/bing_root/0/0_2/"], "2nd Level node should be expanded");
 
 			assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
 
@@ -486,11 +486,11 @@
 			oBinding.collapseToLevel(2);
 			oBinding.getContexts(0, 100); //rebuild the tree, as usual
 
-			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
-			ok(oBinding._mTreeState.expanded["/bing_root/"], "Artificial Root node should be expanded");
-			ok(oBinding._mTreeState.expanded["/bing_root/0/"], "1st Level node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/bing_root/"], "Artificial Root node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/bing_root/0/"], "1st Level node should be expanded");
 
-			ok(oBinding._mTreeState.collapsed["/bing_root/0/0_2/"], "3rd Level node is now in the collapsed map");
+			assert.ok(oBinding._mTreeState.collapsed["/bing_root/0/0_2/"], "3rd Level node is now in the collapsed map");
 
 			//finally collapse the whole tree
 			oBinding.collapseToLevel(0);
@@ -500,13 +500,13 @@
 			assert.equal(oContext.getProperty("name"), "root", "HierarchyNode check for root node, everything is still there");
 			assert.equal(oBinding.isExpanded(0), false, "Root node is also collapsed now");
 
-			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
-			ok(!oBinding._mTreeState.expanded["/bing_root/"], "1st Level node should NOT be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
+			assert.ok(!oBinding._mTreeState.expanded["/bing_root/"], "1st Level node should NOT be expanded");
 			//this node is still expanded, because collapseRecursive is set to false
-			ok(oBinding._mTreeState.expanded["/bing_root/0/"], "2nd Level node should still be expanded (collapseRecursive = false)");
+			assert.ok(oBinding._mTreeState.expanded["/bing_root/0/"], "2nd Level node should still be expanded (collapseRecursive = false)");
 
-			ok(oBinding._mTreeState.collapsed["/bing_root/"], "Root node is now in the collapsed map");
-			ok(oBinding._mTreeState.collapsed["/bing_root/0/0_2/"], "3rd Level node is still in the collapsed map");
+			assert.ok(oBinding._mTreeState.collapsed["/bing_root/"], "Root node is now in the collapsed map");
+			assert.ok(oBinding._mTreeState.collapsed["/bing_root/0/0_2/"], "3rd Level node is still in the collapsed map");
 
 			// switch on collapseRecursive mode
 			oBinding.setCollapseRecursive(true);
@@ -529,10 +529,10 @@
 
 			oBinding.getContexts(0, 100); //rebuild the tree, as usual
 
-			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
-			ok(oBinding._mTreeState.expanded["/bing_root/"], "1st Level node should be expanded again");
+			assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/bing_root/"], "1st Level node should be expanded again");
 			//this node is still expanded, because collapseRecursive is set to false
-			ok(!oBinding._mTreeState.expanded["/bing_root/0/"], "2nd Level node should NOT be expanded (collapseRecursive = true)");
+			assert.ok(!oBinding._mTreeState.expanded["/bing_root/0/"], "2nd Level node should NOT be expanded (collapseRecursive = true)");
 
 			// check for correct change reasons in event
 			var fnChangeHandler5 = function(oEvent) {
@@ -602,7 +602,7 @@
 				assert.equal(oEvent.mParameters.leadIndex, - 1, "Event: leadIndex should be - 1");
 				assert.equal(oEvent.mParameters.oldIndex, oBinding.getLength() - 1, "Event: oldIndex should be Binding length -1");
 				assert.equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 
@@ -660,7 +660,7 @@
 				assert.equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
 				assert.equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
 				assert.equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
@@ -670,7 +670,7 @@
 				assert.equal(oEvent.mParameters.rowIndices.length, 2, "Event: changedIndices should be 2");
 				assert.equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
 				assert.equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[1] should be 4");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler3 = function(oEvent) {
@@ -678,7 +678,7 @@
 				assert.equal(oEvent.mParameters.leadIndex, 4, "Event: leadIndex should be 4");
 				assert.equal(oEvent.mParameters.oldIndex, 4, "Event: oldIndex should be 4");
 				assert.equal(oEvent.mParameters.rowIndices.length, 0, "Event: changedIndices should be undefined");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
@@ -734,7 +734,7 @@
 				assert.equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
 				assert.equal(oEvent.mParameters.rowIndices[0], 3, "Event: first changedIndices[0] should be 3");
 				assert.equal(oEvent.mParameters.rowIndices[4], 7, "Event: last changedIndices[4] should be 7");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
@@ -744,7 +744,7 @@
 				assert.equal(oEvent.mParameters.rowIndices.length, 3, "Event: length of changedIndices should be 3");
 				assert.equal(oEvent.mParameters.rowIndices[0], 9, "Event: first changedIndices[0] should be 9");
 				assert.equal(oEvent.mParameters.rowIndices[2], 11, "Event: last changedIndices[2] should be 11");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler3 = function(oEvent) {
@@ -754,7 +754,7 @@
 				assert.equal(oEvent.mParameters.rowIndices.length, 2, "Event: length of changedIndices should be 2");
 				assert.equal(oEvent.mParameters.rowIndices[0], 8, "Event: first changedIndices[0] should be 7");
 				assert.equal(oEvent.mParameters.rowIndices[1], 12, "Event: last changedIndices[1] should be 12");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
@@ -792,7 +792,7 @@
 				assert.equal(oEvent.mParameters.rowIndices.length, 6, "Event: length of changedIndices should be 6");
 
 				assert.deepEqual(oEvent.mParameters.rowIndices, [3, 4, 8, 9, 10, 11], "Changed indices after setSelectionInterval is correct");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
@@ -802,7 +802,7 @@
 				assert.equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
 
 				assert.deepEqual(oEvent.mParameters.rowIndices, [0, 5, 6, 7, 8], "Changed indices after setSelectedIndex is correct");
-				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
+				assert.ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			oBinding.addSelectionInterval(3, 7);
@@ -878,8 +878,8 @@
 			function fnRefreshHandler() {
 				oBinding.detachRefresh(fnRefreshHandler);
 
-				ok(oBinding._mTreeState.expanded["/bing_root/0/"], "NodeState for Rock still there.");
-				ok(oBinding._mTreeState.expanded["/bing_root/2/"], "NodeState for Swing/Big Band still there.");
+				assert.ok(oBinding._mTreeState.expanded["/bing_root/0/"], "NodeState for Rock still there.");
+				assert.ok(oBinding._mTreeState.expanded["/bing_root/2/"], "NodeState for Swing/Big Band still there.");
 				assert.equal(oBinding._mTreeState.expanded["/bing_root/0/"].expanded, true, "Node Rock is still expanded after sorting.");
 				assert.equal(oBinding._mTreeState.expanded["/bing_root/2/"].expanded, true, "Node Swing/BigBand is still expanded after sorting.");
 
@@ -964,7 +964,7 @@
 			oBinding.toggleIndex(999);
 			oBinding.setNodeSelection({});
 
-			ok(true, "No exceptions thrown");
+			assert.ok(true, "No exceptions thrown");
 		});
 
 		var oData2 = {

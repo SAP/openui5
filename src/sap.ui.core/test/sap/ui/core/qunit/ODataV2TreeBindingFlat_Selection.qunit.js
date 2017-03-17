@@ -27,8 +27,8 @@ QUnit.test("Selection", function(assert){
 			oBinding.setSelectedIndex(1);
 			assert.equal(oBinding.getSelectedIndex(), 1, "Selected index should be 1");
 
-			ok(bSelectionChanged, "selectionChanged event fired");
-			ok(!bSelectAll, "selectionChanged event don't sets selectAll");
+			assert.ok(bSelectionChanged, "selectionChanged event fired");
+			assert.ok(!bSelectAll, "selectionChanged event don't sets selectAll");
 			bSelectionChanged= false;
 			bSelectAll = false;
 
@@ -140,8 +140,8 @@ QUnit.test("Select All", function(assert) {
 			assert.equal(oBinding.getSelectedIndex(), 9, "The last selected node sets the selected index");
 			assert.equal(oBinding.getSelectedIndices().length, 10, "All loaded nodes are now selected");
 
-			ok(bSelectionChanged, "selectionChanged event fired");
-			ok(bSelectAll, "selectionChanged event sets selectAll");
+			assert.ok(bSelectionChanged, "selectionChanged event fired");
+			assert.ok(bSelectAll, "selectionChanged event sets selectAll");
 			bSelectionChanged= false;
 			bSelectAll = false;
 
@@ -149,22 +149,22 @@ QUnit.test("Select All", function(assert) {
 			// 2. Its children aren't selected anymore
 			oBinding.collapse(1);
 			oBinding.expand(1);
-			ok(!oBinding.isIndexSelected(2), "Child isn't selected anymore");
-			ok(!oBinding.isIndexSelected(7), "Child isn't selected anymore");
+			assert.ok(!oBinding.isIndexSelected(2), "Child isn't selected anymore");
+			assert.ok(!oBinding.isIndexSelected(7), "Child isn't selected anymore");
 
 			// 1. Select all nodes
 			// 2. Manually expand a node
 			// 3. Newly loaded nodes are not selected
 			oBinding.selectAll();
-			ok(oBinding.isIndexSelected(3), "The node that is going to be expanded is selected");
+			assert.ok(oBinding.isIndexSelected(3), "The node that is going to be expanded is selected");
 			oBinding.attachChange(handler2);
 			oBinding.expand(3, true);
 		}
 
 		function handler2 (oEvent) {
 			oBinding.detachChange(handler2);
-			ok(!oBinding.isIndexSelected(4), "The newly loaded node isn't selected");
-			ok(!oBinding.isIndexSelected(66), "The newly loaded node isn't selected");
+			assert.ok(!oBinding.isIndexSelected(4), "The newly loaded node isn't selected");
+			assert.ok(!oBinding.isIndexSelected(66), "The newly loaded node isn't selected");
 
 			oBinding.getContexts(100, 10);
 			oBinding.attachChange(handler3);
@@ -172,8 +172,8 @@ QUnit.test("Select All", function(assert) {
 
 		function handler3 (oEvent) {
 			oBinding.detachChange(handler3);
-			ok(oBinding.isIndexSelected(100), "The newly paged node should still be selected");
-			ok(oBinding.isIndexSelected(109), "The newly paged node should still be selected");
+			assert.ok(oBinding.isIndexSelected(100), "The newly paged node should still be selected");
+			assert.ok(oBinding.isIndexSelected(109), "The newly paged node should still be selected");
 			done();
 		}
 

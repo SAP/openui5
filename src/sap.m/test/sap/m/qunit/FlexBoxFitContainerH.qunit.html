@@ -133,7 +133,7 @@
 					QUnit.start();
 					if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout) {
 						QUnit.test("Dummy Test", function(assert) {
-							ok(true, "At least one test needs to run to avoid test timeouts!");
+							assert.ok(true, "At least one test needs to run to avoid test timeouts!");
 						});
 					}
 				}, 1000);
@@ -141,15 +141,15 @@
 
 			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
 				QUnit.test("Flex Boxes rendered", function(assert) {
-					ok(jQuery.sap.domById("outerHBox"), "Outer HBox should be rendered");
-					ok(jQuery.sap.domById("item1"), "Item 1 should be rendered");
-					ok(jQuery.sap.domById("item2"), "Item 2 should be rendered");
-					ok(jQuery.sap.domById("vbox"), "VBox should be rendered");
-					ok(jQuery.sap.domById("item3"), "Item 3 should be rendered");
-					ok(jQuery.sap.domById("innerHBox"), "Inner HBox should be rendered");
-					ok(jQuery.sap.domById("item4"), "Item 4 should be rendered");
-					ok(jQuery.sap.domById("item5"), "Item 5 should be rendered");
-					ok(jQuery.sap.domById("item6"), "Item 6 should be rendered");
+					assert.ok(jQuery.sap.domById("outerHBox"), "Outer HBox should be rendered");
+					assert.ok(jQuery.sap.domById("item1"), "Item 1 should be rendered");
+					assert.ok(jQuery.sap.domById("item2"), "Item 2 should be rendered");
+					assert.ok(jQuery.sap.domById("vbox"), "VBox should be rendered");
+					assert.ok(jQuery.sap.domById("item3"), "Item 3 should be rendered");
+					assert.ok(jQuery.sap.domById("innerHBox"), "Inner HBox should be rendered");
+					assert.ok(jQuery.sap.domById("item4"), "Item 4 should be rendered");
+					assert.ok(jQuery.sap.domById("item5"), "Item 5 should be rendered");
+					assert.ok(jQuery.sap.domById("item6"), "Item 6 should be rendered");
 				});
 
 				QUnit.test("Width and height correct", function(assert) {

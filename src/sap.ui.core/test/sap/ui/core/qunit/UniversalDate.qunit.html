@@ -68,13 +68,13 @@
 
 		QUnit.test("with no arguments", function (assert) {
 			new sap.ui.core.date.UniversalDate();
-			ok(this.dateSpy.calledOnce, "InnerDate must be instantiated just ones");
+			assert.ok(this.dateSpy.calledOnce, "InnerDate must be instantiated just ones");
 			assert.equal(this.dateSpy.firstCall.args.length, 0, "InnerDate must be instantiated with no arguments");
 		});
 
 		QUnit.test("with value parameter (timestamp)", function (assert) {
 			new sap.ui.core.date.UniversalDate(1000);
-			ok(this.dateSpy.calledOnce, "InnerDate must be instantiated just ones");
+			assert.ok(this.dateSpy.calledOnce, "InnerDate must be instantiated just ones");
 			assert.equal(this.dateSpy.firstCall.args.length, 1, "Wrapped date must be instantiated with just one argument");
 			assert.equal(this.dateSpy.firstCall.args[0], 1000, "Wrapped date must be instantiated with singe argument with particular value");
 		});
@@ -127,30 +127,30 @@
 
 			// Explicit calendar type
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Gregorian);
-			ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
+			assert.ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
 			assert.equal(oDate.getCalendarType(), "Gregorian", "Calendar type is set correctly");
 
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Islamic);
-			ok(oDate instanceof sap.ui.core.date.Islamic, "getInstance returns expected object");
+			assert.ok(oDate instanceof sap.ui.core.date.Islamic, "getInstance returns expected object");
 			assert.equal(oDate.getCalendarType(), "Islamic", "Calendar type is set correctly");
 
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Japanese);
-			ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
+			assert.ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
 			assert.equal(oDate.getCalendarType(), "Japanese", "Calendar type is set correctly");
 
 			// Default calendar type
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate);
-			ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
+			assert.ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
 			assert.equal(oDate.getCalendarType(), "Gregorian", "Calendar type is set correctly");
 
 			// getInstance with other UniversalDate
 			oGregorian = new sap.ui.core.date.Gregorian();
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oGregorian, sap.ui.core.CalendarType.Islamic);
-			ok(oDate instanceof sap.ui.core.date.Islamic, "getInstance returns expected object");
+			assert.ok(oDate instanceof sap.ui.core.date.Islamic, "getInstance returns expected object");
 			assert.equal(oDate.getCalendarType(), "Islamic", "Calendar type is set correctly");
 
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oGregorian, sap.ui.core.CalendarType.Japanese);
-			ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
+			assert.ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
 			assert.equal(oDate.getCalendarType(), "Japanese", "Calendar type is set correctly");
 
 		});
@@ -159,8 +159,8 @@
 			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Gregorian);
 			var spy = this.sandbox.spy(sap.ui.core.date, 'Gregorian');
 			var oUniversalDate = new sap.ui.core.date.UniversalDate();
-			ok(1, spy.callCount, "sap.ui.core.date.Gregorian must be instantiated just ones");
-			ok(oUniversalDate instanceof sap.ui.core.date.Gregorian, "Date object must be instance of Gregorian");
+			assert.ok(1, spy.callCount, "sap.ui.core.date.Gregorian must be instantiated just ones");
+			assert.ok(oUniversalDate instanceof sap.ui.core.date.Gregorian, "Date object must be instance of Gregorian");
 			assert.equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "Universal date must report correct calendarType");
 		});
 
@@ -168,8 +168,8 @@
 			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Islamic);
 			var spy = this.sandbox.spy(sap.ui.core.date, 'Islamic');
 			var oUniversalDate = new sap.ui.core.date.UniversalDate();
-			ok(1, spy.callCount, "sap.ui.core.date.Islamic must be instantiated just ones");
-			ok(oUniversalDate instanceof sap.ui.core.date.Islamic, "Date object must be instance of Islamic");
+			assert.ok(1, spy.callCount, "sap.ui.core.date.Islamic must be instantiated just ones");
+			assert.ok(oUniversalDate instanceof sap.ui.core.date.Islamic, "Date object must be instance of Islamic");
 			assert.equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Islamic, "Universal date must report correct calendarType");
 		});
 
@@ -177,8 +177,8 @@
 			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Japanese);
 			var spy = this.sandbox.spy(sap.ui.core.date, 'Japanese');
 			var oUniversalDate = new sap.ui.core.date.UniversalDate();
-			ok(1, spy.callCount, "sap.ui.core.date.Japanese must be instantiated just ones");
-			ok(oUniversalDate instanceof sap.ui.core.date.Japanese, "Date object must be instance of Japanese");
+			assert.ok(1, spy.callCount, "sap.ui.core.date.Japanese must be instantiated just ones");
+			assert.ok(oUniversalDate instanceof sap.ui.core.date.Japanese, "Date object must be instance of Japanese");
 			assert.equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Japanese, "Universal date must report correct calendarType");
 		});
 
@@ -306,7 +306,7 @@
 
 		//--- helpers ----------------------------------------------------------------------------------------------
 		function check(iArgsCount) {
-			ok(this.dateSpy.callCount, 1, "InnerDate must be instantiated just ones");
+			assert.ok(this.dateSpy.callCount, 1, "InnerDate must be instantiated just ones");
 			assert.equal(this.dateSpy.firstCall.args.length, iArgsCount, "Wrapped date must be instantiated with certain amount of arguments");
 			for (var i = 0; i < iArgsCount; i++) {
 				assert.equal(this.dateSpy.firstCall.args[i], testParameter1[i], "Wrapped date arguments:" + testParameter2[testParameter1[i]]);

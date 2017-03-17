@@ -104,7 +104,7 @@ sap.ui.require([
 		bFirstCheck = true;
 		this.clock.tick(1000);
 
-		ok(oFirstSuccess.calledBefore(oSecondSuccess), "Did call the first success first");
+		assert.ok(oFirstSuccess.calledBefore(oSecondSuccess), "Did call the first success first");
 
 		assert.strictEqual(oFirstSuccess.callCount, 1, "First did succeed");
 		assert.strictEqual(oSecondSuccess.callCount, 1, "Second did succeed");

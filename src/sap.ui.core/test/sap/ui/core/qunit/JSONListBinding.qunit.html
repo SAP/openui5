@@ -109,7 +109,7 @@
 	};
 
 	function callBackOnChange(){
-		ok(true,"ChangeEvent fired");
+		assert.ok(true,"ChangeEvent fired");
 	};
 
 	QUnit.module("Listbinding getContexts", {
@@ -135,10 +135,10 @@
 
 	QUnit.test("wrong path", function(assert) {
 		createListBinding("/xyz", "");
-		ok(bindings);
+		assert.ok(bindings);
 		assert.equal(bindings.length, 1, "amount of ListBindings");
 		var listBinding = bindings[0];
-		ok(listBinding);
+		assert.ok(listBinding);
 		assert.equal(listBinding.getPath(), "/xyz", "ListBinding path");
 		assert.equal(listBinding.getModel(), oModel, "ListBinding model");
 		assert.equal(listBinding.getContexts().length, 0, "ListBinding get Contexts with wrong path");
@@ -156,7 +156,7 @@
 			listBinding.setContext(oContext);
 			listBinding.checkUpdate();
 			assert.equal(listBinding.getPath(), "teamMembers", "ListBinding path");
-			ok(listBinding.getContext() == oContext, "ListBinding context");
+			assert.ok(listBinding.getContext() == oContext, "ListBinding context");
 			assert.equal(listBinding.getContexts().length, 0, "ListBinding contexts");
 		});
 	});
@@ -217,7 +217,7 @@
 
 		newContexts = listBinding.getContexts();
 		assert.equal(newContexts.length, 7, "Current contexts should contain 7 items");
-		ok(jQuery.sap.equal(contexts, newContexts), "Old and new contexts array is equal");
+		assert.ok(jQuery.sap.equal(contexts, newContexts), "Old and new contexts array is equal");
 
 		// Although a key is used with extended change detection, the diff must contain
 		// an update, as grouping is enabled on this binding.
@@ -239,7 +239,7 @@
 	QUnit.test("method", 3, function(assert) {
 		assert.equal(this.oBinding.getLength(), 7, "ListBinding returns correct length");
 		this.oBinding.attachChange(function() {
-			ok(true, "ListBinding fires change event when changed");
+			assert.ok(true, "ListBinding fires change event when changed");
 		});
 		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
 		this.oBinding.refresh();
@@ -250,7 +250,7 @@
 		var aContexts = this.oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		this.oBinding.attachChange(function() {
-			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+			assert.ok(false, "ListBinding fires no change event, as changed data is outside visible range");
 		});
 		testData.teamMembers[6].firstName = "Jonas";
 		this.oBinding.refresh();
@@ -261,7 +261,7 @@
 		var aContexts = this.oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		this.oBinding.attachChange(function() {
-			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+			assert.ok(false, "ListBinding fires no change event, as changed data is outside visible range");
 		});
 		testData.teamMembers[6].firstName = "Jonas";
 		this.oBinding.refresh();
@@ -271,7 +271,7 @@
 		var aContexts = this.oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		this.oBinding.attachChange(function() {
-			ok(true, "ListBinding fires change event, as length has changed");
+			assert.ok(true, "ListBinding fires change event, as length has changed");
 		});
 		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
 		this.oBinding.refresh();
@@ -283,7 +283,7 @@
 		var aContexts = this.oBinding.getContexts(0,5);
 		assert.equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
 		this.oBinding.attachChange(function() {
-			ok(true, "ListBinding fires change event, as length has changed");
+			assert.ok(true, "ListBinding fires change event, as length has changed");
 		});
 		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
 		this.oBinding.refresh();
@@ -560,7 +560,7 @@
 
 		listBinding.detachChange(myFnCallback);
 
-		ok(attach, "change event fired with sorter");
+		assert.ok(attach, "change event fired with sorter");
 	});
 
 	QUnit.module("Listbinding filter", {
@@ -769,7 +769,7 @@
 
 		listBinding.detachChange(myFnCallback);
 
-		ok(attach, "change event fired with filter");
+		assert.ok(attach, "change event fired with filter");
 	});
 
 	// only relevant for browsers supporting this
@@ -824,12 +824,12 @@
 		createListBinding("/root");
 		var binding = bindings[0];
 		var contexts = binding.getContexts();
-		ok(jQuery.isArray(contexts));
+		assert.ok(jQuery.isArray(contexts));
 		assert.equal(contexts.length, 2);
 		assert.equal(oModel.getProperty("name",contexts[0]), "item1");
 		assert.equal(oModel.getProperty("nodes",contexts[0]).length, 2);
 		assert.equal(oModel.getProperty("/root/0/nodes/0/nodes/1").name, "subsubitem2");
-		ok(oModel.getProperty("/root/0/nodes/1").collapsed);
+		assert.ok(oModel.getProperty("/root/0/nodes/1").collapsed);
 		assert.equal(oModel.getProperty("name",contexts[1]), "item2");
 		assert.equal(oModel.getProperty("nodes",contexts[1]).length, 1);
 		assert.equal(oModel.getProperty("nodes/0",contexts[1]).name, "subitem3");
@@ -842,7 +842,7 @@
 
 		var binding = bindings[1];
 		var contexts = binding.getContexts();
-		ok(jQuery.isArray(contexts));
+		assert.ok(jQuery.isArray(contexts));
 		assert.equal(contexts.length, 2);
 		assert.equal(oModel.getProperty("name",contexts[0]), "subitem1");
 		assert.equal(oModel.getProperty("name",contexts[1]), "subitem2");
@@ -855,11 +855,11 @@
 		// check if nodes from different listbindings are the same/have the same reference
 		assert.equal(oModel.getProperty("nodes/0/name", bindings[0].getContexts()[0]), "subitem1");
 		assert.equal(oModel.getProperty("name",bindings[1].getContexts()[0]), "subitem1");
-		ok(jQuery.sap.equal(bindings[0].oList[0].nodes[0], bindings[1].oList[0]));
+		assert.ok(jQuery.sap.equal(bindings[0].oList[0].nodes[0], bindings[1].oList[0]));
 
 		assert.equal(oModel.getProperty("nodes/0/name",bindings[0].getContexts()[1]), "subitem3");
 		assert.equal(oModel.getProperty("name",bindings[2].getContexts()[0]), "subitem3");
-		ok(jQuery.sap.equal(bindings[0].oList[1].nodes[0], bindings[2].oList[0]));
+		assert.ok(jQuery.sap.equal(bindings[0].oList[1].nodes[0], bindings[2].oList[0]));
 	});
 
 	QUnit.test("getDistinctValues", function(assert) {
@@ -868,13 +868,13 @@
 			distinctValues;
 
 		distinctValues = binding.getDistinctValues("firstName");
-		ok(jQuery.isArray(distinctValues), "Result is an array");
+		assert.ok(jQuery.isArray(distinctValues), "Result is an array");
 		assert.equal(distinctValues.length, 7, "Number of distinct values");
 		assert.equal(distinctValues[0], "Andreas", "Distinct value content");
 		assert.equal(distinctValues[6], "Frank", "Distinct value content");
 
 		distinctValues = binding.getDistinctValues("gender");
-		ok(jQuery.isArray(distinctValues), "Result is an array");
+		assert.ok(jQuery.isArray(distinctValues), "Result is an array");
 		assert.equal(distinctValues.length, 3, "Number of distinct values");
 		assert.equal(distinctValues[0], "male", "Distinct value content");
 		assert.equal(distinctValues[1], "female", "Distinct value content");
@@ -925,7 +925,7 @@
 			listBinding.detachChange(fnFunc);
 		}
 		assert.equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
-		ok(listBinding.getModel() === oModel, "ListBinding model");
+		assert.ok(listBinding.getModel() === oModel, "ListBinding model");
 		// does not work...recursion because bining is set on model
 		//assert.equal(listBinding.getModel(), oModel, "ListBinding model");
 		var newData = {

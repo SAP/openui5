@@ -194,7 +194,7 @@
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
 			assert.equal(oEvent.type, sEventName, "Event type correct");
-			ok(oEvent.srcControl, "Event attribute 'srcControl' available");
+			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
 			if(oEvent.srcControl) {
 				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
@@ -210,14 +210,14 @@
 
 		if(!bExpectHandlersNotCalled){
 			if(bStopPropagation){
-				ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
+				assert.ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
 			}else{
-				ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
+				assert.ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
 			}
-			ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
+			assert.ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
 		}else{
-			ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
-			ok(!oTestControl2._bEventHandlerCalled, "Event Handler not called on control 2");
+			assert.ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
+			assert.ok(!oTestControl2._bEventHandlerCalled, "Event Handler not called on control 2");
 		}
 
 		oTestControl1._bEventHandlerCalled = undefined;
@@ -242,7 +242,7 @@
 		var iCount = 0;
 		var fCheck = function(oEvent) {
 			iCount++;
-			ok(oEvent.isPseudoType(oEvent._sExpectedPseudoType), "Event has expected pseudo type "+oEvent._sExpectedPseudoType);
+			assert.ok(oEvent.isPseudoType(oEvent._sExpectedPseudoType), "Event has expected pseudo type "+oEvent._sExpectedPseudoType);
 		};
 
 		jQuery("#outer").bind(sOriginalEventName, fCheck);
@@ -299,19 +299,19 @@
 
 		assert.equal(jQuery.sap.ControlEvents.length, aBrowserEvents.length, "Number of basic browser events correct");
 		for(var i=0; i<aBrowserEvents.length; i++){
-			ok(jQuery.inArray(aBrowserEvents[i], jQuery.sap.ControlEvents) >= 0, "Event "+aBrowserEvents[i]+" contained in jQuery.sap.ControlEvents");
+			assert.ok(jQuery.inArray(aBrowserEvents[i], jQuery.sap.ControlEvents) >= 0, "Event "+aBrowserEvents[i]+" contained in jQuery.sap.ControlEvents");
 		}
 	});
 
 	QUnit.test("Pseudo Events", function(assert) {
 		function fCheck(sEventName, sOrigEventName){
 			var evt = jQuery.sap.PseudoEvents[sEventName];
-			ok(!!evt, "Event "+sEventName+" contained in jQuery.sap.PseudoEvents");
+			assert.ok(!!evt, "Event "+sEventName+" contained in jQuery.sap.PseudoEvents");
 			if(evt){
 				assert.equal(evt.sName, sEventName, "Event "+sEventName+": name correct");
-				ok(jQuery.inArray(sOrigEventName, evt.aTypes) >= 0, "Event "+sEventName+": base type correct");
+				assert.ok(jQuery.inArray(sOrigEventName, evt.aTypes) >= 0, "Event "+sEventName+": base type correct");
 				for(var j=0; j<evt.aTypes.length; j++){
-					ok(jQuery.inArray(evt.aTypes[j], jQuery.sap.ControlEvents) >= 0, "Event "+sEventName+": base type in jQuery.sap.ControlEvents");
+					assert.ok(jQuery.inArray(evt.aTypes[j], jQuery.sap.ControlEvents) >= 0, "Event "+sEventName+": base type in jQuery.sap.ControlEvents");
 				}
 			}
 		};
@@ -361,7 +361,7 @@
 		var fCheck = function(oEvent) {
 			iCount++;
 			if(!bFirst){
-				ok(oEvent.isPseudoType("sapdelayeddoubleclick"), "Event has expected pseudo type sapdelayeddoubleclick");
+				assert.ok(oEvent.isPseudoType("sapdelayeddoubleclick"), "Event has expected pseudo type sapdelayeddoubleclick");
 			}
 			oEvent.getPseudoTypes(); //Ensure that pseudo types check functions run
 			bFirst = false;
@@ -384,7 +384,7 @@
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
 			assert.equal(oEvent.type, "sapdelayeddoubleclick", "Event type correct");
-			ok(oEvent.srcControl, "Event attribute 'srcControl' available");
+			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
 			if(oEvent.srcControl) {
 				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
@@ -394,8 +394,8 @@
 		oTestControl2["onsapdelayeddoubleclick"] = function(oEvent){fCheck(oEvent, false);};
 
 		triggerDelayedDoubleClick("test2-Inner", function(){
-			ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
-			ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
+			assert.ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
+			assert.ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
 
 			oTestControl1._bEventHandlerCalled = undefined;
 			oTestControl2._bEventHandlerCalled = undefined;
@@ -414,7 +414,7 @@
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
 			assert.equal(oEvent.type, "sapdelayeddoubleclick", "Event type correct");
-			ok(oEvent.srcControl, "Event attribute 'srcControl' available");
+			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
 			if(oEvent.srcControl) {
 				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
@@ -424,8 +424,8 @@
 		oTestControl2["onsapdelayeddoubleclick"] = function(oEvent){fCheck(oEvent, false);};
 
 		triggerDelayedDoubleClick("test2-Inner", function(){
-			ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
-			ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
+			assert.ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
+			assert.ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
 
 			oTestControl1._bEventHandlerCalled = undefined;
 			oTestControl2._bEventHandlerCalled = undefined;
@@ -513,7 +513,7 @@
 		oEvent.setMarked(sMark);
 
 		// assertion
-		ok(oEvent.isMarked(sMark), "self-contained event is correctly marked");
+		assert.ok(oEvent.isMarked(sMark), "self-contained event is correctly marked");
 	});
 
 	/* ------------------------------ */

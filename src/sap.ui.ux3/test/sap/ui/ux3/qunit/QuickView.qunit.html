@@ -137,13 +137,13 @@
 	QUnit.module("QuickView: open and close");
 	QUnit.test("Open QuickView", function(assert) {
 		var done = assert.async();
-		ok(true, "A-sync OK start");
+		assert.ok(true, "A-sync OK start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
 			qutils.triggerMouseEvent("QuickView", "mouseout");
 			setTimeout(function() {
-				ok(isQuickViewVisible()==false, "QuickView is not visible after mouseout");
+				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after mouseout");
 				done();
 			}, 600);
 		}, 900);
@@ -151,13 +151,13 @@
 
 	QUnit.test("Close using close method", function(assert) {
 		var done = assert.async();
-		ok(true, "A-sync close() start");
+		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
 			oQuickView.close();
 			setTimeout(function() {
-				ok(isQuickViewVisible()==false, "QuickView is not visible after close()");
+				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after close()");
 				done();
 			}, 500);
 		}, 700);
@@ -167,14 +167,14 @@
 	QUnit.test("Click on a link", function(assert) {
 		var done = assert.async();
 		oButton.focus();
-		ok(document.activeElement.id == "QVButton", "Focus the button initially");
+		assert.ok(document.activeElement.id == "QVButton", "Focus the button initially");
 		qutils.triggerKeyboardEvent("QVButton", jQuery.sap.KeyCodes.I, false, false, true);
 		setTimeout(function(){
-			ok(isQuickViewVisible()==true, "QuickView is visible after Ctrl-I");
+			assert.ok(isQuickViewVisible()==true, "QuickView is visible after Ctrl-I");
 			//click on the Name link
 			 jQuery('#QuickView-link').trigger('click');
 			setTimeout(function(){
-				ok(isQuickViewVisible()==false, "QuickView is not visible after navigate event");
+				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after navigate event");
 				assert.equal(document.activeElement.id, "QVButton", "The parent element should be focused after the focused QuickView is closed");
 				done();
 			}, 1000); // CLOSE
@@ -183,13 +183,13 @@
 
 	QUnit.test("Toolbar Actions", function(assert) {
 		var done = assert.async();
-		ok(true, "A-sync close() start");
+		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
 			jQuery('.sapUiUx3ActionBarAction').eq(1).trigger("click");
 			setTimeout(function() {
-				ok(oActionParams.id !== undefined, "Action id is available after click on action");
+				assert.ok(oActionParams.id !== undefined, "Action id is available after click on action");
 				oQuickView.close();
 				done();
 			}, 400);
@@ -200,14 +200,14 @@
 
 	QUnit.test("Icons", function(assert) {
 		var done = assert.async();
-		ok(true, "A-sync close() start");
+		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			ok(jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon is rendered as img");
+			assert.ok(jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon is rendered as img");
 			oModel.setProperty("/icon", "sap-icon://save");
 			setTimeout(function() {
-				ok(!jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon with icon font not rendered as img");
-				ok(jQuery('#QuickView span.sapUiUx3QVIcon').length, "QV-Icon with icon font rendered as span");
+				assert.ok(!jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon with icon font not rendered as img");
+				assert.ok(jQuery('#QuickView span.sapUiUx3QVIcon').length, "QV-Icon with icon font rendered as span");
 				oQuickView.close();
 				done();
 			}, 400);
