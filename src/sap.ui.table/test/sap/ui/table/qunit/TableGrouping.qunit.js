@@ -498,7 +498,7 @@ QUnit.test("Activate Grouping", function(assert) {
 
 	oTable.setGroupBy(oTable.getColumns()[0]);
 	oBinding = oTable.getBinding("rows");
-	equal(oBinding.getLength(), 10, "Row count after Grouping");
+	assert.equal(oBinding.getLength(), 10, "Row count after Grouping");
 });
 
 QUnit.test("Collapse / Expand", function(assert) {
@@ -507,21 +507,21 @@ QUnit.test("Collapse / Expand", function(assert) {
 
 	oTable.setGroupBy(oTable.getColumns()[0]);
 	oBinding = oTable.getBinding("rows");
-	equal(oBinding.getLength(), 10, "Row count after Grouping");
+	assert.equal(oBinding.getLength(), 10, "Row count after Grouping");
 
 	sap.ui.getCore().applyChanges();
 
 	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), false);
-	equal(oBinding.getLength(), 6, "Row count after Collapse");
+	assert.equal(oBinding.getLength(), 6, "Row count after Collapse");
 	ok(!oBinding.isExpanded(0), "!Expanded");
 	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), true);
-	equal(oBinding.getLength(), 10, "Row count after Expand");
+	assert.equal(oBinding.getLength(), 10, "Row count after Expand");
 	ok(oBinding.isExpanded(0), "Expanded");
 	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
-	equal(oBinding.getLength(), 6, "Row count after Toggle");
+	assert.equal(oBinding.getLength(), 6, "Row count after Toggle");
 	ok(!oBinding.isExpanded(0), "!Expanded");
 	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
-	equal(oBinding.getLength(), 10, "Row count after Toggle");
+	assert.equal(oBinding.getLength(), 10, "Row count after Toggle");
 	ok(oBinding.isExpanded(0), "Expanded");
 });
 
@@ -531,10 +531,10 @@ QUnit.test("Reset Grouping", 3, function(assert) {
 
 	oTable.setGroupBy(oTable.getColumns()[0]);
 	oBinding = oTable.getBinding("rows");
-	equal(oBinding.getLength(), 10, "Row count after Grouping");
+	assert.equal(oBinding.getLength(), 10, "Row count after Grouping");
 
 	oTable.setEnableGrouping(false);
 
 	oBinding = oTable.getBinding("rows");
-	equal(oBinding.getLength(), 8, "Row count after rest Grouping");
+	assert.equal(oBinding.getLength(), 8, "Row count after rest Grouping");
 });

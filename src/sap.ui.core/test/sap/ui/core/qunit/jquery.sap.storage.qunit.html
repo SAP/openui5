@@ -41,7 +41,7 @@
 				}
 			}
 
-			equal(type, store.getType(), "Storage is of requested type");
+			assert.equal(type, store.getType(), "Storage is of requested type");
 
 			var supported = store.isSupported();
 
@@ -57,27 +57,27 @@
 				ok(res, "put returns true when storage is supported");
 
 				val = store.get("testkey");
-				equal(val, "testvalue", "Value correct after put");
+				assert.equal(val, "testvalue", "Value correct after put");
 
 				res = store.put("Testkey2", "testvalue2");
 				val = store.get("Testkey2");
-				equal(val, "testvalue2", "Value correct after put");
+				assert.equal(val, "testvalue2", "Value correct after put");
 
 				res = store.put("testkey3", "testvalue3");
 				val = store.get("testkey3");
-				equal(val, "testvalue3", "Value correct after put");
+				assert.equal(val, "testvalue3", "Value correct after put");
 
 				res = store.removeAll("Test");
 				ok(res, "removeAll returns true when storage is supported");
 
 				val = store.get("testkey");
-				equal(val, "testvalue", "Value still there after removeAll");
+				assert.equal(val, "testvalue", "Value still there after removeAll");
 
 				val = store.get("Testkey2");
 				ok(!val, "Value not there after removeAll");
 
 				val = store.get("testkey3");
-				equal(val, "testvalue3", "Value still there after removeAll");
+				assert.equal(val, "testvalue3", "Value still there after removeAll");
 
 				res = store.remove("testkey3");
 				ok(res, "remove returns true when storage is supported");
@@ -86,7 +86,7 @@
 				ok(!val, "Value not there after remove");
 
 				val = store.get("testkey");
-				equal(val, "testvalue", "Value still there after remove");
+				assert.equal(val, "testvalue", "Value still there after remove");
 
 				res = store.removeAll();
 				ok(res, "removeAll returns true when storage is supported");
@@ -139,14 +139,14 @@
 			store.put("testkey0", "testvalue0");
 			store.put("testkey1", "testvalue1");
 
-			equal(s.length, 2, txt + ": 2 items added");
+			assert.equal(s.length, 2, txt + ": 2 items added");
 			for(var i=0; i<s.length; i++){
-				equal(s.key(i), (sIdPrefix ? sIdPrefix : "state.key_") + "-testkey" + i, txt + ": correct key '"+s.key(i)+"'");
+				assert.equal(s.key(i), (sIdPrefix ? sIdPrefix : "state.key_") + "-testkey" + i, txt + ": correct key '"+s.key(i)+"'");
 			}
 
 			store.clear();
 
-			equal(s.length, 0, txt + ": All items removed");
+			assert.equal(s.length, 0, txt + ": All items removed");
 		};
 
 		//*******************************

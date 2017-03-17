@@ -34,12 +34,12 @@
 
 			// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 			var $v = jQuery("meta").filter("[name=viewport]");
-			equal($v.length, 0, "There should be no viewport meta tag");
+			assert.equal($v.length, 0, "There should be no viewport meta tag");
 
 			// touch icon  <link rel="apple-touch-icon...
 			var $ti = jQuery("link").filter("[rel=apple-touch-icon-precomposed]");
-			equal($ti.length, 4, "There should be four apple-touch-icon-precomposed link tags");
-			equal($ti.attr("href"), "home.png", "The apple-touch-icon-precomposed link tag href should be correct")
+			assert.equal($ti.length, 4, "There should be four apple-touch-icon-precomposed link tags");
+			assert.equal($ti.attr("href"), "home.png", "The apple-touch-icon-precomposed link tag href should be correct")
 		});
 
 		</script>

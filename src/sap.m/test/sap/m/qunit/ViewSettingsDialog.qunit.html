@@ -590,7 +590,7 @@
 
 				var done = assert.async();
 				setTimeout(function () {
-					equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
+					assert.equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
 					done();
 				}.bind(this), 1500);
 			});
@@ -756,8 +756,8 @@
 				this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
 
 				sap.ui.test.qunit.triggerKeyboardEvent(this.oVSD._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
-				equal(this.oVSD._vContentPage, 2, "Internal page state should be on the second page");
-				equal(this.oVSD._navContainer.getCurrentPage(), this.oVSD._getPage1(), "NavContainer should be on the first page");
+				assert.equal(this.oVSD._vContentPage, 2, "Internal page state should be on the second page");
+				assert.equal(this.oVSD._navContainer.getCurrentPage(), this.oVSD._getPage1(), "NavContainer should be on the first page");
 			});
 
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
@@ -1407,7 +1407,7 @@
 				oSearchField.fireLiveChange({ newValue: "Mo" }); // Matches: Mousepad, Monitor
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
-				equal(aFilteredItems.length, 2, "After filter search there are 2 visible items in the list.");
+				assert.equal(aFilteredItems.length, 2, "After filter search there are 2 visible items in the list.");
 
 				//Act
 				that.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.Contains);
@@ -1415,7 +1415,7 @@
 
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
-				equal(aFilteredItems.length, 3, "After filter search with 'contains', there are 3 visible items in the list.");
+				assert.equal(aFilteredItems.length, 3, "After filter search with 'contains', there are 3 visible items in the list.");
 
 				//Act
 				that.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.Equals);
@@ -1423,14 +1423,14 @@
 
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
-				equal(aFilteredItems.length, 0, "After filter search with 'equals', there are 0 visible items in the list.");
+				assert.equal(aFilteredItems.length, 0, "After filter search with 'equals', there are 0 visible items in the list.");
 
 				//Act
 				oSearchField.fireLiveChange({ newValue: "Mousepad" }); // Matches: Mousepad
 
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
-				equal(aFilteredItems.length, 1, "After filter search with 'equals', there is 1 visible item in the list.");
+				assert.equal(aFilteredItems.length, 1, "After filter search with 'equals', there is 1 visible item in the list.");
 
 				//Act
 				that.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.AnyWordStartsWith);
@@ -1438,14 +1438,14 @@
 
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
-				equal(aFilteredItems.length, 2, "After filter search with 'anywordstartswith', there are 2 visible items in the list.");
+				assert.equal(aFilteredItems.length, 2, "After filter search with 'anywordstartswith', there are 2 visible items in the list.");
 
 				//Act
 				oSearchField.fireLiveChange({ newValue: "ou" }); // Matches: None
 
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
-				equal(aFilteredItems.length, 0, "After filter search with 'anywordstartswith', there are 0 visible items in the list.");
+				assert.equal(aFilteredItems.length, 0, "After filter search with 'anywordstartswith', there are 0 visible items in the list.");
 
 				//Act
 				oSearchField.fireLiveChange({ newValue: "" }); // Matches: All
@@ -1453,7 +1453,7 @@
 					return oItem.getVisible();
 				});
 				//Assert
-				equal(aFilteredItems.length, 7, "Empty query in filter search shows all items.");
+				assert.equal(aFilteredItems.length, 7, "Empty query in filter search shows all items.");
 
 
 				//Act
@@ -1461,14 +1461,14 @@
 
 				//Assert
 				console.log(that.oVSD._createSelectAllCheckbox(), that.oVSD._createSelectAllCheckbox().getSelected());
-				equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
+				assert.equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
 
 
 				//Act
 				that.oVSD._switchToPage(3, that.oVSD.getFilterItems()[4]); // empty page
 
 				//Assert
-				equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
+				assert.equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
 
 				done();
 			}, 1000);
@@ -1524,9 +1524,9 @@
 				oSearchField.fireLiveChange({newValue: sSearchString});
 
 				//Assert
-				equal(oCallbackSpy.callCount, 7, "filter function is called as many times as it should");
-				equal(oCallbackSpy.args[0][0], sSearchString, "filter function is called with the right first argument");
-				equal(oCallbackSpy.args[0][1], that.oVSD.getFilterItems()[0].getItems()[0].getText(), "filter function is called with the right second argument");
+				assert.equal(oCallbackSpy.callCount, 7, "filter function is called as many times as it should");
+				assert.equal(oCallbackSpy.args[0][0], sSearchString, "filter function is called with the right first argument");
+				assert.equal(oCallbackSpy.args[0][1], that.oVSD.getFilterItems()[0].getItems()[0].getText(), "filter function is called with the right second argument");
 
 				done();
 			}, 1000);
@@ -1578,7 +1578,7 @@
 					return oItem.getSelected();
 				});
 
-				equal(aSelectedItems.length, 4, "At first the selected items are 4.");
+				assert.equal(aSelectedItems.length, 4, "At first the selected items are 4.");
 
 				//Act
 				oSearchField.fireLiveChange({ newValue: "H" }); // Matches: Headphone
@@ -1591,7 +1591,7 @@
 				});
 
 				//Assert
-				equal(aSelectedItems.length, 3, "After deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1.");
+				assert.equal(aSelectedItems.length, 3, "After deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1.");
 
 				done();
 			}, 1000);

@@ -96,29 +96,29 @@
 			QUnit.test("Date formatter", function(assert) {
 				ok(!oDTP1.getValue(), "DTP1: no value");
 				ok(!oDTP1.getDateValue(), "DTP1: no DateValue");
-				equal(oDTP2.getValue(), "2016-02-17,10-11-12", "DTP2: Value in internal format set");
-				equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP2: DateValue set");
-				equal(oDTP3.getValue(), "2/17/16, 10:11 AM", "DTP3: Value in internal format set");
-				equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP3: DateValue set");
-				equal(oDTP4.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP4: Value in internal format set");
-				equal(oDTP4.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
+				assert.equal(oDTP2.getValue(), "2016-02-17,10-11-12", "DTP2: Value in internal format set");
+				assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP2: DateValue set");
+				assert.equal(oDTP3.getValue(), "2/17/16, 10:11 AM", "DTP3: Value in internal format set");
+				assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP3: DateValue set");
+				assert.equal(oDTP4.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP4: Value in internal format set");
+				assert.equal(oDTP4.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
 			});
 
 			QUnit.module("Rendering");
 
 			QUnit.test("date format", function(assert) {
 				ok(!jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").val(), "DTP1: empty date");
-				equal(jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
-				equal(jQuery("#DTP3").children("div.sapMInputDivWrapper").children("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
-				equal(jQuery("#DTP4").children("div.sapMInputDivWrapper").children("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
+				assert.equal(jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
+				assert.equal(jQuery("#DTP3").children("div.sapMInputDivWrapper").children("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
+				assert.equal(jQuery("#DTP4").children("div.sapMInputDivWrapper").children("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
 			});
 
 			QUnit.test("placeholder", function(assert) {
 				if(sap.ui.Device.support.input.placeholder) {
-					equal(jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
-					equal(jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
-					equal(jQuery("#DTP3").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "M/d/yy, h:mm a", "DTP3: placeholder");
-					equal(jQuery("#DTP4").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
+					assert.equal(jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
+					assert.equal(jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
+					assert.equal(jQuery("#DTP3").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "M/d/yy, h:mm a", "DTP3: placeholder");
+					assert.equal(jQuery("#DTP4").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
 				} else {
 					ok(!jQuery("#DTP1").children("div.sapMInputDivWrapper").children("input").attr("placeholder"), "No placeholder attribute");
 				}
@@ -138,7 +138,7 @@
 				oDTP._openPopup();
 				setTimeout(function() {
 					//Assert
-					equal(oSpyUpdateSlidersFn.callCount, 1, "Once picker is opened, function updateSlidersValues should be called");
+					assert.equal(oSpyUpdateSlidersFn.callCount, 1, "Once picker is opened, function updateSlidersValues should be called");
 
 					//Cleanup
 					oSpyUpdateSlidersFn.restore();
@@ -158,11 +158,11 @@
 				jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").val("37+02+2016:10+11");
 				qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-				equal(sId, "DTP2", "Change event fired");
-				equal(sValue, "37+02+2016:10+11", "Value of event has entered value if invalid");
+				assert.equal(sId, "DTP2", "Change event fired");
+				assert.equal(sValue, "37+02+2016:10+11", "Value of event has entered value if invalid");
 				ok(!bValid, "Value is not valid");
-				equal(oDTP2.getValue(), "37+02+2016:10+11", "Value has entered value if invalid");
-				equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DateValue not changed set");
+				assert.equal(oDTP2.getValue(), "37+02+2016:10+11", "Value has entered value if invalid");
+				assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DateValue not changed set");
 
 				bChange = false;
 				sValue = "";
@@ -172,11 +172,11 @@
 				jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").val("18+02+2016:10+30");
 				qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DTP2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-				equal(sId, "DTP2", "Change event fired");
-				equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
+				assert.equal(sId, "DTP2", "Change event fired");
+				assert.equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
 				ok(bValid, "Value is valid");
-				equal(oDTP2.getValue(), "2016-02-18,10-30-00", "Value has entered value if valid");
-				equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "18", "10", "30", "00").getTime(), "DateValue not changed set");
+				assert.equal(oDTP2.getValue(), "2016-02-18,10-30-00", "Value has entered value if valid");
+				assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "18", "10", "30", "00").getTime(), "DateValue not changed set");
 
 			});
 /*
@@ -197,7 +197,7 @@
 					ok(jQuery("#DTP3-Sliders")[0], "Slider rendered");
 					ok(jQuery("#DTP3-Sliders").is(":visible"), "Slider is visible");
 					var oSliders = sap.ui.getCore().byId("DTP3-Sliders");
-					equal(oSliders.getAggregation("_columns").length, 3 , "DTP3: number of rendered sliders");
+					assert.equal(oSliders.getAggregation("_columns").length, 3 , "DTP3: number of rendered sliders");
 
 					var aDays = jQuery("#DTP3-cal--Month0-days").find(".sapUiCalItem");
 					var oDay;
@@ -234,10 +234,10 @@
 					setTimeout(function(){
 						ok(!jQuery("#DTP3-cal").is(":visible"), "calendar is invisible");
 						ok(!jQuery("#DTP3-Sliders").is(":visible"), "Silder is invisible");
-						equal(sId, "DTP3", "Change event fired");
-						equal(sValue, "2/10/16, 11:11 AM", "Value in internal format priovided");
-						equal(oDTP3.getValue(), "2/10/16, 11:11 AM", "Value in internal format set");
-						equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
+						assert.equal(sId, "DTP3", "Change event fired");
+						assert.equal(sValue, "2/10/16, 11:11 AM", "Value in internal format priovided");
+						assert.equal(oDTP3.getValue(), "2/10/16, 11:11 AM", "Value in internal format set");
+						assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
 						done();
 					}, 600);
 				}, 400);

@@ -202,7 +202,7 @@
 					var $objectHeader = oObjectHeader.$("titlediv");
 
 					ok($objectHeader.hasClass("sapMOHRTitleDivFull"), "title occupies the whole available space");
-					equal($objectHeader.width(), oObjectHeader.$("titlenumdiv").width(), "title div width is equal to titleNumber div");
+					assert.equal($objectHeader.width(), oObjectHeader.$("titlenumdiv").width(), "title div width is equal to titleNumber div");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -257,7 +257,7 @@
 					// Assert
 					var introEl = jQuery.sap.domById(sControlId + "-intro");
 					ok(introEl, "Intro is rendered");
-					equal(introEl.textContent, sIntro, "Intro exist and it is with the right value.");
+					assert.equal(introEl.textContent, sIntro, "Intro exist and it is with the right value.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -313,7 +313,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
+					assert.equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -377,11 +377,11 @@
 					oCore.applyChanges();
 
 					sap.ui.test.qunit.triggerEvent("tap", oObjectHeader.$("txt"));
-					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "Title should be clickable when clicking on \"a\" element");
+					assert.equal(domRef.id, oObjectHeader.$("txt").attr("id"), "Title should be clickable when clicking on \"a\" element");
 					domRef = null;
 
 					qutils.triggerEvent("tap", oObjectHeader.$("txt").children(0));
-					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "When clicking inner span element of the \"a\" element event should return \"a\" element id as source");
+					assert.equal(domRef.id, oObjectHeader.$("txt").attr("id"), "When clicking inner span element of the \"a\" element event should return \"a\" element id as source");
 					domRef = null;
 
 					// Clean up
@@ -398,7 +398,7 @@
 					oObjectHeader.placeAt("qunit-fixture");
 					oCore.applyChanges();
 
-					equal(oObjectHeader.getFocusDomRef().attr("id"), oObjectHeader.$("txt").attr("id"), "Focus domRef is correct");
+					assert.equal(oObjectHeader.getFocusDomRef().attr("id"), oObjectHeader.$("txt").attr("id"), "Focus domRef is correct");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -699,7 +699,7 @@
 					var count = getColsCountAfterAddingStates(1, 2, ".sapMOHRTwoCols");
 
 					// Assert
-					equal(count, 2, "States are rendered in 2 columns.");
+					assert.equal(count, 2, "States are rendered in 2 columns.");
 					notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
@@ -707,7 +707,7 @@
 					var count = getColsCountAfterAddingStates(2, 3, ".sapMOHRThreeCols");
 
 					// Assert
-					equal(count, 3, "States are rendered in 3 columns.");
+					assert.equal(count, 3, "States are rendered in 3 columns.");
 					notEqual(count, 2, "States aren't rendered in 2 columns.");
 				});
 
@@ -730,15 +730,15 @@
 					var count2 = getColsCountAfterAddingStates(1, 1, "sapMOHRTwoCols");
 
 					// Assert
-					equal(count, 1, "2 states are rendered next to title block");
-					equal(count2, 0, "2 states aren't rendered below the title block in two columns");
+					assert.equal(count, 1, "2 states are rendered next to title block");
+					assert.equal(count2, 0, "2 states aren't rendered below the title block in two columns");
 				});
 
 				QUnit.test("5 states rendered in 4 columns", function (assert){
 					var count = getColsCountAfterAddingStates(3, 2, ".sapMOHRFourCols");
 
 					// Assert
-					equal(count, 4, "5 states are rendered in 4 columns");
+					assert.equal(count, 4, "5 states are rendered in 4 columns");
 					notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
@@ -764,7 +764,7 @@
 					var count = getColsCountAfterAddingStates(1, 2, ".sapMOHRTwoCols");
 
 					// Assert
-					equal(count, 2, "States are rendered in 2 columns.");
+					assert.equal(count, 2, "States are rendered in 2 columns.");
 					notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
@@ -772,7 +772,7 @@
 					var count = getColsCountAfterAddingStates(2, 3, ".sapMOHRThreeCols");
 
 					// Assert
-					equal(count, 3, "States are rendered in 3 columns.");
+					assert.equal(count, 3, "States are rendered in 3 columns.");
 					notEqual(count, 2, "States aren't rendered in 2 columns.");
 				});
 
@@ -803,15 +803,15 @@
 					var count2 = getColsCountAfterAddingStates(1, 1, "sapMOHRTwoCols");
 
 					// Assert
-					equal(count, 1, "2 states are rendered next to title block");
-					equal(count2, 0, "2 states aren't rendered below the title block in two columns");
+					assert.equal(count, 1, "2 states are rendered next to title block");
+					assert.equal(count2, 0, "2 states aren't rendered below the title block in two columns");
 				});
 
 				QUnit.test("5 states rendered in 4 columns", function (assert){
 					var count = getColsCountAfterAddingStates(3, 2, ".sapMOHRFourCols");
 
 					// Assert
-					equal(count, 4, "5 states are rendered in 4 columns");
+					assert.equal(count, 4, "5 states are rendered in 4 columns");
 					notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
@@ -837,7 +837,7 @@
 				var count = getColsCountAfterAddingStates(2, 1, ".sapMOHRTwoCols");
 
 				// Assert
-				equal(count, 2, "3 states are rendered in two columns");
+				assert.equal(count, 2, "3 states are rendered in two columns");
 				notEqual(count, 1, "States aren't rendered in 1 column.");
 			});
 
@@ -854,7 +854,7 @@
 				var count = getColsCountAfterAddingStates(1, 1, ".sapMOHRTwoCols");
 
 				//Assert
-				equal(count, 2, "2 states are rendered in two columns in FullscreenOptimized mode (desktop - tablet size)");
+				assert.equal(count, 2, "2 states are rendered in two columns in FullscreenOptimized mode (desktop - tablet size)");
 				notEqual(count, 1, "States aren't rendered in 1 column.");
 			});
 
@@ -871,7 +871,7 @@
 				var count = getColsCountAfterAddingStates(3, 2, ".sapMOHRThreeCols");
 
 				//Assert
-				equal(count, 3, "5 states are rendered in three columns in FullscreenOptimized mode (desktop - tablet size)");
+				assert.equal(count, 3, "5 states are rendered in three columns in FullscreenOptimized mode (desktop - tablet size)");
 				notEqual(count, 4, "States aren't rendered in 4 columns.");
 			});
 
@@ -896,7 +896,7 @@
 
 				var count = getColsCountAfterAddingStates(2, 3,".sapMOHROneCols");
 				// Assert
-				equal(count, 1, "5 states are rendered in one column on desktop - phone size");
+				assert.equal(count, 1, "5 states are rendered in one column on desktop - phone size");
 				notEqual(count, 2, "States aren't rendered in 2 columns.");
 			});
 
@@ -923,7 +923,7 @@
 				var count = getColsCountAfterAddingStates(2, 1, ".sapMOHRTwoCols");
 
 				// Assert
-				equal(count, 2, "3 states are rendered in two columns");
+				assert.equal(count, 2, "3 states are rendered in two columns");
 				notEqual(count, 3, "States aren't rendered in 3 columns.");
 			});
 
@@ -943,7 +943,7 @@
 				var count = getColsCountAfterAddingStates(2, 2, ".sapMOHRTwoCols");
 
 				//Assert
-				equal(count, 2, "4 states are rendered in two columns in portrait mode");
+				assert.equal(count, 2, "4 states are rendered in two columns in portrait mode");
 				notEqual(count, 4, "States aren't rendered in 4 columns.");
 			});
 
@@ -962,7 +962,7 @@
 				var count = getColsCountAfterAddingStates(1, 1, ".sapMOHRTwoCols");
 
 				// Assert
-				equal(count, 2, "2 states are rendered in two columns in landscape mode");
+				assert.equal(count, 2, "2 states are rendered in two columns in landscape mode");
 				notEqual(count, 1, "States aren't rendered in 1 column.");
 			});
 
@@ -981,7 +981,7 @@
 				var count = getColsCountAfterAddingStates(3, 2, ".sapMOHRThreeCols");
 
 				// Assert
-				equal(count, 3, "5 states are rendered in 3 columns in landscape mode");
+				assert.equal(count, 3, "5 states are rendered in 3 columns in landscape mode");
 				notEqual(count, 2, "States aren't rendered in 2 columns.");
 			});
 
@@ -1013,7 +1013,7 @@
 
 					var count = getColsCountAfterAddingStates(3, 3,".sapMOHROneCols");
 					// Assert
-					equal(count, 1, "6 states are rendered in one column on phone");
+					assert.equal(count, 1, "6 states are rendered in one column on phone");
 					notEqual(count, 3, "States aren't rendered in 3 columns.");
 				});
 
@@ -1047,7 +1047,7 @@
 					var $objectHeader = oObjectHeader.$();
 
 					ok($objectHeader.attr("role"), "OH has attribute role");
-					equal($objectHeader.attr("role"), "region", "role is region");
+					assert.equal($objectHeader.attr("role"), "region", "role is region");
 				});
 
 				QUnit.test("Active title has aria attributes", function(assert){
@@ -1064,7 +1064,7 @@
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
 					ok($sTitle.attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
-					equal($sTitle.attr("role"), "link", "ActiveTitle has role=link");
+					assert.equal($sTitle.attr("role"), "link", "ActiveTitle has role=link");
 				});
 
 				QUnit.test("Active icon has aria attributes", function(assert){
@@ -1080,7 +1080,7 @@
 
 					// Assert
 					ok(jQuery(".sapMOHRIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
-					equal(jQuery(".sapMOHRIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
+					assert.equal(jQuery(".sapMOHRIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 				});
 
 				QUnit.test("Title Image has aria-labelledby", function(assert){

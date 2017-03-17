@@ -28,7 +28,7 @@
 			// check default settings
 			QUnit.test("Default Settings", function(assert) {
     		assert.expect(1);
-    		equal(sap.ui.getCore().getConfiguration().getNoDuplicateIds(), true, "default setting should be: allow no duplicate IDs");
+    		assert.equal(sap.ui.getCore().getConfiguration().getNoDuplicateIds(), true, "default setting should be: allow no duplicate IDs");
     	});
 
 			// make sure initially there is no error
@@ -42,7 +42,7 @@
     		try {
     			oListItem2 = new sap.ui.core.ListItem("L1");
     		} catch (e) {
-    			equal(1, 1, "Error should be thrown");
+    			assert.equal(1, 1, "Error should be thrown");
     		}
     	});
 

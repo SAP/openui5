@@ -159,17 +159,17 @@ sap.ui.ux3.DataSetSimpleView</title>
 
 	QUnit.test("AddItems", 2, function(assert) {
 		oDataSet.addItem(oDataSetItem);
-		equal(oDataSet.getItems().length, 1, "getItems must return 1 item");
+		assert.equal(oDataSet.getItems().length, 1, "getItems must return 1 item");
 		oDataSetItem2 = oDataSetItem.clone();
 		oDataSet.addItem(oDataSetItem2);
-		equal(oDataSet.getItems().length, 2, "getItems must return 2 items");
+		assert.equal(oDataSet.getItems().length, 2, "getItems must return 2 items");
 	});
 
 	QUnit.test("RemoveItems", 2, function(assert) {
 		oDataSet.removeItem(oDataSetItem2);
-		equal(oDataSet.getItems().length, 1, "getItems must return 1 item");
+		assert.equal(oDataSet.getItems().length, 1, "getItems must return 1 item");
 		oDataSet.removeItem(oDataSetItem);
-		equal(oDataSet.getItems().length, 0, "getItems must return 0 items");
+		assert.equal(oDataSet.getItems().length, 0, "getItems must return 0 items");
 	});
 
 	QUnit.test("LeadSelection", 3,
@@ -177,31 +177,31 @@ sap.ui.ux3.DataSetSimpleView</title>
 				//add some items again
 				oDataSet.bindItems("/test",oDataSetItem);
 
-				equal(oDataSet.getLeadSelection(), -1,
+				assert.equal(oDataSet.getLeadSelection(), -1,
 						"LeadSelection: initial selection");
 				oDataSet.setLeadSelection(1);
-				equal(oDataSet.getLeadSelection(), 1,
+				assert.equal(oDataSet.getLeadSelection(), 1,
 						"LeadSelection: item 1 selected");
 				oDataSet.setLeadSelection(2);
-				equal(oDataSet.getLeadSelection(), 2,
+				assert.equal(oDataSet.getLeadSelection(), 2,
 						"LeadSelection: item 2 selected");
 			});
 
 	QUnit.test("AddViews", 2, function(assert) {
 		oDataSet.addView(oDataSetSimpleView);
-		equal(oDataSet.getViews().length, 1, "getView must return 1 view");
+		assert.equal(oDataSet.getViews().length, 1, "getView must return 1 view");
 		oDataSetSimpleView2 = new sap.ui.ux3.DataSetSimpleView("SV2",{
 			template : oView.clone()
 		});
 		oDataSet.addView(oDataSetSimpleView2);
-		equal(oDataSet.getViews().length, 2, "getViews must return 2 views");
+		assert.equal(oDataSet.getViews().length, 2, "getViews must return 2 views");
 	});
 
 	QUnit.test("RemoveViews", 2, function(assert) {
 		oDataSet.removeView(oDataSetSimpleView2);
-		equal(oDataSet.getViews().length, 1, "getView must return 1 view");
+		assert.equal(oDataSet.getViews().length, 1, "getView must return 1 view");
 		oDataSet.removeView(oDataSetSimpleView);
-		equal(oDataSet.getViews().length, 0, "getView must return 0 views");
+		assert.equal(oDataSet.getViews().length, 0, "getView must return 0 views");
 	});
 
 	QUnit.test("select view", 2,
@@ -212,10 +212,10 @@ sap.ui.ux3.DataSetSimpleView</title>
 				});
 				oDataSet.addView(oDataSetSimpleView2);
 				// if no view selected the first view must be selected (0)
-				equal(oDataSet.getSelectedView(), "SV1",
+				assert.equal(oDataSet.getSelectedView(), "SV1",
 						"selectedView: default selection");
 				oDataSet.setSelectedView("SV3");
-				equal(oDataSet.getSelectedView(), "SV3",
+				assert.equal(oDataSet.getSelectedView(), "SV3",
 						"selectedView: view2 selected");
 			});
 
@@ -242,12 +242,12 @@ sap.ui.ux3.DataSetSimpleView</title>
 		jQuery("#" + oDataSet.getId() + "-searchValue-tf-input").val("img2");
 		sap.ui.test.qunit.triggerKeydown(jQuery("#" + oDataSet.getId()
 				+ "-searchValue-tf-input"), "ENTER");
-		equal(window.filterValue, "img2", "Search value")
+		assert.equal(window.filterValue, "img2", "Search value")
 		jQuery("#" + oDataSet.getId() + "-searchValue-tf-input").focus();
 		jQuery("#" + oDataSet.getId() + "-searchValue-tf-input").val("img4");
 		sap.ui.test.qunit.triggerKeydown(jQuery("#" + oDataSet.getId()
 				+ "-searchValue-tf-input"), "ENTER");
-		equal(window.filterValue, "img4", "Search value");
+		assert.equal(window.filterValue, "img4", "Search value");
 		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getItems()[0].getId()),
 				"click", 1, 1, 1, 1);
 		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getItems()[3].getId()),
@@ -310,7 +310,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 	QUnit.test("Floating Layout", function(assert) {
 		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVFloating"), "class 'sapUiUx3DSSVFloating' is set");
 		var expectedItems = Math.floor(oDataSetLayout.$().width()/200);
-		equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
+		assert.equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
 		ok(jQuery(oDataSetLayout.$().children()[0]).outerWidth() - 200 <= 10 /*just some tolerance*/, "item has width of 200px");
 	});
 
@@ -321,7 +321,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 
 		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVResponsive"), "class 'sapUiUx3DSSVResponsive' is set");
 		var expectedItems = oDataSetLayout._itemsPerRow;
-		equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
+		assert.equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
 		ok(jQuery(oDataSetLayout.$().children()[0]).outerWidth() >= 200, "item has at least width of 200px");
 
 		var $Items = oDataSetLayout.$().children();
@@ -339,7 +339,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 		sap.ui.getCore().applyChanges();
 
 		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVSingleRow"), "class 'sapUiUx3DSSVSingleRow' is set");
-		equal(getNumberOfItemsPerRow(), 1, "one item per row");
+		assert.equal(getNumberOfItemsPerRow(), 1, "one item per row");
 		ok(Math.abs(oDataSetLayout.$().width() - jQuery(oDataSetLayout.$().children()[0]).outerWidth()) <= 10 /*just some tolerance*/, "item occupies the whole row");
 	});
 

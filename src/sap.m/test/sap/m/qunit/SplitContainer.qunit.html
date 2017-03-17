@@ -223,7 +223,7 @@
 
 				var fnMasterClose = function() {
 					oSC.detachAfterMasterClose(fnMasterClose);
-					equal(oSpy.callCount, 1, "invalidate should be called once after rendering");
+					assert.equal(oSpy.callCount, 1, "invalidate should be called once after rendering");
 					oApp.destroy();
 					done();
 				};
@@ -326,7 +326,7 @@
 					],
 					afterMasterOpen: function(){
 						oInput.focus();
-						equal(oInput.getFocusDomRef(), document.activeElement, "Focus is set to input");
+						assert.equal(oInput.getFocusDomRef(), document.activeElement, "Focus is set to input");
 						oSplitContainer.hideMaster();
 					},
 					afterMasterClose: function(){
@@ -365,7 +365,7 @@
 
 				this.stub(sap.ui.Device, "orientation", oPortrait);
 				oSplitContainer._fnResize();
-				equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
+				assert.equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
 				oSplitContainer.destroy();
 			});
 
@@ -644,14 +644,14 @@
 				oSC.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is 'mp1'");
-				equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is 'dp1'");
+				assert.equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is 'mp1'");
+				assert.equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is 'dp1'");
 
 				oSC.toMaster("mp2");
-				equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is still 'mp1'");
+				assert.equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is still 'mp1'");
 
 				oSC.toDetail("dp2");
-				equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is still 'dp1'");
+				assert.equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is still 'dp1'");
 
 				oSC.destroy();
 			});
@@ -745,7 +745,7 @@
 				this.stub(sap.ui.Device, "system", oSystem);
 				this.stub(sap.ui.Device, "orientation", oLandscape);
 
-				equal(oSplitContainer.getMode(), sap.m.SplitAppMode.ShowHideMode, "The default mode is showhide mode");
+				assert.equal(oSplitContainer.getMode(), sap.m.SplitAppMode.ShowHideMode, "The default mode is showhide mode");
 				oSplitContainer.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
@@ -942,12 +942,12 @@
 				this.sut.placeAt('content');
 				sap.ui.getCore().applyChanges();
 
-				equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 1 Page ', 'Initial tooltip is correct');
+				assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 1 Page ', 'Initial tooltip is correct');
 
 				this.sut.to('master2', 'show');
 				sap.ui.getCore().applyChanges();
 
-				equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
+				assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
 			});
 
 			QUnit.module("SplitContainer public API test", {

@@ -56,8 +56,8 @@
 
 			this.oMaskInput.setMask('');
 			ok(oSetterSpy.notCalled, "Invalid placeholder symbol is not accepted");
-			equal(oWarningSpy.calledOnce, true, "Log warning method called");
-			equal(oWarningSpy.getCall(0).args[0],
+			assert.equal(oWarningSpy.calledOnce, true, "Log warning method called");
+			assert.equal(oWarningSpy.getCall(0).args[0],
 					"Setting an empty mask is pointless. Make sure you set it with a non-empty value.",
 					"Verify the exact warning");
 		});
@@ -76,11 +76,11 @@
 			var sOriginalPlaceholderSymbol = oControl.getPlaceholderSymbol();
 			oControl.setPlaceholderSymbol(sPlaceholderSymbol);
 
-			equal(oErrorSpy.calledOnce, true, "Error log called");
-			equal(oErrorSpy.getCall(0).args[0],
+			assert.equal(oErrorSpy.calledOnce, true, "Error log called");
+			assert.equal(oErrorSpy.getCall(0).args[0],
 					"Rejecting placeholder symbol because it is included as a regex in an existing mask input rule.",
 					"Verify the exact error");
-			equal(oControl.getPlaceholderSymbol(), sOriginalPlaceholderSymbol, "The placeholder symbol must not be changed");
+			assert.equal(oControl.getPlaceholderSymbol(), sOriginalPlaceholderSymbol, "The placeholder symbol must not be changed");
 		});
 
 		QUnit.test("Setting (invalid) regex that contains the placeholder symbol", function (assert){
@@ -95,8 +95,8 @@
 			oControl.setPlaceholderSymbol(sPlaceholderSymbol);
 			oControl.addRule(oDefinition);
 
-			equal(oErrorSpy.calledOnce, true, "Error log called");
-			equal(oErrorSpy.getCall(0).args[0],
+			assert.equal(oErrorSpy.calledOnce, true, "Error log called");
+			assert.equal(oErrorSpy.getCall(0).args[0],
 					"Rejecting input mask rule because it includes the currently set placeholder symbol.",
 					"Verify the exact error");
 		});
@@ -158,20 +158,20 @@
 			this.clock.tick(1000);
 			qutils.triggerKeypress(oControl.getDomRef(), "4");
 			//Assert
-			equal(getMaskInputDomValue(oControl), "ISBN4_-__", "After setValue('') and retyping in the mask, previous value should not retain in DOM");
+			assert.equal(getMaskInputDomValue(oControl), "ISBN4_-__", "After setValue('') and retyping in the mask, previous value should not retain in DOM");
 
 			//Act
 			jQuery(oOtherControl).focus();
 			this.clock.tick(1000);
 			//Assert
-			equal(oControl.getValue(), "ISBN4_-__",  "After setValue('') and retyping in the mask, previous value should not retain as 'value' property.")
+			assert.equal(oControl.getValue(), "ISBN4_-__",  "After setValue('') and retyping in the mask, previous value should not retain as 'value' property.")
 			//Cleanup
 			oOtherControl.destroy();
 		});
 
 		QUnit.test("Placeholder symbol default value", function (assert){
 			var oControl = this.oMaskInput;
-			equal(oControl.getPlaceholderSymbol(), "_", "the placeholder symbol default value should be '_'");
+			assert.equal(oControl.getPlaceholderSymbol(), "_", "the placeholder symbol default value should be '_'");
 		});
 
 		QUnit.test("Placeholder symbol setter", function (assert){
@@ -202,7 +202,7 @@
 				oControl.setPlaceholderSymbol(sSymbol);
 				ok(oSetterSpy.notCalled, "Invalid placeholder symbol [" + sSymbol + "] is not accepted");
 				ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sSymbol + "] setPlaceholderSymbol logs error.");
-				equal(oErrorSpy.getCall(0).args[0], "Invalid placeholder symbol string given",
+				assert.equal(oErrorSpy.getCall(0).args[0], "Invalid placeholder symbol string given",
 						"Verify the exact error when setPlaceholderSymbol is called with invalid parameter [" + sSymbol + "]");
 			}
 		});
@@ -219,10 +219,10 @@
 						regex: "[0-9]"
 					})],
 				i = 0;
-			equal(oControl.getRules().length, aExpectedDefaultRules.length, "2 default rules");
+			assert.equal(oControl.getRules().length, aExpectedDefaultRules.length, "2 default rules");
 			for (i = 0; i < 2; i++) {
-				equal(oControl.getRules()[i].getMaskFormatSymbol(), aExpectedDefaultRules[i].getMaskFormatSymbol(), "Mask symbol for rule [" + (i + 1) + "]");
-				equal(oControl.getRules()[i].getRegex(), aExpectedDefaultRules[i].getRegex(), "Mask regex for rule [" + (i + 1) + "]");
+				assert.equal(oControl.getRules()[i].getMaskFormatSymbol(), aExpectedDefaultRules[i].getMaskFormatSymbol(), "Mask symbol for rule [" + (i + 1) + "]");
+				assert.equal(oControl.getRules()[i].getRegex(), aExpectedDefaultRules[i].getRegex(), "Mask regex for rule [" + (i + 1) + "]");
 			}
 		});
 
@@ -235,8 +235,8 @@
 				maskFormatSymbol: "~",
 				regex: '[{}]'
 			}));
-			equal(oControl.getRules()[2].getMaskFormatSymbol(), "~", "There must be a rule with mask format symbol '~'");
-			equal(oControl.getRules()[2].getRegex(), "[{}]", "The rule with mask format symbol '~' regex must be the last one set");
+			assert.equal(oControl.getRules()[2].getMaskFormatSymbol(), "~", "There must be a rule with mask format symbol '~'");
+			assert.equal(oControl.getRules()[2].getRegex(), "[{}]", "The rule with mask format symbol '~' regex must be the last one set");
 		});
 
 		QUnit.test("Single escaped character", function (assert){
@@ -401,13 +401,13 @@
 			this.oMaskSerialNumber.setValue("31 / 12 / 1981");
 			jQuery(this.oMaskSerialNumber).focus();
 			this.clock.tick(1000);
-			equal(getMaskInputDomValue(this.oMaskSerialNumber), "ZXYI-3112-1981-____", "'31 / 12 / 1981' inside serial" +
+			assert.equal(getMaskInputDomValue(this.oMaskSerialNumber), "ZXYI-3112-1981-____", "'31 / 12 / 1981' inside serial" +
 			" number 'ZXYI-9999-9999-9999'");
 
 			this.oMaskPhoneNumber.setValue("31 / 12 / 1981");
 			jQuery(this.oMaskPhoneNumber).focus();
 			this.clock.tick(1000);
-			equal(getMaskInputDomValue(this.oMaskPhoneNumber), "(02)-311-219", "'31 / 12 / 1981' inside phone number" +
+			assert.equal(getMaskInputDomValue(this.oMaskPhoneNumber), "(02)-311-219", "'31 / 12 / 1981' inside phone number" +
 			" '(02)-***-***'");
 		});
 
@@ -600,7 +600,7 @@
 			this.clock.tick(1000);
 
 			ok(this.spyChangeEvent.called, "Change event must be fired");
-			equal(this.oChangeListenerPassedEvent.mParameters.value, "1__", "Change event must have an exact value");
+			assert.equal(this.oChangeListenerPassedEvent.mParameters.value, "1__", "Change event must have an exact value");
 		});
 
 		QUnit.test("Change event must not be called unless ENTER or focusout", function (assert){
@@ -617,7 +617,7 @@
 
 			qutils.triggerKeydown(jQuery(oControl.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
 
-			equal(this.spyChangeEvent.callCount, 1, "Change event must be called exactly once");
+			assert.equal(this.spyChangeEvent.callCount, 1, "Change event must be called exactly once");
 		});
 
 		QUnit.test("Change event must not be called if Escape", function (assert){
@@ -641,7 +641,7 @@
 			jQuery(this.oOtherControl).focus();
 			this.clock.tick(1000);
 			ok(this.spyChangeEvent.called, "Change event must be called");
-			equal(this.oChangeListenerPassedEvent.mParameters.value, "", "Change event must have an exact value");
+			assert.equal(this.oChangeListenerPassedEvent.mParameters.value, "", "Change event must have an exact value");
 		});
 
 		QUnit.test("Change event must not be called if existing value is not really changed", function(assert){
@@ -862,7 +862,7 @@
 					setCursorPosition(iPos, oControl);
 				}
 				qutils.triggerKeypress(oControl.getDomRef(), sChar);
-				equal(oControl._getInputValue(), sExpectedValue, "Typing '" + sChar + "' at position [" +
+				assert.equal(oControl._getInputValue(), sExpectedValue, "Typing '" + sChar + "' at position [" +
 				(iPos === -1 ? "current" : iPos) + "] should resolve to a certain value");
 			}
 		});
@@ -917,7 +917,7 @@
 			var oSelection = getCurrentSelection(oControl);
 
 			ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
-			equal(oSelection.iFrom, 2, "Cursor position.");
+			assert.equal(oSelection.iFrom, 2, "Cursor position.");
 		});
 
 		QUnit.test("Escape position the cursor at the first repalcable character", function (assert){
@@ -930,7 +930,7 @@
 
 			var oSelection = getCurrentSelection(oControl);
 			ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
-			equal(oSelection.iFrom, 0, "Cursor position.");
+			assert.equal(oSelection.iFrom, 0, "Cursor position.");
 		});
 
 		QUnit.test("Click on mask input with an existing value selects the whole value", function (assert){
@@ -939,8 +939,8 @@
 			this.clock.tick(1000);
 
 			var oSelection = getCurrentSelection(oControl);
-			equal(oSelection.iFrom, 0);
-			equal(oSelection.iTo, 5);
+			assert.equal(oSelection.iFrom, 0);
+			assert.equal(oSelection.iTo, 5);
 		});
 
 		QUnit.test("Click on mask input with empty value should position the cursor at the first editable position", function (assert){
@@ -967,7 +967,7 @@
 
 			this.sendAndValidate(-1, "c", "ab-c_");
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-			equal(oControl.getValue(), "ab-__", "The value before focusing-in must be restored");
+			assert.equal(oControl.getValue(), "ab-__", "The value before focusing-in must be restored");
 		});
 
 		QUnit.test("OnBeforeRendering captures any validation errors.", function (assert){
@@ -981,7 +981,7 @@
 
 			this.clock.tick(1000);
 			ok(oWarningSpy.calledOnce, "Warning issued.")
-			equal(oWarningSpy.getCall(0).args[0],
+			assert.equal(oWarningSpy.getCall(0).args[0],
 					"Invalid mask input: Empty mask. Duplicated rule's maskFormatSymbol [+]", "Message");
 		});
 
@@ -1085,13 +1085,13 @@
 			this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
 			this.clock.tick(1000);
-			equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
+			assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
 
 			this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
 			setCursorPosition(0, oControl);
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 			this.clock.tick(1000);
-			equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
+			assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
 
 			this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
 			this.sendAndValidate(1, "2", "12:__:__ ", oControl);
@@ -1099,7 +1099,7 @@
 			this.clock.tick(1000);
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
 			this.clock.tick(1000);
-			equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
+			assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
 
 			this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
 			this.sendAndValidate(1, "2", "12:__:__ ", oControl);
@@ -1107,7 +1107,7 @@
 			this.clock.tick(1000);
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 			this.clock.tick(1000);
-			equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
+			assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
 		}
 
 		function setCursorPosition(iPosition, oControl) {
@@ -1170,8 +1170,8 @@
 
 		function checkCursorIsAtPosition (oControl, iExpectedPosition, sMessagePrefix) {
 			var oSelection = getCurrentSelection(oControl);
-			equal(oSelection.iFrom, oSelection.iTo, "Prerequisites: there must not be any selection(selectionStart & selectionEnd must be equal)");
-			equal(oSelection.iFrom, iExpectedPosition, sMessagePrefix +": Cursor position check");
+			assert.equal(oSelection.iFrom, oSelection.iTo, "Prerequisites: there must not be any selection(selectionStart & selectionEnd must be equal)");
+			assert.equal(oSelection.iFrom, iExpectedPosition, sMessagePrefix +": Cursor position check");
 		}
 
 		function checkSelection(oControl, iExpectedStartPosition, iExpectedEndPosition, sMessagePrefix) {

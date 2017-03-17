@@ -25,7 +25,7 @@
 		<script>
 
 		function intEqual(actual, expected, message) {
-			equal(Math.round(actual), expected, message);
+			assert.equal(Math.round(actual), expected, message);
 		}
 
 		function _getMaxScrollLeft(container) {
@@ -135,10 +135,10 @@
 			QUnit.test("Scrolling - immediate", function(assert) {
 				assert.expect(4);
 
-				equal(getScrollPos(oSC2.getId(), "left"), 0, "ScrollContainer 2 should be scrolled to position 0");
+				assert.equal(getScrollPos(oSC2.getId(), "left"), 0, "ScrollContainer 2 should be scrolled to position 0");
 				oSC2.scrollTo(100,0,0);
 
-				equal(getScrollPos(oSC2.getId(), "left"), -100, "ScrollContainer 2 should be scrolled to position 100");
+				assert.equal(getScrollPos(oSC2.getId(), "left"), -100, "ScrollContainer 2 should be scrolled to position 100");
 				intEqual(oSC2._oScroller._scrollX, 100, "Internally stored x scrolling position should be 100");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 			});
@@ -166,7 +166,7 @@
 
 				oSC2.scrollTo(110,50,0);
 
-				equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
+				assert.equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 
 				intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0"); // no y scrolling possible, so 0 should be the position
@@ -177,7 +177,7 @@
 
 				oSC2.rerender();
 
-				equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
+				assert.equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 				intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
@@ -191,7 +191,7 @@
 				oSC2.scrollTo(9999,0,0); // try to scroll way beyond the end of the content
 
 				window.setTimeout(function(){
-					equal(getScrollPos(oSC2.getId(), "left"), -650, "ScrollContainer 2 should be scrolled to position 650");
+					assert.equal(getScrollPos(oSC2.getId(), "left"), -650, "ScrollContainer 2 should be scrolled to position 650");
 					intEqual(oSC2._oScroller._scrollX, 650, "Internally stored x scrolling position should be 650");
 					intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
@@ -209,7 +209,7 @@
 					oSC2.scrollTo(9999,0,0);  // again try to scroll way beyond the end of the content - but this time the content is a bit larger, iscroll should have noticed
 
 					window.setTimeout(function(){
-						equal(getScrollPos(oSC2.getId(), "left"), -750, "ScrollContainer 2 should be scrolled to position 750");
+						assert.equal(getScrollPos(oSC2.getId(), "left"), -750, "ScrollContainer 2 should be scrolled to position 750");
 
 						intEqual(oSC2._oScroller._scrollX, 750, "Internally stored x scrolling position should be 750");
 						intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
@@ -321,8 +321,8 @@
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "END", false, false, true);
 
 				//in this case Math.ceil is using instead of Math.round because of issue in Chrome with oDomRef.scrollHeight
-				equal(Math.ceil(oSC4.$().scrollLeft()), _getMaxScrollLeft(oSC4), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
-				equal(Math.ceil(oSC4.$().scrollTop()), _getMaxScrollTop(oSC4), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
+				assert.equal(Math.ceil(oSC4.$().scrollLeft()), _getMaxScrollLeft(oSC4), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
+				assert.equal(Math.ceil(oSC4.$().scrollTop()), _getMaxScrollTop(oSC4), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
 			});
 
 			QUnit.test("Press [CTRL] + [HOME]", function(assert) {

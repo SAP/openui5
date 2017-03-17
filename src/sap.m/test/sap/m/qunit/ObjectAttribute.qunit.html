@@ -116,7 +116,7 @@
 		oObjectAttribute.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
+		assert.equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
 
 		// Clean up
 		oObjectAttribute.destroy();
@@ -189,7 +189,7 @@
 
 		ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
 		if(!sap.ui.Device.browser.internet_explorer) {
-			equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
+			assert.equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
 		}
 
 		//Cleanup
@@ -327,7 +327,7 @@
         oObjectAttribute.placeAt("qunit-fixture");
         sap.ui.getCore().applyChanges();
 
-        equal(oObjectAttribute.$().find('.sapMText').text(), "a: \u200f1 2\u200f", "Numbers are read backwards.");
+        assert.equal(oObjectAttribute.$().find('.sapMText').text(), "a: \u200f1 2\u200f", "Numbers are read backwards.");
 
         // Clean up
         oObjectAttribute.destroy();

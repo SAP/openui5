@@ -177,7 +177,7 @@
 
 			// default comment feeder if comments
 			ok(jQuery.sap.byId("Chunk2").find("#Chunk2-CommentFeeder").get(0), "Defaut visible comment feeder for chunks with comments");
-			equal(sap.ui.getCore().getControl("Chunk2-CommentFeeder").getThumbnailSrc(), "../images/feeder/w_01.png", "comment feeder thumbnail source");
+			assert.equal(sap.ui.getCore().getControl("Chunk2-CommentFeeder").getThumbnailSrc(), "../images/feeder/w_01.png", "comment feeder thumbnail source");
 
 			//comment
 			ok(!jQuery.sap.byId("commentChunk1").children("section").get(0), "No comment section found for comment-Chunk");
@@ -195,25 +195,25 @@
 			});
 
 			// sender thumb
-			equal(jQuery.sap.byId("Chunk1-thumb").attr("src"), "../images/feeder/m_01.png", "Sender image rendered for chunk");
-			equal(jQuery.sap.byId("commentChunk3-thumb").attr("src"), "../images/feeder/m_01.png", "Sender image rendered for comment chunk");
+			assert.equal(jQuery.sap.byId("Chunk1-thumb").attr("src"), "../images/feeder/m_01.png", "Sender image rendered for chunk");
+			assert.equal(jQuery.sap.byId("commentChunk3-thumb").attr("src"), "../images/feeder/m_01.png", "Sender image rendered for comment chunk");
 
 			// sender link
-			equal(jQuery.sap.byId("Chunk1-sender").text(), "Sender", "Link for sender name is rendered" );
+			assert.equal(jQuery.sap.byId("Chunk1-sender").text(), "Sender", "Link for sender name is rendered" );
 
 			// @-reference
-			equal(jQuery.sap.byId("Chunk2-Ref0").text(), "@Reference", "Link for @-reference is rendered" );
+			assert.equal(jQuery.sap.byId("Chunk2-Ref0").text(), "@Reference", "Link for @-reference is rendered" );
 
 			// date/time (if expand button exists only compate first part of span content)
-			equal(jQuery.sap.byId("Chunk1").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for Chunk without comments");
-			equal(jQuery.sap.byId("Chunk2").children(".sapUiFeedChunkByline").text().slice(0,sTimestamp.length), sTimestamp, "Timestamp rendered for Chunk with comments");
-			equal(jQuery.sap.byId("commentChunk2").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for comment-Chunk");
+			assert.equal(jQuery.sap.byId("Chunk1").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for Chunk without comments");
+			assert.equal(jQuery.sap.byId("Chunk2").children(".sapUiFeedChunkByline").text().slice(0,sTimestamp.length), sTimestamp, "Timestamp rendered for Chunk with comments");
+			assert.equal(jQuery.sap.byId("commentChunk2").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for comment-Chunk");
 
 			// no expand button if short text
 			ok(!jQuery.sap.byId("Chunk1-exp").get(0), "No expand button if text is short");
 
 			// number of comments
-			equal(jQuery.sap.byId("Chunk2").find(".sapUiFeedChunkComments").text().slice(0,1), "3", "Number of comments displayed");
+			assert.equal(jQuery.sap.byId("Chunk2").find(".sapUiFeedChunkComments").text().slice(0,1), "3", "Number of comments displayed");
 
 			// all comments link
 			ok(jQuery.sap.byId("Chunk2-all").get(0), "Link to show all comments displayed");
@@ -248,43 +248,43 @@
 
 		QUnit.test("delete function", function(assert) {
 			qutils.triggerMouseEvent("commentChunk2-delete", "click");
-			equal(sEvent, "DELETED", "Delete event fired on press on comments delete button");
-			equal(sEventSourceId, "commentChunk2", "Delete event on right ID");
+			assert.equal(sEvent, "DELETED", "Delete event fired on press on comments delete button");
+			assert.equal(sEventSourceId, "commentChunk2", "Delete event on right ID");
 			sEvent = "";
 			sEventSourceId = "";
 			qutils.triggerMouseEvent("Chunk1-toolsButton", "click");
 			qutils.triggerMouseEvent("Chunk1-actDelete", "click");
-			equal(sEvent, "DELETED", "Delete event fired on press delete item on chunk action menu");
-			equal(sEventSourceId, "Chunk1", "Delete event on right ID");
+			assert.equal(sEvent, "DELETED", "Delete event fired on press delete item on chunk action menu");
+			assert.equal(sEventSourceId, "Chunk1", "Delete event on right ID");
 			sEvent = "";
 			sEventSourceId = "";
 		});
 
 		QUnit.test("Click on sender", function(assert) {
 			qutils.triggerMouseEvent("Chunk1-sender", "click");
-			equal(sEvent, "SenderClicked", "senderClicked event on chunk");
-			equal(sEventSourceId, "Chunk1", "Event on right ID");
+			assert.equal(sEvent, "SenderClicked", "senderClicked event on chunk");
+			assert.equal(sEventSourceId, "Chunk1", "Event on right ID");
 			sEvent = "";
 			sEventSourceId = "";
 			qutils.triggerMouseEvent("commentChunk2-sender", "click");
-			equal(sEvent, "SenderClicked", "senderClicked event on comment");
-			equal(sEventSourceId, "commentChunk2", "Event on right ID");
+			assert.equal(sEvent, "SenderClicked", "senderClicked event on comment");
+			assert.equal(sEventSourceId, "commentChunk2", "Event on right ID");
 			sEvent = "";
 			sEventSourceId = "";
 		});
 
 		QUnit.test("Click on @-reference", function(assert) {
 			qutils.triggerMouseEvent("Chunk2-Ref0", "click");
-			equal(sEvent, "ReferenceClicked", "@-reference clicked event on chunk");
-			equal(sEventSourceId, "Chunk2", "Event on right ID");
-			equal(sEventParameter, "@Reference", "@-reference content returned by event");
+			assert.equal(sEvent, "ReferenceClicked", "@-reference clicked event on chunk");
+			assert.equal(sEventSourceId, "Chunk2", "Event on right ID");
+			assert.equal(sEventParameter, "@Reference", "@-reference content returned by event");
 			sEvent = "";
 			sEventSourceId = "";
 			sEventParameter = "";
 			qutils.triggerMouseEvent("commentChunk2-Ref1", "click");
-			equal(sEvent, "ReferenceClicked", "@-reference clicked event on comment");
-			equal(sEventSourceId, "commentChunk2", "Event on right ID");
-			equal(sEventParameter, "@Reference2", "@-reference content returned by event");
+			assert.equal(sEvent, "ReferenceClicked", "@-reference clicked event on comment");
+			assert.equal(sEventSourceId, "commentChunk2", "Event on right ID");
+			assert.equal(sEventParameter, "@Reference2", "@-reference content returned by event");
 			sEvent = "";
 			sEventSourceId = "";
 			sEventParameter = "";
@@ -293,43 +293,43 @@
 		QUnit.test("Click on action buttons", function(assert) {
 			var done = assert.async();
 			qutils.triggerMouseEvent("Chunk1-ActFlag", "click");
-			equal(sEvent, "ToggleFlagged", "Event fired on click on flag action button");
-			equal(sEventSourceId, "Chunk1", "Event on right ID");
-			equal(sEventParameter, true, "flgged state returned from event");
-			equal(oChunk1.getFlagged(), true, "flgged state returned from conrol");
+			assert.equal(sEvent, "ToggleFlagged", "Event fired on click on flag action button");
+			assert.equal(sEventSourceId, "Chunk1", "Event on right ID");
+			assert.equal(sEventParameter, true, "flgged state returned from event");
+			assert.equal(oChunk1.getFlagged(), true, "flgged state returned from conrol");
 			sEvent = "";
 			sEventSourceId = "";
 			sEventParameter = "";
 
 			qutils.triggerMouseEvent("Chunk1-ActFavorite", "click");
-			equal(sEvent, "ToggleFavorite", "Event fired on click on favorite action button");
-			equal(sEventSourceId, "Chunk1", "Event on right ID");
-			equal(sEventParameter, false, "favorite state returned from event");
-			equal(oChunk1.getFavorite(), false, "favorite state returned from conrol");
+			assert.equal(sEvent, "ToggleFavorite", "Event fired on click on favorite action button");
+			assert.equal(sEventSourceId, "Chunk1", "Event on right ID");
+			assert.equal(sEventParameter, false, "favorite state returned from event");
+			assert.equal(oChunk1.getFavorite(), false, "favorite state returned from conrol");
 			sEvent = "";
 			sEventSourceId = "";
 			sEventParameter = "";
 
 			qutils.triggerMouseEvent("Chunk1-ActShare", "click");
-			equal(sEvent, "ToggleShared", "Event fired on click on share action button");
-			equal(sEventSourceId, "Chunk1", "Event on right ID");
-			equal(sEventParameter, true, "shared state returned from event");
-			equal(oChunk1.getShared(), true, "shared state returned from conrol");
+			assert.equal(sEvent, "ToggleShared", "Event fired on click on share action button");
+			assert.equal(sEventSourceId, "Chunk1", "Event on right ID");
+			assert.equal(sEventParameter, true, "shared state returned from event");
+			assert.equal(oChunk1.getShared(), true, "shared state returned from conrol");
 			sEvent = "";
 			sEventSourceId = "";
 			sEventParameter = "";
 
 			qutils.triggerMouseEvent("Chunk2-ActInspect", "click");
-			equal(sEvent, "Inspect", "Event fired on press on inspect action button");
-			equal(sEventSourceId, "Chunk2", "Delete event on right ID");
+			assert.equal(sEvent, "Inspect", "Event fired on press on inspect action button");
+			assert.equal(sEventSourceId, "Chunk2", "Delete event on right ID");
 			sEvent = "";
 			sEventSourceId = "";
 
 			qutils.triggerMouseEvent("Chunk1-toolsButton", "click");
 			qutils.triggerMouseEvent("MenuItem1", "click");
-			equal(sEvent, "ActionItemSelected", "event fired on press item on chunk action menu");
-			equal(sEventSourceId, "Chunk1", "Event on right ID");
-			equal(sEventParameter, "MenuItem1", "item in Action-MenuButton selected");
+			assert.equal(sEvent, "ActionItemSelected", "event fired on press item on chunk action menu");
+			assert.equal(sEventSourceId, "Chunk1", "Event on right ID");
+			assert.equal(sEventParameter, "MenuItem1", "item in Action-MenuButton selected");
 			sEvent = "";
 			sEventSourceId = "";
 			sEventParameter = "";
@@ -366,14 +366,14 @@
 			jQuery.sap.byId("Chunk2-CommentFeeder-input").text("Test");
 			qutils.triggerKeyup("Chunk2-CommentFeeder-input", jQuery.sap.KeyCodes.T, false, false, false);
 			qutils.triggerMouseEvent("Chunk2-CommentFeeder-send", "click");
-			equal(sEvent, "CommentAdded", "event fired on adding a new comment");
-			equal(sEventSourceId, "Chunk2", "Event on right ID");
+			assert.equal(sEvent, "CommentAdded", "event fired on adding a new comment");
+			assert.equal(sEventSourceId, "Chunk2", "Event on right ID");
 			var aComments = oChunk2.getComments();
 			var iLastComment = aComments.length-1;
-			equal(sEventParameter.getId(), aComments[iLastComment].getId(), "comment returned from event must be the last one in aggregation");
-			equal(aComments[iLastComment].getText(), "Test","Text of the comment");
-			equal(aComments[iLastComment].getSender(), "FeederSender","Sender of the comment");
-			equal(aComments[iLastComment].getThumbnailSrc(), "../images/feeder/w_01.png","Thunmnail source of the comment");
+			assert.equal(sEventParameter.getId(), aComments[iLastComment].getId(), "comment returned from event must be the last one in aggregation");
+			assert.equal(aComments[iLastComment].getText(), "Test","Text of the comment");
+			assert.equal(aComments[iLastComment].getSender(), "FeederSender","Sender of the comment");
+			assert.equal(aComments[iLastComment].getThumbnailSrc(), "../images/feeder/w_01.png","Thunmnail source of the comment");
 			sEvent = "";
 			sEventSourceId = "";
 			sEventParameter = "";
@@ -382,10 +382,10 @@
 				// new comment must be displayed at last one
 				aComments = jQuery.sap.byId("Chunk2").children("section").children("article");
 				iLastComment = aComments.length-1;
-				equal(aComments.get(iLastComment).id, "Chunk2-new-3", "New comment must be the first one");
+				assert.equal(aComments.get(iLastComment).id, "Chunk2-new-3", "New comment must be the first one");
 
 				// comment counter must be increased
-				equal(jQuery.sap.byId("Chunk2").find(".sapUiFeedChunkComments").text().slice(0,1), "4", "Number of comments increased");
+				assert.equal(jQuery.sap.byId("Chunk2").find(".sapUiFeedChunkComments").text().slice(0,1), "4", "Number of comments increased");
 
 				done();
 			};
@@ -399,7 +399,7 @@
 
 			var delayedCall = function() {
 				ok(jQuery.sap.byId("Chunk2-new-3").get(0) && jQuery.sap.byId("commentChunk1").get(0) && jQuery.sap.byId("commentChunk2").get(0) && jQuery.sap.byId("commentChunk3").get(0), "All comments displayed");
-				equal(jQuery.sap.byId("Chunk2-all").text(), rb.getText('FEED_MAX_COMMENTS'), "Link to show only max. number of comments if all comments are shown");
+				assert.equal(jQuery.sap.byId("Chunk2-all").text(), rb.getText('FEED_MAX_COMMENTS'), "Link to show only max. number of comments if all comments are shown");
 				done();
 			};
 			setTimeout(delayedCall, 0);
@@ -412,7 +412,7 @@
 
 			var delayedCall = function() {
 				ok(jQuery.sap.byId("Chunk2-new-3").get(0) && !jQuery.sap.byId("commentChunk1").get(0) && !jQuery.sap.byId("commentChunk2").get(0) && jQuery.sap.byId("commentChunk3").get(0), "Only Max. number of comments displayed");
-				equal(jQuery.sap.byId("Chunk2-all").text(), rb.getText('FEED_ALL_COMMENTS'), "Link to show only max. number of comments if all comments are shown");
+				assert.equal(jQuery.sap.byId("Chunk2-all").text(), rb.getText('FEED_ALL_COMMENTS'), "Link to show only max. number of comments if all comments are shown");
 				done();
 			};
 			setTimeout(delayedCall, 0);

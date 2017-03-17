@@ -37,7 +37,7 @@
 		// test property accessor methods
 
 		QUnit.test("Text in HTML", function(assert) {
-			equal(oLink1.$().text(), sText, "oLink1 text should be correct");
+			assert.equal(oLink1.$().text(), sText, "oLink1 text should be correct");
 		});
 
 		QUnit.test("Width", function(assert) {
@@ -130,10 +130,10 @@
 		});
 
 		QUnit.test("Disabled link should not have the preseted href", function(assert) {
-			equal(oLink2.$().attr("href"), "#", "oLink2 href should be '#'");
+			assert.equal(oLink2.$().attr("href"), "#", "oLink2 href should be '#'");
 			oLink2.setEnabled(true);
 			sap.ui.getCore().applyChanges();
-			equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
+			assert.equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
 			oLink2.destroy();
 		});
 

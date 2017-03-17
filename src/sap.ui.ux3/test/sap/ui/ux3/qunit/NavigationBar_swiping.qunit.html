@@ -54,7 +54,7 @@
 			var oList = jQuery.sap.domById("n1-list");
 			var iTouchPosX = 400;
 
-			equal(oList.scrollLeft, 0, "list should not be scrolled initially");
+			assert.equal(oList.scrollLeft, 0, "list should not be scrolled initially");
 
 			// touch the bar
 			sap.ui.test.qunit.triggerTouchEvent("touchstart", oList, {originalEvent:{touches:[{pageX:iTouchPosX}]}, touches:[{pageX:iTouchPosX}]});
@@ -63,20 +63,20 @@
 				// move the finger
 				sap.ui.test.qunit.triggerTouchEvent("touchmove", oList, {originalEvent:{touches:[{pageX:(iTouchPosX-100)}]}, touches:[{pageX:(iTouchPosX-100)}]});
 
-				equal(isForwardVisible(), true, "forward arrow should be visible");
-				equal(isBackVisible(), true, "back arrow should be visible");
-				equal(oList.scrollLeft, 100, "list should be scrolled now by 100px");
+				assert.equal(isForwardVisible(), true, "forward arrow should be visible");
+				assert.equal(isBackVisible(), true, "back arrow should be visible");
+				assert.equal(oList.scrollLeft, 100, "list should be scrolled now by 100px");
 
 				setTimeout(function(){
 					// move the finger further
 					sap.ui.test.qunit.triggerTouchEvent("touchmove", oList, {originalEvent:{touches:[{pageX:(iTouchPosX-200)}]}, touches:[{pageX:(iTouchPosX-200)}]});
 
-					equal(oList.scrollLeft, 200, "list should be scrolled now by 200px");
+					assert.equal(oList.scrollLeft, 200, "list should be scrolled now by 200px");
 
 					// remove the finger
 					sap.ui.test.qunit.triggerTouchEvent("touchend", oList);
 
-					equal(oList.scrollLeft, 200, "list should still be scrolled now by 200px");
+					assert.equal(oList.scrollLeft, 200, "list should still be scrolled now by 200px");
 
 					setTimeout(function(){
 
@@ -86,7 +86,7 @@
 
 						setTimeout(function(){
 							// verify that inertia scrolling has stopped
-							equal(oList.scrollLeft, finalScrollLeft, "list should be scrolled no further than before (inertia scrolling must have ended)");
+							assert.equal(oList.scrollLeft, finalScrollLeft, "list should be scrolled no further than before (inertia scrolling must have ended)");
 
 							done();
 						}, 500);

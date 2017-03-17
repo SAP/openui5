@@ -46,18 +46,18 @@
 			oCtrl[sMutator].apply(oCtrl);
 		}
 
-		equal(_get().length, 0, "Initial number of "+sName+" controls");
+		assert.equal(_get().length, 0, "Initial number of "+sName+" controls");
 		_mutator(false, [new oType(sName+"_1")]);
-		equal(_get().length, 1, "Number of "+sName+" controls after add");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after add");
 		_mutator(true, [new oType(sName+"_2"), 0]);
-		equal(_get().length, 2, "Number of "+sName+" controls after insert");
+		assert.equal(_get().length, 2, "Number of "+sName+" controls after insert");
 		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
 		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
 		oCtrl[oAggMetaData._sRemoveMutator](0);
-		equal(_get().length, 1, "Number of "+sName+" controls after remove");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after remove");
 		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
 		_removeAll();
-		equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
+		assert.equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
 	};
 
 	function checkVisibility(){

@@ -146,7 +146,7 @@
 			var done = assert.async();
 			var p1 = asyncAction(false, "X", 10, false);
 			p1.then(function(oVal){
-				equal(oVal, "X", "Success Case - promise.then");
+				assert.equal(oVal, "X", "Success Case - promise.then");
 			}, function(oVal){
 				ok(false, "Success Case - promise.then, Fail should not be called");
 			});
@@ -156,7 +156,7 @@
 				ok(false, "Fail Case - promise.then, Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "Y", "Fail Case - Promise.then");
+				assert.equal(oVal, "Y", "Fail Case - Promise.then");
 				done();
 			});
 		});
@@ -166,7 +166,7 @@
 			var p1 = asyncAction(false, "X", 10, false);
 			setTimeout(function(){
 				p1.then(function(oVal){
-					equal(oVal, "X", "Success Case - promise.then");
+					assert.equal(oVal, "X", "Success Case - promise.then");
 				}, function(oVal){
 					ok(false, "Success Case - promise.then, Fail should not be called");
 				});
@@ -178,7 +178,7 @@
 					ok(false, "Fail Case - promise.then, Success should not be called");
 					done();
 				}, function(oVal){
-					equal(oVal, "Y", "Fail Case - Promise.then");
+					assert.equal(oVal, "Y", "Fail Case - Promise.then");
 					done();
 				});
 			}, 40);
@@ -196,20 +196,20 @@
 				fnResolveSecondPromise = fnResolve;
 			});
 
-			equal(iCounter++, 0, "Synchronous Before");
+			assert.equal(iCounter++, 0, "Synchronous Before");
 
 			pResolvedDirectly.then(function() {
-				equal(iCounter++, 2, "First promise.then() - Resolved after synchronous code");
+				assert.equal(iCounter++, 2, "First promise.then() - Resolved after synchronous code");
 			});
 
 			pResolvedLater.then(function() {
-				equal(iCounter++, 3, "Second promise.then() - Resolved after first promise.then()");
+				assert.equal(iCounter++, 3, "Second promise.then() - Resolved after first promise.then()");
 				done();
 			});
 
 			fnResolveSecondPromise();
 
-			equal(iCounter++, 1, "Synchronous After - befor promise.then()");
+			assert.equal(iCounter++, 1, "Synchronous After - befor promise.then()");
 		});
 
 
@@ -229,7 +229,7 @@
 
 			var p2 = asyncAction(true, "Y", 10, false);
 			p2["catch"](function(oVal){
-				equal(oVal, "Y", "Fail Case - Promise.catch");
+				assert.equal(oVal, "Y", "Fail Case - Promise.catch");
 				done();
 			});
 		});
@@ -246,7 +246,7 @@
 			var p2 = asyncAction(true, "Y", 10, false);
 			setTimeout(function(){
 				p2["catch"](function(oVal){
-					equal(oVal, "Y", "Fail Case - Promise.catch");
+					assert.equal(oVal, "Y", "Fail Case - Promise.catch");
 					done();
 				});
 			}, 40);
@@ -268,7 +268,7 @@
 			}
 
 			p2.then(function(oVal){
-				equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
+				assert.equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
 			}, function(oVal){
 				ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
 			});
@@ -279,7 +279,7 @@
 				ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "Y", "Fail Case - Promise.resolve(Thenable)");
+				assert.equal(oVal, "Y", "Fail Case - Promise.resolve(Thenable)");
 				done();
 			});
 		});
@@ -289,7 +289,7 @@
 			var d1 = asyncAction_Deferred(false, "X", 10, false);
 			var p1 = P.resolve(d1);
 			p1.then(function(oVal){
-				equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
+				assert.equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
 			}, function(oVal){
 				ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
 			});
@@ -300,7 +300,7 @@
 				ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "Y", "Fail Case - Promise.resolve(Thenable)");
+				assert.equal(oVal, "Y", "Fail Case - Promise.resolve(Thenable)");
 				done();
 			});
 		});
@@ -310,7 +310,7 @@
 			function check(oValue, bStart){
 				var p = P.resolve(oValue);
 				p.then(function(oVal){
-					equal(oVal, oValue, "Success Case - Promise.resolve("+oValue+")");
+					assert.equal(oVal, oValue, "Success Case - Promise.resolve("+oValue+")");
 					if(bStart){
 						done();
 					}
@@ -345,7 +345,7 @@
             	};
 
             P.resolve(thenable).then(function(oVal){
-				equal(oVal, "X", "Success with correct value");
+				assert.equal(oVal, "X", "Success with correct value");
 				iSuccessCount++;
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -353,8 +353,8 @@
 			});
 
             setTimeout(function(){
-            	equal(iSuccessCount, 1, "Success only called once");
-            	equal(iFailCount, 0, "Fail must not be called");
+            	assert.equal(iSuccessCount, 1, "Success only called once");
+            	assert.equal(iFailCount, 0, "Fail must not be called");
             	done();
             }, 10);
 		});
@@ -371,7 +371,7 @@
             	};
 
             P.resolve(thenable).then(function(oVal){
-				equal(oVal, "X", "Success with correct value");
+				assert.equal(oVal, "X", "Success with correct value");
 				iSuccessCount++;
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -379,8 +379,8 @@
 			});
 
             setTimeout(function(){
-            	equal(iSuccessCount, 1, "Success only called once");
-            	equal(iFailCount, 0, "Fail must not be called");
+            	assert.equal(iSuccessCount, 1, "Success only called once");
+            	assert.equal(iFailCount, 0, "Fail must not be called");
             	done();
             }, 10);
 		});
@@ -406,8 +406,8 @@
 			});
 
             setTimeout(function(){
-            	equal(iSuccessCount, 0, "Success must not be called");
-            	equal(iFailCount, 1, "Fail only called once");
+            	assert.equal(iSuccessCount, 0, "Success must not be called");
+            	assert.equal(iFailCount, 1, "Fail only called once");
             	done();
             }, 10);
 		});
@@ -433,8 +433,8 @@
 			});
 
             setTimeout(function(){
-            	equal(iSuccessCount, 0, "Success must not be called");
-            	equal(iFailCount, 1, "Fail only called once");
+            	assert.equal(iSuccessCount, 0, "Success must not be called");
+            	assert.equal(iFailCount, 1, "Fail only called once");
             	done();
             }, 10);
 		});
@@ -456,7 +456,7 @@
 						done();
 					}
 				}, function(oVal){
-					equal(oVal, oValue, "Promise.resolve("+oValue+"), Success Case");
+					assert.equal(oVal, oValue, "Promise.resolve("+oValue+"), Success Case");
 					if(bStart){
 						done();
 					}
@@ -487,9 +487,9 @@
 			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
 				ok(jQuery.isArray(oVal), "Result is array");
-				equal(oVal.length, 2, "Result has length 2");
-				equal(oVal[0], "X", "Result[0] is 'X'");
-				equal(oVal[1], "Y", "Result[1] is 'Y'");
+				assert.equal(oVal.length, 2, "Result has length 2");
+				assert.equal(oVal[0], "X", "Result[0] is 'X'");
+				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -504,7 +504,7 @@
 				ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "X", "Result is 'X'");
+				assert.equal(oVal, "X", "Result is 'X'");
 				done();
 			});
 		});
@@ -516,7 +516,7 @@
 				ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "Y", "Result is 'Y'");
+				assert.equal(oVal, "Y", "Result is 'Y'");
 				done();
 			});
 		});
@@ -528,7 +528,7 @@
 				ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "X", "Result is 'X'");
+				assert.equal(oVal, "X", "Result is 'X'");
 				done();
 			});
 		});
@@ -562,9 +562,9 @@
 			var done = assert.async();
 			P.all(["X", new P(function(resolve, reject){resolve("Y");})]).then(function(oVal){
 				ok(jQuery.isArray(oVal), "Result is array");
-				equal(oVal.length, 2, "Result has length 2");
-				equal(oVal[0], "X", "Result[0] is 'X'");
-				equal(oVal[1], "Y", "Result[1] is 'Y'");
+				assert.equal(oVal.length, 2, "Result has length 2");
+				assert.equal(oVal[0], "X", "Result[0] is 'X'");
+				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -586,7 +586,7 @@
 				ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "X", "Result is 'X'");
+				assert.equal(oVal, "X", "Result is 'X'");
 				done();
 			});
 		});
@@ -598,7 +598,7 @@
 				ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "Y", "Result is 'Y'");
+				assert.equal(oVal, "Y", "Result is 'Y'");
 				done();
 			});
 		});
@@ -610,7 +610,7 @@
 				ok(false, "Success should not be called");
 				done();
 			}, function(oVal){
-				equal(oVal, "Y", "Result is 'Y'");
+				assert.equal(oVal, "Y", "Result is 'Y'");
 				done();
 			});
 		});
@@ -619,7 +619,7 @@
 			var done = assert.async();
 			var p = P.race([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 20, false)]);
 			p.then(function(oVal){
-				equal(oVal, "X", "Result is 'X'");
+				assert.equal(oVal, "X", "Result is 'X'");
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -631,7 +631,7 @@
 			var done = assert.async();
 			var p = P.race([asyncAction(false, "X", 20, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
-				equal(oVal, "Y", "Result is 'Y'");
+				assert.equal(oVal, "Y", "Result is 'Y'");
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -643,7 +643,7 @@
 			var done = assert.async();
 			var p = P.race([asyncAction(false, "X", 10, false), asyncAction(true, "Y", 20, false)]);
 			p.then(function(oVal){
-				equal(oVal, "X", "Result is 'X'");
+				assert.equal(oVal, "X", "Result is 'X'");
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -655,7 +655,7 @@
 			var done = assert.async();
 			var p = P.race([asyncAction(true, "X", 20, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
-				equal(oVal, "Y", "Result is 'Y'");
+				assert.equal(oVal, "Y", "Result is 'Y'");
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -696,7 +696,7 @@
 					setTimeout(function(){reject("Y");}, 10);
 				})]);
 			p.then(function(oVal){
-					equal(oVal, "X", "Success Result is 'X'");
+					assert.equal(oVal, "X", "Success Result is 'X'");
 					done();
 			}, function(oVal){
 				ok(false, "Fail should not be called "+oVal);
@@ -718,7 +718,7 @@
 				return asyncAction(false, "2", 10, false);
 			}).then(function(oVal){
 				var sRes = log("C: "+oVal, true);
-				equal(sRes, "A: 1 -> B: X -> C: 2", "Result is: " + sRes);
+				assert.equal(sRes, "A: 1 -> B: X -> C: 2", "Result is: " + sRes);
 				done();
 			});
 		});
@@ -771,7 +771,7 @@
 		QUnit.test(sTestPrefix + "Chain Test 2", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, false, false, false, false], function(sResult){
-				equal(sResult, "A: 1 -> B: 2 -> D: 3 -> SUCCESS: 5", "Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> B: 2 -> D: 3 -> SUCCESS: 5", "Result is: " + sResult);
 				done();
 			}, function(sResult){
 				ok(false, "Fail should not be called");
@@ -781,7 +781,7 @@
 		QUnit.test(sTestPrefix + "Chain Test 3", function(assert) {
 			var done = assert.async();
 			checkChain([true, false, false, false, false, false], function(sResult){
-				equal(sResult, "C: 1 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
+				assert.equal(sResult, "C: 1 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 				done();
 			}, function(sResult){
 				ok(false, "Fail should not be called");
@@ -791,7 +791,7 @@
 		QUnit.test(sTestPrefix + "Chain Test 4", function(assert) {
 			var done = assert.async();
 			checkChain([false, true, false, false, false, false], function(sResult){
-				equal(sResult, "A: 1 -> C: 2 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> C: 2 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 				done();
 			}, function(sResult){
 				ok(false, "Fail should not be called");
@@ -801,7 +801,7 @@
 		QUnit.test(sTestPrefix + "Chain Test 5", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, true, false, false, false], function(sResult){
-				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 				done();
 			}, function(sResult){
 				ok(false, "Fail should not be called");
@@ -811,7 +811,7 @@
 		QUnit.test(sTestPrefix + "Chain Test 6", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, true, true, false, false], function(sResult){
-				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> SUCCESS: 6", "Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> SUCCESS: 6", "Result is: " + sResult);
 				done();
 			}, function(sResult){
 				ok(false, "Fail should not be called");
@@ -821,30 +821,30 @@
 		QUnit.test(sTestPrefix + "Chain Test 7", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, true, true, false, true], function(sResult){
-				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> FAIL: 6 -> SUCCESS: undefined", "Success-Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> FAIL: 6 -> SUCCESS: undefined", "Success-Result is: " + sResult);
 				done();
 			}, function(sResult){
-				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> FAIL: 6", "Fail-Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> FAIL: 6", "Fail-Result is: " + sResult);
 			}, true);
 		});
 
 		QUnit.test(sTestPrefix + "Chain Test 8", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, false, false, true, false], function(sResult){
-				equal(sResult, "A: 1 -> B: 2 -> D: 3 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> B: 2 -> D: 3 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
 				done();
 			}, function(sResult){
-				equal(sResult, "A: 1 -> B: 2 -> D: 3 -> FAIL: 5", "Fail-Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> B: 2 -> D: 3 -> FAIL: 5", "Fail-Result is: " + sResult);
 			}, true);
 		});
 
 		QUnit.test(sTestPrefix + "Chain Test 9", function(assert) {
 			var done = assert.async();
 			checkChain([false, true, false, false, true, false], function(sResult){
-				equal(sResult, "A: 1 -> C: 2 -> D: 4 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> C: 2 -> D: 4 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
 				done();
 			}, function(sResult){
-				equal(sResult, "A: 1 -> C: 2 -> D: 4 -> FAIL: 5", "Fail-Result is: " + sResult);
+				assert.equal(sResult, "A: 1 -> C: 2 -> D: 4 -> FAIL: 5", "Fail-Result is: " + sResult);
 			}, true);
 		});
 
@@ -872,7 +872,7 @@
 	            	log(val);
 	            }).then(function(){
 	            	var res = log("C", true);
-	                equal(res, "A -> B -> C", "Chaining is: "+res);
+	                assert.equal(res, "A -> B -> C", "Chaining is: "+res);
 	            }).then(function(){
 					done();
 				})["catch"](function(){
@@ -894,7 +894,7 @@
 				done();
 			}, function(oVal){
 				ok(oVal instanceof Error, "Fail-Result is an error");
-				equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
+				assert.equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
 				done();
 			});
 		});
@@ -909,7 +909,7 @@
 				done();
 			}, function(oVal){
 				ok(oVal instanceof Error, "Fail-Result is an error");
-				equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
+				assert.equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
 				done();
 			});
 		});
@@ -930,8 +930,8 @@
 			}, function(oVal){
 				var res = log("D", true);
 				ok(oVal instanceof Error, "Fail-Result is an error");
-				equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
-				equal(res, "A -> B -> C -> D", "Success-Result is: " + res);
+				assert.equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
+				assert.equal(res, "A -> B -> C -> D", "Success-Result is: " + res);
 				done();
 			});
 
@@ -965,7 +965,7 @@
 			setTimeout(function(){
 				var res = log("E", true);
 				ok(!sCallbackCalled, "No callback should not be called: "+sCallbackCalled);
-				equal(res, "A -> B -> C -> D -> E", "Result is: " + res);
+				assert.equal(res, "A -> B -> C -> D -> E", "Result is: " + res);
 				done();
 			}, 30);
 		});
@@ -986,7 +986,7 @@
             };
 
             P.resolve(thenable).then(function(oVal){
-				equal(oVal, "X", "Success with correct value");
+				assert.equal(oVal, "X", "Success with correct value");
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -1027,7 +1027,7 @@
 
 			p.then(function(oVal){
 				var res = log("D "+oVal, true);
-				equal(res, "A -> B -> C -> D X", "Success-Result is: " + res);
+				assert.equal(res, "A -> B -> C -> D X", "Success-Result is: " + res);
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");
@@ -1052,7 +1052,7 @@
 				done();
 			}, function(oVal){
 				var res = log("D "+oVal, true);
-				equal(res, "A -> B -> C -> D X", "Fail-Result is: " + res);
+				assert.equal(res, "A -> B -> C -> D X", "Fail-Result is: " + res);
 				done();
 			});
 
@@ -1068,7 +1068,7 @@
 	        var p2 = asyncAction(false, p1, 10, false);
 
 	        p2.then(function(oVal) {
-				equal(oVal, "X", "Success called with the correct value");
+				assert.equal(oVal, "X", "Success called with the correct value");
 				done();
 	        }, function(oVal) {
 				ok(false, "Fail should not be called");
@@ -1085,7 +1085,7 @@
 	        	ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
-	        	equal(oVal, "X", "Fail called with the correct value");
+	        	assert.equal(oVal, "X", "Fail called with the correct value");
 	        	done();
 			});
 		});
@@ -1096,7 +1096,7 @@
 	        var p2 = asyncAction(false, p1, 10, false);
 
 	        p2.then(function(oVal) {
-				equal(oVal, "X", "Success called with the correct value");
+				assert.equal(oVal, "X", "Success called with the correct value");
 				done();
 	        }, function(oVal) {
 				ok(false, "Fail should not be called");
@@ -1113,7 +1113,7 @@
 	        	ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
-	        	equal(oVal, "X", "Fail called with the correct value");
+	        	assert.equal(oVal, "X", "Fail called with the correct value");
 	        	done();
 			});
 		});
@@ -1125,7 +1125,7 @@
 	        var p3 = asyncAction(false, p2, 10, false);
 
 	        p3.then(function(oVal) {
-				equal(oVal, "X", "Success called with the correct value");
+				assert.equal(oVal, "X", "Success called with the correct value");
 				done();
 	        }, function(oVal) {
 				ok(false, "Fail should not be called");
@@ -1143,7 +1143,7 @@
 	        	ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
-	        	equal(oVal, "X", "Fail called with the correct value");
+	        	assert.equal(oVal, "X", "Fail called with the correct value");
 	        	done();
 			});
 		});
@@ -1155,7 +1155,7 @@
 	        var p3 = asyncAction(false, p2, 10, false);
 
 	        p3.then(function(oVal) {
-				equal(oVal, "X", "Success called with the correct value");
+				assert.equal(oVal, "X", "Success called with the correct value");
 				done();
 	        }, function(oVal) {
 				ok(false, "Fail should not be called");
@@ -1173,7 +1173,7 @@
 	        	ok(false, "Success should not be called");
 	        	done();
 	        }, function(oVal) {
-	        	equal(oVal, "X", "Fail called with the correct value");
+	        	assert.equal(oVal, "X", "Fail called with the correct value");
 	        	done();
 			});
 		});
@@ -1200,9 +1200,9 @@
 	        var p = P.all([asyncAction(false, "X", 10, false), p2]);
 			p.then(function(oVal){
 				ok(jQuery.isArray(oVal), "Result is array");
-				equal(oVal.length, 2, "Result has length 2");
-				equal(oVal[0], "X", "Result[0] is 'X'");
-				equal(oVal[1], "Y", "Result[1] is 'Y'");
+				assert.equal(oVal.length, 2, "Result has length 2");
+				assert.equal(oVal[0], "X", "Result[0] is 'X'");
+				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");
 				done();
 			}, function(oVal){
 				ok(false, "Fail should not be called");

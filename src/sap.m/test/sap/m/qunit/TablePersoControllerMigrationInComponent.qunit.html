@@ -139,18 +139,18 @@
 		QUnit.test("Column order as in historic settings", function(assert) {
 
 			var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
-			equal(aColumns[0].getHeader().getText(), "Name", "Column 1 is Number");
-			equal(aColumns[1].getHeader().getText(), "Color", "Column 2 is Color");
-			equal(aColumns[2].getHeader().getText(), "Number", "Column 3 is Number");
+			assert.equal(aColumns[0].getHeader().getText(), "Name", "Column 1 is Number");
+			assert.equal(aColumns[1].getHeader().getText(), "Color", "Column 2 is Color");
+			assert.equal(aColumns[2].getHeader().getText(), "Number", "Column 3 is Number");
 
 		});
 
 		QUnit.test("Column visibility as in historic settings", function(assert) {
 
 			var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
-			equal(aColumns[0].getVisible(), false, "Column 1 (Name) is not visible");
-			equal(aColumns[1].getVisible(), true, "Column 2 (Color) is visible");
-			equal(aColumns[2].getVisible(), true, "Column 3 (Number) is visible");
+			assert.equal(aColumns[0].getVisible(), false, "Column 1 (Name) is not visible");
+			assert.equal(aColumns[1].getVisible(), true, "Column 2 (Color) is visible");
+			assert.equal(aColumns[2].getVisible(), true, "Column 3 (Number) is visible");
 
 		});
 

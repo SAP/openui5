@@ -106,14 +106,14 @@
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "Category", "entity type name check");
+			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "Category", "entity type name check");
+			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "CategoryName", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
+			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
+			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -131,37 +131,37 @@
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/Products");
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products(3)");
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/CategoryName");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/ProductName");
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Category");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/Products(1)/Category");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Supplier");
-			equal(oResult.name, "Supplier", "entity type name check");
+			assert.equal(oResult.name, "Supplier", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Category/Supplier/Products");
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products(4)/Category/Supplier('4')/Products/Category(1)");
-			equal(oResult.name, "Category", "entity type name check");
+			assert.equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -179,7 +179,7 @@
 		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));
 		var handler = function() { // delay the following test
 			oResult = oBinding.oEntityType;
-			equal(oResult.name, "Product", "entity type name check");
+			assert.equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -198,17 +198,17 @@
 		var handler = function() { // delay the following test
 			oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
-			equal(oResult.name, "CategoryName", "Property type name check");
-			equal(oResult.type, "Edm.String", "Property type name check");
+			assert.equal(oResult.name, "CategoryName", "Property type name check");
+			assert.equal(oResult.type, "Edm.String", "Property type name check");
 
 			// check nav property
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "/Products/ProductName/");
-			equal(oResult.name, "ProductName", "Nav Property type name check");
-			equal(oResult.type, "Edm.String", "Nav Property type name check");
+			assert.equal(oResult.name, "ProductName", "Nav Property type name check");
+			assert.equal(oResult.type, "Edm.String", "Nav Property type name check");
 
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "Products/ProductName");
-			equal(oResult.name, "ProductName", "Nav Property type name check");
-			equal(oResult.type, "Edm.String", "Nav Property type name check");
+			assert.equal(oResult.name, "ProductName", "Nav Property type name check");
+			assert.equal(oResult.type, "Edm.String", "Nav Property type name check");
 
 			oBinding.detachChange(handler);
 			done();          // resume normal testing
@@ -254,14 +254,14 @@
 			var oBinding = oModel.bindList("/Categories");
 			var handler2 = function() { // delay the following test
 				ok(oBinding.oEntityType, "entity type binding check");
-				equal(oBinding.oEntityType.name, "Category", "entity type name check");
+				assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 				var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 				ok(oEntityType, "get entity type check");
-				equal(oEntityType.name, "Category", "entity type name check");
+				assert.equal(oEntityType.name, "Category", "entity type name check");
 				var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 				ok(oPropMeta, "property type check");
-				equal(oPropMeta.name, "CategoryName", "entity type property check");
-				equal(oPropMeta.type, "Edm.String", "entity type property check");
+				assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
+				assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 				oBinding.detachChange(handler2);
 				done();          // resume normal testing
@@ -286,14 +286,14 @@
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "Category", "entity type name check");
+			assert.equal(oBinding.oEntityType.name, "Category", "entity type name check");
 			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "Category", "entity type name check");
+			assert.equal(oEntityType.name, "Category", "entity type name check");
 			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "CategoryName", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
+			assert.equal(oPropMeta.name, "CategoryName", "entity type property check");
+			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
 			done();          // resume normal testing

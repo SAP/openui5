@@ -309,14 +309,14 @@
 
 			// make sure the initial design is "Fill"
 			ok(oRootDomRef.className.indexOf("sapUiPanelAreaDesignFill") > -1, "Panel must by default have AreaDesign.Fill");
-			equal(oRootDomRef.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must by default not have AreaDesign.Plain");
+			assert.equal(oRootDomRef.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must by default not have AreaDesign.Plain");
 
 			// make sure it is actually filled
 			var sColor = jQuery(oContDomRef).css("backgroundColor");
 			if (sap.ui.Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 9)) {
 				ok(sColor === "#f2f2f2", "Panel must by default be filled with a white color (Actual: "+sColor+")");
 			} else {
-				equal(sColor, "rgba(255, 255, 255, 0.8)",	"Panel must by default be filled with a white color");
+				assert.equal(sColor, "rgba(255, 255, 255, 0.8)",	"Panel must by default be filled with a white color");
 			}
 
 			// now switch to "Plain" and do the same tests
@@ -326,12 +326,12 @@
 			var oContDomRef2 = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
 			ok(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignPlain") > -1, "Panel should now have AreaDesign.Plain");
-			equal(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignFill"), -1, "Panel must not anymore have AreaDesign.Fill");
+			assert.equal(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignFill"), -1, "Panel must not anymore have AreaDesign.Fill");
 			sColor = jQuery(oContDomRef2).css("backgroundColor");
 			if (sap.ui.Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 9)) {
 				ok(sColor === "white" || sColor === "#ffffff", "Panel should now be filled with a white color (Actual: "+sColor+")");
 			} else {
-				equal(sColor, "rgb(255, 255, 255)", "Panel should now be filled with a white color");
+				assert.equal(sColor, "rgb(255, 255, 255)", "Panel should now be filled with a white color");
 			}
 
 		// now switch to "transparent" and do the same tests
@@ -341,13 +341,13 @@
 			var oContDomRef3 = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
 			ok(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignTransparent") > -1, "Panel should now have AreaDesign.Transparent");
-			equal(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must not anymore have AreaDesign.Plain");
+			assert.equal(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must not anymore have AreaDesign.Plain");
 			if (sap.ui.Device.browser.internet_explorer) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
+				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
 			} else if (sap.ui.Device.browser.firefox) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
+				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
 			} else if (sap.ui.Device.browser.webkit) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "rgba(0, 0, 0, 0)", "Panel should now be filled with a transparent color");
+				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "rgba(0, 0, 0, 0)", "Panel should now be filled with a transparent color");
 			}
 		});
 
@@ -356,13 +356,13 @@
 
 			// make sure the initial design is "Box"
 			ok(oRootDomRef.className.indexOf("sapUiPanelBorderDesignBox") > -1, "Panel must by default have BorderDesign.Box");
-			equal(oRootDomRef.className.indexOf("sapUiPanelBorderDesignNone"), -1, "Panel must by default not have BorderDesign.None");
+			assert.equal(oRootDomRef.className.indexOf("sapUiPanelBorderDesignNone"), -1, "Panel must by default not have BorderDesign.None");
 
 			// make sure it is actually boxed
-			equal(jQuery(oRootDomRef).css("borderLeftStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef).css("borderRightStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef).css("borderTopStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef).css("borderBottomStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef).css("borderLeftStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef).css("borderRightStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef).css("borderTopStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef).css("borderBottomStyle"), "none", "Panel content must not have a border");
 
 			// now switch to "Plain" and do the same tests
 			oCtrl.setBorderDesign(sap.ui.commons.enums.BorderDesign.None);
@@ -370,11 +370,11 @@
 			var oRootDomRef2 = jQuery.sap.domById(oCtrl.getId());
 
 			ok(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignNone") > -1, "Panel must now have BorderDesign.None");
-			equal(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignBox"), -1, "Panel must not anymore have BorderDesign.Box");
-			equal(jQuery(oRootDomRef2).css("borderLeftStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef2).css("borderRightStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef2).css("borderTopStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef2).css("borderBottomStyle"), "none", "Panel content must not have a border");
+			assert.equal(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignBox"), -1, "Panel must not anymore have BorderDesign.Box");
+			assert.equal(jQuery(oRootDomRef2).css("borderLeftStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef2).css("borderRightStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef2).css("borderTopStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef2).css("borderBottomStyle"), "none", "Panel content must not have a border");
 		});
 
 		/**
@@ -405,11 +405,11 @@
 			oClone1.setText("Some Title");
 			oClone1.setTitle(new sap.ui.core.Title({text:"Some other Title"}));
 			oClone1.destroy();
-			equal(sizeof(oCore.mElements), n, "Clone 1 destroyed");
+			assert.equal(sizeof(oCore.mElements), n, "Clone 1 destroyed");
 			var oClone2 = oCtrl.clone("-0");
 			ok(n < sizeof(oCore.mElements), "Clone 2 created");
 			oClone2.destroy();
-			equal(sizeof(oCore.mElements), n, "Clone 2 destroyed");
+			assert.equal(sizeof(oCore.mElements), n, "Clone 2 destroyed");
 		});
 		</script>
 	</head>

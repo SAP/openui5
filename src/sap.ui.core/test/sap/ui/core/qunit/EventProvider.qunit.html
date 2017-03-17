@@ -320,11 +320,11 @@
 			var that = this;
 			oEventProvider.attachEventOnce("testOnce", function() {
 				iCount++;
-				equal(that, this, "Right scope");
+				assert.equal(that, this, "Right scope");
 			}, this);
 			oEventProvider.fireEvent("testOnce");
 			oEventProvider.fireEvent("testOnce");
-			equal(iCount, 1, "Handler is only called once");
+			assert.equal(iCount, 1, "Handler is only called once");
 		});
 
 

@@ -129,8 +129,8 @@
 		<script>
 			QUnit.module("Pagination");
 			QUnit.test("Initial item count", function(assert) {
-				equal(sap.ui.getCore().byId(oDataSet.getSelectedView()).getInitialItemCount(), 10, "Initial item count");
-				equal(oDataSet.getItems().length, 27, "Item count after inital reload (fill scrollarea)");
+				assert.equal(sap.ui.getCore().byId(oDataSet.getSelectedView()).getInitialItemCount(), 10, "Initial item count");
+				assert.equal(oDataSet.getItems().length, 27, "Item count after inital reload (fill scrollarea)");
 			});
 
 			QUnit.test("Scrolling", function(assert) {
@@ -138,7 +138,7 @@
 				var $scrollArea = jQuery(".sapUiUx3DSSVSA");
 				$scrollArea.scrollTop($scrollArea.height());
 				setTimeout(function() {
-					equal(oDataSet.getItems().length, 32, "Item count after scrolling to the very bottom");
+					assert.equal(oDataSet.getItems().length, 32, "Item count after scrolling to the very bottom");
 					done();
 				}, 1000);
 			});
@@ -148,7 +148,7 @@
 				var $scrollArea = jQuery(".sapUiUx3DSSVSA");
 				$scrollArea.scrollTop($scrollArea.height()+$scrollArea.scrollTop());
 				setTimeout(function() {
-					equal(oDataSet.getItems().length, 37, "Item count after scrolling to the very bottom");
+					assert.equal(oDataSet.getItems().length, 37, "Item count after scrolling to the very bottom");
 					done();
 				}, 1000);
 			});

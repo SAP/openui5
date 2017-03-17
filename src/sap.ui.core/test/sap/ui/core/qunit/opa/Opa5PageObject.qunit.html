@@ -265,9 +265,9 @@ sap.ui.getCore().attachInit(function () {
 		}
 
 		function assertNamespaceClashErrorLogged(bIsCalled){
-			equal(jQuery.sap.log.error.calledOnce,bIsCalled,"Error log is called");
+			assert.equal(jQuery.sap.log.error.calledOnce,bIsCalled,"Error log is called");
 			if(bIsCalled){
-				equal(jQuery.sap.log.error.args[0][0],"Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.","Should log namespace clash error message");
+				assert.equal(jQuery.sap.log.error.args[0][0],"Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.","Should log namespace clash error message");
 			}
 		}
 

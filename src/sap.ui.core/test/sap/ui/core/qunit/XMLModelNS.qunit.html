@@ -44,9 +44,9 @@
 		oModel.setNameSpace("http://tempuri.org/b", "b");
 		oModel.setXML(testdata);
 		var value = oModel.getProperty("/a:member/1/@lastName");
-		equal(value, "Miller", "model value");
+		assert.equal(value, "Miller", "model value");
 		var value = oModel.getProperty("/b:member/1/@lastName");
-		equal(value, "Spring", "model value");
+		assert.equal(value, "Spring", "model value");
 	});
 
 	QUnit.test("test model namespace custom prefix", function(assert) {
@@ -56,9 +56,9 @@
 		oModel.setNameSpace("http://tempuri.org/b", "y");
 		oModel.setXML(testdata);
 		var value = oModel.getProperty("/member/1/@lastName");
-		equal(value, "Miller", "model value");
+		assert.equal(value, "Miller", "model value");
 		var value = oModel.getProperty("/y:member/1/@lastName");
-		equal(value, "Spring", "model value");
+		assert.equal(value, "Spring", "model value");
 	});
 
 	QUnit.test("test model namespace attributes", function(assert) {
@@ -68,9 +68,9 @@
 		oModel.setNameSpace("http://tempuri.org/b", "b");
 		oModel.setXML(testdata);
 		var value = oModel.getProperty("/test/@a:value");
-		equal(value, "Namespace a", "model value");
+		assert.equal(value, "Namespace a", "model value");
 		var value = oModel.getProperty("/test/@b:value");
-		equal(value, "Namespace b", "model value");
+		assert.equal(value, "Namespace b", "model value");
 	});
 
 	</script>

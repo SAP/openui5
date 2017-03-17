@@ -351,10 +351,10 @@
 			sValue = "";
 			sap.ui.getCore().applyChanges();
 			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
-			equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
+			assert.equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
 			if (bSubmitExpected) {
 				if (sExpectedValue) {
-					equal(sValue, sExpectedValue, sText + ": Correct parameter 'value' in enter event: " + sExpectedValue);
+					assert.equal(sValue, sExpectedValue, sText + ": Correct parameter 'value' in enter event: " + sExpectedValue);
 				} else {
 					ok(!sValue, sText + ": Correct parameter 'value' in enter event: Value empty");
 				}
@@ -672,19 +672,19 @@
 		oPopup = oInput6._oSuggestionPopup;
 		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		ok(oPopup.isOpen(), "Suggestion Popup is open now");
-		equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
+		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
 		ok(oPopup.getContent()[0] instanceof sap.m.List, "Suggestions are list-based)");
 
 		oInput6._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
+		assert.equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
 		oInput6._$input.focus().val("").trigger("input");
 		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
-		equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
 
 		oInput6.destroy();
 	});
@@ -713,7 +713,7 @@
 
 		this.clock.tick(300);
 
-		equal(oSpy.callCount, 0, "Suggest event listener shouldn't be called")
+		assert.equal(oSpy.callCount, 0, "Suggest event listener shouldn't be called")
 
 		oInput.destroy();
 	});
@@ -805,9 +805,9 @@
 
 		this.clock.tick(50);
 
-		equal(fnCallback.callCount, 1, "change event handler only called once");
+		assert.equal(fnCallback.callCount, 1, "change event handler only called once");
 		var spyCall = fnCallback.getCall(0);
-		equal(spyCall.args[0].getParameter("value"), "abcTom", "change event fired with the right parameter");
+		assert.equal(spyCall.args[0].getParameter("value"), "abcTom", "change event fired with the right parameter");
 		oInput.destroy();
 	});
 
@@ -851,9 +851,9 @@
 
 		oNextInput.focus();
 
-		equal(fnCallback.callCount, 1, "change event handler only called once");
+		assert.equal(fnCallback.callCount, 1, "change event handler only called once");
 		var spyCall = fnCallback.getCall(0);
-		equal(spyCall.args[0].getParameter("value"), "abc", "change event fired with the right parameter");
+		assert.equal(spyCall.args[0].getParameter("value"), "abc", "change event fired with the right parameter");
 		oInput.destroy();
 		oNextInput.destroy();
 	});
@@ -883,13 +883,13 @@
 
 		ok(oPopup1 instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		ok(oPopup1.isOpen(), "Two Value Suggestion Popup is open now");
-		equal(oPopup1.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
+		assert.equal(oPopup1.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
 		ok(oPopup1.getContent()[0].getItems()[0] instanceof sap.m.DisplayListItem, "Suggestion item is a DisplayListItem");
 
 		oInput7._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		ok(oPopup1.isOpen(), "Two Value Suggestion Popup is still open now");
-		equal(oPopup1.getContent()[0].getItems().length, 1, "Suggestions are filtered");
+		assert.equal(oPopup1.getContent()[0].getItems().length, 1, "Suggestions are filtered");
 
 		//trigger selection
 		var oList = oPopup1.getContent()[0];
@@ -899,13 +899,13 @@
 		});
 
 		ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
-		equal(oInput7.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
+		assert.equal(oInput7.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
 
 		//close the popoup when nothing is typed in input
 		oInput7._$input.focus().val("").trigger("input");
 		this.clock.tick(300);
 		ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
-		equal(oPopup1.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(oPopup1.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
 
 		oInput7.destroy();
 	});
@@ -943,7 +943,7 @@
 
 		ok(oPopup instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		ok(oPopup.isOpen(), "Two Value Suggestion Popup is open now");
-		equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
+		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
 		ok(oPopup.getContent()[0].getItems()[0] instanceof sap.m.DisplayListItem, "Suggestion item is a DisplayListItem");
 
 		this.clock.tick(400);
@@ -1151,17 +1151,17 @@
 
 		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
-		equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
+		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
 
 		oInput._oPopupInput._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
+		assert.equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
 
 		oInput._oPopupInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
 
 		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
@@ -1169,7 +1169,7 @@
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
 		this.clock.tick(500);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
-		equal(oInput.getValue(), aNames[1], "Value is set to originalInput");
+		assert.equal(oInput.getValue(), aNames[1], "Value is set to originalInput");
 
 		oInput.destroy();
 	});
@@ -1222,7 +1222,7 @@
 		this.clock.tick(400);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
 		this.clock.tick(500);
-		equal(oInput.getValue(), "newValue", "Value is last modified by the suggestionItemSelected event listener");
+		assert.equal(oInput.getValue(), "newValue", "Value is last modified by the suggestionItemSelected event listener");
 
 		oInput.destroy();
 	});
@@ -1272,17 +1272,17 @@
 
 		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
-		equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
+		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
 
 		oInput._oPopupInput._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
-		equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
+		assert.equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
 
 		oInput._oPopupInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
 		ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
-		equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
 
 		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
@@ -1290,7 +1290,7 @@
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
 		this.clock.tick(500);
 		ok(!oPopup.isOpen(), "Two value Suggestion Popup is closed");
-		equal(oInput.getValue(), aNames[1], "Value is set to originalInput");
+		assert.equal(oInput.getValue(), aNames[1], "Value is set to originalInput");
 
 		oInput.destroy();
 	});
@@ -1326,7 +1326,7 @@
 
 		oInput._oPopupInput._$input.focus().val("abc").trigger("input");;
 
-		equal(fnLC1.callCount, 1, "liveChange handler on original input is called");
+		assert.equal(fnLC1.callCount, 1, "liveChange handler on original input is called");
 
 		oInput.destroy();
 	});
@@ -1369,8 +1369,8 @@
 		oInput._oPopupInput._$input.focus().val("abc").trigger("input");;
 		this.clock.tick(400);
 
-		equal(oInput.getSuggestionItems().length, 1, "Suggestion Item is inserted");
-		equal(oSpy.callCount, 0, "invalidate isn't called on dialog instance");
+		assert.equal(oInput.getSuggestionItems().length, 1, "Suggestion Item is inserted");
+		assert.equal(oSpy.callCount, 0, "invalidate isn't called on dialog instance");
 
 		oInput.destroy();
 	});
@@ -1496,7 +1496,7 @@
 
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table initially has not the hidden style class");
 
-		equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
+		assert.equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(oPopup.getContent()[0].$().length, 1, "Suggestion table is rendered");
 		ok(oPopup.getContent()[0] instanceof sap.m.Table, "Suggestions are tabular)");
 		assert.strictEqual(oPopup.getContentWidth(), "100px", "Suggestion popup has 100px width");
@@ -1509,7 +1509,7 @@
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!sap.ui.Device.browser.phantomJS) {
-			equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+			assert.equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
 
 		// checks for the show more button (tabular suggestions only)
@@ -1644,7 +1644,7 @@
 
 		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		ok(oPopup.isOpen(), "Suggestion Popup is open now");
-		equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
+		assert.equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(oPopup.getContent()[0].$().length, 1, "Suggestion table is rendered");
 		ok(oPopup.getContent()[0] instanceof sap.m.Table, "Suggestions are tabular)");
 
@@ -1664,7 +1664,7 @@
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!sap.ui.Device.browser.phantomJS) {
-			equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+			assert.equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
 
 		//close the popoup when nothing is typed in input
@@ -1824,7 +1824,7 @@
 
 		oInput._oPopupInput._$input.focus().val("Product").trigger("input");
 		this.clock.tick(400);
-		equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
+		assert.equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog has been renderded after opening");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
@@ -1840,7 +1840,7 @@
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now123");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!bPhantomJS) {
-			equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+			assert.equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
@@ -1863,7 +1863,7 @@
 
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!bPhantomJS) {
-			equal(oPopup.getContent()[0].$().find("tbody").children().length, 3, "3 suggestions are displayed");
+			assert.equal(oPopup.getContent()[0].$().find("tbody").children().length, 3, "3 suggestions are displayed");
 		}
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered during filtering of suggestions");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
@@ -1876,7 +1876,7 @@
 
 		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
-		equal(oInput.getValue(), oSuggestionData.tabularSuggestionItems[1].name, "Value is set to originalInput");
+		assert.equal(oInput.getValue(), oSuggestionData.tabularSuggestionItems[1].name, "Value is set to originalInput");
 
 		oInput.destroy();
 	});
@@ -2017,7 +2017,7 @@
 		oPopup.getContent()[0]._fireSelectionChangeEvent([oPopup.getContent()[0].getItems()[1]]);
 		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
-		equal(oInput.getValue(), "You chose: " + oSuggestionData.tabularSuggestionItems[1].limit, "The input value has been formatted with the custom row result function");
+		assert.equal(oInput.getValue(), "You chose: " + oSuggestionData.tabularSuggestionItems[1].limit, "The input value has been formatted with the custom row result function");
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
@@ -2049,15 +2049,15 @@
 
 		oInput._$input.focus().val("25").trigger("input");
 		this.clock.tick(400);
-		equal(spy.callCount, 0, "2 letters shouldn't fire suggest event");
+		assert.equal(spy.callCount, 0, "2 letters shouldn't fire suggest event");
 
 		oInput._$input.focus().val("2524").trigger("input");
 		this.clock.tick(400);
-		equal(spy.callCount, 1, "4 letters shouldn fire suggest event");
+		assert.equal(spy.callCount, 1, "4 letters shouldn fire suggest event");
 
 		oInput._$input.focus().val("25245").trigger("input");
 		this.clock.tick(400);
-		equal(spy.callCount, 2, "5 letters should fire suggest event again");
+		assert.equal(spy.callCount, 2, "5 letters should fire suggest event again");
 
 		oInput.destroy();
 	});
@@ -2084,20 +2084,20 @@
 
 		oInput._$input.focus();
 		this.clock.tick(400);
-		equal(spy.callCount, 1, "Focus should fire suggest event");
+		assert.equal(spy.callCount, 1, "Focus should fire suggest event");
 
 		oInput._$input.focus().val("25").trigger("input");
 		this.clock.tick(400);
-		equal(spy.callCount, 2, "2 letters shouldn fire suggest event");
+		assert.equal(spy.callCount, 2, "2 letters shouldn fire suggest event");
 
 		oInput._$input.blur();
 		oInput._$input.focus();
 		this.clock.tick(400);
-		equal(spy.callCount, 2, "Focus with text in input shouldn't fire suggest event");
+		assert.equal(spy.callCount, 2, "Focus with text in input shouldn't fire suggest event");
 
 		oInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
-		equal(spy.callCount, 3, "no text should fire suggest event again");
+		assert.equal(spy.callCount, 3, "no text should fire suggest event again");
 
 		oInput.destroy();
 	});
@@ -2391,8 +2391,8 @@
 
 		this.clock.tick(50);
 
-		equal(fnCallback.callCount, 1, "change event handler only called once");
-		equal(oInput.getSelectedKey(), "1", "selected key is correct");
+		assert.equal(fnCallback.callCount, 1, "change event handler only called once");
+		assert.equal(oInput.getSelectedKey(), "1", "selected key is correct");
 
 		oInput.destroy();
 	});
@@ -2410,8 +2410,8 @@
 
 		this.clock.tick(50);
 
-		equal(fnCallback.callCount, 0, "change event is not fired");
-		equal(oInput.getSelectedKey(), "2", "selected key is correct");
+		assert.equal(fnCallback.callCount, 0, "change event is not fired");
+		assert.equal(oInput.getSelectedKey(), "2", "selected key is correct");
 
 		oInput.destroy();
 	});
@@ -2427,7 +2427,7 @@
 		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
 
 		var sValue = oInput.getValue();
-		equal(sValue, "Item 2 (2)", "value is correctly formatted");
+		assert.equal(sValue, "Item 2 (2)", "value is correctly formatted");
 
 		oInput.setTextFormatter(function (item) {
 			return 'Custom: ' + item.getText() + " (" + item.getKey() + ")";
@@ -2436,7 +2436,7 @@
 		oInput.setSelectedItem(oInput.getSuggestionItems()[2]);
 
 		var sValue = oInput.getValue();
-		equal(sValue, "Custom: Item 3 (3)", "custom formatting is correct");
+		assert.equal(sValue, "Custom: Item 3 (3)", "custom formatting is correct");
 
 		oInput.destroy();
 	});
@@ -2612,9 +2612,9 @@
 
 		this.clock.tick(50);
 
-		equal(fnCallback.callCount, 0, "change event is not fired");
-		equal(oInput.getSelectedKey(), "2", "selected key is correct");
-		equal(oInput.getValue(), "Besser ist das = 20.00 EUR", "value is correct");
+		assert.equal(fnCallback.callCount, 0, "change event is not fired");
+		assert.equal(oInput.getSelectedKey(), "2", "selected key is correct");
+		assert.equal(oInput.getValue(), "Besser ist das = 20.00 EUR", "value is correct");
 
 		oInput.destroy();
 	});
@@ -2630,7 +2630,7 @@
 		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
 
 		var sValue = oInput.getValue();
-		equal(sValue, "Besser ist das = 20.00 EUR (2)", "value is correctly formatted");
+		assert.equal(sValue, "Besser ist das = 20.00 EUR (2)", "value is correctly formatted");
 
 		oInput.destroy();
 	});

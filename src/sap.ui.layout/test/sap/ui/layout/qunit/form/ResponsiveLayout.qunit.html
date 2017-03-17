@@ -204,47 +204,47 @@
 			// overwritten getter must return data of corresponding objects
 			var oElement = sap.ui.getCore().byId("F1C1E1");
 			var oRFLayout = sap.ui.getCore().byId("F1C1E1--RFLayout");
-			equal(oRFLayout.getContent()[0].getParent().getId(), oElement.getId(), "Form1: Element must be still parent of Label");
-			equal(oRFLayout.getContent()[1].getParent().getId(), oElement.getId(), "Form1: Element must be still parent of Field");
+			assert.equal(oRFLayout.getContent()[0].getParent().getId(), oElement.getId(), "Form1: Element must be still parent of Label");
+			assert.equal(oRFLayout.getContent()[1].getParent().getId(), oElement.getId(), "Form1: Element must be still parent of Field");
 
 			var oPanel = sap.ui.getCore().byId("F2C1--Panel");
 			var oContainer = sap.ui.getCore().byId("F2C1");
 			var oElement = sap.ui.getCore().byId("F2C1E1");
 			var oRFLayout = sap.ui.getCore().byId("F2C1E1--content--RFLayout");
-			equal(oRFLayout.getContent()[0].getParent().getId(), oElement.getId(), "Form2: Element must be still parent of Field");
+			assert.equal(oRFLayout.getContent()[0].getParent().getId(), oElement.getId(), "Form2: Element must be still parent of Field");
 
 			oPanel = sap.ui.getCore().byId("F3C1--Panel");
 			oContainer = sap.ui.getCore().byId("F3C1");
-			equal(oContainer.getTitle().getParent().getId(), oContainer.getId(), "Form3: Container3 Title must still have Container as Parent");
+			assert.equal(oContainer.getTitle().getParent().getId(), oContainer.getId(), "Form3: Container3 Title must still have Container as Parent");
 
 			oPanel = sap.ui.getCore().byId("F3C2--Panel");
 			oContainer = sap.ui.getCore().byId("F3C2");
 			var oLayoutData = sap.ui.getCore().byId("F3C2LD");
-			equal(oPanel.getLayoutData().getId(), oLayoutData.getId(), "Form3: Panel2 must get LayoutData from Container");
-			equal(oLayoutData.getParent().getId(), oContainer.getId(), "Form3: Container2 LayoutData must still have Container as Parent");
+			assert.equal(oPanel.getLayoutData().getId(), oLayoutData.getId(), "Form3: Panel2 must get LayoutData from Container");
+			assert.equal(oLayoutData.getParent().getId(), oContainer.getId(), "Form3: Container2 LayoutData must still have Container as Parent");
 			oElement = sap.ui.getCore().byId("F3C2E2");
 			oRFLayout = sap.ui.getCore().byId("F3C2E2--RFLayout");
 			oLayoutData = sap.ui.getCore().byId("F3C2E2LD");
-			equal(oRFLayout.getLayoutData().getId(), oLayoutData.getId(), "Form3: Container2 Element2 - RFLayout must get LayoutData from Element");
-			equal(oLayoutData.getParent().getId(), oElement.getId(), "Form3: Container2 Element2 LayoutData must still have Element as Parent");
+			assert.equal(oRFLayout.getLayoutData().getId(), oLayoutData.getId(), "Form3: Container2 Element2 - RFLayout must get LayoutData from Element");
+			assert.equal(oLayoutData.getParent().getId(), oElement.getId(), "Form3: Container2 Element2 LayoutData must still have Element as Parent");
 
 			oPanel = sap.ui.getCore().byId("F3C3--Panel");
 			oContainer = sap.ui.getCore().byId("F3C3");
 			oLayoutData = sap.ui.getCore().byId("F3C3LD");
-			equal(oPanel.getLayoutData().getId(), oLayoutData.getId(), "Form3: Panel3 must get LayoutData from Container");
+			assert.equal(oPanel.getLayoutData().getId(), oLayoutData.getId(), "Form3: Panel3 must get LayoutData from Container");
 
 		});
 
 		QUnit.test("DOM representation", function(assert) {
 			var oContainer = sap.ui.getCore().byId("F1C1");
-			equal(oContainer.getRenderedDomRef().id, "F1C1--RFLayout", "Form1: Container1 ResponsiveFlowLayout is DOM representation");
+			assert.equal(oContainer.getRenderedDomRef().id, "F1C1--RFLayout", "Form1: Container1 ResponsiveFlowLayout is DOM representation");
 			oContainer = sap.ui.getCore().byId("F2C1");
-			equal(oContainer.getRenderedDomRef().id, "F2C1--Panel", "Form2: Container1 Panel is DOM representation");
+			assert.equal(oContainer.getRenderedDomRef().id, "F2C1--Panel", "Form2: Container1 Panel is DOM representation");
 			oContainer = sap.ui.getCore().byId("F3C5");
 			ok(!oContainer.getRenderedDomRef(), "Form3: invisible Container5 no DOM representation");
 
 			var oElement = sap.ui.getCore().byId("F1C1E1");
-			equal(oElement.getRenderedDomRef().id, "F1C1E1--RFLayout", "Form1: Element1 ResponsiveFlowLayout is DOM representation");
+			assert.equal(oElement.getRenderedDomRef().id, "F1C1E1--RFLayout", "Form1: Element1 ResponsiveFlowLayout is DOM representation");
 			oElement = sap.ui.getCore().byId("F3C2E3");
 			ok(!oElement.getRenderedDomRef(), "Form3: invisible Element no DOM representation");
 			oElement = sap.ui.getCore().byId("F3C5E1");
@@ -272,12 +272,12 @@
 			// title as text
 			var oContainer = sap.ui.getCore().byId("F2C1");
 			ok(jQuery.sap.domById("F2C1--title"), "Form2: Container1 Title rendered");
-			equal(jQuery.sap.byId("F2C1--title").text(), oContainer.getTitle(), "Form2: Container1 Title Text");
+			assert.equal(jQuery.sap.byId("F2C1--title").text(), oContainer.getTitle(), "Form2: Container1 Title Text");
 			// title as control
 			oContainer = sap.ui.getCore().byId("F3C1");
 			var sTitleId = oContainer.getTitle().getId();
 			ok(jQuery.sap.domById(sTitleId), "Form3: Container1 Title rendered");
-			equal(jQuery.sap.byId(sTitleId).text(), oContainer.getTitle().getText(), "Form3: Container1 Title Text");
+			assert.equal(jQuery.sap.byId(sTitleId).text(), oContainer.getTitle().getText(), "Form3: Container1 Title Text");
 			// expander
 			ok(!jQuery.sap.domById("F3C1--Exp"), "Form3: Container1 no expander rendered");
 			ok(jQuery.sap.domById("F3C2--Exp"), "Form3: Container2 expander rendered");
@@ -312,15 +312,15 @@
 		QUnit.test("Aria", function(assert) {
 			ok(!jQuery("#F1C1--RFLayout").attr("role"), "Container-F1C1: role \"form\" not set on RFLayout level");
 			ok(!jQuery("#F1C1--RFLayout").attr("aria-labelledby"), "Container-F1C1: aria-labelledby not set on RFLayout level");
-			equal(jQuery("#F2C1--Panel").attr("role"), "form", "Container-F2C1: role \"form\" set on panel level");
+			assert.equal(jQuery("#F2C1--Panel").attr("role"), "form", "Container-F2C1: role \"form\" set on panel level");
 			ok(!jQuery("#F2C1--RFLayout").attr("role"), "Container-F2C1: role \"form\" not set on RFLayout level");
-			equal(jQuery("#F2C1--Panel").attr("aria-labelledby"), "F2C1--title", "Container-F2C1: aria-labelledby set");
-			equal(jQuery("#F3C1--Panel").attr("aria-labelledby"), "F3C1T", "Container-F3C1: aria-labelledby set");
-			equal(jQuery("#F3C6--RFLayout").attr("role"), "form", "Container-F3C6: role \"form\" set on RFLayout level");
+			assert.equal(jQuery("#F2C1--Panel").attr("aria-labelledby"), "F2C1--title", "Container-F2C1: aria-labelledby set");
+			assert.equal(jQuery("#F3C1--Panel").attr("aria-labelledby"), "F3C1T", "Container-F3C1: aria-labelledby set");
+			assert.equal(jQuery("#F3C6--RFLayout").attr("role"), "form", "Container-F3C6: role \"form\" set on RFLayout level");
 
-			equal(jQuery("#F4").attr("aria-labelledby"), "F4-Title", "Form4: aria-labelledby set");
-			equal(jQuery("#F4C1--Panel").attr("aria-labelledby"), "F4C1-Title", "Container-F4C1: aria-labelledby set");
-			equal(jQuery("#F4C2--Panel").attr("aria-labelledby"), "F4-TB3", "Container-F4C2: aria-labelledby default set");
+			assert.equal(jQuery("#F4").attr("aria-labelledby"), "F4-Title", "Form4: aria-labelledby set");
+			assert.equal(jQuery("#F4C1--Panel").attr("aria-labelledby"), "F4C1-Title", "Container-F4C1: aria-labelledby set");
+			assert.equal(jQuery("#F4C2--Panel").attr("aria-labelledby"), "F4-TB3", "Container-F4C2: aria-labelledby default set");
 		});
 
 		QUnit.test("Toolbar", function(assert) {
@@ -513,7 +513,7 @@
 			} else {
 				iLength = Object.keys(oLayout3.mContainers).length;
 			}
-			equal(iLength, 0, "Layout control data cleared");
+			assert.equal(iLength, 0, "Layout control data cleared");
 			ok(!sap.ui.getCore().byId("F3C1E1--content--RFLayout"), "Element1 ResponsiveFlowLayout for content destroyed");
 			ok(!sap.ui.getCore().byId("F3C1E1--RFLayout"), "Element1 ResponsiveFlowLayout destroyed");
 			ok(!sap.ui.getCore().byId("F3C1--RFLayout"), "Container ResponsiveFlowLayout destroyed");

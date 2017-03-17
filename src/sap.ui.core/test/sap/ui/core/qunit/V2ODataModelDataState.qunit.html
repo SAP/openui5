@@ -193,13 +193,13 @@
 					if (oDataState1[aCompareMethods[i]]()) {
 						iLength1 = oDataState1[aCompareMethods[i]]().length;
 					}
-					equal(iLength1 === iLength2,true,"Compared " + aCompareMethods[i] + " : current(" +  iLength1 + "), expected("+ iLength2 +"): "+ sComment);
+					assert.equal(iLength1 === iLength2,true,"Compared " + aCompareMethods[i] + " : current(" +  iLength1 + "), expected("+ iLength2 +"): "+ sComment);
 					if (iLength1 === iLength2) {
 						var aMessages1 = oDataState1.getMessages();
 						var aMessages2 = oDataState2.getMessages();
 						for (var j=0;j<aMessages1.length;j++) {
 							if (aMessages1[j] instanceof sap.ui.core.message.Message && aMessages2[j] instanceof sap.ui.core.message.Message) {
-								equal(aMessages1[j] === aMessages2[j],true,"Compared Message "+ j + " message:'" +aMessages1[j].getMessage() +"': "+ sComment);
+								assert.equal(aMessages1[j] === aMessages2[j],true,"Compared Message "+ j + " message:'" +aMessages1[j].getMessage() +"': "+ sComment);
 							}
 
 						}
@@ -208,7 +208,7 @@
 					//ok(false, "method "+ aCompareMethods[i] + " not implemented");
 				}
 			} else {
-				equal(jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected("+ oDataState2[aCompareMethods[i]]() +"): "+ sComment);
+				assert.equal(jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected("+ oDataState2[aCompareMethods[i]]() +"): "+ sComment);
 			}
 		}
 
@@ -269,8 +269,8 @@
 					var pOthersDone;
 					oModel.submitChanges({
 						success: function() {
-							equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
-							equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
+							assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
+							assert.equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
 							pOthersDone.then(function() {
 								testDataState (oNameBinding,
 										function() {
@@ -415,8 +415,8 @@
 						oModel.attachRequestCompleted(
 							function(oInfo) {
 								if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
-									equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
-									equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
+									assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
+									assert.equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
 									pOthers.then(function() {
 										testDataState (oNameBinding,
 											function() {
@@ -512,8 +512,8 @@
 					oInfo = jQuery.extend(true, {}, oInfo);
 					pOthers.then(function() {
 					if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
-						equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-						equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
+						assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
+						assert.equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
 					}});
 				}
 			);
@@ -840,8 +840,8 @@
 						ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 						var oOrigData = oModel.getOriginalProperty("/ProductSet('HT-1000')");
 						var oData = oModel.getProperty("/ProductSet('HT-1000')");
-						equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('HT-1000')/Name"),"blabla2");
-						equal(oData.Name,oModel.getProperty("/ProductSet('HT-1000')/Name"),"blabla2");
+						assert.equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('HT-1000')/Name"),"blabla2");
+						assert.equal(oData.Name,oModel.getProperty("/ProductSet('HT-1000')/Name"),"blabla2");
 						ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
 						testDataState (oNameBinding,
 							function() {
@@ -1402,7 +1402,7 @@
 				target: "compositeInput/value"
 			});
 
-			equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
+			assert.equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
 
 
 			testDataState(oBinding, function() {}, {
@@ -1511,7 +1511,7 @@
 				target: "compositeInput/value"
 			});
 
-			equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
+			assert.equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
 
 			testDataState(oBinding, function() {}, {
 					originalValue : ["0.0", "CAD"],

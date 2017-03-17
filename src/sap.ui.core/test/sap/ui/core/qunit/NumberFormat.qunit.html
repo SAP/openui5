@@ -53,170 +53,170 @@
 		});
 
 	QUnit.test("integer default format", function(assert) {
-		equal(oDefaultInteger.format(1), "1", "1");
-		equal(oDefaultInteger.format(123), "123", "123");
+		assert.equal(oDefaultInteger.format(1), "1", "1");
+		assert.equal(oDefaultInteger.format(123), "123", "123");
 		// Integer instance has TOWARDS_ZERO set as default rounding mode
-		equal(oDefaultInteger.format(123.23), "123", "123.23");
-		equal(oDefaultInteger.format(123.78), "123", "123.78");
-		equal(oDefaultInteger.format(-123.23), "-123", "-123.23");
-		equal(oDefaultInteger.format(-123.78), "-123", "-123.78");
-		equal(oDefaultInteger.format(1234), "1234", "1234");
-		equal(oDefaultInteger.format(12345), "12345", "12345");
-		equal(oDefaultInteger.format(-123), "-123", "-123");
+		assert.equal(oDefaultInteger.format(123.23), "123", "123.23");
+		assert.equal(oDefaultInteger.format(123.78), "123", "123.78");
+		assert.equal(oDefaultInteger.format(-123.23), "-123", "-123.23");
+		assert.equal(oDefaultInteger.format(-123.78), "-123", "-123.78");
+		assert.equal(oDefaultInteger.format(1234), "1234", "1234");
+		assert.equal(oDefaultInteger.format(12345), "12345", "12345");
+		assert.equal(oDefaultInteger.format(-123), "-123", "-123");
 	});
 
 	QUnit.test("integer format for a specific locale", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance(oLocale);
-		equal(oIntegerFormat.format(1), "1", "1");
-		equal(oIntegerFormat.format(123), "123", "123");
-		equal(oIntegerFormat.format(123.23), "123", "123.23");
-		equal(oIntegerFormat.format(1234), "1234", "1234");
-		equal(oIntegerFormat.format(12345), "12345", "12345");
-		equal(oIntegerFormat.format(-123), "-123", "-123");
+		assert.equal(oIntegerFormat.format(1), "1", "1");
+		assert.equal(oIntegerFormat.format(123), "123", "123");
+		assert.equal(oIntegerFormat.format(123.23), "123", "123.23");
+		assert.equal(oIntegerFormat.format(1234), "1234", "1234");
+		assert.equal(oIntegerFormat.format(12345), "12345", "12345");
+		assert.equal(oIntegerFormat.format(-123), "-123", "-123");
 	});
 
 	QUnit.test("integer custom format", function(assert) {
-		equal(oCustomInteger.format(1), "01", "1");
-		equal(oCustomInteger.format(123), "123", "123");
-		equal(oCustomInteger.format(123.23), "123", "123.23");
-		equal(oCustomInteger.format(1234), "1.234", "1234");
-		equal(oCustomInteger.format(12345), "?.???", "12345");
-		equal(oCustomInteger.format(-123), "-123", "-123");
+		assert.equal(oCustomInteger.format(1), "01", "1");
+		assert.equal(oCustomInteger.format(123), "123", "123");
+		assert.equal(oCustomInteger.format(123.23), "123", "123.23");
+		assert.equal(oCustomInteger.format(1234), "1.234", "1234");
+		assert.equal(oCustomInteger.format(12345), "?.???", "12345");
+		assert.equal(oCustomInteger.format(-123), "-123", "-123");
 	});
 
 	QUnit.test("integer short style", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "short"}, oLocale);
 
-		equal(oFormat.format(1), "1", "1 formatted");
-		equal(oFormat.format(12), "12", "12 formatted");
-		equal(oFormat.format(123), "123", "123 formatted");
-		equal(oFormat.format(999), "1\xa0Tsd.", "999 formatted");
-		equal(oFormat.format(1234), "1,2\xa0Tsd.", "1234 formatted");
-		equal(oFormat.format(9999), "10\xa0Tsd.", "9999 formatted");
-		equal(oFormat.format(12345), "12\xa0Tsd.", "12345 formatted");
-		equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
-		equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
-		equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
-		equal(oFormat.format(1234567), "1,2\xa0Mio.", "1234567 formatted");
-		equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
-		equal(oFormat.format(12345678), "12\xa0Mio.", "12345678 formatted");
-		equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
-		equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
-		equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1,2\xa0Mrd.", "1234567890 formatted");
-		equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12\xa0Mrd.", "12345678901 formatted");
-		equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
-		equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1,2\xa0Bio.", "1234567890123 formatted");
-		equal(oFormat.format(-1), "-1", "-1 formatted");
-		equal(oFormat.format(-12), "-12", "-12 formatted");
-		equal(oFormat.format(-123), "-123", "-123 formatted");
-		equal(oFormat.format(-999), "-1\xa0Tsd.", "-999 formatted");
-		equal(oFormat.format(-1234), "-1,2\xa0Tsd.", "-1234 formatted");
-		equal(oFormat.format(-9999), "-10\xa0Tsd.", "-9999 formatted");
-		equal(oFormat.format(-12345), "-12\xa0Tsd.", "-12345 formatted");
-		equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
-		equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
-		equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
-		equal(oFormat.format(-1234567), "-1,2\xa0Mio.", "-1234567 formatted");
-		equal(oFormat.format(-9999999), "-10\xa0Mio.", "-9999999 formatted");
-		equal(oFormat.format(-12345678), "-12\xa0Mio.", "-12345678 formatted");
-		equal(oFormat.format(-99999999), "-100\xa0Mio.", "-99999999 formatted");
-		equal(oFormat.format(-123456789), "-123\xa0Mio.", "-123456789 formatted");
-		equal(oFormat.format(-999999999), "-1\xa0Mrd.", "-999999999 formatted");
-		equal(oFormat.format(-1234567890), "-1,2\xa0Mrd.", "-1234567890 formatted");
-		equal(oFormat.format(-9999999999), "-10\xa0Mrd.", "-9999999999 formatted");
-		equal(oFormat.format(-12345678901), "-12\xa0Mrd.", "-12345678901 formatted");
-		equal(oFormat.format(-99999999999), "-100\xa0Mrd.", "-99999999999 formatted");
-		equal(oFormat.format(-123456789012), "-123\xa0Mrd.", "-123456789012 formatted");
-		equal(oFormat.format(-999999999999), "-1\xa0Bio.", "-999999999999 formatted");
-		equal(oFormat.format(-1234567890123), "-1,2\xa0Bio.", "-1234567890123 formatted");
+		assert.equal(oFormat.format(1), "1", "1 formatted");
+		assert.equal(oFormat.format(12), "12", "12 formatted");
+		assert.equal(oFormat.format(123), "123", "123 formatted");
+		assert.equal(oFormat.format(999), "1\xa0Tsd.", "999 formatted");
+		assert.equal(oFormat.format(1234), "1,2\xa0Tsd.", "1234 formatted");
+		assert.equal(oFormat.format(9999), "10\xa0Tsd.", "9999 formatted");
+		assert.equal(oFormat.format(12345), "12\xa0Tsd.", "12345 formatted");
+		assert.equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
+		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1,2\xa0Mio.", "1234567 formatted");
+		assert.equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12\xa0Mio.", "12345678 formatted");
+		assert.equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
+		assert.equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1,2\xa0Mrd.", "1234567890 formatted");
+		assert.equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12\xa0Mrd.", "12345678901 formatted");
+		assert.equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
+		assert.equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1,2\xa0Bio.", "1234567890123 formatted");
+		assert.equal(oFormat.format(-1), "-1", "-1 formatted");
+		assert.equal(oFormat.format(-12), "-12", "-12 formatted");
+		assert.equal(oFormat.format(-123), "-123", "-123 formatted");
+		assert.equal(oFormat.format(-999), "-1\xa0Tsd.", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "-1,2\xa0Tsd.", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-10\xa0Tsd.", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-12\xa0Tsd.", "-12345 formatted");
+		assert.equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
+		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
+		assert.equal(oFormat.format(-1234567), "-1,2\xa0Mio.", "-1234567 formatted");
+		assert.equal(oFormat.format(-9999999), "-10\xa0Mio.", "-9999999 formatted");
+		assert.equal(oFormat.format(-12345678), "-12\xa0Mio.", "-12345678 formatted");
+		assert.equal(oFormat.format(-99999999), "-100\xa0Mio.", "-99999999 formatted");
+		assert.equal(oFormat.format(-123456789), "-123\xa0Mio.", "-123456789 formatted");
+		assert.equal(oFormat.format(-999999999), "-1\xa0Mrd.", "-999999999 formatted");
+		assert.equal(oFormat.format(-1234567890), "-1,2\xa0Mrd.", "-1234567890 formatted");
+		assert.equal(oFormat.format(-9999999999), "-10\xa0Mrd.", "-9999999999 formatted");
+		assert.equal(oFormat.format(-12345678901), "-12\xa0Mrd.", "-12345678901 formatted");
+		assert.equal(oFormat.format(-99999999999), "-100\xa0Mrd.", "-99999999999 formatted");
+		assert.equal(oFormat.format(-123456789012), "-123\xa0Mrd.", "-123456789012 formatted");
+		assert.equal(oFormat.format(-999999999999), "-1\xa0Bio.", "-999999999999 formatted");
+		assert.equal(oFormat.format(-1234567890123), "-1,2\xa0Bio.", "-1234567890123 formatted");
 
-		equal(oFormat.parse("1"), 1, "\"1\" parsed");
-		equal(oFormat.parse("12"), 12, "\"12\" parsed");
-		equal(oFormat.parse("123"), 123, "\"123\" parsed");
-		equal(oFormat.parse("1,23 Tsd."), 1230, "\"1,23 Tsd\" parsed");
-		equal(oFormat.parse("12,3 Tsd."), 12300, "\"12,3 Tsd\" parsed");
-		equal(oFormat.parse("123 Tsd."), 123000, "\"123 Tsd\" parsed");
-		equal(oFormat.parse("1000 Tsd."), 1000000, "\"1000 Tsd\" parsed");
-		equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
-		equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
-		equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
-		equal(oFormat.parse("1 Mrd."), 1000000000, "\"1 Mrd.\" parsed");
-		equal(oFormat.parse("10 Mrd."), 10000000000, "\"10 Mrd.\" parsed");
-		equal(oFormat.parse("100 Mrd."), 100000000000, "\"100 Mrd.\" parsed");
-		equal(oFormat.parse("1 Bio."), 1000000000000, "\"1 Bio.\" parsed");
-		equal(oFormat.parse("-1"), -1, "\"-1\" parsed");
-		equal(oFormat.parse("-12"), -12, "\"-12\" parsed");
-		equal(oFormat.parse("-123"), -123, "\"-123\" parsed");
-		equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1,23 Tsd\" parsed");
-		equal(oFormat.parse("-12,3 Tsd."), -12300, "\"-12,3 Tsd\" parsed");
-		equal(oFormat.parse("-123 Tsd."), -123000, "\"-123 Tsd\" parsed");
-		equal(oFormat.parse("-1000 Tsd."), -1000000, "\"-1000 Tsd\" parsed");
-		equal(oFormat.parse("-1 Mio."), -1000000, "\"-1 Mio.\" parsed");
-		equal(oFormat.parse("-10 Mio."), -10000000, "\"-10 Mio.\" parsed");
-		equal(oFormat.parse("-100 Mio."), -100000000, "\"-100 Mio.\" parsed");
-		equal(oFormat.parse("-1 Mrd."), -1000000000, "\"-1 Mrd.\" parsed");
-		equal(oFormat.parse("-10 Mrd."), -10000000000, "\"-10 Mrd.\" parsed");
-		equal(oFormat.parse("-100 Mrd."), -100000000000, "\"-100 Mrd.\" parsed");
-		equal(oFormat.parse("-1 Bio."), -1000000000000, "\"-1 Bio.\" parsed");
+		assert.equal(oFormat.parse("1"), 1, "\"1\" parsed");
+		assert.equal(oFormat.parse("12"), 12, "\"12\" parsed");
+		assert.equal(oFormat.parse("123"), 123, "\"123\" parsed");
+		assert.equal(oFormat.parse("1,23 Tsd."), 1230, "\"1,23 Tsd\" parsed");
+		assert.equal(oFormat.parse("12,3 Tsd."), 12300, "\"12,3 Tsd\" parsed");
+		assert.equal(oFormat.parse("123 Tsd."), 123000, "\"123 Tsd\" parsed");
+		assert.equal(oFormat.parse("1000 Tsd."), 1000000, "\"1000 Tsd\" parsed");
+		assert.equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
+		assert.equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
+		assert.equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
+		assert.equal(oFormat.parse("1 Mrd."), 1000000000, "\"1 Mrd.\" parsed");
+		assert.equal(oFormat.parse("10 Mrd."), 10000000000, "\"10 Mrd.\" parsed");
+		assert.equal(oFormat.parse("100 Mrd."), 100000000000, "\"100 Mrd.\" parsed");
+		assert.equal(oFormat.parse("1 Bio."), 1000000000000, "\"1 Bio.\" parsed");
+		assert.equal(oFormat.parse("-1"), -1, "\"-1\" parsed");
+		assert.equal(oFormat.parse("-12"), -12, "\"-12\" parsed");
+		assert.equal(oFormat.parse("-123"), -123, "\"-123\" parsed");
+		assert.equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1,23 Tsd\" parsed");
+		assert.equal(oFormat.parse("-12,3 Tsd."), -12300, "\"-12,3 Tsd\" parsed");
+		assert.equal(oFormat.parse("-123 Tsd."), -123000, "\"-123 Tsd\" parsed");
+		assert.equal(oFormat.parse("-1000 Tsd."), -1000000, "\"-1000 Tsd\" parsed");
+		assert.equal(oFormat.parse("-1 Mio."), -1000000, "\"-1 Mio.\" parsed");
+		assert.equal(oFormat.parse("-10 Mio."), -10000000, "\"-10 Mio.\" parsed");
+		assert.equal(oFormat.parse("-100 Mio."), -100000000, "\"-100 Mio.\" parsed");
+		assert.equal(oFormat.parse("-1 Mrd."), -1000000000, "\"-1 Mrd.\" parsed");
+		assert.equal(oFormat.parse("-10 Mrd."), -10000000000, "\"-10 Mrd.\" parsed");
+		assert.equal(oFormat.parse("-100 Mrd."), -100000000000, "\"-100 Mrd.\" parsed");
+		assert.equal(oFormat.parse("-1 Bio."), -1000000000000, "\"-1 Bio.\" parsed");
 
 		oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "short", shortLimit: 10000, precision: 3}, oLocale);
 
-		equal(oFormat.format(1), "1", "1 formatted");
-		equal(oFormat.format(12), "12", "12 formatted");
-		equal(oFormat.format(123), "123", "123 formatted");
-		equal(oFormat.format(999), "999", "999 formatted");
-		equal(oFormat.format(1234), "1234", "1234 formatted");
-		equal(oFormat.format(9999), "9999", "9999 formatted");
-		equal(oFormat.format(12345), "12,3\xa0Tsd.", "12345 formatted");
-		equal(oFormat.format(99900), "99,9\xa0Tsd.", "99900 formatted");
-		equal(oFormat.format(99990), "100\xa0Tsd.", "99990 formatted");
-		equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
-		equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
-		equal(oFormat.format(999000), "999\xa0Tsd.", "999000 formatted");
-		equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
-		equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
-		equal(oFormat.format(1234567), "1,23\xa0Mio.", "1234567 formatted");
-		equal(oFormat.format(9990000), "9,99\xa0Mio.", "9990000 formatted");
-		equal(oFormat.format(9999000), "10\xa0Mio.", "9999000 formatted");
-		equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
-		equal(oFormat.format(12345678), "12,3\xa0Mio.", "12345678 formatted");
-		equal(oFormat.format(99900000), "99,9\xa0Mio.", "99900000 formatted");
-		equal(oFormat.format(99990000), "100\xa0Mio.", "99990000 formatted");
-		equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
-		equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
-		equal(oFormat.format(999000000), "999\xa0Mio.", "999000000 formatted");
-		equal(oFormat.format(999900000), "1\xa0Mrd.", "999900000 formatted");
-		equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1,23\xa0Mrd.", "1234567890 formatted");
-		equal(oFormat.format(9990000000), "9,99\xa0Mrd.", "9990000000 formatted");
-		equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12,3\xa0Mrd.", "12345678901 formatted");
-		equal(oFormat.format(99900000000), "99,9\xa0Mrd.", "99900000000 formatted");
-		equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
-		equal(oFormat.format(999000000000), "999\xa0Mrd.", "999000000000 formatted");
-		equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1,23\xa0Bio.", "1234567890123 formatted");
-		equal(oFormat.format(-1), "-1", "-1 formatted");
-		equal(oFormat.format(-12), "-12", "-12 formatted");
-		equal(oFormat.format(-123), "-123", "-123 formatted");
-		equal(oFormat.format(-999), "-999", "-999 formatted");
-		equal(oFormat.format(-1234), "-1234", "-1234 formatted");
-		equal(oFormat.format(-9999), "-9999", "-9999 formatted");
-		equal(oFormat.format(-12345), "-12,3\xa0Tsd.", "-12345 formatted");
-		equal(oFormat.format(-99900), "-99,9\xa0Tsd.", "-99900 formatted");
-		equal(oFormat.format(-99990), "-100\xa0Tsd.", "-99990 formatted");
-		equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
-		equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
-		equal(oFormat.format(-999000), "-999\xa0Tsd.", "-999000 formatted");
-		equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
-		equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
+		assert.equal(oFormat.format(1), "1", "1 formatted");
+		assert.equal(oFormat.format(12), "12", "12 formatted");
+		assert.equal(oFormat.format(123), "123", "123 formatted");
+		assert.equal(oFormat.format(999), "999", "999 formatted");
+		assert.equal(oFormat.format(1234), "1234", "1234 formatted");
+		assert.equal(oFormat.format(9999), "9999", "9999 formatted");
+		assert.equal(oFormat.format(12345), "12,3\xa0Tsd.", "12345 formatted");
+		assert.equal(oFormat.format(99900), "99,9\xa0Tsd.", "99900 formatted");
+		assert.equal(oFormat.format(99990), "100\xa0Tsd.", "99990 formatted");
+		assert.equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
+		assert.equal(oFormat.format(999000), "999\xa0Tsd.", "999000 formatted");
+		assert.equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
+		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1,23\xa0Mio.", "1234567 formatted");
+		assert.equal(oFormat.format(9990000), "9,99\xa0Mio.", "9990000 formatted");
+		assert.equal(oFormat.format(9999000), "10\xa0Mio.", "9999000 formatted");
+		assert.equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12,3\xa0Mio.", "12345678 formatted");
+		assert.equal(oFormat.format(99900000), "99,9\xa0Mio.", "99900000 formatted");
+		assert.equal(oFormat.format(99990000), "100\xa0Mio.", "99990000 formatted");
+		assert.equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
+		assert.equal(oFormat.format(999000000), "999\xa0Mio.", "999000000 formatted");
+		assert.equal(oFormat.format(999900000), "1\xa0Mrd.", "999900000 formatted");
+		assert.equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1,23\xa0Mrd.", "1234567890 formatted");
+		assert.equal(oFormat.format(9990000000), "9,99\xa0Mrd.", "9990000000 formatted");
+		assert.equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12,3\xa0Mrd.", "12345678901 formatted");
+		assert.equal(oFormat.format(99900000000), "99,9\xa0Mrd.", "99900000000 formatted");
+		assert.equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
+		assert.equal(oFormat.format(999000000000), "999\xa0Mrd.", "999000000000 formatted");
+		assert.equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1,23\xa0Bio.", "1234567890123 formatted");
+		assert.equal(oFormat.format(-1), "-1", "-1 formatted");
+		assert.equal(oFormat.format(-12), "-12", "-12 formatted");
+		assert.equal(oFormat.format(-123), "-123", "-123 formatted");
+		assert.equal(oFormat.format(-999), "-999", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "-1234", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-9999", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-12,3\xa0Tsd.", "-12345 formatted");
+		assert.equal(oFormat.format(-99900), "-99,9\xa0Tsd.", "-99900 formatted");
+		assert.equal(oFormat.format(-99990), "-100\xa0Tsd.", "-99990 formatted");
+		assert.equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
+		assert.equal(oFormat.format(-999000), "-999\xa0Tsd.", "-999000 formatted");
+		assert.equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
+		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
 	});
 
 	QUnit.test("integer short style under locale zh_CN", function(assert) {
@@ -230,9 +230,9 @@
 				style: "short"
 			}, oLocale);
 
-		equal(oFormat.parse("1"), 1, "'1' is parsed as 1");
-		equal(oFormat.parse("9999"), 9999, "'9999' is parsed as 9999");
-		equal(oFormat.parse("1万"), 10000, "'1万' is parsed as 10000");
+		assert.equal(oFormat.parse("1"), 1, "'1' is parsed as 1");
+		assert.equal(oFormat.parse("9999"), 9999, "'9999' is parsed as 9999");
+		assert.equal(oFormat.parse("1万"), 10000, "'1万' is parsed as 10000");
 	});
 
 	QUnit.test("short style with 'shortRefNumber' set", function(assert) {
@@ -242,56 +242,56 @@
 			shortRefNumber: 999999
 		}, oLocale);
 
-		equal(oFormat.format(1), "0,000001\xa0Mio.", "1 formatted");
-		equal(oFormat.format(12), "0,000012\xa0Mio.", "12 formatted");
-		equal(oFormat.format(123), "0,00012\xa0Mio.", "123 formatted");
-		equal(oFormat.format(999), "0,001\xa0Mio.", "999 formatted");
-		equal(oFormat.format(1234), "0,0012\xa0Mio.", "1234 formatted");
-		equal(oFormat.format(9999), "0,01\xa0Mio.", "9999 formatted");
-		equal(oFormat.format(12345), "0,012\xa0Mio.", "12345 formatted");
-		equal(oFormat.format(99900), "0,1\xa0Mio.", "99900 formatted");
-		equal(oFormat.format(99990), "0,1\xa0Mio.", "99990 formatted");
-		equal(oFormat.format(99999), "0,1\xa0Mio.", "99999 formatted");
-		equal(oFormat.format(123456), "0,12\xa0Mio.", "123456 formatted");
-		equal(oFormat.format(999000), "1\xa0Mio.", "999000 formatted");
-		equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
-		equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
-		equal(oFormat.format(1234567), "1,2\xa0Mio.", "1234567 formatted");
-		equal(oFormat.format(9990000), "10\xa0Mio.", "9990000 formatted");
-		equal(oFormat.format(9999000), "10\xa0Mio.", "9999000 formatted");
-		equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
-		equal(oFormat.format(12345678), "12\xa0Mio.", "12345678 formatted");
-		equal(oFormat.format(99900000), "100\xa0Mio.", "99900000 formatted");
-		equal(oFormat.format(99990000), "100\xa0Mio.", "99990000 formatted");
-		equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
-		equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
-		equal(oFormat.format(999000000), "999\xa0Mio.", "999000000 formatted");
-		equal(oFormat.format(999900000), "1000\xa0Mio.", "999900000 formatted");
-		equal(oFormat.format(999999999), "1000\xa0Mio.", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1235\xa0Mio.", "1234567890 formatted");
-		equal(oFormat.format(9990000000), "9990\xa0Mio.", "9990000000 formatted");
-		equal(oFormat.format(9999999999), "10000\xa0Mio.", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12346\xa0Mio.", "12345678901 formatted");
-		equal(oFormat.format(99900000000), "99900\xa0Mio.", "99900000000 formatted");
-		equal(oFormat.format(99999999999), "100000\xa0Mio.", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123457\xa0Mio.", "123456789012 formatted");
-		equal(oFormat.format(999000000000), "999000\xa0Mio.", "999000000000 formatted");
-		equal(oFormat.format(999999999999), "1000000\xa0Mio.", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1234568\xa0Mio.", "1234567890123 formatted");
-		equal(oFormat.format(-1), "-0,000001\xa0Mio.", "-1 formatted");
-		equal(oFormat.format(-12), "-0,000012\xa0Mio.", "-12 formatted");
-		equal(oFormat.format(-123), "-0,00012\xa0Mio.", "-123 formatted");
-		equal(oFormat.format(-999), "-0,001\xa0Mio.", "-999 formatted");
-		equal(oFormat.format(-1234), "-0,0012\xa0Mio.", "-1234 formatted");
-		equal(oFormat.format(-9999), "-0,01\xa0Mio.", "-9999 formatted");
-		equal(oFormat.format(-12345), "-0,012\xa0Mio.", "-12345 formatted");
-		equal(oFormat.format(-99900), "-0,1\xa0Mio.", "-99900 formatted");
-		equal(oFormat.format(-99990), "-0,1\xa0Mio.", "-99990 formatted");
-		equal(oFormat.format(-99999), "-0,1\xa0Mio.", "-99999 formatted");
-		equal(oFormat.format(-123456), "-0,12\xa0Mio.", "-123456 formatted");
-		equal(oFormat.format(-999000), "-1\xa0Mio.", "-999000 formatted");
-		equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
-		equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
+		assert.equal(oFormat.format(1), "0,000001\xa0Mio.", "1 formatted");
+		assert.equal(oFormat.format(12), "0,000012\xa0Mio.", "12 formatted");
+		assert.equal(oFormat.format(123), "0,00012\xa0Mio.", "123 formatted");
+		assert.equal(oFormat.format(999), "0,001\xa0Mio.", "999 formatted");
+		assert.equal(oFormat.format(1234), "0,0012\xa0Mio.", "1234 formatted");
+		assert.equal(oFormat.format(9999), "0,01\xa0Mio.", "9999 formatted");
+		assert.equal(oFormat.format(12345), "0,012\xa0Mio.", "12345 formatted");
+		assert.equal(oFormat.format(99900), "0,1\xa0Mio.", "99900 formatted");
+		assert.equal(oFormat.format(99990), "0,1\xa0Mio.", "99990 formatted");
+		assert.equal(oFormat.format(99999), "0,1\xa0Mio.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "0,12\xa0Mio.", "123456 formatted");
+		assert.equal(oFormat.format(999000), "1\xa0Mio.", "999000 formatted");
+		assert.equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
+		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1,2\xa0Mio.", "1234567 formatted");
+		assert.equal(oFormat.format(9990000), "10\xa0Mio.", "9990000 formatted");
+		assert.equal(oFormat.format(9999000), "10\xa0Mio.", "9999000 formatted");
+		assert.equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12\xa0Mio.", "12345678 formatted");
+		assert.equal(oFormat.format(99900000), "100\xa0Mio.", "99900000 formatted");
+		assert.equal(oFormat.format(99990000), "100\xa0Mio.", "99990000 formatted");
+		assert.equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
+		assert.equal(oFormat.format(999000000), "999\xa0Mio.", "999000000 formatted");
+		assert.equal(oFormat.format(999900000), "1000\xa0Mio.", "999900000 formatted");
+		assert.equal(oFormat.format(999999999), "1000\xa0Mio.", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1235\xa0Mio.", "1234567890 formatted");
+		assert.equal(oFormat.format(9990000000), "9990\xa0Mio.", "9990000000 formatted");
+		assert.equal(oFormat.format(9999999999), "10000\xa0Mio.", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12346\xa0Mio.", "12345678901 formatted");
+		assert.equal(oFormat.format(99900000000), "99900\xa0Mio.", "99900000000 formatted");
+		assert.equal(oFormat.format(99999999999), "100000\xa0Mio.", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123457\xa0Mio.", "123456789012 formatted");
+		assert.equal(oFormat.format(999000000000), "999000\xa0Mio.", "999000000000 formatted");
+		assert.equal(oFormat.format(999999999999), "1000000\xa0Mio.", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1234568\xa0Mio.", "1234567890123 formatted");
+		assert.equal(oFormat.format(-1), "-0,000001\xa0Mio.", "-1 formatted");
+		assert.equal(oFormat.format(-12), "-0,000012\xa0Mio.", "-12 formatted");
+		assert.equal(oFormat.format(-123), "-0,00012\xa0Mio.", "-123 formatted");
+		assert.equal(oFormat.format(-999), "-0,001\xa0Mio.", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "-0,0012\xa0Mio.", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-0,01\xa0Mio.", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-0,012\xa0Mio.", "-12345 formatted");
+		assert.equal(oFormat.format(-99900), "-0,1\xa0Mio.", "-99900 formatted");
+		assert.equal(oFormat.format(-99990), "-0,1\xa0Mio.", "-99990 formatted");
+		assert.equal(oFormat.format(-99999), "-0,1\xa0Mio.", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-0,12\xa0Mio.", "-123456 formatted");
+		assert.equal(oFormat.format(-999000), "-1\xa0Mio.", "-999000 formatted");
+		assert.equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
+		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
@@ -299,56 +299,56 @@
 			maxFractionDigits: 2
 		}, oLocale);
 
-		equal(oFormat.format(1), "0\xa0Mio.", "1 formatted");
-		equal(oFormat.format(12), "0\xa0Mio.", "12 formatted");
-		equal(oFormat.format(123), "0\xa0Mio.", "123 formatted");
-		equal(oFormat.format(999), "0\xa0Mio.", "999 formatted");
-		equal(oFormat.format(1234), "0\xa0Mio.", "1234 formatted");
-		equal(oFormat.format(9999), "0,01\xa0Mio.", "9999 formatted");
-		equal(oFormat.format(12345), "0,01\xa0Mio.", "12345 formatted");
-		equal(oFormat.format(99900), "0,1\xa0Mio.", "99900 formatted");
-		equal(oFormat.format(99990), "0,1\xa0Mio.", "99990 formatted");
-		equal(oFormat.format(99999), "0,1\xa0Mio.", "99999 formatted");
-		equal(oFormat.format(123456), "0,12\xa0Mio.", "123456 formatted");
-		equal(oFormat.format(999000), "1\xa0Mio.", "999000 formatted");
-		equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
-		equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
-		equal(oFormat.format(1234567), "1,23\xa0Mio.", "1234567 formatted");
-		equal(oFormat.format(9990000), "9,99\xa0Mio.", "9990000 formatted");
-		equal(oFormat.format(9999000), "10\xa0Mio.", "9999000 formatted");
-		equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
-		equal(oFormat.format(12345678), "12,35\xa0Mio.", "12345678 formatted");
-		equal(oFormat.format(99900000), "99,9\xa0Mio.", "99900000 formatted");
-		equal(oFormat.format(99990000), "99,99\xa0Mio.", "99990000 formatted");
-		equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
-		equal(oFormat.format(123456789), "123,46\xa0Mio.", "123456789 formatted");
-		equal(oFormat.format(999000000), "999\xa0Mio.", "999000000 formatted");
-		equal(oFormat.format(999900000), "999,9\xa0Mio.", "999900000 formatted");
-		equal(oFormat.format(999999999), "1.000\xa0Mio.", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1.234,57\xa0Mio.", "1234567890 formatted");
-		equal(oFormat.format(9990000000), "9.990\xa0Mio.", "9990000000 formatted");
-		equal(oFormat.format(9999999999), "10.000\xa0Mio.", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12.345,68\xa0Mio.", "12345678901 formatted");
-		equal(oFormat.format(99900000000), "99.900\xa0Mio.", "99900000000 formatted");
-		equal(oFormat.format(99999999999), "100.000\xa0Mio.", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123.456,79\xa0Mio.", "123456789012 formatted");
-		equal(oFormat.format(999000000000), "999.000\xa0Mio.", "999000000000 formatted");
-		equal(oFormat.format(999999999999), "1.000.000\xa0Mio.", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1.234.567,89\xa0Mio.", "1234567890123 formatted");
-		equal(oFormat.format(-1), "0\xa0Mio.", "-1 formatted");
-		equal(oFormat.format(-12), "0\xa0Mio.", "-12 formatted");
-		equal(oFormat.format(-123), "0\xa0Mio.", "-123 formatted");
-		equal(oFormat.format(-999), "0\xa0Mio.", "-999 formatted");
-		equal(oFormat.format(-1234), "0\xa0Mio.", "-1234 formatted");
-		equal(oFormat.format(-9999), "-0,01\xa0Mio.", "-9999 formatted");
-		equal(oFormat.format(-12345), "-0,01\xa0Mio.", "-12345 formatted");
-		equal(oFormat.format(-99900), "-0,1\xa0Mio.", "-99900 formatted");
-		equal(oFormat.format(-99990), "-0,1\xa0Mio.", "-99990 formatted");
-		equal(oFormat.format(-99999), "-0,1\xa0Mio.", "-99999 formatted");
-		equal(oFormat.format(-123456), "-0,12\xa0Mio.", "-123456 formatted");
-		equal(oFormat.format(-990000), "-0,99\xa0Mio.", "-999000 formatted");
-		equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
-		equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
+		assert.equal(oFormat.format(1), "0\xa0Mio.", "1 formatted");
+		assert.equal(oFormat.format(12), "0\xa0Mio.", "12 formatted");
+		assert.equal(oFormat.format(123), "0\xa0Mio.", "123 formatted");
+		assert.equal(oFormat.format(999), "0\xa0Mio.", "999 formatted");
+		assert.equal(oFormat.format(1234), "0\xa0Mio.", "1234 formatted");
+		assert.equal(oFormat.format(9999), "0,01\xa0Mio.", "9999 formatted");
+		assert.equal(oFormat.format(12345), "0,01\xa0Mio.", "12345 formatted");
+		assert.equal(oFormat.format(99900), "0,1\xa0Mio.", "99900 formatted");
+		assert.equal(oFormat.format(99990), "0,1\xa0Mio.", "99990 formatted");
+		assert.equal(oFormat.format(99999), "0,1\xa0Mio.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "0,12\xa0Mio.", "123456 formatted");
+		assert.equal(oFormat.format(999000), "1\xa0Mio.", "999000 formatted");
+		assert.equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
+		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1,23\xa0Mio.", "1234567 formatted");
+		assert.equal(oFormat.format(9990000), "9,99\xa0Mio.", "9990000 formatted");
+		assert.equal(oFormat.format(9999000), "10\xa0Mio.", "9999000 formatted");
+		assert.equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12,35\xa0Mio.", "12345678 formatted");
+		assert.equal(oFormat.format(99900000), "99,9\xa0Mio.", "99900000 formatted");
+		assert.equal(oFormat.format(99990000), "99,99\xa0Mio.", "99990000 formatted");
+		assert.equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123,46\xa0Mio.", "123456789 formatted");
+		assert.equal(oFormat.format(999000000), "999\xa0Mio.", "999000000 formatted");
+		assert.equal(oFormat.format(999900000), "999,9\xa0Mio.", "999900000 formatted");
+		assert.equal(oFormat.format(999999999), "1.000\xa0Mio.", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1.234,57\xa0Mio.", "1234567890 formatted");
+		assert.equal(oFormat.format(9990000000), "9.990\xa0Mio.", "9990000000 formatted");
+		assert.equal(oFormat.format(9999999999), "10.000\xa0Mio.", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12.345,68\xa0Mio.", "12345678901 formatted");
+		assert.equal(oFormat.format(99900000000), "99.900\xa0Mio.", "99900000000 formatted");
+		assert.equal(oFormat.format(99999999999), "100.000\xa0Mio.", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123.456,79\xa0Mio.", "123456789012 formatted");
+		assert.equal(oFormat.format(999000000000), "999.000\xa0Mio.", "999000000000 formatted");
+		assert.equal(oFormat.format(999999999999), "1.000.000\xa0Mio.", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1.234.567,89\xa0Mio.", "1234567890123 formatted");
+		assert.equal(oFormat.format(-1), "0\xa0Mio.", "-1 formatted");
+		assert.equal(oFormat.format(-12), "0\xa0Mio.", "-12 formatted");
+		assert.equal(oFormat.format(-123), "0\xa0Mio.", "-123 formatted");
+		assert.equal(oFormat.format(-999), "0\xa0Mio.", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "0\xa0Mio.", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-0,01\xa0Mio.", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-0,01\xa0Mio.", "-12345 formatted");
+		assert.equal(oFormat.format(-99900), "-0,1\xa0Mio.", "-99900 formatted");
+		assert.equal(oFormat.format(-99990), "-0,1\xa0Mio.", "-99990 formatted");
+		assert.equal(oFormat.format(-99999), "-0,1\xa0Mio.", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-0,12\xa0Mio.", "-123456 formatted");
+		assert.equal(oFormat.format(-990000), "-0,99\xa0Mio.", "-999000 formatted");
+		assert.equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
+		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
@@ -356,122 +356,122 @@
 			maxFractionDigits: 2
 		}, new sap.ui.core.Locale("zh_CN"));
 
-		equal(oFormat.format(1), "0万", "1 formatted");
-		equal(oFormat.format(12), "0万", "12 formatted");
-		equal(oFormat.format(123), "0.01万", "123 formatted");
-		equal(oFormat.format(999), "0.1万", "999 formatted");
-		equal(oFormat.format(1234), "0.12万", "1234 formatted");
-		equal(oFormat.format(9999), "1万", "9999 formatted");
-		equal(oFormat.format(12345), "1.23万", "12345 formatted");
-		equal(oFormat.format(99900), "9.99万", "99900 formatted");
-		equal(oFormat.format(99990), "10万", "99990 formatted");
-		equal(oFormat.format(99999), "10万", "99999 formatted");
-		equal(oFormat.format(123456), "12.35万", "123456 formatted");
-		equal(oFormat.format(999000), "99.9万", "999000 formatted");
-		equal(oFormat.format(999900), "99.99万", "999900 formatted");
-		equal(oFormat.format(999999), "100万", "999999 formatted");
-		equal(oFormat.format(1234567), "123.46万", "1234567 formatted");
-		equal(oFormat.format(9990000), "999万", "9990000 formatted");
-		equal(oFormat.format(9999000), "999.9万", "9999000 formatted");
-		equal(oFormat.format(9999999), "1,000万", "9999999 formatted");
-		equal(oFormat.format(12345678), "1,234.57万", "12345678 formatted");
-		equal(oFormat.format(99900000), "9,990万", "99900000 formatted");
-		equal(oFormat.format(99990000), "9,999万", "99990000 formatted");
-		equal(oFormat.format(99999999), "10,000万", "99999999 formatted");
-		equal(oFormat.format(123456789), "12,345.68万", "123456789 formatted");
-		equal(oFormat.format(999000000), "99,900万", "999000000 formatted");
-		equal(oFormat.format(999900000), "99,990万", "999900000 formatted");
-		equal(oFormat.format(999999999), "100,000万", "999999999 formatted");
-		equal(oFormat.format(1234567890), "123,456.79万", "1234567890 formatted");
-		equal(oFormat.format(9990000000), "999,000万", "9990000000 formatted");
-		equal(oFormat.format(9999999999), "1,000,000万", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "1,234,567.89万", "12345678901 formatted");
-		equal(oFormat.format(99900000000), "9,990,000万", "99900000000 formatted");
-		equal(oFormat.format(99999999999), "10,000,000万", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "12,345,678.9万", "123456789012 formatted");
-		equal(oFormat.format(999000000000), "99,900,000万", "999000000000 formatted");
-		equal(oFormat.format(999999999999), "100,000,000万", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "123,456,789.01万", "1234567890123 formatted");
-		equal(oFormat.format(-1), "0万", "-1 formatted");
-		equal(oFormat.format(-12), "0万", "-12 formatted");
-		equal(oFormat.format(-123), "-0.01万", "-123 formatted");
-		equal(oFormat.format(-999), "-0.1万", "-999 formatted");
-		equal(oFormat.format(-1234), "-0.12万", "-1234 formatted");
-		equal(oFormat.format(-9999), "-1万", "-9999 formatted");
-		equal(oFormat.format(-12345), "-1.23万", "-12345 formatted");
-		equal(oFormat.format(-99900), "-9.99万", "-99900 formatted");
-		equal(oFormat.format(-99990), "-10万", "-99990 formatted");
-		equal(oFormat.format(-99999), "-10万", "-99999 formatted");
-		equal(oFormat.format(-123456), "-12.35万", "-123456 formatted");
-		equal(oFormat.format(-990000), "-99万", "-999000 formatted");
-		equal(oFormat.format(-999900), "-99.99万", "-999900 formatted");
-		equal(oFormat.format(-999999), "-100万", "-999999 formatted");
+		assert.equal(oFormat.format(1), "0万", "1 formatted");
+		assert.equal(oFormat.format(12), "0万", "12 formatted");
+		assert.equal(oFormat.format(123), "0.01万", "123 formatted");
+		assert.equal(oFormat.format(999), "0.1万", "999 formatted");
+		assert.equal(oFormat.format(1234), "0.12万", "1234 formatted");
+		assert.equal(oFormat.format(9999), "1万", "9999 formatted");
+		assert.equal(oFormat.format(12345), "1.23万", "12345 formatted");
+		assert.equal(oFormat.format(99900), "9.99万", "99900 formatted");
+		assert.equal(oFormat.format(99990), "10万", "99990 formatted");
+		assert.equal(oFormat.format(99999), "10万", "99999 formatted");
+		assert.equal(oFormat.format(123456), "12.35万", "123456 formatted");
+		assert.equal(oFormat.format(999000), "99.9万", "999000 formatted");
+		assert.equal(oFormat.format(999900), "99.99万", "999900 formatted");
+		assert.equal(oFormat.format(999999), "100万", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "123.46万", "1234567 formatted");
+		assert.equal(oFormat.format(9990000), "999万", "9990000 formatted");
+		assert.equal(oFormat.format(9999000), "999.9万", "9999000 formatted");
+		assert.equal(oFormat.format(9999999), "1,000万", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "1,234.57万", "12345678 formatted");
+		assert.equal(oFormat.format(99900000), "9,990万", "99900000 formatted");
+		assert.equal(oFormat.format(99990000), "9,999万", "99990000 formatted");
+		assert.equal(oFormat.format(99999999), "10,000万", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "12,345.68万", "123456789 formatted");
+		assert.equal(oFormat.format(999000000), "99,900万", "999000000 formatted");
+		assert.equal(oFormat.format(999900000), "99,990万", "999900000 formatted");
+		assert.equal(oFormat.format(999999999), "100,000万", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "123,456.79万", "1234567890 formatted");
+		assert.equal(oFormat.format(9990000000), "999,000万", "9990000000 formatted");
+		assert.equal(oFormat.format(9999999999), "1,000,000万", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "1,234,567.89万", "12345678901 formatted");
+		assert.equal(oFormat.format(99900000000), "9,990,000万", "99900000000 formatted");
+		assert.equal(oFormat.format(99999999999), "10,000,000万", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "12,345,678.9万", "123456789012 formatted");
+		assert.equal(oFormat.format(999000000000), "99,900,000万", "999000000000 formatted");
+		assert.equal(oFormat.format(999999999999), "100,000,000万", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "123,456,789.01万", "1234567890123 formatted");
+		assert.equal(oFormat.format(-1), "0万", "-1 formatted");
+		assert.equal(oFormat.format(-12), "0万", "-12 formatted");
+		assert.equal(oFormat.format(-123), "-0.01万", "-123 formatted");
+		assert.equal(oFormat.format(-999), "-0.1万", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "-0.12万", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-1万", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-1.23万", "-12345 formatted");
+		assert.equal(oFormat.format(-99900), "-9.99万", "-99900 formatted");
+		assert.equal(oFormat.format(-99990), "-10万", "-99990 formatted");
+		assert.equal(oFormat.format(-99999), "-10万", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-12.35万", "-123456 formatted");
+		assert.equal(oFormat.format(-990000), "-99万", "-999000 formatted");
+		assert.equal(oFormat.format(-999900), "-99.99万", "-999900 formatted");
+		assert.equal(oFormat.format(-999999), "-100万", "-999999 formatted");
 	});
 
 	QUnit.test("integer long style", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long"}, oLocale);
 
-		equal(oFormat.format(1), "1", "1 formatted");
-		equal(oFormat.format(12), "12", "12 formatted");
-		equal(oFormat.format(123), "123", "123 formatted");
-		equal(oFormat.format(999), "1 Tausend", "999 formatted");
-		equal(oFormat.format(1234), "1,2 Tausend", "1234 formatted");
-		equal(oFormat.format(9999), "10 Tausend", "9999 formatted");
-		equal(oFormat.format(12345), "12 Tausend", "12345 formatted");
-		equal(oFormat.format(99999), "100 Tausend", "99999 formatted");
-		equal(oFormat.format(123456), "123 Tausend", "123456 formatted");
-		equal(oFormat.format(999999), "1 Million", "999999 formatted");
-		equal(oFormat.format(1234567), "1,2 Million", "1234567 formatted");
-		equal(oFormat.format(9999999), "10 Millionen", "9999999 formatted");
-		equal(oFormat.format(12345678), "12 Millionen", "12345678 formatted");
-		equal(oFormat.format(99999999), "100 Millionen", "99999999 formatted");
-		equal(oFormat.format(123456789), "123 Millionen", "123456789 formatted");
-		equal(oFormat.format(999999999), "1 Milliarde", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1,2 Milliarde", "1234567890 formatted");
-		equal(oFormat.format(9999999999), "10 Milliarden", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12 Milliarden", "12345678901 formatted");
-		equal(oFormat.format(99999999999), "100 Milliarden", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123 Milliarden", "123456789012 formatted");
-		equal(oFormat.format(999999999999), "1 Billion", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1,2 Billion", "1234567890123 formatted");
+		assert.equal(oFormat.format(1), "1", "1 formatted");
+		assert.equal(oFormat.format(12), "12", "12 formatted");
+		assert.equal(oFormat.format(123), "123", "123 formatted");
+		assert.equal(oFormat.format(999), "1 Tausend", "999 formatted");
+		assert.equal(oFormat.format(1234), "1,2 Tausend", "1234 formatted");
+		assert.equal(oFormat.format(9999), "10 Tausend", "9999 formatted");
+		assert.equal(oFormat.format(12345), "12 Tausend", "12345 formatted");
+		assert.equal(oFormat.format(99999), "100 Tausend", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123 Tausend", "123456 formatted");
+		assert.equal(oFormat.format(999999), "1 Million", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1,2 Million", "1234567 formatted");
+		assert.equal(oFormat.format(9999999), "10 Millionen", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12 Millionen", "12345678 formatted");
+		assert.equal(oFormat.format(99999999), "100 Millionen", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123 Millionen", "123456789 formatted");
+		assert.equal(oFormat.format(999999999), "1 Milliarde", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1,2 Milliarde", "1234567890 formatted");
+		assert.equal(oFormat.format(9999999999), "10 Milliarden", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12 Milliarden", "12345678901 formatted");
+		assert.equal(oFormat.format(99999999999), "100 Milliarden", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123 Milliarden", "123456789012 formatted");
+		assert.equal(oFormat.format(999999999999), "1 Billion", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1,2 Billion", "1234567890123 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long", precision: 3, shortLimit: 100000}, oLocale);
 
-		equal(oFormat.format(1), "1", "1 formatted");
-		equal(oFormat.format(12), "12", "12 formatted");
-		equal(oFormat.format(123), "123", "123 formatted");
-		equal(oFormat.format(999), "999", "999 formatted");
-		equal(oFormat.format(1234), "1234", "1234 formatted");
-		equal(oFormat.format(9999), "9999", "9999 formatted");
-		equal(oFormat.format(12345), "12345", "12345 formatted");
-		equal(oFormat.format(99999), "99999", "99999 formatted");
-		equal(oFormat.format(123456), "123 Tausend", "123456 formatted");
-		equal(oFormat.format(999999), "1 Million", "999999 formatted");
-		equal(oFormat.format(1234567), "1,23 Millionen", "1234567 formatted");
-		equal(oFormat.format(9999999), "10 Millionen", "9999999 formatted");
-		equal(oFormat.format(12345678), "12,3 Millionen", "12345678 formatted");
-		equal(oFormat.format(99999999), "100 Millionen", "99999999 formatted");
-		equal(oFormat.format(123456789), "123 Millionen", "123456789 formatted");
-		equal(oFormat.format(999999999), "1 Milliarde", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1,23 Milliarden", "1234567890 formatted");
-		equal(oFormat.format(9999999999), "10 Milliarden", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12,3 Milliarden", "12345678901 formatted");
-		equal(oFormat.format(99999999999), "100 Milliarden", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123 Milliarden", "123456789012 formatted");
-		equal(oFormat.format(999999999999), "1 Billion", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1,23 Billionen", "1234567890123 formatted");
-		equal(oFormat.format(-1), "-1", "-1 formatted");
-		equal(oFormat.format(-12), "-12", "-12 formatted");
-		equal(oFormat.format(-123), "-123", "-123 formatted");
-		equal(oFormat.format(-999), "-999", "-999 formatted");
-		equal(oFormat.format(-1234), "-1234", "-1234 formatted");
-		equal(oFormat.format(-9999), "-9999", "-9999 formatted");
-		equal(oFormat.format(-12345), "-12345", "-12345 formatted");
-		equal(oFormat.format(-99999), "-99999", "-99999 formatted");
-		equal(oFormat.format(-123456), "-123 Tausend", "-123456 formatted");
-		equal(oFormat.format(-999999), "-1 Million", "-999999 formatted");
-		equal(oFormat.format(-1234567), "-1,23 Millionen", "-1234567 formatted");
+		assert.equal(oFormat.format(1), "1", "1 formatted");
+		assert.equal(oFormat.format(12), "12", "12 formatted");
+		assert.equal(oFormat.format(123), "123", "123 formatted");
+		assert.equal(oFormat.format(999), "999", "999 formatted");
+		assert.equal(oFormat.format(1234), "1234", "1234 formatted");
+		assert.equal(oFormat.format(9999), "9999", "9999 formatted");
+		assert.equal(oFormat.format(12345), "12345", "12345 formatted");
+		assert.equal(oFormat.format(99999), "99999", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123 Tausend", "123456 formatted");
+		assert.equal(oFormat.format(999999), "1 Million", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1,23 Millionen", "1234567 formatted");
+		assert.equal(oFormat.format(9999999), "10 Millionen", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12,3 Millionen", "12345678 formatted");
+		assert.equal(oFormat.format(99999999), "100 Millionen", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123 Millionen", "123456789 formatted");
+		assert.equal(oFormat.format(999999999), "1 Milliarde", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1,23 Milliarden", "1234567890 formatted");
+		assert.equal(oFormat.format(9999999999), "10 Milliarden", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12,3 Milliarden", "12345678901 formatted");
+		assert.equal(oFormat.format(99999999999), "100 Milliarden", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123 Milliarden", "123456789012 formatted");
+		assert.equal(oFormat.format(999999999999), "1 Billion", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1,23 Billionen", "1234567890123 formatted");
+		assert.equal(oFormat.format(-1), "-1", "-1 formatted");
+		assert.equal(oFormat.format(-12), "-12", "-12 formatted");
+		assert.equal(oFormat.format(-123), "-123", "-123 formatted");
+		assert.equal(oFormat.format(-999), "-999", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "-1234", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-9999", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-12345", "-12345 formatted");
+		assert.equal(oFormat.format(-99999), "-99999", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-123 Tausend", "-123456 formatted");
+		assert.equal(oFormat.format(-999999), "-1 Million", "-999999 formatted");
+		assert.equal(oFormat.format(-1234567), "-1,23 Millionen", "-1234567 formatted");
 	});
 
 	QUnit.test("getScale", function(assert) {
@@ -491,7 +491,7 @@
 						shortRefNumber: iNumber
 					}, new sap.ui.core.Locale(sLocale));
 
-				equal(oFormat.getScale(), sScale, "The scaling factor in Locale " + sLocale + " for " + iNumber + ": " + sScale);
+				assert.equal(oFormat.getScale(), sScale, "The scaling factor in Locale " + sLocale + " for " + iNumber + ": " + sScale);
 			});
 		});
 	});
@@ -506,58 +506,58 @@
 			showScale: false
 		}, oLocale);
 
-		equal(oFormat.getScale(), "Mio.", "Scale is 'Mio.'");
+		assert.equal(oFormat.getScale(), "Mio.", "Scale is 'Mio.'");
 
-		equal(oFormat.format(1), "0", "1 formatted");
-		equal(oFormat.format(12), "0", "12 formatted");
-		equal(oFormat.format(123), "0", "123 formatted");
-		equal(oFormat.format(999), "0", "999 formatted");
-		equal(oFormat.format(1234), "0", "1234 formatted");
-		equal(oFormat.format(9999), "0,01", "9999 formatted");
-		equal(oFormat.format(12345), "0,01", "12345 formatted");
-		equal(oFormat.format(99900), "0,1", "99900 formatted");
-		equal(oFormat.format(99990), "0,1", "99990 formatted");
-		equal(oFormat.format(99999), "0,1", "99999 formatted");
-		equal(oFormat.format(123456), "0,12", "123456 formatted");
-		equal(oFormat.format(999000), "1", "999000 formatted");
-		equal(oFormat.format(999900), "1", "999900 formatted");
-		equal(oFormat.format(999999), "1", "999999 formatted");
-		equal(oFormat.format(1234567), "1,23", "1234567 formatted");
-		equal(oFormat.format(9990000), "9,99", "9990000 formatted");
-		equal(oFormat.format(9999000), "10", "9999000 formatted");
-		equal(oFormat.format(9999999), "10", "9999999 formatted");
-		equal(oFormat.format(12345678), "12,35", "12345678 formatted");
-		equal(oFormat.format(99900000), "99,9", "99900000 formatted");
-		equal(oFormat.format(99990000), "99,99", "99990000 formatted");
-		equal(oFormat.format(99999999), "100", "99999999 formatted");
-		equal(oFormat.format(123456789), "123,46", "123456789 formatted");
-		equal(oFormat.format(999000000), "999", "999000000 formatted");
-		equal(oFormat.format(999900000), "999,9", "999900000 formatted");
-		equal(oFormat.format(999999999), "1.000", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1.234,57", "1234567890 formatted");
-		equal(oFormat.format(9990000000), "9.990", "9990000000 formatted");
-		equal(oFormat.format(9999999999), "10.000", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12.345,68", "12345678901 formatted");
-		equal(oFormat.format(99900000000), "99.900", "99900000000 formatted");
-		equal(oFormat.format(99999999999), "100.000", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123.456,79", "123456789012 formatted");
-		equal(oFormat.format(999000000000), "999.000", "999000000000 formatted");
-		equal(oFormat.format(999999999999), "1.000.000", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1.234.567,89", "1234567890123 formatted");
-		equal(oFormat.format(-1), "0", "-1 formatted");
-		equal(oFormat.format(-12), "0", "-12 formatted");
-		equal(oFormat.format(-123), "0", "-123 formatted");
-		equal(oFormat.format(-999), "0", "-999 formatted");
-		equal(oFormat.format(-1234), "0", "-1234 formatted");
-		equal(oFormat.format(-9999), "-0,01", "-9999 formatted");
-		equal(oFormat.format(-12345), "-0,01", "-12345 formatted");
-		equal(oFormat.format(-99900), "-0,1", "-99900 formatted");
-		equal(oFormat.format(-99990), "-0,1", "-99990 formatted");
-		equal(oFormat.format(-99999), "-0,1", "-99999 formatted");
-		equal(oFormat.format(-123456), "-0,12", "-123456 formatted");
-		equal(oFormat.format(-990000), "-0,99", "-999000 formatted");
-		equal(oFormat.format(-999900), "-1", "-999900 formatted");
-		equal(oFormat.format(-999999), "-1", "-999999 formatted");
+		assert.equal(oFormat.format(1), "0", "1 formatted");
+		assert.equal(oFormat.format(12), "0", "12 formatted");
+		assert.equal(oFormat.format(123), "0", "123 formatted");
+		assert.equal(oFormat.format(999), "0", "999 formatted");
+		assert.equal(oFormat.format(1234), "0", "1234 formatted");
+		assert.equal(oFormat.format(9999), "0,01", "9999 formatted");
+		assert.equal(oFormat.format(12345), "0,01", "12345 formatted");
+		assert.equal(oFormat.format(99900), "0,1", "99900 formatted");
+		assert.equal(oFormat.format(99990), "0,1", "99990 formatted");
+		assert.equal(oFormat.format(99999), "0,1", "99999 formatted");
+		assert.equal(oFormat.format(123456), "0,12", "123456 formatted");
+		assert.equal(oFormat.format(999000), "1", "999000 formatted");
+		assert.equal(oFormat.format(999900), "1", "999900 formatted");
+		assert.equal(oFormat.format(999999), "1", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1,23", "1234567 formatted");
+		assert.equal(oFormat.format(9990000), "9,99", "9990000 formatted");
+		assert.equal(oFormat.format(9999000), "10", "9999000 formatted");
+		assert.equal(oFormat.format(9999999), "10", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12,35", "12345678 formatted");
+		assert.equal(oFormat.format(99900000), "99,9", "99900000 formatted");
+		assert.equal(oFormat.format(99990000), "99,99", "99990000 formatted");
+		assert.equal(oFormat.format(99999999), "100", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123,46", "123456789 formatted");
+		assert.equal(oFormat.format(999000000), "999", "999000000 formatted");
+		assert.equal(oFormat.format(999900000), "999,9", "999900000 formatted");
+		assert.equal(oFormat.format(999999999), "1.000", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1.234,57", "1234567890 formatted");
+		assert.equal(oFormat.format(9990000000), "9.990", "9990000000 formatted");
+		assert.equal(oFormat.format(9999999999), "10.000", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12.345,68", "12345678901 formatted");
+		assert.equal(oFormat.format(99900000000), "99.900", "99900000000 formatted");
+		assert.equal(oFormat.format(99999999999), "100.000", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123.456,79", "123456789012 formatted");
+		assert.equal(oFormat.format(999000000000), "999.000", "999000000000 formatted");
+		assert.equal(oFormat.format(999999999999), "1.000.000", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1.234.567,89", "1234567890123 formatted");
+		assert.equal(oFormat.format(-1), "0", "-1 formatted");
+		assert.equal(oFormat.format(-12), "0", "-12 formatted");
+		assert.equal(oFormat.format(-123), "0", "-123 formatted");
+		assert.equal(oFormat.format(-999), "0", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "0", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-0,01", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-0,01", "-12345 formatted");
+		assert.equal(oFormat.format(-99900), "-0,1", "-99900 formatted");
+		assert.equal(oFormat.format(-99990), "-0,1", "-99990 formatted");
+		assert.equal(oFormat.format(-99999), "-0,1", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-0,12", "-123456 formatted");
+		assert.equal(oFormat.format(-990000), "-0,99", "-999000 formatted");
+		assert.equal(oFormat.format(-999900), "-1", "-999900 formatted");
+		assert.equal(oFormat.format(-999999), "-1", "-999999 formatted");
 	});
 
 	QUnit.test("integet long style under locale zh_CN", function(assert) {
@@ -571,9 +571,9 @@
 				style: "long"
 			}, oLocale);
 
-		equal(oFormat.parse("1"), 1, "'1' is parsed as 1");
-		equal(oFormat.parse("9999"), 9999, "'9999' is parsed as 9999");
-		equal(oFormat.parse("1万"), 10000, "'1万' is parsed as 10000");
+		assert.equal(oFormat.parse("1"), 1, "'1' is parsed as 1");
+		assert.equal(oFormat.parse("9999"), 9999, "'9999' is parsed as 9999");
+		assert.equal(oFormat.parse("1万"), 10000, "'1万' is parsed as 10000");
 	});
 
 	QUnit.test("Priority of properties (normal style): maxFractionDigits, decimals, shortDecimals, precision", function(assert) {
@@ -583,14 +583,14 @@
 			minFractionDigits: 5,
 			maxFractionDigits: 6
 		});
-		equal(oFormat.format(fNum), "12,345.678901", fNum +" with minFractionDigits and maxFractionDigits");
+		assert.equal(oFormat.format(fNum), "12,345.678901", fNum +" with minFractionDigits and maxFractionDigits");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			minFractionDigits: 5,
 			maxFractionDigits: 6,
 			decimals: 4
 		});
-		equal(oFormat.format(fNum), "12,345.6789", fNum + " with minFractionDigits, maxFractionDigits and decimals");
+		assert.equal(oFormat.format(fNum), "12,345.6789", fNum + " with minFractionDigits, maxFractionDigits and decimals");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			minFractionDigits: 5,
@@ -599,7 +599,7 @@
 			// shortDecimals shouldn't have effect on normal style formatter
 			shortDecimals: 3
 		});
-		equal(oFormat.format(fNum), "12,345.6789", fNum + " with minFractionDigits, maxFractionDigits, decimals and shortDecimals");
+		assert.equal(oFormat.format(fNum), "12,345.6789", fNum + " with minFractionDigits, maxFractionDigits, decimals and shortDecimals");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			minFractionDigits: 5,
@@ -609,7 +609,7 @@
 			shortDecimals: 3,
 			precision: 7
 		});
-		equal(oFormat.format(fNum), "12,345.68", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision");
+		assert.equal(oFormat.format(fNum), "12,345.68", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			minFractionDigits: 5,
@@ -619,7 +619,7 @@
 			shortDecimals: 3,
 			precision: 2
 		});
-		equal(oFormat.format(fNum), "12,346", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
+		assert.equal(oFormat.format(fNum), "12,346", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
 	});
 
 	QUnit.test("Priority of properties (short style): maxFractionDigits, decimals, shortDecimals, precision", function(assert) {
@@ -628,7 +628,7 @@
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short"
 		});
-		equal(oFormat.format(fNum), "3.5K", fNum +" with no setting");
+		assert.equal(oFormat.format(fNum), "3.5K", fNum +" with no setting");
 
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
@@ -636,7 +636,7 @@
 			minFractionDigits: 5,
 			maxFractionDigits: 6
 		});
-		equal(oFormat.format(fNum), "3.456679K", fNum +" with minFractionDigits and maxFractionDigits");
+		assert.equal(oFormat.format(fNum), "3.456679K", fNum +" with minFractionDigits and maxFractionDigits");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
@@ -644,7 +644,7 @@
 			maxFractionDigits: 6,
 			decimals: 4
 		});
-		equal(oFormat.format(fNum), "3.4567K", fNum + " with minFractionDigits, maxFractionDigits and decimals");
+		assert.equal(oFormat.format(fNum), "3.4567K", fNum + " with minFractionDigits, maxFractionDigits and decimals");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
@@ -653,7 +653,7 @@
 			decimals: 4,
 			shortDecimals: 3
 		});
-		equal(oFormat.format(fNum), "3.457K", fNum + " with minFractionDigits, maxFractionDigits, decimals and shortDecimals");
+		assert.equal(oFormat.format(fNum), "3.457K", fNum + " with minFractionDigits, maxFractionDigits, decimals and shortDecimals");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
@@ -663,7 +663,7 @@
 			shortDecimals: 3,
 			precision: 1
 		});
-		equal(oFormat.format(fNum), "3K", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision");
+		assert.equal(oFormat.format(fNum), "3K", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
@@ -673,58 +673,58 @@
 			shortDecimals: 3,
 			precision: 1
 		});
-		equal(oFormat.format(123456.678901), "123K", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
+		assert.equal(oFormat.format(123456.678901), "123K", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
 	});
 
 	QUnit.test("float default format", function(assert) {
-		equal(oDefaultFloat.format(.1), "0.1", ".1");
-		equal(oDefaultFloat.format(0.123), "0.123", "0.123");
-		equal(oDefaultFloat.format(123), "123", "123");
-		equal(oDefaultFloat.format(123.23), "123.23", "123.23");
-		equal(oDefaultFloat.format(1234), "1,234", "1234");
-		equal(oDefaultFloat.format(12345), "12,345", "12345");
-		equal(oDefaultFloat.format(12345.123), "12,345.123", "12345.123");
-		equal(oDefaultFloat.format(12345.12345), "12,345.12345", "12345.12345");
-		equal(oDefaultFloat.format(1234567890), "1,234,567,890", "1234567890");
-		equal(oDefaultFloat.format(-123.23), "-123.23", "-123.23");
-		equal(oDefaultFloat.format("1.23e+9"), "1,230,000,000", "1.23e+9");
-		equal(oDefaultFloat.format("1.23e-9"), "0.00000000123", "1.23e-9");
-		equal(oDefaultFloat.format("-1.23e+9"), "-1,230,000,000", "-1.23e+9");
-		equal(oDefaultFloat.format("-1.23e-9"), "-0.00000000123", "-1.23e-9");
-		equal(oDefaultFloat.format("1.2345e+2"), "123.45", "1.2345e+2");
-		equal(oDefaultFloat.format("12345e-2"), "123.45", "12345e-2");
-		equal(oDefaultFloat.format("-1.2345e+2"), "-123.45", "-1.2345e+2");
-		equal(oDefaultFloat.format("-12345e-2"), "-123.45", "-12345e-2");
-		equal(oDefaultFloat.format("123.45e+2"), "12,345", "123.45e+2");
-		equal(oDefaultFloat.format("12.345e-2"), "0.12345", "12.345e-2");
-		equal(oDefaultFloat.format("-123.45e+2"), "-12,345", "-123.45e+2");
-		equal(oDefaultFloat.format("-12.345e-2"), "-0.12345", "-12.345e-2");
-		equal(oDefaultFloat.format("123456.789e+2"), "12,345,678.9", "123456.789e+2");
-		equal(oDefaultFloat.format("123.456789e-2"), "1.23456789", "123.456789e-2");
-		equal(oDefaultFloat.format("-123456.789e+2"), "-12,345,678.9", "-123456.789e+2");
-		equal(oDefaultFloat.format("-123.456789e-2"), "-1.23456789", "-123.456789e-2");
-		equal(oDefaultFloat.format("1000.00"), "1,000.00", "1000.00");
-		equal(oDefaultFloat.format("1000.0000"), "1,000.0000", "1000.0000");
-		equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
-		equal(oDefaultFloat.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
+		assert.equal(oDefaultFloat.format(.1), "0.1", ".1");
+		assert.equal(oDefaultFloat.format(0.123), "0.123", "0.123");
+		assert.equal(oDefaultFloat.format(123), "123", "123");
+		assert.equal(oDefaultFloat.format(123.23), "123.23", "123.23");
+		assert.equal(oDefaultFloat.format(1234), "1,234", "1234");
+		assert.equal(oDefaultFloat.format(12345), "12,345", "12345");
+		assert.equal(oDefaultFloat.format(12345.123), "12,345.123", "12345.123");
+		assert.equal(oDefaultFloat.format(12345.12345), "12,345.12345", "12345.12345");
+		assert.equal(oDefaultFloat.format(1234567890), "1,234,567,890", "1234567890");
+		assert.equal(oDefaultFloat.format(-123.23), "-123.23", "-123.23");
+		assert.equal(oDefaultFloat.format("1.23e+9"), "1,230,000,000", "1.23e+9");
+		assert.equal(oDefaultFloat.format("1.23e-9"), "0.00000000123", "1.23e-9");
+		assert.equal(oDefaultFloat.format("-1.23e+9"), "-1,230,000,000", "-1.23e+9");
+		assert.equal(oDefaultFloat.format("-1.23e-9"), "-0.00000000123", "-1.23e-9");
+		assert.equal(oDefaultFloat.format("1.2345e+2"), "123.45", "1.2345e+2");
+		assert.equal(oDefaultFloat.format("12345e-2"), "123.45", "12345e-2");
+		assert.equal(oDefaultFloat.format("-1.2345e+2"), "-123.45", "-1.2345e+2");
+		assert.equal(oDefaultFloat.format("-12345e-2"), "-123.45", "-12345e-2");
+		assert.equal(oDefaultFloat.format("123.45e+2"), "12,345", "123.45e+2");
+		assert.equal(oDefaultFloat.format("12.345e-2"), "0.12345", "12.345e-2");
+		assert.equal(oDefaultFloat.format("-123.45e+2"), "-12,345", "-123.45e+2");
+		assert.equal(oDefaultFloat.format("-12.345e-2"), "-0.12345", "-12.345e-2");
+		assert.equal(oDefaultFloat.format("123456.789e+2"), "12,345,678.9", "123456.789e+2");
+		assert.equal(oDefaultFloat.format("123.456789e-2"), "1.23456789", "123.456789e-2");
+		assert.equal(oDefaultFloat.format("-123456.789e+2"), "-12,345,678.9", "-123456.789e+2");
+		assert.equal(oDefaultFloat.format("-123.456789e-2"), "-1.23456789", "-123.456789e-2");
+		assert.equal(oDefaultFloat.format("1000.00"), "1,000.00", "1000.00");
+		assert.equal(oDefaultFloat.format("1000.0000"), "1,000.0000", "1000.0000");
+		assert.equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
+		assert.equal(oDefaultFloat.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
 
 	});
 
 	QUnit.test("float format for a specific locale", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oLocale);
-		equal(oFloatFormat.format(.1), "0,1", ".1");
-		equal(oFloatFormat.format(0.123), "0,123", "0.123");
-		equal(oFloatFormat.format(123), "123", "123");
-		equal(oFloatFormat.format(123.23), "123,23", "123.23");
-		equal(oFloatFormat.format(1234), "1.234", "1234");
-		equal(oFloatFormat.format(12345), "12.345", "12345");
-		equal(oFloatFormat.format(12345.123), "12.345,123", "12345.123");
-		equal(oFloatFormat.format(12345.12345), "12.345,12345", "12345.12345");
-		equal(oFloatFormat.format(1234567890), "1.234.567.890", "1234567890");
-		equal(oFloatFormat.format(-123.23), "-123,23", "-123.23");
-		equal(oFloatFormat.format("1000.00"), "1.000,00", "1000.00");
-		equal(oFloatFormat.format("1000.0000"), "1.000,0000", "1000.0000");
+		assert.equal(oFloatFormat.format(.1), "0,1", ".1");
+		assert.equal(oFloatFormat.format(0.123), "0,123", "0.123");
+		assert.equal(oFloatFormat.format(123), "123", "123");
+		assert.equal(oFloatFormat.format(123.23), "123,23", "123.23");
+		assert.equal(oFloatFormat.format(1234), "1.234", "1234");
+		assert.equal(oFloatFormat.format(12345), "12.345", "12345");
+		assert.equal(oFloatFormat.format(12345.123), "12.345,123", "12345.123");
+		assert.equal(oFloatFormat.format(12345.12345), "12.345,12345", "12345.12345");
+		assert.equal(oFloatFormat.format(1234567890), "1.234.567.890", "1234567890");
+		assert.equal(oFloatFormat.format(-123.23), "-123,23", "-123.23");
+		assert.equal(oFloatFormat.format("1000.00"), "1.000,00", "1000.00");
+		assert.equal(oFloatFormat.format("1000.0000"), "1.000,0000", "1000.0000");
 	});
 
 	QUnit.test("float format with decimals and indian grouping", function(assert) {
@@ -732,12 +732,12 @@
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 2
 		}, oLocale);
-		equal(oFloatFormat.format(1), "1.00", "1");
-		equal(oFloatFormat.format(10), "10.00", "10");
-		equal(oFloatFormat.format(1000), "1,000.00", "1000");
-		equal(oFloatFormat.format(100000), "1,00,000.00", "100000");
-		equal(oFloatFormat.format(1000000), "10,00,000.00", "1000000");
-		equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
+		assert.equal(oFloatFormat.format(1), "1.00", "1");
+		assert.equal(oFloatFormat.format(10), "10.00", "10");
+		assert.equal(oFloatFormat.format(1000), "1,000.00", "1000");
+		assert.equal(oFloatFormat.format(100000), "1,00,000.00", "100000");
+		assert.equal(oFloatFormat.format(1000000), "10,00,000.00", "1000000");
+		assert.equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
 	});
 
 	QUnit.test("float format with decimals and myriad grouping", function(assert) {
@@ -746,12 +746,12 @@
 			decimals: 2,
 			groupingSize: 4
 		}, oLocale);
-		equal(oFloatFormat.format(1), "1.00", "1");
-		equal(oFloatFormat.format(10), "10.00", "10");
-		equal(oFloatFormat.format(1000), "1000.00", "1000");
-		equal(oFloatFormat.format(10000), "1,0000.00", "100000");
-		equal(oFloatFormat.format(10000000), "1000,0000.00", "1000000");
-		equal(oFloatFormat.format(100000000), "1,0000,0000.00", "10000000");
+		assert.equal(oFloatFormat.format(1), "1.00", "1");
+		assert.equal(oFloatFormat.format(10), "10.00", "10");
+		assert.equal(oFloatFormat.format(1000), "1000.00", "1000");
+		assert.equal(oFloatFormat.format(10000), "1,0000.00", "100000");
+		assert.equal(oFloatFormat.format(10000000), "1000,0000.00", "1000000");
+		assert.equal(oFloatFormat.format(100000000), "1,0000,0000.00", "10000000");
 	});
 
 	QUnit.test("float format with custom grouping", function(assert) {
@@ -759,118 +759,118 @@
 			decimals: 2,
 			groupingSize: 2
 		});
-		equal(oFloatFormat.format(1), "1.00", "1");
-		equal(oFloatFormat.format(10), "10.00", "10");
-		equal(oFloatFormat.format(1000), "10,00.00", "1000");
-		equal(oFloatFormat.format(10000), "1,00,00.00", "10000");
-		equal(oFloatFormat.format(10000000), "10,00,00,00.00", "10000000");
-		equal(oFloatFormat.format(100000000), "1,00,00,00,00.00", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.00", "1");
+		assert.equal(oFloatFormat.format(10), "10.00", "10");
+		assert.equal(oFloatFormat.format(1000), "10,00.00", "1000");
+		assert.equal(oFloatFormat.format(10000), "1,00,00.00", "10000");
+		assert.equal(oFloatFormat.format(10000000), "10,00,00,00.00", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "1,00,00,00,00.00", "100000000");
 
 		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 1,
 			groupingSize: 3,
 			groupingBaseSize: 2
 		});
-		equal(oFloatFormat.format(1), "1.0", "1");
-		equal(oFloatFormat.format(10), "10.0", "10");
-		equal(oFloatFormat.format(1000), "10,00.0", "1000");
-		equal(oFloatFormat.format(10000), "100,00.0", "10000");
-		equal(oFloatFormat.format(10000000), "100,000,00.0", "10000000");
-		equal(oFloatFormat.format(100000000), "1,000,000,00.0", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.0", "1");
+		assert.equal(oFloatFormat.format(10), "10.0", "10");
+		assert.equal(oFloatFormat.format(1000), "10,00.0", "1000");
+		assert.equal(oFloatFormat.format(10000), "100,00.0", "10000");
+		assert.equal(oFloatFormat.format(10000000), "100,000,00.0", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "1,000,000,00.0", "100000000");
 
 		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 1,
 			groupingSize: 2,
 			groupingBaseSize: 4
 		});
-		equal(oFloatFormat.format(1), "1.0", "1");
-		equal(oFloatFormat.format(10), "10.0", "10");
-		equal(oFloatFormat.format(1000), "1000.0", "1000");
-		equal(oFloatFormat.format(10000), "1,0000.0", "10000");
-		equal(oFloatFormat.format(10000000), "10,00,0000.0", "10000000");
-		equal(oFloatFormat.format(100000000), "1,00,00,0000.0", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.0", "1");
+		assert.equal(oFloatFormat.format(10), "10.0", "10");
+		assert.equal(oFloatFormat.format(1000), "1000.0", "1000");
+		assert.equal(oFloatFormat.format(10000), "1,0000.0", "10000");
+		assert.equal(oFloatFormat.format(10000000), "10,00,0000.0", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "1,00,00,0000.0", "100000000");
 
 		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 1,
 			groupingSize: 5,
 			groupingBaseSize: 3
 		});
-		equal(oFloatFormat.format(1), "1.0", "1");
-		equal(oFloatFormat.format(10), "10.0", "10");
-		equal(oFloatFormat.format(1000), "1,000.0", "1000");
-		equal(oFloatFormat.format(10000), "10,000.0", "10000");
-		equal(oFloatFormat.format(10000000), "10000,000.0", "10000000");
-		equal(oFloatFormat.format(100000000), "1,00000,000.0", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.0", "1");
+		assert.equal(oFloatFormat.format(10), "10.0", "10");
+		assert.equal(oFloatFormat.format(1000), "1,000.0", "1000");
+		assert.equal(oFloatFormat.format(10000), "10,000.0", "10000");
+		assert.equal(oFloatFormat.format(10000000), "10000,000.0", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "1,00000,000.0", "100000000");
 
 		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 1,
 			groupingSize: 1,
 			groupingBaseSize: 3
 		});
-		equal(oFloatFormat.format(1), "1.0", "1");
-		equal(oFloatFormat.format(10), "10.0", "10");
-		equal(oFloatFormat.format(1000), "1,000.0", "1000");
-		equal(oFloatFormat.format(10000), "1,0,000.0", "10000");
-		equal(oFloatFormat.format(10000000), "1,0,0,0,0,000.0", "10000000");
-		equal(oFloatFormat.format(100000000), "1,0,0,0,0,0,000.0", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.0", "1");
+		assert.equal(oFloatFormat.format(10), "10.0", "10");
+		assert.equal(oFloatFormat.format(1000), "1,000.0", "1000");
+		assert.equal(oFloatFormat.format(10000), "1,0,000.0", "10000");
+		assert.equal(oFloatFormat.format(10000000), "1,0,0,0,0,000.0", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "1,0,0,0,0,0,000.0", "100000000");
 
 		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 1,
 			groupingSize: 4,
 			groupingBaseSize: 1
 		});
-		equal(oFloatFormat.format(1), "1.0", "1");
-		equal(oFloatFormat.format(10), "1,0.0", "10");
-		equal(oFloatFormat.format(1000), "100,0.0", "1000");
-		equal(oFloatFormat.format(10000), "1000,0.0", "10000");
-		equal(oFloatFormat.format(10000000), "100,0000,0.0", "10000000");
-		equal(oFloatFormat.format(100000000), "1000,0000,0.0", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.0", "1");
+		assert.equal(oFloatFormat.format(10), "1,0.0", "10");
+		assert.equal(oFloatFormat.format(1000), "100,0.0", "1000");
+		assert.equal(oFloatFormat.format(10000), "1000,0.0", "10000");
+		assert.equal(oFloatFormat.format(10000000), "100,0000,0.0", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "1000,0000,0.0", "100000000");
 	});
 
 	QUnit.test("float format with pattern defined grouping", function(assert) {
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			pattern: "#,##0.00"
 		});
-		equal(oFloatFormat.format(1), "1.00", "1");
-		equal(oFloatFormat.format(10), "10.00", "10");
-		equal(oFloatFormat.format(1000), "1,000.00", "1000");
-		equal(oFloatFormat.format(10000), "10,000.00", "10000");
-		equal(oFloatFormat.format(10000000), "10,000,000.00", "10000000");
-		equal(oFloatFormat.format(100000000), "100,000,000.00", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.00", "1");
+		assert.equal(oFloatFormat.format(10), "10.00", "10");
+		assert.equal(oFloatFormat.format(1000), "1,000.00", "1000");
+		assert.equal(oFloatFormat.format(10000), "10,000.00", "10000");
+		assert.equal(oFloatFormat.format(10000000), "10,000,000.00", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "100,000,000.00", "100000000");
 
 		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			pattern: "#,##,##0.00"
 		});
-		equal(oFloatFormat.format(1), "1.00", "1");
-		equal(oFloatFormat.format(10), "10.00", "10");
-		equal(oFloatFormat.format(1000), "1,000.00", "1000");
-		equal(oFloatFormat.format(10000), "10,000.00", "10000");
-		equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
-		equal(oFloatFormat.format(100000000), "10,00,00,000.00", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.00", "1");
+		assert.equal(oFloatFormat.format(10), "10.00", "10");
+		assert.equal(oFloatFormat.format(1000), "1,000.00", "1000");
+		assert.equal(oFloatFormat.format(10000), "10,000.00", "10000");
+		assert.equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "10,00,00,000.00", "100000000");
 
 		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			pattern: "#,###0.00"
 		});
-		equal(oFloatFormat.format(1), "1.00", "1");
-		equal(oFloatFormat.format(10), "10.00", "10");
-		equal(oFloatFormat.format(1000), "1000.00", "1000");
-		equal(oFloatFormat.format(10000), "1,0000.00", "10000");
-		equal(oFloatFormat.format(10000000), "1000,0000.00", "10000000");
-		equal(oFloatFormat.format(100000000), "1,0000,0000.00", "100000000");
+		assert.equal(oFloatFormat.format(1), "1.00", "1");
+		assert.equal(oFloatFormat.format(10), "10.00", "10");
+		assert.equal(oFloatFormat.format(1000), "1000.00", "1000");
+		assert.equal(oFloatFormat.format(10000), "1,0000.00", "10000");
+		assert.equal(oFloatFormat.format(10000000), "1000,0000.00", "10000000");
+		assert.equal(oFloatFormat.format(100000000), "1,0000,0000.00", "100000000");
 	});
 
 	QUnit.test("float custom format", function(assert) {
-		equal(oCustomFloat.format(.1), "00,10", ".1");
-		equal(oCustomFloat.format(0.123), "00,123", "0.123");
-		equal(oCustomFloat.format(123), "123,00", "123");
-		equal(oCustomFloat.format(123.23), "123,23", "123.23");
-		equal(oCustomFloat.format(1234), "1234,00", "1234");
-		equal(oCustomFloat.format(12345), "????,00", "12345");
-		equal(oCustomFloat.format(12345.123), "????,123", "12345.123");
-		equal(oCustomFloat.format(12345.12345), "????,1235", "12345.12345");
-		equal(oCustomFloat.format(-123.23), "-123,23", "-123.23");
-		equal(oCustomFloat.format("1000.00"), "1000,00", "1000.00");
-		equal(oCustomFloat.format("1000.0000"), "1000,0000", "1000.0000");
+		assert.equal(oCustomFloat.format(.1), "00,10", ".1");
+		assert.equal(oCustomFloat.format(0.123), "00,123", "0.123");
+		assert.equal(oCustomFloat.format(123), "123,00", "123");
+		assert.equal(oCustomFloat.format(123.23), "123,23", "123.23");
+		assert.equal(oCustomFloat.format(1234), "1234,00", "1234");
+		assert.equal(oCustomFloat.format(12345), "????,00", "12345");
+		assert.equal(oCustomFloat.format(12345.123), "????,123", "12345.123");
+		assert.equal(oCustomFloat.format(12345.12345), "????,1235", "12345.12345");
+		assert.equal(oCustomFloat.format(-123.23), "-123,23", "-123.23");
+		assert.equal(oCustomFloat.format("1000.00"), "1000,00", "1000.00");
+		assert.equal(oCustomFloat.format("1000.0000"), "1000,0000", "1000.0000");
 
 	});
 
@@ -879,37 +879,37 @@
 			maxFractionDigits: 3,
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.123", ".1234");
-		equal(oFormat.format(.1235), "0.124", ".1235");
-		equal(oFormat.format(.1239), "0.124", ".1239");
-		equal(oFormat.format(2.1999), "2.2", "2.1999");
-		equal(oFormat.format(2.11), "2.11", "2.11");
-		equal(oFormat.format(-.1234), "-0.123", "-.1234");
-		equal(oFormat.format(-.1236), "-0.124", "-.1236");
-		equal(oFormat.format(.0005), "0.001", ".0005");
-		equal(oFormat.format(.0004), "0", ".0004");
-		equal(oFormat.format(-.0005), "-0.001", "-.0005");
-		equal(oFormat.format(-.0004), "0", "-.0004");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.123", ".1234");
+		assert.equal(oFormat.format(.1235), "0.124", ".1235");
+		assert.equal(oFormat.format(.1239), "0.124", ".1239");
+		assert.equal(oFormat.format(2.1999), "2.2", "2.1999");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		assert.equal(oFormat.format(-.1236), "-0.124", "-.1236");
+		assert.equal(oFormat.format(.0005), "0.001", ".0005");
+		assert.equal(oFormat.format(.0004), "0", ".0004");
+		assert.equal(oFormat.format(-.0005), "-0.001", "-.0005");
+		assert.equal(oFormat.format(-.0004), "0", "-.0004");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 2
 		});
 
 		// These two are the famous test cases for problematic rounding in Javascript
-		equal(oFormat.format(35.855), "35.86", "35.855");
-		equal(oFormat.format(1.005), "1.01", "1.005");
+		assert.equal(oFormat.format(35.855), "35.86", "35.855");
+		assert.equal(oFormat.format(1.005), "1.01", "1.005");
 
-		equal(oFormat.format(-35.855), "-35.86", "-35.855");
-		equal(oFormat.format(-1.005), "-1.01", "-1.005");
+		assert.equal(oFormat.format(-35.855), "-35.86", "-35.855");
+		assert.equal(oFormat.format(-1.005), "-1.01", "-1.005");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 2
 		});
-		equal(oFormat.format(.005), "0.01", ".005");
-		equal(oFormat.format(.004), "0.00", ".004");
-		equal(oFormat.format(-.005), "-0.01", "-.005");
-		equal(oFormat.format(-.004), "0.00", "-.004");
+		assert.equal(oFormat.format(.005), "0.01", ".005");
+		assert.equal(oFormat.format(.004), "0.00", ".004");
+		assert.equal(oFormat.format(-.005), "-0.01", "-.005");
+		assert.equal(oFormat.format(-.004), "0.00", "-.004");
 
 	});
 
@@ -919,14 +919,14 @@
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.CEILING
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.124", ".1234");
-		equal(oFormat.format(.1235), "0.124", ".1235");
-		equal(oFormat.format(.1239), "0.124", ".1239");
-		equal(oFormat.format(2.1999), "2.2", "2.1999");
-		equal(oFormat.format(2.11), "2.11", "2.11");
-		equal(oFormat.format(-.1234), "-0.123", "-.1234");
-		equal(oFormat.format(-.1236), "-0.123", "-.1236");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.124", ".1234");
+		assert.equal(oFormat.format(.1235), "0.124", ".1235");
+		assert.equal(oFormat.format(.1239), "0.124", ".1239");
+		assert.equal(oFormat.format(2.1999), "2.2", "2.1999");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		assert.equal(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
 	QUnit.test("float format with rounding mode: CEILING with decimals set to a string which contains a number", function(assert) {
@@ -935,14 +935,14 @@
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.CEILING
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.124", ".1234");
-		equal(oFormat.format(.1235), "0.124", ".1235");
-		equal(oFormat.format(.1239), "0.124", ".1239");
-		equal(oFormat.format(2.1999), "2.200", "2.1999");
-		equal(oFormat.format(2.11), "2.110", "2.11");
-		equal(oFormat.format(-.1234), "-0.123", "-.1234");
-		equal(oFormat.format(-.1236), "-0.123", "-.1236");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.124", ".1234");
+		assert.equal(oFormat.format(.1235), "0.124", ".1235");
+		assert.equal(oFormat.format(.1239), "0.124", ".1239");
+		assert.equal(oFormat.format(2.1999), "2.200", "2.1999");
+		assert.equal(oFormat.format(2.11), "2.110", "2.11");
+		assert.equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		assert.equal(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
 	QUnit.test("float format with rounding mode: FLOOR", function(assert) {
@@ -951,14 +951,14 @@
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.FLOOR
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.123", ".1234");
-		equal(oFormat.format(.1235), "0.123", ".1235");
-		equal(oFormat.format(.1239), "0.123", ".1239");
-		equal(oFormat.format(2.0001), "2", "2.0001");
-		equal(oFormat.format(2.11), "2.11", "2.11");
-		equal(oFormat.format(-.1234), "-0.124", "-.1234");
-		equal(oFormat.format(-.1236), "-0.124", "-.1236");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.123", ".1234");
+		assert.equal(oFormat.format(.1235), "0.123", ".1235");
+		assert.equal(oFormat.format(.1239), "0.123", ".1239");
+		assert.equal(oFormat.format(2.0001), "2", "2.0001");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1234), "-0.124", "-.1234");
+		assert.equal(oFormat.format(-.1236), "-0.124", "-.1236");
 	});
 
 	QUnit.test("float format with rounding mode: TOWARDS_ZERO", function(assert) {
@@ -967,15 +967,15 @@
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.TOWARDS_ZERO
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.123", ".1234");
-		equal(oFormat.format(.1235), "0.123", ".1235");
-		equal(oFormat.format(.1239), "0.123", ".1239");
-		equal(oFormat.format(2.0001), "2", "2.0001");
-		equal(oFormat.format(2.11), "2.11", "2.11");
-		equal(oFormat.format(-.1234), "-0.123", "-.1234");
-		equal(oFormat.format(-.1235), "-0.123", "-.1235");
-		equal(oFormat.format(-.1236), "-0.123", "-.1236");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.123", ".1234");
+		assert.equal(oFormat.format(.1235), "0.123", ".1235");
+		assert.equal(oFormat.format(.1239), "0.123", ".1239");
+		assert.equal(oFormat.format(2.0001), "2", "2.0001");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		assert.equal(oFormat.format(-.1235), "-0.123", "-.1235");
+		assert.equal(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
 	QUnit.test("float format with rounding mode: AWAY_FROM_ZERO", function(assert) {
@@ -984,15 +984,15 @@
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.AWAY_FROM_ZERO
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.124", ".1234");
-		equal(oFormat.format(.1235), "0.124", ".1235");
-		equal(oFormat.format(.1239), "0.124", ".1239");
-		equal(oFormat.format(2.1999), "2.2", "2.0001");
-		equal(oFormat.format(2.11), "2.11", "2.11");
-		equal(oFormat.format(-.1234), "-0.124", "-.1234");
-		equal(oFormat.format(-.1235), "-0.124", "-.1235");
-		equal(oFormat.format(-.1236), "-0.124", "-.1236");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.124", ".1234");
+		assert.equal(oFormat.format(.1235), "0.124", ".1235");
+		assert.equal(oFormat.format(.1239), "0.124", ".1239");
+		assert.equal(oFormat.format(2.1999), "2.2", "2.0001");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1234), "-0.124", "-.1234");
+		assert.equal(oFormat.format(-.1235), "-0.124", "-.1235");
+		assert.equal(oFormat.format(-.1236), "-0.124", "-.1236");
 	});
 
 	QUnit.test("float format with rounding mode: HALF_TOWARDS_ZERO", function(assert) {
@@ -1001,16 +1001,16 @@
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_TOWARDS_ZERO
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.123", ".1234");
-		equal(oFormat.format(.1235), "0.123", ".1235");
-		equal(oFormat.format(.1239), "0.124", ".1239");
-		equal(oFormat.format(2.1999), "2.2", "2.1999");
-		equal(oFormat.format(2.11), "2.11", "2.11");
-		equal(oFormat.format(-.1230), "-0.123", "-.1230");
-		equal(oFormat.format(-.1234), "-0.123", "-.1234");
-		equal(oFormat.format(-.1235), "-0.123", "-.1235");
-		equal(oFormat.format(-.1239), "-0.124", "-.1239");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.123", ".1234");
+		assert.equal(oFormat.format(.1235), "0.123", ".1235");
+		assert.equal(oFormat.format(.1239), "0.124", ".1239");
+		assert.equal(oFormat.format(2.1999), "2.2", "2.1999");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1230), "-0.123", "-.1230");
+		assert.equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		assert.equal(oFormat.format(-.1235), "-0.123", "-.1235");
+		assert.equal(oFormat.format(-.1239), "-0.124", "-.1239");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 2,
@@ -1018,11 +1018,11 @@
 		});
 
 		// These two are the famous test cases for problematic rounding in Javascript
-		equal(oFormat.format(35.855), "35.85", "35.855");
-		equal(oFormat.format(1.005), "1", "1.005");
+		assert.equal(oFormat.format(35.855), "35.85", "35.855");
+		assert.equal(oFormat.format(1.005), "1", "1.005");
 
-		equal(oFormat.format(-35.855), "-35.85", "-35.855");
-		equal(oFormat.format(-1.005), "-1", "-1.005");
+		assert.equal(oFormat.format(-35.855), "-35.85", "-35.855");
+		assert.equal(oFormat.format(-1.005), "-1", "-1.005");
 	});
 
 	QUnit.test("float format with rounding mode: HALF_CEILING", function(assert) {
@@ -1031,16 +1031,16 @@
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_CEILING
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.123", ".1234");
-		equal(oFormat.format(.1235), "0.124", ".1235");
-		equal(oFormat.format(.1239), "0.124", ".1239");
-		equal(oFormat.format(2.1999), "2.2", "2.1999");
-		equal(oFormat.format(2.11), "2.11", "2.11");
-		equal(oFormat.format(-.1230), "-0.123", "-.1230");
-		equal(oFormat.format(-.1234), "-0.123", "-.1234");
-		equal(oFormat.format(-.1235), "-0.123", "-.1235");
-		equal(oFormat.format(-.1239), "-0.124", "-.1239");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.123", ".1234");
+		assert.equal(oFormat.format(.1235), "0.124", ".1235");
+		assert.equal(oFormat.format(.1239), "0.124", ".1239");
+		assert.equal(oFormat.format(2.1999), "2.2", "2.1999");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1230), "-0.123", "-.1230");
+		assert.equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		assert.equal(oFormat.format(-.1235), "-0.123", "-.1235");
+		assert.equal(oFormat.format(-.1239), "-0.124", "-.1239");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 2,
@@ -1048,11 +1048,11 @@
 		});
 
 		// These two are the famous test cases for problematic rounding in Javascript
-		equal(oFormat.format(35.855), "35.86", "35.855");
-		equal(oFormat.format(1.005), "1.01", "1.005");
+		assert.equal(oFormat.format(35.855), "35.86", "35.855");
+		assert.equal(oFormat.format(1.005), "1.01", "1.005");
 
-		equal(oFormat.format(-35.855), "-35.85", "-35.855");
-		equal(oFormat.format(-1.005), "-1", "-1.005");
+		assert.equal(oFormat.format(-35.855), "-35.85", "-35.855");
+		assert.equal(oFormat.format(-1.005), "-1", "-1.005");
 	});
 
 	QUnit.test("float format with rounding mode: HALF_FLOOR", function(assert) {
@@ -1061,16 +1061,16 @@
 			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_FLOOR
 		});
 
-		equal(oFormat.format(.1230), "0.123", ".123");
-		equal(oFormat.format(.1234), "0.123", ".1234");
-		equal(oFormat.format(.1235), "0.123", ".1235");
-		equal(oFormat.format(.1239), "0.124", ".1239");
-		equal(oFormat.format(2.1999), "2.2", "2.1999");
-		equal(oFormat.format(2.11), "2.11", "2.11");
-		equal(oFormat.format(-.1230), "-0.123", "-.1230");
-		equal(oFormat.format(-.1234), "-0.123", "-.1234");
-		equal(oFormat.format(-.1235), "-0.124", "-.1235");
-		equal(oFormat.format(-.1239), "-0.124", "-.1239");
+		assert.equal(oFormat.format(.1230), "0.123", ".123");
+		assert.equal(oFormat.format(.1234), "0.123", ".1234");
+		assert.equal(oFormat.format(.1235), "0.123", ".1235");
+		assert.equal(oFormat.format(.1239), "0.124", ".1239");
+		assert.equal(oFormat.format(2.1999), "2.2", "2.1999");
+		assert.equal(oFormat.format(2.11), "2.11", "2.11");
+		assert.equal(oFormat.format(-.1230), "-0.123", "-.1230");
+		assert.equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		assert.equal(oFormat.format(-.1235), "-0.124", "-.1235");
+		assert.equal(oFormat.format(-.1239), "-0.124", "-.1239");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 2,
@@ -1078,11 +1078,11 @@
 		});
 
 		// These two are the famous test cases for problematic rounding in Javascript
-		equal(oFormat.format(35.855), "35.85", "35.855");
-		equal(oFormat.format(1.005), "1", "1.005");
+		assert.equal(oFormat.format(35.855), "35.85", "35.855");
+		assert.equal(oFormat.format(1.005), "1", "1.005");
 
-		equal(oFormat.format(-35.855), "-35.86", "-35.855");
-		equal(oFormat.format(-1.005), "-1.01", "-1.005");
+		assert.equal(oFormat.format(-35.855), "-35.86", "-35.855");
+		assert.equal(oFormat.format(-1.005), "-1.01", "-1.005");
 	});
 
 	QUnit.test("float format with custom rounding function", function(assert) {
@@ -1094,40 +1094,40 @@
 		});
 
 		oFormat.format(1.23456);
-		equal(oSpy.callCount, 1, "Custom rounding function is called");
+		assert.equal(oSpy.callCount, 1, "Custom rounding function is called");
 		ok(oSpy.calledWith(1.23456, 3), "Custom rounding function is called with correct parameters");
 	});
 
 	QUnit.test("Currency format with sMeasure", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
-		equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
-		equal(oFormat.format(123456.789, "JPY"), "JPY" + "\xa0" + "123,457", "123456.789 JPY");
-		equal(oFormat.format([123456.789, "JPY"]), "JPY" + "\xa0" + "123,457", "123456.789 JPY");
-		equal(oFormat.format(-123456.789, "JPY"), "JPY"+ "\ufeff" +"-123,457", "-123456.789 JPY");
-		equal(oFormat.format([-123456.789, "JPY"]), "JPY"+ "\ufeff" +"-123,457", "-123456.789 JPY");
+		assert.equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "JPY"), "JPY" + "\xa0" + "123,457", "123456.789 JPY");
+		assert.equal(oFormat.format([123456.789, "JPY"]), "JPY" + "\xa0" + "123,457", "123456.789 JPY");
+		assert.equal(oFormat.format(-123456.789, "JPY"), "JPY"+ "\ufeff" +"-123,457", "-123456.789 JPY");
+		assert.equal(oFormat.format([-123456.789, "JPY"]), "JPY"+ "\ufeff" +"-123,457", "-123456.789 JPY");
 	});
 
 	QUnit.test("Currency format with sMeasure and showMeasure as symbol", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			currencyCode: false
 		});
-		equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format([123456.789, "EUR"]), "\u20ac" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format([123456.789, "EUR"]), "\u20ac" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(-123456.789, "EUR"), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with sMeasure and showMeasure set to none", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: false
 		});
-		equal(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
-		equal(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "-123,456.79", "123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "-123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(-123456.789, "EUR"), "-123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "-123,456.79", "123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with showMeasure true and currencyContext accounting", function(assert) {
@@ -1135,10 +1135,10 @@
 			showMeasure: true,
 			currencyContext: "accounting"
 		});
-		equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "(EUR" + "\xa0" + "123,456.79)", "123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "(EUR" + "\xa0" + "123,456.79)", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(-123456.789, "EUR"), "(EUR" + "\xa0" + "123,456.79)", "123456.789 EUR");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "(EUR" + "\xa0" + "123,456.79)", "123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with showMeasure false and currencyContext accounting", function(assert) {
@@ -1146,10 +1146,10 @@
 			showMeasure: false,
 			currencyContext: "accounting"
 		});
-		equal(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
-		equal(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "(123,456.79)", "123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "(123,456.79)", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(-123456.789, "EUR"), "(123,456.79)", "123456.789 EUR");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "(123,456.79)", "123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with sMeasure specific locale ko", function(assert) {
@@ -1160,10 +1160,10 @@
 			currencyContext: "accounting"
 		}, oLocale);
 
-		equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "(EUR" + "\xa0" + "123,456.79)", "-123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "(EUR" + "\xa0" + "123,456.79)", "-123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(-123456.789, "EUR"), "(EUR" + "\xa0" + "123,456.79)", "-123456.789 EUR");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "(EUR" + "\xa0" + "123,456.79)", "-123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with sMeaure and set decimal option to overwrite the default number of decimal", function(assert) {
@@ -1171,10 +1171,10 @@
 			decimals: 1
 		});
 
-		equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.8", "123456.789 EUR");
-		equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.8", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.8", "123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "EUR"+ "\ufeff" +"-123,456.8", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.8", "123456.789 EUR");
+		assert.equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.8", "123456.789 EUR");
+		assert.equal(oFormat.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.8", "123456.789 EUR");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "EUR"+ "\ufeff" +"-123,456.8", "123456.789 EUR");
 	});
 
 	QUnit.test("check space between currency code and number in different scenarios", function(assert) {
@@ -1185,12 +1185,12 @@
 				currencyCode: false
 			});
 
-		equal(oCurrencyCodeFormatter.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
-		equal(oCurrencySymbolFormatter.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
-		equal(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "\u20ac\ufeff" + "-123,456.79", "-123456.789 EUR");
-		equal(oCurrencySymbolFormatter.format(123456.789, "HKD"), "HK$123,456.79", "123456.789 HKD");
-		equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "HK$\ufeff-123,456.79", "-123456.789 HKD");
+		assert.equal(oCurrencyCodeFormatter.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
+		assert.equal(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
+		assert.equal(oCurrencySymbolFormatter.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
+		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "\u20ac\ufeff" + "-123,456.79", "-123456.789 EUR");
+		assert.equal(oCurrencySymbolFormatter.format(123456.789, "HKD"), "HK$123,456.79", "123456.789 HKD");
+		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "HK$\ufeff-123,456.79", "-123456.789 HKD");
 
 		// in "de-DE" locale there's already space in the currency pattern: #,##0.00 ¤
 		// there shouldn't be more space inserted
@@ -1199,12 +1199,12 @@
 			currencyCode: false
 		}, new sap.ui.core.Locale("de-DE"));
 
-		equal(oCurrencyCodeFormatter.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "EUR", "123456.789 EUR");
-		equal(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "-123.456,79" + "\xa0" + "EUR", "-123456.789 EUR");
-		equal(oCurrencySymbolFormatter.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "\u20ac", "123456.789 EUR");
-		equal(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "-123.456,79" + "\xa0" + "\u20ac", "-123456.789 EUR");
-		equal(oCurrencySymbolFormatter.format(123456.789, "HKD"), "123.456,79" + "\xa0" + "HK$", "123456.789 HKD");
-		equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "-123.456,79" + "\xa0" + "HK$", "-123456.789 HKD");
+		assert.equal(oCurrencyCodeFormatter.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.equal(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "-123.456,79" + "\xa0" + "EUR", "-123456.789 EUR");
+		assert.equal(oCurrencySymbolFormatter.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "\u20ac", "123456.789 EUR");
+		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "-123.456,79" + "\xa0" + "\u20ac", "-123456.789 EUR");
+		assert.equal(oCurrencySymbolFormatter.format(123456.789, "HKD"), "123.456,79" + "\xa0" + "HK$", "123456.789 HKD");
+		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "-123.456,79" + "\xa0" + "HK$", "-123456.789 HKD");
 
 		// in "uk" locale there's no space in the currency pattern and the symbol is at the end: #,##0.00¤
 		// there shouldn't be more space inserted
@@ -1216,12 +1216,12 @@
 			currencyContext: "accounting"
 		}, new sap.ui.core.Locale("uk"));
 
-		equal(oCurrencyCodeFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\xa0" + "UAH" , "123456.789 UAH");
-		equal(oCurrencyCodeFormatter.format(-123456.789, "UAH"), "(123" + "\xa0" + "456,79" + "\xa0" + "UAH)", "-123456.789 UAH");
-		equal(oCurrencySymbolFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\u20b4", "123456.789 UAH");
-		equal(oCurrencySymbolFormatter.format(-123456.789, "UAH"), "(123" + "\xa0" + "456,79" + "\u20b4)", "-123456.789 UAH");
-		equal(oCurrencySymbolFormatter.format(123456.789, "UAK"), "123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "123456.789 UAK");
-		equal(oCurrencySymbolFormatter.format(-123456.789, "UAK"), "(123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e)", "-123456.789 UAK");
+		assert.equal(oCurrencyCodeFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\xa0" + "UAH" , "123456.789 UAH");
+		assert.equal(oCurrencyCodeFormatter.format(-123456.789, "UAH"), "(123" + "\xa0" + "456,79" + "\xa0" + "UAH)", "-123456.789 UAH");
+		assert.equal(oCurrencySymbolFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\u20b4", "123456.789 UAH");
+		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAH"), "(123" + "\xa0" + "456,79" + "\u20b4)", "-123456.789 UAH");
+		assert.equal(oCurrencySymbolFormatter.format(123456.789, "UAK"), "123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "123456.789 UAK");
+		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAK"), "(123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e)", "-123456.789 UAK");
 	});
 
 	QUnit.test("Percent format with default rounding mode", function(assert) {
@@ -1229,12 +1229,12 @@
 			maxFractionDigits: 3
 		});
 
-		equal(oFormat.format(12), "1,200%", "12");
-		equal(oFormat.format(12.34), "1,234%", "12.34");
-		equal(oFormat.format(.1234567), "12.346%", ".1234567");
-		equal(oFormat.format(-.1234567), "-12.346%", ".1234567");
-		equal(oFormat.format(.1234), "12.34%", ".1234");
-		equal(oFormat.parse("-12.345%"), -0.12345, "-12.345%");
+		assert.equal(oFormat.format(12), "1,200%", "12");
+		assert.equal(oFormat.format(12.34), "1,234%", "12.34");
+		assert.equal(oFormat.format(.1234567), "12.346%", ".1234567");
+		assert.equal(oFormat.format(-.1234567), "-12.346%", ".1234567");
+		assert.equal(oFormat.format(.1234), "12.34%", ".1234");
+		assert.equal(oFormat.parse("-12.345%"), -0.12345, "-12.345%");
 		ok(isNaN(oFormat.parse("%12.345%")), "NaN", "%12.345%");
 	});
 
@@ -1242,38 +1242,38 @@
 		var oLocale = new sap.ui.core.Locale("tr-TR");
 		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance(oLocale);
 
-		equal(oFormat.format(.1234567), "%12,34567", ".1234567");
-		equal(oFormat.parse("%12,34567"), 0.1234567, "%12,34567");
+		assert.equal(oFormat.format(.1234567), "%12,34567", ".1234567");
+		assert.equal(oFormat.parse("%12,34567"), 0.1234567, "%12,34567");
 		ok(isNaN(oFormat.parse("12,34567%")), "12,34567%");
 	});
 
 	QUnit.test("parse default format", function(assert) {
-		equal(oDefaultInteger.parse("123"), 123, "123");
-		equal(oDefaultInteger.parse("123,123"), 123123, "123,123");
-		equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
-		equal(isNaN(oDefaultInteger.parse("123.00")), true, "123.00");
-		equal(isNaN(oDefaultInteger.parse("5e+3")), true, "5e+3");
-		equal(isNaN(oDefaultInteger.parse("a1b2c3")), true, "a1b2c3");
+		assert.equal(oDefaultInteger.parse("123"), 123, "123");
+		assert.equal(oDefaultInteger.parse("123,123"), 123123, "123,123");
+		assert.equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
+		assert.equal(isNaN(oDefaultInteger.parse("123.00")), true, "123.00");
+		assert.equal(isNaN(oDefaultInteger.parse("5e+3")), true, "5e+3");
+		assert.equal(isNaN(oDefaultInteger.parse("a1b2c3")), true, "a1b2c3");
 
-		equal(oDefaultFloat.parse("123.23"), 123.23, "123.23");
-		equal(oDefaultFloat.parse("123,123,123.23"), 123123123.23, "123,123,123.23");
-		equal(oDefaultFloat.parse(".23"), 0.23, ".23");
-		equal(oDefaultFloat.parse("-123.23"), -123.23, "-123.23");
-		equal(oDefaultFloat.parse("+6.5"), 6.5, "+6.5");
-		equal(oDefaultFloat.parse("5e+3"), 5000, "5e+3");
-		equal(oDefaultFloat.parse("1E+4"), 10000, "1E+4");
-		equal(oDefaultFloat.parse("5e-3"), 0.005, "5e-3");
-		equal(oDefaultFloat.parse(".5e-3"), 5e-4, ".5e-3");
-		equal(oDefaultFloat.parse("1."), 1, "1.");
-		equal(isNaN(oDefaultFloat.parse("123.x5")), true, "123.x5");
+		assert.equal(oDefaultFloat.parse("123.23"), 123.23, "123.23");
+		assert.equal(oDefaultFloat.parse("123,123,123.23"), 123123123.23, "123,123,123.23");
+		assert.equal(oDefaultFloat.parse(".23"), 0.23, ".23");
+		assert.equal(oDefaultFloat.parse("-123.23"), -123.23, "-123.23");
+		assert.equal(oDefaultFloat.parse("+6.5"), 6.5, "+6.5");
+		assert.equal(oDefaultFloat.parse("5e+3"), 5000, "5e+3");
+		assert.equal(oDefaultFloat.parse("1E+4"), 10000, "1E+4");
+		assert.equal(oDefaultFloat.parse("5e-3"), 0.005, "5e-3");
+		assert.equal(oDefaultFloat.parse(".5e-3"), 5e-4, ".5e-3");
+		assert.equal(oDefaultFloat.parse("1."), 1, "1.");
+		assert.equal(isNaN(oDefaultFloat.parse("123.x5")), true, "123.x5");
 
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			parseAsString: true
 		});
-		equal(oFormat.parse("123.23"), "123.23", "Simple number is parsed as string");
-		equal(oFormat.parse("000123.23"), "123.23", "Number with leading zeros is parsed as string");
-		equal(oFormat.parse("12,345.67"), "12345.67", "Number with grouping is parsed as string");
-		equal(oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78"), "-12345678901123456345678901123456.78",
+		assert.equal(oFormat.parse("123.23"), "123.23", "Simple number is parsed as string");
+		assert.equal(oFormat.parse("000123.23"), "123.23", "Number with leading zeros is parsed as string");
+		assert.equal(oFormat.parse("12,345.67"), "12345.67", "Number with grouping is parsed as string");
+		assert.equal(oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78"), "-12345678901123456345678901123456.78",
 				"Ridiculously long number is parsed as string");
 	});
 
@@ -1284,25 +1284,25 @@
 			parseAsString: true
 		});
 
-		equal(oIntegerFormat.parse("123"), "123", "123");
-		equal(oIntegerFormat.parse("123,123"), "123123", "123,123");
-		equal(oIntegerFormat.parse("000123,123"), "123123", "000123,123");
-		equal(oIntegerFormat.parse("123,123,1234"), "1231231234", "123,123,1234");
-		equal(isNaN(oIntegerFormat.parse("123.00")), true, "123.00");
-		equal(isNaN(oIntegerFormat.parse("5e+3")), true, "5e+3");
-		equal(isNaN(oIntegerFormat.parse("a1b2c3")), true, "a1b2c3");
+		assert.equal(oIntegerFormat.parse("123"), "123", "123");
+		assert.equal(oIntegerFormat.parse("123,123"), "123123", "123,123");
+		assert.equal(oIntegerFormat.parse("000123,123"), "123123", "000123,123");
+		assert.equal(oIntegerFormat.parse("123,123,1234"), "1231231234", "123,123,1234");
+		assert.equal(isNaN(oIntegerFormat.parse("123.00")), true, "123.00");
+		assert.equal(isNaN(oIntegerFormat.parse("5e+3")), true, "5e+3");
+		assert.equal(isNaN(oIntegerFormat.parse("a1b2c3")), true, "a1b2c3");
 
-		equal(oFloatFormat.parse("123.23"), "123.23", "123.23");
-		equal(oFloatFormat.parse("000123.23"), "123.23", "000123.23");
-		equal(oFloatFormat.parse("123,123,123.23"), "123123123.23", "123,123,123.23");
-		equal(oFloatFormat.parse("+.23"), "0.23", ".23");
-		equal(oFloatFormat.parse("-123.23"), "-123.23", "-123.23");
-		equal(oFloatFormat.parse("+6.5"), "6.5", "+6.5");
-		equal(oFloatFormat.parse("5e+3"), "5000", "5e+3");
-		equal(oFloatFormat.parse("1E+4"), "10000", "1E+4");
-		equal(oFloatFormat.parse("5e-3"), "0.005", "5e-3");
-		equal(oFloatFormat.parse(".5e-3"), "0.0005", ".5e-3");
-		equal(isNaN(oFloatFormat.parse("123.x5")), true, "123.x5");
+		assert.equal(oFloatFormat.parse("123.23"), "123.23", "123.23");
+		assert.equal(oFloatFormat.parse("000123.23"), "123.23", "000123.23");
+		assert.equal(oFloatFormat.parse("123,123,123.23"), "123123123.23", "123,123,123.23");
+		assert.equal(oFloatFormat.parse("+.23"), "0.23", ".23");
+		assert.equal(oFloatFormat.parse("-123.23"), "-123.23", "-123.23");
+		assert.equal(oFloatFormat.parse("+6.5"), "6.5", "+6.5");
+		assert.equal(oFloatFormat.parse("5e+3"), "5000", "5e+3");
+		assert.equal(oFloatFormat.parse("1E+4"), "10000", "1E+4");
+		assert.equal(oFloatFormat.parse("5e-3"), "0.005", "5e-3");
+		assert.equal(oFloatFormat.parse(".5e-3"), "0.0005", ".5e-3");
+		assert.equal(isNaN(oFloatFormat.parse("123.x5")), true, "123.x5");
 	});
 
 	QUnit.test("parse a number with custom plus and minus signs", function(assert) {
@@ -1314,10 +1314,10 @@
 			minusSign: "|"
 		});
 
-		equal(oIntegerFormat.parse(".1,234"), 1234, "1234 with custom plusSign '.'");
-		equal(oIntegerFormat.parse("[1,234,567"), -1234567, "-1234567 with custom minusSign '['");
-		equal(oFloatFormat.parse("]1,234.567"), 1234.567, "1234.567 with custom plusSign ']'");
-		equal(oFloatFormat.parse("|1,234.567"), -1234.567, "1234.567 with custom minusSign '|'");
+		assert.equal(oIntegerFormat.parse(".1,234"), 1234, "1234 with custom plusSign '.'");
+		assert.equal(oIntegerFormat.parse("[1,234,567"), -1234567, "-1234567 with custom minusSign '['");
+		assert.equal(oFloatFormat.parse("]1,234.567"), 1234.567, "1234.567 with custom plusSign ']'");
+		assert.equal(oFloatFormat.parse("|1,234.567"), -1234.567, "1234.567 with custom minusSign '|'");
 	});
 
 	QUnit.test("parse a number with custom grouping separator", function(assert) {
@@ -1326,38 +1326,38 @@
 			groupingSeparator: "S"
 		});
 
-		equal(oIntegerFormat.parse("1S234S567"), 1234567, "1S234S567 is parsed as 1234567 with grouping separator set to 's'");
+		assert.equal(oIntegerFormat.parse("1S234S567"), 1234567, "1S234S567 is parsed as 1234567 with grouping separator set to 's'");
 		ok(isNaN(oIntegerFormat.parse("1s234s567")), "1s234s567 is parsed as NaN");
 	});
 
 	QUnit.test("parse custom format", function(assert) {
-		equal(oCustomInteger.parse("123"), 123, "123");
-		equal(oCustomInteger.parse("123.123"), 123123, "123.123");
-		equal(oCustomInteger.parse("123.123.1234"), 1231231234, "123.123.1234");
-		equal(isNaN(oCustomInteger.parse("123,00")), true, "123,00");
-		equal(isNaN(oCustomInteger.parse("5e+3")), true, "5e+3");
-		equal(isNaN(oCustomInteger.parse("a1b2c3")), true, "a1b2c3");
+		assert.equal(oCustomInteger.parse("123"), 123, "123");
+		assert.equal(oCustomInteger.parse("123.123"), 123123, "123.123");
+		assert.equal(oCustomInteger.parse("123.123.1234"), 1231231234, "123.123.1234");
+		assert.equal(isNaN(oCustomInteger.parse("123,00")), true, "123,00");
+		assert.equal(isNaN(oCustomInteger.parse("5e+3")), true, "5e+3");
+		assert.equal(isNaN(oCustomInteger.parse("a1b2c3")), true, "a1b2c3");
 
-		equal(oCustomFloat.parse("0,23"), 0.23, "0.23");
-		equal(oCustomFloat.parse("1.234,23"), 1234.23, "1.234,23");
-		equal(oCustomFloat.parse("123.123.123,23"), 123123123.23, "123.123.123,23");
-		equal(oCustomFloat.parse(",23"), 0.23, ",23");
-		equal(oCustomFloat.parse("-123,23"), -123.23, "-123,23");
-		equal(oCustomFloat.parse("5e+3"), 5000, "5e+3");
-		equal(oCustomFloat.parse("1E+4"), 10000, "1E+4");
-		equal(oCustomFloat.parse("5e-3"), 0.005, "5e-3");
-		equal(oCustomFloat.parse(",5e-3"), 5e-4, ",5e-3");
-		equal(isNaN(oCustomFloat.parse("123,x5")), true, "123,x5");
+		assert.equal(oCustomFloat.parse("0,23"), 0.23, "0.23");
+		assert.equal(oCustomFloat.parse("1.234,23"), 1234.23, "1.234,23");
+		assert.equal(oCustomFloat.parse("123.123.123,23"), 123123123.23, "123.123.123,23");
+		assert.equal(oCustomFloat.parse(",23"), 0.23, ",23");
+		assert.equal(oCustomFloat.parse("-123,23"), -123.23, "-123,23");
+		assert.equal(oCustomFloat.parse("5e+3"), 5000, "5e+3");
+		assert.equal(oCustomFloat.parse("1E+4"), 10000, "1E+4");
+		assert.equal(oCustomFloat.parse("5e-3"), 0.005, "5e-3");
+		assert.equal(oCustomFloat.parse(",5e-3"), 5e-4, ",5e-3");
+		assert.equal(isNaN(oCustomFloat.parse("123,x5")), true, "123,x5");
 
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			parseAsString: true,
 			groupingSeparator: ".",
 			decimalSeparator: ","
 		});
-		equal(oFormat.parse("123,23"), "123.23", "Simple number is parsed as string");
-		equal(oFormat.parse("000123,23"), "123.23", "Number with leading zeros is parsed as string");
-		equal(oFormat.parse("12.345,67"), "12345.67", "Number with grouping is parsed as string");
-		equal(oFormat.parse("-12.345.678.901.123.456.345.678.901.123.456,78"), "-12345678901123456345678901123456.78",
+		assert.equal(oFormat.parse("123,23"), "123.23", "Simple number is parsed as string");
+		assert.equal(oFormat.parse("000123,23"), "123.23", "Number with leading zeros is parsed as string");
+		assert.equal(oFormat.parse("12.345,67"), "12345.67", "Number with grouping is parsed as string");
+		assert.equal(oFormat.parse("-12.345.678.901.123.456.345.678.901.123.456,78"), "-12345678901123456345678901123456.78",
 				"Ridiculously long number is parsed as string");
 
 	});
@@ -1366,35 +1366,35 @@
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
 		var aResult = oFormat.parse("-12,345.67 EUR");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], -12345.67, "Number is parsed correctly");
-		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.equal(aResult[0], -12345.67, "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("USD23.4567");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], 23.4567, "Number is parsed correctly");
-		equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+		assert.equal(aResult[0], 23.4567, "Number is parsed correctly");
+		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR-1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], -1234567.89, "Number is parsed correctly");
-		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.equal(aResult[0], -1234567.89, "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR");
-		equal(aResult, null, "String with currency code only can't be parsed");
+		assert.equal(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("\u20ac" + " 1,234,567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("$ 1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
@@ -1402,20 +1402,20 @@
 		});
 
 		aResult = oFormat.parse("-12,345.67 EUR");
-		equal(aResult, null, "Currency with measure cannot be parsed");
+		assert.equal(aResult, null, "Currency with measure cannot be parsed");
 
 		aResult = oFormat.parse("USD23.4567");
-		equal(aResult, null, "Currency with measure cannot be parsed");
+		assert.equal(aResult, null, "Currency with measure cannot be parsed");
 
 		aResult = oFormat.parse("EUR-1234567.89");
-		equal(aResult, null, "Currency with measure cannot be parsed");
+		assert.equal(aResult, null, "Currency with measure cannot be parsed");
 
 		aResult = oFormat.parse("EUR");
-		equal(aResult, null, "String with currency code only can't be parsed");
+		assert.equal(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
@@ -1424,56 +1424,56 @@
 
 		aResult = oFormat.parse("-12,345.67 EUR");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], "-12345.67", "Number is parsed correctly");
-		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-00012,345.67 EUR");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], "-12345.67", "Number is parsed correctly");
-		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12,345,678,901,123,456.78 EUR");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], "-12345678901123456.78", "Long number is parsed correctly");
-		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.equal(aResult[0], "-12345678901123456.78", "Long number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78 EUR");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
-		equal(aResult[0], "-12345678901123456345678901123456.78", "Ridiculously long number is parsed correctly");
-		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.equal(aResult[0], "-12345678901123456345678901123456.78", "Ridiculously long number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
 	QUnit.test("float precision", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 0}, oLocale);
 
-		equal(oFormat.format(0.23), "0", "0.23 formatted");
-		equal(oFormat.format(1.345), "1", "1.3456 formatted");
-		equal(oFormat.format(23.456), "23", "23.456 formatted");
+		assert.equal(oFormat.format(0.23), "0", "0.23 formatted");
+		assert.equal(oFormat.format(1.345), "1", "1.3456 formatted");
+		assert.equal(oFormat.format(23.456), "23", "23.456 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 1}, oLocale);
-		equal(oFormat.format(0.23), "0,2", "0.23 formatted");
-		equal(oFormat.format(1.345), "1", "1.3456 formatted");
-		equal(oFormat.format(23.456), "23", "23.456 formatted");
-		equal(oFormat.format(123.456), "123", "123.456 formatted");
+		assert.equal(oFormat.format(0.23), "0,2", "0.23 formatted");
+		assert.equal(oFormat.format(1.345), "1", "1.3456 formatted");
+		assert.equal(oFormat.format(23.456), "23", "23.456 formatted");
+		assert.equal(oFormat.format(123.456), "123", "123.456 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 2}, oLocale);
-		equal(oFormat.format(0.23), "0,23", "0.23 formatted");
-		equal(oFormat.format(1.345), "1,3", "1.3456 formatted");
-		equal(oFormat.format(23.456), "23", "23.456 formatted");
-		equal(oFormat.format(123.456), "123", "123.456 formatted");
+		assert.equal(oFormat.format(0.23), "0,23", "0.23 formatted");
+		assert.equal(oFormat.format(1.345), "1,3", "1.3456 formatted");
+		assert.equal(oFormat.format(23.456), "23", "23.456 formatted");
+		assert.equal(oFormat.format(123.456), "123", "123.456 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 3}, oLocale);
-		equal(oFormat.format(0.23), "0,23", "0.23 formatted");
-		equal(oFormat.format(1.345), "1,35", "1.3456 formatted");
-		equal(oFormat.format(23.456), "23,5", "23.456 formatted");
-		equal(oFormat.format(123.456), "123", "123.456 formatted");
+		assert.equal(oFormat.format(0.23), "0,23", "0.23 formatted");
+		assert.equal(oFormat.format(1.345), "1,35", "1.3456 formatted");
+		assert.equal(oFormat.format(23.456), "23,5", "23.456 formatted");
+		assert.equal(oFormat.format(123.456), "123", "123.456 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 4}, oLocale);
-		equal(oFormat.format(0.23), "0,23", "0.23 formatted");
-		equal(oFormat.format(1.345), "1,345", "1.3456 formatted");
-		equal(oFormat.format(23.456), "23,46", "23.456 formatted");
-		equal(oFormat.format(123.456), "123,5", "123.456 formatted");
+		assert.equal(oFormat.format(0.23), "0,23", "0.23 formatted");
+		assert.equal(oFormat.format(1.345), "1,345", "1.3456 formatted");
+		assert.equal(oFormat.format(23.456), "23,46", "23.456 formatted");
+		assert.equal(oFormat.format(123.456), "123,5", "123.456 formatted");
 
 	});
 
@@ -1482,124 +1482,124 @@
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({style: "short", shortDecimals: 0}, oLocale);
 
-		equal(oFormat.format(0.23), "0,23", "0.23 formatted");
-		equal(oFormat.format(1), "1", "1 formatted");
-		equal(oFormat.format(12), "12", "12 formatted");
-		equal(oFormat.format(123), "123", "123 formatted");
-		equal(oFormat.format(999), "1\xa0Tsd.", "999 formatted");
-		equal(oFormat.format(1234), "1\xa0Tsd.", "1234 formatted");
-		equal(oFormat.format(9999), "10\xa0Tsd.", "9999 formatted");
-		equal(oFormat.format(12345), "12\xa0Tsd.", "12345 formatted");
-		equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
-		equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
-		equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
-		equal(oFormat.format(1234567), "1\xa0Mio.", "1234567 formatted");
-		equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
-		equal(oFormat.format(12345678), "12\xa0Mio.", "12345678 formatted");
-		equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
-		equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
-		equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1\xa0Mrd.", "1234567890 formatted");
-		equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12\xa0Mrd.", "12345678901 formatted");
-		equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
-		equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1\xa0Bio.", "1234567890123 formatted");
-		equal(oFormat.format(-0.23), "-0,23", "0.23 formatted");
-		equal(oFormat.format(-1), "-1", "-1 formatted");
-		equal(oFormat.format(-12), "-12", "-12 formatted");
-		equal(oFormat.format(-123), "-123", "-123 formatted");
-		equal(oFormat.format(-999), "-1\xa0Tsd.", "-999 formatted");
-		equal(oFormat.format(-1234), "-1\xa0Tsd.", "-1234 formatted");
-		equal(oFormat.format(-9999), "-10\xa0Tsd.", "-9999 formatted");
-		equal(oFormat.format(-12345), "-12\xa0Tsd.", "-12345 formatted");
-		equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
-		equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
-		equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
-		equal(oFormat.format(-1234567), "-1\xa0Mio.", "-1234567 formatted");
-		equal(oFormat.format(-9999999), "-10\xa0Mio.", "-9999999 formatted");
-		equal(oFormat.format(-12345678), "-12\xa0Mio.", "-12345678 formatted");
-		equal(oFormat.format(-99999999), "-100\xa0Mio.", "-99999999 formatted");
-		equal(oFormat.format(-123456789), "-123\xa0Mio.", "-123456789 formatted");
-		equal(oFormat.format(-999999999), "-1\xa0Mrd.", "-999999999 formatted");
-		equal(oFormat.format(-1234567890), "-1\xa0Mrd.", "-1234567890 formatted");
-		equal(oFormat.format(-9999999999), "-10\xa0Mrd.", "-9999999999 formatted");
-		equal(oFormat.format(-12345678901), "-12\xa0Mrd.", "-12345678901 formatted");
-		equal(oFormat.format(-99999999999), "-100\xa0Mrd.", "-99999999999 formatted");
-		equal(oFormat.format(-123456789012), "-123\xa0Mrd.", "-123456789012 formatted");
-		equal(oFormat.format(-999999999999), "-1\xa0Bio.", "-999999999999 formatted");
-		equal(oFormat.format(-1234567890123), "-1\xa0Bio.", "-1234567890123 formatted");
+		assert.equal(oFormat.format(0.23), "0,23", "0.23 formatted");
+		assert.equal(oFormat.format(1), "1", "1 formatted");
+		assert.equal(oFormat.format(12), "12", "12 formatted");
+		assert.equal(oFormat.format(123), "123", "123 formatted");
+		assert.equal(oFormat.format(999), "1\xa0Tsd.", "999 formatted");
+		assert.equal(oFormat.format(1234), "1\xa0Tsd.", "1234 formatted");
+		assert.equal(oFormat.format(9999), "10\xa0Tsd.", "9999 formatted");
+		assert.equal(oFormat.format(12345), "12\xa0Tsd.", "12345 formatted");
+		assert.equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
+		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1\xa0Mio.", "1234567 formatted");
+		assert.equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12\xa0Mio.", "12345678 formatted");
+		assert.equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
+		assert.equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1\xa0Mrd.", "1234567890 formatted");
+		assert.equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12\xa0Mrd.", "12345678901 formatted");
+		assert.equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
+		assert.equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1\xa0Bio.", "1234567890123 formatted");
+		assert.equal(oFormat.format(-0.23), "-0,23", "0.23 formatted");
+		assert.equal(oFormat.format(-1), "-1", "-1 formatted");
+		assert.equal(oFormat.format(-12), "-12", "-12 formatted");
+		assert.equal(oFormat.format(-123), "-123", "-123 formatted");
+		assert.equal(oFormat.format(-999), "-1\xa0Tsd.", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "-1\xa0Tsd.", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-10\xa0Tsd.", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-12\xa0Tsd.", "-12345 formatted");
+		assert.equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
+		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
+		assert.equal(oFormat.format(-1234567), "-1\xa0Mio.", "-1234567 formatted");
+		assert.equal(oFormat.format(-9999999), "-10\xa0Mio.", "-9999999 formatted");
+		assert.equal(oFormat.format(-12345678), "-12\xa0Mio.", "-12345678 formatted");
+		assert.equal(oFormat.format(-99999999), "-100\xa0Mio.", "-99999999 formatted");
+		assert.equal(oFormat.format(-123456789), "-123\xa0Mio.", "-123456789 formatted");
+		assert.equal(oFormat.format(-999999999), "-1\xa0Mrd.", "-999999999 formatted");
+		assert.equal(oFormat.format(-1234567890), "-1\xa0Mrd.", "-1234567890 formatted");
+		assert.equal(oFormat.format(-9999999999), "-10\xa0Mrd.", "-9999999999 formatted");
+		assert.equal(oFormat.format(-12345678901), "-12\xa0Mrd.", "-12345678901 formatted");
+		assert.equal(oFormat.format(-99999999999), "-100\xa0Mrd.", "-99999999999 formatted");
+		assert.equal(oFormat.format(-123456789012), "-123\xa0Mrd.", "-123456789012 formatted");
+		assert.equal(oFormat.format(-999999999999), "-1\xa0Bio.", "-999999999999 formatted");
+		assert.equal(oFormat.format(-1234567890123), "-1\xa0Bio.", "-1234567890123 formatted");
 
-		equal(oFormat.parse("0,23"), 0.23, "\"0,23\" parsed");
-		equal(oFormat.parse("1"), 1, "\"1\" parsed");
-		equal(oFormat.parse("12"), 12, "\"12\" parsed");
-		equal(oFormat.parse("123"), 123, "\"123\" parsed");
-		equal(oFormat.parse("1,23 Tsd."), 1230, "\"1,23 Tsd\" parsed");
-		equal(oFormat.parse("12,3 Tsd."), 12300, "\"12,3 Tsd\" parsed");
-		equal(oFormat.parse("123 Tsd."), 123000, "\"123 Tsd\" parsed");
-		equal(oFormat.parse("1000 Tsd."), 1000000, "\"1000 Tsd\" parsed");
-		equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
-		equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
-		equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
-		equal(oFormat.parse("1 Mrd."), 1000000000, "\"1 Mrd.\" parsed");
-		equal(oFormat.parse("10 Mrd."), 10000000000, "\"10 Mrd.\" parsed");
-		equal(oFormat.parse("100 Mrd."), 100000000000, "\"100 Mrd.\" parsed");
-		equal(oFormat.parse("1 Bio."), 1000000000000, "\"1 Bio.\" parsed");
-		equal(oFormat.parse("-0,23"), -0.23, "\"-0,23\" parsed");
-		equal(oFormat.parse("-1"), -1, "\"-1\" parsed");
-		equal(oFormat.parse("-12"), -12, "\"-12\" parsed");
-		equal(oFormat.parse("-123"), -123, "\"-123\" parsed");
-		equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1,23 Tsd\" parsed");
-		equal(oFormat.parse("-12,3 Tsd."), -12300, "\"-12,3 Tsd\" parsed");
-		equal(oFormat.parse("-123 Tsd."), -123000, "\"-123 Tsd\" parsed");
-		equal(oFormat.parse("-1000 Tsd."), -1000000, "\"-1000 Tsd\" parsed");
-		equal(oFormat.parse("-1 Mio."), -1000000, "\"-1 Mio.\" parsed");
-		equal(oFormat.parse("-10 Mio."), -10000000, "\"-10 Mio.\" parsed");
-		equal(oFormat.parse("-100 Mio."), -100000000, "\"-100 Mio.\" parsed");
-		equal(oFormat.parse("-1 Mrd."), -1000000000, "\"-1 Mrd.\" parsed");
-		equal(oFormat.parse("-10 Mrd."), -10000000000, "\"-10 Mrd.\" parsed");
-		equal(oFormat.parse("-100 Mrd."), -100000000000, "\"-100 Mrd.\" parsed");
-		equal(oFormat.parse("-1 Bio."), -1000000000000, "\"-1 Bio.\" parsed");
+		assert.equal(oFormat.parse("0,23"), 0.23, "\"0,23\" parsed");
+		assert.equal(oFormat.parse("1"), 1, "\"1\" parsed");
+		assert.equal(oFormat.parse("12"), 12, "\"12\" parsed");
+		assert.equal(oFormat.parse("123"), 123, "\"123\" parsed");
+		assert.equal(oFormat.parse("1,23 Tsd."), 1230, "\"1,23 Tsd\" parsed");
+		assert.equal(oFormat.parse("12,3 Tsd."), 12300, "\"12,3 Tsd\" parsed");
+		assert.equal(oFormat.parse("123 Tsd."), 123000, "\"123 Tsd\" parsed");
+		assert.equal(oFormat.parse("1000 Tsd."), 1000000, "\"1000 Tsd\" parsed");
+		assert.equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
+		assert.equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
+		assert.equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
+		assert.equal(oFormat.parse("1 Mrd."), 1000000000, "\"1 Mrd.\" parsed");
+		assert.equal(oFormat.parse("10 Mrd."), 10000000000, "\"10 Mrd.\" parsed");
+		assert.equal(oFormat.parse("100 Mrd."), 100000000000, "\"100 Mrd.\" parsed");
+		assert.equal(oFormat.parse("1 Bio."), 1000000000000, "\"1 Bio.\" parsed");
+		assert.equal(oFormat.parse("-0,23"), -0.23, "\"-0,23\" parsed");
+		assert.equal(oFormat.parse("-1"), -1, "\"-1\" parsed");
+		assert.equal(oFormat.parse("-12"), -12, "\"-12\" parsed");
+		assert.equal(oFormat.parse("-123"), -123, "\"-123\" parsed");
+		assert.equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1,23 Tsd\" parsed");
+		assert.equal(oFormat.parse("-12,3 Tsd."), -12300, "\"-12,3 Tsd\" parsed");
+		assert.equal(oFormat.parse("-123 Tsd."), -123000, "\"-123 Tsd\" parsed");
+		assert.equal(oFormat.parse("-1000 Tsd."), -1000000, "\"-1000 Tsd\" parsed");
+		assert.equal(oFormat.parse("-1 Mio."), -1000000, "\"-1 Mio.\" parsed");
+		assert.equal(oFormat.parse("-10 Mio."), -10000000, "\"-10 Mio.\" parsed");
+		assert.equal(oFormat.parse("-100 Mio."), -100000000, "\"-100 Mio.\" parsed");
+		assert.equal(oFormat.parse("-1 Mrd."), -1000000000, "\"-1 Mrd.\" parsed");
+		assert.equal(oFormat.parse("-10 Mrd."), -10000000000, "\"-10 Mrd.\" parsed");
+		assert.equal(oFormat.parse("-100 Mrd."), -100000000000, "\"-100 Mrd.\" parsed");
+		assert.equal(oFormat.parse("-1 Bio."), -1000000000000, "\"-1 Bio.\" parsed");
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({style: "short", shortLimit: 10000, precision: 3}, oLocale);
 
-		equal(oFormat.format(1), "1", "1 formatted");
-		equal(oFormat.format(12), "12", "12 formatted");
-		equal(oFormat.format(123), "123", "123 formatted");
-		equal(oFormat.format(999), "999", "999 formatted");
-		equal(oFormat.format(1234), "1.234", "1234 formatted");
-		equal(oFormat.format(9999), "9.999", "9999 formatted");
-		equal(oFormat.format(12345), "12,3\xa0Tsd.", "12345 formatted");
-		equal(oFormat.format(99900), "99,9\xa0Tsd.", "99900 formatted");
-		equal(oFormat.format(99990), "100\xa0Tsd.", "99990 formatted");
-		equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
-		equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
-		equal(oFormat.format(999000), "999\xa0Tsd.", "999000 formatted");
-		equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
-		equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
-		equal(oFormat.format(1234567), "1,23\xa0Mio.", "1234567 formatted");
-		equal(oFormat.format(9990000), "9,99\xa0Mio.", "9990000 formatted");
-		equal(oFormat.format(9999000), "10\xa0Mio.", "9999000 formatted");
-		equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
-		equal(oFormat.format(12345678), "12,3\xa0Mio.", "12345678 formatted");
-		equal(oFormat.format(99900000), "99,9\xa0Mio.", "99900000 formatted");
-		equal(oFormat.format(99990000), "100\xa0Mio.", "99990000 formatted");
-		equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
-		equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
-		equal(oFormat.format(999000000), "999\xa0Mio.", "999000000 formatted");
-		equal(oFormat.format(999900000), "1\xa0Mrd.", "999900000 formatted");
-		equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1,23\xa0Mrd.", "1234567890 formatted");
-		equal(oFormat.format(9990000000), "9,99\xa0Mrd.", "9990000000 formatted");
-		equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
-		equal(oFormat.format(12345678901), "12,3\xa0Mrd.", "12345678901 formatted");
-		equal(oFormat.format(99900000000), "99,9\xa0Mrd.", "99900000000 formatted");
-		equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
-		equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
-		equal(oFormat.format(999000000000), "999\xa0Mrd.", "999000000000 formatted");
-		equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1,23\xa0Bio.", "1234567890123 formatted");
+		assert.equal(oFormat.format(1), "1", "1 formatted");
+		assert.equal(oFormat.format(12), "12", "12 formatted");
+		assert.equal(oFormat.format(123), "123", "123 formatted");
+		assert.equal(oFormat.format(999), "999", "999 formatted");
+		assert.equal(oFormat.format(1234), "1.234", "1234 formatted");
+		assert.equal(oFormat.format(9999), "9.999", "9999 formatted");
+		assert.equal(oFormat.format(12345), "12,3\xa0Tsd.", "12345 formatted");
+		assert.equal(oFormat.format(99900), "99,9\xa0Tsd.", "99900 formatted");
+		assert.equal(oFormat.format(99990), "100\xa0Tsd.", "99990 formatted");
+		assert.equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
+		assert.equal(oFormat.format(999000), "999\xa0Tsd.", "999000 formatted");
+		assert.equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
+		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
+		assert.equal(oFormat.format(1234567), "1,23\xa0Mio.", "1234567 formatted");
+		assert.equal(oFormat.format(9990000), "9,99\xa0Mio.", "9990000 formatted");
+		assert.equal(oFormat.format(9999000), "10\xa0Mio.", "9999000 formatted");
+		assert.equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
+		assert.equal(oFormat.format(12345678), "12,3\xa0Mio.", "12345678 formatted");
+		assert.equal(oFormat.format(99900000), "99,9\xa0Mio.", "99900000 formatted");
+		assert.equal(oFormat.format(99990000), "100\xa0Mio.", "99990000 formatted");
+		assert.equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
+		assert.equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
+		assert.equal(oFormat.format(999000000), "999\xa0Mio.", "999000000 formatted");
+		assert.equal(oFormat.format(999900000), "1\xa0Mrd.", "999900000 formatted");
+		assert.equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
+		assert.equal(oFormat.format(1234567890), "1,23\xa0Mrd.", "1234567890 formatted");
+		assert.equal(oFormat.format(9990000000), "9,99\xa0Mrd.", "9990000000 formatted");
+		assert.equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
+		assert.equal(oFormat.format(12345678901), "12,3\xa0Mrd.", "12345678901 formatted");
+		assert.equal(oFormat.format(99900000000), "99,9\xa0Mrd.", "99900000000 formatted");
+		assert.equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
+		assert.equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
+		assert.equal(oFormat.format(999000000000), "999\xa0Mrd.", "999000000000 formatted");
+		assert.equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
+		assert.equal(oFormat.format(1234567890123), "1,23\xa0Bio.", "1234567890123 formatted");
 
 	});
 
@@ -1610,10 +1610,10 @@
 			shortDecimals: 1
 		});
 
-		equal(oFormat.format(234.567), "234.57", "234.567 is formatted with 2 decimals");
-		equal(oFormat.format(3456.78), "3.5K", "3456.78 is formatted with 1 decimal");
-		equal(oFormat.format(234.5), "234.50", "234.5 is formatted with 2 decimals");
-		equal(oFormat.format(3000), "3.0K", "3000 is formatted with 1 decimal");
+		assert.equal(oFormat.format(234.567), "234.57", "234.567 is formatted with 2 decimals");
+		assert.equal(oFormat.format(3456.78), "3.5K", "3456.78 is formatted with 1 decimal");
+		assert.equal(oFormat.format(234.5), "234.50", "234.5 is formatted with 2 decimals");
+		assert.equal(oFormat.format(3000), "3.0K", "3000 is formatted with 1 decimal");
 	});
 
 	QUnit.test("float long style", function(assert) {
@@ -1622,11 +1622,11 @@
 			style: "long", maxFractionDigits: 1
 		}, oLocale);
 
-		equal(oFormat.format(1.2), "1,2", "1.2 formatted");
-		equal(oFormat.parse("1,2"), 1.2, "\"1,2\" parsed");
-		equal(oFormat.format(1234.5), "1,2 Tausend", "1234.5 formatted");
-		equal(oFormat.parse("1 Tausend"), 1000, "\"1 Tausend\" parsed");
-		equal(oFormat.parse("1,2 Tausend"), 1200, "\"1,2 Tausend\" parsed");
+		assert.equal(oFormat.format(1.2), "1,2", "1.2 formatted");
+		assert.equal(oFormat.parse("1,2"), 1.2, "\"1,2\" parsed");
+		assert.equal(oFormat.format(1234.5), "1,2 Tausend", "1234.5 formatted");
+		assert.equal(oFormat.parse("1 Tausend"), 1000, "\"1 Tausend\" parsed");
+		assert.equal(oFormat.parse("1,2 Tausend"), 1200, "\"1,2 Tausend\" parsed");
 		// other test similar to integer -> skip
 	});
 
@@ -1635,25 +1635,25 @@
 		var oOriginNumber = sap.ui.core.format.NumberFormat.getIntegerInstance(),
 			sValue = oOriginNumber.format(123),
 			oInfo = sValue.originInfo;
-		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
-		equal(oInfo.locale, "en-US", "Origin Info: locale")
+		assert.equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
+		assert.equal(oInfo.locale, "en-US", "Origin Info: locale")
 	});
 
 	QUnit.test("Private method NumberFormat._shiftDecimalPoint", function(assert) {
 		var f = sap.ui.core.format.NumberFormat._shiftDecimalPoint;
-		equal(f("1234.567", 2), "123456.7", "1234.567 -> (2) = 123456.7");
-		equal(f("1234.567", 10), "12345670000000", "1234.567 -> (10) = 12345670000000");
-		equal(f("1234.567", -2), "12.34567", "1234.567 <- (2) = 12.34567");
-		equal(f("1234.567", -10), "0.0000001234567", "1234.567 <- (10) = 0.0000001234567");
-		equal(f("1234.567", 0), "1234.567", "1234.567 = 1234.567");
-		equal(f("1234.567", 3), "1234567", "1234.567 -> (3) = 1234567");
-		equal(f("1234.567", -4), "0.1234567", "1234.567 <- (4) = 0.1234567");
-		equal(f("1234.567", 5), "123456700", "1234.567 -> (5) = 123456700");
-		equal(f("0", 2), "0", "0 -> (2) = 0");
-		equal(f("1", 2), "100", "1 -> (2) = 100");
-		equal(f("0", -2), "0.00", "0 <- (2) = 0.00");
-		equal(f("1e79", -71), "100000000", "1e79 <- (71) = 100000000");
-		equal(f("1e-79", 71), "0.00000001", "1e-79 -> (71) = 0.00000001");
+		assert.equal(f("1234.567", 2), "123456.7", "1234.567 -> (2) = 123456.7");
+		assert.equal(f("1234.567", 10), "12345670000000", "1234.567 -> (10) = 12345670000000");
+		assert.equal(f("1234.567", -2), "12.34567", "1234.567 <- (2) = 12.34567");
+		assert.equal(f("1234.567", -10), "0.0000001234567", "1234.567 <- (10) = 0.0000001234567");
+		assert.equal(f("1234.567", 0), "1234.567", "1234.567 = 1234.567");
+		assert.equal(f("1234.567", 3), "1234567", "1234.567 -> (3) = 1234567");
+		assert.equal(f("1234.567", -4), "0.1234567", "1234.567 <- (4) = 0.1234567");
+		assert.equal(f("1234.567", 5), "123456700", "1234.567 -> (5) = 123456700");
+		assert.equal(f("0", 2), "0", "0 -> (2) = 0");
+		assert.equal(f("1", 2), "100", "1 -> (2) = 100");
+		assert.equal(f("0", -2), "0.00", "0 <- (2) = 0.00");
+		assert.equal(f("1e79", -71), "100000000", "1e79 <- (71) = 100000000");
+		assert.equal(f("1e-79", 71), "0.00000001", "1e-79 -> (71) = 0.00000001");
 	});
 
 	QUnit.test("Format option 'emptyString'", function(assert) {

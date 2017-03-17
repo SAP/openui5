@@ -118,17 +118,17 @@
 
 	// test properties
 	QUnit.test("Properties", function(assert) {
-		equal(sf1.getValue(), sValue, "Value property, UI5");
-		equal(sf1Dom.value, sValue, "Value property, DOM");
-		equal(sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
+		assert.equal(sf1.getValue(), sValue, "Value property, UI5");
+		assert.equal(sf1Dom.value, sValue, "Value property, DOM");
+		assert.equal(sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
 		if(sf2Dom.placeholder){
-			equal(sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
+			assert.equal(sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
 		} else {
 			// IE9
-			equal(sf2.$("P").text(), sPlaceholder, "Placeholder in IE9");
+			assert.equal(sf2.$("P").text(), sPlaceholder, "Placeholder in IE9");
 		}
-		equal(sf2.getEnabled(), false, "Enabled property, UI5");
-		equal(sf2Dom.disabled, true, "Disabled property, DOM");
+		assert.equal(sf2.getEnabled(), false, "Enabled property, UI5");
+		assert.equal(sf2Dom.disabled, true, "Disabled property, DOM");
 		ok(sf2.$().hasClass("sapMSFDisabled"),"CSS class name for \"disabled\" is set");
 		// Button icons
 		ok(/\uE00D/.test(getIconId(sf1, "search")), "First button icon is magnifier");

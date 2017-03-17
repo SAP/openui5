@@ -37,7 +37,7 @@
 
 
 			function newHandler(oObject){
-				equal(JSON.stringify(oObject), JSON.stringify(currentData), "Handler added by calling addRoute is called. The object is parsed correctly from the hash");
+				assert.equal(JSON.stringify(oObject), JSON.stringify(currentData), "Handler added by calling addRoute is called. The object is parsed correctly from the hash");
 			}
 
 			function newDefaultHanlder(oObject){
@@ -68,12 +68,12 @@
 				routes: [{
 					path: sHistoryPath,
 					handler: function(oObject){
-						equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
+						assert.equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
 					},
 				},{
 					path: sDifferentPath,
 					handler: function(oObject){
-						equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
+						assert.equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
 					}
 				}],
 				defaultHandler: function(){
@@ -86,7 +86,7 @@
 				routes: [{
 					path: sHistoryPath,
 					handler: function(oObject){
-						equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
+						assert.equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
 					}
 				}],
 				defaultHandler: function(){
@@ -288,7 +288,7 @@
 				}, 300);
 
 				setTimeout(function(){
-					equal((window.location.href.split("#")[1] || ""), sHash, "back to the specific hash state");
+					assert.equal((window.location.href.split("#")[1] || ""), sHash, "back to the specific hash state");
 					done();
 				}, 600);
 			});

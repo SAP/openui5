@@ -99,18 +99,18 @@
 			oSplitApp.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
+			assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
 
 			oSplitApp._oPopOver.attachAfterOpen(function(){
 				ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
 				ok(jQuery.sap.byId("splitapp-Popover").length, "Popover should be rendered.");
 				ok(oSplitApp.isMasterShown(), "Master area is shown");
-				equal(oSplitApp._oPopOver.getContent().length,1, "Popover content should not be empty.");
+				assert.equal(oSplitApp._oPopOver.getContent().length,1, "Popover content should not be empty.");
 				ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
 				ok(jQuery.sap.byId("splitapp-MasterBtn").is(":visible"), "Master Button is shown");
 				ok(jQuery.sap.byId("detail").length, "Detail page should be rendered  initially.");
-				equal(oSplitApp.$().children().length,2, "SplitApp should only contain the detail nav container.");
-				equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
+				assert.equal(oSplitApp.$().children().length,2, "SplitApp should only contain the detail nav container.");
+				assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
 				oSplitApp.destroy();
 				done();
 			});
@@ -155,18 +155,18 @@
 			sap.ui.getCore().applyChanges();
 
 			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-			equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp", "Parent of Master page should be SpltApp.");
+			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp", "Parent of Master page should be SpltApp.");
 			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered initially.");
 			ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered initially.");
-			equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
+			assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
 			ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
 			ok(!jQuery.sap.byId("splitapp-MasterBtn").is(":hidden"), "Master Button is shown");
-			equal(oSplitApp.$().children().length, 3, "Splitapp should render both master and detail.");
+			assert.equal(oSplitApp.$().children().length, 3, "Splitapp should render both master and detail.");
 
 			oSplitApp.showMaster();
 			setTimeout(function(){
-				equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+				assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 				oSplitApp.destroy();
 				done();
 			}, 400);
@@ -209,12 +209,12 @@
 			sap.ui.getCore().applyChanges();
 
 			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
 			ok(jQuery.sap.byId("detail").length, "Master Nav Container should be rendered initially.");
-			//equal(jQuery("#splitapp-MasterBtn").css("display"), "none", "Master Button is not shown");	           TODO
-			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
-			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
-			equal(jQuery.sap.byId("splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
+			//assert.equal(jQuery("#splitapp-MasterBtn").css("display"), "none", "Master Button is not shown");	           TODO
+			assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			assert.equal(jQuery.sap.byId("splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
 			oSplitApp.destroy();
 		});
 
@@ -255,12 +255,12 @@
 			sap.ui.getCore().applyChanges();
 
 			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
 			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
 			ok(jQuery.sap.byId("master").length, "Master Nav Container page should be rendered");
-			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
-			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
-			equal(oSplitApp.$("Master").outerWidth(),320, "Master width should be 320px.");
+			assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			assert.equal(oSplitApp.$("Master").outerWidth(),320, "Master width should be 320px.");
 
 			oSplitApp.destroy();
 		});
@@ -302,12 +302,12 @@
 			sap.ui.getCore().applyChanges();
 
 			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
 			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
 			ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
-			equal(oSplitApp.$().children().length, 3 ,"Master page should be rendered initially.");
-			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
-			equal(oSplitApp.$("Master").outerWidth(), 320, "Master width should be 320px.");
+			assert.equal(oSplitApp.$().children().length, 3 ,"Master page should be rendered initially.");
+			assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			assert.equal(oSplitApp.$("Master").outerWidth(), 320, "Master width should be 320px.");
 
 			oSplitApp.destroy();
 		});
@@ -349,14 +349,14 @@
 			sap.ui.getCore().applyChanges();
 
 			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
 			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
 			ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
-			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
-			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 
 			ok(!jQuery.sap.byId("splitapp-Master").is(":hidden"),"Master should be visible.");
-			equal(jQuery.sap.byId("splitapp-Master").outerWidth(),320, "Master width should be 320px.");
+			assert.equal(jQuery.sap.byId("splitapp-Master").outerWidth(),320, "Master width should be 320px.");
 			oSplitApp.destroy();
 		});
 
@@ -393,11 +393,11 @@
 			sap.ui.getCore().applyChanges();
 
 			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
 			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered initially.");
 			ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
-			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
-			equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
+			assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
 			ok(jQuery.sap.byId("splitapp-Master").position().left <= -320, "Master should be hidden.");
 			oSplitApp.destroy();
 		});
@@ -444,13 +444,13 @@
 
 			setTimeout(function(){
 				ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-				equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+				assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
 				ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
 				ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
-				equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+				assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
 
 				ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should not be hidden.");
-				equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
+				assert.equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
 				oSplitApp.destroy();
 				done();
 			}, 500);
@@ -488,8 +488,8 @@
 
 			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
 			ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered initially.");
-			equal(jQuery.sap.byId("detail").length , 0, "Detail Nav Container should not be rendered.");
-			equal(jQuery.sap.byId("splitapp-MasterBtn").length, 0, "Master Button should not be rendered");
+			assert.equal(jQuery.sap.byId("detail").length , 0, "Detail Nav Container should not be rendered.");
+			assert.equal(jQuery.sap.byId("splitapp-MasterBtn").length, 0, "Master Button should not be rendered");
 			oSplitApp.destroy();
 		});
 
@@ -524,16 +524,16 @@
 
 			var aMaster = oSplitApp.getMasterPages();
 			var aDetail = oSplitApp.getDetailPages();
-			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
-			equal(oSplitApp.indexOfMasterPage(oMasterPage), 0, "Master page is in the right aggregation and order");
-			equal(oSplitApp.indexOfMasterPage(oMasterPage2), 1, "Master page 2 is in the right aggregation and order");
-			equal(oSplitApp.indexOfDetailPage(oDetailPage), 0, "Detail page is in the right aggregation and order");
-			equal(oSplitApp.indexOfDetailPage(oDetailPage2), 1, "Detail page 2 is in the right aggregation and order");
+			assert.equal(oSplitApp.indexOfMasterPage(oMasterPage), 0, "Master page is in the right aggregation and order");
+			assert.equal(oSplitApp.indexOfMasterPage(oMasterPage2), 1, "Master page 2 is in the right aggregation and order");
+			assert.equal(oSplitApp.indexOfDetailPage(oDetailPage), 0, "Detail page is in the right aggregation and order");
+			assert.equal(oSplitApp.indexOfDetailPage(oDetailPage2), 1, "Detail page 2 is in the right aggregation and order");
 
 			var oSpyIndexOfMasterPage = this.spy(oSplitApp, "_indexOfMasterPage");
-			equal(oSplitApp.indexOfAggregation("masterPages", oMasterPage), 0, "Master page is in the right aggregation and order");
+			assert.equal(oSplitApp.indexOfAggregation("masterPages", oMasterPage), 0, "Master page is in the right aggregation and order");
 
 			ok(!oSpyIndexOfPage.called, "Right delegate method was called");
 			ok(oSpyIndexOfMasterPage.called, "Right delegate method was called");
@@ -580,23 +580,23 @@
 
 			var aMaster = oSplitApp.getMasterPages();
 			var aDetail = oSplitApp.getDetailPages();
-			equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
 
 			oSplitApp.removeMasterPage(oNewMasterPage);
 			oSplitApp.removeDetailPage(oNewDetailPage);
 
-			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
 			oSplitApp.addMasterPage(oNewMasterPage);
 			oSplitApp.addDetailPage(oNewDetailPage);
-			equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
 			oNewDetailPage.destroy();
 			oNewMasterPage.destroy();
-			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
 			ok(oSpyInsertPage.called, "Right delegate method was called");
 			ok(oSpyRemovePage.called, "Right delegate method was called");
@@ -635,14 +635,14 @@
 			});
 
 			oSplitApp.addMasterPage(oMovePage);
-			equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 			oSplitApp.addDetailPage(oMovePage);
-			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
 			oSplitApp.removeDetailPage(oMovePage);
-			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
 			oMovePage.destroy();
 			oSplitApp.destroy();
@@ -681,8 +681,8 @@
 			});
 
 			oSplitApp.insertMasterPage(oInsertPage, 1);
-			equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
-			equal(oSplitApp.indexOfMasterPage(oInsertPage), 1, "Master page is in the right position");
+			assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
+			assert.equal(oSplitApp.indexOfMasterPage(oInsertPage), 1, "Master page is in the right position");
 			oInsertPage.destroy();
 
 			// Check against native implementation
@@ -699,7 +699,7 @@
 			oNavContainer.addPage(oInsertPage1);
 			oNavContainer.addPage(oInsertPage2);
 			oNavContainer.insertPage(oInsertPage3, 1);
-			equal(oNavContainer.indexOfPage(oInsertPage3), 1, "Validation against native Implementation: Page is in the right position");
+			assert.equal(oNavContainer.indexOfPage(oInsertPage3), 1, "Validation against native Implementation: Page is in the right position");
 
 			ok(oSpyInsertPage.called, "Right delegate method was called");
 
@@ -737,8 +737,8 @@
 
 			var aMaster = oSplitApp.getMasterPages();
 			var aDetail = oSplitApp.getDetailPages();
-			equal(aMaster.length, 0, "Master page aggregation contains the right number of pages");
-			equal(aDetail.length, 0, "Detail page aggregation contains the right number of pages");
+			assert.equal(aMaster.length, 0, "Master page aggregation contains the right number of pages");
+			assert.equal(aDetail.length, 0, "Detail page aggregation contains the right number of pages");
 
 			ok(oSpyRemoveAllPages.called, "Right delegate method was called");
 

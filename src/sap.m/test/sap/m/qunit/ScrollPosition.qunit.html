@@ -161,15 +161,15 @@
 
 
 		QUnit.test("Initial scroll position", function(assert) {
-			equal(page1.getScrollDelegate().getScrollTop(), 0, "page1 should be scrolled to position 0");
+			assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "page1 should be scrolled to position 0");
 		});
 
 
 		QUnit.test("Scrolling", function(assert) {
 			page1.scrollTo(60, 0);
 
-			equal(getScrollPos(), -60, "Page should be scrolled to position 60");
-			equal(page1.getScrollDelegate().getScrollTop(), 60, "Internally stored y scrolling position should be 60");
+			assert.equal(getScrollPos(), -60, "Page should be scrolled to position 60");
+			assert.equal(page1.getScrollDelegate().getScrollTop(), 60, "Internally stored y scrolling position should be 60");
 		});
 
 		QUnit.test("Scrolling - delayed", function(assert) {
@@ -179,8 +179,8 @@
 			page1.scrollTo(50, 100);
 
 			window.setTimeout(function(){
-				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+				assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
 				done();
 			}, 150);
@@ -191,8 +191,8 @@
 			QUnit.test("Scroll position after rerendering page1", function(assert) {
 				page1.rerender();
 
-				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+				assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 			});
 
 			QUnit.test("Scroll position after navigating away and back to page1", function(assert) {
@@ -207,8 +207,8 @@
 				}, 200);
 
 				var test = function() { // function to be executed after navigating forward and back
-					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+					assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
 					app.detachAfterNavigate(test);
 					window.clearInterval(interval);
@@ -216,19 +216,19 @@
 				};
 
 				var goBack = function() {
-					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 					app.detachAfterNavigate(goBack);
 					app.attachAfterNavigate(test);
 
 					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-						equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+						assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 						app.back();
 					}, 100);
 				};
 
 				app.attachAfterNavigate(goBack);
 				app.to("page2");
-				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 			});
 		}
 
@@ -238,8 +238,8 @@
 			assert.expect(5);
 
 			var test = function() { // function to be executed after navigating forward and back
-				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+				assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
 				app.detachAfterNavigate(test);
 				done();
@@ -252,10 +252,10 @@
 				window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 					page1.rerender();
 
-					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
 					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-						equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+						assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 						app.back();
 					}, 100);
 				}, 100);
@@ -263,15 +263,15 @@
 
 			app.attachAfterNavigate(goBack);
 			app.to("page2");
-			equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+			assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 		});
 
 
 		QUnit.test("Scroll position after rerendering the APP", function(assert) {
 			app.rerender();
 
-			equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-			equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+			assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+			assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 		});
 
 		if (!sap.ui.Device.browser.internet_explorer) {
@@ -281,8 +281,8 @@
 				assert.expect(2);
 
 				var test = function() { // function to be executed after navigating forward and back
-					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+					assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
 					app.detachAfterNavigate(test);
 					done();
@@ -311,8 +311,8 @@
 				assert.expect(4);
 
 				var test = function() { // function to be executed after navigating forward and back
-					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+					assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
 					app.detachAfterNavigate(test);
 					done();
@@ -325,11 +325,11 @@
 					window.setTimeout(function(){ // Make sure there is one resize listener cycle with no page1 rendered in the html
 						page1.$().remove();
 
-						equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+						assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
 						window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 							app.back();
-							equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+							assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 						}, 100);
 					}, 310);
 				};
@@ -347,13 +347,13 @@
 			jQuery("#content").css("height", "3000px");
 
 			window.setTimeout(function(){
-				equal(getScrollPos(), 0, "Page should be scrolled to position 0");
-				equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should be 0");
+				assert.equal(getScrollPos(), 0, "Page should be scrolled to position 0");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should be 0");
 
 				page1.scrollTo(50, 0, 0); // try to scroll when it should not be possible
 
-				equal(getScrollPos(), 0, "Page should still be scrolled to position 0");
-				equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should still be 0");
+				assert.equal(getScrollPos(), 0, "Page should still be scrolled to position 0");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should still be 0");
 
 				done();
 			}, 300); // required for iScroll with resize Handler
@@ -366,8 +366,8 @@
 			jQuery("#content").css("height", "300px");
 
 			window.setTimeout(function(){
-				equal(getScrollPos(), 0, "Page should be scrolled to position 0");
-				equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should be 0");
+				assert.equal(getScrollPos(), 0, "Page should be scrolled to position 0");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should be 0");
 
 				done();
 			}, 10);
@@ -381,8 +381,8 @@
 			page1.scrollTo(50, 100); // try to scroll when it should not be possible
 
 			window.setTimeout(function(){
-				equal(getScrollPos(), 0, "Page should still be scrolled to position 0");
-				equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should still be 0");
+				assert.equal(getScrollPos(), 0, "Page should still be scrolled to position 0");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should still be 0");
 
 				jQuery("#content").css("height", "300px");
 				done();

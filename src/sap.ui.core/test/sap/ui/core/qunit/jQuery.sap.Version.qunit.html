@@ -70,7 +70,7 @@
 		QUnit.module("Core Versions");
 
 		QUnit.test("Core Version", function(assert) {
-			equal(config.getVersion().toString(), sap.ui.version, "Used UI5 Core version");
+			assert.equal(config.getVersion().toString(), sap.ui.version, "Used UI5 Core version");
 		});
 
 		QUnit.test("Compatibility Version", function(assert) {
@@ -80,9 +80,9 @@
 				window["sap-ui-config"] = oConf;
 				var _config = new sap.ui.core.Configuration(_core);
 				var dflt = jQuery.sap.Version(sExp1).toString();
-				equal(_config.getCompatibilityVersion("").toString(), dflt, sText+": Default (feature='')");
-				equal(_config.getCompatibilityVersion("xx-test2").toString(), dflt, sText+": Default (undef. feature)");
-				equal(_config.getCompatibilityVersion("xx-test").toString(), jQuery.sap.Version(sExp2).toString(), sText+": Result (avail. feature)");
+				assert.equal(_config.getCompatibilityVersion("").toString(), dflt, sText+": Default (feature='')");
+				assert.equal(_config.getCompatibilityVersion("xx-test2").toString(), dflt, sText+": Default (undef. feature)");
+				assert.equal(_config.getCompatibilityVersion("xx-test").toString(), jQuery.sap.Version(sExp2).toString(), sText+": Result (avail. feature)");
 			}
 
 			var currentVersion = jQuery.sap.Version(config.getVersion().getMajor(), config.getVersion().getMinor()).toString();
@@ -129,10 +129,10 @@
 					text = " - "+values[i].join("/")+" - "+types[j].name;
 
 					var obj = genericNew(jQuery.sap.Version, args);
-					equal(obj.getMajor(), result[i][0], "Check create"+text+" (Major)");
-					equal(obj.getMinor(), result[i][1], "Check create"+text+" (Minor)");
-					equal(obj.getPatch(), result[i][2], "Check create"+text+" (Micro)");
-					equal(obj.getSuffix(), result[i][3], "Check create"+text+" (Suffix)");
+					assert.equal(obj.getMajor(), result[i][0], "Check create"+text+" (Major)");
+					assert.equal(obj.getMinor(), result[i][1], "Check create"+text+" (Minor)");
+					assert.equal(obj.getPatch(), result[i][2], "Check create"+text+" (Micro)");
+					assert.equal(obj.getSuffix(), result[i][3], "Check create"+text+" (Suffix)");
 				}
 			}
 		});
@@ -158,7 +158,7 @@
 					for(var j=0; j<getter_Values.length; j++){
 						var expected = resIdx < 0 ? (getter_Results[j][0]+"."+getter_Results[j][1]+"."+getter_Results[j][2]+getter_Results[j][3]) : getter_Results[j][resIdx];
 						var actual = (new jQuery.sap.Version(getter_Values[j]))[sName]();
-						equal(actual, expected, "Check "+sName+": "+getter_Values[j]);
+						assert.equal(actual, expected, "Check "+sName+": "+getter_Values[j]);
 					}
 				};
 			})(getter[i], i-1));

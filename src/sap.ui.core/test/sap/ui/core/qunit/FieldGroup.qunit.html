@@ -161,7 +161,7 @@
 					iFound++;
 				}
 			}
-			equal(oEvent.mParameters.fieldGroupIds.length,iFound,"ValidateFieldGroup groups, event fired for correct group:" + sCurrentGroup);
+			assert.equal(oEvent.mParameters.fieldGroupIds.length,iFound,"ValidateFieldGroup groups, event fired for correct group:" + sCurrentGroup);
 		}
 	}
 
@@ -174,12 +174,12 @@
 			var a = sap.ui.core.UIArea._oFieldGroupControl.getFieldGroupIds();
 			if (a) {
 				if (sNewGroup.length > 0) {
-					equal(a.indexOf(sNewGroup)>-1,true,"Focus now on newgroup:" + sNewGroup);
+					assert.equal(a.indexOf(sNewGroup)>-1,true,"Focus now on newgroup:" + sNewGroup);
 				} else {
-					equal(a.length,sNewGroup.length,"Focus now on newgroup: Empty");
+					assert.equal(a.length,sNewGroup.length,"Focus now on newgroup: Empty");
 				}
 			} else {
-				equal(0,0,"Focus now on no group:" + sNewGroup);
+				assert.equal(0,0,"Focus now on no group:" + sNewGroup);
 
 			}
 			sCurrentGroup = [sNew];
@@ -245,14 +245,14 @@
 		sNewGroup = "group4";
 		oEnterControl = sap.ui.getCore().byId("field31");
 		oEnterControl.setFieldGroupIds([sNewGroup]);
-		equal(oEnterControl.getFieldGroupIds().indexOf(sNewGroup),0,"FieldGroupId changed to group4");
+		assert.equal(oEnterControl.getFieldGroupIds().indexOf(sNewGroup),0,"FieldGroupId changed to group4");
 		sCurrentGroup = [sNewGroup];
 		sap.ui.getCore().byId("field1").focus();
 		setTimeout(function() {
 			sNewGroup = "group3";
 			oEnterControl = sap.ui.getCore().byId("field31");
 			oEnterControl.setFieldGroupIds([sNewGroup]);
-			equal(oEnterControl.getFieldGroupIds().indexOf(sNewGroup),0,"FieldGroupId changed to group3");
+			assert.equal(oEnterControl.getFieldGroupIds().indexOf(sNewGroup),0,"FieldGroupId changed to group3");
 			setTimeout(function() {
 				oEnterControl.focus()
 				sCurrentGroup = ["group3"];
@@ -269,43 +269,43 @@
 
 	QUnit.test("get controls by field group", 18, function(assert) {
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group1");
-		equal(aGroup.length,3,"3 controls in group1");
+		assert.equal(aGroup.length,3,"3 controls in group1");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group2");
-		equal(aGroup.length,3,"3 controls in group2");
+		assert.equal(aGroup.length,3,"3 controls in group2");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group3");
-		equal(aGroup.length,4,"4 controls in group3");
+		assert.equal(aGroup.length,4,"4 controls in group3");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId([]);
-		equal(aGroup.length,48,"48 controls with no field group");
+		assert.equal(aGroup.length,48,"48 controls with no field group");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("");
-		equal(aGroup.length,48,"48 controls with no field group");
+		assert.equal(aGroup.length,48,"48 controls with no field group");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId();
-		equal(aGroup.length,20,"20 controls with  field groups");
+		assert.equal(aGroup.length,20,"20 controls with  field groups");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId(["group5","group4","group6"]);
-		equal(aGroup.length,1,"1 controls with  field groups ['group5','group4','group6']");
+		assert.equal(aGroup.length,1,"1 controls with  field groups ['group5','group4','group6']");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId(["group6","group4","group5"]);
-		equal(aGroup.length,1,"1 controls with  field groups ['group6','group4','group5']");
+		assert.equal(aGroup.length,1,"1 controls with  field groups ['group6','group4','group5']");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId(["group6","group4"]);
-		equal(aGroup.length,2,"2 controls with  field groups ['group6','group4']");
+		assert.equal(aGroup.length,2,"2 controls with  field groups ['group6','group4']");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group6,group4");
-		equal(aGroup.length,2,"2 controls with  field groups 'group6,group4'");
+		assert.equal(aGroup.length,2,"2 controls with  field groups 'group6,group4'");
 
 
 		var aGroup = sap.ui.getCore().byFieldGroupId("group1");
-		equal(aGroup.length,3,"3 controls in group1");
+		assert.equal(aGroup.length,3,"3 controls in group1");
 		var aGroup = sap.ui.getCore().byFieldGroupId("group2");
-		equal(aGroup.length,3,"3 controls in group2");
+		assert.equal(aGroup.length,3,"3 controls in group2");
 		var aGroup = sap.ui.getCore().byFieldGroupId("group3");
-		equal(aGroup.length,4,"4 controls in group3");
+		assert.equal(aGroup.length,4,"4 controls in group3");
 		var aGroup =sap.ui.getCore().byFieldGroupId([]);
-		equal(aGroup.length,49,"49 controls with no field group");
+		assert.equal(aGroup.length,49,"49 controls with no field group");
 		var aGroup = sap.ui.getCore().byFieldGroupId();
-		equal(aGroup.length,20,"20 controls with  field groups");
+		assert.equal(aGroup.length,20,"20 controls with  field groups");
 		var aGroup = sap.ui.getCore().byFieldGroupId(["group5","group4","group6"]);
-		equal(aGroup.length,1,"1 controls with  field groups ['group5','group4','group6']");
+		assert.equal(aGroup.length,1,"1 controls with  field groups ['group5','group4','group6']");
 		var aGroup = sap.ui.getCore().byFieldGroupId(["group6","group4","group5"]);
-		equal(aGroup.length,1,"1 controls with  field groups ['group6','group4','group5']");
+		assert.equal(aGroup.length,1,"1 controls with  field groups ['group6','group4','group5']");
 		var aGroup = sap.ui.getCore().byFieldGroupId(["group6","group4"]);
-		equal(aGroup.length,2,"2 controls with  field groups ['group6','group4']");
+		assert.equal(aGroup.length,2,"2 controls with  field groups ['group6','group4']");
 
 	});
 
@@ -322,11 +322,11 @@
 			moveFocus("field31",["group2"],"group3",function() {
 				moveFocus("field11",["group3"],"group1",function() {
 					var aGroup = oVerticalLayout.getControlsByFieldGroupId("group2");
-					equal(aGroup.length,2,"2 controls in group2 field21 was destroyed");
+					assert.equal(aGroup.length,2,"2 controls in group2 field21 was destroyed");
 					//adding ading field again
 					oParent.addContent(new sap.ui.commons.CheckBox({id:"field21",width:"200px", fieldGroupIds:["group2"]}))
 					var aGroup = oVerticalLayout.getControlsByFieldGroupId("group2");
-					equal(aGroup.length,3,"3 controls in group2 field21 was added");
+					assert.equal(aGroup.length,3,"3 controls in group2 field21 was added");
 					setTimeout(function() {
 						document.getElementById("content").focus();
 						done();

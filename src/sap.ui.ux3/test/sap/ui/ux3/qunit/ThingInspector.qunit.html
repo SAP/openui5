@@ -58,7 +58,7 @@
 	function facetSelectedEventHandler(oEvent) {
 	ok(true, "facet select event handler has been executed."); // this test tests by just being counted in the respective test
 	var id = oEvent.getParameter("id");
-	equal(id, facet, facet + " Facet should be selected");
+	assert.equal(id, facet, facet + " Facet should be selected");
 	var oTG1 = new sap.ui.ux3.ThingGroup({
 	title : "Block1"
 	});
@@ -70,12 +70,12 @@
 	function actionSelectedEventHandler(oEvent) {
 	ok(true, "action select event handler has been executed."); // this test tests by just being counted in the respective test
 	var id = oEvent.getParameter("id");
-	equal(id, action, action + " Action should be selected");
+	assert.equal(id, action, action + " Action should be selected");
 	}
 	function feedSubmitEventHandler(oEvent) {
 	ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
 	var text = oEvent.getParameter("text");
-	equal(text, "my feed entry", "Feed text should be 'my feed entry'");
+	assert.equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 	}
 	function closeEventHandler(oEvent) {
 	ok(true, "close event handler has been executed."); // this test tests by just being counted in the respective test
@@ -184,13 +184,13 @@
 				equals(true, true, "...");
 				var oDomRef = jQuery.sap.domById(oThingInspector.getId());
 				ok(oDomRef, "Rendered ThingInspector should exist in the page");
-				equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
+				assert.equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
 			});
 
 			QUnit.test("Swatch", function(assert) {
 				var oSwatch = jQuery.sap.domById(oThingInspector.getId() + "-thingViewer-swatch");
 				ok(oSwatch, "Rendered Swatch should exist in the page");
-				equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
+				assert.equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
 			});
 
 			QUnit.test("Facets", function(assert) {
@@ -306,7 +306,7 @@
 					//click again should hide comment popup
 					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
 					setTimeout(function() {
-						equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
+						assert.equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
 								"Rendered update popup was removed in the page");
 						done();
 					}, 500);
@@ -330,7 +330,7 @@
 								qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + '-actionBar-Feeder-send'), "click", 1, 1, 1, 1);
 								setTimeout(function() {
 									ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered comment popup should exist in the page");
-									equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
+									assert.equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
 											"Rendered update popup was removed in the page");
 									done();
 								}, 500);
@@ -391,11 +391,11 @@
 			QUnit.test("FollowSelected Event", function(assert) {
 				var done = assert.async();
 				assert.expect(19);
-				equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
+				assert.equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 				action = "follow";
 				// trigger follow
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
-				equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Follow, "Follow State is sap.ui.ux3.FollowActionState.Follow");
+				assert.equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Follow, "Follow State is sap.ui.ux3.FollowActionState.Follow");
 				// menu must exist after click
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
 				ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
@@ -407,7 +407,7 @@
 					// trigger hold
 					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-holdState"), "click", 1, 1, 1, 1);
 					setTimeout(function() {
-						equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Hold, "Follow State is sap.ui.ux3.FollowActionState.Hold");
+						assert.equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Hold, "Follow State is sap.ui.ux3.FollowActionState.Hold");
 						// menu must exist after click
 						qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
 						ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
@@ -421,7 +421,7 @@
 											"Rendered Follow Action menu with unfollowState should exist in the page");
 									// trigger unfollow
 									qutils.triggerMouseEvent(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"), "click", 1, 1, 1, 1);
-									equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
+									assert.equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 
 									setTimeout(function() {
 

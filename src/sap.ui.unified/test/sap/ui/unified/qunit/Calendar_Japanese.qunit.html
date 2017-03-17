@@ -57,9 +57,9 @@
 
 				var $Month = oCal1.getAggregation("month")[0].$();
 
-				equal($Month.find(".sapUiCalWH").length, 7, "week has 7 days");
-				equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth-1], "Month is correct");
-				equal(oCal1.$("-Head-B2").text(), iExpectedYear + " " + sExpectedEra, "Japanese Year is correct");
+				assert.equal($Month.find(".sapUiCalWH").length, 7, "week has 7 days");
+				assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth-1], "Month is correct");
+				assert.equal(oCal1.$("-Head-B2").text(), iExpectedYear + " " + sExpectedEra, "Japanese Year is correct");
 
 				var aDays = $Month.find(".sapUiCalItem"),
 					$Day,
@@ -67,7 +67,7 @@
 					iCount = 0,
 					oDate = new UniversalDate(UniversalDate.UTC([iExpectedEra, iExpectedYear], iExpectedMonth - 1, 1));
 
-				equal(aDays.length, iExpectedDays + iExpectedDaysOfOtherMonthBefore + iExpectedDaysOfOtherMonthAfter, "Calendar shows all days");
+				assert.equal(aDays.length, iExpectedDays + iExpectedDaysOfOtherMonthBefore + iExpectedDaysOfOtherMonthAfter, "Calendar shows all days");
 
 				for (var i=0; i<35; i++) {
 					$Day = jQuery(aDays[i]);
@@ -78,21 +78,21 @@
 					} else {
 						iCount++;
 						ok(!$Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is in current month.");
-						equal(sDate, oFormat.format(oDate.getJSDate(), true), "Item " + i + " (" + sDate + ") has correct date (data-sap-day).");
-						equal(jQuery($Day.children(".sapUiCalItemText")[0]).text(), "" + iCount, "Item " + i + " (" + sDate + ") has correct date (text).");
+						assert.equal(sDate, oFormat.format(oDate.getJSDate(), true), "Item " + i + " (" + sDate + ") has correct date (data-sap-day).");
+						assert.equal(jQuery($Day.children(".sapUiCalItemText")[0]).text(), "" + iCount, "Item " + i + " (" + sDate + ") has correct date (text).");
 						oDate.setUTCDate(oDate.getUTCDate() + 1);
 					}
 
 					if (sSelectedDate == sDate) {
 						ok($Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is selected.");
-						equal(jQuery($Day.children(".sapUiCalItemText")[0]).text(), "" + iExpectedDay, "Item " + i + " (" + sDate + ") has selected date (text).");
-						equal(i, iExpectedIndex, "Date has expected index")
+						assert.equal(jQuery($Day.children(".sapUiCalItemText")[0]).text(), "" + iExpectedDay, "Item " + i + " (" + sDate + ") has selected date (text).");
+						assert.equal(i, iExpectedIndex, "Date has expected index")
 					} else {
 						ok(!$Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is not selected.");
 					}
 				}
 
-				equal(iCount, iExpectedDays, "Number of days in the month correct.");
+				assert.equal(iCount, iExpectedDays, "Number of days in the month correct.");
 			}
 
 			function checkMonthNavigation(sSelectedDate, iExpectedMonth, sExpectedYear, bForwardNavigation) {
@@ -100,8 +100,8 @@
 				initializeCalendar(sSelectedDate);
 				oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).click();
 
-				equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth], "Month is correct after navigation: " + aMonthNames[iExpectedMonth]);
-				equal(oCal1.$("-Head-B2").text(), sExpectedYear, "Year is correct after navigation " + sExpectedYear);
+				assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth], "Month is correct after navigation: " + aMonthNames[iExpectedMonth]);
+				assert.equal(oCal1.$("-Head-B2").text(), sExpectedYear, "Year is correct after navigation " + sExpectedYear);
 
 			}
 
@@ -113,21 +113,21 @@
 					$Year,
 					sExpectedName;
 
-				equal(aYears.length, 20, "Number of Years is correct.");
-				equal(jQuery(aYears[0]).text(), sExpectedStartYear, "First Year OK")
-				equal(jQuery(aYears[19]).text(), sExpectedEndYear, "Last Year OK")
+				assert.equal(aYears.length, 20, "Number of Years is correct.");
+				assert.equal(jQuery(aYears[0]).text(), sExpectedStartYear, "First Year OK")
+				assert.equal(jQuery(aYears[19]).text(), sExpectedEndYear, "Last Year OK")
 
 				for (var i=0; i<20; i++) {
 					$Year = jQuery(aYears[i]);
 
 					if ($Year.hasClass("sapUiCalItemSel")) {
-						equal($Year.text(), sExpectedSelYear, "Selected Year OK")
+						assert.equal($Year.text(), sExpectedSelYear, "Selected Year OK")
 					}
 				}
 
 				aYears[0].focus();
 				qutils.triggerKeyboardEvent(aYears[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
-				equal(oCal1.$("-Head-B2").text(), sExpectedStartYear, "Year is correct after navigation");
+				assert.equal(oCal1.$("-Head-B2").text(), sExpectedStartYear, "Year is correct after navigation");
 			}
 
 			qutils.delayTestStart();

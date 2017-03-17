@@ -90,7 +90,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 	function checkCreateVariantResponseStatus(params) {
 		return function(result) {
-			equal(result.status, "success");
+			assert.equal(result.status, "success");
 			return params.connector.loadChanges(params.componentName);
 		}
 	}
@@ -99,13 +99,13 @@ jQuery.sap.require('sap.ui.fl.Cache');
 	function checkComponentChangesReturnsVariantAndDelete(params, deleteWithLayer) {
 		return function(result) {
 			var variantChange = result.changes.changes[0];
-			equal(variantChange.changeType, "filterBarVariant");
-			equal(variantChange.fileName, params.fileName);
-			equal(variantChange.fileType, "variant");
-			equal(variantChange.namespace, params.namespace);
-			equal(variantChange.layer, params.expectedLayer);
-			equal(variantChange.content.filter.length, 1);
-			equal(variantChange.content.sort.length, 1);
+			assert.equal(variantChange.changeType, "filterBarVariant");
+			assert.equal(variantChange.fileName, params.fileName);
+			assert.equal(variantChange.fileType, "variant");
+			assert.equal(variantChange.namespace, params.namespace);
+			assert.equal(variantChange.layer, params.expectedLayer);
+			assert.equal(variantChange.content.filter.length, 1);
+			assert.equal(variantChange.content.sort.length, 1);
 
 			var deleteParams = {
 				sChangeName: params.fileName,
@@ -123,7 +123,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 	function checkDeleteSendToBackend(params) {
 		return function(result) {
-			equal(result.status, "nocontent");
+			assert.equal(result.status, "nocontent");
 			return params.connector.loadChanges(params.componentName);
 		}
 	}
@@ -131,7 +131,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 	function checkLoadingComponentChangesReturnsNothing() {
 		return function(result) {
-			equal(result.changes.changes.length, 0);
+			assert.equal(result.changes.changes.length, 0);
 			QUnit.start();
 		}
 	}
@@ -203,13 +203,13 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 		function checkLoadingComponentChangesReturnsVariant(result) {
 			var variantChange = result.changes.changes[0];
-			equal(variantChange.changeType, "filterBarVariant");
-			equal(variantChange.fileName, fileName);
-			equal(variantChange.fileType, "variant");
-			equal(variantChange.namespace, that.namespace);
-			equal(variantChange.layer, expectedLayer);
-			equal(variantChange.content.filter.length, 1);
-			equal(variantChange.content.sort.length, 1);
+			assert.equal(variantChange.changeType, "filterBarVariant");
+			assert.equal(variantChange.fileName, fileName);
+			assert.equal(variantChange.fileType, "variant");
+			assert.equal(variantChange.namespace, that.namespace);
+			assert.equal(variantChange.layer, expectedLayer);
+			assert.equal(variantChange.content.filter.length, 1);
+			assert.equal(variantChange.content.sort.length, 1);
 
 			//Update text
 			if (!variantChange.texts) {
@@ -230,8 +230,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 		function checkReturnedVariantWithChangedText(result) {
 			var variantChangedText = result.response;
-			equal(variantChangedText.texts.integrationTestKey.value, "integrationTestValue");
-			equal(variantChangedText.texts.integrationTestKey.type, "XFLD");
+			assert.equal(variantChangedText.texts.integrationTestKey.value, "integrationTestValue");
+			assert.equal(variantChangedText.texts.integrationTestKey.type, "XFLD");
 
 			var params = {
 				sChangeName: variantChangedText.fileName,

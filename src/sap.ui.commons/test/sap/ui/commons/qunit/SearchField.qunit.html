@@ -67,8 +67,8 @@
 		if(bDoReset){
 			var sNew = "";
 			oSearchField.setValue(sNew);
-			equal(oSearchField.getValue(), sNew, "SearchField' value should have changed.");
-			equal(oSearchField.getFocusDomRef().value, sNew, "SearchField' value should have changed in HTML.");
+			assert.equal(oSearchField.getValue(), sNew, "SearchField' value should have changed.");
+			assert.equal(oSearchField.getFocusDomRef().value, sNew, "SearchField' value should have changed in HTML.");
 		}
 		var aKeys = ["S", "a", "p", "U", "i", "5"];
 		var iLength = Math.min(iCount, aKeys.length);
@@ -124,8 +124,8 @@
 				ok(bEventHandlerCalled, "Search handler called.");
 			}
 
-			equal(jQuery(oSearchField.getFocusDomRef()).val(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (HTML)");
-			equal(oSearchField.getValue(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (Property)");
+			assert.equal(jQuery(oSearchField.getFocusDomRef()).val(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (HTML)");
+			assert.equal(oSearchField.getValue(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (Property)");
 			checkFocus(oSearchField.getFocusDomRef().id, "SearchField has "+(bReadOnly ? "no " : "")+"focus after user action", !bReadOnly);
 
 			done();
@@ -172,8 +172,8 @@
 					oSearchField.attachSearch(handler2);
 					sap.ui.test.qunit.triggerEvent("click", aItems[1].getId());
 					ok(bEventHandlerCalled, "Search Event triggered");
-					equal(jQuery(oSearchField.getFocusDomRef()).val(), "b", "SearchField' value after user action (HTML)");
-					equal(oSearchField.getValue(), "b", "SearchField' value after user action (Property)");
+					assert.equal(jQuery(oSearchField.getFocusDomRef()).val(), "b", "SearchField' value after user action (HTML)");
+					assert.equal(oSearchField.getValue(), "b", "SearchField' value after user action (Property)");
 					if(!bEventHandlerCalled){
 						oSearchField.detachSearch(handler2);
 					}

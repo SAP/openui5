@@ -52,7 +52,7 @@
 
 		// Assert
 		ok(hasPopin, "did have a popin before deleting it");
-		equal(sut.$Popin().length, 0,"popin got removed from dom");
+		assert.equal(sut.$Popin().length, 0,"popin got removed from dom");
 
 		//Cleanup
 		table.destroy();
@@ -83,7 +83,7 @@
 			sut[sFunctionName]();
 
 			//Assert
-			equal(sut.$Popin().hasClass(className), hasClass);
+			assert.equal(sut.$Popin().hasClass(className), hasClass);
 
 			table.destroy();
 		};

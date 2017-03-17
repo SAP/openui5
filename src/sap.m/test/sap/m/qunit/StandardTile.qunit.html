@@ -87,7 +87,7 @@
 		});
 
 		QUnit.test("IconFontRendered", function(assert) {
-			equal(jQuery.sap.domById(tileIconFont + "-img"), null, "tileIconFont icon should be rendered.");
+			assert.equal(jQuery.sap.domById(tileIconFont + "-img"), null, "tileIconFont icon should be rendered.");
 		});
 
 		QUnit.test("NumberRendered", function(assert) {
@@ -156,11 +156,11 @@
 		QUnit.module("Not Rendering Optional Fields");
 
 		QUnit.test("IconNotRendered", function(assert) {
-			equal(jQuery.sap.domById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
+			assert.equal(jQuery.sap.domById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
 		});
 
 		QUnit.test("NumberNotRendered", function(assert) {
-			equal(jQuery.sap.domById(tileNoNumberId + "-number"), null, "tileNoNumber number and number units should not be rendered.");
+			assert.equal(jQuery.sap.domById(tileNoNumberId + "-number"), null, "tileNoNumber number and number units should not be rendered.");
 		});
 
 
@@ -191,7 +191,7 @@
 			sut.destroy();
 
 			//Assert
-			equal(sut._oImageControl,null);
+			assert.equal(sut._oImageControl,null);
 		});
 
 	</script>

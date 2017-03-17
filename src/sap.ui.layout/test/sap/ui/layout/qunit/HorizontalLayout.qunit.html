@@ -47,7 +47,7 @@
 			ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
 
 			// offset() returns fractional numbers on Firefox Mac, so use offsetLeft instead
-			equal(oText[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "TextField should be exactly right of Button");
+			assert.equal(oText[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "TextField should be exactly right of Button");
 		});
 
 		QUnit.test("NoWrap", function(assert) {
@@ -68,8 +68,8 @@
 			var oButton = jQuery.sap.byId('B1');
 			var oText = jQuery.sap.byId('TF1');
 			var oImage = jQuery.sap.byId('B2');
-			equal(oText.offset().left, oButton.offset().left, "Left offset of Button == TextField");
-			equal(oImage.offset().left, oText.offset().left, "Left offset of TextField == Second button");
+			assert.equal(oText.offset().left, oButton.offset().left, "Left offset of Button == TextField");
+			assert.equal(oImage.offset().left, oText.offset().left, "Left offset of TextField == Second button");
 		});
 
 		QUnit.test("Container Padding Classes", function (assert) {

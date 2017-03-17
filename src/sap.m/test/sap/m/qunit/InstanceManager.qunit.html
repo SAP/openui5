@@ -103,13 +103,13 @@
 				afterOpen: function(){
 					ok(im.hasOpenPopover(), "There is popover open");
 					ok(im.isPopoverOpen(this), "This popover is open");
-					equal(im.getOpenPopovers().length, 1, "There is one popover open");
+					assert.equal(im.getOpenPopovers().length, 1, "There is one popover open");
 					QUnit.start();
 				},
 				afterClose:function(){
 					ok(!im.hasOpenPopover(), "There is popover open");
 					ok(!im.isPopoverOpen(this), "This Popover isn't open");
-					equal(im.getOpenPopovers().length, 0, "There is no dialog open");
+					assert.equal(im.getOpenPopovers().length, 0, "There is no dialog open");
 					QUnit.start();
 				},
 				content: [
@@ -142,13 +142,13 @@
 				afterOpen: function(){
 					ok(im.hasOpenDialog(), "There is dialog open");
 					ok(im.isDialogOpen(this), "This dialog is open");
-					equal(im.getOpenDialogs().length, 1, "There is one dialog open");
+					assert.equal(im.getOpenDialogs().length, 1, "There is one dialog open");
 					QUnit.start();
 				},
 				afterClose: function(){
 					ok(!im.hasOpenDialog(), "There is dialog open");
 					ok(!im.isDialogOpen(this), "This dialog isn't open");
-					equal(im.getOpenDialogs().length, 0, "There is no dialog open");
+					assert.equal(im.getOpenDialogs().length, 0, "There is no dialog open");
 					QUnit.start();
 				}
 			});
@@ -182,11 +182,11 @@
 				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
 				im.addInstance(sCategoryId, oInstance);
 				ok(!im.isCategoryEmpty(sCategoryId), "Category is not empty anymore");
-				equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance array is not empty and length should equal 1");
+				assert.equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance array is not empty and length should equal 1");
 				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is managed");
 				// add the same instance again
 				im.addInstance(sCategoryId, oInstance);
-				equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance shouldn't be added again");
+				assert.equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance shouldn't be added again");
 				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is still managed");
 			});
 

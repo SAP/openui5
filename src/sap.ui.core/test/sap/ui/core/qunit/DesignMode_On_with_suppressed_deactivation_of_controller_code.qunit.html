@@ -35,10 +35,10 @@
 QUnit.test("Get Design Mode and Suppression of Deactivation of Controller Code", 2, function(assert) {
 
 	var designMode = sap.ui.getCore().getConfiguration().getDesignMode();
-	equal(designMode, true, "Design Mode is on");
+	assert.equal(designMode, true, "Design Mode is on");
 
 	var suppressDeactivationOfControllerCode = sap.ui.getCore().getConfiguration().getSuppressDeactivationOfControllerCode();
-	equal(suppressDeactivationOfControllerCode, true, "Suppression of Deactivation of Controller Code is on");
+	assert.equal(suppressDeactivationOfControllerCode, true, "Suppression of Deactivation of Controller Code is on");
 
 });
 
@@ -48,14 +48,14 @@ QUnit.test("Create an HTMLView instance and check controller methods are not rep
 	var oController = oView.getController();
 
 //check lifecycle hooks
-	equal(oController.onInit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-	equal(oController.onExit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-	equal(oController.onBeforeRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-	equal(oController.onAfterRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.onInit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.onExit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.onBeforeRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.onAfterRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
 
 //other methods
-	equal(oController.method1(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-	equal(oController.method2(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.method1(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.method2(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
 
 	oView.destroy();
 });
@@ -63,7 +63,7 @@ QUnit.test("Create an HTMLView instance and check controller methods are not rep
 QUnit.test("Create an HTMLView instance and check controller methods from base class(es) were not replaced", 1, function(assert){
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
-	//equal(designMode, true, "Custom Data set properly");
+	//assert.equal(designMode, true, "Custom Data set properly");
 	var oController = oView.getController();
 
 	//as example, try "byId"

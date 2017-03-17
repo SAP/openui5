@@ -36,7 +36,7 @@
 
 				// find and load all existing known templates
 				var aTemplates = sap.ui.template();
-				equal(aTemplates.length, 2, "2 Templates have been found!");
+				assert.equal(aTemplates.length, 2, "2 Templates have been found!");
 
 				// check the first template to be a valid template
 				var oTemplate = sap.ui.getCore().getTemplate("theTemplate");
@@ -73,7 +73,7 @@
 
 			QUnit.test("Inline Templates", 1, function(assert) {
 
-				equal(jQuery("#theEmbeddedTemplate > code").length, 1, "Inline Template doesn't create extra DOM");
+				assert.equal(jQuery("#theEmbeddedTemplate > code").length, 1, "Inline Template doesn't create extra DOM");
 
 			});
 

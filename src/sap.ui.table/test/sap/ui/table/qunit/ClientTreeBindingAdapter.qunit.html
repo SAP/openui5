@@ -201,8 +201,8 @@
 
 		QUnit.test("Properties", function(assert){
 			createTreeBindingAdapter("/bing/root", null, [], {});
-			equal(oBinding.getPath(), "/bing/root", "TreeBinding path");
-			equal(oBinding.getModel(), oModel, "TreeBinding model");
+			assert.equal(oBinding.getPath(), "/bing/root", "TreeBinding path");
+			assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
 			ok(oBinding instanceof sap.ui.model.ClientTreeBinding, "treeBinding class check");
 		});
 
@@ -216,36 +216,36 @@
 				// contexts should be now loaded
 			var aContexts = oBinding.getContexts(0, 5);
 
-			equal(aContexts.length, 4, "TreeBinding rootContexts length");
+			assert.equal(aContexts.length, 4, "TreeBinding rootContexts length");
 
 			oContext = aContexts[0];
-			equal(oModel.getProperty("name", oContext), "Rock", "TreeBinding root content");
+			assert.equal(oModel.getProperty("name", oContext), "Rock", "TreeBinding root content");
 
 			oContext = aContexts[1];
-			equal(oModel.getProperty("name", oContext), "Hip-Hop", "TreeBinding root content");
+			assert.equal(oModel.getProperty("name", oContext), "Hip-Hop", "TreeBinding root content");
 
 			oContext = aContexts[2];
-			equal(oModel.getProperty("name", oContext), "Swing/Big Band", "TreeBinding root content");
+			assert.equal(oModel.getProperty("name", oContext), "Swing/Big Band", "TreeBinding root content");
 
 			oContext = aContexts[3];
-			equal(oModel.getProperty("name", oContext), "ZZZ", "TreeBinding root content");
+			assert.equal(oModel.getProperty("name", oContext), "ZZZ", "TreeBinding root content");
 
 			var fnChangeHandler = function() {
 				// contexts should be now loaded
 				var aContexts = oBinding.getContexts(0, 10);
 
 				var oContext = oBinding.getContextByIndex(3);
-				equal(aContexts.length, 7, "TreeBinding nodeContexts length is 7");
-				equal(oBinding.getChildCount(oContext), 2, "TreeBinding childcount");
+				assert.equal(aContexts.length, 7, "TreeBinding nodeContexts length is 7");
+				assert.equal(oBinding.getChildCount(oContext), 2, "TreeBinding childcount");
 
 				oContext = oBinding.getContextByIndex(4);
-				equal(oModel.getProperty("name", oContext), "Gangsta rap", "TreeBinding node content");
+				assert.equal(oModel.getProperty("name", oContext), "Gangsta rap", "TreeBinding node content");
 
 				oContext = oBinding.getContextByIndex(5);
-				equal(oModel.getProperty("name", oContext), "Swing/Big Band", "TreeBinding node content");
+				assert.equal(oModel.getProperty("name", oContext), "Swing/Big Band", "TreeBinding node content");
 
 				oContext = oBinding.getContextByIndex(6);
-				equal(oModel.getProperty("name", oContext), "ZZZ", "TreeBinding node content");
+				assert.equal(oModel.getProperty("name", oContext), "ZZZ", "TreeBinding node content");
 			};
 
 			oBinding.attachChange(fnChangeHandler);
@@ -263,25 +263,25 @@
 				// contexts should be now loaded
 			var aContexts = oBinding.getContexts(0, 5);
 
-			equal(aContexts.length, 1, "root contexts length");
+			assert.equal(aContexts.length, 1, "root contexts length");
 
 			oContext = aContexts[0];
-			equal(oModel.getProperty("name", oContext), "chandler", "root node is 'chandler'");
+			assert.equal(oModel.getProperty("name", oContext), "chandler", "root node is 'chandler'");
 
 			function fnChangeHandler () {
 				oBinding.detachChange(fnChangeHandler);
 
 				// contexts should be now loaded flattened
 				var aContexts = oBinding.getContexts(0, 10);
-				equal(aContexts.length, 2);
+				assert.equal(aContexts.length, 2);
 
 				var oContext = oBinding.getContextByIndex(0);
-				equal(oModel.getProperty("name", oContext), "chandler", "root node is 'chandler'");
-				equal(oBinding.getChildCount(oContext), 1, "childcount for 'chandler' is 1");
+				assert.equal(oModel.getProperty("name", oContext), "chandler", "root node is 'chandler'");
+				assert.equal(oBinding.getChildCount(oContext), 1, "childcount for 'chandler' is 1");
 
 				var oContext = oBinding.getContextByIndex(1);
-				equal(oModel.getProperty("name", oContext), "root", "index 2 node is 'root'");
-				equal(oBinding.getChildCount(oContext), 4, "childcount for 'root' is 4");
+				assert.equal(oModel.getProperty("name", oContext), "root", "index 2 node is 'root'");
+				assert.equal(oBinding.getChildCount(oContext), 4, "childcount for 'root' is 4");
 
 				oBinding.attachChange(fnChangeHandler2);
 				oBinding.expand(1);
@@ -294,15 +294,15 @@
 
 				// contexts should be now loaded flattened
 				var aContexts = oBinding.getContexts(0, 10);
-				equal(aContexts.length, 6);
+				assert.equal(aContexts.length, 6);
 
 				var oContext = oBinding.getContextByIndex(2);
-				equal(oModel.getProperty("name", oContext), "Rock", "node at index 2 is 'Rock'");
-				equal(oBinding.getChildCount(oContext), 3, "childcount for 'Rock' is 3");
+				assert.equal(oModel.getProperty("name", oContext), "Rock", "node at index 2 is 'Rock'");
+				assert.equal(oBinding.getChildCount(oContext), 3, "childcount for 'Rock' is 3");
 
 				var oContext = oBinding.getContextByIndex(3);
-				equal(oModel.getProperty("name", oContext), "Hip-Hop", "node at index 3 is 'Hip-Hop'");
-				equal(oBinding.getChildCount(oContext), 3, "childcount for 'Hip-Hop' is 1");
+				assert.equal(oModel.getProperty("name", oContext), "Hip-Hop", "node at index 3 is 'Hip-Hop'");
+				assert.equal(oBinding.getChildCount(oContext), 3, "childcount for 'Hip-Hop' is 1");
 
 				oBinding.attachChange(fnChangeHandler3);
 				oBinding.expand(2);
@@ -314,7 +314,7 @@
 				// There should be only 9 contexts in the flat array.
 				// If there are more, than the group ID was not unique
 				var aContexts = oBinding.getContexts(0, 20);
-				equal(aContexts.length, 9, "Only 9 Context flat available");
+				assert.equal(aContexts.length, 9, "Only 9 Context flat available");
 			}
 		});
 
@@ -328,30 +328,30 @@
 			// contexts should be now loaded
 			var aContexts = oBinding.getContexts(0, 10);
 
-			equal(aContexts.length, 1, "# of root contexts = 1");
+			assert.equal(aContexts.length, 1, "# of root contexts = 1");
 
 			oContext = aContexts[0];
-			equal(oModel.getProperty("name", oContext), "root", "Root context values are correct");
+			assert.equal(oModel.getProperty("name", oContext), "root", "Root context values are correct");
 
 			var fnExpandHandler = function () {
 				aContexts = oBinding.getContexts(0, 10);
 
-				equal(aContexts.length, 5, "Length of returned contexts should be 6");
+				assert.equal(aContexts.length, 5, "Length of returned contexts should be 6");
 
 				oContext = aContexts[0];
-				equal(oContext.getProperty("name"), "root", "Root context values are correct");
+				assert.equal(oContext.getProperty("name"), "root", "Root context values are correct");
 
 				oContext = aContexts[1];
-				equal(oContext.getProperty("name"), "Rock", "[1] context values are correct");
+				assert.equal(oContext.getProperty("name"), "Rock", "[1] context values are correct");
 
 				oContext = aContexts[2];
-				equal(oContext.getProperty("name"), "Hip-Hop", "[2] is correct");
+				assert.equal(oContext.getProperty("name"), "Hip-Hop", "[2] is correct");
 
 				oContext = aContexts[3];
-				equal(oContext.getProperty("name"), "Swing/Big Band", "[3] is correct");
+				assert.equal(oContext.getProperty("name"), "Swing/Big Band", "[3] is correct");
 
 				oContext = aContexts[4];
-				equal(oContext.getProperty("name"), "ZZZ", "[4] is correct");
+				assert.equal(oContext.getProperty("name"), "ZZZ", "[4] is correct");
 			};
 
 			oBinding.attachChange(fnExpandHandler);
@@ -369,26 +369,26 @@
 
 			var oContext;
 
-			equal(aContexts.length, 13, "# of contexts after autoExpand = 2 should be 13");
+			assert.equal(aContexts.length, 13, "# of contexts after autoExpand = 2 should be 13");
 
 			oContext = aContexts[0];
-			equal(oContext.getProperty("name"), "root", "First node is correct");
+			assert.equal(oContext.getProperty("name"), "root", "First node is correct");
 
 			//Grunge should not be expanded
 			oContext = oBinding.getContextByIndex(4);
-			equal(oContext.getProperty("name"), "Grunge", "Woohooo Grunge");
-			equal(oBinding.isExpanded(4), false, "Grunge is not expanded");
-			equal(oBinding.getChildCount(oContext), 3, "Grunge has 3 children");
+			assert.equal(oContext.getProperty("name"), "Grunge", "Woohooo Grunge");
+			assert.equal(oBinding.isExpanded(4), false, "Grunge is not expanded");
+			assert.equal(oBinding.getChildCount(oContext), 3, "Grunge has 3 children");
 
 			oContext = oBinding.getContextByIndex(5);
-			equal(oContext.getProperty("name"), "Hip-Hop", "Woohooo Hip-Hop");
-			equal(oBinding.isExpanded(5), true, "Hip-Hop is expanded");
-			equal(oBinding.getChildCount(oContext), 3, "Hip-Hop has 3 children");
+			assert.equal(oContext.getProperty("name"), "Hip-Hop", "Woohooo Hip-Hop");
+			assert.equal(oBinding.isExpanded(5), true, "Hip-Hop is expanded");
+			assert.equal(oBinding.getChildCount(oContext), 3, "Hip-Hop has 3 children");
 
 			oContext = oBinding.getContextByIndex(6);
 			var oNode = oBinding.findNode(6);
-			equal(oContext.getProperty("name"), "Old-School", "Woohoo Old-School");
-			equal(oNode.level, 2, "Old-School sits on level 2");
+			assert.equal(oContext.getProperty("name"), "Old-School", "Woohoo Old-School");
+			assert.equal(oNode.level, 2, "Old-School sits on level 2");
 		});
 
 
@@ -400,21 +400,21 @@
 
 			var oContext;
 			var aContexts = oBinding.getContexts(0, 10);
-			equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
-			equal(oBinding._iPageSize, 10, "PageSize must be 10, since 10 requested by getContexts");
+			assert.equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
+			assert.equal(oBinding._iPageSize, 10, "PageSize must be 10, since 10 requested by getContexts");
 			oContext = aContexts[0];
-			equal(oContext.getProperty("name"), "root", "Root Node OK");
+			assert.equal(oContext.getProperty("name"), "root", "Root Node OK");
 			oBinding.expand(0);
 
 			aContexts = oBinding.getContexts(1, 3);
-			equal(oBinding._iPageSize, 10, "PageSize must still be 10, since 10 was requested by getContexts earlier");
+			assert.equal(oBinding._iPageSize, 10, "PageSize must still be 10, since 10 was requested by getContexts earlier");
 
-			equal(aContexts.length, 3, "Check if getContexts returned the expected length for expanded 1st node");
-			equal(oBinding.getChildCount(oContext), 4, "ChildCount of expanded 1st node");
+			assert.equal(aContexts.length, 3, "Check if getContexts returned the expected length for expanded 1st node");
+			assert.equal(oBinding.getChildCount(oContext), 4, "ChildCount of expanded 1st node");
 
 			// row index 4 must be present due to higher page size (10) although not requested by latest getContexts call
 			oContext = oBinding.getContextByIndex(4);
-			equal(oContext.getProperty("name"), "ZZZ", "ZZZ Node OK");
+			assert.equal(oContext.getProperty("name"), "ZZZ", "ZZZ Node OK");
 		});
 
 		QUnit.test("Pagesize not decreasing", function(assert){
@@ -425,25 +425,25 @@
 				var oContext;
 				var aContexts = oBinding.getContexts(0, 1);
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
-				equal(oBinding._iPageSize, 1, "PageSize must be 1, since 1 requested by getContexts");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
+				assert.equal(oBinding._iPageSize, 1, "PageSize must be 1, since 1 requested by getContexts");
 
 				oContext = aContexts[0];
-				equal(oContext.getProperty("name"), "root", "1st root child HierarchyNode check");
+				assert.equal(oContext.getProperty("name"), "root", "1st root child HierarchyNode check");
 
 				oBinding.expand(0);
 
 				aContexts = oBinding.getContexts(1, 5);
-				equal(oBinding._iPageSize, 5, "PageSize must now be 5, since 5 was requested by latest getContexts call and is higher than the first getContexts call");
+				assert.equal(oBinding._iPageSize, 5, "PageSize must now be 5, since 5 was requested by latest getContexts call and is higher than the first getContexts call");
 
-				equal(aContexts.length, 4, "Check if getContexts returned the expected length for expanded 1st node");
-				equal(oBinding.getChildCount(oContext), 4, "ChildCount of expanded 1st node");
+				assert.equal(aContexts.length, 4, "Check if getContexts returned the expected length for expanded 1st node");
+				assert.equal(oBinding.getChildCount(oContext), 4, "ChildCount of expanded 1st node");
 
 				oContext = oBinding.getContextByIndex(4);
-				equal(oContext.getProperty("name"), "ZZZ", "Node ZZZ is OK");
+				assert.equal(oContext.getProperty("name"), "ZZZ", "Node ZZZ is OK");
 
 				oContext = oBinding.getContextByIndex(5);
-				equal(oContext, null, "Context at row index 5 still missing.");
+				assert.equal(oContext, null, "Context at row index 5 still missing.");
 		});
 
 
@@ -461,18 +461,18 @@
 
 			oBinding.getContexts(0, 100);
 			oContext = oBinding.getContextByIndex(4);
-			equal(oContext.getProperty("name"), "ZZZ", "Node ZZZ OK");
+			assert.equal(oContext.getProperty("name"), "ZZZ", "Node ZZZ OK");
 			oBinding.expand(1);
 
 			//expanded 0.3
 			oBinding.getContexts(0, 100);
 			oContext = oBinding.getContextByIndex(4);
-			equal(oContext.getProperty("name"), "Grunge", "Grunge Node OK");
+			assert.equal(oContext.getProperty("name"), "Grunge", "Grunge Node OK");
 			oBinding.expand(4);
 
 			oBinding.getContexts(0, 100);
 			oContext = oBinding.getContextByIndex(6);
-			equal(oContext.getProperty("name"), "Soundgarden", "Soundgarden Node OK");
+			assert.equal(oContext.getProperty("name"), "Soundgarden", "Soundgarden Node OK");
 
 			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
 			ok(oBinding._mTreeState.expanded["/bing_root/"], "Artificial Root node should be expanded");
@@ -497,8 +497,8 @@
 			oBinding.getContexts(0, 100); //rebuild the tree, as usual
 
 			oContext = oBinding.getContextByIndex(0);
-			equal(oContext.getProperty("name"), "root", "HierarchyNode check for root node, everything is still there");
-			equal(oBinding.isExpanded(0), false, "Root node is also collapsed now");
+			assert.equal(oContext.getProperty("name"), "root", "HierarchyNode check for root node, everything is still there");
+			assert.equal(oBinding.isExpanded(0), false, "Root node is also collapsed now");
 
 			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
 			ok(!oBinding._mTreeState.expanded["/bing_root/"], "1st Level node should NOT be expanded");
@@ -516,8 +516,8 @@
 			assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed now, just before expanding to level X");
 			oBinding.getContexts(0, 100); //rebuild the tree, as usual
 
-			equal(oBinding.isExpanded(0), true, "root is expanded again");
-			equal(oBinding.isExpanded(1), true, "Rock is still expanded");
+			assert.equal(oBinding.isExpanded(0), true, "root is expanded again");
+			assert.equal(oBinding.isExpanded(1), true, "Rock is still expanded");
 			oBinding.expand(3);
 			oBinding.expand(2);
 
@@ -537,14 +537,14 @@
 			// check for correct change reasons in event
 			var fnChangeHandler5 = function(oEvent) {
 				oBinding.detachChange(fnChangeHandler5);
-				equal(oEvent.getParameter("reason"), "expand", "Change Reason expand is set");
+				assert.equal(oEvent.getParameter("reason"), "expand", "Change Reason expand is set");
 				oBinding.attachChange(fnChangeHandler6);
 				oBinding.collapse(1);
 			};
 
 			var fnChangeHandler6 = function(oEvent) {
 				oBinding.detachChange(fnChangeHandler6);
-				equal(oEvent.getParameter("reason"), "collapse", "Change Reason expand is set");
+				assert.equal(oEvent.getParameter("reason"), "collapse", "Change Reason expand is set");
 				done();
 			};
 
@@ -572,7 +572,7 @@
 			oBinding.getContexts(0, 10);
 			iLength2 = oBinding.getLength();
 
-			equal(iLength1, iLength2, "binding length shouldn't be dependent on the contexts length");
+			assert.equal(iLength1, iLength2, "binding length shouldn't be dependent on the contexts length");
 		});
 
 		/**
@@ -591,17 +591,17 @@
 
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
-				equal(oEvent.mParameters.leadIndex, oBinding.getLength() - 1, "Event: leadIndex should be Binding length - 1");
-				equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
-				equal(oEvent.mParameters.rowIndices.length, 13, "Event: length of changedIndices should be 13");
-				equal(oEvent.mParameters.selectAll, true, "Event: selectAll set");
+				assert.equal(oEvent.mParameters.leadIndex, oBinding.getLength() - 1, "Event: leadIndex should be Binding length - 1");
+				assert.equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
+				assert.equal(oEvent.mParameters.rowIndices.length, 13, "Event: length of changedIndices should be 13");
+				assert.equal(oEvent.mParameters.selectAll, true, "Event: selectAll set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
-				equal(oEvent.mParameters.leadIndex, - 1, "Event: leadIndex should be - 1");
-				equal(oEvent.mParameters.oldIndex, oBinding.getLength() - 1, "Event: oldIndex should be Binding length -1");
-				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
+				assert.equal(oEvent.mParameters.leadIndex, - 1, "Event: leadIndex should be - 1");
+				assert.equal(oEvent.mParameters.oldIndex, oBinding.getLength() - 1, "Event: oldIndex should be Binding length -1");
+				assert.equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
@@ -612,30 +612,30 @@
 			oBinding.collapseToLevel(1);
 			oBinding.getContexts(0, 100); // rebuild tree after collapse
 			var aSelectedIndices = oBinding.getSelectedIndices();
-			equal(aSelectedIndices.length, 5, "Number of selected Nodes after collapsing to level 1 must be 5");
+			assert.equal(aSelectedIndices.length, 5, "Number of selected Nodes after collapsing to level 1 must be 5");
 
 			// check that selectAllMode is removed
-			equal(oBinding._oRootNode.nodeState.selectAllMode, true, "After selectAll, selectAllMode of root node is true");
+			assert.equal(oBinding._oRootNode.nodeState.selectAllMode, true, "After selectAll, selectAllMode of root node is true");
 
 			var aSelectedContexts = oBinding.getSelectedContexts();
-			equal(aSelectedIndices.length, aSelectedContexts.length, "Number of selected contexts and indeces must be the same");
+			assert.equal(aSelectedIndices.length, aSelectedContexts.length, "Number of selected contexts and indeces must be the same");
 
 			var oContext = aSelectedContexts[1];
-			equal(oContext.getProperty("name"), "Rock", "Number of selected contexts and indeces must be the same");
+			assert.equal(oContext.getProperty("name"), "Rock", "Number of selected contexts and indeces must be the same");
 
 			var iLeadIndex = oBinding.getSelectedIndex();
-			equal(iLeadIndex, oBinding.getLength() - 1, "LeadIndex must be last node/context of the known/paged tree in SelectAll case");
+			assert.equal(iLeadIndex, oBinding.getLength() - 1, "LeadIndex must be last node/context of the known/paged tree in SelectAll case");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
 			oBinding.clearSelection();
 			aSelectedIndices = oBinding.getSelectedIndices();
-			equal(aSelectedIndices.length, 0, "There should be no selection after clearSelection");
+			assert.equal(aSelectedIndices.length, 0, "There should be no selection after clearSelection");
 
 			// check that selectAllMode is removed
-			equal(oBinding._oRootNode.nodeState.selectAllMode, false, "After clearSelection, selectAllMode of root node is false");
+			assert.equal(oBinding._oRootNode.nodeState.selectAllMode, false, "After clearSelection, selectAllMode of root node is false");
 
 			iLeadIndex = oBinding.getSelectedIndex();
-			equal(iLeadIndex, - 1, "LeadIndex must be -1 if there is no selection");
+			assert.equal(iLeadIndex, - 1, "LeadIndex must be -1 if there is no selection");
 
 			done();
 		});
@@ -656,28 +656,28 @@
 
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
-				equal(oEvent.mParameters.leadIndex, 1, "Event: leadIndex should be 1");
-				equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
-				equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
-				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
+				assert.equal(oEvent.mParameters.leadIndex, 1, "Event: leadIndex should be 1");
+				assert.equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
+				assert.equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
+				assert.equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
-				equal(oEvent.mParameters.leadIndex, 4, "Event: leadIndex should be 4");
-				equal(oEvent.mParameters.oldIndex, 1, "Event: oldIndex should be 1");
-				equal(oEvent.mParameters.rowIndices.length, 2, "Event: changedIndices should be 2");
-				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
-				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[1] should be 4");
+				assert.equal(oEvent.mParameters.leadIndex, 4, "Event: leadIndex should be 4");
+				assert.equal(oEvent.mParameters.oldIndex, 1, "Event: oldIndex should be 1");
+				assert.equal(oEvent.mParameters.rowIndices.length, 2, "Event: changedIndices should be 2");
+				assert.equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
+				assert.equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[1] should be 4");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler3 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler3);
-				equal(oEvent.mParameters.leadIndex, 4, "Event: leadIndex should be 4");
-				equal(oEvent.mParameters.oldIndex, 4, "Event: oldIndex should be 4");
-				equal(oEvent.mParameters.rowIndices.length, 0, "Event: changedIndices should be undefined");
+				assert.equal(oEvent.mParameters.leadIndex, 4, "Event: leadIndex should be 4");
+				assert.equal(oEvent.mParameters.oldIndex, 4, "Event: oldIndex should be 4");
+				assert.equal(oEvent.mParameters.rowIndices.length, 0, "Event: changedIndices should be undefined");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
@@ -685,34 +685,34 @@
 			oBinding.setSelectedIndex(1);
 			var oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			var aSelectedContexts = oBinding.getSelectedContexts();
-			equal(aSelectedContexts.length, 1, "One node should be selected");
+			assert.equal(aSelectedContexts.length, 1, "One node should be selected");
 			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should equal");
-			equal(oContext.getProperty("name"), "Rock", "Second Node should be selected");
+			assert.equal(oContext.getProperty("name"), "Rock", "Second Node should be selected");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
 			oBinding.setSelectedIndex(4);
 			oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			aSelectedContexts = oBinding.getSelectedContexts();
-			equal(aSelectedContexts.length, 1, "Still only one node should be selected");
+			assert.equal(aSelectedContexts.length, 1, "Still only one node should be selected");
 			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
-			equal(oContext.getProperty("name"), "ZZZ", "Last Node should be selected");
+			assert.equal(oContext.getProperty("name"), "ZZZ", "Last Node should be selected");
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler3);
 			oBinding.setSelectedIndex(4);
 			oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
 			aSelectedContexts = oBinding.getSelectedContexts();
-			equal(aSelectedContexts.length, 1, "Still only one node should be selected");
+			assert.equal(aSelectedContexts.length, 1, "Still only one node should be selected");
 			assert.deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
-			equal(oContext.getProperty("name"), "ZZZ", "Last Node should be selected");
+			assert.equal(oContext.getProperty("name"), "ZZZ", "Last Node should be selected");
 
 			//select index out of range
 			oBinding.setSelectedIndex(300);
-			equal(oBinding.getSelectedIndex(), 4, "Selected index is still 9.");
+			assert.equal(oBinding.getSelectedIndex(), 4, "Selected index is still 9.");
 
-			equal(oBinding._isNodeSelectable(0), false, "Illegal nodes are not selectable.");
-			equal(oBinding._isNodeSelectable(null), false, "Illegal nodes are not selectable.");
-			equal(oBinding._isNodeSelectable(undefined), false, "Illegal nodes are not selectable.");
-			equal(oBinding._isNodeSelectable(""), false, "Illegal nodes are not selectable.");
+			assert.equal(oBinding._isNodeSelectable(0), false, "Illegal nodes are not selectable.");
+			assert.equal(oBinding._isNodeSelectable(null), false, "Illegal nodes are not selectable.");
+			assert.equal(oBinding._isNodeSelectable(undefined), false, "Illegal nodes are not selectable.");
+			assert.equal(oBinding._isNodeSelectable(""), false, "Illegal nodes are not selectable.");
 
 			done();
 		});
@@ -729,31 +729,31 @@
 
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
-				equal(oEvent.mParameters.leadIndex, 7, "Event: leadIndex should be 7");
-				equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
-				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
-				equal(oEvent.mParameters.rowIndices[0], 3, "Event: first changedIndices[0] should be 3");
-				equal(oEvent.mParameters.rowIndices[4], 7, "Event: last changedIndices[4] should be 7");
+				assert.equal(oEvent.mParameters.leadIndex, 7, "Event: leadIndex should be 7");
+				assert.equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
+				assert.equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
+				assert.equal(oEvent.mParameters.rowIndices[0], 3, "Event: first changedIndices[0] should be 3");
+				assert.equal(oEvent.mParameters.rowIndices[4], 7, "Event: last changedIndices[4] should be 7");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
-				equal(oEvent.mParameters.leadIndex, 11, "Event: leadIndex should be 11");
-				equal(oEvent.mParameters.oldIndex, 7, "Event: oldIndex should be 7");
-				equal(oEvent.mParameters.rowIndices.length, 3, "Event: length of changedIndices should be 3");
-				equal(oEvent.mParameters.rowIndices[0], 9, "Event: first changedIndices[0] should be 9");
-				equal(oEvent.mParameters.rowIndices[2], 11, "Event: last changedIndices[2] should be 11");
+				assert.equal(oEvent.mParameters.leadIndex, 11, "Event: leadIndex should be 11");
+				assert.equal(oEvent.mParameters.oldIndex, 7, "Event: oldIndex should be 7");
+				assert.equal(oEvent.mParameters.rowIndices.length, 3, "Event: length of changedIndices should be 3");
+				assert.equal(oEvent.mParameters.rowIndices[0], 9, "Event: first changedIndices[0] should be 9");
+				assert.equal(oEvent.mParameters.rowIndices[2], 11, "Event: last changedIndices[2] should be 11");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler3 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler3);
-				equal(oEvent.mParameters.leadIndex, 12, "Event: leadIndex should be 12");
-				equal(oEvent.mParameters.oldIndex, 11, "Event: oldIndex should be 11");
-				equal(oEvent.mParameters.rowIndices.length, 2, "Event: length of changedIndices should be 2");
-				equal(oEvent.mParameters.rowIndices[0], 8, "Event: first changedIndices[0] should be 7");
-				equal(oEvent.mParameters.rowIndices[1], 12, "Event: last changedIndices[1] should be 12");
+				assert.equal(oEvent.mParameters.leadIndex, 12, "Event: leadIndex should be 12");
+				assert.equal(oEvent.mParameters.oldIndex, 11, "Event: oldIndex should be 11");
+				assert.equal(oEvent.mParameters.rowIndices.length, 2, "Event: length of changedIndices should be 2");
+				assert.equal(oEvent.mParameters.rowIndices[0], 8, "Event: first changedIndices[0] should be 7");
+				assert.equal(oEvent.mParameters.rowIndices[1], 12, "Event: last changedIndices[1] should be 12");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
@@ -787,9 +787,9 @@
 
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
-				equal(oEvent.mParameters.leadIndex, 8, "Event: leadIndex should be 8");
-				equal(oEvent.mParameters.oldIndex, 11, "Event: oldIndex should be 11");
-				equal(oEvent.mParameters.rowIndices.length, 6, "Event: length of changedIndices should be 6");
+				assert.equal(oEvent.mParameters.leadIndex, 8, "Event: leadIndex should be 8");
+				assert.equal(oEvent.mParameters.oldIndex, 11, "Event: oldIndex should be 11");
+				assert.equal(oEvent.mParameters.rowIndices.length, 6, "Event: length of changedIndices should be 6");
 
 				assert.deepEqual(oEvent.mParameters.rowIndices, [3, 4, 8, 9, 10, 11], "Changed indices after setSelectionInterval is correct");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
@@ -797,9 +797,9 @@
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
 				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
-				equal(oEvent.mParameters.leadIndex, 0, "Event: leadIndex should be 0");
-				equal(oEvent.mParameters.oldIndex, 8, "Event: oldIndex should be 8");
-				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
+				assert.equal(oEvent.mParameters.leadIndex, 0, "Event: leadIndex should be 0");
+				assert.equal(oEvent.mParameters.oldIndex, 8, "Event: oldIndex should be 8");
+				assert.equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
 
 				assert.deepEqual(oEvent.mParameters.rowIndices, [0, 5, 6, 7, 8], "Changed indices after setSelectedIndex is correct");
 				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
@@ -820,11 +820,11 @@
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
 			oBinding.setSelectedIndex(0);
 
-			equal(oBinding.getSelectedIndex(), 0, "Lead Index is 0");
+			assert.equal(oBinding.getSelectedIndex(), 0, "Lead Index is 0");
 			aSelectedIndices = oBinding.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [0], "Selected indices array is correct, only one entry (0)");
 
-			equal(oBinding.findNode(5).selected, undefined, "Index 1 should not be selected anymore.");
+			assert.equal(oBinding.findNode(5).selected, undefined, "Index 1 should not be selected anymore.");
 
 			done();
 		});
@@ -846,16 +846,16 @@
 
 			oBinding.setSelectedIndex(1);
 
-			equal(oBinding.isIndexSelected(1), true, "isIndexSelected(1) works");
+			assert.equal(oBinding.isIndexSelected(1), true, "isIndexSelected(1) works");
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [1], "Selected indices array is correct, after selecting additional indices");
 
 			oBinding.setSelectedIndex(3);
 
-			equal(oBinding.isIndexSelected(1), false, "isIndexSelected(1) works");
+			assert.equal(oBinding.isIndexSelected(1), false, "isIndexSelected(1) works");
 
-			equal(oBinding.isIndexSelected(3), true, "isIndexSelected(3) works");
+			assert.equal(oBinding.isIndexSelected(3), true, "isIndexSelected(3) works");
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [3], "Selected indices array is correct, after selecting additional indices");
@@ -880,8 +880,8 @@
 
 				ok(oBinding._mTreeState.expanded["/bing_root/0/"], "NodeState for Rock still there.");
 				ok(oBinding._mTreeState.expanded["/bing_root/2/"], "NodeState for Swing/Big Band still there.");
-				equal(oBinding._mTreeState.expanded["/bing_root/0/"].expanded, true, "Node Rock is still expanded after sorting.");
-				equal(oBinding._mTreeState.expanded["/bing_root/2/"].expanded, true, "Node Swing/BigBand is still expanded after sorting.");
+				assert.equal(oBinding._mTreeState.expanded["/bing_root/0/"].expanded, true, "Node Rock is still expanded after sorting.");
+				assert.equal(oBinding._mTreeState.expanded["/bing_root/2/"].expanded, true, "Node Swing/BigBand is still expanded after sorting.");
 
 				done();
 			}
@@ -913,13 +913,13 @@
 			oBinding.clearSelection(); // Should deselect all nodes AND clear all selectAllMode flags (even from not currently selected nodes)
 
 			var aSelectedIndices = oBinding.getSelectedIndices();
-			equal(aSelectedIndices.length, 0, "There should be no selection after clearSelection");
+			assert.equal(aSelectedIndices.length, 0, "There should be no selection after clearSelection");
 
 			// check that selectAllMode is removed from all nodes
-			equal(oBinding._oRootNode.nodeState.selectAllMode, false, "selectAllMode of root node should be cleared");
-			equal(oFirstSubgroup.nodeState.selectAllMode, false, "selectAllMode of first subgroup node should be cleared");
+			assert.equal(oBinding._oRootNode.nodeState.selectAllMode, false, "selectAllMode of root node should be cleared");
+			assert.equal(oFirstSubgroup.nodeState.selectAllMode, false, "selectAllMode of first subgroup node should be cleared");
 			var oSomeNode = oBinding.getNodeByIndex(2);
-			equal(oSomeNode.nodeState.selectAllMode, false, "selectAllMode of any other node should be cleared");
+			assert.equal(oSomeNode.nodeState.selectAllMode, false, "selectAllMode of any other node should be cleared");
 
 			done();
 		});
@@ -934,8 +934,8 @@
 
 			var aContexts = oBinding.getContexts(0, 100);
 
-			equal(aContexts.length, 4);
-			equal(oBinding.getLength(), 4);
+			assert.equal(aContexts.length, 4);
+			assert.equal(oBinding.getLength(), 4);
 
 			// synchronous expands
 			oBinding.expand(0);
@@ -944,7 +944,7 @@
 			aContexts = oBinding.getContexts(0, 100);
 
 			// synchronous tree update works
-			equal(oBinding.getLength(), 9, "Length is correctly calculated synchronously");
+			assert.equal(oBinding.getLength(), 9, "Length is correctly calculated synchronously");
 
 			done();
 		});
@@ -1009,7 +1009,7 @@
 			// node_0
 			//    node_1
 			//    node_2
-			equal(oBinding.getLength(), 3, "initial length is OK");
+			assert.equal(oBinding.getLength(), 3, "initial length is OK");
 
 			// epxand node_1
 			oBinding.attachChange(handler1);
@@ -1025,7 +1025,7 @@
 				//       node_1a
 				//       node_1b
 				//    node_2
-				equal(oBinding.getLength(), 5, "length after expand is ok");
+				assert.equal(oBinding.getLength(), 5, "length after expand is ok");
 
 				done();
 			}

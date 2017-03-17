@@ -83,14 +83,14 @@ QUnit.module('GIVEN data and complex filter features in MockServer', {
     var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
     ok(this.oResponse !== undefined, "response not undefined");
-    equal(this.oResponse.statusCode, 200);
-    equal(this.oResponse.data.d.results.length, 1, "1 row");
+    assert.equal(this.oResponse.statusCode, 200);
+    assert.equal(this.oResponse.data.d.results.length, 1, "1 row");
 });
 QUnit.test("row filter condition", function (assert) {
     var rowExpr = "(SAPClient EQ 'SAPClient_0')";
     var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, 400, "is as expected");
+    assert.equal(this.oResponse.statusCode, 400, "is as expected");
 });
 
 QUnit.test("AND not supported", function (assert) {
@@ -98,23 +98,23 @@ QUnit.test("AND not supported", function (assert) {
     var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
     //ok(isNaN(this.oResponse.statusCode), "is as expected");
-    equal(this.oResponse.statusCode, 400);
+    assert.equal(this.oResponse.statusCode, 400);
 });
 QUnit.test("row filter condition", function (assert) {
     var rowExpr = "(SAPClient eq 'SAPClient_0')";
     var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
     ok(this.oResponse !== undefined, "response not undefined");
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results.length, 1, "1 row");
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results.length, 1, "1 row");
 });
 QUnit.test("row filter condition w/o brackets", function (assert) {
     var rowExpr = "SAPClient eq 'SAPClient_0' and Currency_E eq 6287.57 and P_SAPClient eq 776";
     var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
     ok(this.oResponse !== undefined, "response not undefined");
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results.length, 1, "1 row");
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results.length, 1, "1 row");
 });
 
 QUnit.test("BUG row filter condition w/o brackets shall fail", function (assert) {
@@ -123,9 +123,9 @@ QUnit.test("BUG row filter condition w/o brackets shall fail", function (assert)
     var wcaQuery = "TestQueryResults?$filter=" + row1 + " or " + row2;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
     ok(this.oResponse !== undefined, "response not undefined");
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results.length, 1, "correct 2 rows <<<<< BUG");
-    equal(this.oResponse.data.d.results[0].ID, "ID_1", " correct ID_0 <<<<< BUG");
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results.length, 1, "correct 2 rows <<<<< BUG");
+    assert.equal(this.oResponse.data.d.results[0].ID, "ID_1", " correct ID_0 <<<<< BUG");
 });
 
 QUnit.test("row filter condition with brackets", function (assert) {
@@ -134,50 +134,50 @@ QUnit.test("row filter condition with brackets", function (assert) {
     var wcaQuery = "TestQueryResults?$filter=" + row1 + " or " + row2;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
     ok(this.oResponse !== undefined, "response not undefined");
-    equal(this.oResponse.statusCode, "200", "200 expected");
-    equal(this.oResponse.data.d.results.length, 2, "2 row");
+    assert.equal(this.oResponse.statusCode, "200", "200 expected");
+    assert.equal(this.oResponse.data.d.results.length, 2, "2 row");
 });
 
 QUnit.test("multi rows, 1", function (assert) {
     var orExpr = "SAPClient eq 'SAPClient_0' or Currency_E eq 6287.57 or P_SAPClient eq 776";
     var wcaQuery = "TestQueryResults?$filter=" + orExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results[0].ID, "ID_0");
 });
 
 QUnit.test("multi rows, 2", function (assert) {
     var orExpr = "SAPClient eq 'SAPClient_0' or SAPClient eq 'SAPClient_1'";
     var wcaQuery = "TestQueryResults?$filter=" + orExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results[0].ID, "ID_0");
 });
 
 QUnit.test("multi rows, 2", function (assert) {
     var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776) or (SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
     var wcaQuery = "TestQueryResults?$filter=" + orExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, "200", "200 expected");
-    equal(this.oResponse.data.d.results.length, 2, "2 row");
+    assert.equal(this.oResponse.statusCode, "200", "200 expected");
+    assert.equal(this.oResponse.data.d.results.length, 2, "2 row");
 });
 
 QUnit.test("multi rows, 2", function (assert) {
     var orExpr = "SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776";
     var wcaQuery = "TestQueryResults?$filter=" + orExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results[0].ID, "ID_0");
-    equal(this.oResponse.data.d.results[1].ID, "ID_1");
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    assert.equal(this.oResponse.data.d.results[1].ID, "ID_1");
 });
 
 QUnit.test("multi rows, 2, brackets around or", function (assert) {
     var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
     var wcaQuery = "TestQueryResults?$filter=" + orExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results[0].ID, "ID_0");
-    equal(this.oResponse.data.d.results[1].ID, "ID_1");
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    assert.equal(this.oResponse.data.d.results[1].ID, "ID_1");
 });
 
 // BUG with brackets
@@ -185,26 +185,26 @@ QUnit.test("multi rows, 2, brackets around or", function (assert) {
     var orExpr = "((SAPClient eq 'SAPClient_0') and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776)";
     var wcaQuery = "TestQueryResults?$filter=" + orExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results[0].ID, "ID_0");
-    equal(this.oResponse.data.d.results.length, 1, "1 row  <<<<<<<<<<< BUG");  // should be 2 rows
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    assert.equal(this.oResponse.data.d.results.length, 1, "1 row  <<<<<<<<<<< BUG");  // should be 2 rows
 });
 
 QUnit.test("multi rows, 2, brackets around or AND eq ", function (assert) {
     var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1'  and P_SAPClient eq 776) and P_SAPClient eq 776";
     var wcaQuery = "TestQueryResults?$filter=" + orExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, "200");
-    equal(this.oResponse.data.d.results[0].ID, "ID_0");
-    equal(this.oResponse.data.d.results[1].ID, "ID_1");
+    assert.equal(this.oResponse.statusCode, "200");
+    assert.equal(this.oResponse.data.d.results[0].ID, "ID_0");
+    assert.equal(this.oResponse.data.d.results[1].ID, "ID_1");
 });
 
 QUnit.test("multi rows, 2, brackets around or AND eq in brackets", function (assert) {
     var orExpr = "(SAPClient eq 'SAPClient_0' and P_SAPClient eq 776 or SAPClient eq 'SAPClient_1' and P_SAPClient eq 776) and (P_SAPClient eq 776 or P_SAPClient eq 776)";
     var wcaQuery = "TestQueryResults?$filter=" + orExpr;
     this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(this.oResponse.statusCode, "200", "200 expected");
-    equal(this.oResponse.data.d.results.length, 2, "2 row");
+    assert.equal(this.oResponse.statusCode, "200", "200 expected");
+    assert.equal(this.oResponse.data.d.results.length, 2, "2 row");
 });
 
 
@@ -221,10 +221,10 @@ QUnit.test("POST object", function (assert) {
     var rowExpr = "(SAPClient eq 'SAPClient_100')";
     var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
     var response = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-    equal(response.statusCode, "200");
+    assert.equal(response.statusCode, "200");
     var atomId = "/myService/TestQueryResults(ID='ID_100',P_SAPClient=778)";
     response = jQuery.sap.sjax({url: atomId });
-    equal(response.statusCode, "200");
+    assert.equal(response.statusCode, "200");
 });
 
 QUnit.test("POST set of objects", function (assert) {
@@ -244,8 +244,8 @@ QUnit.test("POST set of objects", function (assert) {
     this.postSet(aSet, "TestQueryResults");
 
     var response = jQuery.sap.sjax({url: "/myService/TestQueryResults?$filter=(SAPClient eq 'SAPClient_999')"});
-    equal(response.statusCode, "200");
-    equal(response.data.d.results.length, 2, "many");
+    assert.equal(response.statusCode, "200");
+    assert.equal(response.data.d.results.length, 2, "many");
 
     response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_101',P_SAPClient=999)" });
     ok(response.data.d !== undefined, "match");
@@ -262,8 +262,8 @@ QUnit.test("POST table", function (assert) {
     this.postTable(aTable, template, "TestQueryResults");
 
     var response = jQuery.sap.sjax({url: "/myService/TestQueryResults?$filter=(SAPClient eq 'SAPClient_999')"});
-    equal(response.statusCode, "200");
-    equal(response.data.d.results.length, 2, "many");
+    assert.equal(response.statusCode, "200");
+    assert.equal(response.data.d.results.length, 2, "many");
 
     response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_101',P_SAPClient=999)" });
     ok(response.data.d !== undefined, "match");
@@ -294,7 +294,7 @@ QUnit.test("POST table", function (assert) {
 
 	        var oResponse = jQuery.sap.sjax({url: sMetadataUrl});
 	        ok(oResponse !== undefined, "response not undefined");
-	        equal(oResponse.statusCode, "200", "200 http status");
+	        assert.equal(oResponse.statusCode, "200", "200 http status");
 
 	        stubbedServer.destroy();
 	    });
@@ -310,7 +310,7 @@ QUnit.test("POST table", function (assert) {
 
 	        var oResponse = jQuery.sap.sjax({url: sMetadataUrl});
 	        ok(oResponse !== undefined, "response not undefined");
-	        equal(oResponse.statusCode, "200", "200 http status");
+	        assert.equal(oResponse.statusCode, "200", "200 http status");
 
 	        stubbedServer.destroy();
 	    });
@@ -327,7 +327,7 @@ QUnit.test("POST table", function (assert) {
 
 	        var oResponse = jQuery.sap.sjax({url: this.localhost + sMetadataUrl});
 	        ok(oResponse !== undefined, "response not undefined");
-	        equal(oResponse.statusCode, "0", "expected 200 http status <<<<<<<<<<< but BUG");
+	        assert.equal(oResponse.statusCode, "0", "expected 200 http status <<<<<<<<<<< but BUG");
 
 	        stubbedServer.destroy();
 	    });
@@ -355,43 +355,43 @@ QUnit.test("POST table", function (assert) {
 	    QUnit.test("request TestQuery", function (assert) {
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/TestQuery"});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 	    QUnit.test("request TestQuery", function (assert) {
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/TestQueryResults"});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 	    QUnit.test("request with predicate", function (assert) {
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/TestQuery(P_SAPClient=777)"});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 	    QUnit.test("request TestQuery & predicate & navigate", function (assert) {
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/TestQuery(P_SAPClient=777)/Results"});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 	    QUnit.test("request TestQuery & predicate & navigate & paging", function (assert) {
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/TestQuery(P_SAPClient=777)/Results?$top=2"});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 	    QUnit.test("request TestQuery & predicate & navigate & 2nd page", function (assert) {
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/TestQuery(P_SAPClient=777)/Results?$top=2&$skip=2"});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 	    QUnit.test("request TestQuery & predicate & navigate & inlinecount", function (assert) {
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/TestQuery(P_SAPClient=777)/Results?$inlinecount=allpages"});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 	//---------
@@ -399,30 +399,30 @@ QUnit.test("POST table", function (assert) {
 	        var wcaQuery = "TestQueryResults?$format=json";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200");
+	        assert.equal(this.oResponse.statusCode, "200");
 	    });
 
 	    QUnit.test("$filter=(...)", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=(P_SAPClient eq 777)";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200");
+	        assert.equal(this.oResponse.statusCode, "200");
 	    });
 
 	    QUnit.test("request of WCA query & filter & no navigation", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=P_SAPClient eq 777";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 53, "all 777");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 53, "all 777");
 	    });
 
 	    QUnit.test("request of WCA query & orderby", function (assert) {
 	        var wcaQuery = "TestQueryResults?$orderby=Currency_E";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 100, "all 777");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 100, "all 777");
 	        ok(this.oResponse.data.d.results[0].Currency_E <= this.oResponse.data.d.results[1].Currency_E, "ascending");
 	    });
 
@@ -430,8 +430,8 @@ QUnit.test("POST table", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=P_SAPClient eq 777&$orderby=Currency_E";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 53, "all 777");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 53, "all 777");
 	        ok(this.oResponse.data.d.results[0].Currency_E <= this.oResponse.data.d.results[1].Currency_E, "ascending");
 	    });
 
@@ -440,8 +440,8 @@ QUnit.test("POST table", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=P_SAPClient eq 777 & $orderby=Currency_E";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 53, "all 777");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 53, "all 777");
 	        var ordered = this.oResponse.data.d.results[0].Currency_E <= this.oResponse.data.d.results[1].Currency_E;
 	        ok(!ordered, "un ordered");
 	    });
@@ -453,66 +453,66 @@ QUnit.test("POST table", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=P_SAPClient eq 777&$filter=SAPClient eq 'SAPClient_22'";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 1, "all 777");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 1, "all 777");
 	    });
 	    QUnit.test("400 when malformed filter", function (assert) {
 	        // "AND $filter !!!!
 	        var wcaQuery = "TestQueryResults?$filter=P_SAPClient eq 777 and $filter=P_SAPClient eq 777";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "400", "400 http status is correct");
+	        assert.equal(this.oResponse.statusCode, "400", "400 http status is correct");
 	    });
 	    QUnit.test("BUG malformed filter", function (assert) {
 	        // MickeyMouse
 	        var wcaQuery = "TestQueryResults?$filter=SAPClient eq 'SAPClient_21' MickeyMouse and SAPClient eq 'SAPClient_22'";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200", "400 expected resp. malformed URI");
+	        assert.equal(this.oResponse.statusCode, "200", "400 expected resp. malformed URI");
 	    });
 
 	    QUnit.test("request of WCA query & filter match 1 element", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=SAPClient eq 'SAPClient_22'";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 1, "1 match");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 1, "1 match");
 	    });
 
 	    QUnit.test("request of WCA query & 2 filters match 0 element", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=SAPClient eq 'SAPClient_22'";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 1, "1 match");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 1, "1 match");
 	    });
 
 
 	    QUnit.test("request of WCA query & 2 filters by and", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=P_SAPClient eq 776 and SAPClient eq 'SAPClient_22'";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 1, "shall be 1");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 1, "shall be 1");
 	    });
 
 	    QUnit.test("request of WCA query & 2 filters by or", function (assert) {
 	        var wcaQuery = "TestQueryResults?$filter=SAPClient eq 'SAPClient_21' or SAPClient eq 'SAPClient_22'";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 2, "shall be 2");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 2, "shall be 2");
 	    });
 
 	    QUnit.test("request of WCA query w/o encoding", function (assert) {
 	        var wcaQuery = "TestQuery(P_SAPClient=777)/Results?$select=ID,P_SAPClient&$filter=P_SAPClient eq 777";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 	    QUnit.test("request of WCA query w/o $batch", function (assert) {
 	        var wcaQuery = "TestQuery(P_SAPClient=777)/Results?$select=ID,Currency_E,SAPClient&$filter=SAPClient%20eq%20%27SAPClient_53%27";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	    });
 
 /*
@@ -553,7 +553,7 @@ QUnit.test("POST table", function (assert) {
 	// TODO fix xsfr token problem
 	    QUnit.test("request metadata", function (assert) {
 	        this.oResponse = this.oMetadata.getPropertyMetadata("TestQueryResultsType", "SAPClient");
-	        equal(JSON.stringify(this.oResponse), '{"name":"SAPClient","dataType":{"type":"Edm.Int32","maxLength":"3"},"aggregation-role":"dimension","label":"SAP Client"}', "");
+	        assert.equal(JSON.stringify(this.oResponse), '{"name":"SAPClient","dataType":{"type":"Edm.Int32","maxLength":"3"},"aggregation-role":"dimension","label":"SAP Client"}', "");
 	        ok(this.stubPutMessage.calledOnce);
 	    });
 
@@ -616,7 +616,7 @@ QUnit.test("POST table", function (assert) {
 	        this.oRequest.sendGetInBatch(this.oFilter, function (result) {
 	            ok(result !== undefined, "Response not undefined");
 	            ok(result.data !== undefined, "data returned");
-	            equal(result.data.length, 53); // join on client 777
+	            assert.equal(result.data.length, 53); // join on client 777
 	            ok(that.stubPutMessage.called);
 	            done();
 	        });
@@ -632,7 +632,7 @@ QUnit.test("POST table", function (assert) {
 	        this.oRequest.sendGetInBatch(this.oFilter, function (result) {
 	            ok(result !== undefined, "Response not undefined");
 	            ok(result.data !== undefined, "data returned");
-	            equal(result.data.length, 53);  // join on client 777
+	            assert.equal(result.data.length, 53);  // join on client 777
 	            done();
 	        });
 	    });
@@ -654,8 +654,8 @@ QUnit.test("POST table", function (assert) {
 	        this.oRequest.sendGetInBatch(this.oFilter, function (result) {
 	            ok(result !== undefined, "Response not undefined");
 	            ok(result.data !== undefined, "data returned");
-	            equal(result.data.length, 1);
-	            equal(result.data[0].ID, "ID_53");
+	            assert.equal(result.data.length, 1);
+	            assert.equal(result.data[0].ID, "ID_53");
 	            done();
 	        });
 	    });
@@ -665,17 +665,17 @@ QUnit.test("POST table", function (assert) {
 	        var wcaQuery = "TestQuery(P_SAPClient=777)/Results";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	        var resultCounter = this.oResponse.data.d.results.length;
-	        equal(resultCounter, 53, "results returned");
+	        assert.equal(resultCounter, 53, "results returned");
 
 	        wcaQuery = "TestQueryResults?$filter=P_SAPClient eq 777";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 53, "results returned");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 53, "results returned");
 
-	        equal(this.oResponse.data.d.results.length, resultCounter, "same results");
+	        assert.equal(this.oResponse.data.d.results.length, resultCounter, "same results");
 
 	    });
 
@@ -691,17 +691,17 @@ QUnit.test("POST table", function (assert) {
 	        var wcaQuery = "TestQuery(P_SAPClient=777)/Results";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
 	        var resultCounter = this.oResponse.data.d.results.length;
-	        equal(resultCounter, 53, "results returned");
+	        assert.equal(resultCounter, 53, "results returned");
 
 	        wcaQuery = "TestQueryResults?$filter=P_SAPClient eq 777";
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
 	        ok(this.oResponse !== undefined, "response not undefined");
-	        equal(this.oResponse.statusCode, "200", "200 http status");
-	        equal(this.oResponse.data.d.results.length, 53, "results returned");
+	        assert.equal(this.oResponse.statusCode, "200", "200 http status");
+	        assert.equal(this.oResponse.data.d.results.length, 53, "results returned");
 
-	        equal(this.oResponse.data.d.results.length, resultCounter, "same results");
+	        assert.equal(this.oResponse.data.d.results.length, resultCounter, "same results");
 	    });
 */
 

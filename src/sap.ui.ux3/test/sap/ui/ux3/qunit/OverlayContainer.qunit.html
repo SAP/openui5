@@ -65,7 +65,7 @@
 				equals(true, true, "...");
 				var oDomRef = jQuery.sap.domById(oOverlayContainer.getId());
 				ok(oDomRef, "Rendered OverlayContainer should exist in the page");
-				equal(oDomRef.className, "sapUiUx3OC sapUiUx3Overlay", "Rendered OverlayContainer should have the classes 'sapUiUx3OC' and 'sapUiUx3Overlay'");
+				assert.equal(oDomRef.className, "sapUiUx3OC sapUiUx3Overlay", "Rendered OverlayContainer should have the classes 'sapUiUx3OC' and 'sapUiUx3Overlay'");
 			});
 
 			QUnit.module("Behaviour");

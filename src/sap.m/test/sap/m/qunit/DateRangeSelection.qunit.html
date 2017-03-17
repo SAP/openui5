@@ -74,10 +74,10 @@
 			QUnit.test("Date formatter", function(assert) {
 				ok(!oDRS1.getValue(), "DRS1: no value");
 				ok(!oDRS1.getDateValue(), "DRS1: no DateValue");
-				equal(oDRS2.getDateValue().getTime(), dateFrom.getTime(), "DRS2: DateValue set");
-				equal(oDRS2.getSecondDateValue().getTime(), dateTo1.getTime(), "DRS2: SecondDateValue set");
-				equal(oDRS3.getDateValue().getTime(), dateFrom.getTime(), "DRS3: DateValue set");
-				equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
+				assert.equal(oDRS2.getDateValue().getTime(), dateFrom.getTime(), "DRS2: DateValue set");
+				assert.equal(oDRS2.getSecondDateValue().getTime(), dateTo1.getTime(), "DRS2: SecondDateValue set");
+				assert.equal(oDRS3.getDateValue().getTime(), dateFrom.getTime(), "DRS3: DateValue set");
+				assert.equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
 			});
 
 			QUnit.test("Calendar and popup", function(assert) {
@@ -89,16 +89,16 @@
 			QUnit.module("Rendering");
 
 			QUnit.test("Styling", function(assert) {
-				equal(jQuery("#DRS1").css("width"), jQuery("body").css("width"), "Default width is 100%");
-				equal(jQuery("#DRS2").css("width"), "250px", "given width used");
+				assert.equal(jQuery("#DRS1").css("width"), jQuery("body").css("width"), "Default width is 100%");
+				assert.equal(jQuery("#DRS2").css("width"), "250px", "given width used");
 				ok(jQuery("#DRS1-icon")[0], "Calendar icon rendered");
 				ok(!jQuery("#DRS3-cal")[0], "no calendar rendered");
 			});
 
 			QUnit.test("Date format", function(assert) {
 				ok(!jQuery("#DRS1").children("div.sapMInputDivWrapper").children("input").val(), "DRS1 : empty date");
-				equal(jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val(), "01+04+2014 - 10+04+2014", "DRS2: defined output format used");
-				equal(jQuery("#DRS3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
+				assert.equal(jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val(), "01+04+2014 - 10+04+2014", "DRS2: defined output format used");
+				assert.equal(jQuery("#DRS3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
 			});
 
 			QUnit.module("interaction");
@@ -158,11 +158,11 @@
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DRS2-cal--Month0-20140409").focus();
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
+				assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
 
 				qutils.triggerEvent("click", "DRS2-icon");
 				jQuery("#DRS2-cal").control(0).fireCancel();
-				equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after cancel");
+				assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after cancel");
 
 				// On a touch device
 				sap.ui.Device.support.touch = true;

@@ -64,7 +64,7 @@
 	oActionBar1.attachFeedSubmit(function(oEvent) {
 		ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
 		var text = oEvent.getParameter("text");
-		equal(text, "my feed entry", "Feed text should be 'my feed entry'");
+		assert.equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 	});
 
 	//Create a panel instance
@@ -97,11 +97,11 @@
 		assert.expect(2);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
-			equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 1,
+			assert.equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 1,
 				"Rendered update popup should be available in the page");
 			oActionBar1.closePopups();
 			setTimeout(function() {
-				equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
+				assert.equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
 				"Rendered update popup should have been removed from the page");
 				done();
 			}, 500);
@@ -123,7 +123,7 @@
 						//click on feed submit button should hide comment popup
 						qutils.triggerMouseEvent(jQuery('#'+oActionBar1.getId()+'-Feeder-send')[0], "click", 1, 1, 1, 1);
 						setTimeout(function() {
-							equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
+							assert.equal(jQuery.sap.byId(oActionBar1.getId() + "-UpdateActionPopup").length, 0,
 								"Rendered update popup should have been removed from the page");
 							done();
 						}, 500);
@@ -145,11 +145,11 @@
 	QUnit.test("Press \"Follow Toggle\" ", function(assert) {
 		var done = assert.async();
 		assert.expect(14);
-		equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
+		assert.equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 		action = "follow";
 		// trigger follow
 		qutils.triggerMouseEvent(jQuery.sap.byId("ActionBar0001-Follow"), "click", 1, 1, 1, 1);
-		equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Follow, "Follow State is sap.ui.ux3.FollowActionState.Follow");
+		assert.equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Follow, "Follow State is sap.ui.ux3.FollowActionState.Follow");
 		// menu must exist after click
 		qutils.triggerMouseEvent(jQuery.sap.byId("ActionBar0001-Follow"), "click", 1, 1, 1, 1);
 		ok(jQuery.sap.domById(oActionBar1.getId() + "-followActionMenu"), "Rendered Follow Action menu should exist in the page");
@@ -160,7 +160,7 @@
 			ok(jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"), "Rendered Follow Action menu with unfollowState should exist in the page");
 			// trigger hold
 			qutils.triggerMouseEvent(jQuery.sap.domById(oActionBar1.getId() + "-holdState"), "click", 1, 1, 1, 1);
-			equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Hold, "Follow State is sap.ui.ux3.FollowActionState.Hold");
+			assert.equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Hold, "Follow State is sap.ui.ux3.FollowActionState.Hold");
 			// menu must exist after click
 			qutils.triggerMouseEvent(jQuery.sap.byId("ActionBar0001-Follow"), "click", 1, 1, 1, 1);
 			ok(jQuery.sap.domById(oActionBar1.getId() + "-followActionMenu"), "Rendered Follow Action menu should exist in the page");
@@ -175,7 +175,7 @@
 						// trigger unfollow
 						qutils.triggerMouseEvent(jQuery.sap.domById(oActionBar1.getId() + "-unfollowState"), "click", 1, 1, 1, 1);
 						ok(jQuery.sap.byId("ActionBar0001-Follow").hasClass("sapUiUx3ActionBarAction"), "Follow Icon has class sapUiUx3ActionBarAction");
-						equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
+						assert.equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 
 						setTimeout(function() {
 							// menu entries with hold, unhold and unfollow must not exist only follow

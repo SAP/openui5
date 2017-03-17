@@ -605,8 +605,8 @@
 		this.multiInput1.openMultiLine();
 
 		//assert
-		equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeBorder");
-		equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeInputContainer");
+		assert.equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeBorder");
+		assert.equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeInputContainer");
 
 		//arrange
 		this.multiInput1.setTokens([
@@ -618,15 +618,15 @@
 		this.multiInput1.openMultiLine();
 
 		//assert
-		equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), true, "MultiInput is open and has class sapMMultiInputMultiModeBorder");
-		equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), true, "MultiInput is open and has class sapMMultiInputMultiModeInputContainer");
+		assert.equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), true, "MultiInput is open and has class sapMMultiInputMultiModeBorder");
+		assert.equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), true, "MultiInput is open and has class sapMMultiInputMultiModeInputContainer");
 
 		//act
 		this.multiInput1.closeMultiLine();
 
 		//assert
-		equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), false, "MultiInput closed and has no class sapMMultiInputMultiModeBorder");
-		equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput closed and has no class sapMMultiInputMultiModeInputContainer");
+		assert.equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), false, "MultiInput closed and has no class sapMMultiInputMultiModeBorder");
+		assert.equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput closed and has no class sapMMultiInputMultiModeInputContainer");
 	});
 
 	QUnit.test("open/close multi line mode using API functions", function(assert) {
@@ -642,7 +642,7 @@
 		this.multiInput1.closeMultiLine();
 
 		//assert
-		equal(this.multiInput1.$().find('.sapMMultiInputIndicator').length, 1, "N More indicator is displayed");
+		assert.equal(this.multiInput1.$().find('.sapMMultiInputIndicator').length, 1, "N More indicator is displayed");
 	});
 
 	QUnit.test("open multi line mode on phone", function(assert) {
@@ -667,9 +667,9 @@
 		sap.ui.getCore().applyChanges();
 
 		//assert
-		equal(oMIMultiLineMode._oSuggestionPopup.isOpen(), true, "MultiInput dialog is open");
-		equal(oMIMultiLineMode._tokenizer.getVisible(), true, "Tokenizer is visible");
-		equal(oMIMultiLineMode._tokenizer.$().hasClass("sapMTokenizerMultiLine"), true, "Tokenizer is displayed on multiple lines");
+		assert.equal(oMIMultiLineMode._oSuggestionPopup.isOpen(), true, "MultiInput dialog is open");
+		assert.equal(oMIMultiLineMode._tokenizer.getVisible(), true, "Tokenizer is visible");
+		assert.equal(oMIMultiLineMode._tokenizer.$().hasClass("sapMTokenizerMultiLine"), true, "Tokenizer is displayed on multiple lines");
 
 		//clean-up
 		oMIMultiLineMode.destroy();

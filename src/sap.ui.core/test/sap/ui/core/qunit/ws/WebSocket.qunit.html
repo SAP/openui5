@@ -36,7 +36,7 @@
 				if (sap.ui.Device.support.websocket) {
 					ok(theEx === undefined, 'No exception was thrown.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
 
 			});
@@ -53,7 +53,7 @@
 				if (sap.ui.Device.support.websocket) {
 					ok(theEx === undefined, 'No exception was thrown.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
 
 			});
@@ -70,7 +70,7 @@
 				if (sap.ui.Device.support.websocket) {
 					ok(theEx === undefined, 'No exception was thrown.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
 
 			});
@@ -88,9 +88,9 @@
 				ok(theEx !== undefined, "No Url provided. Exception was raised.");
 
 				if (sap.ui.Device.support.websocket) {
-					equal(theEx.message, 'sUrl must be a string.', 'Correct exception message.');
+					assert.equal(theEx.message, 'sUrl must be a string.', 'Correct exception message.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'Correct exception message.');
 				}
 
 			});
@@ -108,9 +108,9 @@
 				ok(theEx !== undefined, "Wrong protocol parameter. Exception was raised.");
 
 				if (sap.ui.Device.support.websocket) {
-					equal(theEx.message, 'aProtocols must be a string, array of strings or undefined.', 'Correct exception message.');
+					assert.equal(theEx.message, 'aProtocols must be a string, array of strings or undefined.', 'Correct exception message.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'Correct exception message.');
 				}
 
 			});
@@ -119,14 +119,14 @@
 
 				var _resolveFullUrl = sap.ui.core.ws.WebSocket.prototype._resolveFullUrl;
 
-				equal(_resolveFullUrl.call(null, "ws://hostname:1234/foo/bar"), "ws://hostname:1234/foo/bar", "resolved full URL (ws://)");
-				equal(_resolveFullUrl.call(null, "wss://hostname:1234/foo/bar"), "wss://hostname:1234/foo/bar", "resolved full URL (wss://)");
+				assert.equal(_resolveFullUrl.call(null, "ws://hostname:1234/foo/bar"), "ws://hostname:1234/foo/bar", "resolved full URL (ws://)");
+				assert.equal(_resolveFullUrl.call(null, "wss://hostname:1234/foo/bar"), "wss://hostname:1234/foo/bar", "resolved full URL (wss://)");
 
 				var oBaseUri = new URI();
 				oBaseUri.search('').protocol(oBaseUri.protocol() === 'https' ? 'wss' : 'ws');
 
-				equal(_resolveFullUrl.call(null, "/foo/bar"), new URI("/foo/bar").absoluteTo(oBaseUri).toString(), "resolved absolute URL");
-				equal(_resolveFullUrl.call(null, "../foo/bar"), new URI("../foo/bar").absoluteTo(oBaseUri).toString(), "resolved relative URL");
+				assert.equal(_resolveFullUrl.call(null, "/foo/bar"), new URI("/foo/bar").absoluteTo(oBaseUri).toString(), "resolved absolute URL");
+				assert.equal(_resolveFullUrl.call(null, "../foo/bar"), new URI("../foo/bar").absoluteTo(oBaseUri).toString(), "resolved relative URL");
 
 			});
 

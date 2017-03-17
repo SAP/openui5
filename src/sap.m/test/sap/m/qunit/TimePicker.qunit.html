@@ -95,7 +95,7 @@
 			this.oTp._createPicker(this.oTp.getDisplayFormat());
 
 			//Assert
-			equal(this.oTp._getSliders().getMinutesStep(), STEP, "initial value of the time picker for minutesStep is used");
+			assert.equal(this.oTp._getSliders().getMinutesStep(), STEP, "initial value of the time picker for minutesStep is used");
 		});
 
 		QUnit.test("setMinutesStep", function(assert) {
@@ -180,7 +180,7 @@
 			//Assert
 			ok($ValuesContainer.hasClass("SliderValues6"), "values container has the right class");
 			ok(this.oSlider._getVisibleItems().every(fnHasValueMultipleOfStepOrEqualToSelectedValue), "all visible items have correct values");
-			equal(this.oSlider.getSelectedValue(), SELECTED_VALUE, "slider has the right selected value");
+			assert.equal(this.oSlider.getSelectedValue(), SELECTED_VALUE, "slider has the right selected value");
 		});
 
 		QUnit.test("margins are updated on expand", function(assert) {
@@ -203,12 +203,12 @@
 			this.oSlider.setIsCyclic(true);
 
 			ok(!this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
-			equal(this.oSlider.getProperty("isCyclic"), true, "property is updated");
+			assert.equal(this.oSlider.getProperty("isCyclic"), true, "property is updated");
 
 			this.oSlider.setIsCyclic(false);
 
 			ok(this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
-			equal(this.oSlider.getProperty("isCyclic"), false, "property is updated")
+			assert.equal(this.oSlider.getProperty("isCyclic"), false, "property is updated")
 		});
 
 		QUnit.module("slider select value by typing", {
@@ -250,7 +250,7 @@
 			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp + 500, jQuery.sap.KeyCodes.DIGIT_1);
 
 			//Assert
-			equal(this.oSpy.callCount, 0, "setSelectedValue is not called yet, because there are 2 matched keys");
+			assert.equal(this.oSpy.callCount, 0, "setSelectedValue is not called yet, because there are 2 matched keys");
 
 			//Wait
 			this.clock.tick(1000);
@@ -265,13 +265,13 @@
 			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_5);
 
 			//Assert
-			equal(this.oSpy.callCount, 0, "setSelectedValue is not called after typing non-existent item key");
+			assert.equal(this.oSpy.callCount, 0, "setSelectedValue is not called after typing non-existent item key");
 
 			//Wait
 			this.clock.tick(1000);
 
 			//Assert
-			equal(this.oSpy.callCount, 0, "setSelectedValue is still not called after waiting 1 second");
+			assert.equal(this.oSpy.callCount, 0, "setSelectedValue is still not called after waiting 1 second");
 		});
 
 		QUnit.module("API", {
@@ -676,19 +676,19 @@
 			var lastSlider = sliders.getAggregation("_columns")[3];
 			var secondLastSlider = sliders.getAggregation("_columns")[2];
 
-			equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
+			assert.equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
 			this.clock.tick(1);
 
 			$oElement = document.activeElement;
-			equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
+			assert.equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
 			this.clock.tick(1);
 
 			$oElement = document.activeElement;
-			equal($oElement.id, secondLastSlider.getId(), "the second last slider is the focussed element");
+			assert.equal($oElement.id, secondLastSlider.getId(), "the second last slider is the focussed element");
 
 			//cleanup
 			tp.destroy();
@@ -708,13 +708,13 @@
 			var firstSlider = sliders.getAggregation("_columns")[0];
 			var secondSlider = sliders.getAggregation("_columns")[1];
 
-			equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
+			assert.equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 			this.clock.tick(1);
 
 			$oElement = document.activeElement;
-			equal($oElement.id, secondSlider.getId(), "the second slider is the focussed element");
+			assert.equal($oElement.id, secondSlider.getId(), "the second slider is the focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 			this.clock.tick(1);
@@ -724,7 +724,7 @@
 			this.clock.tick(1);
 
 			$oElement = document.activeElement;
-			equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
+			assert.equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
 
 			//cleanup
 			tp.destroy();
@@ -747,13 +747,13 @@
 			this.clock.tick(1);
 
 			$oElement = document.activeElement;
-			equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
+			assert.equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.HOME);
 			this.clock.tick(1);
 
 			$oElement = document.activeElement;
-			equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
+			assert.equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
 
 			//cleanup
 			tp.destroy();
@@ -774,17 +774,17 @@
 			this.clock.tick(1);
 
 
-			equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value");
+			assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value");
 
 			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
 			this.clock.tick(1);
 
-			equal(firstSlider.getSelectedValue(), firstSlider.getItems()[firstSlider.getItems().length - 1].getKey(), "the selected value is the last value");
+			assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[firstSlider.getItems().length - 1].getKey(), "the selected value is the last value");
 
 			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 			this.clock.tick(1);
 
-			equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value again");
+			assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value again");
 
 			//cleanup
 			tp.destroy();
@@ -809,12 +809,12 @@
 			this.clock.tick(210);
 
 
-			equal(firstSlider.getSelectedValue(), "3", "the selected value is one value upwards");
+			assert.equal(firstSlider.getSelectedValue(), "3", "the selected value is one value upwards");
 
 			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 			this.clock.tick(210);
 
-			equal(firstSlider.getSelectedValue(), "4", "the selected value is one value downwards");
+			assert.equal(firstSlider.getSelectedValue(), "4", "the selected value is one value downwards");
 
 			//cleanup
 			tp.destroy();
@@ -846,7 +846,7 @@
 			this.clock.tick(300);
 
 			ok(!picker.isOpen(), "picker is closed");
-			equal(oHandleOkSpy.callCount, 1, "the picker date value is saved");
+			assert.equal(oHandleOkSpy.callCount, 1, "the picker date value is saved");
 
 			//cleanup
 			tp.destroy();
@@ -879,7 +879,7 @@
 			this.clock.tick(300);
 
 			ok(!picker.isOpen(), "picker is closed");
-			equal(oHandleOkSpy.callCount, 1, "the picker date value is saved");
+			assert.equal(oHandleOkSpy.callCount, 1, "the picker date value is saved");
 
 			//cleanup
 			tp.destroy();
@@ -907,7 +907,7 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 
 			//assert
-			equal(tp.getDateValue().getHours(), 6, "The time picker hours are increased");
+			assert.equal(tp.getDateValue().getHours(), 6, "The time picker hours are increased");
 
 			//cleanup
 			tp.destroy();
@@ -932,7 +932,7 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
 
 			//assert
-			equal(tp.getDateValue().getHours(), 4, "The time picker hours are decreased");
+			assert.equal(tp.getDateValue().getHours(), 4, "The time picker hours are decreased");
 
 			//cleanup
 			tp.destroy();
@@ -958,8 +958,8 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 
 			//assert
-			equal(tp.getDateValue().getMinutes(), 20, "The time picker minutes stay the same");
-			equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
+			assert.equal(tp.getDateValue().getMinutes(), 20, "The time picker minutes stay the same");
+			assert.equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
 			ok(!tp._getPicker(), "picker is missing");
 
 			//cleanup
@@ -985,7 +985,7 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
 
 			//assert
-			equal(tp.getDateValue().getMinutes(), 16, "The time picker minutes are increased");
+			assert.equal(tp.getDateValue().getMinutes(), 16, "The time picker minutes are increased");
 
 			//cleanup
 			tp.destroy();
@@ -1010,7 +1010,7 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
 
 			//assert
-			equal(tp.getDateValue().getMinutes(), 12, "The time picker minutes are decreased");
+			assert.equal(tp.getDateValue().getMinutes(), 12, "The time picker minutes are decreased");
 
 			//cleanup
 			tp.destroy();
@@ -1036,8 +1036,8 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
 
 			//assert
-			equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
-			equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
+			assert.equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
+			assert.equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
 			ok(!tp._getPicker(), "picker is missing");
 
 			//cleanup
@@ -1063,7 +1063,7 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
 
 			//assert
-			equal(tp.getDateValue().getSeconds(), 12, "The time picker seconds are increased");
+			assert.equal(tp.getDateValue().getSeconds(), 12, "The time picker seconds are increased");
 
 			//cleanup
 			tp.destroy();
@@ -1088,7 +1088,7 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, true);
 
 			//assert
-			equal(tp.getDateValue().getSeconds(), 3, "The time picker seconds are decreased");
+			assert.equal(tp.getDateValue().getSeconds(), 3, "The time picker seconds are decreased");
 
 			//cleanup
 			tp.destroy();
@@ -1114,8 +1114,8 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, false, false, true);
 
 			//assert
-			equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
-			equal(tp.getDateValue().getMinutes(), 38, "The time picker minutes stay the same");
+			assert.equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
+			assert.equal(tp.getDateValue().getMinutes(), 38, "The time picker minutes stay the same");
 			ok(!tp._getPicker(), "picker is missing");
 
 			//cleanup
@@ -1188,7 +1188,7 @@
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
 
 			//assert
-			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "After right + right the cursor is at the first minute digit");
+			assert.equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "After right + right the cursor is at the first minute digit");
 
 			//cleanup
 			tp.destroy();
@@ -1212,10 +1212,10 @@
 			tp.focus();
 
 			jQuery(tp.getFocusDomRef()).cursorPos(3);
-			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "Initially the cursor is at the first minute digit");
+			assert.equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "Initially the cursor is at the first minute digit");
 
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
-			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 1, "After left the cursor is at the second hour digit");
+			assert.equal(jQuery(tp.getFocusDomRef()).cursorPos(), 1, "After left the cursor is at the second hour digit");
 
 			//cleanup
 			tp.destroy();
@@ -1239,7 +1239,7 @@
 			//act
 			oBtnCancel.firePress();
 
-			equal(oPopoverCloseSpy.callCount, 1, "At the end cancel button invokes the popover's close method");
+			assert.equal(oPopoverCloseSpy.callCount, 1, "At the end cancel button invokes the popover's close method");
 
 			//cleanup
 			tp._getPicker().close.restore();
@@ -1273,7 +1273,7 @@
 			//act
 
 			//assert
-			equal(tp.getValue(), "16:35", "the value property is set in and formatted correctly");
+			assert.equal(tp.getValue(), "16:35", "the value property is set in and formatted correctly");
 
 			//act
 			oModel.setData({
@@ -1281,7 +1281,7 @@
 			});
 
 			//assert
-			equal(tp.getValue(), "20:10", "the value property has changed with the model");
+			assert.equal(tp.getValue(), "20:10", "the value property has changed with the model");
 
 			//cleanup
 			tp.destroy();
@@ -1310,18 +1310,18 @@
 			sap.ui.getCore().applyChanges();
 
 			//assert
-			equal(tp.getValue(), "4:35 PM", "the value property is set in and formatted correctly");
+			assert.equal(tp.getValue(), "4:35 PM", "the value property is set in and formatted correctly");
 
 			//act
 			qutils.triggerEvent("focusin", tp.getDomRef());
 			//assert
-			equal(tp._getInputValue(), " 4:35 PM", "the value property is formatted correctly (with leading space)");
+			assert.equal(tp._getInputValue(), " 4:35 PM", "the value property is formatted correctly (with leading space)");
 
 			//act
 			tp._openPicker();
 
 			//assert
-			equal(tp._getSliders().getAggregation("_columns").length, 3, "the picker should display 3 sliders");
+			assert.equal(tp._getSliders().getAggregation("_columns").length, 3, "the picker should display 3 sliders");
 
 			//cleanup
 			tp.destroy();
@@ -1434,7 +1434,7 @@
 			var updatedTop = sliderHours._getUpdatedCycleScrollTop.apply(sliderHours, params);
 
 			//assert
-			equal(updatedTop, 1100, "_getUpdatedCycleScrollTop has jumped top by one time the unique content height");
+			assert.equal(updatedTop, 1100, "_getUpdatedCycleScrollTop has jumped top by one time the unique content height");
 
 			//cleanup
 			tp.destroy();
@@ -1462,7 +1462,7 @@
 			sliderHours._doDrag(293, 1435829481277);
 
 			//assert
-			equal(oJQueryScrollTopSpy.callCount, 2, "slider's top position has been updated once for every _doDrag");
+			assert.equal(oJQueryScrollTopSpy.callCount, 2, "slider's top position has been updated once for every _doDrag");
 
 			//cleanup
 			jQuery.fn.scrollTop.restore();
@@ -1492,7 +1492,7 @@
 			sliderHours._endDrag(439, 1435829481402);
 
 			//assert
-			equal(oAnimateScrollSpy.callCount, 1, "animation was started");
+			assert.equal(oAnimateScrollSpy.callCount, 1, "animation was started");
 			ok(Math.abs(oAnimateScrollSpy.args[0][0]) < 2, "animation was started with reasonable speed");
 
 			//cleanup
@@ -1602,7 +1602,7 @@
 		 tp.setDateValue(new Date(2015, 2, 29, 3, 12, 15));
 		 tp._increaseTime(-1, "hour");
 
-		 equal(tp.getDateValue().toString(), new Date(2015, 2, 29, 1, 12, 15).toString(), "_increaseTime works as expected when decreasing in daylight saving");
+		 assert.equal(tp.getDateValue().toString(), new Date(2015, 2, 29, 1, 12, 15).toString(), "_increaseTime works as expected when decreasing in daylight saving");
 
 		 tp.destroy();
 		 });*/
@@ -2428,11 +2428,11 @@
 			});
 
 			// assert
-			equal(tp._oTimeSemanticMaskHelper.iAmPmChar1Index, 9, "AM/PM char index");
-			equal(tp._oTimeSemanticMaskHelper.iHourNumber1Index, 0, "Hour start index");
-			equal(tp._oTimeSemanticMaskHelper.iHourNumber2Index, 1,  "Hour end index");
-			equal(tp._oTimeSemanticMaskHelper.iMinuteNumber1Index, 3, "Minute start index");
-			equal(tp._oTimeSemanticMaskHelper.iSecondNumber1Index, 6, "Second start index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iAmPmChar1Index, 9, "AM/PM char index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iHourNumber1Index, 0, "Hour start index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iHourNumber2Index, 1,  "Hour end index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iMinuteNumber1Index, 3, "Minute start index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iSecondNumber1Index, 6, "Second start index");
 
 
 			//system under test
@@ -2444,11 +2444,11 @@
 			});
 
 			// assert
-			equal(tp._oTimeSemanticMaskHelper.iAmPmChar1Index, 0, "AM/PM char index");
-			equal(tp._oTimeSemanticMaskHelper.iHourNumber1Index, 2, "Hours start index");
-			equal(tp._oTimeSemanticMaskHelper.iHourNumber2Index, 3, "Hours end index");
-			equal(tp._oTimeSemanticMaskHelper.iMinuteNumber1Index, 5, "Minutes start index");
-			equal(tp._oTimeSemanticMaskHelper.iSecondNumber1Index, 8, "Seconds start index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iAmPmChar1Index, 0, "AM/PM char index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iHourNumber1Index, 2, "Hours start index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iHourNumber2Index, 3, "Hours end index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iMinuteNumber1Index, 5, "Minutes start index");
+			assert.equal(tp._oTimeSemanticMaskHelper.iSecondNumber1Index, 8, "Seconds start index");
 		});
 
 		QUnit.test("TimeSemanticMaskHelper.prototype.formatValueWithLeadingTrailingSpaces", function(assert) {
@@ -2459,7 +2459,7 @@
 			});
 
 			//act && assert
-			equal(tp._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces("1:22:52 AM"), " 1:22:52 AM", "1:22:52 AM");
+			assert.equal(tp._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces("1:22:52 AM"), " 1:22:52 AM", "1:22:52 AM");
 
 			//system under test
 			tp = new sap.m.TimePicker({
@@ -2468,7 +2468,7 @@
 			});
 
 			//act && assert
-			equal(tp._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces("AM1:22:52"), "AM 1:22:52", "AM1:22:52");
+			assert.equal(tp._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces("AM1:22:52"), "AM 1:22:52", "AM1:22:52");
 		});
 
 		QUnit.test("TimeSemanticMaskHelper.prototype.stripValueOfLeadingSpaces", function(assert) {
@@ -2479,7 +2479,7 @@
 			});
 
 			//act && assert
-			equal(tp._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces("1:22:52 AM"), "1:22:52 AM", "1:22:52 AM");
+			assert.equal(tp._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces("1:22:52 AM"), "1:22:52 AM", "1:22:52 AM");
 
 			//system under test
 			tp = new sap.m.TimePicker({
@@ -2488,7 +2488,7 @@
 			});
 
 			//act && assert
-			equal(tp._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces("AM 1:22:52"), "AM1:22:52", "AM 1:22:52");
+			assert.equal(tp._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces("AM 1:22:52"), "AM1:22:52", "AM 1:22:52");
 		});
 
 		QUnit.test("TimeSemanticMaskHelper initialization destroyes any previous instances", function(assert) {

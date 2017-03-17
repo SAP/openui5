@@ -197,7 +197,7 @@
 			var oExpectedElement = oExpectedFocusedControl.getFocusDomRef();
 			var oActiveElement = document.activeElement;
 
-			equal("id=" + oActiveElement.id + ", text=" + oActiveElement.innerText, "id=" + oExpectedElement.id + ", text=" + oExpectedElement.innerText, sMessage);
+			assert.equal("id=" + oActiveElement.id + ", text=" + oActiveElement.innerText, "id=" + oExpectedElement.id + ", text=" + oExpectedElement.innerText, sMessage);
 		}
 
 		function getPopupDomRef() {

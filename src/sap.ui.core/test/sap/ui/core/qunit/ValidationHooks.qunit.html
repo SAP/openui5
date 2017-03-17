@@ -59,14 +59,14 @@
 		var bSuccess = false;
 		sap.ui.getCore().attachValidationError(handler);
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), "hello", "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
-			equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
-			equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
+			assert.equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
+			assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 			bSuccess = true;
 		};
 		oTxt.setValue("blubbbbb");
@@ -86,11 +86,11 @@
 		var bSuccess = false;
 		sap.ui.getCore().attachParseError(handler);
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), 3, "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), 3, "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ParseException, "exception instance");
 
 			bSuccess = true;
@@ -115,11 +115,11 @@
 		var bSuccess = false;
 		sap.ui.getCore().attachFormatError(handler);
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oRating.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), 4, "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oRating.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), 4, "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 			ok(oEvent.getParameter("exception") instanceof sap.ui.model.FormatException, "exception instance");
 
 			bSuccess = true;
@@ -142,11 +142,11 @@
 		var bSuccess = false;
 		sap.ui.getCore().attachValidationSuccess(handler);
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), "hello", "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 
 			bSuccess = true;
 		};
@@ -252,18 +252,18 @@
 		oTxt.attachValidationSuccess(handler);
 		var iCount = 0;
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), "hello", "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 			iCount++;
 			bSuccess = true;
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
 			ok(bSuccess, "validation was sucessful");
-			equal(iCount, 2, "validation event count");
+			assert.equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachValidationSuccess(handler);
 			oTxt.detachValidationSuccess(handler);
 			teardown(handler);
@@ -284,21 +284,21 @@
 		oTxt.attachValidationError(handler);
 		var iCount = 0;
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), "hello", "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
-			equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
-			equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
+			assert.equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
+			assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 			bSuccess = true;
 			iCount++;
 		};
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
 			ok(bSuccess, "error occurred sucessfully");
-			equal(iCount, 2, "validation event count");
+			assert.equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachValidationError(handler);
 			oTxt.detachValidationError(handler);
 			teardown(handler);
@@ -319,14 +319,14 @@
 		oTxt.attachValidationError(handler);
 		var iCount = 0;
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), "hello", "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
-			equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
-			equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
+			assert.equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
+			assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 			bSuccess = true;
 			iCount++;
 			oEvent.cancelBubble();
@@ -334,7 +334,7 @@
 		oTxt.setValue("blubbbbb");
 		setTimeout(function() { // delay the following test
 			ok(bSuccess, "error occurred sucessfully");
-			equal(iCount, 1, "validation event count");
+			assert.equal(iCount, 1, "validation event count");
 			sap.ui.getCore().detachValidationError(handler);
 			oTxt.detachValidationError(handler);
 			teardown(handler);
@@ -351,11 +351,11 @@
 		sap.ui.getCore().attachParseError(handler);
 		var iCount = 0;
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), 3, "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), 3, "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ParseException, "exception instance");
 			bSuccess = true;
 			iCount++;
@@ -364,7 +364,7 @@
 		setTimeout(function() { // delay the following test
 			ok(bSuccess, "error occurred sucessfully");
 			oTxt.detachParseError(handler);
-			equal(iCount, 2, "validation event count");
+			assert.equal(iCount, 2, "validation event count");
 			sap.ui.getCore().detachParseError(handler);
 			teardown(handler);
 			done();          // resume normal testing
@@ -384,11 +384,11 @@
 		oTxt.attachFormatError(handler);
 		var iCount = 0;
 		function handler(oEvent){
-			equal(oEvent.getParameter("element").getId(), oRating.getId(), "element");
-			equal(oEvent.getParameter('property'), "value", "property");
-			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
-			equal(oEvent.getParameter("oldValue"), 4, "old value");
-			equal(oEvent.getParameter("type"), oType, "type");
+			assert.equal(oEvent.getParameter("element").getId(), oRating.getId(), "element");
+			assert.equal(oEvent.getParameter('property'), "value", "property");
+			assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			assert.equal(oEvent.getParameter("oldValue"), 4, "old value");
+			assert.equal(oEvent.getParameter("type"), oType, "type");
 			ok(oEvent.getParameter("exception") instanceof sap.ui.model.FormatException, "exception instance");
 
 			bSuccess = true;
@@ -400,7 +400,7 @@
 			ok(bSuccess, "error occurred sucessfully");
 			sap.ui.getCore().detachFormatError(handler);
 			oTxt.detachFormatError(handler);
-			equal(iCount, 1, "validation event count");
+			assert.equal(iCount, 1, "validation event count");
 			oRating.destroy();
 			teardown(handler);
 			done();          // resume normal testing

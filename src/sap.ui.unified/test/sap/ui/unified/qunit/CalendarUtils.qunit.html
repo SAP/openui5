@@ -44,32 +44,32 @@
 		});
 
 		QUnit.test("getFirstDateOfWeek for US border case where the first day of week is in the previous year", function(assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 27, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 27, 0)).toString(),
 					"1 Jan 2016->27 Dec 2015");
 		});
 
 		QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 15, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 15, 0)).toString(),
 					"18 May 2016->15 May 2016");
 		});
 
 		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 1, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 1, 0)).toString(),
 					"1 May 2016->1 May 2016");
 		});
 
 		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 9, 1, 0))).toString(), new Date(Date.UTC(2016, 8, 25, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 9, 1, 0))).toString(), new Date(Date.UTC(2016, 8, 25, 0)).toString(),
 					"1 Oct 2016->25 Sep 2016");
 		});
 
 		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 5, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 29, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 5, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 29, 0)).toString(),
 					"1 Jun 2016->29 May 2016");
 		});
 
 		QUnit.test("getFirstDateOfMonth() returns the first date of the month for a given date", function (assert) {
-			equal(CalendarUtils.getFirstDateOfMonth(new Date(Date.UTC(2016, 5, 12, 0))).toString(), new Date(Date.UTC(2016, 5, 1, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfMonth(new Date(Date.UTC(2016, 5, 12, 0))).toString(), new Date(Date.UTC(2016, 5, 1, 0)).toString(),
 				"12 Jun 2016 -> 1 Jun 2016");
 		});
 
@@ -85,27 +85,27 @@
 		});
 
 		QUnit.test("getFirstDateOfWeek for non US border case where the first day of week is in the previous year", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 28, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 28, 0)).toString(),
 					"1 Jan 2016->28 Dec 2015");
 		});
 
 		QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 16, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 16, 0)).toString(),
 					"18 May 2016->16 May 2016");
 		});
 
 		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 1, 1, 0))).toString(), new Date(Date.UTC(2016, 1, 1, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 1, 1, 0))).toString(), new Date(Date.UTC(2016, 1, 1, 0)).toString(),
 					"1 Feb 2016->1 Feb 2016");
 		});
 
 		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 3, 25, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 3, 25, 0)).toString(),
 					"1 May 2016->25 Apr 2016");
 		});
 
 		QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
-			equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 11, 1, 0))).toString(), new Date(Date.UTC(2016, 10, 28, 0)).toString(),
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 11, 1, 0))).toString(), new Date(Date.UTC(2016, 10, 28, 0)).toString(),
 					"1 Dec 2016->25 Nov 2016");
 		});
 

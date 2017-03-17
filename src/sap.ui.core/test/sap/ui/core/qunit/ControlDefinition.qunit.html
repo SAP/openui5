@@ -35,13 +35,13 @@
 
 		QUnit.test("Extend function", function(assert) {
 			ok(sap.ui.base.Object.extend, "Object.extend() must exist");
-			equal(typeof sap.ui.base.Object.extend, "function", "Object.extend() must be a function");
+			assert.equal(typeof sap.ui.base.Object.extend, "function", "Object.extend() must be a function");
 
 			ok(sap.ui.core.Control.extend, "Control.extend() must exist");
-			equal(typeof sap.ui.core.Control.extend, "function", "Control.extend() must be a function");
+			assert.equal(typeof sap.ui.core.Control.extend, "function", "Control.extend() must be a function");
 
 			ok(sap.ui.commons.Button.extend, "Button.extend() must exist");
-			equal(typeof sap.ui.commons.Button.extend, "function", "Button.extend() must be a function");
+			assert.equal(typeof sap.ui.commons.Button.extend, "function", "Button.extend() must be a function");
 		});
 
 
@@ -52,7 +52,7 @@
 
 
 		QUnit.test("Extend sap.ui.core.Control", function(assert) {
-			equal(window.my, undefined, "'my' should not be defined yet");
+			assert.equal(window.my, undefined, "'my' should not be defined yet");
 
 			// define control
 			var result = sap.ui.core.Control.extend("my.lib.MyControl", {
@@ -115,11 +115,11 @@
 			ok(myControl instanceof sap.ui.core.Control, "myControl should inherit from sap.ui.Core.Control");
 
 			// renderer should not be added as function...
-			equal(myControl.renderer, undefined, "renderer should not be added as function");
+			assert.equal(myControl.renderer, undefined, "renderer should not be added as function");
 
 			// ...but a renderer should exist now
 			ok(my.lib.MyControlRenderer, "my.lib.MyControlRenderer should be defined"); // TODO: is this the case?
-			equal(typeof my.lib.MyControlRenderer.render, "function", "my.lib.MyControlRenderer.render must be a function");
+			assert.equal(typeof my.lib.MyControlRenderer.render, "function", "my.lib.MyControlRenderer.render must be a function");
 		});
 
 
@@ -128,14 +128,14 @@
 
 			// test generation of setter and getter
 			ok(myControl.getText, "getter for property 'text' should be created");
-			equal(typeof myControl.getText, "function", "myControl.getText must be a function");
+			assert.equal(typeof myControl.getText, "function", "myControl.getText must be a function");
 			ok(myControl.setText, "setter for property 'text' should be created");
-			equal(typeof myControl.setText, "function", "myControl.setText must be a function");
+			assert.equal(typeof myControl.setText, "function", "myControl.setText must be a function");
 
 			// test setter and getter
-			equal(myControl.getText(), "test", "value of 'text' property should be 'test'");
+			assert.equal(myControl.getText(), "test", "value of 'text' property should be 'test'");
 			myControl.setText("test2");
-			equal(myControl.getText(), "test2", "value of 'text' property should be 'test2' now");
+			assert.equal(myControl.getText(), "test2", "value of 'text' property should be 'test2' now");
 
 			// test validation
 			try {
@@ -147,46 +147,46 @@
 
 
 		QUnit.test("Methods", function(assert) {
-			equal(myControl.add, my.lib.MyControl.prototype.add, "myControl's add function should actually be a function of the my.lib.MyControl.prototype");
-			equal(myControl.add(1, 2), 3, "myControl's add function should work");
+			assert.equal(myControl.add, my.lib.MyControl.prototype.add, "myControl's add function should actually be a function of the my.lib.MyControl.prototype");
+			assert.equal(myControl.add(1, 2), 3, "myControl's add function should work");
 		});
 
 
 		QUnit.test("Aggregations", function(assert) {
-			equal(typeof myControl.getComma, "function", "myControl.getComma should be an aggregation getter");
-			equal(typeof myControl.setComma, "function", "myControl.setComma should be an aggregation setter");
-			equal(typeof myControl.destroyComma, "function", "myControl.destroyComma should be an aggregation destructor");
+			assert.equal(typeof myControl.getComma, "function", "myControl.getComma should be an aggregation getter");
+			assert.equal(typeof myControl.setComma, "function", "myControl.setComma should be an aggregation setter");
+			assert.equal(typeof myControl.destroyComma, "function", "myControl.destroyComma should be an aggregation destructor");
 
-			equal(typeof myControl.getDots, "function", "myControl.getDots should be an aggregation getter");
-			equal(typeof myControl.addDut, "function", "myControl.addDut should be an aggregation mutator");
-			equal(typeof myControl.removeDut, "function", "myControl.removeDut should be an aggregation mutator");
-			equal(typeof myControl.indexOfDut, "function", "myControl.indexOfDut should be an aggregation function");
-			equal(typeof myControl.removeAllDots, "function", "myControl.removeAllDots should be an aggregation function");
-			equal(typeof myControl.destroyDots, "function", "myControl.destroyDots should be an aggregation function");
+			assert.equal(typeof myControl.getDots, "function", "myControl.getDots should be an aggregation getter");
+			assert.equal(typeof myControl.addDut, "function", "myControl.addDut should be an aggregation mutator");
+			assert.equal(typeof myControl.removeDut, "function", "myControl.removeDut should be an aggregation mutator");
+			assert.equal(typeof myControl.indexOfDut, "function", "myControl.indexOfDut should be an aggregation function");
+			assert.equal(typeof myControl.removeAllDots, "function", "myControl.removeAllDots should be an aggregation function");
+			assert.equal(typeof myControl.destroyDots, "function", "myControl.destroyDots should be an aggregation function");
 
 			myControl.addDut(new sap.ui.commons.Button("myBtn1"));
 			var agg = myControl.getDots();
-			equal(agg.length, 1, "one Button should be aggregated");
-			equal(agg[0].getId(), "myBtn1", "'dots' aggregation should work");
+			assert.equal(agg.length, 1, "one Button should be aggregated");
+			assert.equal(agg[0].getId(), "myBtn1", "'dots' aggregation should work");
 		});
 
 
 		QUnit.test("Associations", function(assert) {
-			equal(typeof myControl.setAssi, "function", "myControl.setAssi should be an association setter");
-			equal(typeof myControl.getAssi, "function", "myControl.getAssi should be an association getter");
+			assert.equal(typeof myControl.setAssi, "function", "myControl.setAssi should be an association setter");
+			assert.equal(typeof myControl.getAssi, "function", "myControl.getAssi should be an association getter");
 
 			myControl.setAssi(new sap.ui.commons.Button("myBtn2"));
-			equal(myControl.getAssi(), "myBtn2", "'assi' association should work");
+			assert.equal(myControl.getAssi(), "myBtn2", "'assi' association should work");
 		});
 
 
 		QUnit.test("Control Events", function(assert) {
-			equal(globalState, "initial", "global state should be initialized");
+			assert.equal(globalState, "initial", "global state should be initialized");
 
 			// test event registering methods
-			equal(typeof myControl.fireSomethingHappened, "function", "myControl.fireSomethingHappened should be a function");
-			equal(typeof myControl.attachSomethingHappened, "function", "myControl.attachSomethingHappened should be a function");
-			equal(typeof myControl.detachSomethingHappened, "function", "myControl.detachSomethingHappened should be a function");
+			assert.equal(typeof myControl.fireSomethingHappened, "function", "myControl.fireSomethingHappened should be a function");
+			assert.equal(typeof myControl.attachSomethingHappened, "function", "myControl.attachSomethingHappened should be a function");
+			assert.equal(typeof myControl.detachSomethingHappened, "function", "myControl.detachSomethingHappened should be a function");
 
 			myControl.attachSomethingHappened(function(){
 				globalState = "somethingHappened";
@@ -194,7 +194,7 @@
 
 			myControl.fireSomethingHappened();
 
-			equal(globalState, "somethingHappened", "global state should be 'somethingHappened' after the event was fired");
+			assert.equal(globalState, "somethingHappened", "global state should be 'somethingHappened' after the event was fired");
 		});
 
 
@@ -202,11 +202,11 @@
 			var md = myControl.getMetadata();
 
 			var properties = md.getProperties();
-			equal(keys(properties).length, 2, "there should be two local public properties");
+			assert.equal(keys(properties).length, 2, "there should be two local public properties");
 			var properties = md.getAllProperties();
-			equal(keys(properties).length, 6, "there should be six public properties");
+			assert.equal(keys(properties).length, 6, "there should be six public properties");
 			ok(properties.text, "there should be a 'text' property");
-			equal(properties.text.type, "string", "'text' should be a string property");
+			assert.equal(properties.text.type, "string", "'text' should be a string property");
 
 			var methods = md.getAllPublicMethods();
 			ok(methods.length > 0, "there should be at least one public method");
@@ -217,19 +217,19 @@
 			ok(jQuery.inArray("renderer", methods) < 0, "'renderer' must not be part of the public methods");
 
 			var aggregations = md.getAggregations();
-			equal(keys(aggregations).length, 2, "there should be one public aggregation");
+			assert.equal(keys(aggregations).length, 2, "there should be one public aggregation");
 			ok(aggregations.dots, "there should be a 'dots' aggregation");
 			var aggregations = md.getAllAggregations();
-			equal(keys(aggregations).length, 6, "there should be 6 public aggregations across the hierarchy");
+			assert.equal(keys(aggregations).length, 6, "there should be 6 public aggregations across the hierarchy");
 			ok(aggregations.dots, "there should be a 'dots' aggregation");
 
 			var associations = md.getAllAssociations();
-			equal(keys(associations).length, 1, "there should be one public association");
+			assert.equal(keys(associations).length, 1, "there should be one public association");
 			ok(associations.assi, "there should be a 'assi' association");
-			equal(associations.assi.type, "sap.ui.commons.Button", "the 'assi' association should be of type Button");
+			assert.equal(associations.assi.type, "sap.ui.commons.Button", "the 'assi' association should be of type Button");
 
 			var events = md.getAllEvents();
-			equal(keys(events).length, 7, "there should be 7 public events");
+			assert.equal(keys(events).length, 7, "there should be 7 public events");
 			ok(events.somethingHappened, "there should be a 'somethingHappened' event");
 		});
 
@@ -264,35 +264,35 @@
 
 			var md = oClass.getMetadata();
 			var aggregations = md.getAggregations();
-			equal(aggregations.children.singularName, "child");
-			equal(typeof oClass.prototype.getChildren, "function");
-			equal(typeof oClass.prototype.addChild, "function");
-			equal(aggregations.smarties.singularName, "smarty");
-			equal(typeof oClass.prototype.getSmarties, "function");
-			equal(typeof oClass.prototype.addSmarty, "function");
-			equal(aggregations.leaves.singularName, "leaf");
-			equal(aggregations.potatoes.singularName, "potato");
-			equal(aggregations.addresses.singularName, "address");
-			equal(aggregations.churches.singularName, "church");
-			equal(aggregations.boxes.singularName, "box");
-			equal(aggregations.crashes.singularName, "crash");
-			equal(aggregations.parts.singularName, "part");
-			equal(aggregations.invisibleChildren.singularName, "invisibleChild");
-			equal(typeof oClass.prototype.getInvisibleChildren, "function");
-			equal(typeof oClass.prototype.addInvisibleChild, "function");
-			equal(aggregations.content.singularName, "content");
-			equal(typeof oClass.prototype.getContent, "function");
-			equal(typeof oClass.prototype.addContent, "function");
-			equal(aggregations.axes.singularName, "axe");
-			equal(typeof aggregations.hans.singularName, "undefined");
-			equal(typeof oClass.prototype.getHans, "function");
-			equal(typeof oClass.prototype.setHans, "function");
-			equal(typeof oClass.prototype.addHan, "undefined");
+			assert.equal(aggregations.children.singularName, "child");
+			assert.equal(typeof oClass.prototype.getChildren, "function");
+			assert.equal(typeof oClass.prototype.addChild, "function");
+			assert.equal(aggregations.smarties.singularName, "smarty");
+			assert.equal(typeof oClass.prototype.getSmarties, "function");
+			assert.equal(typeof oClass.prototype.addSmarty, "function");
+			assert.equal(aggregations.leaves.singularName, "leaf");
+			assert.equal(aggregations.potatoes.singularName, "potato");
+			assert.equal(aggregations.addresses.singularName, "address");
+			assert.equal(aggregations.churches.singularName, "church");
+			assert.equal(aggregations.boxes.singularName, "box");
+			assert.equal(aggregations.crashes.singularName, "crash");
+			assert.equal(aggregations.parts.singularName, "part");
+			assert.equal(aggregations.invisibleChildren.singularName, "invisibleChild");
+			assert.equal(typeof oClass.prototype.getInvisibleChildren, "function");
+			assert.equal(typeof oClass.prototype.addInvisibleChild, "function");
+			assert.equal(aggregations.content.singularName, "content");
+			assert.equal(typeof oClass.prototype.getContent, "function");
+			assert.equal(typeof oClass.prototype.addContent, "function");
+			assert.equal(aggregations.axes.singularName, "axe");
+			assert.equal(typeof aggregations.hans.singularName, "undefined");
+			assert.equal(typeof oClass.prototype.getHans, "function");
+			assert.equal(typeof oClass.prototype.setHans, "function");
+			assert.equal(typeof oClass.prototype.addHan, "undefined");
 
 			var associations = md.getAssociations();
-			equal(associations.multiples.singularName, "multiple");
-			equal(typeof oClass.prototype.getMultiples, "function");
-			equal(typeof oClass.prototype.addMultiple, "function");
+			assert.equal(associations.multiples.singularName, "multiple");
+			assert.equal(typeof oClass.prototype.getMultiples, "function");
+			assert.equal(typeof oClass.prototype.addMultiple, "function");
 
 		});
 
@@ -313,14 +313,14 @@
 		QUnit.test("Event handler methods (on...)", function(assert) {
 			var done = assert.async();
 			assert.expect(2);
-			equal(myControl._state, "initial", "control state should be initialized");
+			assert.equal(myControl._state, "initial", "control state should be initialized");
 
 			// focus the control, which should trigger its event handler changing the _state
 			myControl.focus();
 
 			// wait for focus to actually happen and event to be processed
 			setTimeout(function(){
-				equal(myControl._state, "hadFocus", "control state should reflect the fact that its onfocusin handler should have been executed");
+				assert.equal(myControl._state, "hadFocus", "control state should reflect the fact that its onfocusin handler should have been executed");
 				done();
 			}, 30);
 		});
@@ -356,7 +356,7 @@
 			ok(myTf, "myTf should be a control instance now");
 			ok(myTf instanceof my.lib.MyTextField, "myTf should be an instance of my.lib.MyTextField");
 			ok(myTf instanceof sap.ui.commons.TextField, "myTf should inherit from sap.ui.commons.TextField");
-			equal(myTf.getValue(), "test" + valueSuffix, "value should be modified by overridden method");
+			assert.equal(myTf.getValue(), "test" + valueSuffix, "value should be modified by overridden method");
 		});
 
 
@@ -382,10 +382,10 @@
 			}
 
 			function equalEvent(params,sName,sStereotype,oMetadata) {
-				equal(params.operation, "add", "event should have notified about an 'add' operation");
-				equal(params.name, sName, "event should have notified about the right entity");
-				equal(params.stereotype, sStereotype, "event should contain the right stereotype");
-				equal(params.metadata, oMetadata, "event should contain the right metadata");
+				assert.equal(params.operation, "add", "event should have notified about an 'add' operation");
+				assert.equal(params.name, sName, "event should have notified about the right entity");
+				assert.equal(params.stereotype, sStereotype, "event should contain the right stereotype");
+				assert.equal(params.metadata, oMetadata, "event should contain the right metadata");
 			}
 
 			sap.ui.getCore().attachLibraryChanged(onlibchange);
@@ -393,22 +393,22 @@
 			// create new class
 			var oClass = sap.ui.core.Control.extend("my.lib.TestControl1", {
 			});
-			equal(events.length, 1, "one event should have been received");
+			assert.equal(events.length, 1, "one event should have been received");
 			equalEvent(events[0], "my.lib.TestControl1", "control", oClass.getMetadata());
 
 			var oClass = sap.ui.core.Element.extend("my.lib.TestElement1", {
 			});
-			equal(events.length, 2, "one event should have been received");
+			assert.equal(events.length, 2, "one event should have been received");
 			equalEvent(events[1], "my.lib.TestElement1", "element", oClass.getMetadata());
 
 			sap.ui.getCore().loadLibrary("sap.ui.testlib", "./testdata/uilib");
-			equal(events.length, 3, "one event should have been received");
+			assert.equal(events.length, 3, "one event should have been received");
 			equalEvent(events[2], "sap.ui.testlib", "library", sap.ui.getCore().getLoadedLibraries()["sap.ui.testlib"]);
 			sap.ui.getCore().detachLibraryChanged(onlibchange);
 
 			var oClass = sap.ui.core.Control.extend("my.lib.TestControl1", {
 			});
-			equal(events.length, 3, "no more event should have been received after detach");
+			assert.equal(events.length, 3, "no more event should have been received after detach");
 		});
 
 
@@ -441,17 +441,17 @@
 			ok(!(myObj instanceof sap.ui.core.Control), "myObj should NOT inherit from sap.ui.core.Control");
 
 			// renderer should be a function
-			equal(typeof myObj.renderer, "function", "'renderer' should be added as normal function");
-			equal(myObj.renderer(), "renderer", "'renderer' should work as normal function");
+			assert.equal(typeof myObj.renderer, "function", "'renderer' should be added as normal function");
+			assert.equal(myObj.renderer(), "renderer", "'renderer' should work as normal function");
 
 			// _secretRenderer should be a function
-			equal(typeof myObj._secretRenderer, "function", "'_secretRenderer' should be added as normal function");
-			equal(myObj._secretRenderer(), "secret renderer", "'_secretRenderer' should work as normal function");
+			assert.equal(typeof myObj._secretRenderer, "function", "'_secretRenderer' should be added as normal function");
+			assert.equal(myObj._secretRenderer(), "secret renderer", "'_secretRenderer' should work as normal function");
 
 			// Object.getInterface() should work and return only the public method
 			var intf = myObj.getInterface();
-			equal(typeof intf.renderer, "function", "'renderer' should be added as normal function to the public interface");
-			equal(intf._secretRenderer, undefined, "'_secretRenderer' should NOT be added as normal function to the public interface");
+			assert.equal(typeof intf.renderer, "function", "'renderer' should be added as normal function to the public interface");
+			assert.equal(intf._secretRenderer, undefined, "'_secretRenderer' should NOT be added as normal function to the public interface");
 		});
 
 
@@ -480,43 +480,43 @@
 
 			var md = result.getMetadata();
 			var properties = md.getProperties();
-			equal(keys(properties).length, 2, "there should be two local properties");
-			equal(typeof properties.text, "object", "there should be a 'text' property info object");
-			equal(properties.text.name, "text", "'text' should have name 'text'");
-			equal(properties.text.type, "string", "'text' should be a string property");
-			equal(properties.text.group, "Misc", "'text' should belong to group 'Misc'");
-			equal(typeof properties.rows, "object", "there should be a 'rows' property info object");
-			equal(properties.rows.name, "rows", "'rows' should have name 'rows'");
-			equal(properties.rows.type, "int", "'rows' should be a string property");
-			equal(properties.rows.group, "Misc", "'rows' should belong to group 'Misc'");
+			assert.equal(keys(properties).length, 2, "there should be two local properties");
+			assert.equal(typeof properties.text, "object", "there should be a 'text' property info object");
+			assert.equal(properties.text.name, "text", "'text' should have name 'text'");
+			assert.equal(properties.text.type, "string", "'text' should be a string property");
+			assert.equal(properties.text.group, "Misc", "'text' should belong to group 'Misc'");
+			assert.equal(typeof properties.rows, "object", "there should be a 'rows' property info object");
+			assert.equal(properties.rows.name, "rows", "'rows' should have name 'rows'");
+			assert.equal(properties.rows.type, "int", "'rows' should be a string property");
+			assert.equal(properties.rows.group, "Misc", "'rows' should belong to group 'Misc'");
 
 			var aggregations = md.getAggregations();
-			equal(keys(aggregations).length, 2, "there should be one public aggregation");
-			equal(typeof aggregations.multiples, "object", "there should be a 'multiples' aggregation info object");
-			equal(aggregations.multiples.name, "multiples", "'multiples' should have name 'multiple'");
-			equal(aggregations.multiples.type, "sap.ui.core.Control", "'multiples' should have type 'sap.ui.core.Control'");
-			equal(aggregations.multiples.multiple, true, "'multiples' should have cardinality 'multiple'");
-			equal(aggregations.multiples.singularName, "control", "'multiples' should have singularName 'control'");
-			equal(typeof aggregations.single, "object", "there should be a 'single' aggregation info object");
-			equal(aggregations.single.name, "single", "'single' should have name 'single'");
-			equal(aggregations.single.type, "sap.ui.commons.Button", "'single' should have type 'sap.ui.commons.Button'");
-			equal(aggregations.single.multiple, false, "'single' should have cardinality 'single'");
+			assert.equal(keys(aggregations).length, 2, "there should be one public aggregation");
+			assert.equal(typeof aggregations.multiples, "object", "there should be a 'multiples' aggregation info object");
+			assert.equal(aggregations.multiples.name, "multiples", "'multiples' should have name 'multiple'");
+			assert.equal(aggregations.multiples.type, "sap.ui.core.Control", "'multiples' should have type 'sap.ui.core.Control'");
+			assert.equal(aggregations.multiples.multiple, true, "'multiples' should have cardinality 'multiple'");
+			assert.equal(aggregations.multiples.singularName, "control", "'multiples' should have singularName 'control'");
+			assert.equal(typeof aggregations.single, "object", "there should be a 'single' aggregation info object");
+			assert.equal(aggregations.single.name, "single", "'single' should have name 'single'");
+			assert.equal(aggregations.single.type, "sap.ui.commons.Button", "'single' should have type 'sap.ui.commons.Button'");
+			assert.equal(aggregations.single.multiple, false, "'single' should have cardinality 'single'");
 
 			var associations = md.getAssociations();
-			equal(keys(associations).length, 1, "there should be one public association");
-			equal(typeof associations.assi, "object", "there should be a 'assi' aggregation info object");
-			equal(associations.assi.name, "assi", "'assi' should have name 'assi'");
-			equal(associations.assi.type, "sap.ui.commons.Button", "'assi' should have type 'sap.ui.commons.Button'");
-			equal(associations.assi.multiple, false, "'assi' should have cardinality 'single'");
+			assert.equal(keys(associations).length, 1, "there should be one public association");
+			assert.equal(typeof associations.assi, "object", "there should be a 'assi' aggregation info object");
+			assert.equal(associations.assi.name, "assi", "'assi' should have name 'assi'");
+			assert.equal(associations.assi.type, "sap.ui.commons.Button", "'assi' should have type 'sap.ui.commons.Button'");
+			assert.equal(associations.assi.multiple, false, "'assi' should have cardinality 'single'");
 
 			var events = md.getAllEvents();
-			equal(keys(events).length, 8, "there should be 8 public events");
-			equal(typeof events.somethingHappened, "object", "there should be a 'somethingHappened' event info object");
-			equal(events.somethingHappened.name, "somethingHappened", "'somethingHappened' should have name 'somethingHappened'");
-			equal(events.somethingHappened.allowPreventDefault, false, "'somethingHappened' should not allow to preventDefault");
-			equal(typeof events.somethingElseHappened, "object", "there should be a 'somethingElseHappened' event info object");
-			equal(events.somethingElseHappened.name, "somethingElseHappened", "'somethingElseHappened' should have name 'somethingElseHappened'");
-			equal(events.somethingElseHappened.allowPreventDefault, true, "'somethingElseHappened' should allow to preventDefault");
+			assert.equal(keys(events).length, 8, "there should be 8 public events");
+			assert.equal(typeof events.somethingHappened, "object", "there should be a 'somethingHappened' event info object");
+			assert.equal(events.somethingHappened.name, "somethingHappened", "'somethingHappened' should have name 'somethingHappened'");
+			assert.equal(events.somethingHappened.allowPreventDefault, false, "'somethingHappened' should not allow to preventDefault");
+			assert.equal(typeof events.somethingElseHappened, "object", "there should be a 'somethingElseHappened' event info object");
+			assert.equal(events.somethingElseHappened.name, "somethingElseHappened", "'somethingElseHappened' should have name 'somethingElseHappened'");
+			assert.equal(events.somethingElseHappened.allowPreventDefault, true, "'somethingElseHappened' should allow to preventDefault");
 		});
 	</script>
 </head>

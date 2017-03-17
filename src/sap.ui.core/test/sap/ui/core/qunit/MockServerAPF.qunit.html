@@ -101,25 +101,25 @@ QUnit.test("real initial data", function (assert) {
     var rowExpr = "(SAPClient eq '999')";
     var wcaQuery = this.dataEntitySet + "?$filter=" + rowExpr;
     var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
-    equal(response.statusCode, "200");
+    assert.equal(response.statusCode, "200");
 });
 QUnit.test("ID initial data", function (assert) {
     var rowExpr = "(GenID eq 'ID_9999')";
     var wcaQuery = this.dataEntitySet + "?$filter=" + rowExpr;
     var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
-    equal(response.statusCode, "200");
+    assert.equal(response.statusCode, "200");
 });
 QUnit.test("predicate initial data", function (assert) {
     var wcaQuery = this.dataEntitySet + "(GenID='ID_9999')";
     var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
-    equal(response.statusCode, "200");
+    assert.equal(response.statusCode, "200");
 });
 QUnit.test("query initial parameter data", function (assert) {
     var query = "ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014'," +
         "P_DisplayCurrency='eu',P_ExchangeRateType='eu',P_ExchangeRateDate='01012014'," +
         "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)";
     var response = jQuery.sap.sjax({url: this.rootUri + query});
-    equal(response.statusCode, "200");
+    assert.equal(response.statusCode, "200");
 });
 QUnit.test("navigate from initial param to initial data", function (assert) {
     var query = "ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014'," +
@@ -127,7 +127,7 @@ QUnit.test("navigate from initial param to initial data", function (assert) {
         "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)" +
         "/Results";
     var response = jQuery.sap.sjax({url: this.rootUri + query});
-    equal(response.statusCode, "200");
+    assert.equal(response.statusCode, "200");
 });
 
 
@@ -143,8 +143,8 @@ QUnit.test("POST table", function (assert) {
 
     var myUrl = this.rootUri + this.dataEntitySet + "?$filter=(SAPClient eq '777')";
     var response = jQuery.sap.sjax({url: myUrl});
-    equal(response.statusCode, "200");
-    equal(response.data.d.results.length, 5, "many");
+    assert.equal(response.statusCode, "200");
+    assert.equal(response.data.d.results.length, 5, "many");
 });
 
 QUnit.test("POST table & filter by number", function (assert) {
@@ -159,8 +159,8 @@ QUnit.test("POST table & filter by number", function (assert) {
 
     var myUrl = this.rootUri + this.dataEntitySet + "?$filter=(DaysSalesOutstanding eq 2.22)";
     var response = jQuery.sap.sjax({url: myUrl});
-    equal(response.statusCode, "200");
-    equal(response.data.d.results.length, 1, "one");
+    assert.equal(response.statusCode, "200");
+    assert.equal(response.data.d.results.length, 1, "one");
 });
 
 
@@ -185,8 +185,8 @@ QUnit.test("POST table GET results on parameter set #9999", function (assert) {
         "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)" +
         "/Results";
     var response = jQuery.sap.sjax({url: this.rootUri + query});
-    equal(response.statusCode, "200");
-    equal(response.data.d.results.length, 4, "many");
+    assert.equal(response.statusCode, "200");
+    assert.equal(response.data.d.results.length, 4, "many");
 });
 
 QUnit.test("POST table GET results on parameter set #111", function (assert) {
@@ -208,15 +208,15 @@ QUnit.test("POST table GET results on parameter set #111", function (assert) {
         "P_DisplayCurrency='us',P_ExchangeRateType='us',P_ExchangeRateDate='01012014'," +
         "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)";
     var response111 = jQuery.sap.sjax({url: this.rootUri + query111});
-    equal(response111.statusCode, "200");
+    assert.equal(response111.statusCode, "200");
 
     var query = "ApfTestQuery(P_SAPClient='777',P_FromDate='01012014',P_ToDate='01062014'," +
         "P_DisplayCurrency='us',P_ExchangeRateType='us',P_ExchangeRateDate='01012014'," +
         "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)" +
         "/Results";
     var response = jQuery.sap.sjax({url: this.rootUri + query});
-    equal(response.statusCode, "200");
-    equal(response.data.d.results.length, 3, "many");
+    assert.equal(response.statusCode, "200");
+    assert.equal(response.data.d.results.length, 3, "many");
 });
 
 

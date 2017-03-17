@@ -38,9 +38,9 @@
 		var sPrefixedId = oView.createId("anyid");
 		var sLocalId = oView.getLocalId(sPrefixedId);
 		var sOtherId = oView.getLocalId("anyview--anyid");
-		equal(sPrefixedId, "dummy--anyid");
-		equal(sLocalId, "anyid");
-		equal(sOtherId, null);
+		assert.equal(sPrefixedId, "dummy--anyid");
+		assert.equal(sLocalId, "anyid");
+		assert.equal(sOtherId, null);
 		ok(oView.isPrefixedId(sPrefixedId));
 		notOk(oView.isPrefixedId(sLocalId));
 		oView.destroy();
@@ -68,7 +68,7 @@
 
 		assert.deepEqual(oView.mPreprocessors, {"foo":[]}, "no preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
-		equal(oView.runPreprocessor("xml", oSource, true), oSource);
+		assert.equal(oView.runPreprocessor("xml", oSource, true), oSource);
 	});
 
 	QUnit.test("runPreprocessor w/ config", 2, function (assert) {
@@ -258,7 +258,7 @@
 		sinon.assert.notCalled(expectProcess);
 
 		oView.runPreprocessor("xml", oSource).then(function(vSource) {
-			equal(vSource, oSource);
+			assert.equal(vSource, oSource);
 			done();
 		});
 	});

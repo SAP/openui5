@@ -66,18 +66,18 @@
 			oCtrl[sMutator].apply(oCtrl);
 		}
 
-		equal(_get().length, 0, "Initial number of "+sName+" controls");
+		assert.equal(_get().length, 0, "Initial number of "+sName+" controls");
 		_mutator(false, [new oType(sName+"_1")]);
-		equal(_get().length, 1, "Number of "+sName+" controls after add");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after add");
 		_mutator(true, [new oType(sName+"_2"), 0]);
-		equal(_get().length, 2, "Number of "+sName+" controls after insert");
+		assert.equal(_get().length, 2, "Number of "+sName+" controls after insert");
 		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
 		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
 		oCtrl[oAggMetaData._sRemoveMutator](0);
-		equal(_get().length, 1, "Number of "+sName+" controls after remove");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after remove");
 		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
 		_removeAll();
-		equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
+		assert.equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
 	};
 
 	</script>
@@ -91,13 +91,13 @@
 		QUnit.module("API");
 
 		QUnit.test("Properties - Default Values", function(assert) {
-			equal(oSC.getShowSecondaryContent(), false, "Default 'showSecondaryContent'");
-			equal(oSC.getSecondaryContentSize(), "250px", "Default 'secondaryContentWidth'");
+			assert.equal(oSC.getShowSecondaryContent(), false, "Default 'showSecondaryContent'");
+			assert.equal(oSC.getSecondaryContentSize(), "250px", "Default 'secondaryContentWidth'");
 		});
 
 		QUnit.test("Properties - Custom Values", function(assert) {
-			equal(oSC2.getShowSecondaryContent(), true, "Custom 'showSecondaryContent'");
-			equal(oSC2.getSecondaryContentSize(), "200px", "Custom 'secondaryContentWidth'");
+			assert.equal(oSC2.getShowSecondaryContent(), true, "Custom 'showSecondaryContent'");
+			assert.equal(oSC2.getSecondaryContentSize(), "200px", "Custom 'secondaryContentWidth'");
 		});
 
 		QUnit.test("Aggregation 'content'", function(assert) {
@@ -120,7 +120,7 @@
 			var done = assert.async();
 			oSC.setSecondaryContentSize("200px");
 			setTimeout(function(){
-				equal(jQuery.sap.byId("sc-pane").outerWidth(), 200, "Secondary Content Width after change");
+				assert.equal(jQuery.sap.byId("sc-pane").outerWidth(), 200, "Secondary Content Width after change");
 				done();
 			}, 600);
 		});

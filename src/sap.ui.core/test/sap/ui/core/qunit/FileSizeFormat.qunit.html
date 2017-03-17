@@ -69,7 +69,7 @@
 				sPrefix = "Default";
 		}
 
-		equal(oFormat.format(value), expected, sPrefix + " format of '"+value+"': "+expected);
+		assert.equal(oFormat.format(value), expected, sPrefix + " format of '"+value+"': "+expected);
 	}
 
 	function checkParse(format, value, expected){
@@ -89,7 +89,7 @@
 				sPrefix = "Default";
 		}
 
-		equal(oFormat.parse(value), expected, "Parse ("+sPrefix+" Formatter) of '"+value+"': "+expected);
+		assert.equal(oFormat.parse(value), expected, "Parse ("+sPrefix+" Formatter) of '"+value+"': "+expected);
 	}
 
 	function getHex(i, binary){
@@ -197,7 +197,7 @@
 
 	QUnit.test("create format instance without giving any option", function(assert) {
 		var oFormat = sap.ui.core.format.FileSizeFormat.getInstance();
-		equal(oFormat.format(100000), "100 KB", "BinarySize is set to false by default");
+		assert.equal(oFormat.format(100000), "100 KB", "BinarySize is set to false by default");
 	});
 
 </script>

@@ -54,7 +54,7 @@
 
 			QUnit.test("Initial Rendering", function(assert) {
 				notEqual(jQuery.sap.domById(oMenuButton1.getId()), null, "MenuButton HTML Element should be rendered");
-				equal(jQuery.sap.domById(oMenu1.getId()), null, "Menu HTML Element is not yet rendered");
+				assert.equal(jQuery.sap.domById(oMenu1.getId()), null, "Menu HTML Element is not yet rendered");
 			});
 
 			QUnit.test("Property - Default Values", function(assert) {

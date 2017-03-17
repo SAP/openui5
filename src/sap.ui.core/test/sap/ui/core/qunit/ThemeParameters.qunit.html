@@ -48,20 +48,20 @@
    		 *  3. it should be reliably there for accessibility reasons
    		 *  4. text and background color differ from the base theme
    		 */
-   		equal(sap.ui.core.theming.Parameters.get("sapUiText"), "#ffffff", "sapUiText must be defined as 'white - #ffffff'");
-   		equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as black '#000000'");
+   		assert.equal(sap.ui.core.theming.Parameters.get("sapUiText"), "#ffffff", "sapUiText must be defined as 'white - #ffffff'");
+   		assert.equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as black '#000000'");
 
    		// Read parameters of legacy library-parameters.json format
-   		equal(sap.ui.core.theming.Parameters.get("sapUiLegacyTstTextColor"), "#fafafa", "sapUiLegacyTstTextColor must be defined as '#fafafa'");
-   		equal(sap.ui.core.theming.Parameters.get("sapUiLegacyText"), "#ffffff", "sapUiLegacyText must be defined as '#ffffff'");
+   		assert.equal(sap.ui.core.theming.Parameters.get("sapUiLegacyTstTextColor"), "#fafafa", "sapUiLegacyTstTextColor must be defined as '#fafafa'");
+   		assert.equal(sap.ui.core.theming.Parameters.get("sapUiLegacyText"), "#ffffff", "sapUiLegacyText must be defined as '#ffffff'");
    	});
 
    	QUnit.test("Undefined parameter", function(assert) {
-   		equal(sap.ui.core.theming.Parameters.get("thisParameterNameMayNeverExist"), undefined, "'undefined' should be returned for unknown parameter names");
+   		assert.equal(sap.ui.core.theming.Parameters.get("thisParameterNameMayNeverExist"), undefined, "'undefined' should be returned for unknown parameter names");
    	});
 
    	QUnit.test("Invalid parameter", function(assert) {
-   		equal(sap.ui.core.theming.Parameters.get(null), undefined, "'undefined' should be returned for 'null' parameter name");
+   		assert.equal(sap.ui.core.theming.Parameters.get(null), undefined, "'undefined' should be returned for 'null' parameter name");
    	});
 
    	QUnit.test("All parameters", function(assert) {
@@ -70,14 +70,14 @@
 
    		var count = 0;
    		for (var property in mAllParams) {
-   			equal(typeof mAllParams[property], "string", "Parameter '" + property + "' should be a string");
+   			assert.equal(typeof mAllParams[property], "string", "Parameter '" + property + "' should be a string");
    			count++;
    		}
    		ok(count > 10, "The map of parameters should have quite some entries");
    	});
 
    	QUnit.test("Parameter from Unknown Library", function(assert) {
-   		equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), undefined, "'undefined' should be returned for a parameter of a library that currently is not loaded");
+   		assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), undefined, "'undefined' should be returned for a parameter of a library that currently is not loaded");
    	});
 
 		QUnit.test("After Theme Change", function(assert) {
@@ -89,8 +89,8 @@
 			var fnAssertThemeChanged = function() {
 
 				// parameters of base theme should now be present
-				equal(sap.ui.core.theming.Parameters.get("sapUiText"), "#000000", "sapUiText must be defined as 'black - #000000'");
-				equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#ffffff", "sapUiExtraLightBG must be defined as 'white - #ffffff'");
+				assert.equal(sap.ui.core.theming.Parameters.get("sapUiText"), "#000000", "sapUiText must be defined as 'black - #000000'");
+				assert.equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#ffffff", "sapUiExtraLightBG must be defined as 'white - #ffffff'");
 
 				sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
 				sap.ui.getCore().attachThemeChanged(fnContinue);
@@ -118,20 +118,20 @@
 			}
 
 			sap.ui.getCore().loadLibrary("sap.ui.testlib");
-			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), "#fafafa", "parameter for newly loaded library should be known now");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), "#fafafa", "parameter for newly loaded library should be known now");
 	});
 
 		QUnit.test("Read scoped parameters (from sap.ui.testlib)", function(assert) {
 			var oControl = new sap.ui.core.Control();
 
-			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#fafafa",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#fafafa",
 				"No scope set - default value should get returned");
 
 			oControl.addStyleClass("sapTestScope");
 
-			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#000000",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#000000",
 				"Scope set directly on control - scoped param should be returned");
-			equal(sap.ui.core.theming.Parameters.get("sapUiColor", oControl), "#ffffff",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiColor", oControl), "#ffffff",
 				"Scope set directly on control but no scoped value defined - default value should get returned");
 
 			oControl.removeStyleClass("sapTestScope");
@@ -139,9 +139,9 @@
 			oParent.addStyleClass("sapTestScope");
 			oControl.setParent(oParent);
 
-			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#000000",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#000000",
 				"Scope set on parent control - scoped param should be returned");
-			equal(sap.ui.core.theming.Parameters.get("sapUiText", oControl), "#000000",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiText", oControl), "#000000",
 				"Scope set on parent control but no scoped value defined - default value should get returned");
 
 		});
@@ -149,20 +149,20 @@
 		QUnit.test("Read scoped parameters (error handling)", function(assert) {
 			var oElement = new sap.ui.core.Element();
 
-			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oElement), "#fafafa",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oElement), "#fafafa",
 				"No scope set - default value should get returned");
 
-			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", null), "#fafafa",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", null), "#fafafa",
 				"'null' value provided as 'oControl' - default value should get returned");
 
-			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", {}), "#fafafa",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", {}), "#fafafa",
 				"'{}' value provided as 'oControl' - default value should get returned");
 
 			var oParent = new sap.ui.core.Control();
 			oParent.addStyleClass("sapTestScope");
 			oElement.setParent(oParent);
 
-			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oElement), "#000000",
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oElement), "#000000",
 				"Scope set on parent control - scoped param should be returned");
 
 		});

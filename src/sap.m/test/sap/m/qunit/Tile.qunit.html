@@ -60,9 +60,9 @@
 
 				// Assert
 				if (result.indexOf('matrix3d')==0) {
-					equal(result,"matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, " + xPosition + ", " + yPosition + ", 0, 1)" );
+					assert.equal(result,"matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, " + xPosition + ", " + yPosition + ", 0, 1)" );
 								} else {
-					equal(result,"matrix(1, 0, 0, 1, " + xPosition + ", " + yPosition + ")" );
+					assert.equal(result,"matrix(1, 0, 0, 1, " + xPosition + ", " + yPosition + ")" );
 				}
 				done();
 			},800);
@@ -81,8 +81,8 @@
 			sut.setSize(width,height);
 
 			// Assert
-			equal(sut._width,width);
-			equal(sut._height,height);
+			assert.equal(sut._width,width);
+			assert.equal(sut._height,height);
 		});
 
 
@@ -212,8 +212,8 @@
 			sut._parentPreventsTapEvent = 5;
 
 			//Assert
-			equal(result,true);
-			equal(result,sut._parentPreventsTapEvent);
+			assert.equal(result,true);
+			assert.equal(result,sut._parentPreventsTapEvent);
 			container.destroy();
 		});
 
@@ -235,12 +235,12 @@
             //Act
             sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.ENTER);
             //Assert
-            equal(result, 1);
+            assert.equal(result, 1);
 
             //Act
             sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.SPACE);
             //Assert
-            equal(result, 2);
+            assert.equal(result, 2);
         });
 
 
@@ -257,9 +257,9 @@
 			core.applyChanges();
 
 			// Assert
-			equal(sut.$().attr('role'), 'option', 'option, option; equal success');
-			equal(sut.$().attr('aria-posinset'), "1", 'position in the set must equal to 1');
-			equal(sut.$().attr('aria-setsize'), "2", 'the size of the set must equal to 2');
+			assert.equal(sut.$().attr('role'), 'option', 'option, option; equal success');
+			assert.equal(sut.$().attr('aria-posinset'), "1", 'position in the set must equal to 1');
+			assert.equal(sut.$().attr('aria-setsize'), "2", 'the size of the set must equal to 2');
 
 			cnt.destroy();
 		});
@@ -276,13 +276,13 @@
 			core.applyChanges();
 
 			// Assert
-			equal(sut.$().attr('aria-describedby'), null, 'When tile is not editable, aria-describedBy should not exist');
+			assert.equal(sut.$().attr('aria-describedby'), null, 'When tile is not editable, aria-describedBy should not exist');
 
 			// Act
 			sut.isEditable(true);
 			//Assert
-			equal(sut.$().attr('aria-describedby'), sut._getAriaDescribedByDeleteLabel().getId(), 'When tile is editable, aria-describedBy should exist');
-			equal(sut._getAriaDescribedByDeleteLabel().getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
+			assert.equal(sut.$().attr('aria-describedby'), sut._getAriaDescribedByDeleteLabel().getId(), 'When tile is editable, aria-describedBy should exist');
+			assert.equal(sut._getAriaDescribedByDeleteLabel().getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
 					'When tile is editable, aria-describedBy should point to a label with certain text');
 
 			cnt.destroy();

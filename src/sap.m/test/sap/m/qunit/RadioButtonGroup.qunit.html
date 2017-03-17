@@ -193,8 +193,8 @@
 			oRBGroup.setSelectedIndex(iSelectedIndex);
 
 			// assertions
-			equal(oRBGroup.getSelectedIndex(), iSelectedIndex, "The selectedIndex should be " + iSelectedIndex);
-			equal(oRBGroup.getSelectedButton(), oRadioButton2, "The second Radio Button should be selected");
+			assert.equal(oRBGroup.getSelectedIndex(), iSelectedIndex, "The selectedIndex should be " + iSelectedIndex);
+			assert.equal(oRBGroup.getSelectedButton(), oRadioButton2, "The second Radio Button should be selected");
 
 			// cleanup
 			oRBGroup.destroyButtons();
@@ -226,36 +226,36 @@
 			qutils.triggerMouseEvent("RBG1-0", "click");
 			sap.ui.getCore().applyChanges();
 
-			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
+			assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 			// Test arrow pressing
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_RIGHT");
 			sap.ui.getCore().applyChanges();
-			equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
+			assert.equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_DOWN");
 			sap.ui.getCore().applyChanges();
-			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
+			assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
 			sap.ui.getCore().applyChanges();
-			equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
+			assert.equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_UP");
 			sap.ui.getCore().applyChanges();
-			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
+			assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 			qutils.triggerKeyboardEvent("RBG1", "END");
 			sap.ui.getCore().applyChanges();
-			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
+			assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 			qutils.triggerKeyboardEvent("RBG1", "HOME");
 			sap.ui.getCore().applyChanges();
-			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
+			assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
 			sap.ui.getCore().applyChanges();
-			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
+			assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 			// cleanup
 			oRBGroup.destroyButtons();
@@ -281,7 +281,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "rtl", "Control has 'dir' property set to right to left");
+			assert.equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "rtl", "Control has 'dir' property set to right to left");
 
 			// cleanup
 			oRBGroup.destroy();
@@ -302,7 +302,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "ltr", "Control has 'dir' property set to left to right");
+			assert.equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "ltr", "Control has 'dir' property set to left to right");
 
 			// cleanup
 			oRBGroup.destroy();
@@ -333,19 +333,19 @@
 			this.rbg.setEnabled(false);
 
 			// assert
-			equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
-			equal(aButtons[1].getEnabled(), false, "Second RadioButton is enabled due to EnabledPropagator");
-			equal(aButtons[1].getProperty("enabled"), true, "Second RadioButton keeps enabled=true in mProperties");
-			equal(aButtons[2].getEnabled(), false, "Third RadioButton is enabled due to EnabledPropagator");
-			equal(aButtons[1].getProperty("enabled"), true, "Third RadioButton keeps enabled=true in mProperties");
+			assert.equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
+			assert.equal(aButtons[1].getEnabled(), false, "Second RadioButton is enabled due to EnabledPropagator");
+			assert.equal(aButtons[1].getProperty("enabled"), true, "Second RadioButton keeps enabled=true in mProperties");
+			assert.equal(aButtons[2].getEnabled(), false, "Third RadioButton is enabled due to EnabledPropagator");
+			assert.equal(aButtons[1].getProperty("enabled"), true, "Third RadioButton keeps enabled=true in mProperties");
 
 			// act
 			this.rbg.setEnabled(true);
 
 			// assert
-			equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
-			equal(aButtons[1].getEnabled(), true, "Second RadioButton is enabled");
-			equal(aButtons[2].getEnabled(), true, "Third RadioButton is enabled");
+			assert.equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
+			assert.equal(aButtons[1].getEnabled(), true, "Second RadioButton is enabled");
+			assert.equal(aButtons[2].getEnabled(), true, "Third RadioButton is enabled");
 		});
 
 		QUnit.test("setEditable doesn't modify RadioButton state", function(assert) {
@@ -355,17 +355,17 @@
 			this.rbg.setEditable(false);
 
 			// assert
-			equal(aButtons[0].getEditable(), true, "First RadioButton is editable");
-			equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
-			equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
+			assert.equal(aButtons[0].getEditable(), true, "First RadioButton is editable");
+			assert.equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
+			assert.equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
 
 			// act
 			this.rbg.setEditable(true);
 
 			// assert
-			equal(aButtons[0].getEditable(), true, "First RadioButton is editable");
-			equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
-			equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
+			assert.equal(aButtons[0].getEditable(), true, "First RadioButton is editable");
+			assert.equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
+			assert.equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
 		});
 		</script>
 	</head>

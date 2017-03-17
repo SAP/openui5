@@ -138,8 +138,8 @@
 			assert.expect(2);
 
 			setTimeout(function () { // give the Toolbar some time to recognize the change
-				equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible (6 Buttons + 2 Separators)");
-				equal(oCtrl.iItemDomRefCount, 7, "There should be 8 items considered navigable by the ItemNavigation (6 Buttons + 1 overflow button)");
+				assert.equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible (6 Buttons + 2 Separators)");
+				assert.equal(oCtrl.iItemDomRefCount, 7, "There should be 8 items considered navigable by the ItemNavigation (6 Buttons + 1 overflow button)");
 				done();
 			}, 1000);
 		});
@@ -181,8 +181,8 @@
 			sap.ui.getCore().byId("Toolbar_b_0").setWidth("400px");
 
 			setTimeout(function () { // give the Toolbar some time to recognize the change
-				equal(oCtrl.getVisibleItemInfo().count, 1, "1 item should be considered visible (1 huge Button)");
-				equal(oCtrl.iItemDomRefCount, 2, "There should be 2 items considered navigable by the ItemNavigation (1 huge Button + 1 overflow button)");
+				assert.equal(oCtrl.getVisibleItemInfo().count, 1, "1 item should be considered visible (1 huge Button)");
+				assert.equal(oCtrl.iItemDomRefCount, 2, "There should be 2 items considered navigable by the ItemNavigation (1 huge Button + 1 overflow button)");
 				done();
 			}, 500);
 		})
@@ -205,7 +205,7 @@
 				oCtrl.handleOverflowButtonTriggered();
 				setTimeout(function () {
 					sap.ui.core.RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl, false);
-					equal(jQuery('#test', oCtrl.getDomRef("pu")).length, 0)
+					assert.equal(jQuery('#test', oCtrl.getDomRef("pu")).length, 0)
 					done();
 				}, 500);
 			}, 500);
@@ -230,8 +230,8 @@
 				oCtrl.handleOverflowButtonTriggered();
 				setTimeout(function () {
 					sap.ui.core.RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl, true);
-					equal(oCtrl.getDomRef("pu").hasChildNodes(), false);
-					equal(jQuery('#test_button', oCtrl.getDomRef()).length, 1);
+					assert.equal(oCtrl.getDomRef("pu").hasChildNodes(), false);
+					assert.equal(jQuery('#test_button', oCtrl.getDomRef()).length, 1);
 					done();
 				}, 500);
 			}, 500);
@@ -284,7 +284,7 @@
 					sap.ui.core.RenderManager.getRenderer(oCtrl).emptyOverflowPopup(oCtrl);
 					oCtrl.getDomRef.restore();
 
-					equal(oErrorSpy.withArgs("The renderer 'sap.ui.commons.ToolbarRenderer' cannot empty the toolbar overflow popup.").calledOnce, true);
+					assert.equal(oErrorSpy.withArgs("The renderer 'sap.ui.commons.ToolbarRenderer' cannot empty the toolbar overflow popup.").calledOnce, true);
 
 					oErrorSpy.restore();
 
@@ -337,13 +337,13 @@
 						setTimeout(function() {
 							var pu = oCtrl.getDomRef('pu');
 							// if the popup is still visible, it means resize was not triggered (causing the popup to close)
-							equal(jQuery(pu).css('visibility'), 'visible', 'Popup is properly visible');
-							equal(jQuery('#Toolbar4-pu button').length, 7, 'There are seven buttons in the popup.');
+							assert.equal(jQuery(pu).css('visibility'), 'visible', 'Popup is properly visible');
+							assert.equal(jQuery('#Toolbar4-pu button').length, 7, 'There are seven buttons in the popup.');
 							btn.click();
 							jQuery('#uiArea2').css('width', '600');
 							setTimeout(function() {
 								btn.click();
-								equal(jQuery('#Toolbar4-pu button').length, 3, 'There are three buttons in the popup - toolbar resizing still works after popup opening/closing.');
+								assert.equal(jQuery('#Toolbar4-pu button').length, 3, 'There are three buttons in the popup - toolbar resizing still works after popup opening/closing.');
 								btn.click();
 								done();
 							}, 500);
@@ -425,7 +425,7 @@
 				setTimeout(function () {
 					var oPopupParent = jQuery(oCtrl.getDomRef('pu').parentNode);
 					checkTestButtonDoesNotExpandFromOverflowPopup(oCtrl, "testOverflowButton");
-					equal(oPopupParent.width(), 222 /*Width in class sapUiTbDD */, "The width of the popup should not change.")
+					assert.equal(oPopupParent.width(), 222 /*Width in class sapUiTbDD */, "The width of the popup should not change.")
 					done();
 				}, 500);
 			}, 500);
@@ -443,7 +443,7 @@
 				]
 			});
 			oCtrl.placeAt('uiArea1');
-			equal(isOverflowVisible(oCtrl), false, "Overflow button must not be visible");
+			assert.equal(isOverflowVisible(oCtrl), false, "Overflow button must not be visible");
 		});
 
 		QUnit.test("Overflow menu in popup is deleted upon toolbar destroy", function (assert) {
@@ -528,7 +528,7 @@
 			var iToolbarRightPosition = oPopup.position().left + oPopup.width();
 			var bIsExpanding = (iButtonRightPosition) >= (iToolbarRightPosition);
 
-			equal(false, bIsExpanding, 'Button is not expanding from the overflow popup');
+			assert.equal(false, bIsExpanding, 'Button is not expanding from the overflow popup');
 		}
 
 	</script>

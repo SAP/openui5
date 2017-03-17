@@ -89,20 +89,20 @@
 	QUnit.test("getDefaultBindingMode", function(assert) {
 		setup();
 		var sMode = oModel.getDefaultBindingMode();
-		equal(sMode, sap.ui.model.BindingMode.TwoWay, "default binding mode");
+		assert.equal(sMode, sap.ui.model.BindingMode.TwoWay, "default binding mode");
 	});
 
 	QUnit.test("setDefaultBindingMode", function(assert) {
 		setup();
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
 		var sMode = oModel.getDefaultBindingMode();
-		equal(sMode, sap.ui.model.BindingMode.OneWay, "new default binding mode");
+		assert.equal(sMode, sap.ui.model.BindingMode.OneWay, "new default binding mode");
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 		sMode = oModel.getDefaultBindingMode();
-		equal(sMode, sap.ui.model.BindingMode.TwoWay, "new default binding mode");
+		assert.equal(sMode, sap.ui.model.BindingMode.TwoWay, "new default binding mode");
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneTime);
 		sMode = oModel.getDefaultBindingMode();
-		equal(sMode, sap.ui.model.BindingMode.OneTime, "new default binding mode");
+		assert.equal(sMode, sap.ui.model.BindingMode.OneTime, "new default binding mode");
 		raises(function(){oModel.setDefaultBindingMode(sap.ui.model.BindingMode.Default)}, "test set not supported binding mode");
 	});
 
@@ -112,7 +112,7 @@
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
 		createPropertyBindingsUI("value", "@firstName", "");
 
-		equal(aTextFields.length, 7, "check amount");
+		assert.equal(aTextFields.length, 7, "check amount");
 
 
 		var counter = 0;
@@ -125,7 +125,7 @@
 			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
-		equal(counter, 7, "check amount");
+		assert.equal(counter, 7, "check amount");
 
 	});
 
@@ -134,7 +134,7 @@
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 		createPropertyBindingsUI("value", "@firstName", "");
 
-		equal(aTextFields.length, 7, "check amount");
+		assert.equal(aTextFields.length, 7, "check amount");
 
 
 		var counter = 0;
@@ -147,7 +147,7 @@
 			ok(oValue == "ggg" + i, "check value should have changed in model: " + oValue);
 			counter++;
 		});
-		equal(counter, 7, "check amount");
+		assert.equal(counter, 7, "check amount");
 
 	});
 
@@ -166,7 +166,7 @@
 			ok(oValue == "ggg" + i, "check value should have changed in model: " + oValue);
 			counter++;
 		});
-		equal(counter, 7, "check amount");
+		assert.equal(counter, 7, "check amount");
 
 
 	});
@@ -186,7 +186,7 @@
 			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
-		equal(counter, 7, "check amount");
+		assert.equal(counter, 7, "check amount");
 	});
 
 	QUnit.test("Two Way with multimodels", function(assert) {
@@ -208,7 +208,7 @@
 		aTextFields.push(oTextField);
 
 		var oValue = oModel.getProperty("/clients/member/0/@lastName");
-		equal(oValue, "Duck", "old value check");
+		assert.equal(oValue, "Duck", "old value check");
 		var bEnabled = oModel2.getProperty("/test/0/enabled");
 		ok(bEnabled, "old value check");
 
@@ -218,7 +218,7 @@
 
 		//check
 		var oValue = oModel.getProperty("/clients/member/0/@lastName");
-		equal(oValue, "newValue", "new value check");
+		assert.equal(oValue, "newValue", "new value check");
 		var bEnabled = oModel2.getProperty("/test/0/enabled");
 		ok(!bEnabled, "new value check");
 
@@ -244,7 +244,7 @@
 		aTextFields.push(oTextField);
 
 		var oValue = oModel.getProperty("/clients/member/0/@lastName");
-		equal(oValue, "Duck", "old value check");
+		assert.equal(oValue, "Duck", "old value check");
 		var bEnabled = oModel2.getProperty("/test/0/enabled");
 		ok(bEnabled, "old value check");
 
@@ -254,7 +254,7 @@
 
 		//check
 		var oValue = oModel.getProperty("/clients/member/0/@lastName");
-		equal(oValue, "newValue", "new value check");
+		assert.equal(oValue, "newValue", "new value check");
 		var bEnabled = oModel2.getProperty("/test/0/enabled");
 		ok(bEnabled, "new value check");
 
@@ -266,7 +266,7 @@
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneTime);
 		createPropertyBindingsUI("value", "@firstName");
 
-		equal(aTextFields.length, 7, "check amount");
+		assert.equal(aTextFields.length, 7, "check amount");
 
 
 		var counter = 0;
@@ -279,13 +279,13 @@
 			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
-		equal(counter, 7, "check amount");
+		assert.equal(counter, 7, "check amount");
 
 		// modify value in model...nothing should change in UI
 		jQuery(aTextFields).each(function (i, oTextField){
 			oModel.setProperty("/clients/member/" + i + "/@firstName", "newmodelvalue" + i);
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			equal(oValue, "newmodelvalue" + i, "new model value");
+			assert.equal(oValue, "newmodelvalue" + i, "new model value");
 		});
 
 		jQuery(aTextFields).each(function (i, oTextField){
@@ -313,13 +313,13 @@
 			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
-		equal(counter, 7, "check amount");
+		assert.equal(counter, 7, "check amount");
 
 		// modify value in model...nothing should change in UI
 		jQuery(aTextFields).each(function (i, oTextField){
 			oModel.setProperty("/clients/member/" + i + "/@firstName", "newmodelvalue" + i);
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			equal(oValue, "newmodelvalue" + i, "new model value");
+			assert.equal(oValue, "newmodelvalue" + i, "new model value");
 		});
 
 		jQuery(aTextFields).each(function (i, oTextField){
@@ -347,13 +347,13 @@
 			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
 			counter++;
 		});
-		equal(counter, 7, "check amount");
+		assert.equal(counter, 7, "check amount");
 
 		// modify value in model...nothing should change in UI
 		jQuery(aTextFields).each(function (i, oTextField){
 			oModel.setProperty("/clients/member/" + i + "/@firstName", "newmodelvalue" + i);
 			var oValue = oModel.getProperty("/clients/member/" + i + "/@firstName");
-			equal(oValue, "newmodelvalue" + i, "new model value");
+			assert.equal(oValue, "newmodelvalue" + i, "new model value");
 		});
 
 		jQuery(aTextFields).each(function (i, oTextField){

@@ -340,7 +340,7 @@
 					//act
 					oCache.get("key1").then(function (value) {
 						//check
-						equal(value, "smallValue", "Get item (ro) still sees the item, because [get] started before [del]");
+						assert.equal(value, "smallValue", "Get item (ro) still sees the item, because [get] started before [del]");
 						done();
 					});
 					//act
@@ -439,8 +439,8 @@
 				},
 				//Asserts given data structure
 				assertMetadataStructureLength: function (byKeyLength, byIndexLength) {
-					equal(Object.keys(oCache._metadata.__byKey__).length, byKeyLength, "LRU map structure __byKey__ should be correct.");
-					equal(Object.keys(oCache._metadata.__byIndex__).length, byIndexLength, "LRU map structure __byIndex__ should be correct.");
+					assert.equal(Object.keys(oCache._metadata.__byKey__).length, byKeyLength, "LRU map structure __byKey__ should be correct.");
+					assert.equal(Object.keys(oCache._metadata.__byIndex__).length, byIndexLength, "LRU map structure __byIndex__ should be correct.");
 				},
 				mockPut: function (expectedKey, oErrorEvent, callStart, callEnd) {
 					callStart = callStart || 1;
@@ -547,9 +547,9 @@
 						var iPosition = parseInt(Object.keys(oItem)[0], 10);
 						var oKey = oItem[iPosition];
 						if (oKey) {
-							equal(oCache._metadata.__byKey__[oKey], iPosition, "LRU map structure __byKey__ should contain the entry with key '" + oKey + "'");
+							assert.equal(oCache._metadata.__byKey__[oKey], iPosition, "LRU map structure __byKey__ should contain the entry with key '" + oKey + "'");
 						}
-						equal(oCache._metadata.__byIndex__[iPosition], oKey, "LRU map structure __byIndex__ should contain key " + oKey + " at position " + iPosition);
+						assert.equal(oCache._metadata.__byIndex__[iPosition], oKey, "LRU map structure __byIndex__ should contain key " + oKey + " at position " + iPosition);
 					});
 
 					aNonExistingIndexes.forEach(function (iIndex) {
@@ -558,13 +558,13 @@
 				},
 
 				assertCounters: function (lruCount, mruCount) {
-					equal(oCache._lru, lruCount, "Cache Manager lru value should equal to the next item to delete");
-					equal(oCache._mru, mruCount, "Cache Manager mru value should equal to the next free index");
+					assert.equal(oCache._lru, lruCount, "Cache Manager lru value should equal to the next item to delete");
+					assert.equal(oCache._mru, mruCount, "Cache Manager mru value should equal to the next free index");
 				},
 
 				assertItemCount: function (expectedCount, message) {
 					return oCache._getCount().then(function (count) {
-						equal(count, expectedCount, message);
+						assert.equal(count, expectedCount, message);
 					});
 				}
 			});
@@ -785,7 +785,7 @@
 				aNonExistingKeys = aNonExistingKeys || [];
 				var nonExistingPromises = aNonExistingKeys.map(function (key) {
 					return oCache.has(key).then(function (found) {
-						equal(false, found, "The key " + key + " should not exist.");
+						assert.equal(false, found, "The key " + key + " should not exist.");
 						if (found) {
 							throw new Error("unexpected key found: ", key);
 						}

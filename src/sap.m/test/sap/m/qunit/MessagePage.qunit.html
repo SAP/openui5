@@ -193,7 +193,7 @@
 			// Assert
 			this.clock.tick(500);
 			sActualValue =  jQuery("#" + messagePageId + " .sapMBarChild").text();
-			equal(sActualValue, sExpectedValue, "The title is correct");
+			assert.equal(sActualValue, sExpectedValue, "The title is correct");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -211,7 +211,7 @@
 			// Assert
 			sExpectedValue = sap.ui.core.IconPool.getIconURI("documents");
 
-			equal(oMessagePage.getIcon(), sExpectedValue, "The icon is correct");
+			assert.equal(oMessagePage.getIcon(), sExpectedValue, "The icon is correct");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -229,7 +229,7 @@
 			// Assert
 			sExpectedValue = "One Line Text";
 
-			equal(oMessagePage.getText(), sExpectedValue, "The text is correct");
+			assert.equal(oMessagePage.getText(), sExpectedValue, "The text is correct");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -251,7 +251,7 @@
 			// Assert
 
 			sActualValue =  jQuery(".sapMMessagePageMainText").text();
-			equal(sActualValue, sExpectedValue, "The text is correct");
+			assert.equal(sActualValue, sExpectedValue, "The text is correct");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -269,7 +269,7 @@
 			// Assert
 			sExpectedValue = "Description";
 
-			equal(oMessagePage.getDescription(), sExpectedValue, "The text is correct");
+			assert.equal(oMessagePage.getDescription(), sExpectedValue, "The text is correct");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -293,7 +293,7 @@
 
 			sActualValue =  jQuery(".sapMMessagePageDescription").text();
 
-			equal(sActualValue, sExpectedValue, "The text is correct");
+			assert.equal(sActualValue, sExpectedValue, "The text is correct");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -335,19 +335,19 @@
 
 			iActualResult = jQuery(".sapMEmptyPagCustomIcon").length;
 			ok(!iActualResult, "The icon is destroyed");
-			equal(oMessagePage._oPageIcon, null, "The custom icon should be null");
+			assert.equal(oMessagePage._oPageIcon, null, "The custom icon should be null");
 
 			iActualResult = jQuery(".sapMMessagePageMainText").length;
 			ok(!iActualResult, "The text is destroyed");
-			equal(oMessagePage._oText, null, "The main text should be null");
+			assert.equal(oMessagePage._oText, null, "The main text should be null");
 
 			iActualResult = jQuery(".sapMMessagePageDescription").length;
 			ok(!iActualResult, "The description  is destroyed");
-			equal(oMessagePage._oDescription, null, "The description should be null");
+			assert.equal(oMessagePage._oDescription, null, "The description should be null");
 
 			iActualResult = jQuery(".sapMMessagePage").children(0).length;
 			ok(!iActualResult, "The inner page is destroyed");
-			equal(oMessagePage._oPage, null, "The inner page should be null");
+			assert.equal(oMessagePage._oPage, null, "The inner page should be null");
 
 			iActualResult = jQuery("#" + messagePageId).length;
 			ok(!iActualResult, "The messagePage is destroyed");

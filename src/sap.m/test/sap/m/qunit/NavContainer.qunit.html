@@ -44,14 +44,14 @@
 
 
 		function handleNavEvent(evt) {
-			equal(evt.getParameter("fromId"), window.expectedNav.fromId, "fromId should be correct");
-			equal(evt.getParameter("toId"), window.expectedNav.toId, "toId should be correct");
-			equal(evt.getParameter("firstTime"), window.expectedNav.firstTime, "firstTime should be correct");
-			equal(evt.getParameter("isTo"), window.expectedNav.isTo, "isTo should be correct");
-			equal(evt.getParameter("isBack"), window.expectedNav.isBack, "isBack should be correct");
-			equal(evt.getParameter("isBackToPage"), window.expectedNav.isBackToPage, "isBackToPage should be correct");
-			equal(evt.getParameter("isBackToTop"), window.expectedNav.isBackToTop, "isBackToTop should be correct");
-			equal(evt.getParameter("direction"), window.expectedNav.direction, "direction should be correct");
+			assert.equal(evt.getParameter("fromId"), window.expectedNav.fromId, "fromId should be correct");
+			assert.equal(evt.getParameter("toId"), window.expectedNav.toId, "toId should be correct");
+			assert.equal(evt.getParameter("firstTime"), window.expectedNav.firstTime, "firstTime should be correct");
+			assert.equal(evt.getParameter("isTo"), window.expectedNav.isTo, "isTo should be correct");
+			assert.equal(evt.getParameter("isBack"), window.expectedNav.isBack, "isBack should be correct");
+			assert.equal(evt.getParameter("isBackToPage"), window.expectedNav.isBackToPage, "isBackToPage should be correct");
+			assert.equal(evt.getParameter("isBackToTop"), window.expectedNav.isBackToTop, "isBackToTop should be correct");
+			assert.equal(evt.getParameter("direction"), window.expectedNav.direction, "direction should be correct");
 		}
 
 		function getDelegate(mLog) {
@@ -125,31 +125,31 @@
 
 		QUnit.test("NavContainer rendered", function(assert) {
 
-			equal(window.mPage1EventLog.beforeFirstShow, 1, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
-			equal(window.mPage1EventLog.beforeShow, 1, "Lifecycle event invocation count page1 beforeShow should be correct");
-			equal(window.mPage1EventLog.afterShow, 1, "Lifecycle event invocation count page1 afterShow should be correct");
-			equal(window.mPage1EventLog.beforeHide, 0, "Lifecycle event invocation count page1 beforeHide should be correct");
-			equal(window.mPage1EventLog.afterHide, 0, "Lifecycle event invocation count page1 afterHide should be correct");
+			assert.equal(window.mPage1EventLog.beforeFirstShow, 1, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
+			assert.equal(window.mPage1EventLog.beforeShow, 1, "Lifecycle event invocation count page1 beforeShow should be correct");
+			assert.equal(window.mPage1EventLog.afterShow, 1, "Lifecycle event invocation count page1 afterShow should be correct");
+			assert.equal(window.mPage1EventLog.beforeHide, 0, "Lifecycle event invocation count page1 beforeHide should be correct");
+			assert.equal(window.mPage1EventLog.afterHide, 0, "Lifecycle event invocation count page1 afterHide should be correct");
 
-			equal(window.mPage2EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
-			equal(window.mPage2EventLog.beforeShow, 0, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.afterShow, 0, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
+			assert.equal(window.mPage2EventLog.beforeShow, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.afterShow, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
 
-			equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
-			equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
-			equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
-			equal(window.mPage3EventLog.beforeHide, 0, "Lifecycle event invocation count page3 beforeHide should be correct");
-			equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
+			assert.equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
+			assert.equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
+			assert.equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
+			assert.equal(window.mPage3EventLog.beforeHide, 0, "Lifecycle event invocation count page3 beforeHide should be correct");
+			assert.equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
 
 			ok(jQuery.sap.domById("myNC"), "NavContainer should be rendered");
 			ok(!jQuery.sap.domById("nc2"), "NavContainer 2 should not be rendered");
 			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
-			equal(nc.getCurrentPage().getId(), "page1", "getCurrentPage should return Page1");
-			equal(nc._pageStack.length, 1, "the page stack size should be 1");
+			assert.equal(nc.getCurrentPage().getId(), "page1", "getCurrentPage should return Page1");
+			assert.equal(nc._pageStack.length, 1, "the page stack size should be 1");
 
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
@@ -236,7 +236,7 @@
 			var done = assert.async();
 			assert.expect(64); // including the "navigate" event
 
-			equal(nc.currentPageIsTopPage(), true, "current page should be considered the top page");
+			assert.equal(nc.currentPageIsTopPage(), true, "current page should be considered the top page");
 
 			resetEventLog(window.mPage1EventLog);
 			resetEventLog(window.mPage2EventLog);
@@ -255,63 +255,63 @@
 
 			nc.to("page2", {transferData:"test123"});
 
-			equal(nc.currentPageIsTopPage(), false, "current page should not be considered the top page");
+			assert.equal(nc.currentPageIsTopPage(), false, "current page should not be considered the top page");
 
 			ok(nc._bNavigating === true, "NavContainer should be navigating");
 
-			equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
-			equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
-			equal(window.mPage1EventLog.afterShow, 0, "Lifecycle event invocation count page1 afterShow should be correct");
-			equal(window.mPage1EventLog.beforeHide, 1, "Lifecycle event invocation count page1 beforeHide should be correct");
-			equal(window.mPage1EventLog.afterHide, 0, "Lifecycle event invocation count page1 afterHide should be correct");
+			assert.equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
+			assert.equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
+			assert.equal(window.mPage1EventLog.afterShow, 0, "Lifecycle event invocation count page1 afterShow should be correct");
+			assert.equal(window.mPage1EventLog.beforeHide, 1, "Lifecycle event invocation count page1 beforeHide should be correct");
+			assert.equal(window.mPage1EventLog.afterHide, 0, "Lifecycle event invocation count page1 afterHide should be correct");
 
-			equal(window.mPage2EventLog.beforeFirstShow, 1, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
-			equal(window.mPage2EventLog.beforeShow, 1, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.afterShow, 0, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.beforeFirstShow, 1, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
+			assert.equal(window.mPage2EventLog.beforeShow, 1, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.afterShow, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
 
-			equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
-			equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
-			equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
-			equal(window.mPage3EventLog.beforeHide, 0, "Lifecycle event invocation count page3 beforeHide should be correct");
-			equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
+			assert.equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
+			assert.equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
+			assert.equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
+			assert.equal(window.mPage3EventLog.beforeHide, 0, "Lifecycle event invocation count page3 beforeHide should be correct");
+			assert.equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
 
-			equal(window.mPage1EventLog.data, null, "Data given to page1 should be correct");
-			equal(window.mPage1EventLog.backData, null, "BackData given to page1 should be correct");
-			equal(window.mPage2EventLog.data.transferData, "test123", "Data given to page2 should be correct");
+			assert.equal(window.mPage1EventLog.data, null, "Data given to page1 should be correct");
+			assert.equal(window.mPage1EventLog.backData, null, "BackData given to page1 should be correct");
+			assert.equal(window.mPage2EventLog.data.transferData, "test123", "Data given to page2 should be correct");
 			ok(!!window.mPage2EventLog.backData, "BackData given to page2 should be correct");
-			equal(window.mPage3EventLog.data, null, "Data given to page3 should be correct");
-			equal(window.mPage3EventLog.backData, null, "BackData given to page3 should be correct");
+			assert.equal(window.mPage3EventLog.data, null, "Data given to page3 should be correct");
+			assert.equal(window.mPage3EventLog.backData, null, "BackData given to page3 should be correct");
 
 			setTimeout(function() {
 				ok(jQuery.sap.domById("page1"), "Page 1 should still be in DOM");
 				ok(jQuery.sap.domById("page2"), "Page 2 should now be rendered");
-				equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
-				equal(nc._pageStack.length, 2, "the page stack size should be 2");
+				assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
+				assert.equal(nc._pageStack.length, 2, "the page stack size should be 2");
 
 				setTimeout(function() {
 
-					equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
-					equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
-					equal(window.mPage1EventLog.afterShow, 0, "Lifecycle event invocation count page1 afterShow should be correct");
-					equal(window.mPage1EventLog.beforeHide, 1, "Lifecycle event invocation count page1 beforeHide should be correct");
-					equal(window.mPage1EventLog.afterHide, 1, "Lifecycle event invocation count page1 afterHide should be correct");
+					assert.equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
+					assert.equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
+					assert.equal(window.mPage1EventLog.afterShow, 0, "Lifecycle event invocation count page1 afterShow should be correct");
+					assert.equal(window.mPage1EventLog.beforeHide, 1, "Lifecycle event invocation count page1 beforeHide should be correct");
+					assert.equal(window.mPage1EventLog.afterHide, 1, "Lifecycle event invocation count page1 afterHide should be correct");
 
-					equal(window.mPage2EventLog.beforeFirstShow, 1, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
-					equal(window.mPage2EventLog.beforeShow, 1, "Lifecycle event invocation count page2 should be correct");
-					equal(window.mPage2EventLog.afterShow, 1, "Lifecycle event invocation count page2 should be correct");
-					equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
-					equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
+					assert.equal(window.mPage2EventLog.beforeFirstShow, 1, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
+					assert.equal(window.mPage2EventLog.beforeShow, 1, "Lifecycle event invocation count page2 should be correct");
+					assert.equal(window.mPage2EventLog.afterShow, 1, "Lifecycle event invocation count page2 should be correct");
+					assert.equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
+					assert.equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
 
-					equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
-					equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
-					equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
-					equal(window.mPage3EventLog.beforeHide, 0, "Lifecycle event invocation count page3 beforeHide should be correct");
-					equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
+					assert.equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
+					assert.equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
+					assert.equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
+					assert.equal(window.mPage3EventLog.beforeHide, 0, "Lifecycle event invocation count page3 beforeHide should be correct");
+					assert.equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
 
-					equal(jQuery("#page1").css("display"), "none", "Page 1 should be hidden");
-					equal(nc._aQueue.length, 0, "transition queue length should be 0");
+					assert.equal(jQuery("#page1").css("display"), "none", "Page 1 should be hidden");
+					assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 					ok(nc._bNavigating === false, "NavContainer should not be navigating");
 					ok(!page1.$().hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
 					ok(!page2.$().hasClass("sapMNavItemSliding"), "Page 2 classes should be cleaned up");
@@ -339,23 +339,23 @@
 
 			nc.to("page3", "fade");
 
-			equal(nc.currentPageIsTopPage(), false, "current page should not be considered the top page");
+			assert.equal(nc.currentPageIsTopPage(), false, "current page should not be considered the top page");
 
 			// more data checks
-			equal(window.mPage1EventLog.data, null, "Data given to page1 should be correct");
-			equal(window.mPage1EventLog.backData, null, "BackData given to page1 should be correct");
+			assert.equal(window.mPage1EventLog.data, null, "Data given to page1 should be correct");
+			assert.equal(window.mPage1EventLog.backData, null, "BackData given to page1 should be correct");
 			ok(!!window.mPage3EventLog.data, "Data given to page3 should be correct");
 			ok(!!window.mPage3EventLog.backData, "BackData given to page3 should be correct");
 
 			setTimeout(function() {
 				ok(jQuery.sap.domById("page2"), "Page 2 should still be in DOM");
 				ok(jQuery.sap.domById("page3"), "Page 3 should now be rendered");
-				equal(nc.getCurrentPage().getId(), "page3", "getCurrentPage should return Page 3");
-				equal(nc._pageStack.length, 3, "the page stack size should be 3");
+				assert.equal(nc.getCurrentPage().getId(), "page3", "getCurrentPage should return Page 3");
+				assert.equal(nc._pageStack.length, 3, "the page stack size should be 3");
 
 				setTimeout(function(){
-					equal(jQuery("#page2").css("display"), "none", "Page 2 should be hidden");
-					equal(nc._aQueue.length, 0, "transition queue length should be 0");
+					assert.equal(jQuery("#page2").css("display"), "none", "Page 2 should be hidden");
+					assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 
 					ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
 					ok(!page2.$().hasClass("sapMNavItemFading"), "Page 2 classes should be cleaned up");
@@ -387,58 +387,58 @@
 			nc.back({transferData:"test456"});
 			ok(nc._bNavigating === true, "NavContainer should be navigating");
 
-			equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
-			equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
-			equal(window.mPage1EventLog.afterShow, 0, "Lifecycle event invocation count page1 afterShow should be correct");
-			equal(window.mPage1EventLog.beforeHide, 0, "Lifecycle event invocation count page1 beforeHide should be correct");
-			equal(window.mPage1EventLog.afterHide, 0, "Lifecycle event invocation count page1 afterHide should be correct");
+			assert.equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
+			assert.equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
+			assert.equal(window.mPage1EventLog.afterShow, 0, "Lifecycle event invocation count page1 afterShow should be correct");
+			assert.equal(window.mPage1EventLog.beforeHide, 0, "Lifecycle event invocation count page1 beforeHide should be correct");
+			assert.equal(window.mPage1EventLog.afterHide, 0, "Lifecycle event invocation count page1 afterHide should be correct");
 
-			equal(window.mPage2EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
-			equal(window.mPage2EventLog.beforeShow, 1, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.afterShow, 0, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
-			equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
+			assert.equal(window.mPage2EventLog.beforeShow, 1, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.afterShow, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
+			assert.equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
 
-			equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
-			equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
-			equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
-			equal(window.mPage3EventLog.beforeHide, 1, "Lifecycle event invocation count page3 beforeHide should be correct");
-			equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
+			assert.equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
+			assert.equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
+			assert.equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
+			assert.equal(window.mPage3EventLog.beforeHide, 1, "Lifecycle event invocation count page3 beforeHide should be correct");
+			assert.equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
 
-			equal(window.mPage1EventLog.data, null, "Data given to page1 should be correct");
-			equal(window.mPage1EventLog.backData, null, "BackData given to page1 should be correct");
-			equal(window.mPage2EventLog.data.transferData, "test123", "Data given to page2 should be correct");
-			equal(window.mPage2EventLog.backData.transferData, "test456", "BackData given to page2 should be correct");
-			equal(window.mPage3EventLog.data, null, "Data given to page3 should be correct");
-			equal(window.mPage3EventLog.backData, null, "BackData given to page3 should be correct");
+			assert.equal(window.mPage1EventLog.data, null, "Data given to page1 should be correct");
+			assert.equal(window.mPage1EventLog.backData, null, "BackData given to page1 should be correct");
+			assert.equal(window.mPage2EventLog.data.transferData, "test123", "Data given to page2 should be correct");
+			assert.equal(window.mPage2EventLog.backData.transferData, "test456", "BackData given to page2 should be correct");
+			assert.equal(window.mPage3EventLog.data, null, "Data given to page3 should be correct");
+			assert.equal(window.mPage3EventLog.backData, null, "BackData given to page3 should be correct");
 
 			setTimeout(function() {
 				ok(jQuery.sap.domById("page3"), "Page 3 should still be in DOM");
 				ok(jQuery.sap.domById("page2"), "Page 2 should now be visible");
-				equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
-				equal(nc._pageStack.length, 2, "getStackLevel should return 2");
+				assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
+				assert.equal(nc._pageStack.length, 2, "getStackLevel should return 2");
 
 				setTimeout(function() {
-					equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
-					equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
-					equal(window.mPage1EventLog.afterShow, 0, "Lifecycle event invocation count page1 afterShow should be correct");
-					equal(window.mPage1EventLog.beforeHide, 0, "Lifecycle event invocation count page1 beforeHide should be correct");
-					equal(window.mPage1EventLog.afterHide, 0, "Lifecycle event invocation count page1 afterHide should be correct");
+					assert.equal(window.mPage1EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
+					assert.equal(window.mPage1EventLog.beforeShow, 0, "Lifecycle event invocation count page1 beforeShow should be correct");
+					assert.equal(window.mPage1EventLog.afterShow, 0, "Lifecycle event invocation count page1 afterShow should be correct");
+					assert.equal(window.mPage1EventLog.beforeHide, 0, "Lifecycle event invocation count page1 beforeHide should be correct");
+					assert.equal(window.mPage1EventLog.afterHide, 0, "Lifecycle event invocation count page1 afterHide should be correct");
 
-					equal(window.mPage2EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
-					equal(window.mPage2EventLog.beforeShow, 1, "Lifecycle event invocation count page2 should be correct");
-					equal(window.mPage2EventLog.afterShow, 1, "Lifecycle event invocation count page2 should be correct");
-					equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
-					equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
+					assert.equal(window.mPage2EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page2 beforeFirstShow should be correct");
+					assert.equal(window.mPage2EventLog.beforeShow, 1, "Lifecycle event invocation count page2 should be correct");
+					assert.equal(window.mPage2EventLog.afterShow, 1, "Lifecycle event invocation count page2 should be correct");
+					assert.equal(window.mPage2EventLog.beforeHide, 0, "Lifecycle event invocation count page2 should be correct");
+					assert.equal(window.mPage2EventLog.afterHide, 0, "Lifecycle event invocation count page2 should be correct");
 
-					equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
-					equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
-					equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
-					equal(window.mPage3EventLog.beforeHide, 1, "Lifecycle event invocation count page3 beforeHide should be correct");
-					equal(window.mPage3EventLog.afterHide, 1, "Lifecycle event invocation count page3 afterHide should be correct");
+					assert.equal(window.mPage3EventLog.beforeFirstShow, 0, "Lifecycle event invocation count page3 beforeFirstShow should be correct");
+					assert.equal(window.mPage3EventLog.beforeShow, 0, "Lifecycle event invocation count page3 beforeShow should be correct");
+					assert.equal(window.mPage3EventLog.afterShow, 0, "Lifecycle event invocation count page3 afterShow should be correct");
+					assert.equal(window.mPage3EventLog.beforeHide, 1, "Lifecycle event invocation count page3 beforeHide should be correct");
+					assert.equal(window.mPage3EventLog.afterHide, 1, "Lifecycle event invocation count page3 afterHide should be correct");
 
-					equal(jQuery("#page3").css("display"), "none", "Page 3 should be hidden");
-					equal(nc._aQueue.length, 0, "transition queue length should be 0");
+					assert.equal(jQuery("#page3").css("display"), "none", "Page 3 should be hidden");
+					assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 					ok(nc._bNavigating === false, "NavContainer should not be navigating");
 					ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
 					ok(!page2.$().hasClass("sapMNavItemFading"), "Page 2 classes should be cleaned up");
@@ -450,55 +450,55 @@
 		QUnit.test("Custom Transition Definition (on instance)", function(assert) {
 			assert.expect(4);
 
-			equal(!!sap.m.NavContainer.transitions["c_testTrans"], false, "custom animation should not be defined yet");
+			assert.equal(!!sap.m.NavContainer.transitions["c_testTrans"], false, "custom animation should not be defined yet");
 
 			var value = nc.addCustomTransition(
 					"c_testTrans",
 					/* to */ function(oFromPage, oToPage, fCallback, oCustomData) {
 						oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class which has been added by the NavContainer before the transition was called
-						equal(oCustomData.test, "testParametersTo", "oCustomData should have the correct value");
+						assert.equal(oCustomData.test, "testParametersTo", "oCustomData should have the correct value");
 						fCallback();
 					},
 					/* back */ function(oFromPage, oToPage, fCallback, oCustomData) {
 						oToPage.removeStyleClass("sapMNavItemHidden", true);
 						oFromPage.addStyleClass("sapMNavItemHidden", true); // instantly hide the previous page
-						equal(oCustomData.test, "testParametersBack", "oCustomData should have the correct value");
+						assert.equal(oCustomData.test, "testParametersBack", "oCustomData should have the correct value");
 						fCallback();
 					}
 			);
 
-			equal(!!sap.m.NavContainer.transitions["c_testTrans"], true, "custom animation should be defined now");
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.equal(!!sap.m.NavContainer.transitions["c_testTrans"], true, "custom animation should be defined now");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 		QUnit.test("Custom Transition Definition (static)", function(assert) {
 			assert.expect(4);
 
-			equal(!!sap.m.NavContainer.transitions["c_testTrans2"], false, "custom animation should not be defined yet");
+			assert.equal(!!sap.m.NavContainer.transitions["c_testTrans2"], false, "custom animation should not be defined yet");
 
 			var value = sap.m.NavContainer.addCustomTransition(
 					"c_testTrans2",
 					/* to */ function(oFromPage, oToPage, fCallback, oCustomData) {
 						oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class which has been added by the NavContainer before the transition was called
-						equal(oCustomData.test, "testParametersTo2", "oCustomData should have the correct value");
+						assert.equal(oCustomData.test, "testParametersTo2", "oCustomData should have the correct value");
 						fCallback();
 					},
 					/* back */ function(oFromPage, oToPage, fCallback, oCustomData) {
 						oToPage.removeStyleClass("sapMNavItemHidden", true);
 						oFromPage.addStyleClass("sapMNavItemHidden", true); // instantly hide the previous page
-						equal(oCustomData.test, "testParametersBack2", "oCustomData should have the correct value");
+						assert.equal(oCustomData.test, "testParametersBack2", "oCustomData should have the correct value");
 						fCallback();
 					}
 			);
 
-			equal(!!sap.m.NavContainer.transitions["c_testTrans2"], true, "custom animation should be defined now");
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.equal(!!sap.m.NavContainer.transitions["c_testTrans2"], true, "custom animation should be defined now");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 		QUnit.test("Custom Transition To", function(assert) {
-			assert.expect(20); // including the "navigate" event
+			assert.expect(19); // including the "navigate" event
 
 			window.expectedNav = {
 					fromId: "page2",
@@ -512,13 +512,13 @@
 			};
 
 			nc.to("page3", "c_testTrans", {myTestParam:"testDataTo"}, {test:"testParametersTo"});
-			equal(nc.getCurrentPage().getId(), "page3", "getCurrentPage should return Page 3");
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.equal(nc.getCurrentPage().getId(), "page3", "getCurrentPage should return Page 3");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 		QUnit.test("Custom Transition Back", function(assert) {
-			assert.expect(20); // including the "navigate" event
+			assert.expect(19); // including the "navigate" event
 
 			window.expectedNav = {
 					fromId: "page3",
@@ -532,9 +532,9 @@
 			};
 
 			nc.back({myTestParam:"testDataBack"}, {test:"testParametersBack"});
-			equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
-			ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
 
@@ -553,7 +553,7 @@
 			};
 
 			nc.to("page3", "show");
-			equal(nc.getCurrentPage().getId(), "page3", "getCurrentPage should return Page 3");
+			assert.equal(nc.getCurrentPage().getId(), "page3", "getCurrentPage should return Page 3");
 
 			window.expectedNav = {
 					fromId: "page3",
@@ -567,9 +567,9 @@
 			};
 
 			nc.backToTop();
-			equal(nc.getCurrentPage().getId(), "page1", "getCurrentPage should return Page 1");
-			equal(nc._pageStack.length, 1, "the NavContainer page stack should have one page");
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.equal(nc.getCurrentPage().getId(), "page1", "getCurrentPage should return Page 1");
+			assert.equal(nc._pageStack.length, 1, "the NavContainer page stack should have one page");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 			window.expectedNav = {
@@ -584,11 +584,11 @@
 			};
 
 			nc.to("page2", "show");
-			equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
+			assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
 
 			nc.detachNavigate(handleNavEvent);
 			nc.detachAfterNavigate(handleNavEvent);
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
@@ -599,8 +599,8 @@
 			sap.ui.getCore().applyChanges();
 
 			var ncDom = jQuery.sap.domById("myNC")
-			equal(ncDom.offsetWidth, "100", "width should be 100px");
-			equal(ncDom.offsetHeight, "100", "height should be 100px");
+			assert.equal(ncDom.offsetWidth, "100", "width should be 100px");
+			assert.equal(ncDom.offsetHeight, "100", "height should be 100px");
 
 			nc.setWidth("100%");
 			nc.setHeight("100%");
@@ -608,7 +608,7 @@
 
 			ncDom = jQuery.sap.domById("myNC");
 			var ww = document.documentElement.clientWidth || window.innerWidth; // depending on the browser
-			equal(ncDom.offsetWidth, ww, "width should be the complete window width");
+			assert.equal(ncDom.offsetWidth, ww, "width should be the complete window width");
 			ok((ncDom.offsetHeight === window.innerHeight || ncDom.offsetHeight === document.documentElement.clientHeight),
 					"height should be the complete window height");
 		});
@@ -617,7 +617,7 @@
 		QUnit.test("backToPage", function(assert) {
 			assert.expect(15);
 
-			equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
+			assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
 
 			nc.addPage(new sap.m.Page("page4", {
 				title: "Page 4"
@@ -628,13 +628,13 @@
 			}));
 
 			nc.to("page4", "show");
-			equal(nc.getCurrentPage().getId(), "page4", "getCurrentPage should return Page 4");
+			assert.equal(nc.getCurrentPage().getId(), "page4", "getCurrentPage should return Page 4");
 
 			nc.to("page5", "show");
-			equal(nc.getCurrentPage().getId(), "page5", "getCurrentPage should return Page 5");
+			assert.equal(nc.getCurrentPage().getId(), "page5", "getCurrentPage should return Page 5");
 
 			nc.to("page6", "show");
-			equal(nc.getCurrentPage().getId(), "page6", "getCurrentPage should return Page 6");
+			assert.equal(nc.getCurrentPage().getId(), "page6", "getCurrentPage should return Page 6");
 
 			window.expectedNav = {
 					fromId: "page6",
@@ -649,11 +649,11 @@
 			nc.attachNavigate(handleNavEvent);
 
 			nc.backToPage("page2", "show", {myData:"backToPageData"});
-			equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
+			assert.equal(nc.getCurrentPage().getId(), "page2", "getCurrentPage should return Page 2");
 
 			nc.detachNavigate(handleNavEvent);
 
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
@@ -667,20 +667,20 @@
 				realPageRender.apply(sap.m.PageRenderer, arguments);
 			};
 
-			equal(pageRenderCounter, 0, "no rendering should have happened yet");
+			assert.equal(pageRenderCounter, 0, "no rendering should have happened yet");
 
 			sap.ui.getCore().getControl("page2").rerender();
-			equal(pageRenderCounter, 1, "one page rendering should have happened");
+			assert.equal(pageRenderCounter, 1, "one page rendering should have happened");
 
 			sap.ui.getCore().getControl("page2").addContent(new sap.m.Button({text:"Button p2"}));
 			sap.ui.getCore().applyChanges();
-			equal(pageRenderCounter, 2, "two page renderings should have happened");
+			assert.equal(pageRenderCounter, 2, "two page renderings should have happened");
 
 			sap.ui.getCore().getControl("page3").addContent(new sap.m.Button({text:"Button p3"})); // invisible page - should cause NO re-rendering!
 			sap.ui.getCore().applyChanges();
-			equal(pageRenderCounter, 2, "still, only two page renderings should have happened");
+			assert.equal(pageRenderCounter, 2, "still, only two page renderings should have happened");
 
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
@@ -689,23 +689,23 @@
 			var done = assert.async();
 			assert.expect(8);
 
-			equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 			nc.to("page3");
 
 			setTimeout(function() {
-				equal(nc._aQueue.length, 0, "transition queue length should be 0 after navigation");
+				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0 after navigation");
 				ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
-				equal(pageRenderCounter, 3, "three page renderings should have happened");
+				assert.equal(pageRenderCounter, 3, "three page renderings should have happened");
 				nc.to("page2");
 
 				setTimeout(function() {
-					equal(pageRenderCounter, 3, "still, only three page renderings should have happened");
+					assert.equal(pageRenderCounter, 3, "still, only three page renderings should have happened");
 
 					sap.m.PageRenderer.render = realPageRender; // restore original renderer
-					equal(nc._aQueue.length, 0, "transition queue length should be 0");
+					assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 					ok(nc._bNavigating === false, "NavContainer should not be navigating");
 					done();
 				}, 1600);
@@ -716,7 +716,7 @@
 		QUnit.test("Flip transition", function(assert) {
 			var done = assert.async();
 			if (jQuery.support.cssTransitions) {
-				equal(nc._aQueue.length, 0, "transition queue length should be 0");
+				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 				ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 				nc.addPage(new sap.m.Page("pageTransFlip", {
@@ -725,12 +725,12 @@
 
 				var $flipPage = jQuery("#pageTransFlip");
 				var $page2 = jQuery("#page2");
-				equal($flipPage.length, 0, "Flip page should not be rendered yet");
+				assert.equal($flipPage.length, 0, "Flip page should not be rendered yet");
 
 				nc.to("pageTransFlip", "flip");
 
 				$flipPage = jQuery("#pageTransFlip");
-				equal($flipPage.length, 1, "Flip page should be rendered now");
+				assert.equal($flipPage.length, 1, "Flip page should be rendered now");
 
 				setTimeout(function() {
 					ok($flipPage.hasClass("sapMNavItemFlipNext"), "Flip page should be prepared for flipping now");
@@ -761,7 +761,7 @@
 									ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 classes should be cleaned up");
 									ok(!$page2.hasClass("sapMNavItemFlipNext"), "Page 2 classes should be cleaned up");
 									ok(!$page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 classes should be cleaned up");
-									equal(nc._aQueue.length, 0, "transition queue length should be 0");
+									assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 									ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 									done();
@@ -922,7 +922,7 @@
 
 						if (sPageId === "firstPage") {
 							var oButtonPage1FocusDom = sap.ui.getCore().byId("btn1_1").getFocusDomRef();
-							equal(oButtonPage1FocusDom, document.activeElement, "button <To Page 2> on page 1 should have the focus");
+							assert.equal(oButtonPage1FocusDom, document.activeElement, "button <To Page 2> on page 1 should have the focus");
 
 							//cleanup
 							oNavContainer.destroy();
@@ -930,7 +930,7 @@
 						}
 						if (sPageId === "secondPage") {
 							var oButtonPage2FocusDom = sap.ui.getCore().byId("secondPage-navButton").getFocusDomRef();
-							equal(oButtonPage2FocusDom, document.activeElement, "nav button in the  header on page 2 should have the focus");
+							assert.equal(oButtonPage2FocusDom, document.activeElement, "nav button in the  header on page 2 should have the focus");
 						}
 				};
 
@@ -940,7 +940,7 @@
 
 			// Initial focus check on first page
 			var oButtonPage1FocusDom = sap.ui.getCore().byId("btn1_1").getFocusDomRef();
-			equal(oButtonPage1FocusDom, document.activeElement, "button <To Page 2>  on page 1 should have the focus");
+			assert.equal(oButtonPage1FocusDom, document.activeElement, "button <To Page 2>  on page 1 should have the focus");
 
 			//Act
 			oNavContainer.attachAfterNavigate(afterNavigate);

@@ -149,7 +149,7 @@
 					success : callback
 				});
 
-		        equal(1, this.requests.length, "Right number of requests");
+		        assert.equal(1, this.requests.length, "Right number of requests");
 
 		        this.requests[0].respond(200, { "Content-Type": "application/json" },
 		                                 '[{ "foo": "bar", "bar" : "foo" }]');

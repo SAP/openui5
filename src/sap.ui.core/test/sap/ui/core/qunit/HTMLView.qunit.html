@@ -57,8 +57,8 @@ sap.ui.core.mvc.Controller</title>
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		equal(jQuery("#htmlRoot").html(), "THIS IS A TEST" , "HTML at root level rendered");
-		equal(jQuery("#htmlNested").html(), "NESTED WORKS AS WELL",   "HTML at nested level rendered");
+		assert.equal(jQuery("#htmlRoot").html(), "THIS IS A TEST" , "HTML at root level rendered");
+		assert.equal(jQuery("#htmlNested").html(), "NESTED WORKS AS WELL",   "HTML at nested level rendered");
 		ok(jQuery("#htmlEmbeddedTable")[0], "HTML at embedded level rendered");
 		oView.destroy();
 	});
@@ -68,9 +68,9 @@ sap.ui.core.mvc.Controller</title>
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		var oLabel = oView.byId("MyLabel");
-	 	equal(oLabel.getLabelFor(), oView.byId("message").getId(), "Assocation id is set right");
+	 	assert.equal(oLabel.getLabelFor(), oView.byId("message").getId(), "Assocation id is set right");
 	 	var oNavigationBar = oView.byId("MyNavigationBar");
-	 	equal(oNavigationBar.getAssociatedItems().length, 3, "Number of associated controls is right");
+	 	assert.equal(oNavigationBar.getAssociatedItems().length, 3, "Number of associated controls is right");
 	 	assert.deepEqual(oNavigationBar.getAssociatedItems(), [oView.byId("navitem1").getId(), oView.byId("navitem2").getId(), oView.byId("navitem3").getId()],"Number of associated controls is right", "Assocation IDs are set right");
 		oView.destroy();
 	});
@@ -79,8 +79,8 @@ sap.ui.core.mvc.Controller</title>
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		equal(oView.byId("Button2").data("myData1"), "myvalue1", "Custom Data set properly");
-		equal(oView.byId("Button2").data("myData2"), "formatted-value", "Custom Data Formatter works properly");
+		assert.equal(oView.byId("Button2").data("myData1"), "myvalue1", "Custom Data set properly");
+		assert.equal(oView.byId("Button2").data("myData2"), "formatted-value", "Custom Data Formatter works properly");
 		oView.destroy();
 	});
 
@@ -131,37 +131,37 @@ sap.ui.core.mvc.Controller</title>
 
 		var oViewWithBindings1 = sap.ui.htmlview({viewContent:htmlWithBindings});
 		oViewWithBindings1.setModel(oModel1);
-		equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
-		equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithBindings2 = sap.ui.htmlview({viewContent:htmlWithBindings});
 		oViewWithBindings2.setModel(oModel2);
-		equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
-		equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithNamedBindings = sap.ui.htmlview({viewContent:htmlWithNamedBindings});
 		oViewWithNamedBindings.setModel(oModel1, "model1");
 		oViewWithNamedBindings.setModel(oModel2, "model2");
-		equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
-		equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithElementBinding = sap.ui.htmlview({viewContent:htmlWithElementBinding});
 		oViewWithBindings1.setModel(oModel1);
-		equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
-		equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
-		equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithoutBindings = sap.ui.htmlview({viewContent:htmlWithoutBindings});
 		oViewWithoutBindings.setModel(oModel1);
 		oViewWithoutBindings.setModel(oModel1, "model1");
 		oViewWithoutBindings.setModel(oModel2, "model2");
-		equal(oViewWithoutBindings.byId("btn1").getText(), "The following set is empty: {}", "Check 'text' property of button 'btn1'");
-		equal(oViewWithoutBindings.byId("btn2").getText(), "{} is an empty set", "Check 'text' property of button 'btn2'");
-		equal(oViewWithoutBindings.byId("btn3").getText(), "The following array is empty: []", "Check 'text' property of button 'btn3'");
-		equal(oViewWithoutBindings.byId("btn4").getText(), "[] is an empty array", "Check 'text' property of button 'btn4'");
+		assert.equal(oViewWithoutBindings.byId("btn1").getText(), "The following set is empty: {}", "Check 'text' property of button 'btn1'");
+		assert.equal(oViewWithoutBindings.byId("btn2").getText(), "{} is an empty set", "Check 'text' property of button 'btn2'");
+		assert.equal(oViewWithoutBindings.byId("btn3").getText(), "The following array is empty: []", "Check 'text' property of button 'btn3'");
+		assert.equal(oViewWithoutBindings.byId("btn4").getText(), "[] is an empty array", "Check 'text' property of button 'btn4'");
 	});
 
 

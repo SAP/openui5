@@ -29,9 +29,9 @@
 			// Act
 			core.applyChanges();
 			// Assert
-			equal(sut.$().attr('role'), 'option', 'option, option; equal success');
-			equal(sut.$().attr('aria-posinset'), 1, '1, 1; equal success');
-			equal(sut.$().attr('aria-setsize'), 2, '2, 2; equal success');
+			assert.equal(sut.$().attr('role'), 'option', 'option, option; equal success');
+			assert.equal(sut.$().attr('aria-posinset'), 1, '1, 1; equal success');
+			assert.equal(sut.$().attr('aria-setsize'), 2, '2, 2; equal success');
 			cnt.destroy();
 		});
 

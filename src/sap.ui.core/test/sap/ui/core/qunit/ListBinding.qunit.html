@@ -105,7 +105,7 @@
 		control.bindAggregation("items", "/teamMembers", new MyListItem({text:"{lastName}"}));
 
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -114,7 +114,7 @@
 		control.bindAggregation("items", "NamedModel>/teamMembers", new MyListItem({text:"{NamedModel>firstName}"}));
 
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -130,7 +130,7 @@
 		});
 
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -146,7 +146,7 @@
 		});
 
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -158,7 +158,7 @@
 		})
 
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -177,7 +177,7 @@
 		})
 
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -192,7 +192,7 @@
 		})
 		control.bindElement("/modelData");
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -207,7 +207,7 @@
 		})
 		control.bindElement("NamedModel>/modelData");
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -223,7 +223,7 @@
 		control.placeAt("content");
 
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
@@ -242,7 +242,7 @@
 		control.placeAt("content");
 
 		var items = control.getAggregation("items");
-		equal(items.length, testData.teamMembers.length, "number of list items");
+		assert.equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 

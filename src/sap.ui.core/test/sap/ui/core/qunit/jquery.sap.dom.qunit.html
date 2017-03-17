@@ -23,13 +23,13 @@
 
 		QUnit.test("domById", function(assert) {
 			ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
-			equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
+			assert.equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
 
 			//this is a test for the weird IE behavior of getElementById that looks case insensitive for name and id attributes
-			equal(jQuery.sap.domById('control5'), null, "jQuery.sap.domById('control5') should be null");
-			equal(jQuery.sap.domById('CoNtRoL5'), null, "jQuery.sap.domById('CoNtRoL5') should be null");
-			equal(jQuery.sap.domById('CoNtRoL1'), null, "jQuery.sap.domById('CoNtRoL1') should be null");
-			equal(jQuery.sap.domById('CONTROL1'), null, "jQuery.sap.domById('CONTROL1') should be null");
+			assert.equal(jQuery.sap.domById('control5'), null, "jQuery.sap.domById('control5') should be null");
+			assert.equal(jQuery.sap.domById('CoNtRoL5'), null, "jQuery.sap.domById('CoNtRoL5') should be null");
+			assert.equal(jQuery.sap.domById('CoNtRoL1'), null, "jQuery.sap.domById('CoNtRoL1') should be null");
+			assert.equal(jQuery.sap.domById('CONTROL1'), null, "jQuery.sap.domById('CONTROL1') should be null");
 		});
 
 		QUnit.test("byId - escaping", function(assert) {
@@ -121,7 +121,7 @@
 
 		QUnit.test("SetGetCursorPos", function (assert) {
 			jQuery('#textinput').cursorPos(4);
-			equal(jQuery('#textinput').cursorPos(), 4, "wrong cursor position after setting and getting");
+			assert.equal(jQuery('#textinput').cursorPos(), 4, "wrong cursor position after setting and getting");
 		});
 
 		QUnit.test("SelectText", function(assert) {
@@ -130,34 +130,34 @@
 				jQuery('#testsel').selectText(2,5);
 				var start = jQuery('#testsel').get(0).selectionStart;
 				var end = jQuery('#testsel').get(0).selectionEnd;
-				equal(start, 2);
-				equal(end, 5);
+				assert.equal(start, 2);
+				assert.equal(end, 5);
 
 				jQuery('#testsel').selectText(-2,50);
 				var start = jQuery('#testsel').get(0).selectionStart;
 				var end = jQuery('#testsel').get(0).selectionEnd;
-				equal(start, 0);
-				equal(end, jQuery('#testsel').get(0).value.length);
+				assert.equal(start, 0);
+				assert.equal(end, jQuery('#testsel').get(0).value.length);
 
 				jQuery('#testsel').selectText(2, null);
 				var start = jQuery('#testsel').get(0).selectionStart;
 				var end = jQuery('#testsel').get(0).selectionEnd;
-				equal(start, 0);
-				equal(end, 0);
+				assert.equal(start, 0);
+				assert.equal(end, 0);
 			} else {
 				if (document.selection.createRange) {	// Internet Explorer
 
 					jQuery('#testsel').selectText(2,5);
 					seltext = document.selection.createRange().text;
-					equal(seltext, "lec");
+					assert.equal(seltext, "lec");
 
 					jQuery('#testsel').selectText(-2,50);
 					seltext = document.selection.createRange().text;
-					equal(seltext, "Selection Test");
+					assert.equal(seltext, "Selection Test");
 
 					jQuery('#testsel').selectText(2,null);
 					seltext = document.selection.createRange().text;
-					equal(seltext, "");
+					assert.equal(seltext, "");
 				}
 			}
 		});
@@ -299,10 +299,10 @@
 
 		QUnit.test("Rect", function (assert) {
 			var oRect = jQuery('#PositionedSpan').rect();
-			equal(oRect.left, 10,"jQuery('#PositionedSpan').rect() left is 10");
-			equal(oRect.top, 10, "jQuery('#PositionedSpan').rect() top is 10");
-			equal(oRect.width, 200, "jQuery('#PositionedSpan').rect() width is 200");
-			equal(oRect.height, 100, "jQuery('#PositionedSpan').rect() height is 100");
+			assert.equal(oRect.left, 10,"jQuery('#PositionedSpan').rect() left is 10");
+			assert.equal(oRect.top, 10, "jQuery('#PositionedSpan').rect() top is 10");
+			assert.equal(oRect.width, 200, "jQuery('#PositionedSpan').rect() width is 200");
+			assert.equal(oRect.height, 100, "jQuery('#PositionedSpan').rect() height is 100");
 		});
 
 		QUnit.test("HasTabIndex", function (assert) {
@@ -355,7 +355,7 @@
 			var oParentWithAttribute = jQuery(oDomRef).parentByAttribute("data-sap-ui-test");
 			notEqual(oParentWithAttribute, null, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test') is null)");
 
-			equal(oParentWithAttribute.getAttribute('data-sap-ui-test'), "true", "jQuery(oDomRef).parentByAttribute('data-sap-ui-test').getAttribute('data-sap-ui-test') should be 'true'");
+			assert.equal(oParentWithAttribute.getAttribute('data-sap-ui-test'), "true", "jQuery(oDomRef).parentByAttribute('data-sap-ui-test').getAttribute('data-sap-ui-test') should be 'true'");
 
 			var oParentWithAttributeFalse = jQuery(oDomRef).parentByAttribute("data-sap-ui-test", "false");
 			ok(!oParentWithAttributeFalse, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'false') should be undefined");
@@ -371,7 +371,7 @@
 		QUnit.test("Focus", function (assert) { // actually tests jQuery itself
 			var oDomRef = jQuery.sap.domById('control3');
 			jQuery(oDomRef).focus();
-			equal(document.activeElement, oDomRef, "jQuery().focus() failed");
+			assert.equal(document.activeElement, oDomRef, "jQuery().focus() failed");
 		});
 
 		QUnit.test("ScrollbarSize", function (assert) {

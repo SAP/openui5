@@ -58,8 +58,8 @@
 		var done = assert.async();
 		fnChange = function() {
 			aContexts = oBinding.getContexts(0,10,100);
-			equal(aContexts.length,10, "we should have 10 contexts");
-			equal(oBinding.aKeys.length,110, "we should have 110 keys");
+			assert.equal(aContexts.length,10, "we should have 10 contexts");
+			assert.equal(oBinding.aKeys.length,110, "we should have 110 keys");
 			oBinding.oModel.detachRequestCompleted(fnChange);
 			done();
 		}
@@ -71,83 +71,83 @@
 		var done = assert.async();
 		fnChange = function() {
 			aContexts = oBinding.getContexts(120,10,100);
-			equal(aContexts.length,10, "we should have 10 contexts");
-			equal(oBinding.aKeys.length,210, "we should have 210 keys");
+			assert.equal(aContexts.length,10, "we should have 10 contexts");
+			assert.equal(oBinding.aKeys.length,210, "we should have 210 keys");
 			oBinding.oModel.detachRequestCompleted(fnChange);
 			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
 		var aContexts = oBinding.getContexts(0,10,100);
-		equal(oBinding.getContexts(10,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(20,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(30,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(40,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(50,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(60,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(70,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(80,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(90,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(100,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(10,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(20,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(30,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(40,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(50,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(60,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(70,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(80,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(90,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(100,10,100).length,10, "we should have 10 contexts");
 	});
 
 	QUnit.test("test threshold 100; get next page", function(assert){
 		var done = assert.async();
 		fnChange = function() {
 			aContexts = oBinding.getContexts(120,10,100);
-			equal(aContexts.length,10, "we should have 10 contexts");
-			equal(oBinding.aKeys.length,310, "we should have 310 keys");
+			assert.equal(aContexts.length,10, "we should have 10 contexts");
+			assert.equal(oBinding.aKeys.length,310, "we should have 310 keys");
 			oBinding.oModel.detachRequestCompleted(fnChange);
 			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
-		equal(oBinding.getContexts(110,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(120,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(110,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(120,10,100).length,10, "we should have 10 contexts");
 	});
 
 	QUnit.test("test threshold 100; jumpt to 751", function(assert){
 		var done = assert.async();
 		fnChange = function() {
 			aContexts = oBinding.getContexts(751,10,100);
-			equal(aContexts.length,10, "we should have 10 contexts");
-			equal(oBinding.aKeys.length,830, "we should have 830 keys");
-			equal(oBinding.sRangeParams,"$skip=651&$top=179", "we should read 179 entries");
+			assert.equal(aContexts.length,10, "we should have 10 contexts");
+			assert.equal(oBinding.aKeys.length,830, "we should have 830 keys");
+			assert.equal(oBinding.sRangeParams,"$skip=651&$top=179", "we should read 179 entries");
 			oBinding.oModel.detachRequestCompleted(fnChange);
 			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
-		equal(oBinding.getContexts(751,10,100).length,0, "contexts not loaded yet");
+		assert.equal(oBinding.getContexts(751,10,100).length,0, "contexts not loaded yet");
 	});
 
 	QUnit.test("test threshold 100; page/scroll back", function(assert){
 		var done = assert.async();
 		fnChange = function() {
-			equal(oBinding.sRangeParams,"$skip=551&$top=100", "we should read next 100 entries");
+			assert.equal(oBinding.sRangeParams,"$skip=551&$top=100", "we should read next 100 entries");
 			oBinding.oModel.detachRequestCompleted(fnChange);
 			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
-		equal(oBinding.getContexts(741,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(741,10,100).length,10, "we should have 10 contexts");
 	});
 	QUnit.test("test threshold 100; page/scroll back", function(assert){
 		var done = assert.async();
 		fnChange = function() {
-			equal(oBinding.sRangeParams,"$skip=451&$top=100", "we should read next 100 entries");
-			equal(oBinding.getContexts(541,10,100).length,10, "we should have 10 contexts");
+			assert.equal(oBinding.sRangeParams,"$skip=451&$top=100", "we should read next 100 entries");
+			assert.equal(oBinding.getContexts(541,10,100).length,10, "we should have 10 contexts");
 			oBinding.oModel.detachRequestCompleted(fnChange);
 			done();
 		}
 		oBinding.oModel.attachRequestCompleted(fnChange);
-		equal(oBinding.getContexts(731,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(721,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(711,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(701,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(691,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(681,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(671,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(661,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(651,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(641,10,100).length,10, "we should have 10 contexts");
-		equal(oBinding.getContexts(541,10,100).length,0, "not yet loaded");
+		assert.equal(oBinding.getContexts(731,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(721,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(711,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(701,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(691,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(681,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(671,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(661,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(651,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(641,10,100).length,10, "we should have 10 contexts");
+		assert.equal(oBinding.getContexts(541,10,100).length,0, "not yet loaded");
 	});
 	</script>
 

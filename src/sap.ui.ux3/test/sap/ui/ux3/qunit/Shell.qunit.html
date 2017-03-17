@@ -46,13 +46,13 @@
 			function worksetItemSelectedEventHandler(oEvent) {
 				ok(true, "This text means the event handler has been executed."); // this test tests by just being counted in the respective test
 				var id = oEvent.getParameter("id");
-				equal(id, "wi_so", "Workset item 'wi_so' should be selected");
+				assert.equal(id, "wi_so", "Workset item 'wi_so' should be selected");
 			}
 			function paneBarItemSelectedEventHandler(oEvent) {
 				ok(true, "This text means the event handler has been executed."); // this test tests by just being counted in the respective test
 				oShell.setPaneContent(new sap.ui.commons.Button("paneContent", {text:"Pane Content"}));
 				var id = oEvent.getParameter("id");
-				equal(id, "pb_people", "PaneBar item 'pb_people' should be selected");
+				assert.equal(id, "pb_people", "PaneBar item 'pb_people' should be selected");
 			}
 			function logoutEventHandler(oEvent) {
 				ok(true, "This text means the event handler has been executed."); // this test tests by just being counted in the respective test
@@ -60,12 +60,12 @@
 			function searchEventHandler(oEvent) {
 				ok(true, "This text means the event handler has been executed."); // this test tests by just being counted in the respective test
 				var text = oEvent.getParameter("text");
-				equal(text, "ABC", "Search text should be 'ABC'");
+				assert.equal(text, "ABC", "Search text should be 'ABC'");
 			}
 			function feedSubmitEventHandler(oEvent) {
 				ok(true, "This text means the event handler has been executed."); // this test tests by just being counted in the respective test
 				//var text = oEvent.getParameter("text");
-				//equal(text, "my feed entry", "Feed text should be 'my feed entry'");
+				//assert.equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 			}
 
 
@@ -139,7 +139,7 @@
 	    			if(oShell.getFullHeightContent()){
 	    				ok($content.height() > 0, "Height of Content when fullHeight==true");
 	    			}else{
-	    				equal($content.height(), 0, "Height of Content when fullHeight==false");
+	    				assert.equal($content.height(), 0, "Height of Content when fullHeight==false");
 	    			}
     			}
 
@@ -267,14 +267,14 @@
     	QUnit.test("Advanced Content", function(assert) {
     		var header = jQuery(".sapUiUx3ShellHeader")[0];
     		ok(header.innerHTML.indexOf("") > -1, "Application Title must be present");
-    		equal(jQuery.sap.byId(oShell.getId()+"-logoImg").attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
+    		assert.equal(jQuery.sap.byId(oShell.getId()+"-logoImg").attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
 
     		equals(jQuery(".sapUiUx3ShellHeader-logout").length, 1, "There should be a logout button");
     		equals(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
 
     		var $wi = jQuery.sap.byId(oShell.getId() + "-wsBar-list");
-    		equal($wi.length, 1, "WorksetItem holder should exist");
-    		equal($wi.children().length, 5, "There should be three WorksetItems plus dummy plus arrow");
+    		assert.equal($wi.length, 1, "WorksetItem holder should exist");
+    		assert.equal($wi.children().length, 5, "There should be three WorksetItems plus dummy plus arrow");
     		ok($wi.children(":eq(1)").hasClass("sapUiUx3NavBarItemSel"), "First workset item should be selected");
     		ok(!$wi.children(":eq(2)").hasClass("sapUiUx3NavBarItemSel"), "Second workset item should NOT be selected");
     		ok(!$wi.children(":eq(3)").hasClass("sapUiUx3NavBarItemSel"), "Third workset item should NOT be selected");
@@ -282,9 +282,9 @@
     		// if window is wide enough, there should be no overflow icons visible
     		if ($wi.width() > 250) {
     			var $wiofL = jQuery.sap.byId(oShell.getId() + "-wsBar-ofb");
-    			equal($wiofL.css("display"), "none", "Left workset item overflow button should be invisible");
+    			assert.equal($wiofL.css("display"), "none", "Left workset item overflow button should be invisible");
     			var $wiofR = jQuery.sap.byId(oShell.getId() + "-wsBar-off");
-    			equal($wiofR.css("display"), "none", "Right workset item overflow button should be invisible");
+    			assert.equal($wiofR.css("display"), "none", "Right workset item overflow button should be invisible");
     		}
 
     		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-searchTool");
@@ -330,7 +330,7 @@
 			assert.expect(1);
 			oShell.forceInvalidation();
 			setTimeout(function() {
-				equal(renderCount, 1, "ONE re-rendering should have happened after forced invalidation");
+				assert.equal(renderCount, 1, "ONE re-rendering should have happened after forced invalidation");
 				done();
 			}, 10);
 		});
@@ -341,7 +341,7 @@
 			oShell.addContent(new sap.ui.commons.Button("newContentBtn", {text:"new content"}))
 			setTimeout(function() {
 				ok(jQuery.sap.domById("newContentBtn"), "The new content should now be present in the page");
-				equal(renderCount, 1, "Still, only ONE re-rendering should have happened after adding more content");
+				assert.equal(renderCount, 1, "Still, only ONE re-rendering should have happened after adding more content");
 				done();
 			}, 10);
     	});
@@ -362,7 +362,7 @@
 				oShell.addContent(newLbx);
 				setTimeout(function() {
 					ok(jQuery.sap.domById("newContentLbx"), "The new content should now be present in the page");
-					equal(onAfterRenderingCount, 1, "ListBox.onAfterRendering should have been called once");
+					assert.equal(onAfterRenderingCount, 1, "ListBox.onAfterRendering should have been called once");
 					done();
 				}, 10);
     	});
@@ -378,14 +378,14 @@
 				setTimeout(function() {
 					// check whether popup is open
 					var $tp = jQuery.sap.byId("myShell-feederTool");
-					equal($tp.css("display"), "block", "Feeder tool popup should be visible now");
+					assert.equal($tp.css("display"), "block", "Feeder tool popup should be visible now");
 
 					var btn = $tp.find("button")[0];
 					// trigger a feed TODO: add text and check it
 					qutils.triggerMouseEvent(btn, "click", 1, 1, 1, 1);
 
 					setTimeout(function() {
-						equal($tp.css("display"), "none", "Feeder tool popup should be invisible now");
+						assert.equal($tp.css("display"), "none", "Feeder tool popup should be invisible now");
 						done();
 					}, 3000);
 				}, 300);
@@ -404,7 +404,7 @@
 					// check whether popup is open
 					var oTP = sap.ui.getCore().byId("myShell-searchTool");
 					var $tp = oTP.$();
-					equal($tp.css("display"), "block", "Search tool popup should be visible now");
+					assert.equal($tp.css("display"), "block", "Search tool popup should be visible now");
 
 					// enter text
 					var sf = oShell.getSearchField();
@@ -418,7 +418,7 @@
 						qutils.triggerMouseEvent("myShell-tool-myShell-searchTool", "click", 1, 1, 1, 1);
 						oTP.oPopup.attachClosed(function() {
 							// make sure the popup is closed again
-							equal($tp.css("display"), "none", "Search tool popup should not be visible now");
+							assert.equal($tp.css("display"), "none", "Search tool popup should not be visible now");
 							done();
 						});
 					}, 300);
@@ -431,25 +431,25 @@
 				assert.expect(8);
 
 				// pane should be closed
-				equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
-				equal(jQuery.sap.byId("paneContent").length, 0, "Pane content should not yet exist");
+				assert.equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
+				assert.equal(jQuery.sap.byId("paneContent").length, 0, "Pane content should not yet exist");
 
 				// open pane
 				qutils.triggerMouseEvent("pb_people", "click", 1, 1, 1, 1);
 
 				setTimeout(function() {
 					// check whether pane is open now
-					equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), true, "Pane bar should be open");
-					equal(jQuery.sap.byId("paneContent").length, 1, "Pane content should exist");
+					assert.equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), true, "Pane bar should be open");
+					assert.equal(jQuery.sap.byId("paneContent").length, 1, "Pane content should exist");
 
-					equal(document.activeElement.id, "paneContent", "Pane content has focus after opening");
+					assert.equal(document.activeElement.id, "paneContent", "Pane content has focus after opening");
 
 					// close again
 					qutils.triggerMouseEvent("pb_people", "click", 1, 1, 1, 1);
 
 					setTimeout(function() {
 						// check whether pane is closed
-						equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
+						assert.equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
 						done();
 					}, 3000);
 				}, 3000);
@@ -457,7 +457,7 @@
 
 			QUnit.test("No Further Re-rendering", function(assert) {
 				assert.expect(1);
-				equal(renderCount, 1, "Still, only ONE re-rendering should have happened after further tests");
+				assert.equal(renderCount, 1, "Still, only ONE re-rendering should have happened after further tests");
 			});
 
 

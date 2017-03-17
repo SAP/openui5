@@ -103,7 +103,7 @@
 				sut.init();
 
 				// Assert
-				equal(initSpy.callCount, 2, "The init method should only be called twice");
+				assert.equal(initSpy.callCount, 2, "The init method should only be called twice");
 				assert.strictEqual(initSpy.returnValues[0], false, "The first call is returned with true");
 				assert.strictEqual(initSpy.returnValues[1], true, "The second call is returned with false");
 

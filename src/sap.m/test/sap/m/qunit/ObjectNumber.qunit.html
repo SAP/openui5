@@ -33,12 +33,12 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
-			equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
+			assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
+			assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
 
 			$ontxt = jQuery("#on1").find(".sapMObjectNumberText");
 			var sFontWeight = $ontxt.css("font-weight");
-			equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
+			assert.equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
 
 			//Cleanup
 			sut.destroy();
@@ -58,7 +58,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
+			assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
 
 			//Cleanup
 			sut.destroy();
@@ -85,7 +85,7 @@
 			// check if the jQuery version is lower than 1.10 then use "normal" will be set as font-weigt
 			// from jQuery 1.10 jQuery converts the font-weight of "normal" into 400
 			expected = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.10") > 0 ? "400" : expected;
-			equal($ontxt.css("font-weight"), expected, "font weight of non-emphasized ObjectNumber should be " + expected);
+			assert.equal($ontxt.css("font-weight"), expected, "font weight of non-emphasized ObjectNumber should be " + expected);
 
 			//Cleanup
 			sut.destroy();
@@ -329,9 +329,9 @@
 
 			// Assert
 			if (oObjectNumber.getState() !== sap.ui.core.ValueState.None) {
-				equal(oObjectNumber.$().attr("aria-labelledby"), oObjectNumber.getId() + "-state", "aria-labelledby is set correctly.");
+				assert.equal(oObjectNumber.$().attr("aria-labelledby"), oObjectNumber.getId() + "-state", "aria-labelledby is set correctly.");
 			} else {
-				equal(oObjectNumber.$().attr("aria-labelledby"), undefined, "aria-labelledby is set correctly.");
+				assert.equal(oObjectNumber.$().attr("aria-labelledby"), undefined, "aria-labelledby is set correctly.");
 			}
 
 			// Clean up

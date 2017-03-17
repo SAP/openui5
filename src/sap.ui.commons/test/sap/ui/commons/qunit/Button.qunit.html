@@ -245,13 +245,13 @@
 			oBtn.attachPress({my: "Testdata1"}, listener.listen);
 			oBtn.focus();
 			qutils.triggerEvent("click", oBtn.getId());
-			equal(aEvents.length, 1, "there should be one event in the log");
+			assert.equal(aEvents.length, 1, "there should be one event in the log");
 			oBtn.detachPress(listener.listen);
 			aEvents = [];
 			oBtn.attachPress({my: "Testdata2"}, listener.listen, listener);
 			oBtn.focus();
 			qutils.triggerEvent("click", oBtn.getId());
-			equal(aEvents.length, 1, "there should be one event in the log");
+			assert.equal(aEvents.length, 1, "there should be one event in the log");
 			oBtn.detachPress(listener.listen, listener);
 		});
 
@@ -261,7 +261,7 @@
 			aEvents = [];
 			oBtn.focus();
 			qutils.triggerEvent("click", oBtn.getId());
-			equal(aEvents.length, 1, "there should be one event in the log");
+			assert.equal(aEvents.length, 1, "there should be one event in the log");
 		});
 		QUnit.test("Button's tooltip is preserved when there is icon only", function(assert) {
 			var sTooltip = "My tooltip",
@@ -271,12 +271,12 @@
 			});
 			oButton.placeAt("uiArea5");
 			sap.ui.getCore().applyChanges();
-			equal(jQuery("#btnTooltipWithIconOnly").attr("title"), sTooltip, "Tooltip should be preserved");
+			assert.equal(jQuery("#btnTooltipWithIconOnly").attr("title"), sTooltip, "Tooltip should be preserved");
 
 			var $IconSpan = jQuery("#btnTooltipWithIconOnly>span");
 			assert.strictEqual($IconSpan.attr("aria-label"), undefined, "aria-label shouldn't exist");
 			assert.strictEqual($IconSpan.attr("title"), undefined, "The sap icon should not have tooltip");
-			equal($IconSpan.attr("aria-hidden"), "true", "The icon should be hidden for the assistive technology");
+			assert.equal($IconSpan.attr("aria-hidden"), "true", "The icon should be hidden for the assistive technology");
 			oButton.destroy();
 		});
 
@@ -287,7 +287,7 @@
 			oButton.placeAt("uiArea5");
 			sap.ui.getCore().applyChanges();
 
-			equal(jQuery("#btnDeleteIcon").attr("title"), sap.ui.core.IconPool.getIconInfo(oButton.getIcon()).name,
+			assert.equal(jQuery("#btnDeleteIcon").attr("title"), sap.ui.core.IconPool.getIconInfo(oButton.getIcon()).name,
 					"Tooltip is set to the icon's technical name");
 
 			oButton.destroy();

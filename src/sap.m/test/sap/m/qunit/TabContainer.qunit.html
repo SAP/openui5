@@ -120,7 +120,7 @@
 			assert.strictEqual(this.oTabContainer.getSelectedItem(),oFirstItem.getId(),
 					"The default selected tab is the first one");
 
-			equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
+			assert.equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 			var aTargetTouches = [{pageX: oCloseButton.$().offset().left + 2}];
 
 			//when removing an item, the _moveToNextItem function is called where the focus is handled
@@ -131,7 +131,7 @@
 
 			this.clock.tick(1000);
 
-				equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
+				assert.equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			assert.strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
@@ -151,7 +151,7 @@
 			this.oTabContainer.attachItemClose(function (oEvent) {oEvent.preventDefault()});
 			sap.ui.test.qunit.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
 
-			equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
+			assert.equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
 		QUnit.module("Misc", {
@@ -267,9 +267,9 @@
 			this.oTabStrip._removeItem(oTabStripItemToRemove);
 			this.clock.tick(1000);
 			//assert
-			equal(this.oTabContainer.getItems().length, 4, "Length check");
-			equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
-			equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
+			assert.equal(this.oTabContainer.getItems().length, 4, "Length check");
+			assert.equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
+			assert.equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
 			assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
@@ -285,9 +285,9 @@
 			this.oTabStrip._removeItem(oTabStripItemToRemove);
 			this.clock.tick(1000);
 			//assert
-			equal(this.oTabContainer.getItems().length, 4, "Length check");
-			equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
-			equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
+			assert.equal(this.oTabContainer.getItems().length, 4, "Length check");
+			assert.equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
+			assert.equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
 			assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
 		});
 
@@ -304,9 +304,9 @@
 			this.oTabStrip._removeItem(oTabStripItemToRemove);
 			this.clock.tick(1000);
 			//assert
-			equal(this.oTabContainer.getItems().length, 4, "Length check");
-			equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
-			equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelected.getId(), "Selection is applied to the right item");
+			assert.equal(this.oTabContainer.getItems().length, 4, "Length check");
+			assert.equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
+			assert.equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelected.getId(), "Selection is applied to the right item");
 			assert.strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
@@ -437,9 +437,9 @@
 			oTabContainerItem.setName("Android");
 
 			//assert
-			equal(this.oTabStrip.getItems()[0].getKey(), oTabContainerItem.getId(), "TabContainerItem.id should be propagated to TabStripItem.key");
-			equal(this.oTabStrip.getItems()[0].getText(), oTabContainerItem.getName(), "TabContainerItem.name should be propagated to TabStripItem.text");
-			equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerItem.getModified(), "TabContainerItem.modified should be propagated to TabStripItem.modified");
+			assert.equal(this.oTabStrip.getItems()[0].getKey(), oTabContainerItem.getId(), "TabContainerItem.id should be propagated to TabStripItem.key");
+			assert.equal(this.oTabStrip.getItems()[0].getText(), oTabContainerItem.getName(), "TabContainerItem.name should be propagated to TabStripItem.text");
+			assert.equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerItem.getModified(), "TabContainerItem.modified should be propagated to TabStripItem.modified");
 		});
 
 		QUnit.module("Constructing with array of items", {
@@ -495,8 +495,8 @@
 			this.oTabContainer.destroyItems();
 
 			//assert
-			equal(this.oTabContainer.getSelectedItem(), undefined, 'Selected item should not be set when items are destroyed.');
-			equal(oTabStripDestroySpy.callCount, 1, "destroyItems() in TabContainer should call the destryItems() in TabStrip");
+			assert.equal(this.oTabContainer.getSelectedItem(), undefined, 'Selected item should not be set when items are destroyed.');
+			assert.equal(oTabStripDestroySpy.callCount, 1, "destroyItems() in TabContainer should call the destryItems() in TabStrip");
 
 			//cleanup
 			oTabStripDestroySpy.restore();

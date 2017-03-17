@@ -167,7 +167,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 
 		// assertions
 		assert.strictEqual(oCheckBox.getTabIndex(), 0 , "'getTabindex' should return 0");
-		equal(oCheckBox.$().hasClass("sapMCbRo"), true, ": The CheckBox should have class sapMCbRo");
+		assert.equal(oCheckBox.$().hasClass("sapMCbRo"), true, ": The CheckBox should have class sapMCbRo");
 		assert.strictEqual(oCheckBox.$("CB").attr("readonly"), "readonly", "The Checkbox should have attribute 'readonly=readonly'");
 		assert.strictEqual(oCheckBox.$().attr("aria-readonly"), "true", "Property 'aria-readonly' should be 'true'");
 
@@ -603,22 +603,22 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
+		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
 
 		qutils.triggerEvent("tap", oCheckBox.getId());
 		ok(oSpy.calledOnce, "Event 'select' should have been fired");
-		equal(oCheckBox.getSelected(), true, "CheckBox should be selected");
+		assert.equal(oCheckBox.getSelected(), true, "CheckBox should be selected");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "true", "Property 'aria-checked': Default value should be 'true'");
 
 		qutils.triggerEvent("tap", oCheckBox.getId());
 		ok(oSpy.calledTwice, "Event 'select' should have been fired");
-		equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
+		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
 		oCheckBox.setEditable(false);
 		qutils.triggerEvent("tap", oCheckBox.getId());
 		ok(oSpy.calledTwice, "Event 'select' should have been fired");
-		equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
+		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -643,7 +643,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 
 			sap.ui.test.qunit.triggerKeydown(oCheckBox.$(), jQuery.sap.KeyCodes.SPACE); // trigger Space on checkbox
 			assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, select event was fired");
-			equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
+			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), "" + oOptions.expectedSelection, oOptions.expectedMessageAria);
 
 			// Clean up
@@ -684,7 +684,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 
 			sap.ui.test.qunit.triggerKeydown(oCheckBox.$(), jQuery.sap.KeyCodes.ENTER); // trigger Enter on checkbox
 			assert.strictEqual(oSpy.callCount, 1, "Enter is pressed, select event was fired");
-			equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
+			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), "" + oOptions.expectedSelection, oOptions.expectedMessageAria);
 
 			// Clean up

@@ -800,8 +800,8 @@
 		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		equal(oMultiComboBox.getItems()[0].getKey(), "0", "key is not empty");
-		equal(oMultiComboBox.getItems()[0].getText(), "item 0", "text is not empty");
+		assert.equal(oMultiComboBox.getItems()[0].getKey(), "0", "key is not empty");
+		assert.equal(oMultiComboBox.getItems()[0].getText(), "item 0", "text is not empty");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -833,8 +833,8 @@
 		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		equal(oMultiComboBox.getItems()[0].getKey(), "", "key is empty");
-		equal(oMultiComboBox.getItems()[0].getText(), "item 0", "text is not empty");
+		assert.equal(oMultiComboBox.getItems()[0].getKey(), "", "key is empty");
+		assert.equal(oMultiComboBox.getItems()[0].getText(), "item 0", "text is not empty");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -864,8 +864,8 @@
 		assert.deepEqual(oMultiComboBox.getItems(), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		equal(oMultiComboBox.getItems()[0].getKey(), "", "key is empty");
-		equal(oMultiComboBox.getItems()[0].getText(), "", "text is empty");
+		assert.equal(oMultiComboBox.getItems()[0].getKey(), "", "key is empty");
+		assert.equal(oMultiComboBox.getItems()[0].getText(), "", "text is empty");
 
 		// cleanup
 		oMultiComboBox.destroy();

@@ -64,43 +64,43 @@
 
 	QUnit.test("Default Values", function(assert) {
 		var oTA = oTAs["oTA1"];
-		equal(oTA.getValue(), "", "Default 'value':");
-		equal(oTA.getWidth(), "", "Default 'width':");
-		equal(oTA.getHeight(), "", "Default 'heigth':");
-		equal(oTA.getCols(), 0, "Default 'cols':");
-		equal(oTA.getRows(), 0, "Default 'rows':");
-		equal(oTA.getEditable(), true, "Default 'editable':");
-		equal(oTA.getValueState(), sap.ui.core.ValueState.None, "Default 'valueState':");
-		equal(oTA.getRequired(), false, "Default 'required':");
-		equal(oTA.getDesign(), sap.ui.core.Design.Standard, "Default 'design':");
-		equal(oTA.getWrapping(), sap.ui.core.Wrapping.None, "Default 'wrapping':");
-		equal(oTA.getCursorPos(), 0, "Default 'cursorPos':");
-		equal(oTA.getMaxLength(), 0, "Default 'maxLength':");
-		equal(oTA.getExplanation(), "", "Default 'explanation':");
-		equal(oTA.getLabeledBy(), "", "Default 'labeledBy':");
-		equal(oTA.getTooltip(), null, "Default 'tooltip':");
+		assert.equal(oTA.getValue(), "", "Default 'value':");
+		assert.equal(oTA.getWidth(), "", "Default 'width':");
+		assert.equal(oTA.getHeight(), "", "Default 'heigth':");
+		assert.equal(oTA.getCols(), 0, "Default 'cols':");
+		assert.equal(oTA.getRows(), 0, "Default 'rows':");
+		assert.equal(oTA.getEditable(), true, "Default 'editable':");
+		assert.equal(oTA.getValueState(), sap.ui.core.ValueState.None, "Default 'valueState':");
+		assert.equal(oTA.getRequired(), false, "Default 'required':");
+		assert.equal(oTA.getDesign(), sap.ui.core.Design.Standard, "Default 'design':");
+		assert.equal(oTA.getWrapping(), sap.ui.core.Wrapping.None, "Default 'wrapping':");
+		assert.equal(oTA.getCursorPos(), 0, "Default 'cursorPos':");
+		assert.equal(oTA.getMaxLength(), 0, "Default 'maxLength':");
+		assert.equal(oTA.getExplanation(), "", "Default 'explanation':");
+		assert.equal(oTA.getLabeledBy(), "", "Default 'labeledBy':");
+		assert.equal(oTA.getTooltip(), null, "Default 'tooltip':");
 	});
 
 	QUnit.test("Custom Values", function(assert) {
 		var oTA = oTAs["oTA2"];
-		equal(oTA.getValue(), "Standard Text Area", "Custom 'value':");
-		equal(oTA.getWidth(), "500px", "Custom 'width':");
-		equal(oTA.getHeight(), "100px", "Custom 'heigth':");
-		equal(oTA.getCols(), 10, "Custom 'cols':");
-		equal(oTA.getRows(), 10, "Custom 'rows':");
-		equal(oTA.getEditable(), true, "Custom 'editable':");
-		equal(oTA.getValueState(), sap.ui.core.ValueState.None, "Custom 'valueState':");
-		equal(oTA.getRequired(), false, "Custom 'required':");
-		equal(oTA.getDesign(), sap.ui.core.Design.Standard, "Custom 'design':");
-		equal(oTA.getWrapping(), sap.ui.core.Wrapping.Soft, "Custom 'wrapping':");
-		equal(oTA.getCursorPos(), 3, "Custom 'cursorPos':");
-		equal(oTA.getMaxLength(), 20, "Custom 'maxLength':");
-		equal(oTA.getExplanation(), "", "Custom 'explanation':");
-		equal(oTA.getLabeledBy(), "", "Custom 'labeledBy':");
-		equal(oTA.getTooltip(), "Tooltip 1", "Custom 'tooltip':");
+		assert.equal(oTA.getValue(), "Standard Text Area", "Custom 'value':");
+		assert.equal(oTA.getWidth(), "500px", "Custom 'width':");
+		assert.equal(oTA.getHeight(), "100px", "Custom 'heigth':");
+		assert.equal(oTA.getCols(), 10, "Custom 'cols':");
+		assert.equal(oTA.getRows(), 10, "Custom 'rows':");
+		assert.equal(oTA.getEditable(), true, "Custom 'editable':");
+		assert.equal(oTA.getValueState(), sap.ui.core.ValueState.None, "Custom 'valueState':");
+		assert.equal(oTA.getRequired(), false, "Custom 'required':");
+		assert.equal(oTA.getDesign(), sap.ui.core.Design.Standard, "Custom 'design':");
+		assert.equal(oTA.getWrapping(), sap.ui.core.Wrapping.Soft, "Custom 'wrapping':");
+		assert.equal(oTA.getCursorPos(), 3, "Custom 'cursorPos':");
+		assert.equal(oTA.getMaxLength(), 20, "Custom 'maxLength':");
+		assert.equal(oTA.getExplanation(), "", "Custom 'explanation':");
+		assert.equal(oTA.getLabeledBy(), "", "Custom 'labeledBy':");
+		assert.equal(oTA.getTooltip(), "Tooltip 1", "Custom 'tooltip':");
 
 		oTA = oTAs["oTA3"];
-		equal(oTA.getValue(), "Row1 \nRow2 \nRow3", "Custom 'value' with wrap:");
+		assert.equal(oTA.getValue(), "Row1 \nRow2 \nRow3", "Custom 'value' with wrap:");
 
 	});
 
@@ -108,11 +108,11 @@
 		var done = assert.async();
 		var oTA = oTAs["oTA2"];
 		oTA.setValue("This is a test");
-		equal(oTA.getValue(), "This is a test", "Set Value:");
+		assert.equal(oTA.getValue(), "This is a test", "Set Value:");
 
 		//check for cut on MaxLength
 		oTA.setValue("This is a long text that should be cut.");
-		equal(oTA.getValue(), "This is a long text ", "Set Valuee with long text > MaxLength:");
+		assert.equal(oTA.getValue(), "This is a long text ", "Set Valuee with long text > MaxLength:");
 
 		var oTADom = jQuery.sap.domById('oTA2');
 		oTADom.focus();
@@ -120,7 +120,7 @@
 		var delayedCall = function(){
 			oTA.setCursorPos(5);
 
-			equal(jQuery(oTADom).cursorPos(), 5, "Cursor Position:");
+			assert.equal(jQuery(oTADom).cursorPos(), 5, "Cursor Position:");
 			done();
 		};
 		setTimeout(delayedCall, 0);
@@ -136,31 +136,31 @@
 		var oTA = oTAs["oTA2"];
 		var oTADom = jQuery.sap.domById('oTA2');
 		ok(jQuery(oTADom).hasClass("sapUiTfStd"), "Visible: Standard Class");
-		equal(jQuery(oTADom).hasClass("sapUiTfRo"), false, "Visible: no ReadOnly Class");
+		assert.equal(jQuery(oTADom).hasClass("sapUiTfRo"), false, "Visible: no ReadOnly Class");
 		oTA.setEditable(false);
 		ok(jQuery(oTADom).hasClass("sapUiTfRo"), "Visible:toggle to ReadOnly: ReadOnly Class");
-		equal(jQuery(oTADom).hasClass("sapUiTfStd"), false, "Visibility:toggle to ReadOnly:Visible: no Standard Class");
+		assert.equal(jQuery(oTADom).hasClass("sapUiTfStd"), false, "Visibility:toggle to ReadOnly:Visible: no Standard Class");
 		oTA.setValueState(sap.ui.core.ValueState.Error);
 		ok(jQuery(oTADom).hasClass("sapUiTfRo"), "Visible:toggle to error: Standard Class");
 		ok(jQuery(oTADom).hasClass("sapUiTfErr"), "Visible:toggle to error: Error Class");
 		oTA.setValueState(sap.ui.core.ValueState.Warning);
 		ok(jQuery(oTADom).hasClass("sapUiTfRo"), "Visible:toggle to warning: Standard Class");
-		equal(jQuery(oTADom).hasClass("sapUiTfErr"), false, "Visible:toggle to warning: no Error Class");
+		assert.equal(jQuery(oTADom).hasClass("sapUiTfErr"), false, "Visible:toggle to warning: no Error Class");
 		ok(jQuery(oTADom).hasClass("sapUiTfWarn"), "Visible:toggle to warning: warning Class");
 		oTA.setValueState(sap.ui.core.ValueState.None);
 		ok(jQuery(oTADom).hasClass("sapUiTfRo"), "Visible:toggle to standard: Standard Class");
-		equal(jQuery(oTADom).hasClass("sapUiTfErr"), false, "Visible:toggle to Standard: no Error Class");
-		equal(jQuery(oTADom).hasClass("sapUiTfWarn"), false, "Visible:toggle to Standard: no warning Class");
+		assert.equal(jQuery(oTADom).hasClass("sapUiTfErr"), false, "Visible:toggle to Standard: no Error Class");
+		assert.equal(jQuery(oTADom).hasClass("sapUiTfWarn"), false, "Visible:toggle to Standard: no warning Class");
 		oTA.setEditable(true);
 		ok(jQuery(oTADom).hasClass("sapUiTfStd"), "Visible:toggle to standard: Standard Class");
-		equal(jQuery(oTADom).hasClass("sapUiTfRo"), false, "Visible:toggle to standard: no ReadOnly Class");
+		assert.equal(jQuery(oTADom).hasClass("sapUiTfRo"), false, "Visible:toggle to standard: no ReadOnly Class");
 
 		oTADom = jQuery.sap.domById('oTA4');
 		ok(jQuery(oTADom).hasClass("sapUiTfWarn"), "Visible: Warning Class");
 
 		oTADom = jQuery.sap.domById('oTA5');
 		ok(jQuery(oTADom).hasClass("sapUiTfRo"), "Visible: ReadOnly Class");
-		equal(jQuery(oTADom).hasClass("sapUiTfStd"), false, "Visible: no Standard Class");
+		assert.equal(jQuery(oTADom).hasClass("sapUiTfStd"), false, "Visible: no Standard Class");
 
 		oTADom = jQuery.sap.domById('oTA3');
 		oTADom.focus();
@@ -180,20 +180,20 @@
 		oTA.addAriaLabelledBy("L1");
 		sap.ui.getCore().applyChanges();
 		var $oTA = jQuery.sap.byId("oTA1");
-		equal($oTA.attr("role"), "textbox", "oTA1: Role");
-		equal($oTA.attr("aria-required"), "false", "oTA1: aria-required");
-		equal($oTA.attr("aria-readonly"), "false", "oTA1: aria-readonly");
-		equal($oTA.attr("aria-multiline"), "true", "oTA1: aria-multiline");
-		equal($oTA.attr("aria-autocomplete"), "none", "oTA1: aria-autocomplete");
-		equal($oTA.attr("aria-invalid"), "false", "oTA1: aria-invalid");
-		equal($oTA.attr("aria-describedby"), "D1", "oTA1: aria-describesby");
-		equal($oTA.attr("aria-labelledby"), "L1", "oTA1: aria-labelledby");
+		assert.equal($oTA.attr("role"), "textbox", "oTA1: Role");
+		assert.equal($oTA.attr("aria-required"), "false", "oTA1: aria-required");
+		assert.equal($oTA.attr("aria-readonly"), "false", "oTA1: aria-readonly");
+		assert.equal($oTA.attr("aria-multiline"), "true", "oTA1: aria-multiline");
+		assert.equal($oTA.attr("aria-autocomplete"), "none", "oTA1: aria-autocomplete");
+		assert.equal($oTA.attr("aria-invalid"), "false", "oTA1: aria-invalid");
+		assert.equal($oTA.attr("aria-describedby"), "D1", "oTA1: aria-describesby");
+		assert.equal($oTA.attr("aria-labelledby"), "L1", "oTA1: aria-labelledby");
 
 		$oTA = jQuery.sap.byId("oTA3");
-		equal($oTA.attr("aria-invalid"), "true", "oTA3: aria-invalid");
+		assert.equal($oTA.attr("aria-invalid"), "true", "oTA3: aria-invalid");
 
 		$oTA = jQuery.sap.byId("oTA5");
-		equal($oTA.attr("aria-readonly"), "true", "oTA5: aria-readonly");
+		assert.equal($oTA.attr("aria-readonly"), "true", "oTA5: aria-readonly");
 	});
 
 	QUnit.module("Behaviour");
@@ -213,29 +213,29 @@
 		qutils.triggerCharacterInput("oTA1", "A");
 		qutils.triggerEvent("input", "oTA1");
 		qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.A, true, false, false);
-		equal(oTA.getValue(), "", "Value after Typing");
-		equal(oTA.getLiveValue(), "A", "LiveValue after typing");
-		equal(bChange, false, "Change event fired after typing");
-		equal(bLiveChange, true, "LiveChange event fired after typing");
+		assert.equal(oTA.getValue(), "", "Value after Typing");
+		assert.equal(oTA.getLiveValue(), "A", "LiveValue after typing");
+		assert.equal(bChange, false, "Change event fired after typing");
+		assert.equal(bLiveChange, true, "LiveChange event fired after typing");
 		bChange = false;
 		bLiveChange = false;
 
 		qutils.triggerCharacterInput("oTA1", "b");
 		qutils.triggerEvent("input", "oTA1");
 		qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.B, false, false, false);
-		equal(oTA.getValue(), "", "Value after Typing");
-		equal(oTA.getLiveValue(), "Ab", "LiveValue after typing");
-		equal(bChange, false, "Change event fired after typing");
-		equal(bLiveChange, true, "LiveChange event fired after typing");
+		assert.equal(oTA.getValue(), "", "Value after Typing");
+		assert.equal(oTA.getLiveValue(), "Ab", "LiveValue after typing");
+		assert.equal(bChange, false, "Change event fired after typing");
+		assert.equal(bLiveChange, true, "LiveChange event fired after typing");
 		bChange = false;
 		bLiveChange = false;
 
 		jQuery.sap.domById('oTA2').focus();
 		setTimeout(function(){
-			equal(oTA.getValue(), "Ab", "Value after focus out");
-			equal(oTA.getLiveValue(), "Ab", "LiveValue after focus out");
-			equal(bChange, true, "Change event fired after focus out");
-			equal(bLiveChange, false, "LiveChange event fired after focus out");
+			assert.equal(oTA.getValue(), "Ab", "Value after focus out");
+			assert.equal(oTA.getLiveValue(), "Ab", "LiveValue after focus out");
+			assert.equal(bChange, true, "Change event fired after focus out");
+			assert.equal(bLiveChange, false, "LiveChange event fired after focus out");
 			bChange = false;
 			bLiveChange = false;
 
@@ -244,20 +244,20 @@
 			qutils.triggerCharacterInput("oTA1", "c");
 			qutils.triggerEvent("input", "oTA1");
 			qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.C, false, false, false);
-			equal(oTA.getValue(), "Ab", "Value after Typing");
-			equal(oTA.getLiveValue(), "Abc", "LiveValue after typing");
-			equal(bChange, false, "Change event fired after typing");
-			equal(bLiveChange, true, "LiveChange event fired after typing");
+			assert.equal(oTA.getValue(), "Ab", "Value after Typing");
+			assert.equal(oTA.getLiveValue(), "Abc", "LiveValue after typing");
+			assert.equal(bChange, false, "Change event fired after typing");
+			assert.equal(bLiveChange, true, "LiveChange event fired after typing");
 			bChange = false;
 			bLiveChange = false;
 
 			qutils.triggerKeyEvent("keydown", "oTA1", jQuery.sap.KeyCodes.ESCAPE);
 			qutils.triggerKeyEvent("keypress", "oTA1", jQuery.sap.KeyCodes.ESCAPE);
 			qutils.triggerKeyup("oTA1", jQuery.sap.KeyCodes.ESCAPE, false, false, false);
-			equal(oTA.getValue(), "Ab", "Value after escape");
-			equal(oTA.getLiveValue(), "Ab", "LiveValue after escape");
-			equal(bChange, false, "Change event fired after escape");
-			equal(bLiveChange, true, "LiveChange event fired after escape");
+			assert.equal(oTA.getValue(), "Ab", "Value after escape");
+			assert.equal(oTA.getLiveValue(), "Ab", "LiveValue after escape");
+			assert.equal(bChange, false, "Change event fired after escape");
+			assert.equal(bLiveChange, true, "LiveChange event fired after escape");
 			bChange = false;
 			bLiveChange = false;
 
