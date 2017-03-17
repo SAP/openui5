@@ -448,7 +448,7 @@
 				}
 
 				var $test = jQuery(aTestResults[i]);
-				var sTestSummary = $test.find("strong").text();
+				var sTestSummary = $test.children("strong").text();
 
 				var m = sTestSummary.match(/^([\S\s]*)\((\d+)(?:,\s*(\d+),\s*(\d+))?\)\s*$/);
 				var sTestName;
