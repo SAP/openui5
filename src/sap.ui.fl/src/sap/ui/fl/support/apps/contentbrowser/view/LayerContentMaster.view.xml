@@ -16,6 +16,9 @@
 		<content>
 			<List
 				id="masterComponentsList"
+				growing="true"
+				growingThreshold="100"
+				growingScrollToLoad="true"
 				items="{content>/}">
 				<items>
 					<StandardListItem
