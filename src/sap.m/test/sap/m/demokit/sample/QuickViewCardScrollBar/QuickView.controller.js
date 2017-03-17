@@ -129,6 +129,14 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function() {
+			/* This code is for the purposes of the example only so that the QuickViewCard can be scrolled properly	on iPhone. */
+			var oPageContent = this.getView().byId("quickViewCardExamplePage").getDomRef("cont");
+
+			oPageContent.addEventListener("touchmove", function(event) {
+				event.stopPropagation();
+			});
+			/* This code is for the purposes of the example only so that the QuickViewCard can be scrolled properly	on iPhone. */
+
 			this.getView().byId("quickViewCardContainer").$().css("maxWidth", "320px");
 		},
 

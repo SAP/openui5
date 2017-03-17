@@ -4,7 +4,7 @@
 		   xmlns:l="sap.ui.layout"
 		   xmlns:html="http://www.w3.org/1999/xhtml"
 		   controllerName="sap.m.sample.QuickViewCardScrollBar.QuickView">
-	<Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
+	<Page id="quickViewCardExamplePage" showHeader="false" class="sapUiContentPadding" showNavButton="false">
 		<content>
 			<Button id="buttonBack"
 					enabled="false"
