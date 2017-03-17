@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			}
 			if (!!oFeedListItem.getTimestamp()) {
 				// write date
-				rm.write('<p class="sapMFeedListItemTimestamp sapUiSelectable">');
+				rm.write('<p id="' + sMyId + '-timestamp" class="sapMFeedListItemTimestamp sapUiSelectable">');
 				rm.writeEscaped(oFeedListItem.getTimestamp());
 				rm.write('</p>');
 			}
