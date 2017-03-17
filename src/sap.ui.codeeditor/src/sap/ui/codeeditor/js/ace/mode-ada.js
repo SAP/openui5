@@ -1,4 +1,4 @@
-define("ace/mode/ada_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/ada_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -62,16 +62,16 @@ oop.inherits(AdaHighlightRules, TextHighlightRules);
 exports.AdaHighlightRules = AdaHighlightRules;
 });
 
-define("ace/mode/ada",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/ada_highlight_rules","ace/range"], function(require, exports, module) {
+ace.define("ace/mode/ada",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/ada_highlight_rules"], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
 var TextMode = require("./text").Mode;
 var AdaHighlightRules = require("./ada_highlight_rules").AdaHighlightRules;
-var Range = require("../range").Range;
 
 var Mode = function() {
     this.HighlightRules = AdaHighlightRules;
+    this.$behaviour = this.$defaultBehaviour;
 };
 oop.inherits(Mode, TextMode);
 
