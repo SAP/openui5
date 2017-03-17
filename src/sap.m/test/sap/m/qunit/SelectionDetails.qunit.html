@@ -495,6 +495,57 @@
 		assert.notOk(this.oSelectionDetails._oSelectionData, "Missleading event parameter object end's in nothing");
 	});
 
+	QUnit.test("Selection data updates button text - add items", function(assert) {
+		//Arrange
+		var oExpected = {
+			data: [{
+				data: [],
+				displayData: []
+			},{
+				data: [],
+				displayData: []
+			}]
+		};
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oExpected.data;
+			}
+		});
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details (2)", "The button text is up to date");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), true, "The button enabled");
+	});
+
+	QUnit.test("Selection data updates button text - remove items", function(assert) {
+		//Arrange
+		var oExpected = {
+			data: [{
+				data: [],
+				displayData: []
+			},{
+				data: [],
+				displayData: []
+			}]
+		};
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oExpected.data;
+			}
+		});
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return [];
+			}
+		});
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details", "The button text is up to date");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), false, "The button disabled");
+	});
+
 </script>
 </head>
 <body class="sapUiBody">

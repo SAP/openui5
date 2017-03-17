@@ -199,13 +199,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	/**
 	 * Updates the button text and sets the button to enabled or disabled depending of the amount of items.
+	 * @param {number} count the number of items
 	 * @private
 	 */
-	SelectionDetails.prototype._updateButton = function () {
+	SelectionDetails.prototype._updateButton = function (count) {
 		var sText,
 				oButton = this.getAggregation("_button");
-		if (this.getItems().length > 0) {
-			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT_WITH_NUMBER", [this.getItems().length]);
+		if (jQuery.type(count) !== "number") {
+			count = this.getItems().length;
+		}
+		if (count > 0) {
+			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT_WITH_NUMBER", [count]);
 			oButton.setProperty("text", sText, true);
 			oButton.setProperty("enabled", true, true);
 		} else {
@@ -421,11 +425,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		var oEventParams = oEvent.getParameter("data");
 		if (jQuery.type(oEventParams) === "array") {
 			this._oSelectionData = oEventParams;
+			this._updateButton(this._oSelectionData.length);
+			this.getAggregation("_button").rerender();
 		}
 	};
 
 	/* =========================================================== */
-	/* Public and Protected methods                                             */
+	/* Public and Protected methods                                */
 	/* =========================================================== */
 	/**
 	 * Method to register the factory function that creates the SelectionDetailsItems.
