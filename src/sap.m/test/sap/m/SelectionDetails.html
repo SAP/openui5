@@ -152,6 +152,9 @@
 			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("items").length + " items"
 					+ "\n level is: " + oEvent.getParameter("level"));
 		},
+		navigate: function(oEvent) {
+			sap.m.MessageToast.show("Event 'navigate' triggered originating from " + oEvent.getParameter("item").getId() + " item");
+		},
 		beforeOpen: function () {
 			sap.m.MessageToast.show("Event 'beforeOpen' triggered");
 		},

@@ -91,12 +91,22 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 */
 	SelectionDetailsItem.prototype._getListItem = function() {
 		if (!this._oListItem) {
-			this._oListItem = new SelectionDetailsListItem();
+			this._oListItem = new SelectionDetailsListItem({
+				press: [this._onSelectionDetailsListItemPress, this]
+			});
 			this._oListItem._getParentElement = jQuery.sap.getter(this);
 			this._addOverflowToolbar();
 		}
 
 		return this._oListItem;
+	};
+
+	/**
+	 * Handles the press on the SelectionDetailsListItem by triggering the navigate event.
+	 * @private
+	 */
+	SelectionDetailsItem.prototype._onSelectionDetailsListItemPress = function() {
+		this.fireEvent("_navigate");
 	};
 
 	/**

@@ -90,6 +90,18 @@
 		assert.equal(oListItem.destroy.callCount, 1, "ListItem has been destroyed with element.");
 	});
 
+	QUnit.test("Press handler for ListItem results in event called on SelectionDetailsItem", function(assert) {
+		//Arrange
+		var oListItem = this.oItem._getListItem();
+		sinon.spy(this.oItem, "fireEvent");
+
+		//Act
+		oListItem.firePress();
+
+		//Assert
+		assert.deepEqual(this.oItem.fireEvent.getCalls()[0].args[0], "_navigate", "press event of ListItem results in navigate event on SelectionDetailsItem.");
+	});
+
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oItem = new sap.m.SelectionDetailsItem({
