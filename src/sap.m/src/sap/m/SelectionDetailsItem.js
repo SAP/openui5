@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetailsItem.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library", "sap/m/Button", "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer"],
-	function(jQuery, Element, ListItemBase, library, Button, OverflowToolbar, ToolbarSpacer) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library", "sap/m/Button", "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer", 'sap/ui/base/Interface'],
+	function(jQuery, Element, ListItemBase, library, Button, OverflowToolbar, ToolbarSpacer, Interface) {
 	"use strict";
 
 	/**
@@ -82,6 +82,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 			this._oToolbar.destroy();
 			this._oToolbar = null;
 		}
+	};
+
+	/**
+	 * Returns the public facade of the SelectionDetailsItem for non inner framework usages.
+	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
+	 * @protected
+	 */
+	SelectionDetailsItem.prototype._aFacadeMethods = ["setEnableNav"];
+	SelectionDetailsItem.prototype.getFacade = function() {
+		var oFacade = new Interface(this, SelectionDetailsItem.prototype._aFacadeMethods);
+		this.getFacade = jQuery.sap.getter(oFacade);
+		return oFacade;
 	};
 
 	/**

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetailsItemLine.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Element"],
-	function(jQuery, Element) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", 'sap/ui/base/Interface'],
+	function(jQuery, Element, Interface) {
 	"use strict";
 
 	/**
@@ -57,6 +57,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element"],
 			}
 		}
 	});
+
+	/**
+	 * Returns the public facade of the SelectionDetailsItemLine for non inner framework usages.
+	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
+	 * @protected
+	 */
+	SelectionDetailsItemLine.prototype._aFacadeMethods = ["setLabel"];
+	SelectionDetailsItemLine.prototype.getFacade = function() {
+		var oFacade = new Interface(this, SelectionDetailsItemLine.prototype._aFacadeMethods);
+		this.getFacade = jQuery.sap.getter(oFacade);
+		return oFacade;
+	};
 
 	return SelectionDetailsItemLine;
 });
