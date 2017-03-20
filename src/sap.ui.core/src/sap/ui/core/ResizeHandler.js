@@ -150,10 +150,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 		this.aResizeListeners.forEach(function(oResizeListener){
 			if (oResizeListener) {
 				var bCtrl = !!oResizeListener.oControl,
-					oDomRef = bCtrl ? oResizeListener.oControl.getDomRef() : oResizeListener.oDomRef,
-					oDocumentElementDomRef = document.documentElement;
+					oDomRef = bCtrl ? oResizeListener.oControl.getDomRef() : oResizeListener.oDomRef;
 
-				if (oDomRef && ((oDocumentElementDomRef !== oDomRef) && oDocumentElementDomRef.contains(oDomRef))) { // check that oDomRef is still active
+				if ( oDomRef && jQuery.contains(document.documentElement, oDomRef)) { //check that domref is still active
 
 					var iOldWidth = oResizeListener.iWidth,
 						iOldHeight = oResizeListener.iHeight,
