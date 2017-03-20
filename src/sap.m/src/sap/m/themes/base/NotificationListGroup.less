@@ -241,3 +241,11 @@ html.sap-desktop .sapMNLG:focus::before {
 html.sap-desktop .sapMLIB.sapMNLG:focus {
   outline: none;
 }
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+  .sapMNLG:focus::before {
+    border: 1px dashed @sapUiContentFocusColor;
+
+  }
+}
