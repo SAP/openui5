@@ -4329,6 +4329,11 @@ sap.ui.define([
 			oClone.mEventRegistry[sName] = this.mEventRegistry[sName].slice();
 		}
 
+		//Clone the meta data contexts interpretation
+		if (this._cloneMetadataContexts) {
+			this._cloneMetadataContexts(oClone);
+		}
+
 		// Clone bindings
 		if (bCloneBindings) {
 			for (sName in this.mBindingInfos) {
