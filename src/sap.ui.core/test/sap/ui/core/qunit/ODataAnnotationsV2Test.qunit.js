@@ -322,7 +322,11 @@ function runODataAnnotationsV2Tests() {
 			serviceValid     : true,
 			annotationsValid : "all"
 		},
-
+		"NoLastModified Header": {
+			service          : "fakeService://testdata/odata/sapdata02/",
+			serviceValid     : true,
+			annotationsValid : "all"
+		}
 	};
 
 	// Add additional tests to stadard tests as well
@@ -865,5 +869,22 @@ function runODataAnnotationsV2Tests() {
 	asyncTest("Access to lastModified header", fnTestLastModified);
 
 
+
+
+
+	var fnTestNoLastModified = function(assert) {
+		var mService = mAdditionalTestsServices["NoLastModified Header"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
+			annotationURI: mService.annotations,
+			skipMetadataAnnotationParsing: false
+		});
+
+		return oModel.annotationsLoaded().then(function(aAnnotations) {
+			assert.notOk(aAnnotations[0].lastModified, "LastModified header does not exist for annotation document");
+		});
+	};
+
+	QUnit.test("Access to lastModified header which is not set", fnTestNoLastModified);
 
 }
