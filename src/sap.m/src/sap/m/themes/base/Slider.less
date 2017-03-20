@@ -22,10 +22,6 @@
 	-ms-touch-action: pan-y;
 }
 
-.sapMSlider:not(.sapMSliderDisabled) {
-	cursor: pointer;
-}
-
 .sapMSliderInner {
 	width: 100%;
 	position: relative;
@@ -66,7 +62,7 @@
 
 .sapMSliderTick {
 	display: inline-block;
-	height: 0.875rem;
+	height: 1rem;
 	border-left: 0.0625rem solid @sapUiFieldBorderColor;
 	margin: 0.4375rem 0 0 -0.0625rem;
 }
@@ -78,7 +74,6 @@
 	z-index: 1;
 	width: 0.0625rem;
 	background-color: @sapUiFieldBorderColor;
-	height: 1.75rem;
 	margin: 0 0 0 -0.0625rem;
 
 	&:last-child {
@@ -102,6 +97,16 @@
 /* slider progress bar */
 .sapMSliderProgress {
 	background: @sapUiFieldActiveBorderColor;
+
+	&:before{
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 500%;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
 }
 
 /* slider handle */
@@ -117,6 +122,33 @@
 	border-top-right-radius: 1rem;
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
+
+	&:before{
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 150%;
+		left: 50%;
+		top: 40%;
+		transform: translate(-50%, -50%);
+		cursor: pointer;
+	}
+}
+
+.sapMSliderHandle:hover ~ .sapMSliderTooltipContainer{
+	visibility: visible;
+}
+
+.sapMSliderHandleTooltip:hover{
+	visibility: visible;
+}
+
+.sapMInputBaseWidthPadding:hover{
+	visibility: visible;
+}
+
+.sapMSliderProgress:hover ~ .sapMSliderTooltipContainer {
+	visibility: visible;
 }
 
 /* ============ */

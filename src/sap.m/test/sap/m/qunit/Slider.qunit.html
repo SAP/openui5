@@ -606,7 +606,7 @@
 				oSlider.setValue(-1e+309);	// infinite negative number
 
 				// assert
-				assert.strictEqual(fnErrorSpy.callCount, 5, "jQuery.sap.log.error() method was called");
+				assert.strictEqual(fnErrorSpy.callCount, 0, "jQuery.sap.log.error() method was not called");
 				assert.strictEqual(oSlider.getValue(), 90);
 				assert.equal(oReturnedValue, oSlider);
 
