@@ -1,4 +1,4 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 QUnit.config.autostart = false;
@@ -41,7 +41,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 		beforeEach : function() {
 			this.oAggregationDesignTimeMetadata = new AggregationDesignTimeMetadata({
 				data : {
-					testField : "testValue",
+					testField : "testValue"
 				}
 			});
 		},
@@ -81,7 +81,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 					testField : "testValue",
 					actions : {
 						move : function(oMovedElement){
-							return "otherChangeType"
+							return "otherChangeType";
 						}
 					}
 				}
@@ -113,8 +113,8 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 
 	function _createPropagationInformationObject(oElement, sInstanceOf) {
 		return 	{
-			propagateRelevantContainerElement: oElement,
-			propagationFunction: function (oElement) {
+			relevantContainerElement: oElement,
+			relevantContainerFunction: function (oElement) {
 				var sType = oElement.getMetadata().getName();
 				if (sType === sInstanceOf) {
 					return true;
@@ -132,7 +132,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 			this.oPage2 = new Page("Page2");
 
 			this.mData = {
-				propagateRelevantContainer: [
+				propagationInfos: [
 					_createPropagationInformationObject(this.oPage1, "sap.m.Button"),
 					_createPropagationInformationObject(this.oPage2, "sap.ui.layout.VerticalLayout")
 				]
@@ -153,13 +153,13 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 	QUnit.test("when 'getRelevantContainerForPropagation' is called", function(assert) {
 			var oResultElement = this.oAggregationDesignTimeMetadata.getRelevantContainerForPropagation(this.oButton1);
 			assert.strictEqual(oResultElement.sId, this.oPage1.sId,
-				"with first corresponding element then correct 'relevantContainer' should be returned");
+				"then the button has page as relevant container");
 			oResultElement = this.oAggregationDesignTimeMetadata.getRelevantContainerForPropagation(this.oVerticalLayout);
 			assert.strictEqual(oResultElement.sId, this.oPage2.sId,
-				"with second corresponding element then correct 'relevantContainer' should be returned");
+				"then verticalLayout has page as relevant container");
 			oResultElement = this.oAggregationDesignTimeMetadata.getRelevantContainerForPropagation(this.oPage1);
 			assert.strictEqual(oResultElement, false,
-				"with NOT corresponding element then 'false' should be returned");
+				"then the page has no corresponding elements and 'false' should be returned");
 	});
 
 	QUnit.module("Given 'AggregationDesignTimeMetadata' containing multiple propagation information for the same element is created", {
@@ -169,7 +169,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 			this.oVerticalLayout2 = new VerticalLayout("layout2");
 
 			this.mData = {
-				propagateRelevantContainer: [
+				propagationInfos: [
 					_createPropagationInformationObject(this.oVerticalLayout1, "sap.m.Button"),
 					_createPropagationInformationObject(this.oVerticalLayout2, "sap.m.Button")
 				]
@@ -189,7 +189,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 	QUnit.test("when 'getRelevantContainerForPropagation' is called", function(assert) {
 			var oResultElement = this.oAggregationDesignTimeMetadata.getRelevantContainerForPropagation(this.oButton1);
 			assert.strictEqual(oResultElement.sId, this.oVerticalLayout1.sId,
-				"with first corresponding element then correct 'relevantContainer' should be returned");
+				"then the button has verticalLayout as relevant container");
 	});
 
 });
