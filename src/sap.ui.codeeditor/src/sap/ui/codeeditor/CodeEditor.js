@@ -325,5 +325,9 @@ sap.ui.define([
 		return this._oEditor;
 	};
 
+	CodeEditor.prototype.destroy = function () {
+		this._oEditor.destroy();
+	};
+
 	return CodeEditor;
 }, /* bExport= */true);
