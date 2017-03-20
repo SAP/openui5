@@ -265,6 +265,45 @@
 		assert.equal(oButton.getEnabled(), true, "Button has correct text");
 	});
 
+	QUnit.test("Click handler attached once per action button", function(assert) {
+		// Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem({
+			actions: [new sap.ui.core.Item()]
+		});
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+		var oSpy = sinon.spy(this.oSelectionDetails, "_onActionPress");
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oButton = sap.ui.getCore().byId(oSelectionDetailsItem.getId() + "-action-0");
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		oButton.firePress();
+		//Assert
+		assert.ok(oSpy.calledOnce, "Event handler called once");
+	});
+
+	QUnit.test("ActionPress event on item action triggered in correct context", function(assert) {
+		// Arrange
+		var oButton,
+			oSelectionDetailsItem1 = new sap.m.SelectionDetailsItem({
+				actions: [new sap.ui.core.Item("item1Action", {})]
+			}),
+			oSelectionDetailsItem2 = new sap.m.SelectionDetailsItem({
+				actions: [new sap.ui.core.Item("item2Action", {})]
+			});
+		this.oSelectionDetails.addItem(oSelectionDetailsItem1).addItem(oSelectionDetailsItem2);
+		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		// Act
+		this.oSelectionDetails.removeItem(oSelectionDetailsItem1);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		oButton = sap.ui.getCore().byId(this.oSelectionDetails.getAggregation("items")[0].getId() + "-action-0");
+		oButton.firePress();
+		//Assert
+		assert.deepEqual(oSpy.getCall(0).args[0].items[0], oSelectionDetailsItem2, "Event triggered in correct context");
+		assert.equal(oSpy.getCall(0).args[0].level, "Item", "Event triggered with correct level parameter");
+		assert.equal(oSpy.getCall(0).args[0].action.getId(), "item2Action", "Event triggered with correct action parameter");
+	});
+
 	QUnit.test("Press on the button results in action Press event", function(assert) {
 		// Arrange
 		var oAction = new sap.ui.core.Item();
