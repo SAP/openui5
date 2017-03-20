@@ -1558,6 +1558,8 @@
 
 				// system under test
 				var sInitValue = "Test";
+				var sNewValue = "SomethingThatIsNotSameWithTheInitialValue";
+
 				var oInput = new sap.m.InputBase({
 					value : sInitValue
 				});
@@ -1569,7 +1571,7 @@
 				var fnOnEscapeSpy = this.spy(oInput, "onsapescape");
 
 				// act - set dom value
-				oInput.getFocusDomRef().value = "SomethingThatIsNotSameWithTheInitialValue";
+				oInput.getFocusDomRef().value = sNewValue;
 
 				// assertion - before escape
 				assert.notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before escape call dom value and value property are not same.");
@@ -1581,6 +1583,12 @@
 				assert.strictEqual(oInput.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
 				assert.strictEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Dom value and value property are same after escape.");
 				assert.ok(fnFireEventSpy.calledWith("liveChange"), "Private liveChange event is fired on escape");
+
+				// assertion - properties of liveChange event when escape is pressed
+				assert.ok(fnFireEventSpy.calledWith("liveChange", sinon.match.has("escPressed", true)), "LiveChange event contains property 'escPressed' with value true.");
+				assert.ok(fnFireEventSpy.calledWith("liveChange", sinon.match.has("previousValue", sNewValue)), "LiveChange event contains property 'previousValue' with value of inserted text before escape.");
+				assert.ok(fnFireEventSpy.calledWith("liveChange", sinon.match.has("value", sInitValue)), "LiveChange event contains property 'value' with value of initial text.");
+
 				assert.strictEqual(fnFireEventSpy.callCount, 1, "LiveChange event is fired once");
 				assert.ok(fnOnEscapeSpy.args[0][0].isMarked(), "Escape is marked as handled");
 
