@@ -821,6 +821,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._onResize = function () {
 			var $dialog = this.$(),
 				$dialogContent = this.$('cont'),
+				dialogContentScrollTop,
 				sContentHeight = this.getContentHeight(),
 				iDialogHeight,
 				BORDER_THICKNESS = 2; // solves Scrollbar issue in IE when Table is in Dialog
@@ -831,6 +832,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			if (!sContentHeight || sContentHeight == 'auto') {
+				// save current scroll position so that it can be restored after the resize
+				dialogContentScrollTop = $dialogContent.scrollTop();
+
 				//reset the height so the dialog can grow
 				$dialogContent.css({
 					height: 'auto'
@@ -839,6 +843,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				//set the newly calculated size by getting it from the browser rendered layout - by the max-height
 				iDialogHeight = parseFloat($dialog.height()) + BORDER_THICKNESS;
 				$dialogContent.height(Math.round( iDialogHeight));
+
+				$dialogContent.scrollTop(dialogContentScrollTop);
 			}
 
 			if (!this.getStretch() && !this._oManuallySetSize && !this._bDisableRepositioning) {
