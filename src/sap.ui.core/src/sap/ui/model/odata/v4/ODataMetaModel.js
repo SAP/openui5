@@ -158,7 +158,8 @@ sap.ui.define([
 		 *   The $metadata "JSON"
 		 */
 		function includeSchema(mReferencedScope) {
-			var sKey;
+			var oElement,
+				sKey;
 
 			if (!(sNamespace in mReferencedScope)) {
 				fnLog(WARNING, sReferenceUri, " does not contain ", sNamespace);
@@ -169,7 +170,9 @@ sap.ui.define([
 			for (sKey in mReferencedScope) {
 				// $EntityContainer can be ignored; $Reference, $Version is handled above
 				if (sKey[0] !== "$" && namespace(sKey) === sNamespace) {
-					mScope[sKey] = mReferencedScope[sKey];
+					oElement = mReferencedScope[sKey];
+					mScope[sKey] = oElement;
+					mergeAnnotations(oElement, mScope.$Annotations);
 				}
 			}
 		}
@@ -221,6 +224,28 @@ sap.ui.define([
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
+	}
+
+	/**
+	 * Merges the given schema's annotations into the root scope's $Annotations.
+	 *
+	 * @param {object} oSchema
+	 *   a schema; schema children are ignored because they do not contain $Annotations
+	 * @param {object} mAnnotations
+	 *   the root scope's $Annotations
+	 */
+	function mergeAnnotations(oSchema, mAnnotations) {
+		var sTarget;
+
+		for (sTarget in oSchema.$Annotations) {
+			if (sTarget in mAnnotations) {
+				// "PUT" semantics on term level, last annotation file wins
+				jQuery.extend(mAnnotations[sTarget], oSchema.$Annotations[sTarget]);
+			} else {
+				mAnnotations[sTarget] = oSchema.$Annotations[sTarget];
+			}
+		}
+		delete oSchema.$Annotations;
 	}
 
 	/**
@@ -446,26 +471,6 @@ sap.ui.define([
 			sReferenceUri,
 			that = this;
 
-		/*
-		 * Merges the given schema's annotations into the root scope's $Annotations.
-		 *
-		 * @param {object} oSchema
-		 *   a schema; schema children are ignored because they do not contain $Annotations
-		 */
-		function mergeAnnotations(oSchema) {
-			var sTarget;
-
-			for (sTarget in oSchema.$Annotations) {
-				if (sTarget in mScope.$Annotations) {
-					// "PUT" semantics on term level, last annotation file wins
-					jQuery.extend(mScope.$Annotations[sTarget], oSchema.$Annotations[sTarget]);
-				} else {
-					mScope.$Annotations[sTarget] = oSchema.$Annotations[sTarget];
-				}
-			}
-			delete oSchema.$Annotations;
-		}
-
 		if (this.bSupportReferences) {
 			for (sReferenceUri in mScope.$Reference) {
 				if ("$IncludeAnnotations" in mScope.$Reference[sReferenceUri]) {
@@ -479,7 +484,7 @@ sap.ui.define([
 		// merge $Annotations from all schemas at root scope
 		mScope.$Annotations = {};
 		Object.keys(mScope).forEach(function (sElement) {
-			mergeAnnotations(mScope[sElement]);
+			mergeAnnotations(mScope[sElement], mScope.$Annotations);
 		});
 
 		// merge annotation files into root scope
@@ -495,7 +500,7 @@ sap.ui.define([
 					}
 					oElement = mAnnotationScope[sQualifiedName];
 					mScope[sQualifiedName] = oElement;
-					mergeAnnotations(oElement);
+					mergeAnnotations(oElement, mScope.$Annotations);
 				}
 			}
 		});
