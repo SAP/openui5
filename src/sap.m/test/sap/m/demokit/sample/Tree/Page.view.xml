@@ -1,13 +1,10 @@
 <mvc:View
 	controllerName="sap.m.sample.Tree.Page"
-	xmlns:l="sap.ui.layout"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	 	<Tree
-       		id="Tree"
-       		items="{path: '/'}">
-       		<StandardTreeItem
-			title="{text}"/>
-       	</Tree>
+		    id="Tree"
+		    items="{path: '/'}">
+			<StandardTreeItem title="{text}"/>
+		</Tree>
 </mvc:View>

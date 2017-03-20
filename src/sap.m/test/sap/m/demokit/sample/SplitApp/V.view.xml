@@ -12,7 +12,7 @@
 				</content>
 			</Page>
 			<Page id="detailDetail" title="Detail Detail" class="sapUiStdPage" showNavButton="true"
-				  navButtonText="Back" navButtonPress="onPressDetailBack">
+					navButtonText="Back" navButtonPress="onPressDetailBack">
 				<content>
 					<VBox class="sapUiSmallMargin">
 						<Label text="This is Detail Page2" />
@@ -29,7 +29,7 @@
 				</content>
 			</Page>
 			<Page id="detail2" title="Detail 3 Page" class="sapUiStdPage" showNavButton="true"
-				  navButtonText="Back" navButtonPress="onPressDetailBack">
+					navButtonText="Back" navButtonPress="onPressDetailBack">
 
 				<content>
 					<Label text="This is Detail Page3" />
@@ -56,7 +56,7 @@
 				</content>
 			</Page>
 			<Page id="master2" title="Master 2" icon="sap-icon://action" class="sapUiStdPage" showNavButton="true"
-				  navButtonPress="onPressMasterBack">
+					navButtonPress="onPressMasterBack">
 				<content>
 					<List itemPress="onListItemPress">
 						<items>

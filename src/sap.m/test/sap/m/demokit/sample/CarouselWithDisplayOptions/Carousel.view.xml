@@ -1,22 +1,21 @@
 <mvc:View height="100%"
-		  controllerName="sap.m.sample.CarouselWithDisplayOptions.Carousel"
-		  xmlns:mvc="sap.ui.core.mvc"
-		  xmlns="sap.m"
-		  xmlns:l="sap.ui.layout"
-		  xmlns:f="sap.ui.layout.form">
-	<Page  class="sapUiContentPadding">
+		controllerName="sap.m.sample.CarouselWithDisplayOptions.Carousel"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:f="sap.ui.layout.form">
+	<Page class="sapUiContentPadding">
 		<content>
 			<f:SimpleForm labelSpanL="6"
-						  labelSpanM="6"
-						  editable="true"
-						  layout="ResponsiveGridLayout">
+						labelSpanM="6"
+						editable="true"
+						layout="ResponsiveGridLayout">
 				<Label text="Shrink carousel container" />
 				<Slider value="5"
 						liveChange="onSliderMoved"
 						width="320px"
 						step="1"
 						min="1"
-						max="5"></Slider>
+						max="5"/>
 			</f:SimpleForm>
 			<Toolbar height="auto">
 				<ToolbarSpacer/>
@@ -27,14 +26,14 @@
 				<ToolbarSpacer/>
 			</Toolbar>
 			<f:SimpleForm labelSpanL="6"
-						  labelSpanM="6"
-						  editable="true"
-						  layout="ResponsiveGridLayout">
+						labelSpanM="6"
+						editable="true"
+						layout="ResponsiveGridLayout">
 				<f:content>
 					<Label text="Carousel arrow placement" />
 					<RadioButtonGroup id="RBArrowsPlacement"
-									  columns="2"
-									  select="onArrowsPlacementSelect">
+							columns="2"
+							select="onArrowsPlacementSelect">
 						<buttons>
 							<RadioButton id="RB-Content"
 										 text="Content"
@@ -49,8 +48,8 @@
 
 					<Label text="Page indicator placement" />
 					<RadioButtonGroup id="RBPageIndicatorPlacement"
-									  columns="2"
-									  select="onPageIndicatorPlacementSelect">
+							columns="2"
+							select="onPageIndicatorPlacementSelect">
 						<buttons>
 							<RadioButton id="RB-Bottom"
 										 text="Bottom"
@@ -65,8 +64,8 @@
 
 					<Label text="Show page indicator" />
 					<RadioButtonGroup id="RBShowPageIndicator"
-									  columns="2"
-									  select="onShowPageIndicatorSelect">
+							columns="2"
+							select="onShowPageIndicatorSelect">
 						<buttons>
 							<RadioButton id="RB-Yes"
 										 text="Yes"

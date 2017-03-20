@@ -1,9 +1,8 @@
 <core:View height="100%"
-		   xmlns:core="sap.ui.core"
-		   xmlns="sap.m"
-		   xmlns:l="sap.ui.layout"
-		   xmlns:html="http://www.w3.org/1999/xhtml"
-		   controllerName="sap.m.sample.QuickViewCardScrollBar.QuickView">
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		controllerName="sap.m.sample.QuickViewCardScrollBar.QuickView">
 	<Page id="quickViewCardExamplePage" showHeader="false" class="sapUiContentPadding" showNavButton="false">
 		<content>
 			<Button id="buttonBack"
@@ -17,7 +16,7 @@
 					vSpacing="0"
 					defaultSpan="L6 M6 S10">
 				<Label text="Show Vertical Scroll Bar:"
-					   class="sapUiSmallMarginTop">
+						class="sapUiSmallMarginTop">
 					<layoutData>
 						<l:GridData span="L3 M3 S3"/>
 					</layoutData>
@@ -32,7 +31,7 @@
 				</Switch>
 
 				<Label text="Show Header:"
-					   class="sapUiSmallMarginTop">
+						class="sapUiSmallMarginTop">
 					<layoutData>
 						<l:GridData span="L3 M3 S3"/>
 					</layoutData>

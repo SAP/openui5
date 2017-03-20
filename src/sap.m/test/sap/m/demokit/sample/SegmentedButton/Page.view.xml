@@ -34,7 +34,7 @@
 						<SegmentedButtonItem icon="sap-icon://competitor" key="competitor" />
 					</items>
 				</SegmentedButton>
-				<SegmentedButton selectedKey="lab"  class="sapUiSmallMarginBottom">
+				<SegmentedButton selectedKey="lab" class="sapUiSmallMarginBottom">
 					<items>
 						<SegmentedButtonItem icon="sap-icon://taxi" text="Taxi" />
 						<SegmentedButtonItem icon="sap-icon://lab" text="Lab" key="lab" />

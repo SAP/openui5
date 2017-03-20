@@ -35,7 +35,7 @@
 				id="pullToRefresh"
 				visible="{device>/support/touch}"
 				refresh="onRefresh" />
-			<!-- For client side filtering add this to the items attribute:  parameters: {operationMode: 'Client'}}" -->
+			<!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
 			<List
 				id="list"
 				items="{
@@ -102,7 +102,7 @@
 
 						</firstStatus>
 						<attributes>
-							<ObjectAttribute  id="companyName" text="{Customer/CompanyName}" />
+							<ObjectAttribute id="companyName" text="{Customer/CompanyName}" />
 							<ObjectAttribute title="{i18n>commonItemShipped}"
 								text="{= ${ShippedDate}
 									? ${ path: 'ShippedDate',

@@ -60,7 +60,7 @@
 					<Column
 						minScreenWidth="Tablet"
 						demandPopin="true"
-						hAlign="Right">
+						hAlign="End">
 						<Text text="{i18n>detailLineItemTableUnitNumberColumn}"/>
 					</Column>
 				</columns>

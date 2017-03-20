@@ -1,6 +1,5 @@
 <mvc:View
 	controllerName="sap.m.sample.TableMergeCells.Table"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Table
@@ -26,7 +25,7 @@
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right" >
+				hAlign="End" >
 				<header>
 					<Text text="Dimensions" />
 				</header>
@@ -39,7 +38,7 @@
 					<Text text="Weight" />
 				</header>
 			</Column>
-			<Column hAlign="Right" >
+			<Column hAlign="End">
 				<header>
 					<Text text="Price" />
 				</header>

@@ -23,7 +23,7 @@
 					<semantic:FilterAction press="onSemanticButtonPress"/>
 				</semantic:filter>
 				<semantic:group>
-					<semantic:GroupAction  press="onSemanticButtonPress"/>
+					<semantic:GroupAction press="onSemanticButtonPress"/>
 				</semantic:group>
 				<semantic:addAction>
 					<semantic:AddAction press="onSemanticButtonPress"/>

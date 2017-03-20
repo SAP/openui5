@@ -127,15 +127,15 @@
 						<Button text="Get Error" type="Reject" press="onErrorPress" icon="sap-icon://sys-cancel"/>
 					</buttons>
 				</NotificationListItem>
-                <NotificationListItem
-                        title="New order (#2523) With a long title without description"
-                        showCloseButton="true"
-                        unread="false"
-                        datetime="3 days"
-                        priority="High"
-                        close="onItemClose"
-                        press="onListItemPress">
-                </NotificationListItem>
+				<NotificationListItem
+						title="New order (#2523) With a long title without description"
+						showCloseButton="true"
+						unread="false"
+						datetime="3 days"
+						priority="High"
+						close="onItemClose"
+						press="onListItemPress">
+				</NotificationListItem>
 			</List>
 		</l:content>
 	</l:VerticalLayout>

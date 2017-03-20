@@ -1,6 +1,5 @@
 <mvc:View
 	controllerName="sap.m.sample.Table.Table"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Table id="idProductsTable"
@@ -29,7 +28,7 @@
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Dimensions" />
 			</Column>
 			<Column
@@ -39,7 +38,7 @@
 				<Text text="Weight" />
 			</Column>
 			<Column
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Price" />
 			</Column>
 		</columns>

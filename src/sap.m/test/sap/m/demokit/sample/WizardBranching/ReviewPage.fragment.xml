@@ -12,8 +12,8 @@
 						editable="false"
 						layout="ResponsiveGridLayout">
 					<List mode="None"
-						  items="{/ProductCollection}"
-						  enableBusyIndicator="true">
+							items="{/ProductCollection}"
+							enableBusyIndicator="true">
 						<StandardListItem
 								title="{Name}"
 								type="Active"
@@ -146,8 +146,8 @@
 			<footer>
 				<Bar>
 					<contentRight>
-						<Button text="Submit" press="handleWizardSubmit"></Button>
-						<Button text="Cancel" press="handleWizardCancel"></Button>
+						<Button text="Submit" press="handleWizardSubmit"/>
+						<Button text="Cancel" press="handleWizardCancel"/>
 					</contentRight>
 				</Bar>
 			</footer>

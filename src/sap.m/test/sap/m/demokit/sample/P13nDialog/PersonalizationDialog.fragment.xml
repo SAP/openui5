@@ -1,14 +1,14 @@
-<core:FragmentDefinition xmlns="sap.m"
-	xmlns:core="sap.ui.core"
-	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
 	<P13nDialog ok="handleOK" cancel="handleCancel" showReset="true"
 		reset="handleReset" initialVisiblePanelType="sort">
 		<panels>
 			<P13nColumnsPanel visible="true" addColumnsItem="onAddColumnsItem"
 				changeColumnsItems="onChangeColumnsItem" type="columns"
 				items="{
-                    path: '/ColumnCollection'
-                }">
+					path: '/ColumnCollection'
+				}">
 				<items>
 					<!-- P13nItem columnKey="name" text="{i18n>ColumnName}" visible="true" 
 						/ -->
@@ -18,11 +18,11 @@
 			<P13nSortPanel visible="false" type="sort"
 				containerQuery="true"
 				items="{
-                    path: '/ColumnCollection'
-                }"
+					path: '/ColumnCollection'
+				}"
 				sortItems="{
-                    path: '/SortItems'
-                }">
+					path: '/SortItems'
+				}">
 				<P13nItem columnKey="{path}" text="{text}" />
 				<sortItems>
 					<P13nSortItem columnKey="{columnKeyModel}" operation="{operationModel}" />
@@ -31,11 +31,11 @@
 			<P13nFilterPanel visible="true" type="filter"
 				containerQuery="true"
 				items="{
-                    path: '/ColumnCollection'
-                }"
+					path: '/ColumnCollection'
+				}"
 				filterItems="{
-                    path: '/FilterItems'
-                }">
+					path: '/FilterItems'
+				}">
 				<P13nItem columnKey="{path}" text="{text}" />
 				<filterItems>
 					<P13nFilterItem columnKey="{columnKeyModel}"
