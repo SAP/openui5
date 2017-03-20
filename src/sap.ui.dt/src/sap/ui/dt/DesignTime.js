@@ -391,6 +391,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 	/**
 	 * @param {sap.ui.core.Element} oElement element
+	 * @param {boolean} bInHiddenTree boolean value
 	 * @return {sap.ui.dt.ElementOverlay} created or already existing instance of ElementOverlay for oElement
 	 * @private
 	 */
@@ -418,6 +419,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				}
 				// merge the DTMetadata from the DesignTime and from UI5
 				var oMergedDesignTimeMetadata = oDesignTimeMetadata || {};
+
 				jQuery.extend(true, oMergedDesignTimeMetadata, this.getDesignTimeMetadataFor(oElement));
 				var oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
 					libraryName : oElement.getMetadata().getLibraryName(),
