@@ -123,12 +123,13 @@ sap.ui.define(['jquery.sap.global'],
 
 		// Overrides the Toolbar's method in order to change the role to "button" when the FacetFilter is in "light" mode
 		// and adds "labelledby" info
-		oSummaryBar._writeLandmarkInfo = function (oRm, oControl) {
-			var sFacetFilterText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_ARIA_FACET_FILTER");
-
-			oRm.writeAccessibilityState(oControl, {
+		oSummaryBar._writeLandmarkInfo = function (oRm, oCtrl) {
+			var sFacetFilterText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_ARIA_FACET_FILTER"),
+				sInvisibleLabelId = new sap.ui.core.InvisibleText({text: sFacetFilterText}).toStatic().getId();
+			oControl._aOwnedLabels.push(sInvisibleLabelId);
+			oRm.writeAccessibilityState(oCtrl, {
 				role: "button",
-				labelledby: new sap.ui.core.InvisibleText({text: sFacetFilterText}).toStatic().getId()
+				labelledby: sInvisibleLabelId
 			});
 		};
 
@@ -216,6 +217,7 @@ sap.ui.define(['jquery.sap.global'],
 			//get current position
 			sPosition = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTERLIST_ARIA_POSITION", [(i + 1), iLength]);
 			oAccText = new sap.ui.core.InvisibleText( {text: sFacetFilterText + " " + sPosition}).toStatic();
+			oControl._aOwnedLabels.push(oAccText.getId());
 			oButton.addAriaDescribedBy(oAccText);
 			aNewAriaDescribedBy.push(oAccText.getId());
 
