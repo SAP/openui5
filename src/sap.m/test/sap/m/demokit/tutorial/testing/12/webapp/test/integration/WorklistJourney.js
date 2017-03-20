@@ -13,7 +13,8 @@ sap.ui.require(
 			When.onTheWorklistPage.iLookAtTheScreen();
 
 			// Assertions
-			Then.onTheWorklistPage.theTitleShouldDisplayTheTotalAmountOfItems();
+			Then.onTheWorklistPage.theTableShouldHavePagination().
+				and.theTitleShouldDisplayTheTotalAmountOfItems();
 		});
 
 		opaTest("Should be able to load more items", function (Given, When, Then) {
