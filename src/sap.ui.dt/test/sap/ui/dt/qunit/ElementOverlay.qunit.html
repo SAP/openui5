@@ -1151,8 +1151,8 @@
 				var oDesigntimeMetadata = this.oElemOverlay.getDesignTimeMetadata();
 				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), false,
 					"then 'false' should return");
-				assert.strictEqual(oDesigntimeMetadata.getData().relevantContainer, undefined,
-					"then no 'relevant container' should be set");
+				assert.strictEqual(this.oElemOverlay.getRelevantContainer(), undefined,
+					"then no relevantContainer should be set");
 			});
 
 			QUnit.module("Given that an 'Overlay' and parent overlay with valid propagation container information is created ", {
@@ -1168,16 +1168,21 @@
 							}
 						]
 					};
+					this.oParentElemOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata: new sap.ui.dt.ElementDesignTimeMetadata({}),
+						element: this.oVerticalLayout
+					});
+
 					this.oAggOverlay = new sap.ui.dt.AggregationOverlay({
 						aggregationName: "content",
 						designTimeMetadata: new sap.ui.dt.AggregationDesignTimeMetadata({ data: mData }),
-						element: this.oVerticalLayout
 					});
 
 					this.oElemOverlay = new sap.ui.dt.ElementOverlay({
 						designTimeMetadata: new sap.ui.dt.ElementDesignTimeMetadata({})
 					});
-					
+
+					this.oAggOverlay.setParent(this.oParentElemOverlay);
 					this.oElemOverlay.setParent(this.oAggOverlay);
 				},
 				afterEach : function() {
@@ -1191,8 +1196,8 @@
 				var oDesigntimeMetadata = this.oElemOverlay.getDesignTimeMetadata();
 				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), true,
 					"then 'true' should be returned");
-				assert.strictEqual(oDesigntimeMetadata.getData().relevantContainer, this.oVerticalLayout,
-					"then related 'relevant container' should be set");
+				assert.strictEqual(this.oElemOverlay.getRelevantContainer(), this.oVerticalLayout,
+					"then related relevantContainer should be set");
 			});
 
 			QUnit.test("when '_addRelevantContainerElement' with incomplete relevant container information is called", function(assert) {
@@ -1201,8 +1206,8 @@
 				delete oRelevantContainer[0].propagationFunction;
 				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), false,
 					"then 'false' should be returned");
-				assert.strictEqual(oDesigntimeMetadata.getData().relevantContainer, undefined,
-					"then related 'relevant container' should be set");
+				assert.strictEqual(this.oElemOverlay.getRelevantContainer(), this.oVerticalLayout,
+					"then related relevantContainer should be set");
 			});
 
 			function _createRelevantContainerMetadata(sInstanceOf) {
@@ -1221,7 +1226,7 @@
 				beforeEach : function(assert) {
 					this.oMetadataForToolbar = _createRelevantContainerMetadata("sap.m.Toolbar");
 					this.oMetadataForButton = _createRelevantContainerMetadata("sap.m.Button");
-					
+
 					var oPageMetadata = _buildMetadataObject(this.oMetadataForToolbar);
 					var oVerticalLayoutMetadata = _buildMetadataObject(this.oMetadataForButton);
 					var oEmptyMetadata = _buildMetadataObject({});
@@ -1281,9 +1286,8 @@
 			function(assert) {
 				var oContentAggregationOverlay = this.oPageOverlay.getAggregationOverlay("content");
 				var oContentDesignTimeMetadata = oContentAggregationOverlay.getDesignTimeMetadata();
-				var oElementDesignTimeMetadata = this.oPageOverlay.getDesignTimeMetadata();
-				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, undefined,
-					"then there is no propagated relevantContainer");
+				assert.deepEqual(this.oPageOverlay.getRelevantContainer(), undefined,
+					"then there is no direct parent to be set as propagated relevantContainer");
 				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer.length, 2,
 					"then the 'content' aggregation overlay contains one propagateRelevantContainer");
 			});
@@ -1292,9 +1296,8 @@
 			function(assert) {
 				var oContentAggregationOverlay = this.oVerticalLayoutOverlay.getAggregationOverlay("content");
 				var oContentDesignTimeMetadata = oContentAggregationOverlay.getDesignTimeMetadata();
-				var oElementDesignTimeMetadata = this.oVerticalLayoutOverlay.getDesignTimeMetadata();
-				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, undefined,
-					"then there is no propagated relevantContainer");
+				assert.deepEqual(this.oVerticalLayoutOverlay.getRelevantContainer(), this.oPage,
+					"then the parent is returned as propagated relevantContainer by default");
 				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer.length, 2,
 					"then the 'content' aggregation overlay contains two propagateRelevantContainer");
 				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagationFunction,
@@ -1313,25 +1316,21 @@
 
 			QUnit.test("when toolbar overlay is created",
 			function(assert) {
-				var oElementDesignTimeMetadata = this.oToolbarOverlay.getDesignTimeMetadata();
-				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, this.oPage,
+				assert.deepEqual(this.oToolbarOverlay.getRelevantContainer(), this.oPage,
 					"then it contains the correct element");
 			});
 
 			QUnit.test("when text overlay is created",
 			function(assert) {
-				var oContentDesignTimeMetadata = this.oTextOverlay.getDesignTimeMetadata();
-				assert.deepEqual(oContentDesignTimeMetadata.getData().relevantContainer, undefined,
-					"then there is no propagated relevantContainer");
+				assert.deepEqual(this.oTextOverlay.getRelevantContainer(), this.oToolbar,
+					"then the parent is returned as propagated container by default");
 			});
 
 			QUnit.test("when button overlays are created",
 			function(assert) {
-				var oElementDesignTimeMetadata = this.oButton1Overlay.getDesignTimeMetadata();
-				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, this.oVerticalLayout,
+				assert.deepEqual(this.oButton1Overlay.getRelevantContainer(), this.oVerticalLayout,
 					"then the button1 contains the correct element");
-				oElementDesignTimeMetadata = this.oButton2Overlay.getDesignTimeMetadata();
-				assert.deepEqual(oElementDesignTimeMetadata.getData().relevantContainer, this.oVerticalLayout,
+				assert.deepEqual(this.oButton2Overlay.getRelevantContainer(), this.oVerticalLayout,
 					"then the button2 contains the correct element");
 			});
 
