@@ -93,10 +93,14 @@ sap.ui.define(["jquery.sap.global"], function ($) {
           continue;
         }
 
-        var aScenarioMatch = sLine.match(/^Scenario:(.+)/) || sLine.match(/^Scenario Outline:(.+)/);
+        var aScenarioOutlineMatch = sLine.match(/^Scenario Outline:(.+)/);
+        var aScenarioMatch = sLine.match(/^Scenario:(.+)/) || aScenarioOutlineMatch;
         if (aScenarioMatch) {
           aScenarioTags = aFeatureTags.concat(aTags);
           oScenario = {tags: aScenarioTags, name: aScenarioMatch[1].trim(), steps: []};
+          if (aScenarioOutlineMatch) {
+            oScenario.examples = [];
+          }
           oFeature.scenarios.push(oScenario);
           aTags = [];
           continue;
@@ -111,7 +115,6 @@ sap.ui.define(["jquery.sap.global"], function ($) {
 
         var aExamplesMatch = sLine.match(/^Examples:(.+)?/);
         if (aExamplesMatch) {
-          oScenario.examples = oScenario.examples || [];
           oScenario.examples.push({
             tags: aScenarioTags.concat(aTags),
             name: (aExamplesMatch[1]) ? aExamplesMatch[1].trim() : "",

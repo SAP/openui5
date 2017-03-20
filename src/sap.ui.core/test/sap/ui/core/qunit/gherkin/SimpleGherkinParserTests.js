@@ -199,11 +199,11 @@ sap.ui.require([
       "    When I give him <number> cups of coffee",
       "    Then he should be <mood>",
       "",
-      "  Examples:",
-      "    | user    | number | mood         |",
-      "    | Michael | 1      | happy        |",
-      "    | Elvis   | 4      | electrified  |",
-      "    | John    | 2      | happy        |",
+      "    Examples:",
+      "      | user    | number | mood         |",
+      "      | Michael | 1      | happy        |",
+      "      | Elvis   | 4      | electrified  |",
+      "      | John    | 2      | happy        |",
       ""
     ].join("\n");
 
@@ -231,6 +231,36 @@ sap.ui.require([
           }]
         }
       ]
+    });
+
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Should parse scenario outline with no examples", function() {
+
+    var text = [
+      "Feature: Give cups of coffee to users",
+      "",
+      "  Scenario Outline: Coffee changes people moods",
+      "    Given the user <user>",
+      "    When I give him <number> cups of coffee",
+      "    Then he should be <mood>",
+      ""
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Give cups of coffee to users",
+      scenarios: [{
+        tags: [],
+        name: "Coffee changes people moods",
+        steps: [
+          { text: "the user <user>", keyword: "Given" },
+          { text: "I give him <number> cups of coffee", keyword: "When" },
+          { text: "he should be <mood>", keyword: "Then" }
+        ],
+        examples: []
+      }]
     });
 
   });
@@ -389,11 +419,11 @@ sap.ui.require([
       "  Scenario Outline: Coffee changes people moods",
       "    Then he should be <MOOD>",
       "",
-      "  Examples:",
-      "    | MOOD         |",
-      "    | happy        |",
-      "    | electrified  |",
-      "    | happy        |",
+      "    Examples:",
+      "      | MOOD         |",
+      "      | happy        |",
+      "      | electrified  |",
+      "      | happy        |",
       ""
     ].join("\n");
 
@@ -431,10 +461,10 @@ sap.ui.require([
       "  Scenario Outline: No coffee for you",
       "    Given I have deposited <MONEY>",
       "",
-      "  @examples",
-      "  Examples:",
-      "    | MONEY |",
-      "    | $2    |",
+      "    @examples",
+      "    Examples:",
+      "      | MONEY |",
+      "      | $2    |",
     ].join("\n");
 
     assert.deepEqual(this.parser.parse(text), {
@@ -470,14 +500,14 @@ sap.ui.require([
       "  Scenario Outline: save money now to have more money for coffee later",
       "    Given I have deposited <MONEY>",
       "",
-      "  @wip",
-      "  Examples: lesser savings",
-      "    | MONEY |",
-      "    | $2    |",
+      "    @wip",
+      "    Examples: lesser savings",
+      "      | MONEY |",
+      "      | $2    |",
       "",
-      "  Examples: greater savings",
-      "    | MONEY |",
-      "    | $4    |",
+      "    Examples: greater savings",
+      "      | MONEY |",
+      "      | $4    |",
     ].join("\n");
 
     assert.deepEqual(this.parser.parse(text), {
@@ -519,12 +549,14 @@ sap.ui.require([
       tags: [],
       name: "Serve coffee later",
       scenarios: [{
+        examples: [],
         tags: [],
         name: "don't save money now to have no money for coffee later",
         steps: [
           { text: "I wasted <MONEY> on lottery tickets", keyword: "Given" }
         ]
       },{
+        examples: [],
         tags: [],
         name: "save money now to have more money for coffee later",
         steps: [

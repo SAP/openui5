@@ -8,13 +8,13 @@ Feature: Coffee is very expensive
     When I buy a <COFFEE TYPE> on <DAY>
     Then my running total should be <RUNNING TOTAL>
 
-  Examples:
-    | DAY       | COFFEE TYPE       | RUNNING TOTAL |
-    | Monday    | Moca Frappachino  | $8.34         |
-    | Tuesday   | Milky Coffeeola   | $25.34        |
-    | Wednesday | Espresso-max      | $31.34        |
-    | Thursday  | Sweet Dark Mixola | $43.34        |
-    | Friday    | Demonic Jolt      | $50.00        |
+    Examples:
+      | DAY       | COFFEE TYPE       | RUNNING TOTAL |
+      | Monday    | Moca Frappachino  | $8.34         |
+      | Tuesday   | Milky Coffeeola   | $25.34        |
+      | Wednesday | Espresso-max      | $31.34        |
+      | Thursday  | Sweet Dark Mixola | $43.34        |
+      | Friday    | Demonic Jolt      | $50.00        |
 
   Scenario: Verify coffee price list
     * I look at the coffee price list
