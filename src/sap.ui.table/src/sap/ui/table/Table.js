@@ -3376,7 +3376,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var aColumns = this.getColumns();
 		for (var i = 0, l = aColumns.length; i < l; i++) {
 			if (aColumns[i].getVisible()) {
-				var oColumnTemplateClone = aColumns[i].getTemplateClone(i);
+				var oColumnTemplateClone = aColumns[i].getTemplateClone(i, iIndex);
 				if (oColumnTemplateClone) {
 					oClone.addCell(oColumnTemplateClone);
 				}
@@ -3910,6 +3910,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	Table.prototype._updateTableContent = function() {
 		TableUtils.Grouping.updateGroups(this);
+	};
+
+	/**
+	 * Returns the control inside the cell with the given row index (in the <code>rows</code> aggregation)
+	 * and column index (in the <code>columns</code> aggregation or in the list of visible columns only, depending on
+	 * parameter <code>bVisibleColumnIndex</code>).
+	 *
+	 * @param {int} iRowIndex Index of row in the table's <code>rows</code> aggregation
+	 * @param {int} iColumnIndex Index of column in the list of visible columns or in the <code>columns</code> aggregation, as indicated with <code>bVisibleColumnIndex</code>
+	 * @param {boolean} bVisibleColumnIndex If set to <code>true</code>, the given column index is interpreted as index in the list of visible columns, otherwise as index in the <code>columns</code> aggregation
+	 * @return {sap.ui.core.Control} Control inside the cell with the given row and column index or <code>null</code> if no such control exists
+	 * @protected
+	 */
+	Table.prototype.getCellControl = function(iRowIndex, iColumnIndex, bVisibleColumnIndex) {
+		var oInfo = TableUtils.getRowColCell(this, iRowIndex, iColumnIndex, !bVisibleColumnIndex);
+		return oInfo.cell;
 	};
 
 	return Table;

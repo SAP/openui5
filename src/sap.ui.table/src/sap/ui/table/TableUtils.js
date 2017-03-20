@@ -516,32 +516,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		getRowColCell : function(oTable, iRowIdx, iColIdx, bIdxInColumnAgg) {
-			var oRow = oTable.getRows()[iRowIdx];
+			var oRow = iRowIdx >= 0 && iRowIdx < oTable.getRows().length ? oTable.getRows()[iRowIdx] : null;
 			var aColumns = bIdxInColumnAgg ? oTable.getColumns() : oTable._getVisibleColumns();
-			var oColumn = aColumns[iColIdx];
+			var oColumn = iColIdx >= 0 && iColIdx < aColumns.length ? aColumns[iColIdx] : null;
 			var oCell = null;
 
-			if (bIdxInColumnAgg) {
-				if (oColumn.shouldRender()) {
-					var aVisibleColumns = oTable._getVisibleColumns();
-					for (var i = 0; i < aVisibleColumns.length; i++) {
-						if (aVisibleColumns[i] === oColumn) {
-							oCell = oRow && oRow.getCells()[i];
-							break;
+			if (oRow && oColumn) {
+				if (bIdxInColumnAgg) {
+					if (oColumn.shouldRender()) {
+						var aVisibleColumns = oTable._getVisibleColumns();
+						for (var i = 0; i < aVisibleColumns.length; i++) {
+							if (aVisibleColumns[i] === oColumn) {
+								oCell = oRow.getCells()[i];
+								break;
+							}
 						}
 					}
+				} else {
+					oCell = oRow.getCells()[iColIdx];
 				}
-			} else {
-				oCell = oRow && oRow.getCells()[iColIdx];
-			}
 
-			//TBD: Clarify why this is needed!
-			if (oCell && oCell.data("sap-ui-colid") != oColumn.getId()) {
-				var aCells = oRow.getCells();
-				for (var i = 0; i < aCells.length; i++) {
-					if (aCells[i].data("sap-ui-colid") === oColumn.getId()) {
-						oCell = aCells[i];
-						break;
+				//TBD: Clarify why this is needed!
+				if (oCell && oCell.data("sap-ui-colid") != oColumn.getId()) {
+					var aCells = oRow.getCells();
+					for (var i = 0; i < aCells.length; i++) {
+						if (aCells[i].data("sap-ui-colid") === oColumn.getId()) {
+							oCell = aCells[i];
+							break;
+						}
 					}
 				}
 			}
