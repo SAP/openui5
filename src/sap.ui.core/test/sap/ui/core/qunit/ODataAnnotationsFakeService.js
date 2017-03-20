@@ -10,10 +10,20 @@ xhr.addFilter(function(method, url) {
 });
 xhr.onCreate = function(request) {
 	request.onSend = function() {
+		var mMetaDataHeaders = {
+			"Content-Type": "application/xml;charset=utf-8",
+			"DataServiceVersion": "1.0;"
+		};
+		var mXMLHeaders = 	{
+			"Content-Type": "application/atom+xml;charset=utf-8",
+			"DataServiceVersion": "2.0;"
+		};
+
 		// Default request answer values:
 		var iStatus = 200;
 		var mHeaders = mXMLHeaders;
 		var sAnswer = "This should never be received as an answer!";
+		var bLastModified = true;
 
 		switch (request.url) {
 
@@ -59,6 +69,16 @@ xhr.onCreate = function(request) {
 				sAnswer = sMetadataWithEntityContainers;
 				break;
 
+			case "fakeService://testdata/odata/sapdata02/":
+				mHeaders = mMetaDataHeaders;
+				sAnswer = sMetadataWithEntityContainers;
+				break;
+
+			case "fakeService://testdata/odata/sapdata02/$metadata":
+				mHeaders = mMetaDataHeaders;
+				sAnswer = sMetadataWithEntityContainers;
+				bLastModified = false;
+				break;
 
 			case "fakeService://testdata/odata/northwind-annotations-normal.xml":
 				sAnswer = sNorthwindAnnotations;
@@ -229,7 +249,9 @@ xhr.onCreate = function(request) {
 				break;
 		}
 
-		mHeaders["Last-Modified"] = "Wed, 15 Nov 1995 04:58:08 GMT";
+		if (bLastModified) {
+			mHeaders["Last-Modified"] = "Wed, 15 Nov 1995 04:58:08 GMT";
+		}
 
 		if (request.async === true) {
 			_setTimeout(function() {
@@ -265,15 +287,6 @@ function createHeaderAnnotations(request) {
 	return sAnnotations;
 }
 
-
-var mMetaDataHeaders = {
-	"Content-Type": "application/xml;charset=utf-8",
-	"DataServiceVersion": "1.0;"
-};
-var mXMLHeaders = 	{
-	"Content-Type": "application/atom+xml;charset=utf-8",
-	"DataServiceVersion": "2.0;"
-};
 //var mJSONHeaders = 	{
 //	"Content-Type": "application/json;charset=utf-8",
 //	"DataServiceVersion": "2.0;"
