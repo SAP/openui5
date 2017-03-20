@@ -74,7 +74,7 @@ sap.ui.define([
 
       $.sap.log.info("[GHERKIN] Running feature: '" + oFeatureTest.name + "'");
       oFeatureTest.testScenarios.forEach(function(oTestScenario) {
-        var fnTestFunction = (!oTestScenario.wip) ? QUnit.test : QUnit.skip;
+        var fnTestFunction = (!oFeatureTest.skip && !oTestScenario.skip) ? QUnit.test : QUnit.skip;
         fnTestFunction(oTestScenario.name, function() {
           $.sap.log.info("[GHERKIN] Running scenario: '" + oTestScenario.name + "'");
           oTestScenario.testSteps.forEach(function(oTestStep) {

@@ -37,8 +37,11 @@ sap.ui.define([
       });
 
       this.register(/^this test step will get skipped$/i, function() {
-        // we expect this test to never run because the step before it is not found
-        assert.ok(true);
+        assert.ok(false, "we expect this test to never run because the step before it is not found");
+      });
+
+      this.register(/^the user '<USER>' has been given <NUMBER> cups of coffee$/i, function() {
+        assert.ok(false, "we expect this step to never run, which will cause this test to fail if it's run anyway");
       });
     }
   });

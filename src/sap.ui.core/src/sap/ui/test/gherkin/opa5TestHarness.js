@@ -145,7 +145,7 @@ sap.ui.define([
 
       $.sap.log.info("[GHERKIN] Running feature: '" + oFeatureTest.name + "'");
       oFeatureTest.testScenarios.forEach(function(oTestScenario) {
-        var fnTestFunction = (!oTestScenario.wip) ? this._opaTest : QUnit.skip;
+        var fnTestFunction = (!oFeatureTest.skip && !oTestScenario.skip) ? this._opaTest : QUnit.skip;
         fnTestFunction(oTestScenario.name, function(Given, When, Then) {
           $.sap.log.info("[GHERKIN] Running scenario: '" + oTestScenario.name + "'");
           oTestScenario.testSteps.forEach(function(oTestStep) {
