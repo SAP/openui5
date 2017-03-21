@@ -1022,6 +1022,8 @@
 				var oSpyArgs = fnPropagateRelevantContainerSpy.args[0];
 				assert.ok(oSpyArgs[1],
 					"then '_propagateRelevantContainerObj' called with new propagateRelevantContainer object");
+				assert.strictEqual(oSpyArgs[1].propagationFunction(), true,
+					"then relevantContainerFunction should return 'true'");
 				assert.notOk(oSpyArgs[2],
 					"then '_propagateRelevantContainerObj' called without propagatedRelevantContainer object from parent");
 			});
