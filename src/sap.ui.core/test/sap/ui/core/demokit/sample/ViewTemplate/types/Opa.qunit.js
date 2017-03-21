@@ -15,14 +15,15 @@ sap.ui.require([
 	//*****************************************************************************
 	opaTest("OData Types", function (Given, When, Then) {
 
-		Given.iStartMyAppInAFrame("../../common/index.html?component=ViewTemplate.types"
-			+ "&sap-language=en"
-			+ (TestUtils.isRealOData() ? "&sap-server=test" : "")
-			+ TestUtils.getRealOData());
+		Given.iStartMyUIComponent({
+			componentConfig : {
+				name : "sap.ui.core.sample.ViewTemplate.types"
+			}
+		});
 
 		When.onTheMainPage.changeMinMaxField("100");
 		Then.onTheMainPage.checkMinMaxField();
 		Then.onTheMainPage.checkLog();
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyUIComponent();
 	});
 });
