@@ -2078,6 +2078,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			oResponseCollector.error(oResponse || oData);
 		}
 
+		// BCP: 1770008178
+
+		// Legacy Support:
+		// We set the bNeedsUpdate flag to "true" if ALL request details are empty.
+		// This happens when the initial analyticalInfo is empty and is not set correctly
+		// before the control calls getRootContexts etc.
+		// If at a later point the analyticalInfo is correctly set AND the bNeedsUpdate flag is still true
+		// we falsly force a change event in checkUpdate --> this might lead to an unnecessary re-rendering of the control.
+
+		// In case we have at least 1 valid request (including measures and/or dimensions)
+		// we set the bNeedsUpdate flag to false, because the update flag is set to true ANYWAY during the response-processing.
+		this.bNeedsUpdate = true;
+		for (var iDetail = 0; iDetail < aRequestDetails.length; iDetail++) {
+			var oDetail = aRequestDetails[iDetail];
+			if (oDetail.aAggregationLevel && oDetail.aAggregationLevel.length > 0) {
+				this.bNeedsUpdate = false;
+			}
+		}
+
 		//create sub-requests for all defined requestDetails
 		for (var i = -1, oRequestDetails; (oRequestDetails = aRequestDetails[++i]) !== undefined;) {
 			var oAnalyticalQueryRequest = oRequestDetails.oAnalyticalQueryRequest, sGroupId = oRequestDetails.sGroupId;
@@ -2091,7 +2110,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				this.mServiceLength[sGroupId] = this.mLength[sGroupId] = 1;
 				this.mServiceFinalLength[sGroupId] = true;
 				this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
-				this.bNeedsUpdate = true;
+				// BCP: 1770008178, see comment above
+				// this.bNeedsUpdate = true;
 				// simulate the async behavior, dataRequested and dataReceived have to be fired in pairs
 				setTimeout(triggerDataReceived);
 
