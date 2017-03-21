@@ -913,6 +913,27 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		}.bind(this));
 	});
 
+	QUnit.test("create_ui_setIcon", function(assert) {
+		return DescriptorInlineChangeFactory.create_ui_setIcon({
+			"icon" : "sap-icon://add-contact"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_ui_setIcon failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui_setIcon({
+				"iconId" : "a.string"
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui_setIcon({
+				"icon" : { }
+			})
+		}.bind(this));
+	});
+
 	QUnit.module("DescriptorVariant", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
