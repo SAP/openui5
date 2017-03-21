@@ -85,27 +85,38 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		};
 
 		AlignedFlowLayout.prototype._onRenderingOrThemeChanged = function() {
-			this._onResize();
-			this._updateLastSpacerWidth();
+			var oDomRef = this.getDomRef(),
+				oEndItemDomRef = this.getDomRef("endItem"),
+				bEndItemAndContent = this.getContent().length && oDomRef && oEndItemDomRef;
+
+			if (bEndItemAndContent) {
+				var oLayoutComputedStyle = window.getComputedStyle(oDomRef, null),
+					mEndItemStyle = oEndItemDomRef.style;
+
+				// adapt the position of the absolute-positioned end item in case a standard CSS class is added
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					mEndItemStyle.left = oLayoutComputedStyle.getPropertyValue("padding-left");
+				} else {
+					mEndItemStyle.right = oLayoutComputedStyle.getPropertyValue("padding-right");
+				}
+
+				mEndItemStyle.bottom = oLayoutComputedStyle.getPropertyValue("padding-top");
+			}
+
+			this._onResize(null, oDomRef, oEndItemDomRef);
+
+			// update last spacer width
+			if (bEndItemAndContent) {
+				oDomRef.lastElementChild.style.width = this._iEndItemWidth + "px";
+			}
 		};
 
 		AlignedFlowLayout.prototype.onAfterRendering = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 
-		AlignedFlowLayout.prototype._updateLastSpacerWidth = function() {
-			if (this.getContent().length) {
-				var oDomRef = this.getDomRef(),
-					oEndItemDomRef = this.getDomRef("endItem");
-
-				if (oDomRef && oEndItemDomRef) {
-					oDomRef.lastElementChild.style.width = this._iEndItemWidth + "px";
-				}
-			}
-		};
-
 		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
 		// control changes
-		AlignedFlowLayout.prototype._onResize = function(oEvent) {
+		AlignedFlowLayout.prototype._onResize = function(oEvent, oDomRef, oEndItemDomRef) {
 
 			// called by resize handler, but only the height changed, so there is nothing to do;
 			// this is required to avoid a resizing loop
@@ -113,15 +124,16 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 				return;
 			}
 
-			var oDomRef = this.getDomRef();
+			oDomRef = oDomRef || this.getDomRef();
 
 			if (!oDomRef) {
 				return;
 			}
 
 			var CSS_CLASS_ONE_LINE = this.getRenderer().CSS_CLASS + "OneLine",
-				oEndItemDomRef = this.getDomRef("endItem"),
 				bEnoughSpaceForEndItem = true;
+
+			oEndItemDomRef = oEndItemDomRef || this.getDomRef("endItem");
 
 			if (oEndItemDomRef) {
 				var mLastSpacerStyle = oDomRef.lastElementChild.style;

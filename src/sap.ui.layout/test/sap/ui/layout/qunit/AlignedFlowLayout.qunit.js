@@ -494,6 +494,33 @@ sap.ui.require([
 		});
 	}
 
+	QUnit.test("it should adapt the position of the absolute-positioned end item when a standard CSS padding class is added", function(assert) {
+
+		// system under test
+		var oInput = new Input();
+		var oButton = new Button({
+			text: "lorem ipsum"
+		});
+
+		// arrange
+		this.oContentDomRef.style.width = "600px";
+		this.oAlignedFlowLayout.setMinItemWidth("200px");
+		this.oAlignedFlowLayout.addContent(oInput);
+		this.oAlignedFlowLayout.addEndContent(oButton);
+		this.oAlignedFlowLayout.addStyleClass("sapUiAFLayoutWithPadding"); // add a padding of 30px
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		sap.ui.getCore().applyChanges();
+		var oEndItemComputedStyle = window.getComputedStyle(oButton.getDomRef().parentElement, null);
+
+		// assert
+		if (sap.ui.getCore().getConfiguration().getRTL()) {
+			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("left"), "30px");
+		} else {
+			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("right"), "30px");
+		}
+		assert.strictEqual(oEndItemComputedStyle.getPropertyValue("bottom"), "30px");
+	});
+
 	QUnit.test("it should wrap the items onto multiple lines", function(assert) {
 
 		// system under test
