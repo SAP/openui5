@@ -388,6 +388,12 @@
         "type": "FIX",
         "text": " AnalyticalTable: Ungrouping using the column menu",
         "references": []
+      },
+      {
+        "id": "cf29d0a5c128c66f8b5e8fed8fb9147fe15b9a8b",
+        "type": "FIX",
+        "text": " AnalyticalTable: Ungrouping in SmartTable via ViewSettings dialog",
+        "references": []
       }
     ]
   }

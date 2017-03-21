@@ -454,5 +454,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.9": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "566f8ddb4f4ad51d0074cbb381bc3751e22befb4",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: ObjectNumber has correct styling",
+        "references": []
+      }
+    ]
   }
 }
