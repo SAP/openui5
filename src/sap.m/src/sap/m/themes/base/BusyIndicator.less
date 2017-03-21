@@ -29,6 +29,12 @@
 	transform: translateY(-50%);
 }
 
+html[data-sap-ui-browser^="cr"] {
+	.sapMBar-CTX .sapMBusyIndicator {
+		transform: translateY(25%);
+	}
+}
+
 .sapMBsyIndAnimation(@name) {
 	-webkit-animation: @name 2s linear 0s infinite normal none;
 	animation:         @name 2s linear 0s infinite normal none;
