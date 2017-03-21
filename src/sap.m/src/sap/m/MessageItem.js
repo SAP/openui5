@@ -73,7 +73,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 					/**
 					 * Defines the number of messages for a given message.
 					 */
-					counter: { type: "int", group: "Misc", defaultValue: null }
+					counter: { type: "int", group: "Misc", defaultValue: null },
+
+					/**
+					 * Name of a message group the current item belongs to.
+					 */
+					groupName: { type: "string", group: "Misc", defaultValue: "" }
 				},
 				defaultAggregation: "link",
 				aggregations: {
@@ -93,7 +98,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 			var oParent = this.getParent(),
 				sType = this.getType().toLowerCase(),
 				// Blacklist properties. Some properties have already been set and shouldn't be changed in the StandardListItem
-				aPropertiesNotToUpdateInList = ["description", "type"],
+				aPropertiesNotToUpdateInList = ["description", "type", "groupName"],
 				// TODO: the '_oMessagePopoverItem' needs to be updated to proper name in the eventual sap.m.MessageView control
 				fnUpdateProperty = function (sName, oItem) {
 					if (oItem._oMessagePopoverItem.getId() === this.getId() && oItem.getMetadata().getProperty(sName)) {

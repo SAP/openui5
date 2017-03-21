@@ -21,9 +21,10 @@ sap.ui.define([
 	"./NavContainer",
 	"./Link",
 	"./Popover",
-	"./MessageItem"
+	"./MessageItem",
+	"./GroupHeaderListItem"
 ], function (jQuery, Control, IconPool, HTML, Icon, Button, Toolbar, ToolbarSpacer, Bar, List, StandardListItem,
-			 ListType, Text, SegmentedButton, Page, NavContainer, Link, Popover, MessageItem) {
+			 ListType, Text, SegmentedButton, Page, NavContainer, Link, Popover, MessageItem, GroupHeaderListItem) {
 	"use strict";
 
 	/**
@@ -93,7 +94,12 @@ sap.ui.define([
 				 * @param {function} config.promise.resolve Method to resolve promise
 				 * @param {function} config.promise.reject Method to reject promise
 				 */
-				asyncURLHandler: {type: "any", group: "Behavior", defaultValue: null}
+				asyncURLHandler: {type: "any", group: "Behavior", defaultValue: null},
+
+				/**
+				 * Defines whether the MessageItems are grouped or not
+				 */
+				groupItems: { type: "boolean", group: "Behavior", defaultValue: false }
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -235,11 +241,21 @@ sap.ui.define([
 	};
 
 	MessageView.prototype.onBeforeRendering = function () {
+		var oGroupedItems;
+
 		this._clearLists();
-		this._fillLists(this.getItems());
+
+		if (this.getGroupItems()) {
+			oGroupedItems = this._groupItems(this.getItems());
+
+			this._fillGroupedLists(oGroupedItems);
+		} else {
+			this._fillLists(this.getItems());
+		}
+
 		this._clearSegmentedButton();
 		this._fillSegmentedButton();
-		this._fnFilterList("all");
+		this._fnFilterList(this._getCurrentMessageTypeFilter() || "all");
 
 		var headerButton = this.getHeaderButton();
 
@@ -251,6 +267,49 @@ sap.ui.define([
 		if (!this.getBindingInfo("items") && !this.getItems().length) {
 			this._makeAutomaticBinding();
 		}
+	};
+
+	/**
+	 * Fills grouped items in the lists
+	 *
+	 * @private
+	 */
+	MessageView.prototype._fillGroupedLists = function(oGroupedItems) {
+		var aGroups = Object.keys(oGroupedItems),
+			iUngroupedIndex = aGroups.indexOf(""),
+			oUngrouped, aUngroupedTypes;
+
+		if (iUngroupedIndex !== -1) {
+			oUngrouped = oGroupedItems[""];
+			aUngroupedTypes = Object.keys(oUngrouped);
+
+			aUngroupedTypes.forEach(function(sType) {
+				var aUngroupedItems = oUngrouped[sType];
+				this._fillLists(aUngroupedItems);
+
+				delete oGroupedItems[""];
+				aGroups.splice(iUngroupedIndex, 1);
+			}, this);
+		}
+
+		aGroups.forEach(function(sGroupName) {
+			this._fillListsWithGroups(sGroupName, oGroupedItems[sGroupName]);
+		}, this);
+	};
+
+	MessageView.prototype._fillListsWithGroups = function(sGroupName, oItemTypes) {
+		var aTypes = Object.keys(oItemTypes),
+			oHeader = new GroupHeaderListItem({
+				title: sGroupName
+			}), aItems;
+
+		this._oLists["all"].addAggregation("items", oHeader, true);
+
+		aTypes.forEach(function(sType) {
+			this._oLists[sType.toLowerCase()].addAggregation("items", oHeader.clone(), true);
+			aItems = oItemTypes[sType];
+			this._fillLists(aItems);
+		}, this);
 	};
 
 	/**
@@ -305,6 +364,31 @@ sap.ui.define([
 				template: that._oMessageItemTemplate
 			}
 		);
+	};
+
+	/**
+	 * Groups items in an object of keys and correspoding array of items
+	 *
+	 * @private
+	 */
+	MessageView.prototype._groupItems = function (aItems) {
+		var oGroups = {}, sItemGroup, sItemType;
+
+		aItems.forEach(function(oItem) {
+			sItemGroup = oItem.getGroupName();
+			sItemType = oItem.getType();
+			oGroups[sItemGroup] = oGroups[sItemGroup] || {};
+
+			var oGroup = oGroups[sItemGroup];
+
+			if (oGroup[sItemType]) {
+				oGroup[sItemType].push(oItem);
+			} else {
+				oGroup[sItemType] = [oItem];
+			}
+		});
+
+		return oGroups;
 	};
 
 	/**
@@ -629,8 +713,9 @@ sap.ui.define([
 
 		LIST_TYPES.forEach(function (sListName) {
 			var oList = this._oLists[sListName],
-				iCount = oList.getItems().length,
-				oButton;
+				iCount = oList.getItems().filter(function(oItem) {
+					return (oItem instanceof StandardListItem);
+				}).length, oButton;
 
 			if (iCount > 0) {
 				oButton = new Button(this.getId() + "-" + sListName, {
