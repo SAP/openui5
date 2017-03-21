@@ -3,12 +3,12 @@
 /* Base theme                                  */
 /* =========================================== */
 
-@containerPaddingLeft: 1.5rem;
-@containerPadding: 1rem;
-@closeButtonSize: 2.5rem;
-@closeButtonCompactSize: 1.625rem;
-@closeButtonCozyPosition: 0.25rem;
-@closeButtonCompactPosition: 0.5rem;
+@_sap_m_NotificationListBase_ContainerPaddingLeft: 1.5rem;
+@_sap_m_NotificationListBase_ContainerPadding: 1rem;
+@_sap_m_NotificationListBase_CloseButtonSize: 2.5rem;
+@_sap_m_NotificationListBase_CloseButtonCompactSize: 1.625rem;
+@_sap_m_NotificationListBase_CloseButtonCozyPosition: 0.25rem;
+@_sap_m_NotificationListBase_CloseButtonCompactPosition: 0.5rem;
 
 /* ==========================================================================
    Notification List Base
@@ -17,7 +17,7 @@
 .sapMLIB.sapMNLB {
 	border-radius: 0.25rem;
 	display: block;
-	padding: 0 0 @containerPadding;
+	padding: 0 0 @_sap_m_NotificationListBase_ContainerPadding;
 	margin: 0 0.25rem 0.5rem;
 	overflow: hidden;
 }
@@ -61,7 +61,7 @@
   ========================================================================== */
 
 .sapMNLB-Header, .sapMNLB-SubHeader {
-	padding: @containerPadding @containerPadding 0 @containerPaddingLeft;
+	padding: @_sap_m_NotificationListBase_ContainerPadding @_sap_m_NotificationListBase_ContainerPadding 0 @_sap_m_NotificationListBase_ContainerPaddingLeft;
 	position: relative;
 }
 
@@ -73,20 +73,20 @@
 	box-sizing: border-box;
 	cursor: pointer;
 	height: auto;
-	margin-top: -@containerPadding;
-	padding: @containerPadding 0 0;
+	margin-top: -@_sap_m_NotificationListBase_ContainerPadding;
+	padding: @_sap_m_NotificationListBase_ContainerPadding 0 0;
 	position: absolute;
-	right: @closeButtonCozyPosition;
-	top: @closeButtonCozyPosition;
+	right: @_sap_m_NotificationListBase_CloseButtonCozyPosition;
+	top: @_sap_m_NotificationListBase_CloseButtonCozyPosition;
 	transition: opacity;
-	width: @closeButtonSize;
+	width: @_sap_m_NotificationListBase_CloseButtonSize;
 	z-index: 2;
 
 	.sapMBtnInner {
-		min-width: @closeButtonSize;
+		min-width: @_sap_m_NotificationListBase_CloseButtonSize;
 
 		.sapMBtnIcon {
-			max-height: @closeButtonSize;
+			max-height: @_sap_m_NotificationListBase_CloseButtonSize;
 		}
 	}
 }
@@ -164,11 +164,11 @@
   ========================================================================== */
 
 .sapUiSizeCompact .sapMNLB-CloseButton {
-	height: @closeButtonCompactSize;
+	height: @_sap_m_NotificationListBase_CloseButtonCompactSize;
 	padding: 0;
-	right: @closeButtonCompactPosition;
-	top: @closeButtonCompactPosition + @containerPadding;
-	width: @closeButtonCompactSize;
+	right: @_sap_m_NotificationListBase_CloseButtonCompactPosition;
+	top: @_sap_m_NotificationListBase_CloseButtonCompactPosition + @_sap_m_NotificationListBase_ContainerPadding;
+	width: @_sap_m_NotificationListBase_CloseButtonCompactSize;
 
 	.sapMBtnInner {
 		min-width: 1.625rem;

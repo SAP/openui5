@@ -3,14 +3,15 @@
 /* Base theme                                  */
 /* =========================================== */
 
-@containerPadding: 1rem;
+@_sap_m_NotificationListItem_ContainerPadding: 1rem;
+@_sap_m_NotificationListItem_ContainerPaddingLeft: 1.5rem;
 
 /* ==========================================================================
    NotificationListItem
   ========================================================================== */
 
 .sapMNLI {
-  padding: @containerPadding;
+  padding: @_sap_m_NotificationListItem_ContainerPadding;
   position: relative;
   cursor: pointer;
   background: @sapUiListBackground;
@@ -76,8 +77,8 @@
   display: -webkit-flex;
   display: flex;
 
-  padding-left: @containerPaddingLeft;
-  padding-right: @containerPadding;
+  padding-left: @_sap_m_NotificationListItem_ContainerPaddingLeft;
+  padding-right: @_sap_m_NotificationListItem_ContainerPadding;
   margin-top: 0.375rem;
   position: relative;
 }
