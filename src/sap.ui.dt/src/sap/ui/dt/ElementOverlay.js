@@ -466,7 +466,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			propagateRelevantContainerElement : null
 		};
 
-		// var oDtMetadataForAggregation = this.getDesignTimeMetadata().getAggregation(sAggregationName);
 		var oDtMetadataForAggregation = oAggregationDtMetadata.getData();
 		if (!oDtMetadataForAggregation ||
 			!oDtMetadataForAggregation.propagateRelevantContainer) {
@@ -832,6 +831,22 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		if (oPublicParentAggregationOverlay) {
 			return oPublicParentAggregationOverlay.getParent();
 		}
+	};
+
+	/**
+	 * Returns the relevant container element for this overlay. As default the overlay parent element is returned
+	 * @return {sap.ui.core.Element} Relevant container element
+	 * @public
+	 */
+	ElementOverlay.prototype.getRelevantContainer = function() {
+		var oDesignTimeMeatadata = this.getDesignTimeMetadata();
+		if (oDesignTimeMeatadata &&
+			oDesignTimeMeatadata.getData().relevantContainer) {
+			return oDesignTimeMeatadata.getData().relevantContainer;
+		}
+		// setting the default value to direct parent
+		var oParentOverlay = this.getParentElementOverlay();
+		return oParentOverlay ? oParentOverlay.getElementInstance() : undefined;
 	};
 
 	return ElementOverlay;
