@@ -43,5 +43,14 @@
 			"owner": "pks5",
 			"license": "Apache 2.0",
 			"type": "Extension"
-		}
+		},
+		"karma-openui5": {
+			"name": "karma-openui5",
+			"decription": "A Karma plugin adapter for OpenUI5/SAPUI5 Framework",
+			"githubLink": "https://github.com/SAP/karma-openui5",
+			"documentationLink": "https://github.com/SAP/karma-openui5",
+			"owner": "matz3",
+			"license": "Apache 2.0",
+			"type": "Tool"
+		}		
 	}
