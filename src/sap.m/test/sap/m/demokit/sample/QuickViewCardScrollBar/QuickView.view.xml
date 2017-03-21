@@ -18,7 +18,7 @@
 				<Label text="Show Vertical Scroll Bar:"
 						class="sapUiSmallMarginTop">
 					<layoutData>
-						<l:GridData span="L3 M3 S3"/>
+						<l:GridData span="L3 M6 S8"/>
 					</layoutData>
 				</Label>
 				<Switch id="showHideScrollSwitch"
@@ -26,14 +26,14 @@
 						class="sapUiSmallMarginBottom"
 						change="onScrollSwitchChange">
 					<layoutData>
-						<l:GridData span="L9 M9 S9"/>
+						<l:GridData span="L9 M6 S4"/>
 					</layoutData>
 				</Switch>
 
 				<Label text="Show Header:"
 						class="sapUiSmallMarginTop">
 					<layoutData>
-						<l:GridData span="L3 M3 S3"/>
+						<l:GridData span="L3 M6 S8"/>
 					</layoutData>
 				</Label>
 				<Switch id="showHideHeaderSwitch"
@@ -41,7 +41,7 @@
 						class="sapUiSmallMarginBottom"
 						change="onHeaderSwitchChange">
 					<layoutData>
-						<l:GridData span="L9 M9 S9"/>
+						<l:GridData span="L9 M6 S4"/>
 					</layoutData>
 				</Switch>
 			</l:Grid>
