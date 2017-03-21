@@ -3,7 +3,7 @@
 			"name": "UI5 Inspector",
 			"decription": "The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.",
 			"githubLink": "https://github.com/SAP/ui5-inspector",
-			"documentationLink": "",
+			"documentationLink": "https://openui5.hana.ondemand.com/#docs/guide/b24e72443eb34d0fb7bf6940f2d697eb.html",
 			"owner": "SAP",
 			"license": "Apache 2.0",
 			"type": "Add-on"
@@ -19,7 +19,7 @@
 		},
 		"Meteor-UI5": {
 			"name": "Meteor-UI5",
-			"decription": "Meteor-UI5 is a collection of packages that brings to together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.",
+			"decription": "Meteor-UI5 is a collection of packages that brings together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.",
 			"githubLink": "https://github.com/propellerlabsio/meteor-ui5",
 			"documentationLink": "https://meteor-ui5.propellerlabs.com/",
 			"owner": "proehlen",
