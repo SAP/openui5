@@ -56,12 +56,6 @@ Related UI5 Projects
     margin: 0.7rem 0;
     text-align: left;
 }
-
-.tutorial img {
-    max-height: 300px;
-    width: auto;
-    margin:  0 1.5rem;
-}
 .tutorial li:hover {
     cursor: text;
 }
