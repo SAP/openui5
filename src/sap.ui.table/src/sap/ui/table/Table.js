@@ -3372,13 +3372,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Checks whether the passed oEvent is a touch event.
+	 * Checks whether the event is a touch event.
+	 *
+	 * @param {UIEvent} oEvent The event to check
+	 * @return {boolean} Returns <code>true</code>, if <code>oEvent</code> is a touch event
 	 * @private
-	 * @param {jQuery.Event} oEvent The event to check
-	 * @return {boolean} false
 	 */
-	Table.prototype._isTouchMode = function(oEvent) {
-		return !!oEvent.originalEvent["touches"];
+	Table.prototype._isTouchEvent = function(oEvent) {
+		return oEvent != null &&
+			   oEvent.touches != null || (oEvent.originalEvent != null && oEvent.originalEvent.touches != null);
 	};
 
 	Table.prototype._getRowClone = function(iIndex) {
