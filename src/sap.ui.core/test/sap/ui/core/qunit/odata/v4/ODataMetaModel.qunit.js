@@ -55,7 +55,12 @@ sap.ui.require([
 			},
 			"$Version" : "4.0",
 			"tea_busi_product.v0001." : {
-				"$kind" : "Schema"
+				"$kind" : "Schema",
+				"$Annotations" : { // Note: simulate result of _MetadataRequestor#read
+					"tea_busi_product.v0001.Category/CategoryName" : {
+						"@Common.Label" : "CategoryName from tea_busi_product.v0001."
+					}
+				}
 			},
 			"tea_busi_product.v0001.Category" : {
 				"$kind" : "EntityType",
@@ -448,6 +453,7 @@ sap.ui.require([
 		oTeamLineItem = mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		oWorkerData = mScope["tea_busi.Worker"],
 		mXServiceScope = {
+			"$Annotations" : {}, // simulate ODataMetaModel#_mergeAnnotations
 			"$EntityContainer" : "tea_busi.v0001.DefaultContainer",
 			"$Reference" : {
 				// Note: Do not reference tea_busi_supplier directly from here! We want to test the
@@ -1398,6 +1404,11 @@ sap.ui.require([
 			codeUnderTest("/tea_busi_product.v0001.Category/CategoryName",
 				mClonedProductScope["tea_busi_product.v0001.Category"].CategoryName);
 
+			expectDebug("Waiting for tea_busi_product.v0001.",
+				"/tea_busi_product.v0001.Category/CategoryName@Common.Label");
+			codeUnderTest("/tea_busi_product.v0001.Category/CategoryName@Common.Label",
+				"CategoryName from tea_busi_product.v0001.");
+
 			expectDebug("Waiting for tea_busi_product.v0001."
 				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
 				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
@@ -1438,19 +1449,10 @@ sap.ui.require([
 			return Promise.all(aPromises);
 		});
 	});
-	//TODO edmx:Reference w/o edmx:Include
-	//     --> cannot happen once edmx:IncludeAnnotations is forbidden!
-
 	//TODO Decision: It is an error if a namespace is referenced multiple times with different URIs.
 	//     This should be checked even when load-on-demand is used.
 	//     (It should not even be included multiple times with the same URI!)
 	//TODO Check that no namespace is included which is already present!
-	//TODO We scan each included metadata document for edmx:IncludeAnnotation references and reject
-	//     with an error if found. This is incompatible. We do so because it could make a difference
-	//     whether such annotations are included a priori or not, and we make no attempt to detect
-	//     this or load them on demand or whatever.
-	//TODO For the incompatible changes, a switch can be offered as opt-in
-	//     ("supportReferences : true") or opt-out ("supportReferences : false").
 	//TODO API to load "transitive closure"
 	//TODO support for sync. XML Templating
 
@@ -1675,7 +1677,8 @@ sap.ui.require([
 				+ bSupportReferences;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = new ODataModel({ // code under test
+			var mClonedProductScope = clone(mProductScope),
+				oModel = new ODataModel({ // code under test
 					serviceUrl : "/a/b/c/d/e/",
 					supportReferences : bSupportReferences,
 					synchronizationMode : "None"
@@ -1691,7 +1694,7 @@ sap.ui.require([
 				.returns(_SyncPromise.resolve(clone(mXServiceScope)));
 			this.mock(oMetaModel.oRequestor).expects("read").exactly(bSupportReferences ? 1 : 0)
 				.withExactArgs(sUrl)
-				.returns(Promise.resolve(mProductScope));
+				.returns(Promise.resolve(mClonedProductScope));
 			this.allowWarnings(assert, true);
 			this.oLogMock.expects("warning").exactly(bSupportReferences ? 0 : 1)
 				.withExactArgs("Unknown qualified name " + sPath.slice(1), sPath, sODataMetaModel);
@@ -1699,7 +1702,7 @@ sap.ui.require([
 			// code under test
 			return oMetaModel.fetchObject(sPath).then(function (vResult) {
 				assert.strictEqual(vResult, bSupportReferences
-					? mProductScope["tea_busi_product.v0001.Product"]
+					? mClonedProductScope["tea_busi_product.v0001.Product"]
 					: undefined);
 			});
 		});
