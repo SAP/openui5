@@ -884,6 +884,45 @@
 		oSegmentedButton.destroy();
 	});
 
+	//BCP: 1770067241
+	QUnit.test("SegmentedItem press", function() {
+		//arrange
+		var fnOnPress = function(oEvent) {
+				sSelectedKeyInsidePressHandler = oSB.getSelectedKey();
+				bFired = true
+			},
+			oSB = new sap.m.SegmentedButton({
+				items: [
+					new sap.m.SegmentedButtonItem({
+						key: 'KEY1',
+						text: 'First'
+						,
+						press: fnOnPress
+					}),
+					new sap.m.SegmentedButtonItem({
+						key: 'KEY2',
+						text: 'Second'
+						,
+						press: fnOnPress
+					})
+				]
+			}).placeAt('qunit-fixture'),
+			sSelectedKeyInsidePressHandler,
+			bFired;
+
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oSB.getButtons()[1].firePress();
+
+		//assert
+		ok(bFired, 'item fires press when a button is pressed');
+		equal(sSelectedKeyInsidePressHandler, "KEY1", 'item fires press before the selected key changes');
+
+		//clean
+		oSB.destroy();
+	});
+
 	/* =========================================================== */
 	/* Dialog module                                               */
 	/* =========================================================== */
