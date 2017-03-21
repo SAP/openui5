@@ -315,7 +315,7 @@
 // 						equal(jQuery("#flexbox6").css(sVendorPrefix + 'flex-wrap'), "wrap-reverse", "Flex Box 6 " + sVendorPrefix + "flex-wrap property should be set correctly");
 // 					});
 					test("justify-content", function() {
-						if((sap.ui.Device.browser.name === "cr" && sap.ui.Device.browser.version < 54) || sap.ui.Device.browser.name === "ff") {
+						if(sap.ui.Device.browser.name === 'cr' || sap.ui.Device.browser.name === "ff") {							
 							equal(jQuery("#flexbox1").css(sVendorPrefix + 'justify-content'), "normal", "Flex Box 1 " + sVendorPrefix + "justify-content property should be set correctly");
 						} else {
 							equal(jQuery("#flexbox1").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 1 " + sVendorPrefix + "justify-content property should be set correctly");
@@ -324,7 +324,7 @@
 						equal(jQuery("#flexbox3").css(sVendorPrefix + 'justify-content'), "center", "Flex Box 3 " + sVendorPrefix + "justify-content property should be set correctly");
 						equal(jQuery("#flexbox4").css(sVendorPrefix + 'justify-content'), "space-between", "Flex Box 4 " + sVendorPrefix + "justify-content property should be set correctly");
 						equal(jQuery("#flexbox5").css(sVendorPrefix + 'justify-content'), "space-around", "Flex Box 5 " + sVendorPrefix + "justify-content property should be set correctly");
-						if((sap.ui.Device.browser.name === "cr" && sap.ui.Device.browser.version < 54) || sap.ui.Device.browser.name === "ff") {
+						if(sap.ui.Device.browser.name === 'cr'|| sap.ui.Device.browser.name === "ff") {							
 							equal(jQuery("#flexbox6").css(sVendorPrefix + 'justify-content'), "normal", "Flex Box 6 " + sVendorPrefix + "justify-content property should be set correctly");
 						} else {
 							equal(jQuery("#flexbox6").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 6 " + sVendorPrefix + "justify-content property should be set correctly");
@@ -335,10 +335,10 @@
 						equal(jQuery("#flexbox2").css(sVendorPrefix + 'align-items'), "flex-end", "Flex Box 2 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox3").css(sVendorPrefix + 'align-items'), "center", "Flex Box 3 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox4").css(sVendorPrefix + 'align-items'), "baseline", "Flex Box 4 " + sVendorPrefix + "align-items property should be set correctly");
-						if(sap.ui.Device.browser.name === "ff") {
+						if(sap.ui.Device.browser.name === "cr" || sap.ui.Device.browser.name === "ff") {							
 							equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "normal", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
 							equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "normal", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
-						} else {
+						} else {							
 							equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
 							equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
 						}
