@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					delete mSettings['items'];
 				}
 
-				sap.ui.base.ManagedObject.prototype.constructor.apply(this, arguments);
+				Control.prototype.constructor.apply(this, arguments);
 				var oControl = new sap.m.TabStrip(this.getId() + "--tabstrip", {
 					hasSelect: true,
 					itemSelect: function(oEvent) {
