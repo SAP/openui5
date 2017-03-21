@@ -1,8 +1,9 @@
 /* ============================================= */
 /* CSS for control sap.ui.commons/ColorPicker.control */
 /* ============================================= */
+@_sap_ui_unified_ColorPickerCircleSize: 8px;
 .sapUiColorPicker-ColorPickerMatrix {
-	background-color: @sapUiExtraLightBG;
+	background-color: @sapUiBaseBG;
 	padding-bottom: 0.2rem;
 	&.sapUiColorPickerHSL .hideForHSL {
 		display: none;
@@ -52,7 +53,7 @@
 		.sapUiColorPicker-swatches {
 			margin: 0;
 		}
-		.sapUiColorPicker-ColorPickerHexField .sapMInputBaseInner {
+		.sapUiColorPicker-ColorPickerHexField.sapMInputBase {
 			width: ~"calc(100% - 3rem)";
 		}
 		.sapUiColorPicker-ColorPickerInputFieldsRight,
@@ -76,8 +77,9 @@
 		// Black and white circle so it will be visible on top of all colors
 		.sapUiColorPicker-ColorPickerCircle {
 			position: absolute;
-			width: 6px;
-			height: 6px;
+			box-sizing: border-box;
+			width: @_sap_ui_unified_ColorPickerCircleSize;
+			height: @_sap_ui_unified_ColorPickerCircleSize;
 			border: 1px solid @sapUiWhiteBorder;
 			border-radius: 6px;
 			pointer-events: none;
@@ -160,10 +162,11 @@
 	-webkit-user-select: none;
 }
 
-.sapUiColorPicker-ColorPickerCircle {
+.sapUiColorPicker-ColorPickerMatrix:not(.sapUnifiedColorPicker) .sapUiColorPicker-ColorPickerBox > .sapUiColorPicker-ColorPickerCircle {
 	position: absolute;
-	width: 5px;
-	height: 5px;
+	box-sizing: border-box;
+	width: @_sap_ui_unified_ColorPickerCircleSize;
+	height: @_sap_ui_unified_ColorPickerCircleSize;
 	border-width: 1px;
 	border-style: solid;
 	border-color: @sapUiWhiteBorder;
@@ -177,7 +180,7 @@
 	height: 20px;
 	border-width: 1px;
 	border-style: solid;
-	border-color: @sapUiMediumBorder;
+	border-color: @sapUiBlackBorder;
 	background-color: @sapUiWhiteBG;
 }
 
@@ -188,7 +191,7 @@
 	height: 20px;
 	border-width: 1px;
 	border-style: solid;
-	border-color: @sapUiMediumBorder;
+	border-color: @sapUiBlackBorder;
 	background-color: @sapUiWhiteBG;
 }
 
