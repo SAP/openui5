@@ -185,12 +185,12 @@ ul, ol, dl {
 
 ul > li {
   list-style: disc inside;
-  padding-left: 24px;
+  padding: 0 24px;
 }
 
 ol > li {
   list-style: decimal inside;
-  padding-left: 24px;
+  padding: 0 24px;
 }
 
 .download li {
@@ -462,9 +462,8 @@ ul.feature-links > li {
 }
 
 .feature-anchor {
-  color: #666;;
+  color: #666;
 }
-
 /*******************************************************************************
 Small Device Styles
 *******************************************************************************/
@@ -478,13 +477,19 @@ Small Device Styles
   .feature-container {
       min-height: 490px;
   }
+  
   .feature-list {
     width: 100%;
   }
+  
   .teaser-pic {
     width: 400px;
   }
   .faq-container {
+    min-height: 0px;
+  }
+  
+  .header-container {
     min-height: 0px;
   }
 }
@@ -547,6 +552,10 @@ Small Device Styles
   height: 50px;
   margin-left: -2px;
   }
+  
+  h4 {
+  font-size: 16px;
+}
 }
 
 /*******************************************************************************
@@ -628,11 +637,9 @@ Download links and page
 }
 
 
-
 /*******************************************************************************
 Simple Syntax Highlighter
 *******************************************************************************/
-
 
 .shKeyword {
   color: #333;
