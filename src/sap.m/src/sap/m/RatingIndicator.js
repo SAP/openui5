@@ -12,12 +12,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new RatingIndicator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
-	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * Enables users to rate an item on a numeric scale.
 	 * @class
-	 * Is used to rate content. The amount of rating symbols can be specified, as well as the URIs to the
-	 * image icons which shall be used as rating symbols. When the user performs a rating, an event is fired.
+	 * The rating indicator is used to display a specific number of icons that are used to rate an item. Additionally it is also used to display the average over all ratings.
+	 * <h3>Structure</h3>
+	 * <ul>
+	 * <li>The rating indicator can use different icons (default: stars) which are defined as URIs in the properties <code>iconHovered</code>, <code>iconSelected</code> and <code>iconUnselected</code>.</li>
+	 * <li>The rating indicator can display half-values ({@link sap.m.RatingIndicatorVisualMode visualMode} = Half) when it is used to show the average. Half-values can't be selected by the user.</li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * The preferred number of icons is between 5 (default) and 7.
+	 * <h3>Responsive Behavior</h3>
+	 * You can display icons in 4 recommended sizes:
+	 * <ul>
+	 * <li>large - 32px</li>
+	 * <li>medium(default) - 22px</li>
+	 * <li>small - 16px</li>
+	 * <li>XS - 12px</li>
+	 * </ul>
+	 * <b>Note:</b> If no icon size is set, the rating indicator will set it according to the content density.</h4>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
