@@ -9,16 +9,16 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			this.getView().setModel(oImgModel, "img");
 
 			// set the possible screen sizes
-			var oScreenSizes = {
+			var oCarouselContainer = {
 				screenSizes : [
-					"35%",
-					"45%",
-					"60%",
-					"80%",
-					"100%"
+					"350px",
+					"420px",
+					"555px",
+					"743px",
+					"908px"
 				]
 			};
-			var oScreenSizesModel = new JSONModel(oScreenSizes);
+			var oScreenSizesModel = new JSONModel(oCarouselContainer);
 			this.getView().setModel(oScreenSizesModel, "ScreenSizesModel");
 
 			this._setNumberOfImagesInCarousel(3);
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			var screenWidth = screenSizesJSON.screenSizes[Number(iValue) - 1];
 			var oCarouselContainer = this.getView().byId("carouselContainer");
 			oCarouselContainer.setWidth(screenWidth);
-			var screenHeight = origingalHeight * parseFloat(screenWidth) / 100;
+			var screenHeight = origingalHeight * parseFloat(screenWidth) / 1000;
 			oCarouselContainer.setHeight(screenHeight + 'px');
 		},
 		onNumberOfImagesChange: function (oEvent) {
