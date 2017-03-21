@@ -30,7 +30,7 @@
 			"name": "openui5-i18n-util",
 			"decription": "This script will search all your i18n strings and build auto-magically every translations file for you.",
 			"githubLink": "https://github.com/StErMi/openui5-i18n-util",
-			"documentationLink": "",
+			"documentationLink": "https://github.com/StErMi/openui5-i18n-util",
 			"owner": "StErMi",
 			"license": "Apache 2.0",
 			"type": "Tool"
