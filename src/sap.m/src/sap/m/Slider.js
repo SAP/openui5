@@ -973,7 +973,7 @@ sap.ui.define([
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
-
+			oEvent.stopPropagation();
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1025,7 +1025,7 @@ sap.ui.define([
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
-
+			oEvent.stopPropagation();
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
