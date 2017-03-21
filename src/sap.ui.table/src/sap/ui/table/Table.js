@@ -743,6 +743,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._detachExtensions();
 
 		// cleanup
+		if (this._dataReceivedHandlerId) {
+			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			delete this._dataReceivedHandlerId;
+		}
 		this._cleanUpTimers();
 		this._detachEvents();
 
@@ -3834,7 +3838,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				this.setBusy(true);
 			}
 			this._bPendingRequest = true;
-			jQuery.sap.clearDelayedCall(this._mTimeouts.dataReceivedHandlerId);
+			if (this._dataReceivedHandlerId) {
+				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+				delete this._dataReceivedHandlerId;
+			}
 		}
 	};
 
@@ -3845,19 +3852,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			this._bPendingRequest = false;
-			jQuery.sap.clearDelayedCall(this._mTimeouts.dataReceivedHandlerId);
+			if (this._dataReceivedHandlerId) {
+				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+				delete this._dataReceivedHandlerId;
+			}
 
 			// The table will be set to busy when a request is sent, and set to not busy when a response is received.
 			// When scrolling down fast it can happen that there are multiple requests in the request queue of the binding, which will be processed
 			// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
 			// processed. With this timer we avoid the flickering, as the table will only be set to not busy after all requests have been processed.
 			// The same applied for updating the NoData area.
-			this._mTimeouts.dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
+			this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);
 				}
 				this._updateNoData();
-				delete this._mTimeouts.dataReceivedHandlerId;
+				delete this._dataReceivedHandlerId;
 			});
 		}
 	};
