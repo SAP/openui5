@@ -344,6 +344,9 @@ sap.ui.define([
 		if (oAppDescr && oAppDescr["sap.app"] && oAppDescr["sap.app"]["applicationVersion"]) { //TODO: Replace with method in Utils when available
 			oValidAppVersions.creation = oAppDescr["sap.app"]["applicationVersion"]["version"];
 			oValidAppVersions.from = oAppDescr["sap.app"]["applicationVersion"]["version"];
+			if (mParameters.developerMode) {
+				oValidAppVersions.to = oAppDescr["sap.app"]["applicationVersion"]["version"];
+			}
 		}
 
 		oInfo = {

@@ -263,7 +263,7 @@ sap.ui.define([
 			return true; // without a reference the right to edit or delete a change cannot be determined
 		}
 
-		var oSettings = Settings.getInstanceOrUndef();
+		var oSettings = Settings.getInstanceOrUndef(sReference);
 		if (!oSettings) {
 			return true; // without settings the right to edit or delete a change cannot be determined
 		}
@@ -462,8 +462,8 @@ sap.ui.define([
 	 * @param {string} sAlias - Dependent object is saved under this alias
 	 * @param {object} mPropertyBag
 	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
-	 * @param {sap.ui.core.Component} (optional) mPropertyBag.appComponent - Application component; only needed if vControl is a string or an XML node
-	 * @param {object} (optional) mAdditionalSelectorInformation - Additional mapped data which is added to the selector
+	 * @param {sap.ui.core.Component} [mPropertyBag.appComponent] - Application component; only needed if <code>vControl</code> is a string or an XML node
+	 * @param {object} [mAdditionalSelectorInformation] - Additional mapped data which is added to the selector
 	 *
 	 * @throws {Exception} oException - If sAlias already exists, an error is thrown
 	 * @public
@@ -604,12 +604,15 @@ sap.ui.define([
 	 *                                      these texts will be connected to the translation process
 	 * @param {Object}  [oPropertyBag.content] content of the new change
 	 * @param {Boolean} [oPropertyBag.isVariant] variant?
-	 * @param {String}  [oPropertyBag.namespace] namespace
 	 * @param {String}  [oPropertyBag.packageName] ABAP package name
 	 * @param {Object}  [oPropertyBag.selector] name value pair of the attribute and value
 	 * @param {String}  [oPropertyBag.id] name/id of the file. if not set implicitly created
 	 * @param {Boolean} [oPropertyBag.isVariant] name of the component
 	 * @param {Boolean} [oPropertyBag.isUserDependent] true for enduser changes
+	 * @param {String}  [oPropertyBag.context] ID of the context
+	 * @param {Object}  [oPropertyBag.dependentSelector] List of selectors saved under an alias for creating the dependencies between changes
+	 * @param {Object}  [oPropertyBag.validAppVersions] Application versions where the change is active
+	 * @param {String}  [oPropertyBag.reference] Application component name
 	 *
 	 * @returns {Object} The content of the change file
 	 *
