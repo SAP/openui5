@@ -1,8 +1,8 @@
 function onLoad() {
 	// generate template for each table entry
-	var tableNode = document.getElementById("projectsTable");
-	$.getJSON("./OpenUI5RelatedProjects.json", function(result){
-		$.each(result, function(sIndex, oEntry){
+	var oTableNode = document.getElementById("projectsTable");
+	$.getJSON("./OpenUI5RelatedProjects.json", function(oResult){
+		$.each(oResult, function(sIndex, oEntry){
 			var sRowTemplate = document.createElement("tr");
 			sName  = "<td><a href=" + oEntry.githubLink +">" + oEntry.name + "</a></td>";
 			sType  = "<td>" + oEntry.type + "</td>";
@@ -11,7 +11,7 @@ function onLoad() {
 			sDocumentationLink  = "<td><a href=" + oEntry.documentationLink + ">" + "Documentation</a></td>";
 			sLicense  = "<td>" + oEntry.license + "</td>";
 			sRowTemplate.innerHTML = sName + sOwner + sType + sDescription + sDocumentationLink + sLicense;
-			tableNode.appendChild(sRowTemplate);
+			oTableNode.appendChild(sRowTemplate);
 		});
 	});
 }
