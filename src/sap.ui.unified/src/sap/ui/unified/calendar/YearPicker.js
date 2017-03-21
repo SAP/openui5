@@ -4,9 +4,14 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation',
-               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/library'],
-               function(jQuery, Control, ItemNavigation, Date1, CalendarUtils, UniversalDate, library) {
+               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/library'],
+               function(jQuery, Control, ItemNavigation, Date1, CalendarUtils, CalendarDate, UniversalDate, library) {
 	"use strict";
+
+	/*
+	* Inside the YearPicker CalendarDate objects are used. But in the API JS dates are used.
+	* So conversion must be done on API functions.
+	*/
 
 	/**
 	 * Constructor for a new YearPicker.
@@ -92,9 +97,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
 		this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
-		this._oMinDate = this._newUniversalDate(new Date(Date.UTC(1, 0, 1)));
-		this._oMinDate.getJSDate().setUTCFullYear(1); // otherwise year 1 will be converted to year 1901
-		this._oMaxDate = this._newUniversalDate(new Date(Date.UTC(9999, 11, 31)));
+		this._oMinDate = CalendarUtils._minDate(this.getPrimaryCalendarType());
+		this._oMaxDate = CalendarUtils._maxDate(this.getPrimaryCalendarType());
 
 	};
 
@@ -110,37 +114,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("year", iYear, true);
 		iYear = this.getProperty("year"); // to have type conversion, validation....
 
-		var oDate = this._newUniversalDate(new Date());
+		var oDate = CalendarDate.fromLocalJSDate(new Date(),  this.getPrimaryCalendarType());
 		oDate.setDate(1);
 		oDate.setMonth(0);
-		oDate.setFullYear(iYear);
+		oDate.setYear(iYear);
 
-		this.setDate(oDate.getJSDate());
+		this.setDate(oDate.toLocalJSDate());
 
 		return this;
 
 	};
-
+	/**
+	 * Sets a date.
+	 * @param {Date} oDate a JavaScript date
+	 * @return {sap.ui.unified.YearPicker} <code>this</code> for method chaining
+	 */
 	YearPicker.prototype.setDate = function(oDate){
+		var oCalDate, iYear, iYears, oFirstDate;
 
 		// check the given object if it's a JS Date object
 		// null is a default value so it should not throw error but set it instead
 		oDate && CalendarUtils._checkJSDateObject(oDate);
 
-		var iYear = oDate.getFullYear();
+		iYear = oDate.getFullYear();
 		CalendarUtils._checkYearInValidRange(iYear);
 
-		var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
-		oUTCDate.setUTCMonth(0, 1); // start of year
+		oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
+		oCalDate.setMonth(0);
+		oCalDate.setDate(1); // start of year
 		// no rerendering needed, just select new year or update years
 		this.setProperty("date", oDate, true);
-		this.setProperty("year", oUTCDate.getUTCFullYear(), true);
-		this._oUTCDate = oUTCDate;
+		this.setProperty("year", oCalDate.getYear(), true);
+		this._oDate = oCalDate;
 
 		if (this.getDomRef()) {
-			var iYears = this.getYears();
-			var oFirstDate = this._newUniversalDate(this._oUTCDate);
-			oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() - Math.floor(iYears / 2));
+			iYears = this.getYears();
+			oFirstDate = new CalendarDate(this._oDate, this.getPrimaryCalendarType());
+			oFirstDate.setYear(oFirstDate.getYear() - Math.floor(iYears / 2));
 			_updateYears.call(this, oFirstDate, Math.floor(iYears / 2));
 		}
 
@@ -148,17 +158,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	};
 
+	/**
+	* @return {sap.ui.unified.calendar.CalendarDate}
+	* @private
+	*/
 	YearPicker.prototype._getDate = function(){
 
-		if (!this._oUTCDate) {
+		if (!this._oDate) {
 			var iYear = this.getYear();
-			this._oUTCDate = this._newUniversalDate(new Date(Date.UTC(iYear, 0, 1)));
-			if (iYear < 100) {
-				this._oUTCDate.setUTCFullYear(iYear);
-			}
+			this._oDate = new CalendarDate(iYear, 0, 1, this.getPrimaryCalendarType());
 		}
 
-		return this._oUTCDate;
+		return this._oDate;
 
 	};
 
@@ -168,28 +179,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 		this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
 
-		if (this._oUTCDate) {
-			this._oUTCDate = UniversalDate.getInstance(this._oUTCDate.getJSDate(), sCalendarType);
-			this._oUTCDate.setUTCMonth(0, 1); // start of year
+		if (this._oDate) {
+			this._oDate = new CalendarDate(this._oDate, sCalendarType);
+			this._oDate.setMonth(0);
+			this._oDate.setDate(1); // start of year
 		}
-		this._oMinDate = UniversalDate.getInstance(this._oMinDate.getJSDate(), sCalendarType);
-		this._oMaxDate = UniversalDate.getInstance(this._oMaxDate.getJSDate(), sCalendarType);
+		//The min and max dates are given in gregorian values, but when getters are called they are calendar relevant -
+		//i.e. maxdate date for islamic corresponds to 9666/3/30.
+		//This is why we need to reinstantiate min/max date. If we don't we would again return the same dates for min/max
+		this._oMinDate = new CalendarDate(this._oMinDate, sCalendarType);
+		this._oMaxDate = new CalendarDate(this._oMaxDate, sCalendarType);
 
 		return this;
-
-	};
-
-	YearPicker.prototype._newUniversalDate = function(oDate){
-
-		var oJSDate;
-
-		if ((oDate instanceof UniversalDate)) {
-			oJSDate = new Date(oDate.getJSDate().getTime()); // use getTime() because IE and FF can not parse dates < 0100.01.01
-		} else {
-			oJSDate = new Date(oDate.getTime());
-		}
-
-		return UniversalDate.getInstance(oJSDate, this.getPrimaryCalendarType());
 
 	};
 
@@ -272,30 +273,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	};
 
+	/**
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate
+	* @return {sap.ui.unified.calendar.CalendarDate}
+	* @private
+	*/
 	YearPicker.prototype._checkFirstDate = function(oDate){
 
 		// check if first date is outside of min and max date
 		var iYears = this.getYears();
-		var oMaxStartYear = this._newUniversalDate(this._oMaxDate);
-		oMaxStartYear.setUTCFullYear(oMaxStartYear.getUTCFullYear() - iYears + 1);
-		if (oDate.getTime() > oMaxStartYear.getTime() && oDate.getFullYear() != oMaxStartYear.getUTCFullYear()) {
-			oDate = this._newUniversalDate(oMaxStartYear);
-			oDate.setUTCMonth(0,1);
-		} else if (oDate.getTime() < this._oMinDate.getTime() && oDate.getFullYear() != this._oMinDate.getUTCFullYear()) {
-			oDate = this._newUniversalDate(this._oMinDate);
-			oDate.setUTCMonth(0,1);
+		var oMaxStartYear = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+		oMaxStartYear.setYear(oMaxStartYear.getYear() - iYears + 1);
+		if (oDate.isAfter(oMaxStartYear) && oDate.getYear() != oMaxStartYear.getYear()) {
+			oDate = new CalendarDate(oMaxStartYear, this.getPrimaryCalendarType());
+			oDate.setMonth(0);
+			oDate.setDate(1);
+		} else if (oDate.isBefore(this._oMinDate) && oDate.getYear() != this._oMinDate.getYear()) {
+			oDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
+			oDate.setMonth(0);
+			oDate.setDate(1);
 		}
 
 		return oDate;
 
 	};
 
+	/**
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate
+	* @private
+	*/
 	YearPicker.prototype._checkDateEnabled = function(oDate){
 
 		var bEnabled = true;
 
-		if ((oDate.getTime() > this._oMaxDate.getTime() && oDate.getFullYear() != this._oMaxDate.getUTCFullYear()) ||
-				(oDate.getTime() < this._oMinDate.getTime() && oDate.getFullYear() != this._oMinDate.getUTCFullYear())) {
+		if ((oDate.isAfter(this._oMaxDate) && oDate.getYear() != this._oMaxDate.getYear()) ||
+				(oDate.isBefore(this._oMinDate) && oDate.getYear() != this._oMinDate.getYear())) {
 			bEnabled = false;
 		}
 
@@ -306,9 +318,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	function _initItemNavigation(){
 
 		var iYears = this.getYears();
-		var iYear = this._getDate().getUTCFullYear();
-		var iMinYear = this._oMinDate.getUTCFullYear();
-		var iMaxYear = this._oMaxDate.getUTCFullYear();
+		var iYear = this._getDate().getYear();
+		var iMinYear = this._oMinDate.getYear();
+		var iMaxYear = this._oMaxDate.getYear();
 		var oRootDomRef = this.getDomRef();
 		var aDomRefs = this.$().find(".sapUiCalItem");
 		var iIndex = Math.floor(iYears / 2);
@@ -452,7 +464,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 
 		var sYyyymmdd = $DomRef.attr("data-sap-year-start");
-		var oDate =  this._newUniversalDate(this._oFormatYyyymmdd.parse(sYyyymmdd, true));
+		var oDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd));
 		var sId = this.getId() + "-y" + sYyyymmdd;
 		for ( var i = 0; i < aDomRefs.length; i++) {
 			$DomRef = jQuery(aDomRefs[i]);
@@ -465,9 +477,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 		}
 
-		var oLocalDate = CalendarUtils._createLocalDate(oDate);
-		this.setProperty("date", oLocalDate, true);
-		this.setProperty("year", oDate.getUTCFullYear(), true);
+		this.setProperty("date", oDate.toLocalJSDate(), true);
+		this.setProperty("year", oDate.getYear(), true);
 
 		return true;
 
@@ -476,34 +487,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	function _updatePage(bForward, iSelectedIndex, bFireEvent){
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var oFirstDate =  this._newUniversalDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start"), true));
+		var oFirstDate =  CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start")), this.getPrimaryCalendarType());
 		var iYears = this.getYears();
 
 		if (bForward) {
-			var oMaxDate = this._newUniversalDate(this._oMaxDate);
-			oMaxDate.setUTCFullYear(oMaxDate.getUTCFullYear() - iYears + 1);
-			if (oFirstDate.getTime() < oMaxDate.getTime()){
-				oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() + iYears);
-				if (oFirstDate.getTime() > oMaxDate.getTime()){
-					iSelectedIndex = iSelectedIndex + (oFirstDate.getUTCFullYear() - oMaxDate.getUTCFullYear());
+			var oMaxDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+			oMaxDate.setYear(oMaxDate.getYear() - iYears + 1);
+			if (oFirstDate.isBefore(oMaxDate)) {
+				oFirstDate.setYear(oFirstDate.getYear() + iYears);
+				if (oFirstDate.isAfter(oMaxDate)){
+					iSelectedIndex = iSelectedIndex + (oFirstDate.getYear() - oMaxDate.getYear());
 					if (iSelectedIndex > iYears - 1) {
 						iSelectedIndex = iYears - 1;
 					}
 					oFirstDate = this._oMaxDate;
-					oFirstDate.setUTCMonth(0, 1);
+					oFirstDate.setMonth(0);
+					oFirstDate.setDate(1);
 				}
 			} else {
 				return;
 			}
 		} else {
-			if (oFirstDate.getTime() > this._oMinDate.getTime()) {
-				oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() - iYears);
-				if (oFirstDate.getTime() < this._oMinDate.getTime()) {
-					iSelectedIndex = iSelectedIndex - (this._oMinDate.getUTCFullYear() - oFirstDate.getUTCFullYear());
+			if (oFirstDate.isAfter(this._oMinDate)) {
+				oFirstDate.setYear(oFirstDate.getYear() - iYears);
+				if (oFirstDate.isBefore(this._oMinDate)) {
+					iSelectedIndex = iSelectedIndex - (this._oMinDate.getYear() - oFirstDate.getYear());
 					if (iSelectedIndex < 0) {
 						iSelectedIndex = 0;
 					}
-					oFirstDate = this._newUniversalDate(this._oMinDate);
+					oFirstDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
 				}
 			} else {
 				return;
@@ -518,26 +530,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	}
 
+	/**
+	* @param {sap.ui.unified.calendar.CalendarDate} oFirstDate
+	* @param {int} iSelectedIndex
+	* @private
+	*/
 	function _updateYears(oFirstDate, iSelectedIndex){
 
-		var sCurrentYyyymmdd = this._oFormatYyyymmdd.format(this._getDate().getJSDate(), true);
+		var sCurrentYyyymmdd = this._oFormatYyyymmdd.format(this._getDate().toUTCJSDate(), true);
 		var bEnabledCheck = false; // check for disabled years only needed if borders touched
 		var oFirstDate2 = this._checkFirstDate(oFirstDate);
 		var oSelectedDate;
-		if (oFirstDate2.getTime() != oFirstDate.getTime()) {
-			oSelectedDate = this._newUniversalDate(oFirstDate);
-			oSelectedDate.setUTCFullYear(oSelectedDate.getUTCFullYear() + iSelectedIndex);
+		if (!oFirstDate2.isSame(oFirstDate)) {
+			oSelectedDate = new CalendarDate(oFirstDate, this.getPrimaryCalendarType());
+			oSelectedDate.setYear(oSelectedDate.getYear() + iSelectedIndex);
 			oFirstDate = oFirstDate2;
 			bEnabledCheck = true;
 		}
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var oDate = this._newUniversalDate(oFirstDate);
+		var oDate = new CalendarDate(oFirstDate, this.getPrimaryCalendarType());
 		for ( var i = 0; i < aDomRefs.length; i++) {
-			var sYyyymmdd = this._oFormatYyyymmdd.format(oDate.getJSDate(), true);
+			var sYyyymmdd = this._oFormatYyyymmdd.format(oDate.toUTCJSDate(), true);
 			var $DomRef = jQuery(aDomRefs[i]);
 			$DomRef.attr("id", this.getId() + "-y" + sYyyymmdd);
-			$DomRef.text(this._oYearFormat.format(oDate, true)); // to render era in Japanese
+			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
+			$DomRef.text(this._oYearFormat.format(UniversalDate.getInstance(oDate.toUTCJSDate(), oDate.getCalendarType()), true));
 			$DomRef.attr("data-sap-year-start", sYyyymmdd);
 			if ($DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd != sCurrentYyyymmdd) {
 				$DomRef.removeClass("sapUiCalItemSel");
@@ -550,7 +568,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			var bEnabled = true;
 			if (bEnabledCheck) {
 				bEnabled = this._checkDateEnabled(oDate);
-				if (oDate.getTime() == oSelectedDate.getTime()) {
+				if (oDate.isSame(oSelectedDate)) {
 					iSelectedIndex = i;
 				}
 			}
@@ -563,7 +581,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				$DomRef.attr("aria-disabled", true);
 			}
 
-			oDate.setUTCFullYear(oDate.getUTCFullYear() + 1);
+			oDate.setYear(oDate.getYear() + 1);
 		}
 
 		this._oItemNavigation.focusItem(iSelectedIndex);

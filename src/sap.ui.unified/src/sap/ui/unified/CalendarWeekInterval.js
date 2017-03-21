@@ -3,10 +3,15 @@
  */
 
 //Provides control sap.ui.unified.CalendarWeekInterval.
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', './library',
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', './library',
 		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer'],
-	function (jQuery, CalendarUtils, UniversalDate, library, CalendarDateInterval, CalendarDateIntervalRenderer) {
+	function (jQuery, CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer) {
 		"use strict";
+
+		/*
+		 * Inside the CalendarWeekInterval CalendarDate objects are used. But in the API JS dates are used.
+		 * So conversion must be done on API functions.
+		 */
 
 		/**
 		 * Constructor for a new <code>CalendarWeekInterval</code>.
@@ -68,8 +73,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				oDate = oEvent.getParameter("date");
 				//Before the new(previous/next) week is rendered, this date is outside visible area. Save it, so it can be
 				//focused after week rendering. See function _focusDateExtend.
-				this._oFocusDateWeek = CalendarUtils._createUniversalUTCDate(oDate);
-				oFirstWeekDate = new UniversalDate(CalendarUtils.getFirstDateOfWeek(this._oFocusDateWeek).getTime());
+				this._oFocusDateWeek = CalendarDate.fromLocalJSDate(oDate);
+				oFirstWeekDate = CalendarUtils._getFirstDateOfWeek(this._oFocusDateWeek);
 				oDatesRow = this.getAggregation("month")[0];
 
 				if (oDatesRow.getDomRef()) {//switch/render the new week
@@ -85,35 +90,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * - get the week for the 1st date of the chosen month
 		 * - obtains the 1st day of the week above
 		 * - sets this date as both start date and focused date
-		 * @param {UniversalDate} oFocusedDate the focused date that this function will adjust
+		 * @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate the focused date that this function will adjust
 		 * @param {number} iChosenMonth the new month (0-based)
 		 * @private
 		 */
 		CalendarWeekInterval.prototype._adjustFocusedDateUponMonthChange = function (oFocusedDate, iChosenMonth) {
-			var oNextMonth = new UniversalDate(oFocusedDate.getTime()),
+			var oNextMonth = new CalendarDate(oFocusedDate),
 				bIsTheNextMonthVisibleAsWell;
 
 			oNextMonth.setDate(1);
 			oNextMonth.setMonth(oNextMonth.getMonth() + 1);
-			bIsTheNextMonthVisibleAsWell = this._oPlanningCalendar._dateMatchesVisibleRange(oNextMonth, sap.ui.unified.CalendarIntervalType.Week);
+			bIsTheNextMonthVisibleAsWell = this._oPlanningCalendar._dateMatchesVisibleRange(oNextMonth.toLocalJSDate(), sap.ui.unified.CalendarIntervalType.Week);
 
 			//handle the border-case where end of the month and begin of the next month
 			if (bIsTheNextMonthVisibleAsWell && iChosenMonth === oNextMonth.getMonth()) {//this is already calculated
 				return;
 			}
-			oFocusedDate.setUTCMonth(iChosenMonth);
-			oFocusedDate.setUTCDate(1);
+			oFocusedDate.setMonth(iChosenMonth);
+			oFocusedDate.setDate(1);
 
-			var oFirstWeekDate = new UniversalDate(CalendarUtils.getFirstDateOfWeek(oFocusedDate).getTime());
+			var oFirstWeekDate = CalendarUtils._getFirstDateOfWeek(oFocusedDate);
 			this._setStartDate(oFirstWeekDate, false, true);//renders new week according to the start date
 
 			this._oFocusDateWeek = oFirstWeekDate;
-			oFocusedDate.getJSDate().setTime(oFirstWeekDate.getTime());
+			oFocusedDate.setYear(oFirstWeekDate.getYear());
+			oFocusedDate.setMonth(oFirstWeekDate.getMonth());
+			oFocusedDate.setDate(oFirstWeekDate.getDate());
 		};
 
 		/**
 		 * Overrides the Calendar#_adjustFocusedDateUponYearChange function.
-		 * @param {UniversalDate} oFocusedDate the focused date that this function will adjust
+		 * @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate the focused date that this function will adjust
 		 * @param {number} iChosenYear The new year
 		 * @desc The purpose of this function is the following:
 		 * 1. Takes the same week of the chosen year (as the passed focused date refers to its own year)
@@ -122,19 +129,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * @private
 		 */
 		CalendarWeekInterval.prototype._adjustFocusedDateUponYearChange = function(oFocusedDate, iChosenYear) {
-			if (!(oFocusedDate && oFocusedDate instanceof UniversalDate)) {
+			if (!(oFocusedDate && oFocusedDate instanceof CalendarDate)) {
 				return;
 			}
 
-			var oWeekNumber = UniversalDate.getWeekByDate(oFocusedDate.getCalendarType(), oFocusedDate.getUTCFullYear(), oFocusedDate.getUTCMonth(), oFocusedDate.getUTCDate()),
-				oTempUniversalFocusedDate = new UniversalDate(oFocusedDate.getTime()),
+			var oWeekNumber = CalendarUtils._getWeek(oFocusedDate),
+				oTempFocusedDate = new CalendarDate(oFocusedDate),
 				oNewWeekNumber;
 
 			//Start one week before and find the first date that is sharing the same week as the current
-			oTempUniversalFocusedDate.setFullYear(iChosenYear);
-			oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() - 7);
-			oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
-				oTempUniversalFocusedDate.getMonth(), oTempUniversalFocusedDate.getDate());
+			oTempFocusedDate.setYear(iChosenYear);
+			oTempFocusedDate.setDate(oTempFocusedDate.getDate() - 7);
+			oNewWeekNumber = CalendarUtils._getWeek(oTempFocusedDate);
 
 			if (oWeekNumber.week === 52 && CalendarUtils._getNumberOfWeeksForYear(iChosenYear) < 53) {
 				/**
@@ -145,12 +151,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			}
 
 			while (oWeekNumber.week !== oNewWeekNumber.week) {
-				oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() + 1);
-				oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
-					oTempUniversalFocusedDate.getMonth(), oTempUniversalFocusedDate.getDate());
+				oTempFocusedDate.setDate(oTempFocusedDate.getDate() + 1);
+				oNewWeekNumber = CalendarUtils._getWeek(oTempFocusedDate);
 			}
 
-			oFocusedDate.getJSDate().setTime(oTempUniversalFocusedDate.getJSDate().getTime());
+			oFocusedDate.setYear(oTempFocusedDate.getYear());
+			oFocusedDate.setMonth(oTempFocusedDate.getMonth());
+			oFocusedDate.setDate(oTempFocusedDate.getDate());
 
 		};
 
@@ -160,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * This function checks for special focus date (set by others) in order to focus this particular date.
 		 * Otherwise it delegates the processing to the parent.
 		 *
-		 * @param {Date} oDate the date to focus
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDate the date to focus
 		 * @param {boolean} bOtherMonth determines whether the function is called due navigation outside the visible
 		 * date range
 		 * @param {boolean} bNoEvent hint to skip firing <code>startDateChange</code> event. If true, the parent is supposed
@@ -176,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			}
 
 			oDatesRow = this.getAggregation("month")[0];
-			oLocalFocusDate = CalendarUtils._createLocalDate(this._oFocusDateWeek);
+			oLocalFocusDate = this._oFocusDateWeek.toLocalJSDate();
 
 			this._setFocusedDate(this._oFocusDateWeek);//just a setter
 			oDatesRow.setDate(oLocalFocusDate);//really focus the given date
@@ -187,15 +194,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		};
 
-		CalendarWeekInterval.prototype._dateMatchesVisibleRange = function(oDate) {
+		/**
+		 *
+		 * @param {Date} oDateTime a JavaScript Date (datetime). As CalendarWeekInterval works with dates (no time info),
+		 * the time part of the oDateTime is not considered during comparison.
+		 * @return {boolean} true if the given parameter matches the range between startDate (inclusive) and a date
+		 * that is CalendarWeekInterval.getDays() later(exclusive)
+		 * @private
+		 */
+		CalendarWeekInterval.prototype._dateMatchesVisibleRange = function(oDateTime) {
 			var iIntervals = this.getDays(),
-				oUniversalDate = CalendarUtils._createUniversalUTCDate(oDate),
-				oUniversalStartDate =  CalendarUtils._createUniversalUTCDate(this.getStartDate()),
-				oUniversalEndDate = CalendarUtils._createUniversalUTCDate(this.getStartDate());
+				oDate = CalendarDate.fromLocalJSDate(oDateTime),
+				oStartDate = CalendarDate.fromLocalJSDate(this.getStartDate()),
+				oEndDate = CalendarDate.fromLocalJSDate(this.getStartDate());
 
-			oUniversalEndDate.setUTCDate(oUniversalEndDate.getUTCDate() + iIntervals);
+			oEndDate.setDate(oEndDate.getDate() + iIntervals);
 
-			return oUniversalDate.getTime() >= oUniversalStartDate && oUniversalDate.getTime() < oUniversalEndDate;
+			return oDate.isSameOrAfter(oStartDate) && oDate.isBefore(oEndDate);
 		};
 
 		return CalendarWeekInterval;

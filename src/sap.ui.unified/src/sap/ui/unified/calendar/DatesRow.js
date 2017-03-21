@@ -4,9 +4,14 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
-               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/calendar/Month', 'sap/ui/unified/library'],
-               function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, UniversalDate, Month, library) {
+               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/Month', 'sap/ui/unified/library'],
+               function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, CalendarDate, Month, library) {
 	"use strict";
+
+	/*
+	* Inside the DatesRow CalendarDate objects are used. But in the API JS dates are used.
+	* So conversion must be done on API functions.
+	*/
 
 	/**
 	 * Constructor for a new calendar/DatesRow.
@@ -64,6 +69,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/**
+	 * Sets a start date.
+	 * @param {Date} oDate a JavaScript date
+	 * @return {sap.ui.unified.calendar.DatesRow} <code>this</code> for method chaining
+	 */
 	DatesRow.prototype.setStartDate = function(oStartDate){
 
 		CalendarUtils._checkJSDateObject(oStartDate);
@@ -71,12 +81,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var iYear = oStartDate.getFullYear();
 		CalendarUtils._checkYearInValidRange(iYear);
 
-		var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate, this.getPrimaryCalendarType());
 		this.setProperty("startDate", oStartDate, true);
-		this._oUTCStartDate = oUTCDate;
+		this._oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this.getPrimaryCalendarType());
 
 		if (this.getDomRef()) {
-			var oOldDate = CalendarUtils._createLocalDate(this._getDate());
+			var oOldDate = this._getDate().toLocalJSDate();
 			this._bNoRangeCheck = true;
 			this.displayDate(oStartDate); // don't set focus
 			this._bNoRangeCheck = false;
@@ -88,13 +97,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/**
+	 *
+	 * @returns {sap.ui.unified.calendar.CalendarDate} the start date (timezone agnostic)
+	 * @private
+	 */
 	DatesRow.prototype._getStartDate = function(){
 
-		if (!this._oUTCStartDate) {
-			this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(new Date(), this.getPrimaryCalendarType());
+		if (!this._oStartDate) {
+			this._oStartDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType());
 		}
 
-		return this._oUTCStartDate;
+		return this._oStartDate;
 	};
 
 	/**
@@ -152,8 +166,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		Month.prototype.setPrimaryCalendarType.apply(this, arguments);
 
-		if (this._oUTCStartDate) {
-			this._oUTCStartDate = UniversalDate.getInstance(this._oUTCStartDate.getJSDate(), sCalendarType);
+		if (this._oStartDate) {
+			this._oStartDate = new CalendarDate(this._oStartDate, sCalendarType);
 		}
 
 		return this;
@@ -185,44 +199,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oEvent = oControlEvent.getParameter("event");
 		var iDays = this.getDays();
 		var oOldDate = this._getDate();
-		var oFocusedDate = this._newUniversalDate(oOldDate);
+		var oFocusedDate = new CalendarDate(oOldDate, this.getPrimaryCalendarType());
 
 		if (oEvent.type) {
 			switch (oEvent.type) {
 			case "sapnext":
 			case "sapnextmodifiers":
 				//go to next day
-				oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 1);
+				oFocusedDate.setDate(oFocusedDate.getDate() + 1);
 				break;
 
 			case "sapprevious":
 			case "sappreviousmodifiers":
 				//go to previous day
-				oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+				oFocusedDate.setDate(oFocusedDate.getDate() - 1);
 				break;
 
 			case "sappagedown":
 				// go getDays() days forward
-				oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + iDays);
+				oFocusedDate.setDate(oFocusedDate.getDate() + iDays);
 				break;
 
 			case "sappageup":
 				// go getDays() days backwards
-				oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - iDays);
+				oFocusedDate.setDate(oFocusedDate.getDate() - iDays);
 				break;
 
 			default:
 				break;
 			}
 
-			this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: true, _outsideBorder: true});
+			this.fireFocus({date: oFocusedDate.toLocalJSDate(), otherMonth: true, _outsideBorder: true});
 
 		}
 
 	};
 
-	/*
-	 * needs UTC date
+	/**
+	 * Checks if given date is focusable.
+	 * @param {Date} oDate JavaScript (local) date.
+	 * @returns {boolean} true if the date is focusable, false otherwise.
 	 */
 	DatesRow.prototype.checkDateFocusable = function(oDate){
 
@@ -235,22 +251,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		var oStartDate = this._getStartDate();
 
-		var oEndDate = this._newUniversalDate(oStartDate);
-		oEndDate.setUTCDate(oEndDate.getUTCDate() + this.getDays());
-		var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
+		var oEndDate = new CalendarDate(oStartDate, this.getPrimaryCalendarType());
+		oEndDate.setDate(oEndDate.getDate() + this.getDays());
+		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
 
-		if (oUTCDate.getTime() >= oStartDate.getTime() && oUTCDate.getTime() < oEndDate.getTime()) {
-			return true;
-		}else {
-			return false;
-		}
-
+		return oCalDate.isSameOrAfter(oStartDate) && oCalDate.isBefore(oEndDate);
 	};
 
 	DatesRow.prototype._renderHeader = function(){
 
 		var oStartDate = this._getStartDate();
-		var iStartDay = oStartDate.getUTCDay();
+		var iStartDay = oStartDate.getDay();
 		var oLocaleData = this._getLocaleData();
 		var aWeekHeader = this.$("Names").children();
 
@@ -287,8 +298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 	DatesRow.prototype._getFirstWeekDay = function(){
 
-		var oStartDate = this._getStartDate();
-		return oStartDate.getUTCDay();
+		return this._getStartDate().getDay();
 
 	};
 

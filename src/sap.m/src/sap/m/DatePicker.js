@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.DatePicker.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/model/type/Date', 'sap/ui/core/date/UniversalDate', './library', 'sap/ui/unified/calendar/CalendarUtils'],
-	function(jQuery, Device, InputBase, Date1, UniversalDate, library, CalendarUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/model/type/Date', 'sap/ui/core/date/UniversalDate', './library'],
+	function(jQuery, Device, InputBase, Date1, UniversalDate, library) {
 	"use strict";
 
 
@@ -1058,10 +1058,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 	DatePicker.prototype._getVisibleDatesRange = function (oCalendar) {
 		var aVisibleDays = oCalendar._getVisibleDays();
 
-		// Convert from UTC to local Date
+		// Convert to local JavaScript Date
 		return new sap.ui.unified.DateRange({
-			startDate: CalendarUtils._createLocalDate(aVisibleDays[0].oDate), // First visible date
-			endDate: CalendarUtils._createLocalDate(aVisibleDays[aVisibleDays.length - 1].oDate) // Last visible date
+			startDate: aVisibleDays[0].toLocalJSDate(), // First visible date
+			endDate: aVisibleDays[aVisibleDays.length - 1].toLocalJSDate() // Last visible date
 		});
 	};
 

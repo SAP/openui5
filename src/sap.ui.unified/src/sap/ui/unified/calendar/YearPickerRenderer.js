@@ -2,10 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
-	function(jQuery, UniversalDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate'],
+	function(jQuery, CalendarDate, UniversalDate) {
 	"use strict";
 
+	/*
+	 * Inside the YearPickerRenderer CalendarDate objects are used. But in the API JS dates are used.
+	 * So conversion must be done on API functions.
+	 */
 
 	/**
 	 * YearPicker renderer.
@@ -25,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		var sTooltip = oYP.getTooltip_AsString();
 		var sId = oYP.getId();
 		var oCurrentDate = oYP._getDate();
-		var iCurrentYear = oCurrentDate.getUTCFullYear();
+		var iCurrentYear = oCurrentDate.getYear();
 		var iYears = oYP.getYears();
 		var iColumns = oYP.getColumns();
 		var sWidth = "";
@@ -47,11 +51,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 		oRm.write(">"); // div element
 
-		var oDate = oYP._newUniversalDate(oCurrentDate);
-		oDate.setUTCFullYear(oDate.getFullYear() - Math.floor(iYears / 2));
+		var oDate = new CalendarDate(oCurrentDate, oYP.getPrimaryCalendarType());
+		oDate.setYear(oDate.getYear() - Math.floor(iYears / 2));
 		var bEnabledCheck = false; // check for disabled years only needed if borders touched
 		var oFirstDate = oYP._checkFirstDate(oDate);
-		if (oFirstDate.getTime() != oDate.getTime()) {
+		if (!oFirstDate.isSame(oDate)) {
 			oDate = oFirstDate;
 			bEnabledCheck = true;
 		}
@@ -63,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		}
 
 		for ( var i = 0; i < iYears; i++) {
-			var sYyyymmdd = oYP._oFormatYyyymmdd.format(oDate.getJSDate(), true);
+			var sYyyymmdd = oYP._oFormatYyyymmdd.format(oDate.toUTCJSDate(), true);
 			var mAccProps = {
 					role: "gridcell"
 				};
@@ -83,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			oRm.write("<div");
 			oRm.writeAttribute("id", sId + "-y" + sYyyymmdd);
 			oRm.addClass("sapUiCalItem");
-			if ( oDate.getUTCFullYear() == iCurrentYear) {
+			if ( oDate.getYear() == iCurrentYear) {
 				oRm.addClass("sapUiCalItemSel");
 				mAccProps["selected"] = true;
 			} else {
@@ -100,9 +104,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			oRm.writeStyles();
 			oRm.writeAccessibilityState(null, mAccProps);
 			oRm.write(">"); // div element
-			oRm.write(oYP._oYearFormat.format(oDate, true)); // to render era in Japanese
+			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
+			oRm.write(oYP._oYearFormat.format(UniversalDate.getInstance(oDate.toUTCJSDate(), oDate.getCalendarType()), true)); // to render era in Japanese
 			oRm.write("</div>");
-			oDate.setUTCFullYear(oDate.getUTCFullYear() + 1);
+			oDate.setYear(oDate.getYear() + 1);
 
 			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
 				// end of row
