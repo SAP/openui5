@@ -6,7 +6,7 @@ describe('sap.m.TableSelectDialog', function() {
         element(by.id('TableSelectDialog2-cancel')).click();
     });
 
-    it('should open table select dialog in multiselect mode', function() {
+    /*it('should open table select dialog in multiselect mode', function() {
         element(by.id('tsdWithMultiSelectButton')).click();
         var tableSelectDialog = element(by.id('TableSelectDialog4-dialog'));
         expect(takeScreenshot(tableSelectDialog)).toLookAs('tableSelectDialog-multiselect');
@@ -15,7 +15,7 @@ describe('sap.m.TableSelectDialog', function() {
         expect(takeScreenshot(tableSelectDialog)).toLookAs('tableSelectDialog-multiselect-selection');
 
         element(by.id('TableSelectDialog4-cancel')).click();
-    });
+    });*/
 
     it('should open table select dialog in multiselect mode with large data', function() {
         element(by.id('tsdWithLargeDataAndMultiSelectButton')).click();
