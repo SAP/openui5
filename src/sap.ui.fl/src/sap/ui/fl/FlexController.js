@@ -253,12 +253,9 @@ sap.ui.define([
 		mPropertyBag.viewId = mPropertyBag.modifier.getId(mPropertyBag.view);
 		mPropertyBag.siteId = Utils.getSiteId(mPropertyBag.appComponent);
 
-		var oGetFlexSettingsPromise = FlexSettings.getInstance(this.getComponentName(), mPropertyBag);
-		return oGetFlexSettingsPromise.then(
-			this._oChangePersistence.getChangesForView.bind(this._oChangePersistence, mPropertyBag.viewId, mPropertyBag),
+		return this._oChangePersistence.getChangesForView(mPropertyBag.viewId, mPropertyBag).then(
+			this._resolveGetChangesForView.bind(this, mPropertyBag),
 			this._handlePromiseChainError.bind(this, mPropertyBag.view)
-		).then(
-			this._resolveGetChangesForView.bind(this, mPropertyBag)
 		);
 	};
 
@@ -509,7 +506,7 @@ sap.ui.define([
 	FlexController.prototype._getChangeRegistry = function () {
 		var oInstance = ChangeRegistry.getInstance();
 		// make sure to use the most current flex settings that have been retrieved during processView
-		oInstance.initSettings(this.getComponentName());
+		oInstance.initSettings();
 		return oInstance;
 	};
 

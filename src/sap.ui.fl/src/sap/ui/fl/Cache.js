@@ -122,9 +122,9 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 				Utils.log.error('sap.ui.fl.Cache: Cached changes for component ' + sComponentName + ' overwritten.');
 			}
 			if (mChanges && mChanges.changes && mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
-			    mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function(sValue) {
+				mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function(sValue) {
 				Cache._switches[sValue] = true;
-			    });
+				});
 			}
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;

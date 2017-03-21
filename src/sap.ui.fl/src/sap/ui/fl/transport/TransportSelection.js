@@ -67,7 +67,7 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 					if (oSettings.isAtoEnabled()) {
 						var oTransport = { transportId: "ATO_NOTIFICATION" };
 						fOkay(that._createEventObject(oObjectInfo, oTransport));
-					// ATO is not enabled - use CTS
+						// ATO is not enabled - use CTS
 					} else {
 						that._selectTransport(oObjectInfo, fOkay, fError, bCompactMode);
 					}
