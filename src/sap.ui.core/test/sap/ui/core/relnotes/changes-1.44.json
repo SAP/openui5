@@ -769,5 +769,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.9": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "e39344506e3f3f188e82451300d6764754dacbb6",
+        "type": "FIX",
+        "text": " Fragment, Customizing: ensure viewModification support",
+        "references": []
+      },
+      {
+        "id": "b58bfc553855308dd6a57f273d0e2e67dd747aa5",
+        "type": "FIX",
+        "text": " core.Popup|m.Dialog: consider window scroll for positioning",
+        "references": []
+      },
+      {
+        "id": "572acc420c1551fab4d7b8deb74122e7537697b3",
+        "type": "FIX",
+        "text": " odata.v4.ODataListBinding: no data with ECD when key fields are missing",
+        "references": []
+      }
+    ]
   }
 }

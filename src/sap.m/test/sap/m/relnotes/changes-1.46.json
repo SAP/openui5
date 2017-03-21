@@ -1834,6 +1834,12 @@
         "type": "FIX",
         "text": " sap.m.Wizard: on scrolling is showing only active steps",
         "references": []
+      },
+      {
+        "id": "3e769880b03ec726b1e73b44c9c2c7b20086ee78",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: SelectedKeys should be updated after a formatter is applied to the model",
+        "references": []
       }
     ]
   }
