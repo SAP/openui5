@@ -603,6 +603,8 @@ sap.ui.define([
 			});
 
 			oInput.attachChange(this._handleInputChange.bind(this, oInput));
+			oInput.addEventDelegate({onsapdown: this._inputArrowDown}, this);
+			oInput.addEventDelegate({onsapup: this._inputArrowUp}, this);
 
 			oInput.addEventDelegate({
 				onfocusout: function (oEvent) {
@@ -613,6 +615,26 @@ sap.ui.define([
 			});
 
 			return oInput;
+		};
+
+		Slider.prototype._inputArrowDown = function(oEvent) {
+			var oModifiedEvent = oEvent;
+			oModifiedEvent.srcControl = this;
+
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+
+			this.onsapdecrease(oModifiedEvent);
+		};
+
+		Slider.prototype._inputArrowUp = function(oEvent) {
+			var oModifiedEvent = oEvent;
+			oModifiedEvent.srcControl = this;
+
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+
+			this.onsapincrease(oModifiedEvent);
 		};
 
 		Slider.prototype._handleInputChange = function (oInput, oEvent) {
