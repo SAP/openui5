@@ -108,7 +108,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Event is fired when the user clicks on the control.
 			 */
 			press : {}
-		}
+		},
+		designTime: true
 	}});
 
 

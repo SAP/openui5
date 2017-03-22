@@ -4,11 +4,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.m.Button design time</title>
 
-<script src="../../shared-config.js"></script>
-<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m,sap.ui.dt">
-
-</script>
+	<script src="../../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
+			data-sap-ui-resourceroots='{"dt": "./"}'
+			data-sap-ui-libs="sap.m,sap.ui.rta">
+	</script>
 
 <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -16,26 +16,7 @@
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<script>
-
-sap.ui.require([
-	'sap/ui/dt/test/report/QUnit',
-	'sap/ui/dt/test/ElementEnablementTest'
-], function (QUnit, ElementEnablementTest) {
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Button"
-	});
-	oElementEnablementTest.run().then(function(oData) {
-		var oReport = new QUnit({
-			data: oData
-		});
-	});
-
-});
-
-</script>
+<script src="Button.qunit.js"></script>
 
 </head>
 <body id="body" class="sapUiBody">
