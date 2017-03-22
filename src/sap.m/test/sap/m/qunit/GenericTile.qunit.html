@@ -580,6 +580,39 @@
 		assert.ok(this.oGenericTile.$("lineModeHelpContainer").length > 0, "Help container for line mode was found");
 	});
 
+	QUnit.module("LineMode compact w/o parent", {
+		beforeEach: function() {
+			this.oGenericTile = new sap.m.GenericTile({
+				state: sap.m.LoadState.Loaded,
+				mode: sap.m.GenericTileMode.LineMode
+			}).placeAt("qunit-fixture");
+			this.oGenericTile.addStyleClass("sapUiSizeCompact");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Correct parameters provided to Resize Handler", function(assert) {
+		//Arrange
+		var oSpy = sinon.spy(sap.ui.core.ResizeHandler, "register");
+		this.oGenericTile._bCompact = true;
+		sap.ui.getCore().applyChanges();
+		this.oGenericTile._sParentResizeListenerId = null;
+
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oSpy.calledWith(this.oGenericTile.$().parent()), "Correct parameter provided if parent is UIArea");
+
+		//Cleanup
+		oSpy.restore();
+	});
+
 	QUnit.module("sap.m.GenericTileMode.LineMode compact", {
 		beforeEach: function() {
 			this.oGenericTile = new sap.m.GenericTile({
@@ -608,6 +641,22 @@
 			this.oParent.destroy();
 			this.oParent = null;
 		}
+	});
+
+	QUnit.test("Correct parameter provided to Resize Handler", function(assert) {
+		//Arrange
+		var oSpy = sinon.spy(sap.ui.core.ResizeHandler, "register");
+		this.oGenericTile._sParentResizeListenerId = null;
+
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oSpy.calledWith(this.oGenericTile.getParent()), "Correct parameter provided if parent is a control");
+
+		//Cleanup
+		oSpy.restore();
 	});
 
 	QUnit.test("All elements found", function(assert) {
