@@ -46,7 +46,7 @@
 		},
 		"karma-openui5": {
 			"name": "karma-openui5",
-			"decription": "A Karma plugin adapter for OpenUI5/SAPUI5 Framework",
+			"decription": "A Karma plugin for UI5",
 			"githubLink": "https://github.com/SAP/karma-openui5",
 			"documentationLink": "https://github.com/SAP/karma-openui5",
 			"owner": "matz3",
