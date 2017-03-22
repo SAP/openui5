@@ -82,7 +82,7 @@
 						<account>sapui5</account>
 						<applicationURL>ui5test</applicationURL>
 						<severity>info</severity>
-						<landscape>https://neo.ondemand.com/</landscape>
+						<landscape>https://int.sap.hana.ondemand.com/</landscape>
 						<user>${user}</user>
 						<password>${password}</password>
 					</properties>
