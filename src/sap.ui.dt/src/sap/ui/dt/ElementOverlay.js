@@ -475,7 +475,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			oNewRelevantContainerObj.propagateRelevantContainerElement = this.getElementInstance();
 		} else if (typeof oDtMetadataForAggregation.propagateRelevantContainer === "boolean" &&
 			oDtMetadataForAggregation.propagateRelevantContainer) {
-			oNewRelevantContainerObj.propagationFunction = function() { return oDtMetadataForAggregation.propagateRelevantContainerue; };
+			oNewRelevantContainerObj.propagationFunction = function() { return true; };
 			oNewRelevantContainerObj.propagateRelevantContainerElement = this.getElementInstance();
 		} else {
 			throw new Error("wrong type: it should be either a function or a boolean value and it is:",
