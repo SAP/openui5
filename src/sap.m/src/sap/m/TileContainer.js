@@ -1153,21 +1153,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	TileContainer.prototype._applyPageStartIndex = function(iIndex) {
-<<<<<<< HEAD
-		
-=======
 
->>>>>>> sap/master
 		var oContentDimension = this._getContainerDimension();
 
 		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
 			return;
 		}
-<<<<<<< HEAD
-		
-=======
 
->>>>>>> sap/master
 		this._calculatePositions();
 		var iLength = this._getVisibleTiles().length;
 
