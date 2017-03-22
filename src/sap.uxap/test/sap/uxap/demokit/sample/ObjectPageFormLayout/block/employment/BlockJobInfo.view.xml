@@ -1,0 +1,79 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:forms="sap.ui.layout.form"
+		  xmlns="sap.m"
+		  xmlns:core="sap.ui.core">
+
+	<forms:SimpleForm>
+
+		<core:Title text="General"/>
+		<Label text="Job classification"/>
+		<Input value="Senior Ui Developer (UIDEV-SR)"/>
+
+		<Label text="Pay Grade"/>
+		<Input value="Salary Grade 18 (GR-14)"/>
+
+		<Label text="Job title"/>
+		<Input value="Developer"/>
+
+		<Label text="Local Job Title"/>
+		<Label text="Ui Developer"/>
+
+		<core:Title text="Rating"/>
+		<Label text="Employee Class"/>
+		<Input value="Employee"/>
+
+		<Label text="FTE"/>
+		<Input value="1"/>
+
+		<Label text="Standard Weekly Hours"/>
+		<Input value="40"/>
+
+		<core:Title text="General"/>
+		<Label text="Job classification"/>
+		<Input value="Senior Ui Developer (UIDEV-SR)"/>
+
+		<Label text="Pay Grade"/>
+		<Input value="Salary Grade 18 (GR-14)"/>
+
+		<Label text="Job title"/>
+		<Input value="Developer"/>
+
+		<Label text="Local Job Title"/>
+		<Label text="Ui Developer"/>
+
+		<core:Title text="Rating"/>
+		<Label text="Employee Class"/>
+		<Input value="Employee"/>
+
+		<Label text="FTE"/>
+		<Input value="1"/>
+
+		<Label text="Standard Weekly Hours"/>
+		<Input value="40"/>
+
+		<core:Title text="General"/>
+		<Label text="Job classification"/>
+		<Input value="Senior Ui Developer (UIDEV-SR)"/>
+
+		<Label text="Pay Grade"/>
+		<Input value="Salary Grade 18 (GR-14)"/>
+
+		<Label text="Job title"/>
+		<Input value="Developer"/>
+
+		<Label text="Local Job Title"/>
+		<Label text="Ui Developer"/>
+
+		<core:Title text="Rating"/>
+		<Label text="Employee Class"/>
+		<Input value="Employee"/>
+
+		<Label text="FTE"/>
+		<Input value="1"/>
+
+		<Label text="Standard Weekly Hours"/>
+		<Input value="40"/>
+
+	</forms:SimpleForm>
+
+</mvc:View>

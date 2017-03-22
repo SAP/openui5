@@ -1,7 +1,7 @@
-
-/* ============================================= */
-/* CSS for control sap.m/Link.control */
-/* ============================================= */
+/* =========================== */
+/* CSS for control sap.m/Link  */
+/* Base theme                  */
+/* =========================== */
 
 .sapMLnk {
 	color: @sapUiLink;
@@ -11,6 +11,9 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	word-wrap: normal;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	cursor: pointer;
 }
 
 .sapMLnk:active {
@@ -39,4 +42,75 @@
 
 .sapMLnkMaxWidth {
 	max-width: 100%;
+}
+
+
+/* Link in sap.ui.table.* tables */
+
+.sapUiTableCell .sapMLnk {
+	vertical-align: middle;
+}
+
+.sapUiSizeCondensed .sapUiTableCell .sapMLnk {
+	line-height: 1.5rem;
+}
+
+/* Global focus offset */
+html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline-offset: -1px;
+	text-decoration: underline;
+}
+
+/* Link focus offset and visualization in sap.ui.table.* tables */
+html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline-offset: -2px;
+}
+.sapUiAnalyticalTable .sapUiAnalyticalTableSum .sapUiTableCell .sapMLnk {
+	font-weight: bold;
+}
+
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMLnk:focus:not(.sapMLnkDsbl) {
+		outline: none;
+		position: relative;
+	}
+	.sapMLnk:focus:not(.sapMLnkDsbl):before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 1px dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+/* Hover Decoration only for desktop clients*/
+html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
+	text-decoration: underline;
+}
+
+html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapUiFormEdit .sapMLnk {
+	line-height: 3rem;
+}
+
+.sapMLnkEmphasized {
+	font-weight: bold;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapMLnk {
+	line-height: 2rem;
+}
+
+.sapMLnk:-webkit-any-link:focus {
+	outline: none;
 }

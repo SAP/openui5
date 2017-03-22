@@ -1,13 +1,14 @@
 sap.ui.define([
 		'sap/m/Button',
 		'sap/m/Dialog',
+		'sap/m/Label',
 		'sap/m/MessageToast',
 		'sap/m/Text',
 		'sap/m/TextArea',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/layout/HorizontalLayout',
 		'sap/ui/layout/VerticalLayout'
-	], function(Button, Dialog, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout) {
+	], function(Button, Dialog, Label, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.DialogConfirm.C", {
@@ -43,7 +44,7 @@ sap.ui.define([
 				title: 'Reject',
 				type: 'Message',
 				content: [
-					new Text({ text: 'Are you sure you want to reject your shopping cart?' }),
+					new Label({ text: 'Are you sure you want to reject your shopping cart?', labelFor: 'rejectDialogTextarea'}),
 					new TextArea('rejectDialogTextarea', {
 						width: '100%',
 						placeholder: 'Add note (optional)'
@@ -76,7 +77,7 @@ sap.ui.define([
 				title: 'Confirm',
 				type: 'Message',
 				content: [
-					new Text({ text: 'Are you sure you want to submit your shopping cart?' }),
+					new Label({ text: 'Are you sure you want to submit your shopping cart?', labelFor: 'submitDialogTextarea'}),
 					new TextArea('submitDialogTextarea', {
 						liveChange: function(oEvent) {
 							var sText = oEvent.getParameter('value');

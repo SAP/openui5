@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>qUnit Page for sap.m.ListBase Binding</title>
 
-<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m"></script>
 
 <script>
@@ -15,7 +15,7 @@
 	jQuery.sap.require("sap.m.ListBase");
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css"	type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css"	type="text/css" media="screen">
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -23,44 +23,45 @@
 <script>
 
 	// global service URL keep the path relative not to have cross domain issue.
-	var sServiceURI = "/service/" 
+	var sServiceURI = "/service/"
 
 	// keep the filter operator as a global
 	var mFilterOperator = sap.ui.model.FilterOperator;
-	
+
 	// fakeTimers causing issue with MockServer
 	sinon.config.useFakeTimers = false;
-	
+
 	function testOData(sMessage, fnTest) {
-		asyncTest("ODATA: " + sMessage, fnTest);
+		QUnit.test("ODATA: " + sMessage, fnTest);
 
 		// stub odata constructor with the new odata version 2
 		sinon.stub(sap.ui.model.odata, "ODataModel", sap.ui.model.odata.v2.ODataModel);
-		asyncTest("ODATAV2: " + sMessage, fnTest);
+		QUnit.test("ODATAV2: " + sMessage, fnTest);
+
 		sap.ui.model.odata.ODataModel.restore();
 	}
 
 	function createODataModel(sURL, mSettings) {
 		sURL = sURL || sServiceURI;
 		var oModel = new sap.ui.model.odata.ODataModel(sURL, true);
-		
+
 		mSettings = mSettings || {};
 		jQuery.each(mSettings, function(sProperty, vValue) {
 			sProperty = jQuery.sap.charToUpperCase(sProperty);
 			oModel["set" + sProperty](vValue);
 		});
-		
+
 		return oModel;
 	}
-	
+
 	function createJSONModel(oData) {
 		oData = oData || {
 			Products : jQuery.sap.sjax({
-				url : "data/Product.json", 
+				url : "data/Product.json",
 				dataType:"json"
 			}).data
 		};
-		
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oData);
 		return oModel;
@@ -114,18 +115,19 @@
 		return oList;
 	}
 
-	module("BusyIndicator");
+	QUnit.module("BusyIndicator");
 	testOData("List should show busy indicator during the binding update", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(0),
 			oList = createList({
 				busyIndicatorDelay : 0,
 				updateStarted : function() {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
+					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
 				},
 				updateFinished : function() {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
+					assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
 				}
 			});
 
@@ -133,11 +135,12 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("List should show busy indicator during the binding update when growing is true", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
 				growing : true,
@@ -145,12 +148,12 @@
 				busyIndicatorDelay : 0,
 				updateStarted : function() {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
+					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
 				},
 				updateFinished : function(oEvent) {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
-					strictEqual(oEvent.getParameter("actual"), 10, "Because of the growingThreshold we should see only first 10 items.");
+					assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
+					assert.strictEqual(oEvent.getParameter("actual"), 10, "Because of the growingThreshold we should see only first 10 items.");
 				}
 			});
 
@@ -158,22 +161,23 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
-	
+
 	testOData("List should show busy indicator when there is no data found", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
 				busyIndicatorDelay : 0,
 				updateStarted : function() {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
+					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
 				},
 				updateFinished : function(oEvent) {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
-					strictEqual(oEvent.getParameter("total"), 0, "Because of the filter total binding length should be 0");
+					assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
+					assert.strictEqual(oEvent.getParameter("total"), 0, "Because of the filter total binding length should be 0");
 				}
 			}, {
 				filters : [new sap.ui.model.Filter("Name", mFilterOperator.EQ, "ThisTextShouldNotBeFound")]
@@ -183,18 +187,19 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("List should respect busyIndicatorDelay property to show busy indicator.", function() {
+		var done = assert.async();
 		var iRespondDelay = 10,
 			oMockServer = startMockServer(iRespondDelay),
 			oList = createList({
 				busyIndicatorDelay : iRespondDelay + 1,
 				updateStarted : function() {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 0, "Delay is longer than response time busy indicator should not be visible");
+					assert.strictEqual($BusyIndicator.length, 0, "Delay is longer than response time busy indicator should not be visible");
 				}
 			});
 
@@ -202,17 +207,18 @@
 		oList.done(function() {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
-	
+
 	testOData("List should respect enableBusyIndicator property to show busy indicator.", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
 				enableBusyIndicator : false,
 				updateStarted : function() {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 0, "enableBusyIndicator is false List should not show busy indicator.");
+					assert.strictEqual($BusyIndicator.length, 0, "enableBusyIndicator is false List should not show busy indicator.");
 				}
 			});
 
@@ -220,38 +226,40 @@
 		oList.done(function() {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
 	testOData("List should clear busy state when binding error has occured", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
 				busyIndicatorDelay : 0,
 				updateStarted : function() {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible before error has occured");
+					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible before error has occured");
 				},
 				updateFinished : function(oEvent) {
 					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
-					strictEqual(oEvent.getParameter("total"), 0, "Because on error data is cleared, binding length should be 0");
-					strictEqual(oEvent.getParameter("actual"), 0, "Because on error data is cleared, current item count should be 0");
-					strictEqual(this.$().find(".sapMListNoData").length, 1, "No Data indication is shown after error");
+					assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
+					assert.strictEqual(oEvent.getParameter("total"), 0, "Because on error data is cleared, binding length should be 0");
+					assert.strictEqual(oEvent.getParameter("actual"), 0, "Because on error data is cleared, current item count should be 0");
+					assert.strictEqual(this.$().find(".sapMListNoData").length, 1, "No Data indication is shown after error");
 				}
 			}, {
 				path :"/ThereIsNoSuchPath"
 			});
-	
+
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
-	
+
 	testOData("Growing List should clear busy state and all data when binding error has occured", function() {
+		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
 			oList = createList({
@@ -259,36 +267,36 @@
 				growingThreshold : 10,
 				busyIndicatorDelay : 0
 			});
-		
+
 		// when initial binding is completed
 		oList.done(function () {
 			// attach to the update binding events
 			oList.attachUpdateStarted(function(oEvent) {
 				var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-				strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible before error has occured");
-				strictEqual(oEvent.getParameter("actual"), 10, "There are 10 items after initial loading");
+				assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible before error has occured");
+				assert.strictEqual(oEvent.getParameter("actual"), 10, "There are 10 items after initial loading");
 			}).attachUpdateFinished(function(oEvent) {
 				var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-				strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
-				strictEqual(oEvent.getParameter("total"), 0, "Because on error data is cleared, binding length should be 0");
-				strictEqual(oEvent.getParameter("actual"), 0, "Because on error data is cleared, current item count should be 0");
-				strictEqual(this.$().find(".sapMListNoData").length, 1, "No Data indication is shown after error");
+				assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
+				assert.strictEqual(oEvent.getParameter("total"), 0, "Because on error data is cleared, binding length should be 0");
+				assert.strictEqual(oEvent.getParameter("actual"), 0, "Because on error data is cleared, current item count should be 0");
+				assert.strictEqual(this.$().find(".sapMListNoData").length, 1, "No Data indication is shown after error");
 				oDeferred.resolve();
 			});
-			
+
 			// create http error with unkown sorter field
 			oList.getBinding("items").sort(new sap.ui.model.Sorter("NoSuchField"));
 		});
-	
+
 		// when test is completed
 		jQuery.when(oDeferred).done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
-	test("Update events should not be fired when metadata is not loaded", function() {
+	QUnit.test("Update events should not be fired when metadata is not loaded", function(assert) {
 		var oMockServer = startMockServer(),
 			oModel = createODataModel("/there/is/no/such/service"),
 			fnUpdateFinishedSpy = this.spy(),
@@ -297,10 +305,10 @@
 				updateStarted : fnUpdateStartedSpy,
 				updateFinished : fnUpdateFinishedSpy
 			}, {}, oModel);
-		
-		strictEqual(fnUpdateStartedSpy.callCount, 0, "updateStarted is not fired because metadata is not loaded");
-		strictEqual(fnUpdateFinishedSpy.callCount, 0, "updateFinished is not fired because metadata is not loaded");
-		
+
+		assert.strictEqual(fnUpdateStartedSpy.callCount, 0, "updateStarted is not fired because metadata is not loaded");
+		assert.strictEqual(fnUpdateFinishedSpy.callCount, 0, "updateFinished is not fired because metadata is not loaded");
+
 		// cleanup
 		oMockServer.stop();
 		oModel.destroy();
@@ -308,6 +316,7 @@
 	});
 
 	testOData("Should not have a static after busy", function() {
+		var done = assert.async();
 		// Arrange
 		var oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred();
@@ -323,132 +332,140 @@
 		oList.done(function () {
 			var sPosition = oList.$().css("position");
 			// Assert
-			notStrictEqual(sPosition, "static", "position was not static but: " + sPosition);
+			assert.notStrictEqual(sPosition, "static", "position was not static but: " + sPosition);
 
 			// cleanup
 			oMockServer.stop();
 			oList.destroy();
 
-			start();
+			done();
 		});
 	});
 
-	module("Abort");
+	QUnit.module("Abort");
 	testOData("List should abort multiple requests and runs only the last one", function() {
-		
+		var done = assert.async();
+
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),
 			fnUpdateFinishedSpy = this.spy(),
 			oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
 			oList = createList();
-		
+
 		// when initial binding is completed
 		oList.done(function () {
 			// attach to the update binding events
 			oList.attachUpdateStarted(fnUpdateStartedSpy);
 			oList.attachUpdateFinished(fnUpdateFinishedSpy);
 			oList.attachUpdateFinished(oDeferred.resolve);
-			
+
 			// sort and immediately filter then sort request should be aborted
 			// but even though sort stays in the model and next filter should have sort info
 			this.getBinding("items").sort(new sap.ui.model.Sorter("ProductId", true));
 			this.getBinding("items").filter(new sap.ui.model.Filter("SupplierName", mFilterOperator.Contains, "Very Best Screens"));
 
 		});
-	
+
 		// when all requests are completed
 		jQuery.when(oDeferred).done(function () {
 			// assert
-			strictEqual(fnUpdateStartedSpy.callCount, 1, "update started event is called once");
-			strictEqual(fnUpdateFinishedSpy.callCount, 1, "update finished event is called once");
-			strictEqual(fnUpdateFinishedSpy.args[0][0].getParameter("total"), 3, "Event reported there are 3 records are found: Very Best Screens");
-			strictEqual(oList.getItems().length, 3, "List has 3 records: Very Best Screens");
-			
+			assert.strictEqual(fnUpdateStartedSpy.callCount, 1, "update started event is called once");
+			assert.strictEqual(fnUpdateFinishedSpy.callCount, 1, "update finished event is called once");
+			assert.strictEqual(fnUpdateFinishedSpy.args[0][0].getParameter("total"), 3, "Event reported there are 3 records are found: Very Best Screens");
+			assert.strictEqual(oList.getItems().length, 3, "List has 3 records: Very Best Screens");
+
 			// find all product ids
 			var sProductIds = oList.getItems().map(function(oItem) {
 				return oItem.getBindingContext().getProperty("ProductId");
 			}).join(" > ");
-			
-			strictEqual(sProductIds, "id_13 > id_12 > id_11", "Aborted descending sort information is applied to the filter");
-			
+
+			assert.strictEqual(sProductIds, "id_13 > id_12 > id_11", "Aborted descending sort information is applied to the filter");
+
 			// clean up
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
-	
-	module("CountMode");
+
+	QUnit.module("CountMode");
 	testOData("CountMode.None should show growing indicator when list is not complete yet", function() {
+		var done = assert.async();
 		var iThreshold = 10,
 			oMockServer = startMockServer(),
 			oList = createList({
 				growing : true,
 				growingThreshold : iThreshold,
 				updateFinished : function(oEvent) {
-					strictEqual(oEvent.getParameter("total") > oEvent.getParameter("actual"), true, "Total items is higher than actual items");
-					ok(oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is visible");
+					assert.strictEqual(oEvent.getParameter("total") > oEvent.getParameter("actual"), true, "Total items is higher than actual items");
+					setTimeout(function() {
+						assert.ok(oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is visible");
+					}, 0);
 				}
 			}, {
 				parameters: {
 					countMode: "None"
 				}
 			});
-	
+
 		// when initial binding is completed
 		oList.done(function () {
-			oMockServer.stop();
-			oList.destroy();
-			start();
+			setTimeout(function() {
+				oMockServer.stop();
+				oList.destroy();
+				done();
+			}, 0);
 		});
 	});
 
 	testOData("CountMode.None should not show growing indicator when all items are shown", function() {
+		var done = assert.async();
 		var iThreshold = 20,
 			oMockServer = startMockServer(),
 			oList = createList({
 				growing : true,
 				growingThreshold : iThreshold,
 				updateFinished : function(oEvent) {
-					strictEqual(oEvent.getParameter("total"), 16, "Total number equals amount of entries");
-					strictEqual(oEvent.getParameter("actual"), 16, "Actual number equals amount of entries");
-					ok(!oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is not visible");
+					assert.strictEqual(oEvent.getParameter("total"), 16, "Total number equals amount of entries");
+					assert.strictEqual(oEvent.getParameter("actual"), 16, "Actual number equals amount of entries");
+					assert.ok(!oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is not visible");
 				}
 			}, {
 				parameters: {
 					countMode: "None"
 				}
 			});
-	
+
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
-	module("NonAbsoluteAndUnresolveable Binding Path")
-	test("Should not fire update started if a binding cannot be resolved", function() {
+	QUnit.module("NonAbsoluteAndUnresolveable Binding Path")
+	QUnit.test("Should not fire update started if a binding cannot be resolved", function(assert) {
 		var oMockServer = startMockServer(),
 			oList = createList({
 				updateStarted : function () {
-					ok(false, "Started an update! Why should we? There should no request fired.");
+					assert.ok(false, "Started an update! Why should we? There should no request fired.");
 				}
-			}, { 
+			}, {
 				path : "nonAbsoluteAndUnresolveable"
 			});
 
-		ok(!oList.getBusy(), "Why should the list be busy? There should not be any request");
-		
+		assert.ok(!oList.getBusy(), "Why should the list be busy? There should not be any request");
+
 		// clean up
 		oMockServer.stop();
 		oList.destroy();
 	});
-	
-	module("FocusAfterBindingUpdate");
-	testOData("Focus should be retained after binding update", function() {
+
+	QUnit.module("FocusAfterBindingUpdate");
+	document.hasFocus() && testOData("Focus should be retained after binding update", function() {
+		var done = assert.async();
 		var sFocusedControlId,
 			oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
@@ -462,41 +479,42 @@
 					})
 				})
 			});
-		
+
 		// when initial binding is completed
 		oList.done(function () {
-			
+
 			// focus to the input field
 			sFocusedControlId = oList.$().find("input").eq(5).focus().attr("id");
-			
+
 			// rerender list
 			oList.rerender();
-			
+
 			setTimeout(function() {
 				// check focus after rerender
-				strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after list rerender");
-				
+				assert.strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after list rerender");
+
 				// recheck focus after binding update
 				oList.attachUpdateFinished(function(oEvent) {
-					strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
+					assert.strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
 					oDeferred.resolve();
 				});
-				
+
 				// update the list binding
 				oList.updateItems();
 			}, 0);
-			
+
 		});
-	
+
 		// when test is completed
 		jQuery.when(oDeferred).done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
-	
+
 	testOData("Last setGrowingThreshold should be respected before data fetching", function() {
+		var done = assert.async();
 		var iInitThreshold = 5,
 			iLastThreshold = 10,
 			oMockServer = startMockServer(),
@@ -504,20 +522,116 @@
 				growing : true,
 				growingThreshold : iInitThreshold,
 				updateFinished : function(oEvent) {
-					strictEqual(oEvent.getParameter("actual"), iLastThreshold, "Last growing threshold is respected");
+					assert.strictEqual(oEvent.getParameter("actual"), iLastThreshold, "Last growing threshold is respected");
 				}
 			});
-		
+
 		oList.setGrowingThreshold(iLastThreshold);
-	
+
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			start();
+			done();
 		});
 	});
 
+	QUnit.module("Upwards Growing Direction");
+	testOData("Should fetch the data and render in reverse order", function() {
+		var done = assert.async();
+		var iThreshold = 5,
+			oDeferred = jQuery.Deferred(),
+			oMockServer = startMockServer(),
+			oList = createList({
+				growing : true,
+				growingThreshold : iThreshold,
+				growingDirection : "Upwards",
+				updateFinished : function(oEvent) {
+					var oNavigationRoot = oList.getNavigationRoot(),
+						$GrowingButton = oList.$("trigger");
+
+					assert.ok($GrowingButton.parent().next().get(0) === oList.getDomRef("before"), "Growing button is inserted before the first item.");
+					assert.ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
+
+					if (document.hasFocus()) {
+						oList.focus();
+						assert.ok(document.activeElement === oNavigationRoot.children[iThreshold - 1], "First focus jumps to last item");
+					}
+
+					// act: request new page
+					$GrowingButton.focus().trigger("tap");
+
+					oList.attachUpdateFinished(function(oEvent) {
+						oNavigationRoot = oList.getNavigationRoot(),
+						assert.ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
+
+						if (document.hasFocus()) {
+							assert.ok(document.activeElement === $GrowingButton.get(0), "Focus is not changed after growing");
+						}
+
+						oDeferred.resolve();
+					});
+				}
+			});
+
+		// when test is completed
+		jQuery.when(oDeferred).done(function () {
+			oMockServer.stop();
+			oList.destroy();
+			done();
+		});
+	});
+
+	QUnit.module("TwoWayBinding And Growing");
+	testOData("Property changes updates the list binding when growing feature is enabled", function() {
+		var done = assert.async();
+		// arrange
+		var fnUpdateStartedSpy = this.spy(),
+			oMockServer = startMockServer(),
+			oModel = createJSONModel(),
+			oList = createList({
+				growing: true
+			}, {}, oModel);
+
+		// when initial binding is completed
+		oList.done(function () {
+			oList.attachUpdateStarted(fnUpdateStartedSpy);
+
+			oModel.setProperty("/Products/0/Name", ":(");
+			assert.strictEqual(fnUpdateStartedSpy.callCount, 1, "Property update also updates the list binding");
+
+			// clean up
+			oMockServer.stop();
+			oList.destroy();
+			done();
+		});
+	});
+
+	testOData("Property changes should not update the list binding when unique key is defined", function() {
+		var done = assert.async();
+		// arrange
+		var fnUpdateStartedSpy = this.spy(),
+			oMockServer = startMockServer(),
+			oModel = createJSONModel(),
+			oList = createList({
+				growing: true
+			}, {
+				key: "ProductId"
+			}, oModel);
+
+		// when initial binding is completed
+		oList.done(function () {
+			oList.attachUpdateStarted(fnUpdateStartedSpy);
+
+			oModel.setProperty("/Products/0/Name", ":)");
+			assert.strictEqual(fnUpdateStartedSpy.callCount, 0, "Property update did not update the list binding.");
+
+			// clean up
+			oMockServer.stop();
+			oList.destroy();
+			done();
+		});
+	});
 </script>
 
 </head>

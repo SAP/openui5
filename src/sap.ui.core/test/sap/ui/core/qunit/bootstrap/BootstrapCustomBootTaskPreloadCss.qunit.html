@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<!--
+  Tests the bootstrap variant where the preload of CSS is suppressed
+
+  @author Frank Weigel
+  -->
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Test Page for the SAPUI5 Bootstrap functionality with custom boot task and preload lib css</title>
+		<script>
+			window["sap-ui-config"] = {
+				"preloadLibCss": [ "!sap.ui.core", "sap.ui.testlib" ],
+				"xx-bootTask" : function(callback) {
+					sap.ui.getCore().loadLibrary("sap.ui.testlib", "../testdata/uilib");
+					callback();
+				},
+				"themeroots": {
+					"sap_belize": "foo/bar"
+				}
+			};
+		</script>
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.core"
+				src="../../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+
+		/**
+		 * Test that no theme css was loaded as the "preloadLibCss" configuration should prevent it
+		 */
+		QUnit.test("No Library CSS loaded", function(assert) {
+			assert.equal(jQuery.sap.domById("sap-ui-theme-sap.ui.core"), null, "'sap.ui.core' theme should not be included");
+			assert.equal(jQuery.sap.domById("sap-ui-theme-sap.ui.testlib"), null, "'sap.ui.testlib' theme should not be included");
+		});
+
+		/**
+		 * Test that even though "preloadLibCss" prevents including the library.css, the registered modulepaths
+		 * take the confiured "themeroots" into account.
+		 */
+		QUnit.test("Theme Modulepath should be registered accordingly", function(assert) {
+			var sTheme = sap.ui.getCore().getConfiguration().getTheme();
+
+			assert.equal(jQuery.sap.getModulePath("sap.ui.core.themes." + sTheme), "foo/bar/sap/ui/core/themes/" + sTheme,
+				"Modulepath of 'sap/ui/core/themes/" + sTheme + "' should be set to themeroot.");
+			assert.equal(jQuery.sap.getModulePath("sap.ui.testlib.themes." + sTheme), "foo/bar/sap/ui/testlib/themes/" + sTheme,
+				"Modulepath of 'sap/ui/testlib/themes/" + sTheme + "' should be set to themeroot.");
+
+		});
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

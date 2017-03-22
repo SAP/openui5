@@ -540,8 +540,8 @@
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In" MaxLength="10"/>
 				</FunctionImport>
 			</EntityContainer>
-			<atom:link rel="self" href="http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
-			<atom:link rel="latest-version" href="http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+			<atom:link rel="self" href="/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+			<atom:link rel="latest-version" href="/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

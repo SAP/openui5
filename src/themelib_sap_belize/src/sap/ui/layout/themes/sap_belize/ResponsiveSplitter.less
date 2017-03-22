@@ -1,0 +1,40 @@
+/* ================================================= */
+/* CSS for control sap.ui.layout/ResponsiveSplitter  */
+/* Belize theme                                      */
+/* ================================================= */
+
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonColor: darken(@sapUiContentForegroundColor, 20);
+@_sap_ui_layout_ResponsiveSplitter_BarColor: darken(@sapUiGlobalBackgroundColor, 11);
+@_sap_ui_layout_ResponsiveSplitter_BarHoverColor: darken(@sapUiGlobalBackgroundColor, 21);
+@_sap_ui_layout_ResponsiveSplitter_CircleColor: darken(@sapUiGlobalBackgroundColor, 3);
+@_sap_ui_layout_ResponsiveSplitter_CircleBorderColor: darken(@sapUiGlobalBackgroundColor, 23);
+
+.sapUiResponsiveSplitterPaginatorButton:hover {
+	&:after {
+		background-color: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonColor;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorButton {
+	&:after {
+		background-color: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonColor;
+	}
+}
+
+.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar {
+	background-color: @_sap_ui_layout_ResponsiveSplitter_BarColor;
+
+	&:hover {
+		background-color: @_sap_ui_layout_ResponsiveSplitter_BarHoverColor;
+	}
+}
+
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		background-color: @_sap_ui_layout_ResponsiveSplitter_CircleColor;
+		border-color: @_sap_ui_layout_ResponsiveSplitter_CircleBorderColor;
+	}
+}

@@ -7,40 +7,25 @@ sap.ui.define([
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.ViewSettingsDialog.C", {
-
-		onExit : function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-			}
-		},
-
-		handleOpenDialog: function (oEvent) {
-			if (! this._oDialog) {
+		_getDialog : function () {
+			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.ViewSettingsDialog.Dialog", this);
+				this.getView().addDependent(this._oDialog);
 			}
-			this._oDialog.setModel(this.getView().getModel());
-			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			this._oDialog.open();
+			return this._oDialog;
 		},
-
-		handleOpenDialogFilter: function (oEvent) {
-			if (! this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.ViewSettingsDialog.Dialog", this);
-			}
-			this._oDialog.setModel(this.getView().getModel());
-			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			this._oDialog.open("filter");
+		handleOpenDialog: function () {
+			this._getDialog().open();
 		},
-
+		handleOpenDialogFilter: function () {
+			this._getDialog().open("filter");
+		},
 		handleConfirm: function (oEvent) {
 			if (oEvent.getParameters().filterString) {
 				MessageToast.show(oEvent.getParameters().filterString);
 			}
 		}
 	});
-
 
 	return CController;
 

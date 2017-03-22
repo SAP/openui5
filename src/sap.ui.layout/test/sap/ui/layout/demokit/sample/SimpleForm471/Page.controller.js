@@ -18,6 +18,11 @@ sap.ui.define([
 
 			// Set the initial form to be the display one
 			this._showFormFragment("Display");
+
+			// to navigate to the page on phone and not show the split screen items
+			var oSplitContainer = this.byId("SimpleFormSplitscreen");
+			oSplitContainer.toDetail(this.createId("page"));
+
 		},
 
 		onExit : function () {

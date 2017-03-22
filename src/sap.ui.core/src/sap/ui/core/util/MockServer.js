@@ -5,11 +5,11 @@
 // Provides class sap.ui.core.util.MockServer for mocking a server
 sap.ui
 	.define(
-				['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/thirdparty/sinon'],
+		['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/thirdparty/sinon'],
 		function(jQuery, Device, ManagedObject, sinon) {
 			"use strict";
 
-			if (!!Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 				// sinon internally checks the transported data to be an instance
 				// of FormData and this fails in case of IE9! - therefore we
@@ -143,7 +143,8 @@ sap.ui
 					RESOURCE_NOT_FOUND_FOR_SEGMENT: "Resource not found for the segment ##",
 					MALFORMED_URI_LITERAL_SYNTAX_IN_KEY: "Malformed URI literal syntax in key ##",
 					INVALID_KEY_NAME: "Invalid key name in key predicate. Expected name is ##",
-					INVALID_KEY_PREDICATE_QUANTITY: "Invalid key predicate. The quantity of provided keys does not match the expected value"
+					INVALID_KEY_PREDICATE_QUANTITY: "Invalid key predicate. The quantity of provided keys does not match the expected value",
+					INVALID_KEY_TYPE: "Invalid key predicate. The key literal for key property ## does not match its type."
 				}
 
 			});
@@ -176,9 +177,12 @@ sap.ui
 			};
 
 			/**
-			 * callback function for attachBefore
+			 * Attaches an event handler to be called before the built-in request processing of the mock server
 			 * @param {string} event type according to HTTP Method
-			 * @param {function} fnCallback - the name of the function that will be called at this exit
+			 * @param {function} fnCallback - the name of the function that will be called at this exit.
+			 * The callback function exposes an event with parameters, depending on the type of the request.
+			 * oEvent.getParameters() lists the parameters as per the request. Examples are:
+			 * oXhr : the request object; sUrlParams : the URL parameters of the request; sKeys : key properties of the requested entry; sNavProp/sNavName : name of navigation
 			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
 			 */
@@ -188,9 +192,12 @@ sap.ui
 			};
 
 			/**
-			 * callback function for attachBefore
+			 * Attaches an event handler to be called after the built-in request processing of the mock server
 			 * @param {string} event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
+			 * The callback function exposes an event with parameters, depending on the type of the request.
+			 * oEvent.getParameters() lists the parameters as per the request. Examples are:
+			 * oXhr : the request object; oFilteredData : the mock data entries that are about to be returned in the response; oEntry : the mock data entry that is about to be returned in the response;
 			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
 			 */
@@ -200,7 +207,7 @@ sap.ui
 			};
 
 			/**
-			 * callback function for detachBefore
+			 * Removes a previously attached event handler
 			 * @param {string} event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * @param {string} sEntitySet - (optional) the name of the entity set
@@ -212,7 +219,7 @@ sap.ui
 			};
 
 			/**
-			 * callback function for detachAfter
+			 * Removes a previously attached event handler
 			 * @param {string} event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * @param {string} sEntitySet - (optional) the name of the entity set
@@ -270,9 +277,10 @@ sap.ui
 			 * @param {object} oFilteredData
 			 * @param {string} sQuery string in the form {query}={value}
 			 * @param {string} sEntitySetName the name of the entitySet the oFilteredData belongs to
+			 * @param {array} aUrlParamStrings all query string parts of the request (array of {query}={value})
 			 * @private
 			 */
-			MockServer.prototype._applyQueryOnCollection = function(oFilteredData, sQuery, sEntitySetName) {
+			MockServer.prototype._applyQueryOnCollection = function(oFilteredData, sQuery, sEntitySetName, aUrlParamStrings) {
 				var aQuery = sQuery.split('=');
 				var sODataQueryValue = aQuery[1];
 				if (sODataQueryValue === "") {
@@ -295,13 +303,27 @@ sap.ui
 						oFilteredData.results = oFilteredData.results.slice(sODataQueryValue, oFilteredData.results.length);
 						break;
 					case "$orderby":
-						oFilteredData.results = this._getOdataQueryOrderby(oFilteredData.results, sODataQueryValue);
+						oFilteredData.results = this._getOdataQueryOrderby(oFilteredData.results, sODataQueryValue, sEntitySetName);
 						break;
 					case "$filter":
 						oFilteredData.results = this._recursiveOdataQueryFilter(oFilteredData.results, sODataQueryValue);
 						break;
+					case "search-focus":
+						// query parameter "search-focus" is evaluated together with parameter "search"
+						break;
+					case "search":
+						//Look for "search-focus" first...
+						var sSearchFocus = "";
+						for (var i = 0; i < aUrlParamStrings.length; i++ ) {
+							if ( aUrlParamStrings[i].indexOf("search-focus") != -1 ){
+								sSearchFocus = aUrlParamStrings[i].split('=')[1];
+								break;
+							}
+						}
+						oFilteredData.results = this._recursiveOdataQuerySearch( oFilteredData.results, sODataQueryValue, sSearchFocus, sEntitySetName );
+						break;
 					case "$select":
-						oFilteredData.results = this._getOdataQuerySelect(oFilteredData.results, sODataQueryValue);
+						oFilteredData.results = this._getOdataQuerySelect(oFilteredData.results, sODataQueryValue, sEntitySetName);
 						break;
 					case "$inlinecount":
 						var iCount = this._getOdataInlineCount(oFilteredData.results, sODataQueryValue);
@@ -340,7 +362,7 @@ sap.ui
 					case "$filter":
 						return this._recursiveOdataQueryFilter([oEntry], sODataQueryValue)[0];
 					case "$select":
-						return this._getOdataQuerySelect([oEntry], sODataQueryValue)[0];
+						return this._getOdataQuerySelect([oEntry], sODataQueryValue, sEntitySetName)[0];
 					case "$expand":
 						return this._getOdataQueryExpand([oEntry], sODataQueryValue, sEntitySetName)[0];
 					case "$format":
@@ -356,7 +378,7 @@ sap.ui
 			 * @param {string} sODataQueryValue a comma separated list of property navigation paths to sort by, where each property navigation path terminates on a primitive property
 			 * @private
 			 */
-			MockServer.prototype._getOdataQueryOrderby = function(aDataSet, sODataQueryValue) {
+			MockServer.prototype._getOdataQueryOrderby = function(aDataSet, sODataQueryValue, sEntitySetName) {
 				// sort properties lookup
 				var aProperties = sODataQueryValue.split(',');
 				var that = this;
@@ -391,7 +413,21 @@ sap.ui
 							sPropName = aSort[0].substring(iComplexType + 1);
 							sComplexType = aSort[0].substring(0, iComplexType);
 							if (!a[sComplexType].hasOwnProperty(sPropName)) {
-								that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPropName);
+								var bExist = false;
+								var aTypeProperties = [];
+								if (sComplexType) {
+									var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sComplexType].to.entitySet;
+									aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
+									for (var i = 0; i < aTypeProperties.length; i++) {
+										if (aTypeProperties[i].name === sPropName) {
+											bExist = true;
+											break;
+										}
+									}
+								}
+								if (!bExist) {
+									that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPropName);
+								}
 							}
 							if (a[sComplexType][sPropName] < b[sComplexType][sPropName]) {
 								return -1 * iSorter;
@@ -584,22 +620,25 @@ sap.ui
 					if (!bValue) { //e.g eq, ne, gt, lt, le, ge
 						aODataFilterValues = rExp.exec(sODataQueryValue);
 						sValue = that._trim(aODataFilterValues[iValueIndex + 1]);
-						// remove number suffixes from EDM types decimal, Int64, Single
-						var sTypecheck = sValue[sValue.length - 1];
-						if (sTypecheck === "M" || sTypecheck === "L" || sTypecheck === "f") {
-							sValue = sValue.substring(0, sValue.length - 1);
-						}
 						sPath = that._trim(aODataFilterValues[iPathIndex + 1]);
 					} else { //e.g.substringof, startswith, endswith
-						var rStringFilterExpr = new RegExp("(substringof|startswith|endswith)\\(([^,\\)]*),(.*)\\)");
+						var rStringFilterExpr = new RegExp("(substringof|startswith|endswith)\\(([^\\)]*),(.*)\\)");
 						aODataFilterValues = rStringFilterExpr.exec(sODataQueryValue);
 						sValue = that._trim(aODataFilterValues[iValueIndex + 2]);
 						sPath = that._trim(aODataFilterValues[iPathIndex + 2]);
 					}
 					//TODO do the check using the property type and not value
+					// remove number suffixes from EDM types decimal, Int64, Single
+					var sTypecheck = sValue[sValue.length - 1];
+					if (sTypecheck === "M" || sTypecheck === "m" || sTypecheck === "L" || sTypecheck === "f") {
+						sValue = sValue.substring(0, sValue.length - 1);
+					}
 					//fix for filtering on date time properties
 					if (sValue.indexOf("datetime") === 0) {
 						sValue = that._getJsonDate(sValue);
+					} else if (sValue.indexOf("guid") === 0) {
+						// strip the "guid'" (5) from the front and the "'" (-1) from the back
+						sValue = sValue.substring(5, sValue.length - 1);
 					} else if (sValue === "true") { // fix for filtering on boolean properties
 						sValue = true;
 					} else if (sValue === "false") {
@@ -615,8 +654,14 @@ sap.ui
 					if (iComplexType !== -1) {
 						var sPropName = sPath.substring(iComplexType + 1);
 						var sComplexType = sPath.substring(0, iComplexType);
-						if (!aDataSet[0][sComplexType].hasOwnProperty(sPropName)) {
-							that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPropName);
+						if (aDataSet[0][sComplexType]) {
+							if (!aDataSet[0][sComplexType].hasOwnProperty(sPropName)) {
+								var sErrorMessage = that._oErrorMessages.PROPERTY_NOT_FOUND.replace("##", "'" + sPropName + "'");
+								jQuery.sap.log.error("MockServer: navigation property '" + sComplexType + "' was not expanded, so " + sErrorMessage);
+								return aDataSet;
+							}
+						} else {
+							that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPath);
 						}
 						return fnSelectFilteredData(sPath, sValue, sComplexType, sPropName);
 					} else {
@@ -632,34 +677,34 @@ sap.ui
 				switch (sODataFilterMethod) {
 					case "substringof":
 						return fnGetFilteredData(true, 0, 1, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
-									return (oMockData[sComplexType][sPropName].indexOf(sValue) !== -1);
+									return (typeof oMockData[sComplexType][sPropName] === "string" && oMockData[sComplexType][sPropName].indexOf(sValue) !== -1);
 								}
-								return (oMockData[sPath].indexOf(sValue) !== -1);
+								return (typeof oMockData[sPath] === "string" && oMockData[sPath].indexOf(sValue) !== -1);
 							});
 						});
 					case "startswith":
 						return fnGetFilteredData(true, 1, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
-									return (oMockData[sComplexType][sPropName].indexOf(sValue) === 0);
+									return (typeof oMockData[sComplexType][sPropName] === "string" && oMockData[sComplexType][sPropName].indexOf(sValue) === 0);
 								}
-								return (oMockData[sPath].indexOf(sValue) === 0);
+								return (typeof oMockData[sPath] === "string" && oMockData[sPath].indexOf(sValue) === 0);
 							});
 						});
 					case "endswith":
 						return fnGetFilteredData(true, 1, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
-									return (oMockData[sComplexType][sPropName].indexOf(sValue) === (oMockData[sComplexType][sPropName].length - sValue.length));
+									return (typeof oMockData[sComplexType][sPropName] === "string" && oMockData[sComplexType][sPropName].indexOf(sValue) === (oMockData[sComplexType][sPropName].length - sValue.length));
 								}
-								return (oMockData[sPath].indexOf(sValue) === (oMockData[sPath].length - sValue.length));
+								return (typeof oMockData[sPath] === "string" && oMockData[sPath].indexOf(sValue) === (oMockData[sPath].length - sValue.length));
 							});
 						});
 					case "eq":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] === sValue);
 								}
@@ -668,7 +713,7 @@ sap.ui
 						});
 					case "ne":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] !== sValue);
 								}
@@ -677,7 +722,7 @@ sap.ui
 						});
 					case "gt":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] > sValue);
 								}
@@ -686,7 +731,7 @@ sap.ui
 						});
 					case "lt":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] < sValue);
 								}
@@ -695,7 +740,7 @@ sap.ui
 						});
 					case "ge":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] >= sValue);
 								}
@@ -704,7 +749,7 @@ sap.ui
 						});
 					case "le":
 						return fnGetFilteredData(false, 2, 0, function(sPath, sValue, sComplexType, sPropName) {
-							return jQuery.grep(aDataSet, function(oMockData) {
+							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
 									return (oMockData[sComplexType][sPropName] <= sValue);
 								}
@@ -717,58 +762,142 @@ sap.ui
 			};
 
 			/**
+			 * Processes the search operation:
+			 * Technically a filter is applied with "startswith" filter on the given property (given as
+			 * search-focus URL parameter).
+			 *
+			 * @param {object} aDataSet
+			 * @param {string} sODataQueryValue search string
+			 * @param {string} sODataSearchFocusValue A property name on which entries should be searched
+			 * @return {object} Changed result data set
+			 *
+			 * @private
+			 */
+			MockServer.prototype._recursiveOdataQuerySearch = function(aDataSet, sODataQueryValue, sODataSearchFocusValue, sEntitySetName) {
+				var sFilterString = "";
+
+				if ( sODataSearchFocusValue == "" || sODataSearchFocusValue == undefined ){
+					for ( var i = 0; i < this._mEntitySets[sEntitySetName].keys.length; i++ ) {
+						if (i != 0){
+							sFilterString = sFilterString + " or ";
+						}
+						sFilterString = sFilterString + "startswith(" + this._mEntitySets[sEntitySetName].keys[i] + ",'" + sODataQueryValue + "')";
+					}
+				} else {
+					sFilterString = "startswith(" + sODataSearchFocusValue + ",'" + sODataQueryValue + "')";
+				}
+
+				return this._recursiveOdataQueryFilter(aDataSet, sFilterString);
+			};
+
+			/**
 			 * Applies the Select OData system query option string on the given array
 			 * @param {object} aDataSet
 			 * @param {string} sODataQueryValue a comma separated list of property paths, qualified action names, qualified function names, or the star operator (*)
 			 * @private
 			 */
-			MockServer.prototype._getOdataQuerySelect = function(aDataSet, sODataQueryValue) {
+			MockServer.prototype._getOdataQuerySelect = function(aDataSet, sODataQueryValue, sEntitySetName) {
 				var that = this;
 				var sPropName, sComplexType;
 				var aProperties = sODataQueryValue.split(',');
 				var aSelectedDataSet = [];
 				var oPushedObject;
-				var fnCreatePushedEntry = function(aProperties, oData, oPushedObject) {
-					if (oData["__metadata"]) {
-						oPushedObject["__metadata"] = oData["__metadata"];
-					}
-					jQuery.each(aProperties, function(i, sPropertyName) {
-						var iComplexType = sPropertyName.indexOf("/");
-						// this is a complex type property
-						if (iComplexType !== -1) {
-							sPropName = sPropertyName.substring(iComplexType + 1);
-							sComplexType = sPropertyName.substring(0, iComplexType);
-							if (!oPushedObject[sComplexType]) {
-								oPushedObject[sComplexType] = {};
-							}
-							oPushedObject[sComplexType] = fnCreatePushedEntry([sPropName], oData[sComplexType], oPushedObject[sComplexType]);
-							// this is a simple property
-						} else {
-							if (oData && !oData.hasOwnProperty(sPropertyName)) {
-								that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
-							}
-							oPushedObject[sPropertyName] = oData[sPropertyName];
+				var oDataEntry = aDataSet[0] ? aDataSet[0][aProperties[0].split('/')[0]] : null;
+				if (!(oDataEntry != null && oDataEntry.results && oDataEntry.results.length > 0)) {
+					var fnCreatePushedEntry = function(aProperties, oData, oPushedObject, sParentName) {
+						if (oData["__metadata"]) {
+							oPushedObject["__metadata"] = oData["__metadata"];
 						}
+						jQuery.each(aProperties, function(i, sPropertyName) {
+							var iComplexType = sPropertyName.indexOf("/");
+							// this is a complex type property
+							if (iComplexType !== -1) {
+								sPropName = sPropertyName.substring(iComplexType + 1);
+								sComplexType = sPropertyName.substring(0, iComplexType);
+								if (!oPushedObject[sComplexType]) {
+									oPushedObject[sComplexType] = {};
+								}
+								oPushedObject[sComplexType] = fnCreatePushedEntry([sPropName], oData[sComplexType], oPushedObject[sComplexType], sComplexType);
+								// this is a simple property
+							} else {
+								if (oData && !oData.hasOwnProperty(sPropertyName)) {
+									var bExist = false;
+									var aTypeProperties = [];
+									if (sParentName) {
+										var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sParentName].to.entitySet;
+										aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
+										for (var i = 0; i < aTypeProperties.length; i++) {
+											if (aTypeProperties[i].name === sPropertyName) {
+												bExist = true;
+												break;
+											}
+										}
+									}
+									if (!bExist) {
+										that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
+									}
+								}
+								oPushedObject[sPropertyName] = oData[sPropertyName];
+							}
+						});
+						return oPushedObject;
+					};
+
+					// in case of $select=* return the data as is
+					if (jQuery.inArray("*", aProperties) !== -1) {
+						return aDataSet;
+					}
+
+					// trim all properties
+					jQuery.each(aProperties, function(i, sPropertyName) {
+						aProperties[i] = that._trim(sPropertyName);
 					});
-					return oPushedObject;
-				};
 
-				// in case of $select=* return the data as is
-				if (jQuery.inArray("*", aProperties) !== -1) {
-					return aDataSet;
+					// for each entry in the dataset create a new object that contains only the properties in $select clause
+					jQuery.each(aDataSet, function(iIndex, oData) {
+						oPushedObject = {};
+						aSelectedDataSet.push(fnCreatePushedEntry(aProperties, oData, oPushedObject));
+					});
+				} else {
+					//Add Support for multiple select return 1...n
+					var fnMultiSelect = function(data, select, currentPath) {
+						var result = {};
+						// traversed path to get to data:
+						currentPath = currentPath || '';
+						if (typeof data !== 'object') {
+							return data;
+						}
+						if (typeof data.slice === 'function') {
+							return data.map(function(el, index) {
+								return fnMultiSelect(el, select, currentPath); // on same path
+							});
+						}
+						// If Object:
+						// Handle "__metadata" property
+						if (data.__metadata !== undefined && currentPath.length === 0) {
+							result.__metadata = data.__metadata;
+						}
+						// Take the relevant paths only.
+						select.filter(function(path) {
+							return (path + '/').indexOf(currentPath) === 0;
+						}).forEach(function(path, _, innerSelect) {
+							// then get the next property in given path
+							var propertyKey = path.substr(currentPath.length).split('/')[0];
+							// Check if we have that propertyKey on the current object
+							if (data[propertyKey] !== undefined) {
+								// in this case recurse again while adding this to the current path
+								result[propertyKey] = fnMultiSelect(data[propertyKey], innerSelect, currentPath + propertyKey + '/');
+							}
+						});
+						// Add specific results case handling
+						if (data.results !== undefined) { // recurse with same path
+							result.results = fnMultiSelect(data.results, select, currentPath);
+						}
+						return result;
+					};
+					//invoke recursive function
+					aSelectedDataSet = fnMultiSelect(aDataSet, aProperties);
 				}
-
-				// trim all properties
-				jQuery.each(aProperties, function(i, sPropertyName) {
-					aProperties[i] = that._trim(sPropertyName);
-				});
-
-				// for each entry in the dataset create a new object that contains only the properties in $select clause
-				jQuery.each(aDataSet, function(iIndex, oData) {
-					oPushedObject = {};
-					aSelectedDataSet.push(fnCreatePushedEntry(aProperties, oData, oPushedObject));
-				});
-
 				return aSelectedDataSet;
 			};
 
@@ -829,7 +958,7 @@ sap.ui
 						//check if an expanded operation was already executed. for 1:* check results . otherwise, check if there is __deferred for clean start.
 						var aNavEntry = oRecord[sNavProp].results || oRecord[sNavProp];
 						if (!aNavEntry || !!aNavEntry.__deferred) {
-							aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp));
+							aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp, oRecord));
 						} else if (!jQuery.isArray(aNavEntry)) {
 							aNavEntry = [aNavEntry];
 						}
@@ -860,10 +989,14 @@ sap.ui
 			MockServer.prototype._refreshData = function() {
 
 				// load the metadata
-				this._loadMetadata(this._sMetadataUrl);
+				var oMetadata = this._loadMetadata(this._sMetadataUrl);
+				if (!oMetadata) {
+					return;
+				}
 
 				// here we need to analyse the EDMX and identify the entity sets
 				this._mEntitySets = this._findEntitySets(this._oMetadata);
+				this._mEntityTypes = this._findEntityTypes(this._oMetadata);
 
 				if (!this._sMockdataBaseUrl) {
 					// load the mockdata
@@ -895,17 +1028,21 @@ sap.ui
 			 * @private
 			 */
 			MockServer.prototype._loadMetadata = function(sMetadataUrl) {
-
-				// load the metadata
-				var oMetadata = jQuery.sap.sjax({
+				// load the metadata as string to avoid usage of serializer
+				var sMetadata = jQuery.sap.sjax({
 					url: sMetadataUrl,
-					dataType: "xml"
+					dataType: "text"
 				}).data;
-				jQuery.sap.assert(oMetadata !== undefined, "The metadata for url \"" + sMetadataUrl + "\" could not be found!");
-				this._oMetadata = oMetadata;
-
-				return oMetadata;
-
+				if (!sMetadata) {
+					jQuery.sap.log.error("MockServer: The metadata for url \"" + sMetadataUrl + "\" could not be found!");
+				}
+				this._sMetadata = sMetadata;
+				try {
+					this._oMetadata = jQuery.parseXML(sMetadata);
+				} catch (oError) {
+					jQuery.sap.log.error("MockServer: Invalid metadata XML! Reason: " + oError);
+				}
+				return this._oMetadata;
 			};
 
 			/**
@@ -937,27 +1074,28 @@ sap.ui
 
 				// helper function to find the entity set and property reference
 				// for the given role name
-				var fnResolveNavProp = function(sRole, bFrom) {
-					var aRoleEnd = jQuery(oMetadata).find("End[Role=" + sRole + "]");
-					var sEntitySet;
-					var sMultiplicity;
-					jQuery.each(aRoleEnd, function(i, oValue) {
-						if (!!jQuery(oValue).attr("EntitySet")) {
-							sEntitySet = jQuery(oValue).attr("EntitySet");
-						} else {
-							sMultiplicity = jQuery(oValue).attr("Multiplicity");
-						}
-					});
+				var fnResolveNavProp = function(sRole, aAssociation, aAssociationSet, bFrom) {
+					var sEntitySet = jQuery(aAssociationSet).find("End[Role='" + sRole + "']").attr("EntitySet");
+					var sMultiplicity = jQuery(aAssociation).find("End[Role='" + sRole + "']").attr("Multiplicity");
+
 					var aPropRef = [];
-					var oPrinDeps = (bFrom) ? oPrincipals : oDependents;
-					jQuery(oPrinDeps).each(function(iIndex, oPrinDep) {
-						if (sRole === (jQuery(oPrinDep).attr("Role"))) {
-							jQuery(oPrinDep).children("PropertyRef").each(function(iIndex, oPropRef) {
-								aPropRef.push(jQuery(oPropRef).attr("Name"));
-							});
-							return false;
-						}
-					});
+					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role='" + sRole + "']");
+					if (aConstraint && aConstraint.length > 0) {
+						jQuery(aConstraint[0]).children("PropertyRef").each(function(iIndex, oPropRef) {
+							aPropRef.push(jQuery(oPropRef).attr("Name"));
+						});
+					} else {
+						var oPrinDeps = (bFrom) ? oPrincipals : oDependents;
+						jQuery(oPrinDeps).each(function(iIndex, oPrinDep) {
+							if (sRole === (jQuery(oPrinDep).attr("Role"))) {
+								jQuery(oPrinDep).children("PropertyRef").each(function(iIndex, oPropRef) {
+									aPropRef.push(jQuery(oPropRef).attr("Name"));
+								});
+								return false;
+							}
+						});
+					}
+
 					return {
 						"role": sRole,
 						"entitySet": sEntitySet,
@@ -969,7 +1107,7 @@ sap.ui
 				// find the keys and the navigation properties of the entity types
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					// find the keys
-					var $EntityType = jQuery(oMetadata).find("EntityType[Name=" + oEntitySet.type + "]");
+					var $EntityType = jQuery(oMetadata).find("EntityType[Name='" + oEntitySet.type + "']");
 					var aKeys = jQuery($EntityType).find("PropertyRef");
 					jQuery.each(aKeys, function(iIndex, oPropRef) {
 						var sKeyName = jQuery(oPropRef).attr("Name");
@@ -980,10 +1118,14 @@ sap.ui
 					var aNavProps = jQuery(oMetadata).find("EntityType[Name='" + oEntitySet.type + "'] NavigationProperty");
 					jQuery.each(aNavProps, function(iIndex, oNavProp) {
 						var $NavProp = jQuery(oNavProp);
+						var aRelationship = $NavProp.attr("Relationship").split(".");
+						var aAssociationSet = jQuery(oMetadata).find("AssociationSet[Association = '" + aRelationship.join(".") + "']");
+						var sName = aRelationship.pop();
+						var aAssociation = jQuery(oMetadata).find("Association[Name = '" + sName + "']");
 						oEntitySet.navprops[$NavProp.attr("Name")] = {
 							"name": $NavProp.attr("Name"),
-							"from": fnResolveNavProp($NavProp.attr("FromRole"), true),
-							"to": fnResolveNavProp($NavProp.attr("ToRole"), false)
+							"from": fnResolveNavProp($NavProp.attr("FromRole"), aAssociation, aAssociationSet, true),
+							"to": fnResolveNavProp($NavProp.attr("ToRole"), aAssociation, aAssociationSet, false)
 						};
 					});
 				});
@@ -1075,13 +1217,13 @@ sap.ui
 						}
 						var oKeyValue = oEntry[sKey];
 						if (oEntitySet.keysType[sKey] === "Edm.String") {
-							oKeyValue = "'" + oKeyValue + "'";
+							oKeyValue = encodeURIComponent("'" + oKeyValue + "'");
 						} else if (oEntitySet.keysType[sKey] === "Edm.DateTime") {
 							oKeyValue = that._getDateTime(oKeyValue);
+							oKeyValue = encodeURIComponent(oKeyValue);
 						} else if (oEntitySet.keysType[sKey] === "Edm.Guid") {
 							oKeyValue = "guid'" + oKeyValue + "'";
 						}
-
 						if (oEntitySet.keys.length === 1) {
 							sKeys += oKeyValue;
 							return sKeys;
@@ -1122,19 +1264,24 @@ sap.ui
 						dataType: "json"
 					});
 					if (oResponse.success) {
-						if (!!oResponse.data.d) {
-							if (!!oResponse.data.d.results) {
+						if (oResponse.data.d) {
+							if (oResponse.data.d.results) {
 								mData[oEntitySet.name] = oResponse.data.d.results;
 							} else {
-								jQuery.sap.log.error("The mockdata format for entity set \"" + oEntitySet.name + "\" invalid");
+								jQuery.sap.log.error("The mock data format for entity set \"" + oEntitySet.name + "\" invalid");
 							}
 						} else {
-							mData[oEntitySet.name] = oResponse.data;
+							if (jQuery.isArray(oResponse.data)) {
+								mData[oEntitySet.name] = oResponse.data;
+							} else {
+								jQuery.sap.log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to wrong format!");
+								return false;
+							}
 						}
 						return true;
 					} else {
 						if (oResponse.status === "parsererror") {
-							jQuery.sap.log.error("The mockdata for entity set \"" + oEntitySet.name + "\" could not be loaded due to a parsing error!");
+							jQuery.sap.log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to a parsing error!");
 						}
 						return false;
 					}
@@ -1149,23 +1296,37 @@ sap.ui
 					if (oResponse.success) {
 						mData = oResponse.data;
 					} else {
-						jQuery.sap.log.warning("The mockdata for all the entity types could not be found at \"" + sBaseUrl + "\"!");
+						jQuery.sap.log.warning("The mock data for all the entity types could not be found at \"" + sBaseUrl + "\"!");
 					}
 				} else {
+					var oEntitySets = {};
+					if (that._aEntitySetsNames && that._aEntitySetsNames.length > 0) {
+						var sEntitySet;
+						// In case _aEntitySetsNames is specified - get data only for the specified entity sets
+						for (var i = 0; i < that._aEntitySetsNames.length; i++) {
+							sEntitySet = that._aEntitySetsNames[i];
+							if (mEntitySets[sEntitySet]) {
+								oEntitySets[sEntitySet] = mEntitySets[sEntitySet];
+							}
+						}
+					} else {
+						// In case _aEntitySetsNames is not specified get data for all entity sets
+						oEntitySets = mEntitySets;
+					}
 					// load the mock data individually
-					jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
+					jQuery.each(oEntitySets, function(sEntitySetName, oEntitySet) {
 						if (!mData[oEntitySet.type] || !mData[oEntitySet.name]) {
 							// first look for a file by
 							// the entity set name
 							var sEntitySetUrl = sBaseUrl + oEntitySet.name + ".json";
 							if (!fnLoadMockData(sEntitySetUrl, oEntitySet)) {
-								jQuery.sap.log.warning("The mockdata for entity set \"" + oEntitySet.name + "\" could not be found at \"" + sBaseUrl + "\"!");
+								jQuery.sap.log.warning("The mock data for entity set \"" + oEntitySet.name + "\" could not be found at \"" + sBaseUrl + "\"!");
 								var sEntityTypeUrl = sBaseUrl + oEntitySet.type + ".json";
 								if (!fnLoadMockData(sEntityTypeUrl, oEntitySet)) {
-									jQuery.sap.log.warning("The mockdata for entity type \"" + oEntitySet.type + "\" could not be found at \"" + sBaseUrl + "\"!");
+									jQuery.sap.log.warning("The mock data for entity type \"" + oEntitySet.type + "\" could not be found at \"" + sBaseUrl + "\"!");
 									// generate random
 									// mock data
-									if (!!that._bGenerateMissingMockData) {
+									if (that._bGenerateMissingMockData) {
 										var mEntitySet = {};
 										mEntitySet[oEntitySet.name] = oEntitySet;
 										mData[oEntitySet.type] = that._generateODataMockdataForEntitySet(mEntitySet, that._oMetadata)[oEntitySet.name];
@@ -1175,8 +1336,7 @@ sap.ui
 						}
 					});
 				}
-				// create the mock data for the entity sets and enhance
-				// the mock data with metadata
+				// create the mock data for the entity sets
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					// we clone because of unique metadata for
 					// individual entity sets otherwise the data of the
@@ -1197,7 +1357,9 @@ sap.ui
 							that._oMockdata[sEntitySetName].push(jQuery.extend(true, {}, oEntity));
 						});
 					}
-
+				});
+				//enhance the mock data with metadata
+				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					// enhance with OData metadata if exists
 					if (that._oMockdata[sEntitySetName].length > 0) {
 						that._enhanceWithMetadata(oEntitySet, that._oMockdata[sEntitySetName]);
@@ -1222,17 +1384,16 @@ sap.ui
 						sRootUri = this._getRootUri(),
 						sEntitySetName = oEntitySet && oEntitySet.name;
 					jQuery.each(oMockData, function(iIndex, oEntry) {
-						// add the metadata for the entry (type is pointing to the EntityType which is required by datajs to resolve properties)
-						oEntry.__metadata = {
-							id: sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")",
-							type: oEntitySet.schema + "." + oEntitySet.type,
-							uri: sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")"
-						};
+						oEntry.__metadata = oEntry.__metadata || {};
+						// add the metadata for the entry
+						oEntry.__metadata.id = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
+						oEntry.__metadata.type = oEntitySet.schema + "." + oEntitySet.type;
+						oEntry.__metadata.uri = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
 						// add the navigation properties
 						jQuery.each(oEntitySet.navprops, function(sKey, oNavProp) {
-							if (oEntry[sKey] && !jQuery.isEmptyObject(oEntry[sKey]) && !oEntry[sKey]["__deferred"]) {
+							if (oEntry[sKey] && !jQuery.isEmptyObject(oEntry[sKey]) && !oEntry[sKey]["__deferred"] ) {
 								that._oMockdata[oNavProp.to.entitySet] = that._oMockdata[oNavProp.to.entitySet]
-									.concat([oEntry[sKey]]);
+									.concat(oEntry[sKey]);
 							}
 							oEntry[sKey] = {
 								__deferred: {
@@ -1279,6 +1440,10 @@ sap.ui
 						if (sFirstChar === "'" || sLastChar !== "'") {
 							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
 						}
+					} else if (oEntitySet.keysType[sKey] === "Edm.Binary") {
+						if (!(new RegExp("(binary|X)'[A-Fa-f0-9][A-Fa-f0-9]*'").test(sRequestValue))) {
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
+						}
 					} else {
 						if ((sFirstChar === "'" && sLastChar !== "'") || (sLastChar === "'" && sFirstChar !== "'")) {
 							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
@@ -1316,11 +1481,31 @@ sap.ui
 							sKeyValue = aPair[1];
 						}
 					}
-					if (sKeyValue.indexOf('\'') === 0) {
-						oResult[sKeyName] = sKeyValue.slice(1, sKeyValue.length - 1);
-					} else {
-						oResult[sKeyName] = sKeyValue;
+					oResult[sKeyName] = sKeyValue;
+					switch (oEntitySet.keysType[sKeyName]) {
+						case "Edm.String":
+							oResult[sKeyName] = oResult[sKeyName].replace(/^\'|\'$/g, "");
+							break;
+						case "Edm.Int16":
+						case "Edm.Int32":
+						case "Edm.Int64":
+						case "Edm.Decimal":
+						case "Edm.Byte":
+						case "Edm.Double":
+						case "Edm.Single":
+						case "Edm.SByte":
+							oResult[sKeyName] = parseFloat(oResult[sKeyName]);
+							break;
+						case "Edm.Guid":
+							oResult[sKeyName] = oResult[sKeyName].replace(/^guid\'|\'$/g, "");
+							break;
+						case "Edm.Boolean":
+						case "Edm.Binary":
+						case "Edm.DateTimeOffset":
+						default:
+							oResult[sKeyName] = oResult[sKeyName];
 					}
+
 				}
 				return oResult;
 			};
@@ -1372,7 +1557,8 @@ sap.ui
 					case "SByte":
 						return Math.floor(Math.random() * 10);
 					case "Time":
-						return Math.floor(Math.random() * 23) + ":" + Math.floor(Math.random() * 59) + ":" + Math.floor(Math.random() * 59);
+						// ODataModel expects ISO8601 duration format
+						return "PT" + Math.floor(Math.random() * 23) + "H" + Math.floor(Math.random() * 59) + "M" + Math.floor(Math.random() * 59) + "S";
 					case "Guid":
 						return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 							var r = Math.random() * 16 | 0,
@@ -1386,14 +1572,17 @@ sap.ui
 						for (var nFlag = 0, nShifted = nMask; nFlag < 32; nFlag++, sMask += String(nShifted >>> 31), nShifted <<= 1)
 						;
 						/*eslint-enable */
-
 						return sMask;
 					case "DateTimeOffset":
-						//TODO: generate value for DateTimeOffset
+						var date = new Date();
+						date.setFullYear(2000 + Math.floor(Math.random() * 20));
+						date.setDate(Math.floor(Math.random() * 30));
+						date.setMonth(Math.floor(Math.random() * 12));
+						date.setMilliseconds(0);
+						return "/Date(" + date.getTime() + "+0000)/";
 					default:
 						return this._generateDataFromEntity(mComplexTypes[sType], iIndex, mComplexTypes);
 				}
-
 			};
 
 			/**
@@ -1433,7 +1622,7 @@ sap.ui
 			 *
 			 * @param {object}
 			 *            oEntitySet description of the entity set, conatins the full list of key fields
-			 * @param {oKeys}
+			 * @param {object}
 			 *            oKeys contains already defined key values
 			 * @param {oEntity}
 			 *            oEntity the result object, where the key property/value pairs merged into
@@ -1443,7 +1632,7 @@ sap.ui
 					for (var i = 0; i < oEntitySet.keys.length; i++) {
 						var sKey = oEntitySet.keys[i];
 						// if the key has value, just use it
-						if (oKeys[sKey] || this._isFalseyValue(oKeys[sKey], sKey, oEntitySet.keysType[sKey])) {
+						if (oKeys[sKey] !== undefined && oKeys[sKey] !== null) {
 							if (!oEntity[sKey]) {
 								// take over the specified key value
 								switch (oEntitySet.keysType[sKey]) {
@@ -1451,7 +1640,7 @@ sap.ui
 										oEntity[sKey] = this._getJsonDate(oKeys[sKey]);
 										break;
 									case "Edm.Guid":
-										oEntity[sKey] = oKeys[sKey].substring(5, oKeys[sKey].length - 1);
+										oEntity[sKey] = oKeys[sKey].replace(/^guid\'|\'$/g, "");
 										break;
 									default:
 										oEntity[sKey] = oKeys[sKey];
@@ -1495,6 +1684,7 @@ sap.ui
 					oEntity[oProperty.name] = this._generatePropertyValue(oProperty.name, oProperty.type, mComplexTypes, iIndex);
 				}
 				return oEntity;
+
 			};
 
 			/**
@@ -1523,33 +1713,25 @@ sap.ui
 			MockServer.prototype._generateMockdata = function(mEntitySets, oMetadata) {
 				var that = this;
 				var oMockData = {};
+				var sRootUri = this._getRootUri();
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					var mEntitySet = {};
 					mEntitySet[oEntitySet.name] = oEntitySet;
 					oMockData[sEntitySetName] = that._generateODataMockdataForEntitySet(mEntitySet, oMetadata)[sEntitySetName];
 				});
-
-				this._oMockdata = oMockData;
-			};
-
-			/**
-			 * Generate some mock data based on the metadata specified for the odata service.
-			 * @param {map} mEntitySets map of the entity sets
-			 * @param {object} oMetadata the complete metadata for the service
-			 * @private
-			 */
-			MockServer.prototype._generateODataMockdataForEntitySet = function(mEntitySets, oMetadata) {
-				// load the entity sets (map the entity type data to the entity set)
-				var that = this,
-					sRootUri = this._getRootUri(),
-					oMockData = {};
-
-				// here we need to analyse the EDMX and identify the entity types and complex types
-				var mEntityTypes = this._findEntityTypes(oMetadata);
-				var mComplexTypes = this._findComplexTypes(oMetadata);
-
+				// changing the values if there is a referential constraint
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
-					oMockData[sEntitySetName] = that._generateDataFromEntitySet(oEntitySet, mEntityTypes, mComplexTypes);
+					for (var navprop in oEntitySet.navprops) {
+						var oNavProp = oEntitySet.navprops[navprop];
+						var iPropRefLength = oNavProp.from.propRef.length;
+						for (var j = 0; j < iPropRefLength; j++) {
+							for (var i = 0; i < oMockData[sEntitySetName].length; i++) {
+								var oEntity = oMockData[sEntitySetName][i];
+								// copy the value from the principle to the dependant;
+								oMockData[oNavProp.to.entitySet][i][oNavProp.to.propRef[j]] = oEntity[oNavProp.from.propRef[j]];
+							}
+						}
+					}
 					jQuery.each(oMockData[sEntitySetName], function(iIndex, oEntry) {
 						// add the metadata for the entry
 						oEntry.__metadata = {
@@ -1565,6 +1747,28 @@ sap.ui
 							};
 						});
 					});
+				});
+				this._oMockdata = oMockData;
+			};
+
+			/**
+			 * Generate some mock data based on the metadata specified for the odata service.
+			 * @param {map} mEntitySets map of the entity sets
+			 * @param {object} oMetadata the complete metadata for the service
+			 * @private
+			 */
+			MockServer.prototype._generateODataMockdataForEntitySet = function(mEntitySets, oMetadata) {
+				// load the entity sets (map the entity type data to the entity set)
+				var that = this,
+					// sRootUri = this._getRootUri(),
+					oMockData = {};
+
+				// here we need to analyse the EDMX and identify the entity types and complex types
+				var mEntityTypes = this._findEntityTypes(oMetadata);
+				var mComplexTypes = this._findComplexTypes(oMetadata);
+
+				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
+					oMockData[sEntitySetName] = that._generateDataFromEntitySet(oEntitySet, mEntityTypes, mComplexTypes);
 				});
 				return oMockData;
 			};
@@ -1616,9 +1820,10 @@ sap.ui
 			 * no base url for the mockdata is specified then the mockdata are generated from the metadata
 			 *
 			 * @param {string} sMetadataUrl url to the service metadata document
-			 * @param {string|object} [vMockdataSettings] (optional) base url which contains the path to the mockdata, or an object which contains the following properties: sMockdataBaseUrl, bGenerateMissingMockData. See below for descriptions of these parameters. Ommit this parameter to produce random mock data based on the service metadata.
+			 * @param {string|object} [vMockdataSettings] (optional) base url which contains the path to the mockdata, or an object which contains the following properties: sMockdataBaseUrl, bGenerateMissingMockData, aEntitySetsNames. See below for descriptions of these parameters. Ommit this parameter to produce random mock data based on the service metadata.
 			 * @param {string} [vMockdataSettings.sMockdataBaseUrl] base url which contains the mockdata as single .json files or the .json file containing the complete mock data
 			 * @param {boolean} [vMockdataSettings.bGenerateMissingMockData] true for the MockServer to generate mock data for missing .json files that are not found in sMockdataBaseUrl. Default value is false.
+			 * @param {array} [vMockdataSettings.aEntitySetsNames] list of entity set names to fetch. This parameter should be used to improve performance in case there are a lot of entity sets but only a few are needed to be fetched. Default value is empty - in this case all entity sets will be retrieved.
 			 *
 			 * @since 1.13.2
 			 * @public
@@ -1631,8 +1836,21 @@ sap.ui
 				} else {
 					this._sMockdataBaseUrl = vMockdataSettings.sMockdataBaseUrl;
 					this._bGenerateMissingMockData = vMockdataSettings.bGenerateMissingMockData;
+					this._aEntitySetsNames = vMockdataSettings.aEntitySetsNames;
 				}
 
+				// load the metadata
+				var oMetadata = this._loadMetadata(this._sMetadataUrl);
+				if (!oMetadata) {
+					return;
+				}
+				// create mockserver annotations handler only when metadata exists
+				if (this._sMetadata) {
+					var MockServerAnnotationsHandler = sap.ui.requireSync("sap/ui/core/util/MockServerAnnotationsHandler");
+					var oAnnotations = MockServerAnnotationsHandler.parse(this._oMetadata, this._sMetadata);
+					var DraftEnabledMockServer = sap.ui.requireSync("sap/ui/core/util/DraftEnabledMockServer");
+					DraftEnabledMockServer.handleDraft(oAnnotations, this);
+				}
 				this._refreshData();
 
 				// helper to handle xsrf token
@@ -1682,7 +1900,7 @@ sap.ui
 									break;
 								case "Edm.Int16":
 								case "Edm.Int32":
-								case "Edm.Int64":
+									//case "Edm.Int64": In ODataModel this type is represented as a string. (https://openui5.hana.ondemand.com/docs/api/symbols/sap.ui.model.odata.type.Int64.html)
 								case "Edm.Decimal":
 								case "Edm.Byte":
 								case "Edm.Double":
@@ -1698,6 +1916,11 @@ sap.ui
 									sNewValue = sNewValue.replace(/^guid\'|\'$/g, '');
 									break;
 								case "Edm.Boolean":
+									if (["true", "false"].indexOf(sNewValue) === -1) {
+										that._logAndThrowMockServerCustomError(400, that._oErrorMessages.INVALID_KEY_TYPE, sKey);
+									}
+									sNewValue = sNewValue === "true";
+									break;
 								case "Edm.Binary":
 								case "Edm.DateTimeOffset":
 								default:
@@ -1778,7 +2001,7 @@ sap.ui
 					};
 
 					for (var i = 0; i < aUrlParams.length; i++) {
-					    // there is no ' and no " in param values
+						// there is no ' and no " in param values
 						if (!fnStartsWith(aUrlParams[i])) {
 							aUrlParamsNormalized.push(aUrlParams[i]);
 						}
@@ -1806,6 +2029,7 @@ sap.ui
 				};
 
 				var initNewEntity = function(oXhr, sTargetEntityName, sKeys, sUrlParams) {
+					sKeys = sKeys ? decodeURIComponent(sKeys) : sKeys;
 					var oEntity = JSON.parse(oXhr.requestBody);
 					if (oEntity) {
 						var oKeys = {};
@@ -1834,8 +2058,24 @@ sap.ui
 						};
 						fnHandleXsrfTokenHeader(oXhr, mHeaders);
 
-						oXhr.respond(200, mHeaders, jQuery.sap.serializeXML(that._oMetadata));
-						jQuery.sap.log.debug("MockServer: response sent with: 200, " + jQuery.sap.serializeXML(that._oMetadata));
+						oXhr.respond(200, mHeaders, that._sMetadata);
+						jQuery.sap.log.debug("MockServer: response sent with: 200, " + that._sMetadata);
+						return true;
+					}
+				});
+
+				// add the service request (HEAD request for CSRF Token)
+				aRequests.push({
+					method: "HEAD",
+					path: new RegExp("$"),
+					response: function(oXhr) {
+						jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+						var mHeaders = {
+							"Content-Type": "application/json;charset=utf-8"
+						};
+						fnHandleXsrfTokenHeader(oXhr, mHeaders);
+						oXhr.respond(200, mHeaders);
+						jQuery.sap.log.debug("MockServer: response sent with: 200");
 						return true;
 					}
 				});
@@ -1874,36 +2114,120 @@ sap.ui
 						path: new RegExp("\\$batch([?#].*)?"),
 						response: function(oXhr) {
 							jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
-							var fnResovleStatus = function(iStatusCode) {
-								switch (iStatusCode) {
+							var fnResovleStatus = function(oResponse) {
+								switch (oResponse.statusCode) {
 									case 200:
 										return "200 OK";
-									case 204:
-										return "204 No Content";
 									case 201:
 										return "201 Created";
+									case 204:
+										return "204 No Content";
 									case 400:
 										return "400 Bad Request";
+									case 401:
+										return "401 Unauthorized";
 									case 403:
 										return "403 Forbidden";
 									case 404:
 										return "404 Not Found";
+									case 405:
+										return "405 Method Not Allowed";
+									case 409:
+										return "409 Conflict";
+									case 412:
+										return "412 Precondition Failed";
+									case 415:
+										return "415 Unsupported Media Type";
+									case 500:
+										return "500 Internal Server Error";
+									case 501:
+										return "501 Not Implemented";
+									case 503:
+										return "503 Service Unavailable";
 									default:
-										break;
+										return oResponse.statusCode + " " + oResponse.status;
 								}
 							};
+
 							var fnBuildResponseString = function(oResponse, sContentType) {
-								var sResponseData = JSON.stringify(oResponse.data) || "";
-								if (!oResponse.success) {
+
+								// create the response data string => convert to JSON if possible or use the content directly
+								var sResponseData;
+								if (oResponse.success) {
+									sResponseData = JSON.stringify(oResponse.data) || "";
+								} else {
 									sResponseData = oResponse.errorResponse;
 								}
-								if (sContentType) {
-									return "HTTP/1.1 " + fnResovleStatus(oResponse.statusCode) + "\r\nContent-Type: " + sContentType + "\r\nContent-Length: " +
+
+								// default the content type to application/json
+								sContentType = sContentType || "application/json";
+
+								// by default the dataserviceversion header will be attached to the response headers
+								if (oResponse.responseHeaders) {
+									// if the response contains the headers we include them into the
+									// response string which will be added to the BATCH
+									return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\n" + oResponse.responseHeaders +
+										"dataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
+								} else {
+									// if a content type is defined we override the incoming response content type
+									return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\nContent-Type: " + sContentType + "\r\nContent-Length: " +
 										sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
 								}
-								return "HTTP/1.1 " + fnResovleStatus(oResponse.statusCode) + "\r\nContent-Type: application/json\r\nContent-Length: " +
-									sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
+
 							};
+
+							var fnCUDRequest = function(sUrl, sData, sType,aChangesetResponses) {
+								var oResponse;
+								var fnAjaxSuccess = function(data, textStatus, xhr){
+									oResponse = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status, responseHeaders : xhr && xhr.getAllResponseHeaders() };
+								};
+								var fnAjaxError = function(xhr, textStatus, error) {
+									oResponse = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText, responseHeaders : xhr && xhr.getAllResponseHeaders()};
+								};
+								jQuery.ajax({
+									type: sType,
+									async: false,
+									url: sUrl,
+									data: sData,
+									dataType: "json",
+									success: fnAjaxSuccess,
+									error: fnAjaxError
+								});
+								if (oResponse.statusCode === 400 || oResponse.statusCode === 404) {
+									// the response of the failing request needs to be propagated
+									// but the changeset should not be further processed => ERROR!
+									var sError = fnBuildResponseString(oResponse);
+									throw new Error(sError);
+								}
+								aChangesetResponses.push(fnBuildResponseString(oResponse));
+							};
+
+							var fnRRequest = function(sUrl, aBatchBodyResponse) {
+								var oResponse;
+								var sResponseString;
+								var fnAjaxSuccess = function(data, textStatus, xhr){
+									oResponse = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status, responseHeaders : xhr && xhr.getAllResponseHeaders() };
+								};
+								var fnAjaxError = function(xhr, textStatus, error) {
+									oResponse = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText, responseHeaders : xhr && xhr.getAllResponseHeaders()};
+								};
+								jQuery.ajax({
+									async: false,
+									url: sUrl,
+									dataType: "json",
+									success: fnAjaxSuccess,
+									error: fnAjaxError
+								});
+								var sResponseString;
+								if (sUrl.indexOf('$count') !== -1) {
+									sResponseString = fnBuildResponseString(oResponse, "text/plain");
+								} else {
+									sResponseString = fnBuildResponseString(oResponse);
+								}
+								aBatchBodyResponse.push("\r\nContent-Type: application/http\r\n" + "Content-Length: " + sResponseString.length + "\r\n" +
+									"content-transfer-encoding: binary\r\n\r\n" + sResponseString);
+							};
+
 							// START BATCH HANDLING
 							var sRequestBody = oXhr.requestBody;
 							var oBoundaryRegex = new RegExp("--batch_[a-z0-9-]*");
@@ -1927,47 +2251,17 @@ sap.ui
 									if (rGet.test(sBatchRequest) && sBatchRequest.indexOf("multipart/mixed") === -1) {
 										//In case of POST, PUT or DELETE not in ChangeSet
 										if (rPut.test(sBatchRequest) || rPost.test(sBatchRequest) || rDelete.test(sBatchRequest)) {
-											oXhr
-												.respond(400, null,
-													"The Data Services Request could not be understood due to malformed syntax");
+											oXhr.respond(400, null, "The Data Services Request could not be understood due to malformed syntax");
 											jQuery.sap.log.debug("MockServer: response sent with: 400");
 											return true;
 										}
-										var oResponse = jQuery.sap.sjax({
-											url: sServiceURL + rGet.exec(sBatchRequest)[1],
-											dataType: "json"
-										});
-										var sResponseString;
-										if (rGet.exec(sBatchRequest)[1].indexOf('$count') !== -1) {
-											sResponseString = fnBuildResponseString(oResponse, "text/plain");
+										fnRRequest(sServiceURL + rGet.exec(sBatchRequest)[1], aBatchBodyResponse);
 										} else {
-											sResponseString = fnBuildResponseString(oResponse);
-										}
-										aBatchBodyResponse.push("\r\nContent-Type: application/http\r\n" + "Content-Length: " + sResponseString.length + "\r\n" +
-											"content-transfer-encoding: binary\r\n\r\n" + sResponseString);
-									} else {
 										//CUD handling within changesets
 										// copying the mock data to support rollback
 										var oCopiedMockdata = jQuery.extend(true, {}, that._oMockdata);
 										var aChangesetResponses = [];
 
-										/*eslint-disable no-loop-func */
-										var fnCUDRequest = function(rCUD, sData, sType) {
-											var oResponse = jQuery.sap.sjax({
-												type: sType,
-												url: sServiceURL + rCUD.exec(sChangesetRequest)[1],
-												dataType: "json",
-												data: sData
-											});
-
-											if (oResponse.statusCode === 400 || oResponse.statusCode === 404) {
-												var sError = "\r\nHTTP/1.1 " + fnResovleStatus(oResponse.statusCode) +
-													"\r\nContent-Type: application/json\r\nContent-Length: 0\r\n\r\n";
-												throw new Error(sError);
-											}
-											aChangesetResponses.push(fnBuildResponseString(oResponse));
-										};
-										/*eslint-enable no-loop-func */
 										// extract changeset
 										var sChangesetBoundary = sBatchRequest.substring(
 											sBatchRequest.indexOf("boundary=") + 9, sBatchRequest.indexOf("\r\n\r\n"));
@@ -1990,26 +2284,31 @@ sap.ui
 													// PUT
 													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(rPut, sData, 'PUT');
+													fnCUDRequest(sServiceURL + rPut.exec(sChangesetRequest)[1], sData, 'PUT', aChangesetResponses);
 												} else if (rMerge.test(sChangesetRequest)) {
 													// MERGE
 													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(rMerge, sData, 'MERGE');
+													fnCUDRequest(sServiceURL + rMerge.exec(sChangesetRequest)[1], sData, 'MERGE', aChangesetResponses);
 												} else if (rPost.test(sChangesetRequest)) {
 													// POST
 													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(rPost, sData, 'POST');
+													fnCUDRequest(sServiceURL + rPost.exec(sChangesetRequest)[1], sData, 'POST', aChangesetResponses);
 												} else if (rDelete.test(sChangesetRequest)) {
 													// DELETE
-													fnCUDRequest(rDelete, null, 'DELETE');
+													fnCUDRequest(sServiceURL + rDelete.exec(sChangesetRequest)[1], sData, 'DELETE', aChangesetResponses);
 												}
 											} //END ChangeSets FOR
 											var sChangesetRespondData = "\r\nContent-Type: multipart/mixed; boundary=ejjeeffe1\r\n\r\n--ejjeeffe1";
 											for (var k = 0; k < aChangesetResponses.length; k++) {
-												sChangesetRespondData += "\r\nContent-Type: application/http\r\n" + "Content-Length: " + aChangesetResponses[k].length +
-													"\r\n" + "content-transfer-encoding: binary\r\n\r\n" + aChangesetResponses[k] + "--ejjeeffe1";
+												sChangesetRespondData += "\r\nContent-Type: application/http\r\n"
+													+ "Content-Length: "
+													+ aChangesetResponses[k].length
+													+ "\r\n"
+													+ "content-transfer-encoding: binary\r\n\r\n"
+													+ aChangesetResponses[k]
+													+ "--ejjeeffe1";
 											}
 											sChangesetRespondData += "--\r\n";
 											aBatchBodyResponse.push(sChangesetRespondData);
@@ -2053,11 +2352,11 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sUrlParams) {
 									jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sUrlParams: sUrlParams
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 										oXhr: oXhr,
 										sUrlParams: sUrlParams
 									});
@@ -2081,16 +2380,16 @@ sap.ui
 												}
 												jQuery.each(aUrlParams, function(iIndex, sQuery) {
 													that._applyQueryOnCollection(oFilteredData, sQuery,
-														sEntitySetName);
+														sEntitySetName, aUrlParams);
 												});
 											}
 
 											//trigger the after callback funtion
-											that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+											that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 												oXhr: oXhr,
 												oFilteredData: oFilteredData
 											});
-											that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+											that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 												oXhr: oXhr,
 												oFilteredData: oFilteredData
 											});
@@ -2126,11 +2425,11 @@ sap.ui
 										jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 										//trigger the before callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+										that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 											oXhr: oXhr,
 											sUrlParams: sUrlParams
 										});
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+										that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 											oXhr: oXhr,
 											sUrlParams: sUrlParams
 										});
@@ -2155,16 +2454,15 @@ sap.ui
 													}
 													jQuery.each(aUrlParams, function(iIndex, sQuery) {
 														that._applyQueryOnCollection(oFilteredData, sQuery,
-															sEntitySetName);
+															sEntitySetName, aUrlParams);
 													});
 												}
-
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oFilteredData: oFilteredData
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 													oXhr: oXhr,
 													oFilteredData: oFilteredData
 												});
@@ -2199,12 +2497,12 @@ sap.ui
 										jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 										//trigger the before callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+										that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 											oXhr: oXhr,
 											sKeys: sKeys,
 											sUrlParams: sUrlParams
 										});
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+										that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 											oXhr: oXhr,
 											sKeys: sKeys,
 											sUrlParams: sUrlParams
@@ -2232,11 +2530,11 @@ sap.ui
 												}
 
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntry: oEntry.entry
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 													oXhr: oXhr,
 													oEntry: oEntry.entry
 												});
@@ -2274,13 +2572,13 @@ sap.ui
 												jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 												//trigger the before callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 													oXhr: oXhr,
 													sKeys: sKeys,
 													sNavProp: sNavProp,
 													sUrlParams: sUrlParams
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 													oXhr: oXhr,
 													sKeys: sKeys,
 													sNavProp: sNavProp,
@@ -2322,16 +2620,11 @@ sap.ui
 																}
 
 																if (sMultiplicity === "*") {
-																	jQuery
-																		.each(
-																			aUrlParams,
-																			function(iIndex, sQuery) {
-																				that
-																					._applyQueryOnCollection(
-																						oFilteredData,
-																						sQuery,
-																						that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
-																			});
+																	jQuery.each(aUrlParams, function(iIndex, sQuery) {
+																				that._applyQueryOnCollection(oFilteredData, sQuery,
+																						that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet,
+																						aUrlParams);
+																	});
 																} else {
 																	jQuery
 																		.each(
@@ -2348,15 +2641,16 @@ sap.ui
 														}
 
 														//trigger the after callback funtion
-														that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+														that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 															oXhr: oXhr,
 															oFilteredData: oFilteredData
 														});
-														that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+														that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 															oXhr: oXhr,
 															oFilteredData: oFilteredData
 														});
 
+														oFilteredData.results = oFilteredData.results || [];
 														oXhr
 															.respond(
 																200,
@@ -2391,13 +2685,13 @@ sap.ui
 														.debug("MockServer: incoming request for url: " + oXhr.url);
 
 													//trigger the before callback funtion
-													that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+													that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 														oXhr: oXhr,
 														sKeys: sKeys,
 														sNavProp: sNavProp,
 														sUrlParams: sUrlParams
 													});
-													that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+													that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 														oXhr: oXhr,
 														sKeys: sKeys,
 														sNavProp: sNavProp,
@@ -2413,7 +2707,7 @@ sap.ui
 															var aEntries, oFilteredData = {};
 
 															aEntries = that._resolveNavigation(sEntitySetName,
-																oEntry.entry, sNavProp);
+																oEntry.entry, sNavProp, oEntry.entry);
 															var sMultiplicity = that._mEntitySets[sEntitySetName].navprops[sNavProp].to.multiplicity;
 															if (sMultiplicity === "*") {
 																oFilteredData = {
@@ -2437,16 +2731,13 @@ sap.ui
 																	}
 
 																	if (sMultiplicity === "*") {
-																		jQuery
-																			.each(
-																				aUrlParams,
-																				function(iIndex, sQuery) {
-																					that
-																						._applyQueryOnCollection(
-																							oFilteredData,
-																							sQuery,
-																							that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
-																				});
+																		jQuery.each(aUrlParams, function(iIndex, sQuery) {
+																			that._applyQueryOnCollection(
+																			oFilteredData,
+																			sQuery,
+																			that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet,
+																			aUrlParams);
+																		});
 																	} else {
 																		jQuery
 																			.each(
@@ -2463,11 +2754,11 @@ sap.ui
 															}
 
 															//trigger the after callback funtion
-															that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+															that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 																oXhr: oXhr,
 																oFilteredData: oFilteredData
 															});
-															that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+															that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 																oXhr: oXhr,
 																oFilteredData: oFilteredData
 															});
@@ -2514,12 +2805,12 @@ sap.ui
 									}
 									jQuery.sap.log.debug("MockServer: incoming create request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.POST + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.POST + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
@@ -2528,6 +2819,9 @@ sap.ui
 									var sRespondContentType = null;
 									var iResult = 405; // default: method not allowed
 									try {
+										if (sKeys && !sKeys.split('=')[1]) {
+											sKeys = that._mEntitySets[sEntitySetName].keys[0] + "=" + sKeys;
+										}
 										var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
 											decodeURIComponent(sKeys), sNavName);
 										if (sTargetEntityName) {
@@ -2538,11 +2832,11 @@ sap.ui
 												};
 
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.POST + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.POST + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
@@ -2597,12 +2891,12 @@ sap.ui
 									jQuery.sap.log.debug("MockServer: incoming update request for url: " + oXhr.url);
 
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.PUT + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.PUT + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
@@ -2620,11 +2914,11 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.PUT + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.PUT + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
@@ -2663,12 +2957,12 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
 									jQuery.sap.log.debug("MockServer: incoming merge update request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.MERGE + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
@@ -2686,11 +2980,11 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.MERGE + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
@@ -2727,12 +3021,12 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
 									jQuery.sap.log.debug("MockServer: incoming patch update request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.PATCH + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
@@ -2750,11 +3044,11 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.PATCH + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
@@ -2793,10 +3087,10 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sUrlParams) {
 									jQuery.sap.log.debug("MockServer: incoming delete request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":before", {
 										oXhr: oXhr
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.DELETE + ":before", {
 										oXhr: oXhr
 									});
 									var iResult = 204;
@@ -2809,10 +3103,10 @@ sap.ui
 										}
 
 										//trigger the after callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":after", {
+										that.fireEvent(MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":after", {
 											oXhr: oXhr
 										});
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + ":after", {
+										that.fireEvent(MockServer.HTTPMETHOD.DELETE + ":after", {
 											oXhr: oXhr
 										});
 										oXhr.respond(iResult, null, null);
@@ -2845,7 +3139,7 @@ sap.ui
 			 * @private
 			 */
 			MockServer.prototype._orderQueryOptions = function(aUrlParams) {
-				var iFilterIndex, iInlinecountIndex, iSkipIndex, iTopIndex, iOrderbyIndex, iSelectindex, iExpandIndex, iFormatIndex, aOrderedUrlParams = [];
+				var iFilterIndex, iInlinecountIndex, iSkipIndex, iTopIndex, iOrderbyIndex, iSelectindex, iExpandIndex, iFormatIndex, iSearchIndex, iSearchFocusIndex, aOrderedUrlParams = [];
 				var that = this;
 				jQuery.each(aUrlParams, function(iIndex, sQuery) {
 					switch (sQuery.split('=')[0]) {
@@ -2873,15 +3167,29 @@ sap.ui
 						case "$format":
 							iFormatIndex = jQuery.inArray(sQuery, aUrlParams);
 							break;
+						case "search-focus":
+							iSearchFocusIndex = jQuery.inArray(sQuery, aUrlParams);
+							break;
+						case "search":
+							iSearchIndex = jQuery.inArray(sQuery, aUrlParams);
+							break;
 						default:
 							if (sQuery.split('=')[0].indexOf('$') === 0) {
 								that._logAndThrowMockServerCustomError(400, that._oErrorMessages.IS_NOT_A_VALID_SYSTEM_QUERY_OPTION, sQuery.split('=')[0]);
 							}
 					}
 				});
-
+				if (iExpandIndex >= 0) {
+					aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
+				}
 				if (iFilterIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iFilterIndex]);
+				}
+				if (iSearchFocusIndex >= 0) {
+					aOrderedUrlParams.push(aUrlParams[iSearchFocusIndex]);
+				}
+				if (iSearchIndex >= 0) {
+					aOrderedUrlParams.push(aUrlParams[iSearchIndex]);
 				}
 				if (iInlinecountIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iInlinecountIndex]);
@@ -2894,9 +3202,6 @@ sap.ui
 				}
 				if (iTopIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iTopIndex]);
-				}
-				if (iExpandIndex >= 0) {
-					aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
 				}
 				if (iSelectindex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iSelectindex]);
@@ -2937,7 +3242,7 @@ sap.ui
 			 *
 			 * @param {string}
 			 *          sMethod HTTP verb to use for this method (e.g. GET, POST, PUT, DELETE...)
-			 * @param {string|regexp}
+			 * @param {string|RegExp}
 			 *          sPath the path of the URI (will be concatenated with the rootUri)
 			 * @param {function}
 			 *          fnResponse the response function to call when the request occurs
@@ -3181,6 +3486,7 @@ sap.ui
 			 * @param {boolean} [mConfig.autoRespond=true] If set true, all mock servers will respond automatically. If set false you have to call {@link sap.ui.core.util.MockServer#respond} method for response.
 			 * @param {int} [mConfig.autoRespondAfter=0] the time in ms after all mock servers should send their response.
 			 * @param {boolean} [mConfig.fakeHTTPMethods=false] If set to true, all mock server will find <code>_method</code> parameter in the POST body and use this to override the the actual method.
+			 * @public
 			 */
 			MockServer.config = function(mConfig) {
 				var oServer = this._getInstance();
@@ -3192,6 +3498,7 @@ sap.ui
 
 			/**
 			 * Respond to a request, when the servers are configured not to automatically respond.
+			 * @public
 			 */
 			MockServer.respond = function() {
 				this._getInstance().respond();
@@ -3199,6 +3506,7 @@ sap.ui
 
 			/**
 			 * Starts all registered servers.
+			 * @public
 			 */
 			MockServer.startAll = function() {
 				for (var i = 0; i < this._aServers.length; i++) {
@@ -3208,6 +3516,7 @@ sap.ui
 
 			/**
 			 * Stops all registered servers.
+			 * @public
 			 */
 			MockServer.stopAll = function() {
 				for (var i = 0; i < this._aServers.length; i++) {
@@ -3219,6 +3528,7 @@ sap.ui
 
 			/**
 			 * Stops and calls destroy on all registered servers. Use this method for cleaning up.
+			 * @public
 			 */
 			MockServer.destroyAll = function() {
 				this.stopAll();
@@ -3291,7 +3601,7 @@ sap.ui
 
 			window.sinon.FakeXMLHttpRequest.useFilters = true;
 
-			// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage 
+			// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage
 			// of jQuery.ajax function / sinon also needs to be synchronized with this
 			// adoption by applying the CORS support flag from jQuery to sinon!
 			window.sinon.xhr.supportsCORS = jQuery.support.cors;
@@ -3372,5 +3682,4 @@ sap.ui
 			};
 
 			return MockServer;
-
-		}, /* bExport= */ true);
+		});

@@ -1,6 +1,5 @@
 <mvc:View
 	controllerName="sap.m.sample.ObjectListItemMarkLocked.List"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<List
@@ -11,14 +10,18 @@
 					title="{Name}"
 					type="Active"
 					press="onListItemPress"
-					number="{Price}"
+					number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
 					numberUnit="{CurrencyCode}"
-                    showMarkers="true"
-                    markFlagged="{
+					showMarkers="true"
+					markFlagged="{
 							path: 'Quantity',
 							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.intBoolRandomizer'
 						}"
-                    markFavorite="{
+					markFavorite="{
 							path: 'Status',
 							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.favorite'
 						}"

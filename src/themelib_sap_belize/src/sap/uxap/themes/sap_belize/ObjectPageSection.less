@@ -1,0 +1,22 @@
+/* =========================================== */
+/* CSS for control sap.uxap/ObjectPageSection  */
+/* Belize theme                                */
+/* =========================================== */
+
+@_sap_uxap_ObjectPageSection_HeaderBorderColor: lighten(@sapUiListBorderColor, 5);
+@_sap_uxap_ObjectPageSection_TitleBorderColor: darken(@sapUiListBorderColor, 30);
+
+.sapUxAPObjectPageSectionHeader {
+	border-bottom: 0.125rem solid @_sap_uxap_ObjectPageSection_HeaderBorderColor;
+}
+
+.sapUxAPObjectPageSectionTitle {
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader2Size;
+	border-bottom: 0.125rem solid @_sap_uxap_ObjectPageSection_TitleBorderColor;
+}
+
+.sapUxAPObjectPageSection:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}

@@ -1,84 +1,87 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.IconTabBar</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
+		<script>
 			sinon.config.useFakeTimers = true;
+			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+			jQuery.now = function() {
+				return Date.now();
+			};
 		</script>
 
 		<script>
 
-			module("default values");
+			QUnit.module("default values");
 
-			test("IconTabBar", function() {
+			QUnit.test("IconTabBar", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
 
 				// Assert
-				ok(oIconTabBar.getShowSelection(), "showSelection is set to true");
-				ok(oIconTabBar.getExpandable(), "expandable is set to true");
-				ok(oIconTabBar.getExpanded(), "expanded is set to true");
-				ok(oIconTabBar.getVisible(), "visible is set to true");
-				ok(!oIconTabBar.getUpperCase(), "upperCase is set to false");
-				strictEqual(oIconTabBar.getSelectedKey(), "", "selectedKey is empty string");
+				assert.ok(oIconTabBar.getShowSelection(), "showSelection is set to true");
+				assert.ok(oIconTabBar.getExpandable(), "expandable is set to true");
+				assert.ok(oIconTabBar.getExpanded(), "expanded is set to true");
+				assert.ok(oIconTabBar.getVisible(), "visible is set to true");
+				assert.ok(!oIconTabBar.getUpperCase(), "upperCase is set to false");
+				assert.strictEqual(oIconTabBar.getSelectedKey(), "", "selectedKey is empty string");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
- 			test("IconTabFilter", function() {
+ 			QUnit.test("IconTabFilter", function(assert) {
 
 				// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter();
 
 				// Assert
-				strictEqual(oIconTabFilter.getCount(), "", "count is empty string");
-				ok(!oIconTabFilter.getShowAll(), "showAll is set to false");
-				strictEqual(oIconTabFilter.getDesign(), "Vertical", "design is \"Vertical\"");
-				ok(oIconTabFilter.getVisible(), "visible is set to true");
-				strictEqual(oIconTabFilter.getIcon(), "", "icon is empty string");
-				strictEqual(oIconTabFilter.getIconColor(), "Default", "iconColor is \"Default\"");
-				ok(oIconTabFilter.getIconDensityAware(), "iconDensityAware is set to true");
+				assert.strictEqual(oIconTabFilter.getCount(), "", "count is empty string");
+				assert.ok(!oIconTabFilter.getShowAll(), "showAll is set to false");
+				assert.strictEqual(oIconTabFilter.getDesign(), "Vertical", "design is \"Vertical\"");
+				assert.ok(oIconTabFilter.getVisible(), "visible is set to true");
+				assert.strictEqual(oIconTabFilter.getIcon(), "", "icon is empty string");
+				assert.strictEqual(oIconTabFilter.getIconColor(), "Default", "iconColor is \"Default\"");
+				assert.ok(oIconTabFilter.getIconDensityAware(), "iconDensityAware is set to true");
 
 				// Clean up
 		    	oIconTabFilter.destroy();
 			});
 
-			test("IconTabSeparator", function() {
+			QUnit.test("IconTabSeparator", function(assert) {
 
 				// Arrange
 				var oIconTabSeparator = new sap.m.IconTabSeparator();
 
 				// Assert
-				strictEqual(oIconTabSeparator.getIcon(), "", "icon is empty string");
-				ok(oIconTabSeparator.getIconDensityAware(), "iconDensityAware is set to true");
+				assert.strictEqual(oIconTabSeparator.getIcon(), "", "icon is empty string");
+				assert.ok(oIconTabSeparator.getIconDensityAware(), "iconDensityAware is set to true");
 
 				// Clean up
 		    	oIconTabSeparator.destroy();
 			});
 
-		    module("overwritten Aggregation methods");
+		    QUnit.module("overwritten Aggregation methods");
 
-		    test("addAggregation()", function() {
+		    QUnit.test("addAggregation()", function(assert) {
 
 		    	// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -89,13 +92,13 @@
 
 				// Assert
 				var oFirstItem = oIconTabBar.getItems()[0];
-				deepEqual(oIconTabFilter, oFirstItem, "aggregation is added");
+				assert.deepEqual(oIconTabFilter, oFirstItem, "aggregation is added");
 
 				// Clean up
 			  	oIconTabBar.destroy();
 			});
 
-		    test("destroyAggregation()", function() {
+		    QUnit.test("destroyAggregation()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -110,13 +113,13 @@
 				oIconTabBar.destroyAggregation("items");
 
 				// Assert
-				strictEqual(oIconTabBar.getItems().length, 0, "aggregation \"items\" is destroyed");
+				assert.strictEqual(oIconTabBar.getItems().length, 0, "aggregation \"items\" is destroyed");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    test("removeAllAggregation()", function() {
+		    QUnit.test("removeAllAggregation()", function(assert) {
 
 		    	// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -131,13 +134,13 @@
 				oIconTabBar.removeAllAggregation("items");
 
 				// Assert
-				strictEqual(oIconTabBar.getItems().length, 0, "aggregation \"items\" is removed");
+				assert.strictEqual(oIconTabBar.getItems().length, 0, "aggregation \"items\" is removed");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    test("removeAggregation()", function() {
+		    QUnit.test("removeAggregation()", function(assert) {
 
 		    	// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter();
@@ -149,26 +152,26 @@
 				oIconTabBar.removeAggregation("items", oIconTabFilter);
 
 				// Assert
-				strictEqual(oIconTabBar.getItems().length, 0, "removes oIconTabFilter from the aggregation \"items\"");
+				assert.strictEqual(oIconTabBar.getItems().length, 0, "removes oIconTabFilter from the aggregation \"items\"");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    test("getAggregation()", function() {
+		    QUnit.test("getAggregation()", function(assert) {
 
 		    	// Arrange
 				var aContent = [new sap.m.Button({ text: "btn1" })];
 				var oIconTabBar = new sap.m.IconTabBar({ content : aContent });
 
 				// Assert
-				deepEqual(oIconTabBar.getAggregation("content"), aContent, "aggregation is properly returned");
+				assert.deepEqual(oIconTabBar.getAggregation("content"), aContent, "aggregation is properly returned");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    test("indexOfAggregation()", function() {
+		    QUnit.test("indexOfAggregation()", function(assert) {
 
 		    	// Arrange
 				var oButton1 = new sap.m.Button({ text: "btn1" });
@@ -176,14 +179,14 @@
 				var oIconTabBar = new sap.m.IconTabBar({ content : [oButton1] });
 
 				// Assert
-				strictEqual(oIconTabBar.indexOfAggregation("content", oButton1), 0, "aggregation \"content\" contains oButton1 at index 0");
-				strictEqual(oIconTabBar.indexOfAggregation("content", oButton2), -1, "aggregation \"content\" does not contain oButton2");
+				assert.strictEqual(oIconTabBar.indexOfAggregation("content", oButton1), 0, "aggregation \"content\" contains oButton1 at index 0");
+				assert.strictEqual(oIconTabBar.indexOfAggregation("content", oButton2), -1, "aggregation \"content\" does not contain oButton2");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    test("insertAggregation()", function() {
+		    QUnit.test("insertAggregation()", function(assert) {
 
 		    	// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter();
@@ -199,15 +202,15 @@
 				oIconTabBar.insertAggregation("items", oIconTabFilter, 1);
 
 				// Assert
-				strictEqual(oIconTabBar.getItems().indexOf(oIconTabFilter), 1, "aggregation is inserted at correct index");
+				assert.strictEqual(oIconTabBar.getItems().indexOf(oIconTabFilter), 1, "aggregation is inserted at correct index");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    module("overwritten getter/setter methods");
+		    QUnit.module("overwritten getter/setter methods");
 
-		    test("getSelectedKey()", function() {
+		    QUnit.test("getSelectedKey()", function(assert) {
 
 		    	// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -221,13 +224,13 @@
 				});
 
 		    	// Assert
-				strictEqual(oIconTabBar.getSelectedKey(), "key1", "getSelectedKey() is correct");
+				assert.strictEqual(oIconTabBar.getSelectedKey(), "key1", "getSelectedKey() is correct");
 
 		    	// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    test("setSelectedKey()", function() {
+		    QUnit.test("setSelectedKey()", function(assert) {
 
 		    	// Arrange
 		   		var oIconTabBar = new sap.m.IconTabBar({
@@ -241,13 +244,39 @@
 		   		oIconTabBar.setSelectedKey("key2");
 
 		    	// Assert
-		   		strictEqual(oIconTabBar.getSelectedKey(), "key2", "selected item is set correctly");
+		   		assert.strictEqual(oIconTabBar.getSelectedKey(), "key2", "selected item is set correctly");
 
 		    	// Clean up
 		   		oIconTabBar.destroy();
 		   	});
 
-		    test("getShowSelection()", function() {
+			QUnit.test("setEmptySelectedKey()", function(assert) {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					selectedKey: 'key2',
+					items: [
+						new sap.m.IconTabFilter({key: "key1"}),
+						new sap.m.IconTabFilter({key: "key2"})
+					]
+				});
+
+				// Assert
+				assert.strictEqual(oIconTabBar.getSelectedKey(), "key2", "getSelectedKey() is correct");
+
+				// Act
+				oIconTabBar.setSelectedKey("");
+
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.strictEqual(oIconTabBar.getSelectedKey(), "key1", "selected item is set correctly");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+		    QUnit.test("getShowSelection()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -255,13 +284,13 @@
 				});
 
 				// Assert
-				ok(!oIconTabBar.getShowSelection(), "getShowSelection is correct");
+				assert.ok(!oIconTabBar.getShowSelection(), "getShowSelection is correct");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    test("setShowSelection()", function() {
+		    QUnit.test("setShowSelection()", function(assert) {
 
 		    	// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -270,13 +299,13 @@
 				oIconTabBar.setShowSelection(false);
 
 		    	// Assert
-				ok(!oIconTabBar.getShowSelection(), "showSelection is set to false");
+				assert.ok(!oIconTabBar.getShowSelection(), "showSelection is set to false");
 
 		    	// Clean up
 		    	oIconTabBar.destroy();
 			});
 
-		    test("setExpandable()", function() {
+		    QUnit.test("setExpandable()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -285,13 +314,13 @@
 				oIconTabBar.setExpandable(false);
 
 				// Assert
-				ok(!oIconTabBar.getExpandable(), "expandable is set to false");
+				assert.ok(!oIconTabBar.getExpandable(), "expandable is set to false");
 
 				// Clean up
 		    	oIconTabBar.destroy();
 			});
 
-		    test("setExpanded()", function() {
+		    QUnit.test("setExpanded()", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -300,13 +329,13 @@
 				oIconTabBar.setExpanded(false);
 
 				// Assert
-				ok(!oIconTabBar.getExpanded(), "expanded is set to false");
+				assert.ok(!oIconTabBar.getExpanded(), "expanded is set to false");
 
 				// Clean up
 		    	oIconTabBar.destroy();
 			});
 
-		    test("setSelectedItem()", function() {
+		    QUnit.test("setSelectedItem()", function(assert) {
 
 		    	// Arrange
 		   		var oIconTabFilter = new sap.m.IconTabFilter({key: "key2"});
@@ -322,15 +351,15 @@
 		   		oIconTabBar.setSelectedItem(oIconTabFilter);
 
 		   		// Assert
-		   		strictEqual(oIconTabBar.getSelectedKey(), "key2", "selected item is set correctly");
+		   		assert.strictEqual(oIconTabBar.getSelectedKey(), "key2", "selected item is set correctly");
 
 		   		// Clean up
 		   		oIconTabBar.destroy();
 		   	});
 
-			module("item aggregation methods");
+			QUnit.module("item aggregation methods");
 
-			test("add IconTabFilter", function() {
+			QUnit.test("add IconTabFilter", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar();
@@ -348,14 +377,14 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(oIconTabBar.getItems().length, 1, "The IconTabBar contains 1 item");
-				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "Filter has class sapMITBFilter");
+				assert.strictEqual(oIconTabBar.getItems().length, 1, "The IconTabBar contains 1 item");
+				assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "Filter has class sapMITBFilter");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("remove IconTabFilter", function() {
+			QUnit.test("remove IconTabFilter", function(assert) {
 
 				// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter({
@@ -377,16 +406,16 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(oIconTabBar.getItems().length, 0, "The bar contains 0 items");
-				strictEqual(oIconTabBar.getItems().indexOf(oIconTabFilter), -1, "The bar does not contain oIconTabFilter");
+				assert.strictEqual(oIconTabBar.getItems().length, 0, "The bar contains 0 items");
+				assert.strictEqual(oIconTabBar.getItems().indexOf(oIconTabFilter), -1, "The bar does not contain oIconTabFilter");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-		    module("rendering");
+		    QUnit.module("rendering");
 
-			test("basic rendering", function() {
+			QUnit.test("basic rendering", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -404,18 +433,18 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok (oIconTabBar.$().hasClass("sapMITB"), "IconTabBar has class sapMITB");
-				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
-				ok(!oIconTabBar.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
-				ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
-				ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
-				ok (oIconTabBar.$("content").hasClass("sapMITBContent"), "IconTabBar content is rendered");
+				assert.ok(oIconTabBar.$().hasClass("sapMITB"), "IconTabBar has class sapMITB");
+				assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
+				assert.ok(!oIconTabBar.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
+				assert.ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
+				assert.ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
+				assert.ok(oIconTabBar.$("content").hasClass("sapMITBContent"), "IconTabBar content is rendered");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("icons only", function() {
+			QUnit.test("icons only", function(assert) {
 
 				// Arrange
 				var oIconTabBarNoText = new sap.m.IconTabBar({
@@ -434,14 +463,14 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oIconTabBarNoText.$("-header-head").hasClass("sapMITBNoText"), "should have class for no-text version");
-				ok(!oIconTabBarNoText.$("-header-head").hasClass("sapMITBTextOnly"), "should not have class for text-only version");
+				assert.ok(oIconTabBarNoText.$("-header-head").hasClass("sapMITBNoText"), "should have class for no-text version");
+				assert.ok(!oIconTabBarNoText.$("-header-head").hasClass("sapMITBTextOnly"), "should not have class for text-only version");
 
 				// Clean up
 				oIconTabBarNoText.destroy();
 			});
 
-			test("text only", function() {
+			QUnit.test("text only", function(assert) {
 
 				// Arrange
 				var oIconTabBarTextOnly = new sap.m.IconTabBar({
@@ -460,14 +489,14 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(!oIconTabBarTextOnly.$("-header-head").hasClass("sapMITBNoText"), "should not have class for no-text version");
-				ok(oIconTabBarTextOnly.$("-header-head").hasClass("sapMITBTextOnly"), "should have class for text-only version");
+				assert.ok(!oIconTabBarTextOnly.$("-header-head").hasClass("sapMITBNoText"), "should not have class for no-text version");
+				assert.ok(oIconTabBarTextOnly.$("-header-head").hasClass("sapMITBTextOnly"), "should have class for text-only version");
 
 				// Clean up
 				oIconTabBarTextOnly.destroy();
 			});
 
-			test("UpperCase filter text", function() {
+			QUnit.test("UpperCase filter text", function(assert) {
 
 				// Arrange
 				var oIconTabBarTextOnly = new sap.m.IconTabBar({
@@ -484,13 +513,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oIconTabBarTextOnly.$("-header").hasClass("sapMITBTextUpperCase"), "IconTabBar has class sapMITBTextUpperCase");
+				assert.ok(oIconTabBarTextOnly.$("-header").hasClass("sapMITBTextUpperCase"), "IconTabBar has class sapMITBTextUpperCase");
 
 				// Clean up
 				oIconTabBarTextOnly.destroy();
 			});
 
-			test("IconTabFilter without content", function() {
+			QUnit.test("IconTabFilter without content", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -511,13 +540,13 @@
 				//Assert
 				// Verify that a filter without content shows the IconTabBar content
 				var $itbf = oIconTabBar.$("content");
-				equal ($itbf.children(0).text(), "info info info", "showing default IconTabBar content");
+				assert.equal($itbf.children(0).text(), "info info info", "showing default IconTabBar content");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("IconTabFilter with content", function() {
+			QUnit.test("IconTabFilter with content", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -539,13 +568,13 @@
 				//Assert
 				// Verify that the newly added content is rendered and overwrites the IconTabBar content
 				var $itbf = oIconTabBar.$("content");
-				equal ($itbf.children(0).text(), "icon tab filter content", "showing the IconTabFilter content");
+				assert.equal($itbf.children(0).text(), "icon tab filter content", "showing the IconTabFilter content");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("IconTabBar without one content no rerendering of content", function() {
+			QUnit.test("IconTabBar without one content no rerendering of content", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -569,13 +598,13 @@
 				var oSelectSpy = sinon.spy(sap.m.IconTabBar.prototype, "_rerenderContent");
 
 				// Assert
-				strictEqual(oSelectSpy.callCount, 0, "content is not rerendered");
+				assert.strictEqual(oSelectSpy.callCount, 0, "content is not rerendered");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("standalone IconTabHeader", function() {
+			QUnit.test("standalone IconTabHeader", function(assert) {
 
 				// Arrange
 				var oIconTabHeader = new sap.m.IconTabHeader({
@@ -599,19 +628,104 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok (oIconTabHeader.$().hasClass("sapMITH"), "oIconTabHeader has class sapMITH");
-				ok(oIconTabHeader.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
-				ok(!oIconTabHeader.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
-				ok(oIconTabHeader.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
-				ok(!oIconTabHeader.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
+				assert.ok(oIconTabHeader.$().hasClass("sapMITH"), "oIconTabHeader has class sapMITH");
+				assert.ok(oIconTabHeader.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
+				assert.ok(!oIconTabHeader.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
+				assert.ok(oIconTabHeader.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
+				assert.ok(!oIconTabHeader.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
+
+				assert.ok(oIconTabHeader.getItems()[0].$().hasClass("sapMITBSelected"), "First IconTabBarFilter has class sapMITBSelected");
 
 				// Clean up
 				oIconTabHeader.destroy();
 			});
 
-			module("icon color");
+			QUnit.test("IconTabBar is sap.m.List", function(assert) {
 
-			test("Default", function() {
+				var oModel = new sap.ui.model.json.JSONModel({
+					records: [
+						{
+							text: 'a'
+						},
+						{
+							text: 'b'
+						}
+					]
+				});
+
+				var oListItemTemplate = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: '{text}',
+							content: new sap.m.Label({
+								text: '{text}'
+							})
+						}),
+						new sap.m.IconTabFilter({
+							text: '{text}',
+							content: new sap.m.Label({
+								text: '{text}'
+							})
+						}),
+						new sap.m.IconTabFilter({
+							text: '{text}',
+							content: new sap.m.Label({
+								text: '{text}'
+							})
+						})
+					]
+				});
+
+				var oList = new sap.m.List({
+					items: {
+						path: '/records',
+						template: new sap.m.CustomListItem({
+							content: oListItemTemplate
+						})
+					}
+				});
+				oList.setModel(oModel);
+
+				oList.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(jQuery('.sapMITBFilter').length > 0, 'IconTabFilters are rendered')
+			});
+
+			QUnit.test("disabled tab", function(assert) {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance"
+						}),
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance",
+							enabled: false
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+
+				var aTabs = oIconTabBar.$().find('.sapMITBFilter');
+
+				assert.ok(!aTabs[0].hasAttribute('aria-disabled'), "First item is not disabled");
+				assert.ok(aTabs[1].hasAttribute('aria-disabled'), "Second item is disabled");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+
+			QUnit.module("icon color");
+
+			QUnit.test("Default", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -628,18 +742,18 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterDefault"), "color should be default");
-				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
-				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
-				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
-				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+				assert.ok($itbf.hasClass("sapMITBFilterDefault"), "color should be default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
 
 				// Clean up
 				oIconTabBar.destroy();
 
 			});
 
-			test("Positive", function() {
+			QUnit.test("Positive", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -657,18 +771,18 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterPositive"), "color should be positive");
-				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
-				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
-				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
-				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				assert.ok($itbf.hasClass("sapMITBFilterPositive"), "color should be positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
 
 				// Clean up
 				oIconTabBar.destroy();
 
 			});
 
-			test("Negative", function() {
+			QUnit.test("Negative", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -686,18 +800,18 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterNegative"), "color should be negative");
-				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
-				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
-				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
-				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				assert.ok($itbf.hasClass("sapMITBFilterNegative"), "color should be negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
 
 				// Clean up
 				oIconTabBar.destroy();
 
 			});
 
-			test("Neutral", function() {
+			QUnit.test("Neutral", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -715,18 +829,18 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterNeutral"), "color should be neutral");
-				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
-				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
-				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
-				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+				assert.ok($itbf.hasClass("sapMITBFilterNeutral"), "color should be neutral");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
 
 				// Clean up
 				oIconTabBar.destroy();
 
 			});
 
-			test("Critical", function() {
+			QUnit.test("Critical", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -744,19 +858,19 @@
 
 				// Assert
 				var $itbf = oIconTabBar.getItems()[0].$();
-				ok ($itbf.hasClass("sapMITBFilterCritical"), "color should be critical");
-				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
-				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
-				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
-				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				assert.ok($itbf.hasClass("sapMITBFilterCritical"), "color should be critical");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			module("rerendering");
+			QUnit.module("rerendering");
 
-			test("filter text changing", function() {
+			QUnit.test("filter text changing", function(assert) {
 
 				// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter({
@@ -779,14 +893,14 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				equal(oIconTabFilter.getText(), "new text", "the text is changed");
-				equal(oIconTabFilter.$("text").html(), "new text", "the new text is rendered");
+				assert.equal(oIconTabFilter.getText(), "new text", "the text is changed");
+				assert.equal(oIconTabFilter.$("text").html(), "new text", "the new text is rendered");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("change content", function() {
+			QUnit.test("change content", function(assert) {
 
 				// Arrange
 				var oButton = new sap.m.Button("button", {text: "click me"});
@@ -821,13 +935,13 @@
 
 				// Verify that the new text is rendered
 				var $itbf = oIconTabBar.$("content");
-				equal ($itbf.children(0).text(), "new button", "the text is \"new button\"");
+				assert.equal($itbf.children(0).text(), "new button", "the text is \"new button\"");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("change several things", function() {
+			QUnit.test("change several things", function(assert) {
 
 				// Arrange
 				var oIconTabFilter = new sap.m.IconTabFilter({
@@ -853,16 +967,16 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oIconTabFilter.$().hasClass("sapMITBFilterPositive"), "color is changed to positive");
-				ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSep"), "separator is rendered");
+				assert.ok(oIconTabFilter.$().hasClass("sapMITBFilterPositive"), "color is changed to positive");
+				assert.ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSep"), "separator is rendered");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			module("public methods");
+			QUnit.module("public methods");
 
-			test("expandable set to false", function() {
+			QUnit.test("expandable set to false", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -889,13 +1003,13 @@
 
 				// Assert
 				// Content shoud remain collapsed because expandable is set to false
-				ok(oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
+				assert.ok(oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("expandable set to true", function() {
+			QUnit.test("expandable set to true", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -922,13 +1036,13 @@
 
 				// Assert
 				// Content shoud collapsed because expandable is set to true
-				ok(!oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
+				assert.ok(!oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("collapse", function() {
+			QUnit.test("collapse", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -954,13 +1068,13 @@
 				this.clock.tick(1000);
 
 				// Assert
-				ok(oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
+				assert.ok(oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("expand", function() {
+			QUnit.test("expand", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -986,15 +1100,15 @@
 				this.clock.tick(500);
 
 				// Assert
-				ok(!oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content does not have class sapMITBContentClosed");
+				assert.ok(!oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content does not have class sapMITBContentClosed");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			module("layout");
+			QUnit.module("layout");
 
-			test("vertical / horizontal", function() {
+			QUnit.test("vertical / horizontal", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1014,16 +1128,16 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBVertical"), "default design should be vertical")
-				ok(!oIconTabBar.getItems()[0].$().hasClass("sapMITBHorizontal"), "default design should not be horizontal")
-				ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBHorizontal"), "design should be horizontal");
-				ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBVertical"), "design should not be vertical")
+				assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBVertical"), "default design should be vertical")
+				assert.ok(!oIconTabBar.getItems()[0].$().hasClass("sapMITBHorizontal"), "default design should not be horizontal")
+				assert.ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBHorizontal"), "design should be horizontal");
+				assert.ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBVertical"), "design should not be vertical")
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("showAll Filter", function() {
+			QUnit.test("showAll Filter", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1042,14 +1156,71 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBAll"), "should have class for showAll property");
-				ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBAll"), "should not have class for showAll property");
+				assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBAll"), "should have class for showAll property");
+				assert.ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBAll"), "should not have class for showAll property");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("stretchContentHeight", function () {
+			QUnit.test("Inline Mode", function(assert) {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: "Text 1",
+							count: "10",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								})
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Text 2",
+							count: "20",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								})
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Text 3",
+							count: "30",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								})
+							]
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(oIconTabBar.$().find(".sapMITBCount").length == 3, '3 "counts" texts are displayed');
+				assert.ok(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text() == "Text 1", "The text is correct");
+
+				oIconTabBar.setHeaderMode(sap.m.IconTabHeaderMode.Inline);
+
+				sap.ui.getCore().applyChanges();
+
+				var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+				var sText = bRtl ? "(10) Text 1" : "Text 1 (10)";
+
+				assert.ok(oIconTabBar.$().find(".sapMITBCount").length == 0, '"counts" texts are not displayed');
+				assert.equal(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text(), sText, "The count is attached to the text");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			QUnit.test("stretchContentHeight", function (assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1066,13 +1237,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oIconTabBar.$().hasClass("sapMITBStretch"), "should have class for stretchContentHeight property");
+				assert.ok(oIconTabBar.$().hasClass("sapMITBStretch"), "should have class for stretchContentHeight property");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("applyContentPadding", function () {
+			QUnit.test("applyContentPadding", function (assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1089,13 +1260,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oIconTabBar.$().hasClass("sapMITBNoContentPadding"), "should have class for applyContentPadding property");
+				assert.ok(oIconTabBar.$().hasClass("sapMITBNoContentPadding"), "should have class for applyContentPadding property");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("backgroundDesign transparent", function () {
+			QUnit.test("backgroundDesign transparent", function (assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1112,13 +1283,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oIconTabBar.$().hasClass("sapMITBBackgroundDesignTransparent"), "should have class for backgroundDesign: transparent");
+				assert.ok(oIconTabBar.$().hasClass("sapMITBBackgroundDesignTransparent"), "should have class for backgroundDesign: transparent");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("no flexbox support", function() {
+			QUnit.test("no flexbox support", function(assert) {
 				var	$FlexChild,
 					iFlexChildWidth,
 					iFlexChildHeight;
@@ -1148,15 +1319,15 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(iFlexChildHeight, $FlexChild.height(), "Height is not changed");
+				assert.ok(Math.abs(iFlexChildHeight - $FlexChild.height()) <= 1, "Height is not changed");
 
 				// Cleanup
 				oIconTabBar.destroy();
 			});
 
-			module("scrolling");
+			QUnit.module("scrolling");
 
-			test("initial scrolling - scrollable", function() {
+			QUnit.test("initial scrolling - scrollable", function(assert) {
 
 				//Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1195,7 +1366,7 @@
 				oResizeHandlerStub.callArg(1);
 
 				// Assert
-				ok (oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar is scrollable");
+				assert.ok(oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar is scrollable");
 
 				// Clean up
 				oIconTabBar.destroy();
@@ -1203,7 +1374,7 @@
 
 			});
 
-			test("initial scrolling - not scrollable", function() {
+			QUnit.test("initial scrolling - not scrollable", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1227,14 +1398,14 @@
 				oResizeHandlerStub.callArg(1);
 
 				// Assert
-				ok (!oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar2 is not scrollable");
+				assert.ok(!oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar2 is not scrollable");
 
 				// Clean up
 				oIconTabBar.destroy();
 				oResizeHandler.deregister();
 			});
 
-			test("first element is selected / scroll forward arrow is shown", function() {
+			QUnit.test("first element is selected / scroll forward arrow is shown", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1276,18 +1447,18 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
-				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
-				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
-				ok ($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
-				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
-				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
+				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
+				assert.equal(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
 
 				// Clean up
 				oIconTabBar.destroy();
 				oResizeHandler.deregister();
 			});
 
-			test("last element is selected  / scroll back arrow is shown", function() {
+			QUnit.test("last element is selected  / scroll back arrow is shown", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1314,8 +1485,7 @@
 							icon: "sap-icon://manager",
 							key: "last"
 						})
-					],
-					selectedKey: "last"
+					]
 				});
 
 				// System under Test
@@ -1325,24 +1495,28 @@
 				sap.ui.getCore().applyChanges();
 
 				oResizeHandlerStub.callArg(1);
-				//if the selected item is outside the view a scrolling takes place after a timeout
+				// if the selected item is outside the view a scrolling takes place after a timeout
+				this.clock.tick(1000);
+
+				oIconTabBar.setSelectedKey("last");
+				sap.ui.getCore().applyChanges();
 				this.clock.tick(1000);
 
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
-				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (last selected)");
-				ok ($itbh.hasClass("sapMITBNoScrollForward"), "Scroll forward arrow is not shown, (last selected)");
-				ok ($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (last selected)");
-				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "hidden", "Right arrow is not visible");
-				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
+				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (last selected)");
+				assert.ok($itbh.hasClass("sapMITBNoScrollForward"), "Scroll forward arrow is not shown, (last selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (last selected)");
+				assert.equal(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "hidden", "Right arrow is not visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
 
 				// Clean up
 				oIconTabBar.destroy();
 				oResizeHandler.deregister();
 			});
 
-			test("middle element is selected / both arrows are shown", function() {
+			QUnit.test("middle element is selected / both arrows are shown", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1386,18 +1560,18 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
-				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (middle selected)");
-				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (middle selected)");
-				ok ($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (middle selected)");
-				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
-				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
+				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (middle selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (middle selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (middle selected)");
 
 				// Clean up
 				oIconTabBar.destroy();
 				oResizeHandler.deregister();
 			});
 
-			test("a new item is added / scroll forward arrow is shown", function() {
+			QUnit.test("a new item is added / scroll forward arrow is shown", function(assert) {
 
 				// Arrange
 				jQuery.sap.require("sap.ui.core.ResizeHandler");
@@ -1437,20 +1611,20 @@
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
-				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
-				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
-				ok ($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
-				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
-				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				assert.equal(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
+				assert.ok($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
+				assert.ok($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			module("preserve dom");
+			QUnit.module("preserve dom");
 
 			// test case for: [openui5] sap.m.IconTabBar doesn't support PreserveContent functionality (#26)
-			test("preserve dom", function() {
+			QUnit.test("preserve dom", function(assert) {
 
 				// Arrange
 				// prepare dom content
@@ -1485,22 +1659,22 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(jQuery.sap.byId("PreserveContent1").length, 1, "The span node \"PreserveContent\" is in the DOM");
+				assert.strictEqual(jQuery.sap.byId("PreserveContent1").length, 1, "The span node \"PreserveContent\" is in the DOM");
 				oIconTabBar.setSelectedItem(oIconTabBar.getItems()[1]);
 				sap.ui.getCore().applyChanges();
-				strictEqual(jQuery.sap.byId("PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
+				assert.strictEqual(jQuery.sap.byId("PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
 				oIconTabBar.setSelectedItem(oIconTabBar.getItems()[0]);
 				sap.ui.getCore().applyChanges();
-				strictEqual(jQuery.sap.byId("PreserveContent1").length, 1, "The span node \"PreserveContent1\" is in the DOM");
-				strictEqual(jQuery.sap.byId("PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
+				assert.strictEqual(jQuery.sap.byId("PreserveContent1").length, 1, "The span node \"PreserveContent1\" is in the DOM");
+				assert.strictEqual(jQuery.sap.byId("PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			module("events");
+			QUnit.module("events");
 
-			test("select", function() {
+			QUnit.test("select", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1530,15 +1704,15 @@
 				this.clock.tick(500);
 
 				// Assert
-				strictEqual(oSelectSpy.callCount, 1, "select is fired");
-				strictEqual(oSelectSpy.lastCall.args[0].key, "key2", "second filter key is passed as select event arg");
+				assert.strictEqual(oSelectSpy.callCount, 1, "select is fired");
+				assert.strictEqual(oSelectSpy.lastCall.args[0].key, "key2", "second filter key is passed as select event arg");
 
 				// Clean up
 				sap.m.IconTabBar.prototype.fireSelect.restore();
 				oIconTabBar.destroy();
 			});
 
-			test("expand: shoud not expand(already expanded)", function() {
+			QUnit.test("expand: shoud not expand(already expanded)", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1568,14 +1742,14 @@
 				this.clock.tick(500);
 
 				// Assert
-				strictEqual(oExpandSpy.callCount, 0, "content is already expanded and expand is not fired");
+				assert.strictEqual(oExpandSpy.callCount, 0, "content is already expanded and expand is not fired");
 
 				// Clean up
 				sap.m.IconTabBar.prototype.fireExpand.restore();
 				oIconTabBar.destroy();
 			});
 
-			test("expand after selecting twice", function() {
+			QUnit.test("expand after selecting twice", function(assert) {
 
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1605,16 +1779,16 @@
 				this.clock.tick(500);
 
 				// Assert
-				strictEqual(oExpandSpy.callCount, 1, "select first filter again - expand is fired");
-				ok(oExpandSpy.lastCall.args[0].collapse, "collapse = true is passed as expand event arg");
-				ok(!oExpandSpy.lastCall.args[0].expand, "expand = false is passed as expand event arg");
+				assert.strictEqual(oExpandSpy.callCount, 1, "select first filter again - expand is fired");
+				assert.ok(oExpandSpy.lastCall.args[0].collapse, "collapse = true is passed as expand event arg");
+				assert.ok(!oExpandSpy.lastCall.args[0].expand, "expand = false is passed as expand event arg");
 
 				// Clean up
 				sap.m.IconTabBar.prototype.fireExpand.restore();
 				oIconTabBar.destroy();
 			});
 
-			module("keyboard");
+			QUnit.module("keyboard");
 
 			 function createIconTabBar() {
 				return new sap.m.IconTabBar({
@@ -1631,7 +1805,7 @@
 				});
 			}
 
-			test("Arrow Right", function() {
+			QUnit.test("Arrow Right", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1646,16 +1820,16 @@
 				$tab1.focus(); // set focus on first filter
 
 				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on first filter
-				ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus moved on second filter");
+				assert.ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus moved on second filter");
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on second filter
-				ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus stay on second (last) filter"); // should not loop
+				assert.ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus stay on second (last) filter"); // should not loop
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("Arrow Left", function() {
+			QUnit.test("Arrow Left", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1670,16 +1844,16 @@
 				$tab2.focus(); // set focus on second filter
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on second filter
-				ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus moved on first filter");
+				assert.ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus moved on first filter");
 
 				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on first filter
-				ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus stayed on first filter"); // should not loop
+				assert.ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus stayed on first filter"); // should not loop
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("Arrow Down", function() {
+			QUnit.test("Arrow Down", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1694,16 +1868,16 @@
 				$tab1.focus(); // set focus on first filter
 
 				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on first filter
-				ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus moved on second filter");
+				assert.ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus moved on second filter");
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on second filter
-				ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus stay on second filter"); // should not loop
+				assert.ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus stay on second filter"); // should not loop
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("Arrow Up", function() {
+			QUnit.test("Arrow Up", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1718,16 +1892,16 @@
 				$tab2.focus(); // set focus on second filter
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on second filter
-				ok($tab1.is(":focus"), "ARROW_UP is pressed, focus moved on first filter");
+				assert.ok($tab1.is(":focus"), "ARROW_UP is pressed, focus moved on first filter");
 
 				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on first filter
-				ok($tab1.is(":focus"), "ARROW_UP is pressed, focus stay on first filter"); // should not loop
+				assert.ok($tab1.is(":focus"), "ARROW_UP is pressed, focus stay on first filter"); // should not loop
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("END", function() {
+			QUnit.test("END", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1742,13 +1916,13 @@
 				$tab1.focus(); // set focus on first filter
 
 				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.END); // trigger End on first filter
-				ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
+				assert.ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("HOME", function() {
+			QUnit.test("HOME", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1763,13 +1937,13 @@
 				$tab2.focus(); // set focus on second filter
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.HOME); // trigger Home on second filter
-				ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
+				assert.ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("SPACE", function() {
+			QUnit.test("SPACE", function(assert) {
 
 				//Arrange
 				var oIconTabBar = createIconTabBar();
@@ -1785,16 +1959,16 @@
 				$tab2.focus(); // set focus on second filter
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
-				strictEqual(oSelectSpy.callCount, 1, "SPACE is pressed, select event was fired");
+				assert.strictEqual(oSelectSpy.callCount, 1, "SPACE is pressed, select event was fired");
 
 				// Clean up
 				sap.m.IconTabBar.prototype.fireSelect.restore();
 				oIconTabBar.destroy();
 			});
 
-			module("updating data");
+			QUnit.module("updating data");
 
-			test("keep the selected tab", function() {
+			QUnit.test("keep the selected tab", function(assert) {
 
 				// BCP: 1482007468
 
@@ -1845,13 +2019,13 @@
 				var $selectedItem  = oIconTabBar.$().find('.sapMITBSelected');
 
 				// Assert
-				ok($selectedItem.find('.sapMITBText').text() == 'B', "the second item is selected");
+				assert.ok($selectedItem.find('.sapMITBText').text() == 'B', "the second item is selected");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("keep the current content when change IconTabFilter count property", function() {
+			QUnit.test("keep the current content when change IconTabFilter count property", function(assert) {
 
 				// create
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1904,13 +2078,13 @@
 				var domContentNew = oContent.$()[0];
 
 				// Assert
-				ok(domContent == domContentNew, "the contents are the same");
+				assert.ok(domContent == domContentNew, "the contents are the same");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("update ObjectHeader with IconTabBar ", function() {
+			QUnit.test("update ObjectHeader with IconTabBar ", function(assert) {
 
 				// create
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -1966,13 +2140,13 @@
 				var $tab = oIconTabBar._getIconTabHeader().$().find('.sapMITBText').first();
 
 				// Assert
-				ok($tab.text() == sNewText, "the text is changed");
+				assert.ok($tab.text() == sNewText, "the text is changed");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			test("change the current content when change IconTabFilter content aggregation", function() {
+			QUnit.test("change the current content when change IconTabFilter content aggregation", function(assert) {
 
 				// create
 				var oIconTabBar = new sap.m.IconTabBar({
@@ -2011,7 +2185,7 @@
 				var oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
 
 				// Assert
-				ok(jQuery(oButton).text().indexOf("Text 1") > -1, "the tab content is displayed");
+				assert.ok(jQuery(oButton).text().indexOf("Text 1") > -1, "the tab content is displayed");
 
 				// remove the IconTabFilter contents
 				var aItems = oIconTabBar.getItems();
@@ -2023,15 +2197,184 @@
 				oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
 
 				// Assert
-				ok(jQuery(oButton).text().indexOf("Main Text") > -1, "the default content is displayed");
+				assert.ok(jQuery(oButton).text().indexOf("Main Text") > -1, "the default content is displayed");
 
 				// Clean up
 				oIconTabBar.destroy();
 			});
 
-			module("padding");
+			QUnit.module("tabs");
 
-			test("Container Padding Classes", function () {
+			QUnit.test("remove selected tab", function(assert) {
+
+				// create
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: "Lorem",
+							count: "3",
+							content: [
+								new sap.m.Button({ text: "Text 1" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Ipsum",
+							count: "1",
+							content: [
+								new sap.m.Button({ text: "Text 2" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Lorem",
+							count: "Count",
+							content: [
+								new sap.m.Button({ text: "Text 3" })
+							]
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
+
+				// Assert
+				assert.ok(jQuery(oButton).text().indexOf("Text 1") > -1, "First button is displayed");
+
+				// remove first tab
+				var aItems = oIconTabBar.getItems();
+				oIconTabBar.removeItem(aItems[0]);
+
+				oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
+
+				// Assert
+				assert.ok(jQuery(oButton).text().indexOf("Text 2") > -1, "Second button is displayed");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			QUnit.test("tab reordering", function(assert) {
+
+				// create
+				var oIconTabBar = new sap.m.IconTabBar({
+					enableTabReordering: true,
+					items: [
+						new sap.m.IconTabFilter({
+							id: 'tabReorder1',
+							text: "First tab",
+							count: "3",
+							content: [
+								new sap.m.Button({ text: "Text 1" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							id: 'tabReorder2',
+							text: "Second tab",
+							count: "1",
+							content: [
+								new sap.m.Button({ text: "Text 2" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							id: 'tabReorder3',
+							text: "Third tab",
+							count: "Count",
+							content: [
+								new sap.m.Button({ text: "Text 3" })
+							]
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var $tab = jQuery('#tabReorder1');
+				var mOffset = $tab.offset();
+
+				assert.ok(oIconTabBar.getItems()[0].getText() == 'First tab', 'First Tab is "First Tab"');
+
+				qutils.triggerMouseEvent($tab, "mousedown", 0, 0, mOffset.left + 10, mOffset.top + 10);
+				qutils.triggerMouseEvent($tab, "mousemove", 0, 0, mOffset.left + 200, mOffset.top + 10);
+				qutils.triggerMouseEvent($tab, "mouseup");
+
+				assert.ok(oIconTabBar.getItems()[0].getText() != 'First tab', 'First Tab is not "First Tab"');
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			function getIconTabBarWithOverflowList() {
+				var aTabItems = [];
+				for (var i = 0; i < 30; i++) {
+					aTabItems.push(new sap.m.IconTabFilter({
+						key: i.toString(),
+						text : 'Tab ' + i,
+						content: new sap.m.Text({
+							text: 'Content ' + i
+						})
+					}));
+				}
+
+				var oIconTabBarOverflowSelectList = new sap.m.IconTabBar({
+					showOverflowSelectList: true,
+					items: aTabItems
+				});
+
+				return oIconTabBarOverflowSelectList;
+			}
+
+			QUnit.module("Overflow Select List",{
+				beforeEach: function () {
+					this.oIconTabBar = getIconTabBarWithOverflowList();
+					this.oIconTabBar.placeAt('qunit-fixture');
+
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.oIconTabBar.destroy();
+					this.oIconTabBar = null;
+				}
+			});
+
+			QUnit.test("Rendering", function (assert) {
+				assert.strictEqual(this.oIconTabBar.$().find('.sapMBtn').length, 1, "Overflow button is rendered");
+
+				var oButton = this.oIconTabBar.$().find('.sapMBtn');
+				oButton.trigger('tap');
+
+				sap.ui.getCore().applyChanges();
+
+				assert.strictEqual(jQuery('.sapMITBSelectList').length, 1, "Select list is open");
+			});
+
+			QUnit.test("Selection", function (assert) {
+				this.oIconTabBar.setSelectedKey('3');
+
+				sap.ui.getCore().applyChanges();
+
+				var oButton = this.oIconTabBar.$().find('.sapMBtn');
+				oButton.trigger('tap');
+
+				sap.ui.getCore().applyChanges();
+				var selectItems = jQuery('.sapMITBSelectItem');
+
+				assert.strictEqual(jQuery(selectItems[3]).hasClass('sapMITBSelectItemSelected'), true, 'Correct select item is selected');
+
+				jQuery(selectItems[10]).trigger('tap');
+
+				sap.ui.getCore().applyChanges();
+
+				assert.strictEqual(this.oIconTabBar.getSelectedKey(), '10', 'Correct tab filter is selected');
+			});
+
+			QUnit.module("padding");
+
+			QUnit.test("Container Padding Classes", function (assert) {
 				// System under Test + Act
 				var oContainer = new sap.m.IconTabBar(),
 					sContentSelector = ".sapMITBContainerContent > .sapMITBContent",
@@ -2047,30 +2390,30 @@
 				$containerContent = oContainer.$().find(sContentSelector);
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
 
 				// Act
 				oContainer.removeStyleClass("sapUiNoContentPadding");
 				oContainer.addStyleClass("sapUiContentPadding");
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
 
 				// Act
 				oContainer.removeStyleClass("sapUiContentPadding");
 				oContainer.addStyleClass("sapUiResponsiveContentPadding");
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-				strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-				strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-				strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+				assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+				assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+				assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+				assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 
 				// Cleanup
 				oContainer.destroy();

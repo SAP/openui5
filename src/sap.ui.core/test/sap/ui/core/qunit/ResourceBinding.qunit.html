@@ -1,35 +1,35 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.resource.ResourceBinding
-  Author: d049080
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal">
+	data-sap-ui-language="en">
 	</script>
 
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <!-- Test functions -->
-<script language="javascript">
+<script>
 
 	var oModel;
 	var oBinding;
-	
+
 	function setup(){
 		// reset bindings
 		sap.ui.localResources("testdata");
@@ -37,64 +37,66 @@
 		sap.ui.getCore().setModel(oModel);
 	};
 
-	test("Binding getPath", 2, function(){
+	QUnit.test("Binding getPath", function(assert) {
+		assert.expect(2);
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 		// model stores the binding first when attach change was called
-		ok(oBinding, "binding instantiated");
-		equal(oBinding.getPath(),"TEST_TEXT","Binding Path set properly");
-	}); 
-	
-	test("Binding getModel", 1, function(){
+		assert.ok(oBinding, "binding instantiated");
+		assert.equal(oBinding.getPath(),"TEST_TEXT","Binding Path set properly");
+	});
+
+	QUnit.test("Binding getModel", function(assert) {
+		assert.expect(1);
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 		// check model of each binding...should be the same
-		equal(oBinding.getModel(), oModel, "Binding model");
+		assert.equal(oBinding.getModel(), oModel, "Binding model");
 	});
-		
-	test("Binding changeEvent", function(){
+
+	QUnit.test("Binding changeEvent", function(assert) {
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 
 		// check model of each binding...should be the same
 	    oBinding.attachChange(callBackOnChange);
-			
+
 		// model stores the binding first when attach change was called
-		equal(oModel.aBindings.length, 1, "model bindings")
-			
+		assert.equal(oModel.aBindings.length, 1, "model bindings")
+
 		// fire change event
-		oBinding._fireChange();			
-		ok(attach, "call back method was attached");
-		ok(!detach, "call back method was not detached");
-			
+		oBinding._fireChange();
+		assert.ok(attach, "call back method was attached");
+		assert.ok(!detach, "call back method was not detached");
+
 		oBinding.detachChange(callBackOnChange);
 		attach = false;
 		detach = true;
 		//refire change event
 		oBinding._fireChange();
-		ok(!attach, "call back method was not attached");
-		ok(detach, "call back method was detached");
+		assert.ok(!attach, "call back method was not attached");
+		assert.ok(detach, "call back method was detached");
 		attach = false;
 		detach = true;
-			
-		equal(oModel.aBindings.length, 0, "model bindings")
+
+		assert.equal(oModel.aBindings.length, 0, "model bindings")
 	});
-	
+
 	var attach = false;
 	var detach = true;
-	
+
 	function callBackOnChange(){
 		attach = true;
 		detach = false;
 	};
-	
-	test("PropertyBinding getValue", function(){
+
+	QUnit.test("PropertyBinding getValue", function(assert) {
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
-	
-		equal(oBinding.getValue(), "A text en", "Property binding value");
+
+		assert.equal(oBinding.getValue(), "A text en", "Property binding value");
 	});
-		
+
 	</script>
 
 </head>

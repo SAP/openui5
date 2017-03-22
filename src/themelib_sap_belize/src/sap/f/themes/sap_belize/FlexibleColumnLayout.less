@@ -1,0 +1,48 @@
+/* =========================================== */
+/* CSS for control sap.f/FlexibleColumnLayout  */
+/* Belize theme                                */
+/* =========================================== */
+
+@_sap_f_FlexibleColumnLayout_ButtonBackground: darken(@sapUiObjectHeaderBackground, 3);
+@_sap_f_FlexibleColumnLayout_ButtonHoverBackground: darken(@sapUiObjectHeaderBackground, 8);
+
+.sapFFCLNavigationButton {
+	// Hover
+	&:hover {
+		.sapMBtnHoverable {
+			background-color: @_sap_f_FlexibleColumnLayout_ButtonHoverBackground;
+		}
+	}
+
+	.sapMBtnInner {
+		border: 0;
+
+		// Normal
+		background: @_sap_f_FlexibleColumnLayout_ButtonBackground;
+		.sapMBtnIcon {
+			width: 1.584rem;
+			font-size: 1.375rem;
+			color: @sapUiButtonIconColor;
+		}
+
+		// Active
+		&.sapMBtnActive {
+			background-color: @sapUiButtonActiveBackground;
+			.sapMBtnIcon {
+				color: @sapUiButtonActiveTextColor;
+			}
+		}
+	}
+
+	&.sapFFCLNavigationButtonLeft {
+		.sapMBtnInner {
+			border-radius: 0 0.1875rem 0.1875rem 0;
+		}
+	}
+
+	&.sapFFCLNavigationButtonRight {
+		.sapMBtnInner {
+			border-radius: 0.1875rem 0 0 0.1875rem;
+		}
+	}
+}

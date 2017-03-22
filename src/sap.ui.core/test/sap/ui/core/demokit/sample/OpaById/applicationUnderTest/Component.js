@@ -1,18 +1,13 @@
-sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
-	function(UIComponent, View) {
+sap.ui.define(['sap/ui/core/UIComponent'],
+function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("appUnderTest.Component", {
+	return UIComponent.extend("appUnderTest.Component", {
 
-		createContent : function () {
-			return sap.ui.view({
-				viewName : "view.Main",
-				type : "XML"
-			});
+		metadata: {
+			"rootView": "appUnderTest.view.Main"
 		}
 
 	});
-
-	return Component;
 
 });

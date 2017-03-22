@@ -4,29 +4,54 @@
 			"control" : "sap.ui.unified.Calendar",
 			"url" : "Calendar.html",
 			"desc" : "stand alone calendars",
-			"appComponent" : "CA-UI5-CTR-WDF"
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.CalendarDateInterval",
+			"url" : "../CalendarDateInterval.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.CalendarLegend",
+			"url" : "../CalendarLegend.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.CalendarMonthInterval",
+			"url" : "../CalendarMonthInterval.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.CalendarTimeInterval",
+			"url" : "../CalendarTimeInterval.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.Currency",
+			"url" : "../Currency.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
 			"control" : "sap.ui.unified.Menu",
 			"url" : "Menu.html",
-			"appComponent" : "CA-UI5-CTR-WDF"
+			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
 			"control" : "sap.ui.unified.Shell",
 			"url" : "../ShellOverlay.html",
-			"appComponent" : "CA-UI5-CTR-WDF"
+			"appComponent" : "CA-UI5-TBL"
 		},
 		{
 			"control" : "sap.ui.unified.ShellOverlay",
 			"url" : "../ShellOverlay.html",
 			"desc" : "To open the overlay dialog trigger a search on the SearchField in the Shell header",
-			"appComponent" : "CA-UI5-CTR-WDF"
+			"appComponent" : "CA-UI5-TBL"
 		},
 		{
 			"control" : "sap.ui.unified.FileUploader",
 			"url" : "FileUploader.html",
 			"desc" : "FileUploader test using sap.m library",
-			"appComponent" : "CA-UI5-CTR-WDF"
+			"appComponent" : "CA-UI5-CTR-PIR"
 		}
 	]
 }

@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oForm an object representation of the control that should be rendered
 	 */
@@ -52,7 +52,13 @@ sap.ui.define(['jquery.sap.global'],
 
 		var mAriaProps = {role: "form"};
 		var oTitle = oForm.getTitle();
-		if (oTitle) {
+		var oToolbar = oForm.getToolbar();
+		if (oToolbar) {
+			if (!oForm.getAriaLabelledBy() || oForm.getAriaLabelledBy().length == 0) {
+				// no aria-label -> use complete Toolbar as fallback
+				mAriaProps["labelledby"] = oToolbar.getId();
+			}
+		} else if (oTitle) {
 			var sId = "";
 			if (typeof oTitle == "string") {
 				sId = oForm.getId() + "--title";

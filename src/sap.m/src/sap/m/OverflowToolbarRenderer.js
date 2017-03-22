@@ -26,9 +26,6 @@ sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer'],
 		};
 
 		OverflowToolbarRenderer.renderOverflowButton = function(rm,oToolbar) {
-			var oOverflowButtonLabel = oToolbar._getOverflowButtonLabel();
-			rm.renderControl(oOverflowButtonLabel);
-			
 			var oOverflowButton = oToolbar._getOverflowButton();
 			sap.m.BarInPageEnabler.addChildClassTo(oOverflowButton,oToolbar);
 			rm.renderControl(oOverflowButton);

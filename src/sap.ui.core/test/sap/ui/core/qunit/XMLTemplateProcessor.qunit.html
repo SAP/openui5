@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+-->
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>qUnit Page for XMLTemplateProcessor</title>
+
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-bindingSyntax="complex"
+		data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script id="root" type="application/xml">
+		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" id="root">
+		</mvc:View>
+	</script>
+
+	<script id="view" type="application/xml">
+		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view">
+			<Panel id="panel">
+				<content>
+					<Button text="Button" id="button"></Button>
+					<Button text="StashedButton" id="stashedButton" stashed="true"></Button>
+					<core:ExtensionPoint name="extension">
+						<Button text="ExtensionButton" id="extensionButton"></Button>
+					</core:ExtensionPoint>
+				</content>
+			</Panel>
+		</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.require(["sap/ui/core/XMLTemplateProcessor", "jquery.sap.xml"], function (XMLTemplateProcessor) {
+
+			var sRootView = jQuery('#root').html(),
+					sView = jQuery('#view').html(),
+					viewWithFragment = jQuery('#viewWithFragment').html();
+
+			QUnit.module("enrichTemplateIds", {
+				beforeEach: function() {
+					this.oView = sap.ui.xmlview({
+						viewContent: sRootView,
+						id: "root",
+						async: true
+					});
+					this.xml = jQuery.sap.parseXML(sView);
+				},
+				afterEach: function() {
+					this.oView.destroy();
+				}
+			});
+
+			QUnit.test("create IDs", function(assert) {
+				return this.oView.loaded().then(function() {
+					assert.ok(jQuery.isXMLDoc(this.xml), "valid xml document as input");
+					var xml = XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
+					assert.ok(jQuery.isXMLDoc(xml), "valid xml document returned");
+					assert.strictEqual(xml.parentNode, this.xml, "no copying");
+					var node = jQuery(this.xml).find("#root--button")[0];
+					assert.ok(node, "control was found by full id");
+					assert.equal(node.nodeName, "Button", "button is a button");
+					assert.equal(node.getAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id"), "true", "full id flag is set to true");
+				}.bind(this));
+			});
+
+			QUnit.test("create Controls", function(assert) {
+				return this.oView.loaded().then(function() {
+					XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
+					assert.ok(!this.oView.byId("button"), "no control has been created yet");
+					XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
+					assert.ok(this.oView.byId("button"), "button control is created");
+				}.bind(this));
+			});
+
+			QUnit.test("do not create stashed Controls", function(assert) {
+				return this.oView.loaded().then(function() {
+					XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
+					assert.ok(!this.oView.byId("stashedButton"), "no stashed control has been created yet");
+					XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
+					assert.ok(this.oView.byId("stashedButton"), "stashed button control is created");
+				}.bind(this));
+			});
+
+			QUnit.test("do not process ExtensionPoints", function(assert) {
+				return this.oView.loaded().then(function() {
+					// Preferrably we should test with a spy on "ExtensionPoint", but due
+					// to the AMD module handling it is not possible to place one
+					var node = jQuery(this.xml).find("#extensionButton")[0];
+					XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
+					assert.equal(node.getAttribute("id"), "extensionButton", "id was not enriched");
+					XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
+					assert.ok(this.oView.byId("extensionButton"), "extension button is created");
+				}.bind(this));
+			});
+
+			QUnit.module("General");
+
+			QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function (assert) {
+				var fnOrig_getDesignMode = sap.ui.getCore().getConfiguration().getDesignMode;
+				sap.ui.getCore().getConfiguration().getDesignMode = function () {
+					return true;
+				};
+				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+				var oView = sap.ui.view({
+					viewName: "my.View",
+					type: sap.ui.core.mvc.ViewType.XML
+				});
+				sap.ui.getCore().getConfiguration().getDesignMode = fnOrig_getDesignMode;
+				return oView.loaded().then(function () {
+					var oButton = oView.byId("button");
+					assert.ok(oButton, "button control is created");
+					assert.equal(oButton._sapui_declarativeSourceInfo.xmlNode.getAttribute("text"), "Button");
+					var xmlRootNode = oButton._sapui_declarativeSourceInfo.xmlRootNode;
+					assert.equal(xmlRootNode.getAttribute("controllerName"), "my.View");
+					var oLabel = oView.byId("namedName");
+					assert.equal(oLabel._sapui_declarativeSourceInfo.xmlNode.getAttribute("text"), "{named>name}");
+					assert.equal(oLabel.getParent()._sapui_declarativeSourceInfo.fragmentName, "my.Fragment");
+					assert.equal(oLabel._sapui_declarativeSourceInfo.xmlRootNode, xmlRootNode);
+					assert.equal(oLabel.getParent()._sapui_declarativeSourceInfo.xmlRootNode, xmlRootNode);
+					oView.destroy();
+				});
+			});
+
+			QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo", function (assert) {
+				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+				return sap.ui.view({
+					viewName: "my.View",
+					type: sap.ui.core.mvc.ViewType.XML
+				}).loaded().then(function (oView) {
+					var oButton = oView.byId("button");
+					assert.ok(oButton, "button control is created");
+					assert.notOk(oButton.hasOwnProperty("_sapui_declarativeSourceInfo"));
+					var oLabel = oView.byId("namedName");
+					assert.notOk(oLabel.hasOwnProperty("_sapui_declarativeSourceInfo"));
+					oView.destroy();
+				});
+			});
+
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">qUnit Page for XMLTemplateProcessor</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+
+</html>

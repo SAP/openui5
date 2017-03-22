@@ -2,21 +2,21 @@
  * ${copyright}
  */
 
-// Provides control sap.m.Text.
+// Provides control sap.m.Text
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	function(jQuery, library, Control) {
 	"use strict";
 
-
-
 	/**
 	 * Constructor for a new Text.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The text control can be used for embedding longer paragraphs of text into your application, that need text wrapping.
+	 * The <code>Text</code> control can be used for embedding longer text paragraphs, that need text wrapping, into your app.
+	 * If the configured text value contains HTML code or script tags, those will be escaped.<br>
+	 * <b>Note: </b>Line breaks (\r\n, \n\r, \r, \n) will always be visualized except when the <code>wrapping</code> property is set to <code>false</code>.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
 	 *
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		properties : {
 
 			/**
-			 * Text to be displayed.
+			 * Determines the text to be displayed.
 			 */
 			text : {type : "string", defaultValue : '', bindable : "bindable"},
 
@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * Set this property to false to disable the automatic text wrapping.
+			 * Enables text wrapping.
 			 */
 			wrapping : {type : "boolean", group : "Appearance", defaultValue : true},
 
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
 
 			/**
-			 * By default, the Text control uses the full width available. Set this property to restrict the width to a custom value.
+			 * Sets the width of the Text control. By default, the Text control uses the full width available. Set this property to restrict the width to a custom value.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
@@ -68,14 +68,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.13.2
 			 */
 			maxLines : {type : "int", group : "Appearance", defaultValue : null}
-		}
+		},
+		designTime: true
 	}});
 
 	/**
 	 * Default line height value as a number when line-height is normal.
+	 *
 	 * This value is required during max-height calculation for the browsers that do not support line-clamping.
 	 * It is better to define line-height in CSS instead of "normal" to get consistent maxLines results since normal line-height
-	 * not only vary from browser to browser but they also vary from one font face to another and can also vary within a given face.
+	 * not only varies from browser to browser but they also vary from one font face to another and can also vary within a given face.
 	 *
 	 * Default value is 1.2
 	 *
@@ -87,6 +89,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Determines per instance whether line height should be cached or not.
+	 *
 	 * Default value is true.
 	 *
 	 * @since 1.22
@@ -97,6 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Ellipsis(…) text to indicate more text when clampText function is used.
+	 *
 	 * Can be overwritten with 3dots(...) if fonts do not support this UTF-8 character.
 	 *
 	 * @since 1.13.2
@@ -106,18 +110,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.prototype.ellipsis = '…';
 
 	/**
-	 * Defines whether browser supports native line clamp or not
+	 * To prevent from the layout thrashing of the textContent call, this method
+	 * first tries to set the nodeValue of the first child if it exists.
 	 *
-	 * @since 1.13.2
-	 * @returns {boolean}
+	 * @param {HTMLElement} oDomRef DOM reference of the text node container.
+	 * @param {String} [sNodeValue] new Node value.
+	 * @since 1.30.3
 	 * @protected
-	 * @readonly
 	 * @static
 	 */
-	Text.hasNativeLineClamp = (function() {
-		return (typeof document.documentElement.style.webkitLineClamp != "undefined");
-	})();
-
+	Text.setNodeValue = function(oDomRef, sNodeValue) {
+		sNodeValue = sNodeValue || "";
+		var aChildNodes = oDomRef.childNodes;
+		if (aChildNodes.length === 1 && aChildNodes[0].nodeType === window.Node.TEXT_NODE) {
+			aChildNodes[0].nodeValue = sNodeValue;
+		} else {
+			oDomRef.textContent = sNodeValue;
+		}
+	};
 
 	// suppress invalidation of text property setter
 	Text.prototype.setText = function(sText) {
@@ -126,12 +136,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// check text dom ref
 		var oDomRef = this.getTextDomRef();
 		if (oDomRef) {
-			oDomRef.textContent = this.getText(true);
+			// update the node value of the DOM text
+			Text.setNodeValue(oDomRef, this.getText(true));
 
-			// Toggles the sapMTextBreakWord class when the text value is changed
+			// toggles the sapMTextBreakWord class when the text value is changed
 			if (this.getWrapping()) {
 				// no space text must break
-				if (sText && sText.length > 0 && !/\s/.test(sText)) {
+				if (sText && !/\s/.test(sText)) {
 					this.$().addClass("sapMTextBreakWord");
 				} else {
 					this.$().removeClass("sapMTextBreakWord");
@@ -142,13 +153,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 
-	// returns the text value and normalize line-ending character for rendering
+	 // returns the text value and normalize line-ending character for rendering
 	Text.prototype.getText = function(bNormalize) {
 		var sText = this.getProperty("text");
 
 		// handle line ending characters for renderer
 		if (bNormalize) {
-			return sText.replace(/\r\n/g, "\n");
+			return sText.replace(/\\r\\n|\\n/g, "\n");
 		}
 
 		return sText;
@@ -158,8 +169,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.prototype.onAfterRendering = function() {
 		// check visible, max-lines and line-clamping support
 		if (this.getVisible() &&
-			this.hasMaxLines() &&
-			!this.canUseNativeLineClamp()) {
+			this.hasMaxLines()) {
 
 			// set max-height for maxLines support
 			this.clampHeight();
@@ -167,7 +177,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * Determines whether max lines should be rendered or not
+	 * Determines whether max lines should be rendered or not.
 	 *
 	 * @since 1.22
 	 * @protected
@@ -179,7 +189,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Returns the text node container's DOM reference.
-	 * This can be different then getDomRef when inner wrapper is needed.
+	 *
+	 * This can be different from getDomRef when inner wrapper is needed.
 	 *
 	 * @since 1.22
 	 * @protected
@@ -195,34 +206,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		return this.getDomRef();
-	};
-
-	/**
-	 * Decides whether the control can use native line clamp feature or not.
-	 * In RTL mode native line clamp feature is not supported
-	 *
-	 * @since 1.20
-	 * @protected
-	 * @return {Boolean}
-	 */
-	Text.prototype.canUseNativeLineClamp = function() {
-		// has line clamp feature
-		if (!Text.hasNativeLineClamp) {
-			return false;
-		}
-
-		// is text direction rtl
-		var oDirection = sap.ui.core.TextDirection;
-		if (this.getTextDirection() == oDirection.RTL) {
-			return false;
-		}
-
-		// is text direction inherited as rtl
-		if (this.getTextDirection() == oDirection.Inherit && sap.ui.getCore().getConfiguration().getRTL()) {
-			return false;
-		}
-
-		return true;
 	};
 
 	/**
@@ -280,6 +263,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Returns the max height according to max lines and line height calculation.
+	 *
 	 * This is not calculated max-height!
 	 *
 	 * @since 1.22
@@ -293,7 +277,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * Sets the max-height to support maxLines property
+	 * Sets the max-height to support maxLines property.
 	 *
 	 * @since 1.22
 	 * @protected
@@ -317,6 +301,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Clamps the wrapping text according to max lines and returns the found ellipsis position.
+	 *
 	 * Parameters can be used for better performance.
 	 *
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
@@ -342,8 +327,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		iStartPos = iStartPos || 0;
 		iEndPos = iEndPos || sText.length;
 
-		// do not set content if not needed
-		oDomRef.textContent = sText.slice(0, iEndPos);
+		// update only the node value without layout thrashing
+		Text.setNodeValue(oDomRef, sText.slice(0, iEndPos));
 
 		// if text overflow
 		if (oDomRef.scrollHeight > iMaxHeight) {
@@ -363,7 +348,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 				// check the middle position and update text
 				iEllipsisPos = (iStartPos + iEndPos) >> 1;
-				oDomRef.textContent = sText.slice(0, iEllipsisPos - iEllipsisLen) + sEllipsis;
+
+				// update only the node value without layout thrashing
+				Text.setNodeValue(oDomRef, sText.slice(0, iEllipsisPos - iEllipsisLen) + sEllipsis);
 
 				// check overflow
 				if (oDomRef.scrollHeight > iMaxHeight) {
@@ -385,6 +372,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// return the found position
 		return iEllipsisPos;
+	};
+
+	/**
+	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @protected
+	 */
+	Text.prototype.getAccessibilityInfo = function() {
+		return {description: this.getText()};
 	};
 
 	return Text;

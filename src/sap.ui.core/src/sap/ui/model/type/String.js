@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType'],
-	function(jQuery, NumberFormat, SimpleType) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(jQuery, SimpleType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -22,15 +22,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. String doesn't support any formatting options
-	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid  
-	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have  
-	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with  
-	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case  
-	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with  
-	 * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case  
-	 * @param {string} [oConstraints.contains] an infix that must be contained in any valid value  
-	 * @param {string} [oConstraints.equals] only value that is allowed  
-	 * @param {RegExp} [oConstraints.search] a regular expression that the value must match  
+	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid
+	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have
+	 * @param {int} [oConstraints.minLength] minimum length (in characters) that a string of this value may have
+	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with
+	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case
+	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with
+	 * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case
+	 * @param {string} [oConstraints.contains] an infix that must be contained in any valid value
+	 * @param {string} [oConstraints.equals] only value that is allowed
+	 * @param {RegExp} [oConstraints.search] a regular expression that the value must match
 	 * @alias sap.ui.model.type.String
 	 */
 	var StringType = SimpleType.extend("sap.ui.model.type.String", /** @lends sap.ui.model.type.String.prototype */ {
@@ -45,9 +46,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	});
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.formatValue
-	 */
 	StringType.prototype.formatValue = function(sValue, sInternalType) {
 		if (sValue == undefined || sValue == null) {
 			return null;
@@ -59,13 +57,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "int":
 				var iResult = parseInt(sValue, 10);
 				if (isNaN(iResult)) {
-					throw new sap.ui.model.FormatException(sValue + " is not a valid int value");
+					throw new FormatException(sValue + " is not a valid int value");
 				}
 				return iResult;
 			case "float":
 				var fResult = parseFloat(sValue);
 				if (isNaN(fResult)) {
-					throw new sap.ui.model.FormatException(sValue + " is not a valid float value");
+					throw new FormatException(sValue + " is not a valid float value");
 				}
 				return fResult;
 			case "boolean":
@@ -75,15 +73,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				if (sValue.toLowerCase() == "false" || sValue == "") {
 					return false;
 				}
-				throw new sap.ui.model.FormatException(sValue + " is not a valid boolean value");
+				throw new FormatException(sValue + " is not a valid boolean value");
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format String to " + sInternalType);
+				throw new FormatException("Don't know how to format String to " + sInternalType);
 		}
 	};
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.parseValue
-	 */
 	StringType.prototype.parseValue = function(oValue, sInternalType) {
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
@@ -93,13 +88,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "float":
 				return oValue.toString();
 			default:
-				throw new sap.ui.model.ParseException("Don't know how to parse String from " + sInternalType);
+				throw new ParseException("Don't know how to parse String from " + sInternalType);
 		}
 	};
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.validateValue
-	 */
 	StringType.prototype.validateValue = function(sValue) {
 		if (this.oConstraints) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
@@ -164,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};
@@ -173,4 +165,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	return StringType;
 
-}, /* bExport= */ true);
+});

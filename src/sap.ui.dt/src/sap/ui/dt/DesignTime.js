@@ -4,428 +4,613 @@
 
 // Provides class sap.ui.dt.DesignTime.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/EventBus',
-	'sap/ui/dt/Scope',
-	'sap/ui/dt/Widgets',
-	'sap/ui/dt/LibraryManager',
-	'sap/ui/dt/DragManager',
-	'sap/ui/dt/ShortKeys',
-	'sap/ui/dt/GestureRecognizer'
+	'sap/ui/dt/ElementOverlay',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/Selection',
+	'sap/ui/dt/ElementDesignTimeMetadata',
+	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/OverlayUtil',
+	'./library'
 ],
-function(jQuery, ManagedObject, EventBus, Scope, Widgets, LibraryManager, DragManager, ShortKeys, GestureRecognizer) {
+function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesignTimeMetadata, ElementUtil, OverlayUtil) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new DesignTime.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The UI5 DesignTime allows an user to change a UI5 UI via drag and drop.
-	 * This is done by creating overlays for each control, which intercept the browser events
-	 * and delegates changes to the real control (e.g. movement from one container into another).
+	 * The DesignTime allows to create a set of Overlays above the root elements and
+	 * their public children and manage theire events.
 	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.DesignTime
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var DesignTime = ManagedObject.extend("sap.ui.dt.DesignTime", /** @lends sap.ui.dt.DesignTime.prototype */ {
 		metadata : {
-
 			// ---- object ----
 
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				"keybinding" : {
-					type : "boolean",
-					group : "misc",
-					defaultValue : false
-				}
+				/**
+				 * Selection mode which should be used for overlays selection
+				 */
+				selectionMode : {
+					type : "sap.ui.dt.SelectionMode",
+					defaultValue : sap.ui.dt.SelectionMode.Single
+				},
+
+				/**
+				 * DesignTime metadata for classses to use with overlays (will overwrite default DTMetadata fields)
+				 * should have a map structure { "sClassName" : oDesignTimeMetadata, ... }
+				 */
+				 designTimeMetadata : {
+					type : "object"
+				 }
 			},
 			associations : {
-				"rootControl" : {
-					"type" : "sap.ui.core.Control"
+				/**
+				 * Root elements to create overlays for
+				 */
+				rootElements : {
+					type : "sap.ui.core.Element",
+					multiple : true
+				}
+			},
+			aggregations : {
+				/**
+				 * Plugins to use with a design time
+				 */
+				plugins : {
+					type : "sap.ui.dt.Plugin",
+					multiple : true
 				}
 			},
 			events : {
-				"controlCreated" : {},
-				"controlSelected" : {},
-				"controlChanged" : {},
-				"controlDragStarted" : {},
-				"controlDragEnded" : {},
-				"controlRemoved" : {},
-				"controlDeselected" : {},
-				"controlDestroyed" : {},
-				"controlResized" : {},
-				"canvasLoading" : {},
-				"canvasLoaded" : {},
-				"viewHasChanged" : {},
-				"focus" : {},
-				"designTimeReady" : {},
-				"DOMChanged" : {}
+				/**
+				 * Event fired when an ElementOverlay is created and its designTimeMetadata is loaded
+				 */
+				elementOverlayCreated : {
+					parameters : {
+						elementOverlay : { type : "sap.ui.dt.ElementOverlay" }
+					}
+				},
+				/**
+				 * Event fired when an ElementOverlay is destroyed
+				 */
+				elementOverlayDestroyed : {
+					parameters : {
+						elementOverlay : { type : "sap.ui.dt.ElementOverlay" }
+					}
+				},
+				/**
+				 * Event fired when an overlays selection is changed
+				 */
+				selectionChange : {
+					parameters : {
+						selection : { type : "sap.ui.dt.Overlay[]" }
+					}
+				},
+				/**
+				 * Event fired when DesignTime is syncing overlays with a ControlTree of root elements
+				 */
+				syncing : {},
+				/**
+				 * Event fired when DesignTime's overlays are in-sync with ControlTree of root elements and registered at all known plugins
+				 */
+				synced : {},
+				/**
+				 * Event fired when DesignTime's overlays are in-sync with ControlTree of root elements
+				 */
+				syncedPureOverlays : {},
+				/**
+				 * Event fired when DesignTime's overlays failed to sync with ControlTree of root elements
+				 */
+				syncFailed : {}
 			}
 		}
 	});
 
-	DesignTime.M_EVENTS = {
-		'controlCreated' : 'controlCreated',
-		'controlSelected' : 'controlSelected',
-		'controlDeselected' : 'controlDeselected',
-		'controlDestroyed' : 'controlDestroyed',
-		'controlResized' : 'controlResized',
-		'controlDragStarted' : 'controlDragStarted',
-		'controlDragEnded' : 'controlDragEnded',
-		'controlRemoved' : 'controlRemoved',
-		'canvasLoading' : 'canvasLoading',
-		'canvasLoaded' : 'canvasLoaded',
-		'viewHasChanged' : 'viewHasChanged',
-		'designTimeReady' : 'designTimeReady',
-		'DOMChanged' : 'DOMChanged'
-	};
-
-
-	/*
-	 * @private
+	/**
+	 * Called when the DesignTime is initialized
+	 * @protected
 	 */
 	DesignTime.prototype.init = function() {
+		// number of element overlays waiting for their designTimeMetadata
+		this._iOverlaysPending = 0;
 
-		this._loadedThemes = [];
-		this.oScope = null;
-		this._oRootControl = null;
-
-		// TODO All members should be private
-		this.oEventBus = new EventBus();
-		this.oScope = new Scope(this);
-		this.oWidgets = new Widgets(this);
-		this.oLibraryManager = new LibraryManager(this);
-		this.oShortKeys = new ShortKeys(this);
-		this._oGestureRecognizer = new GestureRecognizer(this);
-		this._oGestureRecognizer.init();
-
-		this.oEventBus.subscribe("control.created", function(channel, path, data) {
-			this.fireControlCreated(data);
-		}, this).subscribe("control.selected", function(channel, path, data) {
-			this.fireControlSelected(data);
-		}, this).subscribe("control.deselected", function(channel, path, data) {
-			this.fireControlDeselected(data);
-		}, this).subscribe("control.resized", function(channel, path, data) {
-			this.fireControlResized(data);
-			this.fireViewHasChanged(data);
-		}, this).subscribe("drag.started", function(channel, path, data) {
-			this.fireControlDragStarted(data);
-		}, this).subscribe("drag.ended", function(channel, path, data) {
-			this.fireControlDragEnded(data);
-		}, this).subscribe("control.remove", function(channel, path, data) {
-			this.fireControlRemoved(data);
-		}, this).subscribe("control.destroyed", function(channel, path, data) {
-			this.fireControlDestroyed(data);
-			this.fireViewHasChanged(data);
-		}, this).subscribe("control.changed", function(channel, path, data) {
-			this.fireControlChanged(data);
-			this.fireViewHasChanged(data);
-		}, this).subscribe("drag.ended", function(channel, path, data) {
-			// TODO Overlay handling should be centralized
-			this.oScope.showOverlayContainer();
-			this.fireFocus();
-			this.fireViewHasChanged(data);
-		}, this).subscribe("canvas.ready", function(channel, path, data) {
-			//TODO : rethink this.fireCanvasReady();
-		}, this).subscribe("dom.changed", function(channel, path, data) {
-			this.fireDOMChanged();
+		this._oSelection = this.createSelection();
+		this._oSelection.attachEvent("change", function(oEvent) {
+			this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 		}, this);
+
+		this._collectOverlaysDuringSyncing();
 	};
 
-	DesignTime.prototype.getGestureRecognizer = function() {
-		return this._oGestureRecognizer;
-	};
+	DesignTime.prototype._collectOverlaysDuringSyncing = function() {
+		// array of element overlays created between syncing and synced event
+		this._aOverlaysCreatedInLastBatch = [];
 
-	DesignTime.prototype.setRootControl = function(oRootControl) {
-		this._bCanvasIsLoaded = false;
-		
-		// TODO This is a workaround to destroy the loosely coupled objects (later, when we removed the event bus, all objects will be destroyed)
-		this.oEventBus.publish("destroy", {fromSetRootControl : true});
+		this.attachSyncing(function(){
+			this._aOverlaysCreatedInLastBatch = [];
+		}.bind(this));
 
-		this._removeOnAfterRenderingDelegate();
+		this.attachElementOverlayCreated(function(oEvent){
+			var oNewOverlay = oEvent.getParameter("elementOverlay");
+			this._aOverlaysCreatedInLastBatch.push(oNewOverlay);
+		}.bind(this));
 
-		this._oRootControl = oRootControl;
-
-		this._destroyMutationObserver();
-		this._oDelegate = {
-				onAfterRendering: this._onAfterRendering
-		};
-		if (this._oRootControl.getDomRef()) {
-			this._onAfterRendering();
-		} else {
-			oRootControl.addEventDelegate(this._oDelegate, this);	
-		}
-	};
-
-	DesignTime.prototype.getRootControl = function() {
-		return this._oRootControl;
-	};
-
-
-	/*
-	 * @private
-	 */
-	DesignTime.prototype._removeOnAfterRenderingDelegate = function() {
-		if (this._oRootControl) {
-			this._oRootControl.removeDelegate(this._oDelegate, this);
-		}
-	};
-
-	/*
-	 * @private
-	 */
-	DesignTime.prototype._onAfterRendering = function() {
-		var that = this;
-		var oRootControl = this._oRootControl;
-		this.getScope().setElement(oRootControl.getDomRef(), function() {			
-			// TODO Scope / Library Manager / Mutation Observer Object should be destroyed and a new one should be created ?
-			var oWindow = that.getScope().getWindow();
-			that.oLibraryManager.initialize();
-			if (that._oCurrentWindow !== oWindow) {
-				that._oCurrentWindow = oWindow;
-				that._oMutationObserver = that._createMutationObserver();
-				that._loadedThemes.push(that.getScope().getCore().getConfiguration().getTheme());
-				that.getScope().getCore().attachThemeChanged(that._onThemeChanged, that);
-			}
-			// TODO initialization fires canvas ready -> this should be changed (loaded = ready?)
-			// TODO perhaps we can rename this to "rootControlChanged" / "ready" / "overlaysCreated"
-			that._bCanvasIsLoaded = true;
-
-			//TODO:
-			that.fireDesignTimeReady({
-				oControl : that
+		this.attachSyncedPureOverlays(function(){
+			var aPlugins = this.getPlugins();
+			this._aOverlaysCreatedInLastBatch.forEach(function(oOverlay) {
+				aPlugins.forEach(function(oPlugin) {
+					oPlugin.callElementOverlayRegistrationMethods(oOverlay);
+				});
 			});
-			that._removeOnAfterRenderingDelegate();
-		});
+
+			this.fireSynced();
+			this._aOverlaysCreatedInLastBatch = [];
+		}.bind(this));
 	};
 
-	DesignTime.prototype.ensureLoadedThen = function(fn) {
-		if (this._bCanvasIsLoaded) {
-			fn();
-		} else {
-			this.attachEvent("designTimeReady", fn);
-		}
-	};
-
-	/*
-	 * @private
+	/**
+	 * Called when the DesignTime is destroyed
+	 * @protected
 	 */
 	DesignTime.prototype.exit = function() {
-		delete this._bCanvasIsLoaded;
-		
-		// TODO This is a workaround to destroy the loosely coupled objects (later, when we removed the event bus, all objects will be destroyed)
-		this.oEventBus.publish("destroy");
-		
-		this._destroyMutationObserver();
-		
-		delete this._oCurrentWindow;
-		this.oScope.destroy();
-		delete this.oScope;
-		this.oEventBus.destroy();
-		delete this.oEventBus;
-		
-		clearTimeout(this._iThemeTimeout);
-
-		this.oLibraryManager.destroy();
-		delete this.oLibraryManager;
-		
-		this._oGestureRecognizer.destroy();
-		delete this._oGestureRecognizer;
-		
-		this._removeOnAfterRenderingDelegate();
-		
-		delete this._oRootControl;
+		delete this._iOverlaysPending;
+		delete this._aOverlaysCreatedInLastBatch;
+		this._destroyAllOverlays();
+		this._oSelection.destroy();
 	};
 
-	DesignTime.prototype.getGestureRecognizer = function() {
-		return this._oGestureRecognizer;
-	};
-
-	/*
-	 * @private
+	/**
+	 * Creates an instance of a Selection to handle the overlays selection inside of the DesignTime
+	 * @return {sap.ui.dt.Selection} the instance of the Selection
+	 * @protected
 	 */
-	DesignTime.prototype._destroyMutationObserver = function() {
-		if (this._oMutationObserver) {
-			this._oMutationObserver.disconnect();
-			clearTimeout(this._iMutationTimeout);
-			this._oMutationObserver = undefined;
-		}
+	DesignTime.prototype.createSelection = function() {
+		return new Selection();
 	};
 
-	DesignTime.prototype.removeControl = function(oControl) {
-		this.oEventBus.publish("control.remove", {
-			oControl : oControl
-		});
-		return this;
+	/**
+	 * Returns array with current selected overlays
+	 * @return {sap.ui.dt.Overlay[]} selected overlays
+	 * @public
+	 */
+	DesignTime.prototype.getSelection = function() {
+		return this._oSelection.getSelection();
 	};
 
-	DesignTime.prototype.selectControl = function(oControl) {
-		// Show first and then select
-		this.oEventBus.publish("control.show", {
-			oControl : oControl
-		});
-		this.oEventBus.publish("control.select", {
-			oControl : oControl
-		});
-		return this;
-	};
+	/**
+	 * Sets selection mode to be used in the Selection inside of the DesignTime
+	 * @param {sap.ui.dt.SelectionMode} oMode a selection mode to be used with the Selection
+	 * @return {sap.ui.dt.DesignTime} this
+	 * @public
+	 */
+	DesignTime.prototype.setSelectionMode = function(oMode) {
+		this.setProperty("selectionMode", oMode);
+		this._oSelection.setMode(oMode);
 
-	DesignTime.prototype.deselectControl = function(oControl) {
-		this.oEventBus.publish("control.deselect", {
-			oControl : oControl
-		});
-		return this;
-	};
-
-	DesignTime.prototype.highlightControl = function(oControl) {
-		this.oEventBus.publish("control.highlight", {
-			oControl : oControl
-		});
-		return this;
-	};
-
-	DesignTime.prototype.downplayControl = function(oControl) {
-		this.oEventBus.publish("control.downplay", {
-			oControl : oControl
-		});
-		return this;
-	};
-
-	DesignTime.prototype.changeControl = function(sAction) {
-		this.oEventBus.publish("control.changeSelection", {
-			action: sAction
-		});
 		return this;
 	};
 
 	/**
-	 * Move a control in a direction
-	 * @param  {object} oControl The control to move
-	 * @param  {string} sDirection The direction to move in
-	 * @return {this}
+	 * Returns all plugins used with the DesignTime
+	 * @return {sap.ui.dt.Plugin[]} an array of plugins
+	 * @protected
 	 */
-	DesignTime.prototype.moveControl = function(oControl, sDirection) {
-		this.oEventBus.publish("control.movePosition", {
-			oControl: oControl,
-			sDirection: sDirection
-		});
+	DesignTime.prototype.getPlugins = function() {
+		return this.getAggregation("plugins") || [];
+	};
+
+	/**
+	 * Adds new plugin to use with the DesignTime
+	 * @param {sap.ui.dt.Plugin} oPlugin to add
+	 * @return {sap.ui.dt.DesignTime} this
+	 * @protected
+	 */
+	DesignTime.prototype.addPlugin = function(oPlugin) {
+		oPlugin.setDesignTime(this);
+
+		this.addAggregation("plugins", oPlugin);
+
 		return this;
 	};
 
-	DesignTime.prototype.showControl = function(oControl) {
-		this.oEventBus.publish("control.show", {
-			oControl : oControl
-		});
+	/**
+	 * Inserts new plugin to use with the DesignTime at a defined position
+	 * @param {sap.ui.dt.Plugin} oPlugin to insert
+	 * @param {int} iIndex a position to insert the plugin at
+	 * @return {sap.ui.dt.DesignTime} this
+	 * @protected
+	 */
+	DesignTime.prototype.insertPlugin = function(oPlugin, iIndex) {
+		oPlugin.setDesignTime(this);
+
+		this.insertAggregation("plugins", oPlugin, iIndex);
+
 		return this;
 	};
 
-	DesignTime.prototype.getScope = function() {
-		return this.oScope;
-	};
-
-	DesignTime.prototype.getLoadedControlTypes = function() {
-		return this.oLibraryManager.aLoadedControls;
-	};
-
-
-	DesignTime.prototype.makeDraggable = function(sControlName, oControl) {
-		jQuery.sap.require("sap.ui.dt.PartsDragManager");
-		var aLoadedControls = this.getLoadedControlTypes();
-		var oControlObject = null;
-		for (var i = 0; i < aLoadedControls.length; i++) {
-			if (aLoadedControls[i].name === sControlName) {
-				oControlObject = this.getScope().getObject(sControlName);
-				break;
-			}
-		}
-		if (!oControlObject) {
-			jQuery.sap.log.error("No DT control can be found for " + sControlName);
-			return;
-		}
-		var oPD = new sap.ui.dt.PartsDragManager(oControlObject, this);
-		return oPD.set(oControl.$());
-	};
-
-
-	/*
-	 * @private
+	/**
+	 * Removes a plugin from the DesignTime
+	 * @param {sap.ui.dt.Plugin} oPlugin to remove
+	 * @return {sap.ui.dt.DesignTime} this
+	 * @protected
 	 */
-	DesignTime.prototype._createMutationObserver = function() {
-		var that = this;
-		var toTriggerEvent = false;
-		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-		var oMutationObserver = new MutationObserver(function(aMutations) {
-			// TODO: This logic needs serious rework
-
-			var bReturn = false;
-			for (var i = 0; i < aMutations.length; i++) {
-				var oMutation = aMutations[i];
-				// ignore body and overlays mutations
-				if (oMutation.target === that.getScope().getBodyElement() || jQuery(oMutation.target).closest("#overlay-container").length) {
-					bReturn = true;
-				} else {
-					bReturn = false;
-					break;
-				}
-			}
-
-			if (bReturn) {
+	DesignTime.prototype.removePlugin = function(oPlugin) {
+		this.getPlugins().forEach(function(oCurrentPlugin) {
+			if (oCurrentPlugin === oPlugin) {
+				oPlugin.setDesignTime(null);
 				return;
 			}
+		});
 
-			toTriggerEvent = true;
-			if (that._iMutationTimeout) {
-				clearTimeout(that._iMutationTimeout);
-			}
-			that._iMutationTimeout = setTimeout(function() {
-				if (toTriggerEvent) { 	// TODO  && that.isActive()
-					that.oEventBus.publish("dom.changed");
-					toTriggerEvent = false;
-				}
-			}, 50);
-		});
-		oMutationObserver.observe(this.oScope.getBodyElement(), {
-			childList : true,
-			subtree : true,
-			attributes : true
-		});
-		return oMutationObserver;
+		this.removeAggregation("plugins", oPlugin);
+
+		return this;
 	};
 
-	/*
+	/**
+	 * Removes all plugins from the DesignTime
+	 * @return {sap.ui.dt.DesignTime} this
+	 * @protected
+	 */
+	DesignTime.prototype.removeAllPlugins = function() {
+		this.getPlugins().forEach(function(oPlugin) {
+			oPlugin.setDesignTime(null);
+		});
+
+		this.removeAllAggregation("plugins");
+
+		return this;
+	};
+
+	/**
+	 * Returns all root elements from the DesignTime
+	 * @return {sap.ui.core.Element[]} rootElements of the DesignTime
+	 * @protected
+	 */
+	DesignTime.prototype.getRootElements = function() {
+		return this.getAssociation("rootElements") || [];
+	};
+
+	/**
+	 * Returns a designTimeMetadata
+	 * @return {map} designTimeMetadata
+	 * @protected
+	 */
+	DesignTime.prototype.getDesignTimeMetadata = function() {
+		return this.getProperty("designTimeMetadata") || {};
+	};
+
+	/**
+	 * Returns a designTimeMetadata for the element or className
+	 * @param {string|sap.ui.core.Element}
+	 * @return {object} designTimeMetadata for a specific element or className
+	 * @protected
+	 */
+	DesignTime.prototype.getDesignTimeMetadataFor = function(vElement) {
+		var sClassName = vElement;
+		var mDesignTimeMetadata = this.getDesignTimeMetadata();
+		if (vElement.getMetadata) {
+			sClassName = vElement.getMetadata().getName();
+		}
+		return mDesignTimeMetadata[sClassName];
+	};
+
+	/**
+	 * Adds a root element to the DesignTime and creates overlays for it and it's public descendants
+	 * @param {string|sap.ui.core.Element} vRootElement element or elemet's id
+	 * @return {sap.ui.dt.DesignTime} this
+	 * @protected
+	 */
+	DesignTime.prototype.addRootElement = function(vRootElement) {
+		this.addAssociation("rootElements", vRootElement);
+
+		var oRootOverlay = this._createElementOverlay(ElementUtil.getElementInstance(vRootElement));
+
+		// trigger rendering of all overlays only once after DesignTime is synced
+		// to prevent rerendering of UIArea during async loading process
+		this.attachEventOnce("synced", function() {
+			oRootOverlay.placeInOverlayContainer();
+		});
+
+		return this;
+	};
+
+	/**
+	 * Removes a root element from the DesignTime and destroys overlays for it and it's public descendants
+	 * @param {string|sap.ui.core.Element} vRootElement element or elemet's id
+	 * @return {sap.ui.dt.DesignTime} this
+	 * @protected
+	 */
+	DesignTime.prototype.removeRootElement = function(vRootElement) {
+		this.removeAssociation("rootElements", vRootElement);
+
+		this._destroyOverlaysForElement(ElementUtil.getElementInstance(vRootElement));
+
+		return this;
+	};
+
+	/**
+	 * Removes all root elements from the DesignTime and destroys overlays for them and theire public descendants
+	 * @param {string|sap.ui.core.Element} element or elemet's id
+	 * @return {sap.ui.dt.DesignTime} this
+	 * @protected
+	 */
+	DesignTime.prototype.removeAllRootElement = function() {
+		this.removeAssociation("rootElements");
+
+		this._destroyAllOverlays();
+
+		return this;
+	};
+
+
+	/**
+	 * Creates and returns the created instance of ElementOverlay for an element
+	 * @param {string|sap.ui.core.Element} oElement to create ElementOverlay for
+	 * @param {object} oDesignTimeMetadata to create ElementOverlay with
+	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
+	 * @protected
+	 */
+	DesignTime.prototype.createElementOverlay = function(oElement, bInHiddenTree) {
+		return new ElementOverlay({
+			inHiddenTree : bInHiddenTree,
+			element : oElement
+		});
+	};
+
+	/**
+	 * Returns an array with all element overlays created, registered and handled by the DesignTime
+	 * @return {sap.ui.dt.ElementOverlay[]} all element overlays created and handled by the DesignTime
+	 * @public
+	 */
+	DesignTime.prototype.getElementOverlays = function() {
+		var aElementOverlays = [];
+
+		this._iterateRootElements(function(oRootElement) {
+			aElementOverlays = aElementOverlays.concat(this._getAllElementOverlaysIn(oRootElement));
+		}, this);
+
+		return aElementOverlays;
+	};
+
+	/**
+	 * @param {sap.ui.core.Element} oElement element
+	 * @param {boolean} bInHiddenTree boolean value
+	 * @return {sap.ui.dt.ElementOverlay} created or already existing instance of ElementOverlay for oElement
 	 * @private
 	 */
-	DesignTime.prototype._onThemeChanged = function(oEvent) {
-		var sThemeName = oEvent.getParameter("theme");
-		// TODO Why not only fire "dom.changed" when the theme has changed? Why is this complex logic needed?
-		var that = this;
-		if (this._loadedThemes.indexOf(sThemeName) === -1) {
-			this._loadedThemes.push(sThemeName);
-			clearTimeout(this._iThemeTimeout);
-			// _onThemeChanged is not firing at the right time....
-			this._iThemeTimeout = setTimeout(function() {
-				// TODO: Refactor and move all event buses to the init
-				that.oEventBus.publish("dom.changed");
-			}, 500);
-		} else {
-			// TODO: Refactor and move all event buses to the init
-			that.oEventBus.publish("dom.changed");
+	DesignTime.prototype._createElementOverlay = function(oElement, bInHiddenTree) {
+		oElement = ElementUtil.fixComponentContainerElement(oElement);
+		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+		if (oElement && !oElement.bIsDestroyed && !oElementOverlay) {
+			if (this._iOverlaysPending === 0) {
+				this.fireSyncing();
+			}
+			this._iOverlaysPending++;
+
+			oElementOverlay = this.createElementOverlay(oElement, bInHiddenTree);
+			if (oElementOverlay) {
+				oElementOverlay.attachRequestElementOverlaysForAggregation(this._onRequestElementOverlaysForAggregation, this);
+				oElementOverlay.attachElementModified(this._onElementModified, this);
+				oElementOverlay.attachDestroyed(this._onElementOverlayDestroyed, this);
+				oElementOverlay.attachSelectionChange(this._onElementOverlaySelectionChange, this);
+			}
+
+			ElementUtil.loadDesignTimeMetadata(oElement).then(function(oDesignTimeMetadata) {
+				// if oElement is already destroyed while designtime metadata is loading
+				if (!oElement || oElement.bIsDestroyed) {
+					return;
+				}
+				// merge the DTMetadata from the DesignTime and from UI5
+				var oMergedDesignTimeMetadata = oDesignTimeMetadata || {};
+
+				jQuery.extend(true, oMergedDesignTimeMetadata, this.getDesignTimeMetadataFor(oElement));
+				var oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
+					libraryName : oElement.getMetadata().getLibraryName(),
+					data : oMergedDesignTimeMetadata});
+
+				oElementOverlay.setDesignTimeMetadata(oElementDesignTimeMetadata);
+				this.fireElementOverlayCreated({elementOverlay : oElementOverlay});
+			}.bind(this)).catch(function(oError) {
+				jQuery.sap.log.error("exception occured in sap.ui.dt.DesignTime._createElementOverlay", oError.stack || oError);
+				if (oError instanceof Error) {
+					this.fireSyncFailed();
+				}
+			}.bind(this)).then(function() {
+				this._iOverlaysPending--;
+				if (this._iOverlaysPending === 0) {
+					this.fireSyncedPureOverlays();
+				}
+			}.bind(this));
 		}
 
+		return oElementOverlay;
+	};
+
+	/**
+	 * Create an overlay for an element and register it in the DesignTime
+	 * @param {sap.ui.core.Element} oElement element
+	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
+	 * @public
+	 */
+	DesignTime.prototype.createOverlay = function(oElement) {
+		return this._createElementOverlay(oElement);
+	};
+
+	/**
+	 * @param {sap.ui.core.Element} oElement element
+	 * @private
+	 */
+	DesignTime.prototype._destroyOverlaysForElement = function(oElement) {
+		var oOverlay = OverlayRegistry.getOverlay(oElement);
+		if (oOverlay) {
+			oOverlay.destroy();
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	DesignTime.prototype._destroyAllOverlays = function() {
+		this._iterateRootElements(function(oRootElement) {
+			this._destroyOverlaysForElement(oRootElement);
+		}, this);
+	};
+
+	/**
+	 * @private
+	*/
+	DesignTime.prototype._createChildOverlaysForAggregation = function(oElementOverlay, sAggregationName) {
+		var oAggregationOverlay = oElementOverlay.getAggregationOverlay(sAggregationName);
+		var oElement = oElementOverlay.getElementInstance();
+		var vChildren = ElementUtil.getAggregation(oElement, sAggregationName);
+		ElementUtil.iterateOverElements(vChildren, function(oChild) {
+			this._createElementOverlay(oChild, oAggregationOverlay.isInHiddenTree());
+		}.bind(this));
+	};
+
+	/**
+	 * @private
+	*/
+	DesignTime.prototype._onRequestElementOverlaysForAggregation = function(oEvent) {
+		var oElementOverlay = oEvent.getSource();
+
+		var sAggregationName = oEvent.getParameter("name");
+		this._createChildOverlaysForAggregation(oElementOverlay, sAggregationName);
+	};
+
+	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @private
+	*/
+	DesignTime.prototype._onElementOverlayDestroyed = function(oEvent) {
+		var oElementOverlay = oEvent.getSource();
+
+		if (oElementOverlay.getSelected()) {
+			this._oSelection.remove(oElementOverlay);
+		}
+		this.fireElementOverlayDestroyed({overlay : oElementOverlay});
+	};
+
+	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @private
+	 */
+	DesignTime.prototype._onElementOverlaySelectionChange = function(oEvent) {
+		var oElementOverlay = oEvent.getSource();
+		var bSelected = oEvent.getParameter("selected");
+
+		this._oSelection.set(oElementOverlay, bSelected);
+	};
+
+	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @private
+	 */
+	DesignTime.prototype._onElementModified = function(oEvent) {
+		var oParams = oEvent.getParameters();
+		if (oParams.type === "addOrSetAggregation" || oParams.type === "insertAggregation") {
+			this._onElementOverlayAddAggregation(oParams.value, oParams.target, oParams.name);
+		} else if (oParams.type === "setParent") {
+			// timeout is needed because UI5 controls & apps can temporary "dettach" controls from control tree
+			// and add them again later, so the check if the control is dettached from root element's tree is delayed
+			setTimeout(function() {
+				if (!this.bIsDestroyed) {
+					this._checkIfOverlayShouldBeDestroyed(oParams.target, oParams.value);
+				}
+			}.bind(this), 0);
+		}
+	};
+
+	/**
+	 * @param {sap.ui.core.Element} oElement which was added
+	 * @private
+	 */
+	DesignTime.prototype._onElementOverlayAddAggregation = function(oChild, oParent, sAggregationName) {
+		// oElement can be of an alternative type (setLabel(sText) for example)
+		if (oChild instanceof sap.ui.core.Element) {
+			var oChildElementOverlay = OverlayRegistry.getOverlay(oChild);
+			if (!oChildElementOverlay) {
+				var bIsInHiddenTree = OverlayRegistry.getOverlay(oParent).getAggregationOverlay(sAggregationName).isInHiddenTree();
+				this._createElementOverlay(oChild, bIsInHiddenTree);
+			}
+		}
+	};
+
+	/**
+	 * @param {sap.ui.core.Element} oElement which parent was changed
+	 * @param {sap.ui.core.Element} oParent new parent
+	 * @private
+	 */
+	DesignTime.prototype._checkIfOverlayShouldBeDestroyed = function(oElement, oParent) {
+		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+		if (oElementOverlay && !this._isElementInRootElements(oElement)) {
+			oElementOverlay.destroy();
+		}
+	};
+
+	/**
+	 * @param {sap.ui.core.Element} oElement to check
+	 * @return {boolean} returns if an element is a descendant of any of the root elements
+	 * @private
+	 */
+	DesignTime.prototype._isElementInRootElements = function(oElement) {
+		var bFoundAncestor = false;
+
+		this._iterateRootElements(function(oRootElement) {
+			if (ElementUtil.hasAncestor(oElement, oRootElement)) {
+				bFoundAncestor = true;
+				return false;
+			}
+		});
+
+		return bFoundAncestor;
+	};
+
+	/**
+	 * @param {function} fnStep function called with every root element
+	 * @private
+	 */
+	DesignTime.prototype._iterateRootElements = function(fnStep, oScope) {
+		var aRootElements = this.getRootElements();
+		aRootElements.forEach(function(sRootElementId) {
+			var oRootElement = ElementUtil.getElementInstance(sRootElementId);
+			fnStep.call(oScope || this, oRootElement);
+		}, this);
+	};
+
+	/**
+	 * @param {sap.ui.core.Element} oElement to search overlays for, also all children overlays will be found
+	 * @return {sap.ui.dt.ElementOverlay[]} created element overlays for oElement and it's children
+	 * @private
+	 */
+	DesignTime.prototype._getAllElementOverlaysIn = function(oElement) {
+		var aElementOverlays = [];
+
+		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+		if (oElementOverlay) {
+			OverlayUtil.iterateOverlayElementTree(oElementOverlay, function(oChildOverlay) {
+				aElementOverlays.push(oChildOverlay);
+			});
+		}
+
+		return aElementOverlays;
 	};
 
 	return DesignTime;

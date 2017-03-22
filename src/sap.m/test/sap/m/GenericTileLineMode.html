@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<title>sap.m.GenericTile LineMode</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+
+	<style>
+		.TileContainer {
+			padding-bottom: 1rem;
+			padding-top: 1rem;
+			width: 100%;
+			min-height: 200px;
+			box-sizing: border-box;
+		}
+		.sapUiTheme-sap_belize .TileContainer {
+			background-color: #ebf2f7;
+		}
+	</style>
+
+	<script>
+		jQuery.sap.initMobile();
+
+		function makeTileData() {
+			return {
+				header: "This is a header",
+				subheader: "Subheader",
+				tooltip: "",
+				state: "Loaded",
+				hasPress: true,
+				scope: "Display"
+			};
+		}
+
+		function handlePress(oEvent) {
+			if (oEvent.getParameter("scope") === sap.m.GenericTileScope.Actions &&
+				oEvent.getParameter("action") === "Press") {
+				var oActionSheet = new sap.m.ActionSheet({
+					title : "Choose Your Action",
+					showCancelButton : true,
+					placement : "Bottom",
+					buttons : [
+						new sap.m.Button({
+							text : "Move"
+						}),
+						new sap.m.Button({
+							text : "Whatever"
+						})
+					],
+					afterClose : function () {
+						oActionSheet.destroy();
+					}
+				});
+				oActionSheet.openBy(oEvent.getParameter("domRef"));
+			} else {
+				sap.m.MessageToast.show("Action " + oEvent.getParameter("action") + " on " + oEvent.getSource().getId() + " pressed.");
+			}
+		}
+
+		var oModel = new sap.ui.model.json.JSONModel({
+			items: [
+				makeTileData()
+			],
+			states: Object.keys(sap.m.LoadState),
+			scopes: Object.keys(sap.m.GenericTileScope)
+		});
+
+		var fnCreateTile = function() {
+			var oTile = new sap.m.GenericTile({
+				mode: "LineMode",
+				header: "{header}",
+				subheader: "{subheader}",
+				tooltip: "{tooltip}",
+				state: "{state}",
+				scope: "{scope}"
+			});
+			oTile.addCustomData(new sap.ui.core.CustomData({
+				key: "hasPress",
+				value: {
+					path: "hasPress",
+					events: {
+						change: function() {
+							if (this.oValue === true) {
+								oTile.attachPress(handlePress);
+							} else {
+								oTile.detachPress(handlePress);
+							}
+						}
+					}
+				}
+			}));
+			return oTile;
+		};
+
+		var fnCreateTileConfig = function(id, context) {
+			return new sap.m.Panel(id, {
+				backgroundDesign: "Solid",
+				headerToolbar: new sap.m.OverflowToolbar({
+					content: [
+						new sap.m.Label({
+							text: context.getPath()
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Button({
+							text: "Repeat Header",
+							press: function() {
+								var iRepeat = parseInt(window.prompt("Times", 1), 10) || 1;
+								oModel.setProperty(context.getPath("header"), (new Array(iRepeat + 1).join(context.getObject().header)));
+								oModel.refresh(true);
+							}
+						}),
+						new sap.m.Button({
+							icon: "sap-icon://delete",
+							press: function() {
+								var aItems = oModel.getProperty("/items");
+								var index = parseInt(context.getPath().match(/\/([^\/]*)$/i), 10);
+								aItems.splice(index, 1);
+								oModel.setProperty("/items", aItems);
+							}
+						})
+					]
+				}),
+				content: [
+					new sap.ui.layout.form.SimpleForm({
+						labelSpanS: 6,
+						labelSpanM: 6, columnsM: 2,
+						labelSpanL: 2, columnsL: 2,
+						layout: "GridLayout",
+						editable: true,
+						maxContainerCols: 2,
+						content: [
+							new sap.m.Label({ text: "Header" }),
+							new sap.m.Input({
+								type: sap.m.InputType.Text,
+								value: "{header}",
+								placeholder: "Enter a header text...",
+								change: function() {
+									oModel.refresh(true);
+								}
+							}),
+							new sap.m.Label({ text: "Subheader" }),
+							new sap.m.Input({
+								type: sap.m.InputType.Text,
+								value: "{subheader}",
+								placeholder: "Enter a subheader text..."
+							}),
+							new sap.m.Label({ text: "Tooltip" }),
+							new sap.m.Input({
+								type: sap.m.InputType.Text,
+								value: "{tooltip}",
+								placeholder: "Enter a tooltip..."
+							}),
+							new sap.m.Label({ text: "State" }),
+							new sap.m.Select({
+								items: {
+									path: "/states",
+									template: new sap.ui.core.Item({
+										key: "{}",
+										text: "{}"
+									})
+								},
+								selectedKey: "{state}"
+							}),
+							new sap.m.Label({ text: "Scope" }),
+							new sap.m.Select({
+								items: {
+									path: "/scopes",
+									template: new sap.ui.core.Item({
+										key: "{}",
+										text: "{}"
+									})
+								},
+								selectedKey: "{scope}"
+							}),
+							new sap.m.Label({ text: "Press Event" }),
+							new sap.m.Switch({
+								state: "{hasPress}"
+							})
+						]
+					})
+				]
+			});
+		};
+
+		var oTileContainer = new sap.ui.layout.HorizontalLayout({
+			allowWrapping: true,
+			content: {
+				path: "/items",
+				factory: fnCreateTile
+			}
+		});
+
+		var oTileConfigContainer = new sap.m.ScrollContainer({
+			focusable: false,
+			width: "100%",
+			content: [
+				new sap.m.HBox({
+					items: {
+						path: "/items",
+						factory: fnCreateTileConfig
+					}
+				})
+			]
+		});
+
+		var oAddTileBtn = new sap.m.Button({
+			text: "Add tile",
+			press: function() {
+				oModel.oData.items.push(makeTileData());
+				oModel.refresh();
+			}
+		});
+
+		var oRemoveAllBtn = new sap.m.Button({
+			text: "Remove all",
+			press: function() {
+				oModel.oData.items = [];
+				oModel.refresh();
+			}
+		});
+
+		var oDensityModeButton = new sap.m.ToggleButton({
+			pressed: false,
+			text: "Cozy",
+			press: function() {
+				if (oDensityModeButton.getPressed()) {
+					oTileContainer.addStyleClass("sapUiSizeCompact");
+					oTileContainer.rerender();
+					oDensityModeButton.setText("Compact");
+				} else {
+					oTileContainer.removeStyleClass("sapUiSizeCompact");
+					oTileContainer.rerender();
+					oDensityModeButton.setText("Cozy");
+				}
+			}
+		});
+
+		var oPage = new sap.m.Page("initial-page", {
+			showHeader: false,
+			content: [
+				new sap.m.VBox({
+					fitContainer: true,
+					items: [
+						new sap.m.Toolbar({
+							content: [
+								oDensityModeButton,
+								oAddTileBtn,
+								oRemoveAllBtn
+							]
+						}).addStyleClass("sapUiSizeCompact"),
+						oTileContainer.addStyleClass("TileContainer"),
+						oTileConfigContainer.addStyleClass("sapUiSizeCompact")
+					]
+				})
+			]
+		}).addStyleClass("sapUiContentPadding").setModel(oModel);
+
+		//create a mobile App embedding the page and place the App into the HTML document
+		new sap.m.App("myApp", {
+			pages: [oPage]
+		}).placeAt("content");
+	</script>
+
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+</html>

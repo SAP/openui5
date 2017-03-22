@@ -1,26 +1,26 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.BarBase</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script>
 		function renderBarInPageTestCase(sTestName, sContext, sExpectedTag, sExpectedClass) {
-			test(sTestName, function () {
+			QUnit.test(sTestName, function (assert) {
 				// System under Test + Act
 				var oBar = new sap.m.Bar();
 
@@ -32,8 +32,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				strictEqual(oBar.getDomRef().nodeName, sExpectedTag.toUpperCase());
-				ok(oBar.$().hasClass(sExpectedClass), "The bar has the context class: " + sExpectedClass);
+				assert.strictEqual(oBar.getDomRef().nodeName, sExpectedTag.toUpperCase());
+				assert.ok(oBar.$().hasClass(sExpectedClass), "The bar has the context class: " + sExpectedClass);
 
 				// Cleanup
 				oBar.destroy();

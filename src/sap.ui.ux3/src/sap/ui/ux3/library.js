@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.ux3.
  */
-sap.ui.define(['jquery.sap.global', 
+sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/library', // library dependency
 	'sap/ui/commons/library'], // library dependency
 	function(jQuery) {
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @version ${version}
 	 * @public
 	 */
-	
+
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.ux3",
@@ -76,54 +76,54 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.ux3.ThingGroup"
 		]
 	});
-	
-	
+
+
 	/**
 	 * Enumeration of available standard actions for 'sap.ui.ux3.ActionBar'. To be used as parameters for function 'sap.ui.ux3.ActionBar.getSocialAction'.
 	 *
 	 * @enum {string}
 	 * @public
-	 * @experimental Since version 1.2. 
+	 * @experimental Since version 1.2.
 	 * API is not yet finished and might change completely
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.ActionBarSocialActions = {
-	
+
 		/**
 		 * Standard action 'Create an update' (Feed)
 		 * @public
 		 */
 		Update : "Update",
-	
+
 		/**
 		 * Standard action 'Follow/Unfollow'
 		 * @public
 		 */
 		Follow : "Follow",
-	
+
 		/**
 		 * Standard action 'Mark for Follow up'
 		 * @public
 		 */
 		Flag : "Flag",
-	
+
 		/**
 		 * Standards action 'Mark as Favorite'
 		 * @public
 		 */
 		Favorite : "Favorite",
-	
+
 		/**
 		 * Standard action 'Open Thing Inspector'
 		 * @public
 		 */
 		Open : "Open"
-	
+
 	};
 	/**
-	 * 
+	 *
 	 *   		Marker interface for controls which are suitable as view rendering for a DataSet.
-	 *   	
+	 *
 	 *
 	 * @author SAP SE
 	 * @name sap.ui.ux3.DataSetView
@@ -131,8 +131,8 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
-	
+
+
 	/**
 	 * Defines the order of the sub lists of a list in the ExactBrowser.
 	 *
@@ -143,54 +143,54 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.ExactOrder = {
-	
+
 		/**
 		 * The order of the sub lists is defined by the selection order of the user.
 		 * @public
 		 */
 		Select : "Select",
-	
+
 		/**
 		 * The order of the sub lists is defined by order of the defined sub attributes.
 		 * @public
 		 */
 		Fixed : "Fixed"
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Type of an Feeder.
 	 *
 	 * @enum {string}
 	 * @public
-	 * @experimental Since version 1.2. 
+	 * @experimental Since version 1.2.
 	 * The whole Feed/Feeder API is still under discussion, significant changes are likely. Especially text presentation (e.g. @-references and formatted text) is not final. Also the Feed model topic is still open.
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.FeederType = {
-	
+
 		/**
 		 * large Feeder
 		 * @public
 		 */
 		Large : "Large",
-	
+
 		/**
 		 * medium feeder
 		 * @public
 		 */
 		Medium : "Medium",
-	
+
 		/**
 		 * comment feeder (small)
 		 * @public
 		 */
 		Comment : "Comment"
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Defines the states of the follow action
 	 *
@@ -199,28 +199,28 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.FollowActionState = {
-	
+
 		/**
 		 * follow state
 		 * @public
 		 */
 		Follow : "Follow",
-	
+
 		/**
 		 * hold state
 		 * @public
 		 */
 		Hold : "Hold",
-	
+
 		/**
 		 * default state
 		 * @public
 		 */
 		Default : "Default"
-	
+
 	};
-	
-	
+
+
 	/**
 	 * This entries are used to set the visibility status of a NotificationBar
 	 *
@@ -230,34 +230,34 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.NotificationBarStatus = {
-	
+
 		/**
 		 * Default height for the bar
 		 * @public
 		 */
 		Default : "Default",
-	
+
 		/**
 		 * Bar should be minimized
 		 * @public
 		 */
 		Min : "Min",
-	
+
 		/**
 		 * Bar should be maximized
 		 * @public
 		 */
 		Max : "Max",
-	
+
 		/**
 		 * Bar should not be visible
 		 * @public
 		 */
 		None : "None"
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Available shell design types.
 	 *
@@ -268,35 +268,35 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.ShellDesignType = {
-	
+
 		/**
 		 * The standard Shell design (dark).
 		 * @public
 		 */
 		Standard : "Standard",
-	
+
 		/**
-		 * 
+		 *
 		 * A lighter design. Should be used in combination with the Standard header
 		 * type.
-		 * 
+		 *
 		 * @public
 		 */
 		Light : "Light",
-	
+
 		/**
-		 * 
+		 *
 		 * An even lighter design. It borrows most of its properties from the Light
 		 * design and just changes a few details like the header colors in order to
 		 * have a blue design within gold reflection.
-		 * 
+		 *
 		 * @public
 		 */
 		Crystal : "Crystal"
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Available shell header display types.
 	 *
@@ -306,34 +306,34 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.ShellHeaderType = {
-	
+
 		/**
 		 * The standard Shell header.
 		 * @public
 		 */
 		Standard : "Standard",
-	
+
 		/**
 		 * Only the branding area is visible. Top-level navigation bar, header items, title and icon are not shown.
 		 * @public
 		 */
 		BrandOnly : "BrandOnly",
-	
+
 		/**
 		 * Like the Standard Area but without top-level navigation bar.
 		 * @public
 		 */
 		NoNavigation : "NoNavigation",
-	
+
 		/**
 		 * Like the Standard Area but with a leaner top-level navigation bar.
 		 * @public
 		 */
 		SlimNavigation : "SlimNavigation"
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Available ThingViewer header display types.
 	 *
@@ -344,22 +344,22 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.ThingViewerHeaderType = {
-	
+
 		/**
 		 * The standard ThingViewer header.
 		 * @public
 		 */
 		Standard : "Standard",
-	
+
 		/**
 		 * The header content is displayed horizontally above the facet content
 		 * @public
 		 */
 		Horizontal : "Horizontal"
-	
+
 	};
-	
-	
+
+
 	/**
 	 * VisibleItemCountMode of the FacetFilter defines if the FacetFilter takes the whole available height (Auto) in the surrounding container, or is so high as needed to show 5 Items ("Fixed " - default).
 	 *
@@ -368,19 +368,19 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.ux3.VisibleItemCountMode = {
-	
+
 		/**
 		 * The FacetFilter always has as many items in the FacetFilterList as defined in the visibleItemCount property.
 		 * @public
 		 */
 		Fixed : "Fixed",
-	
+
 		/**
 		 * The FacetFilter automatically fills the height of the surrounding container. The visibleItemCount property is automatically changed accordingly.
 		 * @public
 		 */
 		Auto : "Auto"
-	
+
 	};
 
 	return sap.ui.ux3;

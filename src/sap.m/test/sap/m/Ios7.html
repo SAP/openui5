@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Ios7 detection - sap.m</title>
 		<style type="text/css">
 			label.sapMLabel {
@@ -9,14 +9,13 @@
 				margin: 0.5em 0 0 0;
 			}
 		</style>
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.ui.commons,sap.m"
-			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.m"
 			data-sap-ui-compatVersion="1.16">
 		</script>
-		<script type="text/javascript">
+		<script>
 			function updateLabel () {
 				label.setText("Keyboard: " + sap.m.ios7._bInputIsOpen + " Intervall: " + sap.m.ios7._bIntervallAttached + " fired: " + sap.m.ios7._bNavigationBarEventFired);
 				labelW.setText("refresh: inner: " + window.innerHeight + " outer: " + window.outerHeight + " or: " +  window.orientation);
@@ -63,7 +62,7 @@
 			sap.ui.Device.orientation.attachHandler(function() {
 				updateLabel();
 			});
-			
+
 			jQuery.sap.require("sap.m.ios7");
 			jQuery.sap.require("sap.m.MessageBox");
 			sap.m.ios7.attachEvent("navigationBarShownInLandscape", function(oEvent) {

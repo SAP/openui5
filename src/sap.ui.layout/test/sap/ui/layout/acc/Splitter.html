@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Splitter ACC Test - sap.ui.layout</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.layout, sap.m"
+			src="../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script>
+		var sLorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae congue diam. Donec venenatis justo sed bibendum finibus.",
+				oSplitter = new sap.ui.layout.Splitter("mySplitter", {
+					contentAreas: [
+						new sap.m.VBox({
+							items: [
+								new sap.m.Text({text: sLorem}),
+								new sap.m.Button({text: "Press me"})
+							]
+						}),
+						new sap.m.VBox({
+							items: [
+								new sap.m.Text({text: sLorem}),
+								new sap.m.Button({text: "Press me 2"})
+							]
+						}),
+						new sap.m.VBox({
+							items: [
+								new sap.m.Text({text: sLorem}),
+								new sap.m.Button({text: "Press me 3"})
+							]
+						})
+					]
+				});
+		oSplitter.placeAt("content");
+
+		new sap.m.Button({
+			text: "Switch Orientation",
+			press: function () {
+				var sOrientation = oSplitter.getOrientation() === sap.ui.core.Orientation.Vertical ? sap.ui.core.Orientation.Horizontal : sap.ui.core.Orientation.Vertical;
+				oSplitter.setOrientation(sOrientation);
+			}
+		}).placeAt("content");
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+<h1 id="header">ACC Test Page for <code>sap.ui.layout.Splitter</code></h1>
+<div id="content" style="height: 500px"></div>
+</body>
+</html>

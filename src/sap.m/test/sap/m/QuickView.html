@@ -1,13 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>sap.m.QuickView</title>
+	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 	</script>
 
 	<style>
@@ -20,7 +19,7 @@
 	</style>
 	<script>
 
-		//		create JSON model instance
+		// create JSON model instance
 		var oModel = new sap.ui.model.json.JSONModel();
 
 		// JSON sample data
@@ -226,7 +225,9 @@
 		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
 		app.placeAt("body");
 
-		var oQuickView = new sap.m.QuickView({
+		var oQuickView = new sap.m.QuickView("QV1", {
+			placement : sap.m.PlacementType.VerticalPreferedBottom,
+			tooltip: "Employee QuickView",
 			pages : {
 				path : '/pages',
 				template : new sap.m.QuickViewPage({
@@ -255,15 +256,14 @@
 			}
 		});
 
-		var oQuickView1 = new sap.m.QuickView();
-
-		var oQuickView2 = new sap.m.QuickView({
+		var oQuickView2 = new sap.m.QuickView("QV2", {
+			placement : sap.m.PlacementType.VerticalPreferedBottom,
 			pages : [
 				new sap.m.QuickViewPage({
 					header	: "Store",
 					title	: "Jumbo",
 					description	: "The best toy store in the USA",
-					icon	: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg", //"sap-icon://retail-store",
+					icon	: "sap-icon://retail-store",
 					groups	: [
 						new sap.m.QuickViewGroup({
 							heading		: "Store details",
@@ -297,9 +297,7 @@
 
 		oQuickView.setModel(oModel);
 
-		// this.getView().addDependent(oQuickView);
-
-		var oButton = new sap.m.Button({
+		var oButton = new sap.m.Button("QVButton", {
 			text: "Open Quick View with binding",
 			press: function() {
 				oQuickView.openBy(this);
@@ -320,14 +318,7 @@
 			}
 		});
 
-		var oOpenEmptyQuickViewButton = new sap.m.Button({
-			text: "Open empty quick view",
-			press: function() {
-				oQuickView1.openBy(this);
-			}
-		});
-
-		var oSinglePageQuickViewButton = new sap.m.Button({
+		var oSinglePageQuickViewButton = new sap.m.Button("SinglePageQVButton", {
 			text: "Open a single page quick view",
 			press: function() {
 				oQuickView2.openBy(this);
@@ -338,7 +329,7 @@
 			header	: "Store",
 			title	: "Jumbo",
 			description	: "The best toy store in the USA",
-			icon	: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg", //"sap-icon://retail-store",
+			icon	: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg",
 			groups	: [
 				new sap.m.QuickViewGroup({
 					heading		: "Store details",
@@ -381,8 +372,7 @@
 			title : "Quick View",
 			content : [
 				oButton,
-				oModifyJsonButton,
-				oOpenEmptyQuickViewButton,
+				//oModifyJsonButton,
 				oSinglePageQuickViewButton,
 				oPanel
 			]

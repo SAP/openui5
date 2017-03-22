@@ -9,15 +9,14 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			dependencies : {
 				libs : [
 					"sap.m",
-					"sap.ui.comp"
+					"sap.ui.layout",
+					"sap.ui.table"
 				]
 			},
-			includes : [ "PageListReportToolbar/style.css" ],
 			config : {
 				sample : {
 					stretch : true,
 					files : [
-						"style.css",
 						"Page.view.xml"
 					]
 				}

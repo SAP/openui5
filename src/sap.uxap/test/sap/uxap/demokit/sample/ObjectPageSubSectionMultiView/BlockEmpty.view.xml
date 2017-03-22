@@ -1,0 +1,16 @@
+<mvc:View
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m"
+		controllerName="sap.uxap.sample.ObjectPageSubSection.MultiViewBlockCommon">
+
+	<forms:SimpleForm
+			maxContainerCols="2"
+			title=" "
+			editable="false"
+			layout="ResponsiveGridLayout">
+
+	</forms:SimpleForm>
+
+</mvc:View>

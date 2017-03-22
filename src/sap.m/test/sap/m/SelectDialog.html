@@ -1,16 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>SelectDialog - sap.m</title>
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.ui.commons,sap.m"
-			data-sap-ui-xx-bindingSyntax="complex"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-xx-bindingSyntax="complex">
 		</script>
-		<script type="text/javascript">
+		<script>
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 			jQuery.sap.require("sap.ui.model.odata.ODataModel");
 
@@ -135,7 +134,7 @@
 				icon: "{icon}",
 				type: "Active"
 			})
-			
+
 			var oItemTemplateSelection = new sap.m.StandardListItem({
 				title: "{title}",
 				description: "{description}",
@@ -219,7 +218,6 @@
 				type: "Text",
 				placeholder: "Open SelectDialog with Dialog Binding & List Binding & width set to 30rem",
 				showValueHelp: true
-
 			})
 			var oButton2 = new sap.m.Button("Button2", {
 				text: "Open SelectDialog with Dialog Binding & List Binding & prefiltered by \"ad\"",
@@ -283,7 +281,7 @@
 				search : fnDoProductSearch,
 				liveChange: fnDoProductSearch
 			});
-			
+
 			var oProductItemTemplate = new sap.m.StandardListItem({
 				title : "{ProductId}",
 				description : "{Name}",
@@ -348,7 +346,7 @@
 				info: "{Price/CurrencyCode}",
 				infoState: "Warning"
 			});
-			
+
 			var my = {
 				productSelectionFormatter: function (sText) {
 					if(!sText) {
@@ -391,7 +389,7 @@
 				press: function (oEvent) {
 					// open dialog
 					oSelectDialog4a.open("id_1");
-					
+
 					// initiate model
 					var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
 					oSelectDialog4a.setModel(oModel);
@@ -438,7 +436,7 @@
 			// set model & bind Aggregation
 			oSelectDialog6.setModel(oModelList);
 			oSelectDialog6.bindAggregation("items", "/superheros", oItemTemplate);
-	
+
 			// attach close listener
 			oSelectDialog6.attachConfirm(function (oEvent) {
 				var aSelectedItems = oEvent.getParameter("selectedItems"),
@@ -479,7 +477,7 @@
 			});
 
 			/* 7) SelectDialog in MultiSelect mode prefiltered by \"id_\" with web service binding and 400px width */
-			
+
 			var oSelectDialog7 = new sap.m.SelectDialog("SelectDialog7", {
 				title: "Choose several World Domination companions",
 				noDataText: "Sorry, no world domination companions available",
@@ -649,7 +647,7 @@
 				filters: fnCreatePrefilter("Hulk"),
 				template: oItemTemplateSelection
 			});
-			
+
 			var oButton9 = new sap.m.Button("Button9", {
 				text: "Open SelectDialog in MultiSelect mode prefiltered by \"Hulk\" with JSON binding and selection model and rememberSelections=true",
 				press: function () {
@@ -742,7 +740,7 @@
 						]
 					})
 				],
-				footer: new sap.m.Bar({ 
+				footer: new sap.m.Bar({
 					contentRight: [oButton5]
 				})
 			});

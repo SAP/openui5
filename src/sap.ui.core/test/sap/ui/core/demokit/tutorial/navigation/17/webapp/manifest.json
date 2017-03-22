@@ -1,0 +1,148 @@
+{
+	"_version": "1.1.0",
+	"sap.app": {
+		"_version": "1.1.0",
+		"id": "sap.ui.demo.nav",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-FST",
+		"dataSources": {
+			"employeeRemote": {
+				"uri": "/here/goes/your/serviceUrl/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri" : "localService/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"_version": "1.1.0",
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": ["sap_belize"]
+  	},
+	"sap.ui5": {
+		"_version": "1.1.0",
+		"rootView": "sap.ui.demo.nav.view.App",
+		"dependencies": {
+			"minUI5Version": "1.30",
+			"libs": {
+				"sap.m": { }
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.nav.i18n.i18n"
+				}
+			},
+			"": {
+				"dataSource": "employeeRemote"
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.nav.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				}
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "appHome",
+				"target": "home"
+			}, {
+				"pattern": "employees",
+				"name": "employeeList",
+				"target": "employees"
+			}, {
+				"pattern": "employee/overview:?query:",
+				"name": "employeeOverview",
+				"target": ["EmployeeOverviewTop", "EmployeeOverviewContent"]
+			}, {
+				"pattern": "employees/{employeeId}",
+				"name": "employee",
+				"target": "employee"
+			}, {
+				"pattern": "employees/{employeeId}/resume:?query:",
+				"name": "employeeResume",
+				"target": "employeeResume"
+			}],
+			"targets": {
+				"home": {
+					"viewName": "Home",
+					"viewLevel" : 1
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"transition": "show"
+				},
+				"employees": {
+					"viewPath": "sap.ui.demo.nav.view.employee",
+					"viewName": "EmployeeList",
+					"viewLevel" : 2
+				},
+				"employee": {
+					"viewName": "employee.Employee",
+					"viewLevel" : 3
+				},
+				"employeeResume": {
+					"viewName": "employee.Resume",
+					"viewLevel" : 4,
+					"transition": "flip"
+				},
+				"resumeTabHobbies": {
+					"parent": "employeeResume",
+					"viewPath": "sap.ui.demo.nav.view.employee",
+					"viewName": "ResumeHobbies",
+					"viewId": "thisIsMyCustomIdToBeUsedForResumeHobbies",
+					"controlId": "hobbiesTab",
+					"controlAggregation": "content"
+				},
+				"resumeTabNotes": {
+					"parent": "employeeResume",
+					"viewPath": "sap.ui.demo.nav.view.employee",
+					"viewName": "ResumeNotes",
+					"controlId": "notesTab",
+					"controlAggregation": "content"
+				},
+				"EmployeeOverview": {
+					"viewPath": "sap.ui.demo.nav.view.employee.overview",
+					"viewName": "EmployeeOverview",
+					"viewLevel" : 2
+				},
+				"EmployeeOverviewTop": {
+					"parent": "EmployeeOverview",
+					"viewPath": "sap.ui.demo.nav.view.employee.overview",
+					"viewName": "EmployeeOverviewTop",
+					"controlId": "EmployeeOverviewParent",
+					"controlAggregation": "content"
+				},
+				"EmployeeOverviewContent": {
+					"parent": "EmployeeOverview",
+					"viewPath": "sap.ui.demo.nav.view.employee.overview",
+					"viewName": "EmployeeOverviewContent",
+					"controlId": "EmployeeOverviewParent",
+					"controlAggregation": "content"
+				}
+			}
+		}
+	}
+}

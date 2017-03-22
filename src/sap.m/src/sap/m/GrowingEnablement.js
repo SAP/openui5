@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.GrowingEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat'],
+	function(jQuery, BaseObject, NumberFormat) {
 	"use strict";
 
 
@@ -31,12 +31,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			/* init growing list */
 			var iRenderedItemsLength = this._oControl.getItems(true).length;
 			this._iRenderedDataItems = iRenderedItemsLength;
-			this._iItemCount = iRenderedItemsLength;
-			this._bRebuilding = false;
-			this._fnRebuildQ = null;
+			this._iLimit = iRenderedItemsLength;
 			this._bLoading = false;
 			this._sGroupingPath = "";
 			this._bDataRequested = false;
+			this._oContainerDomRef = null;
+			this._iTriggerTimer = 0;
+			this._aChunk = [];
+			this._oRM = null;
 		},
 
 		/**
@@ -44,110 +46,74 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * This function must be called by the control which uses this delegate in the <code>exit</code> function.
 		 */
 		destroy : function() {
-			if (this._oBusyIndicator) {
-				this._oBusyIndicator.destroy();
-				delete this._oBusyIndicator;
-			}
 			if (this._oTrigger) {
 				this._oTrigger.destroy();
-				delete this._oTrigger;
-			}
-			if (this._oLoading) {
-				this._oLoading.destroy();
-				delete this._oLoading;
+				this._oTrigger = null;
 			}
 			if (this._oScrollDelegate) {
 				this._oScrollDelegate.setGrowingList(null);
 				this._oScrollDelegate = null;
 			}
+			if (this._oRM) {
+				this._oRM.destroy();
+				this._oRM = null;
+			}
 
-			jQuery(this._oControl.getId() + "-triggerList").remove();
+			this._oControl.$("triggerList").remove();
 			this._oControl.bUseExtendedChangeDetection = false;
 			this._oControl.removeDelegate(this);
-			this._sGroupingPath = "";
-			this._bLoading = false;
+			this._oContainerDomRef = null;
 			this._oControl = null;
 		},
 
-		/**
-		 * Renders loading indicator or load more trigger
-		 */
-		render : function(rm) {
-			var bHasScrollToLoadAndScrollbars = this._oControl.getGrowingScrollToLoad() && this._getHasScrollbars();
-
-			rm.write("<ul id='" + this._oControl.getId() + "-triggerList' role='presentation'");
-
-			if (bHasScrollToLoadAndScrollbars) {
-				rm.addStyle("display", "none");
-				rm.writeStyles();
-			}
-
-			// no header or footer no div
-			rm.addClass("sapMListUl");
-			rm.addClass("sapMGrowingList");
-			if (this._oControl.setBackgroundDesign) {
-				rm.addClass("sapMListBG" + this._oControl.getBackgroundDesign());
-			}
-
-			if (this._oControl.getInset()) {
-				rm.addClass("sapMListInset");
-			}
-			rm.writeClasses();
-			rm.write(">");
-
-			var oActionItem;
-			if (bHasScrollToLoadAndScrollbars) {
-				this._showsLoading = true;
-				oActionItem = this._getLoading(this._oControl.getId() + "-loading");
-			} else {
-				this._showsTrigger = true;
-				oActionItem = this._getTrigger(this._oControl.getId() + "-trigger");
-			}
-
-			// this variable is needed to render loading indicator in list even in table mode
-			rm.renderControl(oActionItem);
-			rm.write("</ul>");
+		// renders load more trigger
+		render : function(oRm) {
+			oRm.write("<ul");
+			oRm.addClass("sapMListUl");
+			oRm.addClass("sapMGrowingList");
+			oRm.writeAttribute("role", "presentation");
+			oRm.writeAttribute("id", this._oControl.getId() + "-triggerList");
+			oRm.addStyle("display", "none");
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write(">");
+			oRm.renderControl(this._getTrigger());
+			oRm.write("</ul>");
 		},
 
-		/**
-		 * Called after rendering phase of the given control
-		 */
 		onAfterRendering : function() {
-			if (this._oControl.getGrowingScrollToLoad()) {
-				var oScrollDelegate = sap.m.getScrollDelegate(this._oControl);
+			var oControl = this._oControl;
+			if (oControl.getGrowingScrollToLoad()) {
+				var oScrollDelegate = sap.m.getScrollDelegate(oControl);
 				if (oScrollDelegate) {
 					this._oScrollDelegate = oScrollDelegate;
-					oScrollDelegate.setGrowingList(this._oControl, jQuery.proxy(this._triggerLoadingByScroll, this));
+					oScrollDelegate.setGrowingList(this.onScrollToLoad.bind(this), oControl.getGrowingDirection());
 				}
 			} else if (this._oScrollDelegate) {
 				this._oScrollDelegate.setGrowingList(null);
-
 				this._oScrollDelegate = null;
 			}
 
-			this._updateTrigger();
+			this._updateTriggerDelayed(false);
 		},
 
 		setTriggerText : function(sText) {
-			if (this._oTrigger) {
-				this._oTrigger.getContent()[0].$().find(".sapMSLITitle").text(sText);
-			}
+			this._oControl.$("triggerText").text(sText);
 		},
 
-		// call to reset paging
+		// reset paging
 		reset : function() {
-			this._iItemCount = 0;
+			this._iLimit = 0;
 		},
 
 		// determines growing reset with binding change reason
-		// according to UX sort/filter/refresh/context should reset the growing
+		// according to UX sort/filter/context should reset the growing
 		shouldReset : function(sChangeReason) {
 			var mChangeReason = sap.ui.model.ChangeReason;
 
 			return 	sChangeReason == mChangeReason.Sort ||
 					sChangeReason == mChangeReason.Filter ||
-					sChangeReason == mChangeReason.Context ||
-					sChangeReason == mChangeReason.Refresh;
+					sChangeReason == mChangeReason.Context;
 		},
 
 		// get actual and total info
@@ -158,12 +124,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			};
 		},
 
+		onScrollToLoad: function() {
+			if (!this._bLoading && this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+				var oScrollDelegate = this._oScrollDelegate;
+				this._oScrollPosition = {
+					left : oScrollDelegate.getScrollLeft(),
+					top : oScrollDelegate.getScrollHeight()
+				};
+			}
+
+			this.requestNewPage();
+		},
+
 		// call to request new page
-		requestNewPage : function(oEvent) {
-			// if max item count not reached
-			if (this._oControl && !this._bLoading && this._iItemCount < this._oControl.getMaxItemsCount()) {
-				this._showIndicator();
-				this._iItemCount += this._oControl.getGrowingThreshold();
+		requestNewPage : function() {
+			if (!this._oControl || this._bLoading) {
+				return;
+			}
+
+			// if max item count not reached or if we do not know the count
+			var oBinding = this._oControl.getBinding("items");
+			if (oBinding && !oBinding.isLengthFinal() || this._iLimit < this._oControl.getMaxItemsCount()) {
+				this._iLimit += this._oControl.getGrowingThreshold();
+				this._updateTriggerDelayed(true);
 				this.updateItems("Growing");
 			}
 		},
@@ -176,113 +159,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 		// called after new page loaded
 		_onAfterPageLoaded : function(sChangeReason) {
-			this._hideIndicator();
-			this._updateTrigger();
 			this._bLoading = false;
+			this._updateTriggerDelayed(false);
 			this._oControl.onAfterPageLoaded(this.getInfo(), sChangeReason);
 		},
 
-		/**
-		 *
-		 * this._oRenderManager is optionally used if defined in order to improve performance. It indicates a state where multiple items can be subsequently rendered.
-		 * If this._oRenderManager is defined, it is the responsibility of the caller to flush and destroy the RenderManager after the last call.
-		 */
-		_renderItemIntoContainer : function(oItem, bDoNotPreserve, vInsert, oDomRef) {
-			oDomRef = oDomRef || this._oContainerDomRef;
-			if (oDomRef) {
-				var rm = this._oRenderManager || sap.ui.getCore().createRenderManager();
-				rm.renderControl(oItem);
-				if (!this._oRenderManager) {
-					rm.flush(oDomRef, bDoNotPreserve, vInsert);
-					rm.destroy();
-				}
-			}
-		},
-
-		_getBusyIndicator : function() {
-			return this._oBusyIndicator || (this._oBusyIndicator = new sap.m.BusyIndicator({
-				size : "2.0em"
-			}));
-		},
-
-		/**
-		 * returns loading indicator
-		 */
-		_getLoading : function(sId) {
-			var that = this;
-			
-			if (this._oLoading) {
-				return this._oLoading;
-			}
-			
-			this._oLoading = new sap.m.CustomListItem({
-				id : sId,
-				content : new sap.ui.core.HTML({
-					content :	"<div class='sapMSLIDiv sapMGrowingListLoading'>" +
-									"<div class='sapMGrowingListBusyIndicator' id='" + sId + "-busyIndicator'></div>" +
-								"</div>",
-					afterRendering : function(e) {
-						var oBusyIndicator = that._getBusyIndicator();
-						var rm = sap.ui.getCore().createRenderManager();
-						rm.render(oBusyIndicator, this.getDomRef().firstChild);
-						rm.destroy();
-					}
-				})
-			}).setParent(this._oControl, null, true);
-			
-			// growing loading indicator as a list item should not be affected from the List Mode
-			this._oLoading.getMode = function() {
-				return sap.m.ListMode.None;
-			};
-			
-			return this._oLoading;
-		},
-
-		/**
-		 * returns load more trigger
-		 */
-		_getTrigger : function(sId) {
-			var that = this;
-
-			var sTriggerText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA");
-			if (this._oControl.getGrowingTriggerText()) {
+		// created and returns load more trigger
+		_getTrigger : function() {
+			var sTriggerID = this._oControl.getId() + "-trigger",
 				sTriggerText = this._oControl.getGrowingTriggerText();
-			}
 
-			this._oControl.addNavSection(sId);
-			
+			sTriggerText = sTriggerText || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA");
+			this._oControl.addNavSection(sTriggerID);
+
 			if (this._oTrigger) {
 				this.setTriggerText(sTriggerText);
 				return this._oTrigger;
 			}
 
 			this._oTrigger = new sap.m.CustomListItem({
-				id : sId,
-				content : new sap.ui.core.HTML({
-					content :	"<div class='sapMGrowingListTrigger'>" +
-									"<div class='sapMGrowingListBusyIndicator' id='" + sId + "-busyIndicator'></div>" +
-									"<div class='sapMSLITitleDiv sapMGrowingListTitel'>" +
-										"<h1 class='sapMSLITitle'>" + jQuery.sap.encodeHTML(sTriggerText) + "</h1>" +
-									"</div>" +
-									"<div class='sapMGrowingListDescription'>" +
-										"<div class='sapMSLIDescription' id='" + sId + "-itemInfo'>" + that._getListItemInfo() + "</div>" +
-									"</div>" +
-								"</div>",
-					afterRendering : function(e) {
-						var oBusyIndicator = that._getBusyIndicator();
-						var rm = sap.ui.getCore().createRenderManager();
-						rm.render(oBusyIndicator, this.getDomRef().firstChild);
-						rm.destroy();
-					}
-				}),
-				type : sap.m.ListType.Active
+				id: sTriggerID,
+				busyIndicatorDelay: 0,
+				type: sap.m.ListType.Active,
+				content: new sap.ui.core.HTML({
+					content:	'<div class="sapMGrowingListTrigger">' +
+									'<div class="sapMSLITitleDiv sapMGrowingListTriggerText">' +
+										'<h1 class="sapMSLITitle" id="' + sTriggerID + 'Text">' + jQuery.sap.encodeHTML(sTriggerText) + '</h1>' +
+									'</div>' +
+									'<div class="sapMGrowingListDescription sapMSLIDescription" id="' + sTriggerID + 'Info"></div>' +
+								'</div>'
+				})
 			}).setParent(this._oControl, null, true).attachPress(this.requestNewPage, this).addEventDelegate({
 				onsapenter : function(oEvent) {
 					this.requestNewPage();
 					oEvent.preventDefault();
 				},
 				onsapspace : function(oEvent) {
-					this.requestNewPage(oEvent);
+					this.requestNewPage();
 					oEvent.preventDefault();
 				},
 				onAfterRendering : function(oEvent) {
@@ -293,502 +206,425 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					});
 				}
 			}, this);
-			
-			// growing button as a list item should not be affected from the List Mode
-			this._oTrigger.getMode = function() {
-				return sap.m.ListMode.None;
-			};
-			
+
+			// stop the eventing between item and the list
+			this._oTrigger.getList = function() {};
+
 			return this._oTrigger;
 		},
 
-		/**
-		 * Returns the information about the list items.
-		 * -> how many items are displayed
-		 * -> maximum items to be displayed
-		 */
+		// returns the growing information to be shown at the growing button
 		_getListItemInfo : function() {
-			return ("[ " + this._iRenderedDataItems + " / " + this._oControl.getMaxItemsCount() + " ]");
+			return ("[ " + this._iRenderedDataItems + " / " + NumberFormat.getFloatInstance().format(this._oControl.getMaxItemsCount()) + " ]");
 		},
 
-		/**
-		 * Only call when grouped
-		 */
-		_getGroupForContext : function(oContext) {
-			// TODO: we should document that group header depends on the first sorter
-			var oNewGroup = this._oControl.getBinding("items").aSorters[0].fnGroup(oContext);
-			if (typeof oNewGroup == "string") {
-				oNewGroup = {
-					key: oNewGroup
-				};
-			}
-			return oNewGroup;
-		},
-
-		/**
-		 * returns the first sorters grouping path when available
-		 */
+		// returns the first sorters grouping path when available
 		_getGroupingPath : function(oBinding) {
-			oBinding = oBinding || this._oControl.getBinding("items") || {};
 			var aSorters = oBinding.aSorters || [];
 			var oSorter = aSorters[0] || {};
-			if (oSorter.fnGroup) {
-				return oSorter.sPath;
-			}
-			return "";
+			return (oSorter.fnGroup) ? oSorter.sPath || "" : "";
 		},
 
-		/**
-		 * If table has pop-in then we have two rows for one item
-		 * So this method finds the correct DOM position to insert item
-		 * This function should not be called within insertItem
-		 */
-		_getDomIndex : function(iIndex) {
+		// if table has pop-in then we have two rows for one item
+		_getDomIndex : function(vIndex) {
+			if (typeof vIndex != "number") {
+				return vIndex;
+			}
+
 			if (this._oControl.hasPopin && this._oControl.hasPopin()) {
-				iIndex *= 2;
+				return (vIndex * 2);
 			}
-			return iIndex;
+
+			return vIndex;
 		},
 
-		/**
-		 * Checks if the Scrollcontainer of the list has scrollbars
-		 * @returns {Boolean}
-		 */
+		// determines if the scroll container of the list has enough scrollable area to hide the growing button
 		_getHasScrollbars : function() {
-			//the containter height is needed because it gets hidden if there are scrollbars and this might lead to the list not having scrollbars again
-			return this._oScrollDelegate && this._oScrollDelegate.getMaxScrollTop() > this._oControl.$("triggerList").height();
+			if (!this._oScrollDelegate) {
+				return false;
+			}
+
+			if (this._iRenderedDataItems >= 40) {
+				return true;
+			}
+
+			// after growing-button gets hidden scroll container should still be scrollable
+			return this._oScrollDelegate.getMaxScrollTop() > this._oControl.$("triggerList").outerHeight();
 		},
 
-		/**
-		 * function is called to destroy all items in list
-		 */
-		destroyListItems : function() {
-			this._oControl.destroyItems();
+		// destroy all items in the list and cleanup
+		destroyListItems : function(bSuppressInvalidate) {
+			this._oControl.destroyItems(bSuppressInvalidate);
 			this._iRenderedDataItems = 0;
+			this._aChunk = [];
 		},
 
-		/**
-		 * function is called to add single list item or row
-		 */
-		addListItem : function(oItem, bSuppressInvalidate) {
-			this._iRenderedDataItems++;
+		// appends single list item to the list
+		addListItem : function(oContext, oBindingInfo, bSuppressInvalidate) {
 
-			// Grouping support
-			var oBinding = this._oControl.getBinding("items"),
-				oBindingInfo = this._oControl.getBindingInfo("items");
+			var oControl = this._oControl,
+				oBinding = oBindingInfo.binding,
+				oItem = this.createListItem(oContext, oBindingInfo);
 
-			if (oBinding.isGrouped() && oBindingInfo) {
-				var bNewGroup = false,
-					aItems = this._oControl.getItems(true),
-					sModelName = oBindingInfo.model || undefined,
-					oNewGroup = this._getGroupForContext(oItem.getBindingContext(sModelName));
+			if (oBinding.isGrouped()) {
+				// creates group header if need
+				var aItems = oControl.getItems(true),
+					oLastItem = aItems[aItems.length - 1],
+					sModelName = oBindingInfo.model,
+					oGroupInfo = oBinding.getGroup(oItem.getBindingContext(sModelName));
 
-				if (aItems.length == 0) {
-					bNewGroup = true;
-				} else if (oNewGroup.key !== this._getGroupForContext(aItems[aItems.length - 1].getBindingContext(sModelName)).key) {
-					bNewGroup = true;
+				if (oLastItem && oLastItem.isGroupHeader()) {
+					oControl.removeAggregation("items", oLastItem, true);
+					this._fnAppendGroupItem = this.appendGroupItem.bind(this, oGroupInfo, oLastItem, bSuppressInvalidate);
+					oLastItem = aItems[aItems.length - 1];
 				}
 
-				if (bNewGroup) {
-					var oGroupHeader = null;
-					if (oBindingInfo.groupHeaderFactory) {
-						oGroupHeader = oBindingInfo.groupHeaderFactory(oNewGroup);
+				if (!oLastItem || oGroupInfo.key !== oBinding.getGroup(oLastItem.getBindingContext(sModelName)).key) {
+					var oGroupHeader = (oBindingInfo.groupHeaderFactory) ? oBindingInfo.groupHeaderFactory(oGroupInfo) : null;
+					if (oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+						this.applyPendingGroupItem();
+						this._fnAppendGroupItem = this.appendGroupItem.bind(this, oGroupInfo, oGroupHeader, bSuppressInvalidate);
+					} else {
+						this.appendGroupItem(oGroupInfo, oGroupHeader, bSuppressInvalidate);
 					}
-					this.addItemGroup(oNewGroup, oGroupHeader);
 				}
 			}
 
-			this._oControl.addAggregation("items", oItem, bSuppressInvalidate);
+			oControl.addAggregation("items", oItem, bSuppressInvalidate);
 			if (bSuppressInvalidate) {
-				this._renderItemIntoContainer(oItem, false, true);
-			}
-			return this;
-		},
-
-		/**
-		 * function is called to add multiple items
-		 */
-		addListItems : function(aContexts, oBindingInfo, bSuppressInvalidate) {
-			if (oBindingInfo && aContexts) {
-				for (var i = 0, l = aContexts.length; i < l; i++) {
-					var oClone = oBindingInfo.factory("", aContexts[i]);
-					oClone.setBindingContext(aContexts[i], oBindingInfo.model);
-					this.addListItem(oClone, bSuppressInvalidate);
-				}
+				this._aChunk.push(oItem);
 			}
 		},
 
-		/**
-		 * destroy all list items and then insert
-		 * this function take care async calls during the insertion
-		 */
-		rebuildListItems : function(aContexts, oBindingInfo, bSuppressInvalidate) {
-			// check if building already started
-			if (this._bRebuilding) {
-				this._fnRebuildQ = jQuery.proxy(this, "rebuildListItems", aContexts, oBindingInfo, bSuppressInvalidate);
+		applyPendingGroupItem: function() {
+			if (this._fnAppendGroupItem) {
+				this._fnAppendGroupItem();
+				this._fnAppendGroupItem = undefined;
+			}
+		},
+
+		appendGroupItem: function(oGroupInfo, oGroupHeader, bSuppressInvalidate) {
+			oGroupHeader = this._oControl.addItemGroup(oGroupInfo, oGroupHeader, bSuppressInvalidate);
+			if (bSuppressInvalidate) {
+				this._aChunk.push(oGroupHeader);
+			}
+		},
+
+		// creates list item from the factory
+		createListItem : function(oContext, oBindingInfo) {
+			this._iRenderedDataItems++;
+			var oItem = oBindingInfo.factory(sap.ui.base.ManagedObjectMetadata.uid("clone"), oContext);
+			return oItem.setBindingContext(oContext, oBindingInfo.model);
+		},
+
+		// update context on all items except group headers
+		updateItemsBindingContext :  function(aContexts, oModel) {
+			if (!aContexts.length) {
 				return;
 			}
 
-			// rebuild list items
-			this._bRebuilding = true;
-			this.destroyListItems();
-			this.addListItems(aContexts, oBindingInfo, bSuppressInvalidate);
-			this._bRebuilding = false;
+			var aItems = this._oControl.getItems(true);
+			for (var i = 0, c = 0, oItem; i < aItems.length; i++) {
+				oItem = aItems[i];
 
-			// check if something is in the queue
-			if (this._fnRebuildQ) {
-				var fnRebuildQ = this._fnRebuildQ;
-				this._fnRebuildQ = null;
-				fnRebuildQ();
+				// group headers are not in binding context
+				if (!oItem.isGroupHeader()) {
+					oItem.setBindingContext(aContexts[c++], oModel);
+				}
 			}
 		},
 
-		/**
-		 * adds a new GroupHeaderListItem
-		 */
-		addItemGroup : function(oGroup, oHeader) {
-			oHeader = this._oControl.addItemGroup(oGroup, oHeader, true);
-			this._renderItemIntoContainer(oHeader, false, true);
-			return this;
+		// render all the collected items in the chunk and flush them into the DOM
+		// vInsert whether to append (true) or replace (falsy) or to insert at a certain position (int)
+		applyChunk : function(vInsert, oDomRef) {
+			this.applyPendingGroupItem();
+
+			var iLength = this._aChunk.length;
+			if (!iLength) {
+				return;
+			}
+
+			if (this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+				this._aChunk.reverse();
+				if (vInsert === true) {
+					vInsert = 0;
+				} else if (typeof vInsert == "number") {
+					vInsert = this._iRenderedDataItems - iLength - vInsert;
+				}
+			}
+
+			oDomRef = oDomRef || this._oContainerDomRef;
+			this._oRM = this._oRM || sap.ui.getCore().createRenderManager();
+
+			for (var i = 0; i < iLength; i++) {
+				this._oRM.renderControl(this._aChunk[i]);
+			}
+
+			this._oRM.flush(oDomRef, false, this._getDomIndex(vInsert));
+			this._aChunk = [];
 		},
 
-		/**
-		 * function is called to insert single list item or row.
-		 */
-		insertListItem : function(oItem, iIndex) {
+		// add multiple items to the list via BindingContext
+		addListItems : function(aContexts, oBindingInfo, bSuppressInvalidate) {
+			for (var i = 0; i < aContexts.length; i++) {
+				this.addListItem(aContexts[i], oBindingInfo, bSuppressInvalidate);
+			}
+		},
+
+		// destroy all the items and create from scratch
+		rebuildListItems : function(aContexts, oBindingInfo, bSuppressInvalidate) {
+			this.destroyListItems(bSuppressInvalidate);
+			this.addListItems(aContexts, oBindingInfo, bSuppressInvalidate);
+			if (bSuppressInvalidate) {
+				var bHasFocus = this._oContainerDomRef.contains(document.activeElement);
+				this.applyChunk(false);
+				bHasFocus && this._oControl.focus();
+			} else {
+				this.applyPendingGroupItem();
+			}
+		},
+
+		// inserts a single list item
+		insertListItem : function(oContext, oBindingInfo, iIndex) {
+			var oItem = this.createListItem(oContext, oBindingInfo);
 			this._oControl.insertAggregation("items", oItem, iIndex, true);
-			this._iRenderedDataItems++;
-			this._renderItemIntoContainer(oItem, false, this._getDomIndex(iIndex));
-			return this;
+			this._aChunk.push(oItem);
 		},
 
-		/**
-		 * function is called to remove single list item or row
-		 */
-		deleteListItem : function(oItem) {
+		// destroy a single list item
+		deleteListItem : function(iIndex) {
+			this._oControl.getItems(true)[iIndex].destroy(true);
 			this._iRenderedDataItems--;
-			oItem.destroy(true);
-			return this;
 		},
 
 		/**
-		 * refresh items ... called from oData model.
+		 * refresh items only for oData model.
 		 */
 		refreshItems : function(sChangeReason) {
 			if (!this._bDataRequested) {
 				this._bDataRequested = true;
 				this._onBeforePageLoaded(sChangeReason);
 			}
-			this._oControl.getBinding("items").getContexts(0, this._oControl.getGrowingThreshold());
+
+			// set iItemCount to initial value if not set or no items at the control yet
+			if (!this._iLimit || this.shouldReset(sChangeReason) || !this._oControl.getItems(true).length) {
+				this._iLimit = this._oControl.getGrowingThreshold();
+			}
+
+			// send the request to get the context
+			this._oControl.getBinding("items").getContexts(0, this._iLimit);
 		},
 
 		/**
-		 * update loaded items ... 2nd time called from oData model.
+		 * update control aggregation if contexts are already available
+		 * or send a request to get the contexts in case of ODATA model.
 		 */
 		updateItems : function(sChangeReason) {
-			var oBindingInfo = this._oControl.getBindingInfo("items"),
-				oBinding = oBindingInfo.binding,
-				fnFactory = oBindingInfo.factory;
+			var oControl = this._oControl,
+				oBinding = oControl.getBinding("items"),
+				oBindingInfo = oControl.getBindingInfo("items"),
+				aItems = oControl.getItems(true);
 
-			// set iItemCount to initial value if not set or no items at the control yet
-			if (!this._iItemCount || this.shouldReset(sChangeReason) || !this._oControl.getItems(true).length) {
-				this._iItemCount = this._oControl.getGrowingThreshold();
+			// set limit to initial value if not set yet or no items at the control yet
+			if (!this._iLimit || this.shouldReset(sChangeReason) || !aItems.length) {
+				this._iLimit = oControl.getGrowingThreshold();
 			}
 
-			// fire growing started event
+			// fire growing started event if data was requested this is a followup call of updateItems
 			if (this._bDataRequested) {
-				// if data was requested this is a followup call of updateItems, so growing started was fired already
-				// and must not be fired again, instead we reset the flag
 				this._bDataRequested = false;
 			} else {
 				this._onBeforePageLoaded(sChangeReason);
 			}
 
-			// get the context from binding
-			// aContexts.diff ==> undefined : New data we should build from scratch
-			// aContexts.diff ==> [] : There is no diff, means data did not changed but maybe it was already grouped and we need to handle group headers
-			// aContexts.diff ==> [{index : 0, type: "delete"}, ...] : Run the diff logic
-			var aContexts = oBinding ? oBinding.getContexts(0, this._iItemCount) || [] : [];
+			// get the context from the binding or request will be sent
+			var aContexts = oBinding.getContexts(0, this._iLimit) || [];
 
-			// if getContexts did cause a request to be sent, set the internal flag so growing started event is not
-			// fired again, when the response of the request is processed.
+			// if getContexts did cause a request to be sent, set the internal flag so growing started event is not fired again
 			if (aContexts.dataRequested) {
 				this._bDataRequested = true;
-				// a partial response may already be contained, so only return here without updating the list,
-				// if no data was changed (diff is empty)
-				if (aContexts.diff && aContexts.diff.length == 0) {
+
+				// a partial response may already be contained, so only return here without updating the list when diff is empty
+				if (aContexts.diff && !aContexts.diff.length) {
 					return;
 				}
 			}
 
 			// cache dom ref for internal functions not to lookup again and again
-			this._oContainerDomRef = this._oControl.getItemsContainerDomRef();
+			this._oContainerDomRef = oControl.getItemsContainerDomRef();
 
-			// check control based logic to handle from scratch is required or not
-			var bCheckGrowingFromScratch = this._oControl.checkGrowingFromScratch && this._oControl.checkGrowingFromScratch();
-			
-			// rebuild list from scratch if there were no items and new items needs to be added 
-			if (!this._oControl.getItems(true).length && aContexts.diff && aContexts.diff.length) {
-				aContexts.diff = undefined;
-			}
+			// aContexts.diff ==> undefined : New data we should build from scratch
+			// aContexts.diff ==> [] : There is no diff, means data did not changed at all
+			// aContexts.diff ==> [{index: 0, type: "delete"}, {index: 1, type: "insert"},...] : Run the diff logic
+			var aDiff = aContexts.diff,
+				bFromScratch = false,
+				vInsertIndex;
 
-			// when data is grouped we insert the sequential items to the end
-			// but with diff calculation we may need to create GroupHeaders
-			// which can be complicated and we rebuild list from scratch
-			if (oBinding.isGrouped() || bCheckGrowingFromScratch) {
-				var bFromScratch = true;
-				if (aContexts.length > 0) {
-					if (this._oContainerDomRef) {
-						// check if diff array exists
-						if (aContexts.diff) {
-							// check if the model diff-array is empty
-							if (!aContexts.diff.length) {
-								// no diff, we do not need to rebuild list when grouping is not changed
-								if (this._sGroupingPath == this._getGroupingPath(oBinding)) {
-									bFromScratch = false;
-								}
-							} else {
-								// check the diff array and whether rebuild is required
-								bFromScratch = false;
-								var bFirstAddedItemChecked = false;
-								for (var i = 0, l = aContexts.diff.length; i < l; i++) {
-									if (aContexts.diff[i].type === "delete") {
-										bFromScratch = true;
-										break;
-									} else if (aContexts.diff[i].type === "insert") {
-										if (!bFirstAddedItemChecked && aContexts.diff[i].index !== this._iRenderedDataItems) {
-											bFromScratch = true;
-											break;
-										}
-										bFirstAddedItemChecked = true;
-										var oClone = fnFactory("", aContexts[aContexts.diff[i].index]);
-										oClone.setBindingContext(aContexts[aContexts.diff[i].index], oBindingInfo.model);
-										this.addListItem(oClone, true);
-									}
-								}
-							}
-						}
-						if (bFromScratch) {
-							// renderer available - fill the aggregation and render list items
-							this.rebuildListItems(aContexts, oBindingInfo, false);
-						}
-					} else {
-						// no renderer - fill only the aggregation
-						this.rebuildListItems(aContexts, oBindingInfo, true);
-					}
+			// process the diff
+			if (!aContexts.length) {
+				// no context, destroy list items
+				this.destroyListItems();
+			} else if (!this._oContainerDomRef) {
+				// no dom ref for compatibility reason start from scratch
+				this.rebuildListItems(aContexts, oBindingInfo);
+			} else if (!aDiff || !aItems.length && aDiff.length) {
+				// new records need to be applied from scratch
+				this.rebuildListItems(aContexts, oBindingInfo, true);
+			} else if (oBinding.isGrouped() || oControl.checkGrowingFromScratch()) {
+
+				if (this._sGroupingPath != this._getGroupingPath(oBinding)) {
+					// grouping is changed so we need to rebuild the list for the group headers
+					bFromScratch = true;
 				} else {
-					// no context
-					this.destroyListItems();
-				}
+					// append items if possible
+					for (var i = 0; i < aDiff.length; i++) {
+						var oDiff = aDiff[i],
+							oContext = aContexts[oDiff.index];
 
-			} else { // no grouping, stable implementation
-				if (aContexts.length > 0) {
-					if (this._oContainerDomRef) {
-						// check if model diff-array exists and execute
-						if (aContexts.diff) {
-							// if previously grouped
-							if (this._sGroupingPath) {
-								// we need to remove all GroupHeaders first
-								this._oControl.removeGroupHeaders(true);
-							}
-
-							this._oRenderManager = sap.ui.getCore().createRenderManager(); // one shared RenderManager for all the items that need to be rendered
-
-							var aItems, oClone, iIndex, iFlushIndex = -1, iLastIndex = -1;
-							for (var i = 0, l = aContexts.diff.length; i < l; i++) {
-								iIndex = aContexts.diff[i].index;
-
-								if (aContexts.diff[i].type === "delete") { // case 1: element is removed
-									if (iFlushIndex !== -1) {
-										this._oRenderManager.flush(this._oContainerDomRef, false, this._getDomIndex(iFlushIndex));
-										iFlushIndex = -1;
-										iLastIndex = -1;
-									}
-
-									aItems = this._oControl.getItems(true);
-									this.deleteListItem(aItems[iIndex]);
-								} else if (aContexts.diff[i].type === "insert") { // case 2: element is added
-									oClone = fnFactory("", aContexts[iIndex]);
-									oClone.setBindingContext(aContexts[iIndex], oBindingInfo.model);
-
-									// start a new burst of subsequent items
-									if (iFlushIndex === -1) {
-										iFlushIndex = iIndex; // the subsequent run/burst of items needs to be inserted at this position
-
-									// otherwise check for the end of a burst of subsequent items
-									} else if (iLastIndex >= 0 && iIndex !== iLastIndex + 1) { // this item is not simply appended to the last one that has been inserted, so we need to flush what we have so far
-										this._oRenderManager.flush(this._oContainerDomRef, false, this._getDomIndex(iFlushIndex));
-										iFlushIndex = iIndex;
-									}
-
-									this.insertListItem(oClone, iIndex);
-									iLastIndex = iIndex;
-								}
-							}
-							// update context on all items after applying diff
-							aItems = this._oControl.getItems(true);
-							for (var i = 0, l = aContexts.length; i < l; i++) {
-								aItems[i].setBindingContext(aContexts[i], oBindingInfo.model);
-							}
-
-							if (iFlushIndex !== -1) {
-								this._oRenderManager.flush(this._oContainerDomRef, false, this._getDomIndex(iFlushIndex));
-							}
-							// clean up the shared RenderManager
-							this._oRenderManager.destroy();
-							delete this._oRenderManager; // make sure there is no instance anymore
-
+						if (oDiff.type == "delete") {
+							// group header may need to be deleted as well
+							bFromScratch = true;
+							break;
+						} else if (oDiff.index != this._iRenderedDataItems) {
+							// this item is not appended
+							bFromScratch = true;
+							break;
 						} else {
-							// most likely a new binding is set in this case - therefore remove all items and fill again
-							this.rebuildListItems(aContexts, oBindingInfo, false);
+							this.addListItem(oContext, oBindingInfo, true);
+							vInsertIndex = true;
 						}
-					} else {
-						// no renderer - fill only the aggregation
-						this.rebuildListItems(aContexts, oBindingInfo, true);
 					}
-				} else {
-					// there is no context
-					this.destroyListItems();
 				}
 
+			} else {
+
+				if (this._sGroupingPath) {
+					// if it was already grouped then we need to remove group headers first
+					oControl.removeGroupHeaders(true);
+				}
+
+				vInsertIndex = -1;
+				var iLastInsertIndex = -1;
+				for (var i = 0; i < aDiff.length; i++) {
+					var oDiff = aDiff[i],
+						iDiffIndex = oDiff.index,
+						oContext = aContexts[iDiffIndex];
+
+					if (oDiff.type == "delete") {
+						if (vInsertIndex != -1) {
+							// this record is deleted while the chunk is getting build
+							this.applyChunk(vInsertIndex);
+							iLastInsertIndex = -1;
+							vInsertIndex = -1;
+						}
+
+						this.deleteListItem(iDiffIndex);
+					} else {
+						if (vInsertIndex == -1) {
+							// the subsequent of items needs to be inserted at this position
+							vInsertIndex = iDiffIndex;
+						} else if (iLastInsertIndex > -1 && iDiffIndex != iLastInsertIndex + 1) {
+							// this item is not simply appended to the last one but has been inserted
+							this.applyChunk(vInsertIndex);
+							vInsertIndex = iDiffIndex;
+						}
+
+						this.insertListItem(oContext, oBindingInfo, iDiffIndex);
+						iLastInsertIndex = iDiffIndex;
+					}
+				}
 			}
 
-			// remove dom cache
-			this._oContainerDomRef = null;
+			if (bFromScratch) {
+				this.rebuildListItems(aContexts, oBindingInfo, true);
+			} else if (this._oContainerDomRef && aDiff && aDiff.length) {
+				// set the binding context of items inserting/deleting entries shifts the index of all following items
+				this.updateItemsBindingContext(aContexts, oBindingInfo.model);
+				this.applyChunk(vInsertIndex);
+			}
 
-			// remember the old grouping path
+			this._oContainerDomRef = null;
 			this._sGroupingPath = this._getGroupingPath(oBinding);
 
-			// if no request is ongoing, trigger growing finished event
 			if (!this._bDataRequested) {
 				this._onAfterPageLoaded(sChangeReason);
 			}
 		},
 
-		/**
-		 * hide or show loading trigger according to list item count.
-		 */
-		_updateTrigger : function() {
-			// check trigger list DOM first
-			var oTriggerListDomRef = document.getElementById(this._oControl.getId() + "-triggerList");
-			if (!oTriggerListDomRef) {
+		_updateTriggerDelayed: function(bLoading) {
+			if (this._oControl.getGrowingScrollToLoad()) {
+				this._iTriggerTimer && jQuery.sap.clearDelayedCall(this._iTriggerTimer);
+				this._iTriggerTimer = jQuery.sap.delayedCall(0, this, "_updateTrigger", [bLoading]);
+			} else {
+				this._updateTrigger(bLoading);
+			}
+		},
+
+		// updates the trigger state
+		_updateTrigger : function(bLoading) {
+			var oTrigger = this._oTrigger,
+				oControl = this._oControl;
+
+			// If there are no visible columns then also hide the trigger.
+			if (!oTrigger || !oControl || !oControl.shouldRenderItems()) {
 				return;
 			}
 
-			// hide trigger if no items or maximum of items reached
-			var iMaxItems = this._oControl.getMaxItemsCount();
-			var iItemsLength = this._oControl.getItems(true).length;
-			var sDisplay = (!iItemsLength || !this._iItemCount || this._iItemCount >= iMaxItems) ? "none" : "block";
-
-			// if we are in the popover then hiding the trigger removes focus and closes popup
-			if (sap.ui.Device.system.desktop && sDisplay == "none" && oTriggerListDomRef.contains(document.activeElement)) {
-				jQuery(oTriggerListDomRef).closest("[data-sap-ui-popup]").focus();
-			}
-
-			// update trigger info
-			oTriggerListDomRef.style.display = sDisplay;
-			this._oControl.$("trigger-itemInfo").text(this._getListItemInfo());
-		},
-
-		/**
-		 * show loading indicator
-		 */
-		_showIndicator : function() {
-			var bHasScrollToLoad = this._oControl.getGrowingScrollToLoad(),
-				bHasScrollbars = this._getHasScrollbars();
-
-			if (bHasScrollToLoad && bHasScrollbars) {
-
-				this._checkTriggerType(bHasScrollToLoad, bHasScrollbars);
-
-				var $trigger = this._oControl.$("triggerList").css("display", "block");
-				if (sap.ui.Device.support.touch && this._oScrollDelegate) {
-					if (this._oScrollDelegate.getMaxScrollTop() - this._oScrollDelegate.getScrollTop() < $trigger.height()) {
-						this._oScrollDelegate.refresh();
-						this._oScrollDelegate.scrollTo(this._oScrollDelegate.getScrollLeft(), this._oScrollDelegate.getMaxScrollTop());
-					}
-				}
-			} else {
-				this._oControl.$("trigger-busyIndicator").addClass("sapMGrowingListBusyIndicatorVisible");
-			}
-
-			this._getBusyIndicator().setVisible(true);
-		},
-
-		/**
-		 * Emties the trigger and puts the Loading indicator in it, without rerendering the whole control.
-		 *
-		 * If scroll to load is disabled, this will do nothing.
-		 * If the button is shown and there are scrollbars, the loading indicator will show up.
-		 * If the button is not shown and there are no scrollbars, the button will show up.
-		 *
-		 * @private
-		 */
-		_checkTriggerType : function(bHasScrollToLoad, bHasScrollbars) {
-
-			if (!bHasScrollToLoad) {
-				this._showsTrigger = this._showsLoading = false;
+			var oBinding = oControl.getBinding("items");
+			if (!oBinding) {
 				return;
 			}
 
-			if (!this._showsLoading && bHasScrollbars) {
-				this._showsLoading = true;
-				this._showsTrigger = false;
-				this._switchTriggerWithLoadingIndicator(true);
-			}
+			// update busy state
+			oTrigger.setBusy(bLoading);
+			oTrigger.$().toggleClass("sapMGrowingListBusyIndicatorVisible", bLoading);
 
-			if (!this._showsTrigger && !bHasScrollbars) {
-				this._showsTrigger = true;
-				this._showsLoading = false;
-				this._switchTriggerWithLoadingIndicator(false);
-			}
-		},
-
-		/**
-		 * Empties the trigger and puts the Loading indicator in it, without rerendering the whole control.
-		 *
-		 * @private
-		 */
-		_switchTriggerWithLoadingIndicator : function(bShowLoading) {
-			var rm = sap.ui.getCore().createRenderManager(),
-				oActionItem,
-				$TriggerList = this._oControl.$("triggerList");
-
-			if (bShowLoading) {
-				oActionItem = this._getLoading();
+			if (bLoading) {
+				oTrigger.setActive(false);
+				oControl.$("triggerList").css("display", "");
 			} else {
-				oActionItem = this._getTrigger();
-			}
+				var aItems = oControl.getItems(true),
+					iItemsLength = aItems.length,
+					iBindingLength = oBinding.getLength() || 0,
+					bLengthFinal = oBinding.isLengthFinal(),
+					bHasScrollToLoad = oControl.getGrowingScrollToLoad();
 
-			$TriggerList.empty();
-			rm.render(oActionItem, $TriggerList[0]);
-		},
-
-		/**
-		 * hide loading indicator
-		 */
-		_hideIndicator : function() {
-			jQuery.sap.delayedCall(0, this, function() {
-				if (this._oControl) {	// maybe control is already destroyed
-					this._getBusyIndicator().setVisible(false);
-					if (this._oControl.getGrowingScrollToLoad() && this._getHasScrollbars()) {
-						this._oControl.$("triggerList").css("display", "none");
-					} else {
-						this._oControl.$("trigger-itemInfo").html(this._getListItemInfo());
-						this._oControl.$("trigger-busyIndicator").removeClass("sapMGrowingListBusyIndicatorVisible");
+				// show, update or hide the growing button
+				if (!iItemsLength || !this._iLimit ||
+					(bLengthFinal && this._iLimit >= iBindingLength) ||
+					(bHasScrollToLoad && this._getHasScrollbars())) {
+					oControl.$("triggerList").css("display", "none");
+					if (document.activeElement === oTrigger.getDomRef()) {
+						oControl.$().focus();
 					}
-				}
-			});
-		},
+				} else {
+					if (bLengthFinal) {
+						oControl.$("triggerInfo").css("display", "block").text(this._getListItemInfo());
+					}
 
-		/**
-		 * ScrollDelegate call this method to inform new page needs to load
-		 */
-		_triggerLoadingByScroll : function() {
-			this.requestNewPage();
+					oTrigger.$().removeClass("sapMGrowingListBusyIndicatorVisible");
+					oControl.$("triggerList").css("display", "");
+				}
+
+				// at the beginning we should scroll to last item
+				if (bHasScrollToLoad && this._oScrollPosition === undefined && oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+					this._oScrollPosition = {
+						left : 0,
+						top : 0
+					};
+				}
+
+				// scroll to last position
+				if (iItemsLength > 0 && this._oScrollPosition) {
+					var oScrollDelegate = this._oScrollDelegate,
+						oScrollPosition = this._oScrollPosition;
+
+					oScrollDelegate.scrollTo(oScrollPosition.left, oScrollDelegate.getScrollHeight() - oScrollPosition.top);
+					this._oScrollPosition = null;
+				}
+			}
 		}
 	});
-
 
 	return GrowingEnablement;
 

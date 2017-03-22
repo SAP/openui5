@@ -1,0 +1,19 @@
+{
+  "1.44.0": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "c7fb152207fb039493957d95aec4742615a24558",
+        "type": "FIX",
+        "text": "Cleanup stuff",
+        "references": []
+      },
+      {
+        "id": "7afbdb345e6ea90a8307a8c5acd6dd9f80b5339e",
+        "type": "FIX",
+        "text": "changes-1.42.json: remove duplicates",
+        "references": []
+      }
+    ]
+  }
+}

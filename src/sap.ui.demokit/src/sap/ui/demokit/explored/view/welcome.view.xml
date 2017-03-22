@@ -4,11 +4,11 @@
 	<Page
 		title="Welcome"
 		enableScrolling="false">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
 		<content>
-			<mvc:HTMLView
-				id="titles"
-				viewName="sap.ui.demokit.explored.view.titles"
-				height="100%" /> <!-- height required for background image -->
+			<Text text="Select an entity from the list..." textAlign="Center" width="100%"></Text>
 		</content>
 	</Page>
 </mvc:View>

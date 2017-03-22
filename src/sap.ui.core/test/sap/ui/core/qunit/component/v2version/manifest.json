@@ -1,0 +1,20 @@
+{
+
+	"name": "sap.ui.test.v2version.Component",
+
+	"sap.app": {
+		"id": "sap.ui.test.v2version",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui5": {
+
+		"dependencies": {
+			"minUI5Version": "1.22.5"
+		}
+
+	}
+
+}

@@ -6,24 +6,24 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<ObjectStatus	
-				class="sapUiSmallMarginBottom" 
+			<ObjectStatus
+				class="sapUiSmallMarginBottom"
 				text="Unknown"
 				state="None" />
 			<ObjectStatus
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				text="Product Shipped"
 				state="Success" />
 			<ObjectStatus
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				text="Product Missing"
 				state="Warning" />
 			<ObjectStatus
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				text="Product Damaged"
 				state="Error" />
 			<ObjectStatus
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				text="Product Damaged"
 				state="Error"
 				icon="sap-icon://alert" />

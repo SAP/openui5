@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Test Page for sap.ui.dt.DesignTime and ComponentContainer</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+			}
+			.sapUiDtElementOverlay {
+				box-sizing: border-box;
+				border: 1px dashed grey;
+			}
+		</style>
+
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
+
+			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
+
+			var CustomComponent = sap.ui.core.UIComponent.extend("sap.ui.dt.test.Component", {
+
+				/**
+				 * Initialize the application
+				 *
+				 * @returns {sap.ui.core.Control} the content
+				 */
+				createContent : function() {
+
+					return new sap.ui.layout.VerticalLayout({
+						content : [
+							new sap.m.Button({text : "Text"})
+						]
+					});
+
+				}
+
+			});
+
+			QUnit.module("Given the ComponentContainer is created..", {
+				beforeEach : function(assert) {
+					var done = assert.async();
+
+					this.oComponent = new CustomComponent();
+
+					this.oComponentContainer = new sap.ui.core.ComponentContainer("CompCont1", {
+						component: this.oComponent
+					});
+
+					this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oComponentContainer]}).placeAt("content");
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [this.oLayout]
+					});
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+				},
+				afterEach : function() {
+					this.oLayout.destroy();
+					this.oComponentContainer.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("When the component container is rendered...", function(assert) {
+				var oInnerLayout = this.oComponent.getRootControl();
+				var oInnerLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oInnerLayout);
+
+				var oOuterLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
+
+				assert.ok(oInnerLayoutOverlay, "an overlay for the root contol of the UIComponent is created");
+				assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oInnerLayoutOverlay, oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
+			});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and ComponentContainer</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

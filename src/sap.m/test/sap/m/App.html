@@ -1,68 +1,74 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>App - sap.m</title>
-		
+
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
-		
-		<script type="text/javascript">
+
+		<script>
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
-			
+
 			var page1 = new sap.m.Page("page1", {
 				title:"Page 1",
-				content : [ 
+				content : [
 					new sap.m.Button({
+					id : "show-footer-btn",
 					text : "Show footer",
 					press : function() {
 						page1.setShowFooter(true);
 					}
 				}),
 				new sap.m.Button({
+					id : "hide-footer-btn",
 					text : "Hide footer",
 					press : function() {
 						page1.setShowFooter(false);
 					}
-				}),				
+				}),
 				new sap.m.Button({
+					id : "set-bgnd-solid-btn",
 					text : "Set Background Design Solid",
 					press : function() {
 						page1.setBackgroundDesign("Solid");
 					}
 				}),
 				new sap.m.Button({
+					id : "set-bgnd-transparent-btn",
 					text : "Set Background Design Transparent",
 					press : function() {
 						page1.setBackgroundDesign("Transparent");
 					}
-				}),	
+				}),
 					new sap.m.Button({
+					id : "go-to-page-2-btn",
 					text : "To Page 2",
 					press : function() {
 						app.to("page2");
 					}
-				}), 
+				}),
 					new sap.m.Button({
+					id : "show-nav-btn",
 					text : "show Nav Button",
 					press : function() {
 						page1.setShowNavButton(true);
 					}
-				}), 
+				}),
 					new sap.m.Button({
+					id : "hide-nav-btn",
 					text : "hide Nav Button",
 					press : function() {
 						page1.setShowNavButton(false);
 					}
-				}), 
+				}),
 				],
 				subHeader: new sap.m.Bar({
-					contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for...", width: "100%"})] 	
+					contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for...", width: "100%"})]
 				}),
 				footer: new sap.m.Bar({
 					id: 'page1-footer',
@@ -71,16 +77,16 @@
 									new sap.m.Button({icon:"images/iconCompetitors.png"} ),
 									new sap.m.Button({icon:"images/iconCompetitors.png"} )]
 				})
-				
+
 			});
-					
+
 			if (!sap.ui.Device.os.ios){
 				page1.addContent(new sap.m.Button({
 					text : "set Icon",
 					press : function() {
 						page1.setIcon("images/favorite@2x.png");
 					}
-					}) 
+					})
 				);
 			}
 			var page2 = new sap.m.Page("page2", {
@@ -109,7 +115,7 @@
 
 			app.placeAt("body");
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

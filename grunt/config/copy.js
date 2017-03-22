@@ -3,6 +3,19 @@ module.exports = function(grunt, config) {
 
 	var copy = {};
 
+	copy['bundle'] = {
+		files: config.libraries.map(function(library) {
+			return {
+				expand: true,
+				dot: true,
+				cwd: 'target/openui5-' + library.name,
+				src: '**',
+				dest: 'target/openui5'
+			};
+		})
+	};
+
+
 	// do not copy testsuite resources when test-resources are not included
 	if (grunt.option('include-test-resources')) {
 		copy['test-target-' + config.testsuite.name] = {
@@ -59,12 +72,16 @@ module.exports = function(grunt, config) {
 						dot: true,
 						cwd: 'target/openui5-' + library.name,
 						src: '**',
-						dest: '../packaged-' + library.name
+						dest: 'tmp/packaged-' + library.name
 					},
-					// license file should also be present in each bower repo
+					// license and notice file should also be present in each bower repo
 					{
 						src: 'LICENSE.txt',
-						dest: '../packaged-' + library.name + '/LICENSE.txt'
+						dest: 'tmp/packaged-' + library.name + '/LICENSE.txt'
+					},
+					{
+						src: 'NOTICE.txt',
+						dest: 'tmp/packaged-' + library.name + '/NOTICE.txt'
 					}
 				]
 			};

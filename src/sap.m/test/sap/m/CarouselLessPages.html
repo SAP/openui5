@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>sap.m.Carousel Test</title>
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-compatVersion="1.20">
+		</script>
+		<script>
+
+		// Create Images
+		var imgDesert = new sap.m.Image("desert", {
+			src: "images/demo/nature/desert.jpg",
+			alt: "Majestic Desert",
+			densityAware: false,
+			decorative: false
+		});
+
+		var imgPrairie = new sap.m.Image("prairie", {
+			src: "images/demo/nature/prairie.jpg",
+			alt: "Prairie in Dawn",
+			densityAware: false,
+			decorative: false
+		});
+
+		var imgWaterfall = new sap.m.Image("waterfall", {
+			src: "images/demo/nature/waterfall.jpg",
+			alt: "Waterfall in the Jungle",
+			densityAware: false,
+			decorative: false
+		});
+
+
+		var carousel = new sap.m.Carousel("myCarousel", {
+			width: "50%",
+			height: "50%",
+			pages: [imgDesert, imgPrairie, imgWaterfall]
+		});
+
+
+		var appCarousel = new sap.m.App("myApp", {initialPage:"carouselPage"});
+
+		var carouselPage = new sap.m.Page("carouselPage",
+			{title: "Carousel Test Page",
+			enableScrolling: false }
+		);
+
+		carouselPage.addContent(carousel);
+		appCarousel.addPage(carouselPage);
+		appCarousel.placeAt("body");
+
+		sap.ui.getCore().applyChanges();
+
+
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody" role="application">
+	</body>
+</html>

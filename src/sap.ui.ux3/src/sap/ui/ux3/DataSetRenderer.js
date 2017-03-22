@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var DataSetRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -26,9 +26,9 @@ sap.ui.define(['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager,
 			oView = null;
-	
+
 		oControl.prepareRendering();
-	
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUx3DS");
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</div>");
 		rm.write("</div>");
 	};
-	
+
 	/**
 	 * Renders the HTML for the DataSet Toolbar
 	 *
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.renderControl(oControl._getToolbar());
 		}
 	};
-	
+
 	/**
 	 * Renders the HTML for the DataSet FilterArea
 	 *
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global'],
 			});
 		}
 	};
-	
+
 
 	return DataSetRenderer;
 

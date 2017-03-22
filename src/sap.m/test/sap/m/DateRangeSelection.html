@@ -1,19 +1,18 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>DateRangeSelection - sap.m</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.DatePicker.gif">
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 		function createFooter(){
 			return new sap.m.Bar({
 				contentMiddle: [new sap.m.Button({
@@ -44,6 +43,45 @@
 			}
 		};
 
+		var oLegend;
+
+		function toggleSpecialDates(oEvent) {
+			var bPressed = oEvent.getParameter("pressed");
+			var oDRS = sap.ui.getCore().byId("DRS2");
+			if (!sap.ui.unified.DateTypeRange) {
+				sap.ui.getCore().loadLibrary("sap.ui.unified");
+				jQuery.sap.require("sap.ui.unified.library");
+			}
+			if (!oLegend) {
+				oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+					items: [
+					        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
+					        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
+					        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
+					        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
+					        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
+					        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
+					        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
+					        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
+					        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
+					        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+					        ]
+				});
+				oDRS.setLegend(oLegend);
+			}
+			if (bPressed) {
+				for (var i = 0; i < 10; i++) {
+					var oDate = new Date(oDRS.getDateValue());
+					oDate.setDate(oDate.getDate() + i);
+					var sType = "Type" + (i < 9 ? "0" + (i + 1) : "10");
+					var oSpecialDate = new sap.ui.unified.DateTypeRange({startDate: oDate, type: sType});
+					oDRS.addSpecialDate(oSpecialDate);
+				}
+			}else {
+				oDRS.destroySpecialDates();
+			}
+		};
+
 		//Preparing input UTC dates for testing purposes:
 		//From: February 16, 2014  0:00 UTC
 		var dateFrom = new Date();
@@ -67,9 +105,16 @@
 
 				new sap.m.Label({text: "DRS2 - DateRangeSelection control with given range:", labelFor: "DRS2"}),
 				new sap.m.DateRangeSelection("DRS2", { delimiter: "#", displayFormat: "yyyy/MM/dd", dateValue: dateFrom, secondDateValue: dateTo, change: handleChange}),
+				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),
 
-				new sap.m.Label({text: "DRS3 - DateRangeSelection control with placeholder from CLDR:", labelFor: "DRS3"}),
+				new sap.m.Label({text: "DRS3 - DateRangeSelection control with placeholder from CLDR:", labelFor: "DRS3", width: "100%"}),
 				new sap.m.DateRangeSelection("DRS3", { delimiter: "", displayFormat: "short", change: handleChange}),
+
+				new sap.m.Label({text: "islamic DateRangeSelection with secondary gregorianic", labelFor: "DRS4"}),
+				new sap.m.DateRangeSelection("DRS4", { displayFormatType: "Islamic", secondaryCalendarType: "Gregorian", change: handleChange }),
+
+				new sap.m.Label({text: "DateRangeSelection with minDate=2016-01-01 and maxDate=2016-12-31", labelFor: "DRS7"}),
+				new sap.m.DateRangeSelection("DRS7", { minDate: new Date("2016", "0", "01"), maxDate: new Date("2016", "11", "31"), change: handleChange }),
 
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}),
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}), // 6 empty lines
@@ -80,13 +125,13 @@
 
 				new sap.m.Text({width: "100%"}),new sap.m.Text({width: "100%"}), // 2 empty lines
 
-				new sap.m.Label({text: "DRS4 - Error DateRangeSelection:", labelFor: "DRS4"}),
-				new sap.m.DateRangeSelection("DRS4", { displayFormat: "dd.MM.yyyy", valueState: "Error"}),
+				new sap.m.Label({text: "DRS5 - Error DateRangeSelection:", labelFor: "DRS5"}),
+				new sap.m.DateRangeSelection("DRS5", { displayFormat: "dd.MM.yyyy", valueState: "Error"}),
 
 				new sap.m.Text({width: "100%"}),new sap.m.Text({width: "100%"}), // 2 empty lines
 
-				new sap.m.Label({text: "DRS5 - Warning DateRangeSelection:", labelFor: "DRS5"}),
-				new sap.m.DateRangeSelection("DRS5", { displayFormat: "dd.MM.yyyy",  valueState: "Warning"})
+				new sap.m.Label({text: "DRS6 - Warning DateRangeSelection:", labelFor: "DRS6"}),
+				new sap.m.DateRangeSelection("DRS6", { displayFormat: "dd.MM.yyyy",  valueState: "Warning"})
 			],
 			footer: createFooter()
 		});

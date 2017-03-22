@@ -1,0 +1,30 @@
+{
+	"1.36.0": {
+		"date": "January 2016",
+		"notes": [
+			{
+				"id": "fb02ebabbfa55f1cfa432fc4e7677c3abad2c137",
+				"type": "FIX",
+				"text": "Enable message to show that merge errors have occurred",
+				"references": []
+			},
+			{
+				"id": "074c26455d0f15b36d896970fa1714d077223bb3",
+				"type": "FIX",
+				"text": "sap.ui.fl: Remove irregular whitespaces",
+				"references": []
+			}
+		]
+	},
+	"1.36.4": {
+		"date": "March 2016",
+		"notes": [
+			{
+				"id": "b0bbd34018a24f1ddc0f0e67667b12900e5a770c",
+				"type": "FIX",
+				"text": "detect application variant mode in case of smart templating apps",
+				"references": []
+			}
+		]
+	}
+}

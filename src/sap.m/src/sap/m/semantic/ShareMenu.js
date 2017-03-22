@@ -11,7 +11,7 @@
  */
 
 // Provides class sap.m.semantic.ShareMenu
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap/m/OverflowToolbarLayoutData'], function(jQuery, Metadata, Button, OverflowToolbarLayoutData) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/core/IconPool', 'sap/m/OverflowToolbarButton'], function(jQuery, Metadata, Button, OverflowToolbarLayoutData, IconPool, OverflowToolbarButton) {
 	"use strict";
 
 	/**
@@ -73,6 +73,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 		return this._oBaseButton;
 	};
 
+	ShareMenu.prototype.getAggregation = function (sName) {
+		if (sName === "content") {
+			return this.getContent();
+		}
+	};
+
+	ShareMenu.prototype.addAggregation = function (sName, oButton, bSuppressInvalidate) {
+		if (sName === "content") {
+			return this.addContent(oButton, bSuppressInvalidate);
+		}
+	};
+
+	ShareMenu.prototype.insertAggregation = function (sName, oButton, iIndex, bSuppressInvalidate) {
+		if (sName === "content") {
+			return this.insertContent(oButton, iIndex, bSuppressInvalidate);
+		}
+	};
+
+	ShareMenu.prototype.indexOfAggregation = function (sName, oButton) {
+		if (sName === "content") {
+			return this.indexOfContent(oButton);
+		}
+	};
+
+	ShareMenu.prototype.removeAggregation = function (sName, oButton, bSuppressInvalidate) {
+		if (sName === "content") {
+			return this.removeContent(oButton, bSuppressInvalidate);
+		}
+	};
+
+	ShareMenu.prototype.removeAllAggregation = function (sName, bSuppressInvalidate) {
+		if (sName === "content") {
+			return this.removeAllContent(bSuppressInvalidate);
+		}
+	};
+
 	/**
 	 * Getter for the items of this menu
 	 *
@@ -106,6 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 			this._setMode(ShareMenu._Mode.actionSheet, bSuppressInvalidate);
 		}
 
+		this._preProcessOverflowToolbarButton(oButton);
 		this._oActionSheet.addButton(oButton, bSuppressInvalidate);
 		return this;
 	};
@@ -128,6 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 			this._setMode(ShareMenu._Mode.actionSheet, bSuppressInvalidate);
 		}
 
+		this._preProcessOverflowToolbarButton(oButton);
 		this._oActionSheet.insertButton(oButton, iIndex, bSuppressInvalidate);
 		return this;
 	};
@@ -160,6 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 		var result;
 		if (this._getMode() === ShareMenu._Mode.actionSheet) {
 			result = this._oActionSheet.removeButton(oButton, bSuppressInvalidate);
+			this._postProcessOverflowToolbarButton(oButton);
 
 			if (result) {
 				if (this._oActionSheet.getAggregation("buttons").length === 1) {
@@ -189,6 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 		var result;
 		if (this._getMode() === ShareMenu._Mode.actionSheet) {
 			result = this._oActionSheet.removeAllButtons(bSuppressInvalidate);
+			result.forEach(this._postProcessOverflowToolbarButton, this);
 
 		} else if (this._getMode() === ShareMenu._Mode.button) {
 			result = [this._oBaseButton];
@@ -282,6 +322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 			} else if (this._mode === ShareMenu._Mode.actionSheet) {
 				var oLastButton = this._oActionSheet.getAggregation("buttons")[0];
 				this._oActionSheet.removeButton(oLastButton, bSuppressInvalidate);
+				this._postProcessOverflowToolbarButton(oLastButton);
 				this._setBaseButton(oLastButton);
 			}
 
@@ -293,6 +334,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 			var oOldBaseButton = this._oBaseButton;
 			this._setBaseButton(this._getShareMenuButton().applySettings({visible: true}));
 			if (oOldBaseButton) {
+				this._preProcessOverflowToolbarButton(oOldBaseButton);
 				this._oActionSheet.addButton(oOldBaseButton, bSuppressInvalidate);
 			}
 			this._mode = ShareMenu._Mode.actionSheet;
@@ -311,8 +353,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 			var that = this;
 
-			this._oShareMenuBtn = new sap.m.Button({
-				icon: "sap-icon://action",
+			this._oShareMenuBtn = new sap.m.Button(this._oActionSheet.getParent().getId() + "-shareButton", {
+				icon: IconPool.getIconURI("action"),
+				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				layoutData: new OverflowToolbarLayoutData({
 					moveToOverflow: false,
 					stayInOverflow: false
@@ -321,9 +364,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 					that._oActionSheet.openBy(that._oShareMenuBtn);
 				}
 			});
+
+			this._oShareMenuBtn.addEventDelegate({
+				onAfterRendering: function() {
+					that._oShareMenuBtn.$().attr("aria-haspopup", true);
+				}
+			});
 		}
 
 		return this._oShareMenuBtn;
+	};
+
+	/**
+	 * This function is run before adding a button to the action sheet
+	 * If the button is OverflowToolbarButton, it is made to show icon+text
+	 * @param oButton
+	 * @private
+	 */
+	ShareMenu.prototype._preProcessOverflowToolbarButton = function(oButton) {
+		if (oButton instanceof OverflowToolbarButton) {
+			oButton._bInOverflow = true;
+		}
+	};
+
+	/**
+	 * This function is run after a button has been removed from the action sheet
+	 * If the button is OverflowToolbarButton, it is made to only show an icon
+	 * @param oButton
+	 * @private
+	 */
+	ShareMenu.prototype._postProcessOverflowToolbarButton = function(oButton) {
+		if (oButton instanceof OverflowToolbarButton) {
+			delete oButton._bInOverflow;
+		}
 	};
 
 	return ShareMenu;

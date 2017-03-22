@@ -2,19 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Matcher'], function (fnMatcher) {
+sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
+	"use strict";
 
 	/**
-	 * PropertyStrictEquals - checks if a property has the exact same value
-	 * The settings supported by PropertyStrictEquals are:
-	 * <ul>
-	 *	<li>Properties
-	 *		<ul>
-	 *			<li>{@link #getName name} : string</li>
-	 *			<li>{@link #getValue value} : any</li>
-	 *		</ul>
-	 *	</li>
-	 * </ul>
+	 * PropertyStrictEquals - checks if a property has the exact same value.
 	 *
 	 * @class PropertyStrictEquals - checks if a property has the exact same value
 	 * @extends sap.ui.test.matchers.Matcher
@@ -24,14 +16,20 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 	 * @author SAP SE
 	 * @since 1.23
 	 */
-	return fnMatcher.extend("sap.ui.test.matchers.PropertyStrictEquals", {
+	return Matcher.extend("sap.ui.test.matchers.PropertyStrictEquals", /** @lends sap.ui.test.matchers.PropertyStrictEquals.prototype */ {
 
 		metadata : {
 			publicMethods : [ "isMatching" ],
 			properties : {
+				/**
+				 * The Name of the property that is used for matching.
+				 */
 				name : {
 					type : "string"
 				},
+				/**
+				 * The value of the property that is used for matching.
+				 */
 				value : {
 					type : "any"
 				}
@@ -39,66 +37,28 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 		},
 
 		/**
-		 * Getter for property <code>name</code>.
-		 * 
-		 * The Name of the property that is used for matching.
-		 *
-		 * @return {string} the value of property <code>name</code>
-		 * @public
-		 * @name sap.ui.test.matchers.PropertyStrictEquals#getName
-		 * @function
-		 */
-
-		/**
-		 * Setter for property <code>name</code>.
-		 * 
-		 * @param {string} sValue the value for the property <code>name</code>
-		 * @return {sap.ui.test.matchers.PropertyStrictEquals} <code>this</code> to allow method chaining
-		 * @public
-		 * @name sap.ui.test.matchers.PropertyStrictEquals#setName
-		 * @function
-		 */
-
-		/**
-		 * Getter for property <code>value</code>.
-		 * 
-		 * The value of the property that is used for matching.
-		 *
-		 * @return {string} the value of property <code>value</code>
-		 * @public
-		 * @name sap.ui.test.matchers.PropertyStrictEquals#getValue
-		 * @function
-		 */
-
-		/**
-		 * Setter for property <code>value</code>.
-		 * 
-		 * @param {string} sValue the value for the property <code>value</code>
-		 * @return {sap.ui.test.matchers.PropertyStrictEquals} <code>this</code> to allow method chaining
-		 * @public
-		 * @name sap.ui.test.matchers.PropertyStrictEquals#setValue
-		 * @function
-		 */
-
-		/**
 		 * Checks if the control has a property that matches the value
-		 * 
+		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the property has a strictly matching value.
 		 * @public
-		 * @name sap.ui.test.matchers.PropertyStrictEquals#isMatching
-		 * @function
 		 */
 		isMatching : function (oControl) {
 			var sPropertyName = this.getName(),
+				sId = oControl.getId(),
 				fnProperty = oControl["get" + jQuery.sap.charToUpperCase(sPropertyName, 0)];
 
 			if (!fnProperty) {
-				jQuery.sap.log.error("Control " + oControl.sId + " does not have a property called: " + sPropertyName);
+				this._oLogger.error("Control '" + sId + "' does not have a property called '" + sPropertyName + "'");
 				return false;
 			}
 
-			return fnProperty.call(oControl) === this.getValue();
+			var vPropertyValue = fnProperty.call(oControl);
+			var bMatches = vPropertyValue === this.getValue();
+			if (!bMatches) {
+				this._oLogger.debug("The property '" + sPropertyName + "' of '" + sId + "' has the value '" + vPropertyValue + "' expected '" + this.getValue() + "'");
+			}
+			return bMatches;
 
 		}
 	});

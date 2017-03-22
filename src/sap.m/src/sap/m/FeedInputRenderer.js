@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global'],
 
 var FeedInputRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -23,6 +23,9 @@ var FeedInputRenderer = {
 		oRm.addClass("sapMFeedIn");
 		if (!oControl.getShowIcon()) {
 			oRm.addClass("sapMFeedInNoIcon");
+		}
+		if (!oControl.getEnabled()) {
+			oRm.addClass("sapMFeedInDisabled");
 		}
 		oRm.writeClasses();
 		oRm.write(">");

@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
-<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.core.HTML">
+<html data-sap-ui-dk-controls="sap.ui.core.HTML">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>HTML Control - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
 				>
 		</script>
@@ -86,7 +86,7 @@
 			}
 			ColorWorm.prototype.doFrame = function() {
 				var t = (new Date().getTime() / 1000) - this.t0;
-				this.color.h = (this.vColor * t / 360 * 255); 
+				this.color.h = (this.vColor * t / 360 * 255);
 				var sColor = hsb2rgb(this.color.h, this.color.s, this.color.b);
 				var a = (this.vRotation * t);
 				var r = 15 + 7 * Math.sin(this.vLingering * t);
@@ -104,17 +104,17 @@
 			}
 
 			jQuery(function() {
-				new ColorWorm().start(50,2000); 
+				new ColorWorm().start(50,2000);
 			});
 
 			function nextColorBlock(sParentId, iMaxCount) {
-				var $parent = jQuery("#"+sParentId); 
+				var $parent = jQuery("#"+sParentId);
 				var i = $parent.children().size();
 				if ( i < iMaxCount ) {
 					var h = i * 255.0 / iMaxCount; // Math.random() * 255.0;
-					var s = 255; //+ Math.random() * 40; 
+					var s = 255; //+ Math.random() * 40;
 					var b = 200; // + Math.random() * 40;
-					var x = Math.round(32 - 4 + s * 20 / 255.0 * Math.cos(h / 255 * 2 * Math.PI)); 
+					var x = Math.round(32 - 4 + s * 20 / 255.0 * Math.cos(h / 255 * 2 * Math.PI));
 					var y = Math.round(32 - 4 - s * 20 / 255.0 * Math.sin(h / 255 * 2 * Math.PI));
 					var color = hsb2rgb(h, s, b);
 					colorBlock(color, x,y,8).appendTo($parent);
@@ -159,7 +159,7 @@
 		function createSamplePanel(sId, sTitle, oHtml, aAddtlCtrls) {
 
 			aAddtlCtrls = aAddtlCtrls || [];
-			
+
 			var oControl = new sap.ui.commons.Panel(sId, {
 				title : new sap.ui.core.Title({text:sTitle}),
 				width : "300px",
@@ -192,9 +192,9 @@
 						content : oControl,
 					}),
 					new sap.ui.commons.Button({
-						text  : "Redraw", 
-						press : function(e) { 
-	  	            		e.getSource().getUIArea().invalidate(); 
+						text  : "Redraw",
+						press : function(e) {
+	  	            		e.getSource().getUIArea().invalidate();
 						}
 	  				})
 				);
@@ -224,11 +224,11 @@
 			"<div style='position:absolute;background-color:rgb(  0,200,200);width:8px;height:8px;top:28px;left: 8px' ></div>" +
 			"<div style='position:absolute;background-color:rgb(  0,100,200);width:8px;height:8px;top:38px;left:11px' ></div>" +
 			"<div style='position:absolute;background-color:rgb(  0,  0,200);width:8px;height:8px;top:45px;left:18px' ></div>" +
-			"<div style='position:absolute;background-color:rgb(100,  0,200);width:8px;height:8px;top:48px;left:28px' ></div>" + 
+			"<div style='position:absolute;background-color:rgb(100,  0,200);width:8px;height:8px;top:48px;left:28px' ></div>" +
 			"<div style='position:absolute;background-color:rgb(200,  0,200);width:8px;height:8px;top:45px;left:38px' ></div>" +
 			"<div style='position:absolute;background-color:rgb(200,  0,100);width:8px;height:8px;top:38px;left:45px' ></div>" +
 			"</div>",
-		preferDOM : false,			
+		preferDOM : false,
 		// use the afterRendering event for 2 purposes
 		afterRendering : function(e) {
 
@@ -239,7 +239,7 @@
 					addColorBlockAtCursor($, e, 64, 8);
 				});
 			}
-    
+
 			// just for illustration purposes: update the redraw infos in the page
 			updateRedrawInfo(e.getSource().getId()); // note: does not touch / invalidate any UI5 control!
 
@@ -247,7 +247,7 @@
 	});
 
 	// Note: createSamplePanel is just a helper function defined elsewhere
-	var oPanel = createSamplePanel("p1", "Panel with some static HTML", html1); 
+	var oPanel = createSamplePanel("p1", "Panel with some static HTML", html1);
 	oPanel.placeAt("sample1");
 
 </script>
@@ -277,9 +277,9 @@
 	});
 
 	// Note: createSamplePanel is just a helper function defined elsewhere
-	createSamplePanel("p2", "Panel with some dynamically enriched HTML", html2, [ 
+	createSamplePanel("p2", "Panel with some dynamically enriched HTML", html2, [
 		// add a checkbox to toggle the preferDOM property of 'html2'
-		new sap.ui.commons.CheckBox({ 
+		new sap.ui.commons.CheckBox({
 			text : "prefer DOM",
 			change : function(e) {
 				html2.setPreferDOM(e.getSource().getChecked());
@@ -344,9 +344,9 @@
 						preferDOM : true
 					}),
 					new sap.ui.commons.Button({
-						text  : "Redraw", 
-						press : function(e) { 
-									//start(); 
+						text  : "Redraw",
+						press : function(e) {
+									//start();
 									e.getSource().getUIArea().invalidate();
 								}
 					})
@@ -361,8 +361,8 @@
 	  	<h2>Overview</h2>
 
 	  	<p>
-		The library controls can be embedded anywhere in an HTML page by the means of a UIArea. Such a UIArea denotes a place by a DOM node in a page where a control, or a tree of controls, will be rendered to. Whenever the JavaScript object that represents the control is modified, the control will be re-rendered. 
-	    </p> 
+		The library controls can be embedded anywhere in an HTML page by the means of a UIArea. Such a UIArea denotes a place by a DOM node in a page where a control, or a tree of controls, will be rendered to. Whenever the JavaScript object that represents the control is modified, the control will be re-rendered.
+	    </p>
 	    <p>
 	    The HTML control which is part of the sap.ui.core library package can be used in any other control such as Tab, Panel, MatrixLayout, or others. In comparison to other library controls, the rendering for the HTML control is different: Instead of creating control-specific HTML, the HTML control displays the HTML that you have defined in the <code>content</code> property.
 	    </p>
@@ -398,7 +398,7 @@
 	    <p>Embed the content into the HTML page as content of the enclosing UIArea. Give the content the same ID the HTML control has. The framework runtime analyzes the content of the UIArea before rendering it and preserves any content with an ID. After rendering the HTML control, the control will find the preserved content by its ID and display it.</p>
 	    </li>
 	    <li>Manual Content Association
-	    <p>Create the DOM content anywhere on the page and associate it with an HTML control by calling the <code>setDOMContent</code> method. The control will reproduce the content whenever it re-renders.</p> 
+	    <p>Create the DOM content anywhere on the page and associate it with an HTML control by calling the <code>setDOMContent</code> method. The control will reproduce the content whenever it re-renders.</p>
 	    </li>
 
 	    <p><b>Sample 3a:</b>Automatic Content Association</p>

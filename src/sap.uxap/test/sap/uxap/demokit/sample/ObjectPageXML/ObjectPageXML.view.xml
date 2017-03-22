@@ -1,0 +1,103 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns:m="sap.m"
+		   xmlns="sap.uxap"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:sample="sap.uxap.testblocks.multiview"
+		   xmlns:edit="sap.uxap.testblocks.objectpageblock"
+		   xmlns:bl="sap.uxap.sample.Headers.block"
+		   xmlns:mb="sap.uxap.testblocks.mixedblock"
+		   controllerName="sap.uxap.sample.ObjectPageXML.ObjectPageXML"
+		   height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout">
+
+		<headerTitle>
+			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
+							  objectTitle="Denise Smith"
+							  objectSubtitle="Senior UI Developer">
+
+				<actions>
+					<m:Button icon="sap-icon://pull-down" press="showCurrentSection" type="Emphasized"></m:Button>
+					<m:Button icon="sap-icon://show" press="showObjectPageState" type="Emphasized"></m:Button>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Link text="+33 6 4512 5158"/>
+				<m:Link text="DeniseSmith@sap.com"/>
+				<layout:HorizontalLayout>
+					<m:Link text="twitter" target="_blank"/>
+					<m:Link text="LinkedIn" target="_blank"/>
+				</layout:HorizontalLayout>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:Label text="Personal description"/>
+				<layout:VerticalLayout id="headerDescription">
+					<m:Label text="Personal description (2)"/>
+					<m:Label text="Personal description (3)"/>
+					<m:Label text="Personal description (4)"/>
+				</layout:VerticalLayout>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:Label id="headerRole" text="Role Specific info"/>
+				<m:Label id="headerRole1" text="Role Specific info 1"/>
+				<m:Label id="headerRole2" text="Role Specific info 2"/>
+			</layout:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection title="{ObjectPageState>/sections/0/title}" icon="sap-icon://employee">
+				<subSections>
+					<ObjectPageSubSection icon="sap-icon://employee-pane"
+										  title="{ObjectPageState>/sections/0/subsections/0/title}"
+										  mode="{ObjectPageState>/sections/0/subsections/0/mode}">
+						<blocks>
+							<bl:GeneralInfo id="generalInfoId">
+								<ModelMapping internalModelName="Employee" externalModelName="ObjectPageModel"
+											  externalPath="/MyEmployee"/>
+							</bl:GeneralInfo>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="{ObjectPageState>/sections/0/subsections/1/title}"
+										  mode="{ObjectPageState>/sections/0/subsections/1/mode}"
+							>
+						<actions>
+							<m:Button icon="sap-icon://action" type="Transparent" press="onActionPress"/>
+							<m:Button icon="sap-icon://edit" type="Transparent" press="onActionPress"/>
+						</actions>
+						<blocks>
+							<sample:MultiViewBlock/>
+							<sample:MultiViewBlock/>
+						</blocks>
+						<moreBlocks>
+							<sample:MultiViewBlock/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="{ObjectPageState>/sections/1/title}">
+				<subSections>
+					<ObjectPageSubSection title="{ObjectPageState>/sections/1/subsections/0/title}"
+										  mode="{ObjectPageState>/sections/1/subsections/0/mode}">
+						<blocks>
+							<bl:GeneralInfo id="compensationId">
+								<ModelMapping internalModelName="Employee" externalModelName="ObjectPageModel"
+											  externalPath="/MyEmployee"/>
+							</bl:GeneralInfo>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="{ObjectPageState>/sections/1/subsections/1/title}"
+										  mode="{ObjectPageState>/sections/1/subsections/1/mode}">
+						<blocks>
+							<edit:SimpleEdit/>
+							<mb:MixedBlock/>
+						</blocks>
+						<moreBlocks>
+							<sample:MultiViewBlock/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

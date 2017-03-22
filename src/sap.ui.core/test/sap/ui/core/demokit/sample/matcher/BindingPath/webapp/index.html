@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>App Under Test</title>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge' charset="UTF-8">
+		<script
+			id='sap-ui-bootstrap'
+			src='../../../../../../../../../resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.m'
+			data-sap-ui-resourceroots='{
+				"webapp" : "./",
+				"view" : "./view",
+				"sap.ui.demo.mock": "../../../../../../../../sap/ui/demokit/explored/"
+			}' >
+		</script>
+		<script>
+			new sap.m.Shell("Shell", {
+				title : "App Under Test",
+				app :  sap.ui.xmlview({
+					viewName : "view.Main"
+				})
+			}).placeAt('content');
+		</script>
+	</head>
+	<body class='sapUiBody' id='content'></body>
+</html>

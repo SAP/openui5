@@ -8,10 +8,10 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 			this.getView().byId("toolbar").setActive(bActive);
 		},
 		onIconPress: function (evt) {
-			MessageToast.show("Icon is pressed");
+			MessageToast.show("Icon is clicked");
 		},
 		onToolbarPress: function (evt) {
-			MessageToast.show("Toolbar is pressed");
+			MessageToast.show("OverflowToolbar is clicked");
 		}
 	});
 

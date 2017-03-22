@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComp
 	Component.prototype.init = function(){
 		UIComponent.prototype.init.apply(this);
 		jQuery.sap.require("sap.ui.model.control.ControlModel");
-		this.getAggregation("rootControl").setModel(new ControlModel(this));
+		this.getRootControl().setModel(new ControlModel(this));
 	};
 
 	Component.prototype.createContent = function(){

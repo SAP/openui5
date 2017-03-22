@@ -1,0 +1,44 @@
+{
+	"@odata.context" : "../$metadata#EMPLOYEES",
+	"value" : [ {
+		"@odata.etag" : "W/\"20010201000000.0000000\"",
+		"ID" : "5",
+		"Name" : "John Field",
+		"AGE" : 42,
+		"ENTRYDATE" : "2001-02-01",
+		"MANAGER_ID" : "3",
+		"ROOM_ID" : "3",
+		"TEAM_ID" : "TEAM_02",
+		"Is_Manager" : true,
+		"LAST_MODIFIED_AT" : "2001-02-01T00:00:00Z",
+		"LOCATION" : {
+			"COUNTRY" : "Germany",
+			"City" : {
+				"POSTALCODE" : "69190",
+				"CITYNAME" : "Walldorf"
+			}
+		},
+		"SALARY" : {
+			"MONTHLY_BASIC_SALARY_AMOUNT" : "2689.44",
+			"BASIC_SALARY_CURR" : "GBP",
+			"YEARLY_BONUS_AMOUNT" : "15000.00",
+			"BONUS_CURR" : "USD"
+		},
+		"EMPLOYEE_2_EQUIPMENTS" : [ {
+			"Category" : "Electronics",
+			"ID" : 7,
+			"Name" : "Office PC",
+			"EmployeeId" : "0005"
+		}, {
+			"Category" : "Vehicle",
+			"ID" : 8,
+			"Name" : "Mercedes B 3.0",
+			"EmployeeId" : "0005"
+		}, {
+			"Category" : "Vehicle",
+			"ID" : 9,
+			"Name" : "Tesla Model S",
+			"EmployeeId" : "0005"
+		} ]
+	} ]
+}

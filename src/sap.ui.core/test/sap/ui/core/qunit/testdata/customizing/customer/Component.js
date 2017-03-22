@@ -2,14 +2,14 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 	function(jQuery, Component1) {
 	"use strict";
 
-	
+
 	var Component = Component1.extend("testdata.customizing.customer.Component", {
 
 		metadata : {
 			version : "1.0",
-		
+
 			customizing: {
-			
+
 				"sap.ui.viewReplacements": {
 					"testdata.customizing.sap.Sub1": {
 						viewName: "testdata.customizing.customer.CustomSub1",
@@ -20,11 +20,11 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						type: "JS"
 					}
 				},
-			
+
 				"sap.ui.controllerReplacements": {
 					"testdata.customizing.sap.Main": "testdata.customizing.customer.Main"
 				},
-			
+
 				"sap.ui.viewExtensions": {
 					"testdata.customizing.sap.Sub2": {
 						"extension2": {
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 							type: "XML"
 						}
 					},
-				
+
 					"testdata.customizing.sap.Frag1": {
 						"extensionPointInFragment": {
 							className: "sap.ui.core.Fragment",
@@ -88,8 +88,13 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						}
 					},
 				},
-			
+
 				"sap.ui.viewModifications": {
+					"testdata.customizing.sap.Sub2": {
+						"btnToHide": {
+							"visible": false
+						}
+					},
 					"testdata.customizing.sap.Sub3": {
 						"customizableText": {
 							"visible": false,
@@ -107,13 +112,21 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						}
 					}
 				},
-			
+
 				"sap.ui.controllerExtensions": {
 					"testdata.customizing.sap.Sub2": {
 						"controllerName": "testdata.customizing.customer.Sub2ControllerExtension"
 					},
 					"testdata.customizing.sap.Sub4": {
-						"controllerName": "testdata.customizing.customer.Sub4ControllerExtension"
+						"controllerNames": [
+							"testdata.customizing.customer.Sub4ControllerExtension"
+						]
+					},
+					"testdata.customizing.sap.Sub6": {
+						"controllerName": "testdata.customizing.customer.Sub6ControllerExtension",
+						"controllerNames": [
+							"testdata.customizing.customer.Sub6AnotherControllerExtension"
+						]
 					}
 				}
 			}

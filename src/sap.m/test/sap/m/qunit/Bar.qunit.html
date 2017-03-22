@@ -1,13 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.Bar</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
@@ -29,7 +28,7 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			sinon.config.useFakeTimers = true;
 
-			module("rendering");
+			QUnit.module("rendering");
 
 			function renderingTest (fnAssertions) {
 
@@ -65,45 +64,45 @@
 				bar2.destroy();
 			};
 
-			test("Should render the bars", function() {
+			QUnit.test("Should render the bars", function(assert) {
 
 				renderingTest.call(this, function() {
 
-					ok(jQuery.sap.domById("myBar"), "Bar should be rendered");
-					ok(jQuery.sap.domById("myBar1"), "Bar1 should be rendered");
+					assert.ok(jQuery.sap.domById("myBar"), "Bar should be rendered");
+					assert.ok(jQuery.sap.domById("myBar1"), "Bar1 should be rendered");
 
 				});
 
 			});
 
 			// This is more like visual test, but will leave it as it is for now.
-			test("Should position the bars", function() {
+			QUnit.test("Should position the bars", function(assert) {
 
 				renderingTest.call(this, function() {
 
-					equal (jQuery.sap.byId("myBar1").position().top, (jQuery.sap.byId("myBar").position().top + jQuery.sap.byId("myBar").outerHeight()),
+					assert.equal(jQuery.sap.byId("myBar1").position().top, (jQuery.sap.byId("myBar").position().top + jQuery.sap.byId("myBar").outerHeight()),
 							"Bar1 should be located below Bar");
 
 				});
 
 			});
 
-			test("content Element position", function(){
+			QUnit.test("content Element position", function(assert) {
 
 				renderingTest.call(this, function() {
 
-					ok(jQuery.sap.byId("CancelBtn").parent().hasClass("sapMBarLeft"), "header button should have class sapMBarLeft");
-					ok(jQuery.sap.byId("myIcon").parent().hasClass("sapMBarLeft"), "header icon should have class sapMBarLeft");
-					ok(jQuery.sap.byId("myLabel").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
-					ok(jQuery.sap.byId("myLabel1").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
-					ok(jQuery.sap.byId("EditBtn").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
-					ok(jQuery.sap.byId("EditBtn1").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
+					assert.ok(jQuery.sap.byId("CancelBtn").parent().hasClass("sapMBarLeft"), "header button should have class sapMBarLeft");
+					assert.ok(jQuery.sap.byId("myIcon").parent().hasClass("sapMBarLeft"), "header icon should have class sapMBarLeft");
+					assert.ok(jQuery.sap.byId("myLabel").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
+					assert.ok(jQuery.sap.byId("myLabel1").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
+					assert.ok(jQuery.sap.byId("EditBtn").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
+					assert.ok(jQuery.sap.byId("EditBtn1").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
 
 				});
 
 			});
 
-			test("Should set the design class to the containers", function() {
+			QUnit.test("Should set the design class to the containers", function(assert) {
 				// Arrange
 				var sBarBaseContext = "sapMIBar-CTX";
 
@@ -116,58 +115,78 @@
 				var sExpectedClass = sap.m.BarRenderer.getContext(oBar);
 
 				// Assert
-				ok(oBar.$().hasClass(sExpectedClass), "the left button parent had the class " + sExpectedClass);
-				ok(oBar.$().hasClass(sBarBaseContext), "the left button parent had the class " + sBarBaseContext);
+				assert.ok(oBar.$().hasClass(sExpectedClass), "the left button parent had the class " + sExpectedClass);
+				assert.ok(oBar.$().hasClass(sBarBaseContext), "the left button parent had the class " + sBarBaseContext);
 
 				//Cleanup
 				oBar.destroy();
 			});
 
-			test("tag property", function(){
+			QUnit.test("Should get the correct contexts", function(assert) {
+				// System under Test
+				var oBar = new sap.m.Bar().placeAt("qunit-fixture");
+
+				// Act
+				sap.ui.getCore().applyChanges();
+
+				var oExpectedContexts = oBar.getContext(oBar);
+
+				// Assert
+				assert.equal(Object.keys(oExpectedContexts).length, 4, "There are four contexts");
+				assert.ok(oExpectedContexts["header"], "returned contexts has 'header' context");
+				assert.ok(oExpectedContexts["subheader"], "returned contexts has 'subheader' context");
+				assert.ok(oExpectedContexts["footer"], "returned contexts has 'footer' context");
+				assert.ok(oExpectedContexts["dialogFooter"], "returned contexts has 'dialogFooter' context");
+
+				//Cleanup
+				oBar.destroy();
+			});
+
+			QUnit.test("tag property", function(assert) {
 
 				renderingTest.call(this, function() {
 
-					ok(jQuery.sap.byId("myBar").is("div"), "bar should be rendered as div");
-					ok(jQuery.sap.byId("myBar1").is("div"), "bar1 should be rendered as div");
+					assert.ok(jQuery.sap.byId("myBar").is("div"), "bar should be rendered as div");
+					assert.ok(jQuery.sap.byId("myBar1").is("div"), "bar1 should be rendered as div");
 
 					var bar = sap.ui.getCore().byId("myBar");
 					bar.setHTMLTag('Header');
 					bar.rerender();
-					ok(jQuery.sap.byId("myBar").is("header"), "bar should be rendered as header");
+					assert.ok(jQuery.sap.byId("myBar").is("header"), "bar should be rendered as header");
 
 					var bar1 = sap.ui.getCore().byId("myBar1");
 					bar1.setHTMLTag('Footer');
 					bar1.rerender();
-					ok(jQuery.sap.byId("myBar1").is("footer"), "bar1 should be rendered as footer");
+					assert.ok(jQuery.sap.byId("myBar1").is("footer"), "bar1 should be rendered as footer");
 
 					var bar2 = sap.ui.getCore().byId("myBar2");
 					bar2.setHTMLTag('H1');
 					bar2.rerender();
-					ok(jQuery.sap.byId("myBar2").is("H1"), "bar2 should be rendered as H1");
-					equal(bar2.getHTMLTag(), "H1", "Even when sap.m.Bar has HTML tag set with value different than header and footer, " +
+					assert.ok(jQuery.sap.byId("myBar2").is("H1"), "bar2 should be rendered as H1");
+					assert.equal(bar2.getHTMLTag(), "H1", "Even when sap.m.Bar has HTML tag set with value different than header and footer, " +
 						"the getHTMLTag should behave in one and the same way- should return the tag value itself");
 				});
 
 			});
 
-			test("should add and remove the flexBox", function(){
+			QUnit.test("should add and remove the flexBox", function(assert) {
 
 				renderingTest.call(this, function() {
 
 					var bar2 = sap.ui.getCore().byId("myBar2");
-					ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
-					ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
+					assert.ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
+					assert.ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
 					bar2.setEnableFlexBox(false);
 
 					sap.ui.getCore().applyChanges();
 
-					ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
-					ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
+					assert.ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
+					assert.ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
 
 				});
 			});
 
-			test("Should set the translucent class if on a touch device", function() {
+			QUnit.test("Should set the translucent class if on a touch device", function(assert) {
 				var //System under Test
 					sut = new sap.m.Bar({
 						translucent : true
@@ -181,13 +200,13 @@
 				sap.ui.getCore().applyChanges();
 
 				//Assert
-				strictEqual(sut.$().filter(".sapMBarTranslucent").length,1,"translucent class got set");
+				assert.strictEqual(sut.$().filter(".sapMBarTranslucent").length,1,"translucent class got set");
 
 				//Cleanup
 				sut.destroy();
 			});
 
-			test("Should not register resize handlers if the bar is invisible", function() {
+			QUnit.test("Should not register resize handlers if the bar is invisible", function(assert) {
 				var //System under Test
 						oBar = new sap.m.Bar({
 							visible : true,
@@ -204,7 +223,7 @@
 				sap.ui.getCore().applyChanges();
 
 				//Assert
-				strictEqual(fnSpy.callCount, 0,"the resize listeners did not get registered");
+				assert.strictEqual(fnSpy.callCount, 0,"the resize listeners did not get registered");
 
 				//Cleanup
 				oBar.destroy();
@@ -214,7 +233,7 @@
 			var iStartEndPadding = 4;
 
 			jQuery.sap.require("sap.m.Button");
-			test("Each first child should not have margins and each none first should have", function() {
+			QUnit.test("Each first child should not have margins and each none first should have", function(assert) {
 				// Arrange
 				var oFirstButton = new sap.m.Button("first"),
 					oMiddleButton = new sap.m.Button("middle"),
@@ -236,11 +255,11 @@
 				// Assert
 				function assertButton (oButton, oMargins) {
 					if(sap.ui.getCore().getConfiguration().getRTL()) {
-						strictEqual(oButton.$().css("margin-left"), oMargins.right + "px", oButton + " did have the correct right margin");
-						strictEqual(oButton.$().css("margin-right"),  oMargins.left + "px", oButton + " did have the correct left margin");
+						assert.strictEqual(oButton.$().css("margin-left"), oMargins.right + "px", oButton + " did have the correct right margin");
+						assert.strictEqual(oButton.$().css("margin-right"),  oMargins.left + "px", oButton + " did have the correct left margin");
 					} else {
-						strictEqual(oButton.$().css("margin-left"), oMargins.left + "px", oButton + " did have the correct left margin");
-						strictEqual(oButton.$().css("margin-right"),  oMargins.right + "px", oButton + " did have the correct right margin");
+						assert.strictEqual(oButton.$().css("margin-left"), oMargins.left + "px", oButton + " did have the correct left margin");
+						assert.strictEqual(oButton.$().css("margin-right"),  oMargins.right + "px", oButton + " did have the correct right margin");
 					}
 				}
 
@@ -260,12 +279,143 @@
 				});
 
 				if(sap.ui.getCore().getConfiguration().getRTL()) {
-					strictEqual(oBar.$("BarLeft").css("padding-right"), iStartEndPadding + "px", "Left bar does have a padding");
+					assert.strictEqual(oBar.$("BarLeft").css("padding-right"), iStartEndPadding + "px", "Left bar does have a padding");
 				} else {
-					strictEqual(oBar.$("BarLeft").css("padding-left"), iStartEndPadding + "px", "Left bar does have a padding");
+					assert.strictEqual(oBar.$("BarLeft").css("padding-left"), iStartEndPadding + "px", "Left bar does have a padding");
 				}
 
 				// Cleanup
+				oBar.destroy();
+			});
+
+			function getBarContentStyles(sut) {
+				var oBarStyles = getJqueryObjectsForBar(sut);
+
+				return {
+					left: oBarStyles.$left.attr("style") ? oBarStyles.$left.attr("style").replace(/[;|\s]/g, "") : "",
+					right: oBarStyles.$right.attr("style") ? oBarStyles.$right.attr("style").replace(/[;|\s]/g, "") : "",
+					mid: oBarStyles.$mid.attr("style") ? oBarStyles.$mid.attr("style").replace(/[;|\s]/g, "") : ""
+				};
+			}
+			function createSUTSingleAggregation(sAggregationName) {
+				var oSut;
+				switch (sAggregationName) {
+					case "contentLeft":
+						oSut = new sap.m.Bar({contentLeft: [ new sap.m.Button()]});
+						break;
+					case "contentMiddle":
+						oSut = new sap.m.Bar({contentMiddle: [ new sap.m.Button()]});
+						break;
+					case "contentRight":
+						oSut = new sap.m.Bar({contentRight: [ new sap.m.Button()]});
+						break;
+					default: "Invalid aggregation " + sAggregationName;
+				}
+				return oSut;
+			}
+			QUnit.test("Single left aggregation is set with with 100%", function(assert) {
+				//Sut
+				var sut = createSUTSingleAggregation("contentLeft"),
+						oBarWidths;
+
+				//Assert
+				function check (sMsgPrefix) {
+					oBarWidths = getBarContentStyles(sut);
+					assert.equal("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
+				}
+
+				//Arrange
+				var oStub = sinon.stub(sut, "onAfterRendering", function() {
+				   //Assert
+				   check("just before onAfterRendering:");
+				   sap.m.Bar.prototype.onAfterRendering.apply(sut, arguments);
+				});
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				check("after onAfterRendering");
+
+				//Cleanup
+				oStub.restore();
+				sut.destroy();
+			});
+
+			QUnit.test("Single middle aggregation is set with with 100%", function(assert) {
+				//Sut
+				var sut = createSUTSingleAggregation("contentMiddle"),
+						oBarWidths;
+
+				//Assert
+				function check (sMsgPrefix) {
+					oBarWidths = getBarContentStyles(sut);
+					assert.notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
+					assert.equal("width:100%",oBarWidths.mid, sMsgPrefix + " Middle Content width must be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
+				}
+
+				//Arrange
+				var oStub = sinon.stub(sut, "onAfterRendering", function() {
+					//Assert
+					check("just before onAfterRendering:");
+					sap.m.Bar.prototype.onAfterRendering.apply(sut, arguments);
+				});
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				check("after onAfterRendering");
+
+				//Cleanup
+				oStub.restore();
+				sut.destroy();
+			});
+
+			QUnit.test("Single right aggregation is set with with 100%", function(assert) {
+				//Sut
+				var sut = createSUTSingleAggregation("contentRight"),
+						oBarWidths;
+
+				//Assert
+				function check (sMsgPrefix) {
+					oBarWidths = getBarContentStyles(sut);
+					assert.notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
+					assert.notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
+					assert.equal("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must be set to 100%");
+				}
+
+				//Arrange
+				var oStub = sinon.stub(sut, "onAfterRendering", function() {
+					//Assert
+					check("just before onAfterRendering:");
+					sap.m.Bar.prototype.onAfterRendering.apply(sut, arguments);
+				});
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				check("after onAfterRendering");
+
+				//Cleanup
+				oStub.restore();
+				sut.destroy();
+			});
+
+				QUnit.test("ariaLabbeledBy", function(assert) {
+
+				//Arrange
+				var oBar = new sap.m.Bar(),
+				oInvisibleText = new sap.ui.core.InvisibleText({text: "invisible text"});
+
+				oBar.addAriaLabelledBy(oInvisibleText.toStatic());
+
+				//Assert
+				assert.equal(oBar.getAriaLabelledBy(), oInvisibleText.getId(), "Bar has attribute aria-labelledby to the internal label");
+
+				//Cleanup
+				oInvisibleText.destroy();
 				oBar.destroy();
 			});
 
@@ -274,7 +424,7 @@
 				return;
 			}
 
-			module("positioning");
+			QUnit.module("positioning");
 
 			function getJqueryObjectsForBar (oBar) {
 				var sBarId = oBar.getId();
@@ -291,11 +441,11 @@
 
 				if(style) {
 
-					strictEqual(style.indexOf("width"), -1, sElementName + " has no inline width set style was " + style);
+					assert.strictEqual(style.indexOf("width"), -1, sElementName + " has no inline width set style was " + style);
 
 				} else {
 
-					ok(true, sElementName + " has no inline style");
+					assert.ok(true, sElementName + " has no inline style");
 
 				}
 			};
@@ -305,12 +455,12 @@
 
 				if(stlye) {
 
-					strictEqual(stlye.indexOf("right"), -1, sElementName + " has no inline right set style was " + stlye);
-					strictEqual(stlye.indexOf("left"), -1, sElementName + " has no inline left set style was " + stlye);
+					assert.strictEqual(stlye.indexOf("right"), -1, sElementName + " has no inline right set style was " + stlye);
+					assert.strictEqual(stlye.indexOf("left"), -1, sElementName + " has no inline left set style was " + stlye);
 
 				} else {
 
-					ok(true, sElementName + " has no inline style");
+					assert.ok(true, sElementName + " has no inline style");
 
 				}
 			}
@@ -351,7 +501,7 @@
 			}
 
 			function testAlsoForRTL(sName, fnTest) {
-				test(sName, function () {
+				QUnit.test(sName, function (assert) {
 					var config = sap.ui.getCore().getConfiguration();
 
 					//turn on rtl for this test
@@ -362,7 +512,7 @@
 					fnTest.call(this, sName, fnTest);
 				});
 
-				test(sName + " RTL", function () {
+				QUnit.test(sName + " RTL", function (assert) {
 					var config = sap.ui.getCore().getConfiguration();
 
 					//turn on rtl for this test
@@ -382,15 +532,15 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
 				elementHasNoWidth(oBarInternals.$left, "left Bar");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 100 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 100 + iStartEndPadding * 2, "mid outerWidth is correct");
 				elementHasNoWidth(oBarInternals.$mid, "mid Bar");
 				elementHasNoLeftOrRight(oBarInternals.$left, "mid Bar");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoWidth(oBarInternals.$right, "right Bar");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
@@ -407,13 +557,13 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.width(), 50 - iStartEndPadding, "left width is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 50 - iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$mid, "mid Bar");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 450 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 450 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
 				//Cleanup
@@ -429,13 +579,13 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.width(), 400 - iStartEndPadding, "left width is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 400 - iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$mid, "mid Bar");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
 				//Cleanup
@@ -451,18 +601,18 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 175 -  iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 175 -  iStartEndPadding * 2, "mid outerWidth is correct");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("Should push the mid to the center of the remaining space, if the right content overlaps it", function() {
+			QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it", function(assert) {
 				var config = sap.ui.getCore().getConfiguration();
 
 				//turn on rtl for this test
@@ -482,19 +632,19 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
-				strictEqual(oBarInternals.$mid.css("left"), 0 +  iStartEndPadding + "px", "mid was positioned at the left edge");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
+				assert.strictEqual(oBarInternals.$mid.css("left"), 0 +  iStartEndPadding + "px", "mid was positioned at the left edge");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("Should push the mid to the center of the remaining space, if the right content overlaps it RTL", function() {
+			QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it RTL", function(assert) {
 				var config = sap.ui.getCore().getConfiguration();
 
 				//turn on rtl for this test
@@ -514,12 +664,12 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
-				strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the right edge");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
+				assert.strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the right edge");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -534,11 +684,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 500, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 500, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -558,11 +708,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.width(), 500 - iStartEndPadding, "left width is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 500 - iStartEndPadding, "left width is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 0 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 0 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -582,11 +732,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 300 -  iStartEndPadding * 2, "mid outerWidth is correct");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 300 -  iStartEndPadding * 2, "mid outerWidth is correct");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -606,11 +756,11 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
 				//Cleanup
 				sut.destroy();
@@ -630,15 +780,15 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
 				elementHasNoLeftOrRight(oBarInternals.$mid, "mid Bar");
 
 
-				strictEqual(oBarInternals.$right.outerWidth(), 500, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 500, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
 
@@ -647,9 +797,34 @@
 				jQuery("#qunit-fixture").width("");
 			});
 
-			module("resizing");
+			QUnit.test("leftContent should not overlap the rightContent", function(assert) {
+				//Arrange + System under Test + Act
+				//left | right | mid
+				var sut = createAndPlaceSUT(300, 450, 0);
 
-			test("Should attach to the resize handlers", function() {
+				//Act
+				jQuery("#qunit-fixture").width("750px");
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				var oBarInternals = getJqueryObjectsForBar(sut);
+
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					assert.strictEqual(oBarInternals.$right.outerWidth(), oBarInternals.$left.position().left, "left content starts where right content ends");
+				} else {
+					assert.strictEqual(oBarInternals.$left.outerWidth(), oBarInternals.$right.position().left, "right content starts where left content ends");
+				}
+
+				//Cleanup
+				sut.destroy();
+				jQuery("#qunit-fixture").width("");
+			});
+
+
+			QUnit.module("resizing");
+
+			QUnit.test("Should attach to the resize handlers", function(assert) {
 				//Arrange + System under Test + Act
 				//left | right | mid
 				var sut = createAndPlaceSUT(225, 225, 100);
@@ -661,18 +836,18 @@
 				sut.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
+				assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
 
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 50 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
-				strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the left edge");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 50 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+				assert.strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the left edge");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
 				jQuery("#qunit-fixture").width("600px");
@@ -681,23 +856,23 @@
 
 				oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
+				assert.strictEqual(oBarInternals.$left.outerWidth(), 225 + iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
-				strictEqual(oBarInternals.$mid.outerWidth(), 100 + iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+				assert.strictEqual(oBarInternals.$mid.outerWidth(), 100 + iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
 				elementHasNoLeftOrRight(oBarInternals.$left, "mid Bar");
 
-				strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+				assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$right, "right Bar");
 
-				strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
+				assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
 
 				//Cleanup
 				sut.destroy();
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("Should not attach resizeHandlers if the bar has no content", function() {
+			QUnit.test("Should not attach resizeHandlers if the bar has no content", function(assert) {
 				//Arrange + System under Test + Act
 				//left | right | mid
 				var sut = new sap.m.Bar();
@@ -708,7 +883,7 @@
 				sut.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
+				assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
 
 				//Act
 				jQuery("#qunit-fixture").width("600px");
@@ -716,23 +891,23 @@
 				this.clock.tick(200);
 
 				//Assert
-				strictEqual(oHandleResizeSpy.callCount, 1, "resize not called twice");
+				assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize not called twice");
 
 				sut.addContentLeft(new sap.m.Button());
 				sap.ui.getCore().applyChanges();
 
-				strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
+				assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
 
 				jQuery("#qunit-fixture").width("500px");
 				this.clock.tick(200);
-				strictEqual(oHandleResizeSpy.callCount, 3, "resize was called three times");
+				assert.strictEqual(oHandleResizeSpy.callCount, 3, "resize was called three times");
 
 				//Cleanup
 				sut.destroy();
 				jQuery("#qunit-fixture").width("");
 			});
 
-			test("Should attach and detach resize listeners to the content", function() {
+			QUnit.test("Should attach and detach resize listeners to the content", function(assert) {
 
 				var oHandleResizeSpy = this.spy(sap.m.Bar.prototype, "_handleResize");
 
@@ -740,7 +915,7 @@
 				//left | right | mid
 				var sut = createAndPlaceSUT(100, 100, 100);
 
-				strictEqual(oHandleResizeSpy.callCount, 1, "resize was called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called");
 
 
 				var oBarInternals = getJqueryObjectsForBar(sut);
@@ -749,19 +924,19 @@
 				oBarInternals.$left.width(105);
 				this.clock.tick(200);
 
-				strictEqual(oHandleResizeSpy.callCount, 2, "resize was called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called");
 
 				//right
 				oBarInternals.$right.width(105);
 				this.clock.tick(200);
 
-				strictEqual(oHandleResizeSpy.callCount, 3, "resize was called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 3, "resize was called");
 
 				//mid
 				oBarInternals.$mid.width(105);
 				this.clock.tick(200);
 
-				strictEqual(oHandleResizeSpy.callCount, 4, "resize was called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 4, "resize was called");
 
 				//detach
 				sut._removeAllListeners();
@@ -770,7 +945,7 @@
 				oBarInternals.$right.width(100);
 				oBarInternals.$mid.width(100);
 
-				strictEqual(oHandleResizeSpy.callCount, 4, "resize was not called");
+				assert.strictEqual(oHandleResizeSpy.callCount, 4, "resize was not called");
 
 				//Cleanup
 				sut.destroy();

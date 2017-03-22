@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.FormattedTextView
-  Author: D034262
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<script id="sap-ui-bootstrap" type="text/javascript"
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons">
@@ -15,15 +15,19 @@
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
 	type="text/css" media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script
+	src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
 <!-- Control initialization -->
-<script language="javascript">
+<script>
+
+
 	var oHtmlText = 'If this does not work, please write an email to: <embed data-index=\"0\"><br>';
 	oHtmlText += '&lt;i&gt;Here is an XSS attack that alerts "XSS attack"&lt;/i&gt;<br>';
 	oHtmlText += '&lt;scr' + 'ipt&gt;alert("XSS attack");&lt;/scr'
@@ -43,7 +47,7 @@
 		href: "mailto:test.me@sap.com"
 	});
 	oFTV.addControl(oLink);
-	
+
 	var oLink2 = new sap.ui.commons.Link("l2", {
 		text: "Test me too",
 		tooltip: "This will send a mail to test.me@sap.com",
@@ -76,23 +80,26 @@
 	var oFTV3 = new sap.ui.commons.FormattedTextView("textView3");
 	oFTV3.placeAt("uiArea3");
 
-	module("Appearance");
-	
-	test("Visibility", function() {
+	var oFTV4 = new sap.ui.commons.FormattedTextView("textView4");
+	oFTV4.placeAt('uiArea4');
+
+	QUnit.module("Appearance");
+
+	QUnit.test("Visibility", function(assert) {
 		// Visible
-		ok(jQuery("#textView1").get(0), "Visible, expected defined");
-		equals(jQuery("#textView1-__clone0").get(0), undefined, "Invisible");
+		assert.ok(jQuery("#textView1").get(0), "Visible, expected defined");
+		assert.equal(jQuery("#textView1-__clone0").get(0), undefined, "Invisible");
 	});
-	
-	test("Placeholders", function(){
+
+	QUnit.test("Placeholders", function(assert) {
 		var placeHolderPattern = new RegExp("\<embed data-index=\"([0-9]*[0-9])\">", "gim");
 		var oTVDom = jQuery.sap.domById('textView1');
 		var renderedText = jQuery(oTVDom).text();
-		ok((placeHolderPattern.exec(renderedText) == null), "All placeholders correctly replaced");
-		
+		assert.ok((placeHolderPattern.exec(renderedText) == null), "All placeholders correctly replaced");
+
 	});
-	
-	test("Sanitizing", function(){
+
+	QUnit.test("Sanitizing", function(assert) {
 		var goodText = 'Within this formatted text view, sanitizing is tested. You should not see anything but empty space between START and END below this sentence.<br>';
 		var evilText = goodText + 'START ' + '<img src="http://www.sap.com/global/images/SAPLogo.gif">'; // <p> is now alloed in FTV + '&lt;p&gt;Here is an XSS attack that alerts "XSS attack"&lt;/p&gt;';
 		evilText  += '&lt;scr' + 'ipt&gt;alert("XSS attack");&lt;/scr' + 'ipt&gt;' + 'END';
@@ -104,11 +111,11 @@
 		// for the sake of IE8 which capitalizes tags retrieved with innerHTML, we use lowercase for comparison of strings
 		goodText = goodText.toLowerCase();
 		var deliveredText = jQuery(jQuery.sap.domById('textView3')).html().toLowerCase();
-		equal(deliveredText, goodText, "Text has been sanitized");
+		assert.equal(deliveredText, goodText, "Text has been sanitized");
 	});
-	
 
-	test("Invalid Controls", function(){
+
+	QUnit.test("Invalid Controls", function(assert) {
 		var controlAdded = true;
 		try {
 			oFTV.addControl(new sap.ui.commons.Button('b1',{ text: 'Button'}));
@@ -116,7 +123,17 @@
 		catch(e){
 			controlAdded = false;
 		}
-		ok(controlAdded, "Button is not an allowed control within FormattedTextView");
+		assert.ok(controlAdded, "Button is not an allowed control within FormattedTextView");
+	});
+
+	QUnit.test("Content with html and embed placeholder is rendered", function(assert) {
+		var LinkToEmbed = new sap.ui.commons.Link('lte', { text: 'LinkToEmbed', href:'www.sap.com'});
+		oFTV4.setContent('<div>This div is a FormattedTextView Control</div><embed data-index="0">', [LinkToEmbed]);
+		sap.ui.getCore().applyChanges();
+
+		var renderedHTML = sap.ui.getCore().byId('textView4').getDomRef().innerHTML;
+		assert.ok(~renderedHTML.indexOf('<div'), 'The div is rendered');
+		assert.ok(~renderedHTML.indexOf('<a'), 'The link is rendered');
 	});
 
 </script>
@@ -131,5 +148,6 @@
 	<div id="uiArea1"></div>
 	<div id="uiArea2"></div>
 	<div id="uiArea3"></div>
+	<div id="uiArea4"></div>
 </body>
 </html>

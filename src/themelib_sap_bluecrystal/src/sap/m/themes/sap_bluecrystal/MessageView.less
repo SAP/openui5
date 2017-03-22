@@ -1,0 +1,61 @@
+/* ===================================== */
+/* CSS for control sap.m/MessagePopover  */
+/* BlueCrystal theme                     */
+/* ===================================== */
+
+.sapMMsgView {
+	.sapMSegB .sapMSegBBtn {
+		background-color: transparent;
+		border-color: transparent;
+		border-radius: 0.125rem;
+		color: @sapUiButtonHeaderTextColor;
+
+		&:hover {
+			background-color: @sapUiButtonHoverBackground;
+			color: @sapUiButtonHeaderTextColor;
+
+			.sapMBtnIcon {
+				color: @sapUiButtonIconColor;
+			}
+		}
+
+		&:active {
+			background-color: @sapUiButtonActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+
+			.sapMBtnIcon.sapUiIcon {
+				color: @sapUiButtonActiveTextColor;
+			}
+		}
+
+		&.sapMSegBBtnSel {
+			background-color: @sapUiSegmentedButtonSelectedBackground;
+			color: @sapUiSegmentedButtonSelectedTextColor;
+
+			.sapMBtnIcon {
+				color: @sapUiContentContrastIconColor;
+			}
+
+			&:hover, &:active {
+				background-color: @sapUiSegmentedButtonSelectedHoverBackground;
+				color: @sapUiSegmentedButtonSelectedTextColor;
+
+				.sapMBtnIcon {
+					color: @sapUiButtonActiveTextColor;
+				}
+			}
+		}
+	}
+
+	.sapMMsgViewTitleText {
+		font-size: @sapMFontHeader4Size;
+		font-weight: bold;
+	}
+
+}
+
+.sapUiSizeCompact .sapMMsgView {
+	.sapMMsgViewTitleText {
+		font-size: @sapMFontMediumSize;
+	}
+}

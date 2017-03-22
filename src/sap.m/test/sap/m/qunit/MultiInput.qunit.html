@@ -1,366 +1,144 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Test Page for sap.m.MultiInput</title>
+<script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- use the sinon faketimers for this test -->
-<script type="text/javascript">
+<script>
 	sinon.config.useFakeTimers = true;
 </script>
 
 <script>
-	var multiInput1;
-	var oMultiInput = new sap.m.MultiInput("i1");
 
-	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "A-Item"}));
-	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "B-Item"}));
-	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "C-Item"}));
-	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "D-Item"}));
-	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "E-Item"}));
-	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "F-Item"}));
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-	var oMLInput = new sap.m.MultiInput("i2",{width:"50%", enableMultiLineMode:true});
-	oMLInput.addToken(new sap.m.Token({key:"ml1",text:"MutiLineToken1"}));
-	oMLInput.addToken(new sap.m.Token({key:"ml2",text:"MutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineToken2"}));
-	oMLInput.addToken(new sap.m.Token({key:"ml3",text:"Token3"}));
-	oMLInput.addSuggestionItem(new sap.ui.core.Item({text: "A-Item"}));
-	oMLInput.addSuggestionItem(new sap.ui.core.Item({text: "B-Item"}));
-	oMLInput.addSuggestionItem(new sap.ui.core.Item({text: "C-Item"}));
+	QUnit.module("Basic", {
+		beforeEach : function() {
+			this.multiInput1 = new sap.m.MultiInput();
+			this.multiInput1.placeAt("qunit-fixture");
 
-	var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-	var sShowMoreKey = "MULTIINPUT_SHOW_MORE_TOKENS";
-
-
-	oMultiInput.placeAt("content");
-	oMLInput.placeAt("content");
-	sap.ui.getCore().applyChanges();
-
-	module("Basic", {
-		setup : function() {
-			multiInput1 = sap.ui.getCore().getControl("i1");
+			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
-			multiInput1.removeAllTokens();
-			multiInput1.removeAllValidators();
-			token1 = null;
+		afterEach : function() {
+			this.multiInput1.destroy();
 		}
 	});
 
-	test("tokens aggregation", function() {
+	QUnit.test("tokens aggregation", function(assert) {
 		var token1 = new sap.m.Token();
 		var token2 = new sap.m.Token();
 		var token3 = new sap.m.Token();
-		multiInput1.addToken(token1);
-		multiInput1.addToken(token2);
-		multiInput1.addToken(token3);
+		this.multiInput1.addToken(token1);
+		this.multiInput1.addToken(token2);
+		this.multiInput1.addToken(token3);
 
-		equals(multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
+		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
 
-		multiInput1.removeToken(token1);
-		equals(multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens");
+		this.multiInput1.removeToken(token1);
+		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens");
 
-		multiInput1.removeAllTokens();
-		equals(multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
+		this.multiInput1.removeAllTokens();
+		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 
-		multiInput1.addToken(token1);
-		multiInput1.addToken(token2);
-		multiInput1.addToken(token3);
-		equals(multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
-
-		token2.fireDelete({token: token2});
-		equals(multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens");
-
-		multiInput1.removeAllTokens();
+		this.multiInput1.addToken(token1);
+		this.multiInput1.addToken(token2);
+		this.multiInput1.addToken(token3);
+		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
 	});
 
-	test("setTokens aggregation", function() {
+	QUnit.test("setTokens aggregation", function(assert) {
 		var token1 = new sap.m.Token();
 		var token2 = new sap.m.Token();
 		var token3 = new sap.m.Token();
-		multiInput1.setTokens([token1, token2, token3]);
+		this.multiInput1.setTokens([token1, token2, token3]);
 
-		equals(multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
-
-		multiInput1.removeAllTokens();
+		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
 	});
 
-	test("check base class prerequisites", function() {
-		ok(multiInput1._$input && multiInput1._$input.cursorPos, "Base class can return cursor position");
-		//ok(multiInput1._oSuggestionPopup && multiInput1._oSuggestionPopup.isOpen, "Base class can tell if suggestion popup is open");
-	});
-
-	test("validation via suggestion items", function() {
-		equals(multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
-
-		multiInput1.setValue("a");
-		multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
-		multiInput1.onsapenter();
-
-		equals(multiInput1.getTokens().length, 1, "MultiInput contains 1 token, added via suggest");
-
-		multiInput1.setValue("B");
-		multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
-		multiInput1.onsapenter();
-
-		equals(multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, added via suggest ");
-
-		multiInput1.setValue("C");
-		multiInput1._getIsSuggestionPopupOpen = function(){ return false; };
-		multiInput1.onsapenter();
-
-		equals(multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added, suggestion list was closed");
-
-		multiInput1.setValue("Z");
-		multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
-		multiInput1.onsapenter();
-
-		equals(multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added, value does not fit suggestion list");
-
-		multiInput1.removeAllTokens();
-	});
-
-	test("validate tokens using validator callback", function() {
-		equals(multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
-
-		multiInput1.removeAllValidators();
-		multiInput1.addValidator(function(args){
-			return new sap.m.Token({text: args.text});
-		});
-
-		var tokenText = "TestToken1";
-		multiInput1.setValue(tokenText);
-		multiInput1.onsapenter();
-		equals(multiInput1.getTokens().length, 1, "MultiInput contains 1 token");
-		equals(multiInput1.getTokens()[0].getText(), tokenText, "added token contains validated text");
-
-		var tokenText = "TestToken2";
-		multiInput1.setValue(tokenText);
-		multiInput1.onsapenter();
-		equals(multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens");
-		equals(multiInput1.getTokens()[1].getText(), tokenText, "added token contains validated text");
-
-		multiInput1.removeAllValidators();
-		multiInput1.addValidator(function(args){
-			return;
-		});
-		tokenText = "TestToken3";
-		multiInput1.setValue(tokenText);
-		multiInput1.onsapenter();
-		equals(multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added as validator rejected it");
-
-
-
-		var fAsyncValidateCallback;
-		multiInput1.removeAllValidators();
-		multiInput1.addValidator(function(args){
-			fAsyncValidateCallback = args.asyncCallback;
-			return sap.m.MultiInput.WaitForAsyncValidation;
-		});
-		tokenText = "TestToken4";
-		multiInput1.setValue(tokenText);
-		multiInput1.onsapenter();
-
-		equals(multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added as validator runs asynchronously");
-
-		fAsyncValidateCallback(new sap.m.Token({text: "dummy"}));
-
-		equals(multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
-
-		multiInput1.removeAllValidators();
-		multiInput1.removeAllTokens();
-	});
-
-	test("delete tokens via backspace", function() {
-		equals(multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
-
+	QUnit.test("getAggregation tokens", function(assert) {
+		//arrange
 		var token1 = new sap.m.Token();
-		multiInput1.addToken(token1);
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token();
 
-		multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
-		ok(token1.getSelected(), "Token got selected");
+		//act
+		this.multiInput1.setTokens([token1, token2, token3]);
 
-		multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
-		equals(multiInput1.getTokens().length, 0, "Token got deleted");
+		//assert
+		assert.equal(this.multiInput1.getAggregation("tokens").length, 3, "MultiInput contains 3 tokens");
+		assert.equal(this.multiInput1.getAggregation("asdf"), null, "asdf is invalid aggregation");
 	});
 
-	test("tokens change event", function() {
-		var eventType;
-		multiInput1.attachTokenChange(function(args){
-			eventType = args.getParameter("type");
-		});
+	QUnit.test("clone", function(assert) {
+		//arrange
+		var TEXT = "text",
+			KEY = "key",
+			token1 = new sap.m.Token({text : TEXT, key : KEY}),
+			multiInputClone;
 
-		var token1 = new sap.m.Token();
-		multiInput1.addToken(token1);
-		equals(eventType, sap.m.MultiInput.TokenChangeType.Added, "added event raised");
+		this.multiInput1.addToken(token1);
 
-		multiInput1.removeToken(token1);
-		equals(eventType, sap.m.MultiInput.TokenChangeType.Removed, "removed event raised");
+		//act
+		multiInputClone = this.multiInput1.clone();
 
-		multiInput1.removeAllTokens();
-		equals(eventType, sap.m.MultiInput.TokenChangeType.RemovedAll, "removedAll event raised");
+		//assert
+		assert.equal(multiInputClone.getTokens().length, 1, "Cloned MultiInput contains 1 token");
+		assert.equal(multiInputClone.getTokens()[0].getText(), TEXT, "Cloned token has correct text");
+
+		//clean-up
+		multiInputClone.destroy();
 	});
 
-	test("test setEditable", function() {
+	QUnit.test("check base class prerequisites", function(assert) {
+		assert.ok(this.multiInput1._$input && this.multiInput1._$input.cursorPos, "Base class can return cursor position");
+		//assert.ok(multiInput1._oSuggestionPopup && multiInput1._oSuggestionPopup.isOpen, "Base class can tell if suggestion popup is open");
+	});
+
+	QUnit.test("test setEditable", function(assert) {
 		var isEditable;
-		multiInput1.setEditable(false);
-		isEditable = multiInput1.getEditable();
-		equals(isEditable, false, "MultiInput editable === false");
+		this.multiInput1.setEditable(false);
 
-		multiInput1.setEditable(false);
-		isEditable = multiInput1.getEditable();
-		equals(isEditable, false, "MultiInput editable still === false");
+		isEditable = this.multiInput1.getEditable();
+		assert.equal(isEditable, false, "MultiInput editable === false");
+		assert.equal(jQuery(this.multiInput1.getDomRef())
+				.css("visibility"), "visible", "Input should be visible even if MultiInput is disabled");
 
-		multiInput1.setEditable(true);
-		isEditable = multiInput1.getEditable();
-		equals(isEditable, true, "MultiInput editable === true");
+		this.multiInput1.setEditable(false);
+		isEditable = this.multiInput1.getEditable();
+		assert.equal(isEditable, false, "MultiInput editable still === false");
 
+		this.multiInput1.setEditable(true);
+		isEditable = this.multiInput1.getEditable();
+		assert.equal(isEditable, true, "MultiInput editable === true");
 	});
 
-	test("test suggestionItemSelected event", function() {
-		var testTokenText = "Testtoken"
-		var item = {
-				getText: function(){return testTokenText;},
-				getKey: function(){return "abc"}
-			}
-
-		multiInput1.fireSuggestionItemSelected({selectedItem: item});
-
-		var aTokens = multiInput1.getTokens(); 
-		equals(aTokens.length, 1, "MultiInput contains 1 token");
-		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
-	});
-
-	test("test text selection", function() {
-		multiInput1.setValue("test text");
-		 
-		equals(multiInput1._completeTextIsSelected(), false, "text is not selected");
-
-		multiInput1._selectAllInputText();
-
-		equals(multiInput1._completeTextIsSelected(), true, "text is selected");
-	});
-
-	test("test text validation on focus leave", function() {
-		var testTokenText = "C-Item";
-		multiInput1.setValue(testTokenText);
-		multiInput1._selectAllInputText();
-		multiInput1.onsapfocusleave({});
-
-		var aTokens = multiInput1.getTokens(); 
-		equals(aTokens.length, 1, "MultiInput contains 1 token");
-		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
-	});
-
-	test("test keyboard navigation", function(){
-		var token = new sap.m.Token({selected: true});
-		multiInput1.addToken(token);
-		equals(multiInput1.getTokens().length, 1, "MultiInput contains 1 token");
-
-		multiInput1.onsapnext({isMarked:function(){return false;}});
-
-		multiInput1.onsapdelete();
-		equals(multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
-
-		token.setSelected(false);
-		multiInput1.addToken(token);
-		multiInput1.onsapprevious({srcControl: multiInput1, preventDefault:function(){}});
-		equals(token.getSelected(), false, "Token not selected because popup is open");
-
-		multiInput1._getIsSuggestionPopupOpen = function(){return false;};
-		multiInput1.onsapprevious({srcControl: multiInput1, preventDefault:function(){}});
-		equals(token.getSelected(), true, "Token got selected");
-	});
-
-	test("test remove via live change", function() {
-		var token1 = new sap.m.Token({selected:true});
-		var token2 = new sap.m.Token({selected:true});
-		var token3 = new sap.m.Token({selected:true});
-		multiInput1.setTokens([token1, token2, token3]);
-		multiInput1.fireLiveChange();
-
-		equals(multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
-	});
-
-	test("keyboard - ctrl + A with no text", function() {
+	QUnit.test("max tokens", function(assert) {
 		var token1 = new sap.m.Token();
 		var token2 = new sap.m.Token();
 		var token3 = new sap.m.Token();
-		multiInput1.setTokens([token1, token2, token3]);
 
-		sap.ui.test.qunit.triggerKeydown(multiInput1.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
-		equals(token1.getSelected(), true, "Token1 got selected using ctrl+a");
-		equals(token2.getSelected(), true, "Token2 got selected using ctrl+a");
-		equals(token3.getSelected(), true, "Token3 got selected using ctrl+a");
+		this.multiInput1.setMaxTokens(2);
+
+		this.multiInput1.setTokens([token1, token2, token3]);
+		assert.equal(this.multiInput1.getTokens().length, 2, "no more than 2 tokens can be added");
 	});
 
-	test("keyboard - ctrl + A with text", function() {
-		
-		if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10)){
-			var token1 = new sap.m.Token();
-			var token2 = new sap.m.Token();
-			var token3 = new sap.m.Token();
-			multiInput1.setTokens([token1, token2, token3]);
-
-			multiInput1.updateDomValue("123");
-			sap.ui.test.qunit.triggerEvent("input", multiInput1.getFocusDomRef());
-
-			multiInput1.selectText(0, multiInput1.getValue().length);
-			equals(multiInput1._$input.getSelectedText(), "123", "only texts are selected");
-
-			sap.ui.test.qunit.triggerKeydown(multiInput1.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
-			equals(token1.getSelected(), true, "Token1 is selected");
-			equals(token2.getSelected(), true, "Token2 is selected");
-			equals(token3.getSelected(), true, "Token3 is selected");
-
-			multiInput1.ontap();
-			this.clock.tick(1);
-			equals(token1.getSelected(), false, "Token1 is unselected");
-			equals(token2.getSelected(), false, "Token2 is unselected");
-			equals(token3.getSelected(), false, "Token3 is unselected");
-		}
-
-	});
-
-	test("esc key", function() {
-
-		multiInput1.setValue("123");
-		multiInput1.selectText(0, multiInput1.getValue().length);
-		var token1 = new sap.m.Token({selected:true});
-		var token2 = new sap.m.Token({selected:true});
-		var token3 = new sap.m.Token({selected:true});
-		multiInput1.setTokens([token1, token2, token3]);
-
-		sap.ui.test.qunit.triggerKeydown(multiInput1.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-		equals(token1.getSelected(), false, "Token1 is unselected");
-		equals(token2.getSelected(), false, "Token2 is unselected");
-		equals(token3.getSelected(), false, "Token3 is unselected");
-		equals(multiInput1._$input.getSelectedText(), "", "texts get unselected");
-	});
-
-	test("test exit", function() {
-
-		multiInput1._sResizeHandlerId = "ID0123";
-		multiInput1.exit();
-
-		equals(multiInput1._sResizeHandlerId, undefined, "Resizehandler got deleted");
-	});
-
-	test("token data binding", function() {
+	QUnit.test("token data binding", function(assert) {
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
 
 		// JSON sample data
@@ -388,164 +166,701 @@
 				new sap.m.MultiInput({
 					tokens:[
 						new sap.m.Token({text:"{lastName}", key:"{lastName}"}),
-					    new sap.m.Token({text:"{gender}", key:"{gender}"})
+						new sap.m.Token({text:"{gender}", key:"{gender}"})
 					]
 				})
 			]
 		});
 
 		var aColumns = [
-       		new sap.m.Column({
-       			header : new sap.m.Label({
-       				text : "LastName"
-       			}),
-   				width: "100px"
-       		}),
-       		new sap.m.Column({
-       			header : new sap.m.Label({
-       				text : "LastName + Gender"
-       			})
-       		})
-		    ];
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "LastName"
+				}),
+				width: "100px"
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "LastName + Gender"
+				})
+			})
+		];
 
-	    var oTable = new sap.m.Table({ columns : aColumns});
-	    oTable.bindItems("/modelData", oItemTemplate);
-	    oTable.placeAt("qunit-fixture");
+		var oTable = new sap.m.Table({ columns : aColumns});
+		oTable.bindItems("/modelData", oItemTemplate);
+		oTable.placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
 
-	    var oMultiInput1 = oTable.getItems()[0].getCells()[1];
-	    equals(oMultiInput1.getTokens()[0].$().text(), "Doe", "text of token is correct");
-	    equals(oMultiInput1.getTokens()[1].$().text(), "Male", "text of token is correct");
-	    
-	    var oMultiInput2 = oTable.getItems()[1].getCells()[1];
-	    equals(oMultiInput2.getTokens()[0].$().text(), "Ali", "text of token is correct");
-	    equals(oMultiInput2.getTokens()[1].$().text(), "Female", "text of token is correct");
-	    
-	    oTable.destroy();
+		var oMultiInput1 = oTable.getItems()[0].getCells()[1];
+		assert.equal(oMultiInput1.getTokens()[0].$().text(), "Doe", "text of token is correct");
+		assert.equal(oMultiInput1.getTokens()[1].$().text(), "Male", "text of token is correct");
+
+		var oMultiInput2 = oTable.getItems()[1].getCells()[1];
+		assert.equal(oMultiInput2.getTokens()[0].$().text(), "Ali", "text of token is correct");
+		assert.equal(oMultiInput2.getTokens()[1].$().text(), "Female", "text of token is correct");
+
+		oTable.destroy();
 	});
 
-	module("MultiLineMode");
+	QUnit.test("data binding when tokens have changed", function(assert) {
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
 
-	test("property EnableMultiLineMode", function() {
-		var oMISingleLineMode = new sap.m.MultiInput("i4");
-		oMISingleLineMode.addToken(new sap.m.Token({key:"1",text:"MutiLineToken1"}));
-		oMISingleLineMode.addToken(new sap.m.Token({key:"2",text:"MutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineToken2"}));
-		oMISingleLineMode.addToken(new sap.m.Token({key:"3",text:"Token3"}));
+		// arrange
+		var oldData = {
+			names: [
+				{firstName: "Peter"},
+				{firstName: "Martin"},
+				{firstName: "Thomas"},
+				{firstName: "John"}
+			]
+		};
 
-		oMISingleLineMode.placeAt("qunit-fixture");
+		var newData = {
+			names: [
+				{firstName: "Arnold"},
+				{firstName: "Chuck"},
+				{firstName: "Silvester"},
+				{firstName: "Jason"}
+			]
+		}
+
+		// create a Model with the data above
+		var model = new sap.ui.model.json.JSONModel();
+		model.setData(oldData);
+
+		var oTokenTemplate = new sap.m.Token({text : "{firstName}"});
+
+		this.multiInput1.setModel(model);
+		this.multiInput1.bindAggregation("tokens", "/names", oTokenTemplate);
+
 		sap.ui.getCore().applyChanges();
 
-		equals(oMISingleLineMode.getEnableMultiLineMode(), false, "initial single-line mode");
+		var firstToken = this.multiInput1.getTokens()[0];
+		firstToken.setSelected(true);
 
-		oMISingleLineMode.setEnableMultiLineMode(true);
+		// act
+		qutils.triggerKeydown(firstToken.$(), jQuery.sap.KeyCodes.BACKSPACE);
+
+		// assert
+		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput has only 3 tokens");
+
+		// act
+
+		model.setData(newData);
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(this.multiInput1.getTokens().length, 4, "MultiInput has 4 tokens");
+		assert.equal(this.multiInput1.getTokens()[0].getText(), "Arnold", "The data binding has been applied properly");
+	});
+
+	/*
+	 * When setTokens is used between MultiInput's model updates there should be proper token destroying.
+	 */
+	QUnit.test("data binding when setTokens is used before a model update", function(assert) {
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+		// arrange
+		var data = {
+			names: [
+				{firstName: "Peter"},
+				{firstName: "Martin"},
+				{firstName: "Thomas"},
+				{firstName: "John"}
+			]
+		};
+		var newData = {
+			names: [
+				{firstName: "Arnold"},
+				{firstName: "Chuck"},
+				{firstName: "Silvester"},
+				{firstName: "Jason"}
+			]
+		}
+
+		// create a Model with the data above
+		var model = new sap.ui.model.json.JSONModel();
+		model.setData(data);
+
+		var oTokenTemplate = new sap.m.Token({text : "{firstName}"});
+
+		this.multiInput1.setModel(model);
+		this.multiInput1.bindAggregation("tokens", "/names", oTokenTemplate);
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.multiInput1.setTokens([
+			new sap.m.Token({text:'1'}),
+			new sap.m.Token({text:'2'}),
+			new sap.m.Token({text:'3'})
+		]);
+		model.setProperty('/names', newData.names);
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(this.multiInput1.getTokens().length, 4, "MultiInput has 4 tokens");
+		assert.equal(this.multiInput1.getTokens()[0].getText(), "Arnold", "The data binding has been applied properly");
+	});
+
+	QUnit.test("tabindex of tokenizer in MultiInput", function(assert) {
+		assert.equal(!this.multiInput1.$().find(".sapMTokenizer").attr("tabindex"), true, "tokenizer has no tabindex if it is in MultiInput");
+	});
+
+	QUnit.test("test setEditable=false MultiInput with editable tokens", function(assert) {
+		var aFirstToken,
+			aSecondToken;
+		//arrange
+		this.multiInput1.setTokens([
+			new sap.m.Token({text: "Token 1", key: "0001"}),
+			new sap.m.Token({text: "Token 2", key: "0002", editable: false})
+		]);
+
+		aFirstToken = this.multiInput1.getTokens()[0];
+		aSecondToken = this.multiInput1.getTokens()[1];
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(aFirstToken.$('icon').css('display'), 'inline-block', 'First token icon is visible');
+		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+
+		//act
+		this.multiInput1.setEditable(false);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
+		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+	});
+
+	QUnit.test("test text validation on focus leave", function(assert) {
+		//arrange
+		var testTokenText = "C-Item";
+
+		this.multiInput1.addValidator(function(args){
+			return new sap.m.Token({text: args.text});
+		});
+
+		this.multiInput1.setValue(testTokenText);
+
+		//act
+		this.multiInput1.onsapfocusleave({});
+
+		//assert
+		var aTokens = this.multiInput1.getTokens();
+		assert.equal(aTokens.length, 1, "MultiInput contains 1 token");
+		assert.equal(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
+	});
+
+	QUnit.module("Validation", {
+		beforeEach: function() {
+			this.multiInput1 = new sap.m.MultiInput();
+			this.multiInput1.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.multiInput1.destroy();
+		}
+	});
+
+	QUnit.test("validation via suggestion items", function(assert) {
+		var i,
+			AasciiCode = 65; // A == 65 in ASCII
+
+		for (i = 0; i < 10; i++) {
+			this.multiInput1.addSuggestionItem(new sap.ui.core.Item({ text : String.fromCharCode(i + AasciiCode) + "-Item"}));
+		}
+
+		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
+
+		this.multiInput1.setValue("a");
+		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
+		this.multiInput1.onsapenter();
+
+		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token, added via suggest");
+
+		this.multiInput1.setValue("B");
+		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
+		this.multiInput1.onsapenter();
+
+		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, added via suggest ");
+
+		this.multiInput1.setValue("C");
+		this.multiInput1._getIsSuggestionPopupOpen = function(){ return false; };
+		this.multiInput1.onsapenter();
+
+		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added, suggestion list was closed");
+
+		this.multiInput1.setValue("Z");
+		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
+		this.multiInput1.onsapenter();
+
+		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added, value does not fit suggestion list");
+	});
+
+	QUnit.test("validate tokens using validator callback", function(assert) {
+		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
+
+		this.multiInput1.removeAllValidators();
+		this.multiInput1.addValidator(function(args){
+			return new sap.m.Token({text: args.text});
+		});
+
+		var tokenText = "TestToken1";
+		this.multiInput1.setValue(tokenText);
+		this.multiInput1.onsapenter();
+		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token");
+		assert.equal(this.multiInput1.getTokens()[0].getText(), tokenText, "added token contains validated text");
+
+		var tokenText = "TestToken2";
+		this.multiInput1.setValue(tokenText);
+		this.multiInput1.onsapenter();
+		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens");
+		assert.equal(this.multiInput1.getTokens()[1].getText(), tokenText, "added token contains validated text");
+
+		this.multiInput1.removeAllValidators();
+		this.multiInput1.addValidator(function(args){
+			return;
+		});
+		tokenText = "TestToken3";
+		this.multiInput1.setValue(tokenText);
+		this.multiInput1.onsapenter();
+		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added as validator rejected it");
+
+
+
+		var fAsyncValidateCallback;
+		this.multiInput1.removeAllValidators();
+		this.multiInput1.addValidator(function(args){
+			fAsyncValidateCallback = args.asyncCallback;
+			return sap.m.MultiInput.WaitForAsyncValidation;
+		});
+		tokenText = "TestToken4";
+		this.multiInput1.setValue(tokenText);
+		this.multiInput1.onsapenter();
+
+		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added as validator runs asynchronously");
+
+		fAsyncValidateCallback(new sap.m.Token({text: "dummy"}));
+
+		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
+	});
+
+	QUnit.module("KeyboardEvents", {
+		beforeEach : function() {
+			this.multiInput1 = new sap.m.MultiInput();
+			this.multiInput1.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			this.multiInput1.$().focus();
+		},
+		afterEach : function() {
+			this.multiInput1.destroy();
+		}
+	});
+
+	QUnit.test("delete tokens via backspace", function(assert) {
+		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
+
+		var token1 = new sap.m.Token();
+		this.multiInput1.addToken(token1);
+
+		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
+		assert.ok(token1.getSelected(), "Token got selected");
+
+		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
+		assert.equal(this.multiInput1.getTokens().length, 0, "Token got deleted");
+	});
+
+	QUnit.test("test keyboard navigation", function(assert){
+		var token = new sap.m.Token({selected: true}),
+			that = this;
+		this.multiInput1.addToken(token);
+		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token");
+
+		this.multiInput1.onsapnext({isMarked:function(){return false;}});
+
+		this.multiInput1.onsapdelete();
+		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
+
+		token = new sap.m.Token({selected: false});
+
+		this.multiInput1.addToken(token);
+		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
+
+		this.multiInput1.onsapprevious(new jQuery.Event("onsapprevious", {srcControl: that.multiInput1}));
+		assert.equal(token.getSelected(), false, "Token not selected because popup is open");
+
+		this.multiInput1._getIsSuggestionPopupOpen = function(){return false;};
+		this.multiInput1.onsapprevious(new jQuery.Event("onsapprevious", {srcControl: that.multiInput1}));
+		assert.equal(token.getSelected(), true, "Token got selected");
+	});
+
+	QUnit.test("test remove via live change", function(assert) {
+		var token1 = new sap.m.Token({selected:true});
+		var token2 = new sap.m.Token({selected:true});
+		var token3 = new sap.m.Token({selected:true});
+		this.multiInput1.setTokens([token1, token2, token3]);
+		this.multiInput1.fireLiveChange();
+
+		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
+	});
+
+	QUnit.test("keyboard - ctrl + A with no text", function(assert) {
+		var token1 = new sap.m.Token();
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token();
+		this.multiInput1.setTokens([token1, token2, token3]);
+
+		sap.ui.getCore().applyChanges();
+
+		this.multiInput1.focus();
+
+		//debugger;
+		qutils.triggerKeydown(this.multiInput1.$(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+		assert.equal(token1.getSelected(), true, "Token1 got selected using ctrl+a");
+		assert.equal(token2.getSelected(), true, "Token2 got selected using ctrl+a");
+		assert.equal(token3.getSelected(), true, "Token3 got selected using ctrl+a");
+	});
+
+	QUnit.test("keyboard - ctrl + A with text", function(assert) {
+		var token1 = new sap.m.Token();
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token();
+		this.multiInput1.setTokens([token1, token2, token3]);
+
+		this.multiInput1.updateDomValue("123");
+		sap.ui.test.qunit.triggerEvent("input", this.multiInput1.getFocusDomRef());
+
+		this.multiInput1.focus();
+		this.multiInput1.selectText(0, this.multiInput1.getValue().length);
+		assert.equal(this.multiInput1._$input.getSelectedText(), "123", "only texts are selected");
+
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+		assert.equal(token1.getSelected(), true, "Token1 is selected");
+		assert.equal(token2.getSelected(), true, "Token2 is selected");
+		assert.equal(token3.getSelected(), true, "Token3 is selected");
+
+		this.multiInput1.ontap();
+		this.clock.tick(1);
+		assert.equal(token1.getSelected(), false, "Token1 is unselected");
+		assert.equal(token2.getSelected(), false, "Token2 is unselected");
+		assert.equal(token3.getSelected(), false, "Token3 is unselected");
+	});
+
+	QUnit.test("esc key", function(assert) {
+
+		this.multiInput1.setValue("123");
+		this.multiInput1.selectText(0, this.multiInput1.getValue().length);
+		var token1 = new sap.m.Token({selected:true});
+		var token2 = new sap.m.Token({selected:true});
+		var token3 = new sap.m.Token({selected:true});
+		this.multiInput1.setTokens([token1, token2, token3]);
+
+		sap.ui.test.qunit.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		assert.equal(token1.getSelected(), false, "Token1 is unselected");
+		assert.equal(token2.getSelected(), false, "Token2 is unselected");
+		assert.equal(token3.getSelected(), false, "Token3 is unselected");
+		assert.equal(this.multiInput1._$input.getSelectedText(), "", "texts get unselected");
+	});
+
+	QUnit.module("MultiLineMode", {
+		beforeEach: function() {
+			this.multiInput1 = new sap.m.MultiInput({
+				enableMultiLineMode : true
+			});
+
+			this.multiInput1.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.multiInput1.destroy();
+		}
+	});
+
+	QUnit.test("property EnableMultiLineMode", function(assert) {
+		this.multiInput1.addToken(new sap.m.Token({key:"1",text:"MutiLineToken1"}));
+		this.multiInput1.addToken(new sap.m.Token({key:"2",text:"MutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineToken2"}));
+		this.multiInput1.addToken(new sap.m.Token({key:"3",text:"Token3"}));
+
+		assert.equal(this.multiInput1.getEnableMultiLineMode(), true, "MultiLine mode is true");
+		assert.equal(this.multiInput1.$().hasClass("sapMMultiInputMultiLine"), true, "MultiLine input has class sapMMultiInputMultiLine");
+
+		this.multiInput1.setEnableMultiLineMode(false);
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(10);
 
-		equals(oMISingleLineMode.getEnableMultiLineMode(), true, "multi-line set successfully");
-
-		oMISingleLineMode.setEnableMultiLineMode(false);
-		sap.ui.getCore().applyChanges();
-		this.clock.tick(10);
-
-		equals(oMISingleLineMode.getEnableMultiLineMode(), false, "set back single-line mode");
-
+		assert.equal(this.multiInput1.getEnableMultiLineMode(), false, "set back single-line mode");
+		assert.equal(this.multiInput1.$().hasClass("sapMMultiInputMultiLine"), false, "multi-line doesn't have class sapMMultiInputMultiLine");
 	});
 
-	test("desktop - edit token in multi-line display mode", function() {
+	QUnit.test("open/close multi line mode on desktop", function(assert) {
+		//act
+		this.multiInput1.openMultiLine();
 
-		equals(oMLInput.getTokens()[2].getVisible(), true, "token3 is not visible");
-		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
-		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
-		
-		oMLInput.focus();
-		this.clock.tick(500);
-		var bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
-		equals(bHasClass, true, "multi-line mode displays");
-		equals(oMLInput.getTokens()[0].getVisible(), true, "token1 can be displayed");
-		equals(oMLInput.getTokens()[1].getVisible(), true, "token2 can be displayed");
-		equals(oMLInput.getTokens()[2].getVisible(), true, "token3 can be displayed");
-		
-		oMLInput.setValue("a");
-		oMLInput._getIsSuggestionPopupOpen = function(){ return true; };
-		oMLInput.onsapenter();
+		//assert
+		assert.equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeBorder");
+		assert.equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeInputContainer");
 
-		this.clock.tick(500);
-		equals(oMLInput.getTokens().length, 4, "new token is added");
-		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
-		equals(bHasClass, true, "multi-line mode still diaplays after item selected");
-		equals(oMLInput.$().find(".sapMTokenizer").css("white-space"), "normal");
+		//arrange
+		this.multiInput1.setTokens([
+			new sap.m.Token({text : "Token 1"}),
+			new sap.m.Token({text : "Token 2"})
+		]);
 
-		oMultiInput = sap.ui.getCore().getControl("i1");
+		//act
+		this.multiInput1.openMultiLine();
 
-		oMultiInput.focus();
+		//assert
+		assert.equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), true, "MultiInput is open and has class sapMMultiInputMultiModeBorder");
+		assert.equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), true, "MultiInput is open and has class sapMMultiInputMultiModeInputContainer");
 
-		this.clock.tick(500);
-		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
-		equals(bHasClass, false, "multi-line mode is closed");
-		equals(oMLInput.getTokens()[3].getVisible(), true, "last token can be displayed");
-		equals(oMLInput.getTokens()[2].getVisible(), false, "token3 is not visible");
-		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
-		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
-		
-		oMLInput.destroy();
+		//act
+		this.multiInput1.closeMultiLine();
+
+		//assert
+		assert.equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), false, "MultiInput closed and has no class sapMMultiInputMultiModeBorder");
+		assert.equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput closed and has no class sapMMultiInputMultiModeInputContainer");
 	});
 
-	test("phone - edit token in multi-line display mode", function() {
+	QUnit.test("open/close multi line mode using API functions", function(assert) {
+		//arrange
+		this.multiInput1.setTokens([
+			new sap.m.Token({text : "Token 1"}),
+			new sap.m.Token({text : "Token 2"}),
+			new sap.m.Token({text : "Token 3"})
+		]);
 
+		//act
+		this.multiInput1.openMultiLine();
+		this.multiInput1.closeMultiLine();
+
+		//assert
+		assert.equal(this.multiInput1.$().find('.sapMMultiInputIndicator').length, 1, "N More indicator is displayed");
+	});
+
+	QUnit.test("open multi line mode on phone", function(assert) {
+		//arrange
 		var oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
 
 		this.stub(sap.ui.Device, "system", oSystem);
 
-		var oMLInput2 = new sap.m.MultiInput("i3",{width:"50%", enableMultiLineMode:true});
-		oMLInput2.addToken(new sap.m.Token({key:"ml1",text:"MutiLineToken1"}));
-		oMLInput2.addToken(new sap.m.Token({key:"ml2",text:"MutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineToken2"}));
-		oMLInput2.addToken(new sap.m.Token({key:"ml3",text:"Token3"}));
-		oMLInput2.addSuggestionItem(new sap.ui.core.Item({text: "A-Item"}));
-		oMLInput2.addSuggestionItem(new sap.ui.core.Item({text: "B-Item"}));
-		oMLInput2.addSuggestionItem(new sap.ui.core.Item({text: "C-Item"}));
-		oMLInput2.placeAt("content");
+		var oMIMultiLineMode = new sap.m.MultiInput();
+
+		oMIMultiLineMode.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		equals(oMLInput2.getTokens()[2].getVisible(), true, "token3 can be displayed");
-		equals(oMLInput2.getTokens()[1].getVisible(), false, "token2 is not visible");
-		equals(oMLInput2.getTokens()[0].getVisible(), false, "token1 is not visible");
+		//act
+		oMIMultiLineMode._openMultiLineOnPhone();
 
-		oMLInput2.focus();
+		this.clock.tick(500);
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(500);
 
-		var oTokenizerInPopup = oMLInput2._oSuggestionPopup.getContent()[0];
-		equals(oTokenizerInPopup.getTokens()[0].getVisible(), true, "token1 can be displayed");
-		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
-		equals(oTokenizerInPopup.getTokens()[2].getVisible(), true, "token3 can be displayed");
+		//assert
+		assert.equal(oMIMultiLineMode._oSuggestionPopup.isOpen(), true, "MultiInput dialog is open");
+		assert.equal(oMIMultiLineMode._tokenizer.getVisible(), true, "Tokenizer is visible");
+		assert.equal(oMIMultiLineMode._tokenizer.$().hasClass("sapMTokenizerMultiLine"), true, "Tokenizer is displayed on multiple lines");
 
-		oMLInput2._oPopupInput.setValue("a");
-		this.clock.tick(500);
-		oMLInput2.onsapenter();
-		this.clock.tick(500);
-		equals(oTokenizerInPopup.getTokens().length, 4, "new token is added");
-		equals(oTokenizerInPopup.getTokens()[0].getVisible(), true, "token1 can be displayed");
-		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
-		equals(oTokenizerInPopup.getTokens()[2].getVisible(), true, "token3 can be displayed");
-		equals(oTokenizerInPopup.getTokens()[3].getVisible(), true, "new token can be displayed");
-
-		oMLInput2._oSuggestionPopup.close();
-		this.clock.tick(500);
-		equals(oMLInput2._tokenizer.getTokens().length, 4, "new token is added");
-		equals(oMLInput2._tokenizer.getTokens()[0].getVisible(), false, "token1 not visible");
-		equals(oMLInput2._tokenizer.getTokens()[1].getVisible(), false, "token2 not visible");
-		equals(oMLInput2._tokenizer.getTokens()[2].getVisible(), false, "token3 not visible");
-		equals(oMLInput2._tokenizer.getTokens()[3].getVisible(), true, "new token can be displayed");
-		
-		oMLInput2.destroy();
+		//clean-up
+		oMIMultiLineMode.destroy();
 	});
 
+	QUnit.module("Events", {
+		beforeEach: function() {
+			this.multiInput1 = new sap.m.MultiInput();
+			this.multiInput1.placeAt("qunit-fixture");
 
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.multiInput1.destroy();
+		}
+	});
+
+	QUnit.test("tokens change event", function(assert) {
+		var eventType;
+		this.multiInput1.attachTokenChange(function(args){
+			eventType = args.getParameter("type");
+		});
+
+		var token1 = new sap.m.Token();
+		this.multiInput1.addToken(token1);
+		assert.equal(eventType, sap.m.MultiInput.TokenChangeType.Added, "added event raised");
+
+		this.multiInput1.removeToken(token1);
+		assert.equal(eventType, sap.m.MultiInput.TokenChangeType.Removed, "removed event raised");
+
+		this.multiInput1.removeAllTokens();
+		assert.equal(eventType, sap.m.MultiInput.TokenChangeType.RemovedAll, "removedAll event raised");
+	});
+
+	QUnit.test("token update event", function(assert) {
+
+		if (!sap.ui.Device.browser.internet_explorer) {
+			//arrange
+			var sPastedString = "a\nb\nc\nd\ne\nf\n\a",
+					counter = 0;
+
+			this.multiInput1.addValidator(function (args) {
+				return new sap.m.Token({text: args.text, key: args.text});
+			});
+
+			this.multiInput1.attachTokenUpdate(function (args) {
+				counter++;
+			});
+
+			//act
+			sap.ui.test.qunit.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+				originalEvent: {
+					clipboardData: {
+						getData: function () {
+							return sPastedString;
+						}
+					}
+				}
+			});
+
+			this.clock.tick(10);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.equal(counter, 1, "tokenUpdate event should be fired once");
+			assert.equal(this.multiInput1.getTokens().length, 6, "6 tokens should be added to MultiInput");
+		} else {
+			assert.expect(0);
+		}
+	});
+
+	QUnit.test("test suggestionItemSelected event", function(assert) {
+		var testTokenText = "Testtoken";
+		var item = {
+			getText: function(){return testTokenText;},
+			getKey: function(){return "abc"}
+		};
+
+		this.multiInput1.fireSuggestionItemSelected({selectedItem: item});
+
+		var aTokens = this.multiInput1.getTokens();
+		assert.equal(aTokens.length, 1, "MultiInput contains 1 token");
+		assert.equal(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach : function() {
+			this.multiInput1 = new sap.m.MultiInput({
+				value: "Value",
+				tooltip: "Tooltip",
+				placeholder: "Placeholder"
+			});
+			this.multiInput1.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.multiInput1.destroy();
+		}
+	});
+
+	QUnit.test("getAccessibilityInfo", function(assert) {
+		// assert
+		assert.ok(!!this.multiInput1.getAccessibilityInfo, "MultiInput has a getAccessibilityInfo function");
+
+		// arrange
+		var oInfo = this.multiInput1.getAccessibilityInfo();
+
+		// assert
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.strictEqual(oInfo.role, this.multiInput1.getRenderer().getAriaRole(), "AriaRole");
+		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_MULTIINPUT"), "Type");
+		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.editable, true, "Editable");
+
+		// act
+		this.multiInput1.setValue("");
+		this.multiInput1.setEnabled(false);
+		oInfo = this.multiInput1.getAccessibilityInfo();
+
+		// assert
+		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
+		assert.strictEqual(oInfo.editable, false, "Editable");
+
+		// act
+		this.multiInput1.setEnabled(true);
+		this.multiInput1.setEditable(false);
+		oInfo = this.multiInput1.getAccessibilityInfo();
+
+		// assert
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.strictEqual(oInfo.editable, false, "Editable");
+
+		// act
+		this.multiInput1.setDescription("Description");
+		oInfo = this.multiInput1.getAccessibilityInfo();
+
+		// assert
+		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
+
+		// act
+		this.multiInput1.addToken(new sap.m.Token({text: "Token1"}));
+		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
+		this.multiInput1.setDescription("Description");
+		oInfo = this.multiInput1.getAccessibilityInfo();
+
+		// assert
+		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description Token1 Token2", "Description");
+	});
+
+	QUnit.test("_tokensInfo aggregation", function(assert) {
+		// arrange
+		var oInvisibleText = this.multiInput1.getAggregation("_tokensInfo");
+
+		// assert
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN"), "'MultiInput may contain tokens' text is set.");
+
+		// act
+		this.multiInput1.addToken(new sap.m.Token({text: "Token1"}));
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_ONE_TOKEN"), "'MultiInput contains 1 token' text is set.");
+
+		// act
+		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_SEVERAL_TOKENS", this.multiInput1.getTokens().length), "'MultiInput contains N tokens' text is set.");
+	});
+
+	QUnit.test("Placeholder opacity", function(assert) {
+		// assert
+		assert.ok(!this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder shows placeholder");
+
+		// act
+		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder doesn't show placeholder");
+	});
 
 </script>
 

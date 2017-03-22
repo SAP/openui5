@@ -1,0 +1,24 @@
+{
+	"1.32.0": {
+		"date": "August 2015",
+		"notes": [
+			{
+				"id": "074c26455d0f15b36d896970fa1714d077223bb3",
+				"type": "FIX",
+				"text": "sap.ui.fl: Remove irregular whitespaces",
+				"references": []
+			}
+		]
+	},
+	"1.32.2": {
+		"date": "September 2015",
+		"notes": [
+			{
+				"id": "702dfa501cd1d540ce83539806590c2ed1920a53",
+				"type": "FIX",
+				"text": "sap.ui.fl.FlexController: The decision for getting changes for views is now implemented control independent",
+				"references": []
+			}
+		]
+	}
+}

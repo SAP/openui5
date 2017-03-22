@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ExactList.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -24,62 +24,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.ExactList
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExactList = Control.extend("sap.ui.ux3.ExactList", /** @lends sap.ui.ux3.ExactList.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * Defines whether the close icon shall be displayed in the header.
 			 */
 			showClose : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * The title of this list is the top of the list hierarchy.
 			 */
 			topTitle : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * The height in px if this list is the top of the list hierarchy.
 			 */
 			topHeight : {type : "int", group : "Appearance", defaultValue : 290}
 		},
 		aggregations : {
-	
+
 			/**
 			 * The sub-ExactLists of this list. This aggregation must not be maintained from outside.
 			 * The control automatically takes care to fill this aggregation according to the given ExactAttribute.
 			 */
-			subLists : {type : "sap.ui.ux3.ExactList", multiple : true, singularName : "subList"}, 
-	
+			subLists : {type : "sap.ui.ux3.ExactList", multiple : true, singularName : "subList"},
+
 			/**
 			 * Hidden aggregation for internal Listbox
 			 */
 			controls : {type : "sap.ui.commons.ListBox", multiple : true, singularName : "control", visibility : "hidden"}
 		},
 		associations : {
-	
+
 			/**
 			 * The associated ExactAttribute
 			 */
 			data : {type : "sap.ui.ux3.ExactAttribute", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * Event which is fired when an attribute is selected/unselected
 			 */
 			attributeSelected : {
 				parameters : {
-	
+
 					/**
 					 * The attribute which was selected/unselected recently
 					 */
-					attribute : {type : "sap.ui.ux3.ExactAttribute"}, 
-	
+					attribute : {type : "sap.ui.ux3.ExactAttribute"},
+
 					/**
 					 * Array of all ExactAttributes
 					 */
@@ -88,29 +89,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Constructor for a new ExactList.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Internal sub-control of the ExactBrowser. The control is not intended to be used stand alone. For this purpose, the ExactBrowser control can be used.
 	 * @extends sap.ui.core.Control
 	 *
-	 * @author SAP SE 
+	 * @author SAP SE
 	 * @version 1.15.1-SNAPSHOT
 	 *
-	 * @constructor   
+	 * @constructor
 	 * @private
 	 * @name sap.ui.ux3.ExactList
 	 */
-	
+
 	(function() {
-	
-	
+
+
 	//Private extension of the ListBox control
 	ListBox.extend("sap.ui.ux3.ExactList.LB", {
 		init : function() {
@@ -119,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			this.setDisplayIcons(true);
 			this.addStyleClass("sapUiUx3ExactLstLb");
 		},
-		
+
 		invalidate : function() {
 			ListBox.prototype.invalidate.apply(this, arguments);
 			if (!this.bInvalidated && this.getParent()) {
@@ -127,22 +128,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 			this.bInvalidated = true;
 		},
-		
+
 		_handleUserActivation : function(oEvent) {
 			oEvent.metaKey = true;
 			ListBox.prototype._handleUserActivation.apply(this, [oEvent]);
 		},
-		
+
 		onclick : function(oEvent) {
 			ListBox.prototype.onclick.apply(this, arguments);
 			this.getParent().onclick(oEvent);
 		},
-		
+
 		onAfterRendering : function() {
 			ListBox.prototype.onAfterRendering.apply(this, arguments);
 			this.bInvalidated = false;
 			var oParent = this.getParent();
-			
+
 			var items = this.getItems();
 			var bIsTop = oParent._isTop();
 			var bHasChildren = false;
@@ -157,20 +158,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				} else {
 					bHasChildren = true;
 				}
-				
+
 				if (bHasChildren && !bIsTop) {
 					jItem.attr("aria-label", oParent._rb.getText(
 							jItem.hasClass("sapUiLbxISel") ? "EXACT_LST_LIST_ITEM_SEL_ARIA_LABEL" : "EXACT_LST_LIST_ITEM_ARIA_LABEL", [oItem.getText()]
 					));
 				}
 			}
-	
+
 			var sPos = oParent._bRTL ? "left" : "right";
 			jQuery(".sapUiLbxITxt", this.getDomRef()).css("margin-" + sPos, 20 + jQuery.sap.scrollbarSize().width + "px");
 			jQuery(".sapUiLbxIIco", this.getDomRef()).css(sPos, 5 + jQuery.sap.scrollbarSize().width + "px");
-	
+
 			jQuery(this.getDomRef()).attr("tabindex", "-1");
-	
+
 			var sListLabel;
 			if (bIsTop) {
 				sListLabel = oParent.getTopTitle();
@@ -178,10 +179,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				sListLabel = oParent._rb.getText("EXACT_LST_LIST_ARIA_LABEL", [oParent._iLevel, oParent._getAtt().getText()]);
 			}
 			jQuery(this.getFocusDomRef()).attr("aria-label", sListLabel).attr("aria-expanded", "true");
-	
+
 			this.oItemNavigation.iActiveTabIndex = -1; //Do not set the tabindex to 0 on the focused list item
 			this.oItemNavigation.setSelectedIndex( -1); //Reset the selected index always -> focus is set by the item navigation on the last focused item
-			
+
 			//The item navigation should not handle the arrow left and right keys
 			this.oItemNavigation.onsapnext = function(oEvent) {
 				if (oEvent.keyCode != jQuery.sap.KeyCodes.ARROW_DOWN) {
@@ -196,26 +197,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				sap.ui.core.delegate.ItemNavigation.prototype.onsapprevious.apply(this, arguments);
 			};
 		},
-	
+
 		renderer: "sap.ui.commons.ListBoxRenderer"
 	});
-	
-	
-	
+
+
+
 	/**
 	 * Does the setup when the control is created.
 	 * @private
 	 */
 	ExactList.prototype.init = function(){
 		var that = this;
-		
+
 		this._iLevel = 0;
-	
+
 		this._bCollapsed = false; //Indicates whether the control is horizontally collapsed
 		this._bIsFirstRendering = true; //Set to false when the first rendering was done (used to animate the first opening)
-	
+
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
-	
+
 		//Create the used ListBox control
 		this._lb = new ExactList.LB(this.getId() + "-lb", {
 			select: function(oEvent){
@@ -239,16 +240,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					//deselect
 					clearAttribute(that, oAttr, iSelectedIndex);
 				}
-	
+
 				getTopList(that)._selectionChanged(oAttr);
 			}
 		});
 		this.addAggregation("controls", this._lb);
-	
+
 		this._closeHandle = jQuery.proxy(this.onForceVerticalClose, this);
 	};
-	
-	
+
+
 	/**
 	 * Does all the cleanup when the control is to be destroyed.
 	 * Called from Element's destroy() method.
@@ -271,8 +272,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			this._dirtyLists = null;
 		}
 	};
-	
-	
+
+
 	/**
 	 * @see sap.ui.core.Element.prototype.getFocusDomRef
 	 * @private
@@ -283,8 +284,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return this._bCollapsed ? this.getDomRef("head") : this._lb.getFocusDomRef();
 	};
-	
-	
+
+
 	/**
 	 * Called before the re-rendering is started.
 	 * @private
@@ -294,13 +295,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		if (!this._bIsFirstRendering) {
 			return;
 		}
-		
+
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
-		
+
 		//Init the open animation (like expand, no Open Animation when the control is the top list)
 		if (!this._isTop()) {
 			this._bCollapsed = true;
-			
+
 			//see also function collapseHorizontally
 			this._oCollapseStyles = {
 				"cntnt": "margin-" + (this._bRTL ? "right" : "left") + ":" + Parameters.get("sapUiUx3ExactLstCollapseWidth") + ";border-top-width:0px;",
@@ -310,8 +311,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			this._bIsFirstRendering = false;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called when the rendering is complete.
 	 * @private
@@ -319,33 +320,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	ExactList.prototype.onAfterRendering = function() {
 		var that = this;
 		var bIsTop = this._isTop();
-	
+
 		if (!this._iCurrentWidth) {
 			this._iCurrentWidth = this._getAtt().getWidth();
 		}
-	
+
 		if (bIsTop) {
 			//Register listener on content overflow for scrollbar
 			this._iScrollWidthDiff = -1;
 			this.onCheckScrollbar();
 			this.$("lst").css("bottom", jQuery.sap.scrollbarSize().height + "px");
-			
+
 			this.$("cntnt").bind("scroll", function(oEvent){
 				if (oEvent.target.id === that.getId() + "-cntnt" && oEvent.target.scrollTop != 0) {
 					oEvent.target.scrollTop = 0;
 				}
 			});
 		}
-		
-		
-	
+
+
+
 		if (!this._bCollapsed) {
 			setWidth(this, this._iCurrentWidth);
 		}
-	
+
 		//Init the header text
 		setHeaderText(this);
-	
+
 		if (this._bIsFirstRendering) {
 			//Open Animation
 			this._bIsFirstRendering = false;
@@ -353,11 +354,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		} else {
 			//Adapt the scrolling behavior and show the vertical list expander if necessary
 			refreshScrollBehaviour(this);
-			
+
 			//Refresh the header text width in case the list is collapsed
 			refreshCollapseHeaderTextWidth(this);
 		}
-		
+
 		if (this._bRefreshList) {
 			this._bRefreshList = false;
 			setTimeout(function(){
@@ -365,11 +366,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}, 0);
 		}
 	};
-	
-	
+
+
 	//********* EVENTING *********
-	
-	
+
+
 	/**
 	 * Called when the control gets the focus.
 	 * @private
@@ -385,7 +386,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			if (!isTopHeaderFocusable(this) && oEvent.target === $head[0]) {
 				this.getFocusDomRef().focus();
 			}
-			
+
 			if (this.$().hasClass("sapUiUx3ExactLstTopHidden") && oEvent.target === this.getDomRef("foc")) {
 				var aLists = this.getSubLists();
 				if (aLists.length > 0) {
@@ -398,8 +399,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			oEvent.__exactHandled = true;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called when the control loses the focus.
 	 * @private
@@ -412,8 +413,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		$head.removeClass("sapUiUx3ExactLstHeadFocus");
 	};
-	
-	
+
+
 	/**
 	 * Called when the control is clicked.
 	 * @private
@@ -441,8 +442,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		this._lb.setScrollTop(s);
 	};
-	
-	
+
+
 	/**
 	 * Called when a key is pressed.
 	 * @private
@@ -452,14 +453,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			if (jQuery(oTargetDomRef).hasClass("sapUiUx3ExactLstFoc")) {
 				return;
 			}
-			
+
 			if (oTargetDomRef) {
 				oTargetDomRef.focus();
 			}
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
-		
+
 		switch (oEvent.keyCode) {
 			case jQuery.sap.KeyCodes.ENTER:
 			case jQuery.sap.KeyCodes.SPACE:
@@ -467,7 +468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					fireHeaderPress(this, oEvent, true);
 				}
 				break;
-		
+
 			case jQuery.sap.KeyCodes.DELETE:
 				//If close functionality is active -> Close the control and deselect the corresponding attribute
 				if (!this._isTop() && this.getShowClose()) {
@@ -475,12 +476,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					_handleKeyEvent(oEvent, this.getParent().getFocusDomRef());
 				}
 				break;
-	
+
 			case jQuery.sap.KeyCodes.NUMPAD_MINUS:
 				/* if (!!(oEvent.metaKey || oEvent.ctrlKey)) { //NUMPAD_MINUS + CTRL: Collapse list vertically
 					//Deactivated on request of UX
-					var jListContRef = jQuery.sap.byId(this.getId() + "-lst");
-					if(jListContRef.hasClass("sapUiUx3ExactLstExpanded") && jQuery.sap.byId(this.getId() + "-exp").is(":visible")){
+					var jListContRef = this.$("lst");
+					if(jListContRef.hasClass("sapUiUx3ExactLstExpanded") && this.$("exp").is(":visible")){
 						toggleVerticalCollapseState(this);
 					}
 					oEvent.preventDefault();
@@ -494,17 +495,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					collapseHorizontally(this, true, oEvent);
 				}
 				break;
-	
+
 			case jQuery.sap.KeyCodes.NUMPAD_PLUS:
 				/* if (!!(oEvent.metaKey || oEvent.ctrlKey)) { //NUMPAD_PLUS + CTRL: Expand list vertically
 					//Deactivated on request of UX
-					var jListContRef = jQuery.sap.byId(this.getId() + "-lst");
-					if(!jListContRef.hasClass("sapUiUx3ExactLstExpanded") && jQuery.sap.byId(this.getId() + "-exp").is(":visible")){
+					var jListContRef = this.$("lst");
+					if(!jListContRef.hasClass("sapUiUx3ExactLstExpanded") && this.$("exp").is(":visible")){
 						toggleVerticalCollapseState(this);
 					}
 					oEvent.preventDefault();
 					oEvent.stopPropagation();
-				} else */ 
+				} else */
 				if (oEvent.shiftKey) { //NUMPAD_PLUS + SHIFT: Make width larger
 					if (!this._bCollapsed) {
 						setWidth(this, this._iCurrentWidth + 10);
@@ -514,7 +515,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					collapseHorizontally(this, false, oEvent);
 				}
 				break;
-	
+
 			case jQuery.sap.KeyCodes.TAB:
 				//Handle Tabbing
 				if (this._iLevel == 0) {
@@ -533,7 +534,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					}
 					return;
 				}
-				
+
 				if (this._iLevel == 1) {
 					var oSubList = null;
 					if (oEvent.shiftKey) {
@@ -551,7 +552,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					oEvent.stopPropagation();
 				}
 				break;
-				
+
 			case jQuery.sap.KeyCodes.ARROW_LEFT:
 			case jQuery.sap.KeyCodes.ARROW_RIGHT:
 				var oSubList = null;
@@ -570,8 +571,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				break;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called when mousedown event appears. -> Starting point for the resizing
 	 * @private
@@ -580,21 +581,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		if (oEvent.target.id === this.getId() + "-rsz") {
 			jQuery(document.body).append(
 					"<div id=\"" + this.getId() + "-ghost\" class=\"sapUiUx3ExactLstRSzGhost\" style =\" z-index:" + Popup.getNextZIndex() + "\" ></div>");
-	
+
 			// Fix for IE text selection while dragging
 			jQuery(document.body).bind("selectstart." + this.getId(), onStartSelect);
-	
+
 			var jHandle = !!sap.ui.Device.browser.internet_explorer ? jQuery(document.body) : this.$("ghost");
 			jHandle.bind("mouseup." + this.getId(), jQuery.proxy(onRelease, this)).bind("mousemove." + this.getId(), jQuery.proxy(onMove, this));
-				
+
 			this._iStartDragX = oEvent.pageX;
 			this._iStartWidth  = this.$("lst").width();
-	
+
 			this.$("rsz").addClass("sapUiUx3ExactLstRSzDrag");
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called when the vertically Collapse State should be closed immediately (e.g. outer event)
 	 * @private
@@ -618,15 +619,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called periodicly to check whether the content scrollbar must be show or hidden
 	 * @private
 	 */
 	ExactList.prototype.onCheckScrollbar = function(oEvent) {
 		this._scrollCheckTimer = null;
-	
+
 		var jContentArea = this.$("cntnt");
 		var oContentArea = jContentArea[0];
 		if (oContentArea) {
@@ -644,11 +645,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			this._scrollCheckTimer = jQuery.sap.delayedCall(300, this, this.onCheckScrollbar);
 		}
 	};
-	
-	
+
+
 	//********* OVERRIDDEN API FUNCTIONS *********
-	
-	
+
+
 	ExactList.prototype.insertSubList = function(oSubList, iIndex) {
 		this.insertAggregation("subLists", oSubList, iIndex);
 		if (oSubList) {
@@ -656,8 +657,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return this;
 	};
-	
-	
+
+
 	ExactList.prototype.addSubList = function(oSubList) {
 		this.addAggregation("subLists", oSubList);
 		if (oSubList) {
@@ -665,13 +666,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return this;
 	};
-	
-	
+
+
 	ExactList.prototype.setData = function(vData) {
 		if (vData != null && typeof (vData) != "string") {
 			vData = vData.getId();
 		}
-	
+
 		if (vData) {
 			//Set the associated ExactAttribute
 			this.setAssociation("data", vData);
@@ -696,7 +697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				}
 			}
 			this._lb.setSelectedKeys(aSelectedKeys);
-	
+
 			//Update child lists
 			var aOldChildren = this.getSubLists();
 			for (var i = 0; i < aOldChildren.length; i++) {
@@ -712,16 +713,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					aOldChildren[i].destroy();
 				}
 			}
-			
+
 			if (vData.getListOrder() === sap.ui.ux3.ExactOrder.Fixed) {
 				this.removeAllSubLists();
 			}
-			
+
 			//Append all newly created lists
 			for (var i = 0; i < aLists.length; i++) {
 				this.addSubList(aLists[i]);
 			}
-	
+
 			//Set the change listener to the exact attribute
 			var that = this;
 			vData.setChangeListener({id: that.getId(), _notifyOnChange: function(sType, oAttribute){
@@ -731,7 +732,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					}
 					return;
 				}
-				
+
 				var oTopList = getTopList(that);
 				if (!oTopList._dirtyLists) {
 					oTopList._dirtyLists = {};
@@ -739,7 +740,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				if (!oTopList._dirtyLists[that.getId()]) {
 					oTopList._dirtyLists[that.getId()] = that;
 				}
-				
+
 				if (!oTopList._dirtyListsCleanupTimer) {
 					oTopList._dirtyListsCleanupTimer = jQuery.sap.delayedCall(0, oTopList, function(){
 						this._dirtyListsCleanupTimer = null;
@@ -757,32 +758,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				}
 			}});
 		}
-	
+
 		return this;
 	};
-	
-	
+
+
 	ExactList.prototype.setShowClose = function(bShowClose) {
 		if (this._isTop()) {
 			this.setProperty("showClose", bShowClose);
 		}
 		return this;
 	};
-	
-	
+
+
 	ExactList.prototype.getShowClose = function() {
 		return getTopList(this).getProperty("showClose");
 	};
-	
-	
+
+
 	ExactList.prototype.getTopTitle = function() {
 		var sTitle = this.getProperty("topTitle");
 		return sTitle ? sTitle : this._rb.getText("EXACT_BRWSR_LST_TITLE");
 	};
-	
-	
+
+
 	//********* GLOBAL HELPERS *********
-	
+
 	/**
 	 * Returns the associated ExactAttribute.
 	 * @private
@@ -790,8 +791,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	ExactList.prototype._getAtt = function() {
 		return sap.ui.getCore().byId(this.getData());
 	};
-	
-	
+
+
 	/**
 	 * Returns <code>true</code>, when this control is the top most in the hierarchy, <code>false</code> otherwise.
 	 * @private
@@ -799,8 +800,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	ExactList.prototype._isTop = function() {
 		return !(this.getParent() instanceof ExactList);
 	};
-	
-	
+
+
 	/**
 	 * Handles selections of the whole list tree and fires selection change event.
 	 * @private
@@ -809,14 +810,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		if (!this._isTop()) {
 			return;
 		}
-	
+
 		// In case of TwoWay databinding the attribute might have already changed by now. Make sure
 		// We use the correct one.
 		// This happened for example when the selected property was bound in the same model as
 		// the data for the lists
 		oAttribute = sap.ui.getCore().byId(oAttribute.getId());
-		
-		
+
+
 		//Computes recursivly all selected attributes and adds them to the given result list
 		var _computeSelectedAttributes = function(oAtt, aResult){
 			if (!oAtt.getSelected()) {
@@ -828,18 +829,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				_computeSelectedAttributes(aValues[idx], aResult);
 			}
 		};
-	
+
 		var aSelectedAttributes = [];
 		var aTopValues = this._getAtt().getAttributesInternal();
 		for (var idx = 0; idx < aTopValues.length; idx++) {
 			_computeSelectedAttributes(aTopValues[idx], aSelectedAttributes);
 		}
-	
-		
+
+
 		this.fireAttributeSelected({attribute: oAttribute, allAttributes: aSelectedAttributes});
 	};
-	
-	
+
+
 	/**
 	 * Closes all open sub lists and clears the selection if this list is the top list.
 	 *
@@ -849,17 +850,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		if (!this._isTop()) {
 			return;
 		}
-	
+
 		var that = this;
-	
+
 		var fCallback = function(){
 			that._getAtt()._clearSelection();
 			that._lb.clearSelection();
 			that.fireAttributeSelected({attribute: undefined, allAttributes: []});
 		};
-	
+
 		var aLists = this.getSubLists();
-	
+
 		if (aLists.length > 0) {
 			for (var i = 0; i < aLists.length; i++) {
 				close(aLists[i], true, i == aLists.length - 1 ? fCallback : null);
@@ -868,10 +869,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			fCallback();
 		}
 	};
-	
-	
+
+
 	//********* LOCAL HELPERS *********
-	
+
 	//Returns the predecessor of the given list based on the level and whether TAB or the arrow keys are used
 	var getPredecessorList = function(oList, bArrow){
 		function getPrevOnSameLevel(oLst){
@@ -883,7 +884,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 			return null;
 		}
-		
+
 		function getListOrLastChild(oLst){
 			var aSubLists = oLst.getSubLists();
 			if (aSubLists.length > 0) {
@@ -891,7 +892,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 			return oLst;
 		}
-		
+
 		if (oList._iLevel == 0) {
 			return null;
 		} else if (oList._iLevel == 1) {
@@ -915,7 +916,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return null;
 	};
-	
+
 	//Returns the successor of the given list based on the level and whether TAB or the arrow keys are used
 	var getSuccessorList = function(oList, bArrow){
 		function getNextOnSameLevel(oLst){
@@ -927,7 +928,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 			return null;
 		}
-		
+
 		function getFirstChild(oLst){
 			var aSubLists = oLst.getSubLists();
 			if (aSubLists.length > 0) {
@@ -935,7 +936,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 			return null;
 		}
-		
+
 		function getNext(oLst){
 			var oNextListRef = getNextOnSameLevel(oLst);
 			if (oNextListRef) {
@@ -948,7 +949,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				return null;
 			}
 		}
-		
+
 		if (oList._iLevel == 0) {
 			return getFirstChild(oList);
 		} else if (oList._iLevel == 1) {
@@ -958,12 +959,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			if (oNextList) {
 				return oNextList;
 			}
-			
+
 			return getNext(oList);
 		}
 		return null;
 	};
-	
+
 	var fireHeaderPress = function(oList, oEvent, bKeyboard){
 		oList.fireEvent("_headerPress", {
 			kexboard: bKeyboard,
@@ -971,21 +972,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		});
 		oEvent.stopPropagation();
 	};
-	
+
 	var isTopHeaderFocusable = function(oList){
 		return !isTopHidden(oList) && oList.$().hasClass("sapUiUx3ExactLstTopActive");
 	};
-	
+
 	var isTopHidden = function(oList){
 		return oList.$().hasClass("sapUiUx3ExactLstTopHidden");
 	};
-	
+
 	//Returns the index in the sublists of the given list for a new list of the given attribute
 	var getIndexForNewSubList = function(oList, oAttr){
 		if (oList._getAtt().getListOrder() != sap.ui.ux3.ExactOrder.Fixed /*Select*/) {
 			return -1;
 		}
-		
+
 		var aAttributes = oList._getAtt().getAttributes();
 		var idx = 0;
 		for (var i = 0; i < aAttributes.length; i++) {
@@ -998,19 +999,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return idx;
 	};
-	
+
 	var refreshScrollBehaviour = function(oList){
 		if (adaptScollBehavior(oList)) {
 			oList.$("lst").addClass("sapUiUx3ExactLstLstExp");
-	
+
 			if (!oList._oPopup) {
 				var fPopupEventHandle = function(oEvent){
 					oList._handleEvent(oEvent);
 				};
-	
+
 				oList._oPopup = new Popup();
-	
-				if (!!!sap.ui.Device.browser.firefox) {
+
+				if (!sap.ui.Device.browser.firefox) {
 					oList._oPopup._fixPositioning = function(oPosition, bRtl) {
 						Popup.prototype._fixPositioning.apply(this, arguments);
 						if (bRtl) {
@@ -1024,7 +1025,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 						}
 					};
 				}
-	
+
 				oList._oPopup.open = function(){
 					var jListContRef = oList.$("lst");
 					animate(jListContRef, false, -1, function(jRef){
@@ -1050,7 +1051,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					}, function(jRef){
 						//Update BlindLayer of popup
 						jListContRef.addClass("sapUiUx3ExactLstExpandedBL");
-						oList._oPopup._updateBlindLayer();
 						//Adapt the scroll behavior and set the focus
 						adaptScollBehavior(oList);
 						oList.getFocusDomRef().focus();
@@ -1092,8 +1092,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 		}
 	};
-	
-	
+
+
 	//Animates the width or height of the given jRef to the given target value
 	//Optional callbacks are possible which are called before and after the animation
 	var animate = function(jRef, bWidth, iValue, fDoBefore, fDoAfter){
@@ -1116,8 +1116,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			jRef.stop(true, true).animate(oParam, 200, 'linear', _fDoAfter);
 		}
 	};
-	
-	
+
+
 	// Handles the StartSelect event during resizing
 	// @see sap.ui.ux3.ExactList.prototype.onmousedown
 	var onStartSelect = function(oEvent){
@@ -1125,8 +1125,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		oEvent.stopPropagation();
 		return false;
 	};
-	
-	
+
+
 	//Handles the MouseMove event during resizing
 	//@see sap.ui.ux3.ExactList.prototype.onmousedown
 	var onMove = function(oEvent){
@@ -1134,8 +1134,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		var iDiff = this._bRTL ? (this._iStartDragX - iCurrentX) : (iCurrentX - this._iStartDragX);
 		setWidth(this, this._iStartWidth + iDiff);
 	};
-	
-	
+
+
 	//Handles the MouseUp event during resizing
 	//@see sap.ui.ux3.ExactList.prototype.onmousedown
 	var onRelease = function(oEvent){
@@ -1146,8 +1146,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		this._iStartDragX = undefined;
 		this.focus();
 	};
-	
-	
+
+
 	//Sets the width of the list to the given width (maybe the width is adapted to the allowed range (@see checkWidth))
 	var setWidth = function(oList, iWidth){
 		iWidth = sap.ui.ux3.ExactAttribute._checkWidth(iWidth);
@@ -1168,8 +1168,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 		}
 	};
-	
-	
+
+
 	//Refresh the header text of the list
 	var setHeaderText = function(oList){
 		var oAtt = oList._getAtt();
@@ -1178,8 +1178,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					+ "<span class=\"sapUiUx3ExactLstHeadInfo\">&nbsp;(" + oList._lb.getSelectedIndices().length + "/" + oList._lb.getItems().length + ")</span>");
 		}
 	};
-	
-	
+
+
 	//Sets the level of the list and its sublists
 	var setLevel = function(oList, iLevel){
 		oList._iLevel = iLevel;
@@ -1188,8 +1188,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			setLevel(aLists[i], iLevel + 1);
 		}
 	};
-	
-	
+
+
 	//Adapt the scrolling behavior when not all list items can be shown and return whether adaptation was done or not.
 	var adaptScollBehavior = function(oList){
 		if (oList._lb) {
@@ -1202,8 +1202,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return false;
 	};
-	
-	
+
+
 	//Collapses or expands the given list horizontally
 	var collapseHorizontally = function(oList, bCollapse, oEvent, bSkipParentTraversal){
 		if (oEvent) {
@@ -1221,7 +1221,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					(oList._iCurrentWidth + "px") : Parameters.get("sapUiUx3ExactLstCollapseWidth"));
 			cntntAnimParam["border-top-width"] = (oList._bCollapsed ?
 					Parameters.get("sapUiUx3ExactLstContentTop") : "0px");
-			
+
 			var $Ctnt = oList.$("cntnt");
 			if (jQuery.fx.off) {
 				for (var css in cntntAnimParam) {
@@ -1230,7 +1230,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			} else {
 				$Ctnt.stop(true, true).animate(cntntAnimParam, 200, 'linear');
 			}
-			
+
 			if (oList._bCollapsed) {
 				//expand
 				animate(oList.$("lst"), true, oList._iCurrentWidth + "px", function() {
@@ -1250,22 +1250,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					refreshScrollBehaviour(oList);
 					setWidth(oList, oList._iCurrentWidth);
 					refreshCollapseHeaderTextWidth(oList);
-					
+
 					$head.removeAttr("role");
 					$head.removeAttr("aria-label");
 					$head.removeAttr("aria-expanded");
-					
+
 					var oAtt = oList._getAtt();
 					if (oAtt && oAtt._scrollToAttributeId) {
 						oAtt.scrollTo(sap.ui.getCore().byId(oAtt._scrollToAttributeId));
 					}
-					
+
 				});
-				
+
 				oList._oCollapseStyles = undefined;
 			} else {
 				oList._oCollapseStyles = {};
-				
+
 				//collapse
 				animate(oList.$("lst"), true, 0, null, function() {
 					jQuery(oList.getDomRef()).addClass("sapUiUx3ExactLstCollapsed");
@@ -1276,13 +1276,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 						oList.focus();
 					}
 					refreshCollapseHeaderTextWidth(oList);
-					
+
 					var $head = oList.$("head");
 					$head.attr("role", "region");
 					$head.attr("aria-label", oList._rb.getText("EXACT_LST_LIST_COLL_ARIA_LABEL", [oList._iLevel, oList._getAtt().getText()]));
 					$head.attr("aria-expanded", "false");
 				});
-				
+
 				//Remember the current styles for rerendering
 				var aStyles = [];
 				for (var css in cntntAnimParam) {
@@ -1291,10 +1291,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				oList._oCollapseStyles["cntnt"] = aStyles.join("");
 				oList._oCollapseStyles["lst"] = "width:0px;";
 			}
-			
+
 			oList._bCollapsed = !oList._bCollapsed;
 		}
-		
+
 		if (bSkipParentTraversal) {
 			return;
 		}
@@ -1303,27 +1303,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			collapseHorizontally(oParent, bCollapse);
 		}
 	};
-	
-	
+
+
 	//Refreshs the header text width of all collapsed lists
 	var refreshCollapseHeaderTextWidth = function(oList) {
 		if (oList._bCollapsed) {
 			var iWidth = oList.$("cntnt").height() - 50/*Space for Header Action Buttons - Maybe provide theme parameter in future*/;
 			var $txt = oList.$("head-txt");
 			$txt.css("width", iWidth + "px");
-			if (jQuery("html").attr("data-sap-ui-browser") == "ie8") {
-				//A text with 90px width is correct aligned when bottom:75px is set
-				var iBottom = 75 - (90 - iWidth);
-				$txt.css("bottom", iBottom + "px");
-			}
 		}
 		var aSubLists = oList.getSubLists();
 		for (var i = 0; i < aSubLists.length; i++) {
 			refreshCollapseHeaderTextWidth(aSubLists[i]);
 		}
 	};
-	
-	
+
+
 	//Toggles the vertical Collapse State
 	var toggleVerticalCollapseState = function(oList){
 		var jListContRef = oList.$("lst");
@@ -1335,8 +1330,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			oList._oPopup.open();
 		}
 	};
-	
-	
+
+
 	//Handles the close of the list
 	var close = function(oList, bSkipNotify, fCallback){
 		var fFinalize = function(jRef) {
@@ -1352,7 +1347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				fCallback();
 			}
 		};
-	
+
 		var oListRef = oList.getDomRef();
 		if (oListRef) {
 			animate(jQuery(oListRef), true, 0, function(jRef) {
@@ -1362,8 +1357,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			fFinalize();
 		}
 	};
-	
-	
+
+
 	//Creates a new ExactList for the given attribute if the attribute is selected and does not have a corresponding list yet.
 	//If the attribute has a corresponding list already this list is returned.
 	var createExactListForAttribute = function(oList, oAttribute) {
@@ -1376,16 +1371,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				} else {
 					oSubList = new ExactList();
 				}
-	
+
 				oSubList.setData(oAttribute);
 				return oSubList;
 			}
 		}
-	
+
 		return null;
 	};
-	
-	
+
+
 	//Sets the selection property of the given attribute and all its sub-attributes to false.
 	//Additionally the given index in the lists ListBox is unselected. ExactLists which corresponds
 	//to the cleared attributes are closed if bSkipNotify is not set.
@@ -1401,8 +1396,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 		}
 	};
-	
-	
+
+
 	//Removes the change listener which is attached to the lists attribute.
 	var clearChangeListener = function(oList) {
 		var oAttr = oList._getAtt();
@@ -1410,8 +1405,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			oAttr.setChangeListener(null);
 		}
 	};
-	
-	
+
+
 	//Returns the top most list.
 	var getTopList = function(oList) {
 		if (oList._isTop()) {
@@ -1422,8 +1417,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return oList._oTopList;
 	};
-	
-	
+
+
 	var getOrCreateListItem = function(oAttribute){
 		var oItem;
 		if (oAttribute.__oItem) {
@@ -1447,13 +1442,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return oItem;
 	};
-	
-	
+
+
 	}());
-	
-	
+
+
 	//Override docu of the "internal" aggregation subLists.
-	
+
 	/**
 	 * Getter for aggregation <code>subLists</code>.<br/>
 	 * The sub ExactLists of this list. This aggregation must not be maintained from outside. The control automatically takes care to fill this aggregation according to the given ExactAttribute.
@@ -1461,7 +1456,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 * @return {sap.ui.ux3.ExactList[]}
 	 * @protected
 	 */
-	
+
 	/**
 	 * Inserts a subList into the aggregation named <code>subLists</code>.
 	 *
@@ -1475,7 +1470,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 * @return {sap.ui.ux3.ExactList} <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	
+
 	/**
 	 * Adds some subList <code>oSubList</code>
 	 * to the aggregation named <code>subLists</code>.
@@ -1485,7 +1480,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 * @return {sap.ui.ux3.ExactList} <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	
+
 	/**
 	 * Removes an subList from the aggregation named <code>subLists</code>.
 	 *
@@ -1493,14 +1488,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 * @return {sap.ui.ux3.ExactList} the removed subList or null
 	 * @protected
 	 */
-	
+
 	/**
 	 * Removes all the controls in the aggregation named <code>subLists</code>.<br/>
 	 * Additionally unregisters them from the hosting UIArea.
 	 * @return {sap.ui.ux3.ExactList[]} an array of the removed elements (might be empty)
 	 * @protected
 	 */
-	
+
 	/**
 	 * Checks for the provided <code>sap.ui.ux3.ExactList</code> in the aggregation named <code>subLists</code>
 	 * and returns its index if found or -1 otherwise.
@@ -1510,14 +1505,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
 	 * @protected
 	 */
-	
+
 	/**
 	 * Destroys all the subLists in the aggregation
 	 * named <code>subLists</code>.
 	 * @return {sap.ui.ux3.ExactList} <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	
+
 
 	return ExactList;
 

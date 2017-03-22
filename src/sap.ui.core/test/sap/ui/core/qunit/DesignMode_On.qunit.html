@@ -4,14 +4,14 @@
 <!--
 	Testing Design Mode
 	Tested classes: sap.ui.core.Configuration, sap.ui.core.mvc.View
-	Author: d029698
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for Design Mode</title>
 
- <script id="sap-ui-bootstrap" type="text/javascript"
+ <script src="../shared-config.js"></script>
+ <script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons"
@@ -22,73 +22,45 @@
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript" src="AnyView.qunit.js"></script>
+<script src="AnyView.qunit.js"></script>
 
 <script>
-test("Get Design Mode", 1, function() {
+QUnit.test("Get Design Mode", function(assert) {
+	assert.expect(1);
 
 	var designMode = sap.ui.getCore().getConfiguration().getDesignMode();
-	equal(designMode, true, "Design Mode is on");
+	assert.equal(designMode, true, "Design Mode is on");
 
 });
 
-test("Create an HTMLView instance and check controller methods are replaced by empty ones", 2, function(){
+QUnit.test("Create an HTMLView instance and check controller methods are replaced by empty ones", function(assert){
+	assert.expect(2);
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
 	var oController = oView.getController();
-	
-	ok(typeof oController !== "undefined", "Controller is not undefined");
-	ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
+
+	assert.ok(typeof oController !== "undefined", "Controller is not undefined");
+	assert.ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
 
 	oView.destroy();
 });
 
-test("Create a XMLView instance and check controller methods are replaced by empty ones", 2, function(){
+QUnit.test("Create a XMLView instance and check controller methods are replaced by empty ones", function(assert){
+	assert.expect(2);
 
 	var oView = sap.ui.xmlview("example.designmode.test01");
 	var oController = oView.getController();
-	
-	ok(typeof oController !== "undefined", "Controller is not undefined");
-	ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
+
+	assert.ok(typeof oController !== "undefined", "Controller is not undefined");
+	assert.ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
 
 	oView.destroy();
-});
-
-asyncTest("Get Design Time Metadata", 2, function() {
-	
-	jQuery.sap.require("example.designmode.Button");
-	jQuery.sap.require("example.designmode.TextField");
-	
-	Promise.all([example.designmode.Button.getMetadata().loadDesignTime(),
-		example.designmode.TextField.getMetadata().loadDesignTime()]).then(function(aValues) {
-	
-		var oButtonDesignTime = aValues[0];
-		var oTextFieldDesignTime = aValues[1];
-		
-		deepEqual(oButtonDesignTime, {
-			css: "Button.designtime.css",
-			icon: "Button.png",
-			name: "{name}",
-			description: "{description}"
-		});
-		
-		deepEqual(oTextFieldDesignTime, {
-			css: "TextField.designtime.css",
-			icon: "TextField.png",
-			name: "{name}",
-			description: "{description}"
-		});
-		
-		start();
-		
-	});
-	
 });
 
 </script>

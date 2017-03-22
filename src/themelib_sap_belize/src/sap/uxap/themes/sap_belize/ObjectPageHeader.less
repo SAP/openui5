@@ -1,0 +1,94 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageHeader  */
+/* Belize theme                               */
+/* ========================================== */
+
+.sapUxAPObjectPageHeader {
+	.sapMBar {
+		background-color: @sapUiObjectHeaderBackground;
+		text-shadow: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
+	.sapUxAPObjectPageHeaderChangesBtn .sapMBtnTransparent:not(.sapMBtnActive) > .sapMBtnIcon,
+	.sapUxAPObjectPageHeaderLockBtn .sapMBtnTransparent:not(.sapMBtnActive) > .sapMBtnIcon {
+		color:  @sapUiContentMarkerIconColor;
+	}
+}
+
+.sapUxAPObjectPageHeaderIdentifier {
+	.sapUxAPObjectPageHeaderIdentifierTitle {
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierDescription {
+		color: @sapUiContentLabelColor;
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			right: 1.25rem;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifierContainer /* desktop-specific padding */{
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+.sapUxAPObjectPageHeaderIdentifierContainer .sapMBreadcrumbs {
+	line-height:  1.25rem;
+}
+
+html.sapUiMedia-StdExt-LargeDesktop .sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiSizeCompact .sapUiContainer-ExtraWide .sapUxAPObjectPageHeaderIdentifier {
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			right: 2.25rem;
+		}
+	}
+}
+
+html.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Medium .sapUxAPObjectPageHeaderIdentifier {
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			right: 1.25rem;
+		}
+	}
+}
+
+html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifier {
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			right: 0.5rem;
+		}
+	}
+}
+
+html.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+html.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn,
+html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
+	margin-top: -0.5rem;
+}
+
+.sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+.sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
+	margin-top: -0.25rem;
+}
+
+.sapUxAPObjectPageHeaderPlaceholder {
+	background-color: @sapUiContentImagePlaceholderBackground;
+}
+
+.sapUxAPObjectPageHeaderPlaceholder > .sapUiIcon {
+	color: @sapUiContentImagePlaceholderForegroundColor;
+}
+
+.sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
+	color: @sapUiContentIconColor;
+}

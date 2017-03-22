@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>FilterPanel - sap.m</title>
 
@@ -10,48 +10,47 @@
 <!-- SAPUI5 Bootstrap:                                                     -->
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
-<script id="sap-ui-bootstrap" 
-	type="text/javascript"
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.m"
-	data-sap-ui-theme="sap_bluecrystal"
 	src="../../../resources/sap-ui-core.js"
 	data-sap-ui-compatVersion="edge">
 </script>
 
-<script type="text/javascript">	
+<script>
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 	jQuery.sap.require("sap.m.P13nFilterPanel");
 	jQuery.sap.require("sap.ui.core.format.DateFormat");
-	jQuery.sap.require("sap.ui.layout.Grid");	
-	
- 	var	aConditions= [];   
+	jQuery.sap.require("sap.ui.layout.Grid");
+
+ 	var	aConditions= [];
 	var oFilterPanel;
 	var oModel;
 	var iCount= 100;
-	
+
 	show= function(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
 			//oPanel.setLayoutMode("Desktop");
 			//oPanel.setLayoutMode("Tablet");
-			
+
 			var oDialog = new sap.m.Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel]});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
 				oDialog.addStyleClass("sapUiSizeCompact");
-			}			
+			}
 			oDialog.setBeginButton(new sap.m.Button({
 				text: "Close",
 				press: function() {
 					oDialog.close();
 				}
 			}));
-			
+
 			oDialog.open();
 		} else {
 			oPanel.placeAt("contentPanel", "only");
-		}		
-	};	
-	
+		}
+	};
+
 
 	var btnShow = new sap.m.Button({
 		text: "show bound FilterPanel",
@@ -60,7 +59,13 @@
 				"items" : [{
 					"key" : "c0",
 					"text" : "Name",
-					"maxLength" : "10" 
+					"type" : "string",
+					"maxLength" : "10"
+				}, {
+					"key" : "c5",
+					"text" : "Char",
+					"type" : "string",
+					"maxLength" : "1"
 				}, {
 					"key" : "c1",
 					"text" : "Date",
@@ -71,9 +76,19 @@
 					"text" : "Number",
 					"tooltip" : "My Tooltip",
 					"type" : "numeric",
-					"precision" : "5", 
+					"precision" : "5",
 					"scale": "2"
-				}],
+				}, {
+					"key" : "c3",
+					"text" : "Boolean",
+					"tooltip" : "Boolean",
+					"type" : "boolean",
+					"values": ["", "off", "ON"]
+				}, {
+					"key" : "c4",
+					"text" : "Time",
+					"type" : "time"
+				}				],
 				"filterItems" : [{
 					"key" : "f0",
 					"columnKey" : "c2",
@@ -88,6 +103,12 @@
 					"value2" : ""
 				}, {
 					"key" : "f2",
+					"columnKey" : "c3",
+					"operation" : "EQ",
+					"value1" : true,
+					"value2" : ""
+				}, {
+					"key" : "f2",
 					"exclude": true,
 					"columnKey" : "c1",
 					"operation" : "EQ",
@@ -95,9 +116,9 @@
 					"value2" : sap.ui.core.format.DateFormat.getDateInstance().format(new Date())
 				}]
 			};
-	
+
 			oModel = new sap.ui.model.json.JSONModel(oData);
-	
+
 			oFilterPanel = new sap.m.P13nFilterPanel({
 				maxIncludes : -1,
 				maxExcludes : -1,
@@ -112,18 +133,18 @@
 							sap.m.MessageToast.show("removeFilterItem ---> " + params.key + " #" + oModel.getData().filterItems.length);
 							return;
 						}
-					});							
+					});
 				},
 				addFilterItem: function(oEvent) {
 					var params = oEvent.getParameters();
 					var oData = oModel.getData();
  					var oFilterItem = {
 						key : params.key,
-						columnKey : params.filterItemData.columnKey,
-						operation : params.filterItemData.operation,
-						exclude : params.filterItemData.exclude,
-						value1 : params.filterItemData.value1,
-						value2 : params.filterItemData.value2
+						columnKey : params.filterItemData.getColumnKey(),
+						operation : params.filterItemData.getOperation(),
+						exclude : params.filterItemData.getExclude(),
+						value1 : params.filterItemData.getValue1(),
+						value2 : params.filterItemData.getValue2()
 					};
 					if (params.index) {
 						oData.filterItems.splice(params.index, 0, oFilterItem);
@@ -133,18 +154,23 @@
 					oModel.setData(oData, true);
 
 					sap.m.MessageToast.show("addFilterItem ---> " + params.key + " #" + oModel.getData().filterItems.length);
-				}				
+				}
 			});
-			oFilterPanel.setModel(oModel);
+/* 			oFilterPanel.setIncludeOperations([
+			                           sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty, sap.m.P13nConditionOperation.NotEmpty
+			                           ], "boolean");
+ */
+ 			oFilterPanel.setModel(oModel);
 			oFilterPanel.bindItems("/items", new sap.m.P13nItem({
 				columnKey : "{key}",
 				text : "{text}",
 				tooltip : "{tooltip}",
 				type : "{type}",
 				maxLength : "{maxLength}",
-				precision: "{precision}", 
-				scale: "{scale}",				
-				isDefault : "{isDefault}"
+				precision: "{precision}",
+				scale: "{scale}",
+				isDefault : "{isDefault}",
+				values : "{values}"
 			}));
 			oFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({
 				key : "{key}",
@@ -154,9 +180,26 @@
 				value1 : "{value1}",
 				value2 : "{value2}"
 			}));
-			
+
 			show(oFilterPanel, "Filter");
 			
+			// Adding some empty rows into the UI by calling some internal functions (only for testing)
+			/* var fAddEmptyFilterItem = function(oPanel, sKeyFieldKey, sOperationKey) {
+				oPanel._handleAddCondition(oPanel._oConditionsGrid, oPanel._oConditionsGrid.getContent()[oPanel._oConditionsGrid.getContent().length - 1]);
+				var oLastConditionGrid = oPanel._oConditionsGrid.getContent()[oPanel._oConditionsGrid.getContent().length - 1];
+				if (sKeyFieldKey) {
+					oLastConditionGrid.keyField.setSelectedKey(sKeyFieldKey);
+				}
+				if (sOperationKey) {
+					oLastConditionGrid.operation.setSelectedKey(sOperationKey)
+				}
+			}
+			
+			setTimeout(function() {
+				fAddEmptyFilterItem(oFilterPanel._oIncludeFilterPanel, "c5", "EQ"); 
+				fAddEmptyFilterItem(oFilterPanel._oIncludeFilterPanel, "c2", "BT"); 
+			});	 */		
+
 			oFieldKey.setModel(oModel);
 			oFieldKey.bindValue("/filterItems/0/key");
 			oFieldKeyField.setModel(oModel);
@@ -169,40 +212,40 @@
 			oField2.bindValue("/filterItems/0/value2");
 		}
 	});
-	
+
 	var btnValidate = new sap.m.Button({
 		text: "validate",
 		press: function() {
 			sap.m.MessageToast.show("validate= "+oFilterPanel.validateConditions());
 		}
 	});
-	
+
 	var btnClearErrors = new sap.m.Button({
 		text: "Clear Errors",
 		press: function() {
 			oFilterPanel.removeValidationErrors();
 		}
 	});
-	
-	
+
+
 	var btnRemoveInvalidConditions = new sap.m.Button({
 		text: "Remove Invalid Conditions",
 		press: function() {
 			oFilterPanel.removeInvalidConditions();
 		}
 	});
-	
+
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
 			aConditions = oFilterPanel.getConditions();
-	
-			var sConditions= ""; 
+
+			var sConditions= "";
 			for (i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
 				sConditions+= "'"+oCondition.text + "' ";
-			}					
-	
+			}
+
 			sap.m.MessageToast.show("Conditions= "+sConditions);
 		}
 	});
@@ -220,8 +263,23 @@
 					"value2" : ""
 			});
 			oModel.setData(oData, true);
-			
+
 			sap.m.MessageToast.show("add FilterItem into Model" + " #" + oModel.getData().filterItems.length);
+		}
+	});
+
+	var btnAddItem = new sap.m.Button({
+		text: "add Item",
+		press: function() {
+			var oData= oModel.getData();
+ 			oData.items.push(			{
+				"key" : "c100",
+				"text" : "NameFoo",
+				"type" : "string"
+			});
+ 			oModel.setData(oData, true);
+
+			sap.m.MessageToast.show("add Item into Model" + " #" + oModel.getData().items.length);
 		}
 	});
 
@@ -284,8 +342,8 @@
 		select : function() {
 		}
 	});
-	
-	
+
+
 	btnShow.placeAt("content");
 	btnValidate.placeAt("content");
 	btnClearErrors.placeAt("content");
@@ -297,11 +355,12 @@
 	oField1.placeAt("content2");
 	oField2.placeAt("content2");
 	btnAddCondition.placeAt("content2");
+	btnAddItem.placeAt("content2");
 	btnInsertCondition.placeAt("content2");
 	btnRemoveCondition.placeAt("content2");
 	theCompactMode.placeAt("content");
 	theDialogMode.placeAt("content");
-		 	
+
 </script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" role="application">

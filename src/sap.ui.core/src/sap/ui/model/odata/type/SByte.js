@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	function(Int) {
 	"use strict";
 
-	var oRange = {minimum: -128, maximum: 127};
+	var oRange = {minimum : -128, maximum : 127};
 
 	/**
 	 * Constructor for a primitive type <code>Edm.SByte</code>.
@@ -15,8 +15,8 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.SByte</code></a>.
 	 *
-	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
-	 * <code>number</code>.
+	 * In both {@link sap.ui.model.odata.v2.ODataModel} and {@link sap.ui.model.odata.v4.ODataModel}
+	 * this type is represented as a <code>number</code>.
 	 *
 	 * @extends sap.ui.model.odata.type.Int
 	 *
@@ -35,9 +35,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @public
 	 * @since 1.27.0
 	 */
-	var SByte = Int.extend("sap.ui.model.odata.type.SByte",
-		/** @lends sap.ui.model.odata.type.SByte.prototype */
-		{
+	var SByte = Int.extend("sap.ui.model.odata.type.SByte", {
 			constructor : function () {
 				Int.apply(this, arguments);
 			}

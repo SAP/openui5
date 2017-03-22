@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.f.DynamicPage test page</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.f">
+	</script>
+
+
+	<script>
+
+		var aPages = [];
+		for (var i = 0; i <= 20; i++) {
+			aPages.push(new sap.m.Page("page" + i, {
+				title: "Page " + i,
+				content: [new sap.m.Button({text: "Press me"})]
+			}));
+		}
+
+		var oFCL = new sap.f.FlexibleColumnLayout("fcl", {
+			beginColumnPages: [aPages[1], aPages[2], aPages[3]],
+			initialBeginColumnPage: "page2",
+
+			midColumnPages: [aPages[4], aPages[5], aPages[6]],
+			initialMidColumnPage: "page6",
+
+			endColumnPages: [aPages[7], aPages[8], aPages[9]],
+			initialEndColumnPage: "page7",
+
+			layout: sap.f.LayoutType.ThreeColumnsMidExpanded
+		});
+
+		// oFCL.to("page3");
+		// oFCL.backBeginColumn();
+
+
+		oFCL.placeAt("content");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" style="height: 100%">
+	<div class="container" id="content" style="height: 100%"></div>
+</body>
+</html>

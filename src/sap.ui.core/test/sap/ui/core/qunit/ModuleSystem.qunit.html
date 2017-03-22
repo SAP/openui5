@@ -1,70 +1,938 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
-		<title>Test Page for Module Loading (require/declare)</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Test Page for Module Loading (define/require/declare)</title>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
-				type="text/javascript"
 				data-sap-ui-noConflict="true"
+				data-sap-ui-logLevel="INFO"
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<!--[if IE 9]>
+			<script>
+				// If this flag is set to `false` sinon will only fake `XDomainRequest` but not `XMLHttpRequest`
+				// GH Issues:
+				// - https://github.com/cjohansen/Sinon.JS/issues/715
+				// - https://github.com/cjohansen/Sinon.JS/issues/732
+				// TODO: remove once this has been fixed!!!
+				sinon.xhr.supportsCORS = true;
+			</script>
+		<![endif]-->
+		<!--[if IE]>
+			<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script >
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.registerResourcePath("testlibs", "testdata/libraries/");
 
-		module('old syntax APIs');
-		
-		test("getModulePath", function(){
-			jQuery.sap.registerModulePath("", "resources/");
-			equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/sap/ui/Global.js", "standard case 'sap.ui.Global'"); 
-			equal(jQuery.sap.getModulePath("jquery.sap.xml", ".js"), "resources/jquery.sap.xml.js", "special case 'jquery.sap.xml'");
-			equal(jQuery.sap.getModulePath("sap.ui.core", "/"), "resources/sap/ui/core/", "folder case"); 
-			equal(jQuery.sap.getModulePath("sap.ui.core", ""), "resources/sap/ui/core", "no suffix"); 
-			
-			jQuery.sap.registerModulePath("sap.ui.Global", "resources/Global/");
-			equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/Global.js", "special case base name mapping"); 
-			jQuery.sap.registerModulePath("sap.ui.Global", "resources/sap/ui/Global/");
-			
+
+		//****************************************************
+		// module loading (require/declare/define)
+		//****************************************************
+
+		QUnit.module("load modules", {
+			beforeEach: function() {
+				this.server = sinon.fakeServer.create();
+				this.server.autoRespond = true;
+			},
+			afterEach: function() {
+				this.server.restore();
+				jQuery.sap.unloadResources('my/first/module.js', false, true, true);
+				jQuery.sap.unloadResources('my/second/module.js', false, true, true);
+				delete window.my;
+			}
 		});
-		
-		module('new syntax APIs');
-		
-		test("getResourcePath(r)", function(){
+
+		QUnit.test("jQuery.sap.require, basic", function (assert) {
+
+			this.server.respondWith(/first/, 'jQuery.sap.declare("my.first.module");' +
+					'jQuery.sap.require("my.second.module");' +
+					'my.first.module = "1st";');
+			this.server.respondWith(/second/, 'jQuery.sap.declare("my.second.module");' +
+					'my.second.module = "2nd";');
+
+			assert.equal(jQuery.sap.getObject("my.first.module"), undefined, "global name for module 'first' should be undefined");
+			assert.ok(!jQuery.sap.isDeclared("my.first.module"), "module 'first' should not be declared");
+			assert.equal(jQuery.sap.getObject("my.second.module"), undefined, "global name for module 'second' should be undefined");
+			assert.ok(!jQuery.sap.isDeclared("my.second.module"), "module 'second' should not be declared");
+
+			jQuery.sap.require("my.first.module");
+			assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "require of 'first' should have loaded 'first'");
+			assert.ok(jQuery.sap.isDeclared("my.first.module"), "module 'first' should be declared");
+			assert.equal(jQuery.sap.getObject("my.second.module"), "2nd", "require of 'first' should have loaded 'second' (transitively)");
+			assert.ok(jQuery.sap.isDeclared("my.second.module"), "module 'first' should be declared");
+
+			jQuery.sap.require("my.second.module");
+			assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "addtl. require of 'second' shouldn't touch globals");
+			assert.equal(jQuery.sap.getObject("my.second.module"), "2nd", "addtl. require of 'second' shouldn't touch globals");
+
+			jQuery.sap.require("my.first.module");
+			assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "addtl. require of 'first' shouldn't touch globals");
+			assert.equal(jQuery.sap.getObject("my.second.module"), "2nd", "addtl. require of 'first' shouldn't touch globals");
+
+		});
+
+		QUnit.test("jQuery.sap.require, nested + cyclic", function (assert) {
+
+			this.server.respondWith(/first/, 'jQuery.sap.declare("my.first.module");' +
+					'jQuery.sap.require("my.second.module");' +
+					'my.first.module = "1st";');
+			this.server.respondWith(/second/, 'jQuery.sap.declare("my.second.module");' +
+					'jQuery.sap.require("my.first.module");' +
+					'my.second.module = my.first.module;');
+
+			jQuery.sap.require("my.first.module");
+
+			assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "first module should have been loaded");
+			assert.ok(jQuery.sap.isDeclared("my.first.module"), "module 'first' should be declared");
+			assert.equal(jQuery.sap.getObject("my.second.module"), undefined, "second module should have been loaded");
+			assert.ok(jQuery.sap.isDeclared("my.second.module"), "module 'second' should be declared");
+
+		});
+
+		QUnit.test("jQuery.sap.require, nested + cyclic (2)", function (assert) {
+
+			this.server.respondWith(/first/, 'jQuery.sap.declare("my.first.module");' +
+					'my.first.module = "1st";' +
+					'jQuery.sap.require("my.second.module");');
+			this.server.respondWith(/second/, 'jQuery.sap.declare("my.second.module");' +
+					'jQuery.sap.require("my.first.module");' +
+					'my.second.module = my.first.module;');
+
+			jQuery.sap.require("my.first.module");
+
+			assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "first module should have been loaded");
+			assert.equal(jQuery.sap.getObject("my.second.module"), "1st", "second module should have been loaded");
+
+		});
+
+		QUnit.test("sap.ui.define (basic)", function (assert) {
+
+			this.server.respondWith(/first/, 'sap.ui.define([], function () {' +
+					'return {my : "firstmodule"}' +
+					'}, /* bExport= */ true);');
+			this.server.respondWith(/second/, 'sap.ui.define([], function () {' +
+					'return {my : "secondmodule"}' +
+					'});');
+
+			var done = assert.async();
+			sap.ui.require(["my/first/module", "my/second/module"], function (firstModule, secondModule) {
+				assert.strictEqual(firstModule.my, "firstmodule");
+				assert.strictEqual(firstModule, jQuery.sap.getObject("my.first.module"));
+				assert.strictEqual(secondModule.my, "secondmodule");
+				assert.ok(my && my.second === undefined);
+				done();
+			});
+
+		});
+
+		QUnit.test("sap.ui.define (cycle)", function (assert) {
+
+			/*
+			 * This test verifies the behavior of sap.ui.define in case of a cyclic module dependency.
+			 *
+			 * Dependencies:
+			 *   my/first/module --> my/second/module --> my/first/module
+			 *
+			 * When 'first' is loaded, it will trigger loading of 'second' as well.
+			 * 'Second' in turn tries to access 'first'. As 'first' is currently loading,
+			 * 'undefined' should be returned as its module value.
+			 * After loading completed, any further reads of 'first' should return the expected value.
+			 */
+
+			this.server.respondWith(/first/, 'sap.ui.define(["my/second/module"], function (second) {' +
+					'return {my : "firstmodule", second: second}' +
+					'}, /* bExport= */ true);');
+			this.server.respondWith(/second/, 'sap.ui.define(["my/first/module"], function (first) {' +
+					'return {' +
+					'  my : "secondmodule",'+
+					'  first: first,' +
+					'  requireDuringExec: sap.ui.require("my/first/module"),' +
+					'  requireSyncDuringExec: sap.ui.requireSync("my/first/module"),' +
+					'  requireSync: function() { return sap.ui.requireSync("my/first/module"); },' +
+					'  require: function() { return sap.ui.require("my/first/module"); },' +
+					'  requireAsync: function(callback) { return sap.ui.require(["my/first/module"], callback); }' +
+					'};' +
+					'}, /* bExport= */ true);');
+
+			var done = assert.async();
+			sap.ui.require(["my/first/module", "my/second/module"], function (firstModule, secondModule) {
+				assert.strictEqual(firstModule.my, "firstmodule", "after loading, value of first module should be as expected");
+				assert.strictEqual(secondModule.my, "secondmodule", "after loading, value of second module should be as expected");
+				assert.ok(firstModule.second && firstModule.second.my === "secondmodule", "first module should have recevied value of second module");
+				assert.ok(secondModule.first === undefined, "second module should not have recevied value of second module, due to cyclic dependency");
+				assert.ok(secondModule.requireDuringExec === undefined, "when second module tries to access 'first' during execution, it still should receive 'undefined'");
+				assert.ok(secondModule.requireSyncDuringExec === undefined, "when second module tries to sync access 'first' during execution, it still should receive 'undefined'");
+				assert.strictEqual(secondModule.require(), firstModule, "when accessing first after load, it should return the expected value");
+				assert.strictEqual(secondModule.requireSync(), firstModule, "when accessing first after load, it should return the expected value");
+
+				secondModule.requireAsync(function(anotherfirst) {
+					assert.strictEqual(anotherfirst, firstModule, "require");
+					done();
+				});
+			});
+
+		});
+
+		QUnit.test("sap.ui.require (sync probe)", function (assert) {
+
+			this.server.respondWith(/first/, 'jQuery.sap.declare("my.first.module");' +
+					'jQuery.sap.require("my.second.module");' +
+					'my.first.module = "1st";');
+			this.server.respondWith(/second/, 'jQuery.sap.declare("my.second.module");' +
+					'my.second.module = "2nd";');
+
+			assert.equal(sap.ui.require("my/first/module"), undefined, "without prior loading, sap.ui.require should return undefined for first");
+			assert.equal(sap.ui.require("my/second/module"), undefined, "without prior loading, sap.ui.require should return undefined for second");
+			jQuery.sap.require("my.first.module");
+			assert.equal(sap.ui.require("my/first/module"), "1st", "after loading, sap.ui.require should return the expected value for first");
+			assert.equal(sap.ui.require("my/second/module"), "2nd", "after loading, sap.ui.require should return the expected value for second");
+
+		});
+
+		QUnit.test("sap.ui.require (async)", function (assert) {
+
+			this.server.respondWith(/first/, 'sap.ui.define([], function () {' +
+					'return {my : "firstmodule"}' +
+					'}, /* bExport= */ true);');
+			this.server.respondWith(/second/, 'sap.ui.define([], function () {' +
+					'return {my : "secondmodule"}' +
+					'}, /* bExport= */ true);');
+
+			var done = assert.async();
+			var calledBack = false;
+			sap.ui.require(["my/first/module", "my/second/module"], function (firstModule, secondModule) {
+				assert.strictEqual(firstModule.my, "firstmodule");
+				assert.strictEqual(secondModule.my, "secondmodule");
+				calledBack = true;
+				done();
+			});
+			assert.equal(calledBack, false, "callback must not have been called synchronously");
+
+		});
+
+		QUnit.test("sap.ui.requireSync", function (assert) {
+
+			this.server.respondWith(/first/, 'jQuery.sap.declare("my.first.module");' +
+					'jQuery.sap.require("my.second.module");' +
+					'my.first.module = "1st";');
+			this.server.respondWith(/second/, 'jQuery.sap.declare("my.second.module");' +
+					'my.second.module = "2nd";');
+
+			assert.equal(sap.ui.require("my/first/module"), undefined, "without prior loading, sap.ui.require should return undefined for first");
+			assert.equal(sap.ui.require("my/second/module"), undefined, "without prior loading, sap.ui.require should return undefined for second");
+
+			assert.equal(sap.ui.requireSync("my/second/module"), "2nd", "sap.ui.requireSync should return the expected value for second");
+			assert.equal(sap.ui.require("my/first/module"), undefined, "after loading 'second', sap.ui.require should still return undefined for first");
+			assert.equal(sap.ui.require("my/second/module"), "2nd", "after loading 'second', sap.ui.require should return the expected value for second");
+
+			assert.equal(sap.ui.requireSync("my/first/module"), "1st", "sap.ui.requireSync should return the expected value for first");
+			assert.equal(sap.ui.require("my/first/module"), "1st", "after loading 'first', sap.ui.require should return the expected value for first");
+			assert.equal(sap.ui.require("my/second/module"), "2nd", "after loading 'Second', sap.ui.require should return the expected value for second");
+
+		});
+
+
+		//****************************************************
+		// module name resolution (sap.ui.define)
+		//****************************************************
+
+		QUnit.module('Module Name Resolution', {
+
+			beforeEach: function(assert) {
+
+				sap.ui.predefine('sap/test/myapp/Component', function(mod2) {
+					return "Component";
+				});
+
+				sap.ui.predefine('sap/test/myapp/views/DetailView', function(mod2) {
+					return "DetailView";
+				});
+
+				sap.ui.predefine('sap/test/myapp/utils/Formatter', function(mod2) {
+					return "Formatter";
+				});
+
+				sap.ui.predefine('thirdparty/SomeOpenSource', function(mod2) {
+					return "SomeOpenSource";
+				});
+			},
+
+			afterEach: function() {
+				jQuery.sap.unloadResources('sap/test/myapp/Component.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/myapp/views/MainView.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/myapp/views/DetailView.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/myapp/utils/Formatter.js', false, true, true);
+				jQuery.sap.unloadResources('thirdparty/SomeOpenSource.js', false, true, true);
+			}
+
+		});
+
+		QUnit.test("simple cases", function(assert) {
+
+			var doneModule1 = assert.async();
+			var doneModule2 = assert.async();
+
+			sap.ui.predefine('sap/test/myapp/views/MainView',
+			[
+				'./DetailView', // same package
+				'../Component', // parent package
+				'../utils/Formatter', // relative to parent package
+				'thirdparty/SomeOpenSource', // absolut name
+				'../../../../thirdparty/SomeOpenSource', // navigation to root and then down again
+				'sap/test/myapp/views/../utils/Formatter' // nav-to-parent somewhere inside a name
+			],
+			function(mod1, mod2, mod3, mod4, mod5, mod6) {
+					assert.equal(mod1, 'DetailView');
+					assert.equal(mod2, 'Component');
+					assert.equal(mod3, 'Formatter');
+					assert.equal(mod4, 'SomeOpenSource');
+					assert.equal(mod5, 'SomeOpenSource');
+					assert.equal(mod6, 'Formatter');
+					return "MainView";
+			});
+
+
+			sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+				assert.equal(mod1, 'MainView', "required module value should be MainView");
+				doneModule1();
+			});
+
+			sap.ui.require(['sap/test/myapp/utils/../views/MainView'], function (mod1) {
+				assert.equal(mod1, 'MainView', "required module value should be MainView");
+				doneModule2();
+			});
+		});
+
+		QUnit.test("navigate to parent of root (begin)", function(assert) {
+
+			sap.ui.predefine('sap/test/myapp/views/MainView',
+			[
+				'../../../../../thirdparty/SomeOpenSource'
+			], function(mod1) {
+				return "MainView";
+			});
+
+			QUnit["throws"](function() {
+				sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+					// if this factory function is reached, this will be an error
+					// but QUnit.throws should have reported it already, so no need to add checks in here
+				});
+			}, /parent of root/i, "module loading should fail due to dependency");
+
+		});
+
+		QUnit.test("navigate to parent of root (inside)", function(assert) {
+
+			sap.ui.predefine('sap/test/myapp/views/MainView',
+			[
+				'sap/test/myapp/../../../../thirdparty/SomeOpenSource'
+			], function(mod1) {
+				return "MainView";
+			});
+
+			QUnit["throws"](function() {
+				sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+					// if this factory function is reached, this will be an error
+					// but QUnit.throws should have reported it already, so no need to add checks in here
+				});
+			}, /parent of root/i, "module loading should fail due to dependency");
+
+		});
+
+		QUnit.test("invalid dot-segment", function(assert) {
+
+			sap.ui.predefine('sap/test/myapp/views/MainView', ['./.../Component'], function(mod1) {
+				return "MainView";
+			});
+
+			QUnit["throws"](function() {
+				sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+					// if this factory function is reached, this will be an error
+					// but QUnit.throws should have reported it already, so no need to add checks in here
+				});
+			}, /illegal.*segment/i, "module loading should fail due to dependency");
+		});
+
+		QUnit.test("invalid use of relative paths in require", function(assert) {
+
+			// sap.ui.require doesn't support relative paths
+			QUnit["throws"](function() {
+				sap.ui.require(['./test/myapp/views/MainView'], function (mod1) {
+					// if this factory function is reached, this will be an error
+					// but QUnit.throws should have reported it already, so no need to add checks in here
+				});
+			}, /not supported/i, "module loading should fail due to relative path ");
+
+			// sap.ui.require doesn't support relative paths
+			QUnit["throws"](function() {
+				sap.ui.require(['../test/myapp/views/MainView'], function (mod1) {
+				});
+			}, /not supported/i, "module loading should fail due to relative path ");
+
+			// sap.ui.require also doesn't support invalid segment
+			QUnit["throws"](function() {
+				sap.ui.require(['.../test/myapp/views/MainView'], function (mod1) {
+				});
+			}, /not supported/i, "module loading should fail due to relative path ");
+
+		});
+
+		//****************************************************
+		// loadJSResourceAsync
+		//****************************************************
+
+		QUnit.module("loadJSResourceAsync", {
+			beforeEach: function() {
+				this.scriptsWith = function(rPattern) {
+					var count = 0;
+					jQuery("head>script").each(function(i, script) {
+						if ( script.src && rPattern.test(script.src) ) {
+							count++;
+						}
+					});
+					return count;
+				}
+			}
+		});
+
+		QUnit.test("successful call", function(assert) {
+			var that = this;
+			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/library-preload.js");
+			return p.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.ok(jQuery.sap.isResourceLoaded('testlibs/scenario1/lib1/library-preload.js'), "resource should have been loaded");
+				assert.equal(that.scriptsWith(/scenario1\/lib1\/library-preload\.js$/), 1, "script tag for lib should exist");
+			}, function() {
+				assert.ok(false, "promise should not fail");
+			});
+
+		});
+
+		QUnit.test("failing call", function(assert) {
+			var that = this;
+			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/non-existing.js");
+			return p.then(function() {
+				assert.ok(false, "promise must not succeed");
+			}, function() {
+				assert.ok(true, "promise should fail");
+				assert.equal(that.scriptsWith(/scenario1\/lib1\/non-existing\.js$/), 1, "script tag should exist");
+			});
+
+		});
+
+		QUnit.test("failing call (ignore errors)", function(assert) {
+			var that = this;
+			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/non-existing-ignored.js", true);
+			return p.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.equal(that.scriptsWith(/scenario1\/lib1\/non-existing-ignored\.js$/), 1, "script tag should exist");
+			}, function() {
+				assert.ok(false, "promise must not fail");
+			});
+
+		});
+
+		QUnit.test("multiple calls (succeeding)", function(assert) {
+			var that = this;
+			var p1 = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib3/library-preload.js");
+			var p2 = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib3/library-preload.js");
+			p1 = p1.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.ok(jQuery.sap.isResourceLoaded('testlibs/scenario1/lib3/library-preload.js'), "resource should have been loaded");
+			}, function() {
+				assert.ok(false, "promise should not fail");
+			});
+			p2 = p2.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.ok(jQuery.sap.isResourceLoaded('testlibs/scenario1/lib3/library-preload.js'), "resource should have been loaded");
+			}, function() {
+				assert.ok(false, "promise should not fail");
+			});
+			return Promise.all([p1,p2]).then(function() {
+				assert.equal(that.scriptsWith(/scenario1\/lib3\/library-preload\.js$/), 1, "only one script tag for lib should exist");
+			});
+		});
+
+		QUnit.test("multiple calls (failing)", function(assert) {
+			var that = this;
+			var p1 = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib3/non-existing.js");
+			var p2 = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib3/non-existing.js", true);
+			p1 = p1.then(function() {
+				assert.ok(false, "promise must not succeed");
+			}, function() {
+				assert.ok(true, "promise should fail");
+			});
+			p2 = p2.then(function() {
+				assert.ok(true, "promise should succeed"); // ignore errors!
+			}, function() {
+				assert.ok(false, "promise must not fail");
+			});
+			return Promise.all([p1,p2]).then(function() {
+				assert.equal(that.scriptsWith(/scenario1\/lib3\/library-preload\.js$/), 1, "only one script tag for lib should exist");
+			});
+		});
+
+		//****************************************************
+		// loadResource tests
+		//****************************************************
+
+		QUnit.module("loadResource");
+
+		QUnit.test("synchronous - basic", function(assert) {
+			var sText = jQuery.sap.loadResource({
+				url: "testdata/test.properties",
+				dataType: 'text',
+				failOnError: false
+			});
+			assert.ok(sText && sText.length > 0, "Resource loaded successfully");
+		});
+
+		QUnit.test("synchronous - no fail on error", function(assert) {
+			var sText = jQuery.sap.loadResource({
+				url: "testdata/testDoesNotExist.properties",
+				dataType: 'text',
+				failOnError: false
+			});
+			assert.ok(!sText, "Resource cannot be found but no error occured");
+		});
+
+		QUnit.test("synchronous - fail on error", function(assert) {
+			try {
+				var sText = jQuery.sap.loadResource({
+					url: "testdata/testDoesNotExist.properties",
+					dataType: 'text',
+					failOnError: true
+				});
+				assert.ok(false, "Resource cannot be found but no error occured");
+			}catch(e){
+				assert.ok(true, "Resource cannot be found and an error occured");
+			}
+		});
+
+		QUnit.test("asynchronous - basic", function(assert) {
+			return jQuery.sap.loadResource({
+				url: "testdata/test.properties",
+				dataType: 'text',
+				failOnError: false,
+				async: true
+			}).then(function(sText){
+				assert.ok(sText && sText.length > 0, "Promise.done: Resource loaded successfully");
+			}, function(oError){
+				assert.ok(false, "Promise.catch should not be called");
+			});
+		});
+
+		QUnit.test("asynchronous - no fail on error", function(assert) {
+			return jQuery.sap.loadResource({
+				url: "testdata/testDoesNotExist.properties",
+				dataType: 'text',
+				failOnError: false,
+				async: true
+			}).then(function(sText){
+				assert.ok(!sText, "Promise.done: Resource cannot be found but no error occured");
+			}, function(oError){
+				assert.ok(false, "Promise.catch should not be called");
+			});
+		});
+
+		QUnit.test("asynchronous - fail on error", function(assert) {
+			return jQuery.sap.loadResource({
+				url: "testdata/testDoesNotExist.properties",
+				dataType: 'text',
+				failOnError: true,
+				async: true
+			}).then(function(sText){
+				assert.ok(false, "Promise.done should not be called");
+			}, function(oError){
+				assert.ok(oError instanceof Error, "Promise.catch: Resource cannot be found and an error occured");
+			});
+		});
+
+
+		//****************************************************
+		// resource roots
+		//****************************************************
+
+		QUnit.module("register roots", {
+			beforeEach: function() {
+				var logSpy = this.logSpy = sinon.stub();
+				this.listener = {
+					onLogEntry: function(oLogEntry) {
+						logSpy(oLogEntry.level, oLogEntry.message);
+					}
+				};
+				jQuery.sap.log.addLogListener(this.listener);
+			},
+			afterEach: function() {
+				jQuery.sap.log.removeLogListener(this.listener);
+			}
+		});
+
+		QUnit.test("register w/o final flag (legacy variant)", function(assert) {
+
+			var sPathInput = "/qunit/test/path";
+
+			//first, set path to anything (should be overwritten then...)
+			jQuery.sap.registerModulePath("qunit.test.path1", "/this/is/the/wrong/path/");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path1/))), "first path registration should have been logged");
+			this.logSpy.reset();
+
+			jQuery.sap.registerModulePath("qunit.test.path1", sPathInput);
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path1/))), "second path registration should have been logged");
+			this.logSpy.reset();
+
+			assert.equal(jQuery.sap.getModulePath("qunit.test.path1"), sPathInput, "non-final path has been overwritten");
+
+		});
+
+		QUnit.test("register with final=false", function(assert) {
+			var sPathInput = "/qunit/test/path";
+
+			//first, set path to anything (should be overwritten then...)
+			jQuery.sap.registerModulePath("qunit.test.path2", "/this/is/the/wrong/path/");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path2/))), "first path registration should have been logged");
+			this.logSpy.reset();
+
+			jQuery.sap.registerModulePath("qunit.test.path2", {'url': sPathInput, 'final': false});
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path2/))), "second path registration should have been logged");
+			this.logSpy.reset();
+
+			assert.equal(jQuery.sap.getModulePath("qunit.test.path2"), sPathInput, "False final flag was handled successfully.");
+		});
+
+		QUnit.test("register with final=true", function(assert) {
+			var sPathInput = "/qunit/test/path";
+
+			//first, set path to the value it should be and stay (should NOT be overwritten then...)
+			jQuery.sap.registerModulePath("qunit.test.path3", {'url': sPathInput, 'final': true});
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path3/)).and(sinon.match(/final/))), "first path registration should have been logged");
+			this.logSpy.reset();
+
+			jQuery.sap.registerModulePath("qunit.test.path3", "/this/is/the/wrong/path/");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.WARNING, sinon.match(/registerResourcePath/).and(sinon.match(/already set as final/))), "warning should be logged when a final path is to be overwritten");
+			this.logSpy.reset();
+
+			assert.equal(jQuery.sap.getModulePath("qunit.test.path3"), sPathInput, "Active final flag was handled successfully.");
+		});
+
+		QUnit.test("no empty Module URLs allowed", function(assert) {
+			jQuery.sap.registerModulePath("qunit.test.path4", "");
+
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path4/))), "first path registration should have been logged");
+			this.logSpy.reset();
+
+			assert.equal(jQuery.sap.getModulePath("qunit.test.path4"), ".", "Setting empty URL avoided successfully.");
+		});
+
+		QUnit.test("single log entry for redundant calls", function(assert) {
+			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "first path registration should have been logged");
+			this.logSpy.reset();
+
+			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
+			assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged");
+
+			jQuery.sap.registerModulePath("qunit.test.path9", "/qunit/test/path9");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path9/))), "call with differing args should be logged");
+
+			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
+			assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged, even after other calls");
+
+			jQuery.sap.registerResourcePath("qunit/test/path8");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/registration removed/))), "cleanup call should be logged");
+			this.logSpy.reset();
+
+			jQuery.sap.registerResourcePath("qunit/test/path8");
+			assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/registration removed/))), "redundant cleanup call should not be logged");
+
+			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "new call with same url should be logged after cleanup call");
+			this.logSpy.reset();
+
+			jQuery.sap.registerModulePath("qunit.test.path8", { url: "/qunit/test/path8", "final": false});
+			assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged, even with different argument syntax");
+
+			jQuery.sap.registerModulePath("qunit.test.path8", { url: "/qunit/test/path8", "final": true});
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/final/))), "call with same URL but different final flag should be logged");
+		});
+
+		QUnit.test("query parameters should be stripped off", function(assert) {
+			var sExpected = "/qunit/test/path/with/query";
+			jQuery.sap.registerModulePath("qunit.test.path5", sExpected + "?foo=bar&x=y");
+
+			var sActual = jQuery.sap.getModulePath("qunit.test.path5");
+			assert.equal(sActual, sExpected, "Query parameters should be stripped correctly.");
+		});
+
+		QUnit.test("hash should be stripped off", function(assert) {
+			var sExpected = "/qunit/test/path/with/hash";
+			jQuery.sap.registerModulePath("qunit.test.path6", sExpected + "#foo?bar=baz");
+
+			var sActual = jQuery.sap.getModulePath("qunit.test.path6");
+			assert.equal(sActual, sExpected, "Hash should be stripped correctly.");
+		});
+
+		QUnit.test("query parameters + hash should be stripped off", function(assert) {
+			var sExpected = "/qunit/test/path/with/query/and/hash";
+			jQuery.sap.registerModulePath("qunit.test.path7", sExpected + "?foo=bar&x=y#foo?bar=baz");
+
+			var sActual = jQuery.sap.getModulePath("qunit.test.path7");
+			assert.equal(sActual, sExpected, "Query parameters + hash should be stripped correctly.");
+		});
+
+		QUnit.test("getModulePath", function(assert) {
+			jQuery.sap.registerModulePath("", "resources/");
+			assert.equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/sap/ui/Global.js", "standard case 'sap.ui.Global'");
+			assert.equal(jQuery.sap.getModulePath("jquery.sap.xml", ".js"), "resources/jquery.sap.xml.js", "special case 'jquery.sap.xml'");
+			assert.equal(jQuery.sap.getModulePath("sap.ui.core", "/"), "resources/sap/ui/core/", "folder case");
+			assert.equal(jQuery.sap.getModulePath("sap.ui.core", ""), "resources/sap/ui/core", "no suffix");
+
+			jQuery.sap.registerModulePath("sap.ui.Global", "resources/Global/");
+			assert.equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/Global.js", "special case base name mapping");
+			jQuery.sap.registerModulePath("sap.ui.Global", "resources/sap/ui/Global/");
+
+		});
+
+		QUnit.test("getResourcePath", function(assert) {
 
 			jQuery.sap.registerResourcePath("", "resources/");
-			equal(jQuery.sap.getResourcePath("sap/ui/Global.js"), "resources/sap/ui/Global.js", "standard case with extension .js: 'sap/ui/Global.js'"); 
-			equal(jQuery.sap.getResourcePath("sap/ui/Global.view.js"), "resources/sap/ui/Global.view.js", "standard case with extension .view.js: 'sap/ui/Global.view.js'"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui/Global.js"), "resources/sap/ui/Global.js", "standard case with extension .js: 'sap/ui/Global.js'");
+			assert.equal(jQuery.sap.getResourcePath("sap/ui/Global.view.js"), "resources/sap/ui/Global.view.js", "standard case with extension .view.js: 'sap/ui/Global.view.js'");
 
 			jQuery.sap.registerResourcePath("sap/ui/Global", "resources/Global");
-			equal(jQuery.sap.getResourcePath("sap/ui/Global", ".js"), "resources/Global.js", "special case: mapping of the base name"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui/Global", ".js"), "resources/Global.js", "special case: mapping of the base name");
 			jQuery.sap.registerResourcePath("sap/ui/Global");
 
 			jQuery.sap.registerResourcePath("sap.ext", "resources/some/");
-			equal(jQuery.sap.getResourcePath("sap.ext/Global", ".js"), "resources/some/Global.js", "special case folder with dots in folder and single name"); 
+			assert.equal(jQuery.sap.getResourcePath("sap.ext/Global", ".js"), "resources/some/Global.js", "special case folder with dots in folder and single name");
 			jQuery.sap.registerResourcePath("sap.ext", "resources/sap.ext/");
-			
+
 			jQuery.sap.registerResourcePath("sap/ui.ext", "resources/some/");
-			equal(jQuery.sap.getResourcePath("sap/ui.ext/Global", ".js"), "resources/some/Global.js", "special case: mapping with dots in folder"); 
-			equal(jQuery.sap.getResourcePath("sap/ui.ext.js"), "resources/some.js", "special case: base name mapping with dots in folder"); 
-			equal(jQuery.sap.getResourcePath("sap/ui.ext.view.js"), "resources/some.view.js", "special case: base name mapping with dots in folder and complex extension"); 
-			equal(jQuery.sap.getResourcePath("sap/ui.ext", ".js"), "resources/some.js", "special case base name mapping with dots in folder"); 
+			assert.equal(jQuery.sap.getResourcePath("sap/ui.ext/Global", ".js"), "resources/some/Global.js", "special case: mapping with dots in folder");
+			assert.equal(jQuery.sap.getResourcePath("sap/ui.ext.js"), "resources/some.js", "special case: base name mapping with dots in folder");
+			assert.equal(jQuery.sap.getResourcePath("sap/ui.ext.view.js"), "resources/some.view.js", "special case: base name mapping with dots in folder and complex extension");
+			assert.equal(jQuery.sap.getResourcePath("sap/ui.ext", ".js"), "resources/some.js", "special case base name mapping with dots in folder");
 			jQuery.sap.registerResourcePath("sap/ui.ext");
-			
+
 		});
-		
+
+
+
+		//****************************************************
+		// lazy stubs
+		//****************************************************
+
+		QUnit.module("lazyRequire", {
+			beforeEach: function(assert) {
+
+				// an AMD module that defines a simple class
+				sap.ui.predefine("sap/test/lazy/MyClass", [], function() {
+					var MyClass = sap.ui.base.ManagedObject.extend("sap.test.lazy.MyClass");
+					return MyClass;
+				});
+
+				// a module implemented with declare/require that defines a simple class
+				jQuery.sap.registerPreloadedModules({
+					version: "2.0",
+					modules: {
+						"sap/test/lazy/MyLegacyClass.js":
+							"jQuery.sap.getObject('sap.test.lazy.MyLegacyClass', 1);" +
+							"jQuery.sap.declare('sap.test.lazy.MyLegacyClass');" +
+							"sap.test.lazy.MyLegacyClass = sap.ui.base.ManagedObject.extend('sap.test.lazy.MyLegacyClass');"
+					}
+				});
+
+				// an AMD module that defines a static utility class
+				sap.ui.predefine("sap/test/lazy/MyUtility", [], function() {
+					var MyUtility = {
+						// simple public method
+						show : function() {
+						},
+						// another public method that relies on a proper 'this'
+						hide : function() {
+							this._internal();
+						},
+						_internal : function() {
+						}
+					};
+
+					// an out-of-line method with name 'sap.test.factory',
+					sap.test.factory = function() {
+						MyUtility.show();
+					};
+					return MyUtility;
+				}, true);
+
+				// preconditions
+				assert.ok(
+					!jQuery.sap.isDeclared("sap/test/lazy/MyClass")
+					&& !jQuery.sap.isDeclared("sap/test/lazy/MyLegacyClass")
+					&& !jQuery.sap.isDeclared("sap/test/lazy/MyUtility")
+					&& sap.test.lazy === undefined
+					&& sap.test.factory === undefined, "precondition: modules not loaded before test");
+
+ 			},
+
+			afterEach: function(assert) {
+				jQuery.sap.unloadResources('sap/test/lazy/MyClass.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/lazy/MyLegacyClass.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/lazy/MyUtility.js', false, true, true);
+				delete sap.test.lazy;
+				delete sap.test.factory; // don't forget the out-of-line method
+			},
+
+			isLazyStub: function isLazyStub(oContext, sProperty, sMethods) {
+				if ( sMethods ) {
+					oContext = oContext[sProperty];
+					var isStub = typeof oContext === 'object';
+					return sMethods.split(" ").reduce(function(isStub,name) {
+						return isStub && isLazyStub(oContext, name);
+					}, isStub);
+				}
+
+//				var oDescriptor = Object.getOwnPropertyDescriptor(oContext, sProperty);
+//				return !!(oDescriptor && oDescriptor.get && oDescriptor.set);
+				return !!(oContext && typeof oContext[sProperty] === 'function' && oContext[sProperty]._sapUiLazyLoader === true);
+			}
+
+		});
+
+		QUnit.test("simple class scenario, read first", function(assert) {
+
+			sap.ui.lazyRequire('sap.test.lazy.MyClass');
+
+			assert.ok(!jQuery.sap.isDeclared('sap/test/lazy/MyClass'), "module still not loaded after creation of lazy stub");
+			assert.ok(sap.test && typeof sap.test.lazy === 'object', "lazy loader did create the parent namespace sap.test.lazy");
+			assert.ok(this.isLazyStub(sap.test.lazy, 'MyClass'), "lazy loader defined property 'MyClass' with get and set methods");
+
+			// read access first
+			var oRequireSpy = this.spy(jQuery.sap, 'require');
+			var oResult = new sap.test.lazy.MyClass();
+			sinon.assert.calledWith(oRequireSpy, 'sap.test.lazy.MyClass');
+			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyClass'), "read access should load the expected module");
+			assert.ok(oResult instanceof sap.ui.base.ManagedObject && oResult.getMetadata().getName() === 'sap.test.lazy.MyClass', "read access should return the expected module content");
+			assert.ok(!this.isLazyStub(sap.test.lazy, 'MyClass'), "the property must no longer be a lazy stub");
+			oRequireSpy.restore();
+
+			// second read access must no longer require module
+			var oRequireSpy = this.spy(jQuery.sap, 'require');
+			var Result = sap.test.lazy.MyClass;
+			sinon.assert.neverCalledWith(oRequireSpy, 'sap.test.lazy.MyClass');
+			oRequireSpy.restore();
+
+		});
+
+		QUnit.test("simple class scenario, write first", function(assert) {
+
+			sap.ui.lazyRequire('sap.test.lazy.MyClass');
+
+			assert.ok(this.isLazyStub(sap.test.lazy, 'MyClass'), "lazy loader created a stub for the property MyClass");
+
+			// explicitly require the module
+			jQuery.sap.require('sap.test.lazy.MyClass');
+
+			assert.ok(!this.isLazyStub(sap.test.lazy, 'MyClass'), "the property must no longer be a lazy stub");
+
+			var oRequireSpy = this.spy(jQuery.sap, 'require');
+			var oResult = new sap.test.lazy.MyClass();
+			sinon.assert.neverCalledWith(oRequireSpy, 'sap.test.lazy.MyClass');
+			oRequireSpy.restore();
+			assert.ok(oResult instanceof sap.ui.base.ManagedObject && oResult.getMetadata().getName() === 'sap.test.lazy.MyClass', "read access should return the expected module content");
+
+		});
+
+		QUnit.test("simple static class scenario", function(assert) {
+
+			sap.ui.lazyRequire('sap.test.lazy.MyUtility', 'show hide');
+
+			assert.ok(sap.test && typeof sap.test.lazy === 'object', "lazy loader did create the parent namespace sap.test.lazy");
+			assert.ok(this.isLazyStub(sap.test.lazy, 'MyUtility', 'show hide'), "lazy loader created a stub for the namespace");
+
+			sap.test.lazy.MyUtility.show();
+
+			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "read access should load the expected module");
+
+		});
+
+		QUnit.test("complex static class scenario", function(assert) {
+
+			sap.ui.lazyRequire('sap.test.lazy.MyUtility', 'show hide');
+
+			assert.ok(sap.test && typeof sap.test.lazy === 'object', "lazy loader did create the parent namespace sap.test.lazy");
+			assert.ok(this.isLazyStub(sap.test.lazy, 'MyUtility', 'show hide'), "lazy loader created a stub for the namespace");
+
+			// method hide() calls an internal method via 'this', so the right context must be set when invoking 'show'
+			sap.test.lazy.MyUtility.hide();
+
+		});
+
+		QUnit.test("out-of-line method (factory)", function(assert) {
+
+			sap.ui.lazyRequire('sap.test', 'factory', 'sap.test.lazy.MyUtility');
+
+			assert.ok(!jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "module still not loaded after creation of lazy stub");
+			assert.ok(this.isLazyStub(sap.test, 'factory'), "lazy loader created a stub for the namespace");
+
+			// invoke out-of-line method, should load the right module
+			sap.test.factory(0);
+
+			assert.ok(jQuery.sap.isDeclared("sap/test/lazy/MyUtility"), "read access should load the expected module");
+
+		});
+
+		QUnit.test("class that reads global property before writing it", function(assert) {
+
+			// this module reads the global property before it defines it
+			// with a bad implementation of lazyRequire, this could result in an endless recursion
+			sap.ui.lazyRequire('sap.test.lazy.MyLegacyClass');
+
+			new sap.test.lazy.MyLegacyClass();
+
+			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyLegacyClass'), "read access should load the expected module");
+
+		});
+
+		QUnit.test("wrong usage", function(assert) {
+
+			// we do a lazyRequire for an out-of-line method that doesn't exist
+			// So loading the module will not properly replace the lazy stub.
+			// this needs to be detected and reported
+			sap.ui.lazyRequire('sap.test', 'noSuchFactory', 'sap.test.lazy.MyUtility');
+
+			assert.ok(this.isLazyStub(sap.test, 'noSuchFactory'), "lazy loader created a stub for the namespace");
+
+			var oLogSpy = this.spy(jQuery.sap.log, 'error');
+			var raised = false;
+			try {
+				sap.test.noSuchFactory();
+			} catch (error) {
+				raised = true;
+			}
+			assert.ok(raised, "read access doesn't resolve the property, but throws an error");
+			//assert.equal(sap.test.noSuchFactory, undefined, "read access doesn't resolve the property, but writes an error"); // executed twice by intention!
+			//sinon.assert.calledOnce(oLogSpy);
+			oLogSpy.restore();
+
+			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "read access should load the expected module");
+
+			delete sap.test.noSuchFactory;
+
+		});
 		</script>
-		
+
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for jquery.sap.global</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
+		<div id="qunit"></div>
 	</body>
 </html>

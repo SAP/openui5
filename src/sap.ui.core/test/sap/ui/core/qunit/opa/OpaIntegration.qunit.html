@@ -2,9 +2,10 @@
 <html>
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.ui.test.Opa</title>
 
+<script src="../../shared-config.js"></script>
 <script src="../../../../../../resources/sap-ui-core.js">
 </script>
 
@@ -28,7 +29,7 @@ sap.ui.require([
 					var $button = jQuery('<button id="button' + iNumberOfButtons + '">' + iNumberOfButtons + '</button>').click(addButtonAfterSomeTime);
 					jQuery("body").append($button);
 					iNumberOfButtons ++;
-				}, Math.random()*10000);
+				}, Math.random()*1000);
 			}
 
 			//add the first button
@@ -63,7 +64,7 @@ sap.ui.require([
 						return jQuery("#" + sButtonId).length;
 					},
 					success : function () {
-						strictEqual(jQuery("#" + sButtonId).text(), sText, "Found the button with the id " + sButtonId);
+						Opa.assert.strictEqual(jQuery("#" + sButtonId).text(), sText, "Found the button with the id " + sButtonId);
 					}
 				});
 				return this;

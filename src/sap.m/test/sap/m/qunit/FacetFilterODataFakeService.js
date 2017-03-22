@@ -1,6 +1,6 @@
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
-// TODO: 
+// TODO:
 //   - Do not use real OData services for testing or at least do not hardcode the context path!!
 //   - Think about mocking the backend this is much more safe than trusting a foreign system!
 //
@@ -30,11 +30,11 @@ xhr.onCreate = function(request) {
 					request.respond(200, oMetaDataHeaders, sMetaData);
 				}, responseDelay);
 			} else {
-				request.respond(200, oMetaDataHeaders, sMetaData);				
+				request.respond(200, oMetaDataHeaders, sMetaData);
 			}
 		}
 		else if (request.url == baseURL + "Categories") {
-			_setTimeout(function() { 
+			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategoriesJSON);
 			}, responseDelay);
 		}
@@ -47,77 +47,77 @@ xhr.onCreate = function(request) {
 		else if (request.url == baseURL + "Categories?$skip=0&$top=8") {
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategoriesJSON);
-			}, responseDelay); 
+			}, responseDelay);
 		}
 		else if (request.url == baseURL + "Products?$skip=0&$top=10") {
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sAllProductsJSON);
-			}, responseDelay); 
+			}, responseDelay);
 		}
 		else if (request.url == baseURL + "Categories?$skip=0&$top=5") {
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategoriesTop5JSON);
-			}, responseDelay); 
+			}, responseDelay);
 		}
 		else if (request.url == baseURL + "Categories?$skip=5&$top=3") {
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategoriesSkip5Top3JSON);
-			}, responseDelay); 
+			}, responseDelay);
 		}
 		else if (request.url == baseURL + "Categories?$skip=0&$top=100&$filter=substringof(%27Seafood%27,CategoryName)&$inlinecount=allpages") {
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategorySeafoodJSON);
-			}, responseDelay); 
+			}, responseDelay);
 		}
 		else if (request.url == baseURL + "Categories/$count?$filter=substringof(%27Seafood%27,CategoryName)") {
 			_setTimeout(function() {
 				request.respond(200, oCountHeaders, "1");
-			}, responseDelay); 
+			}, responseDelay);
 		}
 		else if (request.url == baseURL + "Categories/$count?$filter=(substringof(%27%27,CategoryName))%20and%20CategoryName%20eq%20%27Seafood%27") { // 5 triggerMouseEvent() (manual search)
 			_setTimeout(function() {
 				request.respond(200, oCountHeaders, "1");
-			}, responseDelay); 
+			}, responseDelay);
 		}
 		else if (request.url == baseURL + "Categories?$skip=0&$top=1&$filter=(substringof(%27%27,CategoryName))%20and%20CategoryName%20eq%20%27Seafood%27") {
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategorySeafoodJSON);
-			}, responseDelay); 
-		}		
+			}, responseDelay);
+		}
 		else if (request.url == baseURL + "Categories/$count?$filter=(substringof(%27Seafood%27,CategoryName))") {
 			_setTimeout(function() {
 				request.respond(200, oCountHeaders, "1");
-			}, responseDelay); 
-		}					
+			}, responseDelay);
+		}
 		else if (request.url == baseURL + "Categories?$skip=0&$top=100&$filter=CategoryName%20eq%20%27Seafood%27&$inlinecount=allpages") { //2 placeAt()
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategorySeafoodJSON);
-			}, responseDelay); 
-		}		
-		else if (request.url == baseURL + "Categories?$skip=0&$top=100&$filter=(substringof(%27Seafood%27,CategoryName))&$inlinecount=allpages") { 
+			}, responseDelay);
+		}
+		else if (request.url == baseURL + "Categories?$skip=0&$top=100&$filter=(substringof(%27Seafood%27,CategoryName))&$inlinecount=allpages") {
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategorySeafoodJSON);
-			}, responseDelay); 
-		}					
+			}, responseDelay);
+		}
 		else if (request.url == baseURL + "Categories?$skip=0&$top=20&$filter=CategoryName%20eq%20%27Seafood%27&$inlinecount=allpages") { // 4 openFFL()
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategorySeafoodJSON);
-			}, responseDelay); 
-		}			
+			}, responseDelay);
+		}
 		else if (request.url == baseURL + "Categories?$skip=0&$top=20&$filter=(substringof(%27%27,CategoryName))%20and%20CategoryName%20eq%20%27Seafood%27&$inlinecount=allpages") { //6 triggerMouseEvent() (manual search)
 			_setTimeout(function() {
 				request.respond(200, oJSONHeaders, sCategorySeafoodJSON);
-			}, responseDelay); 
-		}		
+			}, responseDelay);
+		}
 		else if (request.url == baseURL + "Categories/$count?$filter=CategoryName%20eq%20%27Seafood%27") { //1 placeAt(), 3 openFFL()
 			_setTimeout(function() {
 				request.respond(200, oCountHeaders, "1");
-			}, responseDelay); 
-		}			
+			}, responseDelay);
+		}
 		else {
 			jQuery.sap.log.debug("FacetFilterODataFakeService: No match found for request.url=" + request.url);
 		}
-		
+
 		jQuery.sap.log.info("Fake AJAX request started for URL: " + request.url);
 	};
 };
@@ -795,28 +795,28 @@ var sCategoriesSkip5Top3JSON = '\
 	}\
 	}\
 	';
-var sCategorySeafoodJSON = "{\n" + 
-"	\"d\" : {\n" + 
-"		\"results\" : [\n" + 
-"				{\n" + 
-"		\"__metadata\" : {\n" + 
-"			\"id\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(8)\",\n" + 
-"			\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(8)\",\n" + 
-"			\"type\" : \"NorthwindModel.Category\"\n" + 
-"		},\n" + 
-"		\"Products\" : {\n" + 
-"			\"__deferred\" : {\n" + 
-"				\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(8)/Products\"\n" + 
-"			}\n" + 
-"		},\n" + 
-"		\"CategoryID\" : 8,\n" + 
-"		\"CategoryName\" : \"Seafood\",\n" + 
-"		\"Description\" : \"Seaweed and fish\",\n" + 
-"		\"Picture\" : \"\"\n" + 
-"	}\n" + 
-"	]\n" + 
-"	}\n" + 
+var sCategorySeafoodJSON = "{\n" +
+"	\"d\" : {\n" +
+"		\"results\" : [\n" +
+"				{\n" +
+"		\"__metadata\" : {\n" +
+"			\"id\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(8)\",\n" +
+"			\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(8)\",\n" +
+"			\"type\" : \"NorthwindModel.Category\"\n" +
+"		},\n" +
+"		\"Products\" : {\n" +
+"			\"__deferred\" : {\n" +
+"				\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(8)/Products\"\n" +
+"			}\n" +
+"		},\n" +
+"		\"CategoryID\" : 8,\n" +
+"		\"CategoryName\" : \"Seafood\",\n" +
+"		\"Description\" : \"Seaweed and fish\",\n" +
+"		\"Picture\" : \"\"\n" +
+"	}\n" +
+"	]\n" +
+"	}\n" +
 "}"
-; 
+;
 
-var sAllProductsJSON = "{\"d\":{\"results\":[{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\/Supplier\"}},\"ProductID\":1,\"ProductName\":\"Chai\",\"SupplierID\":1,\"CategoryID\":1,\"QuantityPerUnit\":\"10 boxes x 20 bags\",\"UnitPrice\":\"18.0000\",\"UnitsInStock\":39,\"UnitsOnOrder\":0,\"ReorderLevel\":10,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\/Supplier\"}},\"ProductID\":2,\"ProductName\":\"Chang\",\"SupplierID\":1,\"CategoryID\":1,\"QuantityPerUnit\":\"24 - 12 oz bottles\",\"UnitPrice\":\"19.0000\",\"UnitsInStock\":17,\"UnitsOnOrder\":40,\"ReorderLevel\":25,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\/Supplier\"}},\"ProductID\":3,\"ProductName\":\"Aniseed Syrup\",\"SupplierID\":1,\"CategoryID\":2,\"QuantityPerUnit\":\"12 - 550 ml bottles\",\"UnitPrice\":\"10.0000\",\"UnitsInStock\":13,\"UnitsOnOrder\":70,\"ReorderLevel\":25,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\/Supplier\"}},\"ProductID\":4,\"ProductName\":\"Chef Anton\'s Cajun Seasoning\",\"SupplierID\":2,\"CategoryID\":2,\"QuantityPerUnit\":\"48 - 6 oz jars\",\"UnitPrice\":\"22.0000\",\"UnitsInStock\":53,\"UnitsOnOrder\":0,\"ReorderLevel\":0,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\/Supplier\"}},\"ProductID\":5,\"ProductName\":\"Chef Anton\'s Gumbo Mix\",\"SupplierID\":2,\"CategoryID\":2,\"QuantityPerUnit\":\"36 boxes\",\"UnitPrice\":\"21.3500\",\"UnitsInStock\":0,\"UnitsOnOrder\":0,\"ReorderLevel\":0,\"Discontinued\":true},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\/Supplier\"}},\"ProductID\":6,\"ProductName\":\"Grandma\'s Boysenberry Spread\",\"SupplierID\":3,\"CategoryID\":2,\"QuantityPerUnit\":\"12 - 8 oz jars\",\"UnitPrice\":\"25.0000\",\"UnitsInStock\":120,\"UnitsOnOrder\":0,\"ReorderLevel\":25,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\/Supplier\"}},\"ProductID\":7,\"ProductName\":\"Uncle Bob\'s Organic Dried Pears\",\"SupplierID\":3,\"CategoryID\":7,\"QuantityPerUnit\":\"12 - 1 lb pkgs.\",\"UnitPrice\":\"30.0000\",\"UnitsInStock\":15,\"UnitsOnOrder\":0,\"ReorderLevel\":10,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\/Supplier\"}},\"ProductID\":8,\"ProductName\":\"Northwoods Cranberry Sauce\",\"SupplierID\":3,\"CategoryID\":2,\"QuantityPerUnit\":\"12 - 12 oz jars\",\"UnitPrice\":\"40.0000\",\"UnitsInStock\":6,\"UnitsOnOrder\":0,\"ReorderLevel\":0,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\/Supplier\"}},\"ProductID\":9,\"ProductName\":\"Mishi Kobe Niku\",\"SupplierID\":4,\"CategoryID\":6,\"QuantityPerUnit\":\"18 - 500 g pkgs.\",\"UnitPrice\":\"97.0000\",\"UnitsInStock\":29,\"UnitsOnOrder\":0,\"ReorderLevel\":0,\"Discontinued\":true}],\"__count\":\"10\"}}"; 
+var sAllProductsJSON = "{\"d\":{\"results\":[{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(1)\/Supplier\"}},\"ProductID\":1,\"ProductName\":\"Chai\",\"SupplierID\":1,\"CategoryID\":1,\"QuantityPerUnit\":\"10 boxes x 20 bags\",\"UnitPrice\":\"18.0000\",\"UnitsInStock\":39,\"UnitsOnOrder\":0,\"ReorderLevel\":10,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(2)\/Supplier\"}},\"ProductID\":2,\"ProductName\":\"Chang\",\"SupplierID\":1,\"CategoryID\":1,\"QuantityPerUnit\":\"24 - 12 oz bottles\",\"UnitPrice\":\"19.0000\",\"UnitsInStock\":17,\"UnitsOnOrder\":40,\"ReorderLevel\":25,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(3)\/Supplier\"}},\"ProductID\":3,\"ProductName\":\"Aniseed Syrup\",\"SupplierID\":1,\"CategoryID\":2,\"QuantityPerUnit\":\"12 - 550 ml bottles\",\"UnitPrice\":\"10.0000\",\"UnitsInStock\":13,\"UnitsOnOrder\":70,\"ReorderLevel\":25,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(4)\/Supplier\"}},\"ProductID\":4,\"ProductName\":\"Chef Anton\'s Cajun Seasoning\",\"SupplierID\":2,\"CategoryID\":2,\"QuantityPerUnit\":\"48 - 6 oz jars\",\"UnitPrice\":\"22.0000\",\"UnitsInStock\":53,\"UnitsOnOrder\":0,\"ReorderLevel\":0,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(5)\/Supplier\"}},\"ProductID\":5,\"ProductName\":\"Chef Anton\'s Gumbo Mix\",\"SupplierID\":2,\"CategoryID\":2,\"QuantityPerUnit\":\"36 boxes\",\"UnitPrice\":\"21.3500\",\"UnitsInStock\":0,\"UnitsOnOrder\":0,\"ReorderLevel\":0,\"Discontinued\":true},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(6)\/Supplier\"}},\"ProductID\":6,\"ProductName\":\"Grandma\'s Boysenberry Spread\",\"SupplierID\":3,\"CategoryID\":2,\"QuantityPerUnit\":\"12 - 8 oz jars\",\"UnitPrice\":\"25.0000\",\"UnitsInStock\":120,\"UnitsOnOrder\":0,\"ReorderLevel\":25,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(7)\/Supplier\"}},\"ProductID\":7,\"ProductName\":\"Uncle Bob\'s Organic Dried Pears\",\"SupplierID\":3,\"CategoryID\":7,\"QuantityPerUnit\":\"12 - 1 lb pkgs.\",\"UnitPrice\":\"30.0000\",\"UnitsInStock\":15,\"UnitsOnOrder\":0,\"ReorderLevel\":10,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(8)\/Supplier\"}},\"ProductID\":8,\"ProductName\":\"Northwoods Cranberry Sauce\",\"SupplierID\":3,\"CategoryID\":2,\"QuantityPerUnit\":\"12 - 12 oz jars\",\"UnitPrice\":\"40.0000\",\"UnitsInStock\":6,\"UnitsOnOrder\":0,\"ReorderLevel\":0,\"Discontinued\":false},{\"__metadata\":{\"id\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\",\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\",\"type\":\"NorthwindModel.Product\"},\"Category\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\/Category\"}},\"Order_Details\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\/Order_Details\"}},\"Supplier\":{\"__deferred\":{\"uri\":\"http:\/\/localhost:8080\/uilib-sample\/proxy\/http\/services.odata.org\/Northwind\/Northwind.svc\/Products(9)\/Supplier\"}},\"ProductID\":9,\"ProductName\":\"Mishi Kobe Niku\",\"SupplierID\":4,\"CategoryID\":6,\"QuantityPerUnit\":\"18 - 500 g pkgs.\",\"UnitPrice\":\"97.0000\",\"UnitsInStock\":29,\"UnitsOnOrder\":0,\"ReorderLevel\":0,\"Discontinued\":true}],\"__count\":\"10\"}}";

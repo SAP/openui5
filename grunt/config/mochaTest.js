@@ -4,5 +4,5 @@ module.exports = function() {
 		test : {
 			src: ['grunt/mochaTests/*_test.js']
 		}
-	}
+	};
 };

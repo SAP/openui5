@@ -1,34 +1,33 @@
 <!DOCTYPE HTML>
 <!--
  Tested control/class: sap.ui.ux3.QuickView
- Author: D036828
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <style type="text/css">
 	#uiArea1 {
 		width: 250px;
 		margin: auto;
 	}
 </style>
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.core,sap.ui.ux3">
 </script>
 <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-<script type="text/javascript"src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <!-- Control initialization -->
-<script language="javascript">
+<script>
 
 	// Example data
-	var oJSONData = { 
+	var oJSONData = {
 		"type": "Thing Type",
 		"name": "Name",
 		"href": "http://www.google.com",
@@ -79,7 +78,7 @@
 	}
 
 	var testDataQV = {};
-	
+
 	// Event handlers from QuickViews
 	function onOpen(event){
 		testDataQV.opened = true;
@@ -123,89 +122,94 @@
 	// TEST functions
 	qutils.delayTestStart();
 
-	module("Appearance");
+	QUnit.module("Appearance");
 
-	test("Assignment of elements", function() {
+	QUnit.test("Assignment of elements", function(assert) {
 		// Tooltip
-		equal(sap.ui.getCore().getControl("QVButton").getTooltip().getId(),
+		assert.equal(sap.ui.getCore().getControl("QVButton").getTooltip().getId(),
 				"QuickView", "QuickView is assigned as a tooltip to a button");
 	});
-	
+
 	function isQuickViewVisible(){
 		return jQuery("#QuickView").filter(":visible").size() > 0;
 	}
 
-	module("QuickView: open and close");
-	asyncTest("Open QuickView", function() {
-		ok(true, "A-sync OK start");
+	QUnit.module("QuickView: open and close");
+	QUnit.test("Open QuickView", function(assert) {
+		var done = assert.async();
+		assert.ok(true, "A-sync OK start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
 			qutils.triggerMouseEvent("QuickView", "mouseout");
 			setTimeout(function() {
-				ok(isQuickViewVisible()==false, "QuickView is not visible after mouseout");
-				start();
+				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after mouseout");
+				done();
 			}, 600);
 		}, 900);
 	});
 
-	asyncTest("Close using close method", function() {
-		ok(true, "A-sync close() start");
+	QUnit.test("Close using close method", function(assert) {
+		var done = assert.async();
+		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
 			oQuickView.close();
 			setTimeout(function() {
-				ok(isQuickViewVisible()==false, "QuickView is not visible after close()");
-				start();
+				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after close()");
+				done();
 			}, 500);
 		}, 700);
 	});
 
-	module("QuickView: navigation event");
-	asyncTest("Click on a link", function() {
+	QUnit.module("QuickView: navigation event");
+	QUnit.test("Click on a link", function(assert) {
+		var done = assert.async();
 		oButton.focus();
-		ok(document.activeElement.id == "QVButton", "Focus the button initially");
+		assert.ok(document.activeElement.id == "QVButton", "Focus the button initially");
 		qutils.triggerKeyboardEvent("QVButton", jQuery.sap.KeyCodes.I, false, false, true);
 		setTimeout(function(){
-			ok(isQuickViewVisible()==true, "QuickView is visible after Ctrl-I");
+			assert.ok(isQuickViewVisible()==true, "QuickView is visible after Ctrl-I");
 			//click on the Name link
 			 jQuery('#QuickView-link').trigger('click');
 			setTimeout(function(){
-				ok(isQuickViewVisible()==false, "QuickView is not visible after navigate event");
-				equal(document.activeElement.id, "QVButton", "The parent element should be focused after the focused QuickView is closed");
-				start();
+				assert.ok(isQuickViewVisible()==false, "QuickView is not visible after navigate event");
+				assert.equal(document.activeElement.id, "QVButton", "The parent element should be focused after the focused QuickView is closed");
+				done();
 			}, 1000); // CLOSE
 		}, 1000); // OPEN
 	});
 
-	asyncTest("Toolbar Actions", function() {
-		ok(true, "A-sync close() start");
+	QUnit.test("Toolbar Actions", function(assert) {
+		var done = assert.async();
+		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
+			assert.ok(isQuickViewVisible()==true, "QuickView is visible after mouseover");
 			jQuery('.sapUiUx3ActionBarAction').eq(1).trigger("click");
 			setTimeout(function() {
-				ok(oActionParams.id !== undefined, "Action id is available after click on action");
+				assert.ok(oActionParams.id !== undefined, "Action id is available after click on action");
 				oQuickView.close();
-				start();
+				done();
 			}, 400);
 		}, 500);
 	});
-	
-	module("QuickView: content");
-	
-	asyncTest("Icons", function() {
-		ok(true, "A-sync close() start");
+
+	QUnit.module("QuickView: content");
+
+	QUnit.test("Icons", function(assert) {
+		var done = assert.async();
+		assert.ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");
 		setTimeout(function() {
-			ok(jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon is rendered as img");
+			assert.ok(jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon is rendered as img");
 			oModel.setProperty("/icon", "sap-icon://save");
 			setTimeout(function() {
-				ok(!jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon with icon font not rendered as img");
-				ok(jQuery('#QuickView span.sapUiUx3QVIcon').length, "QV-Icon with icon font rendered as span");
+				assert.ok(!jQuery('#QuickView img.sapUiUx3QVIcon').length, "QV-Icon with icon font not rendered as img");
+				assert.ok(jQuery('#QuickView span.sapUiUx3QVIcon').length, "QV-Icon with icon font rendered as span");
 				oQuickView.close();
-				start();
+				done();
 			}, 400);
 		}, 500);
 	});

@@ -22,7 +22,7 @@ sap.ui.define([
 		},
 
 		_getResponsivePopover: function () {
-			if (! this._oPopover) {
+			if (!this._oPopover) {
 				this._oPopover = sap.ui.xmlfragment("sap.m.sample.ObjectHeaderTitleSel.Popover", this);
 			}
 			return this._oPopover;
@@ -38,8 +38,8 @@ sap.ui.define([
 
 		handleTitleSelectorPress: function (oEvent) {
 			var _oPopover = this._getResponsivePopover();
-			_oPopover.openBy(oEvent.getParameter("domRef"));
 			_oPopover.setModel(oEvent.getSource().getModel());
+			_oPopover.openBy(oEvent.getParameter("domRef"));
 		}
 
 	});

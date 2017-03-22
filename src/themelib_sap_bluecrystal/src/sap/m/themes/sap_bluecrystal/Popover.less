@@ -1,35 +1,27 @@
-/* ============================================= */
-/* CSS for control sap.m/Popover.control         */
-/* BlueCrystal theme                             */
-/* ============================================= */
-.sapMPopover{
-	background-color: @sapUiPopoverContBG;
-	border: @sapUiPopupBorder;
-	-webkit-box-shadow: @sapUiPopupBoxShadow;
-	-moz-box-shadow: @sapUiPopupBoxShadow;
-	box-shadow: @sapUiPopupBoxShadow;
-	-webkit-border-radius: @sapUiPopupBorderRadius;
-	-moz-border-radius: @sapUiPopupBorderRadius;
-	border-radius: @sapUiPopupBorderRadius;
+/* ============================== */
+/* CSS for control sap.m/Popover  */
+/* BlueCrystal theme              */
+/* ============================== */
+
+@sapMPopoverForceCompactArrowOffset: false;
+
+.sapMPopover {
+	border: 1px @sapUiContentForegroundBorderColor solid;
+	box-shadow: 0px 0px 30px 2px fade(@sapUiDarkShadowTint, 15);
 }
 
-.sapMPopover .sapMPopoverCont{
+.sapMPopover .sapMPopoverCont {
 	background-color: transparent;
 	margin: 0;
 }
 
 /* padding for title in header is removed because of ticket 0120031469 0004432742 2013*/
-.sapMPopover > .sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH {
+.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH {
 	box-sizing: border-box;
 }
 
-.sapMPopover > .sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH > .sapMLabel {
+.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH > .sapMLabel {
 	display: inline-block;
-}
-
-.sapMPopover > .sapMPopoverHeader > .sapMBarLeft > .sapMBtn,
-.sapMPopover > .sapMPopoverHeader > .sapMBarRight > .sapMBtn {
-	position: relative;
 }
 
 /*for only two buttons in footer's contentMiddle aggregation*/
@@ -50,23 +42,17 @@
 	display: none;
 }
 
-html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
-	/*
-		In IE 9, .sapMBarPH gets style width: 100% when there's content only in the contentMiddle.
-		This style pushes the popover to maximum width. Therefore this inline style has to be overwritten by important.
-	*/
-	width: auto !important;
-}
-
 .sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH > .sapMBtn {
 	width: 50%;
 	padding-left: 0.25rem;
 }
 
 .sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
+
 	.sapMBtn:last-child {
 		margin-left: 0;
 	}
+
 	.sapMBtn:first-child {
 		padding-right: 0.25rem;
 		padding-left: 0;
@@ -75,27 +61,72 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 
 /*arrows*/
 /* shared properties for arrow */
-.sapMPopoverArr{
+.sapMPopoverArr {
 	display: block;
 	border-style: solid;
 	border-width: 16px;
 	position: absolute;
 	width: 0;
 	height: 0;
+	overflow: visible;
 }
 
-.sapMPopoverArr:after{
+.sapMPopoverArr:after {
 	content: "";
 	display: block;
 	position: absolute;
-	width:0;
-	height:0;
+	width: 0;
+	height: 0;
 	border-style: solid;
 	border-width: 16px;
+	-webkit-transform: none;
+	transform: none;
+	background-color: transparent;
+	border-color: transparent;
+	margin: 0;
+	box-shadow: none;
+}
+
+.sapMPopoverArrUp:after {
+	border-bottom-color: @sapUiGroupContentBackground;
+	bottom: -17px;
+	left: -16px;
+}
+
+.sapMPopoverArrLeft:after {
+	border-right-color: @sapUiGroupContentBackground;
+	top: -16px;
+	left: -15px;
+}
+
+.sapMPopoverArrDown:after {
+	border-top-color: @sapUiGroupContentBackground;
+	bottom: -15px;
+	left: -16px;
+	margin: 0;
+}
+
+
+.sapMPopoverArrRight:after {
+	border-left-color: @sapUiGroupContentBackground;
+	top: -16px;
+	left: -17px;
+}
+
+.sapMPopoverCrossArr.sapMPopoverArrLeft:after {
+	border-color: transparent;
+	border-right-color: @sapUiContentForegroundBorderColor;
+	/* 	left: -16px; */
+}
+
+.sapMPopoverCrossArr.sapMPopoverArrLeft:after {
+	border-color: transparent;
+	border-right-color: @sapUiContentForegroundBorderColor;
+	/* 	left: -16px; */
 }
 
 /* pointing downward arrow */
-.sapMPopoverArrDown{
+.sapMPopoverArrDown {
 	/* offset */
 	left: 20px;
 	/* position */
@@ -103,7 +134,7 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 }
 
 /* pointing upward arrow */
-.sapMPopoverArrUp{
+.sapMPopoverArrUp {
 	/* offset */
 	left: 20px;
 	/* position */
@@ -111,7 +142,7 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 }
 
 /* pointing left arrow */
-.sapMPopoverArrLeft{
+.sapMPopoverArrLeft {
 	/* offset */
 	top: 20px;
 	/* position */
@@ -119,7 +150,7 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 }
 
 /* pointing right arrow */
-.sapMPopoverArrRight{
+.sapMPopoverArrRight {
 	/* offset */
 	top: 20px;
 	/* position */
@@ -127,160 +158,98 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 }
 
 /*Arrow Down*/
-.sapMPopoverArrDown{
+.sapMPopoverArrDown {
 	border-color: transparent;
-	border-top-color: @sapUiPopupBorderColor;
+	border-top-color: @sapUiContentForegroundBorderColor;
 }
 
-.sapMPopoverArrDown:after{
+.sapMPopoverArrDown:after {
 	border-color: transparent;
-	border-top-color: @sapUiPopoverContBG;
+	border-top-color: @sapUiGroupContentBackground;
 	bottom: -15px;
 	left: -16px;
 }
 
-.sapMPopoverWithFooter > .sapMPopoverArrDown{
-	border-top-color: @sapUiExtraLightBorder;
+.sapMPopoverWithFooter > .sapMPopoverArrDown {
+	border-top-color: @sapUiContentForegroundBorderColor;
 }
 
 .sapMPopoverWithFooter > .sapMPopoverArrDown:after {
-	border-top-color: @sapUiFooterBG;
+	border-top-color: @sapUiPageFooterBackground;
 }
-.sap-desktop .sapMPopoverWithFooter > .sapMPopoverArrDown:after {
-	border-top-color: @sapUiFooterOnDesktopBG;
+
+html.sap-desktop .sapMPopoverWithFooter > .sapMPopoverArrDown:after {
+	border-top-color: @sapUiPageFooterBackground;
 }
 
 /* Arrow Up */
-.sapMPopoverArrUp{
+.sapMPopoverArrUp {
 	border-color: transparent;
-	border-bottom-color: @sapUiPopupBorderColor;
+	border-bottom-color: @sapUiContentForegroundBorderColor;
 }
 
 .sapMPopoverArrUp:after,
 .sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after,
 .sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after {
 	border-color: transparent;
-	border-bottom-color: @sapUiHeaderBG; /* arrow content area when adjacent to Bar */
+	border-bottom-color: @sapUiPageHeaderBackground; /* arrow content area when adjacent to Bar */
 	bottom: -17px;
 	left: -16px;
 }
 
-.sapMPopoverWithoutBar > .sapMPopoverArrUp:after{
+.sapMPopoverWithoutBar > .sapMPopoverArrUp:after {
 	border-color: transparent;
-	border-bottom-color: @sapUiPopoverContBG;
+	border-bottom-color: @sapUiGroupContentBackground;
 }
 
 /*Arrow Left*/
-.sapMPopoverArrLeft{
+.sapMPopoverArrLeft {
 	border-color: transparent;
-	border-right-color: @sapUiPopupBorderColor;
+	border-right-color: @sapUiContentForegroundBorderColor;
 }
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrRight:after,
-.sapMPopoverArrLeft:after{
-	border-color: transparent;
-	border-right-color: @sapUiPopoverContBG;
-	top: -16px;
-	left: -15px;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrLeft:after{
-	right: -15px;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverHeaderAlignArr.sapMPopoverArrRight:after,
-.sapMPopoverHeaderAlignArr.sapMPopoverArrLeft:after{
-	border-color: transparent;
-	border-right-color: @sapUiHeaderBG;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverCrossArr.sapMPopoverArrLeft:after,
-.sapMPopoverCrossArr.sapMPopoverArrLeft:after{
-	border-color: transparent;
-	border-right-color: @sapUiPopupBorderColor;
-/* 	left: -16px; */
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverArrRight:after,
-.sapMPopoverFooterAlignArr.sapMPopoverArrLeft:after{
-	border-color: transparent;
-	border-right-color: @sapUiFooterOnDesktopBG;
-}
-
 
 /*Arrow Right*/
-.sapMPopoverArrRight{
+.sapMPopoverArrRight {
 	border-color: transparent;
-	border-left-color: @sapUiPopupBorderColor;
+	border-left-color: @sapUiContentForegroundBorderColor;
 }
 
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrLeft:after,
-.sapMPopoverArrRight:after{
-	border-color: transparent;
-	border-left-color: @sapUiPopoverContBG;
-	top: -16px;
-	left: -17px;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrRight:after{
-	left: auto;
-	right: -15px;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverHeaderAlignArr.sapMPopoverArrLeft:after,
-.sapMPopoverHeaderAlignArr.sapMPopoverArrRight:after{
-	border-color: transparent;
-	border-left-color: @sapUiHeaderBG;
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverCrossArr.sapMPopoverArrLeft:after,
-.sapMPopoverCrossArr.sapMPopoverArrRight:after{
-	border-color: transparent;
-	border-left-color: @sapUiPopupBorderColor;
-/* 	right: -16px; */
-}
-
-html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverArrLeft:after,
-.sapMPopoverFooterAlignArr.sapMPopoverArrRight:after{
-	border-color: transparent;
-	border-left-color: fade(@sapUiExtraDarkBG, 90);
+.sapMPopup-CTX .sapMIBar.sapMHeader-CTX.sapMPopoverHeader {
+	background-color: @sapUiPageHeaderBackground;
 }
 
 /* Compact size */
-.sapMPopover.sapUiSizeCompact{
+.sapMPopover.sapUiSizeCompact {
 
-	.sapMPopoverArr{
+	.sapMPopoverArr {
 		border-width: 8px;
 	}
 
-	.sapMPopoverArr:after{
+	.sapMPopoverArr:after {
 		border-width: 8px;
 	}
 
-	.sapMPopoverArrDown{
+	.sapMPopoverArrDown {
 		left: 16px;
 		bottom: -17px;
 	}
 
-	.sapMPopoverArrUp{
+	.sapMPopoverArrUp {
 		left: 20px;
 		top: -17px;
 	}
 
-	.sapMPopoverArrLeft{
+	.sapMPopoverArrLeft {
 		top: 16px;
 		left: -17px;
 	}
 
-	.sapMPopoverArrRight{
+	.sapMPopoverArrRight {
 		top: 16px;
 		right: -17px;
 	}
 
-	.sapMPopoverArrDown:after{
-		border-color: transparent;
-		border-top-color: @sapUiPopoverContBG;
+	.sapMPopoverArrDown:after {
 		bottom: -7px;
 		left: -8px;
 	}
@@ -292,12 +261,12 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverA
 		left: -8px;
 	}
 
-	.sapMPopoverArrLeft:after{
+	.sapMPopoverArrLeft:after {
 		top: -8px;
 		left: -7px;
 	}
 
-	.sapMPopoverArrRight:after{
+	.sapMPopoverArrRight:after {
 		top: -8px;
 		left: -9px;
 	}
@@ -305,7 +274,7 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverA
 	/* 2.5rem height for header and footer in popover */
 	& > header:first-of-type.sapMHeader-CTX,
 	& > footer:last-of-type.sapMFooter-CTX {
-		height : 2.5rem;
+		height: 2.5rem;
 
 		.sapMBarLeft,
 		.sapMBarRight,
@@ -315,5 +284,8 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverA
 			padding-bottom: 0.25rem;
 		}
 	}
+}
 
+.sapMPopoverResizeHandle {
+	color: @sapUiContentForegroundBorderColor;
 }

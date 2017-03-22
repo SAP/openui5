@@ -1,0 +1,11 @@
+<mvc:View controllerName="sap.m.sample.NewsContent.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<TileContent class="sapUiSmallMargin">
+		<content>
+			<NewsContent
+				contentText="SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com"
+				subheader="August 21, 2013" press="press">
+			</NewsContent>
+		</content>
+	</TileContent>
+</mvc:View>

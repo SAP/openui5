@@ -1,0 +1,241 @@
+/* =========================================== */
+/* CSS for control sap.m/NotificationListItem  */
+/* Base theme                                  */
+/* =========================================== */
+
+@containerPadding: 1rem;
+
+/* ==========================================================================
+   NotificationListItem
+  ========================================================================== */
+
+.sapMNLI {
+  padding: @containerPadding;
+  position: relative;
+  cursor: pointer;
+  background: @sapUiListBackground;
+  border-bottom: 0;
+  .sapMText {
+    cursor: pointer;
+  }
+  &:hover {
+    background: @sapUiListHoverBackground;
+  }
+}
+
+
+.sapMNLI:first-of-type {
+  margin-top: 0.125rem;
+}
+
+/* ==========================================================================
+   Priority styles
+  ========================================================================== */
+
+/* ==========================================================================
+   Message Strip styles
+  ========================================================================== */
+
+.sapMNLI .sapMMsgStrip {
+	position: relative;
+	top: 0.5rem;
+	margin: 0.5rem 0.5rem 0.5rem 1rem;
+}
+
+/* ==========================================================================
+   Header styles
+  ========================================================================== */
+
+.sapMNLI-Header {
+  max-height: 2.5rem;
+}
+
+.sapMNLI-Header > .sapMText {
+  display: inline-block;
+  font-size: @sapMFontLargeSize;
+  font-weight: normal;
+  line-height: normal;
+  margin-bottom: 0.25rem;
+  margin-right: 2rem;
+  white-space: normal;
+  overflow: auto;
+  color: @sapUiListTextColor;
+}
+
+.sapMNLI-Header > .sapMText.sapMNLI-Unread {
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   Body styles
+  ========================================================================== */
+
+.sapMNLI-Body {
+
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+
+  padding-left: @containerPaddingLeft;
+  padding-right: @containerPadding;
+  margin-top: 0.375rem;
+  position: relative;
+}
+
+.sapMNLI-Body .sapMNLI-Details {
+  padding-top: 0.375rem;
+  font-family: @sapUiFontFamily;
+  font-weight: normal;
+  color: @sapUiContentLabelColor;
+}
+
+.sapMNLI-Details .sapMText.sapMNLI-Text {
+  display: inline;
+}
+
+.sapMText.sapMNLI-Datetime {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sapMNLI-Description {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Footer styles
+  ========================================================================== */
+
+.sapMNLI-Footer {
+  margin-bottom: -1rem;
+  text-align: right;
+  overflow: hidden;
+  min-height: 1rem;
+}
+
+.sapMNLI-Footer > .sapMBtn {
+  margin-left: 0.25rem;
+  padding: 0;
+  float: left;
+}
+
+/* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
+html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
+  display: block;
+  width: auto;
+}
+
+.sapMNLI-Footer .sapMNLI-CollapseButtonHide {
+  display: none;
+}
+
+/* Compact mode
+  ========================================================================== */
+
+.sapUiSizeCompact .sapMNLI-Footer {
+  margin-bottom: -1rem;
+  box-sizing: border-box;
+  max-height: 2.5rem;
+  min-height: 0.75rem;
+  line-height: 2.5rem;
+  padding-top: 0.25rem;
+}
+
+.sapUiSizeCompact .sapMNLI-Footer .sapMTB > .sapMBtn {
+  margin-left: 0.25rem;
+  padding: 0;
+}
+
+.sapUiSizeCompact .sapMNLI-Footer > .sapMBtn {
+  margin-left: 0.75rem;
+}
+
+/* Styles for calculating text size
+  ========================================================================== */
+
+.sapMNLI-TextWrapper {
+  max-height: 2rem;
+}
+
+.sapMNLI-TextWrapper--is-expanded,
+.sapMNLI-TitleWrapper--is-expanded {
+
+  max-height: none;
+  .sapMTextMaxLine {
+    -webkit-line-clamp: initial !important;
+    max-height: none!important;
+    cursor: pointer;
+  }
+}
+
+.sapMNLI-TextWrapper--initial-overwrite,
+.sapMNLI-TitleWrapper--initial-overwrite {
+  .sapMTextMaxLine {
+    max-height: none !important;
+  }
+
+  .sapMTextNoWrap {
+    text-overflow: initial;
+  }
+
+  .sapMTextLineClamp {
+    -webkit-line-clamp: initial !important;
+  }
+}
+
+.sapMNLI-TextWrapper .sapMTextMaxLine {
+  line-height: 1rem;
+  cursor: pointer;
+}
+
+/* L Size Notification styles
+  ========================================================================== */
+
+.sapMNLI-LSize .sapMNLI-Header .sapMText {
+  box-sizing: border-box;
+  max-width: 60%;
+}
+
+.sapMNLI-LSize .sapMNLI-Header.sapMNLI-No-Footer .sapMText {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.sapMNLI-LSize .sapMNLI-Body {
+  box-sizing: border-box;
+  width: 60%;
+}
+
+.sapMNLI-LSize .sapMNLI-Body.sapMNLI-No-Footer {
+  width: 100%;
+}
+
+.sapMNLI-LSize .sapMNLI-Footer {
+  box-sizing: border-box;
+  width: 40%;
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-bottom: 0;
+}
+
+.sapMNLI-Header > .sapMTitle {
+  font-size: @sapMFontLargeSize;
+}
+
+.sapMNLI-Body .sapMNLI-Details,
+.sapMNLI-Description .sapMNLI-Text,
+.sapMNLI-Details .sapMNLI-Datetime {
+  font-size: @sapMFontMediumSize;
+  color: @sapUiContentLabelColor;
+}
+
+// Focus Styles ========================================================================================================
+
+html.sap-desktop .sapMLIB.sapMNLI:focus {
+  outline: none;
+}

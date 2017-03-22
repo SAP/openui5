@@ -2,29 +2,28 @@
 <html>
 
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+
 		<title>qUnit Page for sap.m.App with Background Images</title>
 
-		<script id="sap-ui-bootstrap" 
-			type="text/javascript"
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<script language="javascript">
+		<script>
 
 		var app = new sap.m.App("myFirstApp", {
 			initialPage: "page1",
-			pages: [ 
+			pages: [
 				new sap.m.Page("page1", {
 					title: "Page 1"
 				})
@@ -42,26 +41,26 @@
 		});
 
 
-		test("App rendered", function() {
-			ok(jQuery.sap.domById("myFirstApp"), "App should be rendered");
-			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+		QUnit.test("App rendered", function(assert) {
+			assert.ok(jQuery.sap.domById("myFirstApp"), "App should be rendered");
+			assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
 		});
 
-		
-		test("Background Image", function() {
+
+		QUnit.test("Background Image", function(assert) {
 			if (window.getComputedStyle) {
 				var appStyle = window.getComputedStyle(jQuery.sap.domById("myFirstApp"));
 				var bgStyle = window.getComputedStyle(jQuery.sap.domById("myFirstApp-BG"));
-				equal(appStyle.backgroundColor, "rgb(255, 0, 0)", "the custom background color should be set");
-				equal(appStyle.backgroundImage, "none", "no standard background image should be set");
-				ok(bgStyle.backgroundImage.indexOf("images/demo/nature/huntingLeopard.jpg") > -1, "Background image should be a Cheetah");
-				equal(bgStyle.backgroundRepeat, "repeat", "Background-repeat should be set to 'repeat'");
-				equal(Math.round(bgStyle.opacity*10,10)/10, 0.6, "Opacity should be right"); // rounding errors in Chrome...
+				assert.equal(appStyle.backgroundColor, "rgb(255, 0, 0)", "the custom background color should be set");
+				assert.equal(appStyle.backgroundImage, "none", "no standard background image should be set");
+				assert.ok(bgStyle.backgroundImage.indexOf("images/demo/nature/huntingLeopard.jpg") > -1, "Background image should be a Cheetah");
+				assert.equal(bgStyle.backgroundRepeat, "repeat", "Background-repeat should be set to 'repeat'");
+				assert.equal(Math.round(bgStyle.opacity*10,10)/10, 0.6, "Opacity should be right"); // rounding errors in Chrome...
 			} else {
-				ok(true, "older browsers don't matter");
+				assert.ok(true, "older browsers don't matter");
 			}
 		});
-		
+
 
 	</script>
 

@@ -1,6 +1,7 @@
-/* ======================================= */
-/* CSS for control sap.m/Slider.control    */
-/* ======================================= */
+/* ============================= */
+/* CSS for control sap.m/Slider  */
+/* Base theme                    */
+/* ============================= */
 
 /* ------------------------------ */
 /* Slider commons styles          */
@@ -11,6 +12,9 @@
 	vertical-align: top;
 	box-sizing: border-box;
 	position: relative;
+	height: 3.3125rem;
+	padding: 1.406rem 1.0625rem;
+
 
 	/* IE Windows 8 */
 	/* This elements receives events when not panning in vertial direction */
@@ -18,18 +22,15 @@
 	-ms-touch-action: pan-y;
 }
 
-.sapMSlider:not(.sapMSliderDisabled) {
-	cursor: pointer;
-}
-
-.sapMSliderDisabled {
-	pointer-events: none;
-}
-
 .sapMSliderInner {
 	width: 100%;
 	position: relative;
 	background-repeat: no-repeat;
+}
+
+.sapMSliderInner,
+.sapMSliderProgress {
+	height: 0.188rem;
 }
 
 .sapMSliderProgress,
@@ -44,4 +45,146 @@
 
 .sapMSliderInput {
 	display: none;
+}
+
+.sapMSliderTickmarks {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	position: absolute;
+	z-index: -1;
+	top: 0.625rem;
+	left: 1.0625rem;
+	right: 1.0625rem;;
+	display: block;
+	height: 1.75rem;
+}
+
+.sapMSliderTick {
+	display: inline-block;
+	height: 1rem;
+	border-left: 0.0625rem solid @sapUiFieldBorderColor;
+	margin: 0.4375rem 0 0 -0.0625rem;
+}
+
+
+.sapMSliderTickLabel {
+	display: inline-block;
+	position: absolute;
+	z-index: 1;
+	width: 0.0625rem;
+	background-color: @sapUiFieldBorderColor;
+	margin: 0 0 0 -0.0625rem;
+
+	&:last-child {
+		right: 0;
+	}
+}
+
+.sapMSliderLabel {
+	font-size: 0.75rem;
+	display: block;
+	width: 5rem;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: absolute;
+	top: 1.75rem;
+	left: -2.5rem;
+}
+
+/* slider progress bar */
+.sapMSliderProgress {
+	background: @sapUiFieldActiveBorderColor;
+
+	&:before{
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 500%;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+}
+
+/* slider handle */
+.sapMSliderHandle {
+	margin-left: -1rem;
+	top: -0.91rem;
+	height: 1.75rem;
+	width: 1.75rem;
+
+	/* some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
+	but does support the long-hand properties for each corner like "border-top-left-radius" */
+	border-top-left-radius: 1rem;
+	border-top-right-radius: 1rem;
+	border-bottom-right-radius: 1rem;
+	border-bottom-left-radius: 1rem;
+
+	&:before{
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 150%;
+		left: 50%;
+		top: 40%;
+		transform: translate(-50%, -50%);
+		cursor: pointer;
+	}
+}
+
+.sapMSliderHandle:hover ~ .sapMSliderTooltipContainer{
+	visibility: visible;
+}
+
+.sapMSliderHandleTooltip:hover{
+	visibility: visible;
+}
+
+.sapMInputBaseWidthPadding:hover{
+	visibility: visible;
+}
+
+.sapMSliderProgress:hover ~ .sapMSliderTooltipContainer {
+	visibility: visible;
+}
+
+/* ============ */
+/* compact size */
+/* ============ */
+
+/* slider */
+.sapUiSizeCompact {
+	.sapMSlider {
+		height: 2.5625rem;
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+	}
+
+	/* slider handle */
+	.sapMSliderHandle {
+		height: 1.375rem;
+		width: 1.375rem;
+		margin-left: -0.8125rem;
+		top: -0.75rem;
+	}
+
+	.sapMSliderTickmarks {
+		height: 1rem;
+	}
+
+	.sapMSliderLabel {
+		top: 1rem;
+	}
+
+	.sapMSliderTick {
+		margin-top: 0.125rem;
+		height: 0.75rem;
+	}
+
+	.sapMSliderTickLabel {
+		height: 1rem;
+	}
 }

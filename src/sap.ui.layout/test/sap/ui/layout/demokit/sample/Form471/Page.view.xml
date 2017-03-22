@@ -1,0 +1,35 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.ui.layout.sample.Form471.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<SplitContainer id="FormSplitscreen" initialDetail="page" initialMaster="master">
+		<detailPages>
+			<Page
+				id="page"
+				showHeader="false" >
+				<footer>
+					<Bar>
+						<contentRight>
+							<Button id="edit" text="Edit" press="handleEditPress" />
+							<Button id="save" text="Save" type="Emphasized" visible="false" press="handleSavePress" />
+							<Button id="cancel" text="Cancel" visible="false" press="handleCancelPress" />
+						</contentRight>
+					</Bar>
+				</footer>
+			</Page>
+		</detailPages>
+		<masterPages>
+			<Page id="master" title="Master" icon="sap-icon://action" class="sapUiStdPage">
+				<content>
+					<List>
+						<items>
+							<StandardListItem title="Item 1" type="Inactive"/>
+							<StandardListItem title="Item 2" type="Inactive"/>
+						</items>
+					</List>
+				</content>
+			</Page>
+		</masterPages>
+	</SplitContainer>
+</mvc:View>

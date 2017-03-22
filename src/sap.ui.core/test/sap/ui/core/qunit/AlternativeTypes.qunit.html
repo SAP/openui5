@@ -1,13 +1,12 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tests special cases regarding alternative aggregration types (e.g. Tooltip)
-  Author: d020684
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script>
 	window["sap-ui-config"] = {
@@ -16,23 +15,23 @@
 		}
 	};
 </script>
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.testlib">
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.ui.testlib">
 	</script>
 
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <!-- Test functions -->
-<script language="javascript">
+<script>
 
 	var oModel = new sap.ui.model.json.JSONModel({
 		teamMembers:[
@@ -45,19 +44,19 @@
 				{firstName:"Frank", lastName:"Wallace"}
 		]
  	});
-	
-	test("clone", function() {
+
+	QUnit.test("clone", function(assert) {
 		var oButton = new sap.ui.testlib.TestButton({
 			text : "a text text",
 			tooltip : "a tooltip text"
 		});
 		var oDolly = oButton.clone("some");
-		ok(oDolly instanceof sap.ui.testlib.TestButton, "clone must return an element");
-		equal(oDolly.getText(), oButton.getText(), "property text must have equal values");
-		equal(oDolly.getTooltip(), oButton.getTooltip(), "property tooltip must have equal values");
+		assert.ok(oDolly instanceof sap.ui.testlib.TestButton, "clone must return an element");
+		assert.equal(oDolly.getText(), oButton.getText(), "property text must have equal values");
+		assert.equal(oDolly.getTooltip(), oButton.getTooltip(), "property tooltip must have equal values");
 	});
-	
-	test("bind property via settings", function(){
+
+	QUnit.test("bind property via settings", function(assert) {
 		var oButton = new sap.ui.testlib.TestButton({
 			text : "{firstName}",
 			tooltip : "{lastName}"
@@ -65,12 +64,12 @@
 		oButton.setModel(oModel);
 		oButton.bindElement("/teamMembers/0");
 		oButton.placeAt("target");
-		equal(oButton.getText(), "Andreas", "binding of text"); 
-		equal(oButton.getTooltip(), "Klark", "binding of tooltip"); 
+		assert.equal(oButton.getText(), "Andreas", "binding of text");
+		assert.equal(oButton.getTooltip(), "Klark", "binding of tooltip");
 		oButton.destroy();
 	});
-	
-	test("bind property via bind...", function(){
+
+	QUnit.test("bind property via bind...", function(assert) {
 		var oButton = new sap.ui.testlib.TestButton({
 		});
 		oButton.setModel(oModel);
@@ -78,11 +77,11 @@
 		oButton.bindProperty("text", "firstName");
 		oButton.bindProperty("tooltip", "lastName");
 		oButton.placeAt("target");
-		equal(oButton.getText(), "Andreas", "binding of text"); 
-		equal(oButton.getTooltip(), "Klark", "binding of tooltip"); 
+		assert.equal(oButton.getText(), "Andreas", "binding of text");
+		assert.equal(oButton.getTooltip(), "Klark", "binding of tooltip");
 		oButton.destroy();
 	});
-	
+
 	</script>
 
 </head>

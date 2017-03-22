@@ -1,0 +1,172 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap"
+		   xmlns:c="sap.uxap.sample.Headers.HeaderExtension"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:m="sap.m"
+		   xmlns:cl="sap.uxap.testblocks.data.Collection"
+		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+		   height="100%"
+>
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="ObjectPage with LazyLoading">
+
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 1" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label section 1"  />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 2" mode="Expanded" id="subsection2">
+						<blocks>
+							<m:Label text="Label label"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 3" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label section 3" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 4" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 5" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 6" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 7" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 8" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 9" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 10a" mode="Expanded" id="subsection10a">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Section 10" mode="Expanded" id="subsection10">
+						<blocks>
+							<ObjectPageLazyLoader stashed="true" id="subsection10stash">
+								<m:Toolbar>
+									<m:Label text="first toolbar"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button1a" />
+									<m:Button text="Button2a" />
+									<m:Button text="Button3a" />
+								</m:Toolbar>
+							</ObjectPageLazyLoader>
+							<ObjectPageLazyLoader stashed="true" id="subsection1110stash">
+								<m:Toolbar>
+									<m:Label text="second toolbar"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button1b" />
+									<m:Button text="Button2b" />
+									<m:Button text="Button3b" />
+								</m:Toolbar>
+							</ObjectPageLazyLoader>
+							<ObjectPageLazyLoader stashed="true" id="subsection11110stash">
+								<m:Toolbar>
+									<m:Label text="second toolbar"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button1b" />
+									<m:Button text="Button2b" />
+									<m:Button text="Button3b" />
+								</m:Toolbar>
+							</ObjectPageLazyLoader>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 11" mode="Expanded" id="subsection11">
+						<blocks>
+							<ObjectPageLazyLoader stashed="true" id="subsection11stash">
+								<m:Toolbar>
+									<m:Label text="My stashed toolbar"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button1" />
+									<m:Button text="Button2" />
+									<m:Button text="Button3" />
+								</m:Toolbar>
+								<m:Toolbar>
+									<m:Label text="My stashed toolbar2"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button4" />
+									<m:Button text="Button5" />
+									<m:Button text="Button6" />
+								</m:Toolbar>
+							</ObjectPageLazyLoader>
+
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+
+		</sections>
+	</ObjectPageLayout>
+</core:View>

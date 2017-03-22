@@ -1,0 +1,99 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageLayout  */
+/* BlueCrystal theme                          */
+/* ========================================== */
+
+.sapUxAPObjectPageAnchorBar .sapMBtnInner {
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapUxAPObjectPageNavigation {
+	background: mix(@sapUiAccent5, @sapUiWhite, 5);
+}
+
+.sapUxAPObjectPageLayout {
+	background: @sapUiGroupContentBackground;
+}
+
+.sapUxAPObjectPageHeaderDetails {
+	.sapMObjectNumberEmph.sapMObjectNumber {
+		> .sapMObjectNumberText {
+			font-family: @sapUiFontHeaderFamily;
+			font-size: 1.375rem;
+			font-weight: @sapUiFontHeaderWeight;
+		}
+		> .sapMObjectNumberUnit {
+			font-family: @sapUiFontFamily;
+			font-size: @sapMFontSmallSize;
+		}
+	}
+	.sapMObjectNumberEmph.sapMObjectNumber:not(.sapMObjectNumberStatusError):not(.sapMObjectNumberStatusWarning):not(.sapMObjectNumberStatusSuccess) {
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapMOHTitle .sapMText {
+		color: @sapUiContentLabelColor;
+	}
+	.sapMLabel {
+		color: @sapUiContentLabelColor;
+	}
+	&.sapUxAPObjectPageHeaderDetailsDesign-Dark {
+		background-color: @sapUiGlobalBackgroundGradientEndColor;
+		background-image: url(darkBackground.png);
+		background-position: bottom left;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		color: @sapUiContentContrastTextColor;
+		.sapMLabel, .sapMPI, .sapMObjectNumber, .sapMObjStatus > .sapMObjStatusTitle, .sapMObjStatus > .sapMObjStatusText, .sapMBtnTransparent, .sapMOHTitle .sapMText {
+			color: @sapUiContentContrastTextColor;
+		}
+		.sapMLnk, .sapMLnk:visited {
+			color: lighten(@sapUiLink, 45);
+		}
+		.sapMOHTitleArrow {
+			color: @sapUiContentContrastIconColor;
+		}
+		/* Semantic colors */
+		.sapMObjStatusError {
+			> .sapMObjStatusText, > .sapMObjStatusIcon, &.sapMObjectNumber {
+				color: lighten(saturate(@sapUiNegativeElement, 22), 40);
+			}
+		}
+		.sapMObjStatusWarning {
+			> .sapMObjStatusText, > .sapMObjStatusIcon, &.sapMObjectNumber {
+				color: lighten(saturate(@sapUiCriticalElement, 22), 40);
+			}
+		}
+		.sapMObjStatusSuccess {
+			> .sapMObjStatusText, > .sapMObjStatusIcon, &.sapMObjectNumber {
+				color: lighten(desaturate(@sapUiPositiveElement, 22), 55);
+			}
+		}
+	}
+}
+
+.sapUxAPObjectChildPage {
+	background: fade(@sapUiAccent5, 20);
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 2.875rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 1.875rem;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 2.9375rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 1.9375rem;
+}
+
+.sapUxAPObjectPageFooter .sapUxAPObjectPageFloatingFooter {
+	background: @sapUiPageFooterBackground;
+	border-color: @sapUiPageFooterBorderColor;
+	box-shadow: @sapUiShadowLevel1;
+}

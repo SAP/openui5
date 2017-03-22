@@ -2,61 +2,43 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
 	xmlns:t="sap.ui.table"
-	xmlns:fb="sap.ui.comp.filterbar"
-	xmlns:var="sap.ui.comp.variants"
+	xmlns:f="sap.ui.layout.form"
 	height="100%">
-	<Page title="Title" enableScrolling="true" class="sapMSampleFioriListReportIconTabBarOverflow">
+	<Page title="Title" enableScrolling="true">
 		<content>
-			<VBox fitContainer="true" class="sapMSampleFioriListReportIconTabBar">
-				<fb:FilterBar>
-					<fb:filterItems>
-						<fb:FilterItem name="A" label="labelA">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterItem>
-						<fb:FilterItem name="B" label="labelB" labelTooltip="Tooltip Example" mandatory="true">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterItem>
-						<fb:FilterItem name="B" label="labelB" labelTooltip="Tooltip Example" mandatory="true">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterItem>
-						<fb:FilterItem name="B" label="labelB" labelTooltip="Tooltip Example" mandatory="true">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterItem>
-					</fb:filterItems>
-					<fb:filterGroupItems>
-						<fb:FilterGroupItem groupName="G1" groupTitle="Group1" name="A" label="labelA" labelTooltip="Tooltip GroupItem Example">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterGroupItem>
-						<fb:FilterGroupItem groupName="G1" groupTitle="Group1" name="B" label="labelB">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterGroupItem>
-						<fb:FilterGroupItem groupName="G2" groupTitle="Group2" name="A2" label="labelA2" labelTooltip="Tooltip GroupItem Example">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterGroupItem>
-						<fb:FilterGroupItem groupName="G2" groupTitle="Group2" name="B2" label="labelB2">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterGroupItem>
-					</fb:filterGroupItems>
-					<fb:layoutData>
-						<FlexItemData shrinkFactor="0"/>
-					</fb:layoutData>
-				</fb:FilterBar>
+			<VBox fitContainer="true">
+				<f:SimpleForm id="SimpleFormDisplay480"
+					minWidth="1024"
+					maxContainerCols="2"
+					editable="false"
+					layout="ResponsiveGridLayout"
+					title="Address"
+					labelSpanL="4"
+					labelSpanM="4"
+					emptySpanL="0"
+					emptySpanM="0"
+					columnsL="2"
+					columnsM="2">
+					<f:content>
+						<c:Title text="Office" />
+						<Label text="Name" />
+						<Text text="Red Point Stores" />
+						<Label text="Street/No." />
+						<Text text="Main St 1618" />
+						<Label text="ZIP Code/City" />
+						<Text text="31415 Maintown" />
+						<Label text="Country" />
+						<Text text="Germany" />
+						<c:Title text="Online" />
+						<Label text="Web" />
+						<Text text="http://www.sap.com" />
+						<Label text="Twitter" />
+						<Text text="@sap" />
+					</f:content>
+					<f:layoutData>
+						<FlexItemData shrinkFactor="0" backgroundDesign="Solid" styleClass="sapContrastPlus"/>
+					</f:layoutData>
+				</f:SimpleForm>
 				<IconTabBar upperCase="true" expandable="false" applyContentPadding="true" stretchContentHeight="true" class="sapUiResponsiveContentPadding">
 					<items>
 						<IconTabFilter text="Balances" />
@@ -65,12 +47,7 @@
 					<content>
 						<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
 							<t:toolbar>
-								<Toolbar>
-									<var:VariantManagement>
-									  <var:items>
-										<c:Item text="My Better Variant" key="MBV"/>
-										</var:items>
-									</var:VariantManagement>
+								<OverflowToolbar>
 									<ToolbarSpacer />
 									<SearchField width="12rem" />
 									<ToolbarSpacer width="1rem" />
@@ -83,7 +60,7 @@
 									<ToolbarSpacer width="1rem" />
 									<Button icon="sap-icon://group-2" type="Transparent" />
 									<Button icon="sap-icon://action-settings" type="Transparent" />
-								</Toolbar>
+								</OverflowToolbar>
 							</t:toolbar>
 							<t:columns>
 								<t:AnalyticalColumn />
@@ -94,7 +71,7 @@
 						</t:AnalyticalTable>
 					</content>
 					<layoutData>
-						<FlexItemData growFactor="1" />
+						<FlexItemData growFactor="1" baseSize="0%"/>
 					</layoutData>
 				</IconTabBar>
 			</VBox>

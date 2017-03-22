@@ -1,14 +1,16 @@
-module("Start-up");
+jQuery.sap.require("sap.ui.core.mvc.JSONView");
+jQuery.sap.require("sap.ui.core.mvc.JSView");
+jQuery.sap.require("sap.ui.core.mvc.XMLView");
+jQuery.sap.require("sap.ui.core.mvc.HTMLView");
 
-test("Check dependencies", 4, function() {
-	jQuery.sap.require("sap.ui.core.mvc.JSONView");
-	jQuery.sap.require("sap.ui.core.mvc.JSView");
-	jQuery.sap.require("sap.ui.core.mvc.XMLView");
-	jQuery.sap.require("sap.ui.core.mvc.HTMLView")
-	ok(sap.ui.core.mvc.JSONView, "sap.ui.core.mvc.JSONView must be defined");
-	ok(sap.ui.core.mvc.JSView, "sap.ui.core.mvc.JSView must be defined");
-	ok(sap.ui.core.mvc.XMLView, "sap.ui.core.mvc.XMLView must be defined");
-	ok(sap.ui.core.mvc.HTMLView, "sap.ui.core.mvc.HTMLView must be defined");
+QUnit.module("Start-up");
+
+QUnit.test("Check dependencies", function(assert) {
+	assert.expect(4);
+	assert.ok(sap.ui.core.mvc.JSONView, "sap.ui.core.mvc.JSONView must be defined");
+	assert.ok(sap.ui.core.mvc.JSView, "sap.ui.core.mvc.JSView must be defined");
+	assert.ok(sap.ui.core.mvc.XMLView, "sap.ui.core.mvc.XMLView must be defined");
+	assert.ok(sap.ui.core.mvc.HTMLView, "sap.ui.core.mvc.HTMLView must be defined");
 });
 
 function asyncTestsuite(sCaption, oConfig) {
@@ -50,7 +52,7 @@ function asyncTestsuite(sCaption, oConfig) {
 		};
 	};
 
-	module(sCaption, {
+	QUnit.module(sCaption, {
 		beforeEach : function() {
 			this.oAfterInitSpy = sinon.spy(sap.ui.core.mvc.View.prototype, "fireAfterInit");
 			this.oView;
@@ -63,73 +65,82 @@ function asyncTestsuite(sCaption, oConfig) {
 		}
 	});
 
-	test("Preparation - View requirements", 2, function() {
+	QUnit.test("Preparation - View requirements", function(assert) {
+		assert.expect(2);
 		var view = jQuery.sap.getObject("sap.ui.core.mvc." + oConfig.type + "View");
-		ok(view.asyncSupport, "View type supports asynchronous loading");
-		ok(view.prototype.loaded, "View type supports Promises via loaded method");
+		assert.ok(view.asyncSupport, "View type supports asynchronous loading");
+		assert.ok(view.prototype.loaded, "View type supports Promises via loaded method");
 	});
 
-	test("Preparation - View source preload", 1, function() {
-		ok(sSource !== undefined, "View content was preloaded synchronously");
+	QUnit.test("Preparation - View source preload", function(assert) {
+		assert.expect(1);
+		assert.ok(sSource !== undefined, "View content was preloaded synchronously");
 	});
 
-	test("Rendering - synchronous resource loading", 3, function () {
+	QUnit.test("Rendering - synchronous resource loading", function (assert) {
+		assert.expect(3);
 		this.oView = fnFactory();
 		this.oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		ok(this.oView, "Instance has been created");
-		ok(this.oView instanceof sap.ui.core.mvc.View, "Instance is a View");
-		ok(this.oView.$().children().length, "View content was rendered synchronously");
+		assert.ok(this.oView, "Instance has been created");
+		assert.ok(this.oView instanceof sap.ui.core.mvc.View, "Instance is a View");
+		assert.ok(this.oView.$().children().length, "View content was rendered synchronously");
 	});
 
-	asyncTest("Rendering - asynchronous resource loading", 5, function () {
+	QUnit.test("Rendering - asynchronous resource loading", function (assert) {
+		assert.expect(5);
+		var done = assert.async();
 		this.oView = fnFactory(true); //true for async
 
 		// event attachement needs to be done immediately, otherwise the event may be fired beforehands
 		var that = this;
 		this.oView.attachAfterInit(function() {
 			sap.ui.getCore().applyChanges();
-			ok(that.oView.$().children().length, "View content was rendered");
-			start();
+			assert.ok(that.oView.$().children().length, "View content was rendered");
+			done();
 		});
 
 		this.oView.placeAt("content");
-		ok(this.oView, "Instance has been created");
-		ok(this.oView instanceof sap.ui.core.mvc.View, "Instance is a View");
+		assert.ok(this.oView, "Instance has been created");
+		assert.ok(this.oView instanceof sap.ui.core.mvc.View, "Instance is a View");
 
 		sap.ui.getCore().applyChanges();
-		ok(this.oView.$().length, "View was rendered empty");
-		ok(!this.oView.$().children().length, "View content is not rendered yet");
+		assert.ok(this.oView.$().length, "View was rendered empty");
+		assert.ok(!this.oView.$().children().length, "View content is not rendered yet");
 
 	});
 
-	asyncTest("Promise - loaded() for sync view", 3, function() {
+	QUnit.test("Promise - loaded() for sync view", function(assert) {
+		assert.expect(3);
+		var done = assert.async();
 		this.oView = fnFactory();
 
 		var oPromise = this.oView.loaded();
-		ok(oPromise instanceof Promise, "Promise returned");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 		var that = this;
 		oPromise.then(function(oViewLoaded) {
-			ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
-			deepEqual(that.oView, oViewLoaded, "Views equal deeply");
-			start();
+			assert.ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
+			assert.deepEqual(that.oView, oViewLoaded, "Views equal deeply");
+			done();
 		});
 	});
 
 
-	asyncTest("Promise - loaded() for async view", 3, function() {
+	QUnit.test("Promise - loaded() for async view", function(assert) {
+		assert.expect(3);
+		var done = assert.async();
 		this.oView = fnFactory(true);
 
 		var oPromise = this.oView.loaded();
-		ok(oPromise instanceof Promise, "Promise returned");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 		var that = this;
 		oPromise.then(function(oViewLoaded) {
-			ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
-			deepEqual(that.oView, oViewLoaded, "Views equal deeply");
-			start();
+			assert.ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
+			assert.deepEqual(that.oView, oViewLoaded, "Views equal deeply");
+			done();
 		});
 	});
 

@@ -1,34 +1,37 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
-sap.ui.controller("sap.ui.demokit.explored.view.notFound", {
+sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/core/UIComponent", "sap/ui/model/json/JSONModel"], function (Controller, UIComponent, JSONModel) {
+	"use strict";
 
-	onInit : function () {
-		this.router = sap.ui.core.UIComponent.getRouterFor(this);
-		this.router.attachRoutePatternMatched(this.onRouteMatched, this);
-		this.getView().addEventDelegate(this);
-	},
+	return Controller.extend("sap.ui.demokit.explored.view.notFound", {
 
-	_msg : "<div class='titlesNotFound'>The requested object '{0}' is unknown to the explored app. We suspect it's lost in space.</div>",
+		onInit : function () {
+			this.router = UIComponent.getRouterFor(this);
+			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
+			this.getView().addEventDelegate(this);
+			this.getView().setModel(new JSONModel({
+				entityName: ""
+			}));
+		},
 
-	onRouteMatched : function (evt) {
-		if (evt.getParameter("name") !== "notFound") {
-			return;
+		onRouteMatched : function (evt) {
+			if (evt.getParameter("name") !== "notFound") {
+				return;
+			}
+			var params = evt.getParameter("arguments")["all*"];
+			this.getView().getModel().setProperty("/entityName", params);
+		},
+
+		onBeforeShow : function (evt) {
+			if (evt.data.path) {
+				this.getView().getModel().setProperty("/entityName", evt.data.path);
+			}
+		},
+
+		onNavBack : function () {
+			this.router.myNavBack("home", {});
 		}
-		var params = evt.getParameter("arguments")["all*"];
-		var html = this._msg.replace("{0}", params);
-		this.getView().byId("msgHtml").setContent(html);
-	},
-
-	onBeforeShow : function (evt) {
-		if (evt.data.path) {
-			var html = this._msg.replace("{0}", evt.data.path);
-			this.getView().byId("msgHtml").setContent(html);
-		}
-	},
-
-	onNavBack : function () {
-		this.router.myNavBack("home", {});
-	}
+	});
 });

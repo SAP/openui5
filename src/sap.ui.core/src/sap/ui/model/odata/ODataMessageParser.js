@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/core/library", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
-	function(jQuery, coreLibrary, MessageParser, Message) {
+sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
+	function(jQuery, Device, coreLibrary, URI, MessageParser, Message) {
 	"use strict";
+
+// shortcuts for enums
+var MessageType = coreLibrary.MessageType;
 
 /**
  * This map is used to translate back-end response severity values to the values defined in the
@@ -12,14 +15,45 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/library", "sap/ui/core/message/
  * @see sap.ui.core.ValueState
  */
 var mSeverityMap = {
-	"error":   sap.ui.core.MessageType.Error,
-	"warning": sap.ui.core.MessageType.Warning,
-	"success": sap.ui.core.MessageType.Success,
-	"info":    sap.ui.core.MessageType.Information
+	"error":   MessageType.Error,
+	"warning": MessageType.Warning,
+	"success": MessageType.Success,
+	"info":    MessageType.Information
 };
 
 /**
- * 
+ * A plain error object as returned by the server. Either "@sap-severity"- or "severity"-property
+ * must be set.
+ *
+ * @typedef {object} ODataMessageParser~ServerError
+ * @property {string} target - The target entity path for which the message is meant
+ * @property {string} message - The error message description
+ * @property {string} code - The error code (message)
+ * @property {string} [@sap-severity] - The level of the error (alternatively in V2: oMessageObject.severity) can be one of "success", "info", "warning", "error"
+ * @property {string} [severity] - The level of the error (alternatively in V4: oMessageObject.@sap-severity) can be one of "success", "info", "warning", "error"
+ */
+
+/**
+ * A map containing the relevant request-URL and (if available) the request and response objects
+ *
+ * @typedef {map} ODataMessageParser~RequestInfo
+ * @property {string} url - The URL of the request
+ * @property {object} request - The request object
+ * @property {object} response - The response object
+ */
+
+/**
+ * A map containing a parsed URL
+ *
+ * @typedef {map} ODataMessageParser~UrlInfo
+ * @property {string} url - The URL, stripped of query and hash
+ * @property {map} parameters - A map of the query parameters
+ * @property {string} hash - The hash value of the URL
+ */
+
+
+/**
+ *
  * @namespace
  * @name sap.ui.model.odata
  * @public
@@ -27,9 +61,9 @@ var mSeverityMap = {
 
 /**
  * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
- * 
+ *
  * @class
- * @classdesc 
+ * @classdesc
  *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
  * @extends sap.ui.core.message.MessageParser
  *
@@ -46,7 +80,7 @@ var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessagePa
 
 	constructor: function(sServiceUrl, oMetadata) {
 		MessageParser.apply(this);
-		this._serviceUrl = stripURI(sServiceUrl);
+		this._serviceUrl = getRelativeServerUrl(this._parseUrl(sServiceUrl).url);
 		this._metadata = oMetadata;
 		this._processor = null;
 		this._headerField = "sap-message"; // Default header field
@@ -95,14 +129,18 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 	// TODO: Implement filter function
 	var aMessages = [];
 
-	var sRequestUri = oRequest ? oRequest.requestUri : oResponse.requestUri;
+	var mRequestInfo = {
+		url: oRequest ? oRequest.requestUri : oResponse.requestUri,
+		request: oRequest,
+		response: oResponse
+	};
 
 	if (oResponse.statusCode >= 200 && oResponse.statusCode < 300) {
 		// Status is 2XX - parse headers
-		this._parseHeader(/* ref: */ aMessages, oResponse, sRequestUri);
+		this._parseHeader(/* ref: */ aMessages, oResponse, mRequestInfo);
 	} else if (oResponse.statusCode >= 400 && oResponse.statusCode < 600) {
 		// Status us 4XX or 5XX - parse body
-		this._parseBody(/* ref: */ aMessages, oResponse, sRequestUri);
+		this._parseBody(/* ref: */ aMessages, oResponse, mRequestInfo);
 	} else {
 		// Status neither ok nor error - I don't know what to do
 		// TODO: Maybe this is ok and should be silently ignored...?
@@ -111,12 +149,13 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		);
 	}
 
-	if (!this._processor) {
+	if (this._processor) {
+		this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
+	} else {
 		// In case no message processor is attached, at least log to console.
 		// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
 		this._outputMesages(aMessages);
 	}
-	this._propagateMessages(aMessages, sRequestUri, mGetEntities, mChangeEntities);
 };
 
 
@@ -125,38 +164,88 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 
 ////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
+/**
+ * Checks whether the property with the given name on the parent entity referenced by thegiven path is a
+ * NavigationProperty.
+ *
+ * @param {string} sParentEntity - The path of the parent entity in which to search for the NavigationProperty
+ * @param {string} sPropertyName - The name of the property which should be checked whether it is a NavigationProperty
+ * @returns {boolean} Returns true if the given property is an NavigationProperty
+ * @private
+ */
+ODataMessageParser.prototype._isNavigationProperty = function(sParentEntity, sPropertyName) {
+	var mEntityType = this._metadata._getEntityTypeByPath(sParentEntity);
+	if (mEntityType) {
+		var aNavigationProperties = this._metadata._getNavigationPropertyNames(mEntityType);
+		return aNavigationProperties.indexOf(sPropertyName) > -1;
+	}
 
+	return false;
+};
+
+/**
+ * Parses the request URL as well as all message targets for paths that are affected, i.e. which have messages meaning
+ * that currently available messages for that path will be replaced with the new ones
+ *
+ * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
+ * @param {string} sRequestUri - The request URL
+ * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
+ * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
+ * @returns {map} A map of affected targets where every affected target
+ */
 ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
 	var mAffectedTargets = jQuery.extend({
 		"": true // Allow global messages by default
 	}, mGetEntities, mChangeEntities);
 
-
 	// Get EntitySet for Requested resource
-	var sRequestTarget = stripURI(sRequestUri);
+	var sRequestTarget = this._parseUrl(sRequestUri).url;
 	if (sRequestTarget.indexOf(this._serviceUrl) === 0) {
 		// This is an absolute URL, remove the service part at the front
 		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
 	}
-	
+
 	var mEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
 	if (mEntitySet) {
 		mAffectedTargets[mEntitySet.name] = true;
 	}
-	
-	
+
+
 	// Get the EntitySet for every single target
 	for (var i = 0; i < aMessages.length; ++i) {
 		var sTarget = aMessages[i].getTarget();
 
 		if (sTarget) {
-			mEntitySet = this._metadata._getEntitySetByPath(sTarget);
-			if (mEntitySet) {
-				mAffectedTargets[mEntitySet.name] = true;
+			var sTrimmedTarget = sTarget.replace(/^\/+|\/$/g, "");
+			mAffectedTargets[sTrimmedTarget] = true;
+
+			var iSlashPos = sTrimmedTarget.lastIndexOf("/");
+			if (iSlashPos > 0) {
+				// This seems to be a property...
+				// But is it a NavigationProperty?
+				var sParentEntity = sTrimmedTarget.substr(0, iSlashPos);
+				var sProperty = sTrimmedTarget.substr(iSlashPos);
+
+				// If this is a property (but no NavigationProperty!), also remove the messages for the entity containing it
+				var bIsNavigationProperty = this._isNavigationProperty(sParentEntity, sProperty);
+				if (!bIsNavigationProperty) {
+					// It isn't a NavigationProperty, which means that the messages for this target belong to the
+					// entity. The entity must be added to the affected targets.
+					mAffectedTargets[sParentEntity] = true;
+				}
 			}
+
+			// Info: As of 2015-11-12 the "parent" EntitySet should not be part of the affected targets, meaning that
+			//       messages for the entire collection should not be deleted just because one entry of that selection
+			//       has been requested.
+			//       Before this all messages for the parent collection were deleted when an entry returned anything.
+			//       This only concerns messages for the EntitySet itself, not for its entities.
+			//       Example:
+			//         GET /Products(1) used to delete all messages for /Products(1) and /Products
+			//         now it only deletes all messages for the single entity /Products(1)
 		}
 	}
-	
+
 	return mAffectedTargets;
 };
 
@@ -165,35 +254,30 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
  * messageChange-event) based on the entities belonging to this request.
  *
  * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
- * @param {string} sRequestUri - The request URL
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @return {void}
  */
-ODataMessageParser.prototype._propagateMessages = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
+ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
 	var i, sTarget;
 
-	var mAffectedTargets = this._getAffectedTargets(aMessages, sRequestUri, mGetEntities, mChangeEntities);
-	
-	// All messages with targets are part of the changed targets by definition. All Messages that
-	// come back from the server belong to affected entities/sets
-	// TODO: Check if this is necessary, since only messages for requested entities/sets should be returned from the service...
-	for (i = 0; i < aMessages.length; ++i) {
-		sTarget = aMessages[i].getTarget();
-		if (!mAffectedTargets[sTarget]) {
-			jQuery.sap.log.error(
-				"Service returned messages for entities that were not requested. " +
-				"This might lead to wrong message processing and loss of messages"
-			);
-			mAffectedTargets[sTarget] = true;
-		}
-	}
+	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo.url, mGetEntities, mChangeEntities);
 
 	var aRemovedMessages = [];
 	var aKeptMessages = [];
 	for (i = 0; i < this._lastMessages.length; ++i) {
-		sTarget = this._lastMessages[i].getTarget();
-		if (mAffectedTargets[sTarget]) {
+		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
+		// be trimmed here
+		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
+
+		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
+		var iPropertyPos = sTarget.lastIndexOf(")/");
+		if (iPropertyPos > 0) {
+			sTarget = sTarget.substr(0, iPropertyPos + 1);
+		}
+
+		if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()) {
 			// Message belongs to targets handled/requested by this request
 			aRemovedMessages.push(this._lastMessages[i]);
 		} else {
@@ -211,26 +295,14 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, sRequestUr
 };
 
 /**
- * A plain error object as returned by the server. Either "@sap-severity"- or "severity"-property
- * must be set.
- *
- * @typedef {object} ODataMessageParser~ServerError
- * @property {string} target - The target entity path for which the message is meant
- * @property {string} message - The error message description
- * @property {string} code - The error code (message)
- * @property {string} [@sap-severity] - The level of the error (alternatively in v2: oMessageObject.severity) can be one of "success", "info", "warning", "error"
- * @property {string} [severity] - The level of the error (alternatively in v4: oMessageObject.@sap-severity) can be one of "success", "info", "warning", "error"
- */
-
-/**
  * Creates a sap.ui.core.message.Message from the given JavaScript object
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {string} sRequestUri - The request URL
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
  * @return {sap.ui.core.message.Message} The message for the given error
  */
-ODataMessageParser.prototype._createMessage = function(oMessageObject, sRequestUri, bIsTechnical) {
+ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestInfo, bIsTechnical) {
 	var sType = oMessageObject["@sap.severity"]
 		? oMessageObject["@sap.severity"]
 		: oMessageObject["severity"];
@@ -243,9 +315,24 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, sRequestU
 		? oMessageObject["message"]["value"]
 		: oMessageObject["message"];
 
-	var sDescriptionUrl = oMessageObject.longtextUrl ? oMessageObject.longtextUrl : "";
+	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
 
-	var sTarget = this._createTarget(oMessageObject, sRequestUri);
+	var bPersistent = false;
+	if (oMessageObject.propertyref) {
+		oMessageObject.target = oMessageObject.propertyref;
+	}
+	if (typeof oMessageObject.target === "undefined") {
+		oMessageObject.target = "";
+	}
+
+	if (oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
+		bPersistent = true;
+		oMessageObject.target = oMessageObject.target.substr(12);
+	} else if (oMessageObject.transient) {
+		bPersistent = true;
+	}
+
+	var sTarget = this._createTarget(oMessageObject, mRequestInfo);
 
 	return new Message({
 		type:      sType,
@@ -254,8 +341,93 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, sRequestU
 		descriptionUrl: sDescriptionUrl,
 		target:    sTarget,
 		processor: this._processor,
-		technical: bIsTechnical
+		technical: bIsTechnical,
+		persistent: bPersistent
 	});
+};
+
+/**
+ * Returns the path of the Entity affected by the given FunctionImport. It either uses the location header sent by the
+ * back-end or if none is sent tries to construct the correct URL from the metadata information about the function.
+ * In case the URL of the target is built using only one key, the parameter-name is removed from the URL.
+ * Example, if there are two keys "A" and "B", the URL mitgt look like this: "/List(A=1,B=2)" in case there is only one
+ * key named "A", the URL would be "/List(1)"
+ *
+ * @param {map} mFunctionInfo - Function information map as returned by sap.ui.model.odata.ODataMetadata._getFunctionImportMetadata
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo - Map containing information about the current request
+ * @param {ODataMessageParser~UrlInfo} mUrlData - Map containing parsed URL information as returned by sap.ui.mode.odata.ODataMessageParser._parseUrl
+ * @returns {string} The Path to the affected entity
+ */
+ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mRequestInfo, mUrlData) {
+	var sTarget = "";
+
+	var i;
+
+	// In case of a function import the location header may point to the corrrect entry in the service.
+	// This should be the case for writing/changing operations using POST
+	if (mRequestInfo.response && mRequestInfo.response.headers && mRequestInfo.response.headers["location"]) {
+		sTarget = mRequestInfo.response.headers["location"];
+
+		var iPos = sTarget.lastIndexOf(this._serviceUrl);
+		if (iPos > -1) {
+			sTarget = sTarget.substr(iPos + this._serviceUrl.length);
+		}
+	} else {
+
+		// Search for "action-for" annotation
+		var sActionFor = null;
+		if (mFunctionInfo.extensions) {
+			for (i = 0; i < mFunctionInfo.extensions.length; ++i) {
+				if (mFunctionInfo.extensions[i].name === "action-for") {
+					sActionFor = mFunctionInfo.extensions[i].value;
+					break;
+				}
+			}
+		}
+
+		var mEntityType;
+		if (sActionFor) {
+			mEntityType = this._metadata._getEntityTypeByName(sActionFor);
+		} else if (mFunctionInfo.entitySet) {
+			mEntityType = this._metadata._getEntityTypeByPath(mFunctionInfo.entitySet);
+		} else if (mFunctionInfo.returnType) {
+			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
+		}
+
+		var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
+
+		if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
+
+			var sId = "";
+			var sParam;
+
+			if (mEntityType.key.propertyRef.length === 1) {
+				// Just the ID in brackets
+				sParam = mEntityType.key.propertyRef[0].name;
+				if (mUrlData.parameters[sParam]) {
+					sId = mUrlData.parameters[sParam];
+				}
+			} else {
+				// Build ID string from keys
+				var aKeys = [];
+				for (i = 0; i < mEntityType.key.propertyRef.length; ++i) {
+					sParam = mEntityType.key.propertyRef[i].name;
+					if (mUrlData.parameters[sParam]) {
+						aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
+					}
+				}
+				sId = aKeys.join(",");
+			}
+
+			sTarget = "/" + mEntitySet.name + "(" + sId + ")";
+		} else if (!mEntitySet) {
+			jQuery.sap.log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
+		} else {
+			jQuery.sap.log.error("Could not determine keys of EntityType for function call: " + mUrlData.url);
+		}
+	}
+
+	return sTarget;
 };
 
 
@@ -265,41 +437,56 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, sRequestU
  * URI and appends the target if the target was not specified as absolute path (with leading "/")
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {string} sRequestUri - The request URL
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo - Map containing information about the current request
  * @return {string} The actual target string
  * @private
  */
-ODataMessageParser.prototype._createTarget = function(oMessageObject, sRequestUri) {
-	var sTarget = "";
-
-	if (oMessageObject.target) {
-		sTarget = oMessageObject.target;
-	} else if (oMessageObject.propertyref) {
-		sTarget = oMessageObject.propertyref;
-	}
+ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
+	var sTarget = oMessageObject.target;
 
 	if (sTarget.substr(0, 1) !== "/") {
 		var sRequestTarget = "";
-		var sUri = stripURI(sRequestUri);
 
-		if (sUri.indexOf(this._serviceUrl) === 0) {
-			sRequestTarget = "/" + sUri.substr(this._serviceUrl.length + 1);
+		var mUrlData = this._parseUrl(mRequestInfo.url);
+		var sUrl = mUrlData.url;
+
+		var iPos = sUrl.lastIndexOf(this._serviceUrl);
+		if (iPos > -1) {
+			sRequestTarget = sUrl.substr(iPos + this._serviceUrl.length + 1);
 		} else {
-			sRequestTarget = "/" + sUri;
+			sRequestTarget = sUrl;
 		}
 
-		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
-		// a target would start with the specific product (like "(23)"), but the request itself
-		// would not have the brackets
-		var iSlashPos = sRequestTarget.lastIndexOf("/");
-		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
-		if (sRequestTargetName.indexOf("(") > -1) {
-			// It is an entity
-			sTarget = sRequestTarget + "/" + sTarget;
+		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
+		var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
+
+		if (mFunctionInfo) {
+			sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
+
+			if (sTarget) {
+				sTarget = sRequestTarget + "/" + sTarget;
+			} else {
+				sTarget = sRequestTarget;
+			}
+
 		} else {
-			// It's a collection
-			sTarget = sRequestTarget + sTarget;
+			sRequestTarget = "/" + sRequestTarget;
+
+			// If sRequestTarget is a collection, we have to add the target without a "/". In this case
+			// a target would start with the specific product (like "(23)"), but the request itself
+			// would not have the brackets
+			var iSlashPos = sRequestTarget.lastIndexOf("/");
+			var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
+			if (sRequestTargetName.indexOf("(") > -1) {
+				// It is an entity
+				sTarget = sRequestTarget + "/" + sTarget;
+			} else {
+				// It's a collection
+				sTarget = sRequestTarget + sTarget;
+			}
 		}
+
+
 	} /* else {
 		// Absolute target path, do not use base URL
 	} */
@@ -312,11 +499,23 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, sRequestUr
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the headers property map will be used
- * @param {string} sRequestUri - The request URL
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
+ *
  */
-ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, sRequestUri) {
+ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
 	var sField = this.getHeaderField();
-	if (!oResponse.headers || !oResponse.headers[sField]) {
+	if (!oResponse.headers) {
+		// No header set, nothing to process
+		return;
+	}
+
+	for (var sKey in oResponse.headers) {
+		if (sKey.toLowerCase() === sField.toLowerCase()) {
+			sField = sKey;
+		}
+	}
+
+	if (!oResponse.headers[sField]) {
 		// No header set, nothing to process
 		return;
 	}
@@ -327,11 +526,11 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 	try {
 		oServerMessage = JSON.parse(sMessages);
 
-		aMessages.push(this._createMessage(oServerMessage, sRequestUri));
+		aMessages.push(this._createMessage(oServerMessage, mRequestInfo));
 
-		if (oServerMessage.details && jQuery.isArray(oServerMessage.details)) {
+		if (Array.isArray(oServerMessage.details)) {
 			for (var i = 0; i < oServerMessage.details.length; ++i) {
-				aMessages.push(this._createMessage(oServerMessage.details[i], sRequestUri));
+				aMessages.push(this._createMessage(oServerMessage.details[i], mRequestInfo));
 			}
 		}
 
@@ -346,18 +545,29 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
- * @param {string} sRequestUri - The request URL
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  */
-ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oResponse, sRequestUri) {
+ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
 	// TODO: The main error object does not support "target". Find out how to proceed with the main error information (ignore/add without target/add to all other errors)
 
 	var sContentType = getContentType(oResponse);
 	if (sContentType && sContentType.indexOf("xml") > -1) {
 		// XML response
-		this._parseBodyXML(/* ref: */ aMessages, oResponse, sRequestUri, sContentType);
+		this._parseBodyXML(/* ref: */ aMessages, oResponse, mRequestInfo, sContentType);
 	} else {
 		// JSON response
-		this._parseBodyJSON(/* ref: */ aMessages, oResponse, sRequestUri);
+		this._parseBodyJSON(/* ref: */ aMessages, oResponse, mRequestInfo);
+	}
+
+	// Messages from an error response should contain duplicate messages - the main error should be the
+	// same as the first errordetail error. If this is the case, remove the first one.
+	if (aMessages.length > 1) {
+		if (
+			aMessages[0].getCode()    == aMessages[1].getCode()    &&
+			aMessages[0].getMessage() == aMessages[1].getMessage()
+		) {
+			aMessages.shift();
+		}
 	}
 };
 
@@ -367,53 +577,45 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
- * @param {string} sRequestUri - The request URL
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  * @param {string} sContentType - The content type of the response (for the XML parser)
  * @return {void}
  */
-ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, sRequestUri, sContentType) {
+ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, mRequestInfo, sContentType) {
 	try {
-		var oDomParser = new DOMParser();
-		var oDoc = oDomParser.parseFromString(oResponse.body, sContentType);
+		// TODO: I do not have a V4 service to test this with.
 
-		var sPath =
-			"//*[local-name()='error'] | " + // Main Error - v2 and v4
-			"//*[local-name()='errordetails']/*[local-name()='errordetail'] | " + // v2 further errors
-			"//*[local-name()='details']/*[local-name()='error']"; // v4 further errrors
-		// TODO: I do not have a v4 service to test this. Is the v4 further errors path really "//details/detail"?
-
-		var oXPath = getXPath();
-		var oNodes = oXPath.selectNodes(oDoc, sPath);
-
-		for (var i = 0; i < oNodes.length; ++i) {
-			var oNode = oXPath.nextNode(oNodes, i);
+		var oDoc = new DOMParser().parseFromString(oResponse.body, sContentType);
+		var aElements = getAllElements(oDoc, [ "error", "errordetail" ]);
+		for (var i = 0; i < aElements.length; ++i) {
+			var oNode = aElements[i];
 
 			var oError = {};
 			// Manually set severity in case we get an error response
-			oError["severity"] = sap.ui.core.MessageType.Error;
+			oError["severity"] = MessageType.Error;
 
 			for (var n = 0; n < oNode.childNodes.length; ++n) {
 				var oChildNode = oNode.childNodes[n];
 				var sChildName = oChildNode.nodeName;
 
-				if (sChildName === "errordetails" || sChildName === "details" || sChildName === "innererror") {
+				if (sChildName === "errordetails" || sChildName === "details" || sChildName === "innererror" || sChildName === "#text") {
 					// Ignore known children that contain other errors
 					continue;
 				}
 
 				if (sChildName === "message" && oChildNode.hasChildNodes() && oChildNode.firstChild.nodeType !== window.Node.TEXT_NODE) {
-					// Special case for v2 error message - the message is in the child node "value"
+					// Special case for V2 error message - the message is in the child node "value"
 					for (var m = 0; m < oChildNode.childNodes.length; ++m) {
 						if (oChildNode.childNodes[m].nodeName === "value") {
-							oError["message"] = oXPath.getNodeText(oChildNode.childNodes[m]);
+							oError["message"] = oChildNode.childNodes[m].text || oChildNode.childNodes[m].textContent;
 						}
 					}
 				} else {
-					oError[oChildNode.nodeName] = oXPath.getNodeText(oChildNode);
+					oError[oChildNode.nodeName] = oChildNode.text || oChildNode.textContent;
 				}
 			}
 
-			aMessages.push(this._createMessage(oError, sRequestUri, true));
+			aMessages.push(this._createMessage(oError, mRequestInfo, true));
 		}
 	} catch (ex) {
 		jQuery.sap.log.error("Error message returned by server could not be parsed");
@@ -425,19 +627,19 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
- * @param {string} sRequestUri - The request URL
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  * @return {void}
  */
-ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse, sRequestUri) {
+ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
 	try {
 		var oErrorResponse = JSON.parse(oResponse.body);
 
 		var oError;
 		if (oErrorResponse["error"]) {
-			// v4 response according to OData specification or v2 response according to MS specification and SAP message specification
+			// V4 response according to OData specification or V2 response according to MS specification and SAP message specification
 			oError = oErrorResponse["error"];
 		} else {
-			// Actual v2 response in all tested services
+			// Actual V2 response in some tested services
 			oError = oErrorResponse["odata.error"];
 		}
 
@@ -447,17 +649,17 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 		}
 
 		// Manually set severity in case we get an error response
-		oError["severity"] = sap.ui.core.MessageType.Error;
+		oError["severity"] = MessageType.Error;
 
-		aMessages.push(this._createMessage(oError, sRequestUri, true));
+		aMessages.push(this._createMessage(oError, mRequestInfo, true));
 
 		// Check if more than one error has been returned from the back-end
 		var aFurtherErrors = null;
-		if (jQuery.isArray(oError.details)) {
-			// v4 errors
+		if (Array.isArray(oError.details)) {
+			// V4 errors
 			aFurtherErrors = oError.details;
-		} else if (oError.innererror && jQuery.isArray(oError.innererror.errordetails)) {
-			// v2 errors
+		} else if (oError.innererror && Array.isArray(oError.innererror.errordetails)) {
+			// V2 errors
 			aFurtherErrors = oError.innererror.errordetails;
 		} else {
 			// No further errors
@@ -465,11 +667,43 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 		}
 
 		for (var i = 0; i < aFurtherErrors.length; ++i) {
-			aMessages.push(this._createMessage(aFurtherErrors[i], sRequestUri, true));
+			aMessages.push(this._createMessage(aFurtherErrors[i], mRequestInfo, true));
 		}
 	} catch (ex) {
 		jQuery.sap.log.error("Error message returned by server could not be parsed");
 	}
+};
+
+/**
+ * Parses the URL into an info map containing the url, the parameters and the has in its properties
+ *
+ * @param {string} sUrl - The URL to be stripped
+ * @returns {ODataMessageParser~UrlInfo} An info map about the parsed URL
+ * @private
+ */
+ODataMessageParser.prototype._parseUrl = function(sUrl) {
+	var mUrlData = {
+		url: sUrl,
+		parameters: {},
+		hash: ""
+	};
+
+	var iPos = -1;
+
+	iPos = sUrl.indexOf("#");
+	if (iPos > -1) {
+		mUrlData.hash = mUrlData.url.substr(iPos + 1);
+		mUrlData.url = mUrlData.url.substr(0, iPos);
+	}
+
+	iPos = sUrl.indexOf("?");
+	if (iPos > -1) {
+		var sParameters = mUrlData.url.substr(iPos + 1);
+		mUrlData.parameters = URI.parseQuery(sParameters);
+		mUrlData.url = mUrlData.url.substr(0, iPos);
+	}
+
+	return mUrlData;
 };
 
 /**
@@ -483,21 +717,23 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
  */
 ODataMessageParser.prototype._outputMesages = function(aMessages) {
 	for (var i = 0; i < aMessages.length; ++i) {
-		var sOutput = "[OData Message] " + aMessages.getMessage() + " - " + aMessages.getDexcription() + " (" + aMessages.getTarget() + ")";
-		switch (aMessages[i].getSeverity()) {
-			case "error":
+		var oMessage = aMessages[i];
+		var sOutput = "[OData Message] " + oMessage.getMessage() + " - " + oMessage.getDescription() + " (" + oMessage.getTarget() + ")";
+		switch (aMessages[i].getType()) {
+			case MessageType.Error:
 				jQuery.sap.log.error(sOutput);
 				break;
 
-			case "warning":
+			case MessageType.Warning:
 				jQuery.sap.log.warning(sOutput);
 				break;
 
-			case "success":
+			case MessageType.Success:
 				jQuery.sap.log.debug(sOutput);
 				break;
 
-			case "info":
+			case MessageType.Information:
+			case MessageType.None:
 			default:
 				jQuery.sap.log.info(sOutput);
 				break;
@@ -520,7 +756,7 @@ function getContentType(oResponse) {
 	if (oResponse && oResponse.headers) {
 		for (var sHeader in oResponse.headers) {
 			if (sHeader.toLowerCase() === "content-type") {
-				return oResponse.headers[sHeader];
+				return oResponse.headers[sHeader].replace(/([^;]*);.*/, "$1");
 			}
 		}
 	}
@@ -528,63 +764,62 @@ function getContentType(oResponse) {
 }
 
 /**
- * Strips all parameters from a URI
+ * Local helper element used to determine the path of a URL relative to the server
  *
- * @param {string} sURI - The URI to be stripped
- * @returns {string} The stripped URI
- * @private
+ * @type {HTMLAnchorElement}
  */
-function stripURI(sURI) {
-	var iPos = -1;
-	var sStrippedURI = sURI;
-
-	iPos = sURI.indexOf("?");
-	if (iPos > -1) {
-		sStrippedURI = sStrippedURI.substr(0, iPos);
-	}
-
-	iPos = sURI.indexOf("#");
-	if (iPos > -1) {
-		sStrippedURI = sStrippedURI.substr(0, iPos);
-	}
-
-	return sStrippedURI;
+var oLinkElement = document.createElement("a");
+/**
+ * Returns the URL relative to the host (i.e. the absolute path on the server) for the given URL
+ *
+ * @param {string} sUrl - The URL to be converted
+ * @returns {string} The server-relative URL
+ */
+function getRelativeServerUrl(sUrl) {
+	oLinkElement.href = sUrl;
+	return URI.parse(oLinkElement.href).path;
 }
 
-var xPath = null;
-function getXPath() {
-	if (xPath === null) {
-		xPath = {};
-		if (sap.ui.Device.browser.msie) {// IE
-			xPath = {
-				selectNodes : function(oSearchNode, sPath) {
-					return oSearchNode.selectNodes(sPath);
-				},
-				nextNode : function(oNode) {
-					return oNode.nextNode();
-				},
-				getNodeText : function(oNode) {
-					return oNode.text;
+/**
+ * Returns all elements in the given document (or node) that match the given elementnames
+ *
+ * @param {Node} oDocument - The start node from where to search for elements
+ * @param {string[]} aElementNames - The names of the elements to search for
+ * @returns {HTMLElement[]} The matching elements
+ * @private
+ */
+function getAllElements(oDocument, aElementNames) {
+	var aElements = [];
+
+	var mElementNames = {};
+	for (var i = 0; i < aElementNames.length; ++i) {
+		mElementNames[aElementNames[i]] = true;
+	}
+
+	var oElement = oDocument;
+	while (oElement) {
+		if (mElementNames[oElement.tagName]) {
+			aElements.push(oElement);
+		}
+
+		if (oElement.hasChildNodes()) {
+			oElement = oElement.firstChild;
+		} else {
+			while (!oElement.nextSibling) {
+				oElement = oElement.parentNode;
+
+				if (!oElement || oElement === oDocument) {
+					oElement = null;
+					break;
 				}
-			};
-		} else {// Chrome, Firefox, Opera, etc.
-			xPath = {
-				selectNodes : function(oSearchNode, sPath) {
-					var xmlNodes = oSearchNode.evaluate(sPath, oSearchNode, null, /* ORDERED_NODE_SNAPSHOT_TYPE: */ 7, null);
-					xmlNodes.length = xmlNodes.snapshotLength;
-					return xmlNodes;
-				},
-				nextNode : function(oNode, oItem) {
-					return oNode.snapshotItem(oItem);
-				},
-				getNodeText : function(oNode) {
-					return oNode.textContent;
-				}
-			};
+			}
+			if (oElement) {
+				oElement = oElement.nextSibling;
+			}
 		}
 	}
 
-	return xPath;
+	return aElements;
 }
 
 //////////////////////////////////////// Overridden Methods ////////////////////////////////////////

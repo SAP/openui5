@@ -5,15 +5,15 @@
   <vendor>SAP SE</vendor>
   <copyright>${copyright}</copyright>
   <version>${version}</version>
-  
+
   <documentation>Unified controls intended for both, mobile and desktop scenarios</documentation>
-  
+
   <dependencies>
     <dependency>
       <libraryName>sap.ui.core</libraryName>
     </dependency>
   </dependencies>
-  
+
   <appData>
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.unified" />
     <!-- excludes for the JSCoverage -->
@@ -28,6 +28,15 @@
         resolve="lib" />
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+        <component>
+            <name>CA-UI5-TBL</name>
+            <modules>
+                <module>sap/ui/unified/ContentSwitcher</module>
+                <module>sap/ui/unified/Shell</module>
+                <module>sap/ui/unified/ShellOverlay</module>
+                <module>sap/ui/unified/SplitContainer</module>
+            </modules>
+        </component>
     </ownership>
   </appData>
 

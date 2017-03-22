@@ -1,0 +1,40 @@
+/* ================================== */
+/* CSS for control sap.m/SearchField  */
+/* Belize theme                       */
+/* ================================== */
+
+.sapMSFDisabled {
+	opacity: 0.5;
+}
+
+/* custom buttons */
+.sapMSFB:focus {
+	outline: none;
+}
+
+html.sap-desktop .sapMFocus > .sapMSFF {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+.sapMBarChild > .sapMSFF > .sapMSFB {
+	text-shadow: none;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFB {
+	color: @sapUiHighlight;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFB:active {
+	color: @sapUiButtonActiveTextColor;
+}
+
+.sapMSFB:hover{
+	background-color: @sapUiButtonLiteHoverBackground;
+}
+
+.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
+.sapMSFF>.sapMSFB.sapMSFBA{
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiButtonActiveTextColor;
+}

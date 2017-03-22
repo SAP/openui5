@@ -1,20 +1,19 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.AutoComplete">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	    <meta name="keywords" content="AutoComplete" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+	    <meta name="keywords" content="AutoComplete">
 		<title>AutoComplete - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
 				>
 		</script>
-		<script type="text/javascript" src="../../../../../js/utils.js"></script>
-		<script type="text/javascript">
+		<script src="../../../../../js/utils.js"></script>
+		<script>
 			var aData = [
 				{name: "Dente, Al", userid: "U01"},
 				{name: "Friese, Andy", userid: "U02"},
@@ -37,17 +36,17 @@
 				{name: "Tress, Matt", userid: "U19"},
 				{name: "Turner, Paige", userid: "U20"}
 			];
-			
+
 			jQuery.sap.require("jquery.sap.strings");
 		</script>
-		
+
 		<style>
 			.sapUiTfAutoComp{
 				margin: 3px;
 			}
 		</style>
 
-<script id='example1' type="text/javascript">
+<script id='example1'>
 //Create a AutoComplete control and fill the items
 var oAuto1 = new sap.ui.commons.AutoComplete({
 	tooltip: "Enter a name",
@@ -78,7 +77,7 @@ oAuto2.setModel(oModel2);
 oAuto2.placeAt("sample1");
 </script>
 
-<script id='example2' type="text/javascript">
+<script id='example2'>
 var aAlreadyAddedUsers = []; //Remember the already added users
 //Create a AutoComplete control and register a handler to the suggest event to incrementally and dynamically add items
 var oAuto3 = new sap.ui.commons.AutoComplete({
@@ -116,7 +115,7 @@ var oAuto4 = new sap.ui.commons.AutoComplete({
 oAuto4.placeAt("sample2");
 </script>
 
-<script id='example3' type="text/javascript">
+<script id='example3'>
 var aAlreadyAddedUsers = []; //Remember the already added users
 //Create a AutoComplete control and register a handler to the suggest event to incrementally and dynamically add items
 var oAuto5 = new sap.ui.commons.AutoComplete({
@@ -162,7 +161,7 @@ var oAuto6 = new sap.ui.commons.AutoComplete({
 oAuto6.placeAt("sample3");
 </script>
 
-<script id='example4' type="text/javascript">
+<script id='example4'>
 //Initialize a JSON Model
 jQuery.sap.require("sap.ui.model.json.JSONModel");
 var oModel7 = new sap.ui.model.json.JSONModel();
@@ -203,7 +202,7 @@ oAuto7.placeAt("sample4");
 		<h2>Examples</h2>
 
 		<p>
-		The following examples use some sample data which looks like follows:<br/>
+		The following examples use some sample data which looks like follows:<br>
 		<pre>
 			var aData = [
 				{name: "Dente, Al", userid: "U01"},
@@ -229,26 +228,26 @@ oAuto7.placeAt("sample4");
 			];
 		</pre>
 		</p>
-		
+
 		<h3>Predefined items</h3>
-		<p>This example creates two AutoComplete controls with a fixed predefined set of suggestion items. The first one is initialized manually via the API 
+		<p>This example creates two AutoComplete controls with a fixed predefined set of suggestion items. The first one is initialized manually via the API
 		functions. The second one uses data binding.</p>
 		<div code-sample="sample1" script="example1"></div>
-		<br/>
-		
+		<br>
+
 		<h3>Dynamic items</h3>
-		<p>The following example shows two AutoComplete controls for which the suggestion items are created dynamically when they are needed. For this purpose the <code>suggest</code> 
-		event can be used to check the current user input. The items for the first control are added incrementally starting with an empty item list. The item list in the 
+		<p>The following example shows two AutoComplete controls for which the suggestion items are created dynamically when they are needed. For this purpose the <code>suggest</code>
+		event can be used to check the current user input. The items for the first control are added incrementally starting with an empty item list. The item list in the
 		second control is recreated each time. This is useful when the suggestions are quite specific for the current input and it makes sense no sense to keep them for a longer time.</p>
 		<div code-sample="sample2" script="example2"></div>
-		<br/>
-		<p>The following examples are the same as above but the items are added asynchronously (in the examples timeouts are used, in reality this would be some asychronous calls). To ensure that no invalid 
+		<br>
+		<p>The following examples are the same as above but the items are added asynchronously (in the examples timeouts are used, in reality this would be some asychronous calls). To ensure that no invalid
 		suggestions are shown a check should be introduced whether the value of the control is still the same.</p>
 		<div code-sample="sample3" script="example3"></div>
-		<br/>
-		
+		<br>
+
 		<h3>Custom filter function</h3>
-		<p>By default the AutoComplete control only shows the items which texts begins with the value the user has typed (case insensitive). But it is possible to provide a custom filter 
+		<p>By default the AutoComplete control only shows the items which texts begins with the value the user has typed (case insensitive). But it is possible to provide a custom filter
 		function. In the following example it is possible to either type in a name or user id.</p>
 		<div code-sample="sample4" script="example4"></div>
 

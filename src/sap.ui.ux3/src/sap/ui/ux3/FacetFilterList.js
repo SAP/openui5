@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new FacetFilterList.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -24,75 +24,76 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.FacetFilter</code> control.
 	 * @alias sap.ui.ux3.FacetFilterList
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilterList = Control.extend("sap.ui.ux3.FacetFilterList", /** @lends sap.ui.ux3.FacetFilterList.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * The title of this list.
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Specifies whether multiple or single selection is used.
 			 */
 			multiSelect : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Specifies whether the text values from the additionalText property (see sap.ui.core.ListItems) shall be displayed.
 			 * @since 1.9.0
 			 */
 			displaySecondaryValues : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * Array of type string containing the selected keys.
 			 */
 			selectedKeys : {type : "string[]", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Specifies whether the counter for all entries is shown.
 			 */
 			showCounter : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		aggregations : {
-	
+
 			/**
 			 * The filter values that are presented as a list.
 			 */
-			items : {type : "sap.ui.core.ListItem", multiple : true, singularName : "item"}, 
-	
+			items : {type : "sap.ui.core.ListItem", multiple : true, singularName : "item"},
+
 			/**
 			 * ListBoxes that are managed by this FacetFilterList
 			 */
 			controls : {type : "sap.ui.commons.ListBox", multiple : true, singularName : "control", visibility : "hidden"}
 		},
 		events : {
-	
+
 			/**
 			 * On Select event.
 			 */
 			select : {
 				parameters : {
-	
+
 					/**
 					 * Id of the FacetFilterList taht fires the event.
 					 */
-					id : {type : "string"}, 
-	
+					id : {type : "string"},
+
 					/**
 					 * Array of selected Indices.
 					 */
-					selectedIndices : {type : "int[]"}, 
-	
+					selectedIndices : {type : "int[]"},
+
 					/**
 					 * Array of selected Items.
 					 */
-					selectedItems : {type : "sap.ui.core.ListItem[]"}, 
-	
+					selectedItems : {type : "sap.ui.core.ListItem[]"},
+
 					/**
 					 * If it is true, then Item All is selected. That means all items in the list are selected - no filter is set.
 					 */
@@ -101,23 +102,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			}
 		}
 	}});
-	
-	
+
+
 	(function() {
-	
+
 	/**
 	 * Does the setup when the control is created.
 	 * @private
 	 */
 	FacetFilterList.prototype.init = function(){
-	
+
 	    // Get the translatable text
 		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
-	
+
 		//For later use
 		//this._bAccMode = sap.ui.getCore().getConfiguration().getAccessibility();
 		//this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		//Create the used ListBox control
 		this._oListBox = new ListBox(this.getId() + "-lb");
 		this._oListBox.setScrollTop(0);
@@ -138,17 +139,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		this._oItemAll = new sap.ui.core.ListItem({text: this._oResBundle.getText("FACETFILTER_ALL", [0]), key:"sapUiFacetFilter_ALL"});
 		this._oListBox.addItem(this._oItemAll);
 	};
-	
+
 	FacetFilterList.prototype.setMultiSelect = function(bMultiSelect) {
 		this._oListBox.setAllowMultiSelect(bMultiSelect);
 		this.setProperty("multiSelect", bMultiSelect, true);
 	};
-	
+
 	FacetFilterList.prototype.setDisplaySecondaryValues = function(bDisplaySecondaryValues) {
 		this._oListBox.setDisplaySecondaryValues(bDisplaySecondaryValues);
 		this.setProperty("displaySecondaryValues", bDisplaySecondaryValues, true);
 	};
-	
+
 	FacetFilterList.prototype.addItem = function(oItem) {
 		this._oListBox.addItem(oItem);
 		if (!oItem.getKey() || jQuery.trim(oItem.getKey()) == "" ) {
@@ -156,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		this.updateText4All();
 	};
-	
+
 	FacetFilterList.prototype.insertItem = function(oItem, iIndex) {
 		this._oListBox.insertItem(oItem, iIndex + 1); // +1 because of entry "all" on the fist position.
 		if (!oItem.getKey() || jQuery.trim(oItem.getKey()) == "" ) {
@@ -164,25 +165,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		this.updateText4All();
 	};
-	
+
 	FacetFilterList.prototype.removeItem = function(oItem) {
 		this._oListBox.removeItem(oItem);
 		this.updateText4All();
 	};
-	
+
 	FacetFilterList.prototype.removeAllItems = function() {
 		this._oListBox.removeAllItems();
 		this._oListBox.addItem(this._oItemAll);
 		this.updateText4All();
 	};
-	
+
 	FacetFilterList.prototype.destroyItems = function() {
 		this._oListBox.removeItem(this._oItemAll);
 		this._oListBox.destroyItems();
 		this._oListBox.addItem(this._oItemAll);
 		this.updateText4All();
 	};
-	
+
 	FacetFilterList.prototype.indexOfItem = function(oItem) {
 		var iIndex = this._oListBox.indexOfItem(oItem);
 		if (iIndex > -1) { // index values -1, -2 and 0 stay unchanged
@@ -190,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return iIndex;
 	};
-	
+
 	FacetFilterList.prototype.getItems = function() {
 		var aListItems = this._oListBox.getItems();
 		var aItems = [];
@@ -199,17 +200,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		}
 		return aItems;
 	};
-	
+
 	FacetFilterList.prototype.setSelectedKeys = function(aSelectedKeys) {
 		this.setProperty("selectedKeys", aSelectedKeys);
 		this.invalidate();
 	};
-	
+
 	FacetFilterList.prototype.setShowCounter = function(bShowCounter) {
 		this.setProperty("showCounter", bShowCounter);
 		this.updateText4All();
 	};
-	
+
 	/**
 	 *
 	 * @private
@@ -221,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			this._oItemAll.setText( this._oResBundle.getText("FACETFILTER_NO_COUNT"));
 		}
 	};
-	
+
 	/**
 	 * Used for after-rendering initialization.
 	 *
@@ -231,7 +232,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		if (!this.bFullHeight) {
 			this._oListBox.setVisibleItems(5);
 		}
-		
+
 		var aKeys = this.getSelectedKeys();
 		if (aKeys && aKeys.length > 0) {
 			this._oListBox.setSelectedKeys(aKeys);
@@ -241,11 +242,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			this._bAllOnly = true;
 		}
 	};
-	
+
 	FacetFilterList.prototype.updateItems = function(){
-	
+
 		this.updateAggregation("items");
-	
+
 		var aSelectedKeys = this._oListBox.getSelectedKeys();
 		//if no selection at all - mark ALL
 		if (aSelectedKeys.length == 0) {
@@ -253,9 +254,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			this._bAllOnly = true;
 			this._oListBox.setSelectedKeys(aSelectedKeys);
 		}
-	
+
 	};
-	
+
 	//Handles the select event of the used ListBox control
 	FacetFilterList.prototype.onSelect = function(oFFList, oEvent) {
 	    var aSelectedKeys = this._oListBox.getSelectedKeys();
@@ -282,9 +283,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	    } else {
 				this._bAllOnly = false;
 	    }
-	
+
 		this.setProperty("selectedKeys", aSelectedKeys, true);
-		
+
 		var aSelectedIndices = [];
 		var aSelectedItems = [];
 		var aAllSelectedItems = this._oListBox.getSelectedItems();
@@ -296,7 +297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 				 }
 			 }
 		}
-		
+
 		this.fireSelect({
 			id:oFFList.getId(),
 			all:this._bAllOnly,
@@ -304,9 +305,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			selectedItems: aSelectedItems
 		});
 	};
-	
+
 	}());
-	
+
 
 	return FacetFilterList;
 

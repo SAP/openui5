@@ -3,6 +3,7 @@ package com.sap.openui5;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URI;
@@ -30,13 +31,13 @@ import org.apache.commons.io.IOUtils;
  * <p>
  * For the proxy request headers like "host" and "referer" will be blocked.
  * <p>
- * If a proxy is required please use the default Java system properties to 
+ * If a proxy is required please use the default Java system properties to
  * specify it like e.g.: <code>http.proxyHost</code>, <code>http.proxyPort</code>,
  * <code>http.nonProxyHosts</code>. For HTTPS just use <code>https</code> instead
  * of the <code>http</code> prefix for the system properties.
  * <p>
  * <i>This class must not be used in productive systems.</i>
- * 
+ *
  * @author Peter Muessig
  */
 public class SimpleProxyServlet extends HttpServlet {
@@ -48,7 +49,7 @@ public class SimpleProxyServlet extends HttpServlet {
 
   /** parameter for configuring the remote location */
   private static final String PARAM_REMOTE_LOCATION = "com.sap.ui5.proxy.REMOTE_LOCATION";
-  
+
 
   /** headers which will be blocked from forwarding by request */
   private String[] BLOCKED_REQUEST_HEADERS = { "host", "referer" };
@@ -56,6 +57,9 @@ public class SimpleProxyServlet extends HttpServlet {
 
   /** base URI of the remote location */
   private String baseUri = null;
+
+  /** query string of the remote location */
+  private String baseUriQueryString = null;
 
 
   /* (non-Javadoc)
@@ -66,7 +70,7 @@ public class SimpleProxyServlet extends HttpServlet {
 
     // read the base uri from the configuration and validate the uri
     try {
-      // first we lookup a system property 
+      // first we lookup a system property
       // if not found we check the servlet init parameters
       // if again not found we check the context init parameters
       this.baseUri = System.getProperty(PARAM_REMOTE_LOCATION, servletConfig.getInitParameter(PARAM_REMOTE_LOCATION));
@@ -74,7 +78,17 @@ public class SimpleProxyServlet extends HttpServlet {
           this.baseUri = servletConfig.getServletContext().getInitParameter(PARAM_REMOTE_LOCATION);
       }
       if (this.baseUri != null) {
-        URI.create(this.baseUri);
+        // validate the URI
+        URI uri = URI.create(this.baseUri);
+        // extract the query string and remove it from base URI
+        if (uri.getQuery() != null) {
+          this.baseUriQueryString = uri.getQuery();
+          this.baseUri = this.baseUri.substring(0, this.baseUri.indexOf("?"));
+        }
+        // remove the trailing slash if there are
+        while (this.baseUri.endsWith("/")) {
+          this.baseUri = this.baseUri.substring(0, this.baseUri.length() - 1);
+        }
       }
     } catch (IllegalArgumentException ex) {
       this.log("URI in context parameter com.sap.ui5.proxy.REMOTE_LOCATION is not valid!", ex);
@@ -96,6 +110,15 @@ public class SimpleProxyServlet extends HttpServlet {
     String pathInfo = request.getRequestURI().substring(request.getContextPath().length() + request.getServletPath().length());
     String queryString = request.getQueryString();
 
+    // add the default query string to the incoming query string
+    if (this.baseUriQueryString != null && !this.baseUriQueryString.isEmpty()) {
+      if (queryString != null && !queryString.isEmpty()) {
+        queryString = this.baseUriQueryString + "&" + queryString;
+      } else {
+        queryString = this.baseUriQueryString;
+      }
+    }
+
     StringBuffer infoLog = new StringBuffer();
     infoLog.append(method).append(" ").append(request.getRequestURL());
 
@@ -107,9 +130,15 @@ public class SimpleProxyServlet extends HttpServlet {
         targetUriString = this.baseUri;
         targetUriString += pathInfo;
       } else {
-        targetUriString = pathInfo.substring(1, pathInfo.indexOf("/", 1));
-        targetUriString += "://";
-        targetUriString += pathInfo.substring(pathInfo.indexOf("/", 1) + 1);
+        int indexOfSlash = pathInfo.indexOf("/", 1);
+        if (indexOfSlash > 0) {
+          targetUriString = pathInfo.substring(1, indexOfSlash);
+          targetUriString += "://";
+          targetUriString += pathInfo.substring(indexOfSlash + 1);
+        } else {
+          response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The proxy request doesn't match the structure \"protocol/domain/path\"!");
+          return;
+        }
       }
       // make sure to replace spaces with %20 in the path
       targetUriString = targetUriString.replace(" ", "%20");
@@ -118,10 +147,10 @@ public class SimpleProxyServlet extends HttpServlet {
         targetUriString += queryString;
       }
     }
-    
+
     // only a valid targetUriString will work
     if (targetUriString != null) {
-    	
+
       // check the targetUriString
       URL targetUrl = new URL(targetUriString);
       infoLog.append("\n").append("  - target: ").append(targetUrl.toString());
@@ -130,7 +159,19 @@ public class SimpleProxyServlet extends HttpServlet {
       //   - HTTP: http.proxyHost, http.proxyPort, http.proxyByPass
       //   - HTTPS: https.proxyHost, https.proxyPort, https.proxyByPass
       HttpURLConnection conn = (HttpURLConnection) new URL(targetUriString).openConnection();
-      conn.setRequestMethod(method);
+      try {
+        conn.setRequestMethod(method);
+      } catch (ProtocolException pex) {
+        // workaround for setting not supported HTTP methods by JRE (e.g. PATCH)
+        //  - search for "setRequestMethodUsingWorkaroundForJREBug"
+        try {
+          Field methodField = HttpURLConnection.class.getDeclaredField("method");
+          methodField.setAccessible(true);
+          methodField.set(conn, method);
+        } catch (Exception ex) {
+          throw new RuntimeException(ex); // NOSONAR
+        }
+      }
       conn.setDoOutput(true);
       conn.setDoInput(true);
       conn.setUseCaches(false);
@@ -159,17 +200,19 @@ public class SimpleProxyServlet extends HttpServlet {
 
       // connect to the target URL
       conn.connect();
-      
-      InputStream is = null; 
+
+      InputStream is = null;
       OutputStream os = null;
-      
+
       try {
-        
-        // pipe the content of a POST, PUT and DELETE request
+
+        // pipe the content of a POST, PUT, PATCH, MERGE and DELETE request
         // -> opening the streams out of the ifs will cause the GET requests
         //    converted into POST requests which happens implicitely by using
         //    conn.getOutputStream().
-        if ("POST".equals(method) || "PUT".equals(method)) {
+        if ("POST".equals(method) || "PUT".equals(method) ||
+            "PATCH".equals(method) || "MERGE".equals(method)) {
+          // PATCH/MERGE => PUT (semantic requests - difference is client intent)
           is = request.getInputStream();
           os = conn.getOutputStream();
           IOUtils.copyLarge(is, os);
@@ -196,7 +239,7 @@ public class SimpleProxyServlet extends HttpServlet {
         conn.disconnect();
         return;
       }
-      
+
       // apply the status of the response
       int responseCode = conn.getResponseCode();
       response.setStatus(responseCode);
@@ -204,7 +247,7 @@ public class SimpleProxyServlet extends HttpServlet {
 
       // pipe and return the response (either the input or the error stream)
       try {
-        
+
         // try to access the inputstream (for success and redirect cases / < 400)
         // and use the errorstream (for client side and server side errors / >= 400)
         if (responseCode >= 200 && responseCode < 400) {
@@ -212,7 +255,7 @@ public class SimpleProxyServlet extends HttpServlet {
         } else {
           is = conn.getErrorStream();
         }
-        
+
         // forward the response headers
         infoLog.append("\n").append("  - response headers:");
         for (Map.Entry<String, List<String>> mapEntry : conn.getHeaderFields().entrySet()) {
@@ -221,10 +264,10 @@ public class SimpleProxyServlet extends HttpServlet {
             List<String> values = mapEntry.getValue();
             if (values != null) {
               for (String value : values) {
-                // we always filter the secure header to avoid the cookie from 
-                // "not" being included in follow up requests in case of the 
-                // proxy is running on HTTP and not HTTPS  
-                if (value != null && "set-cookie".equalsIgnoreCase(name) && 
+                // we always filter the secure header to avoid the cookie from
+                // "not" being included in follow up requests in case of the
+                // proxy is running on HTTP and not HTTPS
+                if (value != null && "set-cookie".equalsIgnoreCase(name) &&
                     value.toLowerCase().contains("secure")) {
                   String[] cookieValues = value.split(";");
                   String newValue = "";
@@ -265,12 +308,12 @@ public class SimpleProxyServlet extends HttpServlet {
       this.log(infoLog.toString());
 
     } else {
-      
+
       // bad request: invalid URL
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      
+
     }
-    
+
   } // method: dispatchRequest
 
 

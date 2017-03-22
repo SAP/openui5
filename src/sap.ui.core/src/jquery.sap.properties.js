@@ -3,24 +3,21 @@
  */
 
 // Provides access to Java-like properties files
-sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
-	function(jQuery/* , jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.sjax'],
+	function(jQuery, Device/* , jQuerySap1 */) {
 	"use strict";
 
 	// Javadoc for private inner class "Properties" - this list of comments is intentional!
 	/**
-	 * @interface  Represents a list of properties (key/value pairs).
+	 * @interface Represents a collection of string properties (key/value pairs).
 	 *
-	 * Each key and its corresponding value in the property list is a string.
-	 * Values are unicode escaped \ue0012.
-	 * Keys are case-sensitive and only alpha-numeric characters with a leading character are allowed.
+	 * Each key and its corresponding value in the collection is a string, keys are case-sensitive.
 	 *
-	 * Use {@link jQuery.sap.properties} to create an instance of jQuery.sap.util.Properties.
+	 * Use {@link jQuery.sap.properties} to create an instance of <code>jQuery.sap.util.Properties</code>.
 	 *
-	 * The getProperty method is used to retrieve a value from the list.
-	 * The setProperty method is used to store or change a property in the list.
-	 * Additionally, the getKeys method can be used to retrieve an array of all keys that are
-	 * currently in the list.
+	 * The {@link #getProperty} method can be used to retrieve a value from the collection,
+	 * {@link #setProperty} to store or change a value for a key and {@link #getKeys}
+	 * can be used to retrieve an array of all keys that are currently stored in the collection.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -28,33 +25,48 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 * @name jQuery.sap.util.Properties
 	 * @public
 	 */
+
 	/**
-	 * Returns the value of a given key. Optionally, a given default value is returned if the requested key is not in the list.
-	 * @param {string} sKey The key of the property
-	 * @param {string} [sDefaultValue] Optional, the default value if the requested key is not in the list.
-	 * @return {string} The value of a given key. The default value (if given) is returned if the requested key is not in the list.
+	 * Returns the value for the given key or <code>null</code> if the collection has no value for the key.
+	 *
+	 * Optionally, a default value can be given which will be returned if the collection does not contain
+	 * a value for the key; only non-empty default values are supported.
+	 *
+	 * @param {string} sKey Key to return the value for
+	 * @param {string} [sDefaultValue=null] Optional, a default value that will be returned
+	 *    if the requested key is not in the collection
+	 * @returns {string} Value for the given key or the default value or <code>null</code>
+	 *    if no default value or a falsy default value was given
+	 * @public
 	 *
 	 * @function
 	 * @name jQuery.sap.util.Properties.prototype.getProperty
 	 */
 	/**
-	 * Returns an array of all keys in the property list.
-	 * @return {array} All keys in the property list.
+	 * Returns an array of all keys in the property collection.
+	 * @returns {string[]} All keys in the property collection
+	 * @public
 	 *
 	 * @function
 	 * @name jQuery.sap.util.Properties.prototype.getKeys
 	 */
 	/**
-	 * Adds or changes a given key to/in the list.
-	 * @param {string} sKey The key of the property
-	 * @param {string} sValue The value for the key with unicode encoding.
+	 * Stores or changes the value for the given key in the collection.
+	 *
+	 * If the given value is not a string, the collection won't be modified.
+	 * The key is always cast to a string.
+	 *
+	 * @param {string} sKey Key of the property
+	 * @param {string} sValue String value for the key
+	 * @public
 	 *
 	 * @function
 	 * @name jQuery.sap.util.Properties.prototype.setProperty
 	 */
 	/**
-	 * Creates and returns a clone of the property list.
-	 * @return {jQuery.sap.util.Properties} A clone of the property list
+	 * Creates and returns a clone of the property collection.
+	 * @returns {jQuery.sap.util.Properties} A clone of the property collection
+	 * @public
 	 *
 	 * @function
 	 * @name jQuery.sap.util.Properties.prototype.clone
@@ -65,7 +77,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 */
 	var Properties = function() {
 		this.mProperties = {};
-		this.aKeys = [];
+		this.aKeys = null;
 	};
 
 	/*
@@ -85,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 * Implements jQuery.sap.util.Properties.prototype.getKeys
 	 */
 	Properties.prototype.getKeys = function() {
-		return this.aKeys;
+		return this.aKeys || (this.aKeys = Object.keys(this.mProperties));
 	};
 
 	/*
@@ -95,8 +107,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 		if (typeof (sValue) != "string") {
 			return;
 		}
-		if (typeof (this.mProperties[sKey]) != "string") {
-			this.aKeys.push(sKey);
+		if (typeof (this.mProperties[sKey]) != "string" && this.aKeys ) {
+			this.aKeys.push(String(sKey));
 		}
 		this.mProperties[sKey] = sValue;
 	};
@@ -107,16 +119,16 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	Properties.prototype.clone = function() {
 		var oClone = new Properties();
 		oClone.mProperties = jQuery.extend({}, this.mProperties);
-		oClone.aKeys = jQuery.merge([], this.aKeys);
 		return oClone;
 	};
 
-	/*
-	 * Saves the property list to a given URL using a POST request.
-	 */
-	//sap.ui.resource.Properties.prototype.save = function(sUrl) {
-	//	return jQuery.sap.syncPost(sUrl, this.mProperties);
-	//};
+	// helper to create a memory-optimized version of the given string, depending on the number of concat operations (V8 only)
+	var flatstr = Device.browser.chrome ? function (s, iConcatOps) {
+		if ( iConcatOps > 2 && 40 * iConcatOps > s.length ) {
+			Number(s); // cast to number on V8 has the side effect of creating a flat version of concat strings
+		}
+		return s;
+	} : function(s) { return s; };
 
 	/**
 	 * RegExp used to split file into lines, also removes leading whitespace.
@@ -125,14 +137,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	var rLines = /(?:\r\n|\r|\n|^)[ \t\f]*/;
 
 	/**
-	 * RegExp that handles escapes, continuation line markers and key/value separators
+	 * Regular expressions to detect escape sequences (unicode or special) and continuation line markers
+	 * in a single line of a properties file. The first expression also detects key/value separators and is used
+	 * as long as no key has been found. The second one is used for the remainder of the line.
 	 *
-	 *              [---unicode escape--] [esc] [cnt] [---key/value separator---]
+	 *                         [---unicode escape--] [esc] [cnt] [---key/value separator---]
 	 */
-	var rEscapes = /(\\u[0-9a-fA-F]{0,4})|(\\.)|(\\$)|([ \t\f]*[ \t\f:=][ \t\f]*)/g;
+	var rEscapesOrSeparator = /(\\u[0-9a-fA-F]{0,4})|(\\.)|(\\$)|([ \t\f]*[ \t\f:=][ \t\f]*)/g;
+	var rEscapes            = /(\\u[0-9a-fA-F]{0,4})|(\\.)|(\\$)/g;
 
 	/**
-	 * Special escape characters as supported by properties format
+	 * Special escape characters as supported by properties format.
 	 * @see JDK API doc for java.util.Properties
 	 */
 	var mEscapes = {
@@ -152,10 +167,19 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	function parse(sText, oProp) {
 
 		var aLines = sText.split(rLines), // split file into lines
-			sLine,sKey,sValue,bKey,i,m,iLastIndex;
+			sLine,rMatcher,sKey,sValue,i,m,iLastIndex,iConcatOps;
+
+		function append(s) {
+			if ( sValue ) {
+				sValue = sValue + s;
+				iConcatOps++;
+			} else {
+				sValue = s;
+				iConcatOps = 0;
+			}
+		}
 
 		oProp.mProperties = {};
-		oProp.aKeys = [];
 
 		for (i = 0; i < aLines.length; i++) {
 			sLine = aLines[i];
@@ -164,53 +188,52 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 				continue;
 			}
 
-			rEscapes.lastIndex = iLastIndex = 0;
+			// start with the full regexp incl. key/value separator
+			rMatcher = rEscapesOrSeparator;
+			rMatcher.lastIndex = iLastIndex = 0;
+			sKey = null;
 			sValue = "";
-			bKey = true;
 
-			while ( (m = rEscapes.exec(sLine)) !== null ) {
+			while ( (m = rMatcher.exec(sLine)) !== null ) {
 				// handle any raw, unmatched input
 				if ( iLastIndex < m.index ) {
-					sValue += sLine.slice(iLastIndex, m.index);
+					append(sLine.slice(iLastIndex, m.index));
 				}
-				iLastIndex = rEscapes.lastIndex;
+				iLastIndex = rMatcher.lastIndex;
 				if ( m[1] ) {
 					// unicode escape
 					if ( m[1].length !== 6 ) {
 						throw new Error("Incomplete Unicode Escape '" + m[1] + "'");
 					}
-					sValue += String.fromCharCode(parseInt(m[1].slice(2), 16));
+					append(String.fromCharCode(parseInt(m[1].slice(2), 16)));
 				} else if ( m[2] ) {
 					// special or simple escape
-					sValue += mEscapes[m[2]] || m[2].slice(1);
+					append(mEscapes[m[2]] || m[2].slice(1));
 				} else if ( m[3] ) {
 					// continuation line marker
 					sLine = aLines[++i];
-					rEscapes.lastIndex = iLastIndex = 0;
-				} else if ( m[4] ) {
-					// key/value separator
-					if ( bKey ) {
-						bKey = false;
-						sKey = sValue;
-						sValue = "";
-					} else {
-						sValue += m[4];
-					}
+					rMatcher.lastIndex = iLastIndex = 0;
+				} else if ( m[4] ) { // only occurs in full regexp
+					// key/value separator detected
+					// -> remember key and switch to simplified regexp
+					sKey = sValue;
+					sValue = "";
+					rMatcher = rEscapes;
+					rMatcher.lastIndex = iLastIndex;
 				}
 			}
 			if ( iLastIndex < sLine.length ) {
-				sValue += sLine.slice(iLastIndex);
+				append(sLine.slice(iLastIndex));
 			}
-			if ( bKey ) {
+			if ( sKey == null ) {
 				sKey = sValue;
 				sValue = "";
 			}
-			oProp.aKeys.push(sKey);
-			oProp.mProperties[sKey] = sValue;
+
+			oProp.mProperties[sKey] = flatstr(sValue, sValue ? iConcatOps : 0); // Note: empty sValue implies iConcatOps == 0
+
 		}
 
-		// remove duplicates from keyset (sideeffect:sort)
-		jQuery.sap.unique(oProp.aKeys);
 	}
 
 	/**
@@ -238,68 +261,63 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 *	var sValue2 = oProperties.getProperty("KEY_2","Default");
 	 * </pre>
 	 *
-	 * @public
 	 * @param {object} [mParams] Parameters used to initialize the property list
 	 * @param {string} [mParams.url] The URL to the .properties file which should be loaded.
-	 * @param {boolean} [mParams.async] Whether the .properties file which should be loaded asynchronously (Default: <code>false</code>)
-	 * @param {object} [mParams.headers] A map of additional header key/value pairs to send along with the request (see headers option of jQuery.ajax).
-	 * @return {jQuery.sap.util.Properties|Promise} A new property list instance (synchronous case). In case of asynchronous loading an ECMA Script 6 Promise is returned.
+	 * @param {boolean} [mParams.async=false] Whether the .properties file which should be loaded asynchronously
+	 * @param {object} [mParams.headers] A map of additional header key/value pairs to send along with
+	 *    the request (see <code>headers</code> option of <code>jQuery.ajax</code>)
+	 * @param {object} [mParams.returnNullIfMissing=false] Whether <code>null</code> should be returned
+	 *    for a missing properties file; by default an empty collection is returned
+	 * @return {jQuery.sap.util.Properties|null|Promise} A new property collection (synchronous case)
+	 *    or <code>null</code> if the file could not be loaded and <code>returnNullIfMissing</code>
+	 *    was set; in case of asynchronous loading, always a Promise is returned, which resolves with
+	 *    the property collection or with <code>null</code> if the file could not be loaded and
+	 *    <code>returnNullIfMissing</code> was set to true
+	 * @throws {Error} When the file has syntax issues (e.g. incomplete unicode escapes);
+	 *    in async mode, the error is not thrown but the returned Promise will be rejected
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 * @public
 	 */
 	jQuery.sap.properties = function properties(mParams) {
 		mParams = jQuery.extend({url: undefined, headers: {}}, mParams);
 
 		var bAsync = !!mParams.async,
-			oProp = new Properties();
-
+			oProp = new Properties(),
+			vResource;
 
 		function _parse(sText){
-			if (typeof (sText) == "string") {
+			if ( typeof sText === "string" ) {
 				parse(sText, oProp);
+				return oProp;
 			}
+			return mParams.returnNullIfMissing ? null : oProp;
 		}
 
-		function _load(){
-			var oRes;
-
-			if (typeof (mParams.url) == "string") {
-				oRes = jQuery.sap.loadResource({
-					url: mParams.url,
-					dataType: 'text',
-					headers: mParams.headers,
-					failOnError: false,
-					async: bAsync
-				});
-			}
-
-			return oRes;
+		if ( typeof mParams.url === "string" ) {
+			vResource = jQuery.sap.loadResource({
+				url: mParams.url,
+				dataType: 'text',
+				headers: mParams.headers,
+				failOnError: false,
+				async: bAsync
+			});
 		}
 
 		if (bAsync) {
-			return new window.Promise(function(resolve, reject){
-				var oRes = _load();
-				if (!oRes) {
-					resolve(oProp);
-					return;
-				}
+			if ( !vResource ) {
+				return Promise.resolve( _parse(null) );
+			}
 
-				oRes.then(function(oVal){
-					try {
-						_parse(oVal);
-						resolve(oProp);
-					} catch (e) {
-						reject(e);
-					}
-				}, function(oVal){
-					reject(oVal instanceof Error ? oVal : new Error("Problem during loading of property file '" + mParams.url + "': " + oVal));
-				});
+			return vResource.then(function(oVal) {
+				return _parse(oVal);
+			}, function(oVal) {
+				throw (oVal instanceof Error ? oVal : new Error("Problem during loading of property file '" + mParams.url + "': " + oVal));
 			});
-		} else {
-			_parse(_load());
-			return oProp;
 		}
+
+		return _parse( vResource );
 	};
 
 	return jQuery;
 
-}, /* bExport= */ false);
+});

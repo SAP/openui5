@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.layout.sample.FormToolbar.Component", {
 
 		metadata : {
-			rootView : "sap.ui.layout.sample.FormToolbar.Panel",
+			rootView : "sap.ui.layout.sample.FormToolbar.Page",
 			dependencies : {
 				libs : [
 					"sap.m",
@@ -15,8 +15,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			config : {
 				sample : {
 					files : [
-						"Panel.view.xml",
-						"Panel.controller.js"
+						"Page.view.xml",
+						"Page.controller.js"
 					]
 				}
 			}

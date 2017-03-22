@@ -1,0 +1,164 @@
+<mvc:View
+	id="view1"
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:semantic="sap.f.semantic"
+	controllerName="sap.f.sample.SemanticPageFreeStyle.C">
+
+	<semantic:SemanticPage
+		id="mySemanticPage"
+		headerPinnable="true"
+		toggleHeaderOnTitleClick="true"
+		preserveHeaderStateOnScroll="false"
+		showFooter="true">
+
+		<!-- Title Heading-->
+		<semantic:titleHeading>
+			<Title text="{/title}" />
+		</semantic:titleHeading>
+
+		<!-- TitleExpanded content-->
+		<semantic:titleSnappedContent>
+			<Text text="{/titleSnappedContent/text}"/>
+		</semantic:titleSnappedContent>
+
+		<!-- Header Content -->
+		<semantic:headerContent>
+			<FlexBox
+					alignItems="Start"
+					justifyContent="SpaceBetween">
+				<items>
+					<Panel backgroundDesign="Transparent">
+						<content>
+							<ObjectAttribute title="Functional Area" text="{/objectDescription/category}"/>
+							<ObjectAttribute title="Cost Center" text="{/objectDescription/center}"/>
+							<ObjectAttribute title="Email" text="{/objectDescription/email}"/>
+						</content>
+					</Panel>
+					<ObjectStatus text="In Stock" state="{/objectDescription/status}" />
+				</items>
+			</FlexBox>
+		</semantic:headerContent>
+
+		<!-- Content -->
+		<semantic:content>
+			<Table
+				id="idProductsTable"
+				inset="false"
+				items="{path:'/ProductCollection'}">
+
+				<columns>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="Name"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="Category"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="SupplierName"/>
+					</Column>
+				</columns>
+
+				<items>
+					<ColumnListItem vAlign="Middle">
+						<cells>
+							<ObjectIdentifier title="{Name}" text="{ProductId}"/>
+							<Text text="{Category}"/>
+							<Text text="{SupplierName}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</semantic:content>
+
+		<semantic:titleMainAction>
+			<semantic:TitleMainAction text="Edit"/>
+		</semantic:titleMainAction>
+
+		<semantic:addAction>
+			<semantic:AddAction />
+		</semantic:addAction>
+
+		<semantic:deleteAction>
+			<semantic:DeleteAction />
+		</semantic:deleteAction>
+
+		<semantic:copyAction>
+			<semantic:CopyAction />
+		</semantic:copyAction>
+
+		<semantic:favoriteAction>
+			<semantic:FavoriteAction />
+		</semantic:favoriteAction>
+
+		<semantic:flagAction>
+			<semantic:FlagAction />
+		</semantic:flagAction>
+
+		<semantic:fullScreenAction>
+			<semantic:FullScreenAction />
+		</semantic:fullScreenAction>
+
+		<semantic:closeAction>
+			<semantic:CloseAction />
+		</semantic:closeAction>
+
+		<!-- Custom Title Text Content-->
+		<semantic:titleCustomTextActions>
+			<Button text="ToggleFooter" press="showFooter"/>
+		</semantic:titleCustomTextActions>
+
+		<!-- Custom Title Icon Content-->
+		<semantic:titleCustomIconActions>
+			<OverflowToolbarButton icon="sap-icon://cart" text="cart" />
+		</semantic:titleCustomIconActions>
+
+		 <!--Semantic ShareMenu Buttons-->
+		<semantic:discussInJamAction>
+			<semantic:DiscussInJamAction />
+		</semantic:discussInJamAction>
+
+		<semantic:shareInJamAction>
+			<semantic:ShareInJamAction />
+		</semantic:shareInJamAction>
+
+		<semantic:printAction>
+			<semantic:PrintAction />
+		</semantic:printAction>
+
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction />
+		</semantic:sendEmailAction>
+
+		<semantic:sendMessageAction>
+			<semantic:SendMessageAction />
+		</semantic:sendMessageAction>
+
+		<!-- Custom Share Actions -->
+		<semantic:customShareActions>
+			<Button icon= "sap-icon://bed" text="Bed" />
+			<Button icon= "sap-icon://flight" text="Flight" />
+		</semantic:customShareActions>
+
+		<!-- Semantic Footer Buttons -->
+		<semantic:positiveAction>
+			<semantic:PositiveAction />
+		</semantic:positiveAction>
+
+		<semantic:negativeAction>
+			<semantic:NegativeAction />
+		</semantic:negativeAction>
+
+		<semantic:messagesIndicator>
+			<semantic:MessagesIndicator press="onMessagesButtonPress"/>
+		</semantic:messagesIndicator>
+
+		<!-- Custom Footer Content-->
+		<semantic:footerCustomActions>
+			<Button text="Save" />
+			<Button text="Cancel" />
+		</semantic:footerCustomActions>
+
+	</semantic:SemanticPage>
+</mvc:View>

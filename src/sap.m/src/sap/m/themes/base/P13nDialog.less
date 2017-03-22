@@ -1,13 +1,25 @@
+/* ================================= */
+/* CSS for control sap.m/P13nDialog  */
+/* Base theme                        */
+/* ================================= */
 
-/* ============================================= */
-/* CSS for control sap.m/P13nDialog.control */
-/* ============================================= */
-
-.sapMP13nDialog{
-  color: @sapUiTextColor;
-  border: 1px solid blue;
+.sapMP13nDialog {
+  color: @sapUiBaseText;
 }
 
-.sapMP13nDialog .sapMITBHead{
+.sapMP13nDialog .sapMITBHead {
 	margin : 0rem;
+}
+
+.sapMP13nDialog.sapMDialog > .sapMDialogSection {
+    background-color: @sapUiBaseBG;
+} 
+
+.sapMP13nDialog.sapUiSizeCompact .sapMSegBBtn {
+    height: 2rem;
+    line-height: 2rem;
+}
+
+.sapMP13nDialog .sapMBarLeft {
+    padding-left: 0rem;
 }

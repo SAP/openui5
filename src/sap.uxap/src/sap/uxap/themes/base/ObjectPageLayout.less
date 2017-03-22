@@ -1,0 +1,220 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageLayout  */
+/* Base theme                                 */
+/* ========================================== */
+
+.sapUxAPObjectPageLayout {
+	width: 100%;
+	height: 100%;
+	position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+	isolation: isolate;
+	z-index: 0;
+}
+
+body > .sapUxAPObjectPageLayout,
+.sapUiVltCell .sapUxAPObjectPageLayout {
+	position: fixed;
+}
+
+.sapUxAPObjectPageHeaderTitle {
+    flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+}
+
+.sapUxAPObjectPageSubSectionPromoted:not(:first-of-type) {
+	padding-top: 0.25rem;
+}
+
+.sapUxAPObjectPageWrapper {
+    position:relative;
+    height:100%;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+	overflow-y: auto;
+}
+
+.sapUxAPObjectPageWrapperTransform {
+	/* Performance tweak - force the objectPageWrapper content on to the GPU effectively separating it in a different
+	composite layer. This is better done with will-change: transform, but at the moment is not supported on
+	many platforms. When will-change becomes widely adopted than it's better to use it rather than translate3d */
+	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+}
+
+.sapUxAPObjectPageScroll {
+	position: relative;
+}
+
+.sapUxAPObjectPageContainerNoBar > .sapUxAPObjectPageSection:first-child {
+	margin-top:  2rem;
+}
+
+/****
+    sapUxAPObjectPageScroll copied from sapMScroll for now
+****/
+
+.sapUxAPObjectPageScrollV,
+.sapUxAPObjectPageScrollH,
+.sapUxAPObjectPageScrollV > div, .sapUxAPObjectPageScrollH > div {
+	position: absolute;
+}
+
+.sapUxAPObjectPageScrollV > div, .sapUxAPObjectPageScrollH > div {
+	box-sizing: border-box;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border-width: 0.0625rem;
+	border-style: solid;
+	border-color: rgba(255, 255, 255, 0.901961);
+	border-radius: 0.1875rem;
+	background-color: rgba(0, 0, 0, 0.498039)
+}
+
+.sapUxAPObjectPageScrollV {
+	width: 0.438rem;
+	right: 0.063rem;
+	top: 0;
+	bottom: 0
+}
+
+.sapUxAPObjectPageScrollV > div {
+	width: 100%
+}
+
+.sapUxAPObjectPageScrollH {
+	height: 0.4375rem;
+	bottom: 0.0625rem;
+	left: 0.125rem;
+	right: 0.125rem
+}
+
+.sapUxAPObjectPageScrollH > div {
+	height: 100%
+}
+
+.sapUxAPObjectChildPage {
+	width: 0.5rem;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	right: auto;
+	z-index: 3000;
+	background: @sapUiObjectHeaderBorderColor;
+}
+
+.sapUxAPObjectPageLayout {
+	.sapUxAPObjectPageFooter {
+		position: absolute;
+		height: 3rem;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
+		margin-bottom: 0.5rem;
+
+		.sapUxAPObjectPageFloatingFooter {
+			border: 1px solid;
+			border-radius: 0.25rem;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageLayout .sapUxAPObjectPageFooter .sapUxAPObjectPageFloatingFooter {
+	height: 2.5rem;
+}
+
+html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
+	.sapUxAPObjectPageFloatingFooterShow {
+		-webkit-animation: bounceShow 0.35s forwards ease-in-out;
+		animation: bounceShow 0.35s forwards ease-in-out;
+	}
+	.sapUxAPObjectPageFloatingFooterHide {
+		-webkit-animation: bounceHide 0.35s forwards ease-in-out;
+		animation: bounceHide 0.35s forwards ease-in-out;
+	}
+
+	@-webkit-keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@-webkit-keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+	@keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+}
+/* Only on Windows 8 with IE 11 there's some weird incompatibility between the usage of the transform property
+ in the sapMShell and the one in the objectPageWrapper.
+ Also the z-index causes the scroll bars of the table to show in the headerTitle.
+ For more information see internal incident 1670194272. */
+html[data-sap-ui-browser^="ie"][data-sap-ui-os^="win8"] .sapMShell {
+
+  .sapUxAPObjectPageWrapperTransform {
+    transform: none;
+  }
+
+  .sapUxAPObjectPageHeaderTitle {
+    z-index: 3;
+  }
+}
+
+.sap-desktop .sapUxAPObjectPageCustomScroller {
+    right: 0px;
+    position: absolute;
+    z-index: 100;
+}
+
+.ui-helper-clearfix:before,
+.ui-helper-clearfix:after {
+	content: "";
+	display: table;
+}
+
+.ui-helper-clearfix:after {
+	clear: both;
+}
+
+.ui-helper-clearfix {
+	zoom: 1;
+}

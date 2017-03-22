@@ -3,30 +3,37 @@
 
 <!--
   Tested class: sap.ui.core.BusyIndicator
-  Author: d046011
 -->
 
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.ui.core.LocalBusyIndicator</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.ui.commons">
+			data-sap-ui-libs="sap.ui.commons, sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<script language="javascript">
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
-		module("Basic", {
-			setup : function() {
+		<script>
+		sinon.config.useFakeTimers = false;
+
+		// load required modules
+		jQuery.sap.require("sap.ui.core.LocalBusyIndicatorSupport");
+
+		QUnit.module("Basic", {
+			beforeEach : function() {
 				this.oListBox = new sap.ui.commons.ListBox({
 					tooltip : "Country",
 					editable : false,
@@ -41,32 +48,108 @@
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+
+			afterEach : function() {
 				this.oListBox.destroy();
 				this.oSlider.destroy();
 			}
 		});
+
 		// make sure the controls are not busy
-		test("InitialCheck", function() {
-			equal(this.oSlider.getBusy(), false, "Slider is not busy");
-			equal(this.oListBox.getBusy(), false, "Listbox is not busy");
+		QUnit.test("InitialCheck", function(assert) {
+			assert.equal(this.oSlider.getBusy(), false, "Slider is not busy");
+			assert.equal(this.oListBox.getBusy(), false, "Listbox is not busy");
 		});
 
-		asyncTest("Accessibility", function() {
+		QUnit.test("Accessibility", function(assert) {
+			var done = assert.async();
 			this.oListBox.setBusy(true);
 			$LB = this.oListBox.$();
 
 			setTimeout(function() {
-				equal($LB.children().length, 2, 'Busy Indicator added to DOM tree');
-				ok($LB[0].hasAttribute("aria-busy", true), 'ARIA busy is set to Control');
-				ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("aria-role", "progressbar"),
+				assert.equal($LB.children().length, 2, 'Busy Indicator added to DOM tree');
+				assert.ok($LB[0].hasAttribute("aria-busy", true), 'ARIA busy is set to Control');
+				assert.ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("role", "progressbar"),
 					'ARIA role "progressbar" is set to busy indicator');
-				start();
+				done();
 			}, 1200);
 		});
 
-		module("Open and Close", {
-			setup : function() {
+		QUnit.test("Check suppressed events", function(assert) {
+			var done = assert.async();
+			this.oListBox.setBusyIndicatorDelay(0);
+			this.oListBox.setBusy(true);
+			var $LB = this.oListBox.$();
+
+			var aPreventedEvents = [
+				"focusin",
+				"focusout",
+				"keydown",
+				"keypress",
+				"keyup",
+				"mousedown",
+				"touchstart",
+				"touchmove",
+				"mouseup",
+				"touchend",
+				"click"
+			];
+			
+			var sListenerCalled = 'not called';
+			function fnEventListener(oEvent) {
+				sListenerCalled = 'called';
+			}
+
+			// register listener for all prevented events
+			// Note: the issues described in BCP 1680184582 only occurs when the prevent-listener of the LocalBusyIndicator 
+			// is executed __BEFORE__ this listener here. As jQuery uses a while(--i) loop, this means we have to register 
+			// our listener before the LBI registers its own listener.
+			// TODO consider using a capturing phase listener in LBI to make this more robust.
+			for (var i = 0; i < aPreventedEvents.length; i++) {
+				$LB.bind(aPreventedEvents[i], fnEventListener);
+			}
+
+			setTimeout(function() {
+
+				for (var i = 0; i < aPreventedEvents.length; i++) {
+
+					try {
+						sListenerCalled = 'not called';
+						sap.ui.test.qunit.triggerEvent(aPreventedEvents[i], $LB);
+						assert.equal(sListenerCalled, 'not called', "Event '" + aPreventedEvents[i] + "' should be suppressed");
+					} catch (ex) {
+						assert.ok(false, "Event '" + aPreventedEvents[i] + "' NOT suppressed");
+					}
+
+				}
+				
+				// hide busy indicator and test that events are no longer prevented
+				this.oListBox.setBusy(false);
+				$LB = this.oListBox.$();
+
+				setTimeout(function() {
+					
+					for (var i = 0; i < aPreventedEvents.length; i++) {
+
+						try {
+							sListenerCalled = 'not called';
+							sap.ui.test.qunit.triggerEvent(aPreventedEvents[i], $LB);
+							assert.equal(sListenerCalled, 'called', "Event '" + aPreventedEvents[i] + "' should no longer be suppressed");
+						} catch (ex) {
+							// assert.ok(false, "Event '" + aPreventedEvents[i] + "' NOT suppressed");
+						}
+
+					}
+					
+					done();
+
+				}.bind(this), 250);
+				
+			}.bind(this), 250);
+		});
+
+		QUnit.module("Open and Close", {
+			beforeEach : function() {
 				this.oListBox = new sap.ui.commons.ListBox({
 					tooltip : "Country",
 					editable : false,
@@ -81,64 +164,114 @@
 
 				sap.ui.getCore().applyChanges();
 			},
-			teardown : function() {
+
+			afterEach : function() {
 				this.oListBox.destroy();
 				this.oSlider.destroy();
 			}
 		});
-		asyncTest("Delayed opening", function() {
+
+		QUnit.test("Delayed opening", function(assert) {
+			var done = assert.async();
 			var that = this;
 			this.oListBox.setBusy(true);
 
-			equal(this.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator not yet added to DOM');
-			equal(this.oListBox.getBusy(), true, 'ListBox is busy');
+			assert.equal(this.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator not yet added to DOM');
+			assert.equal(this.oListBox.getBusy(), true, 'ListBox is busy');
 
 			setTimeout(function() {
-				equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Busy Indicator is part of the DOM');
-				start();
+				assert.equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Busy Indicator is part of the DOM');
+				done();
 			}, 1200);
 		});
 
-		asyncTest("Close Busy Indicator", function() {
+		QUnit.test("Close Busy Indicator", function(assert) {
+			var done = assert.async();
 			var that = this;
 			this.oListBox.setBusy(true);
 
-			equal(this.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator not yet added to DOM');
-			equal(this.oListBox.getBusy(), true, 'ListBox is busy');
+			assert.equal(this.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator not yet added to DOM');
+			assert.equal(this.oListBox.getBusy(), true, 'ListBox is busy');
 
 			setTimeout(function() {
-				equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Busy Indicator is part of the DOM');
+				assert.equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Busy Indicator is part of the DOM');
 
 				that.oListBox.setBusy(false);
 
 				setTimeout(function() {
-					equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator was romoved from DOM');
-					equal(that.oListBox.getBusy(), false, 'ListBox is not busy anymore');
-					start();
+					assert.equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator was romoved from DOM');
+					assert.equal(that.oListBox.getBusy(), false, 'ListBox is not busy anymore');
+					done();
 				}, 250);
 			}, 1200);
 		});
 
-		asyncTest("Open multiple busy indicators", function() {
+		/**
+		 * This test checks if the busy indicator does not crash after the outer control was already
+		 * removed from the DOM, when the
+		 */
+		QUnit.test("BusyIndicator and Already Closed sap.m.BusyDialog does not crash", function(assert) {
+			var done = assert.async();
+			var that = this;
+
+			var dialog = new sap.m.BusyDialog({
+				title: "Loading",
+				text: "something loading..."
+			});
+
+			dialog.open();
+			setTimeout(function () {
+				jQuery("#__dialog0-busyInd").control(0).setBusy(true);
+				dialog.close();
+				assert.ok("everythings fine");
+				done();
+			}, 250);
+
+		});
+
+		QUnit.test("Open multiple busy indicators", function(assert) {
+			var done = assert.async();
 			var that = this;
 
 			this.oListBox.setBusy(true);
 			this.oSlider.setBusy(true);
 
-			equal(this.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Listbox Busy Indicator not yet added to DOM');
-			equal(this.oSlider.$().children('.sapUiLocalBusyIndicator').length, 0, 'Slider Busy Indicator not yet added to DOM');
-			equal(this.oListBox.getBusy(), true, 'ListBox is busy');
-			equal(this.oSlider.getBusy(), true, 'Slider is busy');
+			assert.equal(this.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Listbox Busy Indicator not yet added to DOM');
+			assert.equal(this.oSlider.$().children('.sapUiLocalBusyIndicator').length, 0, 'Slider Busy Indicator not yet added to DOM');
+			assert.equal(this.oListBox.getBusy(), true, 'ListBox is busy');
+			assert.equal(this.oSlider.getBusy(), true, 'Slider is busy');
 
 			setTimeout(function() {
-				equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Listbox Busy Indicator is part of the DOM');
-				equal(that.oSlider.$().children('.sapUiLocalBusyIndicator').length, 1, 'Slider Busy Indicator is part of the DOM');
-				start();
+				assert.equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Listbox Busy Indicator is part of the DOM');
+				assert.equal(that.oSlider.$().children('.sapUiLocalBusyIndicator').length, 1, 'Slider Busy Indicator is part of the DOM');
+				done();
 			}, 1200);
 		});
 
-		module("Delay", {
-			setup : function() {
+		// as XML-View maintains the dom itself busy indicator should treat this particularly, as otherwise duplicate
+		// busy indicators would be created when rerendering and never removed
+		QUnit.test("Busy indicator on XML View", function(assert) {
+			var done = assert.async();
+			// setup the busy view
+			jQuery.sap.require("sap.ui.core.mvc.XMLView");
+			var myView = sap.ui.xmlview({viewContent:'<mvc:View xmlns:mvc="sap.ui.core.mvc" busyIndicatorDelay="0"></mvc:View>'}).placeAt('target1');
+			sap.ui.getCore().applyChanges();
+			myView.setBusy(true);
+			// this rerendering is crucial to test the behavior
+			myView.rerender();
+			setTimeout(function() {
+				// assert
+				assert.ok(myView.$("busyIndicator").length, "BusyIndicator rendered");
+				myView.setBusy(false);
+				assert.ok(!myView.$("busyIndicator").length, "All BusyIndicators removed");
+				//cleanup
+				myView.destroy();
+				done();
+			}, 50);
+		});
+
+		QUnit.module("Delay", {
+			beforeEach : function() {
 				this.iDelay = 500;
 				this.oButton = new sap.ui.commons.Button({
 					busy : true,
@@ -146,36 +279,40 @@
 					text : "Delayed BusyIndicator"
 				});
 			},
-			teardown : function() {
+
+			afterEach : function() {
 				delete this.iDelay;
 				this.oButton.destroy();
 			}
 		});
-		asyncTest("OnAfterRendering", function() {
-			expect(4);
+
+		QUnit.test("OnAfterRendering", function(assert) {
+			var done = assert.async();
+			assert.expect(4);
 			this.oButton.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 			var that = this;
 
 			setTimeout(function() {
 				// set busy after rendering but no animation shown
-				ok(that.oButton.getBusy(), "Button is set to busy");
+				assert.ok(that.oButton.getBusy(), "Button is set to busy");
 				var $BusyIndicator = that.oButton.$("busyIndicator");
-				ok(!$BusyIndicator.length, "BusyIndicator isn't shown yet");
+				assert.ok(!$BusyIndicator.length, "BusyIndicator isn't shown yet");
 
 				setTimeout(function() {
 					// set busy and animation shown
-					ok(that.oButton.getBusy(), "Button still set to busy");
+					assert.ok(that.oButton.getBusy(), "Button still set to busy");
 					$BusyIndicator = that.oButton.$("busyIndicator");
-					ok($BusyIndicator.length, "BusyIndicator is shown after delay");
+					assert.ok($BusyIndicator.length, "BusyIndicator is shown after delay");
 
-					start();
+					done();
 				}, that.iDelay);
 			}, 200);
 		});
 
-		asyncTest("Ensuring DelayedCall Only Used Once", function() {
-			expect(2);
+		QUnit.test("Ensuring DelayedCall Only Used Once", function(assert) {
+			var done = assert.async();
+			assert.expect(2);
 
 			var iFirstDelayedCallId,
 				iSecondDelayedCallId;
@@ -196,7 +333,7 @@
 			var that = this;
 
 			setTimeout(function() {
-				ok(iFirstDelayedCallId && !iSecondDelayedCallId, "Delayed call started in afterRendering of control");
+				assert.ok(iFirstDelayedCallId && !iSecondDelayedCallId, "Delayed call started in afterRendering of control");
 
 				// Force a re-rendering while waiting for the delay
 				// (possible for example if a binding changes properties asynchronously)
@@ -204,11 +341,113 @@
 
 				setTimeout(function() {
 					// set busy and animation shown
-					ok(iFirstDelayedCallId === iSecondDelayedCallId, "Delayed call not overwritten by rerendering");
+					assert.ok(iFirstDelayedCallId === iSecondDelayedCallId, "Delayed call not overwritten by rerendering");
 
-					start();
+					done();
 				}, that.iDelay);
 			}, 20);
+		});
+
+		QUnit.module("Busy Animation");
+
+		QUnit.test("Check if small Animation is used", function(assert) {
+			var done = assert.async();
+
+			this.oBtn = new sap.ui.commons.Button({
+				text : "Blub",
+				width : "45px",
+				busy : true,
+				busyIndicatorDelay : 0
+			}).placeAt("target1");
+
+			this.oDelegate = {
+				onAfterRendering : function(oEvent) {}
+			}
+			this.oBtn.addDelegate(this.oDelegate);
+			this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
+
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
+				assert.ok($Animation.length, "Animation exists");
+				assert.ok($Animation.hasClass("sapUiLocalBusyIndicatorAnimSmall"), "Correct CSS class set to DOM");
+
+				assert.equal(this.oSpy.callCount, 1, "Icon should be rendered once");
+
+				this.oSpy.restore();
+				delete this.oSpy;
+				this.oBtn.removeDelegate(this.oDelegate);
+				delete this.oDelegate;
+				this.oBtn.destroy();
+
+				done();
+			}.bind(this), 50);
+		});
+
+		QUnit.test("Check if animations are stacked", function(assert) {
+			var done = assert.async();
+			this.oVBox = new sap.m.VBox({
+				items : [
+					new sap.m.List({
+						busyIndicatorDelay : 0,
+						busy : true
+					}),
+					new sap.m.List({
+						busyIndicatorDelay : 0,
+						busy : true
+					})
+				],
+				busyIndicatorDelay : 0,
+				busy : true
+			}).placeAt("target3");
+
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
+
+				assert.equal($Animation.length, 3, "3 animations should be in DOM");
+				assert.ok(!jQuery($Animation.get(0)).is(":visible"), "List1's animation is hidden");
+				assert.ok(!jQuery($Animation.get(1)).is(":visible"), "List2's animation is hidden");
+				assert.ok(jQuery($Animation.get(2)).is(":visible"), "VBox's animation is visible");
+
+				this.oVBox.destroy();
+				done();
+			}.bind(this), 50);
+		});
+
+		QUnit.module("Legacy", {
+			beforeEach: function() {
+				this.oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			},
+			afterEach: function() {
+				this.oLogSpy.restore();
+			}
+		});
+
+		QUnit.test("LocalBusyIndicatorSupport", function(assert) {
+
+			assert.equal(typeof sap.ui.core.Control.prototype.setDelay, "undefined", "Control#setDelay should not be available by default");
+
+			// apply deprecated LocalBusyIndicatorSupport to Control prototype to make "setDelay" method available
+			sap.ui.core.LocalBusyIndicatorSupport.apply(sap.ui.core.Control.prototype);
+
+			assert.equal(sap.ui.core.Control.prototype.setDelay, sap.ui.core.Control.prototype.setBusyIndicatorDelay,
+				"Control#setDelay should be available and a reference to #setBusyIndicatorDelay after applying legacy support");
+
+			sinon.assert.notCalled(this.oLogSpy, "No error should be logged");
+
+		});
+
+		QUnit.test("LocalBusyIndicatorSupport (error handling)", function(assert) {
+
+			// apply deprecated LocalBusyIndicatorSupport to a specific control
+			sap.ui.core.LocalBusyIndicatorSupport.apply(sap.ui.commons.Button.prototype);
+
+			// LocalBusyIndicatorSupport should log an error when applying on a specific control
+			sinon.assert.calledWithExactly(this.oLogSpy, "Only controls can use the LocalBusyIndicator", sap.ui.commons.Button.prototype);
+
 		});
 
     </script>
@@ -221,5 +460,6 @@
     <div id="target1"></div>
     <div id="target2"></div>
     <div id="target3"></div>
+    <div id="failsafeTests"></div>
 	</body>
 </html>

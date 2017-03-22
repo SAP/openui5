@@ -5,10 +5,10 @@
   <vendor>SAP SE</vendor>
   <copyright>${copyright}</copyright>
   <version>${version}</version>
-  
-  <documentation>The SAPUI5 Core Runtime. 
-  
-  Contains the UI5 jQuery plugins (jQuery.sap.*), the Core and all its components, 
+
+  <documentation>The SAPUI5 Core Runtime.
+
+  Contains the UI5 jQuery plugins (jQuery.sap.*), the Core and all its components,
   base classes for Controls, Components and the Model View Controller classes.</documentation>
 
   <appData>
@@ -19,15 +19,14 @@
     <!-- excludes for the all-in-one file -->
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
-        <raw-module name="jquery-1.7.1.js" />
-        <raw-module name="jquery.sap.promise.js" depends="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,jquery.sap.promise.js" />
+        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js" />
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/Device.js" />
         <raw-module name="sap/ui/thirdparty/crossroads.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/d3.js" />
         <raw-module name="sap/ui/thirdparty/datajs.js" />
+        <raw-module name="sap/ui/thirdparty/es6-promise.js" />
         <raw-module name="sap/ui/thirdparty/flexie.js" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
@@ -35,10 +34,6 @@
         <raw-module name="sap/ui/thirdparty/iscroll.js" />
         <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
         <raw-module name="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.7.1.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.8.1.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -90,6 +85,7 @@
         <raw-module name="sap/ui/thirdparty/qunit-composite.js" depends="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit-reporter-junit.js" depends="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/require.js" />
+        <raw-module name="sap/ui/thirdparty/RequestRecorder.js" depends="sap/ui/thirdparty/URI.js,sap/ui/thirdparty/sinon.js"/>
         <raw-module name="sap/ui/thirdparty/SecondLevelDomains.js" />
         <raw-module name="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/sinon.js" />
@@ -103,19 +99,14 @@
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
-        <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Element.js,sap/ui/core/UIArea.js,sap/ui/core/Control.js,sap/ui/core/Component.js" />
+        <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
       <all-in-one>
         <!-- exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5) -->
         <exclude name="jquery-*.js" />
         <exclude name="sap-*" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.7.1.js" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.8.1.js" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
         <!-- CorePlugin, shouldn't be installed by default -->
-        <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" /> 
+        <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" />
         <exclude name="sap/ui/core/plugin/LessSupport.js" />
         <!-- exclude non-productive code -->
         <exclude name="sap/ui/debug/**" />
@@ -124,18 +115,18 @@
         <exclude name="sap/ui/test/**" />
         <exclude name="testsuite/**" />
         <!-- Ignore substitutes for moved third party libs -->
-        <exclude name="jquery-ui-core.js" /> 
+        <exclude name="jquery-ui-core.js" />
         <exclude name="jquery-ui-datepicker.js" />
         <exclude name="jquery-ui-position.js" />
         <exclude name="sap/ui/model/odata/datajs.js" />
         <!-- Third party libs which should NOT be part of the all-in-one file -->
         <exclude name="sap/ui/thirdparty/blanket.js" />
-        <exclude name="sap/ui/thirdparty/crossroads.js" />
+        <!-- <exclude name="sap/ui/thirdparty/crossroads.js" /> -->
         <exclude name="sap/ui/thirdparty/d3.js" />
         <exclude name="sap/ui/thirdparty/datajs.js" />
         <exclude name="sap/ui/thirdparty/flexie.js" />
         <exclude name="sap/ui/thirdparty/handlebars.js" />
-        <exclude name="sap/ui/thirdparty/hasher.js" />
+        <!-- <exclude name="sap/ui/thirdparty/hasher.js" /> -->
         <exclude name="sap/ui/thirdparty/IPv6.js" />
         <exclude name="sap/ui/thirdparty/iscroll.js" />
         <exclude name="sap/ui/thirdparty/iscroll-lite.js" />
@@ -173,7 +164,8 @@
         <exclude name="sap/ui/thirdparty/qunit-composite.js" />
         <exclude name="sap/ui/thirdparty/qunit-reporter-junit.js" />
         <exclude name="sap/ui/thirdparty/require.js" />
-        <exclude name="sap/ui/thirdparty/signals.js" />
+        <exclude name="sap/ui/thirdparty/RequestRecorder.js"/>
+        <!-- <exclude name="sap/ui/thirdparty/signals.js" /> -->
         <exclude name="sap/ui/thirdparty/sinon.js" />
         <exclude name="sap/ui/thirdparty/sinon-ie.js" />
         <exclude name="sap/ui/thirdparty/sinon-server.js" />
@@ -216,9 +208,7 @@
         <exclude name=".library-all" />
         <exclude name=".library-preload" />
         <exclude name="jquery-*" />
-        <exclude name="sap-ui-core-*" />
-        <exclude name="sap-ui-debug" />
-        <exclude name="sap-ui-testenv" />
+        <exclude name="sap-ui-*" />
         <exclude name="testsuite." />
         <exclude name="sap.ui.debug." />
         <exclude name="sap.ui.jsunit." />
@@ -313,26 +303,58 @@
         <lib name="tdop" displayName="Top Down Operator Precedence" homepage="https://github.com/douglascrockford/TDOP">
         	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/TDOP-Apache-LICENSE.txt" />
         </lib>
+        <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/jakearchibald/es6-promise/">
+        	<license url="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
+        </lib>
     </thirdparty>
-    
+
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
         indexUrl="../../../../test-resources/sap/ui/core/demokit/docuindex.json"
         resolve="lib" />
-    
+
     <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
         url="../../../../test-resources/sap/ui/core/relnotes/changes-{major}.{minor}.json"
         resolve="lib" />
-    
+
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-COR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+
+        <component>
+            <name>CA-UI5-COR</name>
+            <modules>
+                <module>jquery.sap.*</module>
+                <module>sap/ui/app/*</module>
+                <module>sap/ui/base/*</module>
+                <module>sap/ui/debug/*</module>
+                <module>sap/ui/model/*</module>
+                <module>sap/ui/qunit/*</module>
+                <module>sap/ui/Device</module>
+                <module>sap/ui/Global</module>
+            </modules>
+        </component>
+
         <component>
             <name>CA-UI5-CTR</name>
             <modules>
                 <module>sap/ui/core/InvisibleText</module>
             </modules>
         </component>
+
+        <component>
+            <name>CA-UI5-FST</name>
+            <modules>
+                <module>sap/ui/test/*</module>
+            </modules>
+        </component>
+
+        <component>
+            <name>CA-WDE-MCK</name>
+            <modules>
+                <module>sap/ui/core/util/MockServer</module>
+            </modules>
+        </component>
     </ownership>
-    
+
   </appData>
-    
+
 </library>

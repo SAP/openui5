@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2014-2015 SAP SE
+ * Copyright (c) 2014-2017 SAP SE
  */
 
 'use strict';
 
 var path = require('path');
 var moment = require('moment');
+var semver = require('semver');
 
 module.exports = function(grunt) {
 
@@ -18,6 +19,15 @@ module.exports = function(grunt) {
 		deferLogs: true,
 		color: 'cyan'
 	});
+
+	// Check for valid required Node.js version from package.json
+	// npm does not validate this within the project itself; only if this project would be installed as a dependency (which is not the case as of now)
+	var pkg = grunt.file.readJSON(__dirname + "/package.json");
+	if (pkg.engines && pkg.engines.node && !semver.satisfies(process.version, pkg.engines.node)) {
+		grunt.log.error('!!! WARNING !!!');
+		grunt.log.error('Unsupported Node.js version: wanted "' + pkg.engines.node + '" (current: "' + process.version + '")');
+		grunt.log.error('Please update your Node.js installation!');
+	}
 
 	// Load all custom tasks from grunt/tasks dir
 	grunt.loadTasks(path.join(process.cwd(), 'grunt/tasks'));
@@ -57,7 +67,7 @@ module.exports = function(grunt) {
 							'*.js',
 
 							// files are already part of sap-ui-core.js
-							'!jquery.sap.promise.js',
+							'!sap/ui/thirdparty/es6-promise.js',
 							'!jquery.sap.global.js',
 							'!sap-ui-*.js',
 
@@ -84,6 +94,14 @@ module.exports = function(grunt) {
 					path: 'src/sap.m'
 			},
 			{
+					name: 'sap.tnt',
+					path: 'src/sap.tnt'
+			},
+			{
+					name: 'sap.f',
+					path: 'src/sap.f'
+			},
+			{
 					name: 'sap.ui.commons',
 					path: 'src/sap.ui.commons'
 			},
@@ -104,6 +122,18 @@ module.exports = function(grunt) {
 					path: 'src/sap.ui.dt'
 			},
 			{
+					name: 'sap.uxap',
+					path: 'src/sap.uxap'
+			},
+			{
+					name: 'sap.ui.fl',
+					path: 'src/sap.ui.fl'
+			},
+			{
+					name: 'sap.ui.codeeditor',
+					path: 'src/sap.ui.codeeditor'
+			},
+			{
 					name: 'themelib_sap_bluecrystal',
 					path: 'src/themelib_sap_bluecrystal',
 					type: 'theme'
@@ -114,6 +144,11 @@ module.exports = function(grunt) {
 					type: 'theme'
 			},
 			{
+					name: 'themelib_sap_belize',
+					path: 'src/themelib_sap_belize',
+					type: 'theme'
+			},
+			{
 					name: 'sap.ui.demokit',
 					path: 'src/sap.ui.demokit',
 					bower: false // exclude from bower publish
@@ -121,6 +156,12 @@ module.exports = function(grunt) {
 		]
 
 	};
+
+	// Load config extension script to allow overrides to "grunt" and "gruntData"
+	var configExtensionFile = grunt.option("config-extension");
+	if (configExtensionFile) {
+		configExtensionFile.split(',').forEach(file => require(path.resolve(file))(grunt, gruntData));
+	}
 
 	// determine set of libraries to use (specified by --libs option)
 	gruntData.libraries = !libs ? gruntData.allLibraries : gruntData.allLibraries.filter(function(library) {
@@ -138,7 +179,12 @@ module.exports = function(grunt) {
 				'replace': 'grunt-text-replace',
 				'openui5_connect': 'grunt-openui5',
 				'openui5_theme': 'grunt-openui5',
-				'openui5_preload': 'grunt-openui5'
+				'openui5_preload': 'grunt-openui5',
+				'gitclone': 'grunt-git',
+				'gitadd': 'grunt-git',
+				'gitcommit': 'grunt-git',
+				'gittag': 'grunt-git',
+				'gitpush': 'grunt-git'
 			}
 		},
 

@@ -1,0 +1,7 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:html="http://www.w3.org/1999/xhtml">
+	<html:div style="height:auto;min-height:4em; background-color: #A9EAFF ;line-height: 4em;">
+		Section 2 is empty and is not displayed between section 1 and section 3.
+	</html:div>
+</mvc:View>

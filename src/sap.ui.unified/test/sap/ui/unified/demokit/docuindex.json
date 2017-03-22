@@ -24,7 +24,8 @@
 				"category": "Display",
 				"since": "1.22",
 				"samples": [
-					"sap.ui.unified.sample.Currency"
+					"sap.ui.unified.sample.Currency",
+					"sap.ui.unified.sample.CurrencyInTable"
 				]
 			},
 			{
@@ -47,7 +48,9 @@
 					"sap.ui.unified.sample.CalendarSingleIntervalSelection",
 					"sap.ui.unified.sample.CalendarMultipleDaySelection",
 					"sap.ui.unified.sample.CalendarSpecialDaysLegend",
-					"sap.ui.unified.sample.CalendarMultipleMonth"
+					"sap.ui.unified.sample.CalendarMultipleMonth",
+					"sap.ui.unified.sample.CalendarCalendarType",
+					"sap.ui.unified.sample.CalendarMinMax"
 				]
 			},
 			{
@@ -95,6 +98,11 @@
 				"description": "Display Currencies with proper Alignment"
 			},
 			{
+				"id": "sap.ui.unified.sample.CurrencyInTable",
+				"name": "Currency in Table",
+				"description": "Display Currencies in Table"
+			},
+			{
 				"id": "sap.ui.unified.sample.FileUploaderBasic",
 				"name": "Basic",
 				"description": "Basic File Uploader Example"
@@ -128,6 +136,16 @@
 				"id": "sap.ui.unified.sample.CalendarMultipleMonth",
 				"name": "multiple months",
 				"description": "Calendar with more than one month"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarCalendarType",
+				"name": "calendar type",
+				"description": "islamic Calendar with secondary gregorian type"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarMinMax",
+				"name": "calendar - min., max. and disabled",
+				"description": "Calendar with minimum date 2000-01-01 and maximum date 2050-12-31 and some disabled days (in January 2016)."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",

@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './Binding'],
-	function(jQuery, Binding) {
+sap.ui.define(['./Binding'],
+	function(Binding) {
 	"use strict";
 
 
@@ -22,15 +22,16 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.ContextBinding
+	 * @extends sap.ui.model.Binding
 	 */
 	var ContextBinding = Binding.extend("sap.ui.model.ContextBinding", /** @lends sap.ui.model.ContextBinding.prototype */ {
-		
+
 		constructor : function(oModel, sPath, oContext, mParameters, oEvents){
 			Binding.call(this, oModel, sPath, oContext, mParameters, oEvents);
 			this.oElementContext = null;
 			this.bInitial = true;
 		},
-	
+
 		metadata : {
 			 publicMethods : [
 			 // methods
@@ -38,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 			 ]
 		}
 	});
-	
+
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
@@ -48,24 +49,24 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	ContextBinding.prototype.checkUpdate = function(bForceupdate) {
 		// nothing to do here, data changes can not change the context
 	};
-	
+
 	/**
 	 * Refreshes the binding, check whether the model data has been changed and fire change event
 	 * if this is the case. For server side models this should refetch the data from the server.
-	 * 
+	 *
 	 * @param {boolean} bForceUpdate Does not have any effect on this binding
-	 * 
+	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Return the bound context
 	 */
 	ContextBinding.prototype.getBoundContext = function(oContext) {
 		return this.oElementContext;
 	};
-	
+
 
 	return ContextBinding;
 
-}, /* bExport= */ true);
+});

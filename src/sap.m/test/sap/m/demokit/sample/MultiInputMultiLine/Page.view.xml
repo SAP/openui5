@@ -1,21 +1,22 @@
 <mvc:View height="100%" controllerName="sap.m.sample.MultiInputMultiLine.Page"
-	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
+		xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
 	<VBox>
 			<items>
-			<Label text="MultiInput in MultiLine Display Mode"/>
-			<MultiInput id="multiInput1" width="100%" enableMultiLineMode="true"/>
+			<Label text="MultiInput in MultiLine Display Mode" labelFor="multiInput1"/>
+			<MultiInput id="multiInput1" width="100%" enableMultiLineMode="true" showValueHelp="false"/>
 
-			<Label text="MultiInput with asynchronously validation in MultiLine Display Mode"/>
-			<MultiInput id="multiInput3" width="100%" enableMultiLineMode="true" placeholder= "tokens get validated asynchronously after 500ms"/>
+			<Label text="MultiInput with asynchronously validation in MultiLine Display Mode" labelFor="multiInput3"/>
+			<MultiInput id="multiInput3" width="100%" enableMultiLineMode="true" placeholder= "tokens get validated asynchronously after 500ms" showValueHelp="false"/>
 
-			<Label text="MultiInput with suggestion table in MultiLine Mode Display"/>
+			<Label text="MultiInput with suggestion table in MultiLine Mode Display" labelFor="multiInput2"/>
 			<MultiInput
 				id="multiInput2"
 				width="100%"
 				enableMultiLineMode="true"
 				placeholder="Enter Product ..."
 				showSuggestion="true"
+				showValueHelp="false"
 				suggestionRows="{/ProductCollection}">
 				<suggestionColumns>
 					<Column
@@ -51,23 +52,28 @@
 						<Label text="{Name}"/>
 						<Label text="{ProductId}"/>
 						<Label text="{SupplierName}"/>
-						<Label text="{Price} {CurrencyCode}"/>
+						<Label text="{
+ 		 						parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+		 						formatOptions: {showMeasure: true}
+								}"/>
 					</cells>
 					</ColumnListItem>
 				</suggestionRows>
 			</MultiInput>
-			
-			<Label text="MultiInput  with suggestion list items in MultiLine Mode Display"/>
+
+			<Label text="MultiInput with suggestion list items in MultiLine Mode Display" labelFor="multiInput4"/>
 			<MultiInput id="multiInput4"
 				width="100%"
 				enableMultiLineMode="true"
+				showValueHelp="false"
 				suggestionItems="{
 					path: '/ProductCollection',
 					sorter: { path: 'Name' }
 				}">
 				<core:Item key="{ProductId}" text="{Name}" />
 			</MultiInput>
-			
+
 		</items>
 	</VBox>
 </mvc:View>

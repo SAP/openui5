@@ -1,0 +1,50 @@
+/* ======================================== */
+/* CSS for control sap.m/ComboBoxTextField  */
+/* High Contrast Black theme                */
+/* ======================================== */
+
+/* ------------------------------ */
+/* text field                     */
+/* ------------------------------ */
+
+/* states */
+
+.sapMComboBoxTextFieldWarning,
+.sapMComboBoxTextFieldError {
+	border-style: dashed;
+}
+
+/* disabled and read only */
+
+.sapMComboBoxBaseDisabled,
+.sapMComboBoxTextFieldReadonly {
+	border-color: @sapUiFieldReadOnlyBorderColor;
+}
+
+/* focus */
+
+.sapMComboBoxTextField .sapMComboBoxTextFieldInner:not(.sapMComboBoxTextFieldInnerReadonly):focus {
+	outline-offset: -2px;
+}
+
+/* focus in IE (workaround) */
+html[data-sap-ui-browser^="ie"] {
+	.sapMFocus.sapMComboBoxTextField:not(.sapMInputBaseReadonly):not(.sapMInputBaseDisabled) {
+		&::before {
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+	}
+}
+
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
+
+/* disabled */
+
+.sapMComboBoxTextFieldDisabled .sapMComboBoxTextFieldArrow {
+	color: @sapUiContentDisabledTextColor;
+}

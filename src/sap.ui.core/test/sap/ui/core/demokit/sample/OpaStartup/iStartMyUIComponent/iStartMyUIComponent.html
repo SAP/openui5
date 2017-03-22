@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>OPA sample for starting an app with a component</title>
+
+		<script id="sap-ui-bootstrap"
+		        src="../../../../../../../../resources/sap-ui-core.js"
+		        data-sap-ui-libs="sap.m"
+		        data-sap-ui-theme='sap_belize'
+		        data-sap-ui-resourceroots='{
+				"sap.ui.sample.appUnderTest" : "./applicationUnderTest",
+				"sap.ui.sample.appUnderTest.view" : "./applicationUnderTest/view",
+				"sap.ui.demo.mock" : "../../../../../../../sap/ui/demokit/explored/"
+			}'>
+		</script>
+
+		<script>
+
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.qunit.QUnitUtils");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require([
+				'sap/ui/test/Opa5',
+				'sap/ui/test/opaQunit',
+				'sap/ui/test/matchers/AggregationFilled'
+			], function (Opa5, opaTest, AggregationFilled) {
+				Opa5.extendConfig({
+					viewNamespace : "sap.ui.sample.appUnderTest.view.",
+					autoWait : true
+				});
+
+				QUnit.module("iStartMyUIComponent");
+
+				opaTest("Should start and teardown a component", function (Given, When, Then) {
+
+					// Loads the component with the given name
+					Given.iStartMyUIComponent({
+						componentConfig: {
+							name: "sap.ui.sample.appUnderTest"
+						},
+						// testing deeplinks is possible by setting a hash
+						hash: ""
+					});
+
+					// execute your tests
+					Then.waitFor({
+						viewName: "Main",
+						id: "productList",
+						matchers: new AggregationFilled({ name: "items" }),
+						success: function () {
+							Opa5.assert.ok(true, "The component was removed");
+						}
+					}).
+					// Removes the component again
+					and.iTeardownMyApp();
+
+				});
+				QUnit.start();
+
+			});
+
+		</script>
+
+	</head>
+
+	<script src="README.js"></script>
+
+	<body>
+
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<div id="readme"></div>
+
+	</body>
+</html>

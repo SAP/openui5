@@ -13,8 +13,7 @@ sap.ui.core.UIComponent.extend("sap.m.sample.MessageStrip.Component", {
 		config : {
 			sample : {
 				files : [
-					"V.view.xml",
-					"C.controller.js"
+					"V.view.xml"
 				]
 			}
 		}

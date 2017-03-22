@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 
 		// render ActionBar
-		// result: <div id=​"<id>" data-sap-ui=​"<id>" class=​"sapUiUx3ActionBar" role=​"toolbar">​
+		// result: <div id="<id>" data-sap-ui="<id>" class="sapUiUx3ActionBar" role="toolbar">
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUx3ActionBar");

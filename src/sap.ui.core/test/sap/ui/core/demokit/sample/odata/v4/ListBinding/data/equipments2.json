@@ -1,0 +1,25 @@
+{
+	"@odata.context" : "$metadata#Equipments(Category,ID,Name,EmployeeId)",
+	"@odata.count" : 9,
+	"value" : [ {
+		"Category" : "Vehicle",
+		"ID" : 6,
+		"Name" : "Audi A3 2.5",
+		"EmployeeId" : "0004"
+	}, {
+		"Category" : "Vehicle",
+		"ID" : 8,
+		"Name" : "Mercedes B 3.0",
+		"EmployeeId" : "0005"
+	}, {
+		"Category" : "Vehicle",
+		"ID" : 9,
+		"Name" : "Tesla Model S",
+		"EmployeeId" : "0005"
+	}, {
+		"Category" : "Vehicle",
+		"ID" : 5,
+		"Name" : "VW Golf 2.0",
+		"EmployeeId" : "0003"
+	} ]
+}

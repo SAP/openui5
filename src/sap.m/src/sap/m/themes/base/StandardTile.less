@@ -1,6 +1,7 @@
-/* ============================================= */
-/* CSS base theme for control sap.m/StandardTile.control */
-/* ============================================= */
+/* =================================== */
+/* CSS for control sap.m/StandardTile  */
+/* Base theme                          */
+/* =================================== */
 
 .sapMStdTileTopRow {
 	height: 4rem;
@@ -9,7 +10,7 @@
 }
 
 .sapMStdTileIconDiv {
-	display: inline-block;	
+	display: inline-block;
 	float: left;
 }
 
@@ -27,6 +28,9 @@
 	overflow: hidden;
 	text-align: right;
 	line-height: 1em;
+	font-family: @sapUiFontCondensedFamily;
+	font-stretch: condensed; /* for Firefox */
+	color: @sapUiContentLabelColor;
 }
 
 .sapMStdTileNum {
@@ -60,7 +64,7 @@
 	font-size: 1rem;
 	height: 4rem;
 	width: 100%;
-	overflow: hidden;	
+	overflow: hidden;
 	word-break: break-word;
 }
 
@@ -80,7 +84,7 @@ html[dir=rtl] .sapMStdTileTitle{
 html[dir=rtl] .sapMStdTileNum,
 html[dir=rtl] .sapMStdTileNumM,
 html[dir=rtl] .sapMStdTileNumS,
-html[dir=rtl] .sapMStdTileNumUnit, 
+html[dir=rtl] .sapMStdTileNumUnit,
 html[dir=rtl] .sapMStdTileInfo{
 	text-align: left;
 }
@@ -92,58 +96,116 @@ html[dir=rtl] .sapMStdTileInfo{
 
 .sapMStdTileMonitorType {
 	margin-top: -2rem;
-	padding-top: 2rem;	
+	padding-top: 2rem;
+	background-color: @sapUiTileBackground;
 }
 
 .sapMStdTileBottomRow .sapMStdTileMonitorType {
 	height: 10rem;
 }
 
-.sap-phone .sapMStdTileTopRow {
+html.sap-phone .sapMStdTileTopRow {
 	height: 3rem;
 	margin-bottom: 0;
 }
 
-.sap-phone .sapMStdTileNumDiv {
+html.sap-phone .sapMStdTileNumDiv {
 	width: 5rem;
 	height: 3rem;
 }
 
-.sap-phone .sapMStdTileNumUnit {
+html.sap-phone .sapMStdTileNumUnit {
 	font-size: 0.75rem;
 }
 
-.sap-phone .sapMStdTileBottomRow {
+html.sap-phone .sapMStdTileBottomRow {
 	height: 5rem;
 }
 
-.sap-phone .sapMStdTileMonitorType {
+html.sap-phone .sapMStdTileMonitorType {
 	margin-top: -1rem;
-	padding-top: 1rem;	
+	padding-top: 1rem;
 }
 
-.sap-phone .sapMStdTileTitle {
+html.sap-phone .sapMStdTileTitle {
 	line-height: 1.2rem;
 	font-size: .875rem;
 	height: 4rem;
 	margin-bottom: 0;
 }
 
-.sap-phone .sapMStdTileInfo {
+html.sap-phone .sapMStdTileInfo {
 	height: 1rem;
 	font-size: 0.75rem;
 	width: 100%;
 	margin-top: 0;
 }
 
-.sap-phone .sapMStdTileNum {
+html.sap-phone .sapMStdTileNum {
 	font-size: 2.375rem;
 }
 
-.sap-phone .sapMStdTileNumM {
+html.sap-phone .sapMStdTileNumM {
 	font-size: 1.5rem;
 }
 
-.sap-phone .sapMStdTileNumS {
-	font-size:  1rem;	
+html.sap-phone .sapMStdTileNumS {
+	font-size:  1rem;
+}
+
+.sapMStdTileIconDiv,
+.sapMStdTileTitle {
+	color: @sapUiTileTitleTextColor;
+}
+
+.sapMStdIconMonitor {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMStdIconCreate {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMStdTileNumUnit {
+	color: @sapUiContentLabelColor;
+	text-transform: uppercase;
+}
+
+.sapMStdTileInfo {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMStdTileInfoError {
+	color: @sapUiNegativeText;
+}
+
+.sapMStdTileInfoWarning {
+	color: @sapUiCriticalText;
+}
+
+.sapMStdTileInfoSuccess {
+	color: @sapUiPositiveText;
+}
+
+.sapMTileActive-CTX .sapMStdIconCreate {
+	opacity: 1;
+}
+
+.sapMTileActive-CTX .sapMStdTileInfoWarning,
+.sapMTileActive-CTX .sapMStdTileInfoSuccess,
+.sapMTileActive-CTX .sapMStdTileInfoError,
+.sapMTileActive-CTX .sapMStdTileTitle,
+.sapMTileActive-CTX .sapMStdTileNumUnit,
+.sapMTileActive-CTX .sapMStdTileNum,
+.sapMTileActive-CTX .sapMStdTileNumM,
+.sapMTileActive-CTX .sapMStdTileNumS,
+.sapMTileActive-CTX .sapMStdTileInfo,
+.sapMTileActive-CTX .sapMStdTileMonitorType {
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapMTileActive-CTX .sapMStdTileIconDiv,
+.sapMTileActive-CTX .sapMStdIconMonitor,
+.sapMTileActive-CTX .sapMStdIconCreate {
+	color: @sapUiContentContrastIconColor;
 }

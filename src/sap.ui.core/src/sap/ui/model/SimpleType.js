@@ -3,12 +3,12 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException', './ParseException', './Type', './ValidateException'],
-	function(jQuery, DataType, FormatException, ParseException, Type, ValidateException) {
+sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', './Type', './ValidateException'],
+	function(DataType, FormatException, ParseException, Type, ValidateException) {
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new SimpleType.
 	 *
@@ -28,23 +28,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException',
 	 * @alias sap.ui.model.SimpleType
 	 */
 	var SimpleType = Type.extend("sap.ui.model.SimpleType", /** @lends sap.ui.model.SimpleType.prototype */ {
-	
+
 		constructor : function(oFormatOptions, oConstraints) {
 			Type.apply(this, arguments);
 			this.setFormatOptions(oFormatOptions || {});
 			this.setConstraints(oConstraints || {});
 			this.sName = "SimpleType";
 		},
-	
+
 	  metadata : {
 			"abstract" : true,
 			publicMethods : [
 			"setConstraints", "setFormatOptions", "formatValue", "parseValue", "validateValue"
 		  ]
 	  }
-		
+
 	});
-	
+
 	/**
 	 * Format the given value in model representation to an output value in the given
 	 * internal type. This happens according to the format options, if target type is 'string'.
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException',
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Parse a value of an internal type to the expected value of the model type.
 	 *
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException',
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Validate whether a given value in model representation is valid and meets the
 	 * defined constraints (if any).
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException',
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Sets constraints for this type. This is meta information used when validating the
 	 * value, to ensure it meets certain criteria, e.g. maximum length, minimal amount
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException',
 	SimpleType.prototype.setConstraints = function(oConstraints) {
 		this.oConstraints = oConstraints;
 	};
-	
+
 	/**
 	 * Set format options for this type. This is meta information used when formatting and
 	 * parsing values, such as patterns for number and date formatting or maximum length
@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException',
 	SimpleType.prototype.getPrimitiveType = function(sInternalType) {
 		// Avoid dealing with type objects, unless really necessary
 		switch (sInternalType) {
-			case "any": 
+			case "any":
 			case "boolean":
 			case "int":
 			case "float":
@@ -126,4 +126,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './FormatException',
 
 	return SimpleType;
 
-}, /* bExport= */ true);
+});

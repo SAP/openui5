@@ -12,50 +12,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	"use strict";
 
 
-	
-	
+
+
 	var ShellColorPicker = EventProvider.extend("sap.ui.ux3.ShellColorPicker", {
 		constructor: function(id) {
 			EventProvider.apply(this);
 			this.id = id;
 		}
 	});
-	
-	
+
+
 	/*  EVENT HANDLING */
-	
+
 	ShellColorPicker.M_EVENTS = {liveChange: "liveChange"};
-	
+
 	ShellColorPicker.prototype.attachLiveChange = function(fFunction, oListener) {
 		this.attachEvent(ShellColorPicker.M_EVENTS.liveChange, fFunction, oListener);
 	};
-	
+
 	ShellColorPicker.prototype.detachLiveChange = function(fFunction, oListener) {
 		this.detachEvent(ShellColorPicker.M_EVENTS.liveChange, fFunction, oListener);
 	};
-	
+
 	ShellColorPicker.prototype.fireLiveChange = function(oColor) {
 		var mParameters = {cssColor:ShellColorPicker.hslToCss(oColor)};
 		this.fireEvent(ShellColorPicker.M_EVENTS.liveChange, mParameters);
 	};
-	
-	
-	
+
+
+
 	/* API METHODS */
-	
+
 	/**
 	 * @public
 	 */
 	ShellColorPicker.prototype.isOpen = function() {
 		return (this.oPopup && this.oPopup.isOpen());
 	};
-	
-	
+
+
 	/**
 	 * Opens the color picker, initially showing the given color.
-	 *  
+	 *
 	 * All parameters after <code>oColor</code> have the same meaning and accept the same values as in {@link sap.ui.core.Popup#open Popup.open()}.
-	 *  
+	 *
 	 * @param {object} oColor a hsl-based color object, as returned by parseCssRgbString()
 	 * @param {int} [iDuration] animation duration in milliseconds; default is the jQuery preset "fast". For iDuration == 0 the opening happens synchronously without animation.
 	 * @param {sap.ui.core.Popup.Dock} [my=sap.ui.core.Popup.Dock.CenterCenter] the popup content's reference position for docking
@@ -70,14 +70,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		if (this.oPopup && this.oPopup.isOpen()) {
 			return;
 		}
-	
+
 		this.oSlider = new sap.ui.commons.Slider({width: "225px",liveChange:[this.handleSlider, this]});
 		this.oOkBtn = new Button({text:"OK",press:[this.handleOk, this]});
 		this.oCancelBtn = new Button({text:"Cancel",press:[this.handleCancel, this]});
-	
+
 		this.oInitialColor = oColor;
 		this.oCurrentColor = jQuery.extend({}, this.oInitialColor);
-	
+
 		this.oSlider.setValue(this.oCurrentColor.l);
 		var rm = sap.ui.getCore().createRenderManager();
 		var dummyDiv = document.createElement("div");
@@ -91,18 +91,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		this.oPopup.open(iDuration, my, at, of, offset, collision);
 		statArea.removeChild(dummyDiv);
 		dummyDiv = null;
-	
+
 		jQuery.sap.byId(this.id).bind("mousedown", jQuery.proxy(this.handleGeneralMouseDown, this));
 		jQuery.sap.byId(this.id + "-img").bind("mousedown", jQuery.proxy(this.handleMouseDown, this));
 		jQuery.sap.byId(this.id + "-marker").bind("mousedown", jQuery.proxy(this.handleMouseDown, this));
 		this._imgOffset = jQuery.sap.byId(this.id + "-img").offset();
-	
+
 		this.adaptSliderBar(this.oCurrentColor);
 		this.markColorOnImage(this.oCurrentColor);
 		this.adaptPreview(this.oCurrentColor);
 	};
-	
-	
+
+
 	/**
 	 * Returns the oColor object (hsl-based) for the given CSS string that is built like this: "rgb(127,0,1)"
 	 * @param sRgbString
@@ -113,9 +113,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		var oRgbColor = {r:parseInt(aRgb[0], 10), g:parseInt(aRgb[1], 10), b:parseInt(aRgb[2], 10)};
 		return ShellColorPicker.rgbToHsl(oRgbColor);
 	};
-	
+
 	/* INTERNALS */
-	
+
 	ShellColorPicker.prototype.renderHtml = function(rm) {
 		rm.write("<div id='" + this.id + "' class='sapUiUx3ShellColorPicker'>");
 		rm.write("<img id='" + this.id + "-img' src='" + sap.ui.resource('sap.ui.ux3', 'img/colors-h.png') + "' />");
@@ -127,17 +127,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		rm.renderControl(this.oCancelBtn);
 		rm.write("</div>");
 	};// TODO: remove HTML on close
-	
+
 	ShellColorPicker.prototype.markColorOnImage = function(oColor) {
 		var x = oColor.h * 225;
 		var y = (1 - oColor.s) * 75;
 		jQuery.sap.byId(this.id + "-marker").css("left", x + 10).css("top", y + 10);
 	};
-	
+
 	ShellColorPicker.prototype.markColorOnSlider = function(oColor) {
 		this.oSlider.setValue(oColor.l);
 	};
-	
+
 	ShellColorPicker.prototype.adaptSliderBar = function(oColor) {
 		var gradient = "";
 		var oMediumColor = jQuery.extend({},oColor);
@@ -150,24 +150,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		}
 		jQuery.sap.byId(this.id + "-grad").css("background-image", gradient);
 	};
-	
+
 	ShellColorPicker.prototype.adaptPreview = function(oColor) {
 		jQuery.sap.byId(this.id + "-preview").css("background-color", ShellColorPicker.hslToCss(oColor));
 	};
-	
-	
-	
+
+
+
 	ShellColorPicker.prototype.handleSlider = function(e) {
 		var l = e.getParameter("value");
 		this.oCurrentColor.l = l;
 		this.adaptPreview(this.oCurrentColor);
 		this.fireLiveChange(this.oCurrentColor);
 	};
-	
+
 	ShellColorPicker.prototype.handleGeneralMouseDown = function(e) {
 		e.preventDefault(); // no autoclose!
 	};
-	
+
 	ShellColorPicker.prototype.handleMouseDown = function(e) {
 		this.handleMousePos(e);
 		e.preventDefault(); // no drag&drop of the color image!
@@ -175,14 +175,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 			.bind("mousemove", jQuery.proxy(this.handleMousePos, this))
 			.bind("mouseup", jQuery.proxy(this.handleMouseUp, this));
 	};
-	
+
 	ShellColorPicker.prototype.handleMouseUp = function(e) {
 		this.handleMousePos(e);
 		jQuery(document)
 			.unbind("mousemove", this.handleMousePos)
 			.unbind("mouseup", this.handleMouseUp);
 	};
-	
+
 	ShellColorPicker.prototype.handleMousePos = function(e) {
 		var x = e.pageX - this._imgOffset.left;
 		var y = e.pageY - this._imgOffset.top;
@@ -197,18 +197,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		this.adaptPreview(this.oCurrentColor);
 		this.fireLiveChange(this.oCurrentColor);
 	};
-	
+
 	ShellColorPicker.prototype.handleOk = function() {
 		this.fireLiveChange(this.oCurrentColor);
 		this.oPopup.close();
 	};
-	
+
 	ShellColorPicker.prototype.handleCancel = function() {
 		this.fireLiveChange(this.oInitialColor);
 		this.oPopup.close();
 	};
-	
-	
+
+
 	ShellColorPicker.prototype.handleClose = function() {
 		// clean up event handlers, DOM, child controls and popup
 		jQuery.sap.byId(this.id + "-img")
@@ -220,22 +220,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 			.unbind("mouseup", this.handleMouseUp);
 		jQuery.sap.byId(this.id)
 			.unbind("mousedown", this.handleGeneralMouseDown);
-	
+
 		this.oSlider.destroy();
 		this.oSlider = null;
 		this.oOkBtn.destroy();
 		this.oOkBtn = null;
 		this.oCancelBtn.destroy();
 		this.oCancelBtn = null;
-	
+
 		var domRef = jQuery.sap.domById(this.id);
 		domRef.parentNode.removeChild(domRef);
-	
+
 		this.oPopup.destroy();
 		this.oPopup = null;
 	};
-	
-	
+
+
 	/**
 	 * rgb values are 0..255
 	 */
@@ -246,7 +246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		var max = Math.max(r, g, b);
 		var min = Math.min(r, g, b);
 		var h, s, l = (max + min) / 2;
-	
+
 		if (max == min) {
 			h = s = 0; // all colors equally strong -> no saturation
 		} else {
@@ -261,14 +261,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		}
 		return {h:h,s:s,l:l * 100};
 	};
-	
+
 	/**
 	 * hs values are 0..1, l is 0..100
 	 */
 	ShellColorPicker.hslToRgb = function(oColor) {
 		var r, g, b;
 		var l = oColor.l / 100;
-	
+
 		if (oColor.s == 0) {
 			r = g = b = l; // all colors equally strong -> all equal to lightness
 		} else {
@@ -278,10 +278,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 			g = ShellColorPicker.hueToRgb(p, q, oColor.h);
 			b = ShellColorPicker.hueToRgb(p, q, oColor.h - 1 / 3);
 		}
-	
+
 		return [r * 255, g * 255, b * 255];
 	};
-	
+
 	ShellColorPicker.hueToRgb = function(p, q, t) {
 	  if (t < 0) {
 		t += 1;
@@ -300,7 +300,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	  }
 	  return p;
 	};
-	
+
 	ShellColorPicker.hslToCss = function(oColor) {
 		var rgbColor = ShellColorPicker.hslToRgb(oColor);
 		return "rgb(" + Math.round(rgbColor[0]) + "," + Math.round(rgbColor[1]) + "," + Math.round(rgbColor[2]) + ")";

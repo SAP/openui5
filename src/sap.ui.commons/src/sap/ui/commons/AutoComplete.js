@@ -12,8 +12,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	/**
 	 * Constructor for a new AutoComplete.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 *
@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	 * @constructor
 	 * @public
 	 * @since 1.10.0
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.AutoComplete
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -39,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 		properties : {
 
 			/**
-			 * Whether scrolling should be enabled when the number of items is higher than maxPopupItems.
+			 * Determines whether scrolling should be enabled when the number of items is higher than maxPopupItems.
 			 * If set to false only the first n items (n=maxPopupItems) are shown.
 			 */
 			enableScrolling : {type : "boolean", group : "Misc", defaultValue : true}
@@ -140,7 +141,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 
 		return sDescBy;
 	}
-
 
 	function updateOnClose(oAuto){
 		var $input = jQuery(oAuto.getInputDomRef());
@@ -251,12 +251,17 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 
 	//see sap.ui.commons.ComboBox.prototype._handleItemsChanged
 	AutoComplete.prototype._handleItemsChanged = function(oEvent, bDelayed){
-		if (this.bNoItemCheck) {
-			return;
-		}
 
 		if (bDelayed) {
+			// Items are updated by binding. As items can be "reused" and have same IDSs,
+			// only one check at the end of all changes is needed
+			// only clear if really from an delayed call
 			this._sHandleItemsChanged = null;
+			this._bNoItemCheck = undefined;
+		}
+
+		if (this._bNoItemCheck) {
+			return;
 		}
 
 		var aItems = [];

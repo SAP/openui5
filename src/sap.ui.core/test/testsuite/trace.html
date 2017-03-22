@@ -1,27 +1,27 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>Trace</title>		
-		<link rel="stylesheet" href="styles/main.css" type="text/css" />	
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Trace</title>
+		<link rel="stylesheet" href="styles/main.css" type="text/css">
 		<script>
 			var testfwk = top.testfwk;
 			testfwk.attachContentWillChange(onContentWillChange);
 
 			var oLogViewer = undefined;
-			var sCurrentTab = "trace";		
+			var sCurrentTab = "trace";
 			window.onload = onLoadPage;
 			window.onunload = onUnloadPage;
 			window.onresize = onResizePage;
-	
+
 			function onLoadPage() {
 				setTimeout(onResizePage, 10);
 			};
-	
+
 			function onUnloadPage() {
 				testfwk.detachContentWillChange(onContentWillChange);
 			};
-			
+
 			function onContentWillChange() {
 				if ( oLogViewer ) {
 					try { // Avoid "Can't execute code from a freed script" in IE
@@ -30,20 +30,20 @@
 					} catch(e) {}
 				}
 			};
-			
+
 			function onResizePage() {
 				var borderHeight = 6,
 					tabstripHeight = document.getElementById("tabstrip").offsetHeight,
 					toolbarHeight = sCurrentTab == "trace" ? (document.getElementById("trace-toolbar").offsetHeight+4) : 0,
 					pageHeight = document.body.clientHeight,
 					newContentHeight = pageHeight - borderHeight - toolbarHeight - tabstripHeight;
-					
+
 				var oTraceContent = document.getElementById("sap-ui-TraceWindowRoot");
-					
+
 				if (newContentHeight > 0 && oTraceContent.style.display!="none") oTraceContent.style.height = newContentHeight + 'px';
 				//alert("set trace height to " + newContentHeight);
 			}
-	
+
 			function selectTab(e) {
 				if (!e) e = window.event;
 				if (e.target) e.srcElement = e.target;
@@ -51,7 +51,7 @@
 				if ( !sNewTab.substring(-6) === "-title" )
 					return;
 				sNewTab = sNewTab.slice(0, -6);
-				if ( sCurrentTab === sNewTab || !document.getElementById(sNewTab) ) 
+				if ( sCurrentTab === sNewTab || !document.getElementById(sNewTab) )
 					return;
 				document.getElementById(sCurrentTab).style.display = "none";
 				document.getElementById(sNewTab).style.display = "block";
@@ -61,23 +61,23 @@
 				onSelectTab(sNewTab);
 				sCurrentTab = sNewTab;
 			}
-	
+
 			function onSelectTab(tabId) {
 				switch(tabId) {
 					case "trace":
-						if ( oLogViewer ) 
+						if ( oLogViewer )
 							oLogViewer.scrollToBottom();
 						break;
 				}
 			}
-	
+
 			function onDeselectTab(tabId) {
 				switch(tabId) {
 					case "trace":
 						break;
 				}
 			}
-	
+
 			var oTimerId = undefined;
 			function setLogFilter(oInputField) {
 				var oFilter = undefined;
@@ -88,22 +88,22 @@
 				clearTimeout(oTimerId);
 				oTimerId = setTimeout(function() { if ( oLogViewer ) oLogViewer.setFilter(oFilter); }, 200);
 			};
-			
+
 			function setLogLevel(sLevel) {
 				if ( isNaN(sLevel) ) return;
 				var iLevel = parseInt(sLevel);
 				if ( oLogViewer ) oLogViewer.setLogLevel(iLevel);
 			}
-	
+
 			function clearLog(event) {
 				if ( oLogViewer ) {
-					if ( event.shiftKey === true ) 
+					if ( event.shiftKey === true )
 						oLogViewer.fillFromLogger(0);
 					else
 						oLogViewer.truncate();
-				} 
+				}
 			};
-			
+
 			function toggleTabStrip(oExpander) {
 				var tabstrip = document.getElementById("tabstrip");
 				if ( tabstrip.style.display == 'none' ) {
@@ -115,12 +115,12 @@
 				}
 				document.getElementById("trace-toolbar").style.display = tabstrip.style.display;
 				onResizePage();
-			};		
+			};
 		</script>
 	</head>
-	
+
 	<body class="middle" style="font-size:8pt" >
-		<div class="expander more" style="right:20px" onclick="toggleTabStrip(this);"></div> 
+		<div class="expander more" style="right:20px" onclick="toggleTabStrip(this);"></div>
 		<div id="border" class="border" style="padding-top:2px;border-top:1px solid #ccddff">
 			<div id="tabstrip" class="tabstrip" style="display:none" onclick="selectTab(event)">
 				<div id="trace-title" class="tab selected" >JavaScript Trace</div>
@@ -139,7 +139,7 @@
 					    <option value="5">FINE</option>
 				    	<option value="6">ALL</option>
 					</select>
-					<!--  
+					<!--
 					<button onclick="filter(this, 'browser')" type="button" class="up">browser</button>
 					<button onclick="filter(this, 'semantic')" type="button" class="down">semantic</button>
 					-->

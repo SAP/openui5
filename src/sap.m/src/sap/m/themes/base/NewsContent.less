@@ -1,0 +1,81 @@
+/* ================================== */
+/* CSS for control sap.m/NewsContent  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMNwC {
+	display: inline-block;
+	outline: none;
+	width: 20.5rem;
+	height: 3.5625rem;
+	color: @sapUiTileTextColor;
+	background-color: @sapUiTileBackground;
+}
+
+.sapMNwCCTxt {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	padding: 0.25rem 0 0 0;
+	max-width: 20.5rem;
+
+	.sapMText {
+		display: inline;
+		line-height: 1.1875rem;
+	}
+
+	.sapMText.sapMPointer * {
+		cursor: pointer;
+	}
+}
+
+.sapMNwCSbh {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	max-width: 20.5rem;
+	display: inline-block;
+	line-height: 1.1875rem;
+	color: @sapUiTileTextColor;
+	font-size: @sapMFontMediumSize;
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMNwC {
+		width: 17.75rem;
+		height: 3.188rem;
+	}
+
+	.sapMNwCCTxt {
+		max-width: 17.75rem;
+		padding: 0;
+		.sapMText {
+			line-height: 1.063rem;
+		}
+	}
+
+	.sapMNwCSbh {
+		max-width: 17.75rem;
+		line-height: 1.063rem;
+	}
+}
+
+.sapMNwCCTxt .sapMText {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapMNwC:focus:not([tabindex]) {
+	outline: none;
+}
+
+@media screen and (max-width: 374px) {
+	.sapMNwCCTxt .sapMText, .sapMNwCSbh {
+		font-size: @sapMFontSmallSize;
+	}
+}

@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
-<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.table.Table,sap.ui.table.Column">
+<html data-sap-ui-dk-controls="sap.ui.table.Table,sap.ui.table.Column">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
     <title>Table - SAPUI5 Demo Kit</title>
-    <meta name="keywords" content="Control Table" />
-    <link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+    <meta name="keywords" content="Control Table">
+    <link rel="stylesheet" href="../../../../../theme/default.css">
+    <script src="../shared-config.js"></script>
     <script id="sap-ui-bootstrap"
         src="../../../../../resources/sap-ui-core.js"
         data-sap-ui-theme="sap_bluecrystal"
@@ -14,9 +15,9 @@
     </script>
     <script src="../../../../../js/utils.js"></script>
 
-<script id='TableExampleScript1'> 
+<script id='TableExampleScript1'>
 
-//Define some sample data 
+//Define some sample data
 var aData = [
 	{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/person1.gif", gender: "male", rating: 4},
 	{lastName: "Friese", name: "Andy", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/person2.gif", gender: "male", rating: 2},
@@ -46,7 +47,7 @@ var oTable = new sap.ui.table.Table({
 	visibleRowCount: 7,
 	firstVisibleRow: 3,
 	selectionMode: sap.ui.table.SelectionMode.Single,
-	toolbar: new sap.ui.commons.Toolbar({items: [ 
+	toolbar: new sap.ui.commons.Toolbar({items: [
 		new sap.ui.commons.Button({text: "Button in the Toolbar", press: function() { alert("Button pressed!"); }})
 	]}),
 	extension: [
@@ -123,13 +124,13 @@ oTable.bindRows("/modelData");
 //Initially sort the table
 oTable.sort(oTable.getColumns()[0]);
 
-//Bring the table onto the UI 
+//Bring the table onto the UI
 oTable.placeAt("sample1");
 
 </script>
 
-<script id='TableExampleScript2'> 
-//Define some sample data 
+<script id='TableExampleScript2'>
+//Define some sample data
 var aData = [
 	{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/person1.gif", gender: "male", rating: 4},
 	{lastName: "Friese", name: "Andy", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/person2.gif", gender: "male", rating: 2},
@@ -159,7 +160,6 @@ var oTable2 = new sap.ui.table.Table({
 	visibleRowCount: 7,
 	firstVisibleRow: 3,
 	selectionMode: sap.ui.table.SelectionMode.Single,
-	navigationMode: sap.ui.table.NavigationMode.Paginator,
 	fixedColumnCount: 2
 });
 
@@ -227,43 +227,43 @@ oTable2.bindRows("/modelData");
 //Initially sort the table
 oTable2.sort(oTable2.getColumns()[0]);
 
-//Bring the table onto the UI 
+//Bring the table onto the UI
 oTable2.placeAt("sample2");
-	
+
 </script>
 
 	</head>
 	<body class="sapUiDemokitBody">
 	<h1 color="Blue" icon="images/ctrls/table-icon.png">Table</h1>
-	
+
 	<h2>Introduction</h2>
-	
+
 	<p>
 	The Table control provides a set of sophisticated and comfort functions for table design. For each Column a template control must be defined which describes how the data is visualized.
-	The Table control also provides the possibility for sorting and filtering based on the capabilities of the model, a drag and drop support for the columns and resizing of the table column widths. 
+	The Table control also provides the possibility for sorting and filtering based on the capabilities of the model, a drag and drop support for the columns and resizing of the table column widths.
 	For the selection of rows, a Multi, a Single, and a None mode are available. Many further properties are provided to adapt the visual appearence for example <code>rowHeight</code> or <code>visibleRowCount</code>.
 	</p>
-	
+
 	<h2>Example</h2>
 	<p>
-	The following code snippet shows the basic capabilities of the Table control:   
+	The following code snippet shows the basic capabilities of the Table control:
 	</p>
 	<div code-sample="sample1" script="TableExampleScript1"></div>
-	 
+
 	<p>
 	The example above demonstrates how the Table is connected against a model via the Data Binding API using the function <code>bindRows</code>.
 	For each Column the control template is finally be bound against the properties of an entry in the model. The table is initially sorted based on the entries in the fisrt column.
 	</p>
-	
+
 	<h2>Fixed Columns Example</h2>
 	<p>
-	The following code snippet shows a table with fixed columns:   
+	The following code snippet shows a table with fixed columns:
 	</p>
 	<div code-sample="sample2" script="TableExampleScript2"></div>
-	
+
 	<h2>Tree Mode</h2>
 	<p>
-	The Table control does not provide a Tree mode. For this purpose the <a class="sapUiDemokitSrcLink" href="TreeTable.html">TreeTable</a> control should be used. 
+	The Table control does not provide a Tree mode. For this purpose the <a class="sapUiDemokitSrcLink" href="TreeTable.html">TreeTable</a> control should be used.
 	</p>
 
 	<p>

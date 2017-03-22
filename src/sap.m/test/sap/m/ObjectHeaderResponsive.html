@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 
 		<title>sap.m.ObjectHeader - Responsive</title>
-		<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
 		</script>
 
 		<style>
@@ -592,17 +593,12 @@
 				showMarkers: true,
 				markFlagged: true,
 				numberState: sap.ui.core.ValueState.Success,
-				_objectNumber : [ new sap.m.ObjectNumber({
-					number: "3.624,00",
-					numberUnit: "Euro Dollar Lev",
-					numberState: sap.ui.core.ValueState.Success
-				})],
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Order Shipping slow"
 				}), new sap.m.ProgressIndicator("oh18-pi", {
 					visible : true,
 					enabled : true,
-					barColor : sap.ui.core.BarColor.NEUTRAL,
+					state : sap.ui.core.ValueState.NEUTRAL,
 					//displayValue : '56%',
 					percentValue : 56,
 					showValue : false,
@@ -613,7 +609,7 @@
 				}), new sap.m.ProgressIndicator("oh18-pi2", {
 					visible : true,
 					enabled : true,
-					barColor : sap.ui.core.BarColor.NEUTRAL,
+					state : sap.ui.core.ValueState.NEUTRAL,
 					//displayValue : '90%',
 					percentValue : 90,
 					showValue : false,
@@ -681,7 +677,7 @@
 				}), new sap.m.ProgressIndicator("oh18-piSmall", {
 					visible : true,
 					enabled : true,
-					barColor : sap.ui.core.BarColor.NEUTRAL,
+					state : sap.ui.core.ValueState.NEUTRAL,
 					//displayValue : '56%',
 					percentValue : 56,
 					showValue : false,
@@ -692,7 +688,7 @@
 				}), new sap.m.ProgressIndicator("oh18-pi2Small", {
 					visible : true,
 					enabled : true,
-					barColor : sap.ui.core.BarColor.NEUTRAL,
+					state : sap.ui.core.ValueState.NEUTRAL,
 					//displayValue : '90%',
 					percentValue : 90,
 					showValue : false,

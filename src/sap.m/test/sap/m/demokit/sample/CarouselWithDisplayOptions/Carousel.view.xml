@@ -1,0 +1,87 @@
+<mvc:View height="100%"
+		controllerName="sap.m.sample.CarouselWithDisplayOptions.Carousel"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:f="sap.ui.layout.form">
+	<Page class="sapUiContentPadding">
+		<content>
+			<f:SimpleForm labelSpanL="6"
+						labelSpanM="6"
+						editable="true"
+						layout="ResponsiveGridLayout">
+				<Label text="Shrink carousel container" />
+				<Slider value="5"
+						liveChange="onSliderMoved"
+						width="320px"
+						step="1"
+						min="1"
+						max="5"/>
+			</f:SimpleForm>
+			<Toolbar height="auto">
+				<ToolbarSpacer/>
+				<Panel id="carouselContainer" height="650px">
+					<Carousel class="sapUiContentPadding" loop="true" id="carouselSample" >
+					</Carousel>
+				</Panel>
+				<ToolbarSpacer/>
+			</Toolbar>
+			<f:SimpleForm labelSpanL="6"
+						labelSpanM="6"
+						editable="true"
+						layout="ResponsiveGridLayout">
+				<f:content>
+					<Label text="Carousel arrow placement" />
+					<RadioButtonGroup id="RBArrowsPlacement"
+							columns="2"
+							select="onArrowsPlacementSelect">
+						<buttons>
+							<RadioButton id="RB-Content"
+										 text="Content"
+										 tooltip="Places the arrows on the sides of the content">
+							</RadioButton>
+							<RadioButton id="RB-PageIndicator"
+										 text="PageIndicator"
+										 tooltip="Places the arrows on the sides of the page indicator">
+							</RadioButton>
+						</buttons>
+					</RadioButtonGroup>
+
+					<Label text="Page indicator placement" />
+					<RadioButtonGroup id="RBPageIndicatorPlacement"
+							columns="2"
+							select="onPageIndicatorPlacementSelect">
+						<buttons>
+							<RadioButton id="RB-Bottom"
+										 text="Bottom"
+										 tooltip="Places the page indicator on the bottom of the carousel">
+							</RadioButton>
+							<RadioButton id="RB-Top"
+										 text="Top"
+										 tooltip="Places the page indicator on the top of the carousel">
+							</RadioButton>
+						</buttons>
+					</RadioButtonGroup>
+
+					<Label text="Show page indicator" />
+					<RadioButtonGroup id="RBShowPageIndicator"
+							columns="2"
+							select="onShowPageIndicatorSelect">
+						<buttons>
+							<RadioButton id="RB-Yes"
+										 text="Yes"
+										 tooltip="Shows the page indicator of the carousel">
+							</RadioButton>
+							<RadioButton id="RB-No"
+										 text="No"
+										 tooltip="Hides the page indicator of the carousel">
+							</RadioButton>
+						</buttons>
+					</RadioButtonGroup>
+
+					<Label text="Number of images to display (Can be a number between 1 and 9)" />
+					<Input type="Number" value="3" liveChange="onNumberOfImagesChange" width="320px" />
+				</f:content>
+			</f:SimpleForm>
+		</content>
+	</Page>
+</mvc:View>

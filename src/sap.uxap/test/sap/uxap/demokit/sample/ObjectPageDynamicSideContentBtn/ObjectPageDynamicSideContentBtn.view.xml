@@ -1,0 +1,112 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.uxap.sample.ObjectPageDynamicSideContentBtn.ObjectPageDynamicSideContentBtn"
+	xmlns="sap.uxap"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m">
+				<l:DynamicSideContent
+					id="DynamicSideContent"
+					class="sapUiDSCExplored sapUiContentPadding"
+					sideContentFallDown="BelowM"
+					sideContentPosition="End"
+					containerQuery="true"
+					showSideContent="false"
+					breakpointChanged="updateToggleButtonState">
+					<l:mainContent>
+						<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
+							<headerTitle>
+								<ObjectPageHeader id="headerForTest"
+												  headerDesign="Ligth"
+												  objectTitle="Denise Smith"
+												  showTitleSelector="true"
+												  showMarkers="true"
+												  markFavorite="true"
+												  markFlagged="true"
+												  objectSubtitle="Senior Developer"
+												  objectImageURI="test-resources/sap/uxap/images/imageID_273624.png"
+												  objectImageShape="Circle"
+												  isObjectIconAlwaysVisible="false"
+												  isObjectTitleAlwaysVisible="false"
+												  isObjectSubtitleAlwaysVisible="false"
+												  isActionAreaAlwaysVisible="true">
+									<sideContentButton>
+										<m:Button icon="sap-icon://detail-view" type="Transparent" press="handleSCBtnPress"></m:Button>
+									</sideContentButton>
+									<actions>
+										<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://edit"/>
+										<ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action"/>
+									</actions>
+								</ObjectPageHeader>
+							</headerTitle>
+							<headerContent>
+								<l:VerticalLayout>
+									<m:Link text="denise-smith"/>
+									<m:Label text="(321) 123-4567"/>
+									<m:Link text="DeniseSmith@sap.com"/>
+									<l:HorizontalLayout>
+										<m:Image height="24px" width="24px"
+												 src="./test-resources/sap/uxap/images/twitterIcon.png"/>
+										<m:Image height="24px" width="24px"
+												 src="./test-resources/sap/uxap/images/linkedInIcon.png"/>
+									</l:HorizontalLayout>
+								</l:VerticalLayout>
+								<m:Text width="200px"
+										text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+								<l:VerticalLayout>
+									<m:Label text="Profile completion"/>
+									<m:ProgressIndicator
+											percentValue="30"
+											displayValue="30%"
+											showValue="true"
+											state="None"/>
+								</l:VerticalLayout>
+							</headerContent>
+							<sections>
+								<ObjectPageSection title="2014 Goals Plan">
+									<subSections>
+										<ObjectPageSubSection title=" ">
+											<m:Text width="200px"
+										text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+
+										</ObjectPageSubSection>
+									</subSections>
+								</ObjectPageSection>
+					
+								<ObjectPageSection title="Personal">
+									<subSections>
+										<ObjectPageSubSection title="Connect">
+											<m:Text width="200px"
+										text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+
+										</ObjectPageSubSection>
+					
+										<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+											<blocks>
+												
+											</blocks>
+											<moreBlocks>
+												
+											</moreBlocks>
+										</ObjectPageSubSection>
+									</subSections>
+								</ObjectPageSection>
+							</sections>
+						</ObjectPageLayout>
+					</l:mainContent>
+					<l:sideContent>
+						<m:Toolbar>
+							<m:Title text="My tasks"/>
+							<m:ToolbarSpacer />
+							<m:Button text="Close" type="Transparent" press="handleSideContentHide" />
+						</m:Toolbar>
+						<m:Text text=" Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+						Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+						Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."></m:Text>
+					</l:sideContent>
+				</l:DynamicSideContent>
+			
+</mvc:View>

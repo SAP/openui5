@@ -22,6 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.DataSet
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -755,7 +756,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				that[oAggregationInfo._sMutator](oClone);
 			});
 		}
-		
+
 		// update context on all items after applying diff
 		aItems = this.getItems();
 		for (var i = 0, l = aContexts.length; i < l; i++) {

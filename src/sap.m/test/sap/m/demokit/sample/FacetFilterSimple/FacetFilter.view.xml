@@ -1,6 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.FacetFilterLight.FacetFilter"
-	xmlns:l="sap.ui.layout"
+	controllerName="sap.m.sample.FacetFilterSimple.FacetFilter"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<VBox
@@ -13,14 +12,14 @@
 				showPersonalization="true"
 				showReset="true"
 				reset="handleFacetFilterReset"
+				confirm="handleConfirm"
 				lists="{/ProductCollectionStats/Filters}">
 				<lists>
 					<FacetFilterList
 						title="{type}"
 						key="{key}"
-						multiselect="true"
-						listClose="handleListClose"
-						items="{values}" >
+						mode="MultiSelect"
+						items="{path:'values', templateShareable: 'true'}" >
 						<items>
 							<FacetFilterItem
 								text="{text}"
@@ -31,7 +30,7 @@
 				</lists>
 			</FacetFilter>
 
-			<!--  A demo table will be appended here  -->
+			<!-- A demo table will be appended here -->
 
 		</items>
 	</VBox>

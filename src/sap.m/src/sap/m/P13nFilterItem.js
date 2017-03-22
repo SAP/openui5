@@ -10,14 +10,15 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nFilterItem.
-	 * 
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Type for <code>filterItems</code> aggregation in P13nFilterPanel control.
 	 * @extends sap.ui.core.Item
 	 * @version ${version}
 	 * @constructor
 	 * @public
+	 * @since 1.26.0
 	 * @alias sap.m.P13nFilterItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -30,7 +31,6 @@ sap.ui.define([
 
 				/**
 				 * sap.m.P13nConditionOperation
-				 * @since 1.26.0 
 				 */
 				operation: {
 					type: "string",
@@ -39,8 +39,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * value of the filter  
-				 * @since 1.26.0 
+				 * value of the filter
 				 */
 				value1: {
 					type: "string",
@@ -50,7 +49,6 @@ sap.ui.define([
 
 				/**
 				 * to value of the between filter
-				 * @since 1.26.0 
 				 */
 				value2: {
 					type: "string",
@@ -60,7 +58,6 @@ sap.ui.define([
 
 				/**
 				 * key of the column
-				 * @since 1.26.0 
 				 */
 				columnKey: {
 					type: "string",
@@ -70,7 +67,6 @@ sap.ui.define([
 
 				/**
 				 * defines if the filter is an include or exclude filter item
-				 * @since 1.26.0 
 				 */
 				exclude: {
 					type: "boolean",
@@ -80,6 +76,27 @@ sap.ui.define([
 			}
 		}
 	});
+
+
+	P13nFilterItem.prototype.setOperation = function(sOperation) {
+		return this.setProperty("operation", sOperation, true);
+	};
+
+	P13nFilterItem.prototype.setColumnKey = function(sKey) {
+		return this.setProperty("columnKey", sKey, true);
+	};
+
+	P13nFilterItem.prototype.setValue1 = function(sKey) {
+		return this.setProperty("value1", sKey, true);
+	};
+
+	P13nFilterItem.prototype.setValue2 = function(sKey) {
+		return this.setProperty("value2", sKey, true);
+	};
+
+	P13nFilterItem.prototype.setExclude = function(sKey) {
+		return this.setProperty("exclude", sKey, true);
+	};
 
 	return P13nFilterItem;
 

@@ -1,0 +1,183 @@
+/* ============================================== */
+/* CSS for control sap.uxap/ObjectPageSubSection  */
+/* Base theme                                     */
+/* ============================================== */
+
+.sapUxAPObjectPageSubSection {
+	padding-bottom: 0;
+}
+
+.sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn {
+	margin-left: 0.5rem;
+}
+
+.sapUxAPObjectPageSubSectionHeader {
+	height: auto;
+	overflow: auto;
+	word-wrap: break-word;
+	padding: 1rem 0 0 3rem
+}
+
+.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSectionHeader,
+.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSectionHeader,
+html .sapUiContainer-Medium .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSectionHeader {
+	padding-left: 2rem;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitle {
+	white-space: normal;
+	float: left;
+	line-height: 3rem;
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader4Size;
+	font-weight: normal;
+}
+
+.sapUxAPObjectPageSubSectionHeaderActions {
+	padding-right: 0.5rem;
+	float: right;
+	height: 3rem;
+}
+
+.sapUxAPSubSectionSeeMoreContainer {
+	text-align: right;
+	width: auto;
+	float: right;
+	height: auto;
+	margin-right: 1rem;
+}
+
+.sapUxAPSubSectionSeeMoreButton {
+	display: none;
+}
+
+.sapUxAPSubSectionSeeMoreButtonVisible {
+	display: block;
+}
+
+/* phone display */
+.sapUiMedia-Std-Phone .sapUxAPObjectPageSubSectionHeader,
+html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeader {
+	padding: 0 0 0 1rem;
+}
+
+.sapUiMedia-Std-Phone .sapUxAPObjectPageSubSectionHeaderTitle,
+html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeaderTitle {
+	height: auto;
+	overflow: auto;
+	float: none;
+	white-space: normal;
+	word-wrap: break-word;
+	word-break: break-all;
+}
+
+/* tablet display */
+
+.sapUiMedia-Std-Tablet .sapUxAPObjectPageSubSectionHeader,
+html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
+	padding: 1rem 0 0 2rem;
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout {
+	box-sizing: border-box;
+	width: 25%;
+	margin-right: 0;
+	display: inline-block;
+	vertical-align: top;
+	overflow: visible;
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
+	width: -webkit-calc(~"75% - 4rem");
+	width: calc(~"75% - 4rem");
+	box-sizing: border-box;
+	display: inline-block;
+	margin-left: 0;
+}
+
+.sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
+	width: -webkit-calc(~"75% - 2rem");
+	width: calc(~"75% - 2rem");
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderTitle {
+	height: auto;
+	white-space: normal;
+	word-wrap: break-word;
+	line-height: normal;
+	padding-top: 1rem;
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions {
+	float: none;
+	display: inline-block;
+	margin-left: 0;
+	width: 100%;
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn:first-child {
+	margin-left: 0;
+}
+
+/* remove the padding of form content, since form itself is already in a grid-cell that provides the required extra spacing */
+/* (1) remove the padding of direct children: */
+.sapUxAPBlockContainer .sapUiFormResGrid > div {
+	padding-left: 0;
+	padding-top: 0;
+}
+
+/* (2) if the direct child is a form container with a title, a more specific selector is needed: */
+.sapUxAPBlockContainer .sapUiFormResGrid > div.sapUiFormContainerTitle {
+	padding-top: 0;
+}
+
+/* (3) if the direct child is a form container with a title, a more specific selector is needed for the title itself: */
+.sapUxAPBlockContainer .sapUiFormResGrid > div.sapUiFormContainerTitle > .sapUiFormTitle {
+	line-height: 2rem;
+	margin-bottom: 0;
+}
+
+.sapUxAPBlockContainerDesktop {
+	padding: 1rem 2rem 3rem 2rem;
+}
+.sapUxAPBlockContainerTablet {
+	padding: 1rem 1rem 3rem 1rem;
+}
+.sapUxAPBlockContainerPhone {
+	padding: 1rem 0 1rem 0;
+}
+
+/* compact size */
+.sapUiSizeCompact {
+	.sapUxAPObjectPageSubSectionHeaderTitle {
+		height: 2rem;
+		line-height: 2rem;
+	}
+	.sapUxAPBlockContainerDesktop {
+		padding: 1rem 2rem 2rem 2rem;
+	}
+	.sapUxAPBlockContainerTablet,
+	.sapUxAPBlockContainerPhone{
+		padding: 1rem 1rem 2rem 1rem;
+	}
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageSubSection, .sapUxAPObjectPageSubSectionHeaderTitle {
+	&:focus {
+		outline: none;
+		position: relative;
+	}
+	&:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}

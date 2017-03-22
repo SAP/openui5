@@ -1,30 +1,29 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested classes: sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem + sap.ui.ux3.DataSetSimpleView
-  Author: d049080
 -->
 
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem + sap.ui.ux3.DataSetSimpleView</title>
-		<script id="sap-ui-bootstrap" type="text/javascript"
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.commons,sap.ui.ux3">
 		</script>
-		
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
-			
+
 			// Initialize the Model
-			
+
 			var data = {products:[]};
 			var aTitles = ["Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
 			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
@@ -128,27 +127,29 @@
 		</script>
 
 		<script>
-			module("Pagination");
-			test("Initial item count", function() {
-				equal(sap.ui.getCore().byId(oDataSet.getSelectedView()).getInitialItemCount(), 10, "Initial item count");
-				equal(oDataSet.getItems().length, 27, "Item count after inital reload (fill scrollarea)");
+			QUnit.module("Pagination");
+			QUnit.test("Initial item count", function(assert) {
+				assert.equal(sap.ui.getCore().byId(oDataSet.getSelectedView()).getInitialItemCount(), 10, "Initial item count");
+				assert.equal(oDataSet.getItems().length, 27, "Item count after inital reload (fill scrollarea)");
 			});
 
-			asyncTest("Scrolling", function() {
+			QUnit.test("Scrolling", function(assert) {
+				var done = assert.async();
 				var $scrollArea = jQuery(".sapUiUx3DSSVSA");
 				$scrollArea.scrollTop($scrollArea.height());
 				setTimeout(function() {
-					equal(oDataSet.getItems().length, 32, "Item count after scrolling to the very bottom");
-					start();
+					assert.equal(oDataSet.getItems().length, 32, "Item count after scrolling to the very bottom");
+					done();
 				}, 1000);
 			});
 
-			asyncTest("Scrolling 2", function() {
+			QUnit.test("Scrolling 2", function(assert) {
+				var done = assert.async();
 				var $scrollArea = jQuery(".sapUiUx3DSSVSA");
 				$scrollArea.scrollTop($scrollArea.height()+$scrollArea.scrollTop());
 				setTimeout(function() {
-					equal(oDataSet.getItems().length, 37, "Item count after scrolling to the very bottom");
-					start();
+					assert.equal(oDataSet.getItems().length, 37, "Item count after scrolling to the very bottom");
+					done();
 				}, 1000);
 			});
 		</script>

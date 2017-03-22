@@ -1,0 +1,6 @@
+<core:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<SplitApp id="sap.ui.fl.support.apps.contentbrowser.App"/>
+</core:View>

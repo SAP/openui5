@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Popover</code> control.
 	 * @alias sap.ui.commons.CalloutBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -231,9 +232,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 				vPos = (Math.max(tRect.t, pRect.t) + Math.min(tRect.b, pRect.b)) / 2 - tRect.t -  arrowWidth / 2;
 			}
 
-			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8 && dock.x == "left") {
-				tipOffset = tipOffset - 8;
-			}
 			$arrow.css(dock.x, tipOffset + "px");
 			$arrow.css("top", vPos);
 
@@ -265,9 +263,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 				hPos = (Math.max(tRect.l, pRect.l) + Math.min(tRect.r, pRect.r)) / 2 - tRect.l - arrowWidth / 2;
 			}
 
-			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8 && dock.y == "top") {
-				tipOffset = tipOffset - 8;
-			}
 			$arrow.css(dock.y, tipOffset + "px");
 			$arrow.css("left", hPos + "px");
 
@@ -557,6 +552,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	CalloutBase.prototype.onmousedown = function(oEvent) {
 		if (jQuery(oEvent.target).control(0) === this._currentControl) {
 			this.close();
+
+			//removes the standard tooltip which appears after click
+			this.removeStandardTooltips();
 		}
 	};
 

@@ -1,0 +1,39 @@
+{
+	"@odata.context" : "../$metadata#EMPLOYEES",
+	"value" : [ {
+		"@odata.etag" : "W/\"19770724000000.0000000\"",
+		"ID" : "1",
+		"Name" : "Walter\"s Win's",
+		"AGE" : 52,
+		"ENTRYDATE" : "1977-07-24",
+		"MANAGER_ID" : "",
+		"ROOM_ID" : "1",
+		"TEAM_ID" : "TEAM_01",
+		"Is_Manager" : false,
+		"LAST_MODIFIED_AT" : "1977-07-24T00:00:00Z",
+		"LOCATION" : {
+			"COUNTRY" : "Germany",
+			"City" : {
+				"POSTALCODE" : "69124",
+				"CITYNAME" : "Heidelberg"
+			}
+		},
+		"SALARY" : {
+			"MONTHLY_BASIC_SALARY_AMOUNT" : "5000.00",
+			"BASIC_SALARY_CURR" : "EUR",
+			"YEARLY_BONUS_AMOUNT" : "5000.000",
+			"BONUS_CURR" : "KWD"
+		},
+		"EMPLOYEE_2_EQUIPMENTS" : [ {
+			"Category" : "Electronics",
+			"ID" : 1,
+			"Name" : "Office PC",
+			"EmployeeId" : "0001"
+		}, {
+			"Category" : "Electronics",
+			"ID" : 2,
+			"Name" : "Tablet X",
+			"EmployeeId" : "0001"
+		} ]
+	} ]
+}

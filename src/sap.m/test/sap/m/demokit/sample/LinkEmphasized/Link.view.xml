@@ -28,17 +28,17 @@
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Dimensions" />
 			</Column>
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Weight" />
 			</Column>
 			<Column
-				hAlign="Right"> <!-- not using "Begin" because the content is left-to-right text -->
+				hAlign="End"> <!-- not using "Begin" because the content is left-to-right text -->
 				<Text text="Price" />
 			</Column>
 		</columns>
@@ -57,7 +57,11 @@
 						number="{WeightMeasure}"
 						unit="{WeightUnit}"/>
 					<ObjectNumber
-						number="{Price}"
+						number="{
+							parts:[{path:'Price'},{path:'CurrencyCode'}],
+							type: 'sap.ui.model.type.Currency',
+							formatOptions: {showMeasure: false}
+						}"
 						unit="{CurrencyCode}" />
 				</cells>
 			</ColumnListItem>

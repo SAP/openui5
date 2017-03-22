@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Basics</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Basics</h1>
+		<h2>DESCRIPTION</h2>
+		Test some basic functionality.
+		<h2>PREPARATION</h2>
+
+			To check console errors open the developer tools before starting the application and
+			check with each step, that there are no errors and warnings.
+
+		<h3>Testing with mock data</h3>
+		Start the Sales Orders application
+		URL (adjust host and port if necessary):
+			<ul>
+				<li> as explored application: http://&lt;host>:&lt;port>/sapui5-sdk-dist/explored.html#/sample/sap.ui.core.sample.odata.v4.SalesOrders/preview</li>
+				<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
+			</ul>
+
+		<h3>Testing with backend</h3>
+		Configure your IDE to be able to execute the Sales Orders application against an ABAP
+		backend system.  Start the Sales Orders application URL (adjust host and port if necessary):
+			<ul>
+				<li>local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true</a></li>
+			</ul>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>Set a base context for the a property binding</h3>
+		<ol>
+			<li>After the application is started, click on the button with the check mark icon right
+				of the text <code>Favorite product ID</code>
+			<li><b>Check:</b> The text <code>HT-1000</code> appears between
+				<code>Favorite product ID</code> and the button you just pressed.</li>
+		</ol>
+		<h3>Sort after filtering (with backend only)</h3>
+		<ol>
+			<li>Enter '1000' in the field <code>Filter by gross amount greater than</code> and press
+				<code>Enter</code>.</li>
+			<li><b>Check:</b> The first sales order in the sales orders has a gross amount
+				greater than 1000.</li>
+			<li>Press the button <code>Gross Amount</code> in the header of the respective column of
+				the  sales orders table.</li>
+			<li><b>Check:</b> The filter on gross amount still applies:
+				The first sales order in the sales orders still has a gross amount
+				greater than 1000.</li>
+		</ol>
+		<h3>Read data for relative list bindings</h3>
+		<ol>
+			<li>Select the first sales order</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table is not empty.
+				All items displayed in the table have the ID of the selected sales order in the
+				column <code>Sales Order ID</code></li>
+			<li>Select the first sales order item</li>
+			<li><b>Check:</b> The <code>Supplier Contact Information</code> list is not empty.</li>
+			<li>Select the second sales order item</li>
+			<li><b>Check:</b> The contacts shown in the <code>Supplier Contact Information</code>
+				table are different from the ones shown for the first sales order item.</li>
+		</ol>
+		<h3>Filter on relative list binding (with backend only)</h3>
+		Note: Test runs on sales order items table which is non-growing and therefore does not use
+		extended change detection.
+		<ol>
+			<li>Select the first sales order</li>
+			<li>In the <code>Filter by ProductID</code> field in the header of the
+				<code>Sales Order Line Items</code> table, enter the product ID of some line item
+				displayed in the table.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table contains exactly one
+				row with the sales order item having the product ID entered as filter.</li>
+		</ol>
+		<h3>Sort on list binding updates or refreshes dependent bindings (with backend only)</h3>
+		<ol>
+			<li>Select the first sales order</li>
+			<li>Change sort order of sales orders by clicking the <code>Gross Amount</code>
+				column header.</li>
+			<li><b>Check:</b> The Sales Order Details display the details for the sales order
+				selected after sorting: The Sales Order ID is the same.</li>
+		</ol>
+	</body>
+</html>

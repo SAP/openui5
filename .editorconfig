@@ -3,11 +3,15 @@
 root = true
 
 [*]
-indent_style = tab
-end_of_line = lf
 charset = utf-8
+
+[*.{css,html,java,js,json,less,txt}]
 trim_trailing_whitespace = true
-insert_final_newline = true
+end_of_line = lf
+
+[pom.xml]
+trim_trailing_whitespace = true
+end_of_line = lf
 
 # npm is using 2 spaces when modifying package.json
 [package.json]

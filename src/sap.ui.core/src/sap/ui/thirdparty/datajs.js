@@ -21,12 +21,12 @@
     var odata = window.OData || {};
 
     // AMD support
-    if (typeof define === 'function' && define.amd) {        
+    if (typeof define === 'function' && define.amd) {
         define('datajs', datajs);
         define('OData', odata);
     } else {
         window.datajs = datajs;
-        window.OData = odata; 
+        window.OData = odata;
     }
 
 
@@ -40,9 +40,9 @@
         ///    of the ActiveXObject.
         /// </remarks>
         /// <returns type="Object">
-        ///     The ActiveXObject instance. Null if ActiveX is not supported by the 
+        ///     The ActiveXObject instance. Null if ActiveX is not supported by the
         ///     browser.
-        /// </returns>    
+        /// </returns>
         if (window.ActiveXObject) {
             return new window.ActiveXObject(progId);
         }
@@ -488,8 +488,8 @@
         /// <summary>Creates an configures new MSXML 6.0 or MSXML 3.0 ActiveX object.</summary>
         /// <remakrs>
         ///    This function will try to create a new MSXML 6.0 ActiveX object. If it fails then
-        ///    it will fallback to create a new MSXML 3.0 ActiveX object. Any exception that 
-        ///    happens during the creation of the MSXML 6.0 will be handled by the function while 
+        ///    it will fallback to create a new MSXML 3.0 ActiveX object. Any exception that
+        ///    happens during the creation of the MSXML 6.0 will be handled by the function while
         ///    the ones that happend during the creation of the MSXML 3.0 will be thrown.
         /// <returns type="Object">New MSXML 3.0 ActiveX object.</returns>
 
@@ -508,7 +508,7 @@
         /// <summary>Parses an XML string using the MSXML DOM.</summary>
         /// <remakrs>
         ///    This function throws any exception that occurs during the creation
-        ///    of the MSXML ActiveX object.  It also will throw an exception 
+        ///    of the MSXML ActiveX object.  It also will throw an exception
         ///    in case of a parsing error.
         /// <returns type="Object">New MSXML DOMDocument node representing the parsed XML string.</returns>
 
@@ -528,13 +528,13 @@
     var xmlThrowParserError = function (exceptionOrReason, srcText, errorXmlText) {
         /// <summary>Throws a new exception containing XML parsing error information.</summary>
         /// <param name="exceptionOrReason">
-        ///    String indicatin the reason of the parsing failure or 
+        ///    String indicatin the reason of the parsing failure or
         ///    Object detailing the parsing error.
         /// </param>
         /// <param name="srcText" type="String">
         ///    String indicating the part of the XML string that caused the parsing error.
         /// </param>
-        /// <param name="errorXmlText" type="String">XML string for wich the parsing failed.</param> 
+        /// <param name="errorXmlText" type="String">XML string for wich the parsing failed.</param>
 
         if (typeof exceptionOrReason === "string") {
             exceptionOrReason = { message: exceptionOrReason };
@@ -663,7 +663,7 @@
     var xmlBaseURI = function (domNode, baseURI) {
         /// <summary>Gets the value of the xml:base attribute on the specified element.</summary>
         /// <param name="domNode">Element to get xml:base attribute value from.</param>
-        /// <param name="baseURI" mayBeNull="true" optional="true">Base URI used to normalize the value of the xml:base attribute.</param> 
+        /// <param name="baseURI" mayBeNull="true" optional="true">Base URI used to normalize the value of the xml:base attribute.</param>
         /// <returns type="String">Value of the xml:base attribute if found; the baseURI or null otherwise.</returns>
 
         var base = xmlAttributeNode(domNode, "base", xmlNS);
@@ -692,7 +692,7 @@
         /// <param name="path" type="String">Path to the desired descendant element.</param>
         /// <returns>The element specified by path and namespace URI.</returns>
         /// <remarks>
-        ///     All the elements in the path are matched against namespaceURI. 
+        ///     All the elements in the path are matched against namespaceURI.
         ///     The function will stop searching on the first element that doesn't match the namespace and the path.
         /// </remarks>
 
@@ -735,7 +735,7 @@
         /// <summary>Returns the first child DOM element under the specified DOM node that matches the specified namespace URI and local name.</summary>
         /// <param name="domNode">DOM node from which the child DOM element is going to be retrieved.</param>
         /// <param name="namespaceURI" type="String" optional="true">The namespace URI of the element to match.</param>
-        /// <param name="localName" type="String" optional="true">Name of the element to match.</param> 
+        /// <param name="localName" type="String" optional="true">Name of the element to match.</param>
         /// <returns>The node's first child DOM element that matches the specified namespace URI and local name; null otherwise.</returns>
 
         return xmlFirstElementMaybeRecursive(domNode, namespaceURI, localName, /*recursive*/false);
@@ -745,7 +745,7 @@
         /// <summary>Returns the first descendant DOM element under the specified DOM node that matches the specified namespace URI and local name.</summary>
         /// <param name="domNode">DOM node from which the descendant DOM element is going to be retrieved.</param>
         /// <param name="namespaceURI" type="String" optional="true">The namespace URI of the element to match.</param>
-        /// <param name="localName" type="String" optional="true">Name of the element to match.</param> 
+        /// <param name="localName" type="String" optional="true">Name of the element to match.</param>
         /// <returns>The node's first descendant DOM element that matches the specified namespace URI and local name; null otherwise.</returns>
 
         if (domNode.getElementsByTagNameNS) {
@@ -759,9 +759,9 @@
         /// <summary>Returns the first descendant DOM element under the specified DOM node that matches the specified namespace URI and local name.</summary>
         /// <param name="domNode">DOM node from which the descendant DOM element is going to be retrieved.</param>
         /// <param name="namespaceURI" type="String" optional="true">The namespace URI of the element to match.</param>
-        /// <param name="localName" type="String" optional="true">Name of the element to match.</param> 
+        /// <param name="localName" type="String" optional="true">Name of the element to match.</param>
         /// <param name="recursive" type="Boolean">
-        ///     True if the search should include all the descendants of the DOM node. 
+        ///     True if the search should include all the descendants of the DOM node.
         ///     False if the search should be scoped only to the direct children of the DOM node.
         /// </param>
         /// <returns>The node's first descendant DOM element that matches the specified namespace URI and local name; null otherwise.</returns>
@@ -847,7 +847,7 @@
         /// <summary>Returns the value or the inner text of a XML node.</summary>
         /// <param name="node">DOM node to get the value from.</param>
         /// <returns>Value of the domNode or the inner text if domNode represents a DOM element node.</returns>
-        
+
         if (domNode.nodeType === 1) {
             return xmlInnerText(domNode);
         }
@@ -881,7 +881,7 @@
         /// <summary>Returns the next sibling DOM element of the specified DOM node.</summary>
         /// <param name="domNode">DOM node from which the next sibling is going to be retrieved.</param>
         /// <param name="namespaceURI" type="String" optional="true">The namespace URI of the element to match.</param>
-        /// <param name="localName" type="String" optional="true">Name of the element to match.</param> 
+        /// <param name="localName" type="String" optional="true">Name of the element to match.</param>
         /// <returns>The node's next sibling DOM element, null if there is none.</returns>
 
         var sibling = domNode.nextSibling;
@@ -903,11 +903,11 @@
         /// <summary>Creates a new empty DOM document node.</summary>
         /// <returns>New DOM document node.</returns>
         /// <remarks>
-        ///    This function will first try to create a native DOM document using 
-        ///    the browsers createDocument function.  If the browser doesn't 
-        ///    support this but supports ActiveXObject, then an attempt to create 
+        ///    This function will first try to create a native DOM document using
+        ///    the browsers createDocument function.  If the browser doesn't
+        ///    support this but supports ActiveXObject, then an attempt to create
         ///    an MSXML 6.0 DOM will be made. If this attempt fails too, then an attempt
-        ///    for creating an MXSML 3.0 DOM will be made.  If this last attemp fails or 
+        ///    for creating an MXSML 3.0 DOM will be made.  If this last attemp fails or
         ///    the browser doesn't support ActiveXObject then an exception will be thrown.
         /// </remarks>
 
@@ -923,7 +923,7 @@
         /// <param name="children" type="Array">Array containing DOM nodes or string values that will be appended to the parent.</param>
         /// <returns>The parent with the appended children or string values.</returns>
         /// <remarks>
-        ///    If a value in the children collection is a string, then a new DOM text node is going to be created 
+        ///    If a value in the children collection is a string, then a new DOM text node is going to be created
         ///    for it and then appended to the parent.
         /// </remarks>
 
@@ -944,7 +944,7 @@
         /// <param name="child">Child DOM node or string value to append to the parent.</param>
         /// <returns>The parent with the appended child or string value.</returns>
         /// <remarks>
-        ///    If child is a string value, then a new DOM text node is going to be created 
+        ///    If child is a string value, then a new DOM text node is going to be created
         ///    for it and then appended to the parent.
         /// </remarks>
 
@@ -1005,7 +1005,7 @@
         /// </param>
         /// <returns>New DOM element.</returns>
         /// <remarks>
-        ///    If a value in the children collection is a string, then a new DOM text node is going to be created 
+        ///    If a value in the children collection is a string, then a new DOM text node is going to be created
         ///    for it and then appended to the new DOM element.
         /// </remarks>
 
@@ -1064,10 +1064,10 @@
         /// <param name="Path" type="String">Path string describing the location of the new DOM element or attribute from the root element.</param>
         /// <returns>DOM element or attribute node for the last segment of the path.</returns>
         /// <remarks>
-        ///     This function will traverse the path and will create a new DOM element with the specified namespace URI and prefix 
+        ///     This function will traverse the path and will create a new DOM element with the specified namespace URI and prefix
         ///     for each segment that doesn't have a matching element under root.
         ///
-        ///     The last segment of the path may be decorated with a starting @ character. In this case a new DOM attribute node 
+        ///     The last segment of the path may be decorated with a starting @ character. In this case a new DOM attribute node
         ///     will be created.
         /// </remarks>
 
@@ -1128,8 +1128,8 @@
         }
 
         // Some implementations of the XMLSerializer don't deal very well with fragments that
-        // don't have a DOMElement as their first child. The work around is to wrap all the 
-        // nodes in a dummy root node named "c", serialize it and then just extract the text between 
+        // don't have a DOMElement as their first child. The work around is to wrap all the
+        // nodes in a dummy root node named "c", serialize it and then just extract the text between
         // the <c> and the </c> substrings.
 
         var dom = domNode.ownerDocument;
@@ -1202,7 +1202,7 @@
         /// or the original object.
         ///
         /// Compability Note B - Fulfillment value
-        /// 
+        ///
         /// The Wiki entry at http://wiki.commonjs.org/wiki/Promises/A
         /// implies that the result of a success callback is the
         /// fulfillment value of the object and is received by
@@ -1245,7 +1245,7 @@
             //// See Compatibility Note A in the DjsDeferred constructor.
             //// if (!this._next) {
             ////    this._next = createDeferred();
-            //// } 
+            //// }
             //// return this._next.promise();
 
             if (this._resolved) {
@@ -1266,7 +1266,7 @@
                 var i, len;
                 for (i = 0, len = this._done.length; i < len; i++) {
                     //// See Compability Note B - Fulfillment value.
-                    //// var nextValue = 
+                    //// var nextValue =
                     this._done[i].apply(null, arguments);
                 }
 
@@ -1326,14 +1326,14 @@
     };
 
 
-    
+
 
     var dataItemTypeName = function (value, metadata) {
         /// <summary>Gets the type name of a data item value that belongs to a feed, an entry, a complex type property, or a collection property.</summary>
         /// <param name="value">Value of the data item from which the type name is going to be retrieved.</param>
         /// <param name="metadata" type="object" optional="true">Object containing metadata about the data tiem.</param>
         /// <remarks>
-        ///    This function will first try to get the type name from the data item's value itself if it is an object with a __metadata property; otherwise 
+        ///    This function will first try to get the type name from the data item's value itself if it is an object with a __metadata property; otherwise
         ///    it will try to recover it from the metadata.  If both attempts fail, it will return null.
         /// </remarks>
         /// <returns type="String">Data item type name; null if the type name cannot be found within the value or the metadata</returns>
@@ -1483,7 +1483,7 @@
     	return "\/Date("+value.getTime()+")\/";
     };
     // ##### END: MODIFIED BY SAP
-    
+
     var formatDateTimeOffset = function (value) {
         /// <summary>Formats a DateTime or DateTimeOffset value a string.</summary>
         /// <param name="value" type="Date" mayBeNull="false">Value to format.</param>
@@ -1629,9 +1629,9 @@
                 return;
             }
             // ##### BEGIN: MODIFIED BY SAP
-            // errors in success handler for sync requests result in error handler calls. So here we fix this. 
+            // errors in success handler for sync requests result in error handler calls. So here we fix this.
             try {
-            	success(response.data, response);				
+            	success(response.data, response);
 			} catch (err) {
 				err.bIsSuccessHandlerError = true;
 				throw err;
@@ -1755,7 +1755,7 @@
         /// <summary>Tests whether a value is a primitive type value in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <remarks>
-        ///    Date objects are considered primitive types by the library. 
+        ///    Date objects are considered primitive types by the library.
         /// </remarks>
         /// <returns type="Boolean">True is the value is a primitive type value.</returns>
 
@@ -1987,7 +1987,10 @@
         "accept": "Accept",
         "content-type": "Content-Type",
         "dataserviceversion": "DataServiceVersion",
-        "maxdataserviceversion": "MaxDataServiceVersion"
+        "maxdataserviceversion": "MaxDataServiceVersion",
+        // ##### BEGIN: MODIFIED BY SAP
+        "last-modified": "Last-Modified"
+        // ##### END: MODIFIED BY SAP
     };
 
     var normalizeHeaders = function (headers) {
@@ -2153,7 +2156,7 @@
         /// <summary>Parses a string in xsd:duration format.</summary>
         /// <param name="duration" type="String">Duration value.</param>
         /// <remarks>
-        /// This method will throw an exception if the input string has a year or a month component. 
+        /// This method will throw an exception if the input string has a year or a month component.
         /// </remarks>
         /// <returns type="Object">Object representing the time</returns>
 
@@ -2226,7 +2229,7 @@
         /// <param name="handler">Handler for data serialization</param>
         /// <param name="context">Context used for preparing the request</param>
 
-        // Default to GET if no method has been specified.    
+        // Default to GET if no method has been specified.
         if (!request.method) {
             request.method = "GET";
         }
@@ -2248,7 +2251,7 @@
         if (!assigned(request.headers.MaxDataServiceVersion)) {
             request.headers.MaxDataServiceVersion = handler.maxDataServiceVersion || "1.0";
         }
-        
+
         // ##### BEGIN: MODIFIED BY SAP
         if (request.async === undefined) {
         	request.async = true;
@@ -2419,10 +2422,8 @@
         if (!responseHeaders){
             var contentType = xhr.getResponseHeader("Content-Type");
             var contentLength = xhr.getResponseHeader("Content-Length");
-            if (contentType)
-            	headers["Content-Type"] = contentType;
-            if (contentLength)
-            	headers["Content-Length"] = contentLength;
+            if (contentType){headers["Content-Type"] = contentType;}
+            if (contentLength){headers["Content-Length"] = contentLength;}
         } else {
         // ##### END: MODIFIED BY SAP
         	responseHeaders = responseHeaders.split(/\r?\n/);
@@ -2523,6 +2524,13 @@
                     var headers = [];
                     readResponseHeaders(xhr, headers);
 
+                    // ##### BEGIN: MODIFIED BY SAP
+                    var xml = null;
+                    if (datajs._sap && xhr.responseXML) {
+                    	xml = xhr.responseXML;
+                    }
+                   	// ##### END: MODIFIED BY SAP
+
                     var response = { requestUri: url, statusCode: statusCode, statusText: statusText, headers: headers, body: xhr.responseText };
 
                     done = true;
@@ -2530,12 +2538,22 @@
                     if (statusCode >= 200 && statusCode <= 299) {
                         success(response);
                     } else {
-                    		// ##### BEGIN: MODIFIED BY SAP
-                    		// normalize response headers here which is also done in the success function call above
+                    	// ##### BEGIN: MODIFIED BY SAP
+                    	// normalize response headers here which is also done in the success function call above
                       	normalizeHeaders(response.headers);
                       	// ##### END: MODIFIED BY SAP
                         error({ message: "HTTP request failed", request: request, response: response });
                     }
+                    // ##### BEGIN: MODIFIED BY SAP
+                    if (datajs._sap && response.requestUri.indexOf("$metadata") > -1) {
+
+                    	var mSettings = {
+                      	   supportXML: xml,
+                      	   response: response
+                      	};
+                    	datajs._sap._supportInfo({context: xml, env: {caller:'datajs', settings: mSettings, type:"metadata"}});
+                    }
+                    // ##### END: MODIFIED BY SAP
                 };
 
                 // ##### BEGIN: MODIFIED BY SAP
@@ -2562,12 +2580,13 @@
                     xhr.timeout = request.timeoutMS;
                     xhr.ontimeout = handleTimeout;
                 }
-                
+
                 // ##### BEGIN: MODIFIED BY SAP
                 if (request.async || (!request.async && request.async !== false)) {
                     xhr.onreadystatechange = requestCallback;
-                } 
-                xhr.send(request.body);
+                }
+                // modified by SAP: typeof request.body !== 'undefined' ? request.body : null. Check added to make it work in IE 11.
+                xhr.send(typeof request.body !== 'undefined' ? request.body : null);
                 if (!request.async) {
                 	requestCallback();
                 }
@@ -2678,7 +2697,7 @@
 
     	// ##### BEGIN: MODIFIED BY SAP
         // this was not working in 1.1.0 so this fix is from 1.1.1.beta2
-    	
+
 //        var rwContext = {
 //                contentType: contentType,
 //                dataServiceVersion: dataServiceVersion,
@@ -2697,7 +2716,7 @@
 
         return rwContext;
         //##### END: MODIFIED BY SAP
-        
+
     };
 
     var fixRequestHeader = function (request, name, value) {
@@ -2879,8 +2898,8 @@
     odata.textHandler = handler(textParse, textSerialize, "text/plain", MAX_DATA_SERVICE_VERSION);
 
 
-    var gmlOpenGis = http + "www.opengis.net";           // http://www.opengis.net 
-    var gmlXmlNs = gmlOpenGis + "/gml";                 // http://www.opengis.net/gml 
+    var gmlOpenGis = http + "www.opengis.net";           // http://www.opengis.net
+    var gmlXmlNs = gmlOpenGis + "/gml";                 // http://www.opengis.net/gml
     var gmlSrsPrefix = gmlOpenGis + "/def/crs/EPSG/0/"; // http://www.opengis.net/def/crs/EPSG/0/
 
     var gmlPrefix = "gml";
@@ -2889,7 +2908,7 @@
         /// <summary>Creates a GeoJSON object with the specified type, member and value.</summary>
         /// <param name="type" type="String">GeoJSON object type.</param>
         /// <param name="member" type="String">Name for the data member in the GeoJSON object.</param>
-        /// <param name="data">Data to be contained by the GeoJSON object.</param> 
+        /// <param name="data">Data to be contained by the GeoJSON object.</param>
         /// <returns type="Object">GeoJSON object.</returns>
 
         var result = { type: type };
@@ -2912,7 +2931,7 @@
 
     var gmlReadODataMultiItem = function (domElement, type, member, members, valueReader, isGeography) {
         /// <summary>
-        ///    Reads a GML DOM element that represents a composite structure like a multi-point or a 
+        ///    Reads a GML DOM element that represents a composite structure like a multi-point or a
         ///    multi-geometry returnig its GeoJSON representation.
         /// </summary>
         /// <param name="domElement">GML DOM element.</param>
@@ -2922,7 +2941,7 @@
         /// <param name="valueReader" type="Function">Callback function invoked to get the coordinates of each item in the comoposite structure.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Object">GeoJSON object.</returns>
@@ -2933,17 +2952,17 @@
 
     var gmlReadODataMultiItemValue = function (domElement, member, members, valueReader, isGeography) {
         /// <summary>
-        ///    Reads the value of a GML DOM element that represents a composite structure like a multi-point or a 
+        ///    Reads the value of a GML DOM element that represents a composite structure like a multi-point or a
         ///    multi-geometry returnig its items.
         /// </summary>
         /// <param name="domElement">GML DOM element.</param>
         /// <param name="type" type="String">GeoJSON object type.</param>
         /// <param name="member" type="String">Name for the child element representing a single item in the composite structure.</param>
         /// <param name="members" type="String">Name for the child element representing a collection of items in the composite structure.</param>
-        /// <param name="valueReader" type="Function">Callback function invoked to get the transformed value of each item in the comoposite structure.</param>  
+        /// <param name="valueReader" type="Function">Callback function invoked to get the transformed value of each item in the comoposite structure.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Array">Array containing the transformed value of each item in the multi-item.</returns>
@@ -2989,7 +3008,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Object">MultiGeometry object in GeoJSON format.</returns>
@@ -3003,7 +3022,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Object">LineString object in GeoJSON format.</returns>
@@ -3016,7 +3035,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Object">MultiLineString object in GeoJSON format.</returns>
@@ -3029,7 +3048,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Object">MultiPoint object in GeoJSON format.</returns>
@@ -3042,7 +3061,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Object">MultiPolygon object in GeoJSON format.</returns>
@@ -3055,7 +3074,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Object">Point object in GeoJSON format.</returns>
@@ -3068,7 +3087,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Object">Polygon object in GeoJSON format.</returns>
@@ -3081,7 +3100,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Array">Array containing an array of doubles for each coordinate of the line.</returns>
@@ -3119,7 +3138,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Array">Array of doubles containing the point coordinates.</returns>
@@ -3133,7 +3152,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Array">Array of doubles containing the point coordinates.</returns>
@@ -3147,7 +3166,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Array">Array containing an array of array of doubles for each ring of the polygon.</returns>
@@ -3185,7 +3204,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Array">Array containing an array of doubles for each coordinate of the linear ring.</returns>
@@ -3205,10 +3224,10 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         ///
-        ///    The positions described by the list are assumed to be 2D, so 
+        ///    The positions described by the list are assumed to be 2D, so
         ///    an exception will be thrown if the list has an odd number elements.
         /// </remarks>
         /// <returns type="Array">Array containing an array of doubles for each coordinate in the list.</returns>
@@ -3233,7 +3252,7 @@
         /// <param name="property">DOM element for the GML element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns type="Array">Array of doubles containing the coordinates.</returns>
@@ -3267,7 +3286,7 @@
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each position coordinates in the resulting GeoJSON object.
         /// </remarks>
         /// <returns type="Array">Array containing an array of doubles for each coordinate of the polygon.</returns>
@@ -3334,7 +3353,7 @@
         /// <param name="type" type="String">String indicating the GeoJSON type of the value to serialize.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the spatial value. </returns>
@@ -3393,7 +3412,7 @@
         /// <param name="children" type="Array">Array containing DOM nodes or string values that will be added as children of the new DOM element.</param>
         /// <returns>New DOM element in the GML namespace.</returns>
         /// <remarks>
-        ///    If a value in the children collection is a string, then a new DOM text node is going to be created 
+        ///    If a value in the children collection is a string, then a new DOM text node is going to be created
         ///    for it and then appended as a child of the new DOM Element.
         /// </remarks>
 
@@ -3406,7 +3425,7 @@
         /// <param name="coordinates" type="Array">Array of doubles describing the coordinates of the pos element.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the coordinates use a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first coordinate is the Longitude and 
+        ///    When using a geographic reference system, the first coordinate is the Longitude and
         ///    will be serialized as the second component of the <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New pos DOM element in the GML namespace.</returns>
@@ -3427,7 +3446,7 @@
         /// <param name="coordinates" type="Array">Array of array of doubles describing the coordinates of the line element.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the coordinates use a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace.</returns>
@@ -3452,7 +3471,7 @@
         /// <param name="value" type="Object">GeoJSON Point object.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON Point.</returns>
@@ -3466,7 +3485,7 @@
         /// <param name="coordinates" type="Array">Array of array of doubles describing the coordinates of the line element.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON LineString.</returns>
@@ -3481,7 +3500,7 @@
         /// <param name="coordinates" type="Array">Array of array of doubles describing the coordinates of the polygon ring.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the coordinates use a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace.</returns>
@@ -3500,7 +3519,7 @@
         /// <param name="coordinates" type="Array">Array of array of array of doubles describing the coordinates of the polygon.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace.</returns>
@@ -3525,7 +3544,7 @@
         /// <param name="value" type="Object">GeoJSON Point object.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON Point.</returns>
@@ -3539,7 +3558,7 @@
         /// <param name="value" type="Object">GeoJSON LineString object.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON LineString.</returns>
@@ -3553,7 +3572,7 @@
         /// <param name="value" type="Object">GeoJSON Polygon object.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON Polygon.</returns>
@@ -3568,7 +3587,7 @@
         /// <param name="items" type="Array">Array of items in the composite structure.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the multi-item uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each of the items is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each of the items is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace.</returns>
@@ -3593,7 +3612,7 @@
         /// <param name="value" type="Object">GeoJSON MultiPoint object.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON MultiPoint.</returns>
@@ -3607,7 +3626,7 @@
         /// <param name="value" type="Object">GeoJSON MultiLineString object.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON MultiLineString.</returns>
@@ -3621,7 +3640,7 @@
         /// <param name="value" type="Object">GeoJSON MultiPolygon object.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON MultiPolygon.</returns>
@@ -3635,7 +3654,7 @@
         /// <param name="item" type="Object">GeoJSON object in the geometry collection.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace.</returns>
@@ -3649,7 +3668,7 @@
         /// <param name="value" type="Object">GeoJSON GeometryCollection object.</param>
         /// <param name="isGeography" type="Boolean">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in the GeoJSON value is the Longitude and
         ///    will be serialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the GeoJSON GeometryCollection.</returns>
@@ -3690,9 +3709,9 @@
         /// <param name="domNode">DOM node for the attribute.</param>
         /// <param name="useNamespaceURI" type="Boolean">Flag indicating if the namespaceURI property should be added to the extension object instead of the namespace property.</param>
         /// <remarks>
-        ///    The useNamespaceURI flag is used to prevent a breaking change from older versions of datajs in which extension 
+        ///    The useNamespaceURI flag is used to prevent a breaking change from older versions of datajs in which extension
         ///    objects created for Atom extension attributes have the namespaceURI property instead of the namespace one.
-        ///    
+        ///
         ///    This flag and the namespaceURI property should be deprecated in future major versions of the library.
         /// </remarks>
         /// <returns type="Object">The new extension object.</returns>
@@ -3708,9 +3727,9 @@
         /// <param name="domNode">DOM node for the element.</param>
         /// <param name="useNamespaceURI" type="Boolean">Flag indicating if the namespaceURI property should be added to the extension object instead of the namespace property.</param>
         /// <remarks>
-        ///    The useNamespaceURI flag is used to prevent a breaking change from older versions of datajs in which extension 
+        ///    The useNamespaceURI flag is used to prevent a breaking change from older versions of datajs in which extension
         ///    objects created for Atom extension attributes have the namespaceURI property instead of the namespace one.
-        ///    
+        ///
         ///    This flag and the namespaceURI property should be deprecated in future major versions of the library.
         /// </remarks>
         /// <returns type="Object">The new extension object.</returns>
@@ -3880,7 +3899,7 @@
         /// <param name="propertyType" type="String">Property type name.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
         /// <remarks>
-        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and 
+        ///    When using a geographic reference system, the first component of all the coordinates in each <pos> element in the GML DOM tree is the Latitude and
         ///    will be deserialized as the second component of each <pos> element in the GML DOM tree.
         /// </remarks>
         /// <returns>Spatial property value in GeoJSON format.</returns>
@@ -4028,10 +4047,10 @@
         /// <param name="value" type="Object">Spatial property value in GeoJSON format.</param>
         /// <param name="edmType" type="String" mayBeNull="true" optional="true">Spatial property edm type.<param>
         /// <remarks>
-        ///   If the edmType parameter is null, undefined, "Edm.Geometry" or "Edm.Geography", then the function returns 
+        ///   If the edmType parameter is null, undefined, "Edm.Geometry" or "Edm.Geography", then the function returns
         ///   the GeoJSON type indicated by the value's type property.
         ///
-        ///   If the edmType parameter is specified or is not one of the base spatial types, then it is used to 
+        ///   If the edmType parameter is specified or is not one of the base spatial types, then it is used to
         ///   determine the GeoJSON type and the value's type property is ignored.
         /// </remarks>
         /// <returns>New DOM element in the GML namespace for the spatial value. </returns>
@@ -4078,7 +4097,7 @@
         /// <param name="children" type="Array">Array containing DOM nodes or string values that will be added as children of the new DOM element.</param>
         /// <returns>New DOM element in the OData metadata namespace.</returns>
         /// <remarks>
-        ///    If a value in the children collection is a string, then a new DOM text node is going to be created 
+        ///    If a value in the children collection is a string, then a new DOM text node is going to be created
         ///    for it and then appended as a child of the new DOM Element.
         /// </remarks>
 
@@ -4102,7 +4121,7 @@
         /// <param name="children" type="Array">Array containing DOM nodes or string values that will be added as children of the new DOM element.</param>
         /// <returns>New DOM element in the OData namespace.</returns>
         /// <remarks>
-        ///    If a value in the children collection is a string, then a new DOM text node is going to be created 
+        ///    If a value in the children collection is a string, then a new DOM text node is going to be created
         ///    for it and then appended as a child of the new DOM Element.
         /// </remarks>
 
@@ -4140,7 +4159,7 @@
         /// <param name="typeName" type="String" optional="true">Property type name.</param>
         /// <param name="children" type="Array">Array containing DOM nodes or string values that will be added as children of the new DOM element.</param>
         /// <remarks>
-        ///    If a value in the children collection is a string, then a new DOM text node is going to be created 
+        ///    If a value in the children collection is a string, then a new DOM text node is going to be created
         ///    for it and then appended as a child of the new DOM Element.
         /// </remarks>
         /// <returns>New DOM element in the OData namespace for the entry property.</returns>
@@ -4157,7 +4176,7 @@
         /// <param name="value">Property value.</param>
         /// <param name="typeName" type="String" optional="true">Property type name.</param>
         /// <returns type="Object">
-        ///     Object containing the new DOM element in the OData namespace for the EDM property and the 
+        ///     Object containing the new DOM element in the OData namespace for the EDM property and the
         ///     required data service version for this property.
         /// </returns>
 
@@ -4176,7 +4195,7 @@
         ///     If no typeName is specified, then it will be assumed that this is a primitive type property.
         /// </remarks>
         /// <returns type="Object">
-        ///     Object containing the new DOM element in the OData namespace for the null property and the 
+        ///     Object containing the new DOM element in the OData namespace for the null property and the
         ///     required data service version for this property.
         /// </returns>
 
@@ -4197,7 +4216,7 @@
         /// <param name="collectionModel" type="Object" optional="true">Object describing the collection property in an OData conceptual schema.</param>
         /// <param name="model" type="Object" optional="true">Object describing an OData conceptual schema.</param>
         /// <returns type="Object">
-        ///     Object containing the new DOM element in the OData namespace for the collection property and the 
+        ///     Object containing the new DOM element in the OData namespace for the collection property and the
         ///     required data service version for this property.
         /// </returns>
 
@@ -4228,7 +4247,7 @@
         /// <param name="propertyModel" type="Object" optional="true">Object describing the complex type property in an OData conceptual schema.</param>
         /// <param name="model" type="Object" optional="true">Object describing an OData conceptual schema.</param>
         /// <returns type="Object">
-        ///     Object containing the new DOM element in the OData namespace for the complex type property and the 
+        ///     Object containing the new DOM element in the OData namespace for the complex type property and the
         ///     required data service version for this property.
         /// </returns>
 
@@ -4259,7 +4278,7 @@
         /// <param name="value" type="Object">GeoJSON object containing the property value.</param>
         /// <param name="typeName" type="String" optional="true">Property type name.</param>
         /// <returns type="Object">
-        ///     Object containing the new DOM element in the OData namespace for the EDM property and the 
+        ///     Object containing the new DOM element in the OData namespace for the EDM property and the
         ///     required data service version for this property.
         /// </returns>
 
@@ -4280,7 +4299,7 @@
         /// <param name="dataItemModel" type="Object" optional="true">Object describing the data item in an OData conceptual schema.</param>
         /// <param name="model" type="Object" optional="true">Object describing an OData conceptual schema.</param>
         /// <returns type="Object">
-        ///     Object containing the new DOM element in the appropriate namespace for the data item and the 
+        ///     Object containing the new DOM element in the appropriate namespace for the data item and the
         ///     required data service version for it.
         /// </returns>
         var typeName = dataItemTypeName(value, dataItemMetadata, dataItemModel);
@@ -4289,10 +4308,10 @@
         // The 3rd parameter is always ignored in dataItemTypeName function
         // so if there is no typename we try to find it with the third parameter dataItemModel
         if (!typeName) {
-        	typeName = dataItemTypeName(value, dataItemModel);	
+        	typeName = dataItemTypeName(value, dataItemModel);
         }
         // ##### END: MODIFIED BY SAP
-        
+
         if (isPrimitive(value)) {
         	// ##### BEGIN: MODIFIED BY SAP
         	// removed // typeName || EDM_STRING
@@ -4314,7 +4333,7 @@
             return null;
         }
 
-        // This may be a navigation property.   
+        // This may be a navigation property.
         var navPropKind = navigationPropertyKind(value, dataItemModel);
         if (navPropKind !== null) {
             return null;
@@ -4525,7 +4544,7 @@
         var nsURI = xmlNamespaceURI(domElement);
         var localName = xmlLocalName(domElement);
 
-        // Handle service documents. 
+        // Handle service documents.
         if (nsURI === appXmlNs && localName === "service") {
             return atomReadServiceDocument(domElement, baseURI);
         }
@@ -5074,7 +5093,7 @@
 
         var propertyName = link.rel.substring(odataRelatedLinksPrefix.length);
 
-        // Set the extra property information on the entry object metadata. 
+        // Set the extra property information on the entry object metadata.
         entryMetadata.properties = entryMetadata.properties || {};
         var propertyMetadata = entryMetadata.properties[propertyName] = entryMetadata.properties[propertyName] || {};
 
@@ -5107,7 +5126,7 @@
         // Set the property value on the entry object.
         entry[propertyName] = inlineData;
 
-        // Set the extra property information on the entry object metadata. 
+        // Set the extra property information on the entry object metadata.
         entryMetadata.properties = entryMetadata.properties || {};
         var propertyMetadata = entryMetadata.properties[propertyName] = entryMetadata.properties[propertyName] || {};
 
@@ -5186,7 +5205,7 @@
         /// <param name="mediaResource" type="Object">Object containing media information for an OData Atom entry.</param>
         /// <remarks>
         ///    The function will remove the extension object for the etag if it finds it in the link extensions and will set
-        ///    its value under the media_etag property of the mediaResource object. 
+        ///    its value under the media_etag property of the mediaResource object.
         /// <remarks>
         /// <returns type="Object"> Object containing the value and metadata of the named stream's media resource. <returns>
 
@@ -5205,7 +5224,7 @@
         /// <summary>Reads an atom entry's property as a structural object and sets its value in the parent and the metadata in the parentMetadata objects.</summary>
         /// <param name="propertiesElement">XML element for the 'properties' node.</param>
         /// <param name="parent">
-        ///     Object that will contain the property value. It can be either an antom entry or 
+        ///     Object that will contain the property value. It can be either an antom entry or
         ///     an atom complex property object.
         /// </param>
         /// <param name="parentMetadata">Object that will contain the property metadata. It can be either an atom entry metadata or a complex property metadata object</param>
@@ -5240,8 +5259,8 @@
             extensions.push(createElementExtension(child));
         });
 
-        // AtomPub (RFC 5023 Section 8.3.1) says a service document MUST contain one or 
-        // more workspaces. Throw if we don't find any. 
+        // AtomPub (RFC 5023 Section 8.3.1) says a service document MUST contain one or
+        // more workspaces. Throw if we don't find any.
         if (workspaces.length === 0) {
             throw { message: "Invalid AtomPub service document: No workspace element found.", element: domElement };
         }
@@ -5325,9 +5344,9 @@
             }
         });
 
-        // AtomPub (RFC 5023 Section 8.3.3) says the collection element MUST contain 
-        // a title element. It's likely to be problematic if the service doc doesn't 
-        // have one so here we throw. 
+        // AtomPub (RFC 5023 Section 8.3.3) says the collection element MUST contain
+        // a title element. It's likely to be problematic if the service doc doesn't
+        // have one so here we throw.
         if (!title) {
             throw { message: "Invalid AtomPub service document: collection has no title element", element: domElement };
         }
@@ -5342,7 +5361,7 @@
         /// <param name="children" type="Array">Array containing DOM nodes or string values that will be added as children of the new DOM element.</param>
         /// <returns>New DOM element in the Atom namespace.</returns>
         /// <remarks>
-        ///    If a value in the children collection is a string, then a new DOM text node is going to be created 
+        ///    If a value in the children collection is a string, then a new DOM text node is going to be created
         ///    for it and then appended as a child of the new DOM Element.
         /// </remarks>
 
@@ -5391,7 +5410,7 @@
         /// <param name="value" optional="true" mayBeNull="true">Value of the navigation property, if any.</param>
         /// <param name="model" type="Object" optional="true">Object describing an OData conceptual schema.</param>
         /// <returns type="Object">
-        ///     Object containing the new Atom link DOM element for the navigation property and the 
+        ///     Object containing the new Atom link DOM element for the navigation property and the
         ///     required data service version for this property.
         /// </returns>
 
@@ -5434,7 +5453,7 @@
         /// <param name="dataItemModel" type="Object" optional="true">Object describing the data item in an OData conceptual schema.</param>
         /// <param name="model" type="Object" optional="true">Object describing an OData conceptual schema.</param>
         /// <returns type="Object">
-        ///     Object containing the new DOM element in the appropriate namespace for the data item and the 
+        ///     Object containing the new DOM element in the appropriate namespace for the data item and the
         ///     required data service version for it.
         /// </returns>
 
@@ -5444,7 +5463,7 @@
 
         var dataElement = xmlNewODataDataElement(dom, name, value, dataItemMetadata, dataItemModel, model);
         if (!dataElement) {
-            // This may be a navigation property. 
+            // This may be a navigation property.
             var navPropKind = navigationPropertyKind(value, dataItemModel);
 
             dataElement = atomNewODataNavigationProperty(dom, name, navPropKind, value, model);
@@ -5840,12 +5859,12 @@
             ),
             PropertyValue: schemaElement(
             /*attributes*/["PropertyPath", "Property", "Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time"], // ##### MODIFIED BY SAP
-            /*Elements*/["Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time", "Collection", "Record", "LabeledElement", "Null"] 
+            /*Elements*/["Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time", "Collection", "Record", "LabeledElement", "Null"]
             ),
             // ##### BEGIN: MODIFIED BY SAP
             Record: schemaElement(
             /*attributes*/["Type"],
-            /*Elements*/["PropertyValue*"] 
+            /*Elements*/["PropertyValue*"]
             ),
             // ##### END: MODIFIED BY SAP
             ReferenceType: schemaElement(
@@ -6174,8 +6193,8 @@
         /// <param name="dataItemModel" type="Object" optional="true">Object describing the data item in an OData conceptual schema.</param>
         /// <param name="model" type="Object" optional="true">Object describing an OData conceptual schema.</param>
         /// <remarks>
-        ///    This function will first try to get the type name from the data item's value itself if it is a JSON light object; otherwise 
-        ///    it will try to get it from the odata.type annotation applied to the data item in the container. Then, it will fallback to the data item model. 
+        ///    This function will first try to get the type name from the data item's value itself if it is a JSON light object; otherwise
+        ///    it will try to get it from the odata.type annotation applied to the data item in the container. Then, it will fallback to the data item model.
         ///    If all attempts fail, it will return null.
         /// </remarks>
         /// <returns type="String">Data item type name; null if the type name cannot be found.</returns>
@@ -6268,7 +6287,7 @@
     5
     var jsonLightApplyPayloadODataAnnotation = function (name, target, targetType, value, data, obj, baseURI) {
         /// <summary>
-        ///   Processes a JSON Light payload OData annotation producing either a property, payload metadata, or property metadata on its owner object. 
+        ///   Processes a JSON Light payload OData annotation producing either a property, payload metadata, or property metadata on its owner object.
         /// </summary>
         /// <param name="name" type="String">Annotation name.</param>
         /// <param name="target" type="String">Name of the property that is being targeted by the annotation.</param>
@@ -6301,7 +6320,7 @@
 
     var jsonLightApplyMetadataAnnotation = function (name, target, value, obj, baseURI) {
         /// <summary>
-        ///    Converts a JSON light annotation that applies to entry metadata only (i.e. odata.editLink or odata.readLink) and its value 
+        ///    Converts a JSON light annotation that applies to entry metadata only (i.e. odata.editLink or odata.readLink) and its value
         ///    into their library's internal representation and saves it back to data.
         /// </summary>
         /// <param name="name" type="String">Annotation name.</param>
@@ -6339,7 +6358,7 @@
 
     var jsonLightApplyFeedAnnotation = function (name, target, value, obj, baseURI) {
         /// <summary>
-        ///    Converts a JSON light annotation that applies to feeds only (i.e. odata.count or odata.nextlink) and its value 
+        ///    Converts a JSON light annotation that applies to feeds only (i.e. odata.count or odata.nextlink) and its value
         ///    into their library's internal representation and saves it back to data.
         /// </summary>
         /// <param name="name" type="String">Annotation name.</param>
@@ -6355,7 +6374,7 @@
 
     var jsonLightApplyMediaAnnotation = function (name, target, targetType, value, obj, baseURI) {
         /// <summary>
-        ///    Converts a JSON light media annotation in and its value into their library's internal representation 
+        ///    Converts a JSON light media annotation in and its value into their library's internal representation
         ///    and saves it back to data or metadata.
         /// </summary>
         /// <param name="name" type="String">Annotation name.</param>
@@ -6388,7 +6407,7 @@
 
     var jsonLightApplyNavigationUrlAnnotation = function (name, target, targetType, value, data, obj, baseURI) {
         /// <summary>
-        ///    Converts a JSON light navigation property annotation and its value into their library's internal representation 
+        ///    Converts a JSON light navigation property annotation and its value into their library's internal representation
         ///    and saves it back to data o metadata.
         /// </summary>
         /// <param name="name" type="String">Annotation name.</param>
@@ -6405,8 +6424,8 @@
         var uri = normalizeURI(value, baseURI);
 
         if (data.hasOwnProperty(target)) {
-            // The navigation property is inlined in the payload, 
-            // so the navigation link url should be pushed to the object's 
+            // The navigation property is inlined in the payload,
+            // so the navigation link url should be pushed to the object's
             // property metadata instead.
             propertyMetadata.navigationLinkUrl = uri;
             return;
@@ -6592,9 +6611,9 @@
         /// <param name="model" type="Object" optional="true">Object describing an OData conceptual schema.</param>
         /// <remarks>
         ///     Actions and functions have the same representation in json light, so to disambiguate them the function uses
-        ///     the model object.  If available, the function will look for the functionImport object that describes the 
-        ///     the action or the function.  If for whatever reason the functionImport can't be retrieved from the model (like 
-        ///     there is no model available or there is no functionImport within the model), then the value is going to be treated 
+        ///     the model object.  If available, the function will look for the functionImport object that describes the
+        ///     the action or the function.  If for whatever reason the functionImport can't be retrieved from the model (like
+        ///     there is no model available or there is no functionImport within the model), then the value is going to be treated
         ///     as an advertised action and stored under obj.__metadata.actions.
         /// </remarks>
 
@@ -6797,13 +6816,13 @@
         /// <param name="model" type="Object">Object describing an OData conceptual schema.</param>
         /// <param name="inferFeedAsComplexType" type="Boolean">True if a JSON light payload that looks like a feed should be treated as a complex type property instead.</param>
         /// <remarks>
-        ///     If the arguments passed to the function don't convey enough information about the payload to determine without doubt that the payload is a feed then it 
-        ///     will try to use the payload object structure instead.  If the payload looks like a feed (has value property that is an array or non-primitive values) then 
-        ///     the function will report its kind as PAYLOADTYPE_FEED unless the inferFeedAsComplexType flag is set to true. This flag comes from the user request 
-        ///     and allows the user to control how the library behaves with an ambigous JSON light payload. 
+        ///     If the arguments passed to the function don't convey enough information about the payload to determine without doubt that the payload is a feed then it
+        ///     will try to use the payload object structure instead.  If the payload looks like a feed (has value property that is an array or non-primitive values) then
+        ///     the function will report its kind as PAYLOADTYPE_FEED unless the inferFeedAsComplexType flag is set to true. This flag comes from the user request
+        ///     and allows the user to control how the library behaves with an ambigous JSON light payload.
         /// </remarks>
         /// <returns type="Object">
-        ///     Object with kind and type fields. Null if there is no metadata annotation or the payload info cannot be obtained.. 
+        ///     Object with kind and type fields. Null if there is no metadata annotation or the payload info cannot be obtained..
         /// </returns>
 
         var metadataUri = data[metadataAnnotation];
@@ -7055,7 +7074,7 @@
 
         if (isFeed(value)) {
             data[name] = [];
-            // Format each of the inline feed entries 
+            // Format each of the inline feed entries
             var entries = isArray(value) ? value : value.results;
             var i, len;
             for (i = 0, len = entries.length; i < len; i++) {
@@ -7242,7 +7261,7 @@
     //
     // This first number is date ticks, the + may be a - and is optional,
     // with the second number indicating a timezone offset in minutes.
-    // 
+    //
     // On the wire, the leading and trailing forward slashes are
     // escaped without being required to so the chance of collisions is reduced;
     // however, by the time we see the objects, the characters already
@@ -7299,7 +7318,7 @@
     };
 
     // Some JSON implementations cannot produce the character sequence \/
-    // which is needed to format DateTime and DateTimeOffset into the 
+    // which is needed to format DateTime and DateTimeOffset into the
     // JSON string representation defined by the OData protocol.
     // See the history of this file for a candidate implementation of
     // a 'formatJsonDateString' function.
@@ -7392,7 +7411,7 @@
         /// <param value type="Object">Value to convert.</param>
         /// <returns type="String">JSON representation of the input value.</returns>
         /// <remarks>
-        ///   This method is used during JSON serialization and invoked only by the JSON.stringify function. 
+        ///   This method is used during JSON serialization and invoked only by the JSON.stringify function.
         ///   It should never be called directly.
         /// </remarks>
 
@@ -7517,7 +7536,7 @@
 
     var readBatch = function (text, context) {
         /// <summary>
-        /// Parses a multipart/mixed response body from from the position defined by the context. 
+        /// Parses a multipart/mixed response body from from the position defined by the context.
         /// </summary>
         /// <param name="text" type="String" optional="false">Body of the multipart/mixed response.</param>
         /// <param name="context">Context used for parsing.</param>
@@ -7582,7 +7601,7 @@
 
     var readHeaders = function (text, context) {
         /// <summary>
-        /// Parses the http headers in the text from the position defined by the context.  
+        /// Parses the http headers in the text from the position defined by the context.
         /// </summary>
         /// <param name="text" type="String" optional="false">Text containing an http response's headers</param>
         /// <param name="context">Context used for parsing.</param>
@@ -7615,14 +7634,14 @@
 
     var readResponse = function (text, context, delimiter) {
         /// <summary>
-        /// Parses an HTTP response. 
+        /// Parses an HTTP response.
         /// </summary>
         /// <param name="text" type="String" optional="false">Text representing the http response.</param>
         /// <param name="context" optional="false">Context used for parsing.</param>
         /// <param name="delimiter" type="String" optional="false">String used as delimiter of the multipart response parts.</param>
         /// <returns>Object representing the http response.</returns>
 
-        // Read the status line. 
+        // Read the status line.
         var pos = context.position;
         var match = responseStatusRegex.exec(readLine(text, context));
 
@@ -7729,7 +7748,7 @@
 
     var writeBatchPart = function (part, context, nested) {
         /// <summary>
-        /// Serializes a part of a batch request to a string. A part can be either a GET request or 
+        /// Serializes a part of a batch request to a string. A part can be either a GET request or
         /// a change set grouping several CUD (create, update, delete) requests.
         /// </summary>
         /// <param name="part" optional="false">Request or change set object in payload representation format</param>
@@ -7784,10 +7803,10 @@
             }
         }
         // ##### BEGIN: MODIFIED BY SAP
-        
+
         // code added to add the content-length for each batch part...may be removed for later gateway versions
         if (request.body) {
-        	
+
         	function utf8Len(ch) {
         		if (ch <= 0x7F) return 1;
         		if (ch <= 0x7FF) return 2;
@@ -7807,7 +7826,7 @@
         		return count;
         	}
             result += "Content-Length: " + utf8ByteCount(request.body) + "\r\n";
-        } 
+        }
         // ##### END: MODIFIED BY SAP
 
         result += "\r\n";
@@ -7935,12 +7954,12 @@
             return invokeRequest(request, success, error, handler, httpClient, context);
         } catch (err) {
         	// ##### BEGIN: MODIFIED BY SAP
-            // errors in success handler for sync requests are catched here and result in error handler calls. 
+            // errors in success handler for sync requests are catched here and result in error handler calls.
         	// So here we fix this and throw that error further.
         	if (err.bIsSuccessHandlerError) {
         		throw err;
         	} else {
-        		error(err);        		
+        		error(err);
         	}
         	// ##### END: MODIFIED BY SAP
         }
@@ -7974,7 +7993,7 @@
         /// <param value="Object">Object to convert.</param>
         /// <returns type="Date">Date object.</returns>
         /// <remarks>
-        ///   This method is used during JSON parsing and invoked only by the reviver function. 
+        ///   This method is used during JSON parsing and invoked only by the reviver function.
         ///   It should never be called directly.
         /// </remarks>
 
@@ -8321,7 +8340,7 @@
                 }
 
                 // The database doesn't have the expected store.
-                // Fabricate an error object for the event for the schema mismatch 
+                // Fabricate an error object for the event for the schema mismatch
                 // and error out.
                 event.target.error = { name: "DBSchemaMismatch" };
                 error(event);
@@ -8516,7 +8535,7 @@
                 var cursor = event.target.result;
                 if (cursor) {
                     results.push(cursor.key);
-                    // Some tools have issues because continue is a javascript reserved word. 
+                    // Some tools have issues because continue is a javascript reserved word.
                     cursor["continue"].call(cursor);
                 }
             };
@@ -8549,7 +8568,7 @@
             };
 
             for (var i = 0; i < keys.length; i++) {
-                // Some tools have issues because get is a javascript reserved word. 
+                // Some tools have issues because get is a javascript reserved word.
                 var objectStore = transaction.objectStore(name);
                 var request = objectStore["get"].call(objectStore, keys[i]);
                 request.onsuccess = function (event) {
@@ -8576,7 +8595,7 @@
             };
 
             for (var i = 0; i < keys.length; i++) {
-                // Some tools have issues because continue is a javascript reserved word. 
+                // Some tools have issues because continue is a javascript reserved word.
                 var objectStore = transaction.objectStore(name);
                 objectStore["delete"].call(objectStore, keys[i]);
             }
@@ -8991,7 +9010,7 @@
 
         var that = this;
         var uri = options.source;
-        
+
         that.identifier = normalizeURICase(encodeURI(decodeURI(uri)));
         that.options = options;
 
@@ -9149,7 +9168,7 @@
         return { i: lowIndex, c: highIndex - lowIndex };
     };
 
-    // The DataCache is implemented using state machines.  The following constants are used to properly 
+    // The DataCache is implemented using state machines.  The following constants are used to properly
     // identify and label the states that these machines transition to.
 
     // DataCache state constants
@@ -9161,7 +9180,7 @@
     var CACHE_STATE_PREFETCH = "prefetch";
     var CACHE_STATE_WRITE = "write";
 
-    // DataCacheOperation state machine states.  
+    // DataCacheOperation state machine states.
     // Transitions on operations also depend on the cache current of the cache.
 
     var OPERATION_STATE_CANCEL = "cancel";
@@ -9174,7 +9193,7 @@
 
     var DESTROY_STATE_CLEAR = "clear";
 
-    // Read / Prefetch state machine states 
+    // Read / Prefetch state machine states
 
     var READ_STATE_DONE = "done";
     var READ_STATE_LOCAL = "local";
@@ -9245,7 +9264,7 @@
 
         that.run = function (state) {
             /// <summary>Executes the operation's current state in the context of a new cache state.</summary>
-            /// <param name="state" type="Object">New cache state.</param> 
+            /// <param name="state" type="Object">New cache state.</param>
 
             cacheState = state;
             that.transition(that.s, stateData);
@@ -9261,7 +9280,7 @@
             /// <summary>State machine that describes all operations common behavior.</summary>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
             /// <param name="cacheState" type="Object">Current cache state.</param>
-            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param> 
+            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param>
 
             switch (opTargetState) {
                 case OPERATION_STATE_START:
@@ -9272,7 +9291,7 @@
                     break;
 
                 case OPERATION_STATE_WAIT:
-                    // Wait state indicating that the operation is active but waiting for an asynchronous operation to complete. 
+                    // Wait state indicating that the operation is active but waiting for an asynchronous operation to complete.
                     stateMachine(that, opTargetState, cacheState, data);
                     break;
 
@@ -9284,7 +9303,7 @@
                     break;
 
                 case OPERATION_STATE_ERROR:
-                    // Error state. Data is expected to be an object detailing the error condition.  
+                    // Error state. Data is expected to be an object detailing the error condition.
                     stateMachine(that, opTargetState, cacheState, data);
                     that.canceled = true;
                     that.fireRejected(data);
@@ -9312,7 +9331,7 @@
         var transition = function (state, data) {
             /// <summary>Transitions this operation to a new state.</summary>
             /// <param name="state" type="Object">State to transition the operation to.</param>
-            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param> 
+            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param>
 
             that.s = state;
             stateData = data;
@@ -9441,7 +9460,7 @@
         that.clear = function () {
             /// <summary>Cancels all running operations and clears all local data associated with this cache.</summary>
             /// <remarks>
-            /// New read requests made while a clear operation is in progress will not be canceled. 
+            /// New read requests made while a clear operation is in progress will not be canceled.
             /// Instead they will be queued for execution once the operation is completed.
             /// </remarks>
             /// <returns type="Object">A promise that has no value and can't be canceled.</returns>
@@ -9488,7 +9507,7 @@
             /// <param name="index" type="Number">Zero-based index of record range to read.</param>
             /// <param name="count" type="Number">Number of records in the range.</param>
             /// <remarks>
-            /// New read requests made while a clear operation is in progress will not be canceled. 
+            /// New read requests made while a clear operation is in progress will not be canceled.
             /// Instead they will be queued for execution once the operation is completed.
             /// </remarks>
             /// <returns type="DjsDeferred">
@@ -9567,7 +9586,7 @@
             /// <param name="message" type="String">Message text.</param>
             /// <returns type="Function">Function to use as error callback.</returns>
             /// <remarks>
-            /// This function will specifically handle problems with critical store resources 
+            /// This function will specifically handle problems with critical store resources
             /// during cache initialization.
             /// </remarks>
 
@@ -9775,7 +9794,7 @@
             /// This method is a no-op if any of the following conditions is true:
             ///     1.- prefetchSize is 0
             ///     2.- All data has been read and stored locally in the cache.
-            ///     3.- There is already an all data prefetch operation queued. 
+            ///     3.- There is already an all data prefetch operation queued.
             ///     4.- The cache has run out of available space (overflowed).
             /// <remarks>
 
@@ -9785,7 +9804,7 @@
 
 
             if (prefetchOperations.length === 0 || (prefetchOperations[0] && prefetchOperations[0].c !== -1)) {
-                // Merging prefetch operations would be a nice optimization here. 
+                // Merging prefetch operations would be a nice optimization here.
                 var op = new DataCacheOperation(prefetchStateMachine, null, true, start, prefetchSize, null, prefetchSize);
                 queueAndStart(op, prefetchOperations);
             }
@@ -9902,7 +9921,7 @@
             /// <param name="message" type="String">Message text.</param>
             /// <returns type="Function">Function to use as error callback.</returns>
             /// <remarks>
-            /// This function will specifically handle problems when interacting with the store. 
+            /// This function will specifically handle problems when interacting with the store.
             /// </remarks>
 
             return function (/*error*/) {
@@ -9950,7 +9969,7 @@
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
             /// <param name="cacheState" type="Object">Current cache state.</param>
-            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param> 
+            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param>
             /// <remarks>
             /// This state machine contains behavior common to read and prefetch operations.
             /// </remarks>
@@ -9974,7 +9993,7 @@
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
             /// <param name="cacheState" type="Object">Current cache state.</param>
             /// <remarks>
-            /// Clear operations have the highest priority and can't be interrupted by other operations; however, 
+            /// Clear operations have the highest priority and can't be interrupted by other operations; however,
             /// they will preempt any other operation currently executing.
             /// </remarks>
 
@@ -10018,13 +10037,13 @@
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
             /// <param name="cacheState" type="Object">Current cache state.</param>
-            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param> 
+            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param>
             /// <remarks>
-            /// Prefetch operations have the lowest priority and will be interrupted by operations of 
-            /// other kinds. A preempted prefetch operation will resume its execution only when the state 
+            /// Prefetch operations have the lowest priority and will be interrupted by operations of
+            /// other kinds. A preempted prefetch operation will resume its execution only when the state
             /// of the cache returns to idle.
-            /// 
-            /// If a clear operation starts executing then all the prefetch operations are canceled, 
+            ///
+            /// If a clear operation starts executing then all the prefetch operations are canceled,
             /// even if they haven't started executing yet.
             /// </remarks>
 
@@ -10033,7 +10052,7 @@
 
                 var transition = operation.transition;
 
-                // Handle preemption 
+                // Handle preemption
                 if (cacheState !== CACHE_STATE_PREFETCH) {
                     if (cacheState === CACHE_STATE_DESTROY) {
                         if (opTargetState !== OPERATION_STATE_CANCEL) {
@@ -10086,15 +10105,15 @@
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
             /// <param name="cacheState" type="Object">Current cache state.</param>
-            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param> 
+            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param>
             /// <remarks>
-            /// Read operations have a higher priority than prefetch operations, but lower than 
-            /// clear operations. They will preempt any prefetch operation currently running 
+            /// Read operations have a higher priority than prefetch operations, but lower than
+            /// clear operations. They will preempt any prefetch operation currently running
             /// but will be interrupted by a clear operation.
-            /// 
-            /// If a clear operation starts executing then all the currently running 
-            /// read operations are canceled. Read operations that haven't started yet will 
-            /// wait in the start state until the destory operation finishes. 
+            ///
+            /// If a clear operation starts executing then all the currently running
+            /// read operations are canceled. Read operations that haven't started yet will
+            /// wait in the start state until the destory operation finishes.
             /// </remarks>
 
             // Handle cancelation
@@ -10165,7 +10184,7 @@
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
             /// <param name="cacheState" type="Object">Current cache state.</param>
-            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param> 
+            /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param>
             /// <param name="isPrefetch" type="Boolean">Flag indicating whether a read (false) or prefetch (true) operation is running.
             /// <remarks>
             /// This state machine contains behavior common to read and prefetch operations.
@@ -10241,7 +10260,7 @@
             }
 
             if (request) {
-                // The operation might have been canceled between stack frames do to the async calls.  
+                // The operation might have been canceled between stack frames do to the async calls.
                 if (operation.canceled) {
                     request.cancel();
                 } else if (operation.s === opTargetState) {

@@ -22,14 +22,18 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		QuickViewPageRenderer.render = function(oRm, oQuickViewPage) {
 
-			var mPageContent = oQuickViewPage._createPageContent();
+			var mPageContent = oQuickViewPage.getPageContent();
 
 			oRm.write("<div");
 			oRm.addClass("sapMQuickViewPage");
 			oRm.writeControlData(oQuickViewPage);
 			oRm.writeClasses();
 			oRm.write(">");
-			oRm.renderControl(mPageContent.header);
+
+			if (mPageContent.header) {
+				oRm.renderControl(mPageContent.header);
+			}
+
 			oRm.renderControl(mPageContent.form);
 			oRm.write("</div>");
 		};

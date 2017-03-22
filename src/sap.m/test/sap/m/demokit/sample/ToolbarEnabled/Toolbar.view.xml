@@ -3,9 +3,9 @@
 	controllerName="sap.m.sample.ToolbarEnabled.Toolbar"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<CheckBox text="Toolbar Enabled" selected="true" select="onCheckBoxSelect"/>
-	
-	<Toolbar id="toolbar">
+	<CheckBox text="Enabled" selected="true" select="onCheckBoxSelect"/>
+
+	<OverflowToolbar id="toolbar">
 		<Button text="Accept" type="Accept"/>
 		<ToolbarSpacer/>
 		<CheckBox text="CheckBox"/>
@@ -15,6 +15,6 @@
 		<RadioButton text="RadioButton"/>
 		<ToolbarSpacer/>
 		<Button text="Reject" type="Reject"/>
-	</Toolbar>
-	
+	</OverflowToolbar>
+
 </mvc:View>

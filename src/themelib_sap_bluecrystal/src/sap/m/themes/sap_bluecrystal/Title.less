@@ -1,34 +1,12 @@
-/* ===================================================== */
-/* CSS for sap.m.Title.control (sap_bluecrystal)         */
-/* ===================================================== */
-
-@sapMTitleSize1: @sapMFontHeader1Size;
-@sapMTitleSize2: @sapMFontHeader2Size;
-@sapMTitleSize3: @sapMFontHeader3Size;
-@sapMTitleSize4: @sapMFontHeader4Size;
-@sapMTitleSize5: @sapMFontHeader5Size;
-@sapMTitleSize6: @sapMFontHeader6Size;
-@sapMTitleColor: @sapUiHeaderText;
-@sapMTitleFontFamily: @sapUiFontHeaderFamily;
-@sapMTitleFontWeight: @sapUiFontHeaderWeight;
-
-.sapMTitle {
-	text-shadow: 0 0.0625rem 0 fade(@sapUiLightShadowTint, 50%);
-}
-
-.sapMTitleStyleAuto {
-	font-size: @sapMTitleSize5;
-}
-
-.sapMIBar-CTX .sapMTitle {
-	color: @sapUiBarText;
-	text-shadow: none;
-}
+/* ============================ */
+/* CSS for control sap.m/Title  */
+/* BlueCrystal theme            */
+/* ============================ */
 
 .sapMTB-Transparent-CTX .sapMTitle {
-	text-shadow: 0 1px 0 @sapUiLightShadowTint;
+	text-shadow: @sapUiShadowText;
 }
 
-.sapMTB-Transparent-CTX > .sapMTitleTB.sapMTitleStyleAuto {
-	font-size: @sapMTitleSize4;
+.sapMIBar-CTX.sapMFooter-CTX .sapMTitle {
+	text-shadow: 0 0.0625rem 0 fade(@sapUiContentShadowColor, 50);
 }

@@ -1,0 +1,54 @@
+[
+  {
+    "ProductId": "HT-6132",
+    "Type": "Promoted"
+  },
+  {
+    "ProductId": "HT-1000",
+    "Type": "Promoted"
+  },
+  {
+    "ProductId": "HT-1113",
+    "Type": "Promoted"
+  },
+  {
+    "ProductId": "HT-6130",
+    "Type": "Promoted"
+  },
+  {
+    "ProductId": "HT-1040",
+    "Type": "Promoted"
+  },
+  {
+    "ProductId": "HT-9992",
+    "Type": "Viewed"
+  },
+  {
+    "ProductId": "HT-6130",
+    "Type": "Viewed"
+  },
+  {
+    "ProductId": "HT-6110",
+    "Type": "Viewed"
+  },
+  {
+    "ProductId": "HT-9997",
+    "Type": "Viewed"
+  },
+  {
+    "ProductId": "HT-8000",
+    "Type": "Favorite"
+  },
+  {
+    "ProductId": "HT-6100",
+    "Type": "Favorite"
+  },
+  {
+    "ProductId": "HT-6111",
+    "Type": "Favorite"
+  },
+  {
+    "ProductId": "HT-1041",
+    "Type": "Favorite"
+  }
+]

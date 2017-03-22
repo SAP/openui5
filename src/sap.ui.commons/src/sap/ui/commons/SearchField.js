@@ -8,12 +8,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new SearchField.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Allows the user to type search queries and to trigger the search. Optionally, suggestions can be added.
@@ -25,97 +25,110 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.SearchField</code> control.
 	 * @alias sap.ui.commons.SearchField
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SearchField = Control.extend("sap.ui.commons.SearchField", /** @lends sap.ui.commons.SearchField.prototype */ { metadata : {
-	
+
 		interfaces : [
 			"sap.ui.commons.ToolbarItem"
 		],
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Defines whether a pop up list shall be provided for suggestions
 			 */
 			enableListSuggest : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Defines whether the list expander shall be displayed in the case of an enabled list for suggestions. This feature is deactivated on mobile devices.
 			 */
 			showListExpander : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Defines whether the clear functionality shall be active
 			 */
 			enableClear : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * Defines whether an additional search button shall be displayed
 			 */
 			showExternalButton : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * When list suggestion is enabled all suggestions are cached and no suggest event is fired.
 			 * @since 1.10.3
 			 */
 			enableCache : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Defines whether the search event should also be fired when the SearchField is empty (like a Filter field) and when the clear button (if activated) is pressed.
 			 */
 			enableFilterMode : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * Text that shall be displayed within the search field
 			 */
 			value : {type : "string", group : "Data", defaultValue : ''},
-	
+
 			/**
 			 * Disabled fields have different colors, and they can not be focused.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Non-editable controls have different colors, depending on custom settings
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Control width in CSS-size
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * Maximum number of characters. Value '0' means the feature is switched off.
 			 */
 			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
-	
+
+			/**
+			 * Visualizes warnings or errors related to the input field. Possible values: Warning, Error, Success, None.
+			 * @since 1.32
+			 */
+			valueState: {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
+
+			/**
+			 * Placeholder for the input field.
+			 * @since 1.32
+			 */
+			placeholder: {type : "string", group : "Appearance", defaultValue : ""},
+
 			/**
 			 * Sets the horizontal alignment of the text
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
-	
+
 			/**
-			 * 
+			 *
 			 * Defines the number of items in the suggestion list that shall be displayed at once. If the overall number of list items is higher than the setting,
 			 * a scroll bar is provided.
 			 */
 			visibleItemCount : {type : "int", group : "Behavior", defaultValue : 20},
-	
+
 			/**
-			 * 
+			 *
 			 * Minimum length of the entered string triggering the suggestion list.
 			 */
 			startSuggestion : {type : "int", group : "Behavior", defaultValue : 3},
-	
+
 			/**
-			 * 
+			 *
 			 * Maximum number of suggestion items in the suggestion list.
 			 */
 			maxSuggestionItems : {type : "int", group : "Behavior", defaultValue : 10},
-	
+
 			/**
 			 * Maximum number of history items in the suggestion list.
 			 * 0 displays and stores no history. The history is locally stored on the client. Therefore do not activate this feature when this control handles confidential data.
@@ -123,45 +136,45 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			maxHistoryItems : {type : "int", group : "Behavior", defaultValue : 0}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Search provider instance which handles the suggestions for this SearchField (e.g. Open Search Protocol).
 			 */
 			searchProvider : {type : "sap.ui.core.search.SearchProvider", multiple : false}
 		},
 		associations : {
-	
+
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
-	
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
-	
+
 			/**
 			 * Event which is fired when the user triggers a search
 			 */
 			search : {
 				parameters : {
-	
+
 					/**
 					 * The search query
 					 */
 					query : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Event which is fired when new suggest values are required.
 			 */
 			suggest : {
 				parameters : {
-	
+
 					/**
 					 * The value for which suggestions are required.
 					 */
@@ -170,16 +183,16 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			}
 		}
 	}});
-	
-	
+
+
 	(function() {
-	
+
 	var _DEFAULT_VISIBLE_ITEM_COUNT = 20;
-	
+
 	//***********************************************
 	// Internal control functions
 	//***********************************************
-	
+
 	/**
 	 * Does the setup when the control is created.
 	 * @private
@@ -189,8 +202,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		this._oHistory = new History(this.getId());
 		this._clearTooltipText = getText("SEARCHFIELD_CLEAR_TOOLTIP");
 	};
-	
-	
+
+
 	/**
 	 * Does all the cleanup when the control is to be destroyed.
 	 * Called from Element's destroy() method.
@@ -211,8 +224,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		this._btn = null;
 		this._oHistory = null;
 	};
-	
-	
+
+
 	/**
 	 * Called when the theme is changed.
 	 * @private
@@ -222,8 +235,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			this.invalidate();
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called when the rendering is complete.
 	 * @private
@@ -235,18 +248,18 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	    }
 		_setClearTooltip(this);
 	};
-	
-	
+
+
 	SearchField.prototype.getFocusDomRef = function() {
 		return this._ctrl.getFocusDomRef();
 	};
-	
-	
+
+
 	SearchField.prototype.getIdForLabel = function () {
 		return this._ctrl.getId() + '-input';
 	};
-	
-	
+
+
 	SearchField.prototype.onpaste = function (oEvent) {
 		var that = this;
 		setTimeout(function(){
@@ -256,24 +269,24 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		}, 0);
 	};
 	SearchField.prototype.oncut = SearchField.prototype.onpaste;
-	
-	
+
+
 	SearchField.prototype.fireSearch = function(mArguments) {
 		var sVal = jQuery(this._ctrl.getInputDomRef()).val();
 		if (!this.getEditable() || !this.getEnabled()) {
 			return this;
 		}
-		
+
 		this.setValue(sVal);
-		
+
 		if (!sVal && !this.getEnableFilterMode()) {
 			return this;
 		}
-		
+
 		if (!mArguments) {
 			mArguments = {};
 		}
-		
+
 		if (!mArguments.noFocus) {
 			sVal = this.getValue();
 			this.focus();
@@ -284,20 +297,20 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		}
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * @private
 	 */
 	SearchField.prototype.hasListExpander = function(){
 		return isMobile() ? false : this.getShowListExpander();
 	};
-	
-	
+
+
 	//***********************************************
 	// Overridden getter und setter, API functions
 	//***********************************************
-	
+
 
 	/**
 	 * Clears the history of the control
@@ -309,8 +322,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	SearchField.prototype.clearHistory = function() {
 		this._oHistory.clear();
 	};
-	
-	
+
+
 
 	/**
 	 * Callback function used to provide the suggest values in the handler of the suggest event (only in list suggestion mode)
@@ -329,8 +342,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		}
 		this._ctrl.updateSuggestions(sSuggestValue, aSuggestions);
 	};
-	
-	
+
+
 	SearchField.prototype.setEnableListSuggest = function(bEnableListSuggest) {
 		if ((this.getEnableListSuggest() && bEnableListSuggest) || (!this.getEnableListSuggest() && !bEnableListSuggest)) {
 			return;
@@ -339,11 +352,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		this.setProperty("enableListSuggest", bEnableListSuggest);
 		return this;
 	};
-	
+
 	SearchField.prototype.getValue = function() {
 		return _get(this, "Value");
 	};
-	
+
 	SearchField.prototype.setValue = function(sValue) {
 		var res = _set(this, "Value", sValue, !!this.getDomRef(), true);
 		if (this.getEnableClear() && this.getDomRef()) {
@@ -352,65 +365,81 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		}
 		return res;
 	};
-	
+
 	SearchField.prototype.setEnableCache = function(bEnableCache) {
 		return this.setProperty("enableCache", bEnableCache, true);
 	};
-	
+
 	SearchField.prototype.getEnabled = function() {
 		return _get(this, "Enabled");
 	};
-	
+
 	SearchField.prototype.setEnabled = function(bEnabled) {
 		if (this._btn) {
 			this._btn.setEnabled(bEnabled && this.getEditable());
 		}
 		return _set(this, "Enabled", bEnabled, false, true);
 	};
-	
+
 	SearchField.prototype.getEditable = function() {
 		return _get(this, "Editable");
 	};
-	
+
 	SearchField.prototype.setEditable = function(bEditable) {
 		if (this._btn) {
 			this._btn.setEnabled(bEditable && this.getEnabled());
 		}
 		return _set(this, "Editable", bEditable, false, true);
 	};
-	
+
 	SearchField.prototype.getMaxLength = function() {
 		return _get(this, "MaxLength");
 	};
-	
+
 	SearchField.prototype.setMaxLength = function(iMaxLength) {
 		return _set(this, "MaxLength", iMaxLength, false, true);
 	};
-	
+
+	SearchField.prototype.getValueState = function() {
+		return _get(this, "ValueState");
+	};
+
+	SearchField.prototype.setValueState = function(sValueState) {
+		return _set(this, "ValueState", sValueState, false, true);
+	};
+
+	SearchField.prototype.getPlaceholder = function() {
+		return _get(this, "Placeholder");
+	};
+
+	SearchField.prototype.setPlaceholder = function(sText) {
+		return _set(this, "Placeholder", sText, false, true);
+	};
+
 	SearchField.prototype.getTextAlign = function() {
 		return _get(this, "TextAlign");
 	};
-	
+
 	SearchField.prototype.setTextAlign = function(oTextAlign) {
 		return _set(this, "TextAlign", oTextAlign, false, true);
 	};
-	
+
 	SearchField.prototype.getTooltip = function() {
 		return _get(this, "Tooltip");
 	};
-	
+
 	SearchField.prototype.setTooltip = function(oTooltip) {
 		return _set(this, "Tooltip", oTooltip, true, false);
 	};
-	
+
 	SearchField.prototype.getVisibleItemCount = function() {
 		return _get(this, "MaxPopupItems");
 	};
-	
+
 	SearchField.prototype.setVisibleItemCount = function(iVisibleItemCount) {
 		return _set(this, "MaxPopupItems", iVisibleItemCount, false, true);
 	};
-	
+
 	SearchField.prototype.setShowExternalButton = function(bShowExternalButton) {
 		if (!this._btn) {
 			jQuery.sap.require("sap.ui.commons.Button");
@@ -427,58 +456,58 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		this.setProperty("showExternalButton", bShowExternalButton);
 		return this;
 	};
-	
-	
+
+
 	SearchField.prototype.getAriaDescribedBy = function() {
 		return this._ctrl.getAriaDescribedBy();
 	};
-	
+
 	SearchField.prototype.getAriaLabelledBy = function() {
 		return this._ctrl.getAriaLabelledBy();
 	};
-	
+
 	SearchField.prototype.removeAllAriaDescribedBy = function() {
 		return this._ctrl.removeAllAriaDescribedBy();
 	};
-	
+
 	SearchField.prototype.removeAllAriaLabelledBy = function() {
 		return this._ctrl.removeAllAriaLabelledBy();
 	};
-	
+
 	SearchField.prototype.removeAriaDescribedBy = function(v) {
 		return this._ctrl.removeAriaDescribedBy(v);
 	};
-	
+
 	SearchField.prototype.removeAriaLabelledBy = function(v) {
 		return this._ctrl.removeAriaLabelledBy(v);
 	};
-	
+
 	SearchField.prototype.addAriaDescribedBy = function(v) {
 		this._ctrl.addAriaDescribedBy(v);
 		return this;
 	};
-	
+
 	SearchField.prototype.addAriaLabelledBy = function(v) {
 		this._ctrl.addAriaLabelledBy(v);
 		return this;
 	};
-	
-	
+
+
 	//***********************************************
 	// Private helper functions
 	//***********************************************
-	
+
 	var _setClearTooltip = function(oThis){
 		var $this = oThis.$(),
 			$ico = oThis._ctrl.$("searchico");
-		
+
 		if ($this.hasClass("sapUiSearchFieldClear") && $this.hasClass("sapUiSearchFieldVal")) {
 			$ico.attr("title", oThis._clearTooltipText);
 		} else {
 			$ico.removeAttr("title");
 		}
 	};
-	
+
 	var _set = function(oThis, sMutator, oVal, bSuppressRerendering, bUpdateModelProperty) {
 		var oOldVal = _get(oThis, sMutator);
 		oThis._ctrl["set" + sMutator](oVal);
@@ -490,18 +519,18 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		}
 		return oThis;
 	};
-	
-	
+
+
 	var _get = function(oThis, sGetter) {
 		return oThis._ctrl["get" + sGetter]();
 	};
-	
-	
+
+
 	var _initChildControls = function(oThis, bEnableListSuggest) {
 		if (!oThis._lb) {
 			oThis._lb = new ListBox(oThis.getId() + "-lb");
 		}
-	
+
 		var oOldControl = oThis._ctrl;
 		var oNewControl = null;
 		if (bEnableListSuggest) {
@@ -527,29 +556,31 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			oNewControl.setEnabled(oOldControl.getEnabled());
 			oNewControl.setEditable(oOldControl.getEditable());
 			oNewControl.setMaxLength(oOldControl.getMaxLength());
+			oNewControl.setValueState(oOldControl.getValueState());
+			oNewControl.setPlaceholder(oOldControl.getPlaceholder());
 			oNewControl.setTextAlign(oOldControl.getTextAlign());
 			oNewControl.setTooltip(oOldControl.getTooltip());
 			oNewControl.setMaxPopupItems(oOldControl.getMaxPopupItems());
-			
+
 			var aAsso = oOldControl.getAriaDescribedBy();
 			for (var i = 0; i < aAsso.length; i++) {
 				oNewControl.addAriaDescribedBy(aAsso[i]);
 			}
 			oOldControl.removeAllAriaDescribedBy();
-			
+
 			aAsso = oOldControl.getAriaLabelledBy();
 			for (var i = 0; i < aAsso.length; i++) {
 				oNewControl.addAriaLabelledBy(aAsso[i]);
 			}
 			oOldControl.removeAllAriaLabelledBy();
 			oOldControl.removeAllDependents();
-			
+
 			oOldControl.destroy();
 		}
 		oThis._ctrl = oNewControl;
 	};
-	
-	
+
+
 	var getText = function(sKey, aArgs) {
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 		if (rb) {
@@ -557,18 +588,18 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		}
 		return sKey;
 	};
-	
-	
+
+
 	var isMobile = function() {
 		return sap.ui.Device.browser.mobile;
 	};
-	
-	
+
+
 	//***********************************************
 	//***********************************************
 	// Inner Controls
 	//***********************************************
-	
+
 	var _renderSearchIcon = function(oRM, oCtrl){
 		oRM.write("<div");
 		oRM.writeAttributeEscaped('id', oCtrl.getId() + '-searchico');
@@ -580,48 +611,48 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		oRM.writeClasses();
 		oRM.write("></div>");
 	};
-	
-	
+
+
 	//***********************************************
 	// Inner Control "Search Textfield"
 	//***********************************************
-	
+
 	TextField.extend("sap.ui.commons.SearchField.TF", {
-	  
+
 		metadata : {
 			visibility : "hidden"
 		},
-		
+
 	  constructor : function (sId, mSettings) {
 			TextField.apply(this, arguments);
 	  },
-	
+
 	  getInputDomRef : function() {
 			return this.getDomRef("input");
 	  },
-	  
+
 	  onkeyup : function(oEvent) {
 			SearchField.CB.prototype.onkeyup.apply(this, arguments);
 	  },
-	  
+
 	  _triggerSuggest : function(sCurrentValue) {
 			this._sSuggest = null;
 			if ((sCurrentValue && sCurrentValue.length >= this.getParent().getStartSuggestion()) || (!sCurrentValue && this.getParent().getStartSuggestion() == 0)) {
 				this.getParent().fireSuggest({value: sCurrentValue});
 			}
 	  },
-	  
+
 	  _checkChange : function(oEvent, bDoNotFireSearch) {
 			this.getParent().fireSearch({noFocus:bDoNotFireSearch});
 	  },
-	  
+
 	  onsapfocusleave : function(oEvent) {
 			if (this.getEditable() && this.getEnabled() && this.getRenderer().onblur && oEvent.relatedControlId != this.getId()) {
 				this.getRenderer().onblur(this);
 			}
 			this._checkChange(oEvent, true);
 	  },
-	  
+
 	  onclick : function(oEvent){
 			if (oEvent.target === this.getDomRef("searchico")) {
 				if (this.oPopup && this.oPopup.isOpen()) {
@@ -646,24 +677,24 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 				}
 			}
 	  },
-	  
+
 	  getMaxPopupItems : function(){
 			return this._iVisibleItemCount ? this._iVisibleItemCount : _DEFAULT_VISIBLE_ITEM_COUNT;
 	  },
-	  
+
 	  setMaxPopupItems : function(iMaxPopupItems){
 			this._iVisibleItemCount = iMaxPopupItems;
 	  },
-	
+
 	  //  extend TextFieldRenderer
 	  renderer : {
-	    
+
 	    renderOuterContentBefore :_renderSearchIcon,
-	    
+
 	    renderOuterAttributes : function(oRM, oCtrl) {
 	      oRM.addClass("sapUiSearchFieldTf");
 	    },
-	    
+
 	    renderInnerAttributes : function(oRM, oCtrl) {
 				if (!sap.ui.Device.os.ios) { //on iOS the input is not focused if type search
 					oRM.writeAttribute("type", "search");
@@ -673,24 +704,24 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	        oRM.writeAttribute('autocorrect', 'off');
 	      }
 	    }
-	    
+
 	  }
 	});
-	
+
 	// TODO enhance Notepad controls to support such assignments (e.g. "a,b" : function () { ... } )
 	SearchField.TF.prototype.getFocusDomRef = SearchField.TF.prototype.getInputDomRef;
-	
-	
+
+
 	//***********************************************
 	// Inner Control "Search Combo Box"
 	//***********************************************
-	
+
 	ComboBox.extend("sap.ui.commons.SearchField.CB", {
-	  
+
 		metadata : {
 			visibility : "hidden"
 		},
-		
+
 		constructor: function(sId, mSettings) {
 			ComboBox.apply(this, arguments);
 			this._mSuggestions = {};
@@ -731,7 +762,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 				this._doTypeAhead();
 			}
 		},
-	  
+
 		onclick: function(oEvent) {
 			//this._forceOpen = true;
 			ComboBox.prototype.onclick.apply(this, arguments);
@@ -767,17 +798,26 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		onkeyup: function(oEvent) {
 			var $Input = jQuery(this.getInputDomRef());
 			var sVal = $Input.val();
-			
+
 			this.getParent().$().toggleClass("sapUiSearchFieldVal", !!sVal);
 			_setClearTooltip(this.getParent());
 
 			if (oEvent) {
 				var oKC = jQuery.sap.KeyCodes;
+				if (oEvent.keyCode === oKC.F2) {
+					// toggle action mode
+					var $FocusDomRef = jQuery(this.getFocusDomRef());
+					var bDataInNavArea = $FocusDomRef.data("sap.InNavArea");
+					if (typeof bDataInNavArea === "boolean") {
+						$FocusDomRef.data("sap.InNavArea", !bDataInNavArea);
+					}
+				}
+
 				if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === oKC.F4 && oEvent.which === 0 /* this is the Firefox case and ensures 's' with same charCode is accepted */) {
 					return;
 				}
-				
-				if (sVal == $Input.getSelectedText()) {
+
+				if (sVal && sVal == $Input.getSelectedText()) {
 					// When pressing Ctrl+A quite fast a keyup event for "A" is triggered without oEvent.ctrlKey flag.
 					// But it behaves like Ctrl+A (Text is marked and A is not entered into the field) -> see BCP 1570032167
 					return;
@@ -788,6 +828,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 					this._triggerValueHelp = true;
 					this._lastKeyIsDel = iKC == oKC.DELETE || iKC == oKC.BACKSPACE;
 				}
+
 			}
 
 			if (this._triggerValueHelp) {
@@ -871,7 +912,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		},
 
 		_prepareOpen: function() {},
-	  
+
 
 		_open: function() {
 			ComboBox.prototype._open.apply(this, [0]);
@@ -901,7 +942,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			}
 			this._checkChange(oEvent, true, true);
 		},
-	  
+
 
 		onsapshow: function(oEvent) {
 			if (this.getParent().hasListExpander()) {
@@ -964,9 +1005,9 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		}
 
 	});
-	
+
 	}());
-	
+
 
 	return SearchField;
 

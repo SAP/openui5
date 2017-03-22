@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>Test Page for sap.m.P13nMemoryLeak - create and destroy</title>
+	// refer to https://github.com/SAP/openui5/issues/1117 
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true" data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		sap.ui.require(
+			[
+				"jquery.sap.global"
+			],
+			function(jQuery) {
+
+				function getDetachedControls(sControlName) {
+					return sap.ui.getCore().byFieldGroupId([]).filter(function(control) {
+						//if (sControlName === "sap.m.P13nConditionPanel") {
+							return true;
+						//} else {
+						//	return !control.getDomRef();
+						//}
+					});
+				}
+
+				QUnit.assert.equalElements = function(aActual, aExpected, sMessage) {
+					var aUnexpectedElements = [];
+
+					aActual.forEach(function(oActualElement) {
+						if (!aExpected.find(function(oExpectedElement) {
+								return oActualElement.getId() === oExpectedElement.getId();
+							})) {
+							aUnexpectedElements.push(oActualElement);
+						}
+					});
+					this.push(aUnexpectedElements.length === 0, aUnexpectedElements.join(", "), "", sMessage);
+				};
+
+				var fnMemoryLeakCheckLibrary = function(assert, sLibName) {
+					var oCore = sap.ui.getCore();
+
+					oCore.loadLibrary(sLibName);
+
+					var oLibInfo = oCore.getLoadedLibraries();
+
+					oLibInfo[sLibName].controls.forEach(function(sControlName) {
+						if (sControlName != "sap.m.P13nConditionPanel") {
+							return;
+						}
+						var oUiArea;
+						try {
+							var aPreElements = getDetachedControls(sControlName),
+								oControlClass = jQuery.sap.getObject(sControlName),
+								oControl = new oControlClass();
+
+							oControl.placeAt(CONTENT_DIV_ID);
+							oUiArea = oControl.getParent();
+							oUiArea.rerender();
+							oControl.destroy();
+
+							var aPostElements = getDetachedControls(sControlName);
+
+							assert.equalElements(aPostElements, aPreElements, "Memory leak check for " + sControlName);
+						} catch (e) {
+							// an unexpected error occured (e.g. the control cannot be placed in a UIArea but needs a proper parent)
+							// this is not focus of this test, therefore ignore it
+							assert.ok(true, "unhandled exception for " + sControlName + ": " + e);
+						}
+
+						oUiArea && oUiArea.destroy();
+					});
+				};
+
+				QUnit.module("Memory.Controls");
+
+				var CONTENT_DIV_ID = "QUNIT_TEST_CONTENT_DIV",
+					oContentDomElement;
+				QUnit.moduleStart(function() {
+					oContentDomElement = document.createElement("div");
+					oContentDomElement.id = CONTENT_DIV_ID;
+					document.body.appendChild(oContentDomElement);
+				});
+
+				QUnit.moduleDone(function() {
+					document.body.removeChild(oContentDomElement);
+				});
+
+	//			QUnit.test("test sap.ui.core controls", function(assert) {
+	//				fnMemoryLeakCheckLibrary(assert, "sap.ui.core");
+	//			});
+
+				QUnit.test("test sap.m controls", function(assert) {
+					fnMemoryLeakCheckLibrary(assert, "sap.m");
+					fnMemoryLeakCheckLibrary(assert, "sap.m");
+					fnMemoryLeakCheckLibrary(assert, "sap.m");
+				});
+
+/*				QUnit.test("test sap.ui.unified controls", function(assert) {
+					fnMemoryLeakCheckLibrary(assert, "sap.ui.unified");
+				});
+
+				QUnit.test("test sap.ui.suite controls", function(assert) {
+					fnMemoryLeakCheckLibrary(assert, "sap.ui.suite");
+				});
+
+				QUnit.test("test sap.ui.table controls", function(assert) {
+					fnMemoryLeakCheckLibrary(assert, "sap.ui.table");
+				});
+
+				QUnit.test("test sap.uxap controls", function(assert) {
+					fnMemoryLeakCheckLibrary(assert, "sap.uxap");
+				});
+
+				QUnit.test("test sap.ui.commons controls", function(assert) {
+					fnMemoryLeakCheckLibrary(assert, "sap.ui.commons");
+				}); */
+			}
+		);
+	</script>
+
+
+</head>
+
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.P13nGroupPanel</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+
+	<div id="content"></div>
+</body>
+
+</html>

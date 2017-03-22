@@ -1,25 +1,37 @@
-/* ============================================= */
-/* CSS for control sap.m/ComboBoxBase.control    */
-/* ============================================= */
+/* =================================== */
+/* CSS for control sap.m/ComboBoxBase  */
+/* Base theme                          */
+/* =================================== */
 
-.sapMComboBoxBaseArrow {
-	display: inline-block;
-	cursor: pointer;
-	outline: none;
-	padding: 0;
-	border: none;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	background: transparent;
-	font-size: inherit;
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
 
-	/* auto vertical centering */
-	top: 0;
-	bottom: 0;
-	margin-top: auto;
-	margin-bottom: auto;
+/* hover */
+html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
+	background: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMComboBoxBaseReadonly .sapMComboBoxBaseArrow {
-	display: none;
+/* pressed */
+/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
+.sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
+html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
+	background: @sapUiToggleButtonPressedBackground;
+}
+
+/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
+.sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
+	color: @sapUiToggleButtonPressedTextColor;
+}
+.sapMComboBoxBase .sapMInputDivWrapper {
+	height: 100% !important;
+	max-width: 100%;
+
+}
+	/* ------------------------------ */
+/* dialog                         */
+/* ------------------------------ */
+
+div.sapMComboBoxBasePicker .sapMDialogScrollCont {
+	padding: 0;
 }

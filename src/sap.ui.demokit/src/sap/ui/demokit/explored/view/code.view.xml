@@ -1,8 +1,9 @@
 <mvc:View
-	controllerName="sap.ui.demokit.explored.view.code"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
+	xmlns:d="sap.ui.demokit"
+	controllerName="sap.ui.demokit.explored.view.code"
 	xmlns="sap.m">
 	<Page
 		id="page"
@@ -10,6 +11,9 @@
 		navButtonPress="onNavBack"
 		title="{/title}"
 		icon="img/144_iPad_Retina_Web_Clip.png" >
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
 		<headerContent>
 			<Button
 				class="sapUiHideOnPhone"
@@ -23,16 +27,17 @@
 		</headerContent>
 		<content>
 			<IconTabBar
-				expandable="false"
-				selectedKey="{/selectedTab}"
-				items="{/files}"
-				class="sapUiResponsiveContentPadding">
+					class="sapUiContentPadding"
+					expandable="false"
+					selectedKey="{/fileName}"
+					select="handleTabSelectEvent"
+					items="{/files}" >
 				<items>
 					<IconTabFilter
-						key="{name}"
-						text="{name}" >
+							key="{name}"
+							text="{name}" >
 						<content>
-							<core:HTML content="{code}" />
+							<d:CodeViewer class="sapUiExploredCodeViewer" source="{raw}" lineNumbering="true"/>
 						</content>
 					</IconTabFilter>
 				</items>

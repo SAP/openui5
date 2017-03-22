@@ -1,17 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Currency - sap.ui.unified</title>
-	<script src="../../../../resources/sap-ui-core.js" 
-	        type="text/javascript"
+	<script src="shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
 	        id="sap-ui-bootstrap"
-	        data-sap-ui-libs="sap.ui.unified, sap.ui.layout"
-	        data-sap-ui-theme="sap_bluecrystal">
+	        data-sap-ui-libs="sap.m, sap.ui.unified, sap.ui.layout">
 	</script>
 	<script>
-	
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({
 			modelData: [
@@ -33,9 +32,9 @@
 				}
 			]
 		});
-		
+
 		sap.ui.getCore().setModel(oModel);
-		
+
 		var oTemplate = new sap.ui.unified.Currency({
 			value: {
 				path: 'value',
@@ -43,7 +42,7 @@
 			},
 			currency: '{currency}'
 		});
-		
+
 		var oLayout = new sap.ui.layout.VerticalLayout({
 			content: {
 				path: "/modelData",
@@ -51,7 +50,98 @@
 			}
 		});
 
+		var oTemplate2 = new sap.ui.unified.Currency({
+			value: {
+				path: 'value',
+				type: new sap.ui.model.type.String()
+			},
+			currency: '{currency}',
+			maxPrecision: 0
+		});
+
+		var oLayout2 = new sap.ui.layout.VerticalLayout({
+			content: {
+				path: "/modelData",
+				template: oTemplate2
+			}
+		});
+
 		oLayout.placeAt("content");
+		oLayout2.placeAt("content");
+
+
+		var aData = [
+				{id: Math.random(), lastName: "Dente", money: 5.67, currency: "EUR", useSymbol: true},
+				{id: Math.random(), lastName: "Friese", money: -10.45, currency: "EUR", useSymbol: true},
+				{id: Math.random(), lastName: "Mann", money: 1345.212, currency: "EUR", useSymbol: true},
+				{id: Math.random(), lastName: "Schutt", money: 100.1, currency: "USD", useSymbol: true},
+				{id: Math.random(), lastName: "Open", money: 55663.1, currency: "USD", useSymbol: true},
+				{id: Math.random(), lastName: "Dewit", money: 34.23, currency: "EUR", useSymbol: true},
+				{id: Math.random(), lastName: "Zar", money: 123, currency: "EUR", useSymbol: true},
+				{id: Math.random(), lastName: "Burr", money: 678.45, currency: "DEM", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Hughes", money: 123.45, currency: "EUR", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Town", money: 678.90, currency: "JPY", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Case", money: 8756.2, currency: "EUR", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Time", money: -836.4, currency: "EUR", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Barr", money: 9.3, currency: "USD", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Poole", money: 6344.21, currency: "EUR", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Ander", money: 563.2, currency: "JPY", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Early", money: 8564.4, currency: "EUR", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Dewit", money: 34.23, currency: "EUR", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Turner", money: 5.67, currency: "שקל‎‎", type: "Inactive", useSymbol: false}
+			];
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({modelData: aData});
+
+		var aColumns = [
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "LastName"
+				})
+			}),
+			new sap.m.Column({
+				hAlign: "Right",
+				header : new sap.m.Label({
+					text : "Loan"
+				}),
+				minScreenWidth : "Desktop",
+				popinDisplay : "Inline",
+				demandPopin : true
+			}),
+		];
+		var oTable = new sap.m.Table({
+			columns : aColumns
+		});
+
+		var oTemplateTbl = new sap.m.ColumnListItem({
+			vAlign: "Middle",
+			cells : [
+				new sap.m.Text({
+					text : "{lastName}",
+					wrapping : false
+				}),
+				new sap.ui.unified.Currency({
+					value : "{money}",
+					currency : "{currency}",
+					useSymbol : "{useSymbol}"
+				}),
+			]
+		});
+		oTable.setModel(oModel);
+		oTable.bindItems({
+			path: "/modelData",
+			template : oTemplateTbl,
+			key: "id"
+		});
+
+		var oPage = new sap.m.Page({
+			enableScrolling : true,
+			content : [oTable]
+		});
+		var oApp = new sap.m.App();
+		oApp.addPage(oPage).placeAt("content");
+
 	</script>
 </head>
 <body class="sapUiBody" role="application">

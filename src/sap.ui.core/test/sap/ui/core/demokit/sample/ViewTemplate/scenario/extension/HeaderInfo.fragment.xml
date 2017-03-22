@@ -1,0 +1,26 @@
+<!-- include core:FragmentDefinition for testing purposes -->
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<scenario:Form title="HeaderInfo">
+		<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo">
+			<!-- Note: separate labels instead of composite bindings for testing only! -->
+			<Label labelFor="{path: 'entityType>TypeName', formatter: '.id'}"
+				text="Type Name"/>
+			<Text id="{path: 'entityType>TypeName', formatter: '.id'}"
+				text="{path: 'entityType>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+
+			<template:with path="entityType>Title" var="field">
+				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
+			</template:with>
+
+			<template:if test="{entityType>Description}"> <!-- HeaderInfo Description is Nullable -->
+				<template:with path="entityType>Description" var="field">
+					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
+				</template:with>
+			</template:if>
+		</template:with>
+	</scenario:Form>
+</core:FragmentDefinition>

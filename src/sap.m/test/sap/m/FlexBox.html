@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.m.FlexBox</title>
+		<style>
+			/*.sapMFlexItem {
+				border: 1px dashed red;
+				background-color: #aaaaaa;
+			}*/
+			#layout>div:nth-child(2) {
+				width: 200px;
+				height: 300px;
+				background-color: #ff99ff;
+			}
+			#flexbox1 {
+				background-color: #ffff99;
+			}
+		</style>
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m,sap.ui.layout">
+		</script>
+
+		<script>
+			var oButton1 = new sap.m.Button({
+				text: "Change Visibility",
+				press: function(){
+					var bIsVisible = sap.ui.getCore().byId("__image1-__clone1").getVisible();
+					bIsVisible = !bIsVisible;
+					sap.ui.getCore().byId("__image1-__clone1").setVisible(bIsVisible);
+				}
+			});
+
+			// Create items
+			var oImage1 = new sap.m.Image({
+				src: "images/mark1.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+			var oImage2 = new sap.m.Image({
+				src: "images/mark2.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+			var oImage3 = new sap.m.Image({
+				src: "images/mark3.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+			// Create a vertical flexbox with items
+			var oFlexBox1 = new sap.m.FlexBox("flexbox1", {
+				fitContainer: true,
+				wrap: "Wrap",
+				alignContent: "Stretch",
+				justifyContent: "Start",
+				items: [
+					oImage1.clone(),
+					oImage2.clone(),
+					oImage3.clone(),
+					oImage1.clone(),
+					oImage2.clone(),
+					oImage3.clone(),
+					oImage1.clone(),
+					oImage2.clone(),
+					oImage3.clone()
+				]
+			});
+
+			var oLayout1 = new sap.ui.layout.VerticalLayout("layout", {
+				content: [
+							oButton1,
+							oFlexBox1
+						]
+			});
+
+			var oImage4 = new sap.m.Image({
+				src: "images/action.png",
+				height: "44px",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oInput1 = new sap.m.Input({
+				placeholder: "Some input",
+				width: "auto",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oButton2 = new sap.m.Button({
+				text: "Button",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			// Create a flexbox with wrapped items
+			var oFlexBox2 = new sap.m.FlexBox("flexbox2", {
+				renderType: "Div",
+				width: "100%",
+				items: [
+					oImage4.clone(),
+					oInput1.clone(),
+					oButton2.clone()
+				]
+			});
+
+			// Create a flexbox with bare items
+			var oFlexBox3 = new sap.m.FlexBox("flexbox3", {
+				renderType: "Bare",
+				width: "100%",
+				items: [
+					oImage4.clone(),
+					oInput1.clone(),
+					oButton2.clone()
+				]
+			});
+
+			oButton3 = new sap.m.Button({
+				width: "200px",
+				type: "Emphasized",
+				layoutData: new sap.m.FlexItemData({
+					shrinkFactor: 1
+				})
+			});
+
+			oButton4 = new sap.m.Button({
+				width: "200px",
+				type: "Emphasized",
+				layoutData: new sap.m.FlexItemData({
+					shrinkFactor: 0,
+					growFactor: 3
+				})
+			});
+
+			var oFlexBox4 = new sap.m.FlexBox({
+				renderType: "Bare",
+				alignItems: "Center",
+				justifyContent: "Center",
+				items: [
+							oButton3.clone().setText("1").addStyleClass("sapUiSmallMarginEnd"),
+							oButton3.clone().setText("2").addStyleClass("sapUiSmallMarginEnd"),
+							oButton3.clone().setText("3").addStyleClass("sapUiSmallMarginEnd"),
+							oButton4.clone().setText("4").addStyleClass("sapUiSmallMarginEnd"),
+							oButton3.clone().setText("5")
+				]
+			});
+
+			var page1 = new sap.m.Page("page1", {
+				title:"FlexBox Test Page",
+				content:[
+					oLayout1,
+					oFlexBox2,
+					oFlexBox3,
+					oFlexBox4
+				]
+			});
+
+			var app = new sap.m.App("myApp", {initialPage:"page1"});
+			app.addPage(page1).placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

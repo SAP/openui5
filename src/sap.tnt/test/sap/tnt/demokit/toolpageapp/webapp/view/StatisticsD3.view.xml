@@ -1,0 +1,102 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:base="sap.ui.base"
+	xmlns:tool="sap.ui.demo.toolpageapp.control">
+
+	<l:BlockLayout
+		id="statisticsBlockLayout"
+		busy="false"
+		background="Dashboard">
+		<l:BlockLayoutRow
+			rowColorSet="ColorSet2">
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>ovSysUptime}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>orderStatusDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3PieChart data="{view>/PieChartData}">
+					<base:ManagedObject/>
+				</tool:D3PieChart>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>disUsersMonth}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>customerRatingDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3ColumnChart data="{view>/ColumnChartData}">
+					<base:ManagedObject/>
+				</tool:D3ColumnChart>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>costUpgStor}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>salesTrendDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3ComparisonChart data="{view>/ComparisonChartData}">
+					<base:ManagedObject/>
+				</tool:D3ComparisonChart>
+			</l:BlockLayoutCell>
+
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>databaseUsage}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>canceledOrdersDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3ColumnChart data="{view>/ColumnChartData2}">
+					<base:ManagedObject/>
+				</tool:D3ColumnChart>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>impCostCenter}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>netPromoterDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3ComparisonChart data="{view>/ComparisonChartData2}">
+					<base:ManagedObject/>
+				</tool:D3ComparisonChart>
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>maintCompl}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>revenueDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<tool:D3PieChart data="{view>/PieChartData2}">
+					<base:ManagedObject/>
+				</tool:D3PieChart>
+			</l:BlockLayoutCell>
+
+		</l:BlockLayoutRow>
+	</l:BlockLayout>
+</mvc:View>

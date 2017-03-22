@@ -1,36 +1,33 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<!-- 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<!--
 		    Tested control/class: jquery.sap.properties.js
 		    Author: Frank Weigel, Martin Schaus
 		 -->
 		<title>Test Page for jquery.sap.properties</title>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-language="de"
-				data-sap-ui-noConflict="true"
-				>
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		<script type="text/javascript" charset="utf-8">
+				data-sap-ui-noConflict="true"></script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script charset="utf-8">
 
 		// sinon must not use FakeXDomainRequest
 		sinon.xhr.supportsCORS = true;
 
 		var _test = "äöü";
-		
-		test("PropertiesClassAvailable", function () {
-			equal(typeof jQuery.sap.properties, "function", "jQuery.properties must be a function");
+
+		QUnit.test("PropertiesClassAvailable", function (assert) {
+			assert.equal(typeof jQuery.sap.properties, "function", "jQuery.properties must be a function");
 		});
 
 		var expected = {
@@ -70,105 +67,110 @@
 			'unsupported_escapes_bv\\':'unsupported_escapes_bv\\',
 			'no_double_escaping_\u005cu005a':'no_double_escaping_\u005cu005a',
 			'i18n_äöü_key':'ÄÖÜäöü',
-			
+
 			quoted1 : 'a value with \'single quotes\' in it',
 			quoted2 : 'a value with "double quotes" in it',
 			quoted3 : 'a value with \'single quotes\' and "double quotes" in it',
 			quoted4 : 'a value with \'\'\'unbalanced quotes"""',
 			quoted5 : 'a value with \'\'"" escaped quotes \'\'""',
-			
+
 			key_without_value: "",
 			continuedkey:'continuedkey',
 			single_line:'single_line\\',
 			no_continuation_3:'ok',
-			
+
 			'non.identifier.key' : 'some value',
-			
+
 			test1: 'value\\',
 			test2: 'value2',
 			test3: 'T"; alert(\'Hello!\'); //',
-			
+
 			Truth1: 'Beauty',
 			Truth2: 'Beauty',
 			Truth3: 'Beauty',
 			fruits: 'apple, banana, pear, cantaloupe, watermelon, kiwi, mango',
 			cheeses: ''
-		};	
-		
-		function checkProperties(oProps){
-			// check that the expected content is available 
+		};
+
+		function checkProperties(assert, oProps){
+			// check that the expected content is available
 			for(var sKey in expected) {
 				var sValue = oProps.getProperty(sKey, "Default given");
-				strictEqual(sValue, expected[sKey], "value for key '" + sKey + "'");
+				assert.strictEqual(sValue, expected[sKey], "value for key '" + sKey + "'");
 			}
 
 			// check that no other keys have been loaded
 			var aKeys = oProps.getKeys();
 			for(var i=0; i<aKeys.length; i++) {
-				ok(expected.hasOwnProperty(aKeys[i]), "expected keys should contain actual key '" + aKeys[i] +"'");
+				assert.ok(expected.hasOwnProperty(aKeys[i]), "expected keys should contain actual key '" + aKeys[i] +"'");
 			}
 
 			// check fallback to default with a non existant key
 			var sValue = oProps.getProperty("initially-undefined","Default given");
-			strictEqual(sValue, "Default given", "fallback to provided default");
+			assert.strictEqual(sValue, "Default given", "fallback to provided default");
 
 			// add that key and check that it is returned
 			oProps.setProperty("initially-undefined","New Value added");
 			var sValue = oProps.getProperty("initially-undefined","Default given");
-			strictEqual(sValue, "New Value added", "initially-undefined accessed");
+			assert.strictEqual(sValue, "New Value added", "initially-undefined accessed");
 		};
-					 
-		test("ParseAndAccess (sync)", function () {
+
+		QUnit.test("ParseAndAccess (sync)", function (assert) {
 			var oProps = jQuery.sap.properties({url : "testdata/test.properties"});
-			checkProperties(oProps);
+			checkProperties(assert, oProps);
 		});
-		
-		asyncTest("ParseAndAccess (async)", function () {
+
+		QUnit.test("ParseAndAccess (async)", function (assert) {
 			var oPromise = jQuery.sap.properties({url : "testdata/test.properties", async: true});
-			oPromise.then(function(oProps){
-				checkProperties(oProps);
-				start();
-			}, function(){
-				ok(false, "Fail should not be called");
-				start();
-			});
-		});
-		
-		test("Access non existing (sync)", function () {
-			var oProps = jQuery.sap.properties({url : "testdata/doesnotexist.properties"});
-			equal(oProps.getKeys().length, 0, "Non-existing Properties file results in empty properties list.");
-		});
-		
-		asyncTest("Access non existing (async)", function () {
-			var oPromise = jQuery.sap.properties({url : "testdata/doesnotexist.properties", async: true});
-			oPromise.then(function(oProps){
-				equal(oProps.getKeys().length, 0, "Non-existing Properties file results in empty properties list.");
-				start();
-			}, function(){
-				ok(false, "Fail should not be called");
-				start();
+			return oPromise.then(function(oProps){
+				checkProperties(assert, oProps);
 			});
 		});
 
-		test("IncompleteUnicodeEscape (sync)", function () {
-			QUnit.raises(function() {
+		QUnit.test("Access non existing (sync)", function (assert) {
+			var oProps = jQuery.sap.properties({url : "testdata/doesnotexist.properties"});
+			assert.equal(oProps.getKeys().length, 0, "Non-existing Properties file results in empty properties list.");
+		});
+
+		QUnit.test("Access non existing (async)", function (assert) {
+			var oPromise = jQuery.sap.properties({url : "testdata/doesnotexist.properties", async: true});
+			return oPromise.then(function(oProps){
+				assert.equal(oProps.getKeys().length, 0, "Non-existing Properties file results in empty properties list.");
+			}, function() {
+				assert.ok(false, "promise must not be rejected for no-existing files");
+			});
+		});
+
+		QUnit.test("Access non existing (sync,null)", function (assert) {
+			var oProps = jQuery.sap.properties({url : "testdata/doesnotexist.properties", returnNullIfMissing:true});
+			assert.strictEqual(oProps, null, "Non-existing Properties file results in a null value");
+		});
+
+		QUnit.test("Access non existing (async,null)", function (assert) {
+			var oPromise = jQuery.sap.properties({url : "testdata/doesnotexist.properties", async: true, returnNullIfMissing:true});
+			return oPromise.then(function(oProps){
+				assert.strictEqual(oProps, null, "Non-existing Properties file results in a null value");
+			}, function() {
+				assert.ok(false, "promise must not be rejected for no-existing files");
+			});
+		});
+
+		QUnit.test("IncompleteUnicodeEscape (sync)", function (assert) {
+			assert.throws(function() {
 				jQuery.sap.properties({url : "testdata/broken.properties"});
-				
 			}, "broken unicode escape");
 		});
-		
-		asyncTest("IncompleteUnicodeEscape (async)", function () {
+
+		QUnit.test("IncompleteUnicodeEscape (async)", function (assert) {
 			var oPromise = jQuery.sap.properties({url : "testdata/broken.properties", async: true});
-			oPromise.then(function(oProps){
-				ok(false, "Success should not be called");
-				start();
+			return oPromise.then(function(oProps){
+				assert.ok(false, "Success should not be called");
 			}, function(oError){
-				ok(oError instanceof Error, "Fail due to broken unicode escape error.");
-				start();
+				assert.ok(oError instanceof Error, "Fail due to broken unicode escape error.");
 			});
 		});
 
-		var FIRST_LINE_TESTS = [
+		[
 			{
 				caption : "Empty first line",
 				properties : '\nfoo=bar'
@@ -185,40 +187,38 @@
 				caption : "Empty first line w. whitespace, key w. WS",
 				properties : ' \t\n \tfoo=bar'
 			}
-		];
-		
-		for(var i=0; i<FIRST_LINE_TESTS.length; i++) {
-			(function(info) {
-				test(info.caption, function() {
-					var server = sinon.fakeServer.create();
-					server.respondWith(/fake.properties/, info.properties);
-					var oProps = jQuery.sap.properties({url : "fake.properties"});
-					var aKeys = oProps.getKeys();
-					equal(aKeys.length, 1, "properties should have 1 key/value pair");
-					equal(aKeys[0], "foo", "key must not contain whitespace or newline");
-					equal(oProps.getProperty("foo"), "bar", "value must be retrieved");
-					server.restore();
-				});
-			}(FIRST_LINE_TESTS[i]));
-		}
+		].forEach( function(info) {
 
-		test("getKeys", function () {
+			QUnit.test(info.caption, function(assert) {
+				var server = sinon.fakeServer.create();
+				server.respondWith(/fake.properties/, info.properties);
+				var oProps = jQuery.sap.properties({url : "fake.properties"});
+				var aKeys = oProps.getKeys();
+				assert.equal(aKeys.length, 1, "properties should have 1 key/value pair");
+				assert.equal(aKeys[0], "foo", "key must not contain whitespace or newline");
+				assert.equal(oProps.getProperty("foo"), "bar", "value must be retrieved");
+				server.restore();
+			});
+
+		});
+
+		QUnit.test("getKeys", function (assert) {
 			var oProps = jQuery.sap.properties({url : "testdata/test.properties"});
 			var aKeys = oProps.getKeys();
 			// check that each returned key can be retrieved
 			for (var i=0;i<aKeys.length;i++) {
 				var sValue = oProps.getProperty(aKeys[i],"Default for Key "+i);
-				notStrictEqual(sValue, "Default for Key "+i, "key"+i+" accessed");
+				assert.notStrictEqual(sValue, "Default for Key "+i, "key"+i+" accessed");
 			}
 		});
-		
-		test("clone", function () {
+
+		QUnit.test("clone", function (assert) {
 			var oProps = jQuery.sap.properties({url : "testdata/test.properties"});
 
 			// add one property before cloning
 			oProps.setProperty("initially-undefined","New Value added");
 			sValue = oProps.getProperty("initially-undefined","Default given");
-			ok(sValue == "New Value added", "key11 accessed");
+			assert.ok(sValue == "New Value added", "key11 accessed");
 
 			// now create a clone
 			var oDolly =  oProps.clone();
@@ -226,39 +226,35 @@
 			// and add one property to origin _after_ cloning
 			oProps.setProperty("origin-only","New Value 2 added");
 			sValue = oProps.getProperty("origin-only","Default given");
-			ok(sValue == "New Value 2 added", "origin-only accessed");
+			assert.ok(sValue == "New Value 2 added", "origin-only accessed");
 
 			// check content of clone
 			for(var sKey in expected) {
 				if ( typeof expected[sKey] === "string" ) {
 					var sValue = oDolly.getProperty(sKey, "Default given");
-					strictEqual(sValue, expected[sKey], "access to value");
+					assert.strictEqual(sValue, expected[sKey], "access to value");
 				}
 			}
 			// special case: key 11 has been added before creation of the clone, but after load -> must be part of it
 			var sValue = oDolly.getProperty("initially-undefined","Default given");
-			strictEqual(sValue, "New Value added", "modification before clone must be visible in clone");
+			assert.strictEqual(sValue, "New Value added", "modification before clone must be visible in clone");
 
 			// key 12 has been added after creation of the clone -> must not be part of clone
 			var sValue = oDolly.getProperty("origin-only","Default given");
-			strictEqual(sValue, "Default given", "key added in origin after clone must not exist");
+			assert.strictEqual(sValue, "Default given", "key added in origin after clone must not exist");
 
 			// now do a temp change in the clone for a key existing in the origin -> must not be reflected in the original
 			oDolly.setProperty("initially-undefined","Value modified in Dolly");
 			sValue = oDolly.getProperty("initially-undefined","Default given");
-			strictEqual(sValue, "Value modified in Dolly", "clone modification visible in clone");
+			assert.strictEqual(sValue, "Value modified in Dolly", "clone modification visible in clone");
 			// test again in the original file
 			sValue = oProps.getProperty("initially-undefined","Default given");
-			strictEqual(sValue, "New Value added", "clone modification must not be visible in origin");
+			assert.strictEqual(sValue, "New Value added", "clone modification must not be visible in origin");
 		});
 		</script>
 	</head>
-	
+
 	<body>
-		<h1 id="qunit-header">QUnit page for jquery.sap.properties</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
+		<div id="qunit"></div>
 	</body>
 </html>

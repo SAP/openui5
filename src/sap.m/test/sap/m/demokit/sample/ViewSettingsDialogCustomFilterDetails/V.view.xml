@@ -1,0 +1,21 @@
+<mvc:View
+		controllerName="sap.m.sample.ViewSettingsDialogCustomFilterDetails.C"
+		xmlns:l="sap.ui.layout"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+		<l:content>
+			<Button
+					text="Search Contains"
+					press="handleOpenDialogSearchContains" />
+			<Button
+					text="Search Any Word Starts With"
+					press="handleOpenDialogSearchWordsStartWith" />
+			<Button
+					text="Search Case Sensitive Contains"
+					press="handleOpenDialogCustomSearch" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

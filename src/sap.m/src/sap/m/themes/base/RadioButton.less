@@ -1,6 +1,7 @@
-/* ============================================= */
-/* CSS for control sap.m/RadioButton.control     */
-/* ============================================= */
+/* ================================== */
+/* CSS for control sap.m/RadioButton  */
+/* Base theme                         */
+/* ================================== */
 
 .sapMRb {
 	float: left;
@@ -8,36 +9,195 @@
 	outline: none;
 	text-overflow: ellipsis;
 	position: relative;
+	white-space: nowrap;
+	max-width: 100%;
+
+	> .sapMLabel {
+		// Safari rounds CSS subpixels with about 1px mistake
+		max-width: calc(~"100% - 3rem + 1px");
+	}
 }
 
 .sapMILI-CTX .sapMRb {
 	float: right;
 }
 
+.sapMRbHasLabel .sapMRbB {
+	width: 3rem;
+}
+
 .sapMRbB {
-	height: 3em;
-	width: 3em;
 	display: inline-block; /* for ie*/
-	display: -webkit-inline-box;
+	font-size: 1rem; /* override font size of the message dialog */
 }
 
 .sapMRbB .sapMRbBOut {
-	height: 1.03em;
-	width: 1.03em;	
-	border-radius: 1em;
+	height: 1rem;
+	width: 1rem;
+	border: 0.125rem solid @sapUiFieldBorderColor;
+	border-radius: 1rem;
+	background-color: @sapUiFieldBackground;
+	margin: 0.825rem;
+	padding: 1px; /* using padding here so that margin won't collide */
 }
 
 .sapMRbBLabel {
 	vertical-align: top;
-	height: 3em;
-	line-height: 3em;
+	height: 3rem;
+	line-height: 3rem;
+	cursor: default;
 }
 
 .sapMRbB input {
+	margin: 0; /* FF puts margin */
 	-webkit-appearance: none;
 	visibility: hidden;
 }
 
 .sapMRbB:focus {
 	outline: none;
+}
+
+.sapMRb:focus:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: .75rem;
+	bottom: .75rem;
+	left: .75rem;
+	right: .625rem;
+	pointer-events: none;
+}
+
+.sapMRbBInn {
+	background-color: transparent;
+	-webkit-user-select: none;
+}
+
+.sapMRbB .sapMRbBInn {
+	height: 0.5rem;
+	width: 0.5rem;
+	padding: 1px;
+	border-radius: 1rem;
+	margin: 0.1875rem;
+}
+
+.sapMRbHasLabel.sapMRb:focus:before {
+	right: 0;
+	left: 0;
+}
+
+.sapMRbDis:focus:before {
+	display: none;
+}
+
+.sapUiSizeCompact {
+	.sapMRb:focus:before {
+		top: .4375rem;
+		bottom: .4375rem;
+		left: .4375rem;
+		right: .325rem;
+	}
+
+	.sapMRbHasLabel .sapMRbB {
+		width: 2rem;
+	}
+
+	.sapMRb > .sapMLabel {
+		max-width: calc(~"100% - 2rem + 1px");
+	}
+}
+
+.sapMRbHoverable:hover {
+	border-color: @sapUiFieldHoverBorderColor;
+	background-color: @sapUiFieldHoverBackground;
+}
+
+.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiSelected;
+}
+
+.sapMLIBActive .sapMRbSel .sapMRbBInn {
+	background-color: @sapUiListActiveTextColor;
+}
+
+/* Read only */
+.sapMRbRo .sapMRbBOut {
+	background-color: @sapUiFieldReadOnlyBackground;
+	border-color: @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapMRbRo.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiContentNonInteractiveIconColor;
+}
+
+/* Compact size */
+.sapUiSizeCompact{
+	.sapMRb {
+		height : 2rem;
+	}
+
+	.sapMRbB {
+		font-size: 1rem; /* override font size of the message dialog */
+	}
+
+	.sapMRbB .sapMRbBOut {
+		height: 1rem;
+		width: 1rem;
+		border-width: 0.125rem;
+		margin: 0.5rem;
+		box-sizing: border-box;
+	}
+
+	.sapMRbB .sapMRbBInn {
+		height: 0.25rem;
+		width: 0.25rem;
+		margin: 0.15rem;
+	}
+
+	.sapMRbBLabel {
+		line-height: 2rem;
+		height: 2rem;
+	}
+
+	.sapMRbHasLabel.sapMRb:focus:before {
+		right: 0;
+	}
+}
+
+/* Condensed size */
+.sapUiSizeCondensed.sapUiTable,
+.sapUiSizeCondensed .sapUiTable {
+	.sapMRb {
+		height : 1.5rem;
+		vertical-align: top;
+	}
+
+	.sapMRbB {
+		font-size: 1rem; /* override font size of the message dialog */
+		height: 1.375rem;
+		width: 1.375rem;
+	}
+
+	.sapUiTableCell>.sapMRb>.sapMRbB{
+			margin: 0 0.25rem; /* extra space in the condensed ULV */
+	}
+
+	.sapMRbB .sapMRbBOut {
+		height: 0.75rem;
+		width: 0.75rem;
+		border-width: 1px;
+		margin: 0.375rem;
+	}
+
+	.sapMRbB .sapMRbBInn {
+		height: 0.25rem;
+		width: 0.25rem;
+		margin: 0.0625rem;
+	}
+
+	.sapMRbBLabel {
+		line-height: 1.5rem;
+		height: 1.5rem;
+	}
 }

@@ -1,15 +1,15 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
-	function(Targets, TargetHandler, Target) {
+sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets'],
+	function(Targets, TargetHandler, Target, asyncTargets, syncTargets) {
 		"use strict";
 
 		/**
-		 * Provides a convenient way for placing views into the correct containers of your application
-		 * The mobile extension for targets that target the controls {@link sap.m.SplitContainer} or a {@link sap.m.NavContainer} and all controls extending these.
+		 * Provides a convenient way for placing views into the correct containers of your application.
+		 * The mobile extension of Targets also handles the triggering of page navigation when the target control is a {@link sap.m.SplitContainer}, a {@link sap.m.NavContainer} or a control which extends one of these.
 		 * Other controls are also allowed, but the extra parameters viewLevel, transition and transitionParameters are ignored and it will behave like {@link sap.ui.core.routing.Targets}.
-		 * When a target is displayed, dialogs will be closed. To Change this use {@link #getTargetHandler} and {@link sap.m.routing.TargetHandler#setCloseDialogs}.
+		 * When a target is displayed, dialogs will be closed. To change this use {@link #getTargetHandler} and {@link sap.m.routing.TargetHandler#setCloseDialogs}.
 		 *
 		 * @class
 		 * @extends sap.ui.core.routing.Targets
@@ -59,9 +59,10 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 * The id of the rootView - This should be the id of the view that contains the control with the controlId
 		 * since the control will be retrieved by calling the {@link sap.ui.core.mvc.View#byId} function of the rootView.
 		 * If you are using a component and add the routing.targets <b>do not set this parameter</b>,
-		 * since the component will set the rootView to the view created by the {@link sap.ui.core.UIComponent.html#createContent} function.
+		 * since the component will set the rootView to the view created by the {@link sap.ui.core.UIComponent#createContent} function.
 		 * If you specify the "parent" property of a target, the control will not be searched in the root view but in the view Created by the parent (see parent documentation).
-		 *
+		 * @param {boolean} [oOptions.config.async=false] @since 1.34 Whether the views which are created through this Targets are loaded asyncly. This option can be set only when the Targets
+		 * is used standalone without the involvement of a Router. Otherwise the async option is inherited from the Router.
 		 * @param {object} oOptions.targets One or multiple targets in a map.
 		 * @param {object} oOptions.targets.anyName a new target, the key severs as a name. An example:
 		 * <pre>
@@ -163,10 +164,10 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 *
 		 * @param {string} [oOptions.targets.anyName.controlAggregation] The name of an aggregation of the controlId, that contains views.
 		 * Eg: a {@link sap.m.NavContainer} has an aggregation 'pages', another Example is the {@link sap.ui.ux3.Shell} it has 'content'.
-		 * @param {boolean} [oOptions.targets.anyName.clearAggregation] Defines a boolean that can be passed to specify if the aggregation should be cleared
+		 * @param {boolean} [oOptions.targets.anyName.clearControlAggregation] Defines a boolean that can be passed to specify if the aggregation should be cleared
 		 * - all items will be removed - before adding the View to it.
 		 * When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false. When you use the {@link sap.m.routing.Router} the default will be false.
-		 * @param {string} [oOptions.targets.parent] A reference to another target, using the name of the target.
+		 * @param {string} [oOptions.targets.anyName.parent] A reference to another target, using the name of the target.
 		 * If you display a target that has a parent, the parent will also be displayed.
 		 * Also the control you specify with the controlId parameter, will be searched inside of the view of the parent not in the rootView, provided in the config.
 		 * The control will be searched using the byId function of a view. When it is not found, the global id is checked.
@@ -243,7 +244,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 * So a parent will always be created before the target referencing it.
 		 *
 		 *
-		 * @param {integer} [oOptions.targets.anyName.viewLevel]
+		 * @param {int} [oOptions.targets.anyName.viewLevel]
 		 * If you are having an application that has a logical order of views (eg: a create account process, first provide user data, then review and confirm them).
 		 * You always want to always show a backwards transition if a navigation from the confirm to the userData page takes place.
 		 * Therefore you may use the viewLevel. The viewLevel has to be an integer. The user data page should have a lower number than the confirm page.
@@ -296,6 +297,30 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 */
 		var MobileTargets = Targets.extend("sap.m.routing.Targets", /** @lends sap.m.routing.Targets.prototype */ {
 			constructor: function(oOptions) {
+
+				// If no config is given, set the default value to sync
+				if (!oOptions.config) {
+					oOptions.config = {
+						_async: false
+					};
+				}
+
+				// temporarily: for checking the url param
+				function checkUrl() {
+					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
+						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTargets");
+						return true;
+					}
+					return false;
+				}
+
+				// Config object doesn't have _async set which means the Targets is instantiated standalone by given a non-empty config object
+				// Assign the oConfig.async to oConfig._async and set the default value to sync
+				if (oOptions.config._async === undefined) {
+					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
+					oOptions.config._async = (oOptions.config.async === undefined) ? checkUrl() : oOptions.config.async;
+				}
+
 				if (oOptions.targetHandler) {
 					this._oTargetHandler = oOptions.targetHandler;
 				} else {
@@ -304,6 +329,14 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 				}
 
 				Targets.prototype.constructor.apply(this, arguments);
+
+				var TargetsStub = oOptions.config._async ? asyncTargets : syncTargets;
+
+				this._super = {};
+				for (var fn in TargetsStub) {
+					this._super[fn] = this[fn];
+					this[fn] = TargetsStub[fn];
+				}
 			},
 
 			destroy: function () {
@@ -326,40 +359,27 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 				return this._oTargetHandler;
 			},
 
-			display: function () {
-				var iViewLevel,
-					sName;
-
-				// don't remember previous displays
-				this._oLastDisplayedTarget = null;
-
-				var oReturnValue = Targets.prototype.display.apply(this, arguments);
-
-				// maybe a wrong name was provided then there is no last displayed target
-				if (this._oLastDisplayedTarget) {
-					iViewLevel = this._oLastDisplayedTarget._oOptions.viewLevel;
-					sName = this._oLastDisplayedTarget._oOptions.name;
-				}
-
-				this._oTargetHandler.navigate({
-					viewLevel: iViewLevel,
-					navigationIdentifier: sName
-				});
-
-				return oReturnValue;
-			},
-
 			_constructTarget : function (oOptions, oParent) {
 				return new Target(oOptions, this._oViews, oParent, this._oTargetHandler);
 			},
 
-			_displaySingleTarget : function (sName) {
-				var oTarget = this.getTarget(sName);
-				if (oTarget) {
-					this._oLastDisplayedTarget = oTarget;
-				}
+			/**
+			 * Traverse up from the given target through the parent chain to find out the first target with a defined view level.
+			 * @param {sap.m.routing.Target} oTarget the target from which the traverse starts to find the first defined view level
+			 * @return {number} The view level
+			 * @private
+			 */
+			_getViewLevel : function (oTarget) {
+				var iViewLevel;
+				do {
+					iViewLevel = oTarget._oOptions.viewLevel;
+					if (iViewLevel !== undefined) {
+						return iViewLevel;
+					}
+					oTarget = oTarget._oParent;
+				} while (oTarget);
 
-				return Targets.prototype._displaySingleTarget.apply(this, arguments);
+				return iViewLevel;
 			}
 		});
 

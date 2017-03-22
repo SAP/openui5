@@ -55,7 +55,7 @@
       }
       function fromRuleBasedJamo(next, cp, needFeature){
          if(cp < LBase || (LBase + LCount <= cp && cp < SBase) || (SBase + SCount < cp)){
-            return next(cp, needFeature); 
+            return next(cp, needFeature);
          }
          if(LBase <= cp && cp < LBase + LCount){
             var c = {};
@@ -194,7 +194,7 @@
          if(!uchar){
             return null;
          }
-         this.resBuf = recursiveDecomp(this.canonical, uchar); 
+         this.resBuf = recursiveDecomp(this.canonical, uchar);
       }
       return this.resBuf.shift();
    };
@@ -269,13 +269,13 @@
    var createIterator = function(mode, str){
       switch(mode){
          case "NFD":
-            return new DecompIterator(new RecursDecompIterator(new UCharIterator(str), true)); 
+            return new DecompIterator(new RecursDecompIterator(new UCharIterator(str), true));
          case "NFKD":
-            return new DecompIterator(new RecursDecompIterator(new UCharIterator(str), false)); 
+            return new DecompIterator(new RecursDecompIterator(new UCharIterator(str), false));
          case "NFC":
-            return new CompIterator(new DecompIterator(new RecursDecompIterator(new UCharIterator(str), true))); 
+            return new CompIterator(new DecompIterator(new RecursDecompIterator(new UCharIterator(str), true)));
          case "NFKC":
-            return new CompIterator(new DecompIterator(new RecursDecompIterator(new UCharIterator(str), false))); 
+            return new CompIterator(new DecompIterator(new RecursDecompIterator(new UCharIterator(str), false)));
       }
       throw mode + " is invalid";
    };

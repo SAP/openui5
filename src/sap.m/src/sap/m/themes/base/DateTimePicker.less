@@ -1,0 +1,91 @@
+/* ===================================== */
+/* CSS for control sap.m/DateTimePicker  */
+/* Base theme                            */
+/* ===================================== */
+
+/* styles for popup */
+.sapMDateTimePopupCont {
+	height: 25.25rem;
+	min-width: 40.0625rem;
+}
+
+html[data-sap-ui-browser^=ie]:not(.sapUiMedia-Std-Phone) .sapMDateTimePopupCont {
+	min-width: 40.07rem; /* because of IE rounding issues*/
+}
+
+.sapMDateTimePopupCont > .sapUiCal,
+.sapMDateTimePopupCont > .sapMTimePickerContainer {
+	float: left;
+}
+
+.sapMTimePickerSwitch {
+	margin-top: 1rem;
+	width: 100%;
+	text-align: center;
+}
+
+.sapMTimePickerSep {
+	height: ~'calc(100% - 2rem)';
+	width: 0px;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	border-left: 1px solid @sapUiGroupContentBorderColor;
+	box-sizing: border-box;
+	float: left;
+}
+
+/* Compact mode */
+.sapUiSizeCompact .sapMDateTimePopupCont {
+	height: 17.25rem;
+	min-width: 34.0625rem;
+}
+
+html[data-sap-ui-browser^=ie]:not(.sapUiMedia-Std-Phone) .sapUiSizeCompact .sapMDateTimePopupCont {
+	min-width: 34.07rem; /* because of IE rounding issues*/
+}
+
+/* Phone mode use device and media selector to support small desktop and large phones*/
+.sapMDateTimePopup.sapUiPopupWithPadding > .sapMDialogSection > .sapMDialogScroll > .sapMDialogScrollCont {
+	padding: 0;
+}
+
+.sapMDateTimePopup.sapMDialogPhone > .sapMDialogSection > .sapMDialogScroll > .sapMDialogScrollCont {
+	height: 100%;
+}
+
+html.sap-phone .sapMDateTimePopupCont,
+html.sapUiMedia-Std-Phone .sapMDateTimePopupCont {
+	height: 100%;
+	min-width: 20rem;
+	overflow: auto !important; /* allow scrolling in landscape mode */
+}
+
+html.sap-phone .sapUiSizeCompact .sapMDateTimePopupCont,
+html.sapUiMedia-Std-Phone .sapUiSizeCompact .sapMDateTimePopupCont {
+	min-width: 17rem;
+}
+
+html.sap-phone .sapMTimePickerSep,
+html.sapUiMedia-Std-Phone .sapMTimePickerSep {
+	display: none;
+}
+
+html.sap-phone .sapMDateTimePopupCont > .sapUiCal,
+html.sapUiMedia-Std-Phone .sapMDateTimePopupCont > .sapUiCal {
+	width: 100%;
+}
+
+html.sapUiMedia-Std-Phone .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+	height: 25.25rem;
+	width: 100%;
+}
+
+html.sapUiMedia-Std-Phone.sapUiSizeCompact .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer,
+html.sapUiMedia-Std-Phone .sapUiSizeCompact .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+	height: 15.25rem;
+	width: 100%;
+}
+
+html.sap-phone .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+	height: ~'calc(100% - 3.5rem)';
+}

@@ -1,27 +1,27 @@
 <!DOCTYPE HTML>
-<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.layout.form.SimpleForm">
+<html data-sap-ui-dk-controls="sap.ui.layout.form.SimpleForm">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta name="keywords" content="Control Form" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control Form">
 		<title>SimpleForm - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.layout,sap.ui.commons,sap.ui.demokit"
 				data-sap-ui-language="en"
 				>
 		</script>
-		<script type="text/javascript">sap.ui.demokit._supportedThemes = ["sap_goldreflection", "sap_hcb"];</script>
-		<script type="text/javascript" src="../../../../../js/utils.js"></script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_goldreflection", "sap_hcb"];</script>
+		<script src="../../../../../js/utils.js"></script>
 
-		<script id='samplescript1' type="text/javascript">
+		<script id='samplescript1'>
 var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 	"sf1",
 	{
-		maxContainerCols: 2,
+		layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 		editable: true,
 		content:[
 				new sap.ui.core.Title({text:"Person"}),
@@ -63,9 +63,9 @@ var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 	}).placeAt("sample1");
 		</script>
 
-		<script id='samplescript2' type="text/javascript">
+		<script id='samplescript2'>
 var html =	'<template>' +
-		'<div data-sap-ui-type="sap.ui.layout.form.SimpleForm" id="sf2" data-editable="true">' +
+		'<div data-sap-ui-type="sap.ui.layout.form.SimpleForm" id="sf2" data-editable="true" data-layout="ResponsiveGridLayout">' +
 		'<div data-sap-ui-type="sap.ui.core.Title" id="T1" data-text="Person"></div>' +
 		'<div data-sap-ui-type="sap.ui.commons.Label" id="L1" data-text="Name"></div>' +
 		'<div data-sap-ui-type="sap.ui.commons.TextField" id="TF1" data-value="Max"></div>' +
@@ -93,7 +93,7 @@ myView.placeAt("sample2");
 
 		<p>
 		The <code>SimpleForm</code> is designed to allow an easy usage of the <code>Form</code> control.
-		In the <code>SimpleForm</code> just the content controls are added. The <code>SimpleForm</code> 
+		In the <code>SimpleForm</code> just the content controls are added. The <code>SimpleForm</code>
 		creates the <code>Form</code>, <code>FormContainers</code>, <code>FormElements</code> and <code>FormLayout</code>
 		according to the content.
 		<br>
@@ -124,7 +124,7 @@ myView.placeAt("sample2");
 		<h2>Basic Example</h2>
 		<p>The content is defined using a Json string</p>
 		<div code-sample="sample1" script="samplescript1"></div>
-		<br/><br/>
+		<br><br>
 
 		<p>The content is defined using a HTML view</p>
 		<div code-sample="sample2" script="samplescript2"></div>

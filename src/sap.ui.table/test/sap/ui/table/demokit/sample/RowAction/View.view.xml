@@ -1,0 +1,58 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.RowAction.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m"
+	height="100%">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				rows="{/ProductCollection}"
+				selectionMode="MultiToggle"
+				visibleRowCount="7"
+				ariaLabelledBy="title">
+				<toolbar>
+					<m:Toolbar>
+						<m:Title id="title" text="Products"></m:Title>
+						<m:ToolbarSpacer/>
+						<m:Select id="select" items="{modes>/items}" selectedKey="Navigation" change="onBehaviourModeChange">
+							<c:Item key="{modes>key}" text="{modes>text}"/>
+						</m:Select>
+					</m:Toolbar>
+				</toolbar>
+				<columns>
+					<Column>
+						<m:Label text="Product Name" />
+						<template>
+							<m:Text text="{Name}" wrapping="false"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Product Id" />
+						<template>
+							<m:Text text="{ProductId}" wrapping="false"/>
+						</template>
+					</Column>
+					<Column hAlign="End">
+						<m:Label text="Quantity" />
+						<template>
+							<m:Text text="{Quantity}" wrapping="false"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Price" />
+						<template>
+							<u:Currency value="{Price}" currency="{CurrencyCode}"/>
+						</template>
+					</Column>
+				</columns>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>

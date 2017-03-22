@@ -1,7 +1,6 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.ObjectHeaderFavFlag.Page"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page
@@ -31,7 +30,11 @@
 		<content>
 			<ObjectHeader
 				title="{Name}"
-				number="{Price}"
+				number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
 				numberUnit="{CurrencyCode}"
 				markFavorite="{ff>/isFavorite}"
 				markFlagged="{ff>/isFlagged}"

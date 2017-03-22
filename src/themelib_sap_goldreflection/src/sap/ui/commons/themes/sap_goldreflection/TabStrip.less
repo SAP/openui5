@@ -5,14 +5,12 @@
 }
 
 .sapUiTabBar {
-	height: 29px;
+	height: 27px;
+	border-bottom: 2px solid @sapUiHighlight;
 }
 
 .sapUiTabBarCnt {
 	height: 27px;
-	border-bottom-style: solid;
-	border-bottom-width: 2px;
-	border-bottom-color: @sapUiHighlight;
 	padding: 0;
 }
 
@@ -25,8 +23,6 @@
 	background-color: @sapUiExtraLightBG;
 	border: 1px solid @sapUiMediumBorder;
 	border-bottom-width: 0;
-	-moz-border-radius: @sapUiTabBorderRadius @sapUiTabBorderRadius 0 0;
-	-webkit-border-radius: @sapUiTabBorderRadius @sapUiTabBorderRadius 0 0;
 	border-radius: @sapUiTabBorderRadius @sapUiTabBorderRadius 0 0;
 }
 
@@ -111,4 +107,20 @@ html[data-sap-ui-browser^="ie"] .sapUiTabSel:focus{
 	border: 2px solid @sapUiDarkBorder;
 	border-top-width: 0;
 	padding: 6px;
+}
+
+.sapUiTabStripScrollIcon {
+	color: @sapUiButtonTextColor;
+	background: @sapUiButtonBackground;
+	border: 1px solid @sapUiButtonBorderColor;
+}
+
+.sapUiTabStripScrollIcon:hover {
+	background: @sapUiButtonHoverBackground;
+}
+
+.sapUiTabStripScrollIcon:active {
+	color: @sapUiButtonActiveTextColor;
+	background: @sapUiButtonActiveBackground;
+	border: 1px solid @sapUiButtonActiveBorderColor;
 }

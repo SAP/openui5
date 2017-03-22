@@ -1,3 +1,24 @@
+.sapUiBody#content {
+	padding-left: 0; /* overrides the padding of demokit */
+}
+
+#CompactModeLabel, #RTLLabel {
+	padding-top: 1rem;
+}
+
+.sapUiSizeCompact #CompactModeLabel, .sapUiSizeCompact #RTLLabel {
+	padding-top: 0.5rem;
+}
+
+html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
+	float: left;
+	left: 0.125rem;
+}
+
+#CompactModeButtons, #RTLButtons {
+	float: right;
+	left: -0.125rem;
+}
 
 /* Public, For Samples */
 
@@ -39,6 +60,15 @@
 	width: 1.5rem;
 }
 
+pre.sapUiCodeViewer.sapUiExploredCodeViewer {
+	background-color: white;
+	word-wrap: break-word;
+	white-space: pre-wrap; /*for firefox*/
+	-moz-tab-size: 2;
+	-o-tab-size: 2;
+	tab-size: 2;
+}
+
 /* explored entity view */
 
 .sapMOH[data-deprecated^="true"] .sapMText.sapMOHTitle {
@@ -75,4 +105,27 @@ code {
 #sampleFrame {
 	width : 100%;
 	height : 100%;
+}
+
+/* util */
+
+.fs0875 {
+	font-size: 0.875rem;
+}
+
+.fs0875 pre {
+	white-space: pre-wrap;
+}
+
+.fs0875 > p {
+	margin-top: 0.6em;
+	margin-bottom: 0.6em;
+}
+
+.fs0875 > p:first-child {
+	margin-top: 0;
+}
+
+.fs0875 > p:last-child {
+	margin-bottom: 0;
 }

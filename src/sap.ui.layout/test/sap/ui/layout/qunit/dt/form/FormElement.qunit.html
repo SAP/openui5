@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>qUnit Page for sap.ui.layout.form.FormElement design time</title>
+
+<script src="../../../shared-config.js"></script>
+<script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.layout,sap.ui.dt,sap.m">
+
+</script>
+
+<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script>
+/* global QUnit */
+(function () {
+    "use strict";
+
+    sap.ui.require([
+        'sap/ui/layout/form/FormElement.designtime'
+    ], function (FormElementDesignTime) {
+
+            var oElement = new sap.ui.layout.form.FormElement("E1", {
+                label: "Label1"
+            });
+
+            var oElement2 = new sap.ui.layout.form.FormElement("E2");
+
+            var oLayout = new sap.ui.layout.form.ResponsiveGridLayout("Layout");
+
+            var oForm = new sap.ui.layout.form.Form("F1",{
+                title: new sap.ui.core.Title("F1T",{text: "Form Title"}),
+                layout: oLayout,
+                formContainers: [
+                    new sap.ui.layout.form.FormContainer("C1",{
+                        title: "Container1",
+                        formElements: [ oElement, oElement2 ]
+                        })
+                    ]
+                });
+
+            QUnit.test("Retrieve domRef of Form Element with label inside Responsive Grid Layout", function(assert) {
+                assert.ok(oForm, "Form was created");
+                assert.ok(FormElementDesignTime.domRef(oElement), "domRef is retrieved when label is present");
+                assert.ok(FormElementDesignTime.domRef(oElement2), "domRef is retrieved when label is not present");
+            });
+
+    });
+})();
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.ui.layout.form.Form</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<mvc:View
+	controllerName="sap.m.sample.ListGrowingUpwards.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		growing="true"
+		growingThreshold="10"
+		growingDirection="Upwards"
+		busyIndicatorDelay="200"
+		enableBusyIndicator="true"
+		growingTriggerText="Previous Products"
+		noDataText="No products available"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name',
+				descending: false,
+				group: '.groupFunction'
+			}
+		}">
+		<StandardListItem
+			title="{Name}"
+			description="{Description}"
+			info="{Price} {CurrencyCode}" />
+	</List>
+</mvc:View>

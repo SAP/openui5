@@ -1,86 +1,61 @@
-.sapMMsgPopoverItemSuccess .sapMSLIImgIcon,
-.sapMMsgPopoverBtnSuccess.sapMSegBBtn .sapUiIcon,
-.sapMMsgPopoverDescIconSuccess {
-	color: @sapUiPositiveElement;
-}
-
-.sapMMsgPopoverItemWarning .sapMSLIImgIcon,
-.sapMMsgPopoverBtnWarning.sapMSegBBtn .sapUiIcon,
-.sapMMsgPopoverDescIconWarning {
-	color: @sapUiCriticalElement;
-}
-
-.sapMMsgPopoverItemError .sapMSLIImgIcon,
-.sapMMsgPopoverBtnError.sapMSegBBtn .sapUiIcon,
-.sapMMsgPopoverDescIconError {
-	color: @sapUiNegativeElement;
-}
-
-.sapMMsgPopoverItemInformation .sapMSLIImgIcon,
-.sapMMsgPopoverBtnInformation.sapMSegBBtn .sapUiIcon,
-.sapMMsgPopoverDescIconInformation {
-	color: @sapUiNeutralElement;
-}
-
-.sapMMsgPopoverItem .sapMSLIIconActive {
-	color: @sapUiSLIIconColorActive;
-}
-
-.sapMPopover.sapMMsgPopover.sapMMsgPopover-init {
-	.sapMPopoverArr:after {
-		border-top-color: @sapUiHeaderBG;
-	}
-}
+/* ===================================== */
+/* CSS for control sap.m/MessagePopover  */
+/* BlueCrystal theme                     */
+/* ===================================== */
 
 .sapMMsgPopover {
-	.sapMSegBBtn {
+	.sapMSegB .sapMSegBBtn {
 		background-color: transparent;
 		border-color: transparent;
 		border-radius: 0.125rem;
-		color: @sapUiDarkText;
+		color: @sapUiButtonHeaderTextColor;
 
 		&:hover {
-			background-color: fade(darken(@sapUiButtonStandardBG, 20%), 50%);
-			color: @sapUiDarkText;
+			background-color: @sapUiButtonHoverBackground;
+			color: @sapUiButtonHeaderTextColor;
 
 			.sapMBtnIcon {
-				color: @sapUiElement;
+				color: @sapUiButtonIconColor;
 			}
 		}
 
 		&:active {
-			background-color: @sapUiHighlight;
-			color: @sapUiTextInverted;
+			background-color: @sapUiButtonActiveBackground;
+			color: @sapUiButtonActiveTextColor;
 
 			.sapMBtnIcon.sapUiIcon {
-				color: @sapUiInvertedElement;
+				color: @sapUiButtonActiveTextColor;
 			}
-		}
-
-		&:last-child {
-			border-color: transparent;
 		}
 
 		&.sapMSegBBtnSel {
-			background-color: @sapUiHighlight;
-			color: @sapUiTextInverted;
+			background-color: @sapUiSegmentedButtonSelectedBackground;
+			color: @sapUiSegmentedButtonSelectedTextColor;
 
 			.sapMBtnIcon {
-				color: @sapUiInvertedElement;
+				color: @sapUiContentContrastIconColor;
 			}
 
 			&:hover, &:active {
-				background-color: darken(@sapUiHighlight, 5%);
-				color: @sapUiTextInverted;
+				background-color: @sapUiSegmentedButtonSelectedHoverBackground;
+				color: @sapUiSegmentedButtonSelectedTextColor;
 
 				.sapMBtnIcon {
-					color: @sapUiInvertedElement;
+					color: @sapUiButtonActiveTextColor;
 				}
 			}
 		}
 	}
+
+	.sapMMsgPopoverTitleText {
+		font-size: @sapMFontHeader4Size;
+		font-weight: bold;
+	}
+
 }
 
-.sapMMsgPopoverCloseBtn .sapMBtnIcon {
-	color: @sapUiElement;
+.sapUiSizeCompact.sapMMsgPopover {
+	.sapMMsgPopoverTitleText {
+		font-size: @sapMFontMediumSize;
+	}
 }

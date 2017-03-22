@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var ExactListRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -23,25 +23,25 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ExactListRenderer.render = function(oRenderManager, oControl){
-	
+
 		var rm = oRenderManager;
 		var aSubLists = oControl.getSubLists();
 		var oAttribute = oControl._getAtt();
-		
+
 		if (!oAttribute) {
 			return; //No Attribute attached to this list -> ignore rendering
 		}
-		
+
 		var bIsTop = oControl._isTop();
-	
+
 		// render the root tag
 	    rm.write("<div");
 	    rm.writeControlData(oControl);
 	    rm.addClass("sapUiUx3ExactLst");
 	    var bActiveTitle = false;
-	    
+
 	    var bTopListHidden = false;
-	    
+
 	    if (bIsTop) {
 				var oBrowser = oControl.getParent();
 				if (oBrowser) {
@@ -56,31 +56,31 @@ sap.ui.define(['jquery.sap.global'],
 						bTopListHidden = true;
 					}
 				}
-				
+
 			rm.addClass("sapUiUx3ExactLstTop");
 			rm.addStyle("height", oControl.getTopHeight() + "px");
 	    }
 	    if (oControl._bCollapsed) {
 			rm.addClass("sapUiUx3ExactLstCollapsed");
 	    }
-	    
+
 	    rm.addClass("sapUiUx3ExactLstLvl_" + oControl._iLevel);
-	
+
 	    rm.writeClasses();
 	    rm.writeStyles();
 	    rm.write(">");
-	    
+
 	    if (bTopListHidden) {
 				rm.write("<div id=\"" + oControl.getId() + "-foc\" class=\"sapUiUx3ExactLstFoc\" tabindex=\"0\"></div>");
 	    }
-	
+
 	    if (!oControl._bPopupOpened) {
 			// render the list area with the used listbox
 			rm.write("<div id=\"" + oControl.getId() + "-lst\" class=\"sapUiUx3ExactLstLst\"");
 				if (oControl._bCollapsed && oControl._oCollapseStyles && oControl._oCollapseStyles["lst"]) {
 					rm.write(" style=\"" + oControl._oCollapseStyles["lst"] + "\"");
 				}
-				
+
 				rm.write(">");
 			rm.renderControl(oControl._lb);
 			rm.write("<a id=\"" + oControl.getId() + "-exp\" class=\"sapUiUx3ExactLstExp\">" + this.getExpanderSymbol(false, false) + "</a>");
@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global'],
 	    } else {
 				oControl._bRefreshList = true;
 	    }
-	
+
 	    // render the content area with the sub lists
 	    rm.write("<div id=\"" + oControl.getId() + "-cntnt\" ");
 	    rm.write("class=\"sapUiUx3ExactLstCntnt");
@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.renderControl(aSubLists[i]);
 	    }
 	    rm.write("</div>");
-	
+
 	    // render the header
 	    rm.write("<header id=\"" + oControl.getId() + "-head\" class=\"sapUiUx3ExactLstHead\"");
 	    if (bIsTop && bActiveTitle) {
@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (bActiveTitle) {
 				rm.write("<span class=\"sapUiUx3ExactLstHeadTopIco\"></span>");
 			}
-			rm.write("</span></h3>");
+			rm.write("</h3>");
 	    } else {
 			// render the header content for non-top list
 			rm.write("<h3 id=\"" + oControl.getId() + "-head-txt\" class=\"sapUiUx3ExactLstHeadTxt\"");
@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeEscaped(oAttribute.getText());
 			}
 			rm.write("</h3>");
-	
+
 			// render header actions
 			rm.write("<div id=\"" + oControl.getId() + "-head-action\" class=\"sapUiUx3ExactLstHeadAct" + (oControl.getShowClose() ? "" : " sapUiUx3ExactLstHeadActNoClose") + "\">");
 			rm.write("<a id=\"" + oControl.getId() + "-hide\" class=\"sapUiUx3ExactLstHide\" role=\"presentation\"");
@@ -155,15 +155,15 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</div>");
 	    }
 	    rm.write("</header>");
-	
+
 	    // render resize bar
 	    rm.write("<div id=\"" + oControl.getId() + "-rsz\" class=\"sapUiUx3ExactLstRSz\"></div>");
-	
+
 		// close the root tag
 	    rm.write("</div>");
 	};
-	
-	
+
+
 	/**
 	 * Returns the symbol for the vertical or horizontal expander depending on the given expand state.
 	 * @private
@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global'],
 			return bExpanded ? "&#9650;" : "&#9660;";
 		}
 	};
-	
+
 
 	return ExactListRenderer;
 

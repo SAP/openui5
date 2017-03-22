@@ -1,0 +1,44 @@
+/* ================================== */
+/* CSS for control sap.m/RadioButton  */
+/* Belize theme                       */
+/* ================================== */
+
+@_sap_m_RadioButton_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
+
+.sapMRb:focus:before {
+	border: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMLIBActive .sapMRbB .sapMRbBOut {
+	border: 2px solid @sapUiListActiveTextColor;
+}
+
+.sapMLIBActive .sapMRbSel .sapMRbBOut {
+	background-color: @sapUiListActiveBackground;
+}
+
+.sapMRbDis {
+	opacity: @sapContent_DisabledOpacity;
+}
+
+/* Value states */
+
+.sapMRbErr.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiFieldInvalidColor;
+}
+
+.sapMRbErr .sapMRbBOut,
+.sapMRbErr.sapMRbBTouched .sapMRbBOut {
+	border-color: @sapUiFieldInvalidColor;
+	background-color: @sapUiFieldInvalidBackground;
+}
+
+.sapMRbWarn.sapMRbSel .sapMRbBInn {
+	background-color: @_sap_m_RadioButton_SelectedWarningColor;
+}
+
+.sapMRbWarn .sapMRbBOut,
+.sapMRbWarn.sapMRbBTouched .sapMRbBOut {
+	border-color: @sapUiFieldWarningColor;
+	background-color: @sapUiFieldWarningBackground;
+}

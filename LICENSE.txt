@@ -203,11 +203,25 @@
 
 
 --------------------------------------------------------------------------------------------------------------------------
-SAPUI5 SUBCOMPONENTS:
+APIs
 
-SAPUI5 includes the following subcomponents that are subject to separate license terms.
+This project may include APIs to SAP or third party products or services. The use of these APIs, products and services may be subject to additional agreements. In no event shall the application of the Apache Software License, v.2 to this project grant any rights in or to these APIs, products or services that would alter, expand, be inconsistent with, or supersede any terms of these additional agreements. “API” means application programming interfaces, as well as their respective specifications and implementing code that allows other software products to communicate with or call on SAP or third party products or services (for example, SAP Enterprise Services, BAPIs, Idocs, RFCs and ABAP calls or other user exits) and may be made available through SAP or third party products, SDKs, documentation or other media.
+
+
+------------------------------------------------------------------------------
+OpenUI5 SUBCOMPONENTS:
+
+OpenUI5 includes the following subcomponents that are subject to separate license terms.
 Your use of these subcomponents is subject to the seperate license terms applicable to
 each subcomponent.
+
+Component: ace 1.2.6
+Licensor: Ajax.org B.V.
+Website: https://ace.c9.io/
+License: BSD 3-clause "New" or "Revised" License
+<OWNER>: Ajax.org B.V.
+<ORGANIZATION>: Ajax.org B.V.
+<YEAR> = 2010
 
 Component: Array every Method
 Licensor: Mozilla Developer Network
@@ -263,6 +277,13 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Microsoft
 
+Component: es6-promise 2.3.0 - a tiny implementation of Promises/A+.
+Licensor: Jake Archibald
+Website: https://github.com/jakearchibald/es6-promise
+License: MIT License
+<year> = 2014
+<copyright holders> = Yehuda Katz, Tom Dale, Stefan Penner, Jake Archibald and contributors
+
 Component: Flexie 1.0.3
 Licensor: Richard Herrera
 Website: http://github.com/doctyper/flexie/
@@ -314,39 +335,11 @@ License: MIT License
 <year> = 2008-2013
 <copyright holders> = Matteo Spinelli
 
-Component: jQuery 1.7.1
-Licensor: John Resig
-Website: http://jszip.org/redist/jquery
-License: MIT License
-<year> = 2011
-<copyright holders> = John Resig
-
-Component: jQuery 1.8.1
-Licensor: jQuery Foundation and other contributors
-Website: http://github.com/jquery/jquery/
-License: MIT License
-<year> = 2012
-<copyright holders> = jQuery Foundation and other contributors
-
-Component: jQuery 1.10.1
+Component: jQuery 2.2.3
 Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
 License: MIT License
-<year> = 2013
-<copyright holders> = jQuery Foundation and other contributors
-
-Component: jQuery 1.10.2
-Licensor: jQuery Foundation and other contributors
-Website: http://jquery.com/
-License: MIT License
-<year> = 2013
-<copyright holders> = jQuery Foundation and other contributors
-
-Component: jQuery 1.11.1
-Licensor: jQuery Foundation and other contributors
-Website: http://jquery.com/
-License: MIT License
-<year> = 2014
+<year> = 2016
 <copyright holders> = jQuery Foundation and other contributors
 
 Component: jQuery-UI 1.10.4
@@ -427,6 +420,13 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Mathias Bynens
 
+Component: node-lru-cache 2.7.3 - A cache object that deletes the least-recently-used items.
+Licensor: Isaac Z. Schlueter and Contributors
+Website: https://github.com/isaacs/node-lru-cache/blob/v2.7.3/
+License: ISC License
+<year> = 2015
+<copyright holders> = Isaac Z. Schlueter and Contributors
+
 Component: punycode.js 1.2.3
 Licensor: Acid Media
 Website: http://github.com/bestiejs/punycode.js/
@@ -434,7 +434,7 @@ License: MIT License
 <year> = 2010
 <copyright holders> = Acid Media
 
-Component: qunit 1.16.0
+Component: qunit 1.18.0
 Licensor: jQuery Foundation and other contributors
 Website: http://github.com/jquery/qunit/
 License: MIT License
@@ -515,6 +515,13 @@ Website: http://zynga.github.com/scroller/
 License: MIT License
 <year> = 2011
 <copyright holders> = Zynga Inc.
+
+Component: jalaali-js
+Licensor: Behrang Noruzi Niya
+Website: https://github.com/jalaali/jalaali-js/
+License: MIT License
+<copyright holders> = Behrang Noruzi Niya
+<year> = unspecified
 
 
 --------------------------------------------------------------------------------------------------------------------------
@@ -615,3 +622,21 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+--------------------------------------------------------------------------------------------------------------------------
+
+The ISC License
+
+Copyright (c) Year(s), Company or Person's Name
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

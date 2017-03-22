@@ -113,13 +113,20 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeClasses();
 		rm.write(">");
 
-		for ( var i = 0; i < aContent.length; i++) {
-			var oChild = aContent[i];
+		for ( var index = 0; index < aContent.length; index++) {
+			var oChild = aContent[index];
 			rm.write("<li");
 			rm.writeAttribute("id",oControl.getId() + "-item-" + oChild.getId());
-			rm.writeAttribute("role", "option");
+
+			// ARIA
+			rm.writeAccessibilityState(oControl, {
+				role: "option",
+				posinset: index + 1,
+				setsize: aContent.length,
+				labelledby: oControl.getId() + "-toggleaction"
+			});
+
 			rm.writeAttribute("tabindex", "-1");
-			rm.writeAttribute("aria-describedby", oControl.getId() + "-toggleaction");
 			rm.addClass("sapUiCrslItm");
 			rm.writeClasses();
 			rm.write(">");

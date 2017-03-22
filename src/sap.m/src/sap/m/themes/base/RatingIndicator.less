@@ -1,19 +1,24 @@
-
-/* ============================================= */
-/* CSS for control sap.m/RatingIndicator.control */
-/* ============================================= */
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* Base theme                             */
+/* ====================================== */
 
 .sapMRI {
 	position: relative;
 	display: inline-block;
 	overflow: hidden;
-	vertical-align:middle;
-	padding: 0.25rem;
+	vertical-align: top;
+	padding: 0;
 
 	/* IE Windows 8 */
 	/* This elements receives events when not panning in vertial direction */
 	touch-action: pan-y;
 	-ms-touch-action: pan-y;
+}
+
+html.sap-phone .sapMRI:focus,
+html.sap-tablet .sapMRI:focus {
+	outline: none;
 }
 
 .sapMRISelector {
@@ -26,6 +31,10 @@
 /* ie9 fix for transparent divs */
 html[data-sap-ui-browser*='ie'] .sapMRISelector {
 	background-color: rgba(255,255,255,0.01);
+}
+
+.sapMRIAriaLabel {
+    display: none;
 }
 
 .sapMRISel {
@@ -42,7 +51,7 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 .sapMRIUnsel {
 	position: relative;
 	float: right;
-	color: @sapUiLightBG;
+	color: @sapUiContentForegroundColor;
 	word-wrap: normal;
 	white-space: nowrap;
 }
@@ -56,11 +65,122 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 	float: left;
 	display: none;
 	overflow: hidden;
-	color: @sapUiLinkHover;
 	word-wrap: normal;
 	white-space: nowrap;
 }
 
-/*.sapMRI:focus {
-	outline-width: 0;
-}*/
+.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov {
+    font-family: SAP-icons;
+}
+
+
+.sapUiSizeCondensed .sapUiTableCell > .sapMRI {
+	box-sizing: content-box;
+	padding: 0;
+	margin: 0 0.5rem;
+}
+
+.sapUiRatingIndicatorXS .sapMRI .sapUiIcon,
+.sapUiRatingIndicatorXS .sapMRI .sapMImg {
+	padding-right: @sapUiRIIconPaddingXS;
+	vertical-align:top;
+}
+	.sapUiRatingIndicatorS .sapMRI .sapUiIcon,
+	.sapUiRatingIndicatorS .sapMRI .sapMImg {
+		padding-right: @sapUiRIIconPaddingS;
+		vertical-align:top;
+	}
+
+	.sapUiRatingIndicatorM .sapMRI .sapUiIcon,
+	.sapUiRatingIndicatorM .sapMRI .sapMImg {
+		padding-right: @sapUiRIIconPaddingM;
+		vertical-align:top;
+	}
+
+	.sapUiRatingIndicatorL .sapMRI .sapUiIcon,
+	.sapUiRatingIndicatorL .sapMRI .sapMImg {
+		padding-right: @sapUiRIIconPaddingL;
+		vertical-align:top;
+	}
+
+.sapMRI.sapUiRatingIndicatorXS .sapUiIcon:last-child,
+.sapMRI.sapUiRatingIndicatorXS .sapMImg:last-child,
+.sapMRI.sapUiRatingIndicatorS  .sapUiIcon:last-child,
+.sapMRI.sapUiRatingIndicatorS .sapMImg:last-child,
+.sapMRI.sapUiRatingIndicatorM .sapUiIcon:last-child,
+.sapMRI.sapUiRatingIndicatorM .sapMImg:last-child,
+.sapMRI.sapUiRatingIndicatorL .sapUiIcon:last-child,
+.sapMRI.sapUiRatingIndicatorL .sapMImg:last-child {
+	padding-right: 0;
+}
+
+.sapMRIIcon { /* required for size calculation */
+	height: 1.375rem; /* default size */
+	overflow: hidden;
+}
+
+.sapMRIDisabled {
+	outline: none;
+	cursor: default;
+}
+
+.sapMRI .sapUiIcon,
+.sapMRI .sapMImg {
+	padding-right: 0.25rem;
+}
+
+.sapMRI .sapUiIcon:last-child,
+.sapMRI .sapMImg:last-child {
+	padding-right: 0;
+}
+
+/* Compact mode */
+.sapUiSizeCompact .sapMRIIcon {
+	height: 1rem; /* default size for the compact mode */
+}
+
+/* Condensed mode */
+.sapUiSizeCondensed .sapUiTableCell .sapMRI .sapUiIcon,
+.sapUiSizeCondensed .sapUiTableCell .sapMRI .sapMImg{
+	vertical-align: top;
+}
+
+.sapUiSizeCondensed .sapMRI .sapUiIcon,
+.sapUiSizeCondensed .sapMRI .sapMImg{
+	padding-right: 0;
+}
+
+.sapMRI.sapUiRatingIndicatorXS {
+	.sapUiIcon, .sapMImg {
+		padding-right: @sapUiRIIconPaddingXS;
+		vertical-align: top;
+	}
+}
+
+.sapMRI.sapUiRatingIndicatorS {
+	.sapUiIcon, .sapMImg {
+		padding-right: @sapUiRIIconPaddingS;
+		vertical-align: top;
+	}
+}
+
+.sapMRI.sapUiRatingIndicatorM {
+	.sapUiIcon, .sapMImg {
+		padding-right: @sapUiRIIconPaddingM;
+		vertical-align: top;
+	}
+}
+
+.sapMRI.sapUiRatingIndicatorL {
+	.sapUiIcon, .sapMImg {
+		padding-right: @sapUiRIIconPaddingL;
+		vertical-align: top;
+	}
+}
+
+.sapMRI.sapUiRatingIndicatorXS, .sapMRI.sapUiRatingIndicatorS, .sapMRI.sapUiRatingIndicatorM,
+.sapMRI.sapUiRatingIndicatorL {
+	.sapUiIcon:last-child, .sapMImg:last-child {
+		padding-right: 0;
+	}
+}

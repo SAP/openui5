@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Avatar</title>
+	<script type="text/javascript"
+			src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.f, sap.m"
+			data-sap-ui-theme="sap_belize">
+	</script>
+	<script>
+		var oPage = new sap.m.Page({
+			title: "sap.f.Avatar",
+			content: [
+				new sap.f.Avatar("defaultXSSquareAvatar", {
+					displaySize: "XS",
+					displayShape: "Square"
+				}),
+				new sap.f.Avatar("defaultAvatar"),
+				new sap.f.Avatar("initialsMCircleAvatar", {
+					initials: "BP",
+					displaySize: "M"
+				}),
+				new sap.f.Avatar("iconLAvatar", {
+					src: "sap-icon://lab",
+					displaySize: "L"
+				}),
+				new sap.f.Avatar("imageXL", {
+					src: "images/Woman_avatar_01.png",
+					displaySize: "XL"
+
+				}),
+				new sap.f.Avatar("imageXLSquareCover", {
+					src: "images/Car_avatar_01.jpg",
+					displaySize: "XL",
+					displayShape: "Square",
+					imageFitType: "Cover",
+					press: function() {}
+
+				}),
+				new sap.f.Avatar("imageXLSquareContain", {
+					src: "images/Car_avatar_01.jpg",
+					displaySize: "XL",
+					displayShape: "Square",
+					imageFitType: "Contain",
+					press: function() {}
+
+				}),
+				new sap.f.Avatar("initialsCustomAvatar", {
+					initials: "BP",
+					displaySize: "Custom",
+					customDisplaySize: "10rem",
+					customFontSize: "2rem"
+				})
+			]
+		});
+
+		var oApp = new sap.m.App();
+		oApp.addPage(oPage).placeAt("body");
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

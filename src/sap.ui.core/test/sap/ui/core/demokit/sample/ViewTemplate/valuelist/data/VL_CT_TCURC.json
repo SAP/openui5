@@ -1,0 +1,905 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ADP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ADP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ADP",
+					"LTEXT" : "Andorran Peseta --> (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AED')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AED')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AED",
+					"LTEXT" : "United Arab Emirates Dirham"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AFA')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AFA')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AFA",
+					"LTEXT" : "Afghani (Old)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AFN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AFN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AFN",
+					"LTEXT" : "Afghani"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ALL')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ALL')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ALL",
+					"LTEXT" : "Albanian Lek"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AMD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AMD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AMD",
+					"LTEXT" : "Armenian Dram"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ANG')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ANG')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ANG",
+					"LTEXT" : "West Indian Guilder"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AOA')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AOA')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AOA",
+					"LTEXT" : "Angolanische Kwanza"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AON')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AON')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AON",
+					"LTEXT" : "Angolan New Kwanza (Old)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AOR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AOR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AOR",
+					"LTEXT" : "Angolan Kwanza Reajustado (Old)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ARS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ARS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ARS",
+					"LTEXT" : "Argentine Peso"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ATS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ATS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ATS",
+					"LTEXT" : "Austrian Schilling (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AUD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AUD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AUD",
+					"LTEXT" : "Australian Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AWG')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AWG')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AWG",
+					"LTEXT" : "Aruban Florin"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AZM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AZM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AZM",
+					"LTEXT" : "Azerbaijan Manat (Old)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AZN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('AZN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "AZN",
+					"LTEXT" : "Azerbaijan Manat"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BAM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BAM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BAM",
+					"LTEXT" : "Bosnia and Herzegovina Convertible Mark"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BBD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BBD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BBD",
+					"LTEXT" : "Barbados Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BDT')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BDT')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BDT",
+					"LTEXT" : "Bangladesh Taka"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BEF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BEF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BEF",
+					"LTEXT" : "Belgian Franc (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BGN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BGN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BGN",
+					"LTEXT" : "Bulgarian Lev"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BHD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BHD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BHD",
+					"LTEXT" : "Bahrain Dinar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BIF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BIF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BIF",
+					"LTEXT" : "Burundi Franc"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BMD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BMD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BMD",
+					"LTEXT" : "Bermudan Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BND')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BND')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BND",
+					"LTEXT" : "Brunei Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BOB')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BOB')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BOB",
+					"LTEXT" : "Boliviano"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BRL')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BRL')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BRL",
+					"LTEXT" : "Brazilian Real"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BSD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BSD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BSD",
+					"LTEXT" : "Bahaman Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BTN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BTN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BTN",
+					"LTEXT" : "Bhutan Ngultrum"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BWP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BWP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BWP",
+					"LTEXT" : "Botswana Pula"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BYB')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BYB')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BYB",
+					"LTEXT" : "Belorussian Ruble (Old)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BYR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BYR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BYR",
+					"LTEXT" : "Belorussian Ruble"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BZD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('BZD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "BZD",
+					"LTEXT" : "Belize Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CAD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CAD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CAD",
+					"LTEXT" : "Canadian Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CDF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CDF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CDF",
+					"LTEXT" : "Congolese Franc"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CFP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CFP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CFP",
+					"LTEXT" : "French Franc (Pacific Islands)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CHF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CHF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CHF",
+					"LTEXT" : "Swiss Franc"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CLP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CLP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CLP",
+					"LTEXT" : "Chilean Peso"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CLP4')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CLP4')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CLP4",
+					"LTEXT" : ""
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CNY')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CNY')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CNY",
+					"LTEXT" : "Chinese Renminbi"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('COP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('COP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "COP",
+					"LTEXT" : "Colombian Peso"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CRC')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CRC')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CRC",
+					"LTEXT" : "Costa Rica Colon"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CSD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CSD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CSD",
+					"LTEXT" : "Serbian Dinar (Old)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CUC')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CUC')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CUC",
+					"LTEXT" : "Peso Convertible"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CUP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CUP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CUP",
+					"LTEXT" : "Cuban Peso"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CVE')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CVE')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CVE",
+					"LTEXT" : "Cape Verde Escudo"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CYP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CYP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CYP",
+					"LTEXT" : "Cyprus Pound  (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CZK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('CZK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "CZK",
+					"LTEXT" : "Czech Krona"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DEM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DEM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "DEM",
+					"LTEXT" : "German Mark    (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DEM3')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DEM3')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "DEM3",
+					"LTEXT" : "(Internal) German Mark (3 dec.places)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DJF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DJF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "DJF",
+					"LTEXT" : "Djibouti Franc"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DKK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DKK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "DKK",
+					"LTEXT" : "Danish Krone"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DOP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DOP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "DOP",
+					"LTEXT" : "Dominican Peso"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DZD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('DZD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "DZD",
+					"LTEXT" : "Algerian Dinar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ECS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ECS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ECS",
+					"LTEXT" : "Ecuadorian Sucre (Old --> USD)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('EEK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('EEK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "EEK",
+					"LTEXT" : "Estonian Krone (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('EGP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('EGP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "EGP",
+					"LTEXT" : "Egyptian Pound"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ERN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ERN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ERN",
+					"LTEXT" : "Eritrean Nafka"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ESP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ESP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ESP",
+					"LTEXT" : "Spanish Peseta (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ETB')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ETB')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ETB",
+					"LTEXT" : "Ethiopian Birr"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('EUR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('EUR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "EUR",
+					"LTEXT" : "European Euro"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('EUR4')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('EUR4')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "EUR4",
+					"LTEXT" : "European Euro"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('FIM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('FIM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "FIM",
+					"LTEXT" : "Finnish Markka (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('FJD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('FJD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "FJD",
+					"LTEXT" : "Fiji Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('FKP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('FKP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "FKP",
+					"LTEXT" : "Falkland Pound"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('FRF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('FRF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "FRF",
+					"LTEXT" : "French Franc (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GBP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GBP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GBP",
+					"LTEXT" : "British Pound"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GEL')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GEL')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GEL",
+					"LTEXT" : "Georgian Lari"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GHC')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GHC')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GHC",
+					"LTEXT" : "Ghanaian Cedi (Old)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GHS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GHS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GHS",
+					"LTEXT" : "Ghanian Cedi"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GIP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GIP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GIP",
+					"LTEXT" : "Gibraltar Pound"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GMD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GMD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GMD",
+					"LTEXT" : "Gambian Dalasi"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GNF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GNF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GNF",
+					"LTEXT" : "Guinean Franc"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GRD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GRD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GRD",
+					"LTEXT" : "Greek Drachma (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GTQ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GTQ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GTQ",
+					"LTEXT" : "Guatemalan Quetzal"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GWP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GWP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GWP",
+					"LTEXT" : "Guinea Peso (Old --> SHP)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GYD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('GYD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "GYD",
+					"LTEXT" : "Guyana Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HKD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HKD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "HKD",
+					"LTEXT" : "Hong Kong Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HNL')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HNL')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "HNL",
+					"LTEXT" : "Honduran Lempira"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HRK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HRK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "HRK",
+					"LTEXT" : "Croatian Kuna"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HTG')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HTG')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "HTG",
+					"LTEXT" : "Haitian Gourde"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HUF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('HUF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "HUF",
+					"LTEXT" : "Hungarian Forint"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('IDR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('IDR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "IDR",
+					"LTEXT" : "Indonesian Rupiah"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('IEP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('IEP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "IEP",
+					"LTEXT" : "Irish Punt (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ILS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ILS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ILS",
+					"LTEXT" : "Israeli Scheckel"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('INR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('INR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "INR",
+					"LTEXT" : "Indian Rupee"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('IQD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('IQD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "IQD",
+					"LTEXT" : "Iraqui Dinar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('IRR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('IRR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "IRR",
+					"LTEXT" : "Iranian Rial"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ISK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ISK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ISK",
+					"LTEXT" : "Iceland Krona"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ITL')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('ITL')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "ITL",
+					"LTEXT" : "Italian Lira (Old --> EUR)"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('JMD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('JMD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "JMD",
+					"LTEXT" : "Jamaican Dollar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('JOD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('JOD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "JOD",
+					"LTEXT" : "Jordanian Dinar"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('JPY')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('JPY')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "JPY",
+					"LTEXT" : "Japanese Yen"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KES')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KES')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "KES",
+					"LTEXT" : "Kenyan Shilling"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KGS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KGS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "KGS",
+					"LTEXT" : "Kyrgyzstan Som"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KHR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KHR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "KHR",
+					"LTEXT" : "Cambodian Riel"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KMF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KMF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "KMF",
+					"LTEXT" : "Comoros Franc"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KPW')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KPW')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "KPW",
+					"LTEXT" : "North Korean Won"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KRW')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KRW')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "KRW",
+					"LTEXT" : "South Korean Won"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KWD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_CT_TCURC('KWD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_CT_TCURC"
+					},
+					"WAERS" : "KWD",
+					"LTEXT" : "Kuwaiti Dinar"
+				}]
+	}
+}

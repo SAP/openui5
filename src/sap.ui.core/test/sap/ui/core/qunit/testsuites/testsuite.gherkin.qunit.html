@@ -1,0 +1,43 @@
+<html>
+	<head>
+		<title>TestSuite for sap.ui.core: NOT-YET-GTP testcase CORE/GHERKIN</title>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script>
+
+		/**
+		 * Add test pages to this test suite function.
+		 * Please order alphabetically
+		 */
+		function suite() {
+			var suite = new parent.jsUnitTestSuite();
+			var contextPath = "/" + window.location.pathname.split("/")[1];
+
+			function addTestPage(sUrl, bGlobals) {
+				suite.addTestPage(contextPath + sUrl + "?sap-ui-animation=false" + (bGlobals ? "" : "&noglobals=true"));
+			}
+
+			// Internet Explorer will fail arbitrarily if certain tests are run with noglobals=true 
+			function addGlobalTestPage(sUrl) {
+			  addTestPage(sUrl, true);
+			}
+
+			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/DataTableUtils.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/GherkinTestGenerator.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/SimpleGherkinParser.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/StepDefinitions.qunit.html");
+			addGlobalTestPage("/test-resources/sap/ui/core/qunit/gherkin/qUnitTestHarness.qunit.html");
+			addGlobalTestPage("/test-resources/sap/ui/core/qunit/gherkin/opa5TestHarness.qunit.html");
+			addGlobalTestPage("/test-resources/sap/ui/core/qunit/gherkin/GherkinAndQUnitScriptTag.qunit.html");
+			addGlobalTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithOPA5/GherkinTestRunner.html");
+			addGlobalTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithPageObjects/GherkinTestRunner.html");
+			addGlobalTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithUIComponent/GherkinTestRunner.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithQUnit/GherkinTestRunner.html");
+
+			return suite;
+		}
+
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

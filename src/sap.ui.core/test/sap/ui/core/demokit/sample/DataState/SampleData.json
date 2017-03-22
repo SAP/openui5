@@ -1,0 +1,17 @@
+{
+	"BillingName": "Neill Jackson",
+	"BillingStreet": "Elizabeth St",
+	"BillingStreetNumber": "255",
+	"BillingCity": "New York",
+	"BillingCountry": "United States",
+	"BillingZipCode": "NY 10012",
+	"OnlineMail": "neill.jackson@sample.com",
+	"OnlineTwitter": "#neilljackson",
+	"CreditCardVendor":"Mastercard",
+	"CreditCardNumber":"5488098800031818",
+	"CreditCardYear":"2020",
+	"CreditCardMonth":"12",
+	"CreditCardVer":"12",
+	"DiscountCode":"",
+	"CreditCardValidationCode":"234"
+}

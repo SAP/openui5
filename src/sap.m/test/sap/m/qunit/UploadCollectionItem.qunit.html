@@ -1,31 +1,33 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Test Page for sap.m.UploadCollectionItem</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-language="en">
 </script>
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript">
-	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script>
 
 	/* --------------------------------------- */
 	/* Test properties                         */
 	/* --------------------------------------- */
-	module("I. Initial Test deprecated properties", {
-		setup : function() {
+	QUnit.module("I. Initial Test deprecated properties", {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -40,19 +42,19 @@
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 		}
 	});
 
-	test("Check if the deprecated properties were set with initial load", function(assert) {
+	QUnit.test("Check if the deprecated properties were set with initial load", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 		assert.equal(this.oUploadCollectionItem.getContributor(), "Susan Baker", "Contributor property is set");
 		assert.equal(this.oUploadCollectionItem.getUploadedDate(), "2014-07-30", "UploadedDate property is set");
 		assert.equal(this.oUploadCollectionItem.getFileSize(), "20", "FileSize property is set");
 	});
 
-	test("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
+	QUnit.test("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
 		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
@@ -60,7 +62,7 @@
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 	});
 
-	test("Check deprecated properties before and after a change with the corresponding setter function", function(assert) {
+	QUnit.test("Check deprecated properties before and after a change with the corresponding setter function", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		//before change
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
@@ -78,8 +80,8 @@
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' updated");
 	});
 
-	module("II. Test deprecated properties with setter", {
-		setup : function() {
+	QUnit.module("II. Test deprecated properties with setter", {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 //				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -94,12 +96,12 @@
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 		}
 	});
 
-	test("Set deprecated properties in mixed sequence", function(assert) {
+	QUnit.test("Set deprecated properties in mixed sequence", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 		//fileSize
 		this.oUploadCollectionItem.setFileSize(20);
@@ -119,8 +121,8 @@
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 	});
 
-	module("III. Test deprecated properties with prefilled aggregation", {
-		setup : function() {
+	QUnit.module("III. Test deprecated properties with prefilled aggregation", {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
 					active : false,
@@ -129,12 +131,12 @@
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 		}
 	});
 
-	test("Check of the removeAllAggregation/removeAllAttributes", function(assert) {
+	QUnit.test("Check of the removeAllAggregation/removeAllAttributes", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 
 		//removeAllAggregation
@@ -151,7 +153,7 @@
 		assert.equal(aAggregation, null, "Original attributes with RemoveAllAggregation were deleted");
 	});
 
-	test("Check of the removeAllAggregation with deprecated Properties", function(assert) {
+	QUnit.test("Check of the removeAllAggregation with deprecated Properties", function(assert) {
 		this.oUploadCollectionItem.setFileSize(45);
 		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
 		this.oUploadCollectionItem.setContributor("John Doe");
@@ -172,7 +174,7 @@
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' set");
 	});
 
-	test("Set deprecated properties with prefilled attributes aggregation", function(assert) {
+	QUnit.test("Set deprecated properties with prefilled attributes aggregation", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, 1, "1 attribute available");
 		this.oUploadCollectionItem.setFileSize(45);
@@ -197,13 +199,13 @@
 		this.oUploadCollectionItem.removeAllAggregation(dummyName);
 		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, 2, "2 attributes still available");
-		
+
 		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, 3, "3 deprecated attributes still available");
 	});
 
-	module("IV. Test getter for all attributes", {
-		setup : function() {
+	QUnit.module("IV. Test getter for all attributes", {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
 					active : false,
@@ -212,17 +214,17 @@
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 		}
 	});
 
-	test("Test getAllAttributes", function(assert) {
+	QUnit.test("Test getAllAttributes", function(assert) {
 		//set deprecated properties
 		this.oUploadCollectionItem.setContributor("deprecatedContributor");
 		this.oUploadCollectionItem.setUploadedDate("deprecatedDate");
 		this.oUploadCollectionItem.setFileSize(555);
-		
+
 		this.oUploadCollectionItem.addAggregation("attributes", new sap.m.ObjectAttribute({
 			active : false,
 			text : "someAttribute"
@@ -236,11 +238,198 @@
 		assert.equal(aAggregation[4].getText(), "someAttribute", "Attribute someAttribute at fifth position");
 	});
 
+	QUnit.module("UploadCollectionItem selected", {
+		beforeEach : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				attributes : [ new sap.m.ObjectAttribute({
+					active : false,
+					text : "Test"
+				})]
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollectionItem.destroy();
+			this.oUploadCollectionItem.fireEvent.restore();
+		}
+	});
+
+	QUnit.test("Test set and get selected", function(assert) {
+		//Arrange
+		var eventSpy = sinon.stub(this.oUploadCollectionItem, "fireEvent");
+
+		//Act
+		this.oUploadCollectionItem.setSelected(true);
+
+		//Assert
+		assert.ok(eventSpy.called, "Function 'fireEvent' was called");
+		assert.ok(eventSpy.calledOnce, "Function 'fireEvent' was called once");
+		assert.ok(eventSpy.calledWithExactly("selected"), "Function 'fireEvent' was called with parameter 'selected'")
+		assert.ok(this.oUploadCollectionItem.getSelected(), "Item has been selected");
+	});
+
+	QUnit.module("UploadCollectionItem with markers", {
+		beforeEach : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				markers : [ new sap.m.ObjectMarker({
+					type : "Locked",
+					visibility : "IconOnly"
+				})]
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollectionItem.destroy();
+			this.oUploadCollectionItem.fireEvent.restore();
+		}
+	});
+
+	QUnit.test("Test accessing marker", function(assert) {
+		//Arrange
+		var eventSpy = sinon.stub(this.oUploadCollectionItem, "fireEvent");
+
+		//Act
+		var aMarkers = this.oUploadCollectionItem.getMarkers();
+
+		//Assert
+		assert.ok(aMarkers.length, 1);
+		assert.ok(aMarkers[0].getType(), sap.m.ObjectMarkerType.Locked);
+		assert.ok(aMarkers[0].getVisibility(), sap.m.ObjectMarkerVisibility.IconOnly);
+	});
+
+	QUnit.module("V. Test XMLHttpRequest", {
+		beforeEach : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				contributor : "Susan Baker",
+				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				enableEdit : true,
+				enableDelete : true,
+				fileName : "Screenshot.ico",
+				fileSize : 20,
+				mimeType : "image/jpg",
+				thumbnailUrl : "",
+				uploadedDate : "2014-07-30",
+				url : "/pathToTheFile/Woman_04.png"
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		initFakeServer: function(sResponseCode) {
+			this.aFakeRequest = this.sandbox.useFakeXMLHttpRequest();
+		},
+		afterEach : function() {
+			this.oUploadCollectionItem.destroy();
+			this.oUploadCollectionItem = null;
+		}
+	});
+
+	QUnit.test("Test that XMLHttpRequest is correct", function(assert) {
+		if (sap.ui.Device.browser.name === "sf" || !sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		//Arrange
+		this.initFakeServer.bind(this)();
+
+		//Act
+		var bDownloadResult = this.oUploadCollectionItem.download(true);
+
+		//Assert
+		assert.equal(this.aFakeRequest.requests.length, 1, "The request was called only once");
+		var sURL = this.aFakeRequest.requests[0].url;
+		var sExpectedURL = this.oUploadCollectionItem.getUrl();
+		assert.equal(sURL, sExpectedURL, "The URL of the request is correct");
+	});
+
+	QUnit.test("Check that sap.ui.core.util.File.save was called and it was called with the right arguments", function(assert) {
+		if (sap.ui.Device.browser.name === "sf" || !sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		//Arrange
+		var stub = this.sandbox.stub(sap.ui.core.util.File, "save");
+		var sFileName = this.oUploadCollectionItem.getFileName();
+		var oFileNameAndExtension = this.oUploadCollectionItem._splitFileName(sFileName, false);
+		var sFileExtension = oFileNameAndExtension.extension;
+		sFileName = oFileNameAndExtension.name;
+
+		//Act
+		this.initFakeServer.bind(this)();
+		var bDownloadResult = this.oUploadCollectionItem.download(true);
+		this.aFakeRequest.requests[0].respond(200, {}, "Empty String");
+
+		//Assert
+		assert.ok(stub.calledWith(undefined, sFileName, sFileExtension, "image/jpg", 'utf-8'), "sap.ui.core.util.File.save was called with the right arguments");
+	});
+	
+	// REMARK: phantom.js reacts like Safari 
+	QUnit.test("Check if in case of safari sap.m.URLHelper is called", function(assert) {
+		if (sap.ui.Device.browser.name !== "sf" || sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		//Arrange
+		var stub = this.sandbox.stub(sap.m.URLHelper, "redirect");
+
+		//Act
+		var bDownloadResult = this.oUploadCollectionItem.download(false);
+
+		//Assert
+		assert.ok(bDownloadResult, "Download call was succesfull");
+		assert.ok(stub.called, "Redirect was, at least, called");
+		assert.ok(stub.calledWith(this.oUploadCollectionItem.getUrl(), true), "Redirect was called with the right arguments");
+	});
+
+	QUnit.module("VI. Test download Methods", {
+		beforeEach : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				contributor : "Susan Baker",
+				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				enableEdit : true,
+				enableDelete : true,
+				fileName : "Screenshot.ico",
+				fileSize : 20,
+				mimeType : "image/jpg",
+				thumbnailUrl : "",
+				uploadedDate : "2014-07-30",
+				url : "/pathToTheFile/Woman_04.png"
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollectionItem.destroy();
+			this.oUploadCollectionItem = null;
+		}
+	});
+
+	QUnit.test("Check that sap.m.URLHelper.redirect is called if askForLocation is set to false", function(assert) {
+		//Arrange
+		var stub = this.sandbox.stub(sap.m.URLHelper, "redirect");
+
+		//Act
+		var bDownloadResult = this.oUploadCollectionItem.download(false);
+
+		//Assert
+		assert.ok(bDownloadResult, "Download call was succesfull");
+		assert.ok(stub.called, "Redirect was, at least, called");
+		assert.ok(stub.calledWith(this.oUploadCollectionItem.getUrl(), true), "Redirect was called with the right arguments");
+	});
+
+	QUnit.test("Test to download an item without URL", function(assert) {
+		//Arrange
+		this.oUploadCollectionItem.setUrl(null);
+
+		//Act
+		var bDownloadResult = this.oUploadCollectionItem.download(false);
+
+		//Assert
+		assert.equal(bDownloadResult, false, "Item was downloaded successfully.");
+	});
+
 </script>
 
 </head>
 <body class="sapUiBody">
 	<div id="qunit"></div>
-	<div id="uiArea"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

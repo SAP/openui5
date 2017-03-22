@@ -2,6 +2,13 @@
 	outline: 1px dashed @sapHCStandardFG;
 }
 
+/* focus outline in a table cell */
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiIcon:focus,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiIcon:focus {
+	outline: none;
+	border: 1px dashed @sapHCStandardFG;
+}
+
 .sapUiIconColorNeutral {
 	color: @sapHCNeutral;
 }

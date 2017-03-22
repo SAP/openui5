@@ -1,13 +1,15 @@
-(function(jQuery){
-	
+(function(jQuery, sap) {
+
 	var MESSAGE = "The file sap/ui/thirdparty/jqueryui/jquery-effects-slide.js has been renamed to sap/ui/thirdparty/jqueryui/jquery-ui-effect-slide.js! Please update the dependencies accordingly.";
 
-	if ( jQuery && jQuery.sap && jQuery.sap.require ) {
-		// if jQuery.sap is available, require the new module and log a warning
-		jQuery.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-effect-slide");
+	if (sap && sap.ui && sap.ui.define) {
+		// if sap.ui.define is available, define the new module and log a warning
+		sap.ui.define(["sap/ui/thirdparty/jqueryui/jquery-ui-effect-slide"], function(jQuery) {
+			return jQuery;
+		});
 		jQuery.sap.log.warning(MESSAGE);
 	} else {
 		throw new Error(MESSAGE);
 	}
 
-})(window.jQuery);
+})(window.jQuery, window.sap);

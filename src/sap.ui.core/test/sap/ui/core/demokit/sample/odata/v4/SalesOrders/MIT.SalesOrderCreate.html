@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Create Sales Order</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Create Sales Order</h1>
+		<h2>DESCRIPTION</h2>
+		Test entity creation with the Sales Orders application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+
+		<h3>Testing with mock data</h3>
+		Start the Sales Orders application with following URL (adjust host and port if necessary):
+		<ul>
+			<li> as explored application: http://&lt;host>:&lt;port>/sapui5-sdk-dist/explored.html#/sample/sap.ui.core.sample.odata.v4.SalesOrders/preview</li>
+			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
+		</ul>
+
+		<h3>Testing with backend</h3>
+		Configure your IDE to be able to execute the Sales Orders application against an ABAP
+		backend system.<br>
+		Start the Sales Orders application with the URL (adjust host and port if necessary):
+		<ul>
+			<li>local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true</a></li>
+		</ul>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>Create, modify and delete of an unsaved sales order</h3>
+		<ol>
+			<li><b>Check:</b> (without backend only) The sales orders count is 10.
+			<li>After the application is started, click on the <code>Create</code> button in the
+				<code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The table below the <code>Create New Sales Order</code> dialog gets
+				a new row with an empty <code>Sales Order ID</code> and the <code>Note</code> as
+				displayed in the <code>Create New Sales Order</code> dialog.</li>
+			<li><b>Check:</b> That for input field <code>Currency Code</code> a value help
+				button is displayed.</li>
+			<li>Press the value help button and check that a value help dialog is opened.</li>
+			<li><b>Check:</b> That for each row, first column a value help
+				button is displayed also and the value help can be opened recursively.</li>
+			<li>Close all value help dialogs.</li>
+			<li>Modify the content of the <code>Note</code> input field of the
+				<code>Create New Sales Order</code> dialog.</li>
+			<li><b>Check:</b> The <code>Note</code> of the first sales order (table below the
+				dialog) is updated automatically after leaving the input field of the dialog.</li>
+			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+			<li><b>Check:</b> (without backend only) The sales orders count is 11.
+			<li>Select the newly created sales order.</li>
+			<li>Modify the content of the <code>Note</code> in the newly created sales order.</li>
+			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on the <code>Cancel</code> button in the <code>Sales Order Deletion</code>
+				dialog.</li>
+			<li><b>Check:</b> The newly created sales order is still visible.</li>
+			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on the <code>OK</code> button in the <code>Sales Order Deletion</code>
+				dialog.</li>
+			<li><b>Check:</b> The newly created sales order is gone.</li>
+			<li><b>Check:</b> (without backend only) The sales orders count is 10.
+		</ol>
+		<h3>Create a sales order, save, modify again, save and delete</h3>
+		<ol>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+			<li><b>Check:</b>The <code>Confirm selected sales order</code> button in the
+				<code>Sales Orders</code> table is disabled.</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> You get a success message for creating the sales order.</li>
+			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+			<li>With backend only:<ol>
+				<li><b>Check:</b>The <code>Confirm selected sales order</code> button in the
+					<code>Sales Orders</code> table is enabled.</li>
+				<li><b>Check:</b> The <code>Sales Order ID</code> has been updated by the server.
+				</li>
+				<li>For the newly created sales order enter a text in the <code>Note</code> field
+				.</li>
+				<li>Click on <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+				<li><b>Check:</b> You get a success message for updating the sales order.</li>
+				<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+			</ol></li>
+			<li>Select the saved sales order.</li>
+			<li>Click on <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on the <code>OK</code> button in the <code>Sales Order Deletion</code>
+				dialog.</li>
+			<li><b>Check:</b>You get a success message for the deleted sales order.</li>
+			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+			<li><b>Check:</b> The newly created sales order is gone.</li>
+		</ol>
+		<h3>Create a sales order, save and refresh the sales orders</h3>
+		<ol>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> You get a success message for creating the sales order.</li>
+			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The first sales order is the same as the one from the initial
+			application start.</li>
+			<li><b>Check (with backend only): </b> The new sales order is inserted at the right
+			position (considering sort and filter criterion); maybe you have to click on the
+			<code>More</code> button of the <code>Sales Orders</code> table to see the new sales
+			order.</li>
+		</ol>
+		<h3>Create a sales order, refresh/filter w/o saving -> expected "pending changes"
+			message</h3>
+		<ol>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+		</ol>
+		<h4>Cancel refresh</h4>
+		<ol start="3">
+			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> You get a warning about pending changes.</li>
+			<li>Click on the <code>Cancel</code> button.</li>
+			<li>Click on <code>Refresh all</code> button.</li>
+			<li><b>Check:</b> You get a warning about pending changes.</li>
+			<li>Click on the <code>Cancel</code> button.</li>
+			<li>With backend only:<br><ol>
+			<li>Enter a numerical value in the <code>Filter by gross amount...</code> search field
+				above the <code>Sales Orders</code> table and press <code>Enter</code>.</li>
+			<li><b>Check:</b> You get a error because of unsaved changes.</li>
+			<li>Click on the <code>Close</code> button.</li></ol></li>
+		</ol>
+		<h4>Confirm refresh</h4>
+		<ol start="10">
+			<li>Click on <code>Refresh</code> or <code>Refresh all</code> button.</li>
+			<li><b>Check:</b> You get a warning about pending changes.</li>
+			<li>Click on the <code>Ok</code> button.</li>
+			<li><b>Check:</b> The newly created sales order is gone.</li>
+		</ol>
+		<h3>Create a sales order, press "cancel sales order changes" w/o saving</h3>
+		<ol>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+			<li>Click on <code>Cancel sales orders changes</code> button in the
+				<code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The newly created sales order is gone.</li>
+		</ol>
+		<h3>Cancel or resume a failed creation of a sales order</h3>
+		With backend only:
+		<ol>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> You get a warning about pending changes.</li>
+			<li>Click on the <code>Cancel</code> button.</li>
+			<li>Click on <code>Cancel sales orders changes</code> button in the
+				<code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The newly created sales order is gone.</li>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> A POST request for the created entity is sent to the server.</li>
+			<li>Click again on the <code>Save</code> button in the <code>Sales Orders</code>
+				table.</li>
+			<li><b>Check:</b> A POST request for the created entity is sent to the server.</li>
+			<li>Modify the content of the <code>Note</code> in the newly created sales order.</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> You get a success message for creating the sales order.</li>
+			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+			<li><b>Check:</b> The <code>Sales Order ID</code> has been updated by the server
+		</ol>
+	</body>
+</html>

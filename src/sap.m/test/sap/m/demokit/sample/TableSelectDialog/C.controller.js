@@ -24,7 +24,7 @@ sap.ui.define([
 		},
 
 		handleTableSelectDialogPress: function(oEvent) {
-			if (! this._oDialog) {
+			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.TableSelectDialog.Dialog", this);
 			}
 
@@ -36,7 +36,8 @@ sap.ui.define([
 			var bRemember = !!oEvent.getSource().data("remember");
 			this._oDialog.setRememberSelections(bRemember);
 
-			this._oDialog.setModel(this.getView().getModel());
+			this.getView().addDependent(this._oDialog);
+
 			// toggle compact style
 			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
 			this._oDialog.open();
@@ -51,7 +52,7 @@ sap.ui.define([
 
 		handleClose: function(oEvent) {
 			var aContexts = oEvent.getParameter("selectedContexts");
-			if (aContexts.length) {
+			if (aContexts && aContexts.length) {
 				MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().Name; }).join(", "));
 			}
 			oEvent.getSource().getBinding("items").filter([]);

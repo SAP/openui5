@@ -34,12 +34,12 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 			this.getView().setModel(new JSONModel(this.mInitialOrderState), "Order");
 
-			if (! this.oTemplate) {
+			if (!this.oTemplate) {
 				this.oTemplate = sap.ui.xmlfragment("sap.m.sample.TableBreadcrumb.Row");
 			}
 			this._oTable = this.byId("idProductsTable");
 
-			var sPath = this._getInitialPath();
+			sPath = this._getInitialPath();
 			this._setAggregation(sPath);
 
 		},
@@ -105,7 +105,7 @@ sap.ui.define([
 				oCrumb.bindElement(sContext);
 
 				oCrumbToolbar.addContent(oCrumb);
-				if (! bIsLast) {
+				if (!bIsLast) {
 					var oArrow = new Label({
 						textAlign: "Center",
 						text: ">"
@@ -125,9 +125,12 @@ sap.ui.define([
 			var sPathEnd = sPath.split("/").reverse()[0];
 			if (sPathEnd === this.aCrumbs[this.aCrumbs.length - 1]) {
 				this._oTable.setMode("MultiSelect");
-			}
-			else {
+				this.byId("weightColumn").setVisible(true);
+				this.byId("dimensionsColumn").setVisible(true);
+			} else {
 				this._oTable.setMode("SingleSelectMaster");
+				this.byId("dimensionsColumn").setVisible(false);
+				this.byId("weightColumn").setVisible(false);
 			}
 
 			// Set the new aggregation

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<title>StandardTile - sap.m</title>
 
@@ -10,32 +10,31 @@
 		type="text/css" media="screen"/>
 
 	<!-- UI5 Bootstrap -->
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		type="text/javascript"
 		src="../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.m"></script>
 
 	<!-- QUnit libraries -->
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-	<script type="text/javascript">
-		
+	<script>
+
 		var tileBasic, tileNoIcon, tileNoNumber, tileIconFont;
-		
+
 		var tileBasicId = "tileBasic",
 			tileNoIconId = "tileNoIcon",
 			tileNoNumberId = "tileNoNumber",
 			tileIconFontId = "tileIconFont",
 			core = sap.ui.getCore(),
 			pressedTileId;
-		
+
 		function handlePress(oEvent) {
 			pressedTileId = oEvent.oSource.getId();
 		}
-		
+
 		tileBasic = new sap.m.StandardTile(tileBasicId, {
 			icon : "../images/action.png",
 			number : 37,
@@ -57,7 +56,7 @@
 			title : "Lorem ipsum dolor",
 			info : "1 day ago"
 		});
-		
+
 		tileIconFont = new sap.m.StandardTile(tileIconFontId, {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			number : 37,
@@ -70,60 +69,60 @@
 		tilesList.push(tileNoIcon);
 		tilesList.push(tileNoNumber);
 		tilesList.push(tileIconFont);
-		
+
 		var tc = new sap.m.TileContainer("tc",{
 			tiles : tilesList
 		});
-				
+
 		tc.placeAt("tiles");
 
-		module("Rendering All Fields");
+		QUnit.module("Rendering All Fields");
 
-		test("ControlRendered", function() {
-			notEqual(jQuery.sap.domById(tileBasicId), null, "tileBasic should be rendered.");
-		});
-		
-		test("IconRendered", function() {
-			notEqual(jQuery.sap.domById(tileBasicId + "-img"), null, "tileBasic icon should be rendered.");
-		});		
-		
-		test("IconFontRendered", function() {
-			equal(jQuery.sap.domById(tileIconFont + "-img"), null, "tileIconFont icon should be rendered.");
+		QUnit.test("ControlRendered", function(assert) {
+			assert.notEqual(jQuery.sap.domById(tileBasicId), null, "tileBasic should be rendered.");
 		});
 
-		test("NumberRendered", function() {
-			notEqual(jQuery.sap.domById(tileBasicId + "-number"), null, "tileBasic number should be rendered.");
+		QUnit.test("IconRendered", function(assert) {
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-img"), null, "tileBasic icon should be rendered.");
 		});
-		
-		test("NumberUnitRendered", function() {
-			notEqual(jQuery.sap.domById(tileBasicId + "-numberUnit"), null, "tileBasic number unit should be rendered.");
+
+		QUnit.test("IconFontRendered", function(assert) {
+			assert.equal(jQuery.sap.domById(tileIconFont + "-img"), null, "tileIconFont icon should be rendered.");
 		});
-		
-		test("TitleRendered", function() {
-			notEqual(jQuery.sap.domById(tileBasicId + "-title"), null, "tileBasic title should be rendered.");
+
+		QUnit.test("NumberRendered", function(assert) {
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-number"), null, "tileBasic number should be rendered.");
 		});
-		
-		test("DescriptionRendered", function() {
-			notEqual(jQuery.sap.domById(tileBasicId + "-info"), null, "tileBasic info should be rendered.");
+
+		QUnit.test("NumberUnitRendered", function(assert) {
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-numberUnit"), null, "tileBasic number unit should be rendered.");
 		});
-		
-		test("ShouldRenderAddIconIfTypeIsCreate", function() {	
+
+		QUnit.test("TitleRendered", function(assert) {
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-title"), null, "tileBasic title should be rendered.");
+		});
+
+		QUnit.test("DescriptionRendered", function(assert) {
+			assert.notEqual(jQuery.sap.domById(tileBasicId + "-info"), null, "tileBasic info should be rendered.");
+		});
+
+		QUnit.test("ShouldRenderAddIconIfTypeIsCreate", function(assert) {
 			//SUT
 			var result,
 				sut = new sap.m.StandardTile({type: "Create"});
-			
+
 			//Act
 			result = sut.getIcon();
 
 			//Assert
-			ok(result,"result should not be undefined");
-			ok(result.indexOf("add") !== -1, result,"result should contain add");
-			
-			
+			assert.ok(result,"result should not be undefined");
+			assert.ok(result.indexOf("add") !== -1, result,"result should contain add");
+
+
 			sut.destroy();
 		});
 
-        test("ShouldStyleLongNumbersDifferently", function() {
+        QUnit.test("ShouldStyleLongNumbersDifferently", function(assert) {
             //SUT
             var sut = new sap.m.StandardTile({type: "Monitor", number:"4000", icon : "../images/action.png"}),
                     result;
@@ -133,66 +132,66 @@
             //Act
             result = jQuery(sut.getDomRef()).find(".sapMStdTileNumS .sapMStdTileNumM");
             //Assert
-            equals(result.length, 0);
+            assert.equal(result.length, 0);
 
             //Act
             sut.setNumber("7000000");
             core.applyChanges();
             result = jQuery(sut.getDomRef()).find(".sapMStdTileNumM");
             //Assert
-            equals(result.length, 1);
+            assert.equal(result.length, 1);
 
             //Act
             sut.setNumber("80000000");
             core.applyChanges();
             result = jQuery(sut.getDomRef()).find(".sapMStdTileNumS");
             //Assert
-            equals(result.length, 1);
+            assert.equal(result.length, 1);
 
             sut.destroy();
         });
 
 
 
-		module("Not Rendering Optional Fields");	
-		
-		test("IconNotRendered", function() {
-			equal(jQuery.sap.domById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
-		});		
-		
-		test("NumberNotRendered", function() {
-			equal(jQuery.sap.domById(tileNoNumberId + "-number"), null, "tileNoNumber number and number units should not be rendered.");
-		});		
-		
+		QUnit.module("Not Rendering Optional Fields");
 
-		module("Events", {
-			setup : function() {
+		QUnit.test("IconNotRendered", function(assert) {
+			assert.equal(jQuery.sap.domById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
+		});
+
+		QUnit.test("NumberNotRendered", function(assert) {
+			assert.equal(jQuery.sap.domById(tileNoNumberId + "-number"), null, "tileNoNumber number and number units should not be rendered.");
+		});
+
+
+		QUnit.module("Events", {
+			beforeEach : function() {
 				tileBasic = sap.ui.getCore().getControl(tileBasicId);
 			},
-			teardown : function() {
+			afterEach : function() {
 				tileBasic = null;
 			}
 		});
-		
-		test("PressOk", function() {
+
+		QUnit.test("PressOk", function(assert) {
 			tileBasic.firePress();
 			jQuery.sap.log.info("Pressed tile id=" + pressedTileId);
-			equals(pressedTileId, tileBasicId, "tileBasic was pressed");
+			assert.equal(pressedTileId, tileBasicId, "tileBasic was pressed");
 		});
-		
-		test("ShouldDestroyTheImageIfTileGetsDestroyed", function() {
+
+		QUnit.test("ShouldDestroyTheImageIfTileGetsDestroyed", function(assert) {
 			//SUT
 			var sut = new sap.m.StandardTile({type: "Create"});
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
-			
-			ok(sut._oImageControl, "make sure the Tile has an image");
-						
+
+			assert.ok(sut._oImageControl, "make sure the Tile has an image");
+
 			//Act
-			sut.destroy();			
+			sut.destroy();
 
 			//Assert
-			equal(sut._oImageControl,null);
+			assert.equal(sut._oImageControl,null);
 		});
 
 	</script>

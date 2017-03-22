@@ -1,0 +1,10 @@
+/* override header cell background color for non-accessibility themes */
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineCell {
+	background-color: white !important;
+}
+
+/* override default padding for headline cells */
+.sapUiDemoApps .headlineCell .sapUiBlockCellContent {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}

@@ -4,18 +4,13 @@
 
 	<title>SAPUI5 QUnit TestRunner</title>
 
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/jquery.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/jquery.js"></script>
 
-	<!-- fall back to previous jQuery versions to support using testrunner with older UI5 versions -->
-	<script>window.jQuery || document.write('<script src="../../../../resources/sap/ui/thirdparty/jquery/jquery-1.10.2.js"><\/script>')</script>
-	<script>window.jQuery || document.write('<script src="../../../../resources/sap/ui/thirdparty/jquery/jquery-1.8.1.js"><\/script>')</script>
-	<script>window.jQuery || document.write('<script src="../../../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"><\/script>')</script>
+	<script src="../../../../resources/sap/ui/thirdparty/handlebars.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/blanket.js"></script>
+	<script src="TestRunner.js"></script>
+	<link rel="stylesheet" href="testrunner.css">
 
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/handlebars.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/blanket.js"></script>
-	<script type="text/javascript" src="TestRunner.js"></script>
-	<link rel="stylesheet" href="testrunner.css"/>
-	
 	<script id="qunitResults" type="text/x-handlebars-template">
 		<select id="testPageSelect" name="testPages" size="10" multiple style="width: 100%" >
 			{{#pages}}
@@ -23,9 +18,8 @@
 			{{/pages}}
 		</select>
 	</script>
-	
+
 	<script>
-	var oContext = { pages:[] };
 	jQuery.fn.filterByText = function(textbox) {
 		return this.each(function() {
 			var selectbox = this;
@@ -33,13 +27,13 @@
 			jQuery(selectbox).find("option").each(function() {
 				options.push({value: jQuery(this).val(), text: jQuery(this).text()});
 			});
-			jQuery(selectbox).data("options", options); 
-			
+			jQuery(selectbox).data("options", options);
+
 			jQuery(textbox).bind("change keyup", function() {
-				var options = jQuery(selectbox).empty().data("options"); 
+				var options = jQuery(selectbox).empty().data("options");
 				var search = jQuery(this).val().trim();
 				var regex = new RegExp(search, "gi");
-				
+
 				jQuery.each(options, function(i) {
 					var option = options[i];
 					if(option.text.match(regex) !== null) {
@@ -51,9 +45,8 @@
 			});
 		});
 	};
-	
+
 	function prepareNewRun() {
-		jQuery("#open").click();
 		jQuery("div#innerBar").width("0%");
 		jQuery("#stop").toggle();
 		jQuery("div.testResult").remove();
@@ -62,12 +55,12 @@
 		jQuery("span.failed").text("0");
 		jQuery("#coverageFrame").remove();
 		jQuery("div.test-coverage").hide();
-	};
-	
+	}
+
 	jQuery(function() {
-		
+
 		jQuery("#testPageLabel").text(window.location.origin);
-		
+
 		function showResults() {
 			jQuery("div.test-reporting").attr("style", "padding: 0px; display: block; border: 1px solid rgb(170, 170, 170); margin: 10px;");
 			jQuery("#openReporting").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;");
@@ -82,16 +75,18 @@
 			}
 		}
 		jQuery("#showResults").click(showResults);
-		
+
 		jQuery("#testPage").val(sap.ui.qunit.TestRunner.getTestPageUrl());
-		
+
 		function find() {
+			prepareNewRun();
+			var oContext = { pages:[] };
 			var oDeferred = jQuery.Deferred();
 			sap.ui.qunit.TestRunner.checkTestPage(jQuery("#testPage").val()).done(function(aTestPages) {
 				window.aTestPages = aTestPages;
 				for (var i = 0; i < aTestPages.length; i++) {
 					oContext.pages.push({page: aTestPages[i]});
-				};
+				}
 				var fnTemplate = Handlebars.compile(jQuery("#qunitResults").html());
 				var sHTML = fnTemplate(oContext);
 				jQuery("#testPageSelectDiv").html(sHTML);
@@ -100,7 +95,7 @@
 				});
 				jQuery("#copyButtons").show();
 				jQuery("#selectedTestsDiv").show();
-				
+
 				jQuery("#testPageSelect").filterByText(jQuery("#filter"));
 				jQuery("#filter").show();
 				jQuery("#console").val(aTestPages.join("\n"));
@@ -109,81 +104,89 @@
 			return oDeferred.promise();
 		}
 		jQuery("#find").click(find);
-		
+
 		function copy() {
 			var aSelectedTests = jQuery("#testPageSelect")[0].selectedOptions;
 			for (var i = 0; i < aSelectedTests.length; i++) {
 				jQuery("#selectedTests").append(jQuery("<option>").text(jQuery(aSelectedTests[i]).text()).val(jQuery(aSelectedTests[i]).text()));
-			};
+			}
 		}jQuery("#copy").click(copy);
-		
+
 		function copyAll() {
 			jQuery("#selectedTests").append(jQuery("#testPageSelect > option").clone());
 		}
 		jQuery("#copyall").click(copyAll);
-		
+
 		function remove() {
 			var aSelectedTests = jQuery("#selectedTests")[0].selectedOptions;
 			for (var i = aSelectedTests.length-1; i >= 0; i--) {
 				jQuery(aSelectedTests[i]).remove();
-			};
+			}
 		}jQuery("#remove").click(remove);
-		
+
 		function removeAll() {
 			jQuery("#selectedTests > option").remove();
 		}
 		jQuery("#removeall").click(removeAll);
-				
+
 		function run() {
+			jQuery("#open").click();
+			window.oStartTime = new Date();
+			var $this = jQuery("#run");
+			if ($this.val() === "Run") {
+				//$this.val("Stop");
+				var aTests = [];
+				var aSelectedTests = jQuery("#selectedTests")[0].children;
+				for (var i = 0; i < aSelectedTests.length; i++) {
+					aTests.push(jQuery(aSelectedTests[i]).text());
+				}
+				var nStep = 100 / aTests.length;
+				console.log(aTests.length);
+				console.log(nStep);
+				jQuery("#reportingHeader").toggle();
+				sap.ui.qunit.TestRunner.runTests(aTests, nStep).then(function(oResult) {
+					$this.val("Run");
+					jQuery("#stop").toggle();
+					if (sap.ui.qunit.TestRunner.hasCoverage() && window.blanket) {
+						window.blanket.report({});
+						jQuery("div.test-coverage").toggle();
+					}
+				}).always(function() {
+					$this.val("Run");
+				});
+
+			} else {
+				sap.ui.qunit.TestRunner.stopTests();
+			}
+		}
+
+		jQuery("#run").click(function () {
 			if(jQuery("#selectedTests>option").length === 0) {
 				alert("Please select at least on test to execute");
 			} else {
 				prepareNewRun();
-				var $this = jQuery("#run");
-				if ($this.val() === "Run") {
-					//$this.val("Stop");
-					var aTests = [];
-					var aSelectedTests = jQuery("#selectedTests")[0].children;
-					for (var i = 0; i < aSelectedTests.length; i++) {
-						aTests.push(jQuery(aSelectedTests[i]).text());
-					};
-					var nStep = 100 / aTests.length;
-					console.log(aTests.length);
-					console.log(nStep);
-					jQuery("#reportingHeader").toggle();
-					sap.ui.qunit.TestRunner.runTests(aTests, nStep).then(function(oResult) {
-						$this.val("Run");
-						jQuery("#stop").toggle();
-						if (sap.ui.qunit.TestRunner.hasCoverage() && window.blanket) {
-							window.blanket.report({});
-							jQuery("div.test-coverage").toggle();
-						}
-					}).always(function() {
-						$this.val("Run");
-					});
-					
-				} else {
-					sap.ui.qunit.TestRunner.stopTests();
-				}
+				run();
 			}
-		}
-		jQuery("#run").click(run);
-		
+		});
+
 		function open() {
-			if(jQuery("div#test-selection").css("height")=== "300px") {
+			var $testSelection = jQuery("div#test-selection");
+			if($testSelection.hasClass("opened")) {
+				$testSelection.removeClass("opened");
 				jQuery("div#elements").toggle();
-				jQuery("div#test-selection").animate({height: "40px"}, 500);
+				$testSelection.animate({height: "40px"}, 500);
 				jQuery("#open").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width: 12px 12px 0 12px;border-color:#007dc0 transparent transparent transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			} else {
-				jQuery("div#test-selection").animate({height: "300px"}, 500, function() {
+				$testSelection.addClass("opened");
+				$testSelection.animate({height: "300px"}, 500, function() {
 					jQuery("div#elements").toggle();
 				});
 				jQuery("#open").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			}
 		}
 		jQuery("#open").click(open);
-		
-		
+
+
 		function openCoverage() {
 			if(jQuery("#coverageContent").is(":visible")) {
 				jQuery("#coverageContent").hide();
@@ -194,7 +197,7 @@
 			}
 		}
 		jQuery("#openCoverage").click(openCoverage);
-		
+
 		function openReporting() {
 			jQuery("#showResults").toggle();
 			if(jQuery("#showResults").css("display") === "none") {
@@ -209,29 +212,29 @@
 			}
 		}
 		jQuery("#openReporting").click(openReporting);
-		
+
 		function stop() {
 			sap.ui.qunit.TestRunner.stopTests();
 		}
 		jQuery("#stop").click(stop);
-		
+
 		setInterval(function() {
 			if (window.aTestPages) {
 				jQuery("#run").show();
 			}
 		}, 500);
-		
+
 		if (sap.ui.qunit.TestRunner.getAutoStart()) {
 			find().done(function() {
 				copyAll();
 				run();
 			})
 		}
-		
+
 	});
-	
+
 	</script>
-	
+
 </head>
 
 <body class="sapUiBody" style="padding: 0; margin: 0;">
@@ -239,14 +242,16 @@
 	<div style="padding: 10px;">
 
 		<h1>SAPUI5 Selenium-based QUnit Tests</h1>
-		<div id="test-selection" style="border: 1px solid; border-color: #aaa; height: 300px;">
+		<div id="test-selection" class="opened" style="border: 1px solid; border-color: #aaa; height: 300px;">
 			<div id="selectionHeader" style="height: 30px;margin-top: 0px; padding-left: 2px;padding-top: 10px;background-color: #ccc;margin-bottom: 10px;">
 				<div style="float: left; width: 10%; font-family: Arial;position: absolute">Select Tests</div>
-				<div id="progress" style="float: left;width: 400px;font-family: Arial;position: relative;left: 400px">Progress</div>
-				<div id="bar" style="float: left;position: relative;left: 70px;border: 1px solid;width: 150px;height: 19px">
-					<div id="innerBar" style="background-color: #a4ec81;width:0%;height: 19px"></div>
+				<div id="progress" style="float: left;width: 400px;font-family: Arial;position: relative;left: 200px">Progress</div>
+				<div id="bar" style="float: left;position: relative;left: -130px;border: 1px solid;width: 150px;height: 19px">
+					<div id="innerBar" style="background-color: #a4ec81;width:0%;height: 19px;text-align: right"></div>
 				</div>
-				<input id="stop" type="button" value="Stop" style="float: left;position: relative;left: 75px;bottom: 3px; display: none;">
+				<input id="stop" type="button" value="Stop" style="float: left;position: relative;left: -125px; display: none;">
+				<div id="duration" style="float: left;width: 75px;font-family: Arial;position: relative;left: 50px">Duration</div>
+				<div id="time" style="float: left;position: relative;left: 50px;width: 200px;height: 19px" >0 Seconds</div>
 				<div id="open" style="width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;"></div>
 			</div>
 			<div id="elements">
@@ -274,12 +279,12 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="test-execution" style="padding: 10px;">
 	</div>
 	<div id="reportingHeader" class="test-reporting" style="display: none; padding: 0px; border: 1px solid;border-color: #aaa;margin: 10px;">
 		<div style="height: 30px;margin-top: 0px; padding-left: 2px;padding-top: 10px;background-color: #ccc;">
-			<div style="float: left; width: 10%; font-family: Arial;position: absolute;">Test Reporting</div>
+			<div style="float: left; width: 15%; font-family: Arial;position: absolute;">Test Reporting</div>
 			<div style="float: left; white-space: nowrap; width: 50%; font-family: Arial;position: relative; left: 200px">Number of executed test: <span class="total">0</span> Number of passed tests: <span class="passed">0</span> Number of failed tests: <span class="failed">0</span></div>
 			<input id="showResults" type="button" value="Show all results" style="display: none; float: left; position: relative; left: 200px; bottom: 3px">
 			<div id="openReporting" style="width:0px;height:0px;margin:5px;border-style:solid;border-width: 12px 12px 0 12px;border-color:#007dc0 transparent transparent transparent;float: right;position: relative;left: -10px;cursor: pointer;"></div>

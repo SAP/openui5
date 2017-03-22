@@ -1,15 +1,17 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>ResponsiveFlowLayout - sap.ui.layout</title>
 
+<script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_goldreflection"
-	data-sap-ui-trace="false" type="text/javascript"
+	data-sap-ui-trace="false"
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.layout,sap.ui.commons,sap.ui.ux3"
 	src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 
 <style type="text/css">
@@ -22,7 +24,7 @@
 	padding: 5px;
 }
 </style>
-<script type="text/javascript">
+<script>
 	//just add some shortcuts to save this long names
 	var rfl = sap.ui.layout.ResponsiveFlowLayout;
 	var rflLD = sap.ui.layout.ResponsiveFlowLayoutData;
@@ -47,7 +49,7 @@
 		checked : true,
 		change : function() {
 			bResponsive = this.getChecked();
-			
+
 			oInnerFirst.setResponsive(bResponsive);
 			oInnerLast.setResponsive(bResponsive);
 			oAddress.setResponsive(bResponsive);
@@ -200,11 +202,11 @@
 	var sXmlViewSimpleForm = '<mvc:View xmlns="sap.ui.commons" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">'
 			+ '		<form:SimpleForm>'
 			+ '			<Label text="First Label"></Label>'
-			+ '			<Link text="Press the Phone" />'
+			+ '			<link text="Press the Phone">'
 			+ ' 			<core:Icon src="sap-icon://iphone-2" color="#666666" /> '
 			+ '			<Label text="Second Label" />'
-			+ '			<Link text="Just a Link" />'
-			+ '			<Label text="E-Mail" />' + '			<Link text="test@sap.com" />' + '		</form:SimpleForm>' + '	</mvc:View>';
+			+ '			<link text="Just a Link">'
+			+ '			<Label text="E-Mail" />' + '			<link text="test@sap.com">' + '		</form:SimpleForm>' + '	</mvc:View>';
 
 	var oController = sap.ui.controller("sampleController", {
 		openForm : function() {
@@ -222,16 +224,16 @@
 		}
 	});
 
-	var oXMLView = new sap.ui.xmlview({
+	var oXMLView = sap.ui.xmlview({
 		viewContent : sXmlView,
 		controller : oController
 	}).placeAt("RFL3");
 
-	var oXMLViewSimpleForm = new sap.ui.xmlview("simpleFormView", {
+	var oXMLViewSimpleForm = sap.ui.xmlview("simpleFormView", {
 		viewContent : sXmlViewSimpleForm
 	}).placeAt("RFL3");
 
-	var oXMLViewTP = new sap.ui.xmlview("simpleFormTP", {
+	var oXMLViewTP = sap.ui.xmlview("simpleFormTP", {
 		viewContent : sXmlViewSimpleForm
 	});
 

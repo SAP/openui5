@@ -1,11 +1,75 @@
-/* =============================================== */
-/* CSS for control sap.m/ViewSettingsDialog.control */
-/* =============================================== */
+/* ========================================= */
+/* CSS for control sap.m/ViewSettingsDialog  */
+/* Base theme                                */
+/* ========================================= */
 
 .sapMVSDUpperList {
-	border-bottom: 2px solid @sapUiDarkBorder;
+	border-bottom: 2px solid @sapUiToolbarSeparatorColor;
 }
 
 .sapMVSD.sapMDialog .sapMDialogScrollCont{
 	padding: 0;
+}
+
+.sapUiSizeCompact .sapMVSD.sapMDialog .sapMBarLeft {
+	height: 2rem;
+}
+
+.sapMTB.sapMVSDFilterHeaderToolbar {
+	padding-left: 0;
+	padding-right: 1rem;
+	width: 100%;
+	.sapMBarChild.sapMCb {
+		margin-left: 0;
+		.sapMCbLabel {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+		.sapMCbMark {
+			white-space: normal;
+		}
+	}
+}
+
+//needed for removing not needed padding from the dialog which depends on the compatible version
+.sapMVSD.sapUiPopupWithPadding .sapMDialogScrollCont.sapMDialogStretchContent{
+	height: inherit;
+}
+
+.sapMSF.sapMVSDFilterSearchField,
+.sapUiSizeCompact .sapMSF.sapMVSDFilterSearchField {
+	padding: 0.25rem;
+}
+
+.sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
+	height: 2rem;
+	padding-left: 0.5rem;
+
+	.sapMLabel.sapMCbLabel {
+		overflow: hidden;
+		padding-left: 0.5rem;
+		text-overflow: ellipsis;
+	}
+}
+
+.sapUiSizeCompact .sapMSF.sapMVSDFilterSearchField > .sapMSFF {
+	height: 1.5rem;
+}
+
+html.sap-desktop .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
+	.sapMCb {
+		outline: none;
+		padding-right: 0.5rem;
+	}
+}
+
+.sapMSF.sapMVSDFilterSearchField {
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+}
+
+.sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
+	.sapMLabel.sapMCbLabel {
+		font-size: @sapMFontMediumSize;
+	}
 }

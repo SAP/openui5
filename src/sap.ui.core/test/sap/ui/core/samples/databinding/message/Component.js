@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/m/Input', 'sap/m/Label', 'sap/m/RadioButton', 'sap/m/Select', 'sap/ui/core/Item', 'sap/ui/core/Title', 'sap/ui/core/UIComponent', 'sap/ui/core/message/Message', 'sap/ui/layout/GridData', 'sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 'sap/ui/layout/form/FormElement', 'sap/ui/layout/form/ResponsiveGridLayout', 'sap/ui/model/type/Date', 'sap/ui/model/type/Integer', 'sap/ui/model/type/String'],
-	function(jQuery, Button, DateTimeInput, Input, Label, RadioButton, Select, Item, Title, UIComponent, Message, GridData, Form, FormContainer, FormElement, ResponsiveGridLayout, TypeDate, Integer, TypeString) {
+sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DatePicker', 'sap/m/Input', 'sap/m/Label', 'sap/m/RadioButton', 'sap/m/Select', 'sap/ui/core/Item', 'sap/ui/core/Title', 'sap/ui/core/UIComponent', 'sap/ui/core/message/Message', 'sap/ui/layout/GridData', 'sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 'sap/ui/layout/form/FormElement', 'sap/ui/layout/form/ResponsiveGridLayout', 'sap/ui/model/type/Date', 'sap/ui/model/type/Integer', 'sap/ui/model/type/String'],
+	function(jQuery, Button, DatePicker, Input, Label, RadioButton, Select, Item, Title, UIComponent, Message, GridData, Form, FormContainer, FormElement, ResponsiveGridLayout, TypeDate, Integer, TypeString) {
 	"use strict";
 
 
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 
 	// create the component content, set the models
 	Component.prototype.createContent = function(){
-		var oDate = new TypeDate();
+		var oDate = new TypeDate({strictParsing: true});
 		var oZip = new TypeString(null,{maxLength: 5});
 		var oStreet = new Integer();
 		// UI
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 						new FormElement({
 							label: "Date of birth",
 							fields: [
-								new DateTimeInput({value: {path:"birthdate", type: oDate}})
+								new DatePicker({value: {path:"birthdate", type: oDate}})
 							]
 						}),
 						new FormElement({
@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 				)
 			}
 		});
-	
+
 		var oButton4 = new Button({
 			text: "clear Messages",
 			press: function() {

@@ -1,0 +1,84 @@
+/* ============================================== */
+/* CSS for control sap.m/WizardProgressNavigator  */
+/* Belize theme                                   */
+/* ============================================== */
+
+@_sap_m_WizardProgressNavigator_NavAnchorCircleHoverColor: lighten(@sapUiObjectHeaderBackground, 5);
+@_sap_m_WizardProgressNavigator_NavAnchorTitleSelectedTextColor: darken(@sapUiGroupTitleTextColor, 20);
+@_sap_m_WizardProgressNavigator_NavAnchorTitleHoverTextColor: darken(@sapUiGroupTitleTextColor, 10);
+
+.sapMWizardProgressNav {
+	position: absolute;
+	z-index: 1;
+}
+
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	background-color: inherit;
+	color: @sapUiHighlight;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavAnchorCircle {
+	background-color: @sapUiHighlight;
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavAnchorTitle,
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorTitle {
+	color: @_sap_m_WizardProgressNavigator_NavAnchorTitleHoverTextColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavAnchor::after {
+	height: 0.125rem;
+}
+
+.sapMWizardProgressNavAnchor:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: 1px;
+}
+
+.sapMWizardProgressNavAnchorCircle {
+	color: @sapUiHighlight;
+	border-color: @sapUiHighlight;
+}
+
+.sapMWizardProgressNavAnchorTitle:hover {
+	color: @_sap_m_WizardProgressNavigator_NavAnchorTitleHoverTextColor;
+}
+
+.sapMWizardProgressNavStep::after {
+	border-bottom-color: @sapUiHighlight;
+}
+
+.sapMWizard .sapMWizardStepContainer {
+  background: @sapUiGroupContentBackground;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+
+	.sapMWizardProgressNavAnchorTitle {
+		color: @_sap_m_WizardProgressNavigator_NavAnchorTitleSelectedTextColor;
+	}
+
+  & ~ .sapMWizardProgressNavStep {
+		color: fade(@sapUiGroupTitleTextColor, 50);
+	}
+	/* anchors in all steps after the active one have inactive style */
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
+		border-color: fade(@sapUiHighlight, 50);
+		color: fade(@sapUiHighlight, 50);
+	}
+
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorTitle {
+		color: fade(@sapUiGroupTitleTextColor, 50);
+	}
+
+	& ~ .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+		background-color: inherit;
+	}
+
+	/* all separators after (and including) the active step have inactive style */
+	&::after,
+	& ~ .sapMWizardProgressNavStep::after {
+		border-bottom-color: fade(@sapUiHighlight, 50);
+	}
+}

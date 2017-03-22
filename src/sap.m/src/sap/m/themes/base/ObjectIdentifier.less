@@ -1,13 +1,7 @@
-
-/* ============================================= */
-/* CSS for control sap.m/ObjectIdentifier.control */
-/* ============================================= */
-
-.sapMObjectIdentifier {
-}
-
-.sapMObjectIdentifierTopRow {
-}
+/* ======================================= */
+/* CSS for control sap.m/ObjectIdentifier  */
+/* Base theme                              */
+/* ======================================= */
 
 .sapMObjectIdentifierIcons {
 	overflow: hidden;
@@ -15,7 +9,7 @@
     vertical-align: top-text;
     float: right;
     font-size: 1rem;
-    color: @sapUiLightText;
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapMObjectIdentifierIconSpan {
@@ -27,18 +21,28 @@
 	overflow: visible;
 	font-weight: bold;
 	font-size: 1rem;
-	display: inline;
+	display: inline-block;
 	word-wrap: break-word;
 	white-space: normal;
 }
 
 .sapMObjectIdentifierTitle .sapMText {
-	color: @sapUiDarkText;
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMObjectIdentifierTitle .sapMLnk,
+.sapMOITitleActive .sapMLnk {
+	color: @sapUiLink;	
+}
+
+.sapMObjectIdentifierText .sapMText,
+.sapMObjectIdentifierText,
+.sapMObjectIdentifier {
+	color: @sapUiContentLabelColor;
 }
 
 .sapMObjectIdentifierText {
-	color: @sapUiLightText;
-	font-size: 0.875rem;
+	font-size: @sapMFontMediumSize;
 	padding-top: 0;
 }
 
@@ -46,23 +50,33 @@
 	margin-top: 0.5rem;
 }
 
+.sapMLIBActive .sapMObjectIdentifier {
+		color: @sapUiListActiveTextColor;
+}
+
 /* ObjectIdentifier inside a table */
 .sapMListTbl .sapMObjectIdentifierTitle .sapMLnk,
 .sapMListTbl .sapMObjectIdentifierTitle .sapMText {
-	overflow: visible;
-	font-weight: bold;
-	font-size: 0.875rem;
-	display: inline;
-	word-wrap: break-word;
-	white-space: normal;
+	font-size: @sapMFontMediumSize;
 	padding-top: 0;
 }
 
 .sapMListTbl .sapMObjectIdentifierTitle .sapMText {
-	color: @sapUiDarkText;
+	font-weight: bold;
+	color: @sapUiListTextColor;
 }
 
 .sapMListTbl .sapMObjectIdentifierText .sapMText {
 	line-height: 1.4;
 	padding-top: 0;
+}
+
+/* compact table cell context */
+.sapUiSizeCompact .sapMListTblCell .sapMObjectIdentifier {
+	margin: .5rem 0;
+}
+
+/* compact table cell context with existing content margin */
+.sapUiSizeCompact .sapMListTblCell .sapMTableContentMargin .sapMObjectIdentifier {
+	margin: 0;
 }

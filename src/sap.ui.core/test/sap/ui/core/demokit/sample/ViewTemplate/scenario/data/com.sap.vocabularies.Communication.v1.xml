@@ -51,7 +51,7 @@
         <Property Name="tel" Type="Collection(Communication.PhoneNumberType)" />
         <Property Name="email" Type="Collection(Communication.EmailAddressType)" />
         <Property Name="geo" Type="Collection(Communication.GeoDataType)" />
-        <Property Name="url" Type="Collection(Communication.UrlType)" />        
+        <Property Name="url" Type="Collection(Communication.UrlType)" />
       </ComplexType>
 
       <ComplexType Name="NameType">
@@ -114,7 +114,7 @@
         <Member Name="individual"/>
         <Member Name="group"/>
         <Member Name="org"/>
-        <Member Name="location"/>        
+        <Member Name="location"/>
       </EnumType>
 
       <EnumType Name="ContactInformationType" IsFlags="true">

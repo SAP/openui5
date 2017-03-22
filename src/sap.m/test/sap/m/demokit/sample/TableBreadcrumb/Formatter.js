@@ -2,9 +2,9 @@ sap.ui.define(function() {
 	"use strict";
 
 	var Formatter = {
-	
+
 		weightState :  function (fValue) {
-		
+
 			try {
 				fValue = parseFloat(fValue);
 				if (fValue < 0) {

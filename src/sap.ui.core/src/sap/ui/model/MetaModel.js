@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Model'],
-	function(jQuery, Model) {
+sap.ui.define(['./Model'],
+	function(Model) {
 	"use strict";
 
 	/**
@@ -20,8 +20,7 @@ sap.ui.define(['jquery.sap.global', './Model'],
 	 * @public
 	 * @alias sap.ui.model.MetaModel
 	 */
-	var MetaModel = Model.extend("sap.ui.model.MetaModel",
-		/** @lends sap.ui.model.MetaModel.prototype */ {
+	var MetaModel = Model.extend("sap.ui.model.MetaModel", {
 			constructor : function() {
 				Model.apply(this, arguments);
 			}
@@ -67,10 +66,6 @@ sap.ui.define(['jquery.sap.global', './Model'],
 		return oNewContext;
 	};
 
-	MetaModel.prototype.destroy = function () {
-		return Model.prototype.destroy.apply(this, arguments);
-	};
-
 	/**
 	 * @see sap.ui.model.Model.prototype.destroyBindingContext
 	 * @param {object}
@@ -82,4 +77,4 @@ sap.ui.define(['jquery.sap.global', './Model'],
 
 	return MetaModel;
 
-}, /* bExport= */ true);
+});

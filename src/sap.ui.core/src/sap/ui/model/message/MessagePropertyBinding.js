@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a property binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientPropertyBinding'],
-	function(jQuery, ClientPropertyBinding) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/ClientPropertyBinding'],
+	function(jQuery, ChangeReason, ClientPropertyBinding) {
 	"use strict";
 
 
@@ -18,10 +18,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientPropertyBinding'],
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.message.MessagePropertyBinding
-	 * @extends sap.ui.model.PropertyBinding
+	 * @extends sap.ui.model.ClientPropertyBinding
 	 */
 	var MessagePropertyBinding = ClientPropertyBinding.extend("sap.ui.model.message.MessagePropertyBinding");
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
@@ -31,22 +31,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientPropertyBinding'],
 			this.oModel.setProperty(this.sPath, oValue, this.oContext);
 		}
 	};
-	
+
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
-	 * 
+	 *
 	 * @param {boolean} bForceupdate
-	 * 
+	 *
 	 */
 	MessagePropertyBinding.prototype.checkUpdate = function(bForceupdate){
 		var oValue = this._getValue();
 		if (!jQuery.sap.equal(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = oValue;
-			this._fireChange({reason: sap.ui.model.ChangeReason.Change});
+			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
 
 	return MessagePropertyBinding;
 
-}, /* bExport= */ true);
+});

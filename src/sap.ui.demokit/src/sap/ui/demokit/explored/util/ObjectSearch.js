@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Provides a simple search feature
@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	var ObjectSearch = {
-	
+
 		getEntityPath : function (oData, sId) {
 			if (!oData.entities) {
 				return null;

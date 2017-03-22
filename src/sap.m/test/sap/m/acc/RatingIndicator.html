@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>RatingIndicator - sap.m</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js">
+	</script>
+	<script>
+
+		//rating table
+		var data = {
+			tableData: [
+				{Name: "Garry", Rating: 0},
+				{Name: "John Smith", Rating: 1.5},
+				{Name: "Jane Smith", Rating: 4}]
+		};
+
+		var oTable = new sap.m.Table("items", {
+			columns: [
+				new sap.m.Column({header: new sap.m.Text({text: "Name"})}),
+				new sap.m.Column({header: new sap.m.Text({text: "Rating"})})
+			]
+		});
+
+		var template = new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Label({
+					text: "{Name}"
+				}),
+				new sap.m.RatingIndicator({
+					enabled: false,
+					value: "{Rating}"
+				})
+			]
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(data);
+		oTable.setModel(oModel);
+		oTable.bindAggregation("items", {
+			path: "/tableData",
+			template: template,
+		});
+
+		// rating list
+		var oRatingList = new sap.m.List("ratingList", {
+			inset: true,
+			headerText: "Rating List",
+			items: [
+				new sap.m.InputListItem({
+					type: "Active",
+					label: "Rate me now!",
+					content: new sap.m.RatingIndicator({
+						value: 1,
+						tooltip: "Rating"
+					})
+				}),
+				new sap.m.InputListItem({
+					type: "Active",
+					label: "No, rate me!",
+					content: new sap.m.RatingIndicator({
+						value: 2.5,
+						tooltip: "Rating"
+					})
+				}),
+				new sap.m.InputListItem({
+					type: "Active",
+					label: "Or maybe rate me!",
+					content: new sap.m.RatingIndicator({
+						value: 5,
+						tooltip: "Rating"
+					})
+				})
+			]
+		});
+
+		var sLargeActiveRI = "largeActiveRI",
+				sNormalActiveRI = "normalActiveRI",
+				sSmallActiveRI = "smallActiveRI",
+				sExtraSmallActiveRI = "extrasmallActiveRI",
+				sActiveRI = "activeRating",
+				sInactiveRI = "inactiveRating",
+				oPage = new sap.m.Page("myPage", {
+					title: "Ratings",
+					content: [
+						new sap.m.VBox({
+							items: [
+								new sap.m.Label({text: 'Large active rating', labelFor: sLargeActiveRI}),
+								new sap.m.RatingIndicator(sLargeActiveRI, {
+									id: "rating1",
+									iconSize: "2rem",
+									value: 2.5
+								}),
+								new sap.m.Label({text: 'Normal active rating', labelFor: sNormalActiveRI}),
+								new sap.m.RatingIndicator(sNormalActiveRI, {
+									iconSize: "1.375rem",
+									value: 2.5
+								}),
+								new sap.m.Label({text: 'Small active rating', labelFor: sSmallActiveRI}),
+								new sap.m.RatingIndicator(sSmallActiveRI, {
+									iconSize: "1rem",
+									value: 2.5
+								}),
+								new sap.m.Label({text: 'Extra Small active rating', labelFor: sExtraSmallActiveRI}),
+								new sap.m.RatingIndicator(sExtraSmallActiveRI, {
+									iconSize: "0.75rem",
+									value: 2.5
+								}),
+								new sap.m.Label({text: 'Active rating:', labelFor: sActiveRI}),
+								new sap.m.RatingIndicator(sActiveRI, {
+									value: 2.5,
+									tooltip: "This is a tooltip"
+								}),
+								new sap.m.Label({text: 'Inactive rating:', labelFor: sInactiveRI}),
+								new sap.m.RatingIndicator(sInactiveRI, {
+									enabled: false,
+									value: 2.5,
+									tooltip: "This is a tooltip"
+								})
+							]
+						}),
+						new sap.m.Label({text: 'Rating indicator in List:', labelFor: oRatingList}),
+						oRatingList,
+						new sap.m.Label({text: 'Rating indicator in Table:', labelFor: oTable}),
+						oTable
+					]
+				});
+
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "myPage"
+		});
+
+		oApp.addPage(oPage);
+		oApp.placeAt("content");
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+</html>

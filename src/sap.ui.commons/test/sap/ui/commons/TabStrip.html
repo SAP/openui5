@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>TabStrip - sap.ui.commons</title>
 
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.TabStrip.gif">
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.commons"
 				data-sap-ui-areas="uiArea1,uiArea2"
 				data-sap-ui-evt-oninit="createControls()"
@@ -21,7 +21,6 @@
 			function createControls() {
 
 				oTabStrip1 = new sap.ui.commons.TabStrip("tabstrip1");
-				oTabStrip1.setWidth("700px");
 				oTabStrip1.setHeight("300px");
 				oTabStrip1.setTooltip("Weekdays");
 				oTabStrip1.placeAt("uiArea1");
@@ -79,9 +78,10 @@
 				oTabStrip1.setSelectedIndex(0);
 
 	      var oTV = new sap.ui.commons.TextView("TV1")
-	      oTV.placeAt("uiArea2"); 
+	      oTV.placeAt("uiArea2");
 
 				var oTabStrip2 = new sap.ui.commons.TabStrip({
+					enableTabReordering : true,
 					width: "300px",
 					tabs: [
 						new sap.ui.commons.Tab("Tab2-1", {title: new sap.ui.core.Title({text: "Tab1"}), closable: true, content: new sap.ui.commons.TextView({text: "Content 1"})}),

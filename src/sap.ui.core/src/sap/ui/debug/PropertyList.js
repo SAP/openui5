@@ -3,8 +3,8 @@
  */
 
 // Provides a (modifiable) list of properties for a given control
-sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Core', 'sap/ui/core/Element', 'jquery.sap.strings'],
-	function(jQuery, DataType, EventProvider, Core, Element/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'jquery.sap.strings', 'jquery.sap.encoder'],
+	function(jQuery, DataType, EventProvider, Element, ElementMetadata/* , jQuerySap */) {
 	"use strict";
 
 
@@ -59,10 +59,10 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			//this.oParentDomRef.style.backgroundColor = "#e0e0e0";
 			this.oParentDomRef.style.border = "solid 1px gray";
 			this.oParentDomRef.style.padding = "2px";
-		
+
 		}
 	});
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -70,7 +70,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	PropertyList.prototype.exit = function() {
 		jQuery(this.oParentDomRef).unbind();
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -78,8 +78,8 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	PropertyList.prototype.update = function(oParams) {
 		var sControlId = oParams.getParameter("controlId");
 		this.oParentDomRef.innerHTML = "";
-	
-		var oControl = this.oCore.getElementById(sControlId);
+
+		var oControl = this.oCore.byId(sControlId);
 		if (!oControl) {
 			this.oParentDomRef.innerHTML = "Please select a valid control";
 			return;
@@ -98,8 +98,8 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			aHTML.push("<div id='sap-ui-quickhelp' style='position:fixed;display:none;padding:5px;background-color:rgb(200,220,231);border:1px solid gray;overflow:hidden'>Help</div>");
 		}
 		aHTML.push("<div style='border-bottom:1px solid gray'>&nbsp;</div><table cellspacing='1' style='font-size:8pt;width:100%;table-layout:fixed'>");
-	
-		while ( oMetadata instanceof sap.ui.core.ElementMetadata ) {
+
+		while ( oMetadata instanceof ElementMetadata ) {
 			var mProperties = oMetadata.getProperties();
 			var bHeaderCreated = false;
 			if ( !jQuery.isEmptyObject(mProperties) ) {
@@ -123,36 +123,36 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			}
 			oMetadata = oMetadata.getParent();
 		}
-	
+
 		aHTML.push("</table>");
 		this.oParentDomRef.innerHTML = aHTML.join("");
 		this.mHelpDocs = {};
 	};
-	
+
 	PropertyList.prototype.getAggregationsAsProperties = function(oMetadata) {
-	
+
 		function isSimpleType(sType) {
 			if ( !sType ) {
 				return false;
 			}
-	
+
 			if ( sType.indexOf("[]") > 0 ) {
 				sType = sType.substring(sType.indexOf("[]"));
 			}
-	
+
 			if ( sType === "boolean" || sType === "string" || sType === "int" || sType === "float" ) {
 				return true;
 			}
-	
+
 			if ( sType === "void" ) {
 				return false;
 			}
-	
+
 			// TODO check for enum
-	
+
 			return false;
 		}
-	
+
 		var oResult = {};
 		for (var sAggrName in oMetadata.getAggregations() ) {
 			var oAggr = oMetadata.getAggregations()[sAggrName];
@@ -161,9 +161,9 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			}
 		}
 		return oResult;
-	
+
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -189,7 +189,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					oValue = '(null)';
 				} else if ( oValue  instanceof Element ) {
 					sColor = 'color:#a5a5a5;';
-					if (jQuery.isArray(oValue)) {
+					if (Array.isArray(oValue)) {
 						// array type (copied from primitive values above and modified the value to string / comma separated)
 						oValue = oValue.join(", ");
 					} else {
@@ -197,7 +197,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					}
 					sTitle = ' title="This aggregation currently references an Element. You can set a ' + sType +  ' value instead"';
 				}
-				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + jQuery.sap.escapeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
+				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 			} else if (sType == "boolean") {
 				aHTML.push("<input type='checkbox' sap-name='" + sName + "' ");
 				if (oValue == true) {
@@ -208,7 +208,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 				//Enum or Custom Type
 				var oEnum = jQuery.sap.getObject(sType);
 				if (!oEnum || oEnum instanceof DataType) {
-					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + jQuery.sap.escapeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
+					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 				} else {
 					aHTML.push("<select style='width:100%;font-size:8pt;background-color:#f5f5f5;' sap-name='" + sName + "'>");
 					sType = sType.replace("/",".");
@@ -229,7 +229,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			aHTML.push("</td></tr>");
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -239,7 +239,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			this.applyChanges("sap-debug-propertylist-apply");
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -250,7 +250,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			this.applyChanges("sap-debug-propertylist-apply");
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -264,7 +264,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			}
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -272,11 +272,11 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	PropertyList.prototype.applyChanges = function(sId) {
 		var oSource = this.oParentDomRef.ownerDocument.getElementById(sId),
 			sControlId = oSource.getAttribute("sap-id"),
-			oControl = this.oCore.getElementById(sControlId),
+			oControl = this.oCore.byId(sControlId),
 			aInput = oSource.parentNode.getElementsByTagName("INPUT"),
 			aSelect = oSource.parentNode.getElementsByTagName("SELECT"),
 			oMethod;
-	
+
 		for (var i = 0; i < aInput.length; i++) {
 			var oInput = aInput[i],
 				sName = oInput.getAttribute("sap-name");
@@ -309,7 +309,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 		}
 		this.oCore.applyChanges();
 	};
-	
+
 	PropertyList.prototype.showQuickHelp = function(oSource) {
 		if ( this.oQuickHelpTimer ) {
 			clearTimeout(this.oQuickHelpTimer);
@@ -337,7 +337,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 				var sUrl = this.oWindow.jQuery.sap.getModulePath(this.sCurrentHelpDoc, ".control");
 				var that = this;
 				jQuery.ajax({
-					async: true,
 					url : sUrl,
 					dataType : 'xml',
 					error : function(xhr,status) {
@@ -353,9 +352,9 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			}
 		}
 	};
-	
+
 	// ---- Quickhelp ----
-	
+
 	PropertyList.prototype.receiveQuickHelp = function(oDocument) {
 		if ( oDocument ) {
 			var oControlNode = oDocument.getElementsByTagName("control")[0];
@@ -434,7 +433,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			this.updateQuickHelp(undefined, 0);
 		}
 	};
-	
+
 	PropertyList.prototype.updateQuickHelp = function(sNewContent, iTimeout) {
 		if ( this.oQuickHelpTimer ) {
 			clearTimeout(this.oQuickHelpTimer);
@@ -454,7 +453,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			}
 		}
 	};
-	
+
 	PropertyList.prototype.hideQuickHelp = function() {
 		var oTooltipDomRef = this.oParentDomRef.ownerDocument.getElementById("sap-ui-quickhelp");
 		if ( oTooltipDomRef ) {
@@ -462,7 +461,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 		}
 		this.bMovedOverTooltip = false;
 	};
-	
+
 	PropertyList.prototype._calcHelpId = function(oMetadata, sName) {
 		var sHelpId = oMetadata.getName();
 		if ( sName ) {
@@ -470,7 +469,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 		}
 		return sHelpId;
 	};
-	
+
 	PropertyList.prototype._isChildOfQuickHelp = function(oDomRef) {
 		while ( oDomRef ) {
 			if ( oDomRef.id === "sap-ui-quickhelp" ) {
@@ -480,7 +479,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 		}
 		return false;
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -503,7 +502,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 			this.showQuickHelp(oSource);
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -536,4 +535,4 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 
 	return PropertyList;
 
-}, /* bExport= */ true);
+});

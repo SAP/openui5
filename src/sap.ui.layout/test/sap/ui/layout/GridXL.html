@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
-	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 	<title>Grid - sap.ui.layout</title>
 
-	<script id='sap-ui-bootstrap' type='text/javascript'
+	<script src="shared-config.js"></script>
+	<script id='sap-ui-bootstrap'
 		src='../../../../resources/sap-ui-core.js'
 		data-sap-ui-theme='sap_bluecrystal'
 		data-sap-ui-libs='sap.ui.layout'>
 	</script>
 
-			
+
 	<script>
-		    
+
 	try{
 		sap.ui.getCore().loadLibrary("sap.ui.commons");
 	}catch(e){
@@ -27,12 +28,12 @@
 				defaultSpan: "XL4 L3 M6 S12",
 				defaultIndent:"XL4",
 				content: [
-				
+
 				// headings
 
 				new sap.ui.core.HTML({
 					content: '<b>Grid with 1rem horizontal and vertical spacing</b>'
-					
+
 				}),
 				new sap.ui.commons.Label({
 					text: 'Area spanning over the full width of the grid on all resolutions (XL8 L12 M12 S12)',
@@ -45,7 +46,7 @@
 					})
 				}),
 
-				
+
 				new sap.ui.core.HTML({
 					content: '<p>(XL4 L1 M1 S1)</p>',
 					width: "100%",
@@ -55,39 +56,44 @@
 					})
 				}),
 				new sap.ui.core.HTML({
-					content: '<p>XL2 L2 M2<br />Indent XL2 L5 M5</p>',
+					content: '<p>XL2 L2 M2<br />Indent XL2 L5 M5 and linebreakXL true, L false</p>',
 					width: "100%",
 					layoutData: new sap.ui.layout.GridData({
 						span: "XL2 L2 M2",
 						indent: "XL2 L5 M5",
 						linebreakL: false,
+						linebreakXL: true,
 						linebreakM: true,
 						visibleOnSmall: false
 					})
 				}),
 
 				new sap.ui.core.HTML({
-					content: '<p>XL2 L6 M6 S6<br />Indent XL6 L3 M3 S3<br />linebreakL linebreakM linebreakS</p>',
+					content: '<p>XL2 L6 M6 S6<br />Indent XL6 L3 M3 S3<br />linebreakL linebreakM linebreakS = true and linebreakXL = false</p>',
 					width: "100%",
 					layoutData: new sap.ui.layout.GridData({
 						span: "XL2 L6 M6 S6",
 						indent: "XL6 L3 M3 S3",
 						linebreakL: true,
 						linebreakM: true,
-						linebreakS: true
+						linebreakS: true,
+						linebreakXL: false
 					})
 				}),
 
 				// visisble
 
 				new sap.ui.core.HTML({
-					content: '<p>L12 M12 S12<br />visibleOnLarge visibleOnMedium visibleOnSmall</p>',
+					content: '<p>L12 M12 S12<br />visibleOnLarge visibleOnMedium visibleOnSmall and linebreak for XL same as L  ( L = true)</p>',
 					width: "100%",
 					layoutData: new sap.ui.layout.GridData({
 						span: "L12 M12 S12",
 						visibleL: true,
 						visibleM: true,
-						visibleS: true
+						visibleS: true,
+						linebreakL: true,
+						linebreakM: true,
+						linebreakS: true
 					})
 				}),
 				new sap.ui.core.HTML({
@@ -130,7 +136,7 @@
 					width: "100%"
 				}),
 
-				
+
 				new sap.ui.core.HTML({
 					content: '<p>Span L5, Indent L8</p>'
 				})
@@ -143,15 +149,15 @@
 				defaultSpan: "L4 M6",
 				defaultIndent:"L4",
 				content: [
-				
+
 
 				new sap.ui.core.HTML({
 					content: '<b>Grid with 2rem horizontal and vertical spacing</b>'
-					
+
 				}),
 				new sap.ui.commons.Label({
 					text: 'Area spanning over the full width of the grid on all resolutions (XL8 L12 M12 S12)',
-					
+
 					layoutData: new sap.ui.layout.GridData({
 						span: "XL6 L12 M12 S12",
 						spanXL: 8,
@@ -177,7 +183,7 @@
 
 	oGrid1.placeAt('content1');
 	oGrid2.placeAt('content2');
-		
+
 	</script>
 
 	<style>

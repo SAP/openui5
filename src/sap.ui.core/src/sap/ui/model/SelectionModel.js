@@ -8,13 +8,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	"use strict";
 
 
-	
-	
+
+
 	/**
 	 * Constructs an instance of a sap.ui.model.SelectionModel.
 	 *
 	 * @class
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -26,39 +26,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @alias sap.ui.model.SelectionModel
 	 */
 	var SelectionModel = EventProvider.extend("sap.ui.model.SelectionModel", /** @lends sap.ui.model.SelectionModel.prototype */ {
-	
+
 		constructor : function(iSelectionMode) {
 			EventProvider.apply(this);
-	
+
 			this.iSelectionMode = iSelectionMode || SelectionModel.SINGLE_SELECTION;
-	
+
 			this.aSelectedIndices = [];
 			this.iLeadIndex = -1;
-	
+
 			this.fnSort = function(a, b) {
 				return a - b;
 			};
 			this.fnSortReverse = function(a, b) {
 				return b - a;
 			};
-	
+
 		}
-	
+
 	});
-	
+
 	/**
 	 * SelectionMode: Single Selection
 	 * @public
 	 */
 	SelectionModel.SINGLE_SELECTION = 0;
-	
+
 	/**
 	 * SelectionMode: Multi Selection
 	 * @public
 	 */
 	SelectionModel.MULTI_SELECTION = 1;
-	
-	
+
+
 	/**
 	 * Returns the current selection mode.
 	 * @return {int} the current selection mode
@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	SelectionModel.prototype.getSelectionMode = function() {
 		return this.iSelectionMode;
 	};
-	
+
 	/**
 	 * Sets the selection mode. The following list describes the accepted
 	 * selection modes:
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	SelectionModel.prototype.setSelectionMode = function(iSelectionMode) {
 		this.iSelectionMode = iSelectionMode || SelectionModel.SINGLE_SELECTION;
 	};
-	
+
 	/**
 	 * Returns true if the specified index is selected.
 	 * @param {int} iIndex
@@ -95,9 +95,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @public
 	 */
 	SelectionModel.prototype.isSelectedIndex = function(iIndex) {
-		return jQuery.inArray(iIndex, this.aSelectedIndices) !== -1;
+		return this.aSelectedIndices.indexOf(iIndex) !== -1;
 	};
-	
+
 	/**
 	 * Return the second index argument from the most recent call to
 	 * setSelectionInterval(), addSelectionInterval() or removeSelectionInterval().
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	SelectionModel.prototype.getLeadSelectedIndex = function() {
 		return this.iLeadIndex;
 	};
-	
+
 	/**
 	 * Set the lead selection index.
 	 * @param {int} iLeadIndex sets the lead selected index
@@ -123,8 +123,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this.setSelectionInterval(iLeadIndex, iLeadIndex);
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Returns the first selected index or -1 if the selection is empty.
 	 * @return {int} first selected index or -1
@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			return -1;
 		}
 	};
-	
+
 	/**
 	 * Returns the last selected index or -1 if the selection is empty.
 	 * @return {int} last selected index or -1
@@ -152,8 +152,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			return -1;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Returns the selected indices as array.
 	 *
@@ -164,13 +164,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		var aIndices = this.aSelectedIndices.sort(this.fnSort);
 		return aIndices;
 	};
-	
-	
+
+
 	/**
 	 * Changes the selection to be equal to the range <code>iFromIndex</code> and <code>iToIndex</code>
 	 * inclusive. If <code>iFromIndex</code> is smaller than <code>iToIndex</code>, both parameters are swapped.
 	 *
-	 * In <code>SINGLE_SELECTION</code> selection mode, only <code>iToindex</iToIndex> is used.
+	 * In <code>SINGLE_SELECTION</code> selection mode, only <code>iToIndex</iToIndex> is used.
 	 *
 	 * If this call results in a change to the current selection, then a
 	 * <code>SelectionChanged</code> event is fired.
@@ -183,30 +183,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	SelectionModel.prototype.setSelectionInterval = function(iFromIndex, iToIndex) {
 		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
 		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
-	
+
 		if (this.iSelectionMode === SelectionModel.SINGLE_SELECTION) {
 			iFromIndex = iToIndex;
 		}
-	
+
 		var iFrom = Math.min(iFromIndex, iToIndex);
 		var iTo = Math.max(iFromIndex, iToIndex);
-	
+
 		// set new selection range, determine set of changed indices
-		var aChangedRowIndices = this.aSelectedIndices.slice();
+		var aOldSelectedRowIndices = this.aSelectedIndices.slice();
+
+		// build a lookup map
+		var mLookup = {};
+		var aChangedRowIndices = [];
+		for (var i = 0; i < aOldSelectedRowIndices.length; i++) {
+			mLookup[aOldSelectedRowIndices[i]] = true;
+			if (aOldSelectedRowIndices[i] < iFromIndex || aOldSelectedRowIndices[i] > iToIndex) {
+				// the old index will be deselected when it's not in the range of the new interval, therefore it's a changed index
+				aChangedRowIndices.push(aOldSelectedRowIndices[i]);
+			}
+		}
+
 		var aSelectedIndices = [];
 		for (var iIndex = iFrom; iIndex <= iTo; iIndex++) {
 			aSelectedIndices.push(iIndex);
-			var pos = jQuery.inArray(iIndex, aChangedRowIndices);
-			if ( pos === -1 ) {
+			// if the index was not selected before it is now selected and therefore part of changed indices
+			if (!mLookup[iIndex]) {
 				aChangedRowIndices.push(iIndex);
-			} else {
-				aChangedRowIndices.splice(pos, 1);
 			}
 		}
+
 		this._update(aSelectedIndices, iToIndex, aChangedRowIndices);
 		return this;
 	};
-	
+
 	/**
 	 * Changes the selection to be the union of the current selection
 	 * and the range between <code>iFromIndex</code> and <code>iToIndex</code> inclusive.
@@ -227,19 +238,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	SelectionModel.prototype.addSelectionInterval = function(iFromIndex, iToIndex) {
 		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
 		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
-	
+
 		if (this.iSelectionMode === SelectionModel.SINGLE_SELECTION) {
 			return this.setSelectionInterval(iFromIndex, iToIndex);
 		}
-	
+
 		var iFrom = Math.min(iFromIndex, iToIndex);
 		var iTo = Math.max(iFromIndex, iToIndex);
-	
+
 		var aChangedRowIndices = [];
 		var aSelectedIndices = this.aSelectedIndices;
-	
+
 		for (var iIndex = iFrom; iIndex <= iTo; iIndex++) {
-			if (jQuery.inArray(iIndex, aSelectedIndices) === -1) {
+			if (aSelectedIndices.indexOf(iIndex) === -1) {
 				aSelectedIndices.push(iIndex);
 				aChangedRowIndices.push(iIndex);
 			}
@@ -247,7 +258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this._update(aSelectedIndices, iTo, aChangedRowIndices);
 		return this;
 	};
-	
+
 	/**
 	 * Moves all selected indices starting at the position <code>iStartIndex</code> <code>iMove</code>
 	 * items.
@@ -284,7 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this._update(aSelectedIndices, iLeadIndex, aChangedRowIndices);
 		return this;
 	};
-	
+
 	/**
 	 * Changes the selection to be the set difference of the current selection
 	 * and the indices between <code>iFromIndex</code> and <code>iToIndex</code> inclusive.
@@ -304,19 +315,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	SelectionModel.prototype.removeSelectionInterval = function(iFromIndex, iToIndex) {
 		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
 		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
-	
+
 		if (this.iSelectionMode === SelectionModel.SINGLE_SELECTION) {
 			iFromIndex = iToIndex;
 		}
-	
+
 		var iFrom = Math.min(iFromIndex, iToIndex);
 		var iTo = Math.max(iFromIndex, iToIndex);
-	
+
 		var aChangedRowIndices = [];
 		var aSelectedIndices = this.aSelectedIndices;
 		var iLeadIndex = this.iLeadIndex;
 		for (var iIndex = iFrom; iIndex <= iTo; iIndex++) {
-			var iIndexToRemove = jQuery.inArray(iIndex, aSelectedIndices);
+			var iIndexToRemove = aSelectedIndices.indexOf(iIndex);
 			if (iIndexToRemove > -1) {
 				aSelectedIndices.splice(iIndexToRemove, 1);
 				aChangedRowIndices.push(iIndex);
@@ -328,7 +339,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this._update(aSelectedIndices, iLeadIndex, aChangedRowIndices);
 		return this;
 	};
-	
+
 	/**
 	 * Slices a the indices between the two indices from the selection.
 	 * If <code>iFromIndex</code> is smaller than <code>iToIndex</code>, both parameters are swapped.
@@ -347,7 +358,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	SelectionModel.prototype.sliceSelectionInterval = function(iFromIndex, iToIndex) {
 		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
 		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
-	
+
 		var iFrom = Math.min(iFromIndex, iToIndex);
 		var iTo = Math.max(iFromIndex, iToIndex);
 
@@ -357,10 +368,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		var aSelectedIndices = this.aSelectedIndices;
 		var iLeadIndex = this.iLeadIndex;
 		var iRange = iTo - iFrom + 1;
-		
+
 		//Check for each item in the range if is selected, if this is the case remove it from the list
 		for (var iIndex = iTo; iIndex >= iFrom; iIndex--) {
-			var iIndexToRemove = jQuery.inArray(iIndex, aSelectedIndices);
+			var iIndexToRemove = aSelectedIndices.indexOf(iIndex);
 			if (iIndexToRemove > -1) {
 				aSelectedIndices.splice(iIndexToRemove, 1);
 				//Store removed indices to calculate changed indices later
@@ -381,21 +392,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					iLeadIndex = iNewIndex;
 				}
 				aSelectedIndices[iIndex] = iNewIndex;
-				if (jQuery.inArray(iNewIndex, aOldSelectedIndices) === -1) {
+				if (aOldSelectedIndices.indexOf(iNewIndex) === -1) {
 					aChangedRowIndices.push(iNewIndex);
 				}
 			}
 		}
-		
+
 		//Get the last x indices from the old list and remove them, because this amount of indices was sliced
 		for (var i = 0; i < aRemovedIndices.length; i++) {
 			var iIndex = aOldSelectedIndices[aOldSelectedIndices.length - 1 - i];
-			if (jQuery.inArray(iIndex, aChangedRowIndices) === -1) {
+			if (aChangedRowIndices.indexOf(iIndex) === -1) {
 				aChangedRowIndices.push(iIndex);
 			}
 		}
 		for (var i = 0; i < aRemovedIndices.length; i++) {
-			if (jQuery.inArray(aRemovedIndices[i], aSelectedIndices) === -1 && jQuery.inArray(aRemovedIndices[i], aChangedRowIndices) === -1) {
+			if (aSelectedIndices.indexOf(aRemovedIndices[i]) === -1 && aChangedRowIndices.indexOf(aRemovedIndices[i]) === -1) {
 				aChangedRowIndices.push(aRemovedIndices[i]);
 			}
 		}
@@ -403,7 +414,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this._update(aSelectedIndices, iLeadIndex, aChangedRowIndices);
 		return this;
 	};
-	
+
 	/**
 	 * Change the selection to the empty set and clears the lead selection.
 	 *
@@ -419,8 +430,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Attach event-handler <code>fnFunction</code> to the 'selectionChanged' event of this <code>sap.ui.model.SelectionModel</code>.<br/>
 	 *
@@ -439,7 +450,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this.attachEvent("selectionChanged", oData, fnFunction, oListener);
 		return this;
 	};
-	
+
 	/**
 	 * Detach event-handler <code>fnFunction</code> from the 'selectionChanged' event of this <code>sap.ui.model.SelectionModel</code>.<br/>
 	 *
@@ -456,7 +467,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this.detachEvent("selectionChanged", fnFunction, oListener);
 		return this;
 	};
-	
+
 	/**
 	 * Fire event 'selectionChanged' to attached listeners.
 	 *
@@ -476,7 +487,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this.fireEvent("selectionChanged", mArguments);
 		return this;
 	};
-	
+
 	/**
 	 * Updates the selection models selected indices and the lead selection. Finally
 	 * it notifies the listeners with an array of changed row indices which can
@@ -485,34 +496,83 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int[]} aSelectedIndices selected row indices
 	 * @param {int} iLeadSelection lead selection index
 	 * @param {int[]} aChangedRowIndices changed row indices
+	 * @param {boolean} bSelectAll indicator if all rows are selected
 	 * @private
 	 */
-	SelectionModel.prototype._update = function(aSelectedIndices, iLeadSelection, aChangedRowIndices) {
-	
+	SelectionModel.prototype._update = function(aSelectedIndices, iLeadSelection, aChangedRowIndices, bSelectAll) {
+
 		// create the event parameters with the changed row indices (sorted!)
 		var mParams = {
-			rowIndices: aChangedRowIndices && aChangedRowIndices.sort(this.fnSort)
+			rowIndices: aChangedRowIndices && aChangedRowIndices.sort(this.fnSort),
+			selectAll: bSelectAll
 		};
-	
+
 		// update the selected indices
 		this.aSelectedIndices = aSelectedIndices; // TODO: sorting here could avoid additional sorts in min/max and get
-	
+
 		mParams.oldIndex = this.iLeadIndex;
-		
+
 		// update lead selection (in case of removing the lead selection it is -1)
 		if (this.iLeadIndex !== iLeadSelection) {
 			this.iLeadIndex = iLeadSelection;
 			mParams.leadIndex = this.iLeadIndex;
 		}
-	
+
 		// fire change event
-	  if ( aChangedRowIndices.length > 0 || typeof mParams.leadIndex !== "undefined" ) {
+		if ( aChangedRowIndices.length > 0 || typeof mParams.leadIndex !== "undefined" ) {
 			this.fireSelectionChanged( mParams );
 		}
-	
+
 	};
-	
+
+	/**
+	 * Selects all rows up to the <code>iToIndex</iToIndex>.
+	 *
+	 * If this call results in a change to the current selection, then a
+	 * <code>SelectionChanged</code> event is fired.
+	 *
+	 * @param {int} iToIndex end of the interval
+	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	SelectionModel.prototype.selectAll = function(iToIndex) {
+
+		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
+
+		// set new selection range, determine set of changed indices
+		var aOldSelectedRowIndices = this.aSelectedIndices.slice();
+
+		// build a lookup map
+		var mLookup = {};
+		var aChangedRowIndices = [];
+		var aSelectedIndices = [];
+		var i = 0;
+
+		for (i = 0; i < aOldSelectedRowIndices.length; i++) {
+			mLookup[aOldSelectedRowIndices[i]] = true;
+			if (aOldSelectedRowIndices[i] > iToIndex) {
+				// the old index will be deselected when it's not in the range of the new interval, therefore it's a changed index
+				aChangedRowIndices.push(aOldSelectedRowIndices[i]);
+			}
+		}
+
+		for (i = 0; i <= iToIndex; i++) {
+			aSelectedIndices.push(i);
+			// if the index was not selected before it is now selected and therefore part of changed indices
+			if (!mLookup[i]) {
+				aChangedRowIndices.push(i);
+			}
+		}
+
+		// 0 will be used as leadIndex. It more likely that in oData case the index 0 is already loaded than that the last index is loaded.
+		// The leadIndex will be used to determine the leadContext in the selectionChange event.
+		// If not yet loaded it would need to be request. To avoid unnecessary roundtrips the lead index is set to 0.
+		this._update(aSelectedIndices, 0, aChangedRowIndices, true);
+
+		return this;
+
+	};
 
 	return SelectionModel;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,177 @@
+{
+  "_version": "1.3.0",
+
+  "sap.app": {
+	"_version": "1.3.0",
+	"id": "sap.ui.demo.cart",
+	"type": "application",
+	"i18n": "i18n/i18n.properties",
+	"title": "{{appTitle}}",
+	"description": "{{appDescription}}",
+
+	"applicationVersion": {
+	  "version": "1.0.0"
+	},
+	"dataSources": {
+	  "mainService": {
+		"uri": "/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/",
+		"type": "OData",
+		"settings": {
+		  "odataVersion": "2.0",
+		  "localUri" : "localService/metadata.xml"
+		}
+	  }
+	}
+  },
+
+  "sap.ui": {
+	"_version": "1.3.0",
+	"technology": "UI5",
+	"icons": {
+	  "icon": "sap-icon://detail-view",
+	  "favIcon": "",
+	  "phone": "",
+	  "phone@2": "",
+	  "tablet": "",
+	  "tablet@2": ""
+	},
+	"deviceTypes": {
+	  "desktop": true,
+	  "tablet": true,
+	  "phone": true
+	},
+	"supportedThemes": [
+	  "sap_hcb",
+	  "sap_belize"
+	]
+  },
+
+  "sap.ui5": {
+	"_version": "1.2.0",
+	"rootView": {
+	  "viewName": "sap.ui.demo.cart.view.App",
+	  "type": "XML",
+	  "id": "app"
+	},
+
+	"dependencies": {
+	  "minUI5Version": "1.36.0",
+	  "libs": {
+		"sap.ui.core": {
+		  "minVersion": "1.36.0"
+		},
+		"sap.m": {
+		  "minVersion": "1.36.0"
+		},
+		"sap.ui.layout" : {
+		  "minVersion": "1.36.0"
+		}
+	  }
+	},
+
+	"contentDensities": {
+	  "compact": true,
+	  "cozy": true
+	},
+
+	"models": {
+	  "i18n": {
+		"type": "sap.ui.model.resource.ResourceModel",
+		"settings": {
+		  "bundleName": "sap.ui.demo.cart.i18n.i18n"
+		}
+	  },
+	  "" : {
+		"dataSource": "mainService",
+		"preload": true
+	  }
+	},
+	"resources": {
+	  "css": [
+		{
+		  "uri": "css/style.css"
+		}
+	  ]
+	},
+
+	"routing": {
+	  "config": {
+		"routerClass": "sap.m.routing.Router",
+		"viewType": "XML",
+		"viewPath": "sap.ui.demo.cart.view",
+		"controlId": "splitApp",
+		"controlAggregation": "detailPages",
+		"transition": "slide",
+		"bypassed": {
+		  "target": ["home" , "notFound"]
+		}
+	  },
+	  "routes": [
+		{
+		  "pattern": "",
+		  "name": "home",
+		  "target": ["home", "welcome"]
+		},
+		{
+		  "pattern": "categories",
+		  "name": "categories",
+		  "target": ["homeSlide"]
+		},
+		{
+		  "pattern": "category/{id}",
+		  "name": "category",
+		  "target": ["welcome", "categoryView"]
+		},
+		{
+		  "pattern": "category/{id}/product/{productId}",
+		  "name": "product",
+		  "target": ["categoryView", "productView"]
+		},
+		{
+		  "pattern": "cart",
+		  "name": "cart",
+		  "target": ["cart"]
+		},
+		{
+		  "pattern": "product/{productId}",
+		  "name": "cartProduct",
+		  "target": ["home" , "productView"]
+		}
+	  ],
+
+	  "targets": {
+		"productView": {
+		  "viewName": "Product",
+		  "viewLevel": 3
+		},
+		"categoryView": {
+		  "viewName": "Category",
+		  "viewLevel": 2,
+		  "controlAggregation": "masterPages"
+		},
+		"notFound": {
+		  "viewName": "NotFound",
+		  "viewLevel": 3
+		},
+		"welcome": {
+		  "viewName": "Welcome",
+		  "viewLevel": 0
+		},
+		"home": {
+		  "viewName": "Home",
+		  "viewLevel": 1,
+		  "controlAggregation": "masterPages"
+		},
+		"homeSlide": {
+		  "viewName": "Home",
+		  "viewLevel": -1,
+		  "controlAggregation": "masterPages"
+		},
+		"cart": {
+		  "viewName": "Cart",
+		  "controlAggregation": "masterPages"
+		}
+	  }
+	}
+  }
+}

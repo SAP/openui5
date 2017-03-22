@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested class: sap.ui.core.plugin.DeclarativeSupport
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>QUnit Test for StashedControlSupport</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.ui.core, sap.m">
+	</script>
+
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<!-- Test functions -->
+	<script>
+		sap.ui.require(["sap/ui/core/StashedControlSupport", "sap/ui/core/Component", "sap/m/Button", "sap/m/Panel"],
+		function(StashedControlSupport, Component, Button, Panel) {
+			QUnit.module("Control mixin", {
+				beforeEach: function() {
+					this.Button = Button.extend("Button");
+				}
+			});
+
+			QUnit.test("class", function(assert) {
+				var fnClone = this.Button.prototype.clone,
+					fnDestroy = this.Button.prototype.destroy;
+				StashedControlSupport.mixInto(this.Button);
+				assert.ok(this.Button.getMetadata().hasSpecialSetting("stashed"), "Control class has 'stashed' special setting");
+				assert.ok(this.Button.prototype.getStashed, "Control class has method 'getStashed'");
+				assert.ok(this.Button.prototype.setStashed, "Control class has method 'setStashed'");
+				assert.notStrictEqual(this.Button.prototype.destroy, fnDestroy, "Control class method 'destroy' overwritten'");
+			});
+
+			QUnit.test("instance", function(assert) {
+				StashedControlSupport.mixInto(this.Button);
+				var oButton = new this.Button();
+				assert.ok(!oButton.mProperties.stashed, "Control instance has 'stashed' property");
+				assert.ok(oButton.getStashed, "Control instance has method 'getStashed'");
+				assert.ok(oButton.setStashed, "Control instance has method 'setStashed'");
+				assert.strictEqual(oButton.getStashed(), undefined, "'stashed' property default value is undefined");
+				oButton.destroy();
+			});
+
+			QUnit.module("StashedControl", {
+				beforeEach: function() {
+					this.Button = Button.extend("Button");
+					StashedControlSupport.mixInto(this.Button);
+					this.create = function() {
+						// uses the stashed control's id
+						this.oButton = new this.Button(this.sId);
+						return [this.oButton];
+					}.bind(this);
+					this.mSettings = {
+							sParentId: "parent",
+							sParentAggregationName: "content",
+							fnCreate: this.create
+						};
+					this.sId = "control";
+					this.oPanel = new Panel("parent");
+				},
+				afterEach: function() {
+					if (this.oButton) {
+						this.oButton.destroy();
+					}
+					this.oPanel.destroy();
+				}
+			});
+
+			QUnit.test("factory", function(assert) {
+				this.oStashedControl = StashedControlSupport.createStashedControl(this.sId, this.mSettings);
+				assert.strictEqual(this.oStashedControl.getId(), this.sId, "id is set");
+				assert.strictEqual(this.oStashedControl.sParentId, this.mSettings.sParentId, "sParentId is set");
+				assert.strictEqual(this.oStashedControl.sParentAggregationName, this.mSettings.sParentAggregationName, "sParentAggregationName is set");
+				assert.strictEqual(this.oStashedControl.fnCreate, this.create, "fnCreate hook is set");
+				assert.ok(this.oStashedControl.setStashed, "setStashed method is available");
+				assert.ok(this.oStashedControl.getStashed, "getStashed method is available");
+				assert.ok(this.oStashedControl.clone, "clone method is available");
+				assert.ok(this.oStashedControl.destroy, "destroy method is available");
+				assert.strictEqual(this.oStashedControl.getStashed(), true, "'stashed' is true");
+				this.oStashedControl.destroy();
+			});
+
+			QUnit.test("setParent", function(assert) {
+				var oSpy = sinon.spy(jQuery.sap.log, "error");
+				this.oStashedControl = StashedControlSupport.createStashedControl(this.sId, this.mSettings);
+				this.oStashedControl.setParent("parent");
+				assert.ok(oSpy.calledWithExactly("Cannot set parent on a StashedControl", this.sId), "log error");
+ 			});
+
+			QUnit.test("stash", function(assert) {
+				var oSpy = sinon.spy(jQuery.sap.log, "warning");
+				this.oButton = new this.Button(this.sId);
+				this.oPanel.addAggregation("content", this.oButton);
+				assert.ok(this.oButton.getParent(), "Control has a parent");
+				this.oButton.setStashed(true);
+				assert.ok(oSpy.calledWithExactly("Cannot re-stash a control", this.sId), "log warning");
+			});
+
+			QUnit.test("unstash", function(assert) {
+				this.oStashedControl = StashedControlSupport.createStashedControl(this.sId, this.mSettings);
+				assert.strictEqual(sap.ui.getCore().byId(this.sId), this.oStashedControl, "Control is still a StashedControl");
+				this.oStashedControl.setStashed(false);
+				assert.strictEqual(sap.ui.getCore().byId(this.sId), this.oButton, "StashedControl has been replaced");
+				assert.ok(!this.oButton.getStashed(), "Control is not stashed");
+				assert.strictEqual(this.oStashedControl.getStashed(), false, "StashedControl is not stashed");
+				assert.ok(this.oStashedControl.bIsDestroyed, "StashedControl is destroyed");
+			});
+
+			QUnit.test("clone", function(assert) {
+				this.oStashedControl = StashedControlSupport.createStashedControl(this.sId, this.mSettings);
+				var oPanelClone = this.oPanel.clone("clone");
+				assert.strictEqual(StashedControlSupport.getStashedControls().length, 2, "Stashed control has been cloned");
+				assert.ok(sap.ui.getCore().byId(this.sId), "Original control is available by id");
+				assert.ok(sap.ui.getCore().byId(this.sId + "-clone"), "Cloned control is available by id");
+				oPanelClone.destroy();
+			});
+
+			QUnit.test("destroy", function(assert) {
+				this.oButton = new this.Button(this.sId, {stashed: true});
+				this.oPanel.addAggregation("content", this.oButton);
+				this.oPanel.destroy();
+				assert.strictEqual(StashedControlSupport.getStashedControls().length, 0, "Stashed control has been destroyed");
+			});
+
+			QUnit.module("XML", {
+				beforeEach: function() {
+					if (!Button.prototype.getStashed) {
+						// extend the real sap.m.Button for test purposes - once!
+						StashedControlSupport.mixInto(Button);
+					}
+					this.oView = sap.ui.xmlview("view", {
+						viewContent: document.getElementById("viewsource").innerHTML
+					}).placeAt("content");
+				},
+				afterEach: function() {
+					this.oView.destroy();
+				}
+			});
+
+			QUnit.test("StashedControl support", function(assert) {
+				var done = assert.async();
+				this.oView.onAfterRendering = function() {
+					assert.strictEqual(jQuery("#view--StashedButton").length, 0, "Stashed button is not rendered");
+					var oButton = sap.ui.getCore().byId("view--StashedButton");
+					assert.ok(sap.ui.getCore().byId("view--StashedButton"), "Stashed button is available by id");
+					assert.ok(sap.ui.getCore().byId("view--StashedButton") instanceof sap.ui.core._StashedControl, "Stashed button is a StashedControl");
+					assert.strictEqual(jQuery("#view--Button").length, 1, "Button is rendered");
+					assert.ok(sap.ui.getCore().byId("view--Button") instanceof Button, "Button is a Button");
+					this.oView.onAfterRendering = function() {
+						assert.strictEqual(jQuery("#view--StashedButton").length, 1, "Stashed button is rendered");
+						assert.ok(sap.ui.getCore().byId("view--StashedButton") instanceof Button, "StashedButton is now a Button");
+						done();
+					};
+					oButton.setStashed(false);
+					this.oView.invalidate();
+				}.bind(this);
+			});
+
+			QUnit.test("getStashedControls", function(assert) {
+				assert.strictEqual(StashedControlSupport.getStashedControls().length, 1, "One stashed control existent");
+				assert.strictEqual(StashedControlSupport.getStashedControls("Panel")[0], sap.ui.getCore().byId("control11"), "One stashed controls in parent1");
+			});
+
+			QUnit.test("getStashedControlIds", function(assert) {
+				assert.strictEqual(StashedControlSupport.getStashedControlIds().length, 1, "One stashed control existent");
+				assert.strictEqual(StashedControlSupport.getStashedControlIds("view--Panel")[0], "view--StashedButton", "One stashed controls in parent1");
+			});
+
+			QUnit.module("Component integration");
+
+			QUnit.test("owner component", function(assert) {
+				var oView;
+				function createView() {
+					oView = sap.ui.xmlview("view", {
+						viewContent: document.getElementById("viewsource").innerHTML
+					}).placeAt("content");
+				}
+				new Component("comp").runAsOwner(createView.bind(this));
+
+				sap.ui.getCore().byId("view--StashedButton").setStashed(false);
+				var oButtonComponent = Component.getOwnerComponentFor(oView.byId("view--StashedButton"));
+				var oStashedButtonComponent = Component.getOwnerComponentFor(oView.byId("view--StashedButton"));
+
+				assert.strictEqual(oStashedButtonComponent, oButtonComponent, "Buttons have same owner");
+				assert.equal(oStashedButtonComponent.getId(), "comp", "Buttons have the right owner");
+
+				oView.destroy();
+			});
+
+		});
+
+	</script>
+
+	<script id="viewsource" type="text/xml">
+		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+			<Panel id="Panel">
+				<content>
+					<Button id="StashedButton" stashed="true"/>
+					<Button id="Button"/>
+				</content>
+			</Panel>
+		</mvc:View>
+	</script>
+
+</head>
+
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.core.InvisibleText</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="content">
+	</div>
+</body>
+
+</html>

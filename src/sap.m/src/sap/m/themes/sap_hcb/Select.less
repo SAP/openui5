@@ -1,65 +1,11 @@
-/* ============================================================== */
-/* CSS for control sap.m/Select.control High Contrast Black theme */
-/* ============================================================== */
+/* ============================= */
+/* CSS for control sap.m/Select  */
+/* High Contrast Black theme     */
+/* ============================= */
 
 /* ------------------------------ */
-/* Select commons styles          */
+/* field                          */
 /* ------------------------------ */
-
-.sapMSlt > .sapMSltLabel,
-.sapMSltNative {
-	padding: 0 0.625rem;
-}
-
-.sapMSltWithArrow > .sapMSltLabel,
-.sapMSltWithArrow > .sapMSltNative {
-	padding: 0 3rem 0 0.625rem;
-}
-
-.sapMILI-CTX .sapMSlt > .sapMSltLabel,
-.sapMILI-CTX .sapMSltNative {
-	padding: 0 0.625rem;
-}
-
-.sapMSlt > .sapMSltLabel,
-.sapMSltArrow,
-.sapMSltNative {
-	height: 100%;
-}
-
-.sapMSltArrow::before,
-.sapMSltBar::after {
-	font-family: "SAP-icons";
-	speak: none;
-	content: "\e1ef";
-}
-
-.sapMSltArrow,
-.sapMSltBar::after {
-	position: absolute;
-	line-height: inherit; /* rem values for line-height do not work in pseudo elements for IE9, 10, 11 */
-	text-align: center;
-	top: 0;
-	right: -0.0625rem;
-	color: @sapHCStandardFG;
-}
-
-.sapMSltDisabled {
-	opacity: 0.5;
-}
-
-/* ====================================================== */
-/* Select                                                 */
-/* ====================================================== */
-
-.sapMSlt {
-	height: 2.5rem;
-	margin: 0.25rem 0 0.25rem 0;
-
-	/* note: rounding issue of chrome when using rem as CSS unit for borders at zoom in < 100%  */
-	border: 0.0625rem solid @sapHCStandardFG;
-	background: @sapHCStandardBG;
-}
 
 .sapMSlt.sapMSltIconOnly {
 	border-radius: 0.365rem;
@@ -68,55 +14,57 @@
 /* hover and focus */
 
 .sapMSlt:focus:not(.sapMSltPressed):not(.sapMSltIconOnly) {
-	outline: 0.125rem dotted @sapHCStandardFG;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.1875rem;
 }
 
-.sap-desktop .sapMSlt:not(.sapMSltIconOnly):focus,
+html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):focus,
 .sapMSltHoverable:not(.sapMSltIconOnly):hover {
-	border-color: @sapHCStandardFG;
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
-/* FIX: IE does not support css outline-offset */
- 
-html[data-sap-ui-browser^="ie"] {
+/* FIX: IE and Edge do not support css outline-offset */
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMSlt:focus:not(.sapMSltPressed) {
 		outline: none;
 		position: relative;
 	}
 
-	.sapMSlt:focus:not(.sapMSltPressed)::before {
+	.sapMSlt:focus:not(.sapMSltDisabled):not(.sapMSltPressed)::before {
 		content: "";
 		box-sizing: border-box;
 		width: 100%;
 		height: 100%;
 		position: absolute;
-		left: 0rem;
-		top: 0rem;
-		border: 0.125rem dotted @sapHCStandardFG;
+		left: 0;
+		top: 0;
+		border: 0.125rem dashed @sapUiContentFocusColor;
 	}
 }
 
 /* FIX: In FF bottom outline-offset is not working as expected when Select is in sap.m.Bar and is left-aligned */
 
 html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
-		line-height: 0rem;
+		line-height: 0;
 }
 
-/* Select IconOnly hover and focus */
+/* icon only hover and focus */
 
 .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
-	background: @sapHCHighlightBG;
+	background: @sapUiButtonLiteHoverBackground;
 }
 
 .sapMSlt.sapMSltIconOnly:focus.sapMSltHoverable:hover {
-	background: @sapHCHighlightBG;
+	background: @sapUiButtonLiteHoverBackground;
 	border-color: transparent;
 }
 
-/* IE does not support css outline-offset */
+/* FIX: IE and Edge do not support css outline-offset */
 
-.sap-desktop[data-sap-ui-browser^="ie"] {
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	.sapMSlt:focus.sapMSltIconOnly {
 		outline:          none;
@@ -131,97 +79,67 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 		position:         absolute;
 		left:             0;
 		top:              0;
-		border:           0.125rem dotted @sapHCStandardFG;
+		border:           0.125rem dashed @sapUiContentFocusColor;
 	}
 }
 
 /* pressed */
 
-.sapMSltPressed:not(.sapMSltDisabled) {
-	border-color: @sapHCStandardFG;
-}
-
-.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
-	background: @sapHCHighlightAltBG;
-}
-
-.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+html.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	border-color: transparent;
 }
 
 /* pressed and hover */
 
 .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover {
-	background: @sapHCHighlightBG;
+	background: @sapUiToggleButtonPressedHoverBackground;
 	border-color: transparent;
 }
 
-/* ------------------------------ */
-/* Select Label                   */
-/* ------------------------------ */
+/* value state */
 
-.sapMSlt > .sapMSltLabel {
-	width: 100%;
-	line-height: 2.375rem;
-	color: @sapHCStandardFG;
-	font-style: normal;
-	font-size: @sapMFontMediumSize;
+.sapMSltWarning,
+.sapMSltError {
+	border-style: dashed;
+}
+
+/* disabled */
+
+.sapMSltDisabled {
+	background: @sapUiHcReducedBackground;
+	border-color: @sapUiHcReducedForeground;
+	color: @sapUiContentDisabledTextColor;
 }
 
 /* ------------------------------ */
-/* Select Icon                    */
+/* label                          */
 /* ------------------------------ */
 
-.sapMSltIcon {
-	font-size: 1.375rem;
-	line-height: 2.375rem;
-	padding: 0 0.625rem;
-	color: @sapHCStandardFG;
-	-webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+/* value state */
+
+.sapMSltLabelWarning,
+.sapMSltLabelError {
+	font-style: italic;
 }
 
-/* pressed */
-
-.sapMSltPressed > .sapMSltIcon {
-	color: @sapHCStandardFG;
+.sapMSltLabelError {
+	font-weight: bold;
 }
 
 /* ------------------------------ */
-/* Select Arrow                   */
+/* arrow                          */
 /* ------------------------------ */
-
-.sapMSltArrow {
-	width: 2.5rem;
-	line-height: 2.5rem;
-	right: 0;
-}
 
 /* hover */
 
 .sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-	background: @sapHCHighlightBG;
-	border-left: 0.0625rem solid @sapHCStandardFG;
+	border-left: 0.0625rem solid @sapUiFieldHoverBorderColor;
 }
 
 /* pressed */
 
 .sapMSltPressed > .sapMSltArrow {
-	background: @sapHCHighlightAltBG;
-	border-left: 0.0625rem solid @sapHCStandardFG;
-}
-
-/* ------------------------------ */
-/* Native HTML select element     */
-/* ------------------------------ */
-
-.sapMSltNative {
-	visibility: hidden;
-	font-size: 0.9375rem;
+	border-left: 0.0625rem solid @sapUiFieldActiveBorderColor;
 }
 
 /* ====================================================== */
@@ -230,285 +148,19 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 
 /* focus: Select IconOnly in all contexts get dotted outline */
 
-.sap-desktop .sapMBar-CTX .sapMSltIconOnly:focus,
-.sap-desktop .sapMSltIconOnly:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
+html.sap-desktop .sapMBar-CTX .sapMSltIconOnly:focus:not(.sapMSltPressed),
+html.sap-desktop .sapMSltIconOnly:focus:not(.sapMSltPressed) {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 	border-color: transparent;
 }
 
 /* hover: Select IconOnly in all contexts */
 
-.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
-.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
-.sap-desktop .sapMFooter-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
-.sap-desktop .sapMSltIconOnly:hover:not(.sapMSltPressed) {
-	color: @sapHCStandardFG;
-	background-color: @sapHCHighlightBG;
-}
-
-/* ====================================================== */
-/* Select inside a Bar: header and sub-header contexts    */
-/* ====================================================== */
-
-.sapMSubHeader-CTX .sapMSltPressed > .sapMSltIcon {
-	color: @sapHCStandardFG;
-	background-color: transparent;
-}
-
-.sapMHeader-CTX .sapMSltPressed,
-.sapMSubHeader-CTX .sapMSltPressed {
-
-	/* pressed selects arrow and icon look wrong with text-shadow */
-	text-shadow: none;
-}
-
-.sapMHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed),
-.sapMSubHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed) {
-	border-color: @sapHCStandardFG;
-	background-color: @sapHCStandardBG;
-}
-
-/* ------------------------------ */
-/* Select Icon                    */
-/* ------------------------------ */
-
-.sapMSubHeader-CTX .sapMSltPressed > .sapMSltIcon {
-	color: @sapHCStandardFG;
-}
-
-/* ====================================================== */
-/* Select inside a Bar: footer context                    */
-/* ====================================================== */
-
-.sapMFooter-CTX .sapMSlt {
-	border-color: @sapHCStandardFG;
-}
-
-/* focus and hover */
-
-.sapMFooter-CTX .sapMSltIconOnly.sapMSltHoverable:not(.sapMSltPressed):hover {
-	background: @sapHCHighlightBG;
-}
-
-/* ------------------------------ */
-/* Select Label in footer context */
-/* ------------------------------ */
-
-.sapMIBar-CTX.sapMFooter-CTX .sapMSltArrow {
-	text-shadow: none;
-}
-
-.sapMFooter-CTX .sapMSltIcon {
-	color: inherit;
-}
-
-.sapMFooter-CTX .sapMSltLabel {
-	text-shadow: none;
-}
-
-/* ====================================================== */
-/* Select inside a List                                   */
-/* ====================================================== */
-
-.sapMILI-CTX .sapMSlt {
-	border-left-width: 0;
-	border-right-width: 0;
-	margin: 0;
-	height: 3rem;
-	border-top-width: 0;
-	border-bottom-width: 0;
-	background-color: transparent;
-}
-
-/* ------------------------------ */
-/* Select Label inside a List     */
-/* ------------------------------ */
-
-.sapMILI-CTX .sapMSltPressed > .sapMSltLabel {
-	color: @sapHCStandardFG;
-}
-
-.sapMILI-CTX .sapMSltPressed:not(.sapMSltDisabled) > .sapMSltLabel {
-	color: @sapHCStandardFG;
-}
-
-/* ------------------------------ */
-/* Select Arrow                   */
-/* ------------------------------ */
-
-.sapMILI-CTX .sapMSltArrow {
-	display: none;
-}
-
-.sapMILI-CTX .sapMSltLabel {
-	line-height: 3rem;
-}
-
-/* ------------------------------ */
-/* Select Picker                  */
-/* ------------------------------ */
-
-div.sapMSltPicker {
-	border: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
-}
-
-.sapMSltPicker .sapMBtn {
-	height: 2.5rem;
-}
-
-/* remove the Popover's arrow */
-
-.sapMSltPicker .sapMPopoverArr {
-	display: none;
-}
-
-.sapMSltPicker.sapMPopover {
-	box-sizing: border-box;
-	box-shadow: 0 0.25rem 1.875rem 0.125rem @sapHCStandardFG;
-	border:  0.0625rem  solid @sapHCStandardFG;
-	border-width: 0.125rem;
-	outline: none;
-}
-
-.sapMSl.sapMSltDisabled {
-	background: @sapHCReducedFG;
-	border: 0.0625rem solid @sapHCReducedAltFG;
-	font-style: normal;
-	color: @sapHCReducedFG;
-}
-
-/* ------------------------------ */
-/* Select Dialog                  */
-/* ------------------------------ */
-
-.sapMSltBar {
-	-webkit-box-shadow: none;
-	box-shadow: none;
-}
-
-div.sapMSltPicker .sapMDialogScrollCont {
-	padding: 0;
-}
-
-/* pressed */
-
- .sapMSltBar::after {
-	width: 3.5rem;
-	height: 2.9rem;
-	color: @sapHCStandardFG;
-	background: @sapHCHighlightAltBG;
-	border-left: 0.0625rem solid @sapHCStandardFG;
-	margin-right: 1px;
-}
-
-/* Bar inside the Select's Dialog */
-
-.sapMSltPicker .sapMIBar.sapMIBar-CTX {
-	background: @sapHCStandardBG;
-	border: 1px solid @sapHCStandardFG;
-}
-
-/* Input inside the Select's Dialog */
-
-.sapMSltInput .sapMInputBaseInner.sapMInputBaseReadonlyInner {
-	border: none;
-	background-color: @sapHCStandardBG;
-}
-
-.sapMSltPicker input {
-	padding-right: 3rem;
-	vertical-align: top; /* override the default vertical align of the input control */
-}
-
-/* ================================================================================== */
-/* CSS for control sap.m/Select.control HCB theme smaller sizes - common part */
-/* ================================================================================== */
-
-/* ------------------------------ */
-/* Select commons styles          */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMSltLabel,
-.sapUiSizeCompact .sapMSltNative,
-.sapUiSizeCondensed .sapMSltLabel,
-.sapUiSizeCondensed .sapMSltNative {
-	padding-right: 2.5rem;
-	padding-left: 0.5rem;
-}
-
-.sapUiSizeCompact .sapMSltPicker .sapMBtn,
-.sapUiSizeCondensed .sapMSltPicker .sapMBtn {
-	height: 2rem;
-}
-
-/* ------------------------------ */
-/* Select Label Compact           */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMSltLabel,
-.sapUiSizeCondensed .sapMSltLabel {
-	line-height: 1.5rem;
-}
-
-/* ------------------------------ */
-/* Select Arrow                   */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMSltArrow,
-.sapUiSizeCondensed .sapMSltArrow {
-	width: 2rem;
-	line-height: 1.625rem;
-}
-
-/* ------------------------------ */
-/* Select Icon                    */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMSltIcon,
-.sapUiSizeCondensed .sapMSltIcon {
-	font-size: 1rem;
-	line-height: 1.5rem;
-}
-
-/* =================================================================== */
-/* CSS for control sap.m/Select.control HCB theme compact size */
-/* =================================================================== */
-
-/* ------------------------------ */
-/* Select                         */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMSlt {
-	height: 1.625rem;
-	margin-top: 0.1875rem;
-	margin-bottom: 0.1875rem;
-}
-
-/* ===================================================================== */
-/* CSS for control sap.m/Select.control HCB theme condensed size */
-/* ===================================================================== */
-
-/* ------------------------------ */
-/* Select                         */
-/* ------------------------------ */
-
-.sapUiSizeCondensed .sapMSlt {
-	height: 1.5rem;
-	margin-top: 0;
-	margin-bottom: 0;
-}
-
-/* ------------------------------ */
-/* Select in the Table            */
-/* ------------------------------ */
-
-.sapUiSizeCondensed .sapUiTableCell .sapMSlt {
-	border-color: @sapHCStandardFG;
-}
-
-.sapUiSizeCondensed .sapUiTableCell .sapMSltHoverable:hover {
-	border-color: @sapHCStandardFG;
+html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMFooter-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt), {
+	color: @sapUiContentIconColor;
+	background-color: @sapUiButtonLiteHoverBackground;
 }

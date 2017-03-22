@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @namespace
 	 */
 	var ToolbarSeparatorRenderer = {};
-	
+
 	ToolbarSeparatorRenderer.render = function(rm, oControl) {
 		rm.write("<div");
 		rm.writeControlData(oControl);

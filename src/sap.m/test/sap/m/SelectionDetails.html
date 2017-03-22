@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8">
+
+<title>Test page: Example - sap.m.SelectionDetails</title>
+
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m"
+	src="../../../resources/sap-ui-core.js">
+</script>
+
+<script>
+	var fnCreateLine = function(id, context) {
+		return new sap.m.SelectionDetailsItemLine(id, {
+			label: "{label}",
+			value: "{value}",
+			displayValue: "{displayValue}",
+			unit: "{unit}"
+		});
+	};
+
+	var aItems = [
+		new sap.m.SelectionDetailsItem({
+			lines: {
+				path: "/lines/0",
+				factory: fnCreateLine
+			},
+			actions: [
+				new sap.ui.core.Item("item_action_1", {
+					key: "1",
+					text: "item action 1"
+				}), new sap.ui.core.Item("item_action_2", {
+					key: "2",
+					text: "item action 2"
+				}), new sap.ui.core.Item("item_action_3", {
+					key: "3",
+					text: "item action 3"
+				}), new sap.ui.core.Item("item_action_4", {
+					key: "4",
+					text: "item action 4"
+				})],
+			enableNav: true
+		}),
+		new sap.m.SelectionDetailsItem({
+			lines: {
+				path: "/lines/1",
+				factory: fnCreateLine
+			},
+			enableNav: false
+		})
+	];
+
+	var oModel = new sap.ui.model.json.JSONModel({
+		lines: [
+			[
+				{
+					label: "Company Name",
+					value: "Titanium laptop manufacturing company"
+				}, {
+					label: "Product Category",
+					value: "Laptop"
+				}, {
+					label: "Currency Code",
+					value: "EUR"
+				}, {
+					label: "Date",
+					displayValue: new Date().toLocaleString()
+				}, {
+					label: "Price",
+					value: "939,00",
+					unit: "EUR"
+				}
+			], [
+				{
+					label: "Company Name",
+					value: "Future Industries"
+				}, {
+					label: "Product Category",
+					value: "Satomobiles"
+				}, {
+					label: "Price",
+					value: "10,000.00",
+					unit: "Yuons"
+				}
+			]
+		],
+		actions: [
+			{
+				key: "1",
+				text: "action 1"
+			},
+			{
+				key: "2",
+				text: "action 2"
+			},
+			{
+				key: "3",
+				text: "action 3"
+			},
+			{
+				key: "4",
+				text: "action 4"
+			},
+			{
+				key: "5",
+				text: "action 5"
+			},
+			{
+				key: "6",
+				text: "action 6"
+			}
+		],
+		actionGroups: [
+			{
+				key: "1",
+				text: "action group 1"
+			},
+			{
+				key: "2",
+				text: "action group 2"
+			}
+		]
+	});
+
+	// set the model to the core
+	sap.ui.getCore().setModel(oModel);
+
+	var oActionTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oActionGroupTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{text}"
+	});
+
+	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails", {
+		items: aItems,
+		actions: {
+			path: "/actions",
+			template: oActionTemplate
+		},
+		actionGroups: {
+			path: "/actionGroups",
+			template: oActionGroupTemplate
+		},
+		actionPress: function(oEvent) {
+			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("items").length + " items"
+					+ "\n level is: " + oEvent.getParameter("level"));
+		},
+		navigate: function(oEvent) {
+			sap.m.MessageToast.show("Event 'navigate' triggered originating from " + oEvent.getParameter("item").getId() + " item");
+		},
+		beforeOpen: function () {
+			sap.m.MessageToast.show("Event 'beforeOpen' triggered");
+		},
+		beforeClose: function () {
+			sap.m.MessageToast.show("Event 'beforeClose' triggered");
+		}
+	});
+
+	var oApp = new sap.m.App({
+		pages: new sap.m.Page({
+			title: "Selection Details",
+			content: [ oSelectionDetails ]
+		})
+	});
+	oApp.placeAt("content");
+</script>
+</head>
+
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

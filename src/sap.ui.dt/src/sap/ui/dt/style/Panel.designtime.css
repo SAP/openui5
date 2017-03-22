@@ -1,9 +1,0 @@
-.sapMPanelContent {
-	min-height : 48px;
-}
-.layoutEditorSapMPanelHdrEmpty , .layoutEditorSapMPanelInfoToolbarEmpty {
-	height: 0px;
-}
-.sapUiDtWidget-droparea-sortable > .layoutEditorSapMPanelHdrEmpty , .sapUiDtWidget-droparea-sortable > .layoutEditorSapMPanelInfoToolbarEmpty {
-	height : 48px !important;
-}

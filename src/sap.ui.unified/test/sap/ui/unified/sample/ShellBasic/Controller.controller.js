@@ -31,7 +31,7 @@ sap.ui.define([
 		handleUserItemPressed: function(oEvent) {
 			MessageToast.show("User Button Pressed");
 		},
-	
+
 		handleSearchItemSelect: function(oEvent) {
 			MessageToast.show("Search Entry Selected: " + oEvent.getSource().getTitle());
 		},

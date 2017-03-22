@@ -31,6 +31,15 @@
 	top: 28px;
 }
 
+.sapUiTreeNode {
+	background-image: url(img/tree/TreeNode.gif);
+}
+
+/* use the white icon on black background */
+.sapUiInverted-CTX .sapUiTreeNode {
+	background-image: url(img/tree/TreeNode-inverted.gif);
+}
+
 .sapUiTreeNode:hover{
 	background-color: @sapUiListHoverBackground;
 }
@@ -45,12 +54,30 @@
 	background-image: url(img/tree/TreeNode-white.gif);
 }
 
+.sapUiTreeNodeExpanded {
+	background-image: url(img/tree/TreeNode_Exp.gif);
+}
+
+/* use the white icon on black background */
+.sapUiInverted-CTX .sapUiTreeNodeExpanded {
+	background-image: url(img/tree/TreeNode_Exp-inverted.gif)
+}
+
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent,
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent:Hover,
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelected,
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelected:Hover/*,
 .sapUiTreeNodeExpanded.sapUiTreeNode:Hover*/{
 	background-image: url(img/tree/TreeNode_Exp-white.gif);
+}
+
+.sapUiTreeNodeCollapsed {
+	background-image: url(img/tree/TreeNode_Coll.gif);
+}
+
+/* use the white icon on black background */
+.sapUiInverted-CTX .sapUiTreeNodeCollapsed {
+	background-image: url(img/tree/TreeNode_Coll-inverted.gif)
 }
 
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelectedParent,
@@ -70,7 +97,7 @@
 .sapUiTreeTbCont > .sapUiBtn.sapUiBtnS.sapUiBtnLite:hover,
 .sapUiTreeTbCont > .sapUiBtn.sapUiBtnS.sapUiBtnLite:focus{
 	background-repeat: no-repeat;
-	background-position: center center; 
+	background-position: center center;
 	margin-top: 1px;
 }
 

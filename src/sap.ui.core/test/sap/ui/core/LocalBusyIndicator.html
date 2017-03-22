@@ -1,24 +1,28 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>LocalBusyIndicator - sap.ui.core</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_goldreflection"
-	data-sap-ui-libs="sap.ui.commons,sap.ui.table">
-	
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
+
 </script>
 
-<script>
-	try {
-		sap.ui.getCore().loadLibrary("sap.ui.commons");
-	} catch (e) {
-		alert("This test page requires the library 'sap.ui.commons' which is not available.");
-		throw (e);
+<style>
+	body {
+		margin: 10px !important;
 	}
+	.sapUiIcon {
+		text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
+	}
+</style>
+
+<script>
 
 	var oMyListBox = new sap.ui.commons.ListBox({
 		tooltip : "Country",
@@ -39,11 +43,28 @@
 			oMyListBox.setBusy(bBusy);
 		}
 	}).placeAt("button1");
-	
+	var oBtn_short = new sap.ui.commons.Button({
+		text : "show short",
+		press : function() {
+			bBusy = !oMyListBox.isBusy();
+
+			oMyListBox.setBusyIndicatorDelay(0);
+			bBusy ? oBtn1.setText("set loading-mode: off") : oBtn1.setText("set loading-mode: on")
+			oMyListBox.setBusy(bBusy);
+
+			jQuery.sap.delayedCall(200, this, function() {
+				bBusy = !oMyListBox.isBusy();
+
+				bBusy ? oBtn1.setText("set loading-mode: off") : oBtn1.setText("set loading-mode: on")
+				oMyListBox.setBusy(bBusy);
+			});
+		}
+	}).placeAt("button1");
+
 	var oMyTable = new sap.ui.table.Table({
 	}).placeAt("uiArea2");
 	oMyTable.setBusyIndicatorDelay(0);
-	
+
 	// define the Table columns
 	var oControl = new sap.ui.commons.TextView({text:"{lastName}"}); // short binding notation
 	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Last Name"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "100px"}));
@@ -55,21 +76,21 @@
 	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Web Site"}), template: oControl, sortProperty: "linkText", filterProperty: "linkText"}));
 	oControl = new sap.ui.commons.RatingIndicator({value:"{rating}"});
 	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Rating"}), template: oControl, sortProperty: "rating", filterProperty: "rating"}));
-	
-	
+
+
 	// create some local data
 	var aData = [
 		{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", rating: 4},
 		{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", rating: 2},
 		{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", rating: 3}
 	];
-	
+
 	// create a JSONModel, fill in the data and bind the Table to this model
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: aData});
 	oMyTable.setModel(oModel);
 	oMyTable.bindRows("/modelData");
-	
+
 	var oBtn2 = new sap.ui.commons.Button({
 		text : "set loading-mode: on",
 		press : function() {
@@ -79,6 +100,58 @@
 			oMyTable.setBusy(bBusy);
 		}
 	}).placeAt("button2");
+
+	/**
+	 * Small Busy Indicator test
+	 */
+	var oIcon = new sap.ui.core.Icon({src: "sap-icon://nutrition-activity", size: "3rem", color:"#DD0000"});
+	oIcon.placeAt("icon");
+	oIcon.setBusyIndicatorDelay(0);
+
+	var oMButton = new sap.m.Button({text: "Hello World"});
+	oMButton.placeAt("mButton");
+	oMButton.setBusyIndicatorDelay(0);
+
+	/*
+	 * Toggle All button
+	 */
+	var oToggleAllButton = new sap.m.Button({
+		text: "Toggle Busy All",
+		press: function () {
+			oMyListBox.setBusy(!oMyListBox.getBusy());
+			oMyTable.setBusy(!oMyTable.getBusy());
+			oIcon.setBusy(!oIcon.getBusy());
+			oMButton.setBusy(!oMButton.getBusy());
+			oPanel.setBusy(!oPanel.getBusy());
+			oPanel2.setBusy(!oPanel2.getBusy());
+		}
+	});
+	oToggleAllButton.placeAt("toggleAll");
+
+	/**
+	 * Binding Test
+	 */
+	var oBusyModel = new sap.ui.model.json.JSONModel();
+	oBusyModel.setData({o:{isBusy: true}});
+
+	var oPanel = new sap.m.Panel({
+		headerText: "'busy' property is bound",
+		busy: "{/o/isBusy}",
+		content: new sap.m.Input()
+	});
+	oPanel.placeAt("mPanel");
+	oPanel.setModel(oBusyModel);
+
+	/**
+	 * Partial Test
+	 */
+	var oPanel2 = new sap.m.Panel({
+		headerText: "Only header is set busy",
+		content: new sap.m.Input()
+	});
+	oPanel2.placeAt("mPanel2");
+	oPanel2.setBusy(true, "header");
+
 </script>
 </head>
 <body class="sapUiBody" role="application">
@@ -87,11 +160,21 @@
 		<code>sap.ui.core.LocalBusyIndicator</code>
 	</h1>
 
+	<div id="toggleAll"></div>
+	<hr/>
 	<div>Call with a delay of 1000ms (default)</div>
 	<div id="button1"></div>
 	<div id="uiArea1"></div>
+	<hr/>
 	<div id="button2"></div>
 	<div id="uiArea2"></div>
-
+	<hr/>
+	<div id="icon"></div>
+	<hr/>
+	<div id="mButton"></div>
+	<hr/>
+	<div id="mPanel"></div>
+	<hr/>
+	<div id="mPanel2"></div>
 </body>
 </html>

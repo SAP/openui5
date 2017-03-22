@@ -98,7 +98,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *             target: "notFound"
 		 *         }
 		 *     },
-		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {
@@ -111,8 +111,9 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     });
 		 * </code>
 		 * </pre>
+		 * @param {boolean} [oConfig.async=false] @since 1.34. Whether the views which are loaded within this router instance asyncly. The default value is set to false.
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
-		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.<br/>
+		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.<br/>
 		 * @param {object} [oTargetsConfig]
 		 * the target configuration, see {@link sap.m.routing.Targets#constructor} documentation (the options object).<br/>
@@ -139,7 +140,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     },
 		 *     // You should only use this constructor when you are not using a router with a component.
 		 *     // Please use the metadata of a component to define your routes and targets.
-		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {
@@ -161,6 +162,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 
 			constructor : function() {
 				this._oTargetHandler = new TargetHandler();
+
 				Router.prototype.constructor.apply(this, arguments);
 			},
 
@@ -197,7 +199,6 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 
 				// only if a route has a private target and does not use the targets instance of the router we need to inform the targethandler
 				if (oRoute._oTarget) {
-
 					oTargetConfig = oRoute._oTarget._oOptions;
 
 					this._oTargetHandler.addNavigation({
@@ -209,7 +210,6 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 						view: mArguments.view,
 						preservePageInSplitContainer: oTargetConfig.preservePageInSplitContainer
 					});
-
 				}
 
 				return Router.prototype.fireRouteMatched.apply(this, arguments);
@@ -220,7 +220,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 					iViewLevel;
 
 				if (this._oTargets && this._oTargets._oLastDisplayedTarget) {
-					iViewLevel = this._oTargets._oLastDisplayedTarget._oOptions.viewLevel;
+					iViewLevel = this._oTargets._getViewLevel(this._oTargets._oLastDisplayedTarget);
 				}
 
 				this._oTargetHandler.navigate({
@@ -228,7 +228,6 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 					viewLevel: iViewLevel,
 					askHistory: true
 				});
-
 
 				return Router.prototype.fireRoutePatternMatched.apply(this, arguments);
 			}

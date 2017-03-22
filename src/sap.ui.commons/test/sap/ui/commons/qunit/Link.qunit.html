@@ -4,21 +4,21 @@
 
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Test Page for sap.ui.commons.Link</title>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="base"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.commons"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
 
 		var sText = "Hello",
 		 	sTooltip = "abc",
@@ -58,88 +58,88 @@
 
 		var l1, l2;
 
-		module("Basic", {
-			setup: function() {
+		QUnit.module("Basic", {
+			beforeEach: function() {
 				l1 = sap.ui.getCore().getControl("l1");
 				l2 = sap.ui.getCore().getControl("l2");
-	
+
 				l1.setVisible(true);
 				l2.setVisible(true);
-	
+
 				sap.ui.getCore().applyChanges();
-	
-				ok(l1, "l1 should not be null");
-				ok(l2, "l2 should not be null");
+
+				assert.ok(l1, "l1 should not be null");
+				assert.ok(l2, "l2 should not be null");
 			},
-			teardown : function() {
+			afterEach : function() {
 				l1 = null;
 				l2 = null;
 			}
 		});
-		
-		// test property accessor methods 
-		
-		test("TextOk", function() {
-			strictEqual(l1.getText(), sText, "l1.getText()");
-			strictEqual(l2.getText(), sText, "l2.getText()");
+
+		// test property accessor methods
+
+		QUnit.test("TextOk", function(assert) {
+			assert.strictEqual(l1.getText(), sText, "l1.getText()");
+			assert.strictEqual(l2.getText(), sText, "l2.getText()");
 		});
 
-		test("EnabledOk", function() {
-			strictEqual(l1.getEnabled(), bEnabled, "l1.getEnabled()");
-			
-			strictEqual(l2.getEnabled(), bEnabled, "l2.getEnabled()");
+		QUnit.test("EnabledOk", function(assert) {
+			assert.strictEqual(l1.getEnabled(), bEnabled, "l1.getEnabled()");
+
+			assert.strictEqual(l2.getEnabled(), bEnabled, "l2.getEnabled()");
 		});
 
-		test("VisibleOk", function() {
-			strictEqual(l1.getVisible(), bVisible, "l1.getVisible()");
-			strictEqual(l2.getVisible(), bVisible, "l2.getVisible()");
+		QUnit.test("VisibleOk", function(assert) {
+			assert.strictEqual(l1.getVisible(), bVisible, "l1.getVisible()");
+			assert.strictEqual(l2.getVisible(), bVisible, "l2.getVisible()");
 		});
 
-		test("TooltipOk", function() {
-			strictEqual(l1.getTooltip(), sTooltip, "l1.getTooltip()");
-			strictEqual(l2.getTooltip(), sTooltip, "l2.getTooltip()");
+		QUnit.test("TooltipOk", function(assert) {
+			assert.strictEqual(l1.getTooltip(), sTooltip, "l1.getTooltip()");
+			assert.strictEqual(l2.getTooltip(), sTooltip, "l2.getTooltip()");
 		});
 
-		test("HelpIdOk", function() {
-			strictEqual(l1.getHelpId(), sHelpId, "l1.getHelpId()");
-			strictEqual(l2.getHelpId(), sHelpId, "l2.getHelpId()");
+		QUnit.test("HelpIdOk", function(assert) {
+			assert.strictEqual(l1.getHelpId(), sHelpId, "l1.getHelpId()");
+			assert.strictEqual(l2.getHelpId(), sHelpId, "l2.getHelpId()");
 		});
 
-		test("HrefOk", function() {
-			strictEqual(l1.getHref(), sHref, "l1.getHref()");
-			strictEqual(l2.getHref(), sHref, "l2.getHref()");
+		QUnit.test("HrefOk", function(assert) {
+			assert.strictEqual(l1.getHref(), sHref, "l1.getHref()");
+			assert.strictEqual(l2.getHref(), sHref, "l2.getHref()");
 		});
 
-		test("TargetOk", function() {
-			strictEqual(l1.getTarget(), sTarget, "l1.getTarget()");
-			strictEqual(l2.getTarget(), sTarget, "l2.getTarget()");
+		QUnit.test("TargetOk", function(assert) {
+			assert.strictEqual(l1.getTarget(), sTarget, "l1.getTarget()");
+			assert.strictEqual(l2.getTarget(), sTarget, "l2.getTarget()");
 		});
 
-		// test event handlers 
-		
-		// TODO: event handler using Event parameters 
-		
-		test("PressOk", function() {
+		// test event handlers
+
+		// TODO: event handler using Event parameters
+
+		QUnit.test("PressOk", function(assert) {
 			try {
 				l1.firePress();
 				fail("exception should have been thrown!");
 			} catch (e) {
-				strictEqual(e, sPressMessage, "l1.firePress()");
+				assert.strictEqual(e, sPressMessage, "l1.firePress()");
 			}
 
 			try {
 				l2.firePress();
 				fail("exception should have been thrown!");
 			} catch (e) {
-				strictEqual(e, sPressMessage, "l2.firePress()");
+				assert.strictEqual(e, sPressMessage, "l2.firePress()");
 			}
 		});
 
-		test("DetachPressOk", function() {
+		QUnit.test("DetachPressOk", function(assert) {
 			l1.detachPress(pressEventHandler);
 			try {
 				l1.firePress();
-				ok(true, "No event and thus no exception should be triggered!");
+				assert.ok(true, "No event and thus no exception should be triggered!");
 			} catch (e) {
  				fail("should not occur");
 			}
@@ -147,30 +147,30 @@
 			l1.attachPress(pressEventHandler);
 		});
 
-		// test methods 
-		
-		// TODO 
-		
-		
-		// test misc (control interaction, metadata, styles, etc.)	
-		
+		// test methods
+
+		// TODO
+
+
+		// test misc (control interaction, metadata, styles, etc.)
+
 		function isEmpty(oObject) {
 			for(var i in oObject){ return false;}
 			return true;
 		}
-		
-		test("MetadataOk", function() {
+
+		QUnit.test("MetadataOk", function(assert) {
 			var oMetadata = l1.getMetadata();
-			ok(oMetadata, "l1.getMetadata() should not be null");
-			ok(oMetadata.getParent(), "l1.getMetadata().getParent() should not be null");
-			ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
-			strictEqual(oMetadata.getProperties()["text"]["type"], "string");
-			ok(isEmpty(oMetadata.getAggregations()));
+			assert.ok(oMetadata, "l1.getMetadata() should not be null");
+			assert.ok(oMetadata.getParent(), "l1.getMetadata().getParent() should not be null");
+			assert.ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
+			assert.strictEqual(oMetadata.getProperties()["text"]["type"], "string");
+			assert.ok(isEmpty(oMetadata.getAggregations()));
 			var oAssociations = oMetadata.getAssociations();
-			strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
-			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
-			strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
-			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
+			assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
+			assert.ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
+			assert.strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
+			assert.ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
 		</script>

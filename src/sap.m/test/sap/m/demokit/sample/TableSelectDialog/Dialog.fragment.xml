@@ -6,7 +6,7 @@
 		title="Select Product"
 		search="handleSearch"
 		confirm="handleClose"
-		close="handleClose"
+		cancel="handleClose"
 		items="{
 			path : '/ProductCollection',
 			sorter : {
@@ -29,8 +29,12 @@
 						formatter: 'sap.m.sample.TableSelectDialog.Formatter.weightState'
 					}" />
 				<ObjectNumber
-					number="{Price}"
-					unit="{CurrencyCode}" />
+						number="{
+							parts:[{path:'Price'},{path:'CurrencyCode'}],
+							type: 'sap.ui.model.type.Currency',
+							formatOptions: {showMeasure: false}
+						}"
+						unit="{CurrencyCode}" />
 			</cells>
 		</ColumnListItem>
 		<columns>
@@ -49,7 +53,7 @@
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right">
+				hAlign="End">
 				<header>
 					<Text text="Dimensions" />
 				</header>
@@ -62,7 +66,7 @@
 					<Text text="Weight" />
 				</header>
 			</Column>
-			<Column hAlign="Right">
+			<Column hAlign="End">
 				<header>
 					<Text text="Product" />
 				</header>

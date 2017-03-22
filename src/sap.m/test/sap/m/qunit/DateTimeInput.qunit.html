@@ -1,28 +1,32 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Test Page for sap.m.DateTimeInput</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-language="en-US"
+		src="../../../../resources/sap-ui-core.js">
 </script>
-
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- use the sinon faketimers for this test -->
-<script type="text/javascript">
+<script>
 	sinon.config.useFakeTimers = true;
+	// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+	jQuery.now = function() {
+		return Date.now();
+	};
 </script>
 
-<script type="text/javascript">
+<script>
 	jQuery.sap.require("sap.ui.model.type.Date");
 
 	var oNow = new Date(),
@@ -41,360 +45,174 @@
 	});
 	sap.ui.getCore().setModel(oModel);
 
+	var bChange = false;
+	var sValue = "";
+	var bValid = false;
+	var sId = "";
+
+	function handleChange(oEvent){
+			var oDTI = oEvent.oSource;
+			sValue = oEvent.getParameter("newValue");
+			bValid = oEvent.getParameter("valid");
+			bChange = true;
+			sId = oDTI.getId();
+		};
+
 	var dti0 = new sap.m.DateTimeInput({
 			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
+			valueFormat : sValueFormat,
+			placeholder : "Test",
+			ariaLabelledBy : "XXX",
+			width: "100px",
+			change: handleChange
 		}).placeAt("content"),
 		dti1 = new sap.m.DateTimeInput({
-			type : "Time"
+			type : "Time",
+			change: handleChange
 		}).placeAt("content"),
 		dti2 = new sap.m.DateTimeInput({
 			type : "DateTime",
-			displayFormat : new sap.ui.model.type.DateTime({style: "long"}).getOutputPattern()
+			displayFormat : new sap.ui.model.type.DateTime({style: "long"}).getOutputPattern(),
+			change: handleChange
 		}).placeAt("content"),
 		dti3 = new sap.m.DateTimeInput({
 			value : {
 				path : "/dateVal",
 				type : new sap.ui.model.type.Date({pattern : sValueFormat})
-			}
+			},
+			change: handleChange
 		}).placeAt("content"),
 		dti4 = new sap.m.DateTimeInput("errordti", {
 			displayFormat : "dd MMMM, yyyy",
 			valueState:"Error",
-			valueStateMessage:"Error Message"
+			valueStateText:"Error Message",
+			change: handleChange
 		}).placeAt("content");
 
 
 	qutils.delayTestStart();
 
-	module("Properties");
+	QUnit.module("Properties");
 
-	test("Set and Get Date Value ", function() {
+	QUnit.test("Set and Get Date Value ", function(assert) {
 
 		var oDateValue1 = oFormatter.parse(sDateValue1);
 		dti0.setValue(sDateValue1);
 		oCore.applyChanges();
-		strictEqual(dti0.getValue(), sDateValue1, "value after setValue: " + sDateValue1);
-		strictEqual(+dti0.getDateValue(), +oDateValue1, "dateValue after setValue : " + oDateValue1 + " " + dti0.getDateValue());
+		assert.strictEqual(dti0.getValue(), sDateValue1, "value after setValue: " + sDateValue1);
+		assert.strictEqual(+dti0.getDateValue(), +oDateValue1, "dateValue after setValue : " + oDateValue1 + " " + dti0.getDateValue());
 
 		var oDateValue2 = oFormatter.parse(sDateValue2);
 		dti0.setDateValue(oDateValue2);
 		oCore.applyChanges();
-		strictEqual(dti0.getValue(), sDateValue2, "value after setDateValue: " + sDateValue2);
-		strictEqual(+dti0.getDateValue(), +oDateValue2, "dateValue after setDateValue : " + oDateValue2);
+		assert.strictEqual(dti0.getValue(), sDateValue2, "value after setDateValue: " + sDateValue2);
+		assert.strictEqual(+dti0.getDateValue(), +oDateValue2, "dateValue after setDateValue : " + oDateValue2);
 
 		var oDateValue3 = oFormatter.parse(sDateValue3);
 		oModel.setData({
 			dateVal : oDateValue3
 		});
 		oCore.applyChanges();
-		strictEqual(dti3.getValue(), sDateValue3, "value after oModel.setData: " + sDateValue3);
-		strictEqual(+dti3.getDateValue(), +oDateValue3, "dateValue after oModel.setData : " + oDateValue3);
+		assert.strictEqual(dti3.getValue(), sDateValue3, "value after oModel.setData: " + sDateValue3);
+		assert.strictEqual(+dti3.getDateValue(), +oDateValue3, "dateValue after oModel.setData : " + oDateValue3);
 	});
 
-	test("Load custom picker", function() {
-		//sinon.config.useFakeTimers = false;
-		dti0.rerender();
-		dti1.rerender();
-		dti2.rerender();
-		dti3.rerender();
-		oCore.applyChanges();
-
-		dti2.focus();
-		dti2._$input.scroller("hide");
-		
-		this.clock.tick(500); 
-
-		ok(jQuery.scroller instanceof Object, "Custom picker is loaded");
-		strictEqual(typeof jQuery.scroller.presets.date, "function", "Custom date picker is loaded");
-		strictEqual(typeof jQuery.scroller.presets.time, "function", "Custom time picker is loaded");
-		strictEqual(typeof jQuery.scroller.presets.datetime, "function", "Custom datetime picker is loaded");
-		strictEqual(typeof sap.m.InstanceManager, "object", "Instance Manager is loaded");
+	QUnit.test("used picker", function(assert) {
+		assert.equal(dti0.getAggregation("_picker").getMetadata().getName(), "sap.m.DatePicker", "DatePicker control used inside");
+		assert.equal(dti1.getAggregation("_picker").getMetadata().getName(), "sap.m.TimePicker", "TimePicker control used inside");
+		assert.equal(dti2.getAggregation("_picker").getMetadata().getName(), "sap.m.DateTimePicker", "DateTimePicker control used inside");
 	});
 
-	test("Change", function() {
-		var sAfterValue = sDateValue1,
-			sBeforeValue = sDateValue2,
-			oEvent = jQuery.Event("change"),
-			fnChangeHandler = function() {
-				strictEqual(this.getValue(), sAfterValue, "value after onchange : " + sAfterValue);
-			};
+	QUnit.test("picker properties", function(assert) {
+		var oDatePicker = dti0.getAggregation("_picker");
+		assert.equal(dti0.getValue(), oDatePicker.getValue(), "DatePicker value");
+		assert.equal(dti0.getDateValue().getTime(), oDatePicker.getDateValue().getTime(), "DatePicker Datealue");
+		assert.equal(dti0.getValueFormat(), oDatePicker.getValueFormat(), "DatePicker valueFormat");
+		assert.equal(dti0.getDisplayFormat(), oDatePicker.getDisplayFormat(), "DatePicker displayFormat");
+		assert.equal(dti0.getPlaceholder(), oDatePicker.getPlaceholder(), "DatePicker value");
+		assert.equal(dti0.getWidth(), "100px", "DateTimeInput width");
+		assert.equal(oDatePicker.getWidth(), "100%", "DatePicker width");
+		assert.ok(jQuery.sap.equal(dti0.getAriaLabelledBy(), oDatePicker.getAriaLabelledBy()), "DatePicker getAriaLabelledBy");
 
-		dti0.setValue(sBeforeValue);
-		oCore.applyChanges();
-		strictEqual(dti0.getValue(), sBeforeValue, "value before onchange : " + sBeforeValue);
-		dti0.attachChange(fnChangeHandler);
-		dti0.setValue(sAfterValue);
-		oCore.applyChanges();
-		dti0.onChange(oEvent);
-		dti0.detachChange(fnChangeHandler);
+		oDatePicker = dti4.getAggregation("_picker");
+		assert.equal(dti4.getValueState(), oDatePicker.getValueState(), "DatePicker valueState");
+		assert.equal(dti4.getValueStateText(), oDatePicker.getValueStateText(), "DatePicker valueStateText");
 	});
 
-	test("Invalid Value", function() {
+
+	QUnit.test("Invalid Value", function(assert) {
 		var sInvalidValue = ":)";
 
 		dti2.setValue(sInvalidValue);
 		oCore.applyChanges();
 
-		strictEqual(dti2.getValue(), "", "value after invalid value set : " + dti2.getValue());
-		strictEqual(dti2.getDateValue(), null, "dateValue after invalid value set : " + dti2.getDateValue());
+		assert.strictEqual(dti2.getValue(), ":)", "value after invalid value set : " + dti2.getValue());
+		assert.strictEqual(dti2.getDateValue(), null, "dateValue after invalid value set : " + dti2.getDateValue());
 	});
 
-	test("Destroy", function() {
-		strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
+	QUnit.module("Interaction");
+
+	QUnit.test("Change event", function(assert) {
+		var oDateValue2 = oFormatter.parse(sDateValue2);
+		var oDatePicker = dti0.getAggregation("_picker");
+		bChange = false;
+		sValue = "";
+		bValid = true;
+		sId = "";
+		dti0.focus();
+		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").val("33 May, 2012");
+		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		debugger;
+		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		assert.equal(sId, dti0.getId(), "Change event fired");
+		assert.equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");
+		assert.ok(!bValid, "Value is not valid");
+		assert.equal(dti0.getValue(), "33 May, 2012", "Value has entered value if invalid");
+		assert.equal(dti0.getDateValue().getTime(), oDateValue2.getTime(), "DateValue not changed set");
+
+		bChange = false;
+		sValue = "";
+		bValid = false;
+		sId = "";
+		dti0.focus();
+		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").val("30 May, 2012");
+		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		assert.equal(sId, dti0.getId(), "Change event fired");
+		assert.equal(sValue, "2012-05-30", "Value in internal format priovided");
+		assert.ok(bValid, "Value is valid");
+		assert.equal(dti0.getValue(), "2012-05-30", "Value in internal format set");
+		assert.equal(dti0.getDateValue().getTime(), new Date("2012", "04", "30").getTime(), "DateValue set");
+
+	});
+
+	QUnit.test("Destroy", function(assert) {
+		assert.strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
 		dti1.destroy();
-		strictEqual(dti1.$().length, 0, "DateTimeInput is destroyed");
+		assert.strictEqual(dti1.$().length, 0, "DateTimeInput is destroyed");
 	});
 
-	test("value state and value state message", function() {
+	QUnit.test("value state and value state message", function(assert) {
+		var oPicker = dti4.getAggregation("_picker");
 		dti4.focus();
-		ok(dti4._popup.isOpen(), "error message is open");
+		assert.ok(oPicker._oValueStateMessage._oPopup.isOpen(), "error message is open");
+		this.clock.tick(500);
 
 		document.activeElement.blur();
-		this.clock.tick(500);
-
-		ok(!dti4._popup.isOpen(), "error message is closed");
+		assert.ok(!oPicker._oValueStateMessage._oPopup.isOpen(), "error message is closed");
 	});
 
- 	module("Keyboard handling");
+	QUnit.module("Accessibility");
 
-	test("Scroller [PAGE_DOWN] key handling", function() {
-		var dti4 = new sap.m.DateTimeInput({
-			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		// Open the scroller and scroll to [2012-06-22]
-		var oDateValue = new Date(2014, 5, 22);
-		dti4._$input.scroller("show");
-		dti4._$input.mobiscroll("setDate", oDateValue, true, 2);
-
-		// Get scroller day column
-		var oDayColumn = jQuery(".dwww")[0];
-
-		// Trigger [PAGE_DOWN] key on scroller day columm
-		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.PAGE_DOWN);
-		this.clock.tick(500);
-
-		// Assert
-		equal(dti4._$input.mobiscroll("getInst").temp[0], "30", "Scroller day column moved to 30.06 (June) successfully.");
-
-		// Close the scroller
-		dti4._$input.scroller("hide");
-		this.clock.tick(500);
-	
-		//Clean up
-		dti4.destroy(); 
-	}); 
-
-	test("Scroller [PAGE_UP] key handling", function() {
-		var dti4 = new sap.m.DateTimeInput({
-			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
-		}).placeAt("content");
-
-		// Apply changes
-		sap.ui.getCore().applyChanges();
-
-		// Open the scroller and scroll to [2012-06-22]
-		var oDateValue = new Date(2014, 5, 22);
-		dti4._$input.scroller("show");
-		dti4._$input.mobiscroll("setDate", oDateValue, true, 2);
-
-		// Get scroller day column
-		var oDayColumn = jQuery(".dwww")[0];
-
-		// Trigger [PAGE_UP] key on scroller day columm
-		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.PAGE_UP);
-		this.clock.tick(500);
-
-	 	// Assert
-		equal(dti4._$input.mobiscroll("getInst").temp[0], "1", "Scroller day column movedto 01.05 (May) successfully.");
-
-		// Close the scroller
-		dti4._$input.scroller("hide");
-		this.clock.tick(500);
-
-		//Clean up
-		dti4.destroy(); 
-	}); 
-
-	test("Scroller opening with [F4]", function() {
-		var dti4 = new sap.m.DateTimeInput({
-			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		// Open the scroller with [F4]
-		sap.ui.test.qunit.triggerKeydown(dti4.$(), jQuery.sap.KeyCodes.F4);
-		this.clock.tick(500);
-
-		// Assert
-		ok(dti4.$("inner").hasClass("dwtd"), "Scroller is opened");
-
-		// Close the scroller
-		dti4._$input.scroller("hide");
-		this.clock.tick(500);
-
-		//Clean up
-		dti4.destroy();
-	}); 
-
-	test("Scroller opening with [ARROW_UP]", function() {
-		var dti4 = new sap.m.DateTimeInput({
-			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		// Open the scroller with [ARROW_UP]
-		sap.ui.test.qunit.triggerKeydown(dti4.$(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-		this.clock.tick(500);
-
-		// Assert
-		ok(dti4.$("inner").hasClass("dwtd"), "Scroller is opened");
-
-		// Close the scroller
-		dti4._$input.scroller("hide");
-		this.clock.tick(500);
-
-		// Clean up
-		dti4.destroy();
-	});  
-
-	test("Scroller opening with [ARROW_DOWN]", function() {
-		var dti4 = new sap.m.DateTimeInput({
-			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		// Open the scroller with [ARROW_UP]
-		sap.ui.test.qunit.triggerKeydown(dti4.$(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
-		this.clock.tick(500);
-
-		// Assert
-		ok(dti4.$("inner").hasClass("dwtd"), "Scroller is opened");
-
-		// Close the scroller
-		dti4._$input.scroller("hide");
-		this.clock.tick(500);
-
-		// Clean up
-		dti4.destroy();
-	}); 
-
-	test("Scroller closing with [F4]", function() {
-		var dti5 = new sap.m.DateTimeInput({
-			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-  
-		// Open the scroller and scroll to [2012-05-05]
-		var oNewDate = new Date(2014, 4, 5);
-		dti5._$input.scroller("show");
-		dti5._$input.mobiscroll("setDate", oNewDate, true, 2);
-
-		// Get scroller day column
-		var oDayColumn = jQuery(".dwww")[0];
-	
-		// Trigger [F4] and close the scroller
-		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.F4);
-		this.clock.tick(500);
-		var oSelectedDate = dti5._$input.mobiscroll("getDate");
-	
-		// Assert scroller is closed
-		ok(!dti5.$("inner").hasClass("dwtd"), "Scroller is closed");
-
-		// Assert selected date and the date that was scrolled are equal - Closing with [F4] should act like pressing OK button
-		equal(oSelectedDate.getTime(), oNewDate.getTime());
-		this.clock.tick(500);
-
-		//Clean up
-		dti5.destroy(); 
+	QUnit.test("getAccessibilityInfo", function(assert) {
+		var oInput = new sap.m.DateTimeInput();
+		assert.ok(!!oInput.getAccessibilityInfo, "DateTimeInput has a getAccessibilityInfo function");
+		var oInfo = oInput.getAccessibilityInfo();
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		//Rest is tested in unit tests of inner controls
+		oInput.destroy();
 	});
-
-	test("Scroller closing with [ALT] + [ARROW_UP]", function() {
-		var dti6 = new sap.m.DateTimeInput({
-			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		// Open the scroller and scroll to [2012-04-05]
-		var oNewDate = new Date(2014, 3, 5);
-		dti6._$input.scroller("show");
-		dti6._$input.mobiscroll("setDate", oNewDate, true, 2);
-
-		// Get scroller day column
-		var oDayColumn = jQuery(".dwww")[0];
-	
-		// Trigger [ARROW_UP] and close the scroller
-		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-		this.clock.tick(500);
-		var oSelectedDate = dti6._$input.mobiscroll("getDate");
-	
-		// Refreshing the DOM due timing issues with closing and opening animations
-		dti6.invalidate();
-		sap.ui.getCore().applyChanges();
-
-		// Assert scroller is closed
-		ok(!dti6.$("inner").hasClass("dwtd"), "Scroller is closed");
-
-		// Assert selected date and the date that was scrolled are equal - Closing with [ALT] + [ARROW_UP] should act like pressing OK button
-		equal(oSelectedDate.getTime(), oNewDate.getTime());
-		this.clock.tick(500);
-
-		//Clean up
-		dti6.destroy(); 
-	});
-	
-	test("Scroller closing with [ALT] + [ARROW_DOWN]", function() {
-		var dti7 = new sap.m.DateTimeInput({
-			displayFormat : "dd MMMM, yyyy",
-			valueFormat : sValueFormat
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		// Open the scroller and scroll to [2012-03-05]
-		var oNewDate = new Date(2014, 2, 5);
-		dti7._$input.scroller("show");
-		dti7._$input.mobiscroll("setDate", oNewDate, true, 2);
-
-		// Get scroller day column
-		var oDayColumn = jQuery(".dwww")[0];
-
-		// Trigger [ARROW_DOWN] and close the scroller
-		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
-		this.clock.tick(5000);
-		var oSelectedDate = dti7._$input.mobiscroll("getDate");
-
-		// Refreshing the DOM due timing issues with closing and opening animations
-		dti7.invalidate();
-		sap.ui.getCore().applyChanges();
-
-		// Assert scroller is closed
-		ok(!dti7.$("inner").hasClass("dwtd"), "Scroller is closed");
-
-		// Assert selected date and the date that was scrolled are equal - Closing with [ALT] + [ARROW_DOWN] should act like pressing OK button
-		equal(oSelectedDate.getTime(), oNewDate.getTime());
-		this.clock.tick(5000);
-
-		//Clean up
-		dti7.destroy(); 
-	}); 
 </script>
-
 </head>
 <body>
 	<h1 id="qunit-header">QUnit page for sap.m.DateTimeInput</h1>

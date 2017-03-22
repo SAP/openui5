@@ -2,13 +2,13 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
 	<title>Test Page for sap.m.OverflowToolbar</title>
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-noConflict="true"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 	</script>
 
 	<script>
@@ -70,12 +70,21 @@
 			oOverflowTB = new sap.m.OverflowToolbar(oConfig);
 
 			oOverflowTB.placeAt("qunit-fixture");
-//			oOverflowTB.placeAt("qunit-fixture-visible"); // Easier to debug the tests here
 			sap.ui.getCore().applyChanges();
 
 			return oOverflowTB;
 		}
 
+		function getButton(sText, sPriority, iGroup) {
+			return new sap.m.Button({
+				text: sText,
+				width: "100px",
+				layoutData: new sap.m.OverflowToolbarLayoutData({
+					priority: sPriority,
+					group: iGroup
+				})
+			});
+		}
 		/**
 		 * A list of widths that test all scenarios
 		 * @returns {*[]}
@@ -96,33 +105,28 @@
 
 		function setFlexboxMode(sMode) {
 			if (sMode === "new") {
-				this.stub(sap.m.Toolbar, "hasFlexBoxSupport", true);
 				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
 			} else if (sMode === "old") {
-				this.stub(sap.m.Toolbar, "hasFlexBoxSupport", true);
-				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
-			} else if (sMode === "none") {
-				this.stub(sap.m.Toolbar, "hasFlexBoxSupport", false);
 				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
 			}
 		}
 
-		module("DOM Rendering");
-		test("Creating a toolbar should add it in DOM", function () {
+		QUnit.module("DOM Rendering");
+		QUnit.test("Creating a toolbar should add it in DOM", function (assert) {
 			var oOverflowTB = createOverflowToolbar();
 
-			strictEqual(oOverflowTB.$().length, 1, "Overflow Toolbar is in DOM");
+			assert.strictEqual(oOverflowTB.$().length, 1, "Overflow Toolbar is in DOM");
 
 			oOverflowTB.destroy();
 		});
 
 
-		module("Calculations");
+		QUnit.module("Calculations");
 
 
 		function testAllFlexBoxModes(sName, fnTest) {
-			["new", "old", "none"].forEach(function(sMode) {
-				test("[" + sMode.toUpperCase() + " flexbox] " + sName, function () {
+			["new", "old"].forEach(function(sMode) {
+				QUnit.test("[" + sMode.toUpperCase() + " flexbox] " + sName, function (assert) {
 					setFlexboxMode.call(this, "new");
 					fnTest.call(this, sName, fnTest);
 				});
@@ -130,14 +134,14 @@
 		}
 
 		testAllFlexBoxModes("Shrinking a toolbar should move some buttons to the overflow", function () {
-			
+
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
-						new sap.m.Button({text: "1", width: "100px"}),		
-						new sap.m.Button({text: "2", width: "100px"}),		
-						new sap.m.Button({text: "3", width: "100px"}),		
-						new sap.m.Button({text: "4", width: "100px"}),		
-						new sap.m.Button({text: "5", width: "100px"})		
+						new sap.m.Button({text: "1", width: "100px"}),
+						new sap.m.Button({text: "2", width: "100px"}),
+						new sap.m.Button({text: "3", width: "100px"}),
+						new sap.m.Button({text: "4", width: "100px"}),
+						new sap.m.Button({text: "5", width: "100px"})
 					],
 					oOverflowTB = createOverflowToolbar({
 						width: "550px"
@@ -145,7 +149,7 @@
 
 			// Before the resize, all buttons are visible
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
 
 			// Resize the toolbar
 			oOverflowTB.setWidth('400px');
@@ -153,37 +157,74 @@
 
 			// After the resize there should be less buttons visible on the toolbar
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
-			// The action sheet should not be visible yet
-			var oActionSheet = oOverflowTB._getActionSheet();
-			strictEqual(oActionSheet.$().is(":visible"), false, "The action sheet is not visible");
+			// The overflow area should not be visible yet
+			var oPopover = oOverflowTB._getPopover();
+			assert.strictEqual(oPopover.$().is(":visible"), false, "The overflow area is not visible");
 
 			// Click the overflow button
 			oOverflowButton.firePress();
 			this.clock.tick(1000);
 
-			// The action sheet should appear
-			strictEqual(oActionSheet.$().is(":visible"), true, "The action sheet is visible after clicking the overflow button");
+			// The overflow area should appear
+			assert.strictEqual(oPopover.$().is(":visible"), true, "The overflow area is visible after clicking the overflow button");
 
-			// All buttons should be visible again, because the action sheet is open
+			// All buttons should be visible again, because the overflow area is open
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "After opening the action sheet, all buttons are visible once more");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "After opening the overflow area, all buttons are visible once more");
 
 			// Restore the toolbar to the original size
 			oOverflowTB.setWidth('550px');
 			sap.ui.getCore().applyChanges();
 
-			// There should be no overflow button, no action sheet, all buttons visible again
-			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after restoring to full size");
+			// There should be no overflow button, no overflow area, all buttons visible again
+			assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after restoring to full size");
 			this.clock.tick(1000);
-			strictEqual(oActionSheet.$().is(":visible"), false, "The action sheet is not visible after restoring to full size");
+			assert.strictEqual(oPopover.$().is(":visible"), false, "The overflow area is not visible after restoring to full size");
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+
+			oOverflowTB.destroy();
+		});
+
+		testAllFlexBoxModes("Shrinking a toolbar should also move custom buttons to the overflow", function () {
+
+			var MyButton = sap.m.Button.extend("sap.m.MyButton", {
+				renderer: sap.m.ButtonRenderer.render
+			});
+
+			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+			var aDefaultContent = [
+						new MyButton({text: "1", width: "100px"}),
+						new MyButton({text: "2", width: "100px"}),
+						new MyButton({text: "3", width: "100px"}),
+						new MyButton({text: "4", width: "100px"}),
+						new MyButton({text: "5", width: "100px"})
+					],
+					oOverflowTB = createOverflowToolbar({
+						width: "550px"
+					}, aDefaultContent);
+
+			// Before the resize, all buttons are visible
+			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.MyButton");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+
+			// Resize the toolbar
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// After the resize there should be less buttons visible on the toolbar
+			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.MyButton");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
+
+			// There should be an overflow button and it should be visible
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			oOverflowTB.destroy();
 		});
@@ -204,7 +245,7 @@
 
 			// Before the resize, all buttons are visible
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
 
 			// Change the width of a button
 			aDefaultContent[4].setWidth("500px");
@@ -212,21 +253,21 @@
 
 			// After the width change there should be less buttons visible on the toolbar
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			// Resize the button back
 			aDefaultContent[4].setWidth("100px");
 			sap.ui.getCore().applyChanges();
 
-			// There should be no overflow button, no action sheet, all buttons visible again
-			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
+			// There should be no overflow button, no overflow area, all buttons visible again
+			assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
 			this.clock.tick(1000);
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
 
 			oOverflowTB.destroy();
 		});
@@ -247,7 +288,7 @@
 
 			// Before the resize, all buttons are visible
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
 
 			// Insert a new button
 			var oNewButton = new sap.m.Button({text: "0", width: "100px"});
@@ -256,34 +297,36 @@
 
 			// After the insertion there should be less buttons visible on the toolbar
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons < aDefaultContent.length+1, true, "After the insertion, the number of visible buttons should have decreased");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length+1, true, "After the insertion, the number of visible buttons should have decreased");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			// Remove the button
 			oOverflowTB.removeContent(oNewButton);
 			sap.ui.getCore().applyChanges();
 
-			// There should be no overflow button, no action sheet, all buttons visible again
-			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
+			// There should be no overflow button, no overflow area, all buttons visible again
+			assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
 			this.clock.tick(1000);
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
 
 			oOverflowTB.destroy();
 		});
+
+		QUnit.module("Priority");
 
 		testAllFlexBoxModes("Buttons with layout to stay in overflow never go to the toolbar", function () {
 
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
-						new sap.m.Button({text: "1", width: "100px"}),
-						new sap.m.Button({text: "2", width: "100px"}),
+						getButton('1'),
+						getButton('2'),
 						new sap.m.Button({text: "3", width: "100px", layoutData: new sap.m.OverflowToolbarLayoutData({stayInOverflow: true})}),
-						new sap.m.Button({text: "4", width: "100px"}),
-						new sap.m.Button({text: "5", width: "100px"})
+						getButton('4'),
+						getButton('5'),
 					],
 					oOverflowTB = createOverflowToolbar({
 						width: "550px"
@@ -291,9 +334,9 @@
 
 			// Initially there is an overflow button and not all buttons are visible on the toolbar
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons < aDefaultContent.length, true, "Even though there is enough space on the toolbar, not all buttons are visible");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "Even though there is enough space on the toolbar, not all buttons are visible");
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is always visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is always visible");
 
 			oOverflowTB.destroy();
 		});
@@ -302,10 +345,10 @@
 
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
-						new sap.m.Button({text: "1", width: "100px"}),
-						new sap.m.Button({text: "2", width: "100px"}),
-						new sap.m.Button({text: "3", width: "100px"}),
-						new sap.m.Button({text: "4", width: "100px"}),
+						getButton('1'),
+						getButton('2'),
+						getButton('3'),
+						getButton('4'),
 						new sap.m.Button({text: "5", width: "100px", layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})})
 					],
 					oOverflowTB = createOverflowToolbar({
@@ -314,21 +357,678 @@
 
 			// Before the resize, the button with special layout is in the toolbar
 			var oSpecialButton = aDefaultContent[4];
-			strictEqual(oSpecialButton.$().is(":visible"), true, "Initially the button with special layout is visible");
+			assert.strictEqual(oSpecialButton.$().is(":visible"), true, "Initially the button with special layout is visible");
 
 			// Resize the toolbar
 			oOverflowTB.setWidth('200px');
 			sap.ui.getCore().applyChanges();
 
 			// After the resize there should be less buttons visible on the toolbar
-			strictEqual(oSpecialButton.$().is(":visible"), true, "After the resize, the special layout button is still visible");
+			assert.strictEqual(oSpecialButton.$().is(":visible"), true, "After the resize, the special layout button is still visible");
 
 			oOverflowTB.destroy();
 		});
 
-		module("Data - aggregations and bindings");
+		QUnit.test("Buttons with priority NeverOverflow should never overflow", function (assert) {
 
-		test("[getContent] The content aggregation should contain the proper number of elements", function () {
+			// Create a toolbar 75px and 5 buttons x 100px, so all buttons should overflow by default,
+			// but one of the buttons has special priority which forces the button to stay
+
+			var aDefaultContent = [
+						getButton('1'),
+						getButton('2'),
+						getButton('3', sap.m.OverflowToolbarPriority.NeverOverflow),
+						getButton('4'),
+						getButton('5')
+					],
+					oOverflowTB = createOverflowToolbar({
+						width: "75px"
+					}, aDefaultContent);
+
+			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+			assert.strictEqual(iVisibleButtons, 1, "The button never overflows");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Buttons with priority AlwaysOverflow should always overflow", function (assert) {
+
+			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
+			// but two of the button has special priority whith force the buttons to overflow always
+			var aDefaultContent = [
+						getButton('1'),
+						getButton('2'),
+						getButton('3', sap.m.OverflowToolbarPriority.AlwaysOverflow),
+						getButton('4', sap.m.OverflowToolbarPriority.AlwaysOverflow),
+						getButton('5')
+					],
+					oOverflowTB = createOverflowToolbar({
+						width: "600px"
+					}, aDefaultContent);
+
+			// Even though there is enough space on the toolbar, two of the buttons always oferflows
+			var iOverflowedButtons = oOverflowTB._getPopover().getAssociatedContent().length;
+			assert.strictEqual(iOverflowedButtons, 2, "Two of the buttons always oferflows");
+
+			// There should be three buttons visible in the toolbar
+			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+			assert.strictEqual(iVisibleButtons, 3, "Only three buttons are visible in the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Buttons with priority Disappear should be hidden in the overflow area", function (assert) {
+
+			// Create a toolbar 600px and 5 buttons x 100px, so all buttons should be visible,
+			// but one of the button has special priority Disappear, so when it overflows it should be hidden in the overflow popover
+			var oButtonWithDisappearPriority = getButton('5', sap.m.OverflowToolbarPriority.Disappear);
+
+			var aDefaultContent = [
+						getButton('1'),
+						getButton('2'),
+						getButton('3'),
+						getButton('4'),
+						oButtonWithDisappearPriority
+					],
+					oOverflowTB = createOverflowToolbar({
+						width: "600px"
+					}, aDefaultContent);
+
+			// Shrink the toolbar
+			oOverflowTB.setWidth('300px');
+			sap.ui.getCore().applyChanges();
+
+			// Click the overflow button
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			oOverflowButton.firePress();
+			this.clock.tick(1000);
+
+			// Check if the button with Priority Disappear is visible in the overflow popover
+			assert.strictEqual(oButtonWithDisappearPriority.$().css("display") === "none", true,
+				"The button with Priority Disappear is hidden and the proper css style is applied");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing piority from Low to High should move the button from the overflow area back to the toolbar", function (assert) {
+
+			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
+			// Since all buttons are with equal priority 'Low' they should overflow from right to the left.
+			var oButtonUnderTest = getButton('5', sap.m.OverflowToolbarPriority.Low);
+
+			var aDefaultContent = [
+						getButton('1', sap.m.OverflowToolbarPriority.Low),
+						getButton('2', sap.m.OverflowToolbarPriority.Low),
+						getButton('3', sap.m.OverflowToolbarPriority.Low),
+						getButton('4', sap.m.OverflowToolbarPriority.Low),
+						oButtonUnderTest
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "300px"
+					}, aDefaultContent);
+
+			// The Button with Low Priority is not visible
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false, "The button with Low Priority is not visible");
+
+			// Change the button priority from Low to High
+			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.High}));
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button moved back to the toolbar
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button with Chaged Priority is visible whithin the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing priority from Low to NeverOverflow should move the button to the overflow", function (assert) {
+
+			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
+			// Since all buttons are with equal priority 'Low', they should overflow from right to the left.
+			var oButtonUnderTest = getButton('5', sap.m.OverflowToolbarPriority.Low);
+
+			var aDefaultContent = [
+						getButton('1', sap.m.OverflowToolbarPriority.Low),
+						getButton('2', sap.m.OverflowToolbarPriority.Low),
+						getButton('3', sap.m.OverflowToolbarPriority.Low),
+						getButton('4', sap.m.OverflowToolbarPriority.Low),
+						oButtonUnderTest
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "300px"
+					}, aDefaultContent);
+
+			//Check if the button is visible in the toolbar
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
+				"The button with Low Priority is not visible whithin the toolbar");
+
+			// Change the button priority from Low to NeverOverflow
+			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}));
+			sap.ui.getCore().applyChanges();
+
+			//Check if the button is visible in the toolbar
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button with Chaged Priority is visible whithin the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing priority from High to Low should move the button to the overflow", function (assert) {
+
+			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
+			// Since all buttons are with equal priority 'High' they should overflow from right to the left.
+			var oButtonUnderTest = getButton('1', sap.m.OverflowToolbarPriority.High);
+
+			var aDefaultContent = [
+						oButtonUnderTest,
+						getButton('2', sap.m.OverflowToolbarPriority.High),
+						getButton('3', sap.m.OverflowToolbarPriority.High),
+						getButton('4', sap.m.OverflowToolbarPriority.High),
+						getButton('5', sap.m.OverflowToolbarPriority.High)
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "300px"
+					}, aDefaultContent);
+
+			// The leftmost Button with High Priority should be visible
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button with High Priority is  visible");
+
+			// Change the button priority from High to Low
+			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Low}));
+			sap.ui.getCore().applyChanges();
+
+			//Check if the button moved back to the overflow area
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
+				"The button with Chaged Priority is not visible whithin the toolbar");
+
+			// Click the overflow button
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			oOverflowButton.firePress();
+			this.clock.tick(1000);
+
+			// Check if the button with Changed Priority is visible in the overflow popover
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button with Chaged Priority is visible whithin the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing priority from High to AlwaysOverflow should move the button to the overflow", function (assert) {
+
+			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
+			// Since all buttons are with equal priority 'High' they should overflow from right to the left.
+			var oButtonUnderTest = getButton('1', sap.m.OverflowToolbarPriority.High);
+
+			var aDefaultContent = [
+						oButtonUnderTest,
+						getButton('2', sap.m.OverflowToolbarPriority.High),
+						getButton('3', sap.m.OverflowToolbarPriority.High),
+						getButton('4', sap.m.OverflowToolbarPriority.High),
+						getButton('5', sap.m.OverflowToolbarPriority.High)
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "300px"
+					}, aDefaultContent);
+
+			// The leftmost Button with High Priority should be visible
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The leftmost button with High Priority is visible");
+
+			// Change the button priority from High to AlwaysOverflow
+			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}));
+			sap.ui.getCore().applyChanges();
+
+			//Check if the button is visible in the toolbar
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
+				"The button with Chaged Priority is not visible whithin the toolbar");
+
+			// Click the overflow button
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			oOverflowButton.firePress();
+			this.clock.tick(1000);
+
+			// Check if the button with the Changed Priority is visible in the overflow popover
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true, "The button with Chaged Priority is visible whithin the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Buttons with Priority High should overflow last among the buttons with Priority Low", function (assert) {
+
+			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
+			// and position the button with Priority High in the rightmost in the toolbar
+			var oButtonWithHighPriority = getButton('5', sap.m.OverflowToolbarPriority.High);
+
+			var aDefaultContent = [
+						getButton('1', sap.m.OverflowToolbarPriority.Low),
+						getButton('2', sap.m.OverflowToolbarPriority.Low),
+						getButton('3', sap.m.OverflowToolbarPriority.Low),
+						getButton('4', sap.m.OverflowToolbarPriority.Low),
+						oButtonWithHighPriority
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "600px"
+					}, aDefaultContent);
+
+			// Resize the toolbar so the buttons should overflow from right to the left
+			oOverflowTB.setWidth('300px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button with Priority High is still visible
+			assert.strictEqual(oButtonWithHighPriority.$().is(":visible"), true,
+				"The button with Priority High is visible");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Button with Priority Low should overflow first among buttons with Priority High", function (assert) {
+
+			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
+			// and position the button with Priority Low in the leftmost in the toolbar
+			var oButtonWithLowPriority = getButton('1', sap.m.OverflowToolbarPriority.Low);
+
+			var aDefaultContent = [
+						oButtonWithLowPriority,
+						getButton('2', sap.m.OverflowToolbarPriority.High),
+						getButton('3', sap.m.OverflowToolbarPriority.High),
+						getButton('4', sap.m.OverflowToolbarPriority.High),
+						getButton('5', sap.m.OverflowToolbarPriority.High)
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "600px"
+					}, aDefaultContent);
+
+			// Resize the toolbar so the buttons should overflow from right to the left
+			oOverflowTB.setWidth('300px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button with Priority Low is still visible
+			assert.strictEqual(oButtonWithLowPriority.$().is(":visible"), false, "The button with Priority Low is not visible");
+
+			// Click the overflow button
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			oOverflowButton.firePress();
+			this.clock.tick(1000);
+
+			// Check if the button with  Priority Low is visible
+			assert.strictEqual(oButtonWithLowPriority.$().is(":visible"), true, "The button with Priority Low is visible whithin the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Buttons with equal priority should follow the general overflow order", function (assert) {
+
+			// Create a toolbar 600px and 5 buttons x 100px with priority Low
+			var oLeftMostButton = getButton('1');
+			var oRightMostButton = getButton('5');
+
+			var aDefaultContent = [
+						oLeftMostButton,
+						getButton('2'),
+						getButton('3'),
+						getButton('4'),
+						oRightMostButton
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "600px"
+					}, aDefaultContent);
+
+			// Resize the toolbar so the buttons should overflow from right to the left
+			oOverflowTB.setWidth('300px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the leftmost button is still visible
+			assert.strictEqual(oLeftMostButton.$().is(":visible"), true,
+				"The leftmost button is visible in the toolbar");
+
+			assert.strictEqual(oRightMostButton.$().is(":visible"), false,
+				"The rightmost button is not visible in the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("The order of the items in the overflow area should correspond to the overflow order", function (assert) {
+
+			// Create a toolbar 75px and 5 buttons x 100px, so there is no enogh space and all buttons should overflow.
+			// The buttons have different priorities which affects the order of overflow,
+			// and their position in the popover correspond the order they overflow.
+			var oButtonDefaultPriority = getButton('1'),
+				oButtonLowPriority = getButton('3', sap.m.OverflowToolbarPriority.Low),
+				oButtonLowPriority2 = getButton('4', sap.m.OverflowToolbarPriority.Low),
+				oButtonHighPriority = getButton('2', sap.m.OverflowToolbarPriority.High),
+				oButtonHighPriority2 = getButton('5', sap.m.OverflowToolbarPriority.High);
+
+			var aDefaultContent = [
+						oButtonDefaultPriority,
+						oButtonHighPriority,
+						oButtonLowPriority,
+						oButtonLowPriority2,
+						oButtonHighPriority2
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "75px"
+					}, aDefaultContent);
+
+			// Check if the order of the elements in the popover correspond their order in the toolbar, starting from right to left e.g reversed
+			var aPopoverButtonsIDs = oOverflowTB._getPopover().getAssociatedContent();
+
+			var aExpectedOrder = [
+				oButtonDefaultPriority.getId(),
+				oButtonHighPriority.getId(),
+				oButtonHighPriority2.getId(),
+				oButtonLowPriority.getId(),
+				oButtonLowPriority2.getId(),
+			]
+
+			assert.deepEqual(aPopoverButtonsIDs, aExpectedOrder, "The elements order matches");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing the priority of a group item should move the group back in the toolbar", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oButtonUnderTest1 = getButton('1', sap.m.OverflowToolbarPriority.Low, 1),
+				oButtonUnderTest2 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					oButtonUnderTest1,
+					oButtonUnderTest2,
+					getButton('3'),
+					getButton('4'),
+					getButton('5')
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the buttons under test are visible in the toolbar
+			assert.strictEqual(oButtonUnderTest1.$().is(":visible"), false,
+				"The button under test is not visible in the toolbar");
+
+			assert.strictEqual(oButtonUnderTest2.$().is(":visible"), false,
+				"The button under test is not visible in the toolbar");
+
+			// Change the priority of the button from group 1
+			oButtonUnderTest2.setLayoutData(new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.High,
+				group: 1
+			}));
+			sap.ui.getCore().applyChanges();
+
+			// Check if the buttons under test are visible in the toolbar
+			assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			assert.strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing the priority of a group item should move the group in the overflow area", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oButtonUnderTest1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+				oButtonUnderTest2 = getButton('3', sap.m.OverflowToolbarPriority.High, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oButtonUnderTest1,
+					oButtonUnderTest2,
+					getButton('4'),
+					getButton('5')
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the buttons under test are visible in the toolbar
+			assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			assert.strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			// Change the priority of the button from group 1
+			oButtonUnderTest2.setLayoutData(new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.Low,
+				group: 1
+			}));
+			sap.ui.getCore().applyChanges();
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			// Check if the members of group number 1 are visible in the overflow area
+			assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+				"The button under test from group number 1 is visible whithin the overflow area");
+
+			assert.strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+				"The button under test from group number 1 is visible whithin the overflow area");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.module("Grouping");
+
+		QUnit.test("Buttons in a group should overflow together", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+				oGroupedButton2 = getButton('3', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oGroupedButton1,
+					oGroupedButton2,
+					getButton('4'),
+					getButton('5')
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the members of group number 1 are visible
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), false,
+				"The button 1 from group number 1 is not visible in the toolbar");
+
+			assert.strictEqual(oGroupedButton2.$().is(":visible"), false,
+				"The button 2 from group number 1 is not visible in the toolbar");
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			// Check if the members of group number 1 are visible
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
+				"The button 1 from group number 1 is visible whithin the overflow");
+
+			assert.strictEqual(oGroupedButton2.$().is(":visible"), true,
+				"The button 2 from group number 1 is visible whithin the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Buttons in a group should overflow together even if they are unordered", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+				oGroupedButton2 = getButton('3', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oGroupedButton1,
+					getButton('4'),
+					getButton('5'),
+					oGroupedButton2
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the members of group number 1 are visible
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), false,
+				"The button 1 from group number 1 is not visible in the toolbar");
+
+			assert.strictEqual(oGroupedButton2.$().is(":visible"), false,
+				"The button 2 from group number 1 is not visible in the toolbar");
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			// Check if the members of group number 1 are visible
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
+				"The button 1 from group number 1 is visible whithin the overflow");
+
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
+				"The button 2 from group number 1 is visible whithin the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing the group of a button should move it in the overflow", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oButtonUnderTest = getButton('2', sap.m.OverflowToolbarPriority.Low),
+
+				aDefaultContent = [
+					getButton('1'),
+					oButtonUnderTest,
+					getButton('3'),
+					getButton('4', sap.m.OverflowToolbarPriority.Low, 1),
+					getButton('5', sap.m.OverflowToolbarPriority.Low, 1)
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button under test is visible in the toolbar
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			// Change the group of the button
+			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({group: 1}));
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button under test is visible in the toolbar
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
+				"The button under test from group number 1 is not visible in the toolbar");
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			// Check if the new member of group number 1 is visible in the overflow area
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button under test from group number 1 is visible within the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing the group of a button should move it back to the toolbar", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Three of the buttons belongs to group number 1
+			var oButtonUnderTest = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oButtonUnderTest,
+					getButton('3'),
+					getButton('4', sap.m.OverflowToolbarPriority.Low, 1),
+					getButton('5', sap.m.OverflowToolbarPriority.Low, 1)
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button under test is visible in the toolbar
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
+				"The button under test is not visible in the toolbar");
+
+			// Change the group of the button
+			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({group: 2}));
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button under test is visible in the toolbar
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Group overall priority should be the max priority of its members", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oGroupedButton1,
+					getButton('3', sap.m.OverflowToolbarPriority.High, 1),
+					getButton('4'),
+					getButton('5')
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the members of group number 1 are visible
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
+				"The button 1 from group number 1 is visible in the toolbar although its priority is Low");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.module("Data - aggregations and bindings");
+
+		QUnit.test("[getContent] The content aggregation should contain the proper number of elements", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -336,14 +1036,14 @@
 			// For each width, create a toolbar - in some cases all controls will be in the toolbar, in others - will overflow
 			widthTypes.forEach(function (sWidth) {
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
-				strictEqual(oOverflowTB.getContent().length, aContent.length, "When the toolbar's width is '" + sWidth + "', getContent() correctly returns all " + aContent.length + " items");
+				assert.strictEqual(oOverflowTB.getContent().length, aContent.length, "When the toolbar's width is '" + sWidth + "', getContent() correctly returns all " + aContent.length + " items");
 			});
 
 			oOverflowTB.destroy();
 		});
 
 
-		test("[getContent] Modifying the controls the dynamic toolbar was created with affects its content aggregation", function () {
+		QUnit.test("[getContent] Modifying the controls the dynamic toolbar was created with affects its content aggregation", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					widthTypes = getSampleWidths(),
@@ -357,7 +1057,7 @@
 					if (typeof oControl.setText === "function") {
 						newText = "Modified " + i;
 						oControl.setText(newText);
-						strictEqual(oOverflowTB.getContent()[i].getText(), newText, "When the toolbar's width is '" + sWidth + "', Setting the text of the " + i + "th control (" + oControl + ") affects the respective content aggregation item");
+						assert.strictEqual(oOverflowTB.getContent()[i].getText(), newText, "When the toolbar's width is '" + sWidth + "', Setting the text of the " + i + "th control (" + oControl + ") affects the respective content aggregation item");
 					}
 				});
 			});
@@ -365,7 +1065,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("[getContent] Shrinking and expanding the toolbar will not affect the order of the controls in its content aggregation when no controls have special layout", function () {
+		QUnit.test("[getContent] Shrinking and expanding the toolbar will not affect the order of the controls in its content aggregation when no controls have special layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					aInitialOrder,
@@ -387,13 +1087,13 @@
 
 			// For each control, check if it's in the same place as before
 			aInitialOrder.forEach(function (oControl, i) {
-				strictEqual(aFinalOrder[i], aInitialOrder[i], "The item with index: " + i + " has the same index after shrinking and restoring");
+				assert.strictEqual(aFinalOrder[i], aInitialOrder[i], "The item with index: " + i + " has the same index after shrinking and restoring");
 			});
 
 			oOverflowTB.destroy();
 		});
 
-		test("[getContent] Shrinking and expanding the toolbar will not affect the order of the controls in its content aggregation when some controls have special layout", function () {
+		QUnit.test("[getContent] Shrinking and expanding the toolbar will not affect the order of the controls in its content aggregation when some controls have special layout", function (assert) {
 			var aContent = getDefaultContent(true),
 					oOverflowTB,
 					aInitialOrder,
@@ -416,14 +1116,14 @@
 
 			// For each control, check if it's in the same place as before
 			aInitialOrder.forEach(function (oControl, i) {
-				strictEqual(aFinalOrder[i], aInitialOrder[i], "The item with index: " + i + " has the same index after shrinking and restoring");
+				assert.strictEqual(aFinalOrder[i], aInitialOrder[i], "The item with index: " + i + " has the same index after shrinking and restoring");
 			});
 
 			oOverflowTB.destroy();
 		});
 
 
-		test("[addContent] Adding controls with addContent puts them at the end of the aggregation", function () {
+		QUnit.test("[addContent] Adding controls with addContent puts them at the end of the aggregation", function (assert) {
 			var aContent,
 					oOverflowTB,
 					newButton,
@@ -437,7 +1137,7 @@
 				});
 				oOverflowTB.addContent(newButton);
 
-				strictEqual(oOverflowTB.getContent()[oOverflowTB.getContent().length - 1].getId(), newButton.getId(), "For a toolbar with width = " + sWidth + ", the newly created button is really the last element of the aggregation");
+				assert.strictEqual(oOverflowTB.getContent()[oOverflowTB.getContent().length - 1].getId(), newButton.getId(), "For a toolbar with width = " + sWidth + ", the newly created button is really the last element of the aggregation");
 
 				oOverflowTB.destroy();
 				newButton.destroy();
@@ -447,7 +1147,7 @@
 		});
 
 
-		test("[insertContent] Adding controls with insertContent inserts them at the proper index of the aggregation", function () {
+		QUnit.test("[insertContent] Adding controls with insertContent inserts them at the proper index of the aggregation", function (assert) {
 			var aContent,
 					oOverflowTB,
 					newButton,
@@ -462,7 +1162,7 @@
 				aContent.forEach(function (oControl, i) {
 					oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
 					oOverflowTB.insertContent(newButton, i);
-					strictEqual(oOverflowTB.getContent()[i].getId(), newButton.getId(), "For a toolbar with width = " + sWidth + ", the newly created button is really at index " + i + " in the aggregation");
+					assert.strictEqual(oOverflowTB.getContent()[i].getId(), newButton.getId(), "For a toolbar with width = " + sWidth + ", the newly created button is really at index " + i + " in the aggregation");
 
 				});
 
@@ -472,24 +1172,35 @@
 
 		});
 
-		test("[removeContent] Removing a control with removeContent works no matter if the control is in the toolbar or action sheet", function () {
+		QUnit.test("[removeContent] Removing a control with removeContent works no matter if the control is in the toolbar or popover", function (assert) {
 			var aContent,
 					oOverflowTB,
+					removeAssociatedContentSpy,
+					oAssociativePopover,
+					oControlToRemove,
+					sControlToRemoveId,
 					widthTypes = getSampleWidths();
 
 			widthTypes.forEach(function (sWidth) {
 				aContent = getDefaultContent();
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
-				oOverflowTB.removeContent(aContent[aContent.length - 1]);
+				oAssociativePopover = oOverflowTB._getPopover();
+				this.clock.tick(1000);
+				removeAssociatedContentSpy = this.spy(oAssociativePopover, "removeAssociatedContent");
+				oControlToRemove = aContent[aContent.length - 1];
+				sControlToRemoveId = oControlToRemove.getId();
 
-				strictEqual(oOverflowTB.getContent().length, aContent.length - 1, "For a toolbar with width = " + sWidth + ", removing the last control works");
+				oOverflowTB.removeContent(oControlToRemove);
+				assert.ok(removeAssociatedContentSpy.calledWith(sControlToRemoveId), "The control is removed from the AssociatedContent");
+				assert.strictEqual(oAssociativePopover.getAssociatedContent().indexOf(sControlToRemoveId), -1, "The control cannot be found in the AssociatedContent");
+				assert.strictEqual(oOverflowTB.getContent().length, aContent.length - 1, "For a toolbar with width = " + sWidth + ", removing the last control works");
 
 				oOverflowTB.destroy();
-			});
+			}, this);
 
 		});
 
-		test("[removeAllContent] Removing all controls with removeAllContent really removes all controls, even if there were some in the action sheet", function () {
+		QUnit.test("[removeAllContent] Removing all controls with removeAllContent really removes all controls, even if there were some in the popover", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -498,14 +1209,14 @@
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
 				oOverflowTB.removeAllContent();
 
-				strictEqual(oOverflowTB.getContent().length, 0, "For a toolbar with width = " + sWidth + ", removing all controls really empties the aggregation");
+				assert.strictEqual(oOverflowTB.getContent().length, 0, "For a toolbar with width = " + sWidth + ", removing all controls really empties the aggregation");
 
 				oOverflowTB.destroy();
 			});
 
 		});
 
-		test("[destroyContent] Destroying the aggregation does not leave out any controls in the action sheet", function () {
+		QUnit.test("[destroyContent] Destroying the aggregation does not leave out any controls in the popover", function (assert) {
 			var aContent,
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -515,18 +1226,18 @@
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
 				oOverflowTB.destroyContent();
 				this.clock.tick(1000);
-				strictEqual(oOverflowTB.getContent().length, 0, "For a toolbar with width = " + sWidth + ", after destroying the aggregation, there are no controls left");
+				assert.strictEqual(oOverflowTB.getContent().length, 0, "For a toolbar with width = " + sWidth + ", after destroying the aggregation, there are no controls left");
 
 				// There shouldn't be an overflow button and it should be visible
 				var oOverflowButton = oOverflowTB._getOverflowButton();
-				strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible");
-			
+				assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible");
+
 				oOverflowTB.destroy();
 			}, this);
 
 		});
 
-		test("[indexOfContent] Getting all controls by index is possible no matter whether a control is in the action sheet or in the toolbar", function () {
+		QUnit.test("[indexOfContent] Getting all controls by index is possible no matter whether a control is in the popover or in the toolbar", function (assert) {
 			var aContent,
 					oOverflowTB,
 					widthTypes = getSampleWidths();
@@ -535,7 +1246,7 @@
 				aContent = getDefaultContent();
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
 				aContent.forEach(function (oControl, i) {
-					strictEqual(oOverflowTB.indexOfContent(oControl), i, "For a toolbar with width = " + sWidth + ", the control with index " + i + " has the same index in the aggregation");
+					assert.strictEqual(oOverflowTB.indexOfContent(oControl), i, "For a toolbar with width = " + sWidth + ", the control with index " + i + " has the same index in the aggregation");
 				});
 
 				oOverflowTB.destroy();
@@ -543,7 +1254,7 @@
 
 		});
 
-		test("[bindAggregation] Binding the control to a model makes it load the items from the model", function () {
+		QUnit.test("[bindAggregation] Binding the control to a model makes it load the items from the model", function (assert) {
 			var oOverflowTB,
 					oModel,
 					oButtonTemplate,
@@ -595,36 +1306,84 @@
 				oOverflowTB.setModel(oModel);
 				oOverflowTB.bindAggregation("content", "/buttons", oButtonTemplate);
 				this.clock.tick(1000);
-				strictEqual(oOverflowTB.getContent().length, oData.buttons.length, "When the width is: " + sWidth + ", the toolbar properly displays all buttons from the data source");
+				assert.strictEqual(oOverflowTB.getContent().length, oData.buttons.length, "When the width is: " + sWidth + ", the toolbar properly displays all buttons from the data source");
 
 				// There should be an overflow button and it should be visible
 				var oOverflowButton = oOverflowTB._getOverflowButton();
-				strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
-				
+				if (sWidth > 0) {
+					assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible when size > 0");
+				}
+
 				oOverflowTB.destroy();
 			}, this);
 
 		});
 
-		module("Layout");
-		test("Changing the visibility of controls in the toolbar forces a recalculation of the layout", function () {
-			var aContent = getDefaultContent(),
-					oOverflowTB,
-					spy;
+		QUnit.test("Destroying a control that is in the overflow is possible", function (assert) {
 
-			spy = this.spy(sap.m.OverflowToolbar.prototype, "_onContentPropertyChangedOverflowToolbar");
+			var btn = new sap.m.Button({
+						text: "Button in overflow",
+						layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow})
+					}),
+					oOverflowTB = createOverflowToolbar({width: 'auto'}, [btn]);
 
-			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
-			this.clock.tick(1000);
-			aContent[5].setVisible(false);
-			this.clock.tick(1000);
+			sap.ui.getCore().applyChanges();
 
-			strictEqual(spy.callCount, 1, "Layout recalculation triggered");
+			btn.destroy();
+
+			assert.strictEqual(oOverflowTB.getContent().length, 0, "Button successfully removed from the toolbar");
 
 			oOverflowTB.destroy();
 		});
 
-		test("Changing the layout of controls in the toolbar forces a recalculation of the layout", function () {
+		QUnit.module("Layout");
+		QUnit.test("Changing a control property that affects control size(visibility) forces a recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy;
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			aContent[5].setVisible(false);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing a control property that does not affect control size(enabled) does not force a recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy;
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			aContent[5].setEnabled(false);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation not triggered (_resetAndInvalidateToolbar not called)");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing the layout of controls in the toolbar forces a recalculation of the layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy;
@@ -635,16 +1394,16 @@
 			aContent[5].setLayoutData(new sap.m.OverflowToolbarLayoutData({stayInOverflow: true}));
 			this.clock.tick(1000);
 
-			strictEqual(spy.callCount, 1, "Layout recalculation triggered");
+			assert.strictEqual(spy.callCount, 1, "Layout recalculation triggered");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			oOverflowTB.destroy();
 		});
-		
-		test("[_doLayout] Control-size cache is invalidated only when necessary and resize handler is called always", function () {
+
+		QUnit.test("[_doLayout] Control-size cache is invalidated only when necessary and resize handler is called always", function (assert) {
 			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 			var aDefaultContent = [
 						new sap.m.Button({text: "1", width: "100px"}),
@@ -659,46 +1418,46 @@
 
 			var spyCache = this.spy(sap.m.OverflowToolbar.prototype, "_cacheControlsInfo");
 			var spyResizeHandler = this.spy(sap.m.OverflowToolbar.prototype, "_setControlsOverflowAndShrinking");
-			
+
 			// Change the width of the toolbar - the cache should not be invalidated
 			oOverflowTB.setWidth("251px");
-			this.clock.tick(1000);			
+			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 0, "When there is just a resize, the cache isn't recalculated");
-			strictEqual(spyResizeHandler.callCount, 1, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 0, "When there is just a resize, the cache isn't recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 1, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			// Resize a button - the cache should be invalidated
 			aDefaultContent[0].setWidth("101px");
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 1, "When a control changes a property that affects size, the cache is recalculated");
-			strictEqual(spyResizeHandler.callCount, 2, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 1, "When a control changes a property that affects size, the cache is recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 2, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			// Add a button - the cache should be invalidated
 			oOverflowTB.addContent(new sap.m.Button({width: "100px"}));
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 2, "When a new control is inserted, the cache is recalculated");
-			strictEqual(spyResizeHandler.callCount, 3, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 2, "When a new control is inserted, the cache is recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 3, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			// Change the width of the toolbar again - the cache should not be invalidated
 			oOverflowTB.setWidth("550px");
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 2, "When there is just a resize (again), the cache isn't recalculated");
-			strictEqual(spyResizeHandler.callCount, 4, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 2, "When there is just a resize (again), the cache isn't recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 4, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			// Change the layout of a button - the cache should be invalidated
 			aDefaultContent[1].setLayoutData(new sap.m.OverflowToolbarLayoutData({stayInOverflow: true}));
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 3, "When the layout of a control is changed, the cache is recalculated");
-			strictEqual(spyResizeHandler.callCount, 5, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 3, "When the layout of a control is changed, the cache is recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 5, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			oOverflowTB.destroy();
 		});
 
-		test("[_cacheControlsInfo] Control caching works properly", function () {
+		QUnit.test("[_cacheControlsInfo] Control caching works properly", function (assert) {
 			var spyCache = this.spy(sap.m.OverflowToolbar.prototype, "_cacheControlsInfo"),
 					aDefaultContent = [
 						new sap.m.Label({text: "Label1", width: "100px"}),
@@ -712,22 +1471,22 @@
 					oOverflowTB = createOverflowToolbar({
 						width: "550px"
 					}, aDefaultContent);
-			
 
-			strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
-			strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
-			strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the action sheet");
-			strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 labels are properly marked as toolbar only");
-			strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as action sheet only");
-			
+
+			assert.strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
+			assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
+			assert.strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the popover");
+			assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 labels are properly marked as toolbar only");
+			assert.strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
+
 			// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
-			
+
 			oOverflowTB.destroy();
 		});
-		
-		module("Resize handling");
-		
-		test("Handling of resizes that don't move elements around", function () {
+
+		QUnit.module("Resize handling");
+
+		QUnit.test("Handling of resizes that don't move elements around", function (assert) {
 
 			var aDefaultContent = [
 					new sap.m.Button({text: "1", width: "100px"}),
@@ -739,24 +1498,24 @@
 				oOverflowTB = createOverflowToolbar({
 					width: "550px"
 				}, aDefaultContent);
-		
+
 			var spyResizeHandler = this.spy(sap.m.OverflowToolbar.prototype, "_setControlsOverflowAndShrinking");
 			var spyInvalidate = this.spy(sap.m.OverflowToolbar.prototype, "invalidate");
 			var spyFlexbox = this.spy(sap.m.OverflowToolbar.prototype, "_checkContents");
-			
+
 			// The toolbar already can fit all items, increase its size by 1px so that no rearranging will be necessary
 			oOverflowTB.setWidth("551px");
-			strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+			assert.strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
 			this.clock.tick(1000);
 
-			strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
-			strictEqual(spyInvalidate.callCount, 1, "It did NOT call invalidate");
-			strictEqual(spyFlexbox.callCount, 0, "It did NOT set flexbox css");
+			assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+			assert.strictEqual(spyInvalidate.callCount, 1, "It did NOT call invalidate");
+			assert.strictEqual(spyFlexbox.callCount, 0, "It did NOT set flexbox css");
 
 			oOverflowTB.destroy();
 		});
 
-		test("Handling of resizes that move elements around", function () {
+		QUnit.test("Handling of resizes that move elements around", function (assert) {
 
 			var aDefaultContent = [
 						new sap.m.Button({text: "1", width: "100px"}),
@@ -773,19 +1532,19 @@
 			var spyInvalidate = this.spy(sap.m.OverflowToolbar.prototype, "invalidate");
 			var spyFlexbox = this.spy(sap.m.OverflowToolbar.prototype, "_checkContents");
 
-			// Decrease the size so that some buttons have to move the the action sheet
+			// Decrease the size so that some buttons have to move the the popover
 			oOverflowTB.setWidth("200px");
-			strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+			assert.strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
 			this.clock.tick(1000);
 
-			strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
-			strictEqual(spyInvalidate.callCount, 2, "It called invalidate");
-			strictEqual(spyFlexbox.callCount, 0, "It did NOT set flexbox css");
+			assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+			assert.strictEqual(spyInvalidate.callCount, 2, "It called invalidate");
+			assert.strictEqual(spyFlexbox.callCount, 0, "It did NOT set flexbox css");
 
 			oOverflowTB.destroy();
 		});
 
-		test("Items must first overflow and then shrink", function () {
+		QUnit.test("Items must first overflow and then shrink", function (assert) {
 
 			var aDefaultContent = [
 						new sap.m.Label({text: "This is a very very very long label"}),
@@ -801,15 +1560,143 @@
 
 			// Decrease the size so that all buttons must overflow and the label must be shrunk
 			oOverflowTB.setWidth("60px");
-			strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+			assert.strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
 			this.clock.tick(1000);
 
-			strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
-			strictEqual(spyInvalidate.callCount, 2, "It called invalidate");
-			strictEqual(spyFlexbox.callCount, 1, "It set flexbox css");
+			assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+			assert.strictEqual(spyInvalidate.callCount, 2, "It called invalidate");
+			assert.strictEqual(spyFlexbox.callCount, 1, "It set flexbox css");
 
 			oOverflowTB.destroy();
 		});
+
+		QUnit.module("Integration");
+
+		QUnit.test("Sliders work inside an overflow toolbar", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy,
+					oSlider = new sap.m.Slider({width: "200px"});
+
+			aContent.push(oSlider);
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			// Change the value of the slider
+			oSlider.setValue(1);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Changing the value of the sliderLayout does not trigger recalculation (_resetAndInvalidateToolbar not called)");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Buttons with closeOverflowOnInteraction=false do not close the popover", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					oBtn = new sap.m.Button({
+						text: "Do not close",
+						width: "200px",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.AlwaysOverflow,
+							closeOverflowOnInteraction: false
+						})
+					});
+
+			aContent.push(oBtn);
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			// Click the overflow button
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			oOverflowButton.firePress();
+			this.clock.tick(1000);
+
+			// Click the special button
+			oBtn.firePress();
+			this.clock.tick(1000);
+
+			// The overflow area should still be visible
+			var oPopover = oOverflowTB._getPopover();
+			assert.strictEqual(oPopover.$().is(":visible"), true, "Even though the button was clicked, the overflow area is visible");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Popover can listen to private interaction events from associative controls", function (assert) {
+			var oOverflowTB = new sap.m.OverflowToolbar({width: 'auto'}),
+				oPopover = oOverflowTB._getPopover(),
+				oMenuItem = new sap.m.MenuItem({text:"Item1"}),
+				oMenu = new sap.m.Menu({items: [ oMenuItem ]}),
+				oBtn = new sap.m.MenuButton({
+					text: "Do not close",
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.AlwaysOverflow,
+						closeOverflowOnInteraction: true
+					}),
+					menu: oMenu
+				}),
+				spy;
+
+			oOverflowTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			spy = this.spy(oPopover, "_closeOnInteraction");
+
+			oOverflowTB.addContent(oBtn);
+			this.clock.tick(1000);
+
+			// Click the overflow button
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			oOverflowButton.firePress();
+			this.clock.tick(1000);
+
+			// Click the menu item
+			oMenu.fireItemSelected({item: oMenuItem});
+			this.clock.tick(1000);
+
+			// listener should be called
+			assert.strictEqual(spy.called, true, "The listener for the private event is notified");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.module("Control size measurement");
+
+		QUnit.test("Size of a visible control reported correctly", function (assert) {
+			var oTestButton = new sap.m.Button({width: "200px"});
+			oTestButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton);
+			assert.strictEqual(sSize, 200);
+		});
+
+		QUnit.test("Size of an invisible control reported correctly", function (assert) {
+			var oTestButton = new sap.m.Button({width: "200px", visible: false});
+			oTestButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton);
+			assert.strictEqual(sSize, 0);
+		});
+
+		QUnit.test("Size of a control that was measured before, but now not in the DOM, reported correctly", function (assert) {
+			var oTestButton = new sap.m.Button();
+
+			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton, 333);
+			assert.strictEqual(sSize, 333);
+		});
+
 
 	})();
 	</script>

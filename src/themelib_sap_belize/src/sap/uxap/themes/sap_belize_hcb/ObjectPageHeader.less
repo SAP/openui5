@@ -1,0 +1,33 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageHeader  */
+/* Belize High Contrast Black theme           */
+/* ========================================== */
+
+.sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn,
+.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn {
+	margin-top: -0.3rem;
+}
+
+.sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn,
+.sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn {
+	margin-top: -0.125rem;
+}
+
+/* header container */
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifierContainer /* desktop-specific padding */{
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+html.sapUiMedia-StdExt-LargeDesktop .sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifier, /* Fullscreen, Large Desktop - specific padding */
+html .sapUiSizeCompact .sapUiContainer-ExtraWide .sapUxAPObjectPageHeaderIdentifier {
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			right: 2.25rem;
+		}
+	}
+}

@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>Unorm performance test - sap.ui.core.util</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-libs = "sap.m, sap.ui.layout" data-sap-ui-theme="base">
+	</script>
+	<script>
+		jQuery.sap.require("sap.ui.thirdparty.unorm");
+		jQuery.sap.require("sap.ui.thirdparty.unormdata");
+		jQuery.sap.require("jquery.sap.unicode");
+
+		var fnUnorm = function(str) {
+			return UNorm.nfc(str);
+		},
+		fnUi5Norm = function(str) {
+			return jQuery.sap.isStringNFC(str) ? str : UNorm.nfc(str);
+		},
+		fnBrowser = function(str) {
+			return str.normalize("NFC");
+		},
+		// settings:
+		// 0xFFFF - BMP (Basic Multilingual Plane)
+		// 0x10FFF - BMP + SMP (Supplementary Multilingual Plane (ES6))
+		iUnicodeRange = 0x10FFFF,
+		iWordLength = 16,
+		iBaseLength = 1000;
+
+		function getRandomUnicodeString(iLength) {
+			var sResult = "";
+			for (var i = 0; i < iLength; i++) {
+				sResult += String.fromCharCode(Math.floor(Math.random() * iUnicodeRange));
+			}
+			return sResult;
+		}
+
+		var aWords = [], iHits = 0, iUnormDiffs = 0, iUi5Diffs = 0;
+		(function() {
+			for (var i = 0; i < iBaseLength; i++) {
+				var sWord = getRandomUnicodeString(iWordLength);
+				aWords.push(sWord);
+			}
+			// validation
+			aWords.forEach(function(sWord) {
+				var sBrowser = fnBrowser(sWord);
+				var sUi5norm = fnUi5Norm(sWord);
+				var sUnorm = fnUnorm(sWord);
+				if (sWord != sBrowser) {
+					iHits++;
+				}
+				if( sBrowser != sUi5norm ) {
+					iUi5Diffs++;
+				}
+				if( sBrowser != sUnorm ) {
+					iUnormDiffs++;
+				}
+			});
+		}());
+
+		function runPerfTest(fnMethod, iGrowth) {
+			var sName;
+			if (fnMethod == fnUnorm) {
+				sName = "unorm";
+			} else if (fnMethod == fnUi5Norm) {
+					sName = "ui5";
+			} else if (fnMethod == fnBrowser) {
+					sName = "browser";
+			} else {
+					sName = "unknown";
+			}
+			var aWordBase = [];
+			var iDuration;
+			var iStart = Date.now();
+			for(var i = 0; i < iGrowth; i++) {
+				for(var j = 0; j < iBaseLength; j++) {
+					aWordBase[j] = fnMethod(aWords[j]);
+				}
+
+			}
+			iDuration = Date.now() - iStart;
+			new sap.m.Text({
+				text: "[TEST] " + sName + " with " +
+				iBaseLength * iGrowth + " words, each " +
+				iWordLength + " characters: " +
+				iDuration + " milliseconds..."
+			}).placeAt("results");
+			sap.ui.getCore().applyChanges();
+		}
+
+		// build test ui
+		new sap.ui.layout.VerticalLayout("content").placeAt("uiArea");
+		new sap.m.ComboBox({
+			id: "iterations",
+			items: [
+				{
+					"key": 1,
+					"text": "1 iteration"
+				},
+				{
+					"key": 10,
+					"text": "10 iterations"
+				},
+				{
+					"key": 100,
+					"text": "100 iterations"
+				},
+				{
+					"key": 1000,
+					"text": "1000 iterations"
+				},
+			]
+		}).placeAt("content");
+
+		new sap.m.Button({
+			text: "Start",
+			press: function() {
+				var i = sap.ui.getCore().byId("iterations").getSelectedKey();
+				new sap.m.Text({ text: "[TEST] ********** " + i + " iteration" + ( i > 1 ? "s" : "") + " *********"}).placeAt("results");
+				runPerfTest(fnUnorm, i);
+				runPerfTest(fnUi5Norm, i);
+				runPerfTest(fnBrowser, i);
+			}
+		}).placeAt("content");
+
+		new sap.m.Text({
+			text: "Testing browser " + navigator.userAgent
+		}).placeAt("content");
+		new sap.m.Text({
+			text: "Browser hits: " + iHits + "; UI5 diff: " + iUi5Diffs + "; UNorm diff: " + iUnormDiffs
+		}).placeAt("content");
+		new sap.m.Text({
+			text: "WordBase length: " + iBaseLength + "; Unicode range: 0 - " + iUnicodeRange + "; Normalized Words: " + iHits
+		}).placeAt("content");
+		new sap.ui.layout.VerticalLayout("results").placeAt("content");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="uiArea">
+	</div>
+</body>
+
+</html>

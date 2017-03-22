@@ -1,17 +1,18 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>sap.m.MessageStrip Playground</title>
 
+	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 	</script>
 
-	<script type="text/javascript">
+	<script>
+		// This page is used for visualtesting
+
 		var oMCInformation = new sap.m.MessageStrip("mcontainer1" , {
 			type: "Information",
 			text: "<b>Information:</b> You have configured Windows Internet Explorer to block unsigned ActiveX controls." +
@@ -105,7 +106,7 @@
 			],
 			footer: new sap.m.Bar({
 				contentMiddle: [
-					new sap.m.Button({
+					new sap.m.Button("margin-button", {
 						text: "Add 12px margin-top",
 						press: function () {
 							jQuery(".sapMMsgStrip").css("margin-top", "12px");

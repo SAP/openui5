@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/Dialog" data-sap-ui-dk-controls="sap.ui.commons.Dialog">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control Dialog Popup MessageBox" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control Dialog Popup MessageBox">
 		<title>Dialog - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -16,9 +16,9 @@
 
 <script id='OpenDialog1Script'>
 
-// Create the button which should open the dialog 
+// Create the button which should open the dialog
 var oButton = new sap.ui.commons.Button("button1",{
-			text: "Open Dialog", 
+			text: "Open Dialog",
 			press:function(){
 				openDialog();
 			}
@@ -40,9 +40,9 @@ function openDialog() {
 
 <script id='OpenDialog2Script'>
 
-// Create the button which should open the dialog 
+// Create the button which should open the dialog
 var oButton = new sap.ui.commons.Button("button2",{
-			text: "Open Dialog", 
+			text: "Open Dialog",
 			press:function(){
 				openFirstDialog();
 			}
@@ -89,7 +89,7 @@ sap.ui.jsview("my.own.view", {
 	getControllerName: function() {
 		return "my.own.controller";
 	},
-	
+
 	// defines the UI of this View
 	createContent: function(oController) {
 		// button text is bound to Model, "press" action is bound to Controller's event handler
@@ -107,7 +107,7 @@ sap.ui.jsview("my.own.view2", {
 	getControllerName: function() {
 		return "my.own.controller";
 	},
-	
+
 	// defines the UI of this View
 	createContent: function(oController) {
 		// button text is bound to Model, "press" action is bound to Controller's event handler
@@ -125,11 +125,11 @@ var oBtn = new sap.ui.commons.Button({
 	press : function() {
 		// create an instance of the predefined views
 		var myView1 = sap.ui.view({
-			type:sap.ui.core.mvc.ViewType.JS, 
+			type:sap.ui.core.mvc.ViewType.JS,
 			viewName:"my.own.view"
 		});
 		var myView2 = sap.ui.view({
-			type:sap.ui.core.mvc.ViewType.JS, 
+			type:sap.ui.core.mvc.ViewType.JS,
 			viewName:"my.own.view2"
 		});
 
@@ -166,7 +166,7 @@ var oBtn = new sap.ui.commons.Button({
 			this.removeAllContent();
 			this.addContent(oView);
 		}
-		
+
 		oDialog.open();
 	}
 }).placeAt("sample3");
@@ -186,7 +186,7 @@ sap.ui.jsview("my.own.view", {
 	getControllerName: function() {
 		return "my.own.controller";
 	},
-	
+
 	// defines the UI of this View
 	createContent: function(oController) {
 		// button text is bound to Model, "press" action is bound to Controller's event handler
@@ -198,13 +198,13 @@ sap.ui.jsview("my.own.view", {
 		});
 	}
 });
-		
+
 sap.ui.jsview("my.own.view2", {
 	// define the (default) controller type for this View
 	getControllerName: function() {
 		return "my.own.controller";
 	},
-	
+
 	// defines the UI of this View
 	createContent: function(oController) {
 		// button text is bound to Model, "press" action is bound to Controller's event handler
@@ -222,7 +222,7 @@ sap.ui.jsview("my.own.mainView", {
 	getControllerName: function() {
 		return "my.own.controller";
 	},
-	
+
 	// defines the UI of this View
 	createContent: function(oController) {
 		// button text is bound to Model, "press" action is bound to Controller's event handler
@@ -230,11 +230,11 @@ sap.ui.jsview("my.own.mainView", {
 			text : "Open Dialog with views as content",
 			press: function(oEvent) {
 				var myView1 = sap.ui.view({
-					type:sap.ui.core.mvc.ViewType.JS, 
+					type:sap.ui.core.mvc.ViewType.JS,
 					viewName:"my.own.view"
 				});
 				var myView2 = sap.ui.view({
-					type:sap.ui.core.mvc.ViewType.JS, 
+					type:sap.ui.core.mvc.ViewType.JS,
 					viewName:"my.own.view2"
 				});
 
@@ -271,7 +271,7 @@ sap.ui.jsview("my.own.mainView", {
 					this.removeAllContent();
 					this.addContent(oView);
 				}
-		
+
 				oDialog.open();
 			}
 		});
@@ -279,7 +279,7 @@ sap.ui.jsview("my.own.mainView", {
 });
 
 var myMainView = sap.ui.view({
-	type:sap.ui.core.mvc.ViewType.JS, 
+	type:sap.ui.core.mvc.ViewType.JS,
 	viewName:"my.own.mainView"
 }).placeAt("sample4");
 </script>
@@ -320,22 +320,22 @@ var oFragmentDialog;
 new sap.ui.commons.Button({
 	text: "Open Fragment Dialog",
 	press: function(){
-	
+
 		// create a dummy Controller for the action in the Dialog
 		var oDummyController = {
 			closeDialog: function(){
 				oFragmentDialog.close();
 			}
 		};
-		
+
 		// instantiate the Fragment if not done yet
 		if (!oFragmentDialog) {
 			oFragmentDialog = sap.ui.xmlfragment({fragmentContent:xml}, oDummyController);
 			oFragmentDialog.setModel(oModel);
 		}
-		
+
 		oFragmentDialog.open()
-		
+
 	}
 }).placeAt('sample5');
 </script>
@@ -348,22 +348,22 @@ new sap.ui.commons.Button({
 
 	<p>
 	The Dialog control is used to temporarily display some information in a size-limited window in front of the regular application screen, without removing or modifying the currently displayed content in the main window. Dialog combines concepts known from other technologies where the windows have names such as dialog box,
-	dialog window, popup, popup window, alert box, or message box. The Dialog control is modal that means that some user action is required before returning to the parent window is possible. 
-	You create an instance of the Dialog control using its <code>new sap.ui.commons.Dialog()</code> constructor. Next, you set the properties for the title and the content, make settings for the size and define other property values. 
+	dialog window, popup, popup window, alert box, or message box. The Dialog control is modal that means that some user action is required before returning to the parent window is possible.
+	You create an instance of the Dialog control using its <code>new sap.ui.commons.Dialog()</code> constructor. Next, you set the properties for the title and the content, make settings for the size and define other property values.
 	</p>
 	<p>
-	<strong>RECOMMENDATION</strong>: Do not define a Dialog as content (or part) of a view.<br/>
+	<strong>RECOMMENDATION</strong>: Do not define a Dialog as content (or part) of a view.<br>
 	To use a Dialog with a view, create the Dialog and its content separately or use Fragments. Examples can be found below.
 	The content of a Dialog can be defined through a view but the Dialog itself can't. But with using Fragments it's possible to define a dialog via an XML-fragment that looks like a definition of an XML-view. Please
 	see the documentation in the <a class="sapUiDemokitSrcLink" href="../../../../../docs/guide/Fragments.html">Developer-Guide/Fragments</a>.
 	</p>
-	
+
 	<p>For details please see <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Dialog.html">API documentation</a></p>
 	<h2>Define Buttons</h2>
 	<p>
-	The Dialog buttons are regular buttons where you can register for the <code>press</code> event and act accordingly. 
-	The Dialog has an aggregation for the buttons to be displayed at the bottom. 
-	You add the buttons to the Dialog using the <code>.addButton(...)</code> method. 
+	The Dialog buttons are regular buttons where you can register for the <code>press</code> event and act accordingly.
+	The Dialog has an aggregation for the buttons to be displayed at the bottom.
+	You add the buttons to the Dialog using the <code>.addButton(...)</code> method.
 	You can create one or more buttons for one Dialog.
 	</p>
 	<h2>Open Dialog</h2>
@@ -371,8 +371,8 @@ new sap.ui.commons.Button({
 	</p>
 	<h2>Handle Event and Close Dialog</h2>
 	<p>
-	When one of the buttons closes the Dialog, the event handler calls the <code>.close()</code> method. 
-	Additionally, there is the X-like close button in the header of the Dialog which also closes the Dialog window (<code>.showCloseButton()</code>).  
+	When one of the buttons closes the Dialog, the event handler calls the <code>.close()</code> method.
+	Additionally, there is the X-like close button in the header of the Dialog which also closes the Dialog window (<code>.showCloseButton()</code>).
 	You can react on this case using the <code>closed</code> event which is invoked whenever the Dialog is closed.
 	</p>
 
@@ -380,11 +380,11 @@ new sap.ui.commons.Button({
 
 	<h3>Basic Dialog Example</h3>
 
-	<p>On button click, a Dialog window containing a label and a button is opened. Clicking the <code>OK</code> button (or alternatively X), the dialog is closed. Try out features like drag and drop of the dialog window, or resizing it by dragging the corner at the bottom on the right-hand side (visual marker available).		  
+	<p>On button click, a Dialog window containing a label and a button is opened. Clicking the <code>OK</code> button (or alternatively X), the dialog is closed. Try out features like drag and drop of the dialog window, or resizing it by dragging the corner at the bottom on the right-hand side (visual marker available).
 	</p>
 	<div code-sample="sample1" script="OpenDialog1Script"></div>
 	<p>The Dialog looks as following at runtime, used theme here is the UX theme:</p>
-	<img src="images/dialog1_sap_ux.png"></img>
+	<img src="images/dialog1_sap_ux.png">
 
 	<h3>How to Define two Dialogs for one Application</h3>
 	<div code-sample="sample2" script="OpenDialog2Script"></div>
@@ -395,21 +395,21 @@ new sap.ui.commons.Button({
 	<h2>Keyboard and ARIA Support</h2>
 	<p>
 	It is possible to navigate through the Dialog items step by step using the <code>Tab</code> key.
-	The <code>Space</code> and <code>Enter</code> keys can be used to activate or change the status of a selected control inside the Dialog. 
+	The <code>Space</code> and <code>Enter</code> keys can be used to activate or change the status of a selected control inside the Dialog.
 	<code>Escape</code> closes the current dialog. The Dialog control supports ARIA.</p>
 
   	<h2>The Alternative: MessageBox</h2>
-	Dialog is the more complex control that you handle like any other control regarding instantiation, property usage, and so on. There is also an easier-to-use control available which offers methods for implementing frequently used alert boxes <b>with only one line of code</b>: 
+	Dialog is the more complex control that you handle like any other control regarding instantiation, property usage, and so on. There is also an easier-to-use control available which offers methods for implementing frequently used alert boxes <b>with only one line of code</b>:
 	The <a class="sapUiDemokitSrcLink" href="MessageBox.html">MessageBox</a> control.
-	
+
 	<h2>Dialog with views as content</h2>
 	<div code-sample="sample3" script="DialogWithViews"></div>
-	
+
 	<h2>Dialog defined within a view</h2>
 	<div code-sample="sample4" script="DialogWithinView"></div>
-	
+
 	<h2>Dialog as Fragment with XML-view</h2>
 	<div code-sample="sample5" script="DialogWithinFragment"></div>
-	
+
 	</body>
 </html>

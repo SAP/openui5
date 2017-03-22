@@ -1,35 +1,35 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
+
 		<title>Test Page for SAPUI5 jQuery.sap.global functionality (external configuration)</title>
 		<script>
 			window["sap-ui-config"] = "sap-ui-config.json"
 		</script>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
-			
-			module("Basic");
-			
-			test("ExternalConfig", function() {
-				
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+
+			QUnit.module("Basic");
+
+			QUnit.test("ExternalConfig", function(assert) {
+
 				var oConfig = sap.ui.getCore().getConfiguration();
-				
-				equal(oConfig.getTheme(), "sap_bluecrystal", "Theme must be sap_blucrystal");
-				ok(sap.ui.commons !== undefined, "sap.ui.commons must be preloaded");
-				ok(sap.m === undefined, "sap.m must not preloaded");
-				
+
+				assert.equal(oConfig.getTheme(), "sap_bluecrystal", "Theme must be sap_blucrystal");
+				assert.ok(sap.ui.commons !== undefined, "sap.ui.commons must be preloaded");
+				assert.ok(sap.m === undefined, "sap.m must not be preloaded");
+
 			});
-			
+
 		</script>
-		
+
 	</head>
 	<body>
 		<h1 id="qunit-header">QUnit page for jquery.sap.global</h1>

@@ -5,11 +5,10 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Rating - sap.m</title>
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
 
 		<style>
@@ -45,7 +44,7 @@
 		}
 		</style>
 
-		<script type="text/javascript">
+		<script>
 			jQuery.sap.require("sap.ui.core.IconPool");
 
 			var oApp = new sap.m.App("myApp");
@@ -62,7 +61,7 @@
 			oRatingPage.addContent(oLabel);
 
 			var oLabel0 = new sap.m.Label({text:'Small inactive rating'});
-			var oRating0 = new sap.m.RatingIndicator({
+			var oRating0 = new sap.m.RatingIndicator("smallInactiveRI", {
 				iconSize: "1rem",
 				enabled: false,
 				value: 2.5,
@@ -70,38 +69,38 @@
 			});
 
 			var oLabel1 = new sap.m.Label({text:'Small active rating'});
-			var oRating1 = new sap.m.RatingIndicator({
+			var oRating1 = new sap.m.RatingIndicator("smallActiveRI", {
 				iconSize: "1rem",
 				value: 2.5,
 				tooltip: "This is a tooltip"
 			});
 
 			var oLabel2 = new sap.m.Label({text:'Medium inactive rating'});
-			var oRating2 = new sap.m.RatingIndicator({
+			var oRating2 = new sap.m.RatingIndicator("mediumInactiveRI", {
 				enabled: false,
 				value: 2.5
 			});
 
 			var oLabel3 = new sap.m.Label({text:'Medium active rating'});
-			var oRating3 = new sap.m.RatingIndicator({
+			var oRating3 = new sap.m.RatingIndicator("mediumActiveRI", {
 				value: 2.5
 			});
 
 			var oLabel4 = new sap.m.Label({text:'Large inactive rating'});
-			var oRating4 = new sap.m.RatingIndicator({
+			var oRating4 = new sap.m.RatingIndicator("largeInactiveRI", {
 				iconSize: "2rem",
 				enabled: false,
 				value: 2.5
 			});
 
 			var oLabel5 = new sap.m.Label({text:'Large active rating'});
-			var oRating5 = new sap.m.RatingIndicator({
+			var oRating5 = new sap.m.RatingIndicator("largeActiveRI", {
 				iconSize: "2rem",
 				value: 2.5
 			});
 
 			var oLabel6 = new sap.m.Label({text:'Default active rating'});
-			var oRating6 = new sap.m.RatingIndicator({
+			var oRating6 = new sap.m.RatingIndicator("defaultActiveRI", {
 				value: 2.5
 			});
 
@@ -199,7 +198,7 @@
 			oRatingTable.bindAggregation("items", "/items", oRatingTableTemplate);
 
 			// rating list
-			var oRatingList = new sap.m.List({
+			var oRatingList = new sap.m.List("ratingList", {
 				inset: true,
 				headerText : "Rating List",
 				swipeContent : new sap.m.Button({
@@ -251,7 +250,7 @@
 			oRatingPage.addContent(oLabel);
 
 			var oLabel3 = new sap.m.Label({text:' Rate me!'}).addStyleClass("descriptiveRatingLabel");;
-			var oRating3 = new sap.m.RatingIndicator({
+			var oRating3 = new sap.m.RatingIndicator("automaticRI", {
 				value: 2.5,
 				iconSize: "1.375rem",
 				liveChange: function(oControlEvent) {
@@ -266,7 +265,7 @@
 				}
 			});
 
-			var oHBoxLabeledRating = new sap.m.HBox({
+			var oHBoxLabeledRating = new sap.m.HBox("automaticRIwithLabel", {
 				items: [
 					oRating3,
 					oLabel3
@@ -323,17 +322,17 @@
 			}
 
 			var oIconSelectedLabel = new sap.m.Label({text: 'IconSelected'});
-			var oIconSelectedSelect = new sap.m.Select({
+			var oIconSelectedComboBox = new sap.m.ComboBox({
 				selectedItemId: "favorite_selected",
 				items: aIconsSelected
 			});
 			var oIconUnselectedLabel = new sap.m.Label({text: 'IconUnselected'});
-			var oIconUnselectedSelect = new sap.m.Select({
+			var oIconUnselectedComboBox = new sap.m.ComboBox({
 				selectedItemId: "favorite_unselected",
 				items: aIconsUnselected
 			});
 			var oIconHoveredLabel = new sap.m.Label({text: 'IconHovered'});
-			var oIconHoveredSelect = new sap.m.Select({
+			var oIconHoveredComboBox = new sap.m.ComboBox({
 				selectedItemId: "favorite_hovered",
 				items: aIconsHovered
 			});
@@ -363,9 +362,9 @@
 					oRatingAPI0.setMaxValue(parseInt(oMaxValueInput.getValue()));
 					oRatingAPI0.setIconSize(oIconSizeInput.getValue());
 					oRatingAPI0.setVisualMode(oVisualModeSelect.getSelectedItemId());
-					oRatingAPI0.setIconSelected(sap.ui.core.IconPool.getIconURI(oIconSelectedSelect.getSelectedItem().getText()));
-					oRatingAPI0.setIconUnselected(sap.ui.core.IconPool.getIconURI(oIconUnselectedSelect.getSelectedItem().getText()));
-					oRatingAPI0.setIconHovered(sap.ui.core.IconPool.getIconURI(oIconHoveredSelect.getSelectedItem().getText()));
+					oRatingAPI0.setIconSelected(sap.ui.core.IconPool.getIconURI(oIconSelectedComboBox.getSelectedItem().getText()));
+					oRatingAPI0.setIconUnselected(sap.ui.core.IconPool.getIconURI(oIconUnselectedComboBox.getSelectedItem().getText()));
+					oRatingAPI0.setIconHovered(sap.ui.core.IconPool.getIconURI(oIconHoveredComboBox.getSelectedItem().getText()));
 					oRatingAPI0.setEnabled(oEnabledCheckbox.getSelected());
 					oRatingAPI0.setVisible(oVisibleCheckbox.getSelected());
 				},
@@ -383,11 +382,11 @@
 					oVisualModeLabel,
 					oVisualModeSelect,
 					oIconSelectedLabel,
-					oIconSelectedSelect,
+					oIconSelectedComboBox,
 					oIconUnselectedLabel,
-					oIconUnselectedSelect,
+					oIconUnselectedComboBox,
 					oIconHoveredLabel,
-					oIconHoveredSelect,
+					oIconHoveredComboBox,
 					oEnabledLabel,
 					oEnabledCheckbox,
 					oVisibleLabel,

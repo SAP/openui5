@@ -1,91 +1,90 @@
 <!DOCTYPE HTML>
+<!--
+    Tested module: sap-ui-core in general
+  -->
 <html>
 	<head>
-	<!-- 
-    Tested module: sap-ui-core in general
-    -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 
 		<title>Test Page for the SAPUI5 Bootstrap functionality</title>
+		<script src="../../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
-				type="text/javascript"
 				data-sap-ui-noConflict="true"
 				src="../../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
 
 		/**
 		 * Tests whether basic classes are available that together can be considered the SAPUI5 Core
 		 */
-		test("BasicClassesAvailable", function() {
-			
-			
-			notStrictEqual(sap.ui.base, undefined, "package sap.ui.base must exist");
-			notStrictEqual(sap.ui.base.Object, undefined, "class sap.ui.base.Object must exist");
-			notStrictEqual(sap.ui.base.EventProvider, undefined, "class sap.ui.base.EventProvider must exist");
-			notStrictEqual(sap.ui.base.Interface, undefined, "class sap.ui.base.Interface must exist");
-			notStrictEqual(sap.ui.core, undefined, "package sap.ui.core must exist");
-			notStrictEqual(sap.ui.core.Core, undefined, "class sap.ui.core.Core must exist");
-			notStrictEqual(sap.ui.core.Element, undefined, "class sap.ui.core.Element must exist");
-			notStrictEqual(sap.ui.core.Control, undefined, "class sap.ui.core.Control must exist");
-			notStrictEqual(sap.ui.core.UIArea, undefined, "class sap.ui.core.UIArea must exist");
-			notStrictEqual(sap.ui.core.RenderManager, undefined, "class sap.ui.core.RenderManager must exist");
-		});
-		
-		test("CoreAvailable", function() {
-			
-
-			ok(typeof(sap.ui.getCore) == "function", "function sap.ui.getCore must be defined");
-			notStrictEqual(sap.ui.getCore(), null, "calling sap.ui.getCore() must not return null");
-			ok(sap.ui.getCore() instanceof sap.ui.base.Interface && _providesPublicMethods(sap.ui.getCore(), sap.ui.core.Core), "calling sap.ui.getCore() must deliver the Core interface");
+		QUnit.test("BasicClassesAvailable", function(assert) {
+			assert.notStrictEqual(sap.ui.base, undefined, "package sap.ui.base must exist");
+			assert.notStrictEqual(sap.ui.base.Object, undefined, "class sap.ui.base.Object must exist");
+			assert.notStrictEqual(sap.ui.base.EventProvider, undefined, "class sap.ui.base.EventProvider must exist");
+			assert.notStrictEqual(sap.ui.base.Interface, undefined, "class sap.ui.base.Interface must exist");
+			assert.notStrictEqual(sap.ui.core, undefined, "package sap.ui.core must exist");
+			assert.notStrictEqual(sap.ui.core.Core, undefined, "class sap.ui.core.Core must exist");
+			assert.notStrictEqual(sap.ui.core.Element, undefined, "class sap.ui.core.Element must exist");
+			assert.notStrictEqual(sap.ui.core.Control, undefined, "class sap.ui.core.Control must exist");
+			assert.notStrictEqual(sap.ui.core.UIArea, undefined, "class sap.ui.core.UIArea must exist");
+			assert.notStrictEqual(sap.ui.core.RenderManager, undefined, "class sap.ui.core.RenderManager must exist");
 		});
 
-		test("GetRenderManager", function(){
-			
-			
+		QUnit.test("CoreAvailable", function(assert) {
+			assert.ok(typeof(sap.ui.getCore) == "function", "function sap.ui.getCore must be defined");
+			assert.notStrictEqual(sap.ui.getCore(), null, "calling sap.ui.getCore() must not return null");
+			assert.ok(sap.ui.getCore() instanceof sap.ui.base.Interface, "calling sap.ui.getCore() must deliver the Core interface");
+			checkPublicMethods(assert, sap.ui.getCore(), sap.ui.core.Core);
+		});
+
+		QUnit.test("GetRenderManager", function(assert) {
 			var oCore = sap.ui.getCore();
-			notStrictEqual(oCore.getRenderManager, undefined, "function getRenderManager on sap.ui.core.Core instance must be defined");
-			ok(oCore.getRenderManager() instanceof sap.ui.base.Interface && _providesPublicMethods(oCore.getRenderManager(), sap.ui.core.RenderManager), "calling getRenderManager on Core instance must deliver the RenderManager interface");
+			
+			var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
+								  "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
+								  "addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
+								  "getConfiguration", "getHTML", "cleanupControlWithoutRendering", "render", "flush", "destroy"];
+
+			assert.notStrictEqual(oCore.getRenderManager, undefined, "function getRenderManager on sap.ui.core.Core instance must be defined");
+			assert.ok(typeof oCore.getRenderManager() === 'object', "calling getRenderManager on Core instance must deliver the RenderManager interface");
+			checkMethods(assert, oCore.getRenderManager(), aCommonMethods);
 		});
 
-		test("GetConfiguration", function(){
-			
-			
+		QUnit.test("GetConfiguration", function(assert) {
 			var oCore = sap.ui.getCore();
-			notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
-			ok(oCore.getConfiguration() instanceof sap.ui.base.Interface && _providesPublicMethods(oCore.getConfiguration(), sap.ui.core.Configuration), "calling getConfiguration on Core instance must deliver the RenderManager interface");
+			assert.notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
+			assert.ok(oCore.getConfiguration() instanceof sap.ui.base.Interface, "calling getConfiguration on Core instance must deliver the Configuration interface");
+			checkPublicMethods(assert, oCore.getConfiguration(), sap.ui.core.Configuration);
 		});
-	
+
 
 		// #####################################################################
 		// Convenience
 		// #####################################################################
 
-		function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /**function*/ fnClass, /**boolean*/ bFailEarly) {
-			var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
-			  result = true, 
-				sMethod;
-			for(var i in aMethodNames){
-				sMethod = aMethodNames[i];
-				result = result && oObject[sMethod] != undefined;
-				if(result) continue;
-				if(bFailEarly && !result) break;
-				// inform("method '" + sMethod + "' is missing.");
+		function checkMethods(assert, oObject, aMethodNames) {
+
+			for ( var i = 0; i < aMethodNames.length; i++ ) {
+				assert.ok(oObject[aMethodNames[i]] !== undefined, "expected interface method should actually exist: " + aMethodNames[i]);
 			}
-			return result;
+			
+			for ( var i in oObject ) {
+				assert.ok(aMethodNames.indexOf(i) >= 0, "actual method should be part of expected interface: " + i);
+			}
+
+		}
+		
+		function checkPublicMethods(assert, /**sap.ui.base.Object*/oObject, /**function*/ fnClass) {
+			return checkMethods(assert, oObject, fnClass.getMetadata().getAllPublicMethods());
 		}
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">Bootstrap Variant 'within Head'</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
+		<div id="qunit"></div>
 	</body>
 </html>

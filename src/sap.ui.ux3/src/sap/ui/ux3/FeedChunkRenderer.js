@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('<img id=' + sMyId + '-thumb');
 		var sThumbnail = oChunk.getThumbnailSrc();
 		if (!sThumbnail) {
-			sThumbnail = jQuery.sap.getModulePath("sap.ui.ux3", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sap.ui.core.theming.Parameters.get('sapUiFeedPersonPlaceholder');
+			sThumbnail = sap.ui.core.theming.Parameters._getThemeImage('_sap_ui_ux3_FeedChunk_PersonPlaceholder');
 		}
 		rm.writeAttributeEscaped('src', sThumbnail);
 		rm.writeAttributeEscaped('alt', oChunk.getSender());
@@ -57,9 +57,7 @@ sap.ui.define(['jquery.sap.global'],
 		// text (starting with sender)
 		rm.write('<DIV class= "sapUiFeedChunkText" >');
 		rm.write('<a id=' + sMyId + '-sender ');
-		/* eslint-disable no-script-url */
-		rm.writeAttribute('href', 'javascript:void(0);');
-		/* eslint-enable no-script-url */
+		rm.writeAttribute('href', '#');
 		rm.write('>');
 		rm.writeEscaped(oChunk.getSender());
 		rm.write('</a> ');
@@ -156,9 +154,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (/^@/.test(sWord)) {
 				// @-reference
 				rm.write('<a id=' + oChunk.getId() + '-Ref' + i);
-				/* eslint-disable no-script-url */
-				rm.writeAttribute('href', 'javascript:void(0);');
-				/* eslint-enable no-script-url */
+				rm.writeAttribute('href', '#');
 				rm.write('>');
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>', sSpace);
@@ -207,9 +203,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			if (iLength > oChunk.maxComments) {
 				rm.write('<a id=' + oChunk.getId() + '-all ');
-				/* eslint-disable no-script-url */
-				rm.writeAttribute('href', 'javascript:void(0);');
-				/* eslint-enable no-script-url */
+				rm.writeAttribute('href', '#');
 				rm.write('>');
 				if (!oChunk.allComments) {
 					rm.write(oChunk.rb.getText('FEED_ALL_COMMENTS'));

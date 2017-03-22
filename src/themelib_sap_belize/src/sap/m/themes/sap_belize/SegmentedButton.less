@@ -1,0 +1,50 @@
+/* ====================================== */
+/* CSS for control sap.m/SegmentedButton  */
+/* Belize theme                           */
+/* ====================================== */
+
+.sapMSegBBtn:first-child {
+	border-top-left-radius: 0.2rem;
+	border-bottom-left-radius: 0.2rem;
+}
+
+.sapMSegBBtn:last-child {
+	border-top-right-radius: 0.2rem;
+	border-bottom-right-radius: 0.2rem;
+}
+
+.sapMSegBBtn:last-child {
+	border-right: 1px solid @sapUiSegmentedButtonBorderColor;
+}
+
+/* Custom focus outline: */
+html.sap-desktop {
+	.sapMSegBBtnFocusable:focus {
+		outline: 1px dotted;
+		outline-offset: -3px;
+		outline-color: @sapUiContentFocusColor;
+	}
+
+	.sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
+		outline: 1px dotted;
+		outline-offset: -3px;
+		outline-color: @sapUiContentContrastFocusColor;
+	}
+}
+
+/* IE/Edge */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSegB {
+		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus:before {
+			border: 1px dashed @sapUiContentContrastFocusColor;
+		}
+	}
+}
+
+/* Android size compact fix */
+html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"] {
+	.sapUiSizeCompact .sapMSegBBtn img {
+		margin-bottom: 0.128rem;
+	}
+}

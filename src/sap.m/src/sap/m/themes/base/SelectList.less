@@ -1,20 +1,26 @@
-/* ============================================= */
-/* CSS for control sap.m/SelectList.control      */
-/* ============================================= */
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* Base theme                        */
+/* ================================= */
 
 /* ------------------------------ */
-/* SelectList commons styles      */
+/* commons styles                 */
 /* ------------------------------ */
+
+.sapMSelectList,
+.sapMSelectListItemBase {
+	box-sizing: border-box;
+}
 
 /* disabled */
 
 .sapMSelectListDisabled,
-.sapMSelectListItemDisabled {
+.sapMSelectListItemBaseDisabled {
 	pointer-events: none;
 }
 
 /* ------------------------------ */
-/* SelectList                     */
+/* list                           */
 /* ------------------------------ */
 
 .sapMSelectList {
@@ -22,20 +28,126 @@
 	padding: 0;
 	outline: none;
 	list-style-type: none;
-	box-sizing: border-box;
+	background: @sapUiListBackground;
+}
+
+.sapMSelectListTableLayout {
+	display: table;
+	border-collapse: collapse;
 }
 
 /* ------------------------------ */
-/* SelectList Item                */
+/* item                           */
 /* ------------------------------ */
 
-.sapMSelectListItem {
+.sapMSelectListItemBase {
 	outline: none;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	color: @sapUiListTextColor;
+	font-size: @sapMFontMediumSize;
+	height: 2.5rem;
+	cursor: pointer;
+}
+
+.sapMSelectListItem {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding: 0 1rem 0 1rem;
+	line-height: 2.5rem;
+}
+
+li.sapMSelectListItemBaseInvisible {
+	display: none;
+}
+
+/* hover */
+.sapMSelectListItemBaseHoverable:hover {
+	background: @sapUiListHoverBackground;
+}
+
+/* hover selected */
+.sapMSelectListItemBaseSelected.sapMSelectListItemBaseHoverable:hover {
+	background-color: @sapUiListSelectionHoverBackground;
+}
+
+/* pressed and pressed selected */
+.sapMSelectListItemBase.sapMSelectListItemBasePressed,
+.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMSelectListItemBaseSelected {
+	color: @sapUiListActiveTextColor;
+	background: @sapUiListActiveBackground;
+}
+
+/* focus */
+html.sap-desktop .sapMSelectListItemBase:focus {
+	outline: dotted 1px;
+	outline-offset: -2px;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected:not(.sapMSelectListRow) {
+		outline: none;
+		position: relative;
+	}
+
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
+		content: " ";
+		position: absolute;
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		left: 1px;
+		pointer-events: none;
+	}
+}
+
+/* ------------------------------ */
+/* row                            */
+/* ------------------------------ */
+
+.sapMSelectListRow {
+	display: table-row;
+}
+
+/* ------------------------------ */
+/* cell                           */
+/* ------------------------------ */
+
+.sapMSelectListCell {
+	display: table-cell;
+	vertical-align: middle;
+	padding-left: 1rem;
+}
+
+
+.sapMSelectListLastCell {
+	text-align: right;
+	padding-right: 1rem;
+}
+
+/* ------------------------------ */
+/* separator                      */
+/* ------------------------------ */
+
+.sapMSelectListSeparatorItem {
+	border: 1px solid @sapUiListBorderColor;
+}
+
+/* compact size  */
+
+/* ------------------------------ */
+/* commons styles                 */
+/* ------------------------------ */
+
+.sapUiSizeCompact .sapMSelectListItemBase {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMSelectListItem {
+	line-height: 2rem;
 }

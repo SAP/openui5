@@ -1,0 +1,95 @@
+<mvc:View
+		height="100%"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		controllerName="sap.m.sample.SemanticPageFloatingFooter.Page"
+		xmlns:semantic="sap.m.semantic"
+		xmlns:ui="sap.ca.ui"
+		displayBlock="true">
+
+	<SplitContainer>
+		<masterPages>
+			<semantic:MasterPage title="Master Page Title"
+								 floatingFooter="true">
+				<semantic:sort>
+					<semantic:SortSelect change="onSemanticSelectChange"
+										 items="{
+							path: '/ProductCollectionStats/Filters',
+							sorter: { path: 'Name' }
+							}">
+						<core:Item key="{type}" text="{type}"/>
+					</semantic:SortSelect>
+				</semantic:sort>
+				<semantic:filter>
+					<semantic:FilterAction press="onSemanticButtonPress"/>
+				</semantic:filter>
+				<semantic:group>
+					<semantic:GroupAction press="onSemanticButtonPress"/>
+				</semantic:group>
+				<semantic:addAction>
+					<semantic:AddAction press="onSemanticButtonPress"/>
+				</semantic:addAction>
+				<semantic:multiSelectAction>
+					<semantic:MultiSelectAction press="onMultiSelectPress"/>
+				</semantic:multiSelectAction>
+			</semantic:MasterPage>
+		</masterPages>
+		<detailPages>
+			<semantic:DetailPage
+					title="Detail Page Title"
+					floatingFooter="true">
+				<semantic:positiveAction>
+					<semantic:PositiveAction text="Positive" press="onSemanticButtonPress"/>
+				</semantic:positiveAction>
+				<semantic:negativeAction>
+					<semantic:NegativeAction text="Negative" press="onSemanticButtonPress"/>
+				</semantic:negativeAction>
+				<semantic:forwardAction>
+					<semantic:ForwardAction press="onSemanticButtonPress"/>
+				</semantic:forwardAction>
+				<semantic:flagAction>
+					<semantic:FlagAction press="onSemanticButtonPress"/>
+				</semantic:flagAction>
+				<semantic:favoriteAction>
+					<semantic:FavoriteAction press="onSemanticButtonPress"/>
+				</semantic:favoriteAction>
+				<semantic:sendEmailAction>
+					<semantic:SendEmailAction press="onSemanticButtonPress"/>
+				</semantic:sendEmailAction>
+				<semantic:sendMessageAction>
+					<semantic:SendMessageAction press="onSemanticButtonPress"/>
+				</semantic:sendMessageAction>
+				<semantic:discussInJamAction>
+					<semantic:DiscussInJamAction press="onSemanticButtonPress"/>
+				</semantic:discussInJamAction>
+				<semantic:shareInJamAction>
+					<semantic:ShareInJamAction press="onSemanticButtonPress"/>
+				</semantic:shareInJamAction>
+				<semantic:printAction>
+					<semantic:PrintAction press="onSemanticButtonPress"/>
+				</semantic:printAction>
+				<semantic:messagesIndicator>
+					<semantic:MessagesIndicator press="onMessagesButtonPress"/>
+				</semantic:messagesIndicator>
+				<semantic:pagingAction>
+					<PagingButton count="5" positionChange="onPositionChange"/>
+				</semantic:pagingAction>
+
+				<semantic:customFooterContent>
+					<OverflowToolbarButton icon="sap-icon://settings" text="Settings" press="onPress"/>
+					<OverflowToolbarButton icon="sap-icon://video" text="Video" press="onPress"/>
+				</semantic:customFooterContent>
+
+				<semantic:customShareMenuContent>
+					<Button text="CustomShareBtn1" icon="sap-icon://color-fill" press="onPress"/>
+					<Button text="CustomShareBtn2" icon="sap-icon://crop" press="onPress"/>
+				</semantic:customShareMenuContent>
+
+			</semantic:DetailPage>
+
+		</detailPages>
+
+	</SplitContainer>
+
+</mvc:View>

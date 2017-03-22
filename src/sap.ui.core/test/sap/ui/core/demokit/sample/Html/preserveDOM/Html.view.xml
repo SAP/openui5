@@ -1,0 +1,27 @@
+<mvc:View
+  xmlns:l="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  controllerName="sap.ui.core.sample.Html.preserveDOM.Html"
+>
+
+	<Panel
+	  headerText="Static (decorative) HTML Provided as a String With Preserved DOM After Rendering"
+	>
+	  <content>
+	    <FormattedText
+	      htmlText='&lt;p&gt;The HTML fragment is specified as a string. The difference is that after the first rendering, the HTML control tries to preserve the created DOM nodes as long as possible. Before each re-rendering step, the existing DOM is preserved in some hidden page area, and then the control and its relatives (parents, siblings) are rendered - this creates a new DOM node hierarchy. After the rendering, the preserved DOM content of the controls is integrated in the newly created DOM tree.&lt;/p&gt;
+	      &lt;p&gt;This example is useful when the dynamic changes to the DOM cannot be re-done easily, for example if they represent valuable user interaction. The HTML control initially renders an empty black box. By clicking it, a dynamic modification is simulated (colored boxes are added). When the control is re-rendered, the string content is rendered again, and all dynamic changes are lost. If you enable the preferDOM option which is a control property, the existing DOM node is preserved together with the dynamic changes.&lt;/p&gt;'
+	    />
+
+	    <l:HorizontalLayout id="preserveContentLayout">
+	      <l:content>
+          <CheckBox selected="false" text="prefer DOM" select="onCheckBoxSelected"/>
+					<Button text="Redraw" press="onRedraw" />
+	      </l:content>
+			</l:HorizontalLayout>
+
+	  </content>
+	</Panel>
+</mvc:View>

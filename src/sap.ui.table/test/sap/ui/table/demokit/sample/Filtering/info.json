@@ -1,0 +1,30 @@
+[
+	{
+		"title" : "Filter field in the Toolbar",
+		"text"	: "The filter field triggers a binding based filtering ('contains' filter operator) across the 'Product Name' and 'Category' columns."
+	},{
+		"title" : "Clear all filters",
+		"text"	: "All filters can be cleared via the button with the cross icon in the toolbar."
+	},{
+		"title" : "Column 'Product Name'",
+		"text"	: "Column 1 shows a standard string based filtering using the default 'contains' filter operator."
+	},{
+		"title" : "Column 'Category'",
+		"text"	: "Like column 1 a standard string based filtering is shown but with filter operator 'startsWith'."
+	},{
+		"title" : "Column 'Image'",
+		"text"	: "The attribute 'filterProperty' is not set on the column. Therefore it is not filterable at all."
+	},{
+		"title" : "Column 'Status'",
+		"text"	: "The filter menu entry is disabled in on column 'Status'. Instead the filter (switch between available products and all products) is set calling the 'filter' function. The filter can be activated by the user with a ToggleButton."
+	},{
+		"title" : "Column 'Price'",
+		"text"	: "The default filter functionality is disabled. Instead the filter event is used to implement a custom filter (Filters all prices +-20 around the given value)."
+	},{
+		"title" : "Column 'Quantity'",
+		"text"	: "This column shows a integer based filtering. The default operator here is 'equals'. Try also filter values like '>20'."
+	},{
+		"title" : "Enable Cell Filters",
+		"text"	: "With the toggle button in the toolbar the cell filter context menus can be activated. For all columns for which filtering is activated (all except column 'Image') the filter value can also (beside the header menu) be set via a context menu on a cell."
+	}
+]

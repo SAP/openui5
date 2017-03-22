@@ -1,0 +1,154 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:m="sap.m"
+		   xmlns:sample="sap.uxap.sample.SharedBlocks"
+		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+		   xmlns:connections="sap.uxap.sample.SharedBlocks.connections"
+		   controllerName="sap.uxap.sample.ObjectPageTabNavigationMode.ObjectPageTabNavigationMode"
+		   height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" useIconTabBar="true" showTitleInHeaderContent="true">
+		<headerTitle>
+			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
+							  objectTitle="Denise Smith"
+							  objectImageShape="Circle"
+							  objectSubtitle="Senior UI Developer">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Link text="+33 6 4512 5158"/>
+				<m:Link text="DeniseSmith@sap.com"/>
+			</layout:VerticalLayout>
+
+			<layout:HorizontalLayout>
+				<m:Image src="./test-resources/sap/uxap/images/linkedin.png"></m:Image>
+				<m:Image src="./test-resources/sap/uxap/images/Twitter.png"></m:Image>
+			</layout:HorizontalLayout>
+
+			<layout:VerticalLayout>
+				<m:Label text="Hello! I am Tim and I use UxAP"/>
+				<m:VBox height="63px">
+					<m:Label text="Achieved goals"/>
+					<m:ProgressIndicator
+							percentValue="30"
+							displayValue="30%"
+							showValue="true"
+							state="None"/>
+				</m:VBox>
+			</layout:VerticalLayout>
+
+			<layout:VerticalLayout>
+				<m:Label text="San Jose, USA"/>
+			</layout:VerticalLayout>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection id="goals" title="2014 Goals Plan">
+			<subSections>
+				<ObjectPageSubSection id="goalsSS1" title="">
+					<blocks>
+						<goals:GoalsBlock id="goalsblock"/>
+					</blocks>
+				</ObjectPageSubSection>
+			</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="personal" title="Personal">
+				<subSections>
+					<ObjectPageSubSection id="personalSS1" title="Connect">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone"/>
+							<personal:BlockSocial id="social"/>
+							<personal:BlockAdresses id="adresses"/>
+							<personal:BlockMailing id="mailing" columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="personalSS2" title="Payment information">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="employment" title="Employment">
+				<subSections>
+					<ObjectPageSubSection id="employmentSS1" title="Job information">
+						<blocks>
+							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
+							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
+							<employment:BlockJobInfoPart3 id="jobinfopart3"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="employmentSS2" title="Employee Details" mode="Collapsed">
+						<blocks>
+							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
+						</blocks>
+						<moreBlocks>
+							<employment:BlockEmpDetailPart2 id="empdetailpart2" columnLayout="1"/>
+							<employment:BlockEmpDetailPart3 id="empdetailpart3" columnLayout="1"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="employmentSS3" title="Job Relationship" mode="Collapsed">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection id="connections" title="Connections">
+				<subSections>
+					<ObjectPageSubSection id="connectionsSS1" title="">
+						<blocks>
+							<connections:ConnectionsBlock id="connectionsblock">
+								<connections:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</connections:mappings>
+							</connections:ConnectionsBlock>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

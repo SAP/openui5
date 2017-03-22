@@ -1,19 +1,20 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Carousel - sap.ui.commons</title>
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_goldreflection"
-			data-sap-ui-trace="true" type="text/javascript"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-trace="true"
 			data-sap-ui-libs="sap.ui.commons"
 			src="../../../../resources/sap-ui-core.js">
 		</script>
 
 		<script src="../../../../resources/sap-ui-debug.js"></script>
 
-		<script type="text/javascript">
+		<script>
 
 			var oLyt = new sap.ui.commons.layout.MatrixLayout("mylyt");
 			oLyt.setLayoutFixed(false);
@@ -65,7 +66,6 @@
 			}));
 
 			var oCarousel2 = new sap.ui.commons.Carousel();
-			oCarousel2.setWidth("100%");
 
 			oCarousel2.addContent(new sap.ui.commons.Image("IMG8", {
 				src : "images/carousel/img1.jpg",

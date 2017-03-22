@@ -1,18 +1,17 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>ProgressIndicator - sap.m</title>
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
 
 			var label1 = new sap.m.Label({
@@ -30,15 +29,6 @@
 			var oInput = new sap.m.Input("input", {
 				placeholder : "Number",
 				width:"10%"
-			});
-
-			var oButton =new sap.m.Button("button", {
-				text:"ChangePI",
-				press: function(){
-					var sPercent = sap.ui.getCore().byId("input").getValue();
-					oProgInd1.setPercentValue(parseInt(sPercent));
-					oProgInd1.setDisplayValue(sPercent + "%");
-				}
 			});
 
 			var label2 = new sap.m.Label({
@@ -123,10 +113,48 @@
 
 			// create progressIndicator
 			var oProgInd8 = new sap.m.ProgressIndicator("pi8", {
-				width:"80%",
+				width:"10%",
 				percentValue:49,
 				displayValue:"49%",
 				state: sap.ui.core.ValueState.Success
+			});
+
+			var oButton =new sap.m.Button("button", {
+				text:"ChangePI",
+				press: function(){
+					var sPercent = sap.ui.getCore().byId("input").getValue();
+					oProgInd8.setPercentValue(parseFloat(sPercent));
+					oProgInd8.setDisplayValue(sPercent + "%");
+				}
+			});
+
+			var oButton2 =new sap.m.Button("change_pi", {
+				text:"Change PI to 40%",
+				press: function(){
+					oProgInd8.setPercentValue(40);
+					oProgInd8.setDisplayValue("40%");
+				}
+			});
+
+			var oButton3 =new sap.m.Button("small_pi", {
+				text:"Set PI to small size",
+				press: function(){
+					oProgInd8.setHeight("1.375rem");
+				}
+			});
+
+			var oButton4 =new sap.m.Button("disable_pi", {
+				text:"Set PI to disable",
+				press: function(){
+					oProgInd8.setEnabled(false);
+				}
+			});
+
+			var oButton5 =new sap.m.Button("state_pi", {
+				text:"Set state",
+				press: function(){
+					oProgInd8.setState(sap.ui.core.ValueState.Neutral);
+				}
 			});
 
 			// create page
@@ -150,8 +178,12 @@
 					label8,
 					oProgInd8,
 					oInput,
-					oButton
-				],
+					oButton,
+					oButton2,
+					oButton3,
+					oButton4,
+					oButton5
+				]
 			});
 
 			app.addPage(page1);

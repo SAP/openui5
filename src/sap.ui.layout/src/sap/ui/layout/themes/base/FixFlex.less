@@ -1,6 +1,7 @@
-/* ==========================================================================
-   CSS for control sap.m/FlexBox.control
-   ========================================================================== */
+/* ====================================== */
+/* CSS for control sap.ui.layout/FixFlex  */
+/* Base theme                             */
+/* ====================================== */
 
 /* Class for vertical (default) layout
    ========================================================================== */
@@ -9,18 +10,15 @@
 
 	display: -webkit-box;
 	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 
 	-webkit-box-direction: normal;
 	-webkit-box-orient: vertical;
 	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
 	flex-direction: column;
 
 	-webkit-box-align: start;
 	-webkit-align-items: flex-start;
-	-ms-flex-align: start;
 	align-items: flex-start;
 
 	height: 100%;
@@ -30,19 +28,21 @@
 .sapUiFixFlexFlexible {
 	box-sizing: border-box;
 
+	/* Fixes bug in Chrome 48 where flexbox is broken
+		https://github.com/angular/material/issues/6841 */
+	min-height: 0;
+	min-width: 0;
+
 	display: -webkit-box;
 	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 
 	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
-	flex-grow: 1;
+	-webkit-flex: 1;
+	flex: 1;
 
 	-webkit-box-align: start;
 	-webkit-align-items: flex-start;
-	-ms-flex-align: start;
 	align-items: flex-start;
 
 	overflow: hidden;
@@ -82,7 +82,6 @@
 	-webkit-box-direction: normal;
 	-webkit-box-orient: horizontal;
 	-webkit-flex-direction: row;
-	-ms-flex-direction: row;
 	flex-direction: row;
 
 	& > .sapUiFixFlexFlexible,
@@ -111,20 +110,25 @@
    ========================================================================== */
 .sapUiFixFlexInnerScrolling {
 	& > .sapUiFixFlexFlexible {
-		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
+		overflow: auto;
+
+		.sapUiFixFlexFlexibleContainerGrowing {
+			overflow-x: hidden;
+			overflow-y: visible;
+			width: 100%;
+			position: static;
+		}
 	}
 
 	&.sapUiFixFlexRow {
 		& > .sapUiFixFlexFlexible {
-			overflow-x: auto;
 			overflow-y: hidden;
 		}
 	}
 }
 
 .sapUiFixFlexScrolling {
-	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	display: block;
 
@@ -138,8 +142,6 @@
 	}
 
 	&.sapUiFixFlexRow {
-		overflow-x: auto;
-		overflow-y: hidden;
 		white-space: nowrap;
 		& > .sapUiFixFlexFlexible,
 		& > .sapUiFixFlexFixed {

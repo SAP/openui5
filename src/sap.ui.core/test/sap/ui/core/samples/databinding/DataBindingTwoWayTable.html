@@ -1,47 +1,47 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Data binding test page with Two Way data binding, table and JSON Model</title>
-		
+
 		<!-- ********************************************************************** -->
 		<!-- JavaScript Bootstrap:                                                  -->
 		<!-- Extend the "libs" property if you like to import additional libraries  -->
 		<!-- ********************************************************************** -->
-		<script id="sap-ui-bootstrap" type="text/javascript"
+		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-trace="true">
 		</script>
-		
-		<script type="text/javascript">
-			
+
+		<script>
+
 			try {
 				sap.ui.getCore().loadLibrary("sap.ui.commons");
 			} catch(e) {
 				alert("This test page requires the library 'sap.ui.commons' which is not available.");
 				throw(e);
 			}
-			
+
 			try {
 				sap.ui.getCore().loadLibrary("sap.ui.table");
 			} catch(e){
 				alert("This test page requires the library 'sap.ui.table' which is not available.");
 				throw(e);
 			}
-			
+
 			var oCore = sap.ui.getCore();
 			oCore.attachInitEvent(function() {
 				var logger = jQuery.sap.domById("sap-ui-TraceWindowRoot");
 				if (logger)
 					logger.style.display = "none";
-				
+
 				var oHeader = new sap.ui.commons.ApplicationHeader();
 				oHeader.setLogoText("Testpage with Two Way Data Binding, Tables and JSON Model");
 				oHeader.setDisplayLogoff(false).setDisplayWelcome(false);
 				oHeader.placeAt("header");
-				
+
 				var mdData = {
 					clients:[
 						{firstName:"Donald", lastName:"Duck", id: "1", rating : 5},
@@ -56,16 +56,16 @@
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(mdData);
 				sap.ui.getCore().setModel(oModel);
-				
+
 				var tableArea1 = oCore.createUIArea("tableArea1");
-				var oTable = new sap.ui.table.DataTable({
+				var oTable = new sap.ui.table.Table({
 					title : "Clients Table1",
 					width : "100%",
 					visibleRowCount : 5,
 					selectionMode : sap.ui.table.SelectionMode.Single,
 					editable : true
 				});
-				
+
 				oTable.addColumn(new sap.ui.table.Column({
 					label: new sap.ui.commons.Label({text: "Client ID"}),
 					template: new sap.ui.commons.TextField({value:"{id}"}),
@@ -90,19 +90,19 @@
 					sortProperty: "rating",
 					filterProperty: "rating"
 				}));
-				
+
 				oTable.bindRows("/clients");
 				tableArea1.setRootControl(oTable);
-				
+
 				var tableArea2 = oCore.createUIArea("tableArea2");
-				oTable = new sap.ui.table.DataTable({
+				oTable = new sap.ui.table.Table({
 					title : "Clients Table2",
 					width : "100%",
 					visibleRowCount : 5,
 					selectionMode : sap.ui.table.SelectionMode.Single,
 					editable : true
 				});
-				
+
 				oTable.addColumn(new sap.ui.table.Column({
 					label: new sap.ui.commons.Label({text: "Client ID with One Way Binding", design : sap.ui.commons.LabelDesign.Bold}),
 					template: new sap.ui.commons.TextField().bindValue("id",null, sap.ui.model.BindingMode.OneWay),
@@ -127,10 +127,10 @@
 					sortProperty: "rating",
 					filterProperty: "rating"
 				}));
-				
+
 				oTable.bindRows("/clients");
 				tableArea2.setRootControl(oTable);
-				
+
 			});
 		</script>
 	</head>

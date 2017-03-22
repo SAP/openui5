@@ -1,0 +1,21 @@
+/* ================================= */
+/* CSS for control sap.m/MultiInput  */
+/* Belize theme                      */
+/* ================================= */
+
+.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder::before {
+	border: 1px dotted @sapUiContentFocusColor;
+	content: "";
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	left: 1px;
+	pointer-events: none;
+}
+
+.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
+.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder,
+.sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder {
+	border-width: 2px;
+}

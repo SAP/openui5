@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>qUnit Page for sap.ui.test.matchers.AggregationEmpty</title>
+
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			sap.ui.require([
+				"sap/ui/test/matchers/AggregationEmpty",
+				"sap/m/ComboBox",
+				"sap/ui/core/ListItem"
+			], function (AggregationEmpty, ComboBox, ListItem) {
+
+				QUnit.module("AggregationEmpty", {
+					beforeEach: function () {
+						this.oComboBox = new ComboBox("myCB");
+					},
+					afterEach: function () {
+						this.oComboBox.destroy();
+					}
+				});
+
+				QUnit.test("Should not match a filled aggregation", function(assert) {
+					// Arrange
+					this.oComboBox.addItem(new ListItem());
+
+					// System under Test
+					var oMatcher = new AggregationEmpty({ name : "items" });
+
+					// Act
+					var bResult = oMatcher.isMatching(this.oComboBox);
+
+					// Assert
+					assert.ok(!bResult, "Did not match because there was an item");
+				});
+
+				QUnit.test("Should match an empty aggregation", function(assert) {
+					// System under Test
+					var oMatcher = new AggregationEmpty({ name : "items" });
+
+					// Act
+					var bResult = oMatcher.isMatching(this.oComboBox);
+
+					// Assert
+					assert.ok(bResult, "Matched because there was no item");
+				});
+
+				QUnit.test("Should complain if control does not have an aggregation", function(assert) {
+					// System under Test
+					var oMatcher = new AggregationEmpty({ name : "anAggregationThatWillNeverBeAddedToTheCombobox" });
+
+					// Act
+					var bResult = oMatcher.isMatching(this.oComboBox);
+
+					// Assert
+					assert.strictEqual(bResult, false, "Did not match");
+				});
+		});
+
+		</script>
+	</head>
+
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+
+</html>

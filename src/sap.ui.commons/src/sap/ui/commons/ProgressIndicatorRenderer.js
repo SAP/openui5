@@ -111,23 +111,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeAttribute('id', oProgressIndicator.getId() + '-end');
 
 		if (widthBar > 100) {
-			switch (sBarColor) {
-				case "POSITIVE":
-					oRm.addClass('sapUiProgIndPosEnd');
-					break;
-				case "NEGATIVE":
-					oRm.addClass('sapUiProgIndNegEnd');
-					break;
-				case "CRITICAL":
-					oRm.addClass('sapUiProgIndCritEnd');
-					break;
-				case "NEUTRAL":
-					oRm.addClass('sapUiProgIndEnd');
-					break;
-				default:
-					oRm.addClass('sapUiProgIndEnd');
-					break;
-			}
+			oRm.addClass(oProgressIndicator._getProgIndTypeClass(sBarColor));
 		} else {
 			oRm.addClass('sapUiProgIndEndHidden');
 		}

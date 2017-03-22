@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>RuntimeAuthoring</title>
+
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-resourceroots='{"sap.m.test.rta": "./"}'
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.dt, sap.ui.rta"
+			src="../../../resources/sap-ui-core.js">
+	</script>
+
+	<script type="text/javascript">
+		jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
+
+		// Create the FakeLrep with localStorage
+		(function _createFakeLrep() {
+			sap.ui.require(["sap/ui/fl/FakeLrepConnector", "sap/ui/rta/util/FakeLrepConnectorLocalStorage"], function (FakeLrepConnector, FakeLrepConnectorLocalStorage) {
+				if (/[&?](sap-rta-clear-cache-lrep=(true|x)[&#]?)+/i.test(window.location.search)) {
+
+					jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
+					FakeLrepConnector.deleteChanges();
+				}
+
+				jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
+				FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.m.test.rta.mockdata.FakeLrepConnector") + ".json");
+			});
+		}());
+
+		var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
+			createContent: function () {
+				return new sap.m.App("myApp", {
+					pages: [new sap.m.Page({
+						id: "idMain1", content: [
+							new sap.m.Page("page1", {
+								title: "Page Title",
+								headerContent: [
+									new sap.m.Text({id: "text1", text: "HeaderTitle"}),
+									new sap.m.Text({id: "text2", text: "text2"}),
+									new sap.m.Text({id: "text3", text: "text3"})
+								],
+								subHeader: new sap.m.Bar({
+									id: "bar0",
+									contentLeft: [
+										new sap.m.Text({id: "text4", text: "SubHeader"}),
+										new sap.m.Text({id: "text5", text: "Left"}),
+										new sap.m.Text({id: "text6", text: "text6"})
+									],
+									contentMiddle: [
+										new sap.m.Text({id: "text7", text: "text7"}),
+										new sap.m.Text({id: "text8", text: "Middle"}),
+										new sap.m.Text({id: "text9", text: "text9"})
+									],
+									contentRight: [
+										new sap.m.Text({id: "text10", text: "text10"}),
+										new sap.m.Text({id: "text11", text: "Right"}),
+										new sap.m.Text({id: "text12", text: "text12"})
+									]
+								})
+								,
+								content: [
+									new sap.m.ListBase({
+										id: "list",
+										headerText: "List",
+										items: [
+											new sap.m.CustomListItem({
+												id: "customListItem1",
+												content: [
+													new sap.m.Text({id:"textInListItem1", text:"Custom List Item"}),
+													new sap.m.Switch({id:"switchInListItem"})
+												]
+											}),
+											new sap.m.StandardListItem({id: "standardListItem1", title: "Item 1", description: "Standardlistitem description"}),
+											new sap.m.InputListItem({
+												id: "listItem1",
+												label: "Item 1",
+												content: [
+													new sap.m.Switch({id: "inputInListItem2"})
+												]
+											}),
+											new sap.m.StandardListItem({id: "standardListItem2", title: "Item 2"}),
+											new sap.m.StandardListItem({id: "standardListItem3", title: "Item 3"})
+										]
+									}),
+									new sap.ui.layout.VerticalLayout({
+										id: "verticalLayout",
+										content: [
+											new sap.m.Label({id: "labelInvisible", visible: false, text: "Not Visible"}),
+											new sap.m.Label({id: "labelOutsideForm", text: "Label Outside Form"}),
+											new sap.m.RadioButton({id: "btn1", text: "Button1"}),
+											new sap.m.CheckBox({id:"checkbox1", text: "CheckBox1"}),
+											new sap.m.RatingIndicator("ratingIndicator", { iconSize: "1rem", value: 2.5 }),
+											new sap.m.Button({id: "btn2", text: "Button2"}),
+											new sap.m.Label({id: "labelForInput", text: "Input", labelFor: "input1"}),
+											new sap.m.Input({id: "input1"}),
+											new sap.m.Label({id: "labelForMultiInput", text: "MultiInput", labelFor: "multiinput1"}),
+											new sap.m.MultiInput({id: "multiinput1"}),
+											new sap.ui.layout.VerticalLayout({
+												id: "verticalLayout2",
+												content: [
+													new sap.m.Button({id: "btn3", text: "V2Button3"}),
+													new sap.m.Button({id: "btn4", text: "V2Button4"})
+												]
+											}),
+											new sap.ui.layout.HorizontalLayout({
+												id: "verticalLayout3",
+												content: [
+													new sap.m.Button({id: "btn5", text: "HButton5"}),
+													new sap.m.Button({id: "btn6", text: "HButton6"})
+												]
+											})
+										]
+									}),
+									new sap.ui.layout.form.SimpleForm({
+										id: "SimpleForm1",
+										content: [
+											new sap.m.Title({id: "simpleFormTitle1", text: "Form Title"}),
+											new sap.m.Label({id: "formLabel", text: "Label"}),
+											new sap.m.Text({id: "formText", text: "textToLabel1"})
+										]
+									}),
+									new sap.ui.layout.VerticalLayout({id: "justTest"}),
+									new sap.ui.layout.VerticalLayout({id: "justTest2"}),
+									new sap.m.Toolbar({
+										id: "toolbar0",
+										content: [
+											new sap.m.Text({id: "text13", text: "Text13"}),
+											new sap.m.Text({id: "text14", text: "Text14"}),
+											new sap.m.Text({id: "text15", text: "Text15"})
+										]
+									}),
+									new sap.m.Bar({
+										id: "bar2",
+										contentLeft: [
+											new sap.m.Text({id: "text16", text: "SubHeader"}),
+											new sap.m.Text({id: "text17", text: "Left"}),
+											new sap.m.Text({id: "text18", text: "text18"})
+										],
+										contentMiddle: [
+											new sap.m.Text({id: "text19", text: "text19"}),
+											new sap.m.Text({id: "text20", text: "Middle"}),
+											new sap.m.Text({id: "text21", text: "text21"})
+										],
+										contentRight: [
+											new sap.m.Text({id: "text22", text: "text22"}),
+											new sap.m.Text({id: "text23", text: "Right"}),
+											new sap.m.Text({id: "text24", text: "text24"})
+										]
+									}),
+									new sap.m.OverflowToolbar({
+										id: "overflowToolbar0",
+										content: [
+											new sap.m.Button({id: "btn7", text: "Btn7"}),
+											new sap.m.Button({id: "btn8", text: "Btn8"}),
+											new sap.m.Button({
+												id: "btn9",
+												text: "Btn9",
+												layoutData: new sap.m.OverflowToolbarLayoutData({
+													priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
+												})
+											})
+										]
+									}),
+									new sap.m.ScrollContainer({
+										id: "scrollContainer",
+										content: [
+											new sap.m.Title({id: "title1", text: "Scroll Container"}),
+											new sap.m.Text({id: "text25", text: "text25"}),
+											new sap.m.Text({id: "text26", text: "text26"}),
+											new sap.m.Text({id: "text27", text: "text27"}),
+											new sap.m.Button({id: "btn10", text: "Btn10"})
+										]
+									}),
+									new sap.m.Panel({
+										id: "myPanel",
+										headerText: "My Panel Header Text",
+										content: [
+											new sap.m.Text({id: "text28", text: "PanelContentText1"}),
+											new sap.m.Text({id: "text29", text: "PanelContentText2"}),
+											new sap.m.Text({id: "text30", text: "PanelContentText3"})
+										]
+									}),
+									new sap.m.Panel({
+										id: "myPanel2",
+										headerText: "My Panel Header Text",
+										expandable: true,
+										expanded: true,
+										content: [
+											new sap.m.Text({id: "text31", text: "PanelContentText1"}),
+											new sap.m.Text({id: "text32", text: "PanelContentText2"}),
+											new sap.m.Text({id: "text33", text: "PanelContentText3"})
+										],
+										headerToolbar: new sap.m.Toolbar({
+											id: "headerToolbar2",
+											content: [
+												new sap.m.Title({id: "text34", text: "HeaderToolbarContentTitle1"}),
+												new sap.m.Text({id: "text35", text: "HeaderToolbarContentText1"}),
+												new sap.m.Text({id: "text36", text: "HeaderToolbarContentText2"})
+											]
+										}),
+										infoToolbar: new sap.m.Toolbar({
+											id: "infoToolbar2",
+											content: [
+												new sap.m.Text({id: "text37", text: "InfoToolbarContentText1"}),
+												new sap.m.Text({id: "text38", text: "InfoToolbarContentText2"}),
+												new sap.m.Text({id: "text39", text: "InfoToolbarContentText3"})
+											]
+										})
+									}),
+									new sap.m.Panel({
+										id: "myPanel3",
+										headerText: "My Panel Header Text",
+										content: [
+											new sap.m.Text({id: "text40", text: "PanelContentText1"}),
+											new sap.m.Text({id: "text41", text: "PanelContentText2"}),
+											new sap.m.Text({id: "text42", text: "PanelContentText3"})
+										],
+										headerToolbar: new sap.m.Toolbar({
+											id: "headerToolbar3",
+											content: [
+												new sap.m.Title({id: "text43", text: "HeaderToolbarContentTitle1"}),
+												new sap.m.Text({id: "text44", text: "HeaderToolbarContentText1"}),
+												new sap.m.Text({id: "text45", text: "HeaderToolbarContentText2"})
+											]
+										}),
+										infoToolbar: new sap.m.Toolbar({
+											id: "infoToolbar3",
+											content: [
+												new sap.m.Text({id: "text46", text: "InfoToolbarContentText1"}),
+												new sap.m.Text({id: "text47", text: "InfoToolbarContentText2"}),
+												new sap.m.Text({id: "text48", text: "InfoToolbarContentText3"})
+											]
+										})
+									}),
+									new sap.m.Slider({
+										id: "mySlider1"
+									}),
+									new sap.ui.layout.Grid({
+										id: "grid",
+										content: [
+											new sap.m.Title({id: "text49", text: "Grid"}),
+											new sap.m.Text({id: "text50", text: "text25"}),
+											new sap.m.Text({id: "text51", text: "text26"}),
+											new sap.m.Text({id: "text52", text: "text27"}),
+											new sap.m.Button({id: "btn11", text: "Btn11"})
+										]
+									}),
+									new sap.m.Table({
+										id: "table1",
+										inset: false,
+										columns: [
+											new sap.m.Column({
+												id: "column1",
+												header: new sap.m.Text({id: "text53", text: "Header 1"})
+											}),
+											new sap.m.Column({
+												id: "column2",
+												minScreenWidth: "Desktop",
+												header: new sap.m.Text({id: "text54", text: "Header 2"}),
+												demandPopin: true
+											}),
+											new sap.m.Column({
+												id: "column3",
+												header: new sap.m.Text({id: "text55", text: "Header 3"})
+											})
+										],
+										items: [
+											new sap.m.ColumnListItem({
+												id: "columnListItem1",
+												cells: [
+													new sap.m.Text({id: "text56", text: "text11"}),
+													new sap.m.Text({id: "text57", text: "text12"}),
+													new sap.m.Text({id: "text58", text: "text13"})
+												]
+											}),
+											new sap.m.ColumnListItem({
+												id: "columnListItem2",
+												cells: [
+													new sap.m.Text({id: "text59", text: "text21"}),
+													new sap.m.Text({id: "text60", text: "text22"}),
+													new sap.m.Text({id: "text61", text: "text23"}),
+												]
+											})
+										]
+									})
+								],
+								footer: new sap.m.Bar({
+									id: "bar1",
+									contentLeft: [
+										new sap.m.Button({
+											id: "addapt",
+											text: "Adapt UI",
+											press: function () {
+												var oRta = new sap.ui.rta.RuntimeAuthoring({
+													rootControl: sap.ui.getCore().byId("idMain1")
+												});
+												oRta.start();
+											}
+										}),
+										new sap.m.Button({id: "test", text: "test"})
+									]
+								})
+							})
+						]
+					})]
+				});
+			}
+		});
+
+		new sap.ui.core.ComponentContainer({
+			component: new MyComponent({id: "Comp1"})
+		}).placeAt("content");
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+
+</html>

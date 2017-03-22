@@ -1,0 +1,149 @@
+<mvc:View
+	controllerName="sap.ui.demo.orderbrowser.controller.Detail"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic">
+
+	<semantic:DetailPage
+		id="page"
+		navButtonPress="onNavBack"
+		showNavButton="{device>/system/phone}"
+		title="{i18n>detailTitle}"
+		busy="{detailView>/busy}"
+		busyIndicatorDelay="{detailView>/delay}">
+
+		<semantic:content>
+			<ObjectHeader
+				id="objectHeader"
+				title="{
+					parts: [
+						'i18n>commonItemTitle',
+						'OrderID'
+					],
+					formatter: 'jQuery.sap.formatMessage'
+				}"
+				number="{
+					parts: [
+						{path: 'detailView>/totalOrderAmount'},
+						{path: 'detailView>/currency'}
+					],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {
+						showMeasure: false
+					}
+				}"
+				numberUnit="{detailView>/currency}"
+				backgroundDesign="Translucent">
+				<attributes>
+					<ObjectAttribute title="{i18n>commonCustomerName}" text="{Customer/CompanyName}" />
+					<ObjectAttribute title="{i18n>detailOrderDate}" text="{
+						path: 'OrderDate',
+						type: 'sap.ui.model.type.Date',
+						formatOptions: { style: 'medium' }
+					}" />
+					<ObjectAttribute
+						title="{i18n>commonItemShipped}"
+						text="{= ${ShippedDate}
+									? ${ path: 'ShippedDate',
+										 type: 'sap.ui.model.type.Date',
+										 formatOptions: { style: 'medium' } }
+									: ${i18n>commonItemNotYetShipped} }" />
+				</attributes>
+			</ObjectHeader>
+			<IconTabBar
+				id="iconTabBar"
+				class="sapUiResponsiveContentPadding"
+				select="onTabSelect"
+				selectedKey="{detailView>/selectedTab}">
+				<items>
+					<IconTabFilter
+						id="iconTabFilterShipping"
+						icon="sap-icon://shipping-status"
+						tooltip="{i18n>detailIconTabBarShipping}"
+						key="shipping">
+					</IconTabFilter>
+					<IconTabFilter
+						id="iconTabFilterProcessor"
+						icon="sap-icon://employee"
+						tooltip="{i18n>detailIconTabBarProcessor}"
+						key="processor">
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<Table
+				id="lineItemsList"
+				width="auto"
+				items="{Order_Details}"
+				updateFinished="onListUpdateFinished"
+				noDataText="{i18n>detailLineItemTableNoDataText}"
+				busyIndicatorDelay="{detailView>/lineItemTableDelay}"
+				class="sapUiResponsiveMargin">
+				<headerToolbar>
+					<Toolbar id="lineItemsToolbar">
+						<Title
+							id="lineItemsHeader"
+							text="{detailView>/lineItemListTitle}"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>detailLineItemTableIDColumn}"/>
+					</Column>
+					<Column
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="End">
+						<Text text="{i18n>detailLineItemTableUnitPriceColumn}"/>
+					</Column>
+					<Column
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="End">
+						<Text text="{i18n>detailLineItemTableUnitQuantityColumn}"/>
+					</Column>
+					<Column
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="End">
+						<Text text="{i18n>detailLineItemTableTotalColumn}"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier
+								title="{Product/ProductName}"
+								text="{ProductID}"/>
+							<ObjectNumber
+								number="{
+									path: 'UnitPrice',
+									formatter: '.formatter.currencyValue'
+								}"
+								unit="{detailView>/currency}"/>
+							<ObjectAttribute
+								text="{Quantity}"/>
+							<ObjectNumber
+								number="{
+									parts:[
+										{path: 'Quantity'},
+										{path: 'UnitPrice'},
+										{path:'detailView>/currency'}
+									],
+									formatter: '.formatter.calculateItemTotal'
+								}"
+								unit="{detailView>/currency}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</semantic:content>
+
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction
+				id="shareEmail"
+				press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+
+	</semantic:DetailPage>
+
+</mvc:View>

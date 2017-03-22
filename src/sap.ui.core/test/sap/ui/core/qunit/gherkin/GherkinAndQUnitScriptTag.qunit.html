@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Using Gherkin with OPA5 - Load QUnit From Script Tag</title>
+
+    <script
+      src="../../../../../../resources/sap-ui-core.js"
+      data-sap-ui-resourceroots='{"GherkinWithOPA5": "../../demokit/sample/gherkin/GherkinWithOPA5"}'
+      data-sap-ui-loglevel="INFO"
+    ></script>
+
+    <!-- this is a copy of a sample but it has different resource roots and loads QUnit with a script tag -->
+    <!-- the point of this testfile is to load qunit with a script tag and see if everything is still working fine -->
+    <script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+
+    <script>
+      sap.ui.require([
+        "jquery.sap.global",
+        "sap/ui/test/gherkin/opa5TestHarness",
+        // Code coverage will be calculated for all modules loaded after the harness
+        "GherkinWithOPA5/Steps"
+      ], function($, opa5TestHarness, Steps) {
+        "use strict";
+
+        opa5TestHarness.test({
+          featurePath: "GherkinWithOPA5.Requirements1",
+          steps: Steps
+        });
+        opa5TestHarness.test({
+          featurePath: "GherkinWithOPA5.Requirements2",
+          steps: Steps
+        });
+      });
+    </script>
+
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+  </body>
+</html>
+
+
+

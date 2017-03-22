@@ -8,6 +8,19 @@
 		},
 		"entities" : [
 			{
+				"id" : "sap.ui.layout.DynamicSideContent",
+				"name" : "Dynamic Side Content",
+				"category" : "Layout",
+				"since" : "1.30",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.DynamicSideContent",
+					"sap.ui.layout.sample.DynamicSideContentEqualSplit",
+					"sap.ui.layout.sample.DynamicSideContentProduct",
+					"sap.ui.layout.sample.DynamicSideContentPosition"
+				]
+			},
+			{
 				"id" : "sap.ui.layout.form.Form",
 				"name" : "Form",
 				"category" : "Layout",
@@ -15,6 +28,13 @@
 				"formFactors" : "SML",
 				"samples" : [
 					"sap.ui.layout.sample.Form354",
+					"sap.ui.layout.sample.Form354wide",
+					"sap.ui.layout.sample.Form354wideDual",
+					"sap.ui.layout.sample.Form471",
+					"sap.ui.layout.sample.Form480",
+					"sap.ui.layout.sample.Form480_12120",
+					"sap.ui.layout.sample.Form480_12120Dual",
+					"sap.ui.layout.sample.Form480_Trial",
 					"sap.ui.layout.sample.FormToolbar"
 				]
 			},
@@ -26,8 +46,14 @@
 				"formFactors" : "SML",
 				"samples" : [
 					"sap.ui.layout.sample.SimpleForm354",
+					"sap.ui.layout.sample.SimpleForm354wide",
+					"sap.ui.layout.sample.SimpleForm354wideDual",
 					"sap.ui.layout.sample.SimpleForm471",
-					"sap.ui.layout.sample.SimpleForm480"
+					"sap.ui.layout.sample.SimpleForm480",
+					"sap.ui.layout.sample.SimpleForm480_12120",
+					"sap.ui.layout.sample.SimpleForm480_12120Dual",
+					"sap.ui.layout.sample.SimpleForm480_Trial",
+					"sap.ui.layout.sample.SimpleFormToolbar"
 				]
 			},
 			{
@@ -52,7 +78,8 @@
 				"samples" : [
 					"sap.ui.layout.sample.GridInfo",
 					"sap.ui.layout.sample.GridTasks",
-					"sap.ui.layout.sample.GridTiles"
+					"sap.ui.layout.sample.GridTiles",
+					"sap.ui.layout.sample.GridXL"
 				]
 			},
 			{
@@ -84,13 +111,93 @@
 					"sap.ui.layout.sample.Splitter4",
 					"sap.ui.layout.sample.SplitterNested1"
 				]
+			},
+			{
+				"id" : "sap.ui.layout.BlockLayout",
+				"name" : "Block Layout ",
+				"category" : "Layout",
+				"since" : "1.34",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.BlockLayoutDefault"
+				]
+			},
+			{
+				"id" : "sap.ui.layout.ResponsiveSplitter",
+				"name" : "ResponsiveSplitter ",
+				"category" : "Layout",
+				"since" : "1.38",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.ResponsiveSplitter"
+				]
 			}
 		],
 		"samples" : [
 			{
+				"id": "sap.ui.layout.sample.DynamicSideContent",
+				"name": "Dynamic Side Content",
+				"description": "Attaches side content area which is next to the main content of the page on larger screens taking different ratios between the two on different screen sizes and on phone size screens the side content area falls down under the main content area. Best viewed in full screen."
+			},
+			{
+				"id": "sap.ui.layout.sample.DynamicSideContentEqualSplit",
+				"name": "Dynamic Side Content - equal split mode",
+				"description": "The side content and the main content take 50%/50% of the container on all screen sizes except on phone screens where there is a button implemented to toggle between each other."
+			},
+			{
+				"id": "sap.ui.layout.sample.DynamicSideContentProduct",
+				"name": "Dynamic Side Content - product page",
+				"description": "Product page with comments example."
+			},
+			{
+				"id": "sap.ui.layout.sample.DynamicSideContentPosition",
+				"name": "Dynamic Side Content - position",
+				"description": "The side content is positioned on the left side of the main content in left-to-right mode and on the right side of the main content in right-to-left mode."
+			},
+			{
 				"id": "sap.ui.layout.sample.Form354",
-				"name": "Form - Single 3:5:4",
-				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a single-column 3:5:4 layout (label:input:emptyspace) using the Form control"
+				"name": "Fullscreen",
+				"description": "This is an example of a form with one single group on a fullscreen app using the <code>Form</code> control"
+			},
+			{
+				"id": "sap.ui.layout.sample.Form354wide",
+				"name": "Fullscreen with width adaption on wide screens",
+				"description": "This is an example of a form with one single group on a fullscreen app using the <code>Form</code> control that has longer labels and fields so that some more space is given to them in M size. Even if the form has only one single group, it is possible to give it a two columns layout to avoid too heavy stretching e.g. in XL. In this case also some more space is given to them like in M size."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form354wideDual",
+				"name": "Fullscreen with width more than one  group arranged in one column up to L",
+				"description": "This is an example of a form with more than one group on a fullscreen app using the <code>Form</code> control that has longer labels and fields so that some more space is given to them in M size."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form471",
+				"name": "Splitscreen",
+				"description": "This is an example of a form with more than one group on a split app."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form480",
+				"name": "Fullscreen with width more than one  group arranged in two columns from L",
+				"description": "This is an example of a form with more than one group on a fullscreen app using the <code>Form</code> control that has longer labels and fields so that some more space is given to them in M size. The groups are arranged in up to two columns."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form480_12120",
+				"name": "Fullscreen, one with width more than one group arranged in two columns from L",
+				"description": "This is an example of a two-column layout using the <code>Form</code> control. On large screens a two-column 4:8:0 layout (label:input:emptyspace) is used, on medium screens a two -column 12:12:0 layout is used and on small screens a one-column 12:12:0 layout is used. In the second Form only one Container is used, but an empty column is displayed beside to be aligned with the first Form. The groups in both forms are arranged in up to two columns."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form480_12120Dual",
+				"name": "Fullscreen with width more than one  group and 2 columns as early as possible",
+				"description": "This is an example of a form with more than one group on a fullscreen app getting two columns as early as possible."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form480_Trial",
+				"name": "Fullscreen with width more than one  group arranged in up to three columns",
+				"description": "This is an example of a three-column layout using the <code>Form</code> control. On extra large screens (screen size XL) a three-column 4:8:0 layout (label:input:emptyspace) is used, on large and medium screens a two-column 4:8:0 layout (label:input:emptyspace) is used and on small screens a one-column 12:12:0 layout (label:input:emptyspace) is used."
+			},
+			{
+				"id": "sap.ui.layout.sample.FormToolbar",
+				"name": "With Toolbar",
+				"description": "A <code>Form</code> that uses <code>Toolbar</code>s as <code>Form</code> header and <code>FormContainer</code> headers."
 			},
 			{
 				"id": "sap.ui.layout.sample.HorizontalLayout",
@@ -104,23 +211,48 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm354",
-				"name": "Simple Form - Single 3:5:4",
-				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a single-column 3:5:4 layout (label:input:emptyspace) using the SimpleForm control"
+				"name": "Fullscreen",
+				"description": "This is an example of a form with one single group on a fullscreen app using the <code>SimpleForm</code> control"
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm354wide",
+				"name": "Fullscreen with width adaption on wide screens",
+				"description": "This is an example of a form with one single group on a fullscreen app using the <code>SimpleForm</code> control that has longer labels and fields so that some more space is given to them in M size. Even if the form has only one single group, it is possible to give it a two columns layout to avoid too heavy stretching e.g. in XL. In this case also some more space is given to them like in M size."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm354wideDual",
+				"name": "Fullscreen with width more than one  group arranged in one column up to L",
+				"description": "This is an example of a form with more than one group on a fullscreen app using the <code>SimpleForm</code> control that has longer labels and fields so that some more space is given to them in M size."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm471",
-				"name": "Simple Form - Single 4:7:1",
-				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a single-column 4:7:1 layout (label:input:emptyspace) using the SimpleForm control"
+				"name": "Splitscreen",
+				"description": "This is an example of a single-column 4:7:1 layout (label:input:emptyspace) using the <code>SimpleForm</code> control"
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm480",
-				"name": "Simple Form - Dual 4:8:0",
-				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a dual-column 4:8:0 layout (label:input:emptyspace) using the SimpleForm control"
+				"name": "Fullscreen with width more than one  group arranged in two columns from L",
+				"description": "This is an example of a form with more than one group on a fullscreen app using the <code>SimpleForm</code> control that has longer labels and fields so that some more space is given to them in M size. The groups are arranged in up to two columns."
 			},
 			{
-				"id": "sap.ui.layout.sample.FormToolbar",
-				"name": "Form With Toolbar",
-				"description": "Unfortunately the form control has no toolbar. As remedy you can put the form inside a Panel that carries the toolbar."
+				"id": "sap.ui.layout.sample.SimpleForm480_Trial",
+				"name": "Fullscreen with width more than one group arranged in up to three columns",
+				"description": "This is an example of a three-column layout using the <code>SimpleForm</code> control. On extra large screens (screen size XL) a three-column 4:8:0 layout (label:input:emptyspace) is used, on large and medium screens a two-column 4:8:0 layout (label:input:emptyspace) is used and on small screens a one-column 12:12:0 layout (label:input:emptyspace) is used."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm480_12120",
+				"name": "Fullscreen, one with width more than one  group arranged in up to two columns from L",
+				"description": "This is an example of a two-column layout using the <code>SimpleForm</code> control.<br>On large screens a two-column 4:8:0 layout (label:input:emptyspace) is used, on medium screens a two -column 12:12:0 layout is used and on small screens a one-column 12:12:0 layout is used. In the second <code>SimpleForm</code> only one Container is used, but an empty column is displayed beside to be aligned with the first <code>SimpleForm</code>. The groups in both forms are arranged in up to two columns."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm480_12120Dual",
+				"name": "Fullscreen with width more than one  group and 2 columns as early as possible",
+				"description": "This is an example of a form with more than one group on a fullscreen app getting two columns as early as possible."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleFormToolbar",
+				"name": "With Toolbar",
+				"description": "A <code>SimpleForm</code> that uses <code>Toolbar</code>s as <code>Form</code> header and <code>FormContainer</code> headers."
 			},
 			{
 				"id": "sap.ui.layout.sample.FixFlexVertical",
@@ -158,6 +290,11 @@
 				"description": "Using the Grid control, with appropriate values for the Large/Medium/Small span settings, you can set some elements to be fixed (like the Active, Inactive and Failed titles here) and some to flow."
 			},
 			{
+				"id": "sap.ui.layout.sample.GridXL",
+				"name": "Grid - Features Demo",
+				"description": "The major layout features of the Grid control are shown in this example. Features like indentation, making content visible/invisible based on the screen size, moving content forward and backwards are demonstrated."
+			},
+			{
 				"id": "sap.ui.layout.sample.Splitter",
 				"name": "Splitter Layout",
 				"description": "Splitter where you can change contentAreas and their sizes live"
@@ -181,6 +318,16 @@
 				"id": "sap.ui.layout.sample.SplitterNested1",
 				"name": "Nested Splitter Layouts - 7 Areas",
 				"description": "Nested Splitter example with 7 content areas"
+			},
+			{
+				"id": "sap.ui.layout.sample.BlockLayoutDefault",
+				"name": "Block Layout ",
+				"description": "The Block Layout  is intended to be used with rows and cells. The cells have predefined width, the rows have predefined rendering modes - scrollable/vertical/horizontal."
+			},
+			{
+				"id": "sap.ui.layout.sample.ResponsiveSplitter",
+				"name": "Responsive Splitter",
+				"description": "ResponsiveSplitter is used to visually divide the content of its parent. It consists of PaneContainers that further  agregate other PaneContainers and SplitPanes. SplitPanes can be moved to the pagination when a minimum width of their parent is reached."
 			}
 		]
 	}

@@ -1,24 +1,25 @@
 <!DOCTYPE HTML>
-<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.layout.ResponsiveFlowLayout,sap.ui.layout.ResponsiveFlowLayoutData">
+<html data-sap-ui-dk-controls="sap.ui.layout.ResponsiveFlowLayout,sap.ui.layout.ResponsiveFlowLayoutData">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8"/>
-<meta name="keywords" content="Control NotificationBar" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<meta name="keywords" content="Control NotificationBar">
 <title>ResponsiveFlowLayout - SAPUI5 Demo Kit</title>
-<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+<link rel="stylesheet" href="../../../../../theme/default.css">
+<script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.layout,sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
 	data-sap-ui-language="en">
-	
+
 </script>
 <script>
 	sap.ui.demokit._supportedThemes = [ "sap_goldreflection", "sap_hcb" ];
 </script>
 <script src="../../../../../js/utils.js"></script>
 
-<style type="text/css">
+<style>
 .sapUiNotificationBarDemokit { /*top: 40px;*/
 	bottom: 0;
 	left: 20px;
@@ -33,7 +34,7 @@ h2 {
 </style>
 
 <script>
-	
+
 </script>
 
 <script id='samplescript1'>
@@ -175,10 +176,10 @@ h2 {
 	<h2>Introduction</h2>
 	<p>
 		With this layout added content can be expanded to the full width of a
-		row.<br /> The default HTML behavior is that all items are positioned
+		row.<br> The default HTML behavior is that all items are positioned
 		right next to each other. If the space within the parent container
 		becomes too small, the browser wraps the corresponding item to the
-		next line. In this case the space within a line isn't used.<br />
+		next line. In this case the space within a line isn't used.<br>
 		With this layout each added content can be shrinked to a set
 		min-width. So the layout shinks it until this set value and warps it
 		if necessary. Each content within a line will be maximized to fit the
@@ -201,7 +202,7 @@ h2 {
 	<p>
 		A LayoutData instance can be added to a control that should be used
 		within the ResponsiveFlowLayout. With this instance other values than
-		the default values can be used.<br /> Default values are:
+		the default values can be used.<br> Default values are:
 	</p>
 	<ul>
 		<li>min-width: 100 &rarr; that means that the min-width is used
@@ -221,7 +222,7 @@ h2 {
 			documentation</a>
 	</p>
 
-	<br />
+	<br>
 	<h2>Example1 - A layout with 4 content items</h2>
 	<p>These items are just added as they are. The TextField have the
 		weight of '2'. All content items are set to '100%' to ensure that they
@@ -229,7 +230,7 @@ h2 {
 	<div code-sample="sample1" script="samplescript1" id="sapUiRFL"
 		style="left: 30px; right: 50px; padding-top: 2px;"></div>
 
-	<br />
+	<br>
 	<h2>Example2 - A layout with the items from above but in a Panel</h2>
 	<p>In this case the Panel is the content item the layout takes care
 		of. The layout doesn't know what's inside of the Panel. So the Panel
@@ -237,7 +238,7 @@ h2 {
 	<div code-sample="sample2" script="samplescript2" id="sapUiRFL2"
 		style="left: 30px; right: 50px;"></div>
 
-	<br />
+	<br>
 	<h2>Example3 - A little responsive form</h2>
 	<p>In this case the Label and the TextField belong together. If the
 		space becomes too less the TextField is wrapped below the Label. If

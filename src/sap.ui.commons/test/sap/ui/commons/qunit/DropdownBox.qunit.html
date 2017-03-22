@@ -1,24 +1,24 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>DropdownBox - sap.ui.commons </title>
 
-    <script id="sap-ui-bootstrap" 
-			type="text/javascript"
+    <script src="../shared-config.js"></script>
+    <script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.ui.commons" 
+			data-sap-ui-libs="sap.ui.commons"
 			data-sap-ui-modules="jquery.sap.storage">
 		</script>
 
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<script language="javascript">
+		<script>
 
 		var sCheckText = "second item",
 			sDropdownId = "ddb";
@@ -34,7 +34,7 @@
 		var oDropdown = new sap.ui.commons.DropdownBox(sDropdownId, {value: "",
 				displaySecondaryValues: true,
 	      items : [
-					new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)", key: "key1"}), 
+					new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)", key: "key1"}),
 					new sap.ui.core.ListItem("si",{text:"second item", additionalText: "(2)", key: "key2"}),
 					new sap.ui.core.ListItem("ti",{text:"third item", additionalText: "(3)", key: "key3"}),
 					new sap.ui.core.ListItem("li",{text:"last item", additionalText: "(4)", key: "key4"})]
@@ -49,7 +49,7 @@
 
 		var oDropdown2 = new sap.ui.commons.DropdownBox(sDropdownId + "2", {editable: false,
 			items : [
-				new sap.ui.core.ListItem("red",{text:"red"}), 
+				new sap.ui.core.ListItem("red",{text:"red"}),
 				new sap.ui.core.ListItem("blue",{text:"blue"}),
 				new sap.ui.core.ListItem("yellow",{text:"yellow"})]
 			});
@@ -70,7 +70,7 @@
 										bSearchHelpFired = true;
 									},
       items : [
-				new sap.ui.core.ListItem("Langu1",{text:"German", additionalText: "DE"}), 
+				new sap.ui.core.ListItem("Langu1",{text:"German", additionalText: "DE"}),
 				new sap.ui.core.ListItem("Langu2",{text:"English", additionalText: "EN"}),
 				new sap.ui.core.ListItem("Langu3",{text:"Spanish", additionalText: "SP"})]
 			}
@@ -90,278 +90,279 @@
 		oDropdown5.bindProperty("selectedKey", "/key");
 		oDropdown5.bindAggregation("items", "/items", oItemTemplate);
 
-		module("Control Test - sap.ui.commons.DropdownBox", {
-			setup: function(){
+		QUnit.module("Control Test - sap.ui.commons.DropdownBox", {
+			beforeEach: function(){
 				oDropdown.setValue(sCheckText);
 				oDropdown.focus();
 			}//,
-			//teardown: function(){
+			//afterEach: function(){
 			//	qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			//}
 		});
 
-		test("TestRenderedOK", function(){
-			notEqual(jQuery.sap.domById(sDropdownId), null, "DropdownBox outer HTML Element should be rendered.");
-			equal(jQuery("#" + sDropdownId + " > input").length, 1, "DropdownBox should provide an input element.");
-			equal(oDropdown.getValue(), sCheckText, "Default value / text should still be set.");
-			equal(jQuery.sap.domById(sDropdownInputId).value, sCheckText, "Default value / text should be in the HTML.");
-			equal(oDropdown.getInputDomRef().value, sCheckText, "Default value / text should be in the HTML and accessible via getDomRef.");
+		QUnit.test("TestRenderedOK", function(assert){
+			assert.notEqual(jQuery.sap.domById(sDropdownId), null, "DropdownBox outer HTML Element should be rendered.");
+			assert.equal(jQuery("#" + sDropdownId + " > input").length, 1, "DropdownBox should provide an input element.");
+			assert.equal(oDropdown.getValue(), sCheckText, "Default value / text should still be set.");
+			assert.equal(jQuery.sap.domById(sDropdownInputId).value, sCheckText, "Default value / text should be in the HTML.");
+			assert.equal(oDropdown.getInputDomRef().value, sCheckText, "Default value / text should be in the HTML and accessible via getDomRef.");
 
 			// in jQuery 1.6.2 this has changed
-			ok((jQuery("#" + sDropdownId + "2 > input").attr("readonly"))||(jQuery("#" + sDropdownId + "2 > input").prop("readonly")) , "Second DropdownBox should be read only.");
+			assert.ok((jQuery("#" + sDropdownId + "2 > input").attr("readonly"))||(jQuery("#" + sDropdownId + "2 > input").prop("readonly")) , "Second DropdownBox should be read only.");
 
-			equal(jQuery("#" + sDropdownId + "3").length, 0, "Third (invisible) DropdownBox should not be rendered at all.");
+			assert.equal(jQuery("#" + sDropdownId + "3").length, 0, "Third (invisible) DropdownBox should not be rendered at all.");
 
-			equal(oDropdown2.getValue(), "red", "Default value (if no value set) should be the first item.");
-			equal(jQuery.sap.domById(sDropdownId+"2-input").value, "red", "Default value (if no value set) should be the first item in the HTML.");
+			assert.equal(oDropdown2.getValue(), "red", "Default value (if no value set) should be the first item.");
+			assert.equal(jQuery.sap.domById(sDropdownId+"2-input").value, "red", "Default value (if no value set) should be the first item in the HTML.");
 
+			assert.equal(jQuery("#" + sDropdownId + " > input").attr("aria-describedby"), sDropdownId + "-SecVal", "aria-describesby");
 		});
 
-		test("Setter / Getter", function(){
+		QUnit.test("Setter / Getter", function(assert){
 			oDropdown.setValue("second item");
-			equal(oDropdown.getValue(), "second item", "setValue: value");
-			equal(oDropdown.getSelectedKey(), "key2", "setValue: selectedKey");
-			equal(oDropdown.getSelectedItemId(), "si", "setValue: selectedId");
+			assert.equal(oDropdown.getValue(), "second item", "setValue: value");
+			assert.equal(oDropdown.getSelectedKey(), "key2", "setValue: selectedKey");
+			assert.equal(oDropdown.getSelectedItemId(), "si", "setValue: selectedId");
 
 			oDropdown.setSelectedKey("key3");
-			equal(oDropdown.getValue(), "third item", "setValue: value");
-			equal(oDropdown.getSelectedKey(), "key3", "setValue: selectedKey");
-			equal(oDropdown.getSelectedItemId(), "ti", "setValue: selectedId");
+			assert.equal(oDropdown.getValue(), "third item", "setValue: value");
+			assert.equal(oDropdown.getSelectedKey(), "key3", "setValue: selectedKey");
+			assert.equal(oDropdown.getSelectedItemId(), "ti", "setValue: selectedId");
 
 			oDropdown.setSelectedItemId("fi");
-			equal(oDropdown.getValue(), "first item", "setValue: value");
-			equal(oDropdown.getSelectedKey(), "key1", "setValue: selectedKey");
-			equal(oDropdown.getSelectedItemId(), "fi", "setValue: selectedId");
+			assert.equal(oDropdown.getValue(), "first item", "setValue: value");
+			assert.equal(oDropdown.getSelectedKey(), "key1", "setValue: selectedKey");
+			assert.equal(oDropdown.getSelectedItemId(), "fi", "setValue: selectedId");
 
 			oDropdown.setValue("xxx");
-			equal(oDropdown.getValue(), "first item", "setValue: value");
-			equal(oDropdown.getSelectedKey(), "key1", "setValue: selectedKey");
-			equal(oDropdown.getSelectedItemId(), "fi", "setValue: selectedId");
+			assert.equal(oDropdown.getValue(), "first item", "setValue: value");
+			assert.equal(oDropdown.getSelectedKey(), "key1", "setValue: selectedKey");
+			assert.equal(oDropdown.getSelectedItemId(), "fi", "setValue: selectedId");
 		});
 
-		module("Autocomplete Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+		QUnit.module("Autocomplete Tests - sap.ui.commons.DropdownBox", {
+			beforeEach: function(){
 				resetBeforeTest();
 				oDropdown.focus();
 			}//,
-			//teardown: function(){
+			//afterEach: function(){
 			//	qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			//}
 		});
 
-		test("TestInputOK", function(){
+		QUnit.test("TestInputOK", function(assert){
 			jQuery(oDropdown.getInputDomRef()).val(""); //simulate clearing value by typing on selected text
 			qutils.triggerKeypress(sDropdownTypingInputId, "s");
 
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed, yet.");
-			equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should have autocompleted in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed, yet.");
+			assert.equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should have autocompleted in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal(oDropdown.getValue(), "second item", "DropdownBox' value should hold confirmed entry.");
-			equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should not have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "second item", "DropdownBox' value should hold confirmed entry.");
+			assert.equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should not have changed in HTML.");
 		});
 
-		test("TestMultipleInputOK", function(){
+		QUnit.test("TestMultipleInputOK", function(assert){
 			jQuery(oDropdown.getInputDomRef()).val(""); //simulate clearing value by typing on selected text
 			jQuery.each("third".split(''), function(idx, val){
 				qutils.triggerKeypress(sDropdownTypingInputId, val);
 			});
 
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed, yet.");
-			equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have autocompleted in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed, yet.");
+			assert.equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have autocompleted in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal(oDropdown.getValue(), "third item", "DropdownBox' value should have been autocompleted.");
-			equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "third item", "DropdownBox' value should have been autocompleted.");
+			assert.equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have changed in HTML.");
 		});
 
-		module("Arrow Control Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+		QUnit.module("Arrow Control Tests - sap.ui.commons.DropdownBox", {
+			beforeEach: function(){
 				oDropdown.focus();
 			}
 		});
 
-		test("TestArrowDownOK", function(){
+		QUnit.test("TestArrowDownOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal(oDropdown.getValue(), "last item", "DropdownBox' value should hold selected value.");
-			equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' value should hold selected value.");
+			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
 
 		});
 
-		test("TestArrowUpOK", function(){
+		QUnit.test("TestArrowUpOK", function(assert){
 			var sTestValue = "last item";
-			equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should be last item.");
-			equal(oDropdown.getInputDomRef().value, sTestValue, "DropdownBox' value should match to HTML.");
+			assert.equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should be last item.");
+			assert.equal(oDropdown.getInputDomRef().value, sTestValue, "DropdownBox' value should match to HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
-			equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "third item", "DropdownBox' value should have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
-			equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' value should have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
-			equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
-			equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
+			assert.equal(oDropdown.getValue(), sTestValue, "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should hold selected value.");
-			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should hold selected value.");
+			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
 
 		});
 
-		module("Misc. Keys Control Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+		QUnit.module("Misc. Keys Control Tests - sap.ui.commons.DropdownBox", {
+			beforeEach: function(){
 				oDropdown.focus();
 			},
-			teardown: function(){
+			afterEach: function(){
 				qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			}
 		});
 
-		test("TestEndOK", function(){
+		QUnit.test("TestEndOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.END, false, false, false);
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed when not proposal list not open.");
-			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML when not proposal list not open.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed when not proposal list not open.");
+			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML when not proposal list not open.");
 		});
 
-		test("TestPageDownOK", function(){
+		QUnit.test("TestPageDownOK", function(assert){
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
-			ok(true, "Implementation pending. Specification prio 3");
+			assert.ok(true, "Implementation pending. Specification prio 3");
 		});
 
-		test("TestPageUpOK", function(){
+		QUnit.test("TestPageUpOK", function(assert){
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
-			ok(true, "Implementation pending. Specification prio 3");
+			assert.ok(true, "Implementation pending. Specification prio 3");
 		});
 
-		test("TestEscape", function(){
+		QUnit.test("TestEscape", function(assert){
 			oDropdown.setValue("third item");
 			oDropdown.focus();
 			oDropdown._doSelect();
 			qutils.triggerCharacterInput(sDropdownTypingInputId, "s");
 
-			equal(oDropdown.getValue(), "third item", "DropdownBox' value should have not been changed.");
-			equal(oDropdown.getFocusDomRef().value, "second item", "DropdownBox' value should have changed in HTML.");
-			equal(oDropdown.getSelectedKey(), "key3", "selectedKey should not have changed");
-			equal(oDropdown.getSelectedItemId(), "ti", "selectedItemId should not have changed");
+			assert.equal(oDropdown.getValue(), "third item", "DropdownBox' value should have not been changed.");
+			assert.equal(oDropdown.getFocusDomRef().value, "second item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getSelectedKey(), "key3", "selectedKey should not have changed");
+			assert.equal(oDropdown.getSelectedItemId(), "ti", "selectedItemId should not have changed");
 
 			qutils.triggerKeyEvent("keypress", sDropdownTypingInputId, jQuery.sap.KeyCodes.ESCAPE);
 
-			equal(oDropdown.getValue(), "third item", "DropdownBox' value should have not been changed.");
-			equal(oDropdown.getFocusDomRef().value, "third item", "DropdownBox' value should have been set back in HTML.");
-			equal(oDropdown.getSelectedKey(), "key3", "selectedKey should not have changed");
-			equal(oDropdown.getSelectedItemId(), "ti", "selectedItemId should not have changed");
+			assert.equal(oDropdown.getValue(), "third item", "DropdownBox' value should have not been changed.");
+			assert.equal(oDropdown.getFocusDomRef().value, "third item", "DropdownBox' value should have been set back in HTML.");
+			assert.equal(oDropdown.getSelectedKey(), "key3", "selectedKey should not have changed");
+			assert.equal(oDropdown.getSelectedItemId(), "ti", "selectedItemId should not have changed");
 		});
 
-		module("Open / Close Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+		QUnit.module("Open / Close Tests - sap.ui.commons.DropdownBox", {
+			beforeEach: function(){
 				oDropdown.focus();
 			},
-			teardown: function(){
+			afterEach: function(){
 				qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			}
 		});
 
-		test("TestOpenCloseViaKeyboardOK", function(){
+		QUnit.test("TestOpenCloseViaKeyboardOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
 
 		});
 
-		test("TestOpenCloseViaMouseOK", function(){
+		QUnit.test("TestOpenCloseViaMouseOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerEvent("click", sDropdownIconId);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
 
 			qutils.triggerEvent("click", sDropdownIconId);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
 
 		});
 
 
-		module("Mouse Handling Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+		QUnit.module("Mouse Handling Tests - sap.ui.commons.DropdownBox", {
+			beforeEach: function(){
 				resetBeforeTest();
 				oDropdown.focus();
 				oDropdown.attachChange(this.handleChange);
 			},
-			teardown: function(){
+			afterEach: function(){
 				oDropdown.detachChange(this.handleChange);
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the DropdownBox
 			handleChange: function(){
-				ok(true, "DropdownBox event handler change was triggered.");
+				assert.ok(true, "DropdownBox event handler change was triggered.");
 			}
 		});
 
-		test("TestSelectItemFromListOK", function(){
-			expect(12); // two from reset, 8 from this method and 2 from the event handler (initiated via click events) 
+		QUnit.test("TestSelectItemFromListOK", function(assert){
+			assert.expect(12); // two from reset, 8 from this method and 2 from the event handler (initiated via click events)
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerEvent("click", "si-txt");
-			equal(oDropdown.getValue(), "second item", "DropdownBox' second item should have been selected.");
-			equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' selected value should be shown in HTML.");
+			assert.equal(oDropdown.getValue(), "second item", "DropdownBox' second item should have been selected.");
+			assert.equal(oDropdown.getInputDomRef().value, "second item", "DropdownBox' selected value should be shown in HTML.");
 
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerEvent("click", "li-txt");
-			equal(oDropdown.getValue(), "last item", "DropdownBox' second item should have been selected.");
-			equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' selected value should be shown in HTML.");
+			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' second item should have been selected.");
+			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' selected value should be shown in HTML.");
 
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be visible after item selection");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be visible after item selection");
 
 		});
 
 
-		module("Misc. Keys Control Tests with open Listbox - sap.ui.commons.DropdownBox", {
-			setup: function(){
+		QUnit.module("Misc. Keys Control Tests with open Listbox - sap.ui.commons.DropdownBox", {
+			beforeEach: function(){
 				oDropdown.focus();
 
 				// ensure the "first item" is really the first item in the list (also including the history feature)
@@ -370,81 +371,81 @@
 			}
 		});
 
-		test("TestEndWhenOpenedOK", function(){
+		QUnit.test("TestEndWhenOpenedOK", function(assert){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.END, false, false, false);
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should match to HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should match to HTML.");
 
 			// also check that second 'End' stays the same
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.END, false, false, false);
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal(oDropdown.getValue(), "last item", "DropdownBox' value should hold selected value.");
-			equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' value should hold selected value.");
+			assert.equal(oDropdown.getInputDomRef().value, "last item", "DropdownBox' value should not have changed in HTML.");
 
 		});
 
-		test("TestHomeWhenOpenedOK", function(){
+		QUnit.test("TestHomeWhenOpenedOK", function(assert){
 			oDropdown.setValue("last item"); // reset value to the one from the test method before
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
-			equal(oDropdown.getValue(), "last item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should have changed in HTML.");
 
 			// also check that second 'Home' stays the same
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
-			equal(oDropdown.getValue(), "last item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
-			equal(oDropdown.getValue(), "last item", "DropdownBox' value should not have changed.");
-			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
+			assert.ok(jQuery.sap.byId(sDropdownListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+			assert.equal(oDropdown.getValue(), "last item", "DropdownBox' value should not have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal(oDropdown.getValue(), "first item", "DropdownBox' value should hold selected value.");
-			equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
+			assert.equal(oDropdown.getValue(), "first item", "DropdownBox' value should hold selected value.");
+			assert.equal(oDropdown.getInputDomRef().value, "first item", "DropdownBox' value should not have changed in HTML.");
 		});
 
-		module("Event Tests - sap.ui.commons.DropdownBox", {
-			setup: function(){
+		QUnit.module("Event Tests - sap.ui.commons.DropdownBox", {
+			beforeEach: function(){
 				//resetBeforeTest();
 				oDropdown.focus();
 				oDropdown.attachChange(this.handleChange);
 			},
-			teardown: function(){
+			afterEach: function(){
 				oDropdown.detachChange(this.handleChange);
 				//qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			},
 			// next function does not belong to qUnit but allows setting and removing some event handler to the DropdownBox
 			handleChange: function(oEvent){
-				ok(true, "DropdownBox event handler change was triggered.");
+				assert.ok(true, "DropdownBox event handler change was triggered.");
 			}
 		});
 
-		test("TestChangeOnEnterAfterTextInputOK", function(){
-			expect(4); // two from cleanup + two from the event handlers (the one from the module plus the local one)
+		QUnit.test("TestChangeOnEnterAfterTextInputOK", function(assert){
+			assert.expect(4); // two from cleanup + two from the event handlers (the one from the module plus the local one)
 			resetBeforeTest();
 			var sInput = "second";
 			function fCheck(oEvent){
-				equal(oEvent.getParameter("newValue"), sInput + " item", "Change event should provide valid auto completed new value.")
+				assert.equal(oEvent.getParameter("newValue"), sInput + " item", "Change event should provide valid auto completed new value.")
 			}
 			oDropdown.attachChange(fCheck);
 
@@ -459,12 +460,12 @@
 
 		var sText = "third item";
 		var oTest1 = function(oEvent) {
-			equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");
+			assert.equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");
 		};
-		test("TestChangeOnFocusLostAfterTextInputOK", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+		QUnit.test("TestChangeOnFocusLostAfterTextInputOK", function(assert){
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(4); // two from cleanup + two from the event handler
+			// assert.expect(4); // two from cleanup + two from the event handler
 			resetBeforeTest();
 			oDropdown.attachChange(oTest1);
 
@@ -475,20 +476,21 @@
 			oDropdown2.focus();
 		});
 
-		asyncTest("TestChangeOnFocusLostAfterTextInputOK_check", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+		QUnit.test("TestChangeOnFocusLostAfterTextInputOK_check", function(assert){
+			var done = assert.async();
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(1); // 1 check
+			// assert.expect(1); // 1 check
 			setTimeout( function(){
-				equal(oDropdown.getValue(), sText, "DropdownBox should provide new value via getter method.");
+				assert.equal(oDropdown.getValue(), sText, "DropdownBox should provide new value via getter method.");
 
 				oDropdown.detachChange(oTest1);
-				start();
+				done();
 			}, 100);
 		});
 
-		test("TestChangeOnEnterAfterUpDownOK", function(){
-			expect(3); // two from cleanup + the one from the event handler
+		QUnit.test("TestChangeOnEnterAfterUpDownOK", function(assert){
+			assert.expect(3); // two from cleanup + the one from the event handler
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
@@ -498,12 +500,12 @@
 		});
 
 		var oTest3 = function(oEvent) {
-			equal(oEvent.getParameter("newValue"), "third item", "Entered value should be provided as Event parameter");				
+			assert.equal(oEvent.getParameter("newValue"), "third item", "Entered value should be provided as Event parameter");
 		};
-		test("TestChangeOnFocusLostAfterUpDownOK", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+		QUnit.test("TestChangeOnFocusLostAfterUpDownOK", function(assert){
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(4); // two from cleanup + two from the event handler
+			// assert.expect(4); // two from cleanup + two from the event handler
 			resetBeforeTest();
 
 			oDropdown.attachChange(oTest3);
@@ -514,59 +516,61 @@
 			oDropdown2.focus();
 		});
 
-		asyncTest("TestChangeOnFocusLostAfterUpDownOK_check", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+		QUnit.test("TestChangeOnFocusLostAfterUpDownOK_check", function(assert){
+			var done = assert.async();
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(2); // two checks
+			// assert.expect(2); // two checks
 			setTimeout( function(){
-				equal(oDropdown.getValue(), "third item", "DropdownBox' value should be \"third item\".");
-				equal(oDropdown.getInputDomRef().value, "third item", "ComobBox' selected value should be shown in HTML.");
+				assert.equal(oDropdown.getValue(), "third item", "DropdownBox' value should be \"third item\".");
+				assert.equal(oDropdown.getInputDomRef().value, "third item", "ComobBox' selected value should be shown in HTML.");
 
 				oDropdown.detachChange(oTest3);
-				start();
+				done();
 			},100);
 		});
 
-		test("TestCleanUp", function() {
-			ok(!!sap.ui.getCore().byId("fi"), "fi must exist");
-			ok(!!sap.ui.getCore().byId("si"), "si must exist");
-			ok(!!sap.ui.getCore().byId("ti"), "ti must exist");
-			ok(!!sap.ui.getCore().byId("li"), "li must exist");
+		QUnit.test("TestCleanUp", function(assert) {
+			assert.ok(!!sap.ui.getCore().byId("fi"), "fi must exist");
+			assert.ok(!!sap.ui.getCore().byId("si"), "si must exist");
+			assert.ok(!!sap.ui.getCore().byId("ti"), "ti must exist");
+			assert.ok(!!sap.ui.getCore().byId("li"), "li must exist");
 			oDropdown.destroy();
-			ok(!sap.ui.getCore().byId("fi"), "fi must no longer exist");
-			ok(!sap.ui.getCore().byId("si"), "si must no longer exist");
-			ok(!sap.ui.getCore().byId("ti"), "ti must no longer exist");
-			ok(!sap.ui.getCore().byId("li"), "li must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-shi"), "search help item must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-0"), "history item 0 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-1"), "history item 1 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-2"), "history item 2 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-3"), "history item 3 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-4"), "history item 4 must no longer exist");
-			ok(!sap.ui.getCore().byId("ddb-h-separator"), "history separator must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("fi"), "fi must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("si"), "si must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ti"), "ti must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("li"), "li must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-shi"), "search help item must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-0"), "history item 0 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-1"), "history item 1 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-2"), "history item 2 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-3"), "history item 3 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-4"), "history item 4 must no longer exist");
+			assert.ok(!sap.ui.getCore().byId("ddb-h-separator"), "history separator must no longer exist");
 		});
 
 		function resetBeforeTest(){
 			var sNew = "first item";
 			oDropdown.setValue(null); // one can reset a DropdownBox with null
-			equal(oDropdown.getValue(), sNew, "'DropdownBox' value should have changed.");
-			equal(oDropdown.getInputDomRef().value, sNew, "'DropdownBox' value should have changed in HTML.");
+			assert.equal(oDropdown.getValue(), sNew, "'DropdownBox' value should have changed.");
+			assert.equal(oDropdown.getInputDomRef().value, sNew, "'DropdownBox' value should have changed in HTML.");
 		}
 
-		module("SearchHelp");
+		QUnit.module("SearchHelp");
 
-		asyncTest("Serch help item", function() {
+		QUnit.test("Serch help item", function(assert) {
+			var done = assert.async();
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 			var oListBox = sap.ui.getCore().byId("ddb4-lb")
 			oDropdown4.focus();
 			// open list box to see search help item
 			qutils.triggerEvent("click", "ddb4-icon");
 			setTimeout( function(){
-				equal(oListBox.getItems()[0].getId(), "ddb4_shi", "Seach help item exists as first item");
-				equal(oListBox.getItems()[0].getText(), rb.getText("DDBX_SHI"), "Seach help item default text");
-				equal(oListBox.getItems()[0].getAdditionalText(), rb.getText("DDBX_SHIF4"), "Seach help item default additional text");
-				equal(oListBox.getItems()[0].getIcon(), sap.ui.resource("sap.ui.commons", "images/dropdown/ico12_f4.gif"), "Seach help item default icon");
-				// close list box 
+				assert.equal(oListBox.getItems()[0].getId(), "ddb4_shi", "Seach help item exists as first item");
+				assert.equal(oListBox.getItems()[0].getText(), rb.getText("DDBX_SHI"), "Seach help item default text");
+				assert.equal(oListBox.getItems()[0].getAdditionalText(), rb.getText("DDBX_SHIF4"), "Seach help item default additional text");
+				assert.equal(oListBox.getItems()[0].getIcon(), sap.ui.resource("sap.ui.commons", "images/dropdown/ico12_f4.gif"), "Seach help item default icon");
+				// close list box
 				qutils.triggerEvent("click", "ddb4-icon");
 				sap.ui.getCore().applyChanges();
 
@@ -577,37 +581,38 @@
 					oDropdown4.setSearchHelpIcon(sap.ui.resource("sap.ui.core", "mimes/logo/txtonly_16x16.ico"));
 					// open list box to see search help item
 					qutils.triggerEvent("click", "ddb4-icon");
-					equal(oListBox.getItems()[0].getText(), "Test", "Seach help item default text");
-					equal(oListBox.getItems()[0].getAdditionalText(), "XX", "Seach help item default additional text");
-					equal(oListBox.getItems()[0].getIcon(), sap.ui.resource("sap.ui.core", "mimes/logo/txtonly_16x16.ico"), "Seach help item default icon");
-					// close list box 
+					assert.equal(oListBox.getItems()[0].getText(), "Test", "Seach help item default text");
+					assert.equal(oListBox.getItems()[0].getAdditionalText(), "XX", "Seach help item default additional text");
+					assert.equal(oListBox.getItems()[0].getIcon(), sap.ui.resource("sap.ui.core", "mimes/logo/txtonly_16x16.ico"), "Seach help item default icon");
+					// close list box
 					qutils.triggerEvent("click", "ddb4-icon");
-					start();
+					done();
 				},100);
 			},100);
 
 		});
 
-		asyncTest("Serch help event", function() {
+		QUnit.test("Serch help event", function(assert) {
+			var done = assert.async();
 			// open list box to see search help item
 			oDropdown4.focus();
 			qutils.triggerEvent("click", "ddb4-icon");
 			setTimeout( function(){
 
 				qutils.triggerEvent("click", "ddb4_shi-txt");
-				ok(bSearchHelpFired, "Click on Search help item - serachHelp event fired");
+				assert.ok(bSearchHelpFired, "Click on Search help item - serachHelp event fired");
 				bSearchHelpFired = false;
 
 				qutils.triggerKeyboardEvent("ddb4-input", jQuery.sap.KeyCodes.F4, false, false, false);
-				ok(bSearchHelpFired, "F4 on input field - serachHelp event fired");
+				assert.ok(bSearchHelpFired, "F4 on input field - serachHelp event fired");
 				bSearchHelpFired = false;
-				start();
+				done();
 			},100);
 		});
 
-		module("Other");
+		QUnit.module("Other");
 
-		test("Change items while open", function() {
+		QUnit.test("Change items while open", function(assert) {
 			var oListBox = sap.ui.getCore().byId("ddb4-lb")
 			oDropdown4.focus();
 			// open list box
@@ -616,52 +621,53 @@
 			// add item
 			var oItemX1 = new sap.ui.core.ListItem("X1",{text:"new Item", key: "X1"});
 			oDropdown4.addItem(oItemX1);
-			equal(oDropdown4.getItems().length, 4, "addItem: number DropdownBox items (seach help item must be not included)");
-			equal(oListBox.getItems().length, 6, "addItem: number ListBox items (seach help item must be included)");
+			assert.equal(oDropdown4.getItems().length, 4, "addItem: number DropdownBox items (seach help item must be not included)");
+			assert.equal(oListBox.getItems().length, 6, "addItem: number ListBox items (seach help item must be included)");
 
 			// remove item
 			oDropdown4.removeItem(oItemX1);
-			equal(oDropdown4.getItems().length, 3, "removeItem: number DropdownBox items (seach help item must be not included)");
-			equal(oListBox.getItems().length, 5, "removeItem: number ListBox items (seach help item must be included)");
+			assert.equal(oDropdown4.getItems().length, 3, "removeItem: number DropdownBox items (seach help item must be not included)");
+			assert.equal(oListBox.getItems().length, 5, "removeItem: number ListBox items (seach help item must be included)");
 
 			// insert item
 			var oItemX2 = new sap.ui.core.ListItem("X2",{text:"new Item2", key: "X2"});
 			oDropdown4.insertItem(oItemX2, 2);
-			equal(oDropdown4.getItems().length, 4, "insertItem: number DropdownBox items (seach help item must be not included)");
-			equal(oListBox.getItems().length, 6, "insertItem: number ListBox items (seach help item must be included)");
+			assert.equal(oDropdown4.getItems().length, 4, "insertItem: number DropdownBox items (seach help item must be not included)");
+			assert.equal(oListBox.getItems().length, 6, "insertItem: number ListBox items (seach help item must be included)");
 
 			// index of item
-			equal(oDropdown4.indexOfItem(oItemX2), 2, "index of DropdownBox item (seach help item must be not included)");
-			equal(oListBox.indexOfItem(oItemX2), 4, "index of ListBox item (seach help item must be included)");
+			assert.equal(oDropdown4.indexOfItem(oItemX2), 2, "index of DropdownBox item (seach help item must be not included)");
+			assert.equal(oListBox.indexOfItem(oItemX2), 4, "index of ListBox item (seach help item must be included)");
 
 			// remove all items
 			var aItems = oDropdown4.removeAllItems();
-			equal(aItems.length, 4, "removeAllItems: number of removed items (seach help item must be not included)");
-			equal(oDropdown4.getItems().length, 0, "removeAllItems: number DropdownBox items (seach help item must be not included)");
-			equal(oListBox.getItems().length, 0, "removeAllItems: number ListBox items (no search help if no items)");
+			assert.equal(aItems.length, 4, "removeAllItems: number of removed items (seach help item must be not included)");
+			assert.equal(oDropdown4.getItems().length, 0, "removeAllItems: number DropdownBox items (seach help item must be not included)");
+			assert.equal(oListBox.getItems().length, 0, "removeAllItems: number ListBox items (no search help if no items)");
 
 			// add new items to destroy them
 			oDropdown4.addItem(oItemX1);
 			oDropdown4.addItem(oItemX2);
-			equal(oDropdown4.getItems().length, 2, "addItem: number DropdownBox items (seach help item must be not included)");
-			equal(oListBox.getItems().length, 4, "addItem: number ListBox items (seach help item must be included)");
+			assert.equal(oDropdown4.getItems().length, 2, "addItem: number DropdownBox items (seach help item must be not included)");
+			assert.equal(oListBox.getItems().length, 4, "addItem: number ListBox items (seach help item must be included)");
 			oDropdown4.destroyItems();
-			equal(oDropdown4.getItems().length, 0, "destroyItems: number DropdownBox items (seach help item must be not included)");
-			equal(oListBox.getItems().length, 0, "destroyItems: number ListBox items (no search help if no items)");
+			assert.equal(oDropdown4.getItems().length, 0, "destroyItems: number DropdownBox items (seach help item must be not included)");
+			assert.equal(oListBox.getItems().length, 0, "destroyItems: number ListBox items (no search help if no items)");
 
 			// close list box
 			qutils.triggerEvent("click", "ddb4-icon");
 		});
 
-		module("DataBinding");
-		test("initial binding", function(){
+		QUnit.module("DataBinding");
+		QUnit.test("initial binding", function(assert){
 			// even if selectedKey is set before items it must be used after items are added
-			equal(oDropdown5.getValue(), "Item 2", "Text of second item must be set");
-			equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item 2", "Text of second item must be set in the HTML.");
-			equal(oDropdown5.getSelectedKey(), "I2", "Key of second item must be selected");
+			assert.equal(oDropdown5.getValue(), "Item 2", "Text of second item must be set");
+			assert.equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item 2", "Text of second item must be set in the HTML.");
+			assert.equal(oDropdown5.getSelectedKey(), "I2", "Key of second item must be selected");
 		});
 
-		asyncTest("update binding with key", function(){
+		QUnit.test("update binding with key", function(assert){
+			var done = assert.async();
 			// even if selectedKey is set before items it must be used after items are added
    			oModel.setProperty("/key", "IC");
 			oModel.oData.items = [{text: "Item A", key: "IA"},
@@ -669,37 +675,37 @@
 			    		              {text: "Item C", key: "IC"}];
    			oModel.checkUpdate();
 			setTimeout(function(){
-   				equal(oDropdown5.getValue(), "Item C", "Text of third item must be set");
-				equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item C", "Text of third item must be set in the HTML.");
-				equal(oDropdown5.getSelectedKey(), "IC", "Key of third item must be selected");
-				start();
+   				assert.equal(oDropdown5.getValue(), "Item C", "Text of third item must be set");
+				assert.equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item C", "Text of third item must be set in the HTML.");
+				assert.equal(oDropdown5.getSelectedKey(), "IC", "Key of third item must be selected");
+				done();
 			},0);
 		});
 
-		test("manual with ID", function(){
+		QUnit.test("manual with ID", function(assert){
 			// even if selectedItemId is set before items it must be used after items are added
    		oDropdown5.setSelectedItemId("Item-Y");
 			oDropdown5.removeAllItems();
 			oDropdown5.addItem(new sap.ui.core.ListItem("Item-X",{text:"Item X", key:"IX"}));
 			oDropdown5.addItem(new sap.ui.core.ListItem("Item-Z",{text:"Item Z", key:"IZ"}));
 			oDropdown5.insertItem(new sap.ui.core.ListItem("Item-Y",{text:"Item Y", key:"IY"}), 1);
-			equal(oDropdown5.getValue(), "Item Y", "Text of second item must be set");
-			equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item Y", "Text of second item must be set in the HTML.");
-			equal(oDropdown5.getSelectedKey(), "IY", "Key of second item must be selected");
-			equal(oDropdown5.getSelectedItemId(), "Item-Y", "ID of second item must be selected");
+			assert.equal(oDropdown5.getValue(), "Item Y", "Text of second item must be set");
+			assert.equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item Y", "Text of second item must be set in the HTML.");
+			assert.equal(oDropdown5.getSelectedKey(), "IY", "Key of second item must be selected");
+			assert.equal(oDropdown5.getSelectedItemId(), "Item-Y", "ID of second item must be selected");
 		});
 
-		test("manual with Value", function(){
+		QUnit.test("manual with Value", function(assert){
 			// even if selectedItemId is set before items it must be used after items are added
    		oDropdown5.setValue("Item F");
 			oDropdown5.destroyItems();
 			oDropdown5.addItem(new sap.ui.core.ListItem("Item-E",{text:"Item E", key:"IE"}));
 			oDropdown5.addItem(new sap.ui.core.ListItem("Item-G",{text:"Item G", key:"IG"}));
 			oDropdown5.insertItem(new sap.ui.core.ListItem("Item-F",{text:"Item F", key:"IF"}), 1);
-			equal(oDropdown5.getValue(), "Item F", "Text of second item must be set");
-			equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item F", "Text of second item must be set in the HTML.");
-			equal(oDropdown5.getSelectedKey(), "IF", "Key of second item must be selected");
-			equal(oDropdown5.getSelectedItemId(), "Item-F", "ID of second item must be selected");
+			assert.equal(oDropdown5.getValue(), "Item F", "Text of second item must be set");
+			assert.equal(jQuery.sap.domById(oDropdown5.getId()+"-input").value, "Item F", "Text of second item must be set in the HTML.");
+			assert.equal(oDropdown5.getSelectedKey(), "IF", "Key of second item must be selected");
+			assert.equal(oDropdown5.getSelectedItemId(), "Item-F", "ID of second item must be selected");
 		});
 
 		</script>

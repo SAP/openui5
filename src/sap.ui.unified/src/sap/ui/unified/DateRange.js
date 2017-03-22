@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	/**
 	 * Constructor for a new DateRange.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			startDate : {type : "object", group : "Misc", defaultValue : null},
 
 			/**
-			 * Start date for a date range. If empty only a single date is presented by this DateRange element. This must be a JavaScript date object.
+			 * End date for a date range. If empty only a single date is presented by this DateRange element. This must be a JavaScript date object.
 			 */
 			endDate : {type : "object", group : "Misc", defaultValue : null}
 		}
@@ -62,6 +62,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 		this.setProperty("startDate", oDate);
 
+		return this;
+
 	};
 
 	DateRange.prototype.setEndDate = function(oDate){
@@ -78,6 +80,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 
 		this.setProperty("endDate", oDate);
+
+		return this;
 
 	};
 

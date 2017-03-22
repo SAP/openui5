@@ -3,55 +3,62 @@
  */
 
 // Provides helper sap.ui.core.LabelEnablement
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
+	function(jQuery, ManagedObject) {
 	"use strict";
+
+	function lazyInstanceof(o, sModule) {
+		var FNClass = sap.ui.require(sModule);
+		return typeof FNClass === 'function' && (o instanceof FNClass);
+	}
 
 	// Mapping between controls and labels
 	var CONTROL_TO_LABELS_MAPPING = {};
-	
+
 	// Returns the control for the given id (if available) and invalidates it if desired
 	function toControl(sId, bInvalidate) {
 		if (!sId) {
 			return null;
 		}
-		
+
 		var oControl = sap.ui.getCore().byId(sId);
-		if (oControl && bInvalidate) {
+		// a control must only be invalidated if there is already a DOM Ref. If there is no DOM Ref yet, it will get
+		// rendered later in any case. Elements must always be invalidated because they have no own renderer.
+		if (oControl && bInvalidate && (!lazyInstanceof(oControl, 'sap/ui/core/Control') || oControl.getDomRef())) {
 			oControl.invalidate();
 		}
-		
+
 		return oControl;
 	}
-	
+
 	// Updates the mapping tables for the given label, in destroy case only a cleanup is done
 	function refreshMapping(oLabel, bDestroy){
 		var sLabelId = oLabel.getId();
 		var sOldId = oLabel.__sLabeledControl;
 		var sNewId = bDestroy ? null : oLabel.getLabelForRendering();
-		
+
 		if (sOldId == sNewId) {
 			return;
 		}
-		
+
 		//Invalidate the label itself (see setLabelFor, setAlternativeLabelFor)
 		if (!bDestroy) {
 			oLabel.invalidate();
 		}
-		
+
 		//Update the label to control mapping (1-1 mapping)
 		if (sNewId) {
 			oLabel.__sLabeledControl = sNewId;
 		} else {
 			delete oLabel.__sLabeledControl;
 		}
-		
+
 		//Update the control to label mapping (1-n mapping)
 		var aLabelsOfControl;
 		if (sOldId) {
 			aLabelsOfControl = CONTROL_TO_LABELS_MAPPING[sOldId];
 			if (aLabelsOfControl) {
-				aLabelsOfControl = jQuery.grep(aLabelsOfControl, function(sCurrentLabelId) {
+				aLabelsOfControl = aLabelsOfControl.filter(function(sCurrentLabelId) {
 					  return sCurrentLabelId != sLabelId;
 				});
 				if (aLabelsOfControl.length) {
@@ -66,12 +73,21 @@ sap.ui.define(['jquery.sap.global'],
 			aLabelsOfControl.push(sLabelId);
 			CONTROL_TO_LABELS_MAPPING[sNewId] = aLabelsOfControl;
 		}
-		
+
 		//Invalidate related controls
-		toControl(sOldId, true);
-		toControl(sNewId, true);
+		var oOldControl = toControl(sOldId, true);
+		var oNewControl = toControl(sNewId, true);
+
+		if (oOldControl) {
+			oLabel.detachRequiredChange(oOldControl);
+		}
+
+		if (oNewControl) {
+			oLabel.attachRequiredChange(oNewControl);
+		}
+
 	}
-	
+
 	// Checks whether enrich function can be applied on the given control or prototype.
 	function checkLabelEnablementPreconditions(oControl) {
 		if (!oControl) {
@@ -87,10 +103,10 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		//Add more detailed checks here ?
 	}
-	
+
 	/**
 	 * Helper functionality for enhancement of a Label with common label functionality.
-	 * 
+	 *
 	 * @see sap.ui.core.LabelEnablement#enrich
 	 *
 	 * @author SAP SE
@@ -114,26 +130,26 @@ sap.ui.define(['jquery.sap.global'],
 		if (!oLabel || !oLabel.getLabelForRendering) {
 			return;
 		}
-		
+
 		var sControlId = oLabel.getLabelForRendering();
 		if (!sControlId) {
 			return;
 		}
-		
+
 		var oControl = toControl(sControlId);
 		if (oControl && oControl.getIdForLabel) {
 			// for some controls the label must point to an special HTML element, not the outer one.
 			sControlId = oControl.getIdForLabel();
 		}
-		
+
 		if (sControlId) {
 			oRenderManager.writeAttributeEscaped("for", sControlId);
 		}
 	};
-	
+
 	/**
 	 * Returns an array of ids of the labels referencing the given element
-	 * 
+	 *
 	 * @param {sap.ui.core.Element} oElement The element whose referencing labels should be returned
 	 * @returns {string[]} an array of ids of the labels referencing the given element
 	 * @public
@@ -145,42 +161,41 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return CONTROL_TO_LABELS_MAPPING[sId] || [];
 	};
-	
+
 	/**
 	 * Returns <code>true</code> when the given control is required (property 'required') or one of its referencing labels, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param {sap.ui.core.Element} oElement The element which should be checked for its required state
 	 * @returns {boolean} <code>true</code> when the given control is required (property 'required') or one of its referencing labels, <code>false</code> otherwise
 	 * @public
 	 * @since 1.29.0
 	 */
 	LabelEnablement.isRequired = function(oElement){
-		
-		function checkRequired(oElem) {
-			return !!(oElem && oElem.getMetadata().getProperty("required") && oElem.getRequired());
-		}
-		
+
 		if (checkRequired(oElement)) {
 			return true;
 		}
-		
+
 		var aLabelIds = LabelEnablement.getReferencingLabels(oElement),
 			oLabel;
-		
+
 		for (var i = 0; i < aLabelIds.length; i++) {
 			oLabel = sap.ui.getCore().byId(aLabelIds[i]);
 			if (checkRequired(oLabel)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	};
-	
-	
+
+	function checkRequired(oElem) {
+		return !!(oElem && oElem.getMetadata().getProperty("required") && oElem.getRequired());
+	}
+
 	/**
 	 * This function should be called on a label control to enrich it's functionality.
-	 * 
+	 *
 	 * <b>Usage:</b>
 	 * The function can be called with a control prototype:
 	 * <code>
@@ -192,20 +207,20 @@ sap.ui.define(['jquery.sap.global'],
 	 *    sap.ui.core.LabelEnablement.enrich(this);
 	 * }
 	 * </code>
-	 * 
+	 *
 	 * <b>Preconditions:</b>
 	 * The given control must implement the interface sap.ui.core.Label and have an association 'labelFor' with cardinality 0..1.
 	 * This function extends existing API functions. Ensure not to override this extensions AFTER calling this function.
-	 * 
+	 *
 	 * <b>What does this function do?</b>
-	 * 
+	 *
 	 * A mechanismn is added that ensures that a bidirectional reference between the label and it's labeled control is established:
 	 * The label references the labeled control via the html 'for' attribute (@see sap.ui.core.LabelEnablement#writeLabelForAttribute).
 	 * If the labeled control supports the aria-labelledby attribute. A reference to the label is added automatically.
-	 * 
+	 *
 	 * In addition an alternative to apply a for reference without influencing the labelFor association of the API is applied (e.g. used by Form).
 	 * For this purpose the functions setAlternativeLabelFor and getLabelForRendering are added.
-	 * 
+	 *
 	 * @param {sap.ui.core.Control} oControl the label control which should be enriched with further label functionality.
 	 * @throws Error if the given control cannot be enriched to violated preconditions (see above)
 	 * @protected
@@ -213,14 +228,14 @@ sap.ui.define(['jquery.sap.global'],
 	LabelEnablement.enrich = function(oControl) {
 		//Ensure that enhancement possible
 		checkLabelEnablementPreconditions(oControl);
-		
+
 		oControl.__orig_setLabelFor = oControl.setLabelFor;
 		oControl.setLabelFor = function(sId) {
 			var res = this.__orig_setLabelFor.apply(this, arguments);
 			refreshMapping(this);
 			return res;
 		};
-		
+
 		oControl.__orig_exit = oControl.exit;
 		oControl.exit = function() {
 			this._sAlternativeId = null;
@@ -229,10 +244,10 @@ sap.ui.define(['jquery.sap.global'],
 				oControl.__orig_exit.apply(this, arguments);
 			}
 		};
-		
+
 		// Alternative to apply a for reference without influencing the labelFor association of the API (see e.g. FormElement)
 		oControl.setAlternativeLabelFor = function(sId) {
-			if (sId instanceof sap.ui.base.ManagedObject) {
+			if (sId instanceof ManagedObject) {
 				sId = sId.getId();
 			} else if (sId != null && typeof sId !== "string") {
 				jQuery.sap.assert(false, "setAlternativeLabelFor(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
@@ -241,29 +256,102 @@ sap.ui.define(['jquery.sap.global'],
 
 			this._sAlternativeId = sId;
 			refreshMapping(this);
-			
+
 			return this;
 		};
-		
+
 		// Returns id of the labelled control. The labelFor association is preferred before AlternativeLabelFor.
 		oControl.getLabelForRendering = function() {
 			return this.getLabelFor() || this._sAlternativeId;
 		};
-		
+
 		if (!oControl.getMetadata().getProperty("required")) {
 			return;
 		}
-		
+
 		oControl.__orig_setRequired = oControl.setRequired;
-		oControl.setRequired = function(sId) {
-			var res = this.__orig_setRequired.apply(this, arguments);
-			toControl(this.__sLabeledControl, true); //invalidate the related control
+		oControl.setRequired = function(bRequired) {
+			var bOldRequired = this.getRequired(),
+				oReturn = this.__orig_setRequired.apply(this, arguments);
+
+			// invalidate the related control only when needed
+			if (this.getRequired() !== bOldRequired) {
+				toControl(this.__sLabeledControl, true);
+			}
+
+			return oReturn;
+		};
+
+		/**
+		 * Checks whether the Label itself or the associated control is marked as required (they are mutually exclusive).
+		 *
+		 * @protected
+		 * @returns {Boolean} Returns if the Label or the labeled control are required
+		 */
+		oControl.isRequired = function(){
+			// the value of the local required flag is ORed with the result of a "getRequired"
+			// method of the associated "labelFor" control. If the associated control doesn't
+			// have a getRequired method, this is treated like a return value of "false".
+			var oFor = toControl(this.getLabelForRendering(), false);
+			return checkRequired(this) || checkRequired(oFor);
+
+		};
+
+		// as in the Form the required change is checked, it'd not needed here
+		oControl.disableRequiredChangeCheck = function(bNoCheck){
+
+			this._bNoRequiredChangeCheck = bNoCheck;
+
+		};
+
+		oControl.attachRequiredChange = function(oFor){
+
+			if (oFor && !this._bNoRequiredChangeCheck) {
+				if (oFor.getMetadata().getProperty("required")) {
+					oFor.attachEvent("_change", _handleControlChange, this);
+				}
+				this._bRequiredAttached = true; // to do not check again if control has no required property
+			}
+
+		};
+
+		oControl.detachRequiredChange = function(oFor){
+
+			if (oFor && !this._bNoRequiredChangeCheck) {
+				if (oFor.getMetadata().getProperty("required")) {
+					oFor.detachEvent("_change", _handleControlChange, this);
+				}
+				this._bRequiredAttached = false; // to do not check again if control has no required property
+			}
+
+		};
+
+		function _handleControlChange(oEvent) {
+
+			if (oEvent.getParameter("name") == "required") {
+				this.invalidate();
+			}
+
+		}
+
+		oControl.__orig_onAfterRendering = oControl.onAfterRendering;
+		oControl.onAfterRendering = function(oEvent) {
+			var res;
+
+			if (this.__orig_onAfterRendering) {
+				res = this.__orig_onAfterRendering.apply(this, arguments);
+			}
+
+			if (!this._bNoRequiredChangeCheck && !this._bRequiredAttached && this.__sLabeledControl) {
+				var oFor = toControl(this.__sLabeledControl, false);
+				this.attachRequiredChange(oFor);
+			}
+
 			return res;
 		};
-		
+
 	};
 
-	
 	return LabelEnablement;
 
 }, /* bExport= */ true);

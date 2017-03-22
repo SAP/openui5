@@ -1,23 +1,24 @@
 <!DOCTYPE HTML>
  <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Menu - sap.ui.unified</title>
+		<script src="../shared-config.js"></script>
 		<script src="../../../../../resources/sap-ui-core.js"
-				type="text/javascript" id="sap-ui-bootstrap"
+				id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.ui.unified"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
-		<script type="text/javascript">	
+		<script>
 			try{
 				sap.ui.getCore().loadLibrary("sap.ui.commons");
 			}catch(e){
 				alert("This test page requires the library 'sap.ui.commons' which is not available.");
 				throw(e);
 			}
-			
+
 			function fillMenuButtonMenu(oMenuButton, bIcon) {
 				var aItems = [
 					{text: "View Settings", items: [], tooltip: "View settings details"},
@@ -35,7 +36,7 @@
 						var oMenuItem = new sap.ui.unified.MenuItem({text: aItems[i].text, tooltip: aItems[i].tooltip, startsSection: !!aItems[i].divider, icon: aItems[i].icon, enabled: !aItems[i].disabled});
 						oMenu.addItem(oMenuItem);
 						if(aItems[i].items.length > 0){
-							var oSubMenu = new sap.ui.unified.Menu(); 
+							var oSubMenu = new sap.ui.unified.Menu();
 							oMenuItem.setSubmenu(oSubMenu);
 							fillMenu(aItems[i].items, oSubMenu);
 						}else{
@@ -46,8 +47,8 @@
 						}
 					}
 				};
-	
-				var oMenu = new sap.ui.unified.Menu({ariaDescription: "Settings Menu"});
+
+				var oMenu = new sap.ui.unified.Menu({ariaDescription: "Settings"});
 				fillMenu(aItems, oMenu);
 				oMenu.addItem(new sap.ui.unified.MenuTextFieldItem({label: "Filter:", enabled: true, startsSection: true, icon: "sap-icon://filter", select: function(oEvent){
 					alert("Filter: "+oEvent.getParameter("item").getValue());
@@ -60,7 +61,7 @@
 				}}));
 				oMenuButton.setMenu(oMenu);
 			}
-			
+
 			var oMenuButton = new sap.ui.commons.MenuButton("demoButton", {text: "Settings", tooltip: "Press the button to show the Menu"});
 			fillMenuButtonMenu(oMenuButton);
 			oMenuButton.placeAt("content");

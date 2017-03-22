@@ -1,8 +1,8 @@
 <html>
 	<head>
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/APP</title>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script language="javascript">
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script>
 
 		/**
 		 * Add test pages to this test suite function.
@@ -15,8 +15,13 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MockServer.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MockServerFeature.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MockServerAPF.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DraftEnabledMockServer.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DesignMode_On.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DesignMode_On_with_suppressed_deactivation_of_controller_code.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/parameterClasses.qunit.html?sap-ui-theme=base");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/parameterClasses.qunit.html?sap-ui-theme=sap_hcb");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/parameterClasses.qunit.html?sap-ui-theme=sap_bluecrystal");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/parameterClasses.qunit.html?sap-ui-theme=sap_belize");
 			return suite;
 		}
 

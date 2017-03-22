@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 
 
 	/**
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.core.message
 	 * @public
@@ -22,8 +22,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * The ControlMessageProcessor implementation.
 	 * This MessageProcessor is able to handle Messages with the following target syntax:
 	 * 		'ControlID/PropertyName'
+	 * Creating an instance of this class using the "new" keyword always results in the same instance (Singleton).
 	 *
-	 * @extends sap.ui.base.EventProvider
+	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -34,12 +35,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 */
 	var ControlMessageProcessor = MessageProcessor.extend("sap.ui.core.message.ControlMessageProcessor", /** @lends sap.ui.core.message.ControlMessageProcessor.prototype */ {
 		constructor : function () {
-			MessageProcessor.apply(this, arguments);
+			if (!ControlMessageProcessor._instance) {
+				MessageProcessor.apply(this, arguments);
+				ControlMessageProcessor._instance = this;
+			}
+			return ControlMessageProcessor._instance;
 		},
 		metadata : {
 		}
 	});
-	
+
+
+	ControlMessageProcessor._instance = null;
+
 	/**
 	 * Set Messages to check
 	 * @param {map}
@@ -47,42 +55,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @protected
 	 */
 	ControlMessageProcessor.prototype.setMessages = function(vMessages) {
-		this.mOldMessages = jQuery.isEmptyObject(this.mMessages) ? vMessages : this.mMessages;
+		this.mOldMessages = this.mMessages === null ? {} : this.mMessages;
 		this.mMessages = vMessages || {};
 		this.checkMessages();
 		delete this.mOldMessages;
 	};
-	
+
 	/**
 	 * Check Messages and update controls with messages
 	 * @protected
 	 */
 	ControlMessageProcessor.prototype.checkMessages = function() {
 		var aMessages,
-			that = this;
-		
-		jQuery.each(this.mOldMessages, function(sTarget, aOldMessages) {
-			var oBinding;
-			var aParts = sTarget.split('/');
-			var oControl = sap.ui.getCore().byId(aParts[0]);
-			
+			that = this,
+			mMessages = jQuery.extend(this.mMessages, {});
+
+		//add targets to clear from mOldMessages to the mMessages to check
+		jQuery.each(this.mOldMessages, function(sTarget) {
+			if (!(sTarget in mMessages)) {
+				mMessages[sTarget] = [];
+			}
+		});
+
+		//check messages
+		jQuery.each(mMessages, function(sTarget) {
+			var oBinding,
+				aParts = sTarget.split('/'),
+				oControl = sap.ui.getCore().byId(aParts[0]);
+
 			//if control does not exist: nothing to do
 			if  (!oControl) {
 				return;
 			}
-			
+
 			oBinding = oControl.getBinding(aParts[1]);
-			
 			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
-			
 			if (oBinding) {
-				oBinding._fireMessageChange({messageSource: 'control', messages:aMessages});
+				var oDataState = oBinding.getDataState();
+				oDataState.setControlMessages(aMessages);
+				oBinding.checkDataState();
 			} else {
-				oControl.updateMessages(aParts[1], aMessages);
+				oControl.propagateMessages(aParts[1], aMessages);
 			}
+
 		});
 	};
-	
+
 	return ControlMessageProcessor;
 
-}, /* bExport= */ true);
+});

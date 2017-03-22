@@ -1,18 +1,45 @@
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* Base theme                     */
+/* ============================== */
+
+.sapMIBar.sapMTB  .sapMBarChild {
+  margin-right: 0.25rem;
+}
+
 .sapMTB {
 	white-space: nowrap;
 	overflow: hidden;
 	-webkit-align-items: center;
 	-webkit-box-align: center;
-	-ms-flex-align: center;
 	align-items: center;
 	box-sizing: border-box;
 	-webkit-text-size-adjust: none;
 	-moz-text-size-adjust: none;
 	-ms-text-size-adjust: none;
+	height: 3rem;
+	background: @sapUiToolbarBackground;
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
 }
 
 .sapMTB:focus {
 	outline: 0;
+}
+
+/* Transparent Toolbar Context */
+.sapMTB-Transparent-CTX.sapMTB {
+	padding-left: 0.75rem;
+}
+
+/* Info Toolbar Context */
+.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > *,
+.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > :first-child,
+.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > :last-child {
+	margin: 0 .5rem;
+}
+
+.sapMIBar.sapMTB.sapMTB-Info-CTX > .sapUiIcon {
+  padding-left: 0.5rem;
 }
 
 .sapMTBActive,
@@ -21,25 +48,22 @@
 }
 
 .sapMTBShrinkItem {
-	min-width: 1rem; /* default min-width value for the shrinkable items */
+	min-width: 2.5rem; /* default min-width value for the shrinkable items */
 }
 
 /* NewFlex */
 .sapMTBNewFlex {
 	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 }
 
 .sapMTBNewFlex > * {
 	-webkit-flex-shrink: 0;
-	-ms-flex-negative: 0;
 	flex-shrink: 0;
 }
 
 .sapMTBNewFlex > .sapMTBShrinkItem {
 	-webkit-flex-shrink: 1;
-	-ms-flex-negative: 1;
 	flex-shrink: 1;
 }
 
@@ -50,7 +74,7 @@
 
 .sapMTBOldFlex > .sapMTBShrinkItem:not(.sapMFlexBox) {
 	/* old flex spec does not honour percentual width for non-block level elements */
-	/* @TODO: can we set the display of unknown item */ 
+	/* @TODO: can we set the display of unknown item */
 	display: block;
 }
 
@@ -63,22 +87,60 @@
 	/* old align-items: center does not respect margins and vertical align values */
 	vertical-align: middle;
 	margin-bottom: 0;
-	margin-top: 0
+	margin-top: 0;
+
+	/* float has no effect on a flexible item */
+	float: none;
 }
 
-/* NonFlex */
-/* vertical centering trick, without flexbox */
-/* @TODO: This can break the after pseudo element theming */
-.sapMTBNoFlex::after {
-	content: "";
-	height: 100%;
-	display: inline-block;
-	vertical-align: middle;
+/*** Toolbar inside of Form as Form- and Container- header ***/
+.sapUiFormContainerToolbar > .sapMTB{
+	border-bottom: none;
+	padding: 0;
 }
-.sapMTB.sapMTBNoFlex > * {
-	vertical-align: middle; 
-	display: inline-block; /* @TODO: can we set the display of unknown item? */ 
-	margin-bottom: 0;
-	margin-top: 0;
-	float: none; /* float has no effect on a flexible item */
+
+.sapUiGridHeader > .sapMTB > .sapMBarChild:first-child,
+.sapUiGridTitle > th > .sapMTB > .sapMBarChild:first-child,
+.sapUiFormResLayout.sapUiFormToolbar > .sapMTB > .sapMBarChild:first-child,
+.sapUiRLContainer > .sapMTB > .sapMBarChild:first-child{
+	margin-left: 0;
+}
+
+.sapUiGridHeader > .sapMTB > .sapMBarChild:last-child,
+.sapUiGridTitle > th > .sapMTB > .sapMBarChild:last-child,
+.sapUiFormResLayout.sapUiFormToolbar > .sapMTB > .sapMBarChild:last-child,
+.sapUiRLContainer > .sapMTB > .sapMBarChild:last-child{
+	margin-right: 0;
+}
+
+/* Solid Toolbar Context */
+.sapMTB-Solid-CTX.sapMTB {
+	background: @sapUiListHeaderBackground;
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX.sapMTB {
+	background: @sapUiInfobarBackground;
+	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapMTB-Info-CTX.sapMTBActive:hover {
+	background: @sapUiInfobarHoverBackground;
+}
+
+.sapMTB-Info-CTX.sapMTBActive:active {
+	background: @sapUiInfobarActiveBackground;
+}
+
+/********** COMPACT DESIGN ************/
+
+/* toolbar has 2rem height in compact mode */
+.sapUiSizeCompact .sapMTB {
+	height: 2rem;
+}
+
+/* default min-width value for the shrinkable items */
+.sapUiSizeCompact .sapMTBShrinkItem,
+.sapUiSizeCondensed .sapUiTableCell .sapMTBShrinkItem{
+	min-width: 2rem;
 }

@@ -2,7 +2,7 @@
 
 <html>
  <head>
- 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
    <title>Data binding test page</title>
 
@@ -11,13 +11,12 @@
     <!-- Extend the "libs" property if you like to import additional libraries  -->
     <!-- ********************************************************************** -->
     <script id="sap-ui-bootstrap"
-        type="text/javascript"
         src="../../../../../../resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-theme="sap_bluecrystal"
         data-sap-ui-trace="true">
     </script>
 
-    <script type="text/javascript">
+    <script>
 	    try{
 			sap.ui.getCore().loadLibrary("sap.ui.commons");
 		}catch(e){
@@ -29,10 +28,10 @@
 
     	var oModel = new sap.ui.model.json.JSONModel();
     	oModel.setData({
-    		firstName: "John", 
-    		lastName: "Doe", 
-    		birthday: {day:1,month:4,year:1970}, 
-    		address:[{city:"Walldorf"}], 
+    		firstName: "John",
+    		lastName: "Doe",
+    		birthday: {day:1,month:4,year:1970},
+    		address:[{city:"Walldorf"}],
     		enabled: true
     	});
     	sap.ui.getCore().setModel(oModel);
@@ -40,13 +39,13 @@
     	function doIt(){
 
 
-			var oText = new sap.ui.commons.TextField("source",{change:update});			
+			var oText = new sap.ui.commons.TextField("source",{change:update});
 			oText.placeAt("target1");
 			var oBtn = new sap.ui.commons.Button({
-				id: "btn", 
+				id: "btn",
 				text: "Trigger Change",
 				press: update
-			});			
+			});
 			oBtn.placeAt("target2");
 
     		var oText = new sap.ui.commons.Label();
@@ -64,13 +63,13 @@
 			oText.placeAt("target6");
 
     		var oText = new sap.ui.commons.Label();
-			oText.setText("ComboBox:");		
+			oText.setText("ComboBox:");
 			oText.placeAt("target7");
     		var oCombo = new sap.ui.commons.ComboBox();
             oCombo.addItem(new sap.ui.core.ListItem("i1",{text:"first item", additionalText: "(1)"}));
             oCombo.addItem(new sap.ui.core.ListItem("i2",{text:"second item", additionalText: "(2)"}));
             oCombo.addItem(new sap.ui.core.ListItem("i3",{text:"third item", additionalText: "(3)"}));
-            oCombo.bindValue("/firstName");			
+            oCombo.bindValue("/firstName");
             oCombo.placeAt("target8");
 
 			var oChkBx = new sap.ui.commons.CheckBox({id:"box", change:handleCheckBoxChange});

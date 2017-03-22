@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.DropdownBox,sap.ui.commons.ListBox,sap.ui.core.ListItem">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control TextField ComboBox DropdownBox" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control TextField ComboBox DropdownBox">
 		<title>DropdownBox - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -78,7 +78,7 @@ oModel.setData({
 		{device:"Mouse", enabled:true},
 		{device:"Speaker", enabled:false},
 		{device:"Printer", enabled:true}],
-	editable: true, 
+	editable: true,
 	tooltip: "Device"});
 sap.ui.getCore().setModel(oModel);
 
@@ -110,18 +110,18 @@ var oListBox2 = new sap.ui.commons.ListBox("days", {items : [
 
 // Create dialog for search help
 var oSearchDialog = new sap.ui.commons.Dialog("SearchHelp", {
-	modal: true, 
-	title: "Search Help (example dialog)", 
+	modal: true,
+	title: "Search Help (example dialog)",
 	buttons: [new sap.ui.commons.Button("CancelButton", {
-		text: "Cancel", 
+		text: "Cancel",
 		press: function(oEvent){
 			// close dialog without changing value
 			oEvent.getSource().getParent().close();
-		}})], 
+		}})],
 	content: [new sap.ui.commons.ListBox("SearchList", {
-		width:"100%", 
-		visibleItems: 7, 
-		allowMultiSelect: false, 
+		width:"100%",
+		visibleItems: 7,
+		allowMultiSelect: false,
 		items : [
 			new sap.ui.core.ListItem("Day-1", {text:"Monday"}),
 			new sap.ui.core.ListItem("Day-2", {text:"Tuesday"}),
@@ -248,11 +248,11 @@ var oLayout = new sap.ui.commons.layout.MatrixLayout("Matrix1",{
 	<h4>A DropdownBox Using a ListBox</h4>
 	<p>
 	The items are added to a ListBox control which also contains additional texts. The ListBox is referenced by the DropDownBox using the <code>setListBox</code> method.
-	Using a ListBox for the DropDownBox allows a reuse of this ListBox in multiple DropDownBoxes. This is useful for tables, for example, where the possible values 
-	are the same in every row.  
-	<br/>
+	Using a ListBox for the DropDownBox allows a reuse of this ListBox in multiple DropDownBoxes. This is useful for tables, for example, where the possible values
+	are the same in every row.
+	<br>
 	The <code>change</code> event is assigned to a function that fills the text field next to the DropDownBox. So you can see when the <code>change</code> event is fired.
-	Control creation as well as property assignment in the following example are done using an alternative constructor syntax. The example also shows the history feature.<br/>
+	Control creation as well as property assignment in the following example are done using an alternative constructor syntax. The example also shows the history feature.<br>
 	</p>
 	<div code-sample="sample2" script="DropdownBoxListBox"></div>
 
@@ -269,7 +269,7 @@ var oLayout = new sap.ui.commons.layout.MatrixLayout("Matrix1",{
 	</p>
 	<div code-sample="sample4" script="DropdownBoxSearchHelp"></div>
 
-	<br/><br/>
+	<br><br>
 	<h4>Using Item Id and Key</h4>
 	<p>
 	The value of a DropdownBox can be set from the application using the properties <code>value</code>, <code>selectedKey</code> and
@@ -279,7 +279,7 @@ var oLayout = new sap.ui.commons.layout.MatrixLayout("Matrix1",{
 	<br>
 	In the example you can see how to set and get the DropdownBox value using <code>selectedKey</code> and <code>selectedItemId</code>.
 	</p>
-	<br/>
+	<br>
 	<div code-sample="sample5" script="DropdownBoxIdKey"></div>
 
 	<p>

@@ -1,0 +1,138 @@
+/* ======================================= */
+/* CSS for control sap.tnt/SideNavigation  */
+/* Base theme                              */
+/* ======================================= */
+
+.sapTntSideNavigation {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: @sapUiListBackground;
+  border-right: 1px solid @sapUiGroupContentBorderColor;
+}
+
+.sapTntSideNavigation {
+  width: 15rem;
+}
+
+.sapTntSideNavigation.sapTntSideNavigationNotExpandedWidth {
+  width: 3rem;
+}
+
+.sapTntSideNavigationNotExpanded {
+
+  .sapTntNavLIText, .sapTntNavLIExpandIcon  {
+    display: none;
+  }
+  .sapTntSideNavigationSeparator {
+    margin: 0.25rem 0.5rem;
+  }
+
+  .sapTntSideNavigationFlexible {
+    padding-right: 3rem;
+    width: 6rem;
+  }
+}
+
+.sapTntSideNavigationFlexible {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+
+  -webkit-flex-basis: 100%;
+  flex-basis: 100%;
+
+  position: relative;
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+.sapTntSideNavigationSeparator {
+  margin: 0.25rem 1rem;
+  height: 1px;
+  min-height: 1px;
+   background-color: @sapUiToolbarSeparatorColor;
+}
+
+.sapTntSideNavigationFixed {
+  position: relative;
+}
+
+.sapTntSideNavigationVerticalScrolling {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Styles for layout with arrows
+   ========================================================================== */
+
+.sapTntSideNavigationScrollIcon {
+  display: none;
+  padding: 0.6875rem 0;
+  outline: none;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;
+  color: @sapUiContentIconColor;
+}
+
+.sapTntSideNavigationScrollIcon.sapUiIcon:focus {
+  outline: none;
+}
+
+.sapTntSideNavigationScrollIconDisabled {
+  cursor: auto;
+}
+
+.sapTntSideNavigationScrollIconUp {
+  border-bottom: 1px solid @sapUiListBorderColor;
+}
+
+.sapTntSideNavigationScrollIconDown {
+  border-top: 1px solid @sapUiListBorderColor;
+}
+
+.sapTntSideNavigationScrollIcon:not(.sapTntSideNavigationScrollIconDisabled):hover {
+  background-color: @sapUiListHoverBackground;
+}
+
+.sapTntSideNavigationScrollIcon:not(.sapTntSideNavigationScrollIconDisabled):active {
+  background-color: @sapUiListActiveBackground;
+  color: @sapUiListActiveTextColor;
+}
+
+/*  Compact size
+   ========================================================================== */
+
+.sapUiSizeCompact {
+
+  .sapTntSideNavigationNotExpandedWidth {
+    width: 2rem;
+  }
+
+  .sapTntSideNavigationNotExpanded {
+
+    .sapTntSideNavigationSeparator {
+      margin: 0.125rem 0.25rem;
+    }
+  }
+
+  .sapTntSideNavigationSeparator {
+    margin: 0.125rem 0.5rem;
+  }
+
+  .sapTntSideNavigationScrollIcon {
+    padding: 0.5rem 0;
+  }
+}

@@ -1,0 +1,47 @@
+/* ======================================== */
+/* CSS for control sap.ui.commons/Splitter  */
+/* Belize theme                             */
+/* ======================================== */
+
+.sapUiVerticalSplitterBar {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	background-color: lighten(@sapUiContentForegroundColor, 5); // @sapUiExtraLightBG = #f2f2f2
+	background-image: url(img/splitter/splitter_vert_grip.gif);
+}
+
+.sapUiHorizontalSplitterBar {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	background-color: lighten(@sapUiContentForegroundColor, 5); // @sapUiExtraLightBG = #f2f2f2
+	background-image: url(img/splitter/splitter_horiz_grip.gif);
+}
+
+.sapUiVSplitterSecondPane:focus,
+.sapUiHSplitterSecondPane:focus,
+.sapUiVSplitterFirstPane:focus,
+.sapUiHSplitterFirstPane:focus {
+	outline: @sapUiHighlight dashed 1px;
+}
+
+.sapUiVerticalSplitterBar:hover{
+	background-color: lighten(@sapUiContentForegroundColor, 5); // @sapUiExtraLightBG = #f2f2f2
+	cursor: e-resize;
+}
+
+.sapUiHorizontalSplitterBar:hover{
+	background-color: lighten(@sapUiContentForegroundColor, 5); // @sapUiExtraLightBG = #f2f2f2
+	cursor: n-resize;
+}
+
+.sapUiVSBGhost{
+	background-image: none;
+	background-color: @sapUiHighlight;
+	cursor: e-resize;
+}
+
+.sapUiHSBGhost{
+	background-image: none;
+	background-color: @sapUiHighlight;
+	cursor: n-resize;
+}

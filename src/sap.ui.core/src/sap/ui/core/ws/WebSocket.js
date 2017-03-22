@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 			}
 
 			// Check protocols
-			if (typeof (aProtocols) !== 'undefined' && !jQuery.isArray(aProtocols) && typeof (aProtocols) !== 'string') {
+			if (typeof (aProtocols) !== 'undefined' && !Array.isArray(aProtocols) && typeof (aProtocols) !== 'string') {
 				throw new Error("aProtocols must be a string, array of strings or undefined.");
 			}
 
@@ -503,7 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 
 	/**
 	 * Getter for the protocol selected by the server once the connection is open.
-	 * 
+	 *
 	 * @returns {string} protocol
 	 * @public
 	 */
@@ -513,4 +513,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 
 	return WebSocket;
 
-}, /* bExport= */ true);
+});

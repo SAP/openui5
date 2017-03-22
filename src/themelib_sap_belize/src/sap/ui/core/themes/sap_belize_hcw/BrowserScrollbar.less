@@ -1,0 +1,38 @@
+/* ============================================= */
+/* CSS for control sap.ui/core/BrowserScrollbar  */
+/* Belize High Contrast White theme              */
+/* ============================================= */
+
+.sapUiBody {
+	scrollbar-base-color: @sapUiHcStandardBackground;
+	scrollbar-face-color: @sapUiHcStandardForeground;
+	scrollbar-3dlight-color: @sapUiHcStandardForeground;
+	scrollbar-arrow-color: @sapUiHcStandardForeground;
+	scrollbar-darkshadow-color:@sapUiHcStandardBackground;
+	scrollbar-shadow-color: @sapUiHcStandardForeground;
+	scrollbar-track-color: @sapUiHcReducedBackground;
+	scrollbar-highlight-color: @sapUiHcStandardBackground;
+}
+
+html.sap-desktop ::-webkit-scrollbar {
+	background-color: @sapUiHcStandardBackground;
+	border-left: 1px solid @sapUiHcReducedAltForeground;
+}
+
+html.sap-desktop ::-webkit-scrollbar:horizontal {
+	height: 0.75rem;
+}
+
+html.sap-desktop ::-webkit-scrollbar:vertical {
+	width: 0.75rem;
+}
+
+html.sap-desktop ::-webkit-scrollbar-thumb {
+	background-color: @sapUiHcReducedAltForeground;
+	box-shadow: inset @sapUiHcStandardBackground 0 0 0 0.125rem;
+	border-left: 1px solid @sapUiHcReducedAltForeground;
+}
+
+html.sap-desktop ::-webkit-scrollbar-thumb:hover {
+	background-color: @sapUiHcStandardForeground;
+}

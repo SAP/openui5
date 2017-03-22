@@ -5,7 +5,7 @@ sap.ui.define(['./MockServer','sap/ui/core/mvc/Controller','sap/ui/model/odata/O
 
 	var ListController = Controller.extend("sap.m.sample.ListDeletion.List", {
 
-		onInit: function(oEvent) {
+		onInit: function() {
 
 			// NOTE TO DEVELOPERS: You do not need to reproduce this following section
 			// It is just so we can simulate 1000ms delay from the fictional OData service
@@ -35,7 +35,7 @@ sap.ui.define(['./MockServer','sap/ui/core/mvc/Controller','sap/ui/model/odata/O
 
 			// send a delete request to the odata service
 			this.oProductModel.remove(sPath);
-		},
+		}
 	});
 
 

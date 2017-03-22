@@ -1,57 +1,98 @@
+/* ============================================== */
+/* CSS for control sap.m/WizardProgressNavigator  */
+/* Base theme                                     */
+/* ============================================== */
+
 @navHeight: 4rem;
-@listHeight: 2.25rem;
-@stepWidth: 2.25rem;
+@listHeight: 2rem;
+@stepWidth: 2rem;
+@stepPadding: 0.5rem;
+@smallSeparator: 0.25rem;
 @stepUnderlineHeight: 0.125rem;
 @stepUnderlineWidth: 3rem;
-@stepOverlapOnPhone: 1rem;
+@stepOverlapOnPhone: 1.75rem;
 
 .sapMWizardProgressNav {
 	box-sizing: border-box;
-	font-size: 0.875rem;
 	height: @navHeight;
-	padding: 0.875rem 2rem;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
+	padding: 1rem;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	background: @sapUiObjectHeaderBackground;
+	font-size: @sapMFontMediumSize;
+	box-shadow: @sapUiShadowHeader;
 }
 
-.sapMWizardProgressNav ul {
+.sapMWizardProgressNavList,
+.sapMWizardProgressNavListVarying {
+	display: table;
+	table-layout: fixed;
+	position: relative;
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: table;
 	width: 100%;
 	height: @listHeight;
 }
 
-.sapMWizardProgressNav li {
+.sapMWizardProgressNavStep {
 	display: table-cell;
-	text-align: center;
-	vertical-align: middle;
+	position: relative;
+	padding: 0 @stepPadding;
 }
 
-.sapMWizardProgressNavStep {
-	position: relative;
-	width: @stepWidth;
+// the separator connecting every two steps
+.sapMWizardProgressNavStep::after {
+	content: "";
+	display: block;
+	position: absolute;
+	top: @listHeight / 2;
+	left: @stepWidth + (2 * @stepPadding);
+	right: 0;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
 
-	&[data-sap-ui-wpn-step-current="true"]::after {
-		display: block;
+// we do not have a separator at the end for known number of steps
+.sapMWizardProgressNavList .sapMWizardProgressNavStep:last-child::after {
+	display: none;
+}
+
+// we have a dashed separator at the end when the number of steps can change
+.sapMWizardProgressNavListVarying .sapMWizardProgressNavStep:last-child::after {
+	display: block;
+	border-bottom-style: dashed;
+}
+
+// the currently selected step
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+
+	// the current step is underlined as to have a visual cue
+	.sapMWizardProgressNavAnchor::after {
 		content: "";
+		display: block;
 		position: absolute;
-		width: @stepUnderlineWidth;
+		width: 100%;
 		height: @stepUnderlineHeight;
 
-		/* negative values are needed for the right positioning */
-		bottom: (@listHeight - @navHeight) / 2;
-		margin-left: (@stepWidth - @stepUnderlineWidth) / 2;
+		// negative values are needed for the right positioning - (2rem - 4rem) / 2 = -1
+		// bottom:0 positions it at the bottom of the list but we want it at the bottom of the nav
+		bottom: (@listHeight - @navHeight) / 2 - @stepUnderlineHeight;
 	}
 
-	/* anchors in all steps after the active one have the default cursor */
-	&[data-sap-ui-wpn-step-active="true"] ~
-		.sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
+	// anchors in all steps after the current one are right aligned so that they dont overflow to the right
+	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
+		right: 0;
+	}
+}
+
+// the step up to which progress has been reached
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+
+	// anchors in all steps after the active one have the default cursor and no focus
+	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
 		cursor: default;
 
 		&:focus {
@@ -60,60 +101,125 @@
 	}
 }
 
-.sapMWizardProgressNavAnchor {
-	display: block;
-	width: @stepWidth;
-	height: @listHeight;
-	line-height: @listHeight;
-	text-decoration: none;
-	cursor: pointer;
-	border-width: 1px;
-	border-style: solid;
-	border-radius: 50%;
-	box-sizing: border-box;
-
-	&:focus {
-		outline-width: 1px;
-		outline-style: dotted;
-		outline-offset: 1px;
-	}
-}
-
-.sapMWizardProgressNavSeparator::after {
-	content: "";
-	display: block;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-}
-
-.sapMWizardProgressNavSeparator:last-child::after {
-	border-bottom-style: dashed;
-}
-
-.sapMSplitContainerDetail .sapMWizardProgressNav {
-	padding: 0.875rem 1rem;
-}
-
-.sap-phone {
-	.sapMWizardProgressNav {
-		padding: 0.875rem 0.5rem;
-	}
-
-	/* we check the last two in case there is a separator as a last element */
-	.sapMWizardProgressNavStep:not(:nth-last-child(-n + 2)) {
-		width: @stepWidth - @stepOverlapOnPhone;
-	}
+// all steps that are grouped
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] {
+	width: @stepWidth - @stepOverlapOnPhone;
+	padding: 0;
 
 	.sapMWizardProgressNavAnchor {
 		position: absolute;
 		top: 0;
 	}
 
-	.sapMWizardProgressNavSeparator {
+	.sapMWizardProgressNavAnchorTitle {
 		display: none;
+	}
+}
 
-		&[data-sap-ui-wpn-separator-open="true"] {
-			display: table-cell;
-		}
+// when there are no titles and the number of steps is know the last step should align to the end
+.sapMWizardProgressNavList.sapMWizardProgressNavListNoTitles .sapMWizardProgressNavStep:last-child {
+	width: @stepWidth;
+}
+
+// override the previous rule when more than one step is grouped because we want the last step to be
+// shrunk and show below the previous step with [data-sap-ui-wpn-step-open="false"]
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] {
+	width: @stepWidth - @stepOverlapOnPhone;
+}
+
+// select the first grouped step on the right and style it so that it does not collapse
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="true"] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] {
+	width: @stepWidth;
+	padding-left: @stepPadding;
+}
+
+// select the last grouped step on the left and style it so that it does not collapse
+// add the needed padding to the right so that the separator between the steps is visible
+// the second selector is needed for a corner case
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"],
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] +  .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"] {
+	width: @stepWidth;
+	padding-right: @stepPadding + @smallSeparator;
+
+	&::after {
+		left: @stepWidth + @stepPadding;
+	}
+}
+
+.sapMWizardProgressNavAnchor {
+	display: inline-block;
+	position: relative;
+	z-index: 1;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.sapMWizardProgressNavAnchorCircle {
+	display: inline-block;
+	box-sizing: border-box;
+	vertical-align: middle;
+	width: @stepWidth;
+	height: @listHeight;
+	line-height: @listHeight;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 50%;
+	color: @sapUiBaseText;
+	background: @sapUiObjectHeaderBackground;
+	border-color: @sapUiObjectHeaderBorderColor;
+	font-size: @sapMFontMediumSize;
+	.sapUiIcon {
+		font-size: @sapMFontLargeSize;
+	}
+}
+
+.sapMWizardProgressNavAnchorTitle {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: left;
+	padding: 0 @stepPadding;
+	max-height: @listHeight;
+	overflow: hidden;
+	overflow-wrap: normal;
+	max-width: ~"calc(100% - 3rem)";
+
+	// allow only two lines of text
+	line-height: @listHeight  / 2;
+
+	font-size: @sapMFontMediumSize;
+	color: @sapUiGroupTitleTextColor;
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapMSplitContainerDetail .sapMWizardProgressNav {
+	padding: 0.875rem 1rem;
+}
+
+html.sap-phone .sapMWizardProgressNav {
+	padding: 0.875rem 0.5rem;
+}
+
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	background: @sapUiHighlight;
+}
+
+.sapMWizardProgressNavAnchorIcon {
+	font-size: @sapMFontLargeSize;
+}
+
+.sapMWizardProgressNavStep::after {
+	border-bottom-color: @sapUiObjectHeaderBorderColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+	& .sapMWizardProgressNavAnchor::after {
+		background: @sapUiSelected;
+		height: 0.25rem;
+	}
+
+	& .sapMWizardProgressNavAnchorCircle {
+		background: @sapUiSelected;
+		color: @sapUiContentContrastIconColor;
 	}
 }

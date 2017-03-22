@@ -1,16 +1,15 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.format.FileSizeFormat
-  Author: d046314
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
+<script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.ui.commons"
@@ -21,15 +20,15 @@
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <!-- Test functions -->
-<script language="javascript">
+<script>
 
 	jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
 	var oFormatBinary = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: true, maxFractionDigits: 2}, new sap.ui.core.Locale("en"));
@@ -55,7 +54,7 @@
 
 	function checkFormat(format, value, expected){
 		var oFormat, sPrefix;
-		
+
 		switch(format){
 			case "binary":
 				oFormat = oFormatBinary;
@@ -69,13 +68,13 @@
 				oFormat = oFormatDefault;
 				sPrefix = "Default";
 		}
-		
-		equal(oFormat.format(value), expected, sPrefix + " format of '"+value+"': "+expected);
+
+		assert.equal(oFormat.format(value), expected, sPrefix + " format of '"+value+"': "+expected);
 	}
-	
+
 	function checkParse(format, value, expected){
 		var oFormat, sPrefix;
-		
+
 		switch(format){
 			case "binary":
 				oFormat = oFormatBinary;
@@ -89,10 +88,10 @@
 				oFormat = oFormatDefault;
 				sPrefix = "Default";
 		}
-		
-		equal(oFormat.parse(value), expected, "Parse ("+sPrefix+" Formatter) of '"+value+"': "+expected);
+
+		assert.equal(oFormat.parse(value), expected, "Parse ("+sPrefix+" Formatter) of '"+value+"': "+expected);
 	}
-	
+
 	function getHex(i, binary){
 		switch(i){
 			case 1:
@@ -115,14 +114,14 @@
 				return "0x0";
 		}
 	}
-	
-	test("format binary", function(){
+
+	QUnit.test("format binary", function(assert) {
 		for(var i=1; i<9; i++){
 			checkFormat("binary", 2*Math.pow(1024, i), "2 "+aBinaryUnits[i-1]);
 			checkFormat("binary", 2*Math.pow(1024, i)+"", "2 "+aBinaryUnits[i-1]);
 			checkFormat("binary", getHex(i, true), "2 "+aBinaryUnits[i-1]);
 		}
-		
+
 		checkFormat("binary", 888, "888 Bytes");
 		checkFormat("binary", "888", "888 Bytes");
 		checkFormat("binary", "0x378", "888 Bytes");
@@ -131,14 +130,14 @@
 		checkFormat("binary", "0x1", "1 Byte");
 		checkFormat("binary", 1048575, "1 MiB");
 	});
-	
-	test("format decimal", function(){
+
+	QUnit.test("format decimal", function(assert) {
 		for(var i=1; i<9; i++){
 			checkFormat("decimal", 2*Math.pow(1000, i), "2 "+aDecimalUnits[i-1]);
 			checkFormat("decimal", 2*Math.pow(1000, i)+"", "2 "+aDecimalUnits[i-1]);
 			checkFormat("decimal", getHex(i), "2 "+aDecimalUnits[i-1]);
 		}
-		
+
 		checkFormat("decimal", 888, "888 Bytes");
 		checkFormat("decimal", "888", "888 Bytes");
 		checkFormat("decimal", "0x378", "888 Bytes");
@@ -147,14 +146,14 @@
 		checkFormat("decimal", "0x1", "1 Byte");
 		checkFormat("decimal", 999999, "1 MB");
 	});
-	
-	test("format default", function(){
+
+	QUnit.test("format default", function(assert) {
 		for(var i=1; i<9; i++){
 			checkFormat("default", 2*Math.pow(1000, i), "2 "+aDecimalUnits[i-1]);
 			checkFormat("default", 2*Math.pow(1000, i)+"", "2 "+aDecimalUnits[i-1]);
 			checkFormat("default", getHex(i), "2 "+aDecimalUnits[i-1]);
 		}
-		
+
 		checkFormat("default", 888, "888 Bytes");
 		checkFormat("default", "888", "888 Bytes");
 		checkFormat("default", "0x378", "888 Bytes");
@@ -162,43 +161,43 @@
 		checkFormat("default", "1", "1 Byte");
 		checkFormat("default", "0x1", "1 Byte");
 	});
-	
-	test("parse binary", function(){
+
+	QUnit.test("parse binary", function(assert) {
 		for(var i=1; i<9; i++){
 			checkParse("binary", "2 "+aBinaryUnits[i-1], 2*Math.pow(1024, i));
 			checkParse("binary", "2 "+aDecimalUnits[i-1], 2*Math.pow(1000, i));
 		}
-		
+
 		checkParse("binary", "888 Bytes", 888);
 		checkParse("binary", "1 Byte", 1);
 		checkParse("binary", "888", 888);
 	});
-	
-	test("parse decimal", function(){
+
+	QUnit.test("parse decimal", function(assert) {
 		for(var i=1; i<9; i++){
 			checkParse("decimal", "2 "+aBinaryUnits[i-1], 2*Math.pow(1024, i));
 			checkParse("decimal", "2 "+aDecimalUnits[i-1], 2*Math.pow(1000, i));
 		}
-		
+
 		checkParse("decimal", "888 Bytes", 888);
 		checkParse("decimal", "1 Byte", 1);
 		checkParse("decimal", "888", 888);
 	});
-	
-	test("parse default", function(){
+
+	QUnit.test("parse default", function(assert) {
 		for(var i=1; i<9; i++){
 			checkParse("default", "2 "+aBinaryUnits[i-1], 2*Math.pow(1024, i));
 			checkParse("default", "2 "+aDecimalUnits[i-1], 2*Math.pow(1000, i));
 		}
-		
+
 		checkParse("default", "888 Bytes", 888);
 		checkParse("default", "1 Byte", 1);
 		checkParse("default", "888", 888);
 	});
 
-	test("create format instance without giving any option", function() {
+	QUnit.test("create format instance without giving any option", function(assert) {
 		var oFormat = sap.ui.core.format.FileSizeFormat.getInstance();
-		equal(oFormat.format(100000), "100 KB", "BinarySize is set to false by default");
+		assert.equal(oFormat.format(100000), "100 KB", "BinarySize is set to false by default");
 	});
 
 </script>

@@ -1,12 +1,12 @@
 {
 	"TileCollection" : [
 		{
-			"icon" : "hint",
+			"icon" : "sap-icon://hint",
 			"type" : "Monitor",
 			"title" : "Tiles: a modern UI design pattern for overview & navigation."
 		},
 		{
-			"icon" : "inbox",
+			"icon" : "sap-icon://inbox",
 			"number" : "89",
 			"title" : "Approve Leave Requests",
 			"info" : "Overdue",
@@ -19,28 +19,28 @@
 			"infoState" : "Success"
 		},
 		{
-			"icon" : "travel-expense-report",
+			"icon" : "sap-icon://travel-expense-report",
 			"number" : "281",
 			"numberUnit" : "euro",
 			"title" : "Travel Reimbursement",
 			"info" : "1 day ago"
 		},
 		{
-			"icon" : "loan",
+			"icon" : "sap-icon://loan",
 			"number" : "2380",
 			"numberUnit" : "euro",
 			"title" : "My Salary",
 			"info" : "8 days ago"
 		},
 		{
-			"icon" : "lab",
+			"icon" : "sap-icon://lab",
 			"number" : "1",
 			"numberUnit" : "Invention",
 			"title" : "Test Lab Reports",
 			"info" : "8 Days Ago"
 		},
 		{
-			"icon" : "inbox",
+			"icon" : "sap-icon://inbox",
 			"type" : "Monitor",
 			"title" : "Leave Request History"
 		},
@@ -51,19 +51,19 @@
 			"infoState" : "Success"
 		},
 		{
-			"icon" : "stethoscope",
+			"icon" : "sap-icon://stethoscope",
 			"number" : "3",
 			"title" : "Yearly Health Check",
 			"info" : "3 year overdue",
 			"infoState" : "Error"
 		},
 		{
-			"icon" : "meal",
+			"icon" : "sap-icon://meal",
 			"type" : "Monitor",
 			"title" : "Meal Schedule"
 		},
 		{
-			"icon" : "cart",
+			"icon" : "sap-icon://cart",
 			"number" : "787",
 			"numberUnit" : "euro",
 			"title" : "My Shopping Carts",
@@ -71,7 +71,7 @@
 			"infoState" : "Warning"
 		},
 		{
-			"icon" : "factory",
+			"icon" : "sap-icon://factory",
 			"number" : "2",
 			"numberUnit" : "Outages",
 			"title" : "Factory Power Management",
@@ -79,11 +79,11 @@
 			"infoState" : "Error"
 		},
 		{
-			"icon" : "calendar",
+			"icon" : "sap-icon://calendar",
 			"title" : "Team Calendar"
 		},
 		{
-			"icon" : "pie-chart",
+			"icon" : "sap-icon://pie-chart",
 			"number" : "5",
 			"title" : "Financial Reports",
 			"info" : "4 day ago",

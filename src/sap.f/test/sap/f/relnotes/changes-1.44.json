@@ -1,0 +1,37 @@
+{
+  "1.44.0": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "cfeca2abd550c9b0c837a0feb71628f1cded282d",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPage - toggleHeaderOnTitleClick property introduced",
+        "references": []
+      },
+      {
+        "id": "5c642bfe3b9771694c96d4861f83bf0a67a25837",
+        "type": "FEATURE",
+        "text": "sap.f.FlexibleColumnLayout: enable the setting of a layout through the API",
+        "references": []
+      },
+      {
+        "id": "875d2bad7037a6965485f58e9b061eb38358b779",
+        "type": "FEATURE",
+        "text": "sap.f: Shared theme configuration for test pages",
+        "references": []
+      },
+      {
+        "id": "7afbdb345e6ea90a8307a8c5acd6dd9f80b5339e",
+        "type": "FIX",
+        "text": "changes-1.42.json: remove duplicates",
+        "references": []
+      },
+      {
+        "id": "5adb22326bc4ae09e052f511895319a65862f8af",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: scrollbar offset measurement in headerAlwaysExpanded mode updated",
+        "references": []
+      }
+    ]
+  }
+}

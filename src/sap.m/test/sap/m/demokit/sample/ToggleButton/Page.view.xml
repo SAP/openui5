@@ -40,7 +40,7 @@
 						<FlexItemData growFactor="1" />
 					</layoutData>
 				</ToggleButton>
-				<ToggleButton  icon="sap-icon://action" enabled="true" press="onPress" >
+				<ToggleButton icon="sap-icon://action" enabled="true" press="onPress" >
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
@@ -50,7 +50,7 @@
 		<footer>
 			<Bar>
 				<contentRight>
-					<ToggleButton text="Pressed &amp; Disabled" enabled="false" pressed="true"  press="onPress" />
+					<ToggleButton text="Pressed &amp; Disabled" enabled="false" pressed="true"	press="onPress" />
 					<ToggleButton icon="sap-icon://action" press="onPress" />
 				</contentRight>
 			</Bar>

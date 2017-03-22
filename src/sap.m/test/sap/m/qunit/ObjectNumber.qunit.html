@@ -1,24 +1,25 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	<title>ObjectNumber - sap.m</title>
 
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 
 	<!-- UI5 Bootstrap -->
-	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m"></script>
 
 	<!-- QUnit libraries -->
 
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-	<script type="text/javascript">
+	<script>
 
-		test("ShouldRenderObjectNumber", function() {
+		QUnit.test("ShouldRenderObjectNumber", function(assert) {
 			//SUT
 			var sNumber = "5",
 				sNumberUnit ="Euro",
@@ -32,18 +33,18 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
-			equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
+			assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
+			assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
 
 			$ontxt = jQuery("#on1").find(".sapMObjectNumberText");
 			var sFontWeight = $ontxt.css("font-weight");
-			equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
+			assert.equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
 
 			//Cleanup
 			sut.destroy();
 		});
 
-		test("ShouldRenderUnit", function() {
+		QUnit.test("ShouldRenderUnit", function(assert) {
 			//SUT
 			var sUnit = "Dollar";
 			sut = new sap.m.ObjectNumber("unit", {
@@ -57,13 +58,13 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");				
+			assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
 
 			//Cleanup
 			sut.destroy();
 		});
 
-		test("Non-emphasized ObjectNumber", function() {
+		QUnit.test("Non-emphasized ObjectNumber", function(assert) {
 			//SUT
 
 			var sNumber = "5",
@@ -84,13 +85,13 @@
 			// check if the jQuery version is lower than 1.10 then use "normal" will be set as font-weigt
 			// from jQuery 1.10 jQuery converts the font-weight of "normal" into 400
 			expected = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.10") > 0 ? "400" : expected;
-			equal($ontxt.css("font-weight"), expected, "font weight of non-emphasized ObjectNumber should be " + expected);
+			assert.equal($ontxt.css("font-weight"), expected, "font weight of non-emphasized ObjectNumber should be " + expected);
 
 			//Cleanup
 			sut.destroy();
 		});
 
-		test("ValueState of ObjectNumber", function() {
+		QUnit.test("ValueState of ObjectNumber", function(assert) {
 			//SUT
 
 			var sNumber = "5",
@@ -107,7 +108,7 @@
 			//Assert
 			//Check value
 			$ontxt = jQuery("#on3");
-			ok($ontxt.hasClass("sapMObjectNumberStatusNone"), "Object Number should be assigned css class 'sapMObjectNumberStatusNone'" );
+			assert.ok($ontxt.hasClass("sapMObjectNumberStatusNone"), "Object Number should be assigned css class 'sapMObjectNumberStatusNone'" );
 
 			var aValueStates = [
 				sap.ui.core.ValueState.Error,
@@ -120,11 +121,11 @@
 				sap.ui.getCore().applyChanges();
 				var sStatusClass = "sapMObjectNumberStatus" + aValueStates[i];
 				$ontxt = jQuery("#on3");
-				ok($ontxt.hasClass(sStatusClass), "Object Number should be assigned css class '" + sStatusClass + "'" );
+				assert.ok($ontxt.hasClass(sStatusClass), "Object Number should be assigned css class '" + sStatusClass + "'" );
 				if(i > 0) {
 					//Make sure that the old class got removed
 					var sFormerStatusClass = "sapMObjectNumberStatus" + aValueStates[i-1];
-					ok(!$ontxt.hasClass(sFormerStatusClass), "Object Number should not be assigned css class '" + sFormerStatusClass + "' any more." );
+					assert.ok(!$ontxt.hasClass(sFormerStatusClass), "Object Number should not be assigned css class '" + sFormerStatusClass + "' any more." );
 				}
 			};
 
@@ -133,7 +134,7 @@
 			sut.destroy();
 		});
 
-		test("RTL ObjectNumber", function() {
+		QUnit.test("RTL ObjectNumber", function(assert) {
 			//SUT
 			var on4 = new sap.m.ObjectNumber("on4", {
 				number: "1.50",
@@ -174,43 +175,26 @@
 			//Assert
 			var $onnum = jQuery("#on4").find(".sapMObjectNumberText");
 			var $onunit = jQuery("#on4").find(".sapMObjectNumberUnit");
-			var sLeftPadding = $onunit.css('padding-left');
-			var sRightPadding = $onunit.css('padding-right');
 
-			ok($onnum.offset().left === 0, "object number is left aligned");
-			ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
-			ok(sRightPadding === "0px", "number unit has no right padding.");
-			ok(sLeftPadding.length > 0 && sLeftPadding.indexOf("0") !== 0, "number unit has left padding.");
+			assert.ok($onnum.offset().left === 0, "object number is left aligned");
+			assert.ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
 
 			$onnum = jQuery("#on5").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on5").find(".sapMObjectNumberUnit");
-			sLeftPadding = $onunit.css('padding-left');
-			sRightPadding = $onunit.css('padding-right');
 
-			ok($onnum.offset().left > 0, "object number is right aligned");
-			ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
-			ok(sRightPadding === "0px", "number unit has no right padding.");
-			ok(sLeftPadding.length > 0 && sLeftPadding.indexOf("0") !== 0, "number unit has left padding.");
+			assert.ok($onnum.offset().left > 0, "object number is right aligned");
+			assert.ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
 
 			$onnum = jQuery("#on6").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on6").find(".sapMObjectNumberUnit");
-			sLeftPadding = $onunit.css('padding-left');
-			sRightPadding = $onunit.css('padding-right');
 
-			ok($onunit.offset().left > 0, "object number is right aligned");
-			ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
-			ok(sRightPadding.length > 0 && sRightPadding.indexOf("0") !== 0, "number unit has right padding.");
-			ok(sLeftPadding === "0px", "number unit has no left padding.");
-
+			assert.ok($onunit.offset().left > 0, "object number is right aligned");
+			assert.ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
 			$onnum = jQuery("#on7").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on7").find(".sapMObjectNumberUnit");
-			sLeftPadding = $onunit.css('padding-left');
-			sRightPadding = $onunit.css('padding-right');
 
-			ok($onunit.offset().left === 0, "object number is left aligned");
-			ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
-			ok(sRightPadding.length > 0 && sRightPadding.indexOf("0") !== 0, "number unit has right padding.");
-			ok(sLeftPadding === "0px", "number unit has no left padding.");
+			assert.ok($onunit.offset().left === 0, "object number is left aligned");
+			assert.ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
 
 			//Cleanup
 			on4.destroy();
@@ -219,9 +203,25 @@
 			on7.destroy();
 		});
 
-		module("Screen reader support");
+		QUnit.module("Screen reader support");
 
-		test("Basic rendering", function() {
+		QUnit.test("Basic rendering - state: None", function(assert) {
+			ariaLabelSetCorrectly(sap.ui.core.ValueState.None);
+		});
+
+		QUnit.test("Basic rendering - state: Success", function(assert) {
+			ariaLabelSetCorrectly(sap.ui.core.ValueState.Success);
+		});
+
+		QUnit.test("Basic rendering - state: Warning", function(assert) {
+			ariaLabelSetCorrectly(sap.ui.core.ValueState.Warning);
+		});
+
+		QUnit.test("Basic rendering - state: Error", function(assert) {
+			ariaLabelSetCorrectly(sap.ui.core.ValueState.Error);
+		});
+
+		QUnit.test("Value state None (default)", function(assert) {
 
 			// System under test
 			var oObjectNumber = new sap.m.ObjectNumber({
@@ -233,31 +233,13 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			equal(oObjectNumber.$().attr("aria-labelledby"), oObjectNumber.getId() + "-state", "aria-labelledby is set correctly.");
+			assert.strictEqual(oObjectNumber.$("state").length, 0, "No label for the default state.");
 
 			// Clean up
 			oObjectNumber.destroy();
 		});
 
-		test("Value state None (default)", function() {
-
-			// System under test
-			var oObjectNumber = new sap.m.ObjectNumber({
-				number: 256,
-				unit: "EUR"
-			});
-
-			oObjectNumber.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			// Assert
-			strictEqual(oObjectNumber.$("state").length, 0, "No label for the default state.");
-
-			// Clean up
-			oObjectNumber.destroy();
-		});
-
-		test("Value state Success", function() {
+		QUnit.test("Value state Success", function(assert) {
 
 			// System under test
 			var oObjectNumber = new sap.m.ObjectNumber({
@@ -271,10 +253,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
-			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS"),
 						"The text for value state \"Success\" is taken from the message bundle."
 			);
@@ -283,7 +265,7 @@
 			oObjectNumber.destroy();
 		});
 
-		test("Value state Warning", function() {
+		QUnit.test("Value state Warning", function(assert) {
 
 			// System under test
 			var oObjectNumber = new sap.m.ObjectNumber({
@@ -297,10 +279,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
-			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING"),
 						"The text for value state \"Warning\" is taken from the message bundle."
 			);
@@ -309,7 +291,7 @@
 			oObjectNumber.destroy();
 		});
 
-		test("Value state Error", function() {
+		QUnit.test("Value state Error", function(assert) {
 
 			var oObjectNumber = new sap.m.ObjectNumber({
 				number: 256,
@@ -322,10 +304,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
-			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 						"The text for value state \"Error\" is taken from the message bundle."
 			);
@@ -333,6 +315,28 @@
 			// Clean up
 			oObjectNumber.destroy();
 		});
+
+		function ariaLabelSetCorrectly(labelState){
+			// System under test
+			var oObjectNumber = new sap.m.ObjectNumber({
+				number: 256,
+				unit: "EUR",
+				state: labelState
+			});
+
+			oObjectNumber.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			if (oObjectNumber.getState() !== sap.ui.core.ValueState.None) {
+				assert.equal(oObjectNumber.$().attr("aria-labelledby"), oObjectNumber.getId() + "-state", "aria-labelledby is set correctly.");
+			} else {
+				assert.equal(oObjectNumber.$().attr("aria-labelledby"), undefined, "aria-labelledby is set correctly.");
+			}
+
+			// Clean up
+			oObjectNumber.destroy();
+		}
 
 	</script>
 </head>

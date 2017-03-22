@@ -2,10 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException',
-		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
-		'sap/ui/model/ValidateException'],
-	function(NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/format/NumberFormat',
+	'sap/ui/model/FormatException',
+	"sap/ui/model/odata/ODataUtils",
+	'sap/ui/model/odata/type/ODataType',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException'
+], function(jQuery, NumberFormat, FormatException, BaseODataUtils, ODataType, ParseException,
+		ValidateException) {
 	"use strict";
 
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;
@@ -22,8 +28,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 		if (!oType.oFormat) {
 			oFormatOptions = {
-				groupingEnabled: true,
-				maxIntegerDigits: Infinity
+				groupingEnabled : true,
+				maxIntegerDigits : Infinity
 			};
 			iScale = getScale(oType);
 			if (iScale !== Infinity) {
@@ -34,18 +40,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
 		return oType.oFormat;
-	}
-
-	/**
-	 * Returns the type's precision constraint.
-	 *
-	 * @param {sap.ui.model.odata.type.Decimal} oType
-	 *   the type
-	 * @returns {number}
-	 *   the precision constraint or <code>Infinity</code> if not defined
-	 */
-	function getPrecision(oType) {
-		return (oType.oConstraints && oType.oConstraints.precision) || Infinity;
 	}
 
 	/**
@@ -75,18 +69,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	}
 
 	/**
-	 * Returns the type's nullable constraint.
-	 *
-	 * @param {sap.ui.model.odata.type.Decimal} oType
-	 *   the type
-	 * @returns {boolean}
-	 *   the nullable constraint or <code>true</code> if not defined
-	 */
-	function isNullable(oType) {
-		return !oType.oConstraints || oType.oConstraints.nullable !== false;
-	}
-
-	/**
 	 * Sets the constraints.
 	 *
 	 * @param {sap.ui.model.odata.type.Decimal} oType
@@ -95,47 +77,88 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   constraints, see {@link #constructor}
 	 */
 	function setConstraints(oType, oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable,
-			vPrecision = oConstraints && oConstraints.precision,
-			vScale = oConstraints && oConstraints.scale,
-			iPrecision, iScale;
+		var vNullable, iPrecision, vPrecision, iScale, vScale;
 
-		function validate(vValue, iDefault, iMinimum, sName) {
+		function logWarning(vValue, sName) {
+			jQuery.sap.log.warning("Illegal " + sName + ": " + vValue, null, oType.getName());
+		}
+
+		function validateInt(vValue, iDefault, iMinimum, sName) {
 			var iValue = typeof vValue === "string" ? parseInt(vValue, 10) : vValue;
 
 			if (iValue === undefined) {
 				return iDefault;
 			}
 			if (typeof iValue !== "number" || isNaN(iValue) || iValue < iMinimum) {
-				jQuery.sap.log.warning("Illegal " + sName + ": " + vValue, null, oType.getName());
+				logWarning(vValue, sName);
 				return iDefault;
 			}
 			return iValue;
 		}
 
+		/*
+		 * Validates whether the given value is a valid Edm.Decimal value.
+		 *
+		 * @param {string} sValue
+		 *   the constraint minimum or maximum value
+		 * @param {string} sName
+		 *   name for logging
+		 * @returns {string}
+		 *   the validated value or undefined
+		 */
+		function validateDecimal(sValue, sName) {
+			if (sValue) {
+				if (sValue.match(rDecimal)) {
+					return sValue;
+				}
+				logWarning(sValue, sName);
+			}
+		}
+
+		function validateBoolean(vValue, sName) {
+			if (vValue === true || vValue === "true") {
+				return true;
+			}
+			if (vValue !== undefined && vValue !== false && vValue !== "false") {
+				logWarning(vValue, sName);
+			}
+		}
+
 		function setConstraint(sName, vValue, vDefault) {
-			if (vValue != vDefault) {
+			if (vValue !== vDefault) {
 				oType.oConstraints = oType.oConstraints || {};
 				oType.oConstraints[sName] = vValue;
 			}
 		}
 
-		iScale = vScale === "variable" ? Infinity : validate(vScale, 0, 0, "scale");
-		iPrecision = validate(vPrecision, Infinity, 1, "precision");
-		if (iScale !== Infinity && iPrecision <= iScale) {
-			jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
-				+ vPrecision + ", scale=" + vScale + ")", null, oType.getName());
-			iScale = Infinity; // "variable"
-		}
 		oType.oConstraints = undefined;
-		setConstraint("precision", iPrecision, Infinity);
-		setConstraint("scale", iScale, 0);
-		if (vNullable === false || vNullable === "false") {
-			setConstraint("nullable", false, true);
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
-		}
+		if (oConstraints) {
+			vNullable = oConstraints.nullable;
+			vPrecision = oConstraints.precision;
+			vScale = oConstraints.scale;
 
+			iScale = vScale === "variable" ? Infinity : validateInt(vScale, 0, 0, "scale");
+			iPrecision = validateInt(vPrecision, Infinity, 1, "precision");
+			if (iScale !== Infinity && iPrecision <= iScale) {
+				jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
+					+ vPrecision + ", scale=" + vScale + ")", null, oType.getName());
+				iScale = Infinity; // "variable"
+			}
+			setConstraint("precision", iPrecision, Infinity);
+			setConstraint("scale", iScale, 0);
+			if (vNullable === false || vNullable === "false") {
+				setConstraint("nullable", false, true);
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				logWarning(vNullable, "nullable");
+			}
+
+			setConstraint("minimum", validateDecimal(oConstraints.minimum, "minimum"));
+			setConstraint("minimumExclusive",
+				validateBoolean(oConstraints.minimumExclusive, "minimumExclusive"));
+			setConstraint("maximum", validateDecimal(oConstraints.maximum, "maximum"));
+			setConstraint("maximumExclusive",
+				validateBoolean(oConstraints.maximumExclusive, "maximumExclusive"));
+		}
 		oType._handleLocalizationChange();
 	}
 
@@ -146,8 +169,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Decimal</code></a>.
 	 *
-	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
-	 * <code>string</code>. It never uses exponential format ("1e-5").
+	 * In both {@link sap.ui.model.odata.v2.ODataModel} and {@link sap.ui.model.odata.v4.ODataModel}
+	 * this type is represented as a <code>string</code>. It never uses exponential format ("1e-5").
 	 *
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
@@ -164,10 +187,18 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
+	 * @param {string} [oConstraints.maximum]
+	 *   the maximum value allowed
+	 * @param {boolean} [oConstraints.maximumExclusive=false]
+	 *   if <code>true</code>, the maximum value itself is not allowed
+	 * @param {string} [oConstraints.minimum]
+	 *   the minimum value allowed
+	 * @param {boolean} [oConstraints.minimumExclusive=false]
+	 *   if <code>true</code>, the minimum value itself is not allowed
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @param {int|string} [oConstraints.precision=Infinity]
-	 *   the maximum number of digits allowed in the property’s value
+	 *   the maximum number of digits allowed
 	 * @param {int|string} [oConstraints.scale=0]
 	 *   the maximum number of digits allowed to the right of the decimal point; the number must be
 	 *   less than <code>precision</code> (if given). As a special case, "variable" is supported.
@@ -181,9 +212,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 * @since 1.27.0
 	 */
-	var Decimal = ODataType.extend("sap.ui.model.odata.type.Decimal",
-			/** @lends sap.ui.model.odata.type.Decimal.prototype */
-			{
+	var Decimal = ODataType.extend("sap.ui.model.odata.type.Decimal", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					this.oFormatOptions = oFormatOptions;
@@ -199,7 +228,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @param {string} sValue
 	 *   the value to be formatted, which is represented as a string in the model
 	 * @param {string} sTargetType
-	 *   the target type; may be "any", "float", "int" or "string".
+	 *   the target type; may be "any", "float", "int", "string", or a type with one of these types
+	 *   as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {number|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
@@ -212,7 +242,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		if (sValue === null || sValue === undefined) {
 			return null;
 		}
-		switch (sTargetType) {
+		switch (this.getPrimitiveType(sTargetType)) {
 		case "any":
 			return sValue;
 		case "float":
@@ -235,8 +265,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int" or
-	 *   "string".
+	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int",
+	 *   "string", or a type with one of these types as its
+	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the parsed value
@@ -251,7 +282,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		if (vValue === null || vValue === "") {
 			return null;
 		}
-		switch (sSourceType) {
+		switch (this.getPrimitiveType(sSourceType)) {
 		case "string":
 			sResult = getFormatter(this).parse(vValue);
 			if (!sResult) {
@@ -297,9 +328,10 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 */
 	Decimal.prototype.validateValue = function (sValue) {
-		var iFractionDigits, iIntegerDigits, aMatches, iPrecision, iScale;
+		var iFractionDigits, iIntegerDigits, aMatches, sMaximum, bMaximumExclusive, sMinimum,
+			bMinimumExclusive, iPrecision, iScale;
 
-		if (sValue === null && isNullable(this)) {
+		if (sValue === null && (!this.oConstraints || this.oConstraints.nullable !== false)) {
 			return;
 		}
 		if (typeof sValue !== "string") {
@@ -309,10 +341,13 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		if (!aMatches) {
 			throw new ValidateException(getText("EnterNumber"));
 		}
+
 		iIntegerDigits = aMatches[1].length;
 		iFractionDigits = (aMatches[2] || "").length;
 		iScale = getScale(this);
-		iPrecision = getPrecision(this);
+		iPrecision = (this.oConstraints && this.oConstraints.precision) || Infinity;
+		sMinimum = this.oConstraints && this.oConstraints.minimum;
+		sMaximum = this.oConstraints && this.oConstraints.maximum;
 		if (iFractionDigits > iScale) {
 			if (iScale === 0) {
 				throw new ValidateException(getText("EnterInt"));
@@ -329,6 +364,26 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		} else if (iIntegerDigits > iPrecision - iScale) {
 			throw new ValidateException(getText("EnterNumberInteger",
 				[iPrecision - iScale]));
+		}
+		if (sMinimum) {
+			bMinimumExclusive = this.oConstraints && this.oConstraints.minimumExclusive;
+			if (BaseODataUtils.compare(sMinimum, sValue, true) >= (bMinimumExclusive ? 0 : 1)) {
+				throw new ValidateException(
+					getText(bMinimumExclusive
+						? "EnterNumberMinExclusive"
+						: "EnterNumberMin",
+					[this.formatValue(sMinimum, "string")]));
+			}
+		}
+		if (sMaximum) {
+			bMaximumExclusive = this.oConstraints && this.oConstraints.maximumExclusive;
+			if (BaseODataUtils.compare(sMaximum, sValue, true) <= (bMaximumExclusive ? 0 : -1)) {
+				throw new ValidateException(
+					getText(bMaximumExclusive
+						? "EnterNumberMaxExclusive"
+						: "EnterNumberMax",
+					[this.formatValue(sMaximum, "string")]));
+			}
 		}
 	};
 

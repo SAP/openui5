@@ -2,7 +2,7 @@
 
 <html>
  <head>
- 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
    <title>Data binding test page</title>
 
@@ -11,9 +11,7 @@
     <!-- Extend the "libs" property if you like to import additional libraries  -->
     <!-- ********************************************************************** -->
     <script id="sap-ui-bootstrap"
-        type="text/javascript"
         src="../../../../../../resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_bluecrystal"
         data-sap-ui-libs="sap.ui.layout,sap.m"
         data-sap-ui-messaging="false">
     </script>
@@ -105,7 +103,14 @@
 		var oMP = new sap.m.MessagePopover({
 			items: {
 					path:"message>/",
-					template: new sap.m.MessagePopoverItem({description: "{message>description}", type: "{message>type}", title:"{message>message}"})
+					template: new sap.m.MessagePopoverItem({
+						description: "{message>description}",
+						type: "{message>type}",
+						title:"{message>message}",
+						subtitle: {
+							path: 'message>additionalText'
+						}
+					})
 			}
 		});
 

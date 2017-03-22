@@ -1,0 +1,19 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		noDataText="No Cut out Nodes found"
+		title="Select a Node to re-insert"
+		confirm=".closeClipboard"
+		items="{
+			path: '/nodes'
+		}" >
+		<StandardListItem
+			title="{key}"
+			description="removed node/sub-tree"
+			icon="sap-icon://tree"
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

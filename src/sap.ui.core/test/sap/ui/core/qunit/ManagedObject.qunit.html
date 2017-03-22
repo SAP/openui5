@@ -1,23 +1,33 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
 		<title>ManagedObject - sap.ui.base</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true" >
 		</script>
 
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script>
 
 			var mObjects = {};
+
+			window.MyEnum = {
+				Good: 'Good', /* default */
+				Better: 'Better',
+				Best: 'Best'
+			};
 
 			// define new types for testing
 			sap.ui.base.ManagedObject.extend("sap.ui.core.TestManagedObject", {
@@ -30,20 +40,24 @@
 						floatValue : {type: "float", group: "Appearance", defaultValue: 0},
 						intValue : {type: "int", group: "Appearance", defaultValue: 0},
 						booleanValue : {type: "boolean", group: "Appearance", defaultValue: false},
+						enumValue : {type: "MyEnum", group: "Appearance", defaultValue: MyEnum.Good},
 						stringArray : {type: "string[]", group: "Appearance", defaultValue: []},
 						floatArray : {type: "float[]", group: "Appearance", defaultValue: []},
 						intArray : {type: "int[]", group: "Appearance", defaultValue: []},
 						booleanArray : {type: "boolean[]", group: "Appearance", defaultValue: []},
-						objectValue : {type: "object", group: "Misc", defaultValue: null}
+						objectValue : {type: "object", group: "Misc", defaultValue: null},
 					},
 					aggregations : {
 						singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
-						subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"}
+						subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"},
+						elements : { type : "sap.ui.core.Element", multiple : true}
 					},
 					associations : {
 						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
 						associatedObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "associatedObj"}
-					}
+					},
+					defaultAggregation : "singleAggr",
+					defaultProperty: "value"
 				},
 
 				init : function() {
@@ -52,6 +66,14 @@
 
 				exit : function() {
 					delete mObjects[this.getId()];
+				},
+
+				// needed for grouping test
+				addSubObjGroup : function(oGroup, oControl) {
+					if (!oControl) {
+						oControl = new sap.ui.core.TestManagedObject({value: oGroup.key, booleanValue: true});
+					}
+					this.addSubObj(oControl);
 				}
 			});
 
@@ -80,6 +102,10 @@
 
 			});
 
+
+			//derive
+			sap.ui.core.TestManagedObject.extend("sap.ui.core.TestManagedObjectDerived", {});
+
 			var changed = false;
 
 			function byId(sId) {
@@ -94,49 +120,50 @@
 				}
 			}
 
-			function equalSortedIds(aActual, aExpected, sMsg) {
+			// custom assertions
+			QUnit.assert.equalSortedIds = function equalSortedIds(aActual, aExpected, sMsg) {
 				var aIdActual = toId(aActual).sort();
 				var aIdExpected = toId(aExpected).sort();
-				deepEqual(aIdActual, aIdExpected, sMsg);
-			}
+				this.deepEqual(aIdActual, aIdExpected, sMsg);
+			};
 
-			function childOf(sId,sParentId) {
+			QUnit.assert.childOf = function childOf(sId,sParentId) {
 				var oItem = byId(sId);
 				sParentId = sParentId || "testObj";
-				ok(!!oItem, "Item '"+sId+"' should exist");
-				equal(oItem.getParent() && oItem.getParent().getId(), sParentId, "Item '"+sId+"' should have correct parent");
-			}
+				this.ok(!!oItem, "Item '"+sId+"' should exist");
+				this.equal(oItem.getParent() && oItem.getParent().getId(), sParentId, "Item '"+sId+"' should have correct parent");
+			};
 
-			function notChildOf(sId, sParentId) {
+			QUnit.assert.notChildOf = function notChildOf(sId, sParentId) {
 				var oItem = byId(sId);
 				sParentId = sParentId || "testObj";
-				ok(!!oItem, "Item '"+sId+"' should exist");
-				notEqual(oItem.getParent() && oItem.getParent().getId(), sParentId, "Item '"+sId+"' should have correct parent");
-			}
+				this.ok(!!oItem, "Item '"+sId+"' should exist");
+				this.notEqual(oItem.getParent() && oItem.getParent().getId(), sParentId, "Item '"+sId+"' should have correct parent");
+			};
 
-			function checkIfParentCleared(oObj, sMsg) {
+			QUnit.assert.checkIfParentCleared = function checkIfParentCleared(oObj, sMsg) {
 				var oParent = sap.ui.base.ManagedObject.prototype.getParent.call (oObj);
-				ok(oParent == null, sMsg || "parent relationship must have been cleared");
-			}
+				this.ok(oParent == null, sMsg || "parent relationship must have been cleared");
+			};
 
-			function checkIfDestroyed(oObj) {
+			QUnit.assert.checkIfDestroyed = function checkIfDestroyed(oObj) {
 				try {
 					oObj.setParent(this.obj);
-					ok(false, "should not be reached");
+					this.ok(false, "should not be reached");
 				} catch (e) {
-					ok(true, "setting the parent on a destroyed object should raise an exception");
+					this.ok(true, "setting the parent on a destroyed object should raise an exception");
 				}
-				checkIfParentCleared(oObj, "parent relationship for a destroyed object must have been cleared");
-			}
+				this.checkIfParentCleared(oObj, "parent relationship for a destroyed object must have been cleared");
+			};
 
 			var oModel = new sap.ui.model.json.JSONModel({
 				value: "testvalue",
 				value2: "testvalue2",
 				objectValue: { model: true },
 				list: [
-					{value: "testvalue1"},
-					{value: "testvalue2"},
-					{value: "testvalue3"}
+					{value: "testvalue1", intValue: 1, groupValue: "group1"},
+					{value: "testvalue2", intValue: 2, groupValue: "group2"},
+					{value: "testvalue3", intValue: 3, groupValue: null}
 				]
 			});
 
@@ -144,154 +171,258 @@
 				changed = true;
 			}
 
-			module("Basic");
+			QUnit.module("Basic");
 
-			test("Object Creation", function() {
+			QUnit.test("Object Creation", function(assert) {
 				var obj = new sap.ui.core.TestManagedObject();
-				ok(obj, "obj must have been created");
-				ok(obj.getId, "obj must have a getter for the ID");
-				ok(obj.getId(), "obj must have a (generated) ID");
-				ok(obj.getId().length > 0, "generated ID must not be empty");
+				assert.ok(obj, "obj must have been created");
+				assert.ok(obj.getId, "obj must have a getter for the ID");
+				assert.ok(obj.getId(), "obj must have a (generated) ID");
+				assert.ok(obj.getId().length > 0, "generated ID must not be empty");
 
 				var obj2 = new sap.ui.core.TestManagedObject();
-				ok(obj.getId() != obj2.getId(), "second generated ID must be different from the first one");
+				assert.ok(obj.getId() != obj2.getId(), "second generated ID must be different from the first one");
 			});
 
-			test("Object Creation (ID given)", function() {
+			QUnit.test("Object Creation (ID given)", function(assert) {
 				var obj = new sap.ui.core.TestManagedObject("myObject");
-				equal(obj.getId(), "myObject", "ID must be 'myObject'");
+				assert.equal(obj.getId(), "myObject", "ID must be 'myObject'");
 			});
 
-			module("Properties", {
-				setup: function() {
+			QUnit.module("Property Metadata", {
+				beforeEach: function() {
+					this.clazz = sap.ui.base.ManagedObject.extend("sap.test.MetadataTestClass", {
+						metadata : {
+							library : "sap.test",
+							properties : {
+								propWithoutOwnDefault: {type: "string", defaultValue: null},
+								propWithOwnDefault: {type: "string", defaultValue: "42"},
+								propWithSameDefaultAsType: {type: "string", defaultValue: ""},
+								propWithUndefinedDefault: {type: "string", defaultValue: undefined},
+								propWithNoDefault: {type: "string"},
+								enumValue: {type: "MyEnum", defaultValue: null},
+								noType : {type: "noType", defaultValue: 42},
+								noTypeNoDefault : {type: "noType", defaultValue: null},
+							}
+						}
+					});
+					this.metadata = this.clazz.getMetadata();
+				}
+			});
+
+			QUnit.test("Property default values", function(assert) {
+				var oMetadata = this.metadata;
+				var obj = new (this.clazz)();
+
+				// initial default values  (from default property bag)
+				assert.strictEqual(obj.getPropWithoutOwnDefault(), '', "a property without own default value should inherit the default value of the type");
+				assert.strictEqual(obj.getPropWithOwnDefault(), '42', "a property with own default value should have that default value");
+				assert.strictEqual(obj.getPropWithSameDefaultAsType(), '', "a property with own default value should have that default value");
+				assert.strictEqual(obj.getPropWithUndefinedDefault(), undefined, "a property with a default value 'undefined' should have that default value");
+				assert.strictEqual(obj.getPropWithNoDefault(), undefined, "a property with no default value should have 'undefined' as default value");
+				assert.strictEqual(obj.getEnumValue(), MyEnum.Good, "a property with enum type and no own default value should inherit a default from the enum");
+				assert.strictEqual(obj.getNoType(), 42, "a property with invalid type should keep a configured default value");
+				assert.strictEqual(obj.getNoTypeNoDefault(), null, "a property with invalid type and without default should default to null");
+
+				// set 'other' values and restore default
+				obj.setPropWithoutOwnDefault('other').setPropWithoutOwnDefault();
+				obj.setPropWithOwnDefault('other').setPropWithOwnDefault();
+				obj.setPropWithSameDefaultAsType('other').setPropWithSameDefaultAsType();
+				obj.setPropWithUndefinedDefault('other').setPropWithUndefinedDefault();
+				obj.setPropWithNoDefault('other').setPropWithNoDefault();
+				obj.setEnumValue('Better').setEnumValue();
+				obj.setNoType('other').setNoType();
+				obj.setNoTypeNoDefault('other').setNoTypeNoDefault();
+
+				// restored default values
+				assert.strictEqual(obj.getPropWithoutOwnDefault(), '', "a property without own default value should inherit the default value of the type");
+				assert.strictEqual(obj.getPropWithOwnDefault(), '42', "a property with own default value should have that default value");
+				assert.strictEqual(obj.getPropWithSameDefaultAsType(), '', "a property with own default value should have that default value");
+				assert.strictEqual(obj.getPropWithUndefinedDefault(), undefined, "a property with a default value 'undefined' should have that default value");
+				assert.strictEqual(obj.getPropWithNoDefault(), undefined, "a property with no default value should have 'undefined' as default value");
+				assert.strictEqual(obj.getEnumValue(), MyEnum.Good, "a property with enum type and no own default value should inherit a default from the enum");
+				assert.strictEqual(obj.getNoType(), 42, "a property with invalid type should keep a configured default value");
+				assert.strictEqual(obj.getNoTypeNoDefault(), null, "a property with invalid type and without default should default to null");
+			});
+
+
+			QUnit.module("Properties", {
+				beforeEach: function() {
 					this.obj = new sap.ui.core.TestManagedObject();
 					this.obj.setModel(oModel);
 				}
 			});
 
-			test("Set and get property", function() {
-				this.obj.setProperty("value", "testvalue");
-				equal(this.obj.getProperty("value"), "testvalue", "Getter must return set value");
-			});
-
-			test("Set unknown property", function() {
-				var bThrown = false;
-				try {
-					this.obj.setProperty("unknown", "testvalue");
-				} catch(e) {
-					bThrown = true;
-				}
-				ok(bThrown, "Must throw error on unknown property setter")
-			});
-
-			test("Set properties with different types", function() {
+			QUnit.test("Set properties with different types", function(assert) {
 				var that = this;
-				function test(name, value, shouldThrow) {
-					var bThrown = false,
-						sMessage = "Must " + (shouldThrow ? "throw" : "not throw") + " when setting " + value + " on " + name;
-					try {
+				var oDate = new Date();
+				var SAME = {}; // special unique value
+				var ERROR = new Error(); // special unique value
+
+				function setAndTest(name, value, expected) {
+					if ( expected === ERROR ) {
+						assert['throws'](function() {
 						that.obj.setProperty(name, value);
-					} catch(e) {
-						bThrown = true;
+						}, function( err ) {
+							return err.message && err.message.indexOf(name) >= 0 && err.message.indexOf(that.obj.getMetadata().getName()) >= 0;
+						}, "setting '" + name + "' to <" + value + "> should throw an error that mentiones property and class name");
+					} else {
+						var actual = that.obj.setProperty(name, value).getProperty(name);
+						expected = expected === SAME ? value : expected;
+						if ( Array.isArray(actual) ) {
+							assert.notStrictEqual(actual, expected, "setting a value must not return the same array");
+							assert.deepEqual(actual, expected, "setting '" + name + "' to <" + value + "> should return <" + expected + ">");
+						} else {
+							assert.strictEqual(actual, expected, "setting '" + name + "' to <" + value + "> should return <" + expected + ">");
+						}
 					}
-
-					equal(bThrown, shouldThrow, sMessage)
 				}
-				test("stringValue", "test", false);
-				test("stringValue", 23, false);
-				test("stringValue", 23.45, false);
-				test("stringValue", true, false);
-				test("intValue", 23, false);
-				test("intValue", "23", true);
-				test("intValue", 23.45, true);
-				test("intValue", true, true);
-				test("floatValue", 23.45, false);
-				test("floatValue", 23, false);
-				test("floatValue", "23", true);
-				test("floatValue", true, true);
-				test("booleanValue", true, false);
-				test("booleanValue", 23.45, true);
-				test("booleanValue", 23, true);
-				test("booleanValue", "true", true);
-				test("stringArray", ["a", "b", "c"], false);
-				test("stringArray", ["a", 10, true], false);
-				test("stringArray", "test", false);
-				test("stringArray", 23, true);
-				test("stringArray", 23.45, true);
-				test("stringArray", true, true);
-				test("intArray", [1, 2, 3], false);
-				test("intArray", [1, 2, 3.5], true);
-				test("intArray", ["a", 10, true], true);
-				test("intArray", "test", true);
-				test("intArray", 23, true);
-				test("intArray", 23.45, true);
-				test("intArray", true, true);
-				test("floatArray", [1.3, 2.5, 3.123], false);
-				test("floatArray", [1, 2, 3.5], false);
-				test("floatArray", ["a", 10, true], true);
-				test("floatArray", "test", true);
-				test("floatArray", 23, true);
-				test("floatArray", 23.45, true);
-				test("floatArray", true, true);
-				test("booleanArray", [true, false, true], false);
-				test("booleanArray", [true, false, 0], true);
-				test("booleanArray", ["a", 10, true], true);
-				test("booleanArray", "test", true);
-				test("booleanArray", 23, true);
-				test("booleanArray", 23.45, true);
-				test("booleanArray", true, true);
+
+				setAndTest("stringValue", "test", SAME);
+				setAndTest("stringValue", 23, "" + 23);
+				setAndTest("stringValue", 23.45, "" + 23.45);
+				setAndTest("stringValue", true, "" + true);
+				setAndTest("stringValue", oDate, "" + oDate);
+				setAndTest("stringValue", new String("0815"), "0815");
+				setAndTest("stringValue", null, '');
+				setAndTest("stringValue", undefined, '');
+				// no ERROR scenario for string types
+
+				setAndTest("intValue", 23, SAME);
+				setAndTest("intValue", null, 0);
+				setAndTest("intValue", undefined, 0);
+				setAndTest("intValue", "23", ERROR);
+				setAndTest("intValue", 23.45, ERROR);
+				setAndTest("intValue", true, ERROR);
+
+				setAndTest("floatValue", 23.45, SAME);
+				setAndTest("floatValue", 23, SAME);
+				setAndTest("floatValue", null, 0.0);
+				setAndTest("floatValue", undefined, 0.0);
+				setAndTest("floatValue", "23", ERROR);
+				setAndTest("floatValue", true, ERROR);
+
+				setAndTest("booleanValue", false, SAME);
+				setAndTest("booleanValue", true, SAME);
+				setAndTest("booleanValue", null, false);
+				setAndTest("booleanValue", undefined, false);
+				setAndTest("booleanValue", 23.45, ERROR);
+				setAndTest("booleanValue", 23, ERROR);
+				setAndTest("booleanValue", "true", ERROR);
+
+				setAndTest("objectValue", { a:1, b:'test', c:true}, SAME);
+				setAndTest("objectValue", function(){}, SAME); // function is allowed
+				setAndTest("objectValue", null, null);
+				setAndTest("objectValue", undefined, null);
+				setAndTest("objectValue", 23.45, ERROR);
+				setAndTest("objectValue", 23, ERROR);
+				setAndTest("objectValue", true, ERROR);
+				setAndTest("objectValue", "true", ERROR);
+
+				setAndTest("enumValue", MyEnum.Better, SAME);
+				setAndTest("enumValue", 'Better', SAME);
+				setAndTest("enumValue", null, MyEnum.Good);
+				setAndTest("enumValue", undefined, MyEnum.Good);
+				setAndTest("enumValue", 23.45, ERROR);
+				setAndTest("enumValue", 23, ERROR);
+				setAndTest("enumValue", "true", ERROR);
+
+				setAndTest("stringArray", ["a", "b", "c"], SAME);
+				setAndTest("stringArray", [], SAME);
+				setAndTest("stringArray", ["a", 10, true], ["a", "10", "true"]);
+				setAndTest("stringArray", "test", ["test"]);
+				setAndTest("stringArray", null, []);
+				setAndTest("stringArray", undefined, []);
+				setAndTest("stringArray", 23, ERROR);
+				setAndTest("stringArray", 23.45, ERROR);
+				setAndTest("stringArray", true, ERROR);
+
+				setAndTest("intArray", [1, 2, 3], SAME);
+				setAndTest("intArray", [], SAME);
+				setAndTest("intArray", null, []);
+				setAndTest("intArray", undefined, []);
+				setAndTest("intArray", [1, 2, 3.5], ERROR);
+				setAndTest("intArray", ["a", 10, true], ERROR);
+				setAndTest("intArray", "test", ERROR);
+				setAndTest("intArray", 23, ERROR);
+				setAndTest("intArray", 23.45, ERROR);
+				setAndTest("intArray", true, ERROR);
+
+				setAndTest("floatArray", [1.3, 2.5, 3.123], SAME);
+				setAndTest("floatArray", [1, 2, 3.5], SAME);
+				setAndTest("floatArray", [], SAME);
+				setAndTest("floatArray", null, []);
+				setAndTest("floatArray", undefined, []);
+				setAndTest("floatArray", ["a", 10, true], ERROR);
+				setAndTest("floatArray", "test", ERROR);
+				setAndTest("floatArray", 23, ERROR);
+				setAndTest("floatArray", 23.45, ERROR);
+				setAndTest("floatArray", true, ERROR);
+
+				setAndTest("booleanArray", [true, false, true], SAME);
+				setAndTest("booleanArray", [], SAME);
+				setAndTest("booleanArray", [true, false, 0], ERROR);
+				setAndTest("booleanArray", null, []);
+				setAndTest("booleanArray", undefined, []);
+				setAndTest("booleanArray", ["a", 10, true], ERROR);
+				setAndTest("booleanArray", "test", ERROR);
+				setAndTest("booleanArray", 23, ERROR);
+				setAndTest("booleanArray", 23.45, ERROR);
+				setAndTest("booleanArray", true, ERROR);
+
+				setAndTest("unknown", "testtest", ERROR);
 			});
 
-			test("Bind property", function() {
+			QUnit.test("Bind property", function(assert) {
 				this.obj.bindProperty("value", "/value");
-				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
 			});
 
-			test("Bind property OneTime", function() {
+			QUnit.test("Bind property OneTime", function(assert) {
 				this.obj.bindProperty("value", {
 					path: "/value",
 					mode: "OneTime"
 				});
-				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
 				oModel.setProperty("/value", "newvalue");
-				equal(this.obj.getProperty("value"), "testvalue", "New model value must not be reflected");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "New model value must not be reflected");
 				this.obj.setProperty("value", "othervalue");
-				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				assert.equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
 				oModel.setProperty("/value", "testvalue");
 			});
 
-			test("Bind property OneWay", function() {
+			QUnit.test("Bind property OneWay", function(assert) {
 				this.obj.bindProperty("value", {
 					path: "/value",
 					mode: "OneWay"
 				});
-				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
 				oModel.setProperty("/value", "newvalue");
-				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				assert.equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
 				this.obj.setProperty("value", "othervalue");
-				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				assert.equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
 				oModel.setProperty("/value", "testvalue");
 			});
 
-			test("Bind property TwoWay", function() {
+			QUnit.test("Bind property TwoWay", function(assert) {
 				this.obj.bindProperty("value", {
 					path: "/value",
 					mode: "TwoWay"
 				});
-				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
 				oModel.setProperty("/value", "newvalue");
-				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				assert.equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
 				this.obj.setProperty("value", "othervalue");
-				equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
-				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				assert.equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				assert.equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
 				oModel.setProperty("/value", "testvalue");
 			});
 
-			test("Bind property TwoWay with formatter", function() {
+			QUnit.test("Bind property TwoWay with formatter", function(assert) {
 				this.obj.bindProperty("value", {
 					path: "/value",
 					mode: "TwoWay",
@@ -299,17 +430,59 @@
 						return sValue;
 					}
 				});
-				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
 				oModel.setProperty("/value", "newvalue");
-				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				assert.equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
 				this.obj.setProperty("value", "othervalue");
-				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
-				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				assert.equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				assert.equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
 				oModel.setProperty("/value", "testvalue");
 			});
 
-			test("Bind property TwoWay with formatter & parts", function() {
+			QUnit.test("Bind property TwoWay with type", function(assert) {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay",
+					type: new sap.ui.model.type.String()
+				});
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				assert.equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				assert.equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				assert.equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			QUnit.test("Bind property TwoWay with type as string", function(assert) {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay",
+					type: "sap.ui.model.type.String"
+				});
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				assert.equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				assert.equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				assert.equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			QUnit.test("Bind property TwoWay with unkown type as string", function(assert) {
+				assert.throws(function() {
+					this.obj.bindProperty("value", {
+						path: "/value",
+						mode: "TwoWay",
+						type: "sap.unknown.Type"
+					});
+				}, "Raises unknown type error");
+			});
+
+			QUnit.test("Bind property TwoWay with formatter & parts", function(assert) {
 				this.obj.bindProperty("value", {
 					parts: [{
 						path: "/value"
@@ -319,17 +492,17 @@
 						return sValue;
 					}
 				});
-				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
 				oModel.setProperty("/value", "newvalue");
-				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				assert.equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
 				this.obj.setProperty("value", "othervalue");
-				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
-				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				assert.equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				assert.equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
 				oModel.setProperty("/value", "testvalue");
 			});
 
-			test("Bind property Composite with mixed binding modes", function() {
+			QUnit.test("Bind property Composite with mixed binding modes", function(assert) {
 				this.obj.bindProperty("value", {
 					parts: [
 						{
@@ -345,16 +518,16 @@
 						return value1 + "/" + value2;
 					}
 				});
-				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(this.obj.getProperty("value"), "testvalue/testvalue", "Property must return model value");
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue/testvalue", "Property must return model value");
 				oModel.setProperty("/value", "newvalue");
-				equal(this.obj.getProperty("value"), "newvalue/testvalue", "New model value must be reflected in oneway part only");
+				assert.equal(this.obj.getProperty("value"), "newvalue/testvalue", "New model value must be reflected in oneway part only");
 				this.obj.setProperty("value", "othervalue");
-				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				assert.equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
 				oModel.setProperty("/value", "testvalue");
 			});
 
-			test("Bind property in settings", function() {
+			QUnit.test("Bind property in settings", function(assert) {
 				var obj = new sap.ui.core.TestManagedObject({
 					value: "{/value}",
 					objectValue: {
@@ -362,10 +535,10 @@
 					},
 					models: oModel
 				});
-				equal(obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(obj.getProperty("value"), "testvalue", "Property must return model value");
-				equal(obj.isBound("objectValue"), true, "isBound must return true for bound properties");
-				equal(obj.getProperty("objectValue").model, true, "Object must contain model property");
+				assert.equal(obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(obj.getProperty("value"), "testvalue", "Property must return model value");
+				assert.equal(obj.isBound("objectValue"), true, "isBound must return true for bound properties");
+				assert.equal(obj.getProperty("objectValue").model, true, "Object must contain model property");
 				obj.destroy();
 				obj = new sap.ui.core.TestManagedObject({
 					objectValue: {
@@ -375,40 +548,60 @@
 					},
 					models: oModel
 				});
-				equal(obj.isBound("objectValue"), false, "isBound does return false if object contains ui5object");
-				equal(obj.getProperty("objectValue").local, true, "Object must contain local property");
-				equal(obj.getProperty("objectValue").ui5object, undefined, "Object must not contain ui5object anymore");
+				assert.equal(obj.isBound("objectValue"), false, "isBound does return false if object contains ui5object");
+				assert.equal(obj.getProperty("objectValue").local, true, "Object must contain local property");
+				assert.equal(obj.getProperty("objectValue").ui5object, undefined, "Object must not contain ui5object anymore");
 				obj.destroy();
 			});
 
-			test("Bind property/pass event handler", function() {
+			QUnit.test("Bind property/pass event handler", function(assert) {
 				this.obj.bindProperty("value", {path:"/value", events:{change:fnChange}});
-				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
-				equal(changed,true,"handler attached/change event fired");
+				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				assert.equal(changed,true,"handler attached/change event fired");
 				changed = false;
 			});
 
-			test("Unbind property", function() {
+			QUnit.test("Unbind property", function(assert) {
 				this.obj.bindProperty("value", "/value");
 				this.obj.unbindProperty("value");
-				equal(this.obj.isBound("value"), false, "isBound must return false for bound properties");
-				equal(this.obj.getProperty("value"), "", "Property value must be reset to default");
+				assert.equal(this.obj.isBound("value"), false, "isBound must return false for bound properties");
+				assert.equal(this.obj.getProperty("value"), "", "Property value must be reset to default");
 			});
 
 
-			test("Bind unkown property", function() {
+			QUnit.test("Bind unknown property", function(assert) {
 				var bThrown = false;
 				try {
 					this.obj.bindProperty("unknown", "/testpath");
 				} catch(e) {
 					bThrown = true;
 				}
-				ok(bThrown, "Must throw error on unknown property bind")
+				assert.ok(bThrown, "Must throw error on unknown property bind")
 			});
 
-			module("Aggregations", {
-				setup: function() {
+			QUnit.test("Bind property: targetType", function(assert) {
+				this.obj.bindProperty("value", {path : "/value", targetType : "any"});
+				assert.equal(this.obj.getBinding("value").sInternalType, "any", "targetType is used");
+				assert.notOk("targetType" in this.obj.getBindingInfo("value"), "targetType is moved into part");
+			});
+
+			QUnit.test("Bind property: targetType for composite", function(assert) {
+				this.obj.bindProperty("value", {
+					parts : [{
+						path : "/value", targetType : "foo"
+					}, {
+						path : "/value", targetType : "bar"
+					}],
+					targetType : "any"
+				});
+				assert.equal(this.obj.getBinding("value").getBindings()[0].sInternalType, "foo");
+				assert.equal(this.obj.getBinding("value").getBindings()[1].sInternalType, "bar");
+				assert.equal(this.obj.getBinding("value").sInternalType, "any", "targetType is used");
+			});
+
+			QUnit.module("Aggregations", {
+				beforeEach: function() {
 					this.obj = new sap.ui.core.TestManagedObject();
 					this.subObj = new sap.ui.core.TestManagedObject();
 					this.subObj2 = new sap.ui.core.TestManagedObject();
@@ -418,108 +611,438 @@
 				}
 			});
 
-			test("Accessor / Mutator functions", function() {
-				ok(typeof(this.obj.getSubObjects) === "function", "Typed get function for multiple public aggregation available");
-				ok(typeof(this.obj.addSubObj) === "function", "Typed add function for multiple public aggregation available");
-				ok(typeof(this.obj.removeSubObj) === "function", "Typed remove function for multiple public aggregation available");
-				ok(typeof(this.obj.removeAllSubObjects) === "function", "Typed removeAll function for multiple public aggregation available");
-				ok(typeof(this.obj.destroySubObjects) === "function", "Typed destroy function for multiple public aggregation available");
-				ok(typeof(this.obj.indexOfSubObj) === "function", "Typed indexOf function for multiple public aggregation available");
-				ok(typeof(this.obj.insertSubObj) === "function", "Typed insert function for multiple public aggregation available");
+			QUnit.test("Accessor / Mutator functions", function(assert) {
+				assert.ok(typeof(this.obj.getSubObjects) === "function", "Typed get function for multiple public aggregation available");
+				assert.ok(typeof(this.obj.addSubObj) === "function", "Typed add function for multiple public aggregation available");
+				assert.ok(typeof(this.obj.removeSubObj) === "function", "Typed remove function for multiple public aggregation available");
+				assert.ok(typeof(this.obj.removeAllSubObjects) === "function", "Typed removeAll function for multiple public aggregation available");
+				assert.ok(typeof(this.obj.destroySubObjects) === "function", "Typed destroy function for multiple public aggregation available");
+				assert.ok(typeof(this.obj.indexOfSubObj) === "function", "Typed indexOf function for multiple public aggregation available");
+				assert.ok(typeof(this.obj.insertSubObj) === "function", "Typed insert function for multiple public aggregation available");
 
-				ok(typeof(this.obj.getSingleAggr) === "function", "Typed get function for single public aggregation available");
-				ok(typeof(this.obj.setSingleAggr) === "function", "Typed set function for single public aggregation available");
-				ok(typeof(this.obj.destroySingleAggr) === "function", "Typed destroy function for single public aggregation available");
+				assert.ok(typeof(this.obj.getSingleAggr) === "function", "Typed get function for single public aggregation available");
+				assert.ok(typeof(this.obj.setSingleAggr) === "function", "Typed set function for single public aggregation available");
+				assert.ok(typeof(this.obj.destroySingleAggr) === "function", "Typed destroy function for single public aggregation available");
 			});
 
-			test("Set, get, unset and destroy single aggregation", function() {
+			QUnit.test("Set, get, unset and destroy single aggregation", function(assert) {
 
 				// get
-				equal(this.obj.getAggregation("singleAggr"), undefined, "getter should return null/undefined for an empty aggregation");
+				assert.equal(this.obj.getAggregation("singleAggr"), undefined, "getter should return null/undefined for an empty aggregation");
 
 				// set
 				this.obj.setAggregation("singleAggr", this.subObj);
-				childOf(this.subObj.getId(), this.obj.getId());
+				assert.childOf(this.subObj.getId(), this.obj.getId());
 
 				// get
-				equal(this.obj.getAggregation("singleAggr"), this.subObj, "getter should return the previously set object");
+				assert.equal(this.obj.getAggregation("singleAggr"), this.subObj, "getter should return the previously set object");
 
 				// unset
 				this.obj.setAggregation("singleAggr", null);
-				equal(this.obj.getAggregation("singleAggr"), undefined, "getter should return null/undefined after setting the aggregation to null");
-				notChildOf(this.subObj.getId(), this.obj.getId());
-				checkIfParentCleared(this.subObj);
+				assert.equal(this.obj.getAggregation("singleAggr"), undefined, "getter should return null/undefined after setting the aggregation to null");
+				assert.notChildOf(this.subObj.getId(), this.obj.getId());
+				assert.checkIfParentCleared(this.subObj);
 
 				// destroy
 				this.obj.setAggregation("singleAggr", this.subObj);
 				this.obj.destroyAggregation("singleAggr");
-				equal(this.obj.getAggregation("singleAggr"), undefined, "Getter must not return an object");
-				checkIfDestroyed(this.subObj);
+				assert.equal(this.obj.getAggregation("singleAggr"), undefined, "Getter must not return an object");
+				assert.checkIfDestroyed(this.subObj);
 			});
 
-			test("Add, Get, Remove and Destroy multiple aggregation", function() {
+			QUnit.test("invalidation of multiple aggregation", function(assert) {
+				var obj;
+
+				sinon.spy(this.obj, "invalidate");
+
+				// set
+				this.obj.setSingleAggr( this.subObj );
+				assert.equal(this.obj.invalidate.callCount, 1, "set calls invalidate only called once");
+				this.obj.invalidate.reset();
+
+				// set to null
+				this.obj.setSingleAggr( null );
+				assert.equal(this.obj.invalidate.callCount, 1, "set to null calls invalidate only once");
+				this.obj.invalidate.reset();
+
+				// set another object
+				this.obj.setSingleAggr( this.subObj2 );
+				this.obj.invalidate.reset();
+				this.obj.setSingleAggr( this.subObj );
+				assert.equal(this.obj.invalidate.callCount, 1, "setting another object calls invalidate only once");
+				this.obj.invalidate.reset();
+
+				// setting an object a second time
+				this.obj.setSingleAggr( this.subObj );
+				this.obj.invalidate.reset();
+				this.obj.setSingleAggr( this.subObj );
+				// for a 0..n aggr, the "no-change" situation is easier to detect
+				assert.equal(this.obj.invalidate.callCount, 0, "move within aggregation doesn't call invalidate");
+				this.obj.invalidate.reset();
+
+				// moving a child elsewhere
+				new sap.ui.core.TestManagedObject().addSubObj( this.subObj );
+				assert.equal(this.obj.invalidate.callCount, 1, "moving child elsehwere calls invalidate only once");
+				this.obj.invalidate.reset();
+
+				this.obj.invalidate.restore();
+			});
+
+			QUnit.test("Detect cycle when updating a single aggregation", function(assert) {
+
+				// get
+				this.obj.setAggregation("singleAggr", this.subObj);
+				assert.throws(function() {
+					this.subObj.setAggregation("singleAggr", this.obj);
+				}, /cycle/i);
+			});
+
+			QUnit.test("Set, unset and destroy single aggregation with modifyAggregation event", function(assert) {
+				var aParameters = [];
+					aExpected = [];
+
+				function modifyAggregationHandler(oEvent) {
+					aParameters.push(oEvent.getParameters());
+				}
+
+				function modifyEventDataEquals() {
+					if (aParameters.length !== aExpected.length) {
+						return false;
+					}
+					for (var i = 0; i < aParameters.length; i++) {
+						if (aParameters[i] && aParameters[i]) {
+							for (var n in aExpected) {
+								if (aParameters[i][n] !== aExpected[i][n]) {
+									return false
+								}
+							}
+						}
+					}
+					aExpected = [];
+					aParameters = [];
+					return true;
+				}
+				this.obj._attachModifyAggregation("singleAggr", modifyAggregationHandler);
+				// set
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				assert.equal(modifyEventDataEquals(), true, "set - modifyAggregation event with singleAggr, insert");
+
+				//unset
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj},
+				];
+				this.obj.setAggregation("singleAggr", null);
+				assert.equal(modifyEventDataEquals(), true, "unset - modifyAggregation event with singleAggr, remove");
+
+				//set - unset - set
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj},
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				this.obj.setAggregation("singleAggr", null);
+				this.obj.setAggregation("singleAggr", this.subObj);
+				assert.equal(modifyEventDataEquals(), true, "set - unset - set - modifyAggregation event with singleAggr, insert, remove, insert");
+
+				//reset
+				aExpected = [];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				assert.equal(modifyEventDataEquals(), true, "reset - modifyAggregation event not called");
+
+				//set other
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj2}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj2);
+				assert.equal(modifyEventDataEquals(), true, "set other - modifyAggregation event called remove, insert");
+
+				//detached not fired
+				this.obj._detachModifyAggregation("singleAggr", modifyAggregationHandler);
+				this.obj.setAggregation("singleAggr", this.subObj);
+				this.obj.setAggregation("singleAggr", null);
+				this.obj.setAggregation("singleAggr", this.subObj2);
+				assert.equal(modifyEventDataEquals(), true, "detached - modifyAggregation event not called anymore");
+				this.obj._attachModifyAggregation("singleAggr", modifyAggregationHandler);
+
+				//multi aggregation not attached not fired
 				this.obj.addAggregation("subObjects", this.subObj);
-				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj], "Getter must return objects array");
-				childOf(this.subObj.getId(), this.obj.getId());
+				assert.equal(modifyEventDataEquals(), true, "not attached - modifyAggregation event not called");
+
+				//destroy child
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj2}
+				];
+				this.subObj2.destroy();
+				assert.equal(aExpected.length == 1 && aParameters.length == 1, true,"destroy - modifyAggregation event called 1 time");
+				assert.equal(modifyEventDataEquals(), true, "destroy - modifyAggregation event called remove");
+				assert.checkIfDestroyed(this.subObj2);
+
+				//destroy aggregation
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj},
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				this.obj.destroyAggregation("singleAggr");
+				assert.equal(modifyEventDataEquals(), true, "destroy aggregation - modifyAggregation event called insert, remove");
+				assert.checkIfDestroyed(this.subObj);
+			});
+
+			QUnit.test("Add, Get, Remove and Destroy multiple aggregation", function(assert) {
+				this.obj.addAggregation("subObjects", this.subObj);
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj], "Getter must return objects array");
+				assert.childOf(this.subObj.getId(), this.obj.getId());
 
 				this.obj.removeAggregation("subObjects", this.subObj);
-				deepEqual(this.obj.getAggregation("subObjects"), [], "Getter must return empty array");
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [], "Getter must return empty array");
 
 				this.obj.addAggregation("subObjects", this.subObj);
 				this.obj.addAggregation("subObjects", this.subObj2);
 				this.obj.addAggregation("subObjects", this.subObj3);
-				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "getter must return objects array");
-				childOf(this.subObj.getId(), this.obj.getId());
-				childOf(this.subObj2.getId(), this.obj.getId());
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "getter must return objects array");
+				assert.childOf(this.subObj.getId(), this.obj.getId());
+				assert.childOf(this.subObj2.getId(), this.obj.getId());
 				this.obj.removeAggregation("subObjects", this.subObj2);
-				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3], "Getter must return array with remaining objects");
-				checkIfParentCleared(this.subObj2);
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3], "Getter must return array with remaining objects");
+				assert.checkIfParentCleared(this.subObj2);
 				this.obj.removeAllAggregation("subObjects");
-				deepEqual(this.obj.getAggregation("subObjects", []), [], "Getter must return empty array");
-				checkIfParentCleared(this.subObj);
-				checkIfParentCleared(this.subObj3);
+				assert.deepEqual(this.obj.getAggregation("subObjects", []), [], "Getter must return empty array");
+				assert.checkIfParentCleared(this.subObj);
+				assert.checkIfParentCleared(this.subObj3);
 
 				this.obj.addAggregation("subObjects", this.subObj);
 				this.obj.addAggregation("subObjects", this.subObj2);
 				this.obj.addAggregation("subObjects", this.subObj3);
 				this.obj.destroyAggregation("subObjects");
-				checkIfDestroyed(this.subObj);
-				checkIfDestroyed(this.subObj2);
-				checkIfDestroyed(this.subObj3);
+				assert.checkIfDestroyed(this.subObj);
+				assert.checkIfDestroyed(this.subObj2);
+				assert.checkIfDestroyed(this.subObj3);
 			});
 
-			test("applySettings on a 'multiple' aggregation", function() {
+			QUnit.test("invalidation of multiple aggregation", function(assert) {
+				var obj;
+
+				sinon.spy(this.obj, "invalidate");
+
+				// add
+				this.obj.addSubObj( this.subObj );
+				assert.equal(this.obj.invalidate.callCount, 1, "add calls invalidate only called once");
+				this.obj.invalidate.reset();
+
+				// insert
+				this.obj.insertSubObj(this.subObj2, 0);
+				assert.equal(this.obj.invalidate.callCount, 1, "insert calls invalidate only once");
+				this.obj.invalidate.reset();
+
+				// remove
+				this.obj.removeSubObj( this.subObj );
+				assert.equal(this.obj.invalidate.callCount, 1, "remove calls invalidate only once");
+				this.obj.invalidate.reset();
+
+				// destroy child
+				this.subObj2.destroy();
+				assert.equal(this.obj.invalidate.callCount, 1, "destroy of child calls invalidate only once");
+				this.obj.invalidate.reset();
+
+				// adding an object a second time
+				this.obj.addSubObj( this.subObj );
+				this.obj.invalidate.reset();
+				this.obj.addSubObj( this.subObj );
+				// subObj internally will be removed and added again
+				assert.equal(this.obj.invalidate.callCount, 2, "move within aggregation calls invalidate atmost twice");
+				this.obj.invalidate.reset();
+
+				// moving a child elsewhere
+				new sap.ui.core.TestManagedObject().addSubObj( this.subObj );
+				assert.equal(this.obj.invalidate.callCount, 1, "moving child elsehwere calls invalidate only once");
+				this.obj.invalidate.reset();
+
+				this.obj.invalidate.restore();
+			});
+
+			QUnit.test("Detect cycle when updating a multiple aggregation", function(assert) {
+
+				// get
+				this.obj.addAggregation("subObjects", this.subObj);
+				assert.throws(function() {
+					this.subObj.addAggregation("subObjects", this.obj);
+				}, /cycle/i);
+			});
+
+			QUnit.test("Add, Get, Remove and Destroy multiple aggregation with modifyAggregation event", function(assert) {
+				var aParameters = [];
+					aExpected = [];
+				function modifyAggregationHandler(oEvent) {
+					aParameters.push(oEvent.getParameters());
+				}
+				function modifyEventDataEquals() {
+					if (aParameters.length !== aExpected.length) {
+						return false;
+					}
+					for (var i = 0; i < aParameters.length; i++) {
+						if (aParameters[i] && aParameters[i]) {
+							for (var n in aExpected) {
+								if (aParameters[i][n] !== aExpected[i][n]) {
+									return false
+								}
+							}
+						}
+					}
+					aExpected = [];
+					aParameters = [];
+					return true;
+				}
+				this.obj._attachModifyAggregation("subObjects", modifyAggregationHandler);
+
+				//add
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
+				];
+				this.obj.addAggregation("subObjects", this.subObj);
+				assert.equal(modifyEventDataEquals(), true, "add - modifyAggregation event with subObjects, insert");
+
+				//remove
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+				];
+				this.obj.removeAggregation("subObjects", 0);
+				assert.equal(modifyEventDataEquals(), true, "remove - modifyAggregation event with subObjects, remove");
+
+				//add - remove - add
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
+				];
+				this.obj.addAggregation("subObjects", this.subObj);
+				this.obj.removeAggregation("subObjects", 0);
+				this.obj.addAggregation("subObjects", this.subObj);
+				assert.equal(modifyEventDataEquals(), true, "add - remove - add - modifyAggregation event with subObjects, insert, remove, insert");
+
+				//add same
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
+				];
+				this.obj.addAggregation("subObjects", this.subObj);
+				assert.equal(modifyEventDataEquals(), true, "add same - modifyAggregation event called 2 times");
+
+				//add other
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj2}
+				];
+				this.obj.addAggregation("subObjects", this.subObj2);
+				assert.equal(modifyEventDataEquals(), true, "add other - modifyAggregation event called remove, insert");
+
+				//insert
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj3}
+				];
+				this.obj.insertAggregation("subObjects", this.subObj3, 0);
+				assert.equal(modifyEventDataEquals(), true, "insert other - modifyAggregation event called remove, insert");
+
+				//remove all
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj3},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj2}
+				];
+				this.obj.removeAllAggregation("subObjects");
+				assert.equal(modifyEventDataEquals(), true, "remove all - modifyAggregation event called remove, insert");
+
+				//insert many
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj2},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj3},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj3},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj3}
+				];
+				this.obj.insertAggregation("subObjects", this.subObj, 0);
+				this.obj.insertAggregation("subObjects", this.subObj2, 0);
+				this.obj.insertAggregation("subObjects", this.subObj3, 1);
+				this.obj.insertAggregation("subObjects", this.subObj3, 0);
+				assert.equal(modifyEventDataEquals(), true, "insert many - modifyAggregation event called insert, insert, insert, remove, insert");
+
+				//detached not fired
+				this.obj._detachModifyAggregation("subObjects", modifyAggregationHandler);
+				this.obj.removeAllAggregation("subObjects", this.subObj, 0);
+				this.obj.insertAggregation("subObjects", this.subObj, 0);
+				this.obj.insertAggregation("subObjects", this.subObj2, 0);
+				this.obj.insertAggregation("subObjects", this.subObj3, 1);
+				this.obj.insertAggregation("subObjects", this.subObj3, 0);
+				assert.equal(modifyEventDataEquals(), true, "detached - modifyAggregation event not called anymore");
+				this.obj._attachModifyAggregation("subObjects", modifyAggregationHandler);
+
+				//single aggregation not attached not fired
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				assert.equal(modifyEventDataEquals(), true, "not attached - modifyAggregation event called remove");
+				this.obj.addAggregation("subObjects", this.subObj);
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
+				];
+				assert.equal(modifyEventDataEquals(), true, "not attached - modifyAggregation event called insert");
+
+				//destroy child
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj2}
+				];
+
+				this.subObj2.destroy();
+				assert.equal(modifyEventDataEquals(), true, "destroy - modifyAggregation event called remove");
+				assert.checkIfDestroyed(this.subObj2);
+
+				//destroy aggregation
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj3},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+				];
+				this.obj.destroyAggregation("subObjects");
+				assert.equal(modifyEventDataEquals(), true, "destroy aggregation - modifyAggregation event called remove");
+				assert.checkIfDestroyed(this.subObj3);
+				assert.checkIfDestroyed(this.subObj);
+			});
+
+			QUnit.test("applySettings on a 'multiple' aggregation", function(assert) {
 				this.obj.applySettings({
 					subObjects: [this.subObj, this.subObj3]
 				});
-				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3], "all objects in a given array should have been nadded");
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3], "all objects in a given array should have been nadded");
 
 				this.obj.applySettings({
 					subObjects: [this.subObj2]
 				});
-				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3, this.subObj2], "another call should append objects to the aggregation");
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3, this.subObj2], "another call should append objects to the aggregation");
 				this.obj.removeAllAggregation("subObjects");
 
 				this.obj.applySettings({
 					subObjects: this.subObj2
 				});
-				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj2], "a single object should be treated like a singleton array");
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj2], "a single object should be treated like a singleton array");
 				this.obj.removeAllAggregation("subObjects");
 
 				this.obj.applySettings({
 					subObjects: [[this.subObj3, this.subObj2], this.subObj]
 				});
-				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj3, this.subObj2, this.subObj], "a nested array should have been resolved");
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj3, this.subObj2, this.subObj], "a nested array should have been resolved");
 				this.obj.removeAllAggregation("subObjects");
 
 				this.obj.applySettings({
 					subObjects: [[this.subObj3, [this.subObj, [this.subObj2]]]]
 				});
-				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj3, this.subObj, this.subObj2], "multiple levels of nested arrays should have been resolved");
+				assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj3, this.subObj, this.subObj2], "multiple levels of nested arrays should have been resolved");
 				this.obj.removeAllAggregation("subObjects");
 			});
 
-			test("Add/Insert item twice", function() {
+			QUnit.test("Add/Insert item twice", function(assert) {
 				this.obj.addAggregation("subObjects", this.subObj);
 				this.obj.addAggregation("subObjects", this.subObj2);
 				this.obj.addAggregation("subObjects", this.subObj3);
@@ -527,164 +1050,508 @@
 
 				for(var i=0; i<N; i++) {
 					this.obj.addAggregation("subObjects", this.obj.getAggregation("subObjects")[i]);
-					equalSortedIds(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "add(get(" + i + ")): there must be no duplicate Ids");
+					assert.equalSortedIds(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "add(get(" + i + ")): there must be no duplicate Ids");
 				}
 
 				for(var i=0; i<N; i++) {
 					for(var j=0; j<N+1; j++) {
 						this.obj.insertAggregation("subObjects", this.obj.getAggregation("subObjects")[i], j);
-						equalSortedIds(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "insert(get(" + i + ")," + j + "): there must be no duplicate Ids");
+						assert.equalSortedIds(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "insert(get(" + i + ")," + j + "): there must be no duplicate Ids");
 					}
 				}
 			});
 
-			test("Set a multiple aggregation", function() {
-				QUnit["throws"](function() {
+			QUnit.test("Set a multiple aggregation", function(assert) {
+				assert["throws"](function() {
 					this.obj.setAggregation("subObjects", this.subObj);
 				}, null, "Must throw error on calling aggregation setter for a mutiple aggregation");
 			});
 
-			test("Set unknown aggregation", function() {
-				QUnit["throws"](function() {
+			QUnit.test("Set unknown aggregation", function(assert) {
+				assert["throws"](function() {
 					this.obj.setAggregation("unknown", this.subObj);
 				}, null, "Must throw error on unknown aggregation setter");
 			});
 
-			test("Bind aggregation", function() {
+			QUnit.test("Bind aggregation", function(assert) {
 				this.obj.bindAggregation("subObjects", "/list", this.template);
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 			});
 
-			test("Bind single aggregation", function() {
+			QUnit.test("Bind aggregation reuse templates on updates", function(assert) {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 4},
+					{value: 5},
+					{value: 6},
+					{value: 7},
+					{value: 8}
+				]);
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				assert.ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				assert.ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				assert.ok(aOldObjects[2] === aNewObjects[2], "Third SubObject is reused after update");
+			});
+
+			QUnit.test("Bind aggregation don't reuse factory objects on updates", function(assert) {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bindAggregation("subObjects", "/changingList", function(sIdSuffix, oContext) {
+					return this.template.clone(sIdSuffix)
+				}.bind(this));
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 4},
+					{value: 5},
+					{value: 6},
+					{value: 7},
+					{value: 8}
+				]);
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				assert.ok(aOldObjects[0] !== aNewObjects[0], "First SubObject is not reused after update");
+				assert.ok(aOldObjects[1] !== aNewObjects[1], "Second SubObject is not reused after update");
+				assert.ok(aOldObjects[2] !== aNewObjects[2], "Third SubObject is not reused after update");
+			});
+
+			QUnit.test("Bind aggregation reuse templates on updates with extended change detection", function(assert) {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bUseExtendedChangeDetection = true;
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 4},
+					{value: 5},
+					{value: 3}
+				]);
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				assert.ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				assert.ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				assert.ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
+				this.obj.bUseExtendedChangeDetection = false;
+			});
+
+			QUnit.test("Bind aggregation reuse factory objects on updates with extended change detection", function(assert) {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bUseExtendedChangeDetection = true;
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 4},
+					{value: 5},
+					{value: 3}
+				]);
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				assert.ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				assert.ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				assert.ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
+				this.obj.bUseExtendedChangeDetection = false;
+			});
+
+			QUnit.test("Bind single aggregation", function(assert) {
 				// This worked in the past so I add a test to not break it accidentally
 				this.obj.bindAggregation("singleAggr", "/list", this.template);
-				equal(this.obj.isBound("singleAggr"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("singleAggr") instanceof sap.ui.core.TestManagedObject, true, "Aggregation is instance of TestManagedObject");
-				equal(this.obj.getAggregation("singleAggr").getValue(), "testvalue3", "Value matches the last array entry");
+				assert.equal(this.obj.isBound("singleAggr"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("singleAggr") instanceof sap.ui.core.TestManagedObject, true, "Aggregation is instance of TestManagedObject");
+				assert.equal(this.obj.getAggregation("singleAggr").getValue(), "testvalue3", "Value matches the last array entry");
 			});
 
-			test("Bind aggregation with template non shareable", function() {
+			QUnit.test("Bind aggregation without templateShareable (default)", function(assert) {
+
+				var oTemplate = new sap.ui.core.Element("template");
+
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate}); // old behavior
+				assert.equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = this.obj.getBindingInfo('elements');
+				assert.ok(oBindingInfo, "binding info");
+				assert.ok(oBindingInfo.template, "binding info template");
+				assert.ok(oBindingInfo.template === oTemplate, "binding info template");
+				assert.ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+
+				// when unbinding the aggregation, the template must not be destroyed, but it should be marked as a candidate for destroy
+				this.obj.unbindAggregation("elements");
+				assert.equal(this.obj.getAggregation("elements"), undefined, "Getter must not return an object");
+				assert.ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+				assert.ok(oTemplate._sapui_candidateForDestroy, "Template should be marked for destroy");
+
+				// bind again with same template. Should remove the 'candidateForDestroy' marker
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate});
+				assert.equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = this.obj.getBindingInfo('elements');
+				assert.ok(oBindingInfo, "binding info");
+				assert.ok(oBindingInfo.template, "binding info template");
+				assert.ok(oBindingInfo.template === oTemplate, "binding info template");
+				assert.ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+				assert.ok(!oTemplate._sapui_candidateForDestroy, "Template must no longer be marked for destroy");
+
+				// doing the same re-bind operation without a preceding unbind should produce the same result
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate});
+				assert.equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = this.obj.getBindingInfo('elements');
+				assert.ok(oBindingInfo, "binding info");
+				assert.ok(oBindingInfo.template, "binding info template");
+				assert.ok(oBindingInfo.template === oTemplate, "binding info template");
+				assert.ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+				assert.ok(!oTemplate._sapui_candidateForDestroy, "Template must no longer be marked for destroy");
+
+				// unbind again
+				this.obj.unbindAggregation("elements");
+				assert.equal(this.obj.getAggregation("elements"), undefined, "Getter must not return an object");
+				assert.ok(!oTemplate.bIsDestroyed, "Template is not destroyed");
+				assert.ok(oTemplate._sapui_candidateForDestroy, "Template should be marked for destroy");
+
+				// create new UI object with same Id (must not throw exception, class can differ)
+				var oLogSpy = this.spy(jQuery.sap.log, "debug");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+				var oTemplateNew = new sap.ui.core.Control("template", {value: "{value}"});
+				assert.ok(oLogSpy.calledWith(sinon.match(/destroying dangling template [\s\S]+ when creating new object with same ID/)), "destroyed elements should be reported with level debug");
+				oLogSpy.restore();
+				assert.ok(oTemplate.bIsDestroyed, "old Template should have been destroyed after object with same Id has been created");
+				assert.checkIfDestroyed(oTemplate);
+
+				// bind again with the new object
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplateNew});
+				assert.equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				// delete the aggregating object -> should mark the new template for destroy
+				this.obj.destroy();
+				assert.ok(!oTemplateNew.bIsDestroyed, "Template is not destroyed");
+				assert.ok(oTemplateNew._sapui_candidateForDestroy, "Template should be marked for destroy");
+
+			});
+
+			QUnit.test("Bind aggregation without templateShareable (default, Component)", function(assert) {
+
+				var MyControl = sap.ui.core.Control.extend("MyControl", {
+					metadata : {
+						aggregations : {
+							elements : "sap.ui.core.Element"
+						}
+					}
+				});
+
+				var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
+					createContent : function() {
+						this.oMyTemplate = new sap.ui.core.Element("template");
+						this.oMyRootControl = new MyControl({
+							models: oModel,
+							elements: {
+								path : '/list',
+								template: this.oMyTemplate
+							}
+						});
+						return this.oMyRootControl;
+					}
+				});
+
+				var oComponent = new MyComponent();
+				assert.ok(oComponent.oMyTemplate, "component should have a reference to the template");
+				assert.ok(oComponent.oMyRootControl, "component should have a reference to the template");
+				assert.equal(oComponent.oMyRootControl.isBound("elements"), true, "isBound must return true for bound aggregations");
+				assert.equal(oComponent.oMyRootControl.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = oComponent.oMyRootControl.getBindingInfo('elements');
+				assert.ok(oBindingInfo, "binding info");
+				assert.ok(oBindingInfo.template, "binding info template");
+				assert.ok(oBindingInfo.template === oComponent.oMyTemplate, "binding info template");
+				assert.ok(!oComponent.oMyTemplate.bIsDestroyed, "Template is not destroyed");
+
+				// when destroying the component, the template should be desroyed as well
+				var oLogSpy = this.spy(jQuery.sap.log, "debug");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+				oComponent.destroy();
+				assert.ok(oLogSpy.calledWith(sinon.match(/destroying dangling template [\s\S]+ when destroying the owner component/)), "destroyed elements should be reported with level debug");
+				oLogSpy.restore();
+
+				assert.ok(oComponent.oMyTemplate.bIsDestroyed, "old Template should have been destroyed after object with same Id has been created");
+				assert.checkIfDestroyed(oComponent.oMyTemplate);
+
+			});
+
+			QUnit.test("Bind aggregation and clone with different templateShareable values", function(assert) {
+
+				// undefined
+
+				var oTemplate = new sap.ui.core.Element();
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate});
+				assert.equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+				assert.ok(typeof this.obj.getBindingInfo("elements").templateShareable !== 'boolean' && this.obj.getBindingInfo("elements").templateShareable, "default for templateShareable should be neither true nor false");
+
+				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oClone = this.obj.clone("clone");
+				sinon.assert.calledWith(oLogSpy,
+					sinon.match(/templateShareable/) // msg should contain the term templateShareable
+					.and(sinon.match(/['"<]elements[>"']/)) // msg should contain the name of the aggregation
+					.and(sinon.match(new RegExp('[\'"<]' + jQuery.sap.escapeRegExp(this.obj.getId()) + '[>"\']'))) // and the name of the aggregating object
+				);
+				oLogSpy.restore();
+
+				assert.strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "after clone operation, templateShareable should have changed from MAYBE to true in origin");
+				assert.strictEqual(oClone.getBindingInfo("elements").templateShareable, true, "after clone operation, templateShareable should have changed from MAYBE to true in clone");
+				oClone.destroy();
+				this.obj.unbindAggregation("elements");
+
+				// false
+
+				var oTemplate = new sap.ui.core.Element();
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate, templateShareable: false});
+				assert.equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+				assert.strictEqual(this.obj.getBindingInfo("elements").templateShareable, false, "value of templateShareable should be as specified");
+
+				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oClone = this.obj.clone("clone");
+				sinon.assert.neverCalledWith(oLogSpy, sinon.match(/templateShareable/));
+				oLogSpy.restore();
+
+				assert.strictEqual(this.obj.getBindingInfo("elements").templateShareable, false, "after clone operation, templateShareable of origin still should be false");
+				assert.strictEqual(oClone.getBindingInfo("elements").templateShareable, false, "after clone operation, templateShareable of clone also should be false");
+				assert.ok(this.obj.getBindingInfo("elements").template !== oClone.getBindingInfo("elements").template, "templates should differ");
+				oClone.destroy();
+				this.obj.unbindAggregation("elements");
+
+				// true
+
+				var oTemplate = new sap.ui.core.Element();
+				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate, templateShareable: true});
+				assert.equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
+				assert.strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "value of templateShareable should be as specified");
+
+				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oClone = this.obj.clone("clone");
+				sinon.assert.neverCalledWith(oLogSpy, sinon.match(/templateShareable/));
+				oLogSpy.restore();
+
+				assert.strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "after clone operation, templateSharable of origin still should be false");
+				assert.strictEqual(oClone.getBindingInfo("elements").templateShareable, true, "after clone operation, templateSharable of clone also should be false");
+				assert.ok(this.obj.getBindingInfo("elements").template === oClone.getBindingInfo("elements").template, "templates should differ");
+				oClone.destroy();
+				this.obj.unbindAggregation("elements");
+
+			});
+
+			QUnit.test("Bind aggregation with templateShareable:true", function(assert) {
+				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:true});
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+
+				var oBindingInfo = this.obj.getBindingInfo('subObjects');
+				assert.ok(oBindingInfo, "binding info");
+				assert.ok(oBindingInfo.template, "binding info template");
+				assert.ok(oBindingInfo.template === this.template, "binding info template");
+				assert.ok(!this.template.bIsDestroyed, "Template is not destroyed");
+
+				this.obj.unbindAggregation("subObjects");
+				assert.equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
+				assert.ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				assert.ok(!this.template._sapui_candidateForDestroy, "Template must not be marked for destroy");
+
+			});
+
+			QUnit.test("Bind aggregation with templateShareable:false", function(assert) {
 				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:false});
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 
 				var oBindingInfo = this.obj.getBindingInfo('subObjects');
-				ok(oBindingInfo, "binding info");
-				ok(oBindingInfo.template, "binding info template");
-				ok(oBindingInfo.template === this.template, "binding info template");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				assert.ok(oBindingInfo, "binding info");
+				assert.ok(oBindingInfo.template, "binding info template");
+				assert.ok(oBindingInfo.template === this.template, "binding info template");
+				assert.ok(!this.template.bIsDestroyed, "Template is not destroyed");
 
 				this.obj.unbindAggregation("subObjects");
-				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
-				ok(this.template.bIsDestroyed, "Template is destroyed");
-				checkIfDestroyed(this.template);
+				assert.equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
+				assert.ok(this.template.bIsDestroyed, "Template is destroyed");
+				assert.checkIfDestroyed(this.template);
+				assert.ok(!this.template._sapui_candidateForDestroy, "Template must not be marked for destroy");
 
 			});
 
-			test("Bind aggregation with template shareable", function() {
-				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template}); // old behavior
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
-
-				var oBindingInfo = this.obj.getBindingInfo('subObjects');
-				ok(oBindingInfo, "binding info");
-				ok(oBindingInfo.template, "binding info template");
-				ok(oBindingInfo.template === this.template, "binding info template");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
-
-				this.obj.unbindAggregation("subObjects");
-				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
-
-			});
-
-			test("Bind aggregation with template shareable with flag", function() {
-				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:true}); // old behavior
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
-
-				var oBindingInfo = this.obj.getBindingInfo('subObjects');
-				ok(oBindingInfo, "binding info");
-				ok(oBindingInfo.template, "binding info template");
-				ok(oBindingInfo.template === this.template, "binding info template");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
-
-				this.obj.unbindAggregation("subObjects");
-				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
-
-			});
-
-			test("Bind aggregation with template non shareable and destroy object", function() {
+			QUnit.test("Bind aggregation with templateShareable:false and destroy object", function(assert) {
 				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:false});
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 
 				var oBindingInfo = this.obj.getBindingInfo('subObjects');
-				ok(oBindingInfo, "binding info");
-				ok(oBindingInfo.template, "binding info template");
-				ok(oBindingInfo.template === this.template, "binding info template");
-				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				assert.ok(oBindingInfo, "binding info");
+				assert.ok(oBindingInfo.template, "binding info template");
+				assert.ok(oBindingInfo.template === this.template, "binding info template");
+				assert.ok(!this.template.bIsDestroyed, "Template is not destroyed");
 
 				this.obj.destroy();
-				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
-				checkIfDestroyed(this.obj);
-				checkIfDestroyed(this.template);
-				ok(this.obj.bIsDestroyed, "obj is destroyed");
-				ok(this.template.bIsDestroyed, "Template is destroyed");
+				assert.equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
+				assert.checkIfDestroyed(this.obj);
+				assert.checkIfDestroyed(this.template);
+				assert.ok(this.obj.bIsDestroyed, "obj is destroyed");
+				assert.ok(this.template.bIsDestroyed, "Template is destroyed");
 
 			});
 
-			test("Bind aggregation with length", function() {
+			QUnit.test("Bind aggregation with length", function(assert) {
 				this.obj.bindAggregation("subObjects", {
 					path: "/list",
 					template: this.template,
 					length: 2
 				});
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 2, "Aggregation length should match defined length");
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 2, "Aggregation length should match defined length");
 			});
 
-			test("Bind aggregation with startIndex/length", function() {
+			QUnit.test("Bind aggregation with startIndex/length", function(assert) {
 				this.obj.bindAggregation("subObjects", {
 					path: "/list",
 					template: this.template,
 					startIndex: 1,
 					length: 5
 				});
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 2, "Aggregation length should match the rest of available length");
-				equal(this.obj.getAggregation("subObjects")[0].getProperty("value"), "testvalue2", "First aggregation entry should match second list entry");
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 2, "Aggregation length should match the rest of available length");
+				assert.equal(this.obj.getAggregation("subObjects")[0].getProperty("value"), "testvalue2", "First aggregation entry should match second list entry");
 			});
 
-			test("Bind aggregation/pass event handler", function() {
+			QUnit.test("Bind aggregation/pass event handler", function(assert) {
 				this.obj.bindAggregation("subObjects", {path:"/list", template:this.template, events:{change:fnChange}});
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
-				equal(changed,true,"handler attached/change event fired");
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				assert.equal(changed,true,"handler attached/change event fired");
 				changed = false;
 			});
 
-			test("Unbind aggregation", function() {
-				this.obj.bindAggregation("subObjects", "/list", this.template);
-				this.obj.unbindAggregation("subObjects");
-				equal(this.obj.isBound("subObjects"), false, "isBound must return false for bound aggregations");
-				equal(this.obj.getAggregation("subObjects", []).length, 0, "Aggregation must be reset after unbind");
+			QUnit.test("Bind aggregation with grouping", function(assert) {
+				jQuery.each(["value", "intValue", "groupValue"], function(i, sGroupProperty) {
+					var binding, subobjects;
+					this.obj.bindAggregation("subObjects", {
+						path: "/list",
+						template: this.template,
+						sorter: new sap.ui.model.Sorter(sGroupProperty, false, true)
+					});
+					assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+					subobjects = this.obj.getAggregation("subObjects", []);
+					assert.equal(subobjects.length, 6, "Aggregation length should match defined length plus headers");
+					assert.equal(subobjects[0].getBooleanValue(), true, "Entry must be a header entry")
+					assert.equal(subobjects[2].getBooleanValue(), true, "Entry must be a header entry")
+					assert.equal(subobjects[4].getBooleanValue(), true, "Entry must be a header entry")
+
+					binding = this.obj.getBinding("subObjects");
+					binding.sort(); //ungroup
+					subobjects = this.obj.getAggregation("subObjects", []);
+					assert.equal(subobjects.length, 3, "Aggregation length should match array length");
+					assert.equal(subobjects[0].getBooleanValue(), false, "Entry must not be a header entry")
+					assert.equal(subobjects[1].getBooleanValue(), false, "Entry must not be a header entry")
+					assert.equal(subobjects[2].getBooleanValue(), false, "Entry must not be a header entry")
+				}.bind(this));
 			});
 
-			test("Bind unkown aggregation", function() {
+			QUnit.test("Bind aggregation with grouping, but without grouping function", function(assert) {
+				var binding, elements;
+				this.obj.bindAggregation("elements", {
+					path: "/list",
+					template: new sap.ui.core.Element(),
+					sorter: new sap.ui.model.Sorter("value", false, true)
+				});
+				assert.equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				elements = this.obj.getAggregation("elements", []);
+				assert.equal(elements.length, 3, "Aggregation length should match array length");
+
+				binding = this.obj.getBinding("elements");
+				binding.sort(); //ungroup
+				elements = this.obj.getAggregation("elements", []);
+				assert.equal(elements.length, 3, "Aggregation length should match array length");
+			});
+
+			QUnit.test("Bind aggregation with grouping and header factory", function(assert) {
+				jQuery.each(["value", "intValue", "groupValue"], function(i, sGroupProperty) {
+					var binding, subobjects;
+					this.obj.bindAggregation("subObjects", {
+						path: "/list",
+						template: this.template,
+						sorter: new sap.ui.model.Sorter(sGroupProperty, false, true),
+						groupHeaderFactory: function(oGroup) {
+							return  new sap.ui.core.TestManagedObject({value: oGroup.key, booleanValue: true});
+						}
+					});
+					assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+					subobjects = this.obj.getAggregation("subObjects", []);
+					assert.equal(subobjects.length, 6, "Aggregation length should match defined length plus headers");
+					assert.equal(subobjects[0].getBooleanValue(), true, "Entry must be a header entry")
+					assert.equal(subobjects[2].getBooleanValue(), true, "Entry must be a header entry")
+					assert.equal(subobjects[4].getBooleanValue(), true, "Entry must be a header entry")
+
+					binding = this.obj.getBinding("subObjects");
+					binding.sort(); //ungroup
+					subobjects = this.obj.getAggregation("subObjects", []);
+					assert.equal(subobjects.length, 3, "Aggregation length should match array length");
+					assert.equal(subobjects[0].getBooleanValue(), false, "Entry must not be a header entry")
+					assert.equal(subobjects[1].getBooleanValue(), false, "Entry must not be a header entry")
+					assert.equal(subobjects[2].getBooleanValue(), false, "Entry must not be a header entry")
+				}.bind(this));
+			});
+
+			QUnit.test("Unbind aggregation", function(assert) {
+				this.obj.bindAggregation("subObjects", "/list", this.template);
+				this.obj.unbindAggregation("subObjects");
+				assert.equal(this.obj.isBound("subObjects"), false, "isBound must return false for bound aggregations");
+				assert.equal(this.obj.getAggregation("subObjects", []).length, 0, "Aggregation must be reset after unbind");
+			});
+
+			QUnit.test("Bind unkown aggregation", function(assert) {
 				var bThrown = false;
 				try {
 					this.obj.bindAggregation("unknown", "/testpath", this.template);
 				} catch(e) {
 					bThrown = true;
 				}
-				ok(bThrown, "Must throw error on unknown aggregation bind")
+				assert.ok(bThrown, "Must throw error on unknown aggregation bind")
 			});
 
-			module("Hidden Aggregations", {
-				setup: function() {
+			QUnit.module("Hidden Aggregations", {
+				beforeEach: function() {
 					this.testObj = new sap.test.TestManagedObject("testObj", {
 						multiplePublicItems : [
 							new sap.ui.core.TestManagedObject("i1"),
@@ -698,179 +1565,185 @@
 						singleHiddenItem : new sap.ui.core.TestManagedObject("i6")
 					});
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.testObj.destroy();
 				}
 			});
 
-			test("Accessor / Mutator functions", function() {
-				ok(!this.testObj.getMultipleHiddenItems, "Typed get function for multiple private aggregation not available");
-				ok(!this.testObj.addMultipleHiddenItem, "Typed add function for multiple private aggregation not available");
-				ok(!this.testObj.removeMultipleHiddenItem, "Typed remove function for multiple private aggregation not available");
-				ok(!this.testObj.removeAllMultipleHiddenItems, "Typed removeAll function for multiple private aggregation not available");
-				ok(!this.testObj.destroyMultipleHiddenItems, "Typed destroy function for multiple private aggregation not available");
-				ok(!this.testObj.indexOfMultipleHiddenItem, "Typed indexOf function for multiple private aggregation not available");
-				ok(!this.testObj.insertMultipleHiddenItem, "Typed insert function for multiple private aggregation not available");
+			QUnit.test("Accessor / Mutator functions", function(assert) {
+				assert.ok(!this.testObj.getMultipleHiddenItems, "Typed get function for multiple private aggregation not available");
+				assert.ok(!this.testObj.addMultipleHiddenItem, "Typed add function for multiple private aggregation not available");
+				assert.ok(!this.testObj.removeMultipleHiddenItem, "Typed remove function for multiple private aggregation not available");
+				assert.ok(!this.testObj.removeAllMultipleHiddenItems, "Typed removeAll function for multiple private aggregation not available");
+				assert.ok(!this.testObj.destroyMultipleHiddenItems, "Typed destroy function for multiple private aggregation not available");
+				assert.ok(!this.testObj.indexOfMultipleHiddenItem, "Typed indexOf function for multiple private aggregation not available");
+				assert.ok(!this.testObj.insertMultipleHiddenItem, "Typed insert function for multiple private aggregation not available");
 
-				ok(!this.testObj.getSingleHiddenItem, "Typed get function for single private aggregation not available");
-				ok(!this.testObj.setSingleHiddenItem, "Typed set function for single private aggregation not available");
-				ok(!this.testObj.destroySingleHiddenItem, "Typed destroy function for single private aggregation not available");
+				assert.ok(!this.testObj.getSingleHiddenItem, "Typed get function for single private aggregation not available");
+				assert.ok(!this.testObj.setSingleHiddenItem, "Typed set function for single private aggregation not available");
+				assert.ok(!this.testObj.destroySingleHiddenItem, "Typed destroy function for single private aggregation not available");
 			});
 
-			test("Parent Relationship", function() {
-				childOf("testObj-singleHiddenItem");
-				childOf("testObj-multipleHiddenItem1");
-				childOf("testObj-multipleHiddenItem2");
+			QUnit.test("Parent Relationship", function(assert) {
+				assert.childOf("testObj-singleHiddenItem");
+				assert.childOf("testObj-multipleHiddenItem1");
+				assert.childOf("testObj-multipleHiddenItem2");
 			});
 
-			test("Initial Settings (Apply Settings ignores hidden aggregations)", function() {
-				notChildOf("i3");
-				notChildOf("i4");
-				notChildOf("i6");
-				equals(this.testObj.getAggregation("multipleHiddenItems").length, 2, "Number of aggregated multiple private items correct");
-				equals(this.testObj.getAggregation("singleHiddenItem").getId(), "testObj-singleHiddenItem", "Aggregated single private item correct");
+			QUnit.test("Initial Settings (Apply Settings ignores hidden aggregations)", function(assert) {
+				assert.notChildOf("i3");
+				assert.notChildOf("i4");
+				assert.notChildOf("i6");
+				assert.equal(this.testObj.getAggregation("multipleHiddenItems").length, 2, "Number of aggregated multiple private items correct");
+				assert.equal(this.testObj.getAggregation("singleHiddenItem").getId(), "testObj-singleHiddenItem", "Aggregated single private item correct");
 			});
 
-			test("Destroy", function() {
+			QUnit.test("Destroy", function(assert) {
 				this.testObj.destroyAggregation("multipleHiddenItems");
 				this.testObj.destroyAggregation("singleHiddenItem");
 
-				equals(this.testObj.getAggregation("multipleHiddenItems", []).length, 0, "Number of aggregated multiple private items after destroy correct");
-				ok(!this.testObj.getAggregation("singleHiddenItem"), "No aggregated single private item after destroy");
+				assert.equal(this.testObj.getAggregation("multipleHiddenItems", []).length, 0, "Number of aggregated multiple private items after destroy correct");
+				assert.ok(!this.testObj.getAggregation("singleHiddenItem"), "No aggregated single private item after destroy");
 
-				ok(!byId("testObj-singleHiddenItem"), "Item 'testObj-singleHiddenItem' destroyed");
-				ok(!byId("testObj-multipleHiddenItem1"), "Item 'testObj-multipleHiddenItem1' destroyed");
-				ok(!byId("testObj-multipleHiddenItem2"), "Item 'testObj-multipleHiddenItem2' destroyed");
+				assert.ok(!byId("testObj-singleHiddenItem"), "Item 'testObj-singleHiddenItem' destroyed");
+				assert.ok(!byId("testObj-multipleHiddenItem1"), "Item 'testObj-multipleHiddenItem1' destroyed");
+				assert.ok(!byId("testObj-multipleHiddenItem2"), "Item 'testObj-multipleHiddenItem2' destroyed");
 			});
 
-			module("[0..n] Associations", {
-				setup : function() {
+			QUnit.module("[0..n] Associations", {
+				beforeEach : function() {
 					this.obj = new sap.ui.core.TestManagedObject();
 					this.assocElement = new sap.ui.core.TestManagedObject();
 					this.assocElement2 = new sap.ui.core.TestManagedObject();
 				}
 			});
 
-			test("Get from to 0..n Association", function() {
+			QUnit.test("Get from to 0..n Association", function(assert) {
 				var result = this.obj.getAssociation("associatedObjects", []); // the second parameter is usually generated by XSLT
-				ok(result, "returned value must not be null");
-				ok(jQuery.isArray(result), "returned type must be an array");
-				equal(result.length, 0, "returned array must be empty");
+				assert.ok(result, "returned value must not be null");
+				assert.ok(jQuery.isArray(result), "returned type must be an array");
+				assert.equal(result.length, 0, "returned array must be empty");
 			});
 
-			test("Add to 0..n Association", function() {
+			QUnit.test("Add to 0..n Association", function(assert) {
 				this.obj.addAssociation("associatedObjects", this.assocElement);
 				var result = this.obj.getAssociation("associatedObjects", []);
 
-				ok(result, "returned value must not be null");
-				equal(typeof(result.length), "number", "returned type must be an array");
-				equal(result.length, 1, "returned array must have one entry");
-				equal(result[0], this.assocElement.getId(), "returned entry must be the ID of the associated object");
+				assert.ok(result, "returned value must not be null");
+				assert.equal(typeof(result.length), "number", "returned type must be an array");
+				assert.equal(result.length, 1, "returned array must have one entry");
+				assert.equal(result[0], this.assocElement.getId(), "returned entry must be the ID of the associated object");
 			});
 
-			test("Add more to 0..n Association", function() {
+			QUnit.test("Add more to 0..n Association", function(assert) {
 				this.obj.addAssociation("associatedObjects", this.assocElement);
 				var result = this.obj.addAssociation("associatedObjects", this.assocElement2);
-				equal(result.getId(), this.obj.getId(), "the returned item must be the object itself");
+				assert.equal(result.getId(), this.obj.getId(), "the returned item must be the object itself");
 
 				result = this.obj.getAssociation("associatedObjects", []);
 
-				ok(result, "returned value must not be null");
-				equal(typeof(result.length), "number", "returned type must be an array");
-				equal(result.length, 2, "returned array must have two entries");
-				equal(result[0], this.assocElement.getId(), "first returned entry must be the ID of the first associated object");
-				equal(result[1], this.assocElement2.getId(), "second returned entry must be the ID of the second associated object");
+				assert.ok(result, "returned value must not be null");
+				assert.equal(typeof(result.length), "number", "returned type must be an array");
+				assert.equal(result.length, 2, "returned array must have two entries");
+				assert.equal(result[0], this.assocElement.getId(), "first returned entry must be the ID of the first associated object");
+				assert.equal(result[1], this.assocElement2.getId(), "second returned entry must be the ID of the second associated object");
 			});
 
-			test("Modification of array returned as representation of 0..n Association", function() {
+			QUnit.test("Modification of array returned as representation of 0..n Association", function(assert) {
 				this.obj.addAssociation("associatedObjects", this.assocElement);
 				var result = this.obj.getAssociation("associatedObjects", []);
 				result[0] = "modified-value!";
 
 				result = this.obj.getAssociation("associatedObjects", []);
-				equal(result[0], this.assocElement.getId(), "first returned entry must be the ID of the first associated object even after a copy had been modified");
+				assert.equal(result[0], this.assocElement.getId(), "first returned entry must be the ID of the first associated object even after a copy had been modified");
 			});
 
-			test("Remove from 0..n Association", function() {
+			QUnit.test("Remove from 0..n Association", function(assert) {
 				this.obj.addAssociation("associatedObjects", this.assocElement);
 				this.obj.addAssociation("associatedObjects", this.assocElement2);
 				var result = this.obj.removeAssociation("associatedObjects", this.assocElement);
-				equal(result, this.assocElement.getId(), "returned value must be the ID of the removed object");
+				assert.equal(result, this.assocElement.getId(), "returned value must be the ID of the removed object");
 
 				var remaining = this.obj.getAssociation("associatedObjects", []);
-				ok(remaining, "returned value must not be null");
-				equal(typeof(remaining.length), "number", "returned type must be an array");
-				equal(remaining.length, 1, "returned array must have one entry");
-				equal(remaining[0], this.assocElement2.getId(), "remaining entry must be the ID of the second associated object");
+				assert.ok(remaining, "returned value must not be null");
+				assert.equal(typeof(remaining.length), "number", "returned type must be an array");
+				assert.equal(remaining.length, 1, "returned array must have one entry");
+				assert.equal(remaining[0], this.assocElement2.getId(), "remaining entry must be the ID of the second associated object");
 			});
 
-			test("Remove All from 0..n Association", function() {
+			QUnit.test("Remove from 0..n Association that does not exists or was never used", function (assert) {
+				var result = this.obj.removeAssociation("associatedObjects", this.assocElement);
+
+				assert.equal(result, null, "returned value must be null");
+			});
+
+			QUnit.test("Remove All from 0..n Association", function(assert) {
 				this.obj.addAssociation("associatedObjects", this.assocElement2);
 				this.obj.addAssociation("associatedObjects", this.assocElement); // add one more so removeAll has to remove two objects
 
 				var result = this.obj.removeAllAssociation("associatedObjects");
-				ok(result, "returned value must not be null");
-				equal(typeof(result.length), "number", "returned type must be an array");
-				equal(result.length, 2, "returned array must have two entries");
-				equal(result[0], this.assocElement2.getId(), "first returned entry must be the ID of the first associated object");
-				equal(result[1], this.assocElement.getId(), "second returned entry must be the ID of the second associated object");
+				assert.ok(result, "returned value must not be null");
+				assert.equal(typeof(result.length), "number", "returned type must be an array");
+				assert.equal(result.length, 2, "returned array must have two entries");
+				assert.equal(result[0], this.assocElement2.getId(), "first returned entry must be the ID of the first associated object");
+				assert.equal(result[1], this.assocElement.getId(), "second returned entry must be the ID of the second associated object");
 
 				var remaining = this.obj.getAssociation("associatedObjects", []);
-				ok(remaining.length == 0, "returned value must be an empty array");
+				assert.ok(remaining.length == 0, "returned value must be an empty array");
 			});
 
-			module("Cloning Elements", {
-				setup: function() {
+			QUnit.module("Cloning Elements", {
+				beforeEach: function() {
 					this.obj = new sap.ui.core.TestManagedObject();
 					this.subObj = new sap.ui.core.TestManagedObject();
 					this.template = new sap.ui.core.TestManagedObject();
 				}
 			});
 
-			test("Clone Object", function() {
+			QUnit.test("Clone Object", function(assert) {
 				this.obj.addAggregation("subObjects", this.subObj);
 				var oClone = this.obj.clone("clone");
-				ok(oClone instanceof sap.ui.core.TestManagedObject, "clone of object created");
-				equal(oClone.getId(), this.obj.getId()+"-clone", "id created with correct suffix");
+				assert.ok(oClone instanceof sap.ui.core.TestManagedObject, "clone of object created");
+				assert.equal(oClone.getId(), this.obj.getId()+"-clone", "id created with correct suffix");
 				var result = oClone.getAggregation("subObjects", []);
-				equal(result.length, 1,	"sub objects cloned");
-				ok(result[0] instanceof sap.ui.core.TestManagedObject, "subObject instance of TestManagedObject");
-				equal(result[0].getId(), this.subObj.getId()+"-clone", "id of cloned sub object created with correct suffix");
+				assert.equal(result.length, 1,	"sub objects cloned");
+				assert.ok(result[0] instanceof sap.ui.core.TestManagedObject, "subObject instance of TestManagedObject");
+				assert.equal(result[0].getId(), this.subObj.getId()+"-clone", "id of cloned sub object created with correct suffix");
 			});
 
-			test("Clone Object: cloneChildren",function() {
+			QUnit.test("Clone Object: cloneChildren",function(assert) {
 				this.obj.addAggregation("subObjects", this.subObj);
 				var oClone = this.obj.clone(null,null,{cloneChildren:false});
 				var result = oClone.getAggregation("subObjects", []);
-				equal(result.length, 0,	"no children cloned");
+				assert.equal(result.length, 0,	"no children cloned");
 				oClone = this.obj.clone(null,null,{cloneChildren:true});
 				result = oClone.getAggregation("subObjects", []);
-				equal(result.length, 1,	"children cloned");
+				assert.equal(result.length, 1,	"children cloned");
 			});
 
-			test("Clone Object: cloneBinding:true/false", function() {
+			QUnit.test("Clone Object: cloneBinding:true/false", function(assert) {
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData({testpath:[{test:"test1"},{test:"test2"}]});
 				this.obj.setModel(oModel);
 				this.obj.bindAggregation("subObjects", "/testpath", this.template);
-				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 				var oClone = this.obj.clone(null,null,{cloneChildren:false, cloneBindings:true});
 				var result = oClone.getAggregation("subObjects", []);
-				equal(oClone.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-				equal(result.length, 2,	"children recreated via binding");
+				assert.equal(oClone.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				assert.equal(result.length, 2,	"children recreated via binding");
 				var oClone = this.obj.clone(null,null,{cloneChildren:false, cloneBindings:false});
 				var result = oClone.getAggregation("subObjects", []);
-				equal(result.length, 0,	"children not cloned");
-				equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
+				assert.equal(result.length, 0,	"children not cloned");
+				assert.equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
 				var oClone = this.obj.clone(null,null,{cloneChildren:true, cloneBindings:false});
 				var result = oClone.getAggregation("subObjects", []);
-				equal(result.length, 2,	"children cloned");
-				equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
+				assert.equal(result.length, 2,	"children cloned");
+				assert.equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
 			});
 
-			module("Invalidate")
+			QUnit.module("Invalidate")
 
-			test("ShouldKnowIfInvalidateIsSuppressed", function() {
+			QUnit.test("ShouldKnowIfInvalidateIsSuppressed", function(assert) {
 				var fnTestCase = function(sutSuppressedInvalidate, parentSuppressedInvalidate, expectedResult) {
 					//Arrange
 					var sut, result,
@@ -894,7 +1767,7 @@
 					result = sut.isInvalidateSuppressed();
 
 					//Assert
-					strictEqual(result, expectedResult, "invalidate is supressed")
+					assert.strictEqual(result, expectedResult, "invalidate is supressed")
 				};
 
 
@@ -907,15 +1780,15 @@
 
 			});
 
-			test("ShouldInvalidateWhenSettingAnAggregation", function() {
-				
+			QUnit.test("ShouldInvalidateWhenSettingAnAggregation", function(assert) {
+
 				//Arrange
 				sap.ui.core.Element.extend("sap.test.Dummy", { metadata : {
 					aggregations : {
 						"someAggregation": { type: "sap.test.Dummy", multiple: false }
 					}
 				}});
-				
+
 				var fnTestCase = function(supressInvalidate) {
 
 					var sut,
@@ -933,15 +1806,15 @@
 					sut.setAggregation("someAggregation",child,supressInvalidate);
 
 
-					strictEqual(invalidateWasCalled,!supressInvalidate,"invalidate was not called");
+					assert.strictEqual(invalidateWasCalled,!supressInvalidate,"invalidate was not called");
 				};
 
 				fnTestCase(true);
 				fnTestCase(false);
 			});
 
-			module("bind Object", {
-				setup: function() {
+			QUnit.module("bind Object", {
+				beforeEach: function() {
 					this.obj = new sap.ui.core.TestManagedObject();
 					this.subObj = new sap.ui.core.TestManagedObject();
 					this.subObj2 = new sap.ui.core.TestManagedObject();
@@ -950,15 +1823,64 @@
 					this.obj.setModel(oModel);
 				}
 			});
-			test("Bind object/pass event handler", function() {
+
+			QUnit.test("Cleanup on destroy", function(assert) {
+				var iExistingBindings = oModel.aBindings.length;
+
+				this.obj.bindObject({path:"/list/0"});
+				this.obj.bindObject({path:"late>/list/0"});
+				this.obj.bindObject({path:"never>/list/0"});
+				this.obj.bindProperty("value", "value");
+				this.obj.bindProperty("intValue", "late>intValue");
+				this.obj.bindProperty("stringValue", "never>value");
+
+				// until now, only the default model bindings should exist
+				assert.ok(typeof this.obj.mBindingInfos === 'object' && Object.keys(this.obj.mBindingInfos).length === 3, "there should be 3 binding infos");
+				assert.ok(typeof this.obj.mObjectBindingInfos === 'object' && Object.keys(this.obj.mObjectBindingInfos).length === 3, "there should be 3 bound objects");
+				assert.ok(typeof this.obj.mObjectBindingInfos.undefined === 'object' && this.obj.mObjectBindingInfos.undefined.binding, "there should be a ContextBinding for the default model");
+				assert.ok(typeof this.obj.mObjectBindingInfos.late === 'object' && !this.obj.mObjectBindingInfos.late.binding, "there should be no ContextBinding yet for the late model");
+				assert.ok(typeof this.obj.mObjectBindingInfos.never === 'object' && !this.obj.mObjectBindingInfos.never.binding, "there should be no ContextBinding yet for the never model");
+
+				// after setting the late model, the corr. binding should exist
+				this.obj.setModel(oModel, 'late');
+				assert.ok(typeof this.obj.mBindingInfos === 'object' && Object.keys(this.obj.mBindingInfos).length === 3, "there still should be 3 binding infos");
+				assert.ok(typeof this.obj.mObjectBindingInfos === 'object' && Object.keys(this.obj.mObjectBindingInfos).length === 3, "there still should be 3 bound objects");
+				assert.ok(typeof this.obj.mObjectBindingInfos.undefined === 'object' && this.obj.mObjectBindingInfos.undefined.binding, "there still should be a ContextBinding for the default model");
+				assert.ok(typeof this.obj.mObjectBindingInfos.late === 'object' && this.obj.mObjectBindingInfos.late.binding, "there should be a ContextBinding now for the late model");
+				assert.ok(typeof this.obj.mObjectBindingInfos.never === 'object' && !this.obj.mObjectBindingInfos.never.binding, "there still should be no ContextBinding for the never model");
+
+				// after destroying the object, all bindings should have gone
+				this.obj.destroy();
+				assert.ok(this.obj.mBindingInfos == null || Object.keys(this.obj.mBindingInfos).length === 0, "there should be no more binding infos");
+				assert.ok(this.obj.mObjectBindingInfos == null || Object.keys(this.obj.mObjectBindingInfos).length === 0, "there should be no more bound objects");
+				assert.equal(oModel.aBindings.length, iExistingBindings, "there should be the same number of bindings in the model as before starting the test");
+			});
+
+			QUnit.test("Bind object/pass event handler", function(assert) {
 				this.obj.bindObject({path:"/list/0", events:{change:fnChange}});
-				equal(changed,true,"handler attached/change event fired");
+				assert.equal(changed,true,"handler attached/change event fired");
 				changed = false;
 			});
 
-			module("ManagedObjectMetadata");
+			QUnit.test("Bind object with empty path", function(assert) {
+				var oContext = oModel.createBindingContext("/list/0");
+				this.obj.bindObject({path:"", events:{change:fnChange}});
+				this.obj.setBindingContext(oContext);
+				assert.equal(changed,true,"handler attached/change event fired");
+				assert.ok(this.obj.getObjectBinding().getBoundContext() === oContext, "Bound context equals set context");
+				changed = false;
+				this.obj.setBindingContext(null);
+			});
 
-			test("Check for generated IDs", function() {
+			QUnit.module("ManagedObjectMetadata", {
+				beforeEach: function() {
+					this.obj = new sap.ui.core.TestManagedObject();
+					this.obj2 = new sap.ui.core.TestManagedObjectDerived();
+					this.obj3 =  new sap.test.TestManagedObject();
+				}
+			});
+
+			QUnit.test("Check for generated IDs", function(assert) {
 				var mIdChecks = {
 					"foo--__bar04--baz": true,
 					"foo--__bar04": true,
@@ -975,7 +1897,7 @@
 					var isGenerated = mIdChecks[sId];
 					var isDetected = sap.ui.base.ManagedObjectMetadata.isGeneratedId(sId);
 
-					ok(isGenerated === isDetected,
+					assert.ok(isGenerated === isDetected,
 						"Id \"" + sId + "\" is " + (isGenerated ? "generated" : "not generated") +
 						", was detected as "+ (isDetected ? "generated" : "not generated")
 					);
@@ -984,13 +1906,145 @@
 
 			});
 
+			QUnit.test("Check Metadata defaults", function(assert) {
+				assert.ok(this.obj.getMetadata().getDefaultAggregation() === this.obj.getMetadata().getAggregation("singleAggr"), "singleAggr is defaultAggregation");
+				assert.ok(this.obj.getMetadata().getDefaultProperty() === this.obj.getMetadata().getDefaultProperty("value"), "value is defaultProperty");
+				assert.ok(this.obj.getMetadata().getDefaultAggregationName() === "singleAggr", "singleAggr is defaultAggregationName");
+				assert.ok(this.obj.getMetadata().getDefaultPropertyName() === "value", "value is defaultPropertyName");
+
+				assert.ok(this.obj2.getMetadata().getDefaultAggregation() === this.obj.getMetadata().getAggregation("singleAggr"), "derived correctly, singleAggr is defaultAggregation");
+				assert.ok(this.obj2.getMetadata().getDefaultProperty() === this.obj.getMetadata().getDefaultProperty("value"), "derived correctly, value is defaultProperty");
+				assert.ok(this.obj2.getMetadata().getDefaultAggregationName() === "singleAggr", "derived correctly, singleAggr is defaultAggregationName");
+				assert.ok(this.obj2.getMetadata().getDefaultPropertyName() === "value", "derived correctly, value is defaultPropertyName");
+
+				assert.ok(this.obj3.getMetadata().getDefaultAggregation() === undefined, "undefined defaultAggregation");
+				assert.ok(this.obj3.getMetadata().getDefaultProperty() === undefined, "undefined defaultProperty");
+				assert.ok(this.obj3.getMetadata().getDefaultAggregationName() === null, "empty defaultAggregationName");
+				assert.ok(this.obj3.getMetadata().getDefaultPropertyName() === null, "empty defaultPropertyName");
+			});
+
+			QUnit.test("Should keep the exception stack", function (assert) {
+				assert.expect(2);
+				function failingNamedFunction () {
+					throw new Error("oh nose")
+				}
+
+				var FailingManagedObject = sap.ui.base.ManagedObject.extend("sap.ui.namespace.for.unitTests.FailingManagedObject",{
+					init: function () {
+						failingNamedFunction();
+					}
+				});
+
+				// cannot use QUnit.assert.throws since the stack is not exposed here
+				// this test cannot test the original problem that the exceptions source was not visible when try catch was used
+				try {
+					new FailingManagedObject("myId");
+				} catch (ex) {
+					assert.ok(ex.stack.indexOf("failingNamedFunction" > -1), "contained the named function in the stack");
+				}
+
+				assert.ok(!sap.ui.getCore().byId("myId"), "object was deregistered");
+			});
+
+			QUnit.module("Contextual settings", {
+				beforeEach: function() {
+					this.obj1 = new sap.ui.core.TestManagedObject();
+					this.obj2 = new sap.ui.core.TestManagedObject();
+				},
+				afterEach: function() {
+					this.obj1.destroy();
+					this.obj2.destroy();
+				}
+			});
+
+			QUnit.test("Constructor and singleton", function(assert) {
+				assert.ok(this.obj1._oContextualSettings, "A managed object has contextual settings by default");
+				assert.equal(this.obj1._getContextualSettings(), sap.ui.base.ManagedObject._defaultContextualSettings, "The singleton object is used for the default contextual settings");
+			});
+
+			QUnit.test("Application of contextual settings", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				var oSpy = this.spy(sap.ui.base.ManagedObject.prototype, "_onContextualSettingsChanged");
+
+				assert.ok(jQuery.isEmptyObject(this.obj1._getContextualSettings()), "Initially the contextual settings object is empty");
+
+				this.obj1._applyContextualSettings(oCustomSettings);
+				var oReadSettings = this.obj1._getContextualSettings();
+
+				assert.ok(oReadSettings === oCustomSettings, "Applied contextual settings on an object are saved on it");
+				assert.ok(oSpy.calledOnce, "Hook method called");
+
+				oSpy.restore();
+			});
+
+			QUnit.test("Propagation for single aggregations", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				// First add children
+				this.obj1.setAggregation("singleAggr", this.obj2);
+
+				// Then apply settings to the parent
+				this.obj1._applyContextualSettings(oCustomSettings);
+
+				var oReadSettings = this.obj2._getContextualSettings();
+				assert.ok(oReadSettings === oCustomSettings, "Contextual settings are propagated to single aggregations");
+			});
+
+			QUnit.test("Propagation for multiple aggregations", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				// First add children
+				this.obj1.addAggregation("subObjects", this.obj2);
+
+				// Then apply settings to the parent
+				this.obj1._applyContextualSettings(oCustomSettings);
+
+				var oReadSettings = this.obj2._getContextualSettings();
+				assert.ok(oReadSettings === oCustomSettings, "Contextual settings are propagated to multiple aggregations");
+			});
+
+
+			QUnit.test("Children receive the contextual settings of parents", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				var oSpy = this.spy(sap.ui.base.ManagedObject.prototype, "_onContextualSettingsChanged");
+
+				// First apply settings
+				this.obj1._applyContextualSettings(oCustomSettings);
+
+				// Then add children
+				this.obj1.setAggregation("singleAggr", this.obj2);
+
+				var oReadSettings = this.obj2._getContextualSettings();
+
+				assert.equal(this.obj1._getContextualSettings(), this.obj2._getContextualSettings(), "Contextual settings for both managed objects are the same js object");
+				assert.equal(oSpy.callCount, 2, "Hook method called for both managed objects");
+
+				oSpy.restore();
+			});
+
+			QUnit.test("Removing a managed object from the tree restores the default contextual settings", function(assert) {
+				var oCustomSettings = {mySetting: 1};
+
+				// First apply settings
+				this.obj1._applyContextualSettings(oCustomSettings);
+
+				// Then add children
+				this.obj1.setAggregation("singleAggr", this.obj2);
+
+				var oReadSettings = this.obj2._getContextualSettings();
+
+				assert.ok(oReadSettings === oCustomSettings, "Initially the child has the parent's contextual settings");
+
+				this.obj1.setAggregation("singleAggr", null);
+
+				assert.ok(this.obj2._getContextualSettings() === sap.ui.base.ManagedObject._defaultContextualSettings, "Child now has the default contextual settings");
+
+			});
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit Page for sap.ui.base.ManagedObject</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
-		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="qunit"></div>
 	</body>
 </html>

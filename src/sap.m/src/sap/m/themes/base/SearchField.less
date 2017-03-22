@@ -1,20 +1,25 @@
-/* ============================================= */
-/* CSS for control     sap.m/SearchField.control */
-/* Styling is in general reused from sap.m.Input */
-/* ============================================= */
+/* ================================== */
+/* CSS for control sap.m/SearchField  */
+/* Base theme                         */
+/* ================================== */
 
-.sapMSF{
+.sapMSF {
 	position: relative;
 	-moz-user-modify: read-only;
 	-webkit-user-modify: read-only;
 	-webkit-user-select: none;
 	user-select: none;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 7rem;
+	height: 3rem;
+	background: transparent;
+	padding: 0.25rem 0;
 }
 
 .sapMSFI[type="search"] {
 	font-size: 0.88em;
 	-webkit-appearance:none;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	width: 100%;
 }
@@ -46,4 +51,223 @@ input.sapMSFI[type="search"]:focus {
 .sapMSFPlaceholder {
 	font-size: 0.88em;
 	display: none;
+}
+
+.sapMSplitContainerMaster .sapMSF {
+	padding-right: 1px;
+}
+
+.sapMSFF {
+	box-sizing: border-box;
+	height: 2.5rem;
+	line-height: 2.375rem;
+	border: 1px solid @sapUiFieldBorderColor;
+	background: @sapUiFieldBackground;
+	vertical-align: top;
+	width: 100%;
+	position: relative;
+	padding-left: 0.625rem;
+	padding-right: 4.75rem;
+}
+
+.sapMSFF.sapMSFNS { /* no search button */
+	padding-right: 2.375rem;
+}
+
+/* Block elements do not work with bar layout */
+.sapMBar .sapMSF {
+	display : inline-block;
+}
+
+.sapMSFF>form>input {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sapMFocus>.sapMSFF {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+:not(.sapMSFDisabled) > .sapMSFF:hover {
+	border-color: @sapUiFieldHoverBorderColor;
+}
+
+.sapMSFI {
+	color: @sapUiFieldTextColor;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	background: transparent;
+	width: 100%;
+	height: 2.375rem;
+	border: none;
+	outline: none;
+	padding: 0;
+	margin: 0;
+	text-indent: 0.125rem;
+	vertical-align: top;
+	text-overflow: ellipsis;
+}
+
+.sapMSFI.sapMSFIA4{
+	-webkit-user-modify: read-write-plaintext-only;
+}
+
+.sapMSFI[type='search']{
+	font-size: 0.875rem;
+}
+
+/* remove clear x button in webkit */
+.sapMSFI[type="search"]::-webkit-search-cancel-button{
+	-webkit-appearance: none;
+	display: none;
+}
+
+/* remove clear x button in IE */
+.sapMSFI::-ms-clear{
+	display: none;
+}
+
+/* custom buttons */
+.sapMSFB {
+	position: absolute;
+	width: 2.38rem;
+	height: 2.38rem; /* due to incorrect rounding in Windows Phone, it should be 2.38 instead of 2.375 */
+	line-height: 2.38rem;
+	font-size: 1.125rem;
+	color: @sapUiContentIconColor;
+	text-align: center;
+	cursor: default;
+	margin:0;
+	padding:0;
+	right: 0;
+	top: 0;
+}
+
+.sapMSFB:after {
+	speak: none;
+	font-weight: normal;
+	font-family: 'SAP-icons';
+	-webkit-font-smoothing: antialiased;
+}
+
+/* reset button */
+.sapMSFR:not(.sapMSFNS) {
+	right: 2.375rem;
+}
+
+.sapMSFR {
+	visibility: hidden;
+}
+
+.sapMSFR:after {
+	content: "\e1c7";
+}
+
+.sapMSFVal>.sapMSFF>.sapMSFR,
+:not(.sapMSFVal):not(.sapMFocus)>.sapMSFReload>.sapMSFR {
+	visibility: visible;
+}
+
+/* search icon in place of the reset button */
+:not(.sapMSFVal)>.sapMSFReload>.sapMSFR:after {
+	content: "\e00d";
+}
+
+/* search button */
+.sapMSFS:after {
+	content: "\e00d";
+}
+
+/* refresh icon in some cases */
+:not(.sapMFocus)>.sapMSFReload>.sapMSFS:after {
+	content: "\e00a";
+}
+
+/*grouping is not allowed here*/
+.sapMSFI::-webkit-input-placeholder {
+	color:		   @sapUiFieldPlaceholderTextColor;
+	font-size:	   @sapMFontMediumSize;
+	font-style:	   italic;
+}
+
+.sapMSFI:-ms-input-placeholder {
+	color:		   @sapUiFieldPlaceholderTextColor;
+	font-size:	   @sapMFontMediumSize;
+	font-style:	   italic;
+}
+
+.sapMSFI::-moz-placeholder {
+	color:		   @sapUiFieldPlaceholderTextColor;
+	font-size:	   @sapMFontMediumSize;
+	font-style:	   italic;
+}
+
+/* custom placeholder if not natively supported (IE9) */
+.sapMSF>.sapMSFF>.sapMSFPlaceholder {
+	display: block;
+	color: @sapUiFieldPlaceholderTextColor;
+	font-size: @sapMFontMediumSize;
+	font-style: italic;
+	position: absolute;
+	bottom: 0;
+	left: 1rem;
+	height: 2.375rem;
+}
+
+.sapMSF.sapMSFVal>.sapMSFF>.sapMSFPlaceholder,
+.sapMSF.sapMFocus>.sapMSFF>.sapMSFPlaceholder {
+	display: none;
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+
+	.sapMSF {
+		height: 2rem;
+		padding: 0.1875rem 0;
+		min-width: 6rem;
+	}
+
+	.sapMSFF {
+		height: 1.625rem;
+		line-height: 1.5rem;
+		padding-left: 0.375rem;
+		padding-right: 4rem;
+	}
+
+	.sapMSFF.sapMSFNS { /* no search button */
+		padding-right: 2.38rem;
+	}
+
+	/* input */
+	.sapMSFI {
+		height: 1.5rem;
+	}
+
+	/* custom buttons */
+	.sapMSFB {
+		width: 2rem;
+		height: 1.5rem;
+		font-size: 1rem;
+		text-align: center;
+		margin:0;
+		padding:0;
+		line-height: 1.5rem;
+	}
+
+	.sapMSFR:not(.sapMSFNS) {
+		right: 2rem;
+	}
+
+	/* custom placeholder if not natively supported (IE9) */
+	.sapMSF>.sapMSFF>.sapMSFPlaceholder {
+		left: 0.5rem;
+		height: 1.5rem;
+	}
+
+}
+
+html[dir=rtl] .sapMSF {
+	transform: translateZ(0);
 }

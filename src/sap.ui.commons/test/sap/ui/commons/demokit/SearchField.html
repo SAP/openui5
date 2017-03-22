@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.SearchField">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
-	  <meta name="keywords" content="SearchField Search Suggestion SearchProvider Open Search Protocol" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+	  <meta name="keywords" content="SearchField Search Suggestion SearchProvider Open Search Protocol">
 		<title>SearchField - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -13,7 +13,7 @@
 				>
 		</script>
 		<script src="../../../../../js/utils.js"></script>
-		<style type="text/css">
+		<style>
 			#liveSearchLB, #suggestSearch2 {
 				margin-left: 10px;
 			}
@@ -154,38 +154,38 @@ oSearch.placeAt("sample4");
 		or presses the Enter key, a <code>search</code> event is fired based on the user's input.
 		</p>
 		<div code-sample="sample1" script="SimpleSearchField"></div>
-		<br/>
+		<br>
 
 		<p>The SearchField control can also be used to implement a live search or a filter functionality like in the following example. The <code>suggest</code> event
 		of the control is used to immediately update the list of European countries.
 		</p>
 		<p>
 		<b>Note:</b> Please note that the value of the SearchField is different from the value that
-		is set as event-parameter. The value of the SearchField that is returned by the 
+		is set as event-parameter. The value of the SearchField that is returned by the
 		getValue-method of the SearchField returns the value that was last set on the field after
 		the user pressed enter or changed the focus away from the SearchField. The value-parameter
 		of the suggest-event contains the string that is currently shown on screen. Always use the
-		event-value (<code>oEvent.getParameter("value")</code>) instead of the control-value 
-		(<code>oSearch.getValue()</code>) when calculating suggestions.<br/>
-		See also: The 
+		event-value (<code>oEvent.getParameter("value")</code>) instead of the control-value
+		(<code>oSearch.getValue()</code>) when calculating suggestions.<br>
+		See also: The
 		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TextField.html" >liveChange- and change-event</a>
 		of the underlying TextField control for more information about the value difference.
 		</p>
 		<div code-sample="sample2" script="LiveSearchField"></div>
-		<br/>
+		<br>
 
 		<p>The next example uses the same data (European countries) as in the example before. A suggestion list is opened when the user types more than
 		two characters (for this, a configurable parameter is available via property <code>startSuggestion</code>). The list expander can optionally be shown or hidden (property <code>showListExpander</code>).
 		</p>
 		<div code-sample="sample3" script="SuggestSearchField"></div>
-		<br/>
+		<br>
 
 		<p>The SearchField control also allows to attach a <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.search.SearchProvider.html" >SearchProvider</a> which takes over
 		the suggestion handling. This class is the abstract parent for concrete SearchProvider implementations. Currently the <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.search.OpenSearchProvider.html" >OpenSearchProvider</a> is
 		the only concrete sub class. The <code>suggestUrl</code> property of the OpenSearchProvider allows to specify a URL which is called to request the suggestions. The returned data
 		must be like specified in the <a href="http://www.opensearch.org" >Open Search Protocol</a> where the <a href="http://www.opensearch.org/Specifications/OpenSearch/Extensions/Suggestions/1.1#Response_format" >JSON</a>
-		and the <a href="http://msdn.microsoft.com/en-us/library/cc891508%28v=vs.85%29.aspx" >XML</a> response format are supported (see property <code>suggestType</code>).<br/>
-		<b>Note:</b> Keep potential cross domain issues in mind when you specify a suggestion URL (e.g. use a proxy servlet).<br/>
+		and the <a href="http://msdn.microsoft.com/en-us/library/cc891508%28v=vs.85%29.aspx" >XML</a> response format are supported (see property <code>suggestType</code>).<br>
+		<b>Note:</b> Keep potential cross domain issues in mind when you specify a suggestion URL (e.g. use a proxy servlet).<br>
 		The following example shows the connection to the suggestion functionality of the Demo Kit search.
 		</p>
 		<div code-sample="sample4" script="ProviderSearchField"></div>

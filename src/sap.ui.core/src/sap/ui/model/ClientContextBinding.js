@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './ContextBinding'],
-	function(jQuery, ContextBinding) {
+sap.ui.define(['./ContextBinding'],
+	function(ContextBinding) {
 	"use strict";
 
 
@@ -21,9 +21,10 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.ClientContextBinding
+	 * @extends sap.ui.model.ContextBinding
 	 */
 	var ClientContextBinding = ContextBinding.extend("sap.ui.model.ClientContextBinding", /** @lends sap.ui.model.ClientContextBinding.prototype */ {
-	
+
 		constructor : function(oModel, sPath, oContext, mParameters, oEvents){
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
 			var that = this;
@@ -32,9 +33,9 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 				that.oElementContext = oContext;
 			});
 		}
-	
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
 	 */
@@ -50,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 			}
 		}, true);
 	};
-	
+
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
 	 */
@@ -62,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 			that._fireChange();
 		}, true);
 	};
-	
+
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.setContext
 	 */
@@ -79,4 +80,4 @@ sap.ui.define(['jquery.sap.global', './ContextBinding'],
 
 	return ClientContextBinding;
 
-}, /* bExport= */ true);
+});

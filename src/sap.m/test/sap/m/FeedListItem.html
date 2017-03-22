@@ -1,48 +1,48 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>sap.m.FeedListItem Test</title>
-		<script id='sap-ui-bootstrap' type='text/javascript'
+		<script src="shared-config.js"></script>
+		<script id='sap-ui-bootstrap'
 			src='../../../resources/sap-ui-core.js'
-				data-sap-ui-theme='sap_bluecrystal'
 				data-sap-ui-libs='sap.m'>
 		</script>
-		<script type="text/javascript">
-		
+		<script>
+
 		var oList2 = new sap.m.List({
 			inset : true
 		});
-		
+
 		var data = {
 			navigation : [ {
 				title : "Travel Expend",
 				description : "Access the travel expend workflow",
 				icon : "images/travel_expend.png",
 				iconInset : false,
-				type : "Navigation",
+				type : "Active",
 				press : 'detailPage'
 			}, {
 				title : "Travel and expense report",
 				description : "Access travel and expense reports",
 				icon : "images/travel_expense_report.png",
 				iconInset : false,
-				type : "Navigation",
+				type : "Detail",
 				press : 'detailPage'
 			}, {
 				title : "Travel Request",
 				description : "Access the travel request workflow",
 				icon : "images/travel_request.png",
 				iconInset : false,
-				type : "Navigation",
+				type : "DetailAndActive",
 				press : 'detailPage'
 			}, {
 				title : "Work Accidents",
 				description : "Report your work accidents",
 				icon : "images/wounds_doc.png",
 				iconInset : false,
-				type : "Navigation",
+				type : "Inactive",
 				press : 'detailPage'
 			}, {
 				title : "Travel Settings",
@@ -53,7 +53,7 @@
 				press : 'detailPage'
 			} ]
 		};
-		
+
 		var oItemTemplate1 = new sap.m.StandardListItem({
 			title : "{title}",
 			description : "{description}",
@@ -61,9 +61,8 @@
 			iconInset : "{iconInset}",
 			type : "{type}"
 		});
-		
-		function bindListData(data, itemTemplate, list)
-		{
+
+		function bindListData(data, itemTemplate, list) {
 			var oModel = new sap.ui.model.json.JSONModel();
 			// set the data for the model
 			oModel.setData(data);
@@ -73,9 +72,9 @@
 			// bind Aggregation
 			list.bindAggregation("items", "/navigation", itemTemplate);
 		}
-		
+
 		bindListData(data, oItemTemplate1, oList2);
-		
+
 		var oLeftButton = new sap.m.Button({
 			text: "Modal",
 			type: sap.m.ButtonType.Reject,
@@ -83,7 +82,7 @@
 				oPopover.setModal(!oPopover.getModal());
 			}
 		});
-		
+
 		var oRightButton = new sap.m.Button({
 			text: "Close",
 			type: sap.m.ButtonType.Accept,
@@ -91,16 +90,15 @@
 				oPopover.close();
 			}
 		});
-		
-		var footer = new sap.m.Bar({ 
-			contentLeft: [],	
+
+		var footer = new sap.m.Bar({
+			contentLeft: [],
 			contentMiddle: [new sap.m.Button({icon: "images/favorite@2x.png"}),
-			                new sap.m.Button({icon: "images/feed@2x.png"}),
-			                new sap.m.Button({icon: "images/flag@2x.png"})],
+							new sap.m.Button({icon: "images/feed@2x.png"}),
+							new sap.m.Button({icon: "images/flag@2x.png"})],
 			contentRight: []
 		});
-		
-		
+
 		var oPopover = new sap.m.Popover({
 			placement: sap.m.PlacementType.Auto,
 			title: "Popover",
@@ -124,21 +122,18 @@
 				oList2
 			]
 		});
-		
-		
-		
-		
+
 		var oFeedList = new sap.m.List("oFeedItemList", {
-		    mode: "SingleSelectMaster",
-		    //showSeparators: "None",
+			mode: "SingleSelectMaster",
+			//showSeparators: "None",
 		});
-		
-		
+
+
 		var fnOpenPopup = function(oControlEvent) {
-			oPopover.openBy(oControlEvent.getParameters().domRef);
+			oPopover.openBy(oControlEvent.getParameter("getDomRef")());
 		};
-		
-		
+
+
 		var oFeedListItemTemplate = new sap.m.FeedListItem({
 			type: "{type}",
 			icon : "{icon}",
@@ -150,13 +145,14 @@
 			iconActive: "{iconActive}",
 			info: "{info}",
 			timestamp : "{timestamp}",
+			type : "{type}",
 			maxCharacters : 100,
 			senderPress : fnOpenPopup,
-			iconPress : fnOpenPopup
+			iconPress : fnOpenPopup,
+			convertLinksToAnchorTags: sap.m.LinkConversion.All
 		});
 
-		function bindFeedListData(data, itemTemplate, list)
-		{
+		function bindFeedListData(data, itemTemplate, list) {
 			var oModel = new sap.ui.model.json.JSONModel();
 			// set the data for the model
 			oModel.setData(data);
@@ -166,16 +162,22 @@
 			// bind Aggregation
 			list.bindAggregation("items", "/chunks", itemTemplate);
 		}
-		
+
 		jQuery.sap.require("sap.ui.core.IconPool");
 		var sURI = sap.ui.core.IconPool.getIconURI("personnel-view");
-		
-		
-		
 		var feedData = {
 				chunks : [ {
-					icon: "images/male.jpg",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. This is a very long URL: http://this.is.some.very.long.url.sap.com/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit#LoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElit Quisque ut ipsum est.",
+					icon: "images/Woman_04.png",
+					text: 'Automatically recognized link: www.sap.com - links open in a new window',
+					sender: "Jeremy Dash",
+					senderActive: true,
+					iconActive: true,
+					timestamp: "March 03, 2013",
+					info: "Approved",
+					type: sap.m.ListType.Active,
+				}, {
+					icon: "images/Woman_04.png",
+					text: '<h3>subheader</h3>     <p>link: <a href="//www.sap.com">link to sap.com</a> - links open in a new window.</p> <p> Automatically recognized link: www.sap.com - links open in a new window.</p>     <p>paragraph: <strong>strong</strong> and <em>emphasized</em>.</p>     <p>list:</p>     <ul><li>list item 1</li><li>list item 2<ul><li>sub item 1</li><li>sub item 2</li></ul></li></ul>     <p>pre:</p><pre>abc    def    ghi</pre>     <p>code: <code>var el = document.getElementById("myId");</code></p>     <p>cite: <cite>a reference to a source</cite></p>     <dl><dt>definition:</dt><dd>definition list of terms and descriptions</dd></dl>',
 					sender: "Jeremy Dash",
 					senderActive: true,
 					iconActive: true,
@@ -184,41 +186,41 @@
 					type: sap.m.ListType.Active,
 				}, {
 					icon: sURI,
-					text: "This FeedListItem displays an ImagePool image. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
+					text: "This FeedListItem displays an ImagePool image and it is clickable. <strong>Strong Text</strong> and another one <em>Italic text</em> metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
 					sender: "Christopher Kent",
 					senderActive: true,
 					iconActive: true,
 					timestamp: "Dec 04, 2012",
 					info: "Rejected",
-					type: sap.m.ListType.Active,
+					type: sap.m.ListType.Detail,
 				}, {
 					icon: "images/female.jpg",
-					text: "This FeedListItem comes with senderActive = false and iconActive = false. In hac habitasse platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
+					text: "This <em>FeedListItem</em> comes with <strong>senderActive</strong> = false and iconActive = false and it is not clickable. In hac habitasse <a href='//www.sap.com'>link</a> platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
 					sender: "Claire Jones",
 					senderActive: false,
 					iconActive: false,
 					timestamp: "Dec 02, 2012",
 					info: "Waiting for Approval",
-					type: sap.m.ListType.Navigation,
+					type: sap.m.ListType.DetailAndActive,
 				}, {
-					text: "This FeedListItem comes without an image and has a very long info text",
+					text: "This <a href='//www.sap.com'>FeedListItem</a> comes without an image, it is not clickable and has a very long info text",
 					sender: "Christine Noah",
 					senderActive: true,
-					iconActive: true,
+					iconActive: false,
 					timestamp: "Nov 23, 2012",
 					info: "Waiting for Approval and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting",
-					type: sap.m.ListType.Navigation,
+					type: sap.m.ListType.Inactive,
 				}, {
 					icon: "images/male.jpg",
 					activeIcon: "images/female.jpg",
-					text: "This one has no date",
+					text: "This one has no date and it is not clickable",
 					sender: "Frank Black",
 					senderActive: true,
-					iconActive: true,
+					iconActive: false,
 					info: "New",
-					type: sap.m.ListType.Active,
+					type: sap.m.ListType.Navigation,
 				}, {
-					text: "This one shows the default image",
+					text: "This one shows the default image and it is clickable",
 					sender: "Frank Black",
 				}, {
 					text: "And this one does without info",
@@ -271,9 +273,9 @@
 					info: "Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved ",
 				}]
 			};
-		
+
 		bindFeedListData(feedData, oFeedListItemTemplate, oFeedList);
-		
+
 		var oRerenderButton = new sap.m.Button({
 			text : "Invalidate / Rerender",
 			press : function (oEvent) {
@@ -292,11 +294,12 @@
 		});
 
 		appFeedList.addPage(feedListPage);
-		appFeedList.placeAt("body");
-		
+		appFeedList.placeAt("content");
+
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
+		<div id="content"></div>
 	</body>
 </html>

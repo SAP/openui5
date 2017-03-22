@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html style="height: 100%">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>DesignTime - sap.ui.dt</title>
 
@@ -10,41 +10,53 @@
 				height : 100%;
 			}
 			.sapUiView {
-				height: 100%;	
+				height: 100%;
 			}
 		</style>
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-noConflict="true"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
 				data-sap-ui-resourceroots='{"dt.view": "qunit/testdata/designtime/"}'
 				>
 		</script>
 
 		<script>
-
-			jQuery.sap.require("sap.ui.dt.adapter");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
 			jQuery.sap.require("sap.ui.dt.DesignTime");
-
-
+			jQuery.sap.require("sap.ui.dt.plugin.TabHandling");
+			jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
+			jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
+			jQuery.sap.require("sap.ui.dt.plugin.CutPaste");
 			var oView = sap.ui.xmlview("testView", "dt.view.Test2");
 			oView.placeAt("content");
 
-			var oDesignTime = new sap.ui.dt.DesignTime({
-				rootControl : oView
-			});
+			var aMOVABLE_TYPES = ["sap.m.Button", "sap.m.Label", "sap.m.StandardListItem", "sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer", "sap.m.ObjectHeader", "sap.m.ObjectAttribute"]
 
-			oDesignTime.ensureLoadedThen(function() {
-				jQuery.sap.log.debug("DesignTime ready");
+			jQuery(function() {
+				var oTabHandlingPlugin = new sap.ui.dt.plugin.TabHandling();
+				var oSelectionPlugin = new sap.ui.dt.plugin.MouseSelection();
+				var oDragPlugin = new sap.ui.dt.plugin.ControlDragDrop({
+					draggableTypes : aMOVABLE_TYPES
+				});
+				var oCutPastePlugin = new sap.ui.dt.plugin.CutPaste({
+					movableTypes : aMOVABLE_TYPES
+				});
+
+				var oDesignTime = new sap.ui.dt.DesignTime({
+					rootElements : [oView],
+					plugins : [
+						oSelectionPlugin,
+						oCutPastePlugin,
+						oDragPlugin
+					]
+				});
 			});
-			
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
-		Press "ctrl" key to switch drop zones when a control is dragged
 		<div id="content"></div>
 	</body>
 </html>

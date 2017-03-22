@@ -1,0 +1,40 @@
+describe("sap.m.MessageBox", function () {
+	var jsCode = "";
+
+	it("Should load test page", function () {
+		expect(takeScreenshot()).toLookAs("initial");
+	});
+
+	["INFORMATION", "WARNING", "ERROR", "SUCCESS", "QUESTION"].forEach(function (type) {
+		it("Should open MessageBox of type " + type, function () {
+			element(by.id("selectType")).click();
+			element(by.id("type" + type)).click();
+			["OK", "CANCEL"].forEach(function (value) {
+				jsCode = "sap.ui.getCore().byId('mBox" + value + "').close();";
+				element(by.id("button" + value)).click();
+				expect(takeScreenshot(element(by.id("mBox" + value)))).toLookAs(type + "-mbox-" + value);
+				browser.executeScript(jsCode);
+			});
+		});
+	});
+
+	it("Should open confirm MessageBox", function () {
+		element(by.id("buttonConfirm")).click();
+		expect(takeScreenshot(element(by.id("mBoxConfirm")))).toLookAs("mbox-confirm");
+		browser.executeScript("sap.ui.getCore().byId('mBoxConfirm').close();");
+	});
+
+	it("Should open MessageBox with a very long text", function () {
+		element(by.id("buttonLongText")).click();
+		expect(takeScreenshot(element(by.id("messageBoxId")))).toLookAs("mbox-longtext");
+		browser.executeScript("sap.ui.getCore().byId('messageBoxId').close();");
+	});
+
+	it("Should open MessageBox with show details options", function () {
+		element(by.id("buttonDetails")).click();
+		expect(takeScreenshot(element(by.id("messageBoxId1")))).toLookAs("mbox-details1");
+		browser.executeScript("sap.ui.getCore().byId('messageBoxId1').getContent()[0].getAggregation('items')[1].firePress();");
+		expect(takeScreenshot(element(by.id("messageBoxId1")))).toLookAs("mbox-details2");
+	});
+
+});

@@ -1,0 +1,72 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Table
+		id="results"
+		width="auto"
+		class="sapUiSmallMargin"
+		mode="SingleSelectMaster"
+		selectionChange="onSelectionChange"
+		items="{
+			path: '/groups/0/icons',
+			templateShareable: true
+		}"
+		noDataText="{view>/overviewNoDataText}"
+		growing="true"
+		growingScrollToLoad="true"
+		growingThreshold="{view>/growingThreshold}"
+		updateFinished="onUpdateFinished">
+
+		<columns>
+			<Column id="iconColumn" width="2rem">
+				<Text id="iconColumnTitle" text="{i18n>tableIconColumnTitle}"/>
+			</Column>
+			<Column id="nameColumn" width="20%">
+				<Text id="nameColumnTitle" text="{i18n>tableNameColumnTitle}"/>
+			</Column>
+			<Column
+				id="codeColumn"
+				width="20%"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text id="codeColumnTitle" text="{i18n>tableCodeColumnTitle}"/>
+			</Column>
+			<Column
+				id="tagsColumn"
+				width="35%"
+				minScreenWidth="Desktop"
+				demandPopin="true">
+				<Text id="tagsColumnTitle" text="{i18n>tableTagsColumnTitle}"/>
+			</Column>
+			<Column id="favColumn" width="2rem"/>
+		</columns>
+
+		<items>
+			<ColumnListItem
+				type="Active">
+				<cells>
+					<core:Icon size="2rem" src="sap-icon://{name}" color="Default"/>
+					<Label design="Bold" text="{name}"/>
+					<Text text="sap-icon://{name}"/>
+					<Tokenizer
+						class="sapUiTinyMarginTop"
+						width="100%"
+						tokens="{
+							path: 'tags',
+							templateShareable: true
+						}"
+						editable="false">
+						<Token text="{name}" select="onTagSelect"/>
+					</Tokenizer>
+					<ToggleButton
+						icon="sap-icon://favorite"
+						press="onToggleFavorite"
+						pressed="{
+							path: 'name',
+							formatter: '.formatter.isFavorite'
+						}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

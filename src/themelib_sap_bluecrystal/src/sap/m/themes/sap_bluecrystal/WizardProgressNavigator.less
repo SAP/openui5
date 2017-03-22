@@ -1,48 +1,56 @@
+/* ============================================== */
+/* CSS for control sap.m/WizardProgressNavigator  */
+/* BlueCrystal theme                              */
+/* ============================================== */
+
 .sapMWizardProgressNav {
-	background: @sapUiLightestBG;
-	border-color: @sapUiLightBorder;
+	background: @sapUiGroupContentBackground;
+	border-color: @sapUiGroupContentBorderColor;
 }
 
-.sapMWizardProgressNavAnchor {
-	color: @sapUiElement;
-	background: @sapUiLightestBG;
-	border-color: @sapUiHighlight;
-
-	&:hover {
-		background: darken(@sapUiLightestBG, 5%);
-	}
-
-	&:focus {
-		outline-color: @sapUiFocus;
-	}
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	background: @sapUiButtonHoverBackground;
 }
 
-.sapMWizardProgressNavSeparator::after {
-	border-color: @sapUiHighlight;
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"]:hover .sapMWizardProgressNavAnchorCircle {
+	background: @sapUiHighlight;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-	&::after {
-		background: @sapUiHighlight;
-	}
+.sapMWizardProgressNavAnchor:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: 1px;
+}
 
-	& > .sapMWizardProgressNavAnchor {
-		color: @sapUiTextInverted;
-		background: @sapUiHighlight;
-		border: none;
-	}
+.sapMWizardProgressNavAnchorCircle {
+	color: @sapUiButtonTextColor;
+	background: @sapUiSegmentedButtonBackground;
+	border-color: @sapUiSegmentedButtonSelectedBackground;
+}
+
+.sapMWizardProgressNavAnchorTitle {
+	background: @sapUiGroupContentBackground;
+}
+
+.sapMWizardProgressNavAnchorTitle:hover {
+	color: darken(@sapUiGroupTitleTextColor, 10);
+}
+
+.sapMWizardProgressNavStep::after {
+	border-bottom-color: @sapUiHighlight;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 
 	/* anchors in all steps after the active one have inactive style */
-	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
-		background: @sapUiExtraLightBG;
-		border-color: @sapUiLightBorder;
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
+		color: @sapUiSegmentedButtonIconColor;
+		background: @sapUiButtonBackground;
+		border-color: @sapUiSegmentedButtonBorderColor;
 	}
 
-	/* all separators after the active step have inactive style */
-	& ~ .sapMWizardProgressNavSeparator::after {
-		border-color: @sapUiLightBorder;
+	/* all separators after (and including) the active step have inactive style */
+	&::after,
+	& ~ .sapMWizardProgressNavStep::after {
+		border-bottom-color: @sapUiSegmentedButtonBorderColor;
 	}
 }

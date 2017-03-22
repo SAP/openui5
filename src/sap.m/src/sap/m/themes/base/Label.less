@@ -1,11 +1,13 @@
-
-/* ============================================= */
-/* CSS for control sap.m/Label.control */
-/* ============================================= */
+/* ============================ */
+/* CSS for control sap.m/Label  */
+/* Base theme                   */
+/* ============================ */
 
 .sapMLabel {
-	color: @sapUiText;
-	font-size: @sapUiFontSize;
+	color: @sapUiContentLabelColor;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
 	display: inline-block;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -13,7 +15,8 @@
 	cursor: text;
 }
 
-.sapMLabelBold {
+.sapMLabelBold,
+.sapMLabel.sapMLabelBold {
 	font-weight: bold;
 }
 
@@ -21,9 +24,34 @@
 	max-width: 100%;
 }
 
-.sapMLIBCursor .sapMLabel,
-.sapMLIBCursor + .sapMListTblSubRow .sapMLabel{
+.sapMLIBActionable .sapMLabel{
 	cursor: pointer;
+}
+
+.sapMLabelRequired:before {
+	content:"*";
+	color: @sapUiFieldRequiredColor;
+	font-size: 1.25rem;
+	font-weight: bold;
+	line-height: 0;
+	position: relative;
+	top: 0.15rem;
+}
+
+.sapMIBar-CTX .sapMLabel {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMIBar-CTX.sapMFooter-CTX .sapMLabel {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiPageFooterTextColor;
+}
+
+.sapMLIBActive .sapMLabel,
+.sapMLIBActive .sapMListTblCell .sapMLabel,
+.sapMLIBActive .sapMListTblSubCntRow .sapMLabel{
+	color: @sapUiListActiveTextColor;
 }
 
 /* ============================ */
@@ -31,14 +59,207 @@
 /* ============================ */
 
 /* GridLayout */
-.sapUiGridLabel > .sapMLabel{
+td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 	float: right;
+	position: relative;
+	padding-right: 0.25rem;
 }
 
 /* ResponsiveGridLayout */
 /* make labels right aligned if left from fields*/
-.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
-.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel {
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
 	float: right;
+}
+
+/* ResponsiveLayout */
+/* If label is above the fields it's left aligned, if it's left of the fields it's right aligned */
+.sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel{
+	text-align: end !important; /* to overwrite setting on label */
+	width: 100%; /* to react on touch/click on whole label cell */
+	padding-right: 0.25rem;
+	box-sizing: border-box;
+	position: relative;
+}
+
+/* in the cases text-align: end is set, we position the colon of the label to absolute so it does not get truncated in the ellipsis*/
+td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel:after,
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel:after,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel:after,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel:after,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel:after,
+.sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child:not(.sapUiRFLFullLength) > .sapUiRFLContainerContent > .sapMLabel:after {
+	position: absolute;
+	right: 0;
+}
+
+html[data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel,
+html[data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel {
+	text-align: right !important; /* to overwrite setting on label */
+}
+
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel {
+	text-align: left !important; /* to overwrite setting on label */
+}
+
+.sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel{
+	text-align: start !important; /* to overwrite setting on label */
+	padding-bottom: 2px;
+}
+
+html[data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel,
+html[data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel {
+	text-align: left !important; /* to overwrite setting on label */
+}
+
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel {
+	text-align: right !important; /* to overwrite setting on label */
+}
+
+/* ResponsiveGridLayout */
+.sapUiFormResGridCont > .sapUiFormElementLbl > .sapMLabel{
+	width: 100%;
+}
+
+/* collapse lines in a form */
+.sapUiForm .sapUiFormElementLbl > .sapMLabel{
+	height: auto;
+}
+
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel{
+	/*
+		We guessed the width of a : here. 0.3em seems to be fine in chrome it works without the padding
+		but as long as we do not touch the box-sizing it seems to be fine to set it there too
+		because the padding is outside of the box
+		The use of em is intentional since it has to relate to the current font size applied to the label
+	*/
+	padding-right: 0.3em;
+}
+
+.sapUiForm.sapUiFormEdit .sapUiFormElementLbl > .sapMLabel{
+	vertical-align: top; /* align vertically to multiline texts */
+}
+
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel:after{
+	content:":";
+}
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel:lang(fr):after{
+	content:" :";
+}
+
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel.sapMLabelNoText:after{
+	content: none;
+}
+
+.sapMLIBUnread .sapMLabel,
+.sapMLIBUnread + .sapMListTblSubRow .sapMLabel{
+	font-family: @sapUiFontFamily;
+	font-weight: bold;
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX .sapMLabel {
+	font-style: italic;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapMTB-Info-CTX .sapMLabel.sapMLabelTBHeader {
+	text-shadow: none;
+}
+
+html[dir=rtl] .sapMTB-Info-CTX .sapMLabel {
+	padding-left: 0.125rem; /* prevents truncation of the rightmost symbol in RTL */
+}
+
+/* Transparent Toolbar Context*/
+.sapMTB-Transparent-CTX .sapMLabel{
+	font-weight: @sapUiFontHeaderWeight;
+	font-family: @sapUiFontHeaderFamily;
+	color: @sapUiGroupTitleTextColor;
+}
+
+/* ================================ */
+/* SMALL,  MEDIUM and LARGE DEVICES */
+/* ================================ */
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
+	text-align: end !important; /* to overwrite style set on element */
+	float: none; /* as label has 100% width not needed (will bring wrong alignments on iPad) */
+	position: relative; /* to allow to place ":" at end even if label is truncated */
+}
+
+html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel,
+html[data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+html[data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+html[data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+html[data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
+	text-align: right !important; /* to overwrite style set on element */
+}
+
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
+	text-align: left !important; /* to overwrite style set on element */
+}
+
+/* ========================================================== */
+/* COMPACT + CONDENSED SIZE + SPECIALS FOR SAP.UI.TABLE.TABLE */
+/* ========================================================== */
+
+.sapUiSizeCompact,
+.sapUiSizeCondensed.sapUiTable,
+.sapUiSizeCondensed .sapUiTable {
+	.sapMIBar-CTX.sapMPageHeader .sapMLabel,
+	.sapMDialog-CTX .sapMIBar-CTX .sapMLabel {
+		font-size: @sapMFontHeader6Size;
+	}
+}
+
+.sapUiSizeCompact,
+.sapUiSizeCondensed {
+	.sapUiTableCell .sapMLabel,
+	.sapUiTableColCell > .sapMLabel {
+		font-weight: normal;
+		font-size: @sapMFontHeader6Size;
+	}
+}
+
+.sapUiSizeCondensed {
+	.sapUiTableTd {
+		:not(.sapMRbBLabel):not(.sapMCbLabel) .sapMLabel {
+			line-height: 1.5rem;
+		}
+	}
+}
+
+.sapUiTableCell .sapMLabel,
+.sapUiTableColCell > .sapMLabel {
+	color: @sapUiListTextColor;
+}
+
+.sapUiAnalyticalTable {
+	.sapUiTableCell > .sapMLabel,
+	.sapUiTableColCell > .sapMLabel {
+		width: 100%;
+	}
+
+	.sapUiAnalyticalTableSum .sapUiTableCell .sapMLabel {
+		font-weight: bold;
+	}
 }

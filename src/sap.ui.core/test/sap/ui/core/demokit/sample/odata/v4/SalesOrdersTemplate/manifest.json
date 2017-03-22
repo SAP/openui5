@@ -1,0 +1,76 @@
+{
+	"_version" : "1.1.0",
+	"sap.app" : {
+		"_version" : "1.1.0",
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "{{sap.app.description}}",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
+				"type" : "OData",
+				"settings" : {
+					"annotations": ["testanno"],
+					"odataVersion" : "4.0"
+				}
+			},
+			"testanno": {
+				"uri": "data/annotations.xml",
+				"type": "ODataAnnotation"
+			}
+		},
+		"id" : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
+		"i18n" : "i18n/i18n.properties",
+		"title" : "{{sap.app.title}}",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"_version" : "1.1.0",
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"supportedThemes" : [
+			"sap_belize",
+			"sap_hcb"
+		],
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"_version" : "1.1.0",
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"FormattedText.fragment.xml",
+					"Helper.js",
+					"Main.view.xml",
+					"../../../common/ValueHelp.js"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.37",
+			"libs" : {
+				"sap.m" : {}
+			}
+		},
+		"handleValidation" : false,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"settings" : {
+					"synchronizationMode" : "None"
+				}
+			}
+		},
+		"rootView" : "Main.view.xml"
+	}
+}

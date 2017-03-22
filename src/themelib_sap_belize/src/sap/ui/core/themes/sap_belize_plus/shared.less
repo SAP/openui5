@@ -1,0 +1,19 @@
+#CSS_SCOPE_ROOT {
+	color: @sapUiText;
+}
+
+/**
+ * sap.m.Shell background for the dark flavor should be defined one level deeper, in order to avoid putting sapContrast/
+ * sapContrastPlus at root level(if so, sapContrast/sapContrastPlus would apply to all the children, which is not desired).
+ * With the next selector, the sap.m.ShellRenderer may put the sapContrast/sapContrastPlus at the inner (Shell-BG) shell element,
+ * that has no children.
+ */
+.sapMShellBG.sapUiGlobalBackgroundImage {
+  background: @sapUiShellBackgroundImage;
+}
+
+.sapContrastPlus.sapMShellBG {
+  .sapUshellShell & {
+    background: transparent;
+  }
+}

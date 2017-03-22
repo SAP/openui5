@@ -1,25 +1,26 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Component - sap.ui.core - Experimental </title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_goldreflection" data-sap-ui-libs="sap.ui.commons">
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
 
 </script>
 
 <script>
 	sap.ui.localResources("samples");
-	
+
 	var sServiceUrl = "http://epmdemo.corp/sap/bc/sepm_odata_srv/purchase";
-	
+
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 	var oMockServer = new sap.ui.core.util.MockServer({
 		rootUri: sServiceUrl+"/"
 	});
-	
+
 	oMockServer.simulate("samples/epmdata/metadata.xml", "samples/epmdata/");
 	oMockServer.start();
 
@@ -30,7 +31,7 @@
 		name: "samples.components.productlist",
 		propagateModel: true
 	}).placeAt("content");
-	
+
 </script>
 
 </head>

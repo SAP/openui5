@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.fl</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+
+  <documentation>SAPUI5 library with sap.ui.fl controls.</documentation>
+
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.m</libraryName>
+    </dependency>
+  </dependencies>
+
+  <appData>
+    <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.mobileext" />
+    <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
+      <exclude name="sap.ui.fl.js." />
+    </jsdoc>
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+      <exclude name="sap.ui.fl.js." />
+    </jscoverage>
+    <!--
+    <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
+        indexUrl="../../../../test-resources/sap/ui/fl/demokit/docuindex.json"
+        resolve="lib" />
+     -->
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+      url="../../../../test-resources/sap/ui/fl/relnotes/changes-{major}.{minor}.json"
+      resolve="lib" />
+
+    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
+      <all-in-one>
+        <exclude name="sap/ui/fl/support/" />
+      </all-in-one>
+    </packaging>
+
+    <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+        <component>CA-UI5-FL</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+    </ownership>
+  </appData>
+
+</library>

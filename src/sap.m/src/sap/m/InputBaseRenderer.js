@@ -6,7 +6,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	function(jQuery, Renderer, ValueStateSupport) {
 	"use strict";
 
-
 	/**
 	 * Input renderer.
 	 *
@@ -32,14 +31,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// outer styles
 		this.addOuterStyles(oRm, oControl);
 
-		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
-		}
+		this.addControlWidth(oRm, oControl);
 
 		oRm.writeStyles();
 
 		// outer classes
 		oRm.addClass("sapMInputBase");
+		this.addPaddingClass(oRm, oControl);
 		this.addCursorClass(oRm, oControl);
 		this.addOuterClasses(oRm, oControl);
 
@@ -71,23 +69,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		// enable self-made placeholder
 		if (oControl.bShowLabelAsPlaceholder) {
-			oRm.write('<label class="sapMInputBasePlaceholder"');
+			oRm.write("<label");
 			oRm.writeAttribute("id", oControl.getId() + "-placeholder");
+
 			if (sTextAlign) {
 				oRm.addStyle("text-align", sTextAlign);
 			}
+
+			this.addPlaceholderClasses(oRm, oControl);
 			this.addPlaceholderStyles(oRm, oControl);
+			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
 			oRm.writeEscaped(oControl._getPlaceholder());
 			oRm.write("</label>");
 		}
 
+		oRm.write('<div ');
+		oRm.addClass("sapMInputDivWrapper");
+
+		// check disable and readonly
+		if (!oControl.getEnabled()) {
+			oRm.addClass("sapMInputBaseDisabledInner");
+
+		} else if (!oControl.getEditable()) {
+			oRm.addClass("sapMInputBaseReadonlyInner");
+		}
+
+		oRm.writeClasses();
+
+		this.addWrapperStyles(oRm, oControl);
+		oRm.writeStyles();
+		oRm.write('>');
+
 		// start inner
 		this.openInputTag(oRm, oControl);
 
 		// inner attributes
-		oRm.writeAttribute("id", oControl.getId() + "-inner");
+		this.writeInnerId(oRm, oControl);
 
 		// write the name of input
 		if (oControl.getName()) {
@@ -103,16 +122,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		if (oControl.getMaxLength && oControl.getMaxLength() > 0) {
 			oRm.writeAttribute("maxlength", oControl.getMaxLength());
 		}
-
-		// check disable and readonly
 		if (!oControl.getEnabled()) {
 			oRm.writeAttribute("disabled", "disabled");
-			oRm.addClass("sapMInputBaseDisabledInner");
+
 		} else if (!oControl.getEditable()) {
 			oRm.writeAttribute("readonly", "readonly");
-			oRm.addClass("sapMInputBaseReadonlyInner");
-		}
 
+		}
 		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
 		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
@@ -127,9 +143,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		if (sap.ui.Device.browser.mozilla) {
 			if (sTooltip) {
+
 				// fill tooltip to mozilla validation flag too, to display it in validation error case too
-				oRm.writeAttribute("x-moz-errormessage", sTooltip);
+				oRm.writeAttributeEscaped("x-moz-errormessage", sTooltip);
 			} else {
+
 				// if no tooltip use blank text for mozilla validation text
 				oRm.writeAttribute("x-moz-errormessage", " ");
 			}
@@ -139,10 +157,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		// inner classes
 		oRm.addClass("sapMInputBaseInner");
+
 		if (sValueState !== sap.ui.core.ValueState.None) {
-			oRm.addClass("sapMInputBaseStateInner");
-			oRm.addClass("sapMInputBase" + sValueState + "Inner");
+			this.addValueStateInnerClasses(oRm, oControl);
 		}
+
 		this.addInnerClasses(oRm, oControl);
 		oRm.writeClasses();
 
@@ -150,8 +169,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		if (sTextAlign) {
 			oRm.addStyle("text-align", sTextAlign);
 		}
-
-		// inner styles
 		this.addInnerStyles(oRm, oControl);
 		oRm.writeStyles();
 		oRm.write(">");
@@ -159,7 +176,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// finish inner
 		this.writeInnerContent(oRm, oControl);
 		this.closeInputTag(oRm, oControl);
-		
+
+		// close wrapper div
+		oRm.write('</div>');
+
+		this.writeDecorations(oRm, oControl);
+
 		// render hidden aria nodes
 		if (bAccessibility) {
 			this.renderAriaLabelledBy(oRm, oControl);
@@ -169,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// finish outer
 		oRm.write("</div>");
 	};
-	
+
 	/**
 	 * Returns aria accessibility role for the control.
 	 * Hook for the subclasses.
@@ -180,7 +202,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.getAriaRole = function(oControl) {
 		return "textbox";
 	};
-	
+
 	/**
 	 * Returns the inner aria labelledby ids for the accessibility.
 	 * Hook for the subclasses.
@@ -193,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			return oControl.getId() + "-labelledby";
 		}
 	};
-	
+
 	/**
 	 * Returns the inner aria labelledby announcement texts for the accessibility.
 	 * Hook for the subclasses.
@@ -204,7 +226,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.getLabelledByAnnouncement = function(oControl) {
 		return oControl._getPlaceholder() || "";
 	};
-	
+
 	/**
 	 * Renders the hidden aria labelledby node for the accessibility.
 	 * Hook for the subclasses.
@@ -225,20 +247,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.write("</label>");
 		}
 	};
-	
+
 	/**
 	 * Returns the inner aria describedby ids for the accessibility.
 	 * Hook for the subclasses.
 	 *
 	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {String|undefined} 
+	 * @returns {String|undefined}
 	 */
 	InputBaseRenderer.getAriaDescribedBy = function(oControl) {
 		if (this.getDescribedByAnnouncement(oControl)) {
 			return oControl.getId() + "-describedby";
 		}
 	};
-	
+
 	/**
 	 * Returns the inner aria describedby announcement texts for the accessibility.
 	 * Hook for the subclasses.
@@ -249,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.getDescribedByAnnouncement = function(oControl) {
 		return oControl.getTooltip_AsString() || "";
 	};
-	
+
 	/**
 	 * Renders the hidden aria labelledby node for the accessibility.
 	 * Hook for the subclasses.
@@ -270,7 +292,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.write("</span>");
 		}
 	};
-	
+
 	/**
 	 * Returns the accessibility state of the control.
 	 * Hook for the subclasses.
@@ -281,28 +303,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.getAccessibilityState = function(oControl) {
 		var sAriaLabelledBy = this.getAriaLabelledBy(oControl),
 			sAriaDescribedBy = this.getAriaDescribedBy(oControl),
-			mAccessibilityState = {
-				role: this.getAriaRole(oControl)
-			};
-		
+			sRole = this.getAriaRole(oControl),
+			mAccessibilityState = { };
+
+		if (sRole) {
+			mAccessibilityState.role = sRole;
+		}
+
 		if (oControl.getValueState() === sap.ui.core.ValueState.Error) {
 			mAccessibilityState.invalid = true;
 		}
-		
+
 		if (sAriaLabelledBy) {
 			mAccessibilityState.labelledby = {
 				value: sAriaLabelledBy.trim(),
 				append: true
 			};
 		}
-		
+
 		if (sAriaDescribedBy) {
 			mAccessibilityState.describedby = {
 				value: sAriaDescribedBy.trim(),
 				append: true
 			};
 		}
-		
+
 		return mAccessibilityState;
 	};
 
@@ -343,7 +368,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
-	InputBaseRenderer.addCursorClass = function(oRm, oControl) {
+	InputBaseRenderer.addCursorClass = function(oRm, oControl) {};
+
+	/**
+	 * Add a padding class to input container.
+	 * May be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.addPaddingClass = function(oRm, oControl) {
+		oRm.addClass("sapMInputBaseWidthPadding");
 	};
 
 	/**
@@ -354,6 +389,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 */
 	InputBaseRenderer.addOuterStyles = function(oRm, oControl) {};
 
+
+	/**
+	 * This method is reserved for derived class to set width inline style
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.addControlWidth = function(oRm, oControl) {
+		if (oControl.getWidth()) {
+			oRm.addStyle("width", oControl.getWidth());
+		}
+	};
 	/**
 	 * This method is reserved for derived classes to add extra classes for input container.
 	 *
@@ -377,6 +424,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.addInnerStyles = function(oRm, oControl) {};
+
+	/**
+	 * This method is reserved for derived classes to add extra styles for input element.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.addWrapperStyles = function(oRm, oControl) {};
 
 	/**
 	 * This method is reserved for derived classes to add extra classes for input element.
@@ -411,6 +466,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.writeInnerContent = function(oRm, oControl) {};
 
 	/**
+	 * Write the decorations of the input - description and value-help icon.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.writeDecorations = function(oRm, oControl) {};
+
+	/**
 	 * Write the closing tag name of the input.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
@@ -427,6 +490,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.addPlaceholderStyles = function(oRm, oControl) {};
 
 	/**
+	 * Adds custom placeholder classes, if native placeholder is not used.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.addPlaceholderClasses = function(oRm, oControl) {
+		oRm.addClass("sapMInputBasePlaceholder");
+	};
+
+	/**
+	 * Add the CSS value state classes to the input element using the provided {@link sap.ui.core.RenderManager}.
+	 * May be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.addValueStateInnerClasses = function(oRm, oControl) {
+		oRm.addClass("sapMInputBaseStateInner");
+		oRm.addClass("sapMInputBase" + oControl.getValueState() + "Inner");
+	};
+
+	/**
 	 * Add the CSS value state classes to the control's root element using the provided {@link sap.ui.core.RenderManager}.
 	 * To be overwritten by subclasses.
 	 *
@@ -436,6 +522,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.addValueStateClasses = function(oRm, oControl) {
 		oRm.addClass("sapMInputBaseState");
 		oRm.addClass("sapMInputBase" + oControl.getValueState());
+	};
+
+	/**
+	 * Write the id of the inner input
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.writeInnerId = function(oRm, oControl) {
+		oRm.writeAttribute("id", oControl.getId() + "-inner");
 	};
 
 	return InputBaseRenderer;

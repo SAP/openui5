@@ -1,8 +1,8 @@
 <html>
 	<head>
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/OPA</title>
+		<script src="../../../../../../resources/sap/ui/Device.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script src="../../../../../../resources/sap-ui-core.js"></script>
 
 		<script>
 
@@ -14,12 +14,7 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
-			var sUrlParameters = "?noglobals=true";
-
-			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
-				// In ie8 sinon will introduce globals and less does not work so the execution is without check for globals but with noless
-				sUrlParameters = "?sap-ui-xx-noless=true"
-			}
+			var sUrlParameters = "?noglobals=true&sap-ui-animation=false";
 
 			function addTestPage(sUrl) {
 				suite.addTestPage(contextPath + sUrl + sUrlParameters);
@@ -30,9 +25,27 @@
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa5.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaPlugin.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaIntegration.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/opaQunit.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/_LogCollector.qunit.html");
 
 			// Introduces globals
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/Opa5PageObject.qunit.html?sap-ui-xx-noless=true");
+
+			// Actions
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Action.qunit.html");
+
+			if (sap.ui.Device.browser.msie) {
+				// The noglobals check is disabled because IE11 creates false negative from the blindlayer
+				// which is kept in the DOM as global variable
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html?sap-ui-animation=false");
+			} else {
+				addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html");
+			}
+
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/EnterText.qunit.html");
+
+			// OPA Launcher
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/launchers/componentLauncher.qunit.html");
 
 			//OPA matchers
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationFilled.qunit.html");
@@ -41,6 +54,33 @@
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationContainsPropertyEquals.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/Ancestor.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/Properties.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/BindingPath.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/Visible.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/Interactable.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/I18NText.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/LabelFor.qunit.html");
+
+			// Pipelines
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/pipelines/ActionPipeline.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/pipelines/MatcherPipeline.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/pipelines/PipelineFactory.qunit.html");
+
+			// OPA Samples
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/sample/OpaAction/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html");
+
+			// Matcher samples
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/I18NText/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html");
+
+			// Launcher samples
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html");
+
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html?sap-ui-debug=true");
 
 			return suite;
 		}

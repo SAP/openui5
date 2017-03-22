@@ -1,0 +1,34 @@
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* Belize theme                      */
+/* ================================= */
+
+/* selected */
+.sapMSelectListItemBaseSelected {
+	background: @sapUiListSelectionBackgroundColor;
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
+}
+
+/* pressed */
+html.sap-desktop .sapMSelectListItemBase.sapMSelectListItemBasePressed:focus {
+	outline: 1px dotted @sapUiContentContrastFocusColor;
+}
+
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	opacity: 0.5;
+}
+
+/* focus */
+html.sap-desktop .sapMSelectListItemBase:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
+		border: 1px dashed @sapUiContentFocusColor;
+	}
+}

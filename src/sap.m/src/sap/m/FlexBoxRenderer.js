@@ -6,14 +6,19 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 	function(jQuery, FlexBoxStylingHelper) {
 	"use strict";
 
+	// Issue warning if flex algorithm is unsupported
+	if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
+		jQuery.sap.log.warning("This browser does not support flexible box layouts natively.");
+	}
 
 	/**
 	 * FlexBox renderer
 	 * @namespace
 	 */
+
 	var FlexBoxRenderer = {};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -21,135 +26,175 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FlexBoxRenderer.render = function(oRm, oControl) {
-		if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
-			jQuery.sap.log.warning("This browser does not support Flexible Box Layouts natively.");
-			FlexBoxRenderer.usePolyfill = true;
-		}
-	
-		// Make sure HBox and VBox don't get the wrong direction and get the appropriate class
-		var hvClass = "";
-		if (oControl.getDirection() === "Row" || oControl.getDirection() === "RowReverse") {
-			if (oControl instanceof sap.m.VBox) {
-				jQuery.sap.log.error("Flex direction cannot be set to Row or RowReverse on VBox controls.");
-			} else {
-				hvClass = "sapMHBox";
-			}
-		} else if (oControl.getDirection() === "Column" || oControl.getDirection() === "ColumnReverse") {
-			if (oControl instanceof sap.m.HBox) {
-				jQuery.sap.log.error("Flex direction cannot be set to Column or ColumnReverse on HBox controls.");
-			} else {
-				hvClass = "sapMVBox";
-			}
-		}
-	
-		// Special treatment if FlexBox is itself an item of a parent FlexBox
-		var oParent = oControl.getParent();
-		if (oControl.getParent() instanceof sap.m.FlexBox) {
-			oRm.addClass("sapMFlexItem");
-	
-	
-			// Set layout properties
-			var oLayoutData = oControl.getLayoutData();
-			if (oLayoutData instanceof sap.m.FlexItemData && !FlexBoxRenderer.usePolyfill) {
-				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
-			}
-	
-			if (oParent.getRenderType() === 'List') {
-				oRm.write('<li');
-				oRm.writeClasses();
-				oRm.writeStyles();
-			}
-		}
-	
-		if (oControl.getRenderType() === 'List') {
+		// Open FlexBox HTML element
+		if (oControl.getRenderType() === sap.m.FlexRendertype.List) {
 			oRm.write('<ul');
 		} else {
 			oRm.write('<div');
 		}
-	
+
 		oRm.writeControlData(oControl);
-		oRm.addClass("sapMFlexBox");
-		oRm.addClass(hvClass);
-		oRm.writeClasses();
-		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
+
+		// Special treatment if FlexBox is itself an item of a parent FlexBox
+		var oParent = oControl.getParent();
+		if (oControl.getParent() instanceof sap.m.FlexBox) {
+			oRm.addClass("sapMFlexItem");
+
+			// Set layout properties for flex item
+			var oLayoutData = oControl.getLayoutData();
+			if (oLayoutData instanceof sap.m.FlexItemData) {
+				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
+			}
+
+			// Wrap in list item
+			if (oParent.getRenderType() === sap.m.FlexRendertype.List) {
+				oRm.write('<li');
+			}
+		} else if (oControl.getFitContainer()) {
+			oRm.addClass("sapMFlexBoxFit");
 		}
+
+		// Add classes for flex styling
+		oRm.addClass("sapMFlexBox");
+		if (oControl.getDisplayInline()) {
+			oRm.addClass("sapMFlexBoxInline");
+		}
+
+		if (oControl.getDirection() === sap.m.FlexDirection.Column || oControl.getDirection() === sap.m.FlexDirection.ColumnReverse) {
+			oRm.addClass("sapMVBox");
+		} else {
+			oRm.addClass("sapMHBox");
+		}
+
+		if (oControl.getDirection() === sap.m.FlexDirection.RowReverse || oControl.getDirection() === sap.m.FlexDirection.ColumnReverse) {
+			oRm.addClass("sapMFlexBoxReverse");
+		}
+
+		oRm.addClass("sapMFlexBoxJustify" + oControl.getJustifyContent());
+		oRm.addClass("sapMFlexBoxAlignItems" + oControl.getAlignItems());
+		oRm.addClass("sapMFlexBoxWrap" + oControl.getWrap());
+		oRm.addClass("sapMFlexBoxAlignContent" + oControl.getAlignContent());
+		oRm.addClass("sapMFlexBoxBG" + oControl.getBackgroundDesign());
+		oRm.writeClasses();
+
+		// Add inline styles
 		if (oControl.getHeight()) {
 			oRm.addStyle("height", oControl.getHeight());
 		}
-		if (!FlexBoxRenderer.usePolyfill) {
-			FlexBoxStylingHelper.setFlexBoxStyles(oRm, oControl);
+		if (oControl.getWidth()) {
+			oRm.addStyle("width", oControl.getWidth());
 		}
 		oRm.writeStyles();
+
+		// Add tooltip
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
+
+		// Close opening tag
 		oRm.write(">");
-	
-		// Now render the flex items
-		var aChildren = oControl.getItems();
-		var bWrapItem = true;
-		for (var i = 0; i < aChildren.length; i++) {
-			// Don't wrap if it's a FlexBox control or if it's not visible
-			if (aChildren[i] instanceof sap.m.FlexBox || (aChildren[i].getVisible !== undefined && !aChildren[i].getVisible())) {
-				bWrapItem = false;
-			} else {
-				bWrapItem = true;
-			}
-	
-			// Create wrapper if it's not a FlexBox control
-			if (bWrapItem) {
-				if (oControl.getRenderType() === 'List') {
-					oRm.write('<li');
-				} else {
-					oRm.write('<div');
-				}
-	
-				// Set layout properties
-				var oLayoutData = aChildren[i].getLayoutData();
-				if (oLayoutData instanceof sap.m.FlexItemData) {
-					if (oLayoutData.getId()) {
-						oRm.write(" id='" + oLayoutData.getId() + "'");
-					}
-					if (oLayoutData.getStyleClass()) {
-						oRm.addClass(oLayoutData.getStyleClass());
-					}
-	
-					if (!FlexBoxRenderer.usePolyfill) {
-						FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
-					}
-	
-					// ScrollContainer needs height:100% on the flex item
-					if (aChildren[i] instanceof sap.m.ScrollContainer) {
-						oRm.addStyle("height", "100%");
-					}
-					oRm.writeStyles();
-				}
-	
-				oRm.addClass("sapMFlexItem");
-				oRm.writeClasses();
-				oRm.write(">");
-			}
-	
-			// Render control
-			oRm.renderControl(aChildren[i]);
-	
-			if (bWrapItem) {
-				// Close wrapper
-				if (oControl.getRenderType() === 'List') {
-					oRm.write('</li>');
-				} else {
-					oRm.write('</div>');
-				}
-			}
-		}
-	
-		// Close the flexbox
-		if (oControl.getRenderType() === "List") {
+
+		// Render the flex items
+		FlexBoxRenderer.renderItems(oControl, oRm);
+
+		// Close FlexBox HTML element
+		if (oControl.getRenderType() === sap.m.FlexRendertype.List) {
 			oRm.write("</ul>");
 		} else {
 			oRm.write("</div>");
+		}
+	};
+
+	FlexBoxRenderer.renderItems = function(oControl, oRm) {
+		var aChildren = oControl.getItems(),
+			sWrapperTag = '';
+
+		for (var i = 0; i < aChildren.length; i++) {
+			// Don't wrap if it's a FlexBox control
+			if (aChildren[i] instanceof sap.m.FlexBox || oControl.getRenderType() === sap.m.FlexRendertype.Bare) {
+				sWrapperTag = "";
+			} else if (oControl.getRenderType() === sap.m.FlexRendertype.List) {
+				sWrapperTag = "li";
+			} else {
+				sWrapperTag = "div";
+			}
+
+			FlexBoxRenderer.renderItem(aChildren[i], sWrapperTag, oRm);
+		}
+	};
+
+	FlexBoxRenderer.renderItem = function(oItem, sWrapperTag, oRm) {
+		if (sWrapperTag) {
+			// Open wrapper
+			oRm.write('<' + sWrapperTag);
+
+			// ScrollContainer needs height:100% on the flex item
+			if (oItem instanceof sap.m.ScrollContainer) {
+				oRm.addClass("sapMFlexBoxScroll");
+			}
+
+			// Hide invisible items, but leave them in the DOM
+			if (!oItem.getVisible()) {
+				oRm.addClass("sapUiHiddenPlaceholder");
+			}
+		}
+
+		// Set layout properties
+		var oLayoutData = oItem.getLayoutData();
+
+		// If no layout data is set, create it so that an ID can be set on the wrapper
+		if (sWrapperTag && !oLayoutData) {
+			oItem.setAggregation("layoutData", new sap.m.FlexItemData(), true);
+			oLayoutData = oItem.getLayoutData();
+		}
+
+		if (!(oLayoutData instanceof sap.m.FlexItemData)) {
+			jQuery.sap.log.warning(oLayoutData + " set on " + oItem + " is not of type sap.m.FlexItemData");
+		} else {
+			// FlexItemData is an element not a control, so we need to write id and style class ourselves if a wrapper tag is used
+			if (sWrapperTag && oLayoutData.getId()) {
+				oRm.writeAttributeEscaped("id", oLayoutData.getId());
+			}
+
+			// Add style class set by app
+			if (oLayoutData.getStyleClass()) {
+				FlexBoxRenderer.addItemClass(jQuery.sap.encodeHTML(oLayoutData.getStyleClass()), oItem, sWrapperTag, oRm);
+			}
+
+			// Add classes relevant for flex item
+			FlexBoxRenderer.addItemClass("sapMFlexItemAlign" + oLayoutData.getAlignSelf(), oItem, sWrapperTag, oRm);
+			FlexBoxRenderer.addItemClass("sapMFlexBoxBG" + oLayoutData.getBackgroundDesign(), oItem, sWrapperTag, oRm);
+
+			// Set layout properties for flex item
+			if (sWrapperTag) {
+				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
+			}
+		}
+
+		FlexBoxRenderer.addItemClass("sapMFlexItem", oItem, sWrapperTag, oRm);
+
+		// Write the styles and classes and close the wrapper tag
+		if (sWrapperTag) {
+			oRm.writeStyles();
+			oRm.writeClasses();
+			oRm.write(">");
+		}
+
+		// Render control
+		oRm.renderControl(oItem);
+
+		if (sWrapperTag) {
+			// Close wrapper
+			oRm.write('</' + sWrapperTag + '>');
+		}
+	};
+
+	FlexBoxRenderer.addItemClass = function(sClass, oItem, sWrapperTag, oRm) {
+		if (sWrapperTag) {
+			oRm.addClass(sClass);
+		} else {
+			oItem.addStyleClass(sClass);
 		}
 	};
 

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>sap.m.Panel</title>
 <style>
 #text1,#text2,#text3,#text4,#text5,#text6,#text7,#text8 {
@@ -16,13 +16,19 @@
 	color: blue;
 	background-color: #FFFFDD;
 }
+
+.sapMPanel {
+	margin: 3rem;
+}
 </style>
+<script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.m,sap.ui.commons"
-	data-sap-ui-theme="sap_bluecrystal">
+	data-sap-ui-libs="sap.m">
 
 </script>
 <script>
+	//This page is used for visualtesting
+
 	// create and add app
 	jQuery.sap.require("sap.m.MessageToast");
 	var app = new sap.m.App("myApp");
@@ -32,23 +38,23 @@
 	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
 	var page = new sap.m.Page("textPage", {
 		title : "Panel Test Page",
-		content : [new sap.m.Panel({
+		content : [new sap.m.Panel("panel1", {
 			headerText : "This is the Panel header",
 			content : [new sap.m.Text({
 				text : "This is a Text control inside a Panel."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel2", {
 			headerText : "This is the Panel header",
 			content : [new sap.m.Text({
 				text : "This is a Panel with a defined size.\n" + lorem
 			})],
 			width : "400px",
 			height : "80px"
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel3", {
 			headerText : "This is the Panel header",
 			headerToolbar : new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Transparent,
-				content : [new sap.m.Label({
+				content : [new sap.m.Title({
 					text : "Panel header"
 				}), new sap.m.ToolbarSpacer(), new sap.m.Button({
 					icon : "sap-icon://drop-down-list",
@@ -80,12 +86,12 @@
 			height : "200px"
 		}),
 
-		new sap.m.Panel({
+		new sap.m.Panel("panel4", {
 			expandable : true,
 			expanded : false,
 			headerToolbar : new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Transparent,
-				content : [new sap.m.Label({
+				content : [new sap.m.Title({
 					text : "1st Header toolbar content ..."
 				})]
 			}),
@@ -100,7 +106,7 @@
 					lorem + lorem + lorem + lorem + lorem
 			})],
 			height: "100px"
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel5", {
 			expandable : true,
 			expanded : true,
 			headerText : "2nd Header Text",
@@ -113,31 +119,31 @@
 			content : [new sap.m.Text({
 				text : "2nd This is a Panel with a header text and an info toolbar - this is the content."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel6", {
 			expandable : true,
 			expanded : true,
 			headerText : "3rd Header Text",
 			content : [new sap.m.Text({
 				text : "3rd This is a Panel with a header text and no info toolbar - this is the content."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel7", {
 			expandable : true,
 			expanded : true,
 			headerToolbar : new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Transparent,
-				content : [new sap.m.Label({
+				content : [new sap.m.Title({
 					text : "4th Header toolbar content ..."
 				})]
 			}),
 			content : [new sap.m.Text({
 				text : "4th This is a Panel with a header toolbar and no info toolbar - this is the content."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel8", {
 			expandable : true,
 			expanded : false,
 			headerToolbar : new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Transparent,
-				content : [new sap.m.Label({
+				content : [new sap.m.Title({
 					text : "5th Header toolbar content ..."
 				})]
 			}),
@@ -150,7 +156,7 @@
 			content : [new sap.m.Text({
 				text : "5th This is a Panel with a header toolbar and an info toolbar - this is the content."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel9", {
 			expandable : true,
 			expanded : true,
 			headerText : "6th Header Text",
@@ -163,51 +169,74 @@
 			content : [new sap.m.Text({
 				text : "6th This is a Panel with a header text and an info toolbar - this is the content."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel10", {
 			expandable : true,
 			expanded : false,
 			headerText : "7th Header Text",
 			content : [new sap.m.Text({
 				text : "7th This is a Panel with a header text and no info toolbar - this is the content."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel11", {
 			expandable : true,
 			expanded : false,
 			headerToolbar : new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Transparent,
-				content : [new sap.m.Label({
+				content : [new sap.m.Title({
 					text : "8th Header toolbar content ..."
 				})]
 			}),
 			content : [new sap.m.Text({
 				text : "8th This is a Panel with a header toolbar and no info toolbar - this is the content."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel12", {
 			expandable : true,
 			expanded : false,
 			expandAnimation: false,
 			headerToolbar : new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Transparent,
-				content : [new sap.m.Label({
+				content : [new sap.m.Title({
 					text : "9th Header toolbar content ..."
 				})]
 			}),
 			content : [new sap.m.Text({
 				text : "9th This is a Panel with expand animation set to false."
 			})]
-		}), new sap.m.Panel({
+		}), new sap.m.Panel("panel13", {
 			expandable : true,
 			expanded : false,
 			expandAnimation: false,
 			headerToolbar : new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Transparent,
-				content : [new sap.m.Label({
+				content : [new sap.m.Title({
 					text : "10th Header toolbar content ..."
 				})]
 			}),
 			content : [new sap.m.Text({
 				text : "10th This is a second Panel with expand animation set to false."
 			})]
+		}), new sap.m.Panel("panel14", {
+				headerText: "Panel Header Text",
+				content: [
+					new sap.m.Button("button1", {text: "Click me"})
+				]
+		}), new sap.m.Panel("panel15", {
+				headerText: "Panel Header Text",
+				expandable: true,
+				expanded: true,
+				content: [
+					new sap.m.Button("button2", {text: "Click me"})
+				]
+		}), new sap.m.Panel("panel16", {
+				headerText: "Panel Header Text",
+				expandable: true,
+				headerToolbar: new sap.m.Toolbar({
+					content: [new sap.m.Title({
+						text: "Panel Header Toolbar Title Text"
+					})]
+				}),
+				content: [
+					new sap.m.Button("button3", {text: "Click me"})
+				]
 		})]
 	});
 

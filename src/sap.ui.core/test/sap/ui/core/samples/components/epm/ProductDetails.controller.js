@@ -4,9 +4,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 
 	return Controller.extend("sap.ui.epm.ProductDetails", {
 
-		onRowSelect: function(oContext) {    
-			this.getView().setBindingContext(oContext);  
-		}  	
+		onRowSelect: function(oContext) {
+			this.getView().setBindingContext(oContext);
+		}
 	});
 
 });

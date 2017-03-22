@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.SelectDialog</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
@@ -16,6 +16,8 @@
 				jQuery.sap.require("sap.ui.qunit.qunit-css");
 				jQuery.sap.require("sap.ui.model.FilterOperator");
 				jQuery.sap.require("sap.ui.thirdparty.qunit");
+				jQuery.sap.require("sap.ui.qunit.qunit-junit");
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 				jQuery.sap.require("sap.ui.thirdparty.sinon");
 				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 				sinon.config.useFakeTimers = true;
@@ -69,7 +71,7 @@
 						]
 					};
 				}
-				
+
 				// create a bindable list item
 				function createTemplateListItem() {
 					return new sap.m.StandardListItem({
@@ -90,8 +92,19 @@
 					oSelectDialog.bindAggregation("items", oConfiguration);
 				}
 
+				function notSupportedIE(bAsync, fDone){
+					// this test is not supported by IE9
+					if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+						QUnit.expect(0);
+						if (bAsync) {
+							fDone();
+						}
+						return;
+					}
+				}
+
 				QUnit.module("API", {
-					setup: function() {
+					beforeEach: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog", {
 							title: "my SelectDialog",
 							noDataText: "Sorry, no data is available",
@@ -99,7 +112,7 @@
 							multiSelect: true
 						});
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 					}
@@ -114,13 +127,35 @@
 					assert.strictEqual(this.oSelectDialog.getMultiSelect(), true, 'The multiSelect mode should be "true"');
 				});
 
+				QUnit.test("setBusy", function (assert) {
+					this.oSelectDialog.open();
+					this.clock.tick(1000);
+
+					var oDialogRef2 = this.oSelectDialog.setBusy(true);
+					this.clock.tick(1500);
+
+					assert.strictEqual(this.oSelectDialog, oDialogRef2, "Should return the object itself. Ready for method chaining");
+					assert.strictEqual(oDialogRef2.getBusy(), true, "Should return dialog's proper busy state");
+					assert.strictEqual(this.oSelectDialog.getBusy(), true, "Should return dialog's proper busy state");
+					assert.strictEqual(this.oSelectDialog.$("busyIndicator").length, 1, "To have busy indicator activated inside the real dialog");
+
+					oDialogRef2 = this.oSelectDialog.setBusy(false);
+					this.clock.tick(1000);
+
+					assert.strictEqual(oDialogRef2.getBusy(), false, "Should return dialog's proper busy state");
+					assert.strictEqual(this.oSelectDialog.getBusy(), false, "Should return dialog's proper busy state");
+					assert.strictEqual(this.oSelectDialog.$("busyIndicator").length, 0, "To have busy indicator deactivated inside the real dialog");
+				});
+
 				QUnit.module("Rendering", {
-					setup: function() {
+					beforeEach: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog");
+						this.mockupData = generateData();
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
+						delete this.mockupData;
 					}
 				});
 
@@ -132,16 +167,51 @@
 					jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
 						assert.ok(jQuery.sap.domById("selectDialog-dialog"), "Dialog is opened");
 						assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
-						assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");	
+						assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
 					});
 				});
 
+				QUnit.test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function (assert) {
+					var that = this;
+					this.oSelectDialog.setMultiSelect(true);
+					bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
+
+					this.oSelectDialog.open();
+					sap.ui.getCore().applyChanges();
+					assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
+				});
+
+				QUnit.test("No InfoToolbar should be shown in single select mode even if there is a selected option", function (assert) {
+					var that = this;
+					bindItems(this.oSelectDialog, { oData: {
+						items : [
+							{
+								Title : "Title1",
+								Description: "Description1",
+								Selected: false
+							}, {
+								Title : "Title2",
+								Description: "Description2",
+								Selected: false
+							}, {
+								Title : "Title3",
+								Description: "Description3",
+								Selected: true
+							}
+						]
+					}, path: "/items", template: createTemplateListItem() });
+
+					this.oSelectDialog.open();
+					sap.ui.getCore().applyChanges();
+					assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().getVisible(), false, "The should be no toolbar shown");
+				});
+
 				QUnit.module("XML Rendering", {
-					setup: function() {
+					beforeEach: function() {
 						this.oSelectDialog = null;
 
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						this.oXmlViewOrFragment.destroy();
@@ -149,7 +219,6 @@
 				});
 
 				QUnit.test("Open SelectDialog that is defined within an XML view without parent (has no UI area, temporary fix: will be added to static area)", function (assert) {
-
 					var xml = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 					'      <SelectDialog id="xmlSelectDialog"></SelectDialog>' +
 					'    </mvc:View>',
@@ -171,7 +240,6 @@
 				});
 
 				QUnit.test("Open SelectDialog that is defined within a fragment", function (assert) {
-
 					var sFragmentText = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 					 '      <SelectDialog id="fragmentSelectDialog"></SelectDialog>' +
 					 '    </core:FragmentDefinition>',
@@ -191,7 +259,7 @@
 				});
 
 				QUnit.module("Multiselection", {
-					setup: function() {
+					beforeEach: function() {
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
 							multiSelect: true,
@@ -199,16 +267,19 @@
 							noDataText: "Sorry, no data is available",
 							growingThreshold: 50
 						});
-						this.mockupData = generateData();	
+						this.mockupData = generateData();
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
 					}
 				});
 
-				QUnit.asyncTest("Remember Selections after Cancel", function (assert) {
+				QUnit.test("Remember Selections after Cancel", function (assert) {
+					var done = assert.async();
+
+					notSupportedIE(true, done);
 
 					// arrange
 					this.oSelectDialog.setRememberSelections(true);
@@ -221,14 +292,14 @@
 						var aInitiallySelectedItems = this.oSelectDialog._oList.getSelectedItems();
 						this.oSelectDialog._resetSelection();
 						assert.strictEqual(aInitiallySelectedItems.length, this.oSelectDialog._oList.getSelectedItems().length, 'Selected items after cancelling are the same');
-						start();
+						done();
 					}, this);
 
 					this.oSelectDialog.open();
+					this.clock.tick(270);
 				});
 
 				QUnit.test("Remember Selections false mode", function (assert) {
-
 					// arrange
 					this.oSelectDialog.setRememberSelections(false);
 
@@ -255,7 +326,6 @@
 
 
 				QUnit.test("Remember Selections true mode", function (assert) {
-
 					// arrange
 					this.oSelectDialog.setRememberSelections(true);
 
@@ -281,7 +351,7 @@
 				});
 
 				QUnit.module("Open and Close", {
-					setup: function() {
+					beforeEach: function() {
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
 							title: "my SelectDialog",
@@ -289,7 +359,7 @@
 						});
 						this.mockupData = generateData();
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
@@ -308,9 +378,8 @@
 				});
 
 				QUnit.test("Open with string and filter", function (assert) {
-
 					var that = this,
-					oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1");
+						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1");
 
 					this.oSelectDialog.bindAggregation("items", {
 						path: "/items",
@@ -329,14 +398,14 @@
 				});
 
 				QUnit.module("Event testing", {
-					setup: function() {
+					beforeEach: function() {
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog', {
 							title: "my SelectDialog"
 						});
 						this.mockupData = generateData();
 					},
-					teardown: function() {
+					afterEach: function() {
 						// cleanup
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
@@ -345,8 +414,8 @@
 
 				QUnit.test("Search event", function (assert) {
 					// Arrange
-					var fnFireSelectSpy = sinon.spy();
-					var that = this;
+					var fnFireSelectSpy = sinon.spy(),
+						that = this;
 					this.oSelectDialog.attachSearch(fnFireSelectSpy);
 
 					jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
@@ -356,6 +425,8 @@
 				});
 
 				QUnit.test("liveChange event", function (assert) {
+					notSupportedIE(false);
+
 					// Arrange
 					var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
 						// Asert
@@ -373,9 +444,12 @@
 					});
 				});
 
-				QUnit.asyncTest("Confirm Event", function (assert) {
+				QUnit.test("Confirm Event", function (assert) {
+					var done = assert.async(),
+						that = this;
 
-					var that = this;
+					notSupportedIE(true, done);
+
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 					sap.ui.getCore().applyChanges();
@@ -397,17 +471,21 @@
 						assert.strictEqual(aSelectedContexts[1].getObject().Title, "Title3", 'The second selectedContexts entry should be "Title3"');
 						assert.strictEqual(aSelectedContexts[2].getObject().Title, "Title4", 'The third selectedContexts entry should be "Title4"');
 						assert.strictEqual(aSelectedContexts[3].getObject().Title, "Title8", 'The fourth selectedContexts entry should be "Title8"');
-						QUnit.start();
+						done();
 					});
 
-					jQuery.when(this.oSelectDialog.open()).then(function (assert) {
+					jQuery.when(this.oSelectDialog.open()).then(function () {
 						that.oSelectDialog._getOkButton().firePress();
+						that.clock.tick(270);
 					});
 				});
 
-				QUnit.asyncTest("Cancel Event with unfiltered selection", function (assert) {
+				QUnit.test("Cancel Event with unfiltered selection", function (assert) {
+					var done = assert.async(),
+						that = this;
 
-					var that = this;
+					notSupportedIE(true, done);
+
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
@@ -415,8 +493,7 @@
 						assert.ok(true, 'The event "cancel" has been fired');
 
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 items selected again');
-						QUnit.start();
-
+						done();
 					});
 
 					// simulate open and close
@@ -426,16 +503,20 @@
 						that.oSelectDialog._oList.getItems()[3].setSelected(false);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 2, 'Before cancelling there should be 2 items selected');
 						that.oSelectDialog._getCancelButton().firePress();
+						that.clock.tick(270);
 					});
-					this.oSelectDialog.open();
 
+					this.oSelectDialog.open();
+					this.clock.tick(270);
 				});
 
-				QUnit.asyncTest("Cancel Event with pre-filtered selection", function (assert) {
+				QUnit.test("Cancel Event with pre-filtered selection", function (assert) {
+					var done = assert.async(),
+						that = this,
+						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
 
-					var that = this,
-					clock = this.clock,
-					oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
+					notSupportedIE(true, done);
+
 					this.oSelectDialog.setMultiSelect(true);
 
 					// reset binding
@@ -445,10 +526,9 @@
 						assert.ok(true, 'The event "cancel" has been fired');
 
 						// the selection is reset immediately ater the cancel event so we do it with clock.tick
-						clock.tick(500);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 1, 'After cancelling there should be 1 visible item selected again');
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContexts(true).length, 1, 'After cancelling there should be 4 invisible item selected again (prefiltered items are not added to the contexts initially)');
-						QUnit.start();
+						done();
 					});
 
 
@@ -459,15 +539,20 @@
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 0, 'Before cancelling there should be 0 visible items selected');
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContexts(true).length, 0, 'Before cancelling there should be 0 invisible contexts selected (prefiltered items are not added to the contexts initially)');
 						that.oSelectDialog._getCancelButton().firePress();
+						that.clock.tick(270);
 					});
+
 					this.oSelectDialog.open();
+					this.clock.tick(270);
 				});
 
-				QUnit.asyncTest("Cancel Event with user-filtered selection", function (assert) {
+				QUnit.test("Cancel Event with user-filtered selection", function (assert) {
+					var done = assert.async(),
+						that = this,
+						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
 
-					var that = this,
-					clock = this.clock,
-					oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
+					notSupportedIE(true, done);
+
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
@@ -480,39 +565,38 @@
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedItems().length, 0, 'Before cancelling there should be 0 visible items selected');
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContexts(true).length, 2, 'Before cancelling there should be 2 invisible items selected');
 						that.oSelectDialog._getCancelButton().firePress();
+						that.clock.tick(270);
 					});
 
 					this.oSelectDialog.attachCancel(function (oEvent) {
 						assert.ok(true, 'The event "cancel" has been fired');
-
-						// the selection is reset immediately ater the cancel event so we do it with ticks
-						clock.tick(100);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 invisible items selected again');
-						QUnit.start();
+						done();
 					});
+
 					this.oSelectDialog.open();
+					this.clock.tick(270);
 				});
 
-				QUnit.asyncTest("Cancel on key ESCAPE event", function (assert) {
-
+				QUnit.test("Cancel on key ESCAPE event", function (assert) {
 					this.oSelectDialog.setMultiSelect(true);
 
-					var that = this,
-						clock = this.clock,
+					var done = assert.async(),
+						that = this,
 						fnChecks = function () {
 							assert.ok(true, "Event cancel was fired");
-							// the selection is reset immediately ater the cancel event so we do it with ticks
-							clock.tick(100);
 							assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 items selected again');
-							QUnit.start();
+							done();
 						};
+
+					notSupportedIE(true, done);
 
 					// bind items
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
-					// attach dialog cancel event 
+					// attach dialog cancel event
 					this.oSelectDialog.attachCancel(fnChecks);
-					
+
 					// simulate open and close
 					this.oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
 						// make a change to the selection
@@ -521,18 +605,20 @@
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedItems().length, 2, 'Before cancelling there should be 2 items selected');
 
 						qutils.triggerKeydown(that.oSelectDialog._oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+						that.clock.tick(270);
 					});
 
 					this.oSelectDialog.open();
+					this.clock.tick(270);
 				});
 
 				QUnit.module("Destroy", {
-					setup: function() {
+					beforeEach: function() {
 
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog');
 						this.mockupData = generateData();
-					}, teardown: function() {
+					}, afterEach: function() {
 
 						// cleanup
 						this.oSelectDialog.destroy();
@@ -540,9 +626,12 @@
 					}
 				});
 
-				QUnit.asyncTest("Destroy SelectDialog", function (assert) {
+				QUnit.test("Destroy SelectDialog", function (assert) {
+					var done = assert.async(),
+						that = this;
 
-					var that = this;
+					notSupportedIE(true, done);
+
 					this.oSelectDialog.setMultiSelect(true);
 
 					// init list
@@ -592,14 +681,17 @@
 						assert.strictEqual(that.oSelectDialog._list, null, "internal compatibility parameter _list is null");
 						assert.strictEqual(that.oSelectDialog._searchField, null, "internal compatibility parameter _searchField is null");
 						assert.strictEqual(that.oSelectDialog._dialog, null, "internal compatibility parameter _dialog is null");
-						QUnit.start();
+						done();
 					});
 
 					// simulate open and close
 					this.oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
 						that.oSelectDialog._oDialog.close();
+						that.clock.tick(270);
 					});
+
 					this.oSelectDialog.open();
+					this.clock.tick(270);
 				});
 
 				QUnit.test("Check add/remove/toggle/hasStyleClass methods", function (assert) {
@@ -625,7 +717,6 @@
 				});
 
 				QUnit.test("Check getDomRef method", function (assert) {
-
 					this.oSelectDialog.open();
 
 					// getDomRef
@@ -634,33 +725,37 @@
 					this.oSelectDialog._oDialog.close();
 				});
 
-				QUnit.asyncTest("Check height of content", function(assert) {
+				QUnit.test("Check height of content", function(assert) {
+					var done = assert.async(),
+						that = this;
 
-					var that = this;
+					notSupportedIE(true, done);
+
 					this.oSelectDialog.setContentHeight("150px");
 					sap.ui.getCore().applyChanges();
 
 					this.oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
-						
 						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
-
 						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
-
 						that.oSelectDialog.setContentHeight("286px");
 						sap.ui.getCore().applyChanges();
-						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 286, "content in Dialog should have height of 286px.");
-						QUnit.start();
+
+						var browserCalculatedHeight = Math.round(parseFloat(window.getComputedStyle(jQuery("#selectDialog-dialog-cont")[0]).height));
+						assert.strictEqual(browserCalculatedHeight, 286, "content in Dialog should have height of 286px.");
+						done();
 					});
+
 					this.oSelectDialog.open();
+					this.clock.tick(270);
 				});
 
 				QUnit.module("Keyboard and focus Handling", {
-					setup: function() {
+					beforeEach: function() {
 
 						// arrange
 						this.oSelectDialog = new sap.m.SelectDialog('selectDialog');
 						this.mockupData = generateData();
-					}, teardown: function() {
+					}, afterEach: function() {
 
 						// cleanup
 						this.oSelectDialog.destroy();
@@ -706,20 +801,21 @@
 					this.oSelectDialog.open();
 				});
 
-				QUnit.asyncTest("focus on SearchField after liveChange", function (assert) {
+				QUnit.test("focus on SearchField after liveChange", function (assert) {
+					var done = assert.async();
+
+					notSupportedIE(true, done);
+
 					// Arrange
 					var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
 						var sValue = oEvent.getParameter("value");
-						var oFilter = new sap.ui.model.Filter(
-						"Title",
-						sap.ui.model.FilterOperator.Contains, sValue
-						);
+						var oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains, sValue);
 
 						oEvent.getSource().getBinding("items").filter([oFilter]);
 						sap.ui.getCore().applyChanges();
 
 						assert.strictEqual(jQuery.sap.byId('selectDialog-searchField-I')[0], document.activeElement, 'Focus should stay on the searchfield after liveChange');
-						QUnit.start();
+						done();
 
 					}),
 					that = this;
@@ -729,12 +825,12 @@
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
 					this.oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
-
-						// Act
 						that.oSelectDialog._oSearchField.$('I').focus().val("1").trigger("input");
+						that.clock.tick(350);
 					});
 
 					this.oSelectDialog.open();
+					this.clock.tick(270);
 				});
 
 			})();

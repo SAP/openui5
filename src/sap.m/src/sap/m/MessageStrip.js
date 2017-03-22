@@ -3,9 +3,8 @@
 */
 
 // Provides control sap.m.MessageStrip.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/MessageStripUtilities",
-				"sap/m/Text", "sap/m/Link"],
-	function (jQuery, library, Control, MSUtils, Text, Link) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./MessageStripUtilities",
+	"./Text", "./Link"], function (jQuery, library, Control, MSUtils, Text, Link) {
 	"use strict";
 
 	/**
@@ -18,6 +17,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 	 * MessageStrip is a control that enables the embedding of application-related messages in the application.
 	 * There are 4 types of messages: Information, Success, Warning and Error.
 	 * Each message can have a close button, so that it can be removed from the UI if needed.
+	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -47,8 +47,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 
 				/**
 				 * Determines a custom icon which is displayed.
-				 * Note: You can only set a custom icon for messages of type MessageType.Information.
-				 * All other message types use predefined icons.
+				 * If none is set, the default icon for this message type is used.
 				 */
 				customIcon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: "" },
 
@@ -85,7 +84,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 		}
 	});
 
-	MessageStrip.prototype.init = function() {
+	MessageStrip.prototype.init = function () {
 		this.data("sap-ui-fastnavgroup", "true", true);
 		this.setAggregation("_text", new Text());
 	};
@@ -127,10 +126,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 		return this;
 	};
 
-	MessageStrip.prototype.onBeforeRendering = function () {
-		MSUtils.setIconIfVisible.call(this);
-	};
-
 	/**
 	 * Handles tap/click
 	 * @type void
@@ -153,17 +148,32 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/M
 	MessageStrip.prototype.onsapspace = MSUtils.handleMSCloseButtonInteraction;
 
 	/**
-	* Close the MessageStrip.
-	*
-	* @type void
-	* @public
-	* @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	*/
+	 * Handles mobile touch events
+	 * @type void
+	 * @private
+	 */
+	MessageStrip.prototype.ontouchmove = function (oEvent) {
+		// mark the event for components that needs to know if the event was handled
+		oEvent.setMarked();
+	};
+
+	/**
+	 * Closes the MessageStrip.
+	 * This method sets the visible property of the MessageStrip to false.
+	 * The MessageStrip can be shown again by setting the visible property to true.
+	 * @type void
+	 * @public
+	 */
 	MessageStrip.prototype.close = function () {
 		var fnClosed = function () {
 			this.fireClose();
-			this.destroy();
+			this.setVisible(false);
 		}.bind(this);
+
+		if (!sap.ui.getCore().getConfiguration().getAnimation()) {
+			fnClosed();
+			return;
+		}
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 			MSUtils.closeTransitionWithJavascript.call(this, fnClosed);

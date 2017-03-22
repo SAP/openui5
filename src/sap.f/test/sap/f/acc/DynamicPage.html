@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>DynamicPage</title>
+	<script src="../DynamicPageUtility.js"></script>
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.f, sap.m, sap.ui.layout">
+	</script>
+	<script>
+		var fnToggleFooter = function () {
+			oPage.setShowFooter(!oPage.getShowFooter());
+		};
+
+		var oToggleFooterButton = new sap.m.Button({
+			text: "Toggle footer",
+			press: fnToggleFooter
+		});
+
+		var oTitle = getTitle(oToggleFooterButton);
+		var oHeader = getHeader();
+		var oContent = new sap.m.Button({text: "Home"});
+		var oFooter = getFooter();
+
+		var oPage = getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
+
+		var oApp = new sap.m.App("myApp");
+		oApp.addPage(oPage).placeAt("body");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" role="application">
+</body>
+
+</html>

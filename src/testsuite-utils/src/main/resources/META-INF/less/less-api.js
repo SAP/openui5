@@ -3,31 +3,17 @@
 /* eslint-disable no-unused-vars */
 
 /*****************************************************************************
-* Less Patches:
-* This function contains patches to the original LESS code
-*****************************************************************************/
-
-// Return "transparent" from the less engine during toCSS call in case rgba(0,0,0,0) is the value
-var fnToCSS = window.less.tree.Color.prototype.toCSS;
-window.less.tree.Color.prototype.toCSS = function(){
-	if (this.alpha == 0 && this.rgb[0] == 0 && this.rgb[1] == 0 && this.rgb[2] == 0){
-		return "transparent";
-	}
-	return fnToCSS.apply(this, arguments);
-};
-
-// Save original function
-var __lessTreeRuleEval = window.less.tree.Rule.prototype.eval;
-
-/*****************************************************************************
 * Less API:
 * Wrapper to use the LessParser and access some additional infos!
 *****************************************************************************/
 
+// Save original function
+var __lessTreeRuleEval = window.less.tree.Rule.prototype.eval;
+
 var __env = context.__env = {};
 
 /**
- * Convenience function to parse string 
+ * Convenience function to parse string
  */
 var parse = context.parse = function(sData, sPath, bCompress, bCompressJSON, sLibraryName) {
 	var oResult = {},
@@ -150,7 +136,7 @@ var parse = context.parse = function(sData, sPath, bCompress, bCompressJSON, sLi
 		sMsg += createErrorMessage(oImportError);
 		throw sMsg;
 	}
-	
+
 	// convert the resources into a semicolon separated string
 	oResult.resources = aResources.join(";");
 

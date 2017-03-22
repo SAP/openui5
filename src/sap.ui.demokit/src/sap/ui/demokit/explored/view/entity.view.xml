@@ -10,6 +10,9 @@
 		class="sapUiFioriObjectPage"
 		navButtonPress="onNavBack"
 		id="page">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
 		<headerContent>
 			<Button
 			    id="toggleFullScreenBtn"
@@ -26,7 +29,9 @@
 			backgroundDesign="Translucent"
 			number="{/deprecatedMark}"
 			numberState="Warning"
-			intro="{/shortDescription}">
+			intro="{/shortDescription}"
+			introActive="{/show/introLink}"
+			introPress="onIntroLinkPress">
 
 			<attributes>
 				<ObjectAttribute
@@ -45,7 +50,7 @@
 					</customData>
 				</ObjectAttribute>
 				<ObjectAttribute
-					title="Form Factors"
+					title="Content Density"
 					text="{entity>formFactors}" />
 				<ObjectAttribute
 					title="Category"
@@ -67,7 +72,7 @@
 							key="about"
 							text="About"
 							visible="{/show/about}" >
-							<Text text="{/description}" />
+							<core:HTML content="{/description}" />
 							<Table
 								class="myTable"
 								visible="{/show/values}"
@@ -108,7 +113,7 @@
 									<ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
 										<cells>
 											<Text text="{entity>name}" class="entitySampleName" wrapping="false" />
-											<Text text="{entity>description}" />
+											<core:HTML content="{path: 'entity>description', formatter:'.descriptionText'}" sanitizeContent="true"></core:HTML>
 										</cells>
 									</ColumnListItem>
 								</items>
@@ -154,7 +159,7 @@
 											</Link>
 											<Text text="{defaultValue}" wrapping="false" />
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -205,7 +210,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -255,7 +260,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -299,7 +304,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -323,7 +328,7 @@
 								items="{/methods}" >
 								<columns>
 									<Column><Label text="Name" /></Column>
-									<Column><Label text="Param" /></Column>
+									<Column width="15%"><Label text="Param" /></Column>
 									<Column><Label text="Type" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
@@ -336,14 +341,14 @@
 													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
 												</customData>
 											</Text>
-											<Text text="{param}" class="docuParam" wrapping="false" />
+											<Text text="{param}" class="docuParam" wrapping="true" />
 											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
 												<customData>
 													<core:CustomData key="type" value="{type}" />
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>

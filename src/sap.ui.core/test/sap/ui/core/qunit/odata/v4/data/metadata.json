@@ -1,0 +1,641 @@
+{
+	"$Version" : "4.0",
+	"$EntityContainer" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Container",
+	"$Reference" : {
+		"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
+			"$Include" : [ "com.sap.gateway.default.iwbep.tea_busi_product.v0001." ]
+		},
+		"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" : {
+			"$Include" : [ "com.sap.vocabularies.Common.v1." ]
+		},
+		"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value" : {
+			"$Include" : [ "Org.OData.Measures.V1." ]
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.Department" : {
+		"$kind" : "EntityType",
+		"$Key" : [ "Sector", "ID" ],
+		"Sector" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 10
+		},
+		"ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		},
+		"Name" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 40
+		},
+		"MemberCount" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Int32",
+			"$Nullable" : false
+		},
+		"ManagerID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT" : {
+		"$kind" : "EntityType",
+		"$Key" : [ "Category", "ID" ],
+		"Category" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false
+		},
+		"ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Int32",
+			"$Nullable" : false
+		},
+		"Name" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false
+		},
+		"EmployeeId" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false
+		},
+		"EQUIPMENT_2_EMPLOYEE" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
+			"$Nullable" : false
+		},
+		"EQUIPMENT_2_PRODUCT" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product",
+			"$Nullable" : false
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeAges" : [ {
+		"$kind" : "Function",
+		"$ReturnType" : {
+			"$isCollection" : true,
+			"$Type" : "Edm.Int16",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeByID" : [ {
+		"$kind" : "Function",
+		"$Parameter" : [ {
+			"$Type" : "Edm.String",
+			"$Name" : "EmployeeID",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		} ],
+		"$ReturnType" : {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeByManagerID" : [ {
+		"$kind" : "Function",
+		"$Parameter" : [ {
+			"$Type" : "Edm.String",
+			"$Name" : "ManagerID",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		} ],
+		"$ReturnType" : {
+			"$isCollection" : true,
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeLocationByEmployeeID" : [ {
+		"$kind" : "Function",
+		"$Parameter" : [ {
+			"$Type" : "Edm.String",
+			"$Name" : "EmployeeID",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		} ],
+		"$ReturnType" : {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Location",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeMaxAge" : [ {
+		"$kind" : "Function",
+		"$ReturnType" : {
+			"$Type" : "Edm.Int16",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER" : {
+		"$kind" : "EntityType",
+		"$Key" : [ "ID" ],
+		"ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		},
+		"TEAM_ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 10
+		},
+		"Manager_to_Team" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
+			"$Nullable" : false
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM" : {
+		"$kind" : "EntityType",
+		"$Key" : [ "Team_Id" ],
+		"Team_Id" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 10
+		},
+		"Name" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 40
+		},
+		"MEMBER_COUNT" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Int32",
+			"$Nullable" : false
+		},
+		"MANAGER_ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		},
+		"BudgetCurrency" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 5
+		},
+		"Budget" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Decimal",
+			"$Nullable" : false,
+			"$Precision" : 16,
+			"$Scale" : "variable"
+		},
+		"TEAM_2_EMPLOYEES" : {
+			"$kind" : "NavigationProperty",
+			"$isCollection" : true,
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
+		},
+		"TEAM_2_MANAGER" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER",
+			"$Nullable" : false
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" : {
+		"$kind" : "EntityType",
+		"$Key" : [ "ID" ],
+		"ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		},
+		"Name" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 16
+		},
+		"AGE" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Int16",
+			"$Nullable" : false
+		},
+		"ENTRYDATE" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Date",
+			"$Nullable" : false
+		},
+		"MANAGER_ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		},
+		"ROOM_ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 10
+		},
+		"TEAM_ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 10
+		},
+		"Is_Manager" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Boolean",
+			"$Nullable" : false
+		},
+		"LAST_MODIFIED_AT" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.DateTimeOffset",
+			"$Nullable" : false,
+			"$Precision" : 7
+		},
+		"LOCATION" : {
+			"$kind" : "Property",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Location",
+			"$Nullable" : false
+		},
+		"SALARY" : {
+			"$kind" : "Property",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Salary",
+			"$Nullable" : false
+		},
+		"EMPLOYEE_2_EQUIPMENTS" : {
+			"$kind" : "NavigationProperty",
+			"$isCollection" : true,
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT"
+		},
+		"EMPLOYEE_2_MANAGER" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"
+		},
+		"EMPLOYEE_2_TEAM" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
+			"$Nullable" : false
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_City" : {
+		"$kind" : "ComplexType",
+		"POSTALCODE" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 16
+		},
+		"CITYNAME" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 255
+		},
+		"EmployeesInCity" : {
+			"$kind" : "NavigationProperty",
+			"$isCollection" : true,
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Location" : {
+		"$kind" : "ComplexType",
+		"COUNTRY" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 255
+		},
+		"City" : {
+			"$kind" : "Property",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_City",
+			"$Nullable" : false
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Salary" : {
+		"$kind" : "ComplexType",
+		"MONTHLY_BASIC_SALARY_AMOUNT" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Decimal",
+			"$Nullable" : false,
+			"$Precision" : 16,
+			"$Scale" : "variable"
+		},
+		"BASIC_SALARY_CURR" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 5
+		},
+		"YEARLY_BONUS_AMOUNT" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Decimal",
+			"$Nullable" : false,
+			"$Precision" : 16,
+			"$Scale" : "variable"
+		},
+		"BONUS_CURR" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 5
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfDepartment" : [ {
+		"$kind" : "Action",
+		"$IsBound" : true,
+		"$Parameter" : [ {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Department",
+			"$Name" : "DEPARTMENT",
+			"$Nullable" : false
+		}, {
+			"$Type" : "Edm.String",
+			"$Name" : "ManagerID",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		} ],
+		"$ReturnType" : {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Department",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam" : [ {
+		"$kind" : "Action",
+		"$IsBound" : true,
+		"$Parameter" : [ {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
+			"$Name" : "TEAM",
+			"$Nullable" : false
+		}, {
+			"$Type" : "Edm.String",
+			"$Name" : "ManagerID",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		} ],
+		"$ReturnType" : {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamBudgetByID" : [ {
+		"$kind" : "Action",
+		"$Parameter" : [ {
+			"$Type" : "Edm.String",
+			"$Name" : "TeamID",
+			"$Nullable" : false,
+			"$MaxLength" : 10
+		}, {
+			"$Type" : "Edm.Decimal",
+			"$Name" : "Budget",
+			"$Nullable" : false,
+			"$Precision" : 16,
+			"$Scale" : "variable"
+		} ],
+		"$ReturnType" : {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee" : [ {
+		"$kind" : "Action",
+		"$IsBound" : true,
+		"$Parameter" : [ {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
+			"$Name" : "EMPLOYEE",
+			"$Nullable" : false
+		}, {
+			"$Type" : "Edm.String",
+			"$Name" : "TeamID",
+			"$Nullable" : false,
+			"$MaxLength" : 10
+		} ],
+		"$ReturnType" : {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
+			"$Nullable" : false
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.AcFireEmployee" : [ {
+		"$kind" : "Action",
+		"$Parameter" : [ {
+			"$Type" : "Edm.String",
+			"$Name" : "EmployeeID",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		} ]
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.AcIncreaseSalaryByFactor" : [ {
+		"$kind" : "Action",
+		"$Parameter" : [ {
+			"$Type" : "Edm.String",
+			"$Name" : "EmployeeID",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		}, {
+			"$Type" : "Edm.Int16",
+			"$Name" : "Factor",
+			"$Nullable" : false
+		} ],
+		"$ReturnType" : {
+			"$Type" : "Edm.Decimal",
+			"$Nullable" : false,
+			"$Precision" : 16,
+			"$Scale" : "variable"
+		}
+	} ],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.Container" : {
+		"$kind" : "EntityContainer",
+		"Departments" : {
+			"$kind" : "EntitySet",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Department"
+		},
+		"EMPLOYEES" : {
+			"$kind" : "EntitySet",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
+			"$NavigationPropertyBinding" : {
+				"EMPLOYEE_2_TEAM" : "TEAMS",
+				"EMPLOYEE_2_EQUIPMENTS" : "Equipments",
+				"EMPLOYEE_2_MANAGER" : "MANAGERS",
+				"LOCATION/City/EmployeesInCity" : "EMPLOYEES"
+			}
+		},
+		"Equipments" : {
+			"$kind" : "EntitySet",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT",
+			"$NavigationPropertyBinding" : {
+				"EQUIPMENT_2_EMPLOYEE" : "EMPLOYEES",
+				"EQUIPMENT_2_PRODUCT" : "com.sap.gateway.default.iwbep.tea_busi_product.v0001.Container/Products"
+			}
+		},
+		"MANAGERS" : {
+			"$kind" : "EntitySet",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER",
+			"$NavigationPropertyBinding" : {
+				"Manager_to_Team" : "TEAMS"
+			}
+		},
+		"TEAMS" : {
+			"$kind" : "EntitySet",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
+			"$NavigationPropertyBinding" : {
+				"TEAM_2_EMPLOYEES" : "EMPLOYEES",
+				"TEAM_2_MANAGER" : "MANAGERS"
+			}
+		},
+		"Me" : {
+			"$kind" : "Singleton",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
+		},
+		"ChangeTeamBudgetByID" : {
+			"$kind" : "ActionImport",
+			"$Action" : "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamBudgetByID",
+			"$EntitySet" : "TEAMS"
+		},
+		"FireEmployee" : {
+			"$kind" : "ActionImport",
+			"$Action" : "com.sap.gateway.default.iwbep.tea_busi.v0001.AcFireEmployee"
+		},
+		"IncreaseSalaryByFactor" : {
+			"$kind" : "ActionImport",
+			"$Action" : "com.sap.gateway.default.iwbep.tea_busi.v0001.AcIncreaseSalaryByFactor"
+		},
+		"GetEmployeeAges" : {
+			"$kind" : "FunctionImport",
+			"$Function" : "com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeAges",
+			"$IncludeInServiceDocument" : true
+		},
+		"GetEmployeeByID" : {
+			"$kind" : "FunctionImport",
+			"$Function" : "com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeByID",
+			"$EntitySet" : "EMPLOYEES",
+			"$IncludeInServiceDocument" : true
+		},
+		"GetEmployeeByManagerID" : {
+			"$kind" : "FunctionImport",
+			"$Function" : "com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeByManagerID",
+			"$EntitySet" : "EMPLOYEES",
+			"$IncludeInServiceDocument" : true
+		},
+		"GetEmployeeLocationByEmployeeID" : {
+			"$kind" : "FunctionImport",
+			"$Function" : "com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeLocationByEmployeeID",
+			"$IncludeInServiceDocument" : true
+		},
+		"GetEmployeeMaxAge" : {
+			"$kind" : "FunctionImport",
+			"$Function" : "com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeMaxAge",
+			"$IncludeInServiceDocument" : true
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001." : {
+		"$kind" : "Schema",
+		"$Annotations" : {
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Location/COUNTRY" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "char255"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Location/ComplexType_City/POSTALCODE" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Postal Code"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Location/ComplexType_City/CITYNAME" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "City"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Salary/MONTHLY_BASIC_SALARY_AMOUNT" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Planned basic salary amount per month",
+				"@Org.OData.Measures.V1.ISOCurrency" : "BASIC_SALARY_CURR"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Salary/BASIC_SALARY_CURR" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Währung",
+				"@com.sap.vocabularies.Common.v1.Heading" : "Währg",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Währungsschlüssel"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Salary/YEARLY_BONUS_AMOUNT" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Amount",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "TEA V4 Currency Amount",
+				"@Org.OData.Measures.V1.ISOCurrency" : "BONUS_CURR"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Salary/BONUS_CURR" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Währung",
+				"@com.sap.vocabularies.Common.v1.Heading" : "Währg",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Währungsschlüssel"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER/ID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "ID",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Employee ID - CHAR - Conversion Exit"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER/ETAG" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "ETag"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM/Budget" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Team Budget",
+				"@Org.OData.Measures.V1.ISOCurrency" : "BUDGET_CURRENCY"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_City/POSTALCODE" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Postal Code"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_City/CITYNAME" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "City"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Location/COUNTRY" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "char255"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Location/ComplexType_City/POSTALCODE" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Postal Code"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Location/ComplexType_City/CITYNAME" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "City"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Salary/MONTHLY_BASIC_SALARY_AMOUNT" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Planned basic salary amount per month",
+				"@Org.OData.Measures.V1.ISOCurrency" : "BASIC_SALARY_CURR"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Salary/BASIC_SALARY_CURR" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Währung",
+				"@com.sap.vocabularies.Common.v1.Heading" : "Währg",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Währungsschlüssel"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Salary/YEARLY_BONUS_AMOUNT" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Amount",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "TEA V4 Currency Amount",
+				"@Org.OData.Measures.V1.ISOCurrency" : "BONUS_CURR"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Salary/BONUS_CURR" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Währung",
+				"@com.sap.vocabularies.Common.v1.Heading" : "Währg",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Währungsschlüssel"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/Is_Manager" : {
+				"@com.sap.vocabularies.Common.v1.ValueList" : {
+					"CollectionRoot" : "../../../../f4/sap/boole-fv/0001;ps='default-*iwbep*tea_busi-0001'",
+					"CollectionPath" : "ValueList",
+					"SearchSupported" : false,
+					"Parameters" : [ {
+						"$Type" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut",
+						"LocalDataProperty" : {
+							"$PropertyPath" : "Is_Manager"
+						},
+						"ValueListProperty" : "FieldValue"
+					} ]
+				}
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM/BudgetCurrency" : {
+				"@com.sap.vocabularies.Common.v1.ValueList" : {
+					"CollectionRoot" : "../../../../f4/sap/tcurc-ct/0001;ps='default-*iwbep*tea_busi-0001'",
+					"CollectionPath" : "ValueList",
+					"SearchSupported" : false,
+					"Parameters" : [ {
+						"$Type" : "com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly",
+						"ValueListProperty" : "WAERS"
+					}, {
+						"$Type" : "com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly",
+						"ValueListProperty" : "LTEXT"
+					} ]
+				}
+			}
+		}
+	}
+}

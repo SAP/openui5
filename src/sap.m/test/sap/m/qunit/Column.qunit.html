@@ -1,26 +1,32 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>Column - sap.m</title>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 
 <!-- UI5 Bootstrap -->
-<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m"></script>
 
 <!-- QUnit libraries -->
 
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-<script type="text/javascript">
+<script>
 
-	module("popin");
+	sinon.config.useFakeTimers = true;
 
-	test("ShouldSetDemandPopin", function() {
+	QUnit.module("popin");
+
+	QUnit.test("ShouldSetDemandPopin", function(assert) {
 		var fnTestCase = function(initialValue, valueToSet,bShouldInvalidate, expectedValidateToBeCalled){
 			//SUT
 			var result,
@@ -43,10 +49,10 @@
 			result = sut.setDemandPopin(valueToSet);
 
 			//Assert
-			strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
-			strictEqual(sut,result, "should be chainable");
+			assert.strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
+			assert.strictEqual(sut,result, "should be chainable");
 			if(expectedValidateToBeCalled){
-				equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called")
+				assert.equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called")
 			}
 
 			//Cleanup
@@ -68,7 +74,7 @@
 		fnTestCase(false, true, false, false);
 	});
 
-	test("ShouldKnowThatItIsAPopin", function() {
+	QUnit.test("ShouldKnowThatItIsAPopin", function(assert) {
 		var fnTestCase = function(demandsPopin, hasMedia, hasMatchingMedia, expectedResult){
 			//SUT
 			var result,
@@ -84,7 +90,7 @@
 			result = sut.isPopin();
 
 			//Assert
-			equal(result, expectedResult);
+			assert.equal(result, expectedResult);
 
 			//Cleanup
 			sut.destroy();
@@ -107,9 +113,9 @@
 		fnTestCase(true, true, true, false);
 	});
 
-	module("size and visibility")
+	QUnit.module("size and visibility")
 
-	test("ShouldKnowIfItIsHidden", function() {
+	QUnit.test("ShouldKnowIfItIsHidden", function(assert) {
 		var fnTestCase = function( expectedResult, hasMedia, hasMatchingMedia, hasScreen, minWidth){
 			//SUT
 			var result,
@@ -129,7 +135,7 @@
 			result = sut.isHidden();
 
 			//Assert
-			strictEqual(result, expectedResult);
+			assert.strictEqual(result, expectedResult);
 
 			//Cleanup
 			sut.destroy();
@@ -155,7 +161,7 @@
 
 	});
 
-	test("ShouldValidateMinWidth", function() {
+	QUnit.test("ShouldValidateMinWidth", function(assert) {
 		var fnTestCase = function(width){
 			//SUT
 			var screenSize, result,
@@ -166,20 +172,20 @@
 			sut._validateMinWidth(width);
 
 			//Assert
-			ok(true,"valid minScreenWidth : " + width);
+			assert.ok(true,"valid minScreenWidth : " + width);
 
 			//Cleanup
 			sut.destroy();
 		};
 
 		//invalid testcases
-		throws(function(){ fnTestCase(1)},/expected string for property "minScreenWidth" of /,"raised error because it expects a string");
-		throws(function(){ fnTestCase("random string")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("eightpx")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize")
-		throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("5%")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		
+		assert.throws(function(){ fnTestCase(1)},/expected string for property "minScreenWidth" of /,"raised error because it expects a string");
+		assert.throws(function(){ fnTestCase("random string")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("eightpx")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize")
+		assert.throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("5%")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+
 		//valid ones
 		fnTestCase("8px");
 		fnTestCase("100000em");
@@ -190,101 +196,26 @@
 		}
 	});
 
-	test("ShouldKnowIfItIsNeverVisibleWithCache", function() {
-		var fnTestCase = function(expectedResult){
-			//SUT
-			var result,
-				sut = new sap.m.Column();
-
-			sut._isNeverVisible = expectedResult;
-
-			//Act
-			result = sut.isNeverVisible(true);
-
-			//Assert
-			strictEqual(result,expectedResult);
-
-			//Cleanup
-			sut.destroy();
-		};
-
-		fnTestCase(true);
-		fnTestCase(false);
-	});
-
-	test("ShouldKnowIfItIsNeverVisibleWithoutMinWidth", function() {
-		//SUT
-		var result,
-			sut = new sap.m.Column();
-
-
-		//Act
-		result = sut.isNeverVisible(false);
-
-		//Assert
-		strictEqual(result, false);
-		strictEqual(sut._isNeverVisible, false);
-
-		//Cleanup
-		sut.destroy();
-	});
-
-
-
-	test("ShouldKnowIfItIsNeverVisibleWithMinWidth", function() {
-		//SUT
-		var result,
-			sut = new sap.m.Column({minScreenWidth: "30px"});
-
-
-		//Act
-		result = sut.isNeverVisible(false);
-
-		//Assert
-		strictEqual(result, false);
-		strictEqual(sut._isNeverVisible, false);
-
-		//Cleanup
-		sut.destroy();
-	});
-
-	test("ShouldKnowIfItIsNeverVisibleWithHugeMinWidth", function() {
-		//SUT
-		var result,
-		sut = new sap.m.Column({minScreenWidth: "300000px"});
-
-
-		//Act
-		result = sut.isNeverVisible(false);
-
-		//Assert
-		strictEqual(result, true);
-		strictEqual(sut._isNeverVisible, true);
-
-		//Cleanup
-		sut.destroy();
-	});
-
-	test("ShouldKnowIfWidthIsPredefined", function() {
+	QUnit.test("ShouldKnowIfWidthIsPredefined", function(assert) {
 		//SUT
 		var sut = new sap.m.Column({minScreenWidth : "240px"});
 
 
 		//Act
-		strictEqual(sut._screen,"phone");
+		assert.strictEqual(sut._screen,"phone");
 		sut._isWidthPredefined("600px");
 
 		//Assert
-		strictEqual(sut._screen,"tablet");
-		strictEqual(sut._minWidth,"600px");
+		assert.strictEqual(sut._screen,"tablet");
+		assert.strictEqual(sut._minWidth,"600px");
 
 		//Cleanup
 		sut.destroy();
 	});
 
-	module("media");
+	QUnit.module("media");
 
-	test("ShouldAddMedia", function() {
+	QUnit.test("ShouldAddMedia", function(assert) {
 
 		var fnTestCase = function(width,matches) {
 			//SUT
@@ -294,8 +225,8 @@
 			sut._addMedia();
 
 			//Assert
-			ok(sut._media);
-			strictEqual(sut._media.matches, matches);
+			assert.ok(sut._media);
+			assert.strictEqual(sut._media.matches, matches);
 
 			//Cleanup
 			sut.destroy();
@@ -305,72 +236,267 @@
 		fnTestCase("100px",true);
 	});
 
-	test("ShouldClearMedia", function() {
+	QUnit.test("ShouldClearMedia", function(assert) {
 		//SUT
 		var sut = new sap.m.Column({minScreenWidth: "100px"});
 
 
 		//Act
 		sut._addMedia();
-		ok(sut._media);
+		assert.ok(sut._media);
 		sut._clearMedia();
 
 		//Assert
-		ok(!sut._media);
+		assert.ok(!sut._media);
 
 		//Cleanup
 		sut.destroy();
 	});
 
-	module("events");
+	QUnit.module("events");
 
-	asyncTest("ShouldNotifyOnResize", 3, function() {
+	QUnit.test("Media handler should not be attached if the table is not rendered yet", function (assert) {
+		var mediaAttachSpy = this.spy(sap.ui.Device.media, "attachHandler"),
+				sut = new sap.m.Column({
+					minScreenWidth : "phone"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				});
+
+		assert.ok(!mediaAttachSpy.called, "Media handler not attached initially");
+
+		parent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
+
+		parent.destroy();
+	});
+
+	QUnit.test("Media handler should be attached when adding a column to a rendered table", function (assert) {
+		var mediaAttachSpy = this.spy(sap.ui.Device.media, "attachHandler"),
+				sut = new sap.m.Column({
+					minScreenWidth : "phone"
+				}),
+				parent = new sap.m.Table({});
+
+		parent.placeAt("qunit-fixture");
+		parent.addColumn(sut);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(mediaAttachSpy.called, "Media handler called immediately");
+
+		parent.destroy();
+	});
+
+	QUnit.test("ShouldNotifyOnResize", function(assert) {
+
+		// need to bypass the lazy require stub for spies to work
+		jQuery.sap.require("sap/m/Table");
+
 		//System under Test + Arrange
-		var cresize,
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
 			sut = new sap.m.Column({
-				minScreenWidth : "phone",
+				minScreenWidth : "phone"
 			}),
 			parent = new sap.m.Table({
 				columns : sut
 			});
 
-		cresize = parent.onColumnResize;
+		// The table needs to be rendered for the column media object to be initialized
+		parent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-		parent.onColumnResize = function(column) {
-			cresize.call(parent, column);
-			//Assert
-			strictEqual(sut, column, "Resize was called on the parent");
-			start();
-		};
+		sut._notifyResize({from: 240}); // this is the default value for minScreenWidth="phone"
+		this.clock.tick(1);
 
-		sap.ui.base.EventProvider.prototype.attachEvent.call(
-			sut,
-			"media",
-			undefined,
-			function(args) {
-				//Assert
-				strictEqual(args.sId, "media", "the event type is media");
-				strictEqual(sut, this, "the control who fires is column");
-			}, 
-			sut
-		);
+		assert.ok(!tableResizeSpy.called, "Table resize not called, if media is the same");
 
-		//Act
-		sut.setMinScreenWidth("tablet");
-		sut._notifyResize({});
+		sut._notifyResize({from: 0});
+		this.clock.tick(1);
+
+		assert.ok(tableResizeSpy.called, "Table resize called, if media is different");
+
+		parent.destroy();
+	});
+
+	QUnit.test("Should not notify when contextual width is set to a parent container, but this width is in the same range as the device width (when initially rendered without contextual width)", function (assert) {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({
+					content: [parent]
+				});
+
+		// The table is rendered without contextual width, the Device.media API is used
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1);
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
+
+		// Set contextual width to a parent (as for tablet or above) and wait 1 tick for onColumnResize
+		page._applyContextualSettings({contextualWidth: 600});
+		this.clock.tick(1);
+		assert.equal(tableResizeSpy.callCount, 0, "After applying contextual width to a parent container, but this width is in the same range, onColumnResize is not called");
+
+		page.destroy();
+	});
+
+	QUnit.test("Should notify when contextual width is set to a parent container, and this width is in a different range compared to device width (when initially rendered without contextual width)", function (assert) {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({
+					content: [parent]
+				});
+
+		// The table is rendered without contextual width, the Device.media API is used
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1);
+
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
+
+		// Set contextual width to a parent (as for phone) and wait 1 tick for onColumnResize
+		page._applyContextualSettings({contextualWidth: 100});
+		this.clock.tick(1);
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+
+		// Now set contextual width that doesn't go beyond a breakpoint
+		page._applyContextualSettings({contextualWidth: 101});
+		this.clock.tick(1);
+		// callCount is still 1
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, but this width isn't in a different range, onColumnResize is not called");
+
+		// Now set contextual width that goes beyond a breakpoint (tablet starts at 600)
+		page._applyContextualSettings({contextualWidth: 600});
+		this.clock.tick(1);
+		assert.equal(tableResizeSpy.callCount, 2, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+
+		page.destroy();
+	});
+
+	QUnit.test("Should notify when contextual width changes beyond a breakpoint (when already rendered with contextual width)", function (assert) {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({}); // we want the page to be empty so we can insert the table later
+
+
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		page._applyContextualSettings({contextualWidth: 100});
+
+		// Place the table in a container that already has contextual settings
+		page.addContent(parent);
+		this.clock.tick(1);
+
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
+
+		// Now change the contextual width significantly (tablet starts at 600) and wait 1 tick for onColumnResize
+		page._applyContextualSettings({contextualWidth: 600});
+		this.clock.tick(1);
+
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+
+		page.destroy();
+	});
+
+	QUnit.test("Should notify when contextual width is removed from a parent, and this width was in a different range compared to device width", function (assert) {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({}); // we want the page to be empty so we can insert the table later
+
+
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		page._applyContextualSettings({contextualWidth: 100});
+
+		// Place the table in a container that already has contextual settings
+		page.addContent(parent);
+		this.clock.tick(1);
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
+
+		// Now remove contextual settings - the table will be rerendered as for desktop
+		page._applyContextualSettings({});
+		this.clock.tick(1);
+		assert.equal(tableResizeSpy.callCount, 1, "After removing contextual with from a parent container, and this width was in another range compared to the device size range, onColumnResize is called");
+
+		page.destroy();
+	});
+
+	QUnit.test("Should not notify when contextual width is removed from a parent, but this width wasn't in a different range compared to device width", function (assert) {
+
+		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
+		var tableResizeSpy = this.spy(sap.m.Table.prototype, "onColumnResize"),
+				sut = new sap.m.Column({
+					minScreenWidth : "tablet"
+				}),
+				parent = new sap.m.Table({
+					columns : sut
+				}),
+				page = new sap.m.Page({}); // we want the page to be empty so we can insert the table later
+
+
+		page.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		page._applyContextualSettings({contextualWidth: 1000});
+
+		// Place the table in a container that already has contextual settings
+		page.addContent(parent);
+		this.clock.tick(1);
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for tablet since contextual width is 1000 already");
+
+		// Now remove contextual settings - the table will not be rerendered as it is already showing the column
+		page._applyContextualSettings({});
+		this.clock.tick(1);
+		assert.equal(tableResizeSpy.callCount, 0, "After removing contextual width from a parent container, but this width was in the same range compared to the device width, onColumnResize is not called");
+
+		page.destroy();
 	});
 
 
-	module("display and style");
+	QUnit.module("display and style");
 
-	test("ShouldSetDisplay", function() {
+	QUnit.test("ShouldSetDisplay", function(assert) {
 		//System under Test + Arrange
 		var sut = new sap.m.Column({
 				demandPopin : true,
 				minScreenWidth : "1px"
 			}),
 			parent = new sap.m.Table({
-				columns : sut
+				columns : sut,
+				items: new sap.m.ColumnListItem({
+					cells: new sap.m.Text({
+						text: "cell"
+					})
+				})
 			});
 
 		//Act
@@ -379,21 +505,21 @@
 		sut.setDisplayViaMedia($("table")[0]);
 
 		//Assert
-		strictEqual(parent.$().find("td").css("display"), "table-cell");
-		strictEqual(parent.$().find("th").css("display"), "table-cell");
+		assert.strictEqual(parent.$().find("td").css("display"), "table-cell");
+		assert.strictEqual(parent.$().find("th").eq(1).css("display"), "table-cell");
 
 		//Act
 		sut.setDisplay($("table")[0], false);
 
 		//Assert
-		strictEqual(parent.$().find("td").css("display"), "none");
-		strictEqual(parent.$().find("th").css("display"), "none");
+		assert.strictEqual(parent.$().find("td").eq(1).css("display"), "none");
+		assert.strictEqual(parent.$().find("th").eq(1).css("display"), "none");
 
 		//Cleanup
 		parent.destroy();
 	});
 
-	test("ShouldGetTheStyleClass", function() {
+	QUnit.test("ShouldGetTheStyleClass", function(assert) {
 		//Arrange
 		var result,
 			className = "awesomeStyle",
@@ -408,11 +534,11 @@
 		result = sut.getStyleClass(true);
 
 		//Assert
-		ok(result.indexOf(className) !== -1, "style class was present in: " + result);
-		ok(result.indexOf(media) !== -1, "media class was present in: " + result);
+		assert.ok(result.indexOf(className) !== -1, "style class was present in: " + result);
+		assert.ok(result.indexOf(media) !== -1, "media class was present in: " + result);
 	});
 
-	test("ShouldApplyAlign", function() {
+	QUnit.test("ShouldApplyAlign", function(assert) {
 		//Arrange
 		var align = "Center",
 			label = new sap.m.Label(),
@@ -425,21 +551,21 @@
 		sut.applyAlignTo(label, align);
 
 		//Assert
-		strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());
+		assert.strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());
 
 		//Cleanup
 		label.destroy();
 	});
-	
-	test("Should convert units correctly", function() {
+
+	QUnit.test("Should convert units correctly", function(assert) {
 
 		var fnTestCase = function(width, px, screen) {
 			//SUT
 			var sut = new sap.m.Column({minScreenWidth: width});
 
 			//Assert
-			strictEqual(sut._minWidth, px);
-			strictEqual(sut._screen, screen);
+			assert.strictEqual(sut._minWidth, px);
+			assert.strictEqual(sut._screen, screen);
 
 			//Cleanup
 			sut.destroy();
@@ -449,12 +575,12 @@
 		fnTestCase("64em", "1024px", "desktop");
 		fnTestCase("desktop", "1024px", "desktop");
 		fnTestCase("Desktop", "1024px", "desktop");
-		
+
 		fnTestCase("63rem", 63 * 16 + "px", "");
 		fnTestCase("63em", 63 * 16 + "px", "");
-		
+
 		fnTestCase("63px", "63px", "");
-		
+
 	});
 
 </script>

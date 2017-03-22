@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html style="height: 100%">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>Dialog - sap.ui.commons</title>
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.commons,sap.ui.ux3"
 				data-sap-ui-evt-oninit="createControls()"
 				>
@@ -181,7 +181,7 @@
 			opener: btn
 		});
 
-		dialog.addContent(new sap.ui.commons.Image({decorative: true, src: 'https://sapui5.neo.ondemand.com/sdk/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png'}));
+		dialog.addContent(new sap.ui.commons.Image({decorative: true, src: 'https://openui5.hana.ondemand.com/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png'}));
 		dialog.addContent(new sap.ui.commons.TextField());
 		dialog.addContent(new sap.ui.commons.TextField());
 
@@ -193,7 +193,7 @@
 		var dialog2 = new sap.ui.commons.Dialog({modal: true, showCloseButton: true});
 
 		dialog2.addContent(new sap.ui.commons.TextField());
-		dialog2.addContent(new sap.ui.commons.Image({decorative: true, src: 'https://sapui5.neo.ondemand.com/sdk/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png'}));
+		dialog2.addContent(new sap.ui.commons.Image({decorative: true, src: 'https://openui5.hana.ondemand.com/resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png'}));
 		dialog2.addContent(new sap.ui.commons.TextField());
 
 		btn2.attachPress(function() { dialog2.open() });
@@ -205,19 +205,19 @@
 	<h1>Test Page for sap.ui.commons.Dialog</h1>
 
 	<div id="uiArea1"></div>
-	<br/>
+	<br>
 	<div id="uiArea2"></div>
-	<br/>
+	<br>
 	<div id="uiArea3"></div>
-	<br/>
+	<br>
 	<div id="uiArea4"></div>
-	<br/>
+	<br>
 	<div id="uiArea5"></div>
-	<br/>
+	<br>
 	<div id="uiArea6"></div>
-	<br/>
+	<br>
 	<div id="uiArea7"></div>
-	<br/>
+	<br>
 	<div id='tabChain'></div>
 </body>
 </html>

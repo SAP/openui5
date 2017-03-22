@@ -3,40 +3,53 @@
 	"content": [{
 		"Type":"sap.ui.commons.Panel",
 		"id":"myPanel",
-		"content":[{
-			"Type":"sap.ui.commons.Button",
-			"id":"Button1",
-			"text":"Hello World!",
-			"press": "doIt"
-		},
-		{
-			"Type": "sap.ui.commons.SearchField"
-		},
-		{
-			"Type":"sap.ui.commons.Button",
-			"id":"Button2",
-			"text":"Hello"
-		},
-		{
-			"Type":"sap.ui.core.mvc.JSONView",
-			"viewName":"example.mvc.test2",
-			"id":"MyJSONView"
-		},		
-		{
-			"Type":"sap.ui.core.mvc.JSView",
-			"viewName":"example.mvc.test2",
-			"id":"MyJSView"
-		},		
-		{
-			"Type":"sap.ui.core.mvc.XMLView",
-			"viewName":"example.mvc.test2",
-			"id":"MyXMLView"
-		},
-		{
-			"Type":"sap.ui.core.mvc.HTMLView",
-			"viewName":"example.mvc.test2",
-			"controllerName":"example.mvc.test",
-			"id":"MyHTMLView"
-		}]
+		"content":[
+			{
+				"Type":"sap.ui.commons.Button",
+				"id":"Button1",
+				"text":"Hello World!",
+				"press": "doIt"
+			},
+			{
+				"Type": "sap.ui.commons.SearchField"
+			},
+			{
+				"Type":"sap.ui.commons.Button",
+				"id":"Button2",
+				"text":"Hello"
+			},
+			{
+				"Type":"sap.ui.commons.Button",
+				"id":"ButtonX",
+				"text":"Another Hello",
+				"press": ".sap.doIt"
+			},
+			{
+				"Type":"sap.ui.core.mvc.JSONView",
+				"viewName":"example.mvc.test2",
+				"id":"MyJSONView"
+			},
+			{
+				"Type":"sap.ui.core.mvc.JSView",
+				"viewName":"example.mvc.test2",
+				"id":"MyJSView"
+			},
+			{
+				"Type":"sap.ui.core.mvc.XMLView",
+				"viewName":"example.mvc.test2",
+				"id":"MyXMLView"
+			},
+			{
+				"Type":"sap.ui.core.mvc.HTMLView",
+				"viewName":"example.mvc.test2",
+				"controllerName":"example.mvc.test",
+				"id":"MyHTMLView"
+			},
+			{
+				"Type":"sap.ui.commons.Button",
+				"id":"ButtonWithBinding",
+				"text": "{path:\"/test\", formatter: \".valueFormatter\"}"
+			}
+		]
 	}]
 }

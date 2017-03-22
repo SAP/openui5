@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.unified.
  */
-sap.ui.define(['jquery.sap.global', 
+sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/library'], // library dependency
 	function(jQuery) {
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @version ${version}
 	 * @public
 	 */
-	
+
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.unified",
@@ -28,7 +28,8 @@ sap.ui.define(['jquery.sap.global',
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.unified.CalendarDayType",
-			"sap.ui.unified.ContentSwitcherAnimation"
+			"sap.ui.unified.ContentSwitcherAnimation",
+			"sap.ui.unified.ColorPickerMode"
 		],
 		interfaces: [],
 		controls: [
@@ -36,11 +37,18 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.unified.calendar.Header",
 			"sap.ui.unified.calendar.Month",
 			"sap.ui.unified.calendar.MonthPicker",
+			"sap.ui.unified.calendar.MonthsRow",
+			"sap.ui.unified.calendar.TimesRow",
 			"sap.ui.unified.calendar.YearPicker",
 			"sap.ui.unified.Calendar",
 			"sap.ui.unified.CalendarDateInterval",
+			"sap.ui.unified.CalendarWeekInterval",
+			"sap.ui.unified.CalendarMonthInterval",
+			"sap.ui.unified.CalendarTimeInterval",
 			"sap.ui.unified.CalendarLegend",
+			"sap.ui.unified.CalendarRow",
 			"sap.ui.unified.ContentSwitcher",
+			"sap.ui.unified.ColorPicker",
 			"sap.ui.unified.Currency",
 			"sap.ui.unified.FileUploader",
 			"sap.ui.unified.Menu",
@@ -50,6 +58,7 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.unified.SplitContainer"
 		],
 		elements: [
+			"sap.ui.unified.CalendarAppointment",
 			"sap.ui.unified.CalendarLegendItem",
 			"sap.ui.unified.DateRange",
 			"sap.ui.unified.DateTypeRange",
@@ -61,8 +70,8 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.unified.ShellHeadUserItem"
 		]
 	});
-	
-	
+
+
 	/**
 	 * Type of a calendar day used for visualization.
 	 *
@@ -72,126 +81,226 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.unified.CalendarDayType = {
-	
+
+		/**
+		 * None: No special type is used
+		 * @public
+		 */
+		None : "None",
+
 		/**
 		 * Type 01: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type01 : "Type01",
-	
+
 		/**
 		 * Type 02: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type02 : "Type02",
-	
+
 		/**
 		 * Type 03: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type03 : "Type03",
-	
+
 		/**
 		 * Type 04: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type04 : "Type04",
-	
+
 		/**
 		 * Type 05: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type05 : "Type05",
-	
+
 		/**
 		 * Type 06: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type06 : "Type06",
-	
+
 		/**
 		 * Type 07: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type07 : "Type07",
-	
+
 		/**
 		 * Type 08: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type08 : "Type08",
-	
+
 		/**
 		 * Type 09: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type09 : "Type09",
-	
+
 		/**
 		 * Type 10: The semantic meaning must be defined by the application. It can be shown in a legend.
 		 * @public
 		 */
 		Type10 : "Type10"
-	
+
 	};
-	
-	
+
+	/**
+	 * Interval types in a <code>CalendarRow</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.34.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.unified.CalendarIntervalType = {
+
+		/**
+		 * Intervals have the size of one hour.
+		 * @public
+		 */
+		Hour : "Hour",
+
+		/**
+		 * Intervals have the size of one day.
+		 * @public
+		 */
+		Day : "Day",
+
+		/**
+		 * Intervals have the size of one month.
+		 * @public
+		 */
+		Month : "Month",
+
+		/**
+		 * Intervals have the size of one day where 7 days are displayed, starting with the first day of the week.
+		 *
+		 * Note: This interval type is NOT supported when creating a custom sap.m.PlanningCalendarView.
+		 *
+		 * @since 1.44
+		 */
+		Week : "Week",
+
+		/**
+		 * Intervals have the size of one day where 31 days are displayed, starting with the first day of the month.
+		 *
+		 * Note: This interval type is NOT supported when creating a custom sap.m.PlanningCalendarView.
+		 *
+		 * @since 1.46
+		 */
+		OneMonth : "One Month"
+
+	};
+
+	/**
+	 * Visualization types for {@link sap.ui.unified.CalendarAppointment}.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.40.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.unified.CalendarAppointmentVisualization = {
+
+		/**
+		 * Standard visualization with no fill color.
+		 * @public
+		 */
+		Standard : "Standard",
+
+		/**
+		 * Visualization with fill color depending on the used theme.
+		 * @public
+		 */
+		Filled : "Filled"
+
+	};
+
 	/**
 	 * Predefined animations for the ContentSwitcher
 	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.16.0
-	 * @experimental Since version 1.16.0. 
+	 * @experimental Since version 1.16.0.
 	 * API is not yet finished and might change completely
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.unified.ContentSwitcherAnimation = {
-	
+
 		/**
 		 * No animation. Content is switched instantly.
 		 * @public
 		 */
 		None : "None",
-	
+
 		/**
 		 * Content is faded (opacity change).
 		 * @public
 		 */
 		Fade : "Fade",
-	
+
 		/**
 		 * The new content is "zoomed in" from the center and grows to fill the full content area.
 		 * @public
 		 */
 		ZoomIn : "ZoomIn",
-	
+
 		/**
 		 * The old content is "zoomed out", i.e. shrinks to a point at the center of the content area.
 		 * @public
 		 */
 		ZoomOut : "ZoomOut",
-	
+
 		/**
 		 * The new content rotates in. (Just like one of those old newspaper-animations.)
 		 * @public
 		 */
 		Rotate : "Rotate",
-	
+
 		/**
 		 * The new slides in from the left (to the right).
 		 * @public
 		 */
 		SlideRight : "SlideRight",
-	
+
 		/**
 		 * The new content slides in from the left while the old content slides out to the left at the same time.
 		 * @public
 		 */
 		SlideOver : "SlideOver"
-	
+
 	};
-	
+
+	/**
+	 * different styles for a ColorPicker.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.unified.ColorPickerMode = {
+
+		/**
+		 * Color picker works with HSV values.
+		 * @public
+		 */
+		HSV : "HSV",
+
+		/**
+		 * Color picker works with HSL values.
+		 * @public
+		 */
+		HSL : "HSL"
+
+	};
+
 	sap.ui.base.Object.extend("sap.ui.unified._ContentRenderer", {
 		constructor : function(oControl, sContentContainerId, oContent, fAfterRenderCallback) {
 			sap.ui.base.Object.apply(this);
@@ -201,7 +310,7 @@ sap.ui.define(['jquery.sap.global',
 			this._rm = sap.ui.getCore().createRenderManager();
 			this._cb = fAfterRenderCallback || function(){};
 		},
-		
+
 		destroy : function() {
 			this._rm.destroy();
 			delete this._rm;
@@ -215,20 +324,20 @@ sap.ui.define(['jquery.sap.global',
 			}
 			sap.ui.base.Object.prototype.destroy.apply(this, arguments);
 		},
-		
+
 		render : function() {
 			if (!this._rm) {
 				return;
 			}
-			
+
 			if (this._rerenderTimer) {
 				jQuery.sap.clearDelayedCall(this._rerenderTimer);
 			}
-			
+
 			this._rerenderTimer = jQuery.sap.delayedCall(0, this, function(){
 				var $content = jQuery.sap.byId(this._id);
 				var doRender = $content.length > 0;
-				
+
 				if (doRender) {
 					if (typeof (this._cntnt) === "string") {
 						var aContent = this._ctrl.getAggregation(this._cntnt, []);
@@ -240,21 +349,37 @@ sap.ui.define(['jquery.sap.global',
 					}
 					this._rm.flush($content[0]);
 				}
-	
+
 				this._cb(doRender);
 			});
 		}
 	});
-	
-	
+
+
 	sap.ui.unified._iNumberOfOpenedShellOverlays = 0;
-	
-	//factory for the FileUploader to create TextField an Button to be overwritten by commons and mobile library
+
+	// Default implementation of ColorPickerHelper - to be overwritten by commons or mobile library
+	if (!sap.ui.unified.ColorPickerHelper) {
+		sap.ui.unified.ColorPickerHelper = {
+			isResponsive: function () { return false; },
+			factory: {
+				createLabel:  function () { throw new Error("no Label control available"); },
+				createInput:  function () { throw new Error("no Input control available"); },
+				createSlider: function () { throw new Error("no Slider control available"); },
+				createRadioButtonGroup: function () { throw new Error("no RadioButtonGroup control available"); },
+				createRadioButtonItem: function () { throw new Error("no RadioButtonItem control available"); }
+			},
+			bFinal: false
+		};
+	}
+
+	//factory for the FileUploader to create TextField and Button to be overwritten by commons and mobile library
 	if (!sap.ui.unified.FileUploaderHelper) {
 		sap.ui.unified.FileUploaderHelper = {
 			createTextField: function(sId){ throw new Error("no TextField control available!"); }, /* must return a TextField control */
 			setTextFieldContent: function(oTextField, sWidth){ throw new Error("no TextField control available!"); },
 			createButton: function(){ throw new Error("no Button control available!"); }, /* must return a Button control */
+			addFormClass: function(){ return null; },
 			bFinal: false /* if true, the helper must not be overwritten by an other library */
 		};
 	}

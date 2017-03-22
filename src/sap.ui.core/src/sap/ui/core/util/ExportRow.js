@@ -3,14 +3,14 @@
  */
 
 // Provides class sap.ui.core.util.ExportRow
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell'],
-	function(jQuery, ManagedObject, ExportCell) {
+sap.ui.define(['sap/ui/base/ManagedObject', './ExportCell'],
+	function(ManagedObject, ExportCell) {
 	'use strict';
 
 	/**
 	 * Constructor for a new ExportRow.
-	 * 
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 *
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell']
 	 */
 	var ExportRow = ManagedObject.extend("sap.ui.core.util.ExportRow", {
 		metadata: {
+			library: "sap.ui.core",
 			aggregations: {
 				/**
 				 * Cells for the Export.
@@ -41,4 +42,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell']
 
 	return ExportRow;
 
-}, /* bExport= */ true);
+});

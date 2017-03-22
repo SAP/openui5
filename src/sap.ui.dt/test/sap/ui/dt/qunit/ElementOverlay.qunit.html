@@ -1,0 +1,1441 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Test Page for sap.ui.dt.ElementOverlay</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+			}
+		</style>
+
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+			jQuery.sap.require("sap.ui.dt.ElementOverlay");
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+			jQuery.sap.require("sap.ui.dt.DOMUtil");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
+			jQuery.sap.require("sap.m.Button");
+			jQuery.sap.require("sap.m.Page");
+			jQuery.sap.require("sap.ui.layout.VerticalLayout");
+			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
+			jQuery.sap.require("sap.ui.core.ElementMetadata");
+			jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
+			jQuery.sap.require("sap.ui.dt.AggregationDesignTimeMetadata");
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+
+			var sandbox = sinon.sandbox.create();
+
+			QUnit.module("Given that an Overlay Container is created", {
+				beforeEach : function() {
+					sap.ui.dt.Overlay.getOverlayContainer();
+				},
+				afterEach : function() {
+					sap.ui.dt.Overlay.removeOverlayContainer();
+				}
+			});
+
+			QUnit.test("then", function(assert) {
+				var $container = jQuery("#overlay-container");
+				assert.strictEqual($container.length, 1, "overlay container exists");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oButton,
+						designTimeMetadata : {}
+					});
+					this.oOverlay.placeInOverlayContainer();
+
+					this.oButton.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when all is rendered", function(assert) {
+				assert.ok(this.oOverlay.$(), "overlay is visible");
+				assert.deepEqual(this.oOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control with an existing designTime metadata", {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
+					this.oPage = new sap.m.Page();
+					this.oPage.placeAt("content");
+					sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oPage).then(function(oDesignTimeMetadata) {
+						that.oOverlay = new sap.ui.dt.ElementOverlay({
+							designTimeMetadata : { data : oDesignTimeMetadata},
+							element : that.oPage
+						});
+						that.oOverlay.placeInOverlayContainer();
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when OverlayRegistry initialized", function(assert) {
+				assert.strictEqual(this.oOverlay, sap.ui.dt.OverlayRegistry.getOverlay(this.oPage.getId()), "overlay is registered in OverlayRegistery");
+			});
+
+			QUnit.test("when the control is rendered", function(assert) {
+				var oDomRef = this.oOverlay.getDomRef();
+				var oElementDomRef = this.oOverlay.getElementInstance().getDomRef();
+				assert.strictEqual(this.oOverlay.$().parent().attr("id"), "overlay-container", 'then the overlay is added to the overlay container');
+
+				assert.notEqual(oDomRef.className.indexOf("sapUiDtOverlay"), -1, 'and the right CSS class overlay is set to the element');
+				assert.notEqual(oDomRef.className.indexOf("sapUiDtElementOverlay"), -1, 'and the right CSS element overlay class is set to the element');
+
+				var mElementOffset = jQuery(oDomRef).offset();
+				var mOverlayOffset = jQuery(oDomRef).offset();
+				assert.equal(mOverlayOffset.top, mElementOffset.top, 'and the right postion "top" is applied to the overlay');
+				assert.equal(mOverlayOffset.left, mElementOffset.left, 'and the right postion "left" is applied to the overlay');
+
+				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
+				assert.ok(oDesignTimeMetadata instanceof sap.ui.dt.ElementDesignTimeMetadata, "and the design time metadata for the control is set");
+			});
+
+			QUnit.test("when the overlay is rerendered", function(assert) {
+				var done = assert.async();
+
+				var fnOriginalOnAfterRendering =  this.oOverlay.onAfterRendering;
+				this.oOverlay.onAfterRendering = function() {
+					// if this test fails, check if there're changes in RenderManager _fPutIntoDom function (see ElementOverlay init comment for details)
+					assert.notStrictEqual(this.getUIArea().getRootNode().childNodes.length, 0, "overlay is still in UIArea's DOM");
+
+					done();
+					return fnOriginalOnAfterRendering.apply(this, arguments);
+				};
+
+				this.oOverlay.rerender();
+			});
+
+			QUnit.test("when setSelectable, setMovable, setEditable is called on the overlay with undefined", function(assert) {
+				this.oOverlay.setSelectable(undefined);
+				assert.equal(this.oOverlay.isSelectable(), false, 'then the overlay is not selectable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlaySelectable"), false, "the Overlay doesn't have the sapUiDtOverlaySelectable StyleClass");
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayFocusable"), false, "the Overlay doesn't have the sapUiDtOverlayFocusable StyleClass");
+
+				this.oOverlay.setMovable(undefined);
+				assert.equal(this.oOverlay.isMovable(), false, 'then the overlay is not movable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayMovable"), false, "the Overlay doesn't have the sapUiDtOverlayMovable StyleClass");
+				this.oOverlay.setMovable(true);
+				assert.equal(this.oOverlay.isMovable(), true, 'then the overlay is movable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayMovable"), true, "the Overlay has the sapUiDtOverlayMovable StyleClass");
+
+				this.oOverlay.setEditable(undefined);
+				assert.equal(this.oOverlay.isEditable(), false, 'then the overlay is not editable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayEditable"), false, "the Overlay doesn't have the sapUiDtOverlayEditable StyleClass");
+				this.oOverlay.setEditable(true);
+				assert.equal(this.oOverlay.isEditable(), true, 'then the overlay is editable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayEditable"), true, "the Overlay has the sapUiDtOverlayEditable StyleClass");
+			});
+
+			QUnit.test("when setSelected is called on the overlay with undefined", function(assert) {
+				this.oOverlay.setSelectable(true);
+				this.oOverlay.setSelected(undefined);
+				assert.equal(this.oOverlay.isSelectable(), true, 'then the overlay is selectable');
+				assert.equal(this.oOverlay.isSelected(), false, 'then the overlay is not selected');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlaySelectable"), true, "the Overlay doesn't have the Selectable StyleClass");
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayFocusable"), true, "the Overlay doesn't have the focusable StyleClass");
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlaySelected"), false, "the Overlay doesn't have the selected StyleClass");
+			});
+
+			QUnit.test("when the overlay is selectable and selected", function(assert) {
+				this.oOverlay.attachSelectionChange(function(oEvent) {
+					assert.ok(oEvent.getParameter("selected"), 'and a "selectionChange" event is fired which provides the right selected state');
+				}, this);
+				this.oOverlay.setSelectable(true);
+				this.oOverlay.setSelected(true);
+				assert.ok(this.oOverlay.isSelected(), 'then the state of the overlay is "selected"');
+			});
+
+			QUnit.test("when the overlay is selected and selected again", function(assert) {
+				this.oOverlay.setSelected(true);
+				var bFired = false;
+				this.oOverlay.attachSelectionChange(function(oEvent) {
+					bFired = true;
+				}, this);
+				this.oOverlay.setSelected(true);
+				assert.ok(!bFired, 'then the "selection change" event should not fire again');
+			});
+
+			QUnit.test("when the overlay is changed to selectable false and the overlay is selected", function(assert) {
+				this.oOverlay.setSelectable(false);
+				assert.ok(!this.oOverlay.isSelectable(), 'then the state of the overlay is "not selectable"');
+
+				var bFired = false;
+				this.oOverlay.attachSelectionChange(function(oEvent) {
+					bFired = true;
+				}, this);
+				this.oOverlay.setSelected(true);
+				assert.ok(!this.oOverlay.isSelected(), 'and the state of the overlay is "not selected"');
+				assert.ok(!bFired, 'and no "selection change" event is fired');
+			});
+
+			QUnit.test("when the overlay is selectable or not selectable", function(assert) {
+				this.oOverlay.setSelectable(true);
+				assert.ok(this.oOverlay.isFocusable(), "then the control is focusable");
+
+				this.oOverlay.setSelectable(false);
+				assert.ok(!this.oOverlay.isFocusable(), "then the control is not focusable");
+			});
+
+			QUnit.test("when the overlay is focusable and is focused", function(assert) {
+				this.oOverlay.setFocusable(true);
+				assert.ok(this.oOverlay.isFocusable(), "then the control knows it is focusable");
+				sap.ui.getCore().applyChanges();
+
+				this.oOverlay.focus();
+				var that = this;
+				var done = assert.async();
+				setTimeout(function() {
+					assert.ok(that.oOverlay.hasFocus(), 'then the state of the overlay is "focused"');
+					done();
+				}, 0);
+			});
+
+			QUnit.test("when the overlay is changed to focusable", function(assert) {
+
+				var fnHandler = this.spy();
+				this.oOverlay.attachFocusableChange(fnHandler);
+
+				this.oOverlay.setFocusable(true);
+				assert.equal(fnHandler.callCount, 1, 'then the event handler is called');
+			});
+
+
+			QUnit.module("Given that an Overlay is created for a control with an existing designTime metadata", {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
+					this.oPage = new sap.m.Page();
+					this.oPage.placeAt("content");
+					sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oPage).then(function(oDesignTimeMetadata) {
+						that.oOverlay = new sap.ui.dt.ElementOverlay({
+							designTimeMetadata : { data : oDesignTimeMetadata},
+							element : that.oPage
+						});
+						that.oOverlay.placeInOverlayContainer();
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
+					this.oLabel = new sap.m.Label();
+					this.oLabel.placeAt("content");
+					that.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : that.oLabel
+					});
+					that.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oLabel.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the control's domRef is changed to visible...", function(assert) {
+				var done = assert.async();
+
+				var fnOriginalOnAfterRendering =  this.oOverlay.onAfterRendering;
+				this.oOverlay.onAfterRendering = function() {
+					var vOriginalReturn = fnOriginalOnAfterRendering.apply(this, arguments);
+					assert.ok(this.$().is(":visible"), "the overlay is also visible in DOM");
+
+					done();
+					return vOriginalReturn;
+				};
+
+				this.oLabel.setText("test");
+				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
+					this.oLabel = new sap.m.Label({text : "text"});
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel] });
+					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					this.oVerticalLayout.$().css("display", "none");
+
+					that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : that.oVerticalLayout
+					});
+					that.oLayoutOverlay.placeInOverlayContainer();
+					that.oLabelOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : that.oLabel
+					});
+					that.oLabelOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+					this.oLayoutOverlay.destroy();
+					this.oLabelOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the layout's domRef is changed to visible...", function(assert) {
+				var that = this;
+				var done = assert.async();
+
+				var fnOriginalOnAfterRendering =  this.oLabelOverlay.onAfterRendering;
+				this.oLabelOverlay.onAfterRendering = function() {
+					var vOriginalReturn = fnOriginalOnAfterRendering.apply(this, arguments);
+					assert.ok(that.oLayoutOverlay.$(), "the layout's overlay is also in DOM");
+					assert.ok(this.$(), "layout children's overlay is also in DOM");
+
+					done();
+					return vOriginalReturn;
+				};
+
+				this.oVerticalLayout.$().css("display", "block");
+			});
+
+			QUnit.module("Given that an Overlay is created for a layout with a visible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
+					this.oLabel1 = new sap.m.Label({text : "text 1"});
+					this.oLabel2 = new sap.m.Label({text : "text 2"});
+					this.oInnerLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel2] });
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel1, this.oInnerLayout] });
+					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						element : that.oVerticalLayout,
+						designTimeMetadata : {}
+					});
+					that.oLayoutOverlay.placeInOverlayContainer();
+					that.oInnerLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						element : that.oInnerLayout,
+						designTimeMetadata : {}
+					});
+					that.oInnerLayoutOverlay.placeInOverlayContainer();
+					that.oLabelOverlay1 = new sap.ui.dt.ElementOverlay({
+						element : that.oLabel1,
+						designTimeMetadata : {}
+					});
+					that.oLabelOverlay1.placeInOverlayContainer();
+					that.oLabelOverlay2 = new sap.ui.dt.ElementOverlay({
+						element : that.oLabel2,
+						designTimeMetadata : {}
+					});
+					that.oLabelOverlay2.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+				}
+			});
+
+			QUnit.test("when the layout is switched to invisible and the back to visible...", function(assert) {
+				var that = this;
+				var done = assert.async();
+
+				this.oVerticalLayout.setVisible(false);
+				sap.ui.getCore().applyChanges();
+				this.oVerticalLayout.setVisible(true);
+				sap.ui.getCore().applyChanges();
+
+				// timeout is needed to handle applyStyles
+				setTimeout(function() {
+					assert.deepEqual(that.oLayoutOverlay.$().offset(), that.oVerticalLayout.$().offset(), "g");
+					assert.deepEqual(that.oLabelOverlay1.$().offset(), that.oLabel1.$().offset(), "g");
+
+					done();
+				}, 0);
+			});
+
+			QUnit.module("Given that an Overlay is created for a layout with child controls", {
+				beforeEach : function() {
+					this.oButton1 = new sap.m.Button({
+						text : "Button 1"
+					});
+					this.oVerticalLayout1 = new sap.ui.layout.VerticalLayout({
+							content : [this.oButton1]
+					});
+					this.oVerticalLayout2 = new sap.ui.layout.VerticalLayout();
+					this.oVerticalLayout1.placeAt("content");
+					this.oVerticalLayout2.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+
+					this.oOverlayLayout1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oVerticalLayout1
+					});
+					this.oOverlayLayout1.placeInOverlayContainer();
+
+					this.oOverlayButton1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton1
+					});
+					this.oOverlayButton1.placeInOverlayContainer();
+
+					this.oOverlayLayout2 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oVerticalLayout2
+					});
+					this.oOverlayLayout2.placeInOverlayContainer();
+
+				},
+				afterEach : function() {
+
+					this.oButton1.destroy();
+					this.oVerticalLayout1.destroy();
+					this.oVerticalLayout2.destroy();
+					this.oOverlayLayout1.destroy();
+					this.oOverlayLayout2.destroy();
+					this.oOverlayButton1.destroy();
+
+				}
+			});
+
+			QUnit.test("when the layout is rendered", function(assert) {
+				assert.ok(this.oOverlayButton1.getParent().getParent() === this.oOverlayLayout1, "then a button's overlay should be inside of an layout's overlay");
+			});
+
+			QUnit.test("when a control is moved from one layout to another", function(assert) {
+				this.oVerticalLayout2.addContent(this.oButton1);
+				sap.ui.getCore().applyChanges();
+				// first parent is aggregation overlay, second parent is overlay control
+				assert.ok(this.oOverlayButton1.getParent().getParent() === this.oOverlayLayout2, "then a button's overlay should be inside of an another layout's overlay");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control with custom design time metadata", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oButton,
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data : {
+								name : "My Custom Metadata"
+							}
+						})
+					});
+					this.oOverlay.placeInOverlayContainer();
+					this.oButton.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the design time metadata is retrieved", function(assert) {
+				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
+				assert.equal(oDesignTimeMetadata.getData().name, "My Custom Metadata", "then the right custom data is set");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control marked as ignored in the designtime Metadata", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oButton,
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data : {
+								ignore : true
+							}
+						})
+					});
+					this.oOverlay.placeInOverlayContainer();
+					this.oButton.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("then...", function(assert) {
+				assert.strictEqual(this.oOverlay.isVisible(), false, "the overlay is marked as invisible");
+				assert.strictEqual(this.oOverlay.$().is(":visible"), false, "the overlay is hidden in DOM");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control with an aggregation", {
+				beforeEach : function() {
+					this.oPage = new sap.m.Page();
+					this.oDTMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
+						data : {
+							aggregations: {
+								content: {
+									domRef : ":sap-domref > section"
+								}
+							}
+						}
+					});
+
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when ignore for the aggregation is not defined, then...", function(assert) {
+				this.oOverlay = new sap.ui.dt.ElementOverlay({
+					designTimeMetadata : this.oDTMetadata
+				});
+				this.oOverlay.placeInOverlayContainer();
+				this.oOverlay.setElement(this.oPage);
+				this.oPage.placeAt("content");
+				// Render Controls
+				sap.ui.getCore().applyChanges();
+
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("content");
+				assert.ok(oAggregationOverlay, "the aggregation overlay is created");
+				assert.strictEqual(oAggregationOverlay.$().is(":visible"), true, "the aggregation overlay is visible in DOM");
+			});
+
+			QUnit.test("when ignore for the aggregation is boolean and equal true, then...", function(assert) {
+				this.oDTMetadata.getData().aggregations.content.ignore = true;
+				this.oOverlay = new sap.ui.dt.ElementOverlay({
+					designTimeMetadata : this.oDTMetadata
+				});
+				this.oOverlay.placeInOverlayContainer();
+				this.oOverlay.setElement(this.oPage);
+				this.oPage.placeAt("content");
+				// Render Controls
+				sap.ui.getCore().applyChanges();
+
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("content");
+				assert.notOk(oAggregationOverlay, "the aggregation overlay is not created");
+			});
+
+			QUnit.test("when ignore for the aggregation is boolean and equal false, then...", function(assert) {
+				this.oDTMetadata.getData().aggregations.content.ignore = false;
+				this.oOverlay = new sap.ui.dt.ElementOverlay({
+					designTimeMetadata : this.oDTMetadata
+				});
+				this.oOverlay.placeInOverlayContainer();
+				this.oOverlay.setElement(this.oPage);
+				this.oPage.placeAt("content");
+				// Render Controls
+				sap.ui.getCore().applyChanges();
+
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("content");
+				assert.ok(oAggregationOverlay, "the aggregation overlay is created");
+				assert.strictEqual(oAggregationOverlay.$().is(":visible"), true, "the aggregation overlay is visible in DOM");
+			});
+
+			QUnit.test("when ignore for the aggregation is a function and the function returns true, then...", function(assert) {
+				this.oDTMetadata.getData().aggregations.content.ignore = function(oElement) {
+					return true;
+				};
+				this.oOverlay = new sap.ui.dt.ElementOverlay({
+					designTimeMetadata : this.oDTMetadata
+				});
+				this.oOverlay.placeInOverlayContainer();
+				this.oOverlay.setElement(this.oPage);
+				this.oPage.placeAt("content");
+				// Render Controls
+				sap.ui.getCore().applyChanges();
+
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("content");
+				assert.notOk(oAggregationOverlay, "the aggregation overlay is not created");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control with an aggregation containing a control", {
+				beforeEach : function() {
+					this.oText = new sap.m.Text();
+					this.oPage = new sap.m.Page({
+						content : [this.oText]
+					});
+					this.oDTMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
+						data : {
+							aggregations: {
+								content: {
+									domRef : ":sap-domref > section"
+								}
+							}
+						}
+					});
+
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when ignore is a function which returns true when a Text is in the content, then...", function(assert) {
+				this.oDTMetadata.getData().aggregations.content.ignore = function(oElement) {
+					if (oElement.getContent()[0].getMetadata().getName() === "sap.m.Text") {
+						return true;
+					} else {
+						return false;
+					}
+				};
+				this.oOverlay = new sap.ui.dt.ElementOverlay({
+					designTimeMetadata : this.oDTMetadata
+				});
+				this.oOverlay.placeInOverlayContainer();
+				this.oOverlay.setElement(this.oPage);
+				this.oPage.placeAt("content");
+				// Render Controls
+				sap.ui.getCore().applyChanges();
+
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("content");
+				assert.notOk(oAggregationOverlay, "the aggregation overlay is not created");
+			});
+
+			QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored and inHiddenTree", {
+				beforeEach : function() {
+					this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+						content : [
+							new sap.m.Label({text : "Label"})
+						]
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data : {
+								aggregations: {
+									form: {
+										ignore : false,
+										inHiddenTree : true
+									}
+								}
+							}
+						})
+					});
+					this.oOverlay.placeInOverlayContainer();
+					this.oOverlay.setElement(this.oSimpleForm);
+					this.oSimpleForm.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+					this.oFormOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oSimpleForm.getAggregation("form")
+					});
+					this.oFormOverlay.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oSimpleForm.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("then...", function(assert) {
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
+				assert.strictEqual(oAggregationOverlay.isVisible(), true, "the aggregation overlay is marked as invisible");
+				assert.strictEqual(oAggregationOverlay.isInHiddenTree(), true, "the aggregation overlay is marked as inHiddenTree");
+				assert.strictEqual(oAggregationOverlay.hasStyleClass("sapUiDtOverlayInHiddenTree"), true, "the Overlay has the right StyleClass");
+
+				assert.strictEqual(this.oFormOverlay.getPublicParentElementOverlay(), this.oOverlay, "getPublicParentElementOverlay for hidden Form returns SimpleForm control");
+				assert.strictEqual(this.oFormOverlay.getPublicParentAggregationOverlay(), this.oOverlay.getAggregationOverlay("form"), "getPublicParentAggregationOverlay for hidden Form returns form aggregation overlay");
+			});
+
+			QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored and not inHiddenTree", {
+				beforeEach : function() {
+					this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+						content : [
+							new sap.m.Label({text : "Label"})
+						]
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data : {
+								aggregations: {
+									form: {
+										ignore : false
+									}
+								}
+							}
+						})
+					});
+					this.oOverlay.placeInOverlayContainer();
+					this.oOverlay.setElement(this.oSimpleForm);
+					this.oSimpleForm.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+					this.oFormOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oSimpleForm.getAggregation("form")
+					});
+					this.oFormOverlay.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oSimpleForm.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("then...", function(assert) {
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
+				assert.strictEqual(oAggregationOverlay.isInHiddenTree(), false, "the aggregation overlay is marked as inHiddenTree");
+				assert.strictEqual(oAggregationOverlay.hasStyleClass("sapUiDtOverlayInHiddenTree"), false, "the Overlay has the right StyleClass");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control with copyDom:true in the designtime Metadata", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oButton.placeAt("content");
+
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oButton,
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data: {
+								cloneDomRef : true
+							}
+						})
+					});
+					this.oOverlay.placeInOverlayContainer();
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the overlay is rendered", function(assert) {
+				assert.strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
+			});
+
+
+			QUnit.module("Given that an Overlay is created for a control with copyDom:'css-selector' in the designtime Metadata", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oButton,
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data: {
+								cloneDomRef : ":sap-domref"
+							}
+						})
+					});
+					this.oOverlay.placeInOverlayContainer();
+					this.oButton.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the overlay is rendered", function(assert) {
+				assert.strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton
+					});
+					this.oOverlay.placeInOverlayContainer();
+					this.oButton.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+				}
+			});
+
+			QUnit.test("when the overlay is destroyed", function(assert) {
+				var sId = this.oOverlay.getId();
+				this.oOverlay.destroy();
+				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(sId), undefined, "then OverlayRegistry.getOverlay should returns undefined for it's id");
+				var $container = jQuery("#overlay-container");
+				assert.strictEqual($container.length, 0, "overlay container is also destroyed with a last overlay");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton
+					});
+					this.oOverlay.placeInOverlayContainer();
+					this.oButton.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+				}
+			});
+
+			QUnit.test("when the control is destroyed before the overlay", function(assert) {
+				var sId = this.oButton.getId();
+				this.oButton.destroy();
+				this.oOverlay.destroy();
+				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(sId), undefined, "then OverlayRegistry.getOverlay should returns undefined for it's id");
+			});
+
+			QUnit.module("Given that an Overlay is created for two layouts with two child controls", {
+				beforeEach : function() {
+					this.oButton1 = new sap.m.Button({
+						text : "Button 1"
+					});
+					this.oButton2 = new sap.m.Button({
+						text : "Button 2"
+					});
+					this.oButton3 = new sap.m.Button({
+						text : "Button 3"
+					});
+					this.oButton4 = new sap.m.Button({
+						text : "Button 4"
+					});
+
+					this.oVerticalLayout1 = new sap.ui.layout.VerticalLayout({
+							content : [this.oButton1, this.oButton2]
+					});
+
+					this.oVerticalLayout2 = new sap.ui.layout.VerticalLayout({
+						content : [this.oButton3, this.oButton4]
+					});
+
+					this.oVerticalLayout1.placeAt("content");
+					this.oVerticalLayout2.placeAt("content");
+
+					sap.ui.getCore().applyChanges();
+
+
+					this.oOverlayLayout1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oVerticalLayout1
+					});
+					this.oOverlayLayout1.placeInOverlayContainer();
+
+					this.oOverlayLayout2 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oVerticalLayout2
+					});
+					this.oOverlayLayout2.placeInOverlayContainer();
+
+					this.oOverlayButton1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton1
+					});
+					this.oOverlayButton1.placeInOverlayContainer();
+
+					this.oOverlayButton2 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton2
+					});
+					this.oOverlayButton2.placeInOverlayContainer();
+
+					this.oOverlayButton3 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton3
+					});
+					this.oOverlayButton3.placeInOverlayContainer();
+
+					this.oOverlayButton4 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton4
+					});
+					this.oOverlayButton4.placeInOverlayContainer();
+
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+
+					this.oButton1.destroy();
+					this.oButton2.destroy();
+					this.oButton3.destroy();
+					this.oButton4.destroy();
+					this.oVerticalLayout1.destroy();
+					this.oVerticalLayout2.destroy();
+					this.oOverlayLayout1.destroy();
+					this.oOverlayLayout2.destroy();
+					this.oOverlayButton1.destroy();
+					this.oOverlayButton2.destroy();
+					this.oOverlayButton3.destroy();
+					this.oOverlayButton4.destroy();
+
+				}
+			});
+
+			QUnit.test("when a control is moved to another layout", function(assert) {
+				sap.ui.dt.ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 1);
+				sap.ui.getCore().applyChanges();
+
+				var oDomRefButton1 = this.oOverlayButton1.getDomRef();
+				var oDomRefButton2 = this.oOverlayButton2.getDomRef();
+				var oDomRefButton3 = this.oOverlayButton3.getDomRef();
+				var oDomRefButton4 = this.oOverlayButton4.getDomRef();
+
+				assert.strictEqual(oDomRefButton3, oDomRefButton2.previousElementSibling, "then Overlay DOM elements in target layout are in correct order - button3 before button2");
+				assert.strictEqual(oDomRefButton4, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order - button4 after button2");
+				assert.strictEqual(null, oDomRefButton1.nextElementSibling, "and source layout contains only one control");
+			});
+
+			QUnit.test("when DomRef of Overlay Layout contains extra elements and the control is prepended to this layout", function(assert) {
+				this.oOverlayLayout2.$().prepend("<div></div>");
+				sap.ui.dt.ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 0);
+				sap.ui.getCore().applyChanges();
+
+				var oDomRefButton1 = this.oOverlayButton1.getDomRef();
+				var oDomRefButton2 = this.oOverlayButton2.getDomRef();
+				var oDomRefButton3 = this.oOverlayButton3.getDomRef();
+				var oDomRefButton4 = this.oOverlayButton4.getDomRef();
+
+				assert.strictEqual(oDomRefButton3, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order");
+				assert.strictEqual(null, oDomRefButton2.previousElementSibling, "and extra element is not taken into account");
+			});
+
+			QUnit.module("Given that an Overlay is created for a control in the content of a scrollable container", {
+				beforeEach : function() {
+					this.$container = jQuery("<div id='scroll-container' style='height: 400px; width: 200px; overflow-y: auto;'><div style='width: 100%; height: 100px;'></div><div id='scroll-content' style='height: 500px;'></div></div>");
+					this.$container.appendTo("#content");
+
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton
+					});
+					this.oOverlay.placeInOverlayContainer();
+
+					this.oButton.placeAt("scroll-content");
+					sap.ui.getCore().applyChanges();
+
+				},
+				afterEach : function() {
+					this.$container.remove();
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the container is scrolled", function(assert) {
+				var that = this;
+				var done = assert.async();
+
+				this.$container.scrollTop(50);
+				setTimeout(function() {
+					assert.deepEqual(that.oOverlay.$().offset(), that.oButton.$().offset(), "overlay has same position as a control");
+					done();
+				}, 0);
+			});
+
+			function _buildMetadataObject(vContent)  {
+				return {
+					data: {
+						aggregations: {
+							content: vContent
+						}
+					}
+				};
+			}
+
+			function _createNewDesigntimeMetadataInstance(oData) {
+				return new sap.ui.dt.AggregationDesignTimeMetadata({
+						data: oData || {}
+				});
+			};
+
+			QUnit.module("Given that an Overlay is created with 'propagateRelevantContainer' as boolean in the designtime Metadata without parent", {
+				beforeEach : function(assert) {
+					var oPropObject = { propagateRelevantContainer: true };
+					this.oMetadata = _buildMetadataObject(oPropObject);
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance(oPropObject);
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata)
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_handlePropagationOfRelevantContainer' is called", function(assert) {
+				var fnPropagateRelevantContainerSpy = sinon.spy(this.oOverlay, "_propagateRelevantContainerObj");
+				this.oOverlay._handlePropagationOfRelevantContainer(this.oDesigntimeMetadata);
+				assert.strictEqual(fnPropagateRelevantContainerSpy.callCount, 1,
+					"then '_propagateRelevantContainerObj' called once");
+				var oSpyArgs = fnPropagateRelevantContainerSpy.args[0];
+				assert.ok(oSpyArgs[1],
+					"then '_propagateRelevantContainerObj' called with new propagateRelevantContainer object");
+				assert.notOk(oSpyArgs[2],
+					"then '_propagateRelevantContainerObj' called without propagatedRelevantContainer object from parent");
+			});
+
+			QUnit.module("Given that an Overlay is created with 'propagateRelevantContainer' as function in the designtime Metadata", {
+				beforeEach : function(assert) {
+					this.fnPropagateRelevantContainer = function() {
+						return true;
+					};
+					var oPropObject = { propagateRelevantContainer: this.fnPropagateRelevantContainer };
+					this.oMetadata = _buildMetadataObject(oPropObject);
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance(oPropObject);
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata)
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_handlePropagationOfRelevantContainer' is called with valid sAggregations property",
+			function(assert) {
+				var fnPropagateRelevantContainerSpy = sinon.spy(this.oOverlay, "_propagateRelevantContainerObj");
+				this.oOverlay._handlePropagationOfRelevantContainer(this.oDesigntimeMetadata);
+				assert.strictEqual(fnPropagateRelevantContainerSpy.callCount, 1,
+					"then '_propagateRelevantContainerObj' called once");
+				var oSpyArgs = fnPropagateRelevantContainerSpy.args[0];
+				assert.strictEqual(oSpyArgs[1].propagationFunction, this.fnPropagateRelevantContainer,
+					"then '_propagateRelevantContainerObj' called with propagatedRelevantContainer object")
+				assert.notOk(oSpyArgs[2],
+					"then '_propagateRelevantContainerObj' called without propagatedRelevantContainer object from parent");
+			});
+
+			QUnit.module("Given that an Overlay is created with 'propagateRelevantContainer' as object in the designtime Metadata", {
+				beforeEach : function(assert) {
+					var oPropObject = { propagateRelevantContainer: {} };
+					this.oMetadata = _buildMetadataObject(oPropObject);
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance(oPropObject);
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata)
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_handlePropagationOfRelevantContainer' is called",
+			function(assert) {
+				assert.throws(function() {
+					this.oOverlay._handlePropagationOfRelevantContainer(this.oDesigntimeMetadata);
+				}, /wrong type: it should be either a function or a boolean value/,"then '_propagateRelevantContainerObj' should throw an exception");
+			});
+
+			QUnit.module("Given that an Overlay is created without 'propagateRelevantContainer' in the designtime Metadata and without parent", {
+				beforeEach : function(assert) {
+					this.oMetadata = _buildMetadataObject({});
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance({});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata)
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_handlePropagationOfRelevantContainer' is called",
+			function(assert) {
+				var fnPropagateRelevantContainerSpy = sinon.spy(this.oOverlay, "_propagateRelevantContainerObj");
+				this.oOverlay._handlePropagationOfRelevantContainer(this.oDesigntimeMetadata);
+				assert.strictEqual(fnPropagateRelevantContainerSpy.withArgs({}, null).callCount, 0,
+					"then '_propagateRelevantContainerObj' shouldn't be called");
+			});
+
+			function _createRelevantContainerObject(vPropagateFunction, oRelevantContainerElement) {
+				return {
+						propagationFunction : vPropagateFunction,
+						propagateRelevantContainerElement : oRelevantContainerElement
+					};
+			};
+
+			QUnit.module("Given that an Overlay and designtime Metadata for aggregation have been created", {
+				beforeEach : function(assert) {
+					this.oButton = new sap.m.Button();
+					this.oPage = new sap.m.Page();
+					this.oDesigntimeMetadata = _createNewDesigntimeMetadataInstance();
+					this.oOverlay = new sap.ui.dt.ElementOverlay({});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oPage.destroy();
+					this.oDesigntimeMetadata.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_propagateRelevantContainerObj' is called without attributes",
+			function(assert) {
+				assert.strictEqual(this.oOverlay._propagateRelevantContainerObj(), false,
+					"then '_propagateRelevantContainerObj' should return false");
+			});
+
+			QUnit.test("when '_propagateRelevantContainerObj' is called with new relevantContainerPropagation object and without parentPropagation object",
+			function(assert) {
+				var oNewRelevantContainerPropagation = _createRelevantContainerObject(true, this.oButton);
+				assert.strictEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer, undefined,
+					"then before '_propagateRelevantContainerObj' is called, data of designtime metadata is undefined");
+				assert.strictEqual(this.oOverlay._propagateRelevantContainerObj(this.oDesigntimeMetadata, oNewRelevantContainerPropagation, undefined), true,
+					"then '_propagateRelevantContainerObj' should return true");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer[0], oNewRelevantContainerPropagation,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains relevantContainer propagation object");
+			});
+
+			QUnit.test("when '_propagateRelevantContainerObj' is called with new relevantContainerPropagation object and with parentPropagation object",
+			function(assert) {
+				var aParentRelevantContainerPropagation = [ _createRelevantContainerObject(true, this.oPage) ];
+				var oNewRelevantContainerPropagation = _createRelevantContainerObject(true, this.oButton);
+				assert.strictEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer, undefined,
+					"then before '_propagateRelevantContainerObj' is called, data of designtime metadata is undefined");
+				assert.strictEqual(this.oOverlay._propagateRelevantContainerObj(this.oDesigntimeMetadata, oNewRelevantContainerPropagation, aParentRelevantContainerPropagation),
+					true,
+					"then '_propagateRelevantContainerObj' should return true");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer.length, 2,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains 2 objects");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer[0], aParentRelevantContainerPropagation[0],
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains the parentRelevantContainer object");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer[1], oNewRelevantContainerPropagation,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains also the oNewRelevantContainerPropagation object");
+			});
+
+			QUnit.test("when '_propagateRelevantContainerObj' is called without new relevantContainerPropagation object and with parentPropagation object",
+			function(assert) {
+				var aParentRelevantContainerPropagation = [ _createRelevantContainerObject(true, this.oPage) ];
+				assert.strictEqual(this.oOverlay._propagateRelevantContainerObj(this.oDesigntimeMetadata, null, aParentRelevantContainerPropagation),
+					true,
+					"then '_propagateRelevantContainerObj' should return true");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer.length, 1,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains 1 objects");
+				assert.deepEqual(this.oDesigntimeMetadata.getData().propagateRelevantContainer[0], aParentRelevantContainerPropagation[0],
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains only the parentRelevantContainer object");
+			});
+
+			QUnit.module("Given that an Overlay is created with 'propagateRelevantContainer' as function in the designtime Metadata", {
+				beforeEach : function(assert) {
+					this.fnPropagateRelevantContainer = function() {
+						return true;
+					};
+					this.oMetadata = _buildMetadataObject({ propagateRelevantContainer: this.fnPropagateRelevantContainer });
+					this.oPage = new sap.m.Page();
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata(this.oMetadata),
+						element: this.oPage
+					});
+					this.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when overlay is created and without parent overlay",
+			function(assert) {
+				var oContentAggregation = this.oOverlay.getAggregationOverlay("content");
+				var oContentDesignTimeMetadata = oContentAggregation.getDesignTimeMetadata();
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer.length, 1,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains 1 objects");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagationFunction, this.fnPropagateRelevantContainer,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains relevantContainer propagation function");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagateRelevantContainerElement, this.oPage,
+					"then after '_propagateRelevantContainerObj' is called, data of designtime metadata contains relevantContainer propagation element");
+			});
+
+			QUnit.module("Given that an 'Overlay' and parent overlay is created", {
+				beforeEach : function(assert) {
+					this.oAggOverlay = new sap.ui.dt.AggregationOverlay({
+						aggregationName: "content",
+						designTimeMetadata : new sap.ui.dt.AggregationDesignTimeMetadata({})
+					});
+
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout("layout1");
+
+					this.oElemOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata: new sap.ui.dt.ElementDesignTimeMetadata({})
+					});
+				},
+				afterEach : function() {
+					this.oAggOverlay.destroy();
+					this.oVerticalLayout.destroy();
+					this.oElemOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' is called without related parent overlay", function(assert) {
+				this.oElemOverlay.setParent(this.oVerticalLayout);
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement({}), false,
+					"then no relevant container added to the element");
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' is called having parent without designTime", function(assert) {
+				this.oElemOverlay.setParent(this.oVerticalLayout);
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement({}), false,
+					"then no relevant container added to the element");
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' is called having parent without propagationContainer in designTime", function(assert) {
+				this.oElemOverlay.setParent(this.oAggOverlay);
+				var oDesigntimeMetadata = this.oElemOverlay.getDesignTimeMetadata();
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), false,
+					"then 'false' should return");
+				assert.strictEqual(this.oElemOverlay.getRelevantContainer(), undefined,
+					"then no relevantContainer should be set");
+			});
+
+			QUnit.module("Given that an 'Overlay' and parent overlay with valid propagation container information is created ", {
+				beforeEach : function(assert) {
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout("layout1");
+					var mData = {
+						propagateRelevantContainer: [
+							{
+								propagateRelevantContainerElement: this.oVerticalLayout,
+								propagationFunction: function (oElement) {
+									return true;
+								}
+							}
+						]
+					};
+					this.oParentElemOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata: new sap.ui.dt.ElementDesignTimeMetadata({}),
+						element: this.oVerticalLayout
+					});
+
+					this.oAggOverlay = new sap.ui.dt.AggregationOverlay({
+						aggregationName: "content",
+						designTimeMetadata: new sap.ui.dt.AggregationDesignTimeMetadata({ data: mData }),
+					});
+
+					this.oElemOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata: new sap.ui.dt.ElementDesignTimeMetadata({})
+					});
+
+					this.oAggOverlay.setParent(this.oParentElemOverlay);
+					this.oElemOverlay.setParent(this.oAggOverlay);
+				},
+				afterEach : function() {
+					this.oAggOverlay.destroy();
+					this.oVerticalLayout.destroy();
+					this.oElemOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' is called", function(assert) {
+				var oDesigntimeMetadata = this.oElemOverlay.getDesignTimeMetadata();
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), true,
+					"then 'true' should be returned");
+				assert.strictEqual(this.oElemOverlay.getRelevantContainer(), this.oVerticalLayout,
+					"then related relevantContainer should be set");
+			});
+
+			QUnit.test("when '_addRelevantContainerElement' with incomplete relevant container information is called", function(assert) {
+				var oDesigntimeMetadata = this.oElemOverlay.getDesignTimeMetadata();
+				var oRelevantContainer = this.oAggOverlay.getDesignTimeMetadata().getData().propagateRelevantContainer;
+				delete oRelevantContainer[0].propagationFunction;
+				assert.strictEqual(this.oElemOverlay._addRelevantContainerElement(oDesigntimeMetadata), false,
+					"then 'false' should be returned");
+				assert.strictEqual(this.oElemOverlay.getRelevantContainer(), this.oVerticalLayout,
+					"then related relevantContainer should be set");
+			});
+
+			function _createRelevantContainerMetadata(sInstanceOf) {
+				return {
+					propagateRelevantContainer: function (oElement) {
+						var sType = oElement.getMetadata().getName();
+						if (sType === sInstanceOf) {
+							return true;
+						}
+						return false;
+					}
+				}
+			}
+
+			QUnit.module("Given that an complex text have been created with different relevant container propagations in the designtime Metadata", {
+				beforeEach : function(assert) {
+					this.oMetadataForToolbar = _createRelevantContainerMetadata("sap.m.Toolbar");
+					this.oMetadataForButton = _createRelevantContainerMetadata("sap.m.Button");
+
+					var oPageMetadata = _buildMetadataObject(this.oMetadataForToolbar);
+					var oVerticalLayoutMetadata = _buildMetadataObject(this.oMetadataForButton);
+					var oEmptyMetadata = _buildMetadataObject({});
+
+					this.oButton1 = new sap.m.Button("button1");
+					this.oButton2 = new sap.m.Button("button2");
+					this.oText = new sap.m.Text("text1");
+					this.oToolbar = new sap.m.Toolbar("toolbar1", {
+						content: [this.oButton1, this.oText]
+					});
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout("layout", {
+						content: [this.oToolbar, this.oButton2]
+					});
+					this.oPage = new sap.m.Page({
+						content: [this.oVerticalLayout]
+					}).placeAt("content");
+
+					sap.ui.getCore().applyChanges();
+
+					var fnLoadDtMetadataStub = sandbox.stub(sap.ui.dt.ElementUtil, "loadDesignTimeMetadata");
+					fnLoadDtMetadataStub.withArgs(this.oPage).returns(Promise.resolve(oPageMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oVerticalLayout).returns(Promise.resolve(oVerticalLayoutMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oToolbar).returns(Promise.resolve(oEmptyMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oText).returns(Promise.resolve(oEmptyMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oButton1).returns(Promise.resolve(oEmptyMetadata.data));
+					fnLoadDtMetadataStub.withArgs(this.oButton2).returns(Promise.resolve(oEmptyMetadata.data));
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [this.oPage]
+					});
+
+					var done = assert.async();
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						this.oPageOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage);
+						this.oVerticalLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oVerticalLayout);
+						this.oTextOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oText);
+						this.oToolbarOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oToolbar);
+						this.oButton1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1);
+						this.oButton2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2);
+						done();
+					}.bind(this));
+				},
+				afterEach : function() {
+					this.oButton1Overlay.destroy();
+					this.oButton2Overlay.destroy();
+					this.oTextOverlay.destroy();
+					this.oToolbarOverlay.destroy();
+					this.oVerticalLayoutOverlay.destroy();
+					this.oPage.destroy();
+					this.oDesignTime.destroy();
+					sandbox.restore();
+				}
+			});
+
+			QUnit.test("when page overlay is created",
+			function(assert) {
+				var oContentAggregationOverlay = this.oPageOverlay.getAggregationOverlay("content");
+				var oContentDesignTimeMetadata = oContentAggregationOverlay.getDesignTimeMetadata();
+				assert.deepEqual(this.oPageOverlay.getRelevantContainer(), undefined,
+					"then there is no direct parent to be set as propagated relevantContainer");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer.length, 2,
+					"then the 'content' aggregation overlay contains one propagateRelevantContainer");
+			});
+
+			QUnit.test("when verticalLayout overlay is created",
+			function(assert) {
+				var oContentAggregationOverlay = this.oVerticalLayoutOverlay.getAggregationOverlay("content");
+				var oContentDesignTimeMetadata = oContentAggregationOverlay.getDesignTimeMetadata();
+				assert.deepEqual(this.oVerticalLayoutOverlay.getRelevantContainer(), this.oPage,
+					"then the parent is returned as propagated relevantContainer by default");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer.length, 2,
+					"then the 'content' aggregation overlay contains two propagateRelevantContainer");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagationFunction,
+					this.oMetadataForToolbar.propagateRelevantContainer,
+					"then the 'content' aggregation overlay first propagateRelevantContainer contains the correct function");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[1].propagationFunction,
+					this.oMetadataForButton.propagateRelevantContainer,
+					"then the 'content' aggregation overlay second propagateRelevantContainer contains the correct function");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[0].propagateRelevantContainerElement,
+					this.oPage,
+					"then the 'contetn' aggregation overlay first propagateRelevantContainer contains the correct element");
+				assert.deepEqual(oContentDesignTimeMetadata.getData().propagateRelevantContainer[1].propagateRelevantContainerElement,
+					this.oVerticalLayout,
+					"then the 'contetn' aggregation overlay second propagateRelevantContainer contains the correct element");
+			});
+
+			QUnit.test("when toolbar overlay is created",
+			function(assert) {
+				assert.deepEqual(this.oToolbarOverlay.getRelevantContainer(), this.oPage,
+					"then it contains the correct element");
+			});
+
+			QUnit.test("when text overlay is created",
+			function(assert) {
+				assert.deepEqual(this.oTextOverlay.getRelevantContainer(), this.oToolbar,
+					"then the parent is returned as propagated container by default");
+			});
+
+			QUnit.test("when button overlays are created",
+			function(assert) {
+				assert.deepEqual(this.oButton1Overlay.getRelevantContainer(), this.oVerticalLayout,
+					"then the button1 contains the correct element");
+				assert.deepEqual(this.oButton2Overlay.getRelevantContainer(), this.oVerticalLayout,
+					"then the button2 contains the correct element");
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.ElementOverlay</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<div id="content"></div>
+		<ol id="qunit-tests"></ol>
+	</body>
+</html>

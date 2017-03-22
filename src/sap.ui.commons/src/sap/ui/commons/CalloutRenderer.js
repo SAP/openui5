@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './CalloutBaseRenderer', 'sap/ui/core/Render
 	 * @namespace
 	 */
 	var CalloutRenderer = Renderer.extend(CalloutBaseRenderer);
-	
+
 	/**
 	 * Renders the HTML for content.
 	 *
@@ -20,16 +20,16 @@ sap.ui.define(['jquery.sap.global', './CalloutBaseRenderer', 'sap/ui/core/Render
 	 * @param {sap.ui.core.Control} oCallout an object representation of the Callout that should be rendered
 	 */
 	CalloutRenderer.renderContent = function(oRenderManager, oCallout){
-	
+
 		var rm = oRenderManager;
 		var content = oCallout.getContent();
-	
+
 		// content
 		for (var i = 0; i < content.length; i++) {
 			rm.renderControl(content[i]);
 		}
 	};
-	
+
 	/**
 	 * Add the root CSS class to the Callout to redefine/extend CalloutBase
 	 *
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', './CalloutBaseRenderer', 'sap/ui/core/Render
 	CalloutRenderer.addRootClasses = function(oRenderManager, oControl) {
 		oRenderManager.addClass("sapUiClt");
 	};
-	
+
 	/**
 	 * Add the content CSS class to the Callout to redefine/extend CalloutBase
 	 *
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './CalloutBaseRenderer', 'sap/ui/core/Render
 	CalloutRenderer.addContentClasses = function(oRenderManager, oControl) {
 		oRenderManager.addClass("sapUiCltCont");
 	};
-	
+
 	/**
 	 * Add the arrow/tip CSS class to the Callout to redefine/extend CalloutBase
 	 *
@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './CalloutBaseRenderer', 'sap/ui/core/Render
 	CalloutRenderer.addArrowClasses = function(oRenderManager, oControl) {
 		oRenderManager.addClass("sapUiCltArr");
 	};
-	
+
 
 	return CalloutRenderer;
 

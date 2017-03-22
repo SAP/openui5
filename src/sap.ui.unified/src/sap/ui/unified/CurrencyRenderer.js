@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Currency renderer.
 	 *
@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var CurrencyRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		oRm.addClass("sapUiUfdCurrency");
-		if (!oCurrency._hasValue()) {
+		if (oCurrency._bRenderNoValClass) {
 			oRm.addClass("sapUiUfdCurrencyNoVal");
 		}
 		oRm.writeClasses();
@@ -48,6 +48,8 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.write("<span");
+		// The currency value should always be displayed in ltr direction
+		oRm.writeAttribute("dir", "ltr");
 		oRm.addClass("sapUiUfdCurrencyValue");
 		oRm.writeClasses();
 		oRm.write(">");
@@ -57,11 +59,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapUiUfdCurrencyCurrency");
 		oRm.writeClasses();
 		oRm.write(">");
-		if (oCurrency.getUseSymbol()) {
-			oRm.writeEscaped(oCurrency.getCurrencySymbol());
-		} else {
-			oRm.writeEscaped(oCurrency.getCurrency());
-		}
+		oRm.writeEscaped(oCurrency._getCurrency());
 		oRm.write("</span>");
 		oRm.write("</div>");
 		oRm.write("</div>");

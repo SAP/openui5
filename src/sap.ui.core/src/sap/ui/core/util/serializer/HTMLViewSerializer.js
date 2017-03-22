@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTML', 'sap/ui/thirdparty/vkbeautify'],
-	function(jQuery, EventProvider, HTML, vkbeautify) {
+sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', 'sap/ui/thirdparty/vkbeautify'],
+	function(EventProvider, Serializer, HTML, vkbeautify) {
 	"use strict";
 
 
@@ -15,13 +15,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 	 * @param {function} fnGetControlId delegate function which returns the control id
 	 * @param {function} fnGetEventHandlerName delegate function which returns the event handler name
 	 *
-	 * @public
 	 * @class HTMLViewSerializer class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.util.serializer.HTMLViewSerializer
-	 * @experimental Since 1.15.1. The HTMLViewSerializer is still under construction, so some implementation details can be changed in future.
+	 * @private
+	 * @sap-restricted sap.watt com.sap.webide
 	 */
 	var HTMLViewSerializer = EventProvider.extend("sap.ui.core.util.serializer.HTMLViewSerializer", /** @lends sap.ui.core.util.serializer.HTMLViewSerializer.prototype */
 	{
@@ -33,22 +33,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 			this._fnGetEventHandlerName = fnGetEventHandlerName;
 		}
 	});
-	
-	
+
+
 	/**
 	 * Serializes the given HTML view.
-	 * 
+	 *
 	 * @returns {string} the serialized HTML view.
 	 */
 	HTMLViewSerializer.prototype.serialize = function () {
-	
+		var that = this;
 		// a function to understand if to skip aggregations
 		var fnSkipAggregations = function (oControl) {
-			return (oControl instanceof this._oWindow.sap.ui.core.mvc.View);
+			return oControl instanceof this._oWindow.sap.ui.core.mvc.View && oControl !== that._oView;
 		};
-	
+
 		// create serializer
-		var oControlSerializer = new sap.ui.core.util.serializer.Serializer(
+		var oControlSerializer = new Serializer(
 			this._oView,
 			new HTML(
 				this._fnGetControlId,
@@ -56,10 +56,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 			true,
 			this._oWindow,
 			fnSkipAggregations);
-		
+
 		// run serializer
 		var sResult = oControlSerializer.serialize();
-		
+
 		// wrap result with the template tag
 		var sView = [];
 		sView.push('<template');
@@ -69,11 +69,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 		sView.push(" >");
 		sView.push(sResult);
 		sView.push("</template>");
-		
+
 		// done
 		return vkbeautify.xml(sView.join(""));
 	};
 
 	return HTMLViewSerializer;
 
-}, /* bExport= */ true);
+});

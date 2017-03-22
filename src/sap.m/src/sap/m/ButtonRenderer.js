@@ -29,8 +29,10 @@ sap.ui.define(['jquery.sap.global'],
 		var sType = oButton.getType();
 		var bEnabled = oButton.getEnabled();
 		var sWidth = oButton.getWidth();
-		var sTooltip = oButton.getTooltip_AsString();
+		var sTooltip = oButton._getTooltip();
+		var sText = oButton._getText();
 		var sTextDir = oButton.getTextDirection();
+		var bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge;
 
 		// get icon from icon pool
 		var sBackURI = sap.ui.core.IconPool.getIconURI("nav-back");
@@ -45,7 +47,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMBtn");
 
 			// extend  minimum button size if icon is set without text for button types back and up
-			if ((sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) && oButton.getIcon() && !oButton._getText()) {
+			if ((sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) && oButton.getIcon() && !sText) {
 				oRm.addClass("sapMBtnBack");
 			}
 		}
@@ -69,6 +71,10 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		if (sTextId) {
 			mAccProps["describedby"] = {value: sTextId, append: true};
+		}
+
+		if (oButton.getAriaLabelledBy() && oButton.getAriaLabelledBy().length > 0) {
+			mAccProps["labelledby"] = {value: oButton.getId(), append: true };
 		}
 
 		//descendants (e.g. ToggleButton) callback
@@ -95,12 +101,9 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 
-		// get icon-font info. will return null if the icon is a image
-		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon());
-
 		// add tooltip if available
-		if (sTooltip || (oIconInfo && !oButton.getText())) {
-			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
 		oRm.writeClasses();
@@ -110,12 +113,13 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addStyle("width", sWidth);
 			oRm.writeStyles();
 		}
+		renderTabIndex(oButton, oRm);
 
 		// close button tag
 		oRm.write(">");
 
 		// start inner button tag
-		oRm.write("<div");
+		oRm.write("<span");
 		oRm.writeAttribute("id", oButton.getId() + "-inner");
 
 		// button style class
@@ -131,6 +135,26 @@ sap.ui.define(['jquery.sap.global'],
 		// check if button is focusable (not disabled)
 		if (bEnabled) {
 			oRm.addClass("sapMFocusable");
+			// special focus handling for IE
+			if (bIE_Edge) {
+				oRm.addClass("sapMIE");
+			}
+		}
+
+		if (!oButton._isUnstyled()) {
+			if (sText) {
+				oRm.addClass("sapMBtnText");
+			}
+			if (sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) {
+				oRm.addClass("sapMBtnBack");
+			}
+			if (oButton.getIcon()) {
+				if (oButton.getIconFirst()) {
+					oRm.addClass("sapMBtnIconFirst");
+				} else {
+					oRm.addClass("sapMBtnIconLast");
+				}
+			}
 		}
 
 		//get render attributes of depended buttons (e.g. ToggleButton)
@@ -138,35 +162,17 @@ sap.ui.define(['jquery.sap.global'],
 			this.renderButtonAttributes(oRm, oButton);
 		}
 
-		// set padding depending on icons left or right or none
-		if (!oButton._isUnstyled()) {
-			if (!oButton.getIcon()) {
-				if (sType != sap.m.ButtonType.Back && sType != sap.m.ButtonType.Up) {
-					oRm.addClass("sapMBtnPaddingLeft");
-				}
-				if (oButton._getText()) {
-					oRm.addClass("sapMBtnPaddingRight");
-				}
-			} else {
-				if (oButton.getIcon() && oButton._getText() && oButton.getIconFirst()) {
-					oRm.addClass("sapMBtnPaddingRight");
-				}
-				if (oButton.getIcon() && oButton._getText() && !oButton.getIconFirst()) {
-					if (sType != sap.m.ButtonType.Back && sType != sap.m.ButtonType.Up) {
-						oRm.addClass("sapMBtnPaddingLeft");
-					}
-				}
-			}
-		}
-
 		// set button specific styles
 		if (!oButton._isUnstyled() && sType !== "") {
 			// set button specific styles
-			oRm.addClass("sapMBtn" + jQuery.sap.escapeHTML(sType));
+			oRm.addClass("sapMBtn" + jQuery.sap.encodeHTML(sType));
 		}
 
 		// add all classes to inner button tag
 		oRm.writeClasses();
+
+		//apply on the inner level as well as not applying it will allow for focusing the button after a mouse click
+		renderTabIndex(oButton, oRm);
 
 		// close inner button tag
 		oRm.write(">");
@@ -182,39 +188,27 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		// write button text
-		if (oButton._getText()) {
+		if (sText) {
 			oRm.write("<span");
 			oRm.addClass("sapMBtnContent");
 			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
 			if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
 				oRm.writeAttribute("dir", sTextDir.toLowerCase());
 			}
-			// Check and add padding between icon and text
-			if (oButton.getIcon()) {
-				if (oButton.getIconFirst()) {
-					if (sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) {
-						oRm.addClass("sapMBtnBackContentRight");
-					} else {
-						oRm.addClass("sapMBtnContentRight");
-					}
-				} else {
-					if (sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) {
-						oRm.addClass("sapMBtnContentRight");
-					}
-					oRm.addClass("sapMBtnContentLeft");
-				}
-			} else if (sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) {
-				oRm.addClass("sapMBtnContentRight");
-			}
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oButton.getId() + "-content");
 			oRm.write(">");
-			oRm.writeEscaped(oButton._getText());
+			oRm.writeEscaped(sText);
 			oRm.write("</span>");
 		}
 
+		// special handling for IE focus outline
+		if (bIE_Edge && bEnabled) {
+			oRm.write('<span class="sapMBtnFocusDiv"></span>');
+		}
+
 		// end inner button tag
-		oRm.write("</div>");
+		oRm.write("</span>");
 
 		// end button tag
 		oRm.write("</button>");
@@ -247,6 +241,17 @@ sap.ui.define(['jquery.sap.global'],
 	ButtonRenderer.writeInternalIconPoolHtml = function(oRm, oButton, sURI) {
 		oRm.renderControl(oButton._getInternalIconBtn((oButton.getId() + "-iconBtn"), sURI));
 	};
+
+	/**
+	 * Renders tabindex with value of "-1" if required by  <code>_bExcludeFromTabChain</code> property.
+	 * @param oButton
+	 * @param oRm
+	 */
+	function renderTabIndex(oButton, oRm){
+		if (oButton._bExcludeFromTabChain) {
+			oRm.writeAttribute("tabindex", -1);
+		}
+	}
 
 	return ButtonRenderer;
 

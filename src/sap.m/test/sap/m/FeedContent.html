@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+
+<title>sap.m.FeedContent</title>
+
+<!-- UI5 Bootstrap -->
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.commons, sap.m, sap.ui.ux3">
+</script>
+
+<script>
+	function setBackgroundColor(oAnyObject) {
+		var oColors = {
+			white : "#FFFFFF",
+			black : "#000000",
+			blue : "#6666FF",
+			red : "#FF6666",
+			green : "#66FF66"
+		};
+		var sParam = jQuery.sap.getUriParameters().get("sap-ui-suite-background-color");
+		if (sParam) {
+			var sColor = oColors[sParam.toLowerCase()];
+			if (sColor) {
+				oAnyObject.addDelegate({
+					onAfterRendering : function() {
+						oAnyObject.$().css("background-color", sColor);
+					}
+				});
+			}
+		}
+	}
+</script>
+
+<script>
+	jQuery.sap.initMobile();
+
+	var oConfData = {
+		contentText : "@@notify Great outcome of the Presentation today. The new functionality and the new design was well received.",
+		subheader : "about 1 minute ago in Computer Market",
+		valueColor : sap.m.ValueColor.Neutral,
+		truncateValueTo : 4,
+		tooltip : "New message:\n{AltText}\nClick to follow"
+	}
+
+	var oConfModel = new sap.ui.model.json.JSONModel(oConfData);
+	sap.ui.getCore().setModel(oConfModel);
+
+	var fnPress = function(oEvent) {
+		sap.m.MessageToast.show("The feed content is pressed.");
+	};
+
+	var oFeedContent = new sap.m.FeedContent("configurable-feed-content", {
+		contentText : "{/contentText}",
+		subheader : "{/subheader}",
+		value : "{/value}",
+		truncateValueTo : "{/truncateValueTo}",
+		valueColor : "{/valueColor}",
+		tooltip : "{/tooltip}",
+		press : fnPress
+	});
+	oFeedContent.addStyleClass("sapUiSmallMargin");
+
+	var oFlexBox = new sap.m.FlexBox("flexbox", {
+		items : [oFeedContent],
+		alignItems: "Start",
+		justifyContent: "SpaceAround"
+	});
+
+	var oCTLbl = new sap.m.Label({
+		text : "Content Text",
+		labelFor : "content-text-value"
+	});
+
+	var oCTInput = new sap.m.Input("content-text-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter value ...'
+	});
+	oCTInput.bindValue("/contentText");
+
+	var oSbhLbl = new sap.m.Label({
+		text : "Subheader",
+		labelFor : "subheader-value"
+	});
+
+	var oSbhInput = new sap.m.Input("subheader-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter value ...'
+	});
+	oSbhInput.bindValue("/subheader");
+
+	var oValueLbl = new sap.m.Label({
+		text : "Value",
+		labelFor : "value-value"
+	});
+
+	var oValueInput = new sap.m.Input("value-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter value ...'
+	});
+	oValueInput.bindValue("/value");
+
+	var oTooltipLbl = new sap.m.Label({
+		text : "Tooltip",
+		labelFor : "tooltip"
+	});
+
+	var oTooltipInput = new sap.m.TextArea("tooltip",{
+		rows : 3,
+		placeholder : 'Enter tooltip (use {AltText} for inserting the default text) ...',
+		value : "{/tooltip}"
+	});
+
+	var oTooltipSwtchLbl = new sap.m.Label({
+		text : "QuickView Tooltip",
+		labelFor : "tooltip-swtch"
+	});
+
+	var oTooltipSwtch = new sap.m.Switch({
+		id : "tooltip-swtch",
+		state : false,
+		name : "QuickView tooltip",
+		change : function(oEvent) {
+			var bState = oEvent.getParameter("state");
+			oFeedContent.setTooltip(bState ? new sap.ui.ux3.QuickView({
+				content : new sap.m.Text({
+					text : oTooltipInput.getValue().split("{AltText}").join(oFeedContent.getAltText())
+				})
+			}) : oTooltipInput.getValue());
+		}
+	});
+
+	var oTruncateLbl = new sap.m.Label({
+		text : "Truncate value to",
+		labelFor : "truncate-value-to"
+	});
+
+	var oTruncateInput = new sap.m.Input("truncate-value-to", {
+		type : sap.m.InputType.Number,
+		value : {
+			path : "/truncateValueTo",
+			type : new sap.ui.model.type.Integer()
+		}
+	});
+
+	var oValueColorChangeLbl = new sap.m.Label({
+		text : "Value Color",
+		labelFor : "value-color-change"
+	});
+
+	var oValueColorChangeSlct = new sap.m.Select("value-color-change", {
+		change : function(oEvent) {
+			var oSelectedItem = oEvent.getParameter("selectedItem");
+			oConfData.valueColor = oSelectedItem.getKey();
+			oConfModel.checkUpdate();
+		},
+		items : [
+				new sap.ui.core.Item("actual-value-color-"
+						+ sap.m.ValueColor.Neutral, {
+					key : sap.m.ValueColor.Neutral,
+					text : sap.m.ValueColor.Neutral
+				}),
+				new sap.ui.core.Item("actual-value-color-"
+						+ sap.m.ValueColor.Good, {
+					key : sap.m.ValueColor.Good,
+					text : sap.m.ValueColor.Good
+				}),
+				new sap.ui.core.Item("actual-value-color-"
+						+ sap.m.ValueColor.Critical, {
+					key : sap.m.ValueColor.Critical,
+					text : sap.m.ValueColor.Critical
+				}),
+				new sap.ui.core.Item("actual-value-color-"
+						+ sap.m.ValueColor.Error, {
+					key : sap.m.ValueColor.Error,
+					text : sap.m.ValueColor.Error
+				}) ],
+		selectedItem : "actual-value-color-" + sap.m.ValueColor.Neutral
+	});
+
+	var oPressLbl = new sap.m.Label({
+		text : "Press Action",
+		labelFor : "press-action"
+	});
+
+	var oPressSwtch = new sap.m.Switch({
+		id : "press-action",
+		state : true,
+		change : function(oEvent) {
+			var bState = oEvent.getParameter("state");
+			if (bState) {
+				oFeedContent.attachPress(fnPress);
+			} else {
+				oFeedContent.detachPress(fnPress);
+			}
+		}
+	});
+
+	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
+		maxContainerCols : 2,
+		editable : true,
+		content : [ new sap.ui.core.Title({
+			text : "Modify Feed Content"
+		}), oCTLbl, oCTInput, oSbhLbl, oSbhInput, oValueLbl, oValueInput,
+				oValueColorChangeLbl, oValueColorChangeSlct, oTruncateLbl,
+				oTruncateInput, oPressLbl, oPressSwtch, oTooltipLbl,
+				oTooltipInput, oTooltipSwtchLbl, oTooltipSwtch ]
+	});
+	var oPage = new sap.m.Page({
+		content : [oFlexBox, editableSimpleForm]
+	});
+	//create a mobile App embedding the page and place the App into the HTML document
+	var app = new sap.m.App("myApp", {
+		pages : [oPage]
+	}).placeAt("content");
+	setBackgroundColor(oPage);
+
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>

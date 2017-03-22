@@ -2,8 +2,11 @@
  * ${copyright}
  */
 
-/*global QUnit, URI*/// declare unusual global vars for JSLint/SAPUI5 validation
+/*global jQuery, QUnit, URI, blanket*/// declare unusual global vars for JSLint/SAPUI5 validation
 (function() {
+	"use strict";
+
+	/*global jQuery */
 
 	if (typeof QUnit === "undefined") {
 		throw new Error("qunit-coverage.js: QUnit is not loaded yet!");
@@ -12,18 +15,31 @@
 	// set a hook for client-side coverage on window object
 	window["sap-ui-qunit-coverage"] = "client";
 
-	// extract base URL from script to attach the qunit-reporter-junit script
+	// client-side instrument filter options (data-attributes of qunit-coverage script tag)
+	var sFilterAttr, sAntiFilterAttr;
+
+	// extract base URL from script to attach the qunit-coverage script
 	var sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, ""),
 			aScripts = document.getElementsByTagName("script"),
 			sBaseUrl = null,
 			sFullUrl = null;
 
 	for (var i = 0; i < aScripts.length; i++) {
-		var sSrc = aScripts[i].getAttribute("src");
+		var oScript = aScripts[i];
+		var sSrc = oScript.getAttribute("src");
 		if (sSrc) {
 			var aBaseUrl = sSrc.match(/(.*)qunit\/qunit-coverage\.js$/i);
 			if (aBaseUrl && aBaseUrl.length > 1) {
 				sBaseUrl = aBaseUrl[1];
+
+				// Set custom client-side instrument filter (from script attributes)
+				if (oScript.hasAttribute("data-sap-ui-cover-only")) {
+					sFilterAttr = oScript.getAttribute("data-sap-ui-cover-only");
+				}
+				if (oScript.hasAttribute("data-sap-ui-cover-never")) {
+					sAntiFilterAttr = oScript.getAttribute("data-sap-ui-cover-never");
+				}
+
 				break;
 			}
 		}
@@ -59,21 +75,38 @@
 				QUnit.config.autostart = true;
 
 				// prevent QUnit.start() call in blanket
-				window.blanket.options("existingRequireJS", true);
+				blanket.options("existingRequireJS", true);
 
 				if (jQuery && jQuery.sap) {
 					jQuery.sap.require._hook = function(sScript, sModuleName) {
-						// TODO: manage includes/excludes? (usage of regex)
+
 						// avoid duplicate instrumentation on server and client-side
-						if (sScript.indexOf("window['sap-ui-qunit-coverage'] = 'server';") !== 0) {
-							window.blanket.instrument({
+						if (sScript.indexOf("window['sap-ui-qunit-coverage'] = 'server';") === 0) {
+							return sScript;
+						}
+
+						// manage includes and excludes with blanket utils
+						// check for blanket option (set via JS) and fall back to attribute of qunit-coverage script tag
+						var sFilter = blanket.options("sap-ui-cover-only") || sFilterAttr;
+						var sAntiFilter = blanket.options("sap-ui-cover-never") || sAntiFilterAttr;
+
+						if (typeof sAntiFilter !== "undefined" && blanket.utils.matchPatternAttribute(sModuleName, sAntiFilter)) {
+							// NEVER INSTRUMENT (excluded)
+						} else if (typeof sFilter === "undefined" || blanket.utils.matchPatternAttribute(sModuleName, sFilter)) {
+							// INSTRUMENT (included)
+
+							blanket.instrument({
 								inputFile: sScript,
 								inputFileName: sModuleName,
 								instrumentCache: false
 							}, function(sInstrumentedScript) {
 								sScript = sInstrumentedScript;
 							});
+
+						} else {
+							// DONT INSTRUMENT (not explicitly excluded / included)
 						}
+
 						return sScript;
 					};
 				} else {

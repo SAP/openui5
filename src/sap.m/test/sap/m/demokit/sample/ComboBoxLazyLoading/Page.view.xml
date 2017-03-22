@@ -1,0 +1,20 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ComboBoxLazyLoading.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page showHeader="false">
+		<content>
+			<ComboBox
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' },
+					suspended: true
+				}"
+				loadItems="handleLoadItems">
+				<core:ListItem key="{ProductId}" text="{Name}"/>
+			</ComboBox>
+		</content>
+	</Page>
+</mvc:View>

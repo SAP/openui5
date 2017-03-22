@@ -1,0 +1,84 @@
+<html>
+	<head>
+		<title>QUnit TestSuite for sap.ui.fl</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap" src='../../../../../resources/sap-ui-core.js'> </script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+	</head>
+	<body>
+		<script>
+
+			/**
+			 * Add test pages to this test suite function.
+			 * Please order alphabetically
+			 */
+			function suite() {
+				var suite = new parent.jsUnitTestSuite(),
+					contextPath = "/" + window.location.pathname.split("/")[1];
+
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/library.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/Cache.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/Change.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/Base.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/HideControl.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/UnhideControl.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/MoveControls.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/MoveElements.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/PropertyChange.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/PropertyBindingChange.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/StashControl.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/UnstashControl.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/BaseTreeModifier.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/BaseRename.qunit.html");
+				// at the moment empty test classes:
+				//   suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/JsControlTreeModifier.qunit.html");
+				//   suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/changeHandler/XmlTreeModifier.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/ChangePersistenceFactory.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/ChangePersistence.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/context/Context.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/context/DeviceContextProvider.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/context/SwitchContextProvider.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/context/ContextManager.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/codeExt/CodeExtManager.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/core/EventDelegate.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/core/FlexVisualizer.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/fieldExt/Access.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/registry/ChangeRegistry.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/registry/ChangeTypeMetadata.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/registry/ChangeRegistryItem.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/registry/Settings.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/registry/SimpleChanges.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/DefaultVariant.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/StandardVariant.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/FlexController.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/FlexControllerFactory.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/LrepConnector.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/FakeLrepConnectorLocalStorage.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/FakeLrepLocalStorage.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/Persistence.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/PreprocessorImpl.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/RegistrationDelegator.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/transport/TransportDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/transport/TransportSelection.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/Transports.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/Utils.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/descriptorRelated/api/Api.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/descriptorRelated/internal/Utils.qunit.html");
+				/**
+				 * Test pages for LRep support.
+				 */
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/support/Flexibility.qunit.html");
+				// Content browser application
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/support/apps/contentbrowser/controller/ContentDetails.controller.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/support/apps/contentbrowser/controller/LayerContentMaster.controller.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/support/apps/contentbrowser/controller/Layers.controller.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/support/apps/contentbrowser/lrepConnector/LRepConnector.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/support/apps/contentbrowser/utils/DataUtils.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/support/apps/contentbrowser/utils/ErrorUtils.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/fl/qunit/support/apps/contentbrowser/utils/HtmlEscapeUtils.qunit.html");
+				return suite;
+			}
+
+			</script>
+	</body>
+</html>

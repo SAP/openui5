@@ -1,0 +1,40 @@
+/* ================================ */
+/* CSS for control sap.m/SlideTile  */
+/* BlueCrystal theme                */
+/* ================================ */
+
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
+	border: 1px solid @sapUiTileBackground;
+}
+
+/* This part is used to achieve dotted white black interlace border*/
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0.25rem;
+	margin: -1px;
+	border: 1px dotted @sapUiContentFocusColor;
+}
+
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted > span {
+	background-color: lighten(@sapUiContentIconColor, 38);
+	box-shadow: 0 0 0.25rem fade(@sapUiContentContrastShadowColor, 30);
+}
+
+.sapMSTBulleted > span.sapMSTActive {
+	background-color: @sapUiContentIconColor;
+	box-shadow: 0 0 0.25rem fade(@sapUiContentContrastShadowColor, 30);
+}
+
+.sapMST .sapMSTIconDisplayArea {
+	background-color: darken(@sapUiHighlight, 18);
+}
+
+.sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	background-color: @sapUiHighlight;
+}

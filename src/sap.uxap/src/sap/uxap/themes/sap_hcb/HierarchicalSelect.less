@@ -1,0 +1,97 @@
+/* ============================================ */
+/* CSS for control sap.uxap/HierarchicalSelect  */
+/* High Contrast Black theme                    */
+/* ============================================ */
+
+.sapUxAPHierarchicalSelect {
+	border: none;
+
+	&.sapMSltHoverable {
+		border: none;
+
+		&.sapMSltIconOnly {
+
+			&:hover {
+				background: transparent;
+
+				&:focus {
+					background: transparent;
+				}
+			}
+
+			&:focus {
+				outline: none;
+
+				> .sapMSltIcon {
+					outline: 0.125rem dotted @sapUiContentFocusColor;
+					outline-offset: -0.125rem;
+					border-color: transparent;
+				}
+			}
+		}
+
+		> .sapMSltIcon:hover {
+			background: @sapUiButtonHoverBackground;
+		}
+	}
+
+	&.sapMSltPressed {
+
+		&.sapMSltIconOnly:not(.sapMSltDisabled) {
+			background: none;
+			border: none;
+		}
+
+		> .sapMSltIcon {
+			background: @sapUiButtonActiveBackground;
+		}
+	}
+}
+
+.sapUxAPHierarchicalSelect .sapMSltLabel,
+.sapUxAPHierarchicalSelect .sapMSltArrow,
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
+	color: @sapUiListTextColor;
+}
+
+.sapUiMedia-Std-Phone .sapUxAPHierarchicalSelect .sapMSltArrow,
+.sapUiMedia-Std-Phone .sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltArrow {
+	width: 3rem;
+}
+
+.sapUiMedia-Std-Phone .sapUxAPHierarchicalSelect > .sapMSltArrow {
+	border-left: none;
+}
+
+.sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltIconOnly {
+	border-radius: 0;
+	height: 3rem;
+	width: 2rem;
+}
+
+.sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltIconOnly .sapMSltIcon {
+	box-sizing: border-box;
+	border: 1px solid @sapUiButtonBorderColor;
+}
+
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem,
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
+	border-bottom: none;
+}
+
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	border-top: 1px solid @sapUiListBorderColor;
+	padding-left: 2rem;
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
+	border-top: 0.125rem solid @sapUiGroupContentBorderColor;
+}
+
+.sapMSelectList .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	text-indent: 1rem;
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltIcon {
+	top: 0;
+}

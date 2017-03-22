@@ -259,6 +259,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/0",
 						"com.sap.vocabularies.Communication.v1.Contact" : {
 							"email" : [{
@@ -379,38 +380,36 @@
 								"String" : "Google Maps"
 							},
 							"Url" : {
-								"UrlRef" : {
-									"Apply" : {
-										"Name" : "odata.fillUriTemplate",
-										"Parameters" : [{
-											"Type" : "String",
-											"Value" : "https://www.google.de/maps/place/{street},{city}"
-										}, {
-											"Type" : "LabeledElement",
-											"Name" : "street",
-											"Value" : {
-												"Apply" : {
-													"Name" : "odata.uriEncode",
-													"Parameters" : [{
-														"Type" : "Path",
-														"Value" : "Address/Street"
-													}]
-												}
+								"Apply" : {
+									"Name" : "odata.fillUriTemplate",
+									"Parameters" : [{
+										"Type" : "String",
+										"Value" : "https://www.google.de/maps/place/{street},{city}"
+									}, {
+										"Type" : "LabeledElement",
+										"Value" : {
+											"Apply" : {
+												"Name" : "odata.uriEncode",
+												"Parameters" : [{
+													"Type" : "Path",
+													"Value" : "Address/Street"
+												}]
 											}
-										}, {
-											"Type" : "LabeledElement",
-											"Name" : "city",
-											"Value" : {
-												"Apply" : {
-													"Name" : "odata.uriEncode",
-													"Parameters" : [{
-														"Type" : "Path",
-														"Value" : "Address/City"
-													}]
-												}
+										},
+										"Name" : "street"
+									}, {
+										"Type" : "LabeledElement",
+										"Value" : {
+											"Apply" : {
+												"Name" : "odata.uriEncode",
+												"Parameters" : [{
+													"Type" : "Path",
+													"Value" : "Address/City"
+												}]
 											}
-										}]
-									}
+										},
+										"Name" : "city"
+									}]
 								}
 							},
 							"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldWithUrl"
@@ -873,7 +872,7 @@
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
 							"com.sap.vocabularies.Common.v1.Label" : {
-								"String" : "Dimensions"
+								"String" : "Width"
 							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
@@ -895,7 +894,7 @@
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
 							"com.sap.vocabularies.Common.v1.Label" : {
-								"String" : "Dimensions"
+								"String" : "Depth"
 							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
@@ -917,7 +916,7 @@
 							"sap:unit" : "DimUnit",
 							"sap:label" : "Dimensions",
 							"com.sap.vocabularies.Common.v1.Label" : {
-								"String" : "Dimensions"
+								"String" : "Height"
 							},
 							"Org.OData.Measures.V1.Unit" : {
 								"Path" : "DimUnit"
@@ -1011,6 +1010,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/1",
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
@@ -1271,6 +1271,21 @@
 								},
 								"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 								"EdmType" : "Edm.Decimal"
+							}]
+						},
+						"com.sap.vocabularies.UI.v1.Chart#Dimensions" : {
+							"Title" : {
+								"String" : "Product Dimensions"
+							},
+							"Dimensions" : [{
+								"PropertyPath" : "ProductID"
+							}],
+							"Measures" : [{
+								"PropertyPath" : "Depth"
+							}, {
+								"PropertyPath" : "Height"
+							}, {
+								"PropertyPath" : "Width"
 							}]
 						},
 						"com.sap.vocabularies.UI.v1.Facets" : [{
@@ -1742,17 +1757,24 @@
 							},
 							"com.sap.vocabularies.Common.v1.Text" : {
 								"If" : [{
-									"Eq" : [{
-										"Path" : "DeliveryStatus"
+									"Or" : [{
+										"Eq" : [{
+											"Path" : "DeliveryStatus"
+										}, {
+											"String" : ""
+										}]
 									}, {
-										"String" : ""
+										"Eq" : [{
+											"Path" : "DeliveryStatus"
+										}, {
+											"Null" : null
+										}]
 									}]
 								}, {
 									"String" : "Not delivered"
 								}, {
 									"Path" : "DeliveryStatusDescription"
-								}],
-								"Path" : "DeliveryStatusDescription"
+								}]
 							}
 						}, {
 							"name" : "DeliveryStatusDescription",
@@ -1863,6 +1885,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/2",
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
@@ -2071,6 +2094,22 @@
 							},
 							"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
 							"EdmType" : "Edm.DateTime"
+						}, {
+							"Label" : {
+								"String" : "Cancel Sales Order"
+							},
+							"Action" : {
+								"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Cancel"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldForAction"
+						}, {
+							"Label" : {
+								"String" : "Confirm Sales Order"
+							},
+							"Action" : {
+								"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrder_Confirm"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldForAction"
 						}],
 						"com.sap.vocabularies.UI.v1.StatusInfo" : [{
 							"Label" : {
@@ -2526,6 +2565,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/3",
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
 							"TypeName" : {
@@ -2994,6 +3034,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/4",
 						"com.sap.vocabularies.Communication.v1.Contact" : {
 							"fn" : {
@@ -3097,61 +3138,6 @@
 							}],
 							"RecordType" : "com.sap.vocabularies.Communication.v1.ContactType"
 						},
-						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
-							"TypeName" : {
-								"String" : "Contact"
-							},
-							"TypeNamePlural" : {
-								"String" : "Contacts"
-							},
-							"Title" : {
-								"Label" : {
-									"String" : "Name"
-								},
-								"Value" : {
-									"Apply" : {
-										"Name" : "odata.concat",
-										"Parameters" : [{
-											"Type" : "If",
-											"Value" : [{
-												"Eq" : [{
-													"Path" : "Sex"
-												}, {
-													"String" : "M"
-												}]
-											}, {
-												"String" : "Mr. "
-											}, {
-												"If" : [{
-													"Eq" : [{
-														"Path" : "Sex"
-													}, {
-														"String" : "F"
-													}]
-												}, {
-													"String" : "Mrs. "
-												}, {
-													"String" : ""
-												}]
-											}]
-										}, {
-											"Type" : "Path",
-											"Value" : "FirstName",
-											"EdmType" : "Edm.String"
-										}, {
-											"Type" : "String",
-											"Value" : ""
-										}, {
-											"Type" : "Path",
-											"Value" : "LastName",
-											"EdmType" : "Edm.String"
-										}]
-									}
-								},
-								"RecordType" : "com.sap.vocabularies.UI.v1.DataField"
-							},
-							"RecordType" : "com.sap.vocabularies.UI.v1.HeaderInfoType"
-						},
 						"com.sap.vocabularies.UI.v1.Badge" : {
 							"HeadLine" : {
 								"Path" : "ToBusinessPartner/CompanyName"
@@ -3254,7 +3240,10 @@
 									}]
 								}
 							},
-							"RecordType" : "com.sap.vocabularies.UI.v1.DataField"
+							"Target" : {
+								"NavigationPropertyPath" : "ToBusinessPartner"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldWithNavigationPath"
 						}, {
 							"Label" : {
 								"String" : "Company Name"
@@ -3317,9 +3306,63 @@
 								}
 							},
 							"RecordType" : "com.sap.vocabularies.Communication.v1.AddressType"
+						},
+						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+							"TypeName" : {
+								"String" : "Contact"
+							},
+							"TypeNamePlural" : {
+								"String" : "Contacts"
+							},
+							"Title" : {
+								"Label" : {
+									"String" : "Name"
+								},
+								"Value" : {
+									"Apply" : {
+										"Name" : "odata.concat",
+										"Parameters" : [{
+											"Type" : "If",
+											"Value" : [{
+												"Eq" : [{
+													"Path" : "Sex"
+												}, {
+													"String" : "M"
+												}]
+											}, {
+												"String" : "Mr. "
+											}, {
+												"If" : [{
+													"Eq" : [{
+														"Path" : "Sex"
+													}, {
+														"String" : "F"
+													}]
+												}, {
+													"String" : "Mrs. "
+												}, {
+													"String" : ""
+												}]
+											}]
+										}, {
+											"Type" : "Path",
+											"Value" : "FirstName",
+											"EdmType" : "Edm.String"
+										}, {
+											"Type" : "String",
+											"Value" : ""
+										}, {
+											"Type" : "Path",
+											"Value" : "LastName",
+											"EdmType" : "Edm.String"
+										}]
+									}
+								},
+								"RecordType" : "com.sap.vocabularies.UI.v1.DataField"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.HeaderInfoType"
 						}
-					},
-					{
+					}, {
 						"name" : "VH_Sex",
 						"key" : {
 							"propertyRef" : [{
@@ -3407,9 +3450,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/5"
-					},
-					{
+					}, {
 						"name" : "VH_Country",
 						"key" : {
 							"propertyRef" : [{
@@ -3534,9 +3577,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/6"
-					},
-					{
+					}, {
 						"name" : "VH_AddressType",
 						"key" : {
 							"propertyRef" : [{
@@ -3624,9 +3667,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/7"
-					},
-					{
+					}, {
 						"name" : "VH_Category",
 						"key" : {
 							"propertyRef" : [{
@@ -3677,9 +3720,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/8"
-					},
-					{
+					}, {
 						"name" : "VH_Currency",
 						"key" : {
 							"propertyRef" : [{
@@ -3772,9 +3815,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/9"
-					},
-					{
+					}, {
 						"name" : "VH_UnitQuantity",
 						"key" : {
 							"propertyRef" : [{
@@ -3867,9 +3910,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/10"
-					},
-					{
+					}, {
 						"name" : "VH_UnitWeight",
 						"key" : {
 							"propertyRef" : [{
@@ -3962,9 +4005,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/11"
-					},
-					{
+					}, {
 						"name" : "VH_UnitLength",
 						"key" : {
 							"propertyRef" : [{
@@ -4057,9 +4100,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/12"
-					},
-					{
+					}, {
 						"name" : "VH_ProductTypeCode",
 						"key" : {
 							"propertyRef" : [{
@@ -4147,9 +4190,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/13"
-					},
-					{
+					}, {
 						"name" : "VH_BPRole",
 						"key" : {
 							"propertyRef" : [{
@@ -4237,9 +4280,9 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/14"
-					},
-					{
+					}, {
 						"name" : "VH_Language",
 						"key" : {
 							"propertyRef" : [{
@@ -4327,6 +4370,7 @@
 							"namespace" : "http://www.sap.com/Protocols/SAPData"
 						}],
 						"sap:content-version" : "1",
+						"namespace" : "GWSAMPLE_BASIC",
 						"$path" : "/dataServices/schema/0/entityType/15"
 					}],
 			"complexType" : [{
@@ -4430,6 +4474,7 @@
 						"String" : "Address Type"
 					}
 				}],
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/complexType/0",
 				"com.sap.vocabularies.Communication.v1.Contact" : {
 					"adr" : {
@@ -4478,6 +4523,7 @@
 						"Bool" : "true"
 					}
 				}],
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/complexType/1"
 			}],
 			"association" : [{
@@ -4497,6 +4543,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/0"
 			}, {
 				"name" : "Assoc_VH_Country_BusinessPartners",
@@ -4515,6 +4562,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/1"
 			}, {
 				"name" : "Assoc_VH_UnitQuantity_Products",
@@ -4547,6 +4595,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/2"
 			}, {
 				"name" : "Assoc_VH_UnitQuantity_SalesOrderLineItem",
@@ -4579,6 +4628,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/3"
 			}, {
 				"name" : "Assoc_BusinessPartner_Contacts",
@@ -4611,6 +4661,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/4"
 			}, {
 				"name" : "Assoc_BusinessPartner_Products",
@@ -4643,6 +4694,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/5"
 			}, {
 				"name" : "Assoc_BusinessPartner_SalesOrders",
@@ -4675,6 +4727,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/6"
 			}, {
 				"name" : "Assoc_VH_UnitWeight_Products",
@@ -4707,6 +4760,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/7"
 			}, {
 				"name" : "Assoc_SalesOrder_SalesOrderLineItems",
@@ -4739,6 +4793,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/8"
 			}, {
 				"name" : "Assoc_VH_Currency_BusinessPartners",
@@ -4771,6 +4826,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/9"
 			}, {
 				"name" : "Assoc_VH_Currency_Products",
@@ -4803,6 +4859,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/10"
 			}, {
 				"name" : "Assoc_VH_Currency_SalesOrders",
@@ -4835,6 +4892,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/11"
 			}, {
 				"name" : "Assoc_VH_Currency_SalesOrderLineItems",
@@ -4867,6 +4925,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/12"
 			}, {
 				"name" : "Assoc_Product_SalesOrderLineItems",
@@ -4899,6 +4958,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/13"
 			}, {
 				"name" : "Assoc_VH_Language_Contacts",
@@ -4931,6 +4991,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/14"
 			}, {
 				"name" : "Assoc_VH_Category_Products",
@@ -4963,6 +5024,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/15"
 			}, {
 				"name" : "Assoc_VH_Sex_Contacts",
@@ -4995,6 +5057,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/16"
 			}, {
 				"name" : "Assoc_VH_ProductTypeCode_Products",
@@ -5027,6 +5090,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/17"
 			}, {
 				"name" : "Assoc_VH_BPRole_BusinessPartners",
@@ -5059,6 +5123,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/18"
 			}, {
 				"name" : "Assoc_VH_UnitLength_Products",
@@ -5091,6 +5156,7 @@
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
 				"sap:content-version" : "1",
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/association/19"
 			}],
 			"entityContainer" : [{
@@ -5155,6 +5221,18 @@
 						}, {
 							"PropertyPath" : "DescriptionLanguage"
 						}]
+					},
+					"com.sap.vocabularies.UI.v1.DataPoint" : {
+						"Title" : {
+							"String" : "Price"
+						},
+						"Description" : {
+							"Path" : "Name"
+						},
+						"Value" : {
+							"Path" : "Price"
+						},
+						"RecordType" : "com.sap.vocabularies.UI.v1.DataPointType"
 					}
 				}, {
 					"name" : "SalesOrderSet",
@@ -6726,54 +6804,48 @@
 					}],
 					"sap:action-for" : "GWSAMPLE_BASIC.SalesOrder"
 				}],
+				"namespace" : "GWSAMPLE_BASIC",
 				"$path" : "/dataServices/schema/0/entityContainer/0"
 			}],
-			"extensions" : [
-					{
-						"name" : "lang",
-						"value" : "en",
-						"namespace" : "http://www.w3.org/XML/1998/namespace"
-					},
-					{
-						"name" : "schema-version",
-						"value" : "0000",
-						"namespace" : "http://www.sap.com/Protocols/SAPData"
-					},
-					{
-						"name" : "link",
-						"value" : null,
-						"attributes" : [
-								{
-									"name" : "rel",
-									"value" : "self",
-									"namespace" : null
-								},
-								{
-									"name" : "href",
-									"value" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata",
-									"namespace" : null
-								}],
-						"children" : [],
-						"namespace" : "http://www.w3.org/2005/Atom"
-					},
-					{
-						"name" : "link",
-						"value" : null,
-						"attributes" : [
-								{
-									"name" : "rel",
-									"value" : "latest-version",
-									"namespace" : null
-								},
-								{
-									"name" : "href",
-									"value" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata",
-									"namespace" : null
-								}],
-						"children" : [],
-						"namespace" : "http://www.w3.org/2005/Atom"
-					}],
-			"sap:schema-version" : "0000"
+			"extensions" : [{
+				"name" : "lang",
+				"value" : "en",
+				"namespace" : "http://www.w3.org/XML/1998/namespace"
+			}, {
+				"name" : "schema-version",
+				"value" : "0000",
+				"namespace" : "http://www.sap.com/Protocols/SAPData"
+			}, {
+				"name" : "link",
+				"value" : null,
+				"attributes" : [{
+					"name" : "rel",
+					"value" : "self",
+					"namespace" : null
+				}, {
+					"name" : "href",
+					"value" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata",
+					"namespace" : null
+				}],
+				"children" : [],
+				"namespace" : "http://www.w3.org/2005/Atom"
+			}, {
+				"name" : "link",
+				"value" : null,
+				"attributes" : [{
+					"name" : "rel",
+					"value" : "latest-version",
+					"namespace" : null
+				}, {
+					"name" : "href",
+					"value" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata",
+					"namespace" : null
+				}],
+				"children" : [],
+				"namespace" : "http://www.w3.org/2005/Atom"
+			}],
+			"sap:schema-version" : "0000",
+			"$path" : "/dataServices/schema/0"
 		}]
 	}
 }

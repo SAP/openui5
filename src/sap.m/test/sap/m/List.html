@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>sap.m.List Test</title>
 
-<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
 
 </script>
 
@@ -19,7 +20,6 @@
 
 <script>
 	var app = new sap.m.App("myApp");
-	var isBlueCrystal = window.location.search.search("sap_bluecrystal") >= 0;
 
 	function addFioriButton(){
 		return new sap.m.Select({
@@ -46,7 +46,7 @@
 				showDialog(page, list); }
 		})
 	}
-	
+
 	/*
 	// ================================================================================
 	// create application pages for the different lists
@@ -1302,7 +1302,7 @@
 		content : new sap.m.Button({
 			text : "{title}",
 			width : "100%",
-			icon : "./images/action.png",
+			icon : "sap-icon://action",
 			type : sap.m.ButtonType.Reject
 		}),
 		press : handlePress
@@ -1676,7 +1676,6 @@
 	}
 
 	function handlePress(e) {
-		this.setUnread(false);
 		if(this.data("xyz") && "Content pressed" != this.data("xyz") )
 			app.to(this.data("xyz"));
 		else{
@@ -1744,7 +1743,7 @@
 	});
 	model.setData(model.getData());
 	}
-	
+
 	function showDialog(oPage, oList){
 		if(!oPage._dialog){
 			var list = oList.clone();

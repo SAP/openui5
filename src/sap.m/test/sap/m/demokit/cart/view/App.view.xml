@@ -1,3 +1,0 @@
-<View xmlns="sap.m" displayBlock="true">
-	<SplitApp id="splitApp"/>
-</View>

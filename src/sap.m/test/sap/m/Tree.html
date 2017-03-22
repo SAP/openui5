@@ -1,0 +1,517 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.Tree</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+</script>
+
+<script>
+
+var oData = [
+			{
+				text: "Node0",
+				ref: "images/action.png"
+			},
+ 			{
+ 				text: "Node1 text text text text text text text text text text text text text text text text text text text text",
+ 				ref: "images/action.png",
+ 				nodes: [
+ 					{
+ 						text: "Node1-1",
+ 						ref: "images/action.png"
+ 					},
+ 					{
+ 						text: "Node1-2",
+ 						ref: "images/action.png",
+ 						nodes: [
+ 							{
+ 								text: "Node1-2-1",
+ 								ref: "images/action.png",
+ 								nodes: [
+								{
+									text: "Node1-2-1-1",
+									ref: "images/action.png",
+	 								nodes: [
+	 										{
+	 											text: "Node1-2-1-1-1",
+	 											ref: "images/action.png",
+	 			 								nodes: [
+	 			 										{
+	 			 											text: "Node1-2-1-1-1-1",
+	 			 											ref: "images/action.png",
+	 			 			 								nodes: [
+	 			 			 										{
+	 			 			 											text: "Node1-2-1-1-1-1-1",
+	 			 			 											ref: "images/action.png",
+	 			 			 			 								nodes: [
+	 			 			 			 									{
+	 			 			 			 										text: "Node1-2-1-1-1-1-1-1",
+	 			 			 			 										ref: "images/action.png",
+	 			 			 			 	 								nodes: [
+	 			 			 			 	 									{
+	 			 			 			 	 										text: "Node1-2-1-1-1-1-1-1-1",
+	 			 			 			 	 										ref: "images/action.png",
+	 			 			 			 	 	 								nodes: [
+	 			 			 			 	 	 									{
+	 			 			 			 	 	 										text: "Node1-2-1-1-1-1-1-1-1-1",
+	 			 			 			 	 	 										ref: "images/action.png",
+	 			 			 			 	 	 	 								nodes: [
+	 			 			 			 	 	 	 									{
+	 			 			 			 	 	 	 										text: "Node1-2-1-1-1-1-1-1-1-1-1",
+	 			 			 			 	 	 	 										ref: "images/action.png",
+		 			 			 			 	 	 	 	 								nodes: [
+		 			 			 			 	 	 	 	 								{
+		 			 			 			 	 	 	 	 									text: "Node1-2-1-1-1-1-1-1-1-1-1-1",
+		 			 			 			 	 	 	 	 									ref: "images/action.png",
+			 			 			 			 	 	 	 	 								nodes: [
+			 			 			 			 	 	 	 	 								{
+			 			 			 			 	 	 	 	 									text: "Node1-2-1-1-1-1-1-1-1-1-1-1-1 text text text text text text text",
+			 			 			 			 	 	 	 	 									ref: "images/action.png",
+				 			 			 			 	 	 	 	 								nodes: [
+				 			 			 			 	 	 	 	 								{
+				 			 			 			 	 	 	 	 									text: "Node1-2-1-1-1-1-1-1-1-1-1-1-1-1",
+				 			 			 			 	 	 	 	 									ref: "images/action.png",
+					 			 			 			 	 	 	 	 								nodes: [
+					 			 			 			 	 	 	 	 								{
+					 			 			 			 	 	 	 	 									text: "Node1-2-1-1-1-1-1-1-1-1-1-1-1-1-1",
+					 			 			 			 	 	 	 	 									ref: "images/action.png"
+					 			 			 			 	 	 	 	 								}]
+				 			 			 			 	 	 	 	 								}]
+				 			 			 			 	 	 	 	 							}]
+			 			 			 			 	 	 	 	 							}]
+		 			 			 			 	 	 	 								}]
+	 			 			 			 	 	 									}]
+	 			 			 			 	 									}]
+	 			 			 			 									}]
+	 			 			 										}]
+	 			 										}]
+	 										}]
+								}]
+ 							},
+ 							{
+ 								text: "Node1-2-2",
+ 								ref: "images/action.png"
+ 							},
+ 							{
+ 								text: "Node1-2-3",
+ 								ref: "images/action.png",
+ 								nodes: [
+								{
+									text: "Node1-2-3-1",
+									ref: "images/action.png"
+								},
+								{
+									text: "Node1-2-3-2",
+									ref: "images/action.png"
+								},
+								{
+									text: "Node1-2-3-3",
+									ref: "images/action.png"
+								}
+								]
+ 							}
+ 						]
+ 					}
+ 				]
+ 			},
+ 			{
+ 				text: "Node2",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node3",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node4",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node5",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node6",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node7",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node8",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node9",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node10",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node11",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node12",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node13",
+				ref: "images/action.png"
+			},
+ 			{
+ 				text: "Node14",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node15",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node16",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node17",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node18",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node19",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node20",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node21",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node22",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node23",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node24",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node25",
+				ref: "images/action.png"
+			},
+ 			{
+ 				text: "Node26",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node27",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node28",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node29",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node30",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node31",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node32",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node33",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node34",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node35",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node36",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node37",
+				ref: "images/action.png"
+			},
+ 			{
+ 				text: "Node38",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node39",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node40",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node41",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node42",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node43",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node44",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node45",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node46",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node47",
+				ref: "images/action.png"
+			},
+			{
+ 				text: "Node48",
+ 				ref: "images/action.png"
+ 			},
+ 			{
+				text: "Node49",
+				ref: "images/action.png"
+			},
+			{
+				text: "Node50",
+				ref: "images/action.png"
+			}
+ 		];
+
+	var oApp = new sap.m.App();
+
+	var oLabel2 = new sap.m.Label({text:"******************TreeItemBase****************"});
+
+	var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
+	var oTree = new sap.m.Tree({
+		headerText: "Data in Tree Structure"
+	});
+
+	//JSON
+	var oModel = new sap.ui.model.json.JSONModel();
+	oTree.setModel(oModel);
+	// set the data to the model
+	oModel.setData(oData);
+	var oStandardTreeItem = new sap.m.StandardTreeItem({
+		title: "{text}"
+	});
+	oTree.bindItems("/", oStandardTreeItem);
+	//oTree.expandToLevel(3);
+
+	// footer funxtions
+	function addSelectionMode(){
+		return new sap.m.Select({
+			tooltip: "Selection Mode",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: sap.m.ListMode.None }),
+				new sap.ui.core.Item({ key: "1", text: sap.m.ListMode.SingleSelect }),
+				new sap.ui.core.Item({ key: "2", text: sap.m.ListMode.SingleSelectLeft }),
+				new sap.ui.core.Item({ key: "3", text: sap.m.ListMode.SingleSelectMaster}),
+				new sap.ui.core.Item({ key: "4", text: sap.m.ListMode.MultiSelect }),
+				new sap.ui.core.Item({ key: "5", text: sap.m.ListMode.Delete })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var sMode = oControlEvent.getParameter("selectedItem").getText();
+				oTree.setMode(sMode);
+			}
+		});
+	};
+
+	function addNodeType(){
+		return new sap.m.Select({
+			tooltip: "set Type to tree node",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: sap.m.ListType.Inactive }),
+				new sap.ui.core.Item({ key: "1", text: sap.m.ListType.Detail }),
+				new sap.ui.core.Item({ key: "2", text: sap.m.ListType.Navigation }),
+				new sap.ui.core.Item({ key: "3", text: sap.m.ListType.Active }),
+				new sap.ui.core.Item({ key: "4", text: sap.m.ListType.DetailAndActive })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var sType = oControlEvent.getParameter("selectedItem").getText();
+				for (var i = 0; i < oTree.getItems().length; i++) {
+					oTree.getItems()[i].setType(sType);
+
+				}
+			}
+		});
+	};
+
+	function addVisibility(){
+		return new sap.m.Select({
+			tooltip: "Visibility",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: "Visible" }),
+				new sap.ui.core.Item({ key: "1", text: "invisible" })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var sVisibility = (oControlEvent.getParameter("selectedItem").getText() === "Visible") ? true : false;
+				oTree.setVisible(sVisibility);
+			}
+		});
+	};
+
+	function addShowNoData(){
+		return new sap.m.Select({
+			tooltip: "ShowNoData",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: "WithData" }),
+				new sap.ui.core.Item({ key: "1", text: "ShowNoData" })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var bShowNoData = oControlEvent.getParameter("selectedItem").getText() === "ShowNoData";
+				if (bShowNoData) {
+					oTree.bindItems("/dd", null);
+				} else {
+					oTree.bindItems("/", oStandardTreeItem);
+					oTree.rerender();
+				}
+			}
+		});
+	};
+
+	function addShowSeparator(){
+		return new sap.m.Select({
+			tooltip: "Separator",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: sap.m.ListSeparators.All }),
+				new sap.ui.core.Item({ key: "1", text: sap.m.ListSeparators.Inner }),
+				new sap.ui.core.Item({ key: "2", text: sap.m.ListSeparators.None })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var sSeparator = oControlEvent.getParameter("selectedItem").getText();
+				oTree.setShowSeparators(sSeparator);
+			}
+		});
+	};
+
+	function addSizeMode(){
+		return new sap.m.Select({
+			tooltip: "SizeMode",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: "cozy" }),
+				new sap.ui.core.Item({ key: "1", text: "compact" })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var sMode = oControlEvent.getParameter("selectedItem").getText();
+				if (sMode === "compact") {
+					$("body").addClass("sapUiSizeCompact");
+				} else {
+					$("body").removeClass("sapUiSizeCompact");
+				}
+			}
+		});
+	};
+
+	function addIcon(){
+		return new sap.m.Select({
+			tooltip: "Icon",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: "withoutIcon" }),
+				new sap.ui.core.Item({ key: "1", text: "withIcon" })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var sItem = oControlEvent.getParameter("selectedItem").getText();
+				if (sItem === "withIcon") {
+					var oStandardTreeItem = new sap.m.StandardTreeItem({
+						title: "{text}",
+						icon: "{ref}"
+					});
+					oTree.bindItems("/", oStandardTreeItem);
+				} else {
+					var oStandardTreeItem = new sap.m.StandardTreeItem({
+						title: "{text}"
+					});
+					oTree.bindItems("/", oStandardTreeItem);
+				}
+			}
+		});
+	};
+
+	function addExpandToLevel(){
+		return new sap.m.Select({
+			tooltip: "Icon",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: "CollapseAll" }),
+				new sap.ui.core.Item({ key: "1", text: "ExpandToLevel1" })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var sItem = oControlEvent.getParameter("selectedItem").getText();
+				if (sItem === "ExpandToLevel1") {
+					oTree.expandToLevel(1);
+				} else {
+					oTree.collapseAll();
+				}
+			}
+		});
+	};
+
+	var oPage = new sap.m.Page("TreeTest", {
+		title : "Test Page for sap.m.Tree",
+		content : [oTree],
+		footer : new sap.m.Bar({
+			contentMiddle : [
+				addSizeMode(),
+				addSelectionMode(),
+				addExpandToLevel(),
+				addNodeType(),
+				addShowSeparator(),
+				addIcon(),
+				addShowNoData(),
+				addVisibility()
+			]
+		})
+	});
+
+	oApp.addPage(oPage).placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

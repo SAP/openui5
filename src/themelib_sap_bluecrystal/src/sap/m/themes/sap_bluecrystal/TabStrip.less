@@ -1,0 +1,35 @@
+/* =============================== */
+/* CSS for control sap.m/TabStrip  */
+/* BlueCrystal theme               */
+/* =============================== */
+
+.sapMTabStrip {
+	border-top: 1px solid @sapUiPageHeaderBorderColor;
+	border-bottom: 1px solid @sapUiPageHeaderBorderColor;
+	/* This class can override the default border-top style */
+	&.sapMTabStripTopBorderVisible {
+		border-top: 1px solid @sapUiPageHeaderBorderColor;
+	}
+	.sapMTSTabsContainer {
+		.sapMTSTabs {
+			.sapMTabStripItem {
+				border-right: 1px solid @sapUiPageHeaderBorderColor;
+				&.sapMTabStripItemSelected {
+					background: @sapUiSegmentedButtonBackground;
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+				}
+				&:hover {
+					background: @sapUiSegmentedButtonHoverBackground;
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+				}
+				&:active {
+					background: @sapUiSegmentedButtonActiveBackground;
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+				}
+				&:first-child {
+					border-left: 1px solid @sapUiPageHeaderBorderColor;
+				}
+			}
+		}
+	}
+}

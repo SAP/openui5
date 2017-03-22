@@ -1,0 +1,97 @@
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="FRA_EXCLUDED_TERM_LIST_SRV" sap:schema-version="1" xml:lang="en" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="FRA_CV_ETLListTypeGroupType" sap:content-version="1" sap:label="Excluded Term List - List Type Group">
+				<Key>
+					<PropertyRef Name="ListTypeGroup"/>
+				</Key>
+				<Property MaxLength="10" Name="ListTypeGroup" Nullable="false" Type="Edm.String" sap:display-format="UpperCase" sap:label="List Group"/>
+				<Property MaxLength="50" Name="Description" Type="Edm.String" sap:label="Medium Description"/>
+				<Property MaxLength="255" Name="TermListDescription" Type="Edm.String" sap:display-format="UpperCase" sap:label="List Description"/>
+				<Property MaxLength="10" Name="AuthorizationGroup" Type="Edm.String" sap:display-format="UpperCase" sap:label="Authorization Group"/>
+			</EntityType>
+			<EntityType Name="FRA_CV_ETLListTypeGroupAssignType" sap:content-version="1" sap:label="Excluded Term Assignment">
+				<Key>
+					<PropertyRef Name="DbKey"/>
+				</Key>
+				<Property Name="DbKey" Nullable="false" Type="Edm.Guid" sap:label="UUID"/>
+				<Property Name="ParentKey" Type="Edm.Guid" sap:label="UUID"/>
+				<Property MaxLength="10" Name="ListTypeGroup" Type="Edm.String" sap:display-format="UpperCase" sap:label="List Group"/>
+				<Property MaxLength="50" Name="ListTypeGroupDescription" Type="Edm.String" sap:label="Medium Description"/>
+				<Property MaxLength="10" Name="AuthorizationGroup" Type="Edm.String" sap:display-format="UpperCase" sap:label="Authorization Group"/>
+			</EntityType>
+			<EntityType Name="FRA_CV_ExcludedTermType" sap:content-version="1" sap:label="Excluded Term">
+				<Key>
+					<PropertyRef Name="DbKey"/>
+				</Key>
+				<Property Name="DbKey" Nullable="false" Type="Edm.Guid" sap:label="UUID"/>
+				<Property Name="ParentKey" Type="Edm.Guid" sap:label="UUID"/>
+				<Property Name="Active" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Active"/>
+				<Property Name="Term" Type="Edm.String" sap:label="Term"/>
+				<Property MaxLength="10" Name="AuthorizationGroup" Type="Edm.String" sap:display-format="UpperCase" sap:label="Authorization Group"/>
+			</EntityType>
+			<EntityType Name="FRA_CV_ExcludedTermListType" sap:content-version="1" sap:label="Excluded Term List">
+				<Key>
+					<PropertyRef Name="DbKey"/>
+				</Key>
+				<Property Name="DbKey" Nullable="false" Type="Edm.Guid" sap:label="UUID"/>
+				<Property Name="Active" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Status"/>
+				<Property MaxLength="255" Name="Description" Type="Edm.String" sap:display-format="UpperCase" sap:label="List Description"/>
+				<Property MaxLength="10" Name="AuthorizationGroup" Type="Edm.String" sap:display-format="UpperCase" sap:label="Authorization Group"/>
+				<Property Name="CreatedOn" Precision="7" Type="Edm.DateTimeOffset" sap:label="Created On"/>
+				<Property MaxLength="80" Name="CreatedByFullName" Type="Edm.String" sap:label="Created By"/>
+				<Property MaxLength="12" Name="CreatedBy" Type="Edm.String" sap:display-format="UpperCase" sap:label="User Name"/>
+				<Property MaxLength="80" Name="LastChangedByFullName" Type="Edm.String" sap:label="Last Changed By"/>
+				<Property MaxLength="12" Name="LastChangedBy" Type="Edm.String" sap:display-format="UpperCase" sap:label="User Name"/>
+				<Property ConcurrencyMode="Fixed" Name="LastChangedOn" Precision="7" Type="Edm.DateTimeOffset" sap:label="Last Changed On"/>
+				<Property MaxLength="264" Name="NumberOfTerms" Type="Edm.String" sap:display-format="UpperCase" sap:label="Number of Terms"/>
+				<Property Name="NumberOfAssignedListTypeGroups" Type="Edm.Int32" sap:label="Assigned List Type Groups"/>
+				<NavigationProperty FromRole="FromRole_assoc_858C7C737BCE7E5E40E10A6A4924F38C" Name="to_ExcludedTerms"
+					Relationship="FRA_EXCLUDED_TERM_LIST_SRV.assoc_858C7C737BCE7E5E40E10A6A4924F38C" ToRole="ToRole_assoc_858C7C737BCE7E5E40E10A6A4924F38C"
+					sap:filterable="false"/>
+				<NavigationProperty FromRole="FromRole_assoc_74D1B63D98A864A3DA5AECBE6AB21579" Name="to_ListTypeGroupAssignment"
+					Relationship="FRA_EXCLUDED_TERM_LIST_SRV.assoc_74D1B63D98A864A3DA5AECBE6AB21579" ToRole="ToRole_assoc_74D1B63D98A864A3DA5AECBE6AB21579"
+					sap:filterable="false"/>
+			</EntityType>
+			<Association Name="assoc_74D1B63D98A864A3DA5AECBE6AB21579" sap:content-version="1">
+				<End Multiplicity="1" Role="FromRole_assoc_74D1B63D98A864A3DA5AECBE6AB21579" Type="FRA_EXCLUDED_TERM_LIST_SRV.FRA_CV_ExcludedTermListType"/>
+				<End Multiplicity="*" Role="ToRole_assoc_74D1B63D98A864A3DA5AECBE6AB21579"
+					Type="FRA_EXCLUDED_TERM_LIST_SRV.FRA_CV_ETLListTypeGroupAssignType"/>
+			</Association>
+			<Association Name="assoc_858C7C737BCE7E5E40E10A6A4924F38C" sap:content-version="1">
+				<End Multiplicity="1" Role="FromRole_assoc_858C7C737BCE7E5E40E10A6A4924F38C" Type="FRA_EXCLUDED_TERM_LIST_SRV.FRA_CV_ExcludedTermListType"/>
+				<End Multiplicity="*" Role="ToRole_assoc_858C7C737BCE7E5E40E10A6A4924F38C" Type="FRA_EXCLUDED_TERM_LIST_SRV.FRA_CV_ExcludedTermType"/>
+			</Association>
+			<EntityContainer Name="FRA_EXCLUDED_TERM_LIST_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				<EntitySet EntityType="FRA_EXCLUDED_TERM_LIST_SRV.FRA_CV_ETLListTypeGroupType" Name="FRA_CV_ETLListTypeGroup" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"/>
+				<EntitySet EntityType="FRA_EXCLUDED_TERM_LIST_SRV.FRA_CV_ETLListTypeGroupAssignType" Name="FRA_CV_ETLListTypeGroupAssign"
+					sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false"/>
+				<EntitySet EntityType="FRA_EXCLUDED_TERM_LIST_SRV.FRA_CV_ExcludedTermType" Name="FRA_CV_ExcludedTerm" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:searchable="true" sap:updatable="false"/>
+				<EntitySet EntityType="FRA_EXCLUDED_TERM_LIST_SRV.FRA_CV_ExcludedTermListType" Name="FRA_CV_ExcludedTermList" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:searchable="true" sap:updatable="false"/>
+				<AssociationSet Association="FRA_EXCLUDED_TERM_LIST_SRV.assoc_74D1B63D98A864A3DA5AECBE6AB21579"
+					Name="assoc_74D1B63D98A864A3DA5AECBE6AB21579" sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false">
+					<End EntitySet="FRA_CV_ExcludedTermList" Role="FromRole_assoc_74D1B63D98A864A3DA5AECBE6AB21579"/>
+					<End EntitySet="FRA_CV_ETLListTypeGroupAssign" Role="ToRole_assoc_74D1B63D98A864A3DA5AECBE6AB21579"/>
+				</AssociationSet>
+				<AssociationSet Association="FRA_EXCLUDED_TERM_LIST_SRV.assoc_858C7C737BCE7E5E40E10A6A4924F38C"
+					Name="assoc_858C7C737BCE7E5E40E10A6A4924F38C" sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false">
+					<End EntitySet="FRA_CV_ExcludedTermList" Role="FromRole_assoc_858C7C737BCE7E5E40E10A6A4924F38C"/>
+					<End EntitySet="FRA_CV_ExcludedTerm" Role="ToRole_assoc_858C7C737BCE7E5E40E10A6A4924F38C"/>
+				</AssociationSet>
+			</EntityContainer>
+			<atom:link href="/sap/opu/odata/sap/FRA_EXCLUDED_TERM_LIST_SRV/$metadata" rel="self"
+				xmlns:atom="http://www.w3.org/2005/Atom"/>
+			<atom:link href="/sap/opu/odata/sap/FRA_EXCLUDED_TERM_LIST_SRV/$metadata" rel="latest-version"
+				xmlns:atom="http://www.w3.org/2005/Atom"/>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

@@ -46,11 +46,12 @@ if ( !sap.ui.testfwk ) {
 
 sap.ui.testfwk.TestFWK = {
 	sLanguage : (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage,
-	sTheme : "sap_bluecrystal",
+	sTheme : "sap_belize",
+	bContrastMode: false,
 	bRTL : false,
 	bAccessibilityMode: true,
-	bSimulateTouch: false,
-	sJQueryVersion: jQuery.fn.jquery
+	bSimulateTouch: false
+
 };
 
 sap.ui.testfwk.TestFWK.LANGUAGES = {
@@ -60,36 +61,30 @@ sap.ui.testfwk.TestFWK.LANGUAGES = {
 
 sap.ui.testfwk.TestFWK.THEMES = {
 	"base" : "Base",
+	"sap_belize" : "Belize",
+	"sap_belize_plus" : "Belize Plus",
+	"sap_belize_hcb" : "Belize High Contrast Black",
+	"sap_belize_hcw" : "Belize High Contrast White",
 	"sap_bluecrystal" : "Blue Crystal",
 	"sap_goldreflection" : "Gold Reflection",
-	"sap_platinum" : "Platinum",
 	"sap_hcb" : "High Contrast Black",
+	"sap_platinum" : "Platinum",
 	"sap_ux" : "Ux Target Design",
 	"edding" : "Edding (EXPERIMENTAL!)"
 };
 
-sap.ui.testfwk.TestFWK.JQUERY_VERSIONS = {
-	"1.7.1" : "jQuery 1.7.1",
-	"1.8.1" : "jQuery 1.8.1",
-	"1.10.1" : "jQuery 1.10.1",
-	"1.10.2" : "jQuery 1.10.2",
-	"1.11.1" : "jQuery 1.11.1"
-};
-
 // the themes supported by each library
 sap.ui.testfwk.TestFWK.LIBRARY_THEMES = {
-	"sap.ui.core" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
-	"sap.m" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_hcb"]},
-	"sap.me" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal"]},
+	"sap.m" : {"default":"sap_belize", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"]},
+	"sap.me" : {"default":"sap_belize", "supports":["sap_bluecrystal","sap_hcb"]},
 	"sap.service.visualization" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum"]},
 	"sap.ui.commons" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.composite" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.dev" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.richtexteditor" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.suite" : {"default":"sap_goldreflection", "supports":["sap_goldreflection","sap_hcb","sap_bluecrystal"]},
-	"sap.ui.table" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.ux3" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb"]},
-	"all" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]}
+	"all" : {"default":"sap_belize", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]}
 };
 
 sap.ui.testfwk.TestFWK.init = function(oContentWindow) {
@@ -101,7 +96,7 @@ sap.ui.testfwk.TestFWK.init = function(oContentWindow) {
 sap.ui.testfwk.TestFWK.getAllowedThemes = function() {
 	if (!this.oThemeConstraints) {
 		return this.THEMES;
-		
+
 	} else {
 		var result = {};
 		var aThemeNames = this.oThemeConstraints.supports, l = aThemeNames.length;
@@ -119,9 +114,9 @@ sap.ui.testfwk.TestFWK.getContentURL = function() {
 /**
  * Sets a new URL as content, using the current settings, but considering the given constraints for the theme.
  * If this causes a theme change, the themeConfigurationChanged event will be fired.
- * 
+ *
  * @private
- * 
+ *
  * @param sURL
  * @param oThemeConstraints optional
  * @param sLibName optional
@@ -129,33 +124,33 @@ sap.ui.testfwk.TestFWK.getContentURL = function() {
  */
 sap.ui.testfwk.TestFWK.setContentURL = function(sURL, oThemeConstraints, sLibName) {
 	this.sContentURL = sURL;
-	
+
 	var newTheme = this.getEffectiveTheme(this.sTheme, oThemeConstraints);
 	var bSomethingChanged = false;
-	
+
 	if (this.sTheme !== newTheme) {
 		this.sTheme = newTheme;
 		bSomethingChanged = true;
 	}
-	
+
 	if (!jQuery.sap.equal(oThemeConstraints, this.oThemeConstraints)) {
 		this.oThemeConstraints = oThemeConstraints;
 		bSomethingChanged = true;
 	}
-	
+
 	// update settings ComboBox and selection in this ComboBox
 	if (bSomethingChanged) {
 		this.fireThemeConfigurationChanged();
 	}
-	
-	this.updateContent(sLibName); 
+
+	this.updateContent(sLibName);
 };
 
 /**
  * Updates the content according to the current settings
- * 
+ *
  * @private
- * 
+ *
  * @param sLibName optional
  */
 sap.ui.testfwk.TestFWK.updateContent = function(sLibName) {
@@ -229,14 +224,22 @@ sap.ui.testfwk.TestFWK.setSimulateTouch = function(bSimulateTouch) {
 	}
 };
 
-sap.ui.testfwk.TestFWK.getJQueryVersion = function() {
-	return this.sJQueryVersion;
+sap.ui.testfwk.TestFWK.getContrastMode = function() {
+	return this.bContrastMode;
 };
 
-sap.ui.testfwk.TestFWK.setJQueryVersion = function(sJQueryVersion) {
-	if ( this.sJQueryVersion !== sJQueryVersion ) {
-		this.sJQueryVersion = sJQueryVersion;
-		this.applySettings();
+sap.ui.testfwk.TestFWK.setContrastMode = function(bContrastMode) {
+	if ( this.bContrastMode !== bContrastMode ) {
+		var frameDocument = $('frame[name="sap-ui-ContentWindow"]');
+		var frameDocumentBody = frameDocument.contents().find("body");
+		frameDocumentBody.removeClass("sapContrast");
+		frameDocumentBody.removeClass("sapContrastPlus");
+		if (this.sTheme == "sap_belize" && bContrastMode) {
+			frameDocumentBody.addClass("sapContrast");
+		} else if (this.sTheme == "sap_belize_plus" && bContrastMode) {
+			frameDocumentBody.addClass("sapContrastPlus");
+		}
+		this.bContrastMode = bContrastMode;
 	}
 };
 
@@ -244,7 +247,7 @@ sap.ui.testfwk.TestFWK.setJQueryVersion = function(sJQueryVersion) {
  * Returns the appropriate theme, considering the requested theme and the configuration of allowed themes.
  * If allowed, the requested theme will be returned, otherwise the default theme will be returned.
  * If either parameter is null, the other will be returned; if both are null, null will be returned.
- * 
+ *
  * @private
  * @param sRequestedTheme
  * @param oThemeConstraints
@@ -259,11 +262,11 @@ sap.ui.testfwk.TestFWK.getEffectiveTheme = function(sRequestedTheme, oThemeConst
 				}
 			}
 			return oThemeConstraints["default"]; // requested theme is not allowed, return the default one
-			
+
 		} else {
 			return sRequestedTheme; // no constraints configuration given, so it's okay to use the requested theme
 		}
-		
+
 	} else { // no theme requested: return the default from the configuration, if available
 		return oThemeConstraints ? oThemeConstraints["default"] : null;
 	}
@@ -277,7 +280,7 @@ sap.ui.testfwk.TestFWK.applySettings = function() {
 sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints) {
 
 	// hash rewriting currently doesn't work with webkit browsers and framesets
-	if ( !!!sap.ui.Device.browser.webkit ) {
+	if ( !sap.ui.Device.browser.webkit ) {
 		top.window.location.hash = sURL.replace(/\?/g, "_");
 	}
 
@@ -289,7 +292,7 @@ sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints) {
 		}
 		sURL += sParam + "=" + vValue;
 	}
-	
+
 	add("sap-ui-debug", true);
 	if ( this.sLanguage ) {
 		add("sap-ui-language", this.sLanguage);
@@ -305,9 +308,6 @@ sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints) {
 		add("sap-ui-xx-test-mobile", this.bSimulateTouch);
 	}
 	add("sap-ui-accessibility", this.bAccessibilityMode);
-	if ( this.sJQueryVersion ) {
-		add("sap-ui-jqueryversion", this.sJQueryVersion);
-	}
 
 	return sURL;
 };

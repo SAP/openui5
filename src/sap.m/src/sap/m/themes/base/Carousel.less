@@ -1,16 +1,28 @@
-/* ============================================= */
-/* CSS for control sap.m/Carousel.control */
-/* ============================================= */
-
+/* =============================== */
+/* CSS for control sap.m/Carousel  */
+/* Base theme                      */
+/* =============================== */
 
 .sapMCrsl {
 	position: relative;
 	overflow: hidden;
+	box-sizing: border-box;
+	border: 1px solid transparent;
 
 	/* IE Windows 8 */
 	/* This elements receives events when not panning in vertial direction */
 	touch-action: pan-y;
 	-ms-touch-action: pan-y;
+	min-width: 20rem;
+}
+
+.sapMCrsl:focus {
+	outline: none;
+}
+
+//show the left and right arrows when the carousel is focused
+.sapMCrsl:focus .sapMCrslHud a {
+	opacity: 0.3;
 }
 
 .sapMCrsl.sapMCrslLeft {
@@ -26,7 +38,7 @@
 }
 
 .sapMCrsl.sapMCrslFluid.sapMCrslCenter>.sapMCrslInner>*:first-child {
-	margin-left: 0%;
+	margin-left: 0;
 }
 
 .sapMCrslInner {
@@ -38,47 +50,71 @@
 	font-size: 0;
 	/*  Configure  animations  */
 	-webkit-transition-property: -webkit-transform;
-	-moz-transition-property: -moz-transform;
-	-ms-transition-property: -ms-transform;
 	transition-property: transform;
 	/*  iOS  like  slide  timings  */
-	-webkit-transition-timing-function: cubic-bezier(0.33, 0.66, 0.66, 1);
-	-moz-transition-timing-function: cubic-bezier(0.33, 0.66, 0.66, 1);
-	-ms-transition-timing-function: cubic-bezier(0.33, 0.66, 0.66, 1);
-	transition-timing-function: cubic-bezier(0.33, 0.66, 0.66, 1);
+	-webkit-transition-timing-function: cubic-bezier(0.46, 0, 0.44, 1);
+	transition-timing-function: cubic-bezier(0.46, 0, 0.44, 1);
 	-webkit-transition-duration: 0.5s;
-	-moz-transition-duration: 0.5s;
-	-ms-transition-duration: 0.5s;
 	transition-duration: 0.5s;
 }
 
-/* special handling for IE, as it does not support text-align: end */
-html[data-sap-ui-browser^="ie"] .sapMCrslInner {
+/* for tablet and phone the duration is smaller */
+@media all and (max-width: 1024px) {
+	.sapMCrslInner {
+		transition-duration: 0.3s;
+	}
+}
+
+html[data-sap-ui-animation='off'] .sapMCrslInner {
+	transition-duration: 0.01s;
+ }
+
+
+/* special handling for IE / Edge, as it does not support text-align: end */
+html[data-sap-ui-browser^="ie"] .sapMCrslInner,
+html[data-sap-ui-browser^="ed"] .sapMCrslInner {
  	text-align: left;
 }
 
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner {
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner,
+html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 	text-align: right;
+
 }
 
 .sapMCrslItemTable {
-	display: table;
+	height: 100%;
 }
 
 .sapMCrslItemTableCell {
 	height: 100%;
-	display: table-cell;
 }
 
 .sapMCrslImg {
 	text-align: center;
+}
+
+.sapMCrslImgNoArrows {
+	text-align: center;
+}
+
+.sapMCrslImgNoArrows:before,
+.sapMCrslImg:before {
+	content: ' ';
+	display: inline-block;
+	height: 100%;
 	vertical-align: middle;
+}
+
+.sapMCrslItemTableCell.sapMCrslImgNoArrows img,
+.sapMCrslItemTableCell.sapMCrslImg img {
+	vertical-align: middle;
+	max-width: 100%;
+	max-height: 100%;
 }
 
 .sapMCrslInner.sapMCrslNoTransition {
 	-webkit-transition-duration: 0.01s;
-	-moz-transition-duration: 0.01s;
-	-ms-transition-duration: 0.01s;
 	transition-duration: 0.01s;
 }
 
@@ -106,3 +142,389 @@ html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner {
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMCrsl", ~"> .sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll");
+
+/*
+  Carousel control base styling
+*/
+.sapMCrslControls {
+	text-align: center;
+	height: 3.5rem;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.sapMCrslControlsNoArrows {
+	text-align: center;
+	height: 2rem;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.sapMCrslHud a {
+	z-index: 2;
+	opacity: 0;
+	display: none;
+	position: absolute;
+	width: 2rem;
+	height: 2rem;
+	margin: -1.5625px 0 0 0;
+	padding: 0;
+	text-decoration: none;
+	border-radius: 50%;
+	-webkit-transition: opacity 0.1s ease-in;
+	transition: opacity 0.1s ease-in;
+	box-sizing: border-box;
+	background-color: @sapUiButtonBackground;
+	color: @sapUiButtonIconColor;
+}
+
+.sapMCrslHudMiddle a {
+	top:  calc(~"50% - 1rem");
+}
+
+.sapMCrslHudTop a {
+	top: 50%;
+}
+
+.sapMCrslHudBottom a {
+	top: calc(~"50% - 2rem");
+}
+
+.sapMCrslControls a,
+.sapMCrslHud a {
+	padding: 0;
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	user-select: none;
+	-webkit-user-drag: none;
+	-moz-user-drag: -moz-none;
+	user-drag: none;
+	box-sizing: border-box;
+}
+
+.sapMCrslBulleted > span {
+	text-indent: 2rem;
+	line-height: 0;
+	text-decoration: none;
+	overflow: hidden;
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	margin: 0 0.25rem;
+	-webkit-transition: background-color 0.1s ease-in;
+	transition: background-color 0.1s ease-in;
+	border-radius: 50%;
+	align-self: center;
+	box-sizing: border-box;
+  	color: @sapUiContentLabelColor;
+	background-color: @sapUiContentForegroundColor;
+}
+
+// 2rem indicator height + 1px border
+.sapMCrslTopOffset .sapMCrslItem {
+	padding-top: calc(~"2rem + 1px");
+}
+
+// 3.5rem indicator height + 1px border
+.sapMCrslTopOffset.sapMCrslTopArrowsOffset .sapMCrslItem
+{
+	padding-top: calc(~"3.5rem + 1px");
+}
+
+.sapMCrslBottomOffset .sapMCrslItem {
+	padding-bottom: calc(~"2rem + 1px");
+}
+
+.sapMCrslBottomOffset.sapMCrslBottomArrowsOffset .sapMCrslItem {
+  padding-bottom: calc(~"3.5rem + 1px");
+}
+
+.sapMCrslControlsContainer {
+	width: 100%;
+	align-self: center;
+	height: 2.5rem;
+	display: flex;
+	justify-content: center;
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
+
+.sapMCrslControls.sapMCrslControlsTop,
+.sapMCrslControlsNoArrows.sapMCrslControlsTop {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+	align-self: center;
+}
+
+.sapMCrslControls.sapMCrslControlsBottom,
+.sapMCrslControlsNoArrows.sapMCrslControlsBottom {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+.sapMCrslControlsNoArrowsTop {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+	align-self: center;
+}
+
+.sapMCrslControlsNoArrowsBottom {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+.sapMCrslControlsBottom.sapMCrslControlsContainerBottom {
+	width: 100%;
+	align-self: center;
+}
+
+.sapMCrslControlsTop.sapMCrslControlsContainerTop {
+	width: 100%;
+	align-self: center;
+}
+
+.sapMCrslControls .sapMCrslPrev,
+.sapMCrslControls .sapMCrslNext {
+	width: 2rem;
+	height: 2rem;
+	display: inline-block;
+	padding: 0;
+	text-decoration: none;
+	text-align: center;
+	border-radius: 50%;
+	outline: none;
+	position: relative;
+	top: 4px;
+	box-sizing: border-box;
+	background: @sapUiButtonBackground;
+	border: 1px solid @sapUiButtonBorderColor;
+}
+
+.sapMCrslHud .sapMCrslPrev,
+.sapMCrslHud .sapMCrslNext {
+	position: absolute;
+	background-color: @sapUiButtonBackground;
+	border: 1px solid @sapUiButtonBorderColor;
+	border-radius: 50%;
+}
+
+.sapMCrslArrowInner {
+	display: table;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+.sapMCrslArrowInner .sapUiIcon {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	pointer-events: none;
+}
+
+.sapMCrslPrev .sapMCrslArrowInner .sapUiIcon {
+	text-indent: -0.0625rem;
+	font-size: 1rem;
+}
+
+.sapMCrslNext .sapMCrslArrowInner .sapUiIcon {
+	text-indent: 0.0625rem;
+	font-size: 1rem;
+}
+
+.sapMCrslBulleted,
+.sapMCrslNumeric {
+	padding-left: 1rem;
+	padding-right: 1rem;
+	height: 2rem;
+	bottom: 1.0625rem;
+	max-width: calc(~"100% - 6.5rem");
+	display: flex;
+	justify-content: center;
+	align-self: center;
+}
+
+.sapMCrslControlsNoArrows .sapMCrslBulleted,
+.sapMCrslControlsNoArrows .sapMCrslNumeric {
+	width: 100%;
+	position: relative;
+	bottom: 0;
+	align-self: center;
+}
+
+/* Styles for carousel dots on different screens */
+/* screen width < 600px */
+@media screen and (max-width: 599px) {
+	 .sapMCrslBulleted,
+	 .sapMCrslNumeric {
+		width: 12rem;
+	 }
+}
+
+/* 600px <= screen width < 1024px */
+@media screen and (min-width : 600px) and (max-width: 1023px) {
+	 .sapMCrslBulleted,
+	 .sapMCrslNumeric {
+		width: 16rem;
+	 }
+}
+
+/* 1024px <= screen width < 1440px */
+@media screen and (min-width : 1024px) and (max-width: 1439px) {
+	 .sapMCrslBulleted,
+	 .sapMCrslNumeric {
+		width: 20rem;
+	 }
+}
+
+/* screen width >= 1440px */
+@media screen and (min-width: 1440px) {
+	 .sapMCrslBulleted,
+	 .sapMCrslNumeric {
+		width: 24rem;
+	 }
+}
+
+/* Styles needed for keyboard handling
+   ========================================================================== */
+.sapMCrslItem {
+	visibility: hidden;
+}
+.sapMCrslActive {
+	visibility: visible;
+}
+
+/* Page Indicator Numeric
+   ====================================================================== */
+.sapMCrslNumeric span {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiContentLabelColor;
+	white-space: nowrap;
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	align-self: center;
+}
+
+/* remove transition when animation is off . As js depends of the animation, the duration is 0.01s */
+html[data-sap-ui-animation='off'] {
+	.sapMCrslInner {
+		-webkit-transition-duration: 0.01s;
+		transition-duration: 0.01s;
+	}
+}
+
+/* Carousel controls: Bulleted */
+.sapMCrslBulleted > span:hover,
+.sapMCrslBulleted > span:focus {
+	cursor: default;
+	outline: none;
+}
+
+.sapMCrslBulleted > span.sapMCrslActive {
+	color: @sapUiContentNonInteractiveIconColor;
+	background-color: @sapUiContentNonInteractiveIconColor;
+}
+
+/* Carousel controls: HUD */
+.sapMCrslHud {
+	padding-top: 0;
+}
+
+.sapMCrslItemTableCell.sapMCrslImg img {
+	background: @sapUiBaseBG;
+}
+
+.sapMCrsl .sapMCrslHud a:hover,
+.sapMCrsl .sapMCrslHud a:focus {
+	background: @sapUiButtonBackground;
+
+	opacity: 1;
+	display: block;
+}
+
+.sapMCrsl .sapMCrslHud a:active {
+	background-color: @sapUiButtonActiveBackground;
+	border-color: @sapUiButtonActiveBorderColor;
+	color: @sapUiButtonActiveTextColor;
+}
+
+.sapMCrsl .sapMCrslControls a:active {
+	background: @sapUiButtonActiveBackground;
+	color: @sapUiButtonActiveTextColor;
+}
+
+.sapMCrsl .sapMCrslHud.sapMCrslLeftmost a.sapMCrslPrev,
+.sapMCrsl .sapMCrslHud.sapMCrslRightmost a.sapMCrslNext {
+	opacity: 0;
+	display: none;
+}
+
+.sapMCrslHud .sapMCrslPrev {
+	left: 0.625rem;
+}
+
+.sapMCrslHud .sapMCrslNext {
+	right: 0.625rem;
+}
+
+/* extra bits */
+
+/* captions */
+.sapMCrslCaption {
+	margin: 0;
+	padding: 0.625rem;
+	height: auto;
+	text-align: center;
+}
+
+.sapMCrslControls.sapMCrslControlsTop,
+.sapMCrslControlsNoArrows.sapMCrslControlsTop {
+	background: @sapUiPageFooterBackground;
+	border-bottom: 1px solid @sapUiPageFooterBorderColor;
+}
+
+.sapMCrslControls.sapMCrslControlsBottom,
+.sapMCrslControlsNoArrows.sapMCrslControlsBottom {
+	background: @sapUiPageFooterBackground;
+	border-top: 1px solid @sapUiPageFooterBorderColor;
+}
+
+.sapMCrslControls a:hover,
+.sapMCrslPrev:hover, .sapMCrslNext:hover {
+	background: @sapUiButtonHoverBackground;
+}
+
+/* Default Themes/Sytles for Slider */
+.sapMCrslFluid .sapMCrslItem {
+	margin-right: 1.25rem;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.sapMCrslControls,
+.sapMCrslHud {
+	.sapMCrslPrev,
+	.sapMCrslNext {
+		background: @sapUiButtonBackground;
+		border: 1px solid @sapUiButtonBorderColor;
+		color: @sapUiButtonIconColor;
+	}
+}
+
+.sapMCrsl:hover .sapMCrslHud a {
+	opacity: 1;
+	display: block;
+}

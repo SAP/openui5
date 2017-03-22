@@ -3,8 +3,8 @@
 		  xmlns:form="sap.ui.commons.form"
 		    xmlns:commons="sap.ui.commons"
 		>
-		
-		
+
+
 	<App id="app">
    </App>
 </mvc:View>

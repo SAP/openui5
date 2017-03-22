@@ -36,11 +36,14 @@
 }
 
 .sapUiLbxI:hover:not(.sapUiLbxIDis),
-.sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
-.sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
-.sapUiLbxStd > ul > .sapUiLbxISel:hover,
 .sapUiLbx:not(.sapUiLbxDis) > ul > .sapUiLbxI:hover:not(.sapUiLbxISel):not(.sapUiLbxIDis) > span {  /* Fix for IE10 :hover bug - need to set the color on children as well */
 	background-color: @sapUiListHoverBackground;
+}
+
+.sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
+.sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
+.sapUiLbxStd > ul > .sapUiLbxISel:hover {
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 /*
@@ -75,10 +78,6 @@ no special style for focus!
 
 .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
 	padding-right: 16px; /* when width is not set, a scrollbar may cover the last part of the text which is not nice because no width means "adapted to content" */
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 0; /* above mentioned problem does not appear in IE9 */
 }
 
 .sapUiLbxStd > ul > .sapUiLbxISel > span, /* Fix for IE10 bug - need to set the color on children as well */

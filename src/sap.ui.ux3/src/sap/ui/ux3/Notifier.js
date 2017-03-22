@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	/**
 	 * Constructor for a new Notifier.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.Notifier
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -47,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 			/**
 			 * Messages of this notifier.
 			 */
-			messages : {type : "sap.ui.core.Message", multiple : true, singularName : "message"}, 
+			messages : {type : "sap.ui.core.Message", multiple : true, singularName : "message"},
 
 			/**
 			 * Views aggregated with this Notifier and managed by the parent NotificationBar.
@@ -65,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 					/**
 					 * The message that was selected
 					 */
-					message : {type : "sap.ui.core.Message"}, 
+					message : {type : "sap.ui.core.Message"},
 
 					/**
 					 * The notifier that contains the selected message
@@ -77,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	}});
 
 
-	
+
 
 
 	/**

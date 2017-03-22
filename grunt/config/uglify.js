@@ -16,7 +16,7 @@ module.exports = function(grunt, config) {
 	return {
 		options: {
 			banner: 'window["sap-ui-optimized"] = true;',
-			preserveComments: 'some'
+			preserveComments: /copyright|\(c\)|released under|license|\u00a9/i
 		},
 		coreNoJQueryJS: {
 			src: sSourcesFolder + 'sap-ui-core-nojQuery-dbg.js',

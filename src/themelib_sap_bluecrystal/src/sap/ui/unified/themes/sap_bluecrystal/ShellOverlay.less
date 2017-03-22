@@ -1,64 +1,29 @@
-/* ============================================== */
-/* CSS for sap.ui.unfied.ShellOverlay.control (blue crystal)*/
-/* ============================================== */
+/* ============================================ */
+/* CSS for control sap.ui.unified/ShellOverlay  */
+/* BlueCrystal theme                            */
+/* ============================================ */
 
-.sapUiUfdShellOvrlyBrand {
-	background-color: @sapUiBrand;
-}
-
-.sapUiUfdShellOvrlyCntnt {
-	background-color: @sapUiLightestBG;
-}
+@_sap_ui_unified_ShellLayout_lHeadBGStartColor: lighten(@sapUiShellBackground,2);
+@_sap_ui_unified_ShellLayout_HeadBGEndColor: darken(@sapUiShellBackground,2);
 
 .sapUiUfdShellOvrlyHeadCntnt {
-	background-color: @sapUiExtraLightBG;
-	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiUfdShellHeadBGStartColor}', EndColorStr='@{sapUiUfdShellHeadBGEndColor}',GradientType=0)";
-	background: -ms-linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiExtraLightBG 33%,@sapUiExtraLightBG 75%,@sapUiUfdShellHeadBGEndColor 100%);
-	background: -webkit-gradient(linear,left top,left bottom,color-stop(0,@sapUiUfdShellHeadBGStartColor),color-stop(0.33,@sapUiExtraLightBG),color-stop(0.75,@sapUiExtraLightBG),color-stop(1,@sapUiUfdShellHeadBGEndColor));
-	background-image: -webkit-linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiExtraLightBG 33%,@sapUiExtraLightBG 75%,@sapUiUfdShellHeadBGEndColor 100%);
-	background: linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiExtraLightBG 33%,@sapUiExtraLightBG 75%,@sapUiUfdShellHeadBGEndColor 100%);
-		
-	-webkit-box-shadow: inset 0 -0.0625em @sapUiMediumBG;
-	box-shadow: inset 0 -0.0625em @sapUiMediumBG;
+	background-color: @sapUiShellBackground;
+	background: -ms-linear-gradient(top,@_sap_ui_unified_ShellLayout_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellLayout_HeadBGEndColor 100%);
+	background: -webkit-gradient(linear,left top,left bottom,color-stop(0,@_sap_ui_unified_ShellLayout_HeadBGStartColor),color-stop(0.33,@sapUiShellBackground),color-stop(0.75,@sapUiShellBackground),color-stop(1,@_sap_ui_unified_ShellLayout_HeadBGEndColor));
+	background-image: -webkit-linear-gradient(top,@_sap_ui_unified_ShellLayout_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellLayout_HeadBGEndColor 100%);
+	background: linear-gradient(top,@_sap_ui_unified_ShellLayout_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellLayout_HeadBGEndColor 100%);
+	box-shadow: inset 0 -0.0625em @sapUiShellBorderColor;
 }
 
 .sapUiUfdShellOvrlyHeadClose,
-.sapUiUfdShellOvrlyHeadClose:active,
 .sapUiUfdShellOvrlyHeadClose:hover,
 .sapUiUfdShellOvrlyHeadClose:focus,
 .sapUiUfdShellOvrlyHeadClose:visited {
-	color: @sapUiLightText;
-	text-shadow: 0 1px 0 fade(@sapUiWhite,50);
+	color: @sapUiButtonIconColor;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapUiUfdShellOvrlyHeadClose:active {
-	background-color: @sapUiHighlight;
-	color: @sapUiTextInverted;
-}
-
-.sapUiUfdShellOvrlyHeadClose {
-	right: 0;
-	height: @sapUiUfdShellHeaderBarHeight - 8px;
-	margin: 4px;
-	padding-top: 10px;
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
-.sapUiUfdShellOvrlyHeadClose:before {
-	background-color: darken(@sapUiHeaderBG,10);
-    content: " ";
-    height: 76%;
-    top: 12%;
-    position: absolute;
-    left: -4px;
-    width: 1px;
-}
-
-.sapUiMedia-Std-Desktop .sapUiUfdShellOvrlyHeadClose:hover {
-	background-color: @sapUiButtonHoverBackground;
-}
-
-.sapUiMedia-Std-Desktop .sapUiUfdShellOvrlyHeadClose:active:hover {
-	background-color: @sapUiHighlight;
+	background-color: @sapUiButtonActiveBackground;
+	color: @sapUiButtonActiveTextColor;
 }

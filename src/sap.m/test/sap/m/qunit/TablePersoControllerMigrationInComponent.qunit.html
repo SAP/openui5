@@ -1,22 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.TablePersoDialog</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-compatVersion="1.16"
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script id="mainView" type="sapui5/xmlview">
 			<mvc:View
@@ -135,23 +134,23 @@
 		oComponentContainer.setComponent(new perso.qunit.Component());
 		oComponentContainer.placeAt("content");
 
-		module("Migration");
+		QUnit.module("Migration");
 
-		test("Column order as in historic settings", function() {
+		QUnit.test("Column order as in historic settings", function(assert) {
 
 			var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
-			equal(aColumns[0].getHeader().getText(), "Name", "Column 1 is Number");
-			equal(aColumns[1].getHeader().getText(), "Color", "Column 2 is Color");
-			equal(aColumns[2].getHeader().getText(), "Number", "Column 3 is Number");
+			assert.equal(aColumns[0].getHeader().getText(), "Name", "Column 1 is Number");
+			assert.equal(aColumns[1].getHeader().getText(), "Color", "Column 2 is Color");
+			assert.equal(aColumns[2].getHeader().getText(), "Number", "Column 3 is Number");
 
 		});
 
-		test("Column visibility as in historic settings", function() {
+		QUnit.test("Column visibility as in historic settings", function(assert) {
 
 			var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
-			equal(aColumns[0].getVisible(), false, "Column 1 (Name) is not visible");
-			equal(aColumns[1].getVisible(), true, "Column 2 (Color) is visible");
-			equal(aColumns[2].getVisible(), true, "Column 3 (Number) is visible");
+			assert.equal(aColumns[0].getVisible(), false, "Column 1 (Name) is not visible");
+			assert.equal(aColumns[1].getVisible(), true, "Column 2 (Color) is visible");
+			assert.equal(aColumns[2].getVisible(), true, "Column 3 (Number) is visible");
 
 		});
 

@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new FacetFilter.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -24,11 +24,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.FacetFilter</code> control.
 	 * @alias sap.ui.ux3.FacetFilter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilter = Control.extend("sap.ui.ux3.FacetFilter", /** @lends sap.ui.ux3.FacetFilter.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
 			/**
@@ -37,18 +38,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			visibleItemCountMode : {type : "sap.ui.ux3.VisibleItemCountMode", group : "Appearance", defaultValue : sap.ui.ux3.VisibleItemCountMode.Fixed}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Facet Filter list represents the list of the filter values and the title of this list.
 			 */
 			lists : {type : "sap.ui.ux3.FacetFilterList", multiple : true, singularName : "list"}
 		}
 	}});
-	
+
 	FacetFilter.prototype.init = function() {
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
-	
+
 
 	return FacetFilter;
 

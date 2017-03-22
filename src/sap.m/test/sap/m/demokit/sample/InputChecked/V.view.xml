@@ -8,7 +8,7 @@
 		width="100%">
 		<l:content>
 
-			<Label text="Name" />
+			<Label text="Name" labelFor="nameInput"/>
 			<Input
 				id="nameInput"
 				class="sapUiSmallMarginBottom"
@@ -24,7 +24,7 @@
 					}
 				}" />
 
-			<Label text="EMail" />
+			<Label text="EMail" labelFor="emailInput"/>
 			<Input
 				id="emailInput"
 				class="sapUiSmallMarginBottom"

@@ -1,0 +1,4 @@
+link[id^="sap-ui-theme-"]::after,
+.sapUiThemeDesignerCustomCss {
+  content: "true";
+}

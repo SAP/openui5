@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for model bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason'],
-	function(jQuery, EventProvider, ChangeReason) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason', './DataState'],
+	function(jQuery, EventProvider, ChangeReason, DataState) {
 	"use strict";
 
 
@@ -17,13 +17,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * model for the control, so it is the event provider for changes in the data model
 	 * and provides getters for accessing properties or lists.
 	 *
-	 * @param {sap.ui.model.Model} the model
+	 * @param {sap.ui.model.Model} oModel the model
 	 * @param {String} sPath the path
 	 * @param {sap.ui.model.Context} oContext the context object
 	 * @param {object} [mParameters]
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.Binding
+	 * @extends sap.ui.base.EventProvider
 	 */
 	var Binding = EventProvider.extend("sap.ui.model.Binding", /** @lends sap.ui.model.Binding.prototype */ {
 
@@ -38,16 +39,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			this.mParameters = mParameters;
 			this.bInitial = false;
 			this.bSuspended = false;
+			this.oDataState = null;
 		},
 
 		metadata : {
 			"abstract" : true,
 			publicMethods : [
 				// methods
-				"getPath", "getContext", "getModel", "attachChange", "detachChange", "refresh", "isInitial","attachDataRequested","detachDataRequested","attachDataReceived","detachDataReceived","suspend","resume"]
+				"getPath", "getContext", "getModel", "attachChange", "detachChange", "refresh", "isInitial",
+				"attachDataStateChange","detachDataStateChange",
+				"attachAggregatedDataStateChange", "detachAggregatedDataStateChange",
+				"attachDataRequested","detachDataRequested","attachDataReceived","detachDataReceived","suspend","resume", "isSuspended"
+			]
 		}
 
 	});
+
+	/**
+	 * The 'dataRequested' event is fired, when data was requested from a backend.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.Binding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+
+	 * @public
+	 */
+
+	 /**
+ 	 * The 'dataReceived' event is fired, when data was received from a backend. This event may also be fired when an error occured.
+ 	 *
+ 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+ 	 *
+ 	 * @name sap.ui.model.Binding#dataReceived
+ 	 * @event
+ 	 * @param {sap.ui.base.Event} oEvent
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+ 	 * @param {object} oEvent.getParameters
+
+ 	 * @param {string} [oEvent.getParameters.data] The data received. In error cases it will be undefined.
+ 	 * @public
+ 	 */
+
+	 /**
+ 	 * The 'change' event is fired, when the data of the Binding is changed from the model. The reason parameter of the event provides a hint where the change came from.
+ 	 *
+ 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+ 	 *
+ 	 * @name sap.ui.model.Binding#change
+ 	 * @event
+ 	 * @param {sap.ui.base.Event} oEvent
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+ 	 * @param {object} oEvent.getParameters
+
+ 	 * @param {string} [oEvent.getParameters.reason] A string stating the reason for the data change. Can be any string and new values can be added in the future.
+ 	 * @public
+ 	 */
 
 	// Getter
 	/**
@@ -72,8 +122,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 */
 	Binding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
+			sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
 			this.oContext = oContext;
-			this._fireChange();
+			this.oDataState = null;
+			this._fireChange({reason : ChangeReason.Context});
 		}
 	};
 
@@ -86,8 +138,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
+	 * Returns the data state for this binding
+	 * @return {sap.ui.model.DataState} the data state
+	 */
+	Binding.prototype.getDataState = function() {
+		if (!this.oDataState) {
+			this.oDataState = new DataState();
+		}
+		return this.oDataState;
+	};
+
+	/**
 	 * Getter for model
-	 * @return {sap.ui.core.Model} the model
+	 * @return {sap.ui.model.Model} the model
 	 */
 	Binding.prototype.getModel = function() {
 		return this.oModel;
@@ -121,34 +184,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Fire event messageChange to attached listeners.
+	 * Fire event dataStateChange to attached listeners.
 
 	 * @param {Map}
 	 *         mArguments the arguments to pass along with the event.
 	 * @private
 	 */
-	Binding.prototype._fireMessageChange = function(mArguments) {
-		this.fireEvent("messageChange", mArguments);
+	Binding.prototype._fireDataStateChange = function(mArguments) {
+		this.fireEvent("DataStateChange", mArguments);
 	};
 
 	/**
-	* Attach event-handler <code>fnFunction</code> to the 'messageChange' event of this <code>sap.ui.model.Model</code>.<br/>
+	* Attach event-handler <code>fnFunction</code> to the 'DataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
 	* @param {function} fnFunction The function to call, when the event occurs.
 	* @param {object} [oListener] object on which to call the given function.
 	* @protected
 	*/
-	Binding.prototype.attachMessageChange = function(fnFunction, oListener) {
-		this.attachEvent("messageChange", fnFunction, oListener);
+	Binding.prototype.attachDataStateChange = function(fnFunction, oListener) {
+		this.attachEvent("DataStateChange", fnFunction, oListener);
 	};
 
 	/**
-	* Detach event-handler <code>fnFunction</code> from the 'messageChange' event of this <code>sap.ui.model.Model</code>.<br/>
+	* Detach event-handler <code>fnFunction</code> from the 'DataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
 	* @param {function} fnFunction The function to call, when the event occurs.
 	* @param {object} [oListener] object on which to call the given function.
 	* @protected
 	*/
-	Binding.prototype.detachMessageChange = function(fnFunction, oListener) {
-		this.detachEvent("messageChange", fnFunction, oListener);
+	Binding.prototype.detachDataStateChange = function(fnFunction, oListener) {
+		this.detachEvent("DataStateChange", fnFunction, oListener);
+	};
+
+	/**
+	* Attach event-handler <code>fnFunction</code> to the 'AggregatedDataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
+	* @param {function} fnFunction The function to call, when the event occurs.
+	* @param {object} [oListener] object on which to call the given function.
+	* @protected
+	*/
+	Binding.prototype.attachAggregatedDataStateChange = function(fnFunction, oListener) {
+		this.attachEvent("AggregatedDataStateChange", fnFunction, oListener);
+	};
+
+	/**
+	* Detach event-handler <code>fnFunction</code> from the 'AggregatedDataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
+	* @param {function} fnFunction The function to call, when the event occurs.
+	* @param {object} [oListener] object on which to call the given function.
+	* @protected
+	*/
+	Binding.prototype.detachAggregatedDataStateChange = function(fnFunction, oListener) {
+		this.detachEvent("AggregatedDataStateChange", fnFunction, oListener);
 	};
 
 	/**
@@ -213,9 +296,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Fire event dataReceived to attached listeners.
+	 * Fire event dataReceived to attached listeners. This event may also be fired when an error occured.
 
 	 * @param {Map} mArguments the arguments to pass along with the event.
+	 * @param {object} [mArguments.data] the data received. In error cases it will be undefined.
 	 * @protected
 	 */
 	Binding.prototype.fireDataReceived = function(mArguments) {
@@ -233,6 +317,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
+	 * Returns whether this binding validates the values that are set on it.
+	 *
+	 * @returns {boolean} Returns true if the binding throws a validation exception when an invalid value is set on it.
+	 * @private
+	 */
+	Binding.prototype.hasValidation = function() {
+		return !!this.getType();
+	};
+
+	/**
 	 * Checks whether an update of this bindings is required. If this is the case the change event of
 	 * the binding is fired.
 	 * The default implementation just fires the change event, if the method is called, the bForceUpdate
@@ -243,27 +337,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @private
 	 */
 	Binding.prototype.checkUpdate = function(bForceUpdate) {
-		if (!this.bSuspended) {
-			this._fireChange({reason: ChangeReason.Change});
+		if (this.bSuspended && !bForceUpdate ) {
+			return;
 		}
-	};
-
-	/**
-	 * Checks whether an update of the messages of this binding is required.
-	 *
-	 * @private
-	 */
-	Binding.prototype.checkMessages = function() {
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-			vMessages;
-		if (sResolvedPath) {
-			vMessages = this.oModel.getMessagesByPath(sResolvedPath);
-			if (!jQuery.sap.equal(vMessages, this.vMessages)) {
-				//this.vMessages = vMessages;
-				this.vMessages = vMessages ? [].concat(vMessages) : []; 
-				this._fireMessageChange({messages: this.vMessages});
-			}
-		}
+		this._fireChange({reason: ChangeReason.Change});
 	};
 
 	/**
@@ -277,6 +354,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @public
 	 */
 	Binding.prototype.refresh = function(bForceUpdate) {
+		if (this.bSuspended && !bForceUpdate) {
+			return;
+		}
 		this.checkUpdate(bForceUpdate);
 	};
 
@@ -287,7 +367,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @protected
 	 */
 	Binding.prototype.initialize = function() {
-		this.checkUpdate(true);
+		if (!this.bSuspended) {
+			this.checkUpdate(true);
+		}
 		return this;
 	};
 
@@ -299,6 +381,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		this.refresh();
 	};
 
+	/**
+	 * Check if the binding can be resolved. This is true if the path is absolute or the path is relative and a context is specified.
+	 * @private
+	 */
+	Binding.prototype.isResolved = function() {
+		if (this.bRelative && !this.oContext) {
+			return false;
+		}
+		return true;
+	};
 
 	/**
 	 * Returns whether the binding is initial, which means it did not get an initial value yet
@@ -392,20 +484,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Suspends the binding update. No change Events will be fired
+	 * Suspends the binding update. No change events will be fired.
+	 *
+	 * A refresh call with bForceUpdate set to true will also update the binding and fire a change in suspended mode.
+	 * Special operations on bindings, which require updates to work properly (as paging or filtering in list bindings)
+	 * will also update and cause a change event although the binding is suspended.
+	 * @public
 	 */
 	Binding.prototype.suspend = function() {
 		this.bSuspended = true;
 	};
 
 	/**
+	 * Returns true if the binding is suspended or false if not.
+	 *
+	 * @return {boolean} whether binding is suspended
+	 * @public
+	 */
+	Binding.prototype.isSuspended = function() {
+		return this.bSuspended;
+	};
+
+	/**
 	 * Resumes the binding update. Change events will be fired again.
+	 *
+	 * When the binding is resumed, a change event will be fired immediately, if the data has changed while the binding
+	 * was suspended. For serverside models, a request to the server will be triggered, if a refresh was requested
+	 * while the binding was suspended.
+	 * @public
 	 */
 	Binding.prototype.resume = function() {
 		this.bSuspended = false;
 		this.checkUpdate();
 	};
 
+	/**
+	 * Removes all control messages for this binding from the MessageManager in addition to the standard clean-up tasks.
+	 * @see sap.ui.base.EventProvider#destroy
+	 *
+	 * @public
+	 */
+	Binding.prototype.destroy = function() {
+		sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
+		EventProvider.prototype.destroy.apply(this, arguments);
+	};
+
 	return Binding;
 
-}, /* bExport= */ true);
+});

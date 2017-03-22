@@ -1,0 +1,35 @@
+<mvc:View
+	controllerName="sap.ui.demo.orderbrowser.controller.Detail"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<VBox>
+		<f:SimpleForm id="SimpleFormProcessorInfo"
+			minWidth="1024"
+			maxContainerCols="2"
+			editable="false"
+			layout="ResponsiveGridLayout"
+			title="{i18n>detailProcessorTitle}"
+			labelSpanL="3"
+			labelSpanM="3"
+			emptySpanL="4"
+			emptySpanM="4"
+			columnsL="2"
+			columnsM="2">
+			<f:content>
+				<core:Title text="{i18n>detailsProcessorTitle}"/>
+				<Label text="{i18n>detailName}" />
+				<Text text="{Employee/FirstName} {Employee/LastName}" />
+				<Label text="{i18n>detailProcessorEmployeeID}" />
+				<Text text="{Employee/EmployeeID}" />
+				<Label text="{i18n>detailProcessorJobTitle}" />
+				<Text text="{Employee/Title}" />
+				<Label text="{i18n>detailProcessorPhone}" />
+				<Link text="{Employee/HomePhone}" press="_onHandleTelephonePress" />
+				<core:Title text="{i18n>photoProcessorTitle}" />
+				<Image src="{path:'Employee/Photo', formatter: '.formatter.handleBinaryContent'}" width="50%" height="50%" />
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+</mvc:View>

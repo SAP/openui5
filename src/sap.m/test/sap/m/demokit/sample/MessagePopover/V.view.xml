@@ -5,31 +5,14 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<Page
-			showHeader="false"
-			class="sapUiContentPadding"
-			height="100%">
+			showHeader="false">
 		<content>
-			<l:VerticalLayout
-					class="sapUiContentPadding"
-					width="100%">
-				<l:content>
-					<Button
-							text="Show MessagePopover (collapsed)"
-							press="handleMessagePopoverPress3"
-							class="sapUiSmallMarginBottom"/>
 
-					<Button
-							text="Show MessagePopover (expanded)"
-							press="handleMessagePopoverPress1"/>
-
-				</l:content>
-			</l:VerticalLayout>
 		</content>
 		<footer>
 			<Toolbar>
-				<ToolbarSpacer/>
-				<Button icon="sap-icon://alert" text="{/messagesLength}" type="Emphasized"
-						press="handleMessagePopoverPress2"/>
+				<Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
+						press="handleMessagePopoverPress"/>
 				<ToolbarSpacer/>
 			</Toolbar>
 		</footer>

@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.FacetFilter,sap.ui.ux3.FacetFilterList">
 	<head>
-	    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	    <meta charset="UTF-8"/>
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta charset="utf-8">
 	    <title>FacetFilter - SAPUI5 Demo Kit</title>
-	    <meta name="keywords" content="Control FacetFilter" />
-	    <link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+	    <meta name="keywords" content="Control FacetFilter">
+	    <link rel="stylesheet" href="../../../../../theme/default.css">
 	    <script id="sap-ui-bootstrap"
 	        src="../../../../../resources/sap-ui-core.js"
 	        data-sap-ui-theme="sap_bluecrystal"
@@ -14,13 +14,13 @@
 	    </script>
 	    <script src="../../../../../js/utils.js"></script>
 
-		<script id='BasicTableScript'> 
+		<script id='BasicTableScript'>
 		var aFilters1 = [];
 		var aFilters2 = [];
 		var aFilters3 = [];
 
 		var prevFilter1, prevFilter2, prevFilter3;
-			
+
 		var oData = {cars : [
 				{brand: "BMW", model: "320d", type: "Limousine"},
 				{brand: "BMW", model: "320d", type: "Coupé"},
@@ -55,16 +55,16 @@
 				{name : "Limousine", key: "1"},
 				{name : "Coupé", key: "2"},
 				{name : "Cabrio", key: "3"}
-			]						
+			]
 		};
-		
-    	
+
+
     	function calcFilter(oEvent, sFilterAtt, oFFL1, sFilterAtt1, oFFL2, sFilterAtt2) {
 			var aSelectedItems = oEvent.getParameter("selectedItems");
 			var aFilters = [];
 			var aCrossFilters1 = [];
-			var aCrossFilters2 = []; 	
-		
+			var aCrossFilters2 = [];
+
 			for(var i=0; i<aSelectedItems.length; i++){
 				var sFilterText = aSelectedItems[i].getText();
  				aFilters.push(new sap.ui.model.Filter(sFilterAtt, sap.ui.model.FilterOperator.EQ, sFilterText));
@@ -82,7 +82,7 @@
  						if (bCheckParam1 == true) {
  	 						var oCrossFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.EQ, sCrossFilterText1);
  	 						aCrossFilters1.push(oCrossFilter1);
-						}   	 						
+						}
 	 					var sCrossFilterText2 = oData.cars[j][sFilterAtt2];
 						var aCheckItems2 = oFFL2.getItems();
 						var bCheckParam2 = false;
@@ -92,44 +92,44 @@
 	 							bCheckParam2 = true;
 	 						}
 						}
-	 					if (bCheckParam2 == true) {  	 						
+	 					if (bCheckParam2 == true) {
 	 						var oCrossFilter2 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.EQ, sCrossFilterText2);
 	 						aCrossFilters2.push(oCrossFilter2);
 	 					}
 	 				}
 	 			}
 			}
-				
+
 			return {filter: aFilters, crossFilters1: aCrossFilters1, crossFilters2: aCrossFilters2};
 		}
-    	
+
 		function applyFilter(oFFL1, oFFL2, aCrossFilters1, aCrossFilters2) {
 			var aSaveSelectedKeys1 = oFFL1.getSelectedKeys();
  			var aSaveSelectedKeys2 = oFFL2.getSelectedKeys();
  			var aFilters = [].concat(aFilters1, aFilters2, aFilters3);
 			oFFL1.getBinding("items").filter(aCrossFilters1);
 			oFFL2.getBinding("items").filter(aCrossFilters2);
-			oTable.getBinding('rows').filter(aFilters);	 			
+			oTable.getBinding('rows').filter(aFilters);
 			oFFL1.setSelectedKeys(aSaveSelectedKeys1 ? aSaveSelectedKeys1 : []);
-			oFFL2.setSelectedKeys(aSaveSelectedKeys2 ? aSaveSelectedKeys2 : []);	
+			oFFL2.setSelectedKeys(aSaveSelectedKeys2 ? aSaveSelectedKeys2 : []);
 		}
-		
+
 
 		var oFacetFilter = new sap.ui.ux3.FacetFilter("myFacetFilter");
 
    		var oModel = new sap.ui.model.json.JSONModel();
     	oModel.setData(oData);
     	sap.ui.getCore().setModel(oModel);
-		
+
     	var oItemTemplate = new sap.ui.core.ListItem({text:"{name}", key:"{key}"});
-    	
+
 		var oFFL1 = new sap.ui.ux3.FacetFilterList("ffl1", {
 			title:"Car Brand",
 			items : {path : "/brands", template : oItemTemplate}
 		});
 		oFFL1.attachSelect(function(oEvent) {
 			aFilters1 = [];
-				
+
 			if(oEvent.getParameter("all")) {
 				applyFilter(oFFL2, oFFL3, [], []);
 				prevFilter1 = undefined;
@@ -145,7 +145,7 @@
 			var oFilters = calcFilter(oEvent, "brand", oFFL2, "model", oFFL3, "type");
 			aFilters1 = oFilters.filter;
 			prevFilter1 = oEvent.getParameter("selectedItems");
-			applyFilter(oFFL2, oFFL3, oFilters.crossFilters1, oFilters.crossFilters2);	
+			applyFilter(oFFL2, oFFL3, oFilters.crossFilters1, oFilters.crossFilters2);
 		});
 		oFacetFilter.addList(oFFL1);
 
@@ -156,7 +156,7 @@
 		});
 		oFFL2.attachSelect(function(oEvent) {
 			aFilters2 = [];
-				
+
 			if(oEvent.getParameter("all")) {
 				applyFilter(oFFL1, oFFL3, [], []);
 				prevFilter2 = undefined;
@@ -172,7 +172,7 @@
 			var oFilters = calcFilter(oEvent, "model", oFFL1, "brand", oFFL3, "type");
 			aFilters2 = oFilters.filter;
 			prevFilter2 = oEvent.getParameter("selectedItems");
-			applyFilter(oFFL1, oFFL3, oFilters.crossFilters1, oFilters.crossFilters2);	
+			applyFilter(oFFL1, oFFL3, oFilters.crossFilters1, oFilters.crossFilters2);
 		});
 		oFacetFilter.addList(oFFL2);
 
@@ -182,7 +182,7 @@
 		});
 		oFFL3.attachSelect(function(oEvent) {
 			aFilters3 = [];
-				
+
 			if(oEvent.getParameter("all")) {
 				applyFilter(oFFL1, oFFL2, [], []);
 				prevFilter3 = undefined;
@@ -198,7 +198,7 @@
  			var oFilters = calcFilter(oEvent, "type", oFFL1, "brand", oFFL2, "model");
 			aFilters2 = oFilters.filter;
 			prevFilter3 = oEvent.getParameter("selectedItems");
- 			applyFilter(oFFL1, oFFL2, oFilters.crossFilters1, oFilters.crossFilters2);	
+ 			applyFilter(oFFL1, oFFL2, oFilters.crossFilters1, oFilters.crossFilters2);
 		});
 		oFacetFilter.addList(oFFL3);
 
@@ -218,25 +218,25 @@
 		</script>
 
 	</head>
-  
+
 	<body class="sapUiDemokitBody">
-  
+
 		<h1 color="Blue" icon="images/ctrls/facetfilter-icon.png">FacetFilter</h1>
-		
+
 		<h2>Introduction</h2>
-		
+
 		<p>
-		The FacetFilter is an advanced filtering tool usually for combined usage together with the Table oder the DataSet. The FacetFilter consists of several FacetFilterLists, 
+		The FacetFilter is an advanced filtering tool usually for combined usage together with the Table oder the DataSet. The FacetFilter consists of several FacetFilterLists,
 		each representing an attribute to be filtered. In case of a table such a Facet would typically represent a column. In contrary to the ExactPattern the FacetFilter does not
 		support hierarchies but it can be implemented the way that the several Facets are dependent and will therefore affect each other. As the data for filling the FacetFilter and
 		the according Table comes from the backend the logic how the Facets are affecting each other has to be provided by the backend as well. By default the each FacetFilterList
 		allows multiple selection of entries by holding the CTRL Key while clicking. There is also an "All" entry within each List which represents a filter reset for that attribute.
 		</p>
-		
+
 		<h2>Example</h2>
 		<p>
 		The following example shows a Table with an integrated FacetFilter consisting of 3 Facets representing the respective 3 Columns of the Table below. Both the FacetFilter and
-		the Table are connected to an array of data via the Data Binding API. After a Filter changes the DataTable and also the other Filters are influenced accordingly. The data shown
+		the Table are connected to an array of data via the Data Binding API. After a Filter changes the Table and also the other Filters are influenced accordingly. The data shown
 		within the Table is always the combination of all filters chosen. As this Example works with Keys in the FacetFilterLists, different Data arrays were used to provide the data
 		for the Table and for the several FacetFilterLists. Every Select on a List Item sets up a filter which is bound to the Table and triggers a refresh. The filter is set up
 		using a Constructor like this: <code>var oFilter = new sap.ui.model.Filter("brand", sap.ui.model.FilterOperator.EQ, sFilterText);</code>. In addition the selected Items from the other 2
@@ -247,7 +247,7 @@
 		filtered data for the Table and the FacetFilterLists accordingly.
 		</p>
 		<div code-sample="sample1" script="BasicTableScript"></div>
-		 
+
 		<p>
 		<h2>API Documentation</h2>
 		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.FacetFilter.html">API documentation</a>

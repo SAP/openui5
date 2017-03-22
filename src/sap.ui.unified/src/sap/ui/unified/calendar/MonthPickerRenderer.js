@@ -33,11 +33,12 @@ sap.ui.define(['jquery.sap.global'],
 
 		var aMonthNames = [];
 		var aMonthNamesWide = [];
+		var sCalendarType = oMP.getPrimaryCalendarType();
 		if (oMP._bLongMonth || !oMP._bNamesLengthChecked) {
-			aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			aMonthNames = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		} else {
-			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
-			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
+			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
+			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		}
 
 		oRm.write("<div");
@@ -76,11 +77,13 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		for ( var i = 0; i < iMonths; i++) {
+			var iCurrentMonth = i + iStartMonth;
+
 			mAccProps = {
 					role: "gridcell"
 				};
 			if (!oMP._bLongMonth && oMP._bNamesLengthChecked) {
-				mAccProps["label"] = aMonthNamesWide[i + iStartMonth];
+				mAccProps["label"] = aMonthNamesWide[iCurrentMonth];
 			}
 
 			if (iColumns > 0 && i % iColumns == 0) {
@@ -91,18 +94,27 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write("<div");
-			oRm.writeAttribute("id", sId + "-m" + (i + iStartMonth));
-			oRm.addClass("sapUiCalMonth");
-			if (i + iStartMonth == iMonth) {
-				oRm.addClass("sapUiCalMonthSel");
+			oRm.writeAttribute("id", sId + "-m" + (iCurrentMonth));
+			oRm.addClass("sapUiCalItem");
+			if (iCurrentMonth == iMonth) {
+				oRm.addClass("sapUiCalItemSel");
+				mAccProps["selected"] = true;
+			} else {
+				mAccProps["selected"] = false;
 			}
+
+			if (iCurrentMonth < oMP._iMinMonth || iCurrentMonth > oMP._iMaxMonth) {
+				oRm.addClass("sapUiCalItemDsbl"); // month disabled
+				mAccProps["disabled"] = true;
+			}
+
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.addStyle("width", sWidth);
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.writeAccessibilityState(null, mAccProps);
 			oRm.write(">"); // div element
-			oRm.write(aMonthNames[i + iStartMonth]);
+			oRm.write(aMonthNames[iCurrentMonth]);
 			oRm.write("</div>");
 
 			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {

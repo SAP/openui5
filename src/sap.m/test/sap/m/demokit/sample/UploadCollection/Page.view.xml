@@ -1,40 +1,66 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.UploadCollection.Page"
-	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 
 	<Page showHeader="false">
 		<content>
-			<Toolbar>
+			<OverflowToolbar>
 				<ToolbarSpacer/>
-				<Label
-					text="Layout:">
-				</Label>
+				<Label text="Upload button invisible"></Label>
+				<Switch id="uploadInvisibleSwitch" state="false" change="onSwitchUploadInvisibleChange" type="Transparent"></Switch>
+				<Label text="Layout: Enable FileUploader"></Label>
+				<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
+				<Label text="Multi-selection mode"></Label>
+				<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
+				<Label text="File types"></Label>
+				<MultiComboBox
+					id="fileTypesBox"
+					selectionChange="onFileTypeChange"
+					width="250px"
+					placeholder="Choose the valid file types"
+					items="{fileTypes>/items}">
+					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
+				</MultiComboBox>
 				<Select
 					id="tbSelect"
 					items="{/items}"
 					selectedKey="{/selectedKey}"
-					change="onSelectChange" >
+					change="onSeparatorsChange" >
 					<core:Item key="{key}" text="{text}"/>
 				</Select>
-			</Toolbar>
+			</OverflowToolbar>
+			<MessageStrip showIcon="true" type="Information" text="To add files, you can also use drag &amp; drop on your desktop or tablet." class="sapUiTinyMargin"></MessageStrip>
 			<UploadCollection
 				id="UploadCollection"
 				maximumFilenameLength="55"
 				maximumFileSize="10"
 				multiple="true"
-				showSeparators="All"
 				change="onChange"
 				fileDeleted="onFileDeleted"
 				filenameLengthExceed="onFilenameLengthExceed"
 				fileRenamed="onFileRenamed"
 				fileSizeExceed="onFileSizeExceed"
+				selectionChange="onSelectionChange"
 				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete"
-				items="{/items}">
+				beforeUploadStarts="onBeforeUploadStarts"
+				uploadTerminated="onUploadTerminated"
+				items="{path : '/items', templateShareable : 'true'}"
+				numberOfAttachmentsText="Uploaded (8)"
+				mode="SingleSelectMaster">
+				<toolbar>
+					<OverflowToolbar id="myId" >
+						<Title id="attachmentTitle"/>
+						<ToolbarSpacer/>
+						<SearchField width="10rem" search="onSearch"></SearchField>
+						<Button id="deleteSelectedButton" text="Delete" press="onDeleteSelectedItems" enabled="false" visible="false" type="Transparent"></Button>
+						<ToggleButton id="selectAllButton" text="Select all" press="onSelectAllPress" enabled="false" visible="false" type="Transparent"></ToggleButton>
+						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
+					</OverflowToolbar>
+				</toolbar>
 				<items>
 					<UploadCollectionItem
 						documentId="{documentId}"
@@ -46,14 +72,16 @@
 						enableDelete="{enableDelete}"
 						visibleDelete="{visibleDelete}"
 						visibleEdit="{visibleEdit}"
-						attributes="{attributes}"
-						statuses="{statuses}">
+						attributes="{path : 'attributes', templateShareable : 'true'}"
+						statuses="{path : 'statuses', templateShareable : 'true'}"
+						markers="{path : 'markers', templateShareable : 'true'}"
+						selected="{selected}">
 						<attributes>
 							<ObjectAttribute
 								title="{title}"
-								text="{text}"
+								text="{path : 'text', formatter : '.formatAttribute'}"
 								active="{active}"
-								textDirection="{textDirection}"/>
+								press="onAttributePress"/>
 						</attributes>
 						<statuses>
 							<ObjectStatus
@@ -64,6 +92,11 @@
 								iconDensityAware="{iconDensityAware}"
 								textDirection="{textDirection}"/>
 						</statuses>
+						<markers>
+							<ObjectMarker
+								type="{type}"
+								press="onMarkerPress"/>
+						</markers>
 					</UploadCollectionItem>
 				</items>
 			</UploadCollection>

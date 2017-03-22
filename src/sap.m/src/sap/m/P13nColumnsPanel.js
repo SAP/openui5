@@ -10,10 +10,10 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nColumnsPanel.
-	 * 
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The P13nColumnsPanel control is used to define column-specific settings for table personalization.
+	 * @class The <code>P13nColumnsPanel</code> control is used to define column-specific settings for table personalization.
 	 * @extends sap.m.P13nPanel
 	 * @author SAP SE
 	 * @version ${version}
@@ -29,8 +29,19 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * This property is used to specify a threshold of visible items
-				 * 
+				 * Specifies a threshold of visible items. If the end user makes a lot of columns visible, this might cause performance to slow down.
+				 * When this happens, the user can receive a corresponding warning triggered by the <code>visibleItemsThreshold</code> property. The
+				 * property needs to be activated and set to the required value by the consuming application to ensure that the warning message is
+				 * shown when the threshold has been exceeded. In the following example the message will be shown if more than 100 visible columns are
+				 * selected:
+				 *
+				 * <pre>
+				 * customData&gt;
+				 * core:CustomData key=&quot;p13nDialogSettings&quot;
+				 * value='\{&quot;columns&quot;:\{&quot;visible&quot;: true, &quot;payload&quot;: \{&quot;visibleItemsThreshold&quot;: 3\}\}\}' /&gt;
+				 * /customData&gt;
+				 * </pre>
+				 *
 				 * @since 1.26.7
 				 */
 				visibleItemsThreshold: {
@@ -38,11 +49,12 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: -1
 				}
+
 			},
 			aggregations: {
 				/**
-				 * list of columns that has been changed
-				 * 
+				 * List of columns that has been changed.
+				 *
 				 * @since 1.26.0
 				 */
 				columnsItems: {
@@ -53,7 +65,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Content for the ConditionPanel. This property is not public!
+				 * Internal aggregation for the toolbar content.
 				 */
 				content: {
 					type: "sap.ui.core.Control",
@@ -65,14 +77,14 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * event raised when a columnsItem shall be added
-				 * 
+				 * Event raised when a <code>columnsItem</code> is added.
+				 *
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
 					parameters: {
 						/**
-						 * columnsItem that needs to be added in the model
+						 * <code>columnsItem</code> that needs to be added in the model.
 						 */
 						newItem: {
 							type: "sap.m.P13nColumnsItem"
@@ -80,20 +92,20 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * event raised when columnsItems shall be changed or new one needs to be created in model
-				 * 
+				 * Event raised if <code>columnsItems</code> is changed or new one needs to be created in the model.
+				 *
 				 * @since 1.26.7
 				 */
 				changeColumnsItems: {
 					parameters: {
 						/**
-						 * contains columnsItems that needs to be created in the model
+						 * Contains <code>columnsItems</code> that needs to be created in the model.
 						 */
 						newItems: {
 							type: "sap.m.P13nColumnsItem[]"
 						},
 						/**
-						 * contains columnsItems that needs to be changed in the model
+						 * Contains <code>columnsItems</code> that needs to be changed in the model.
 						 */
 						existingItems: {
 							type: "sap.m.P13nColumnsItem[]"
@@ -101,13 +113,29 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * event raised when setData on model should be called; this event serves the purpose of minimizing such calls since these can be very
-				 * performance expensive
-				 * 
+				 * Event raised if <code>setData</code> is called in model. The event serves the purpose of minimizing such calls since they can
+				 * take up a lot of performance.
+				 *
 				 * @since 1.26.7
 				 */
 				setData: {}
 			}
+		},
+		renderer: function(oRm, oControl) {
+			oRm.write("<div");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sapMP13nColumnsPanel");
+			oRm.writeClasses();
+			oRm.write(">"); // div element
+
+			var aContent = oControl.getAggregation("content");
+			if (aContent) {
+				aContent.forEach(function(oContent) {
+					oRm.renderControl(oContent);
+				});
+			}
+
+			oRm.write("</div>");
 		}
 	});
 
@@ -117,7 +145,7 @@ sap.ui.define([
 
 	/**
 	 * Move selected item to begin of the item list
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveToTop = function() {
@@ -142,12 +170,18 @@ sap.ui.define([
 				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
 				this._afterMoveItem();
 			}
+
+			if (this._oMoveToTopButton.getEnabled()) {
+				this._oMoveToTopButton.focus();
+			} else {
+				this._oSelectedItem.focus();
+			}
 		}
 	};
 
 	/**
 	 * Move selected item one position up
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveUp = function() {
@@ -172,12 +206,18 @@ sap.ui.define([
 				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
 				this._afterMoveItem();
 			}
+
+			if (this._oMoveUpButton.getEnabled()) {
+				this._oMoveUpButton.focus();
+			} else {
+				this._oSelectedItem.focus();
+			}
 		}
 	};
 
 	/**
 	 * Move selected item one position down
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveDown = function() {
@@ -204,12 +244,18 @@ sap.ui.define([
 				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
 				this._afterMoveItem();
 			}
+
+			if (this._oMoveDownButton.getEnabled()) {
+				this._oMoveDownButton.focus();
+			} else {
+				this._oSelectedItem.focus();
+			}
 		}
 	};
 
 	/**
 	 * Move selected item to end of the item list
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveToBottom = function() {
@@ -236,13 +282,19 @@ sap.ui.define([
 				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
 				this._afterMoveItem();
 			}
+
+			if (this._oMoveToBottomButton.getEnabled()) {
+				this._oMoveToBottomButton.focus();
+			} else {
+				this._oSelectedItem.focus();
+			}
 		}
 	};
 
 	/**
 	 * This method determines all columnsItems that have an index property, which are not undefined and fit into index range of iOldIndex & iNewIndex.
 	 * If such columnsItems are found take the index property and change it to a value according to the move direction.
-	 * 
+	 *
 	 * @private
 	 * @param {int} iOldIndex is the index from where the correction shall start in columnsItems
 	 * @param {int} iNewIndex is the index to where the correction shall run in columnsItems
@@ -292,7 +344,7 @@ sap.ui.define([
 
 	/**
 	 * After an items was moved renewal selected items instance and it's selection
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._afterMoveItem = function() {
@@ -302,7 +354,7 @@ sap.ui.define([
 
 	/**
 	 * Swop "Show Selected" button to "Show All"
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._swopShowSelectedButton = function() {
@@ -329,8 +381,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Escapes special characters
+	 *
+	 * @private
+	 * @param {string} sToEscape contains the content that shall be escaped
+	 */
+	P13nColumnsPanel.prototype._escapeRegExp = function(sToEscape) {
+		if (sToEscape) {
+			return sToEscape.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+		}
+	};
+
+	/**
 	 * Filters items by its selection status
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._filterItems = function() {
@@ -356,8 +420,10 @@ sap.ui.define([
 				sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
 			}
 			// create RegEx for search only if a searchText exist!!
-			if (sSearchText !== null && sSearchText !== undefined) { // " " is a VALID value!!!
-				regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
+			if (sSearchText !== null && sSearchText !== undefined) {// " " is a VALID value!!!
+				sSearchText = this._escapeRegExp(sSearchText); // escape user input
+				sSearchText = regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
+
 			}
 		}
 
@@ -403,7 +469,7 @@ sap.ui.define([
 
 	/**
 	 * Execute search by filtering columns list based on the given sValue
-	 * 
+	 *
 	 * @private
 	 * @param {boolean} bStatus is OPTIONAL and determines whether the SelectAll check-box is enabled = true||false
 	 */
@@ -417,7 +483,7 @@ sap.ui.define([
 
 	/**
 	 * Execute search by filtering columns list based on the given sValue
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._executeSearch = function() {
@@ -449,10 +515,10 @@ sap.ui.define([
 
 	/**
 	 * Determine the previous table item index starting from position, which comes via iStartIndex
-	 * 
+	 *
 	 * @private
 	 * @param {inteter} iStartIndex is the table index from where the search start
-	 * @returns {integer} is the index of a previous items; if no item is found it will be returned -1
+	 * @returns {int} is the index of a previous items; if no item is found it will be returned -1
 	 */
 	P13nColumnsPanel.prototype._getPreviousItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0;
@@ -480,10 +546,10 @@ sap.ui.define([
 
 	/**
 	 * Determine the next table item index to that position, which comes via iStartIndex
-	 * 
+	 *
 	 * @private
 	 * @param {inteter} iStartIndex is the table index from where the search start
-	 * @returns {integer} is the index of the next item; if no item is found it will be returned -1
+	 * @returns {int} is the index of the next item; if no item is found it will be returned -1
 	 */
 	P13nColumnsPanel.prototype._getNextItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0, iLength = null;
@@ -515,7 +581,7 @@ sap.ui.define([
 
 	/**
 	 * Update Select All column count information
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._updateSelectAllDescription = function(oEvent) {
@@ -542,7 +608,7 @@ sap.ui.define([
 
 	/**
 	 * Change the selected item instance to the new given one
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._changeSelectedItem = function(oItem) {
@@ -568,7 +634,7 @@ sap.ui.define([
 
 	/**
 	 * Item press behavior is called as soon as a table item is selected
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
@@ -580,7 +646,7 @@ sap.ui.define([
 
 	/**
 	 * Calculates the Appearance of the move button depending of selected item instance
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._calculateMoveButtonAppearance = function() {
@@ -645,7 +711,7 @@ sap.ui.define([
 
 	/**
 	 * Set highlighting to an item
-	 * 
+	 *
 	 * @private
 	 * @param {object} oItem is that item that shall be highlighted
 	 */
@@ -657,7 +723,7 @@ sap.ui.define([
 
 	/**
 	 * Remove highlighting from an item
-	 * 
+	 *
 	 * @private
 	 * @param {object} oItem is that item that where highlighting shall be removed from
 	 */
@@ -669,7 +735,7 @@ sap.ui.define([
 
 	/**
 	 * Deactivate selected items for any movements & all move buttons
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._deactivateSelectedItem = function() {
@@ -682,11 +748,11 @@ sap.ui.define([
 
 	/**
 	 * Delivers the index of an item in the given array identified by its key
-	 * 
+	 *
 	 * @private
 	 * @param {string} sItemKey is the key for that item for that the index shall be found in the array
 	 * @param {array} aItems is the array in that the item will be searched
-	 * @returns {integer} is the index of the identified item
+	 * @returns {int} is the index of the identified item
 	 */
 	P13nColumnsPanel.prototype._getArrayIndexByItemKey = function(sItemKey, aItems) {
 		var iResult = -1;
@@ -725,7 +791,7 @@ sap.ui.define([
 
 	/**
 	 * Scroll table content to given item
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._scrollToSelectedItem = function(oItem) {
@@ -750,7 +816,7 @@ sap.ui.define([
 
 	/**
 	 * This method extracts all information from given columnsItems array into a JSON based list
-	 * 
+	 *
 	 * @private
 	 * @param {array} aColumnsItems list of columnsItems
 	 * @returns {array} aExtractionResult is a JSON based array with main information about the given columnsItems array
@@ -776,7 +842,7 @@ sap.ui.define([
 
 	/**
 	 * This method extracts all information from existing table items into a JSON based list
-	 * 
+	 *
 	 * @private
 	 * @returns {array} aExtractionResult is a JSON based array with main information about table items
 	 */
@@ -802,7 +868,7 @@ sap.ui.define([
 
 	/**
 	 * react on item visibility changes
-	 * 
+	 *
 	 * @private
 	 * @param {sap.m.ColumnListItem} oItem is the table item for that the index was changed
 	 * @param {int} iNewIndex is the item index where the item shall be inserted
@@ -832,6 +898,7 @@ sap.ui.define([
 				this.fireAddColumnsItem({
 					newItem: oColumnsItem
 				});
+				this._notifyChange();
 			} else {
 				oColumnsItem.setIndex(iNewIndex);
 				aExistingColumnsItems.push(oColumnsItem);
@@ -844,6 +911,7 @@ sap.ui.define([
 					newItems: aNewColumnsItems,
 					existingItems: aExistingColumnsItems
 				});
+				this._notifyChange();
 			}
 
 			// fire event for setting of changed data into model
@@ -862,7 +930,7 @@ sap.ui.define([
 
 	/**
 	 * react on item visibility changes
-	 * 
+	 *
 	 * @private
 	 * @param {array} aItems is an array of JSON objects that represents content of involved sap.m.ColumnListItem
 	 */
@@ -895,6 +963,7 @@ sap.ui.define([
 					that.fireAddColumnsItem({
 						newItem: oColumnsItem
 					});
+					that._notifyChange();
 				} else {
 					oColumnsItem.setVisible(oItem.visible);
 					// in case a column will be made invisible -> remove the index property
@@ -913,6 +982,7 @@ sap.ui.define([
 					newItems: aNewColumnsItems,
 					existingItems: aExistingColumnsItems
 				});
+				this._notifyChange();
 			}
 
 			// fire event for setting of changed data into model
@@ -929,8 +999,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * get ColumnsItem by a given ColumnsKey
-	 * 
+	 * Create ColumnsItem by a given ColumnsKey
+	 *
 	 * @private
 	 * @param {string} sItemKey is the columns key with that a ColumnsItem can be identified
 	 * @param {boolean} bCreateIfNotFound determines whether a ColumnsItems will be created if no ColumnsItem was found by the given key
@@ -945,7 +1015,7 @@ sap.ui.define([
 
 	/**
 	 * get ColumnsItem by a given ColumnsKey
-	 * 
+	 *
 	 * @private
 	 * @param {string} sItemKey is the columns key with that a ColumnsItem can be identified
 	 * @returns {object} ColumnsItem that was found by the key or created if required
@@ -968,7 +1038,7 @@ sap.ui.define([
 
 	/**
 	 * Updates table items based on content of ColumnsItem(s)
-	 * 
+	 *
 	 * @private
 	 * @param {object} oColumnsItem is an item from columnsItems aggregation
 	 */
@@ -1003,7 +1073,7 @@ sap.ui.define([
 
 	/**
 	 * This method shall reorder all existing table items. First all selected, and then the unselected items in a alphabetical order
-	 * 
+	 *
 	 * @private
 	 * @param {object} oColumnsItem is an item from columnsItems aggregation
 	 */
@@ -1032,13 +1102,7 @@ sap.ui.define([
 				sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
 			} catch (exception) {
 				// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
-				if (window.console && window.console.log) {
-					if (!!exception.stack) {
-						window.console.log(exception.stack);
-					} else {
-						window.console.log(exception.toString());
-					}
-				}
+				jQuery.sap.log.error("sap.m.P13nColumnsPanel : no available Language/Locale to sort table items");
 				sLanguage = null;
 			}
 
@@ -1066,7 +1130,7 @@ sap.ui.define([
 
 	/**
 	 * Add a new table item based on the given P13nItem content
-	 * 
+	 *
 	 * @private
 	 * @param {sap.m.P13nItem} oItem is used to create and added a new table item
 	 */
@@ -1106,7 +1170,7 @@ sap.ui.define([
 
 	/**
 	 * Inserts a new table item based on the given P13nItem content
-	 * 
+	 *
 	 * @private
 	 * @param {int} iIndex is the index where the new item shall be inserted
 	 * @param {sap.m.P13nItem} oItem is used to create and insert a new table item
@@ -1146,39 +1210,40 @@ sap.ui.define([
 
 	/**
 	 * Inserts a new table item based on the given P13nItem content
-	 * 
+	 *
 	 * @private
 	 * @param {sap.m.P13nItem} oItem is the information template to create a new table item
 	 * @returns {sap.m.ColumnListItem} oNewTableItem is the new created table item or null
 	 */
 	P13nColumnsPanel.prototype._createNewTableItemBasedOnP13nItem = function(oItem) {
-		var oNewTableItem = null, sColumnKeys = null;
-
-		if (oItem) {
-			sColumnKeys = oItem.getColumnKey();
-			oNewTableItem = new sap.m.ColumnListItem({
-				cells: [
-					new sap.m.Text({
-						text: oItem.getText()
-					})
-				],
-				visible: true,
-				selected: oItem.getVisible(),
-				tooltip: oItem.getTooltip(),
-				type: sap.m.ListType.Active
-			});
-			oNewTableItem.data('P13nColumnKey', sColumnKeys);
-
-			// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-			oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
+		if (!oItem) {
+			return null;
 		}
+		var sColumnKeys = oItem.getColumnKey();
+		// Note: for 'i18n' resource model the item text is not set yet. So set the copy of "text" binding info into table item.
+		var oNewTableItem = new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Text({
+					text: oItem.getText() ? oItem.getText() : jQuery.extend(true, {}, oItem.getBindingInfo("text"))
+				})
+			],
+			visible: true,
+			selected: oItem.getVisible(),
+			tooltip: oItem.getTooltip(),
+			type: sap.m.ListType.Active
+		});
+
+		oNewTableItem.data('P13nColumnKey', sColumnKeys);
+
+		// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
+		oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
 
 		return oNewTableItem;
 	};
 
 	/**
 	 * Apply all ColumnsItem changes (that are stored in its properties) to the proper table item (if it already exist)
-	 * 
+	 *
 	 * @private
 	 * @param {object} oColumnsItem is an item from columnsItems aggregation
 	 * @param {object} oTableItem is that item (in this._oTable) where all ColumnsItem changes will be applied to
@@ -1230,7 +1295,7 @@ sap.ui.define([
 
 	/**
 	 * This method returns a boolean based status, whether the panel has been changed
-	 * 
+	 *
 	 * @private
 	 * @returns {Boolean} bTableItemsChangeStatus that returns true if something was changed and otherwise false
 	 */
@@ -1283,18 +1348,17 @@ sap.ui.define([
 	/* Lifecycle methods */
 	/* =========================================================== */
 
-	/**
-	 * Initialization hook.
-	 * 
-	 * @private
-	 */
 	P13nColumnsPanel.prototype.init = function() {
-		var iLiveChangeTimer = 0;
 		var that = this;
+		this._iLiveChangeTimer = 0;
+		this._iSearchTimer = 0;
 		this._bOnBeforeRenderingFirstTimeExecuted = false;
 		this._bOnAfterRenderingFirstTimeExecuted = false;
 		this._aExistingColumnsItems = null;
 		this._aExistingTableItems = null;
+
+		this.setType(sap.m.P13nPanelType.columns);
+		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COLUMSPANEL_TITLE"));
 
 		// ---------------------------------------------------------------
 		// Following object _oTableItemsOrdering handles the table behavior for sorting of included items
@@ -1364,8 +1428,6 @@ sap.ui.define([
 			return bChangeResult;
 		};
 
-		sap.ui.Device.resize.attachHandler(this._fnHandleResize, this);
-
 		// Resource bundle, for texts
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -1373,11 +1435,14 @@ sap.ui.define([
 			icon: sap.ui.core.IconPool.getIconURI("collapse-group"),
 			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
 			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._ItemMoveToTop();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.Low,
+				group: 2
 			})
 		});
 
@@ -1385,11 +1450,14 @@ sap.ui.define([
 			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
 			text: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
 			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._ItemMoveUp();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High,
+				group: 1
 			})
 		});
 
@@ -1397,11 +1465,14 @@ sap.ui.define([
 			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
 			text: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
 			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._ItemMoveDown();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High,
+				group: 1
 			})
 		});
 
@@ -1409,21 +1480,27 @@ sap.ui.define([
 			icon: sap.ui.core.IconPool.getIconURI("expand-group"),
 			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
 			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._ItemMoveToBottom();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.Low,
+				group: 2
 			})
 		});
 
 		this._oShowSelectedButton = new sap.m.Button({
 			text: this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
+			tooltip: this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._swopShowSelectedButton();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High
 			})
 		});
 		this._bShowSelected = false;
@@ -1434,9 +1511,9 @@ sap.ui.define([
 				var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
 
 				// execute search after user stops typing for 300ms
-				window.clearTimeout(iLiveChangeTimer);
+				window.clearTimeout(that._iSearchTimer);
 				if (iDelay) {
-					iLiveChangeTimer = window.setTimeout(function() {
+					that._iSearchTimer = window.setTimeout(function() {
 						that._executeSearch();
 					}, iDelay);
 				} else {
@@ -1460,8 +1537,7 @@ sap.ui.define([
 		this._oToolbarSpacer = new sap.m.ToolbarSpacer();
 
 		this._oToolbar = new sap.m.OverflowToolbar({
-			active: true,
-			design: sap.m.ToolbarDesign.Solid, // Transparent,
+			design: sap.m.ToolbarDesign.Auto,
 			content: [
 				this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
 			]
@@ -1496,6 +1572,11 @@ sap.ui.define([
 				});
 				that._handleItemVisibilityChanged(aTableItemsVisibilityChange);
 
+				var fValidate = that.getValidationExecutor();
+				if (fValidate) {
+					fValidate();
+				}
+
 				// Special logic to change _oSelectedItem ALSO then if ONLY the "selection" status has been changed from
 				// false to true
 				if (aTableItems.length === 1 && bSelected === true) {
@@ -1523,13 +1604,14 @@ sap.ui.define([
 			height: '100%'
 		});
 
-// this._oScrollContainer.setParent(this);
 		this.addAggregation("content", this._oScrollContainer);
+
+		this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this._oScrollContainer, this._fnHandleResize);
 	};
 
 	/**
 	 * This method does a re-initialization of the panel
-	 * 
+	 *
 	 * @public
 	 * @since 1.28
 	 */
@@ -1540,11 +1622,6 @@ sap.ui.define([
 		this._oTableItemsOrdering.fCheckReOrdering();
 	};
 
-	/**
-	 * Required adaptations before rendering
-	 * 
-	 * @private
-	 */
 	P13nColumnsPanel.prototype.onBeforeRendering = function() {
 
 		// Execute following lines only if this control is started the first time!
@@ -1578,21 +1655,14 @@ sap.ui.define([
 		this._calculateMoveButtonAppearance();
 	};
 
-	/**
-	 * Required adaptations after rendering
-	 * 
-	 * @private
-	 */
 	P13nColumnsPanel.prototype.onAfterRendering = function() {
-		var that = this, iLiveChangeTimer = 0;
+		var that = this;
 
 		// adapt scroll-container very first time to the right size of the browser
 		if (!this._bOnAfterRenderingFirstTimeExecuted) {
 			this._bOnAfterRenderingFirstTimeExecuted = true;
-			window.clearTimeout(iLiveChangeTimer);
-			iLiveChangeTimer = window.setTimeout(function() {
-				that._fnHandleResize();
-
+			window.clearTimeout(this._iLiveChangeTimer);
+			this._iLiveChangeTimer = window.setTimeout(function() {
 				// following line is needed to get layout of OverflowToolbar rearranged IF it is used in a dialog
 				that._oToolbar._resetAndInvalidateToolbar();
 			}, 0);
@@ -1601,7 +1671,7 @@ sap.ui.define([
 
 	/**
 	 * Delivers a payload for columnsPanel that can be used at consumer side
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.7
 	 * @returns {object} oPayload, which contains useful information
@@ -1635,7 +1705,7 @@ sap.ui.define([
 
 	/**
 	 * Delivers a payload for columnsPanel that can be used at consumer side
-	 * 
+	 *
 	 * @public
 	 * @since 1.28
 	 * @returns {object} oPayload, which contains useful information
@@ -1650,14 +1720,10 @@ sap.ui.define([
 		return oPayload;
 	};
 
-	/**
-	 * Cleans up before destruction.
-	 * 
-	 * @public
-	 */
 	P13nColumnsPanel.prototype.exit = function() {
 
-		sap.ui.Device.resize.detachHandler(this._fnHandleResize);
+		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
+		this._sContainerResizeListener = null;
 
 		this._oMoveToTopButton.destroy();
 		this._oMoveToTopButton = null;
@@ -1679,16 +1745,11 @@ sap.ui.define([
 
 		this._oTable.destroy();
 		this._oTable = null;
+
+		window.clearTimeout(this._iLiveChangeTimer);
+		window.clearTimeout(this._iSearchTimer);
 	};
 
-	/**
-	 * Add item to items aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 * @param {sap.m.P13nItem} oItem is the new item that shall be added
-	 */
 	P13nColumnsPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
@@ -1696,15 +1757,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Add item to items aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 * @param {int} iIndex is the index where the new item shall be inserted
-	 * @param {sap.m.P13nItem} oItem is the new item that shall be added
-	 */
 	P13nColumnsPanel.prototype.insertItem = function(iIndex, oItem) {
 		P13nPanel.prototype.insertItem.apply(this, arguments);
 
@@ -1712,14 +1764,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Remove item from items aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nItem} The removed item or null.
-	 * @param {sap.m.P13nItem} oItem is the item that shall be removed
-	 */
 	P13nColumnsPanel.prototype.removeItem = function(oItem) {
 		var oTableItemToBeRemoved = null, iItemIndex = null, aTableItems = null, sItemKey = null;
 
@@ -1744,13 +1788,6 @@ sap.ui.define([
 		return oItem;
 	};
 
-	/**
-	 * Remove all item from items aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nItem[]} An array of the removed items (might be empty).
-	 */
 	P13nColumnsPanel.prototype.removeAllItems = function() {
 		var aItems = P13nPanel.prototype.removeAllItems.apply(this, arguments);
 		if (this._oTable) {
@@ -1759,13 +1796,6 @@ sap.ui.define([
 		return aItems;
 	};
 
-	/**
-	 * Destroy all items from items aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 */
 	P13nColumnsPanel.prototype.destroyItems = function() {
 		P13nPanel.prototype.destroyItems.apply(this, arguments);
 
@@ -1775,14 +1805,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Add ColumnsItem to columnsItems aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the new ColumnsItem that shall be added
-	 */
 	P13nColumnsPanel.prototype.addColumnsItem = function(oColumnsItem) {
 		this.addAggregation("columnsItems", oColumnsItem);
 
@@ -1792,15 +1814,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Insert ColumnsItem to columnsItems aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 * @param {int} iIndex is the index where the columnsItem item shall be inserted
-	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the new columnsItem that shall be inserted
-	 */
 	P13nColumnsPanel.prototype.insertColumnsItem = function(iIndex, oColumnsItem) {
 		this.insertAggregation("columnsItems", oColumnsItem, iIndex);
 
@@ -1810,14 +1823,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Remove ColumnsItem from columnsItems aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nColumnsItem} The removed item or null.
-	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the ColumnsItem that shall be removed
-	 */
 	P13nColumnsPanel.prototype.removeColumnsItem = function(oColumnsItem) {
 		oColumnsItem = this.removeAggregation("columnsItems", oColumnsItem);
 
@@ -1827,13 +1832,6 @@ sap.ui.define([
 		return oColumnsItem;
 	};
 
-	/**
-	 * Remove all ColumnsItems from columnsItems aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nColumnsItem[]} An array of the removed items (might be empty).
-	 */
 	P13nColumnsPanel.prototype.removeAllColumnsItems = function() {
 		var aColumnsItems = this.removeAllAggregation("columnsItems");
 
@@ -1842,13 +1840,6 @@ sap.ui.define([
 		return aColumnsItems;
 	};
 
-	/**
-	 * Destroy all instances from columnsItems aggregation
-	 * 
-	 * @public
-	 * @since 1.26.0
-	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 */
 	P13nColumnsPanel.prototype.destroyColumnsItems = function() {
 		this.destroyAggregation("columnsItems");
 
@@ -1857,23 +1848,17 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * This method is executed before navigation, to provide validation result(s) for columnsPanel
-	 * 
-	 * @returns {boolean} true if it is allowed to navigate away from this panel, false if it is not allowed
-	 * @public
-	 * @since 1.26.7
-	 */
 	P13nColumnsPanel.prototype.onBeforeNavigationFrom = function() {
-		var bResult = true;
 		var aSelectedItems = this._oTable.getSelectedItems();
 		var iVisibleItemsThreshold = this.getVisibleItemsThreshold();
+		return !(aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold);
+	};
 
-		if (aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold) {
-			bResult = false;
+	P13nColumnsPanel.prototype._notifyChange = function() {
+		var fListener = this.getChangeNotifier();
+		if (fListener) {
+			fListener(this);
 		}
-
-		return bResult;
 	};
 
 	return P13nColumnsPanel;

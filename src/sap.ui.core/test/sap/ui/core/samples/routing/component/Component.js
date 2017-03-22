@@ -26,19 +26,19 @@ sap.ui.define([
 				"components" : [],
 				"ui5version" : "1.13.1"
 			},
-		
+
 			"routing": {
-			
+
 				"config": {
-				
+
 					"viewType" : "XML",
 					"viewPath" : "NavigationWithoutMasterDetailPattern.view",
 					"targetControl" : "app",
 					"targetAggregation" : "pages",
 					"clearTarget" : false
-				
+
 				},
-			
+
 				"routes": [{
 					"name" : "view1", // name used for listening or navigating to this route
 					"pattern" : "FirstView/{from}", // will be the url and from has to be provided in the data
@@ -68,9 +68,9 @@ sap.ui.define([
 						}]
 					}]
 				}]
-				
+
 			}
-			
+
 		},
 
 		getAutoPrefixId : function() {
@@ -84,12 +84,12 @@ sap.ui.define([
 				viewName : "NavigationWithoutMasterDetailPattern.MainXML"
 			});
 			return oView;
-		
-		}, 
-	
+
+		},
+
 		init : function() {
 			UIComponent.prototype.init.apply(this, arguments);
-		
+
 			// this component should automatically initialize the router!
 			this.getRouter().initialize();
 		}

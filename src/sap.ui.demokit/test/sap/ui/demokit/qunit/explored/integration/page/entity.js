@@ -1,9 +1,9 @@
-sap.ui.require([
-		'sap/ui/test/Opa5',
-		'test/page/Common',
-		'test/page/matchers'
-	],
-	function(Opa5, Common, matchers) {
+sap.ui.define([
+	'sap/ui/test/Opa5',
+	'test/page/Common',
+	'test/page/matchers'
+],
+function(Opa5, Common, matchers) {
 	"use strict";
 
 	Opa5.createPageObjects({

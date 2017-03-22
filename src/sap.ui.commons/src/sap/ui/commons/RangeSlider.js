@@ -9,10 +9,10 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 
 
 	/**
-	 * Constructor for a new RangeSlider.
+	 * Constructor for a new <code>RangeSlider</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * The interactive control is displayed either as a horizontal or a vertical line with two pointers and units of measurement.
@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.8.0
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.RangeSlider</code> control.
 	 * @alias sap.ui.commons.RangeSlider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -35,6 +36,9 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 
 			/**
 			 * Current second value of the slider. (Position of the second grip.)
+			 *
+			 * <b>Note:</b> If the value is not in the valid range (between <code>min</code> and <code>max</code>) it will be changed to be in the valid range.
+			 * If it is smaller than <code>value</code> it will be set to the same value.
 			 */
 			value2 : {type : "float", group : "Appearance", defaultValue : 80}
 		}
@@ -49,34 +53,25 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 		// standard behavior of Slider
 		Slider.prototype.onAfterRendering.apply(this);
 
-		var fNewValueLeft = this.getValue();
-		var fNewValueRight = this.getValue2();
+		var fValueLeft = this.getValue(); // is checked to be in valid range and corrected if not (from Slider logic)
+		var fValueRight = this.getValue2();
 
-		if (fNewValueLeft >= fNewValueRight) {
-			fNewValueLeft = fNewValueRight;
-		} else if (fNewValueLeft <= this.getMin()) {
-			fNewValueLeft = this.getMin();
-		}
-		if (fNewValueRight >= this.getMax()) {
-			fNewValueRight = this.getMax();
-		} else if (fNewValueRight <= fNewValueLeft) {
-			fNewValueRight = fNewValueLeft;
+		if ( fValueRight >= this.getMax() ) {
+			fValueRight   = this.getMax();
+		} else if ( fValueRight < fValueLeft ) {
+			fValueRight = fValueLeft;
 		}
 
-		// Calculate grip position
-		var iNewPosLeft = (fNewValueLeft - this.getMin())
-				/ (this.getMax() - this.getMin()) * this.getBarWidth();
-		var iNewPosRight = (fNewValueRight - this.getMin())
+		// Calculate right grip position (left grip already done in Slider logic)
+		var iNewPosRight = (fValueRight - this.getMin())
 				/ (this.getMax() - this.getMin()) * this.getBarWidth();
 
 		if (this.bRtl || this.getVertical()) {
-			iNewPosLeft = this.getBarWidth() - iNewPosLeft;
 			iNewPosRight = this.getBarWidth() - iNewPosRight;
 		}
 
 		// Move grip to hit the point in the middle
-		this.changeGrip(fNewValueLeft, iNewPosLeft, this.oGrip);
-		this.changeGrip(fNewValueRight, iNewPosRight, this.oGrip2);
+		this.changeGrip(fValueRight, iNewPosRight, this.oGrip2);
 
 	};
 
@@ -208,7 +203,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 
 	/**
 	 * Function to set width and position of highlight bar
-	 * 
+	 *
 	 * @param {int} iNewPos new position
 	 * @param {Element} oGrip DOM-Ref of grip
 	 * @private
@@ -262,7 +257,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 
 	/**
 	 * Function to update value property for grip
-	 * 
+	 *
 	 * @param {float} fNewValue new value
 	 * @param {Element} oGrip DOM-Ref of grip
 	 * @private
@@ -279,9 +274,9 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	/*
 	 * Overwrite of generated function - no new JS-doc. Property setter for the
 	 * value A new rendering is not necessary, only the grip must be moved.
-	 * 
+	 *
 	 * @param fValue
-	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining 
+	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RangeSlider.prototype.setValue = function(fValue) {
@@ -335,8 +330,8 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	/*
 	 * Overwrite of generated function - no new JS-doc. Property setter for the
 	 * value A new rendering is not necessary, only the grip must be moved.
-	 * 
-	 * @param fValue @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining 
+	 *
+	 * @param fValue @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RangeSlider.prototype.setValue2 = function(fValue) {
@@ -606,7 +601,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 
 	/**
 	 * Set width/height
-	 * 
+	 *
 	 * @private
 	 * @param {int} iNewPos new position
 	 * @param {Element} oObject DOM-Ref

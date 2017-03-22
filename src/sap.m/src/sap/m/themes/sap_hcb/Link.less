@@ -1,47 +1,33 @@
-/* ============================================= */
-/* CSS for control sap.m/Link.control            */
-/* High Contrast Black theme                     */
-/* ============================================= */
+/* =========================== */
+/* CSS for control sap.m/Link  */
+/* High Contrast Black theme   */
+/* =========================== */
 
 .sapMLnk {
-	font-size: @sapMFontMediumSize;
-	color: @sapHCStandardFG;
 	text-decoration: underline;
 }
 
 .sapMLnkDsbl, .sapMLnkDsbl:visited {
 	outline: none;
 	cursor: default;
-	color: @sapHCReducedFG;
+	color: @sapUiContentDisabledTextColor;
 	text-decoration: underline;
 }
 
-.sapMLnk:focus:not(.sapMLnkDsbl) {
+html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	text-decoration: none;
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.125rem;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
 }
 
-/* IE ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"] {
-	.sapMLnk:focus {
-		outline: none;
-		position: relative;
-	}
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMLnk:focus:not(.sapMLnkDsbl):before {
-		content: " ";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-		border: 0.125rem dotted @sapHCStandardFG;
-		pointer-events: none;
+		border: 0.125rem dashed @sapUiContentFocusColor;
 	}
 }
 
-.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
+html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
 	text-decoration: none;
 }
 
@@ -49,21 +35,17 @@ html[data-sap-ui-browser^="ie"] {
 	outline: none;
 }
 
-.sapUiFormEdit .sapMLnk {
-	line-height: 3rem;
+/* Link in sap.ui.table.* tables */
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl),
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline: none;
+	position: relative;
 }
 
-.sapMLnkEmphasized {
-	font-weight: bold;
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl):before,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl):before {
+	position: absolute;
+	border: 0.125rem dashed @sapUiContentFocusColor;
+	content: "";
+	pointer-events: none;
 }
-
-/* Compact size */
-.sapUiSizeCompact .sapUiFormEdit .sapMLnk {
-	line-height: 2rem;
-}
-
-/* Condensed size */
-.sapUiSizeCondensed .sapUiTableCell>.sapMLnk {
-	.sapUiCondensedTableCellContent; /* see shared.css */
-}
-

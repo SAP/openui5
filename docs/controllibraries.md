@@ -1,4 +1,4 @@
-Developing Content for SAPUI5
+Developing Content for UI5
 =============================
 
 1.  [Control Libraries](#control-libraries)
@@ -32,29 +32,32 @@ some.lib/
 |   +---some/
 |       +---lib/
 |           +---themes/
-|               +---base
+|               +---base/
 |                   +---img/
 |                       img-RTL/
 |                       library.source.less
-|                       SomeControl.css
-|                   sap_bluecrystal
+|                       SomeControl.less
+|                   sap_bluecrystal/
 |                   +---img/
 |                       img-RTL/
 |                       library.source.less
-|                       SomeControl.css
+|                       SomeControl.less
 |           .library
 |           library.js
 |           messagebundle.properties
 |           messagebundle_<any-locale>.properties
 |           SomeControl.js
 |           SomeControlRenderer.js
-+---test
++---test/
     +---some/
         +---lib/
             +---SomeControl.html
                 qunit/
                 +---testsuite.qunit.html
                     SomeControl.qunit.html
+                visual/
+                +---visual.suite.js
+                    SomeControl.spec.js
 ```
 
 At runtime (and after the Grunt build) all libraries are merged into one directory tree, but during development libraries are separated, hence the duplication of the library name, once as folder containing the complete library and twice inside as folder structure for the runtime sources as well as for the test pages.
@@ -229,15 +232,17 @@ The one in the base theme imports `base.less` and `global.less` from the core li
 ...
 ```
 
-The one in the specific theme (here: sap\_hcb) imports the above `library.source.less` from the base theme in this library and `global.less` from the specific theme in the core library (and all existing sap\_hcb CSS files of the controls in this library):
+The one in the specific theme (here: sap\_bluecrystal) imports the above `library.source.less` from the base theme in this library and `base.less` and `global.less` from the specific theme in the core library (and all existing sap\_bluecrystal CSS files of the controls as well as `shared.css` in this library):
 ```css
 @import "../base/library.source.less";
-@import "../../../../sap/ui/core/themes/sap_hcb/global.less";
+@import "../../../../sap/ui/core/themes/sap_bluecrystal/base.less";
+@import "../../../../sap/ui/core/themes/sap_bluecrystal/global.less";
 @import "shared.less";
 
 @import "ActionListItem.less";
 ...
 ```
+Note that the relative paths, which are going up four levels and then descending into `sap/ui/core/themes/sap_bluecrystal`, do not correspond to the physical file locations of the sources, but to the file tree as it would exist at runtime (where the content of source folders like `sap.ui.core` and `themelib_sap_bluecrystal` is merged into one tree).
 
 `shared.less` is by convention the name of a CSS file for library-level styles. It is handled and imported just like normal control CSS files, the separation is purely for better maintainability.
 
@@ -574,3 +579,7 @@ Any HTML pages placed into the *test*\<libraryname\> folder (or below) will be l
 ### QUnit Tests
 
 To provide automated unit tests for a control, create the file: `/test/<libraryname>/qunit/<controlname>.qunit.hml` and add it to the list of test pages in the `testsuite.qunit.html` file in the same directory. For the implementation of these tests, please refer to the [QUnit documentation](http://qunitjs.com/) or existing unit tests.
+
+### Visual Tests
+
+To provide automated visual tests for a control, create the file: `/test/<libraryname>/visual/<controlname>.spec.js` and add it to the list of test pages in the `visual.suite.js` file in the same directory. For the implementation of these tests, please refer to the "ui5delivery/visualtestjs" project on the SAP GitHub or existing visual tests.

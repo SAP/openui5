@@ -1,0 +1,46 @@
+/* ================================= */
+/* CSS for control sap.m/Slider      */
+/* Belize High Contrast White theme  */
+/* ================================= */
+
+/* slider */
+.sapMSliderInner {
+	border: 1px solid @sapUiFieldBorderColor;
+	background: @sapUiFieldBackground;
+	border-radius: 0.125rem;
+}
+
+/* slider handle */
+.sapMSliderHandle {
+	background: transparent;
+	border: 0.125rem solid @sapUiFieldBorderColor;
+}
+
+/* hover */
+html.sap-desktop .sapMSliderHandle:not(.sapMSliderInnerDisabled ):hover {
+	background: @sapUiFieldActiveBackground;
+}
+
+/* focus */
+html.sap-desktop .sapMSliderHandle:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+/* pressed */
+.sapMSliderPressed:not(.sapMSliderInnerDisabled ) > .sapMSliderHandle {
+	background: @sapUiFieldActiveBackground;
+	border: 0.125rem solid @sapUiFieldActiveBorderColor;
+}
+
+.sapMSliderInnerDisabled {
+	border: 0.063rem solid @sapUiHcReducedAltForeground;
+}
+
+.sapMSliderInnerDisabled .sapMSliderProgress {
+	background: @sapUiHcReducedBackground;
+}
+
+.sapMSliderInnerDisabled > .sapMSliderHandle {
+	background: transparent;
+	border:0.125rem solid @sapUiHcReducedForeground;
+}

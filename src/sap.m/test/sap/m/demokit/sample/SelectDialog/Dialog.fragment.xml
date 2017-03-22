@@ -13,7 +13,7 @@
 		<StandardListItem
 			title="{Name}"
 			description="{ProductId}"
-			icon="{ProductPicUrl}" 
+			icon="{ProductPicUrl}"
 			iconDensityAware="false"
 			iconInset="false"
 			type="Active" />

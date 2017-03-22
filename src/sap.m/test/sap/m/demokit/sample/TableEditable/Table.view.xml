@@ -1,0 +1,79 @@
+<mvc:View
+	height="100%"
+	icontrollerName="sap.m.sample.TableEditable.Table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+	<Page showHeader="false" enableScrolling="true" class="sapUiContentPadding"
+		showNavButton="false">
+
+		<content>
+			<Table id="idProductsTable" growing="true" growingThreshold="10">
+				<headerToolbar>
+					<OverflowToolbar id="otbSubheader">
+						<Title text="Products" level="H2" />
+						<ToolbarSpacer />
+						<Button id="editButton" text="Edit" type="Transparent"
+							press="onEdit" />
+						<Button id="saveButton" text="Save" type="Transparent"
+							press="onSave" visible="false" />
+						<Button id="cancelButton" text="Cancel" type="Transparent"
+							press="onCancel" visible="false" />
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column width="12em">
+						<Text text="Product" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+						<Text text="Quantity" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center">
+						<Text text="Weight" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="Price" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier title="{Name}" text="{ProductId}" />
+							<ObjectNumber
+								number="{
+								path:'Quantity',
+								type: 'sap.ui.model.type.String',
+								formatOptions: {showMeasure: false}
+							}"
+								unit="{UoM}" />
+							<ObjectNumber number="{WeightMeasure}" unit="{WeightUnit}"
+								state="{
+							path: 'WeightMeasure',
+							formatter: 'sap.m.sample.TableEditable.Formatter.weightState'
+						}" />
+							<ObjectNumber
+								number="{
+								parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+								unit="{CurrencyCode}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<OverflowToolbar id="otbFooter">
+				<ToolbarSpacer />
+				<Button text="Order" press="onOrder">
+					<layoutData>
+						<OverflowToolbarLayoutData
+							moveToOverflow="false" />
+					</layoutData>
+				</Button>
+			</OverflowToolbar>
+		</footer>
+
+	</Page>
+</mvc:View>

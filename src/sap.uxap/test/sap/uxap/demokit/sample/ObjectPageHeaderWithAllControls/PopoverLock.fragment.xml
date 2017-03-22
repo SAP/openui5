@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<ResponsivePopover
+			title="Locked"
+			class="sapUiContentPadding"
+			placement="Bottom">
+		<content>
+			<Label text="This profile is being edited by another user."/>
+		</content>
+	</ResponsivePopover>
+</core:FragmentDefinition>

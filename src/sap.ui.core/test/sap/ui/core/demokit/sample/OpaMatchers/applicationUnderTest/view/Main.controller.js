@@ -1,8 +1,8 @@
 sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+function(Controller) {
 	"use strict";
 
-	var MainController = Controller.extend("view.Main", {
+	return Controller.extend("appUnderTest.view.Main", {
 
 		onInit : function () {
 			var that = this;
@@ -13,7 +13,5 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 		}
 
 	});
-
-	return MainController;
 
 });

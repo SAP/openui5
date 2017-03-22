@@ -1,54 +1,53 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Token - sap.m</title>
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 
 		jQuery.sap.require("sap.m.MessageBox");
 		jQuery.sap.require("sap.m.Token");
-				
-		var app = new sap.m.App("myApp");		
-		
+
+		var app = new sap.m.App("myApp");
+
 		var tokenPress = function(args){
 			args.oSource.setSelected(!args.oSource.getSelected());
-			sap.m.MessageBox.alert("Token pressed: " +  args.oSource.getText());			
+			sap.m.MessageBox.alert("Token pressed: " +  args.oSource.getText());
 		};
-		
+
 		var tokenDeleted = function(args){
 			sap.m.MessageBox.alert("Token deleted: " +  args.oSource.getText());
 		};
-		
+
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile Token Control",
 			content : [
 					new sap.m.Label({ text : "Tokens:", width: "100%"}),
-					new sap.m.Token({key : "01", text : "1. Token", press: tokenPress, "delete": tokenDeleted}),
-					new sap.m.Token({key : "02", text : "2. Token with very long text example", press: tokenPress, "delete": tokenDeleted}),
-					new sap.m.Token({key : "03", text : "3. no edit Token", press: tokenPress, "delete": tokenDeleted, editable: false}),
+					new sap.m.Token("tokenNotSelected1", {key : "01", text : "1. Token", "delete": tokenDeleted}),
+					new sap.m.Token({key : "02", text : "2. Token with very long text example", "delete": tokenDeleted}),
+					new sap.m.Token("tokenSelected3", {key : "03", text : "3. no edit Token", "delete": tokenDeleted, editable: false}),
 					new sap.m.Label({ text : "Selected tokens:", width: "100%"}),
-					new sap.m.Token({key : "04", text : "4. Token", press: tokenPress, "delete": tokenDeleted, selected: true}),
-					new sap.m.Token({key : "05", text : "5. Token with very long text example", press: tokenPress, "delete": tokenDeleted, selected: true}),
-					new sap.m.Token({key : "06", text : "6. no edit Token", press: tokenPress, "delete": tokenDeleted, editable: false, selected: true}),
+					new sap.m.Token("tokenSelected4", {key : "04", text : "4. Token", "delete": tokenDeleted, selected: true}),
+					new sap.m.Token({key : "05", text : "5. Token with very long text example", "delete": tokenDeleted, selected: true}),
+					new sap.m.Token("tokenSelected6", {key : "06", text : "6. no edit Token", "delete": tokenDeleted, editable: false, selected: true}),
 					new sap.m.Label({ text : "Token with textDirection set to LTR in RTL page", width: "100%"}),
-					new sap.m.Token({key : "07", text : "123 456", textDirection: sap.ui.core.TextDirection.LTR, press: tokenPress, "delete": tokenDeleted, selected: true}),
+					new sap.m.Token({key : "07", text : "123 456", textDirection: sap.ui.core.TextDirection.LTR, "delete": tokenDeleted, selected: true}),
 					new sap.m.Label({ text : "The same token but with default textDirection in RTL page", width: "100%"}),
-					new sap.m.Token({key : "08", text : "123 456", press: tokenPress, "delete": tokenDeleted, selected: true})
+					new sap.m.Token({key : "08", text : "123 456", "delete": tokenDeleted, selected: true})
 					]
 		});
 		app.addPage(page1);
-		
+
 		app.placeAt("body");
-		
+
 </script>
 	<style>
 	body {

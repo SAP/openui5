@@ -1,18 +1,59 @@
-
-/* ============================================= */
-/* CSS for control sap.m/ProgressIndicator.control */
-/* ============================================= */
+/* ======================================== */
+/* CSS for control sap.m/ProgressIndicator  */
+/* Base theme                               */
+/* ======================================== */
 
 .sapMPI {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-flex-direction: row;
 	box-sizing: border-box;
-	border: 1px solid @sapUiDarkBorder;
-	padding: 1px;
+	outline: none;
+	background: @sapUiFieldBackground;
+	width: 100%;
+	height: 2rem;
+	min-width: 6rem;
+	min-height: 1rem;
+	padding: 0;
 	margin: 0.25rem 0;
+	border: none;
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+
+.sapMPIBar,
+.sapMPIBarRemaining {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	min-width: 0;
+
+	-webkit-align-items: center;
+	align-items: center;
 }
 
 .sapMPIBar {
 	height: 100%;
-	float: left;
+	-webkit-justify-content: flex-end;
+	justify-content: flex-end;
+	border-top-left-radius: 0.5rem;
+	border-bottom-left-radius: 0.5rem;
+}
+
+.sapMPIValueMax .sapMPIBarRemaining {
+	display: none;
+}
+
+.sapMPIBarRemaining {
+	-webkit-flex-grow: 1;
+	flex-grow: 1;
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+	border-top: 1px solid @sapUiFieldBorderColor;
+	border-right: 1px solid @sapUiFieldBorderColor;
+	border-bottom: 1px solid @sapUiFieldBorderColor;
 }
 
 .sapMPIBarDisabled {
@@ -20,20 +61,22 @@
 }
 
 .sapMPIText {
-	font-size: 0.75rem;
-	color: @sapUiLightText;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontSmallSize;
+	font-weight: normal;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	color: @sapUiContentForegroundTextColor;
 }
 
 .sapMPITextLeft {
-	color: @sapUiTextInverted;
-	display: none;
-	float: right;
+	color: @sapUiContentContrastTextColor;
 	padding-right: 0.5rem;
+	display: none;
 }
 
 .sapMPITextRight {
-	display:block;
-	float: left;
 	padding-left: 0.5rem;
 }
 
@@ -42,9 +85,71 @@
 }
 
 .sapMPIValueGreaterHalf .sapMPITextLeft {
-	display: block;
+	display: inline-block;
 }
 
 .sapMPIAnimate .sapMPIText {
 	display: none;
+}
+
+/* Progress Indicator Bar */
+.sapMPIValueMax .sapMPIBar {
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+}
+
+.sapMPIValueNormal .sapMPIBar {
+	max-width: calc(~"100% - 0.5rem");
+	min-width: 0.5rem;
+}
+
+.sapMPIBarNeutral {
+	background: @sapUiNeutralElement;
+}
+
+.sapMPIBarPositive {
+	background: @sapUiPositiveElement;
+}
+
+.sapMPIBarNegative {
+	background: @sapUiNegativeElement;
+}
+
+.sapMPIBarCritical {
+	background: @sapUiCriticalElement;
+}
+
+/* Progress Indicator Remaining Bar */
+.sapMPIValueMin .sapMPIBarRemaining {
+	border-radius: 0.5rem;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
+/* Progress Indicator Value Text */
+.sapMPIBarNeutral .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiNeutralElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapMPIBarPositive .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiPositiveElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapMPIBarNegative .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiNegativeElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapMPIBarCritical .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiCriticalElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}
+
+/* Compact */
+.sapUiSizeCompact .sapMPI {
+	height: 1.375rem;
+	margin: 0.125rem 0;
+}
+
+/* Condensed */
+.sapUiSizeCondensed .sapUiTableCell .sapMPI {
+	height: 1.5rem;
+	margin: 0;
 }

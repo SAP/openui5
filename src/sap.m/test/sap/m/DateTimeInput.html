@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>sap.m.DateTimeInput</title>
 
+<script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
 </script>
 
 <script>
@@ -22,6 +23,53 @@
 	});
 	sap.ui.getCore().setModel(oModel);
 
+	var iEvent = 0;
+	function handleChange(oEvent){
+		var oDTI = oEvent.oSource;
+		var oInput = sap.ui.getCore().byId("I2");
+		var sValue = oEvent.getParameter("value");
+		var bValid = oEvent.getParameter("valid");
+		iEvent++;
+		oInput.setValue("Change - Event " + iEvent + ": DateTimeInput " + oDTI.getId() + ":" + sValue + " ;valid: " + bValid);
+		if (bValid) {
+			oDTI.setValueState(sap.ui.core.ValueState.None);
+		} else {
+			oDTI.setValueState(sap.ui.core.ValueState.Error);
+		}
+	};
+
+	sap.ui.getCore().attachParseError(
+			function(oEvent) {
+				var oElement = oEvent.getParameter("element");
+				var sProperty = oEvent.getParameter('property');
+				var oValue = oEvent.getParameter('newValue');
+				var oType = oEvent.getParameter('type');
+				var oOldValue = oEvent.getParameter('oldValue');
+
+				var oInput = sap.ui.getCore().byId("I2");
+				oInput.setValue( "ParseError: Entered value: "+oValue);
+
+				if (oElement.setValueState) {
+					oElement.setValueState(sap.ui.core.ValueState.Error);
+				}
+			});
+
+	sap.ui.getCore().attachValidationSuccess(
+			function(oEvent) {
+				var oElement = oEvent.getParameter("element");
+				var sProperty = oEvent.getParameter('property');
+				var oValue = oEvent.getParameter('newValue');
+				var oType = oEvent.getParameter('type');
+				var oOldValue = oEvent.getParameter('oldValue');
+
+				var oInput = sap.ui.getCore().byId("I2");
+				oInput.setValue( "ValidationSuccess: Entered value: "+oValue);
+
+				if (oElement.setValueState) {
+					oElement.setValueState(sap.ui.core.ValueState.None);
+				}
+			});
+
 	var page = new sap.m.Page({
 		title : "DateTimeInput Controls",
 		enableScrolling : true,
@@ -32,103 +80,101 @@
 				items : [
 					new sap.m.InputListItem({
 						label : "Christmas",
-						content : dti0 = new sap.m.DateTimeInput({
+						content : oDTI1 = new sap.m.DateTimeInput("DTI1", {
 							placeholder : "Date Picker",
 							change : function(e) {
 								var oDate = e.getParameters().newDateValue;
 								if (oDate && oDate.getMonth() == 11 && oDate.getDate() == 25) {
-									dti0.setValueState("None");
+									oDTI1.setValueState("None");
 								} else {
-									dti0.setValueState("Error");
+									oDTI1.setValueState("Error");
 								}
 							}
 						})
 					}), new sap.m.InputListItem({
 						label : "Duration",
-						content : dti1 = new sap.m.DateTimeInput({
+						content : oDTI2 = new sap.m.DateTimeInput("DTI2", {
 							placeholder : "Time Picker",
 							type : "Time",
 							valueFormat : "HH:mm",
 							value : "11:23",
 							displayFormat : "H'h' m'm'",
-							change : function(e) {
-								page.setTitle(e.getParameters().newValue);
-							}
+							change : handleChange
 						})
 					}), new sap.m.InputListItem({
 						label : "DateTime",
-						content : dti2 = new sap.m.DateTimeInput({
+						content : oDTI3 = new sap.m.DateTimeInput("DTI3", {
 							placeholder : "DateTime",
 							type : "DateTime",
-							change : function(e) {
-								page.setTitle(e.getParameters().newValue);
-							}
+							change : handleChange
 						})
 					})
 				]
 			}),
 
 			// free style date value assingment according to valueFormat
-			dti3 = new sap.m.DateTimeInput({
-				value : "05-29, 2012",
+			oDTI4 = new sap.m.DateTimeInput("DTI4", {
+				value : "29-05, 2012",
 				valueFormat : "dd-MM, yyyy",
 				displayFormat : "dd MMMM, yyyy",
 				width : "20%",
-				change : function(e) {
-					console.log(dti3 + " : " + e.getParameters().newValue + " # " + e.getParameters().newDateValue);
-				}
+				change : handleChange
 			}),
 
 			// formats which includes zones "Z" can be used for local date time
-			dti4 = new sap.m.DateTimeInput({
+			oDTI5 = new sap.m.DateTimeInput("DTI5", {
 				width : "99%",
 				type : "DateTime",
 				displayFormat : new sap.ui.model.type.DateTime({style: "long"}).getOutputPattern(),
 				dateValue : new Date(2012, 4, 29, 19, 14, 0),
 				valueState : "Warning",
-				change : function() {
-					console.log(dti4.toString(), dti4.getDateValue(), dti4.getValue());
-				}
+				change : handleChange
 			}),
 
 			// data binding usage
-			dti5 = new sap.m.DateTimeInput({
+			oDTI6 = new sap.m.DateTimeInput("DTI6", {
 				value : {
 					path : "/dateVal1",
-					type : new sap.ui.model.type.Date()
+					type : new sap.ui.model.type.Date({strictParsing: true})
 				}
 			}),
-			di6 = new sap.m.DateTimeInput({
+			oI1 = new sap.m.Input("I1", {
+				value: {
+					path: "/dateVal1",
+					type: new sap.ui.model.type.Date({style: "long", strictParsing: true})
+					},
+				editable: false
+			}),
+			oDTI7 = new sap.m.DateTimeInput("DTI7", {
 				value : {
 					path : "/dateVal2",
-					type : new sap.ui.model.type.Date({pattern : "E dd, MMMM yyyy"})
+					type : new sap.ui.model.type.Date({pattern : "E dd, MMMM yyyy", strictParsing: true})
 				},
-				change : function(e) {
-					console.log(di6 + " : " + e.getParameters().newValue + " # " + e.getParameters().newDateValue);
-				}
+				change : handleChange
 			}),
-			dti7 = new sap.m.DateTimeInput({
+			oDTI8 = new sap.m.DateTimeInput("DTI8", {
 				value : {
 					path : "/dateVal3",
-					type : new sap.ui.model.type.Date({style : "short"})
+					type : new sap.ui.model.type.Date({style : "short", strictParsing: true})
 				}
 			}),
-			dti8 = new sap.m.DateTimeInput({
+			oDTI9 = new sap.m.DateTimeInput("DTI9", {
 				type : "Time",
 				editable : false,
 				value : {
 					path : "/dateVal4",
-					type : new sap.ui.model.type.Time({style : "medium"})
+					type : new sap.ui.model.type.Time({style : "medium", strictParsing: true})
 				}
 			}),
-			dti9 = new sap.m.DateTimeInput({
+			oDTI10 = new sap.m.DateTimeInput("DTI10", {
 				type : "DateTime",
 				enabled : false,
 				value : {
 					path : "/dateVal5",
-					type : new sap.ui.model.type.DateTime({style : "medium"})
+					type : new sap.ui.model.type.DateTime({style : "medium", strictParsing: true})
 				}
-			})
+			}),
+			new sap.m.Input("I2", {value: "Content of events DateTimeInput", editable: false}),
 		]
 	});
 

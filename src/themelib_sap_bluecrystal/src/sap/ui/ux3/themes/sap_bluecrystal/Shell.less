@@ -14,7 +14,7 @@
 
     background-color:   @sapUiLightestBG;
     background-image:   none;
-    padding:            9px 5px 0;
+    padding:            6px 5px 0;
     height:             31px;
 }
 
@@ -23,12 +23,15 @@
     height:             4px;
 }
 
-.sapUiUx3ShellHeader > img,
-.sapUiUx3ShellHeader > h1 {
+.sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft > img {
     color:              @sapUiLightText;
     margin-top:         -3px;
     text-shadow:        none;
     font-size:          12px;
+}
+
+.sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft > span {
+    color:              @sapUiLightText;
 }
 
 .sapUiUx3ShellHeader .sapUiBtn,
@@ -229,24 +232,14 @@ html[dir="rtl"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3NavBarArrow {
     clip:               inherit;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3NavBarArrow {
-	display:			inline-block;
-    background:         transparent;
-    border-color:       transparent transparent @sapUiDarkBorder transparent;
-    border-width:       0 7px 7px 7px;
-    width:              auto;
-    height:             auto;
-    top:                auto;
-}
-
 .sapUiUx3ShellCanvas .sapUiUx3ShellContent {
-	padding-left: 20px; 
-	padding-right: 20px; 
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .sapUiUx3ShellNoContentPadding .sapUiUx3ShellContent {
     padding:        0;
-} 
+}
 
 .sapUiUx3ShellCanvas .sapUiUx3NavBar .sapUiUx3NavBarList > li > a {
     padding:            0 10px 0 10px;
@@ -271,7 +264,7 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3
     width:              5px;
     margin-left:        -5px;
 }
- 
+
 .sapUiUx3ShellContent {
 	width: auto;
 }
@@ -281,15 +274,15 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3
 .sapUiUx3ShellHeadBrandOnly .sapUiUx3ShellCanvas > .sapUiUx3NavBar {
 	background-color: @sapUiLightestBG;
 }
-    
+
 .sapUiUx3ShellHeadNoNavigation .sapUiUx3ShellCanvas .sapUiUx3NavBarItem,
 .sapUiUx3ShellHeadBrandOnly .sapUiUx3ShellCanvas .sapUiUx3NavBarItem {
 	font-size: 15px;
 }
 
-   
-    
-    
+
+
+
 /* tool palette area */
 
 .sapUiUx3ShellToolPaletteArea, .sapUiUx3ShellPaneBarRight {
@@ -332,7 +325,7 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3
     background-position: 4px -64px;
 }
 .sapUiUx3ShellTool-search:hover,
-.sapUiUx3ShellTool-search:active, 
+.sapUiUx3ShellTool-search:active,
 .sapUiUx3ShellTool-search.sapUiUx3ShellToolSelected {
     background-position: -28px -64px;
 }
@@ -343,7 +336,7 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3
 .sapUiUx3ShellTool-inspector:hover {
     background-position: -28px -32px;
 }
-.sapUiUx3ShellTool-inspector:active, 
+.sapUiUx3ShellTool-inspector:active,
 .sapUiUx3ShellTool-inspector.sapUiUx3ShellToolSelected {
     background-position: -60px -32px;
 }
@@ -352,7 +345,7 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3
     background-position: 4px 0;
 }
 .sapUiUx3ShellTool-feeder:hover,
-.sapUiUx3ShellTool-feeder:active, 
+.sapUiUx3ShellTool-feeder:active,
 .sapUiUx3ShellTool-feeder.sapUiUx3ShellToolSelected {
     background-position: -28px 0;
 }
@@ -404,7 +397,6 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3
 
 .sapUiUx3ShellPaneEntrySelected {
     color:                      @sapUiDarkText;
-    background-image:           none;
     font-size:                  14px;
     font-weight:                bold;
 }
@@ -412,7 +404,6 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3
 .sapUiUx3ShellPaneEntrySelected:hover {
     color:                      @sapUiHighlight;
     font-size:                  14px;
-    background-image:           none;
 }
 
 .sapUiUx3ShellPaneBarRight:hover .sapUiUx3ShellPaneEntry:hover {
@@ -482,20 +473,6 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3Shell .sapUiUx3NavBarToplevel .sapUiUx3
     padding:            10px;
 }
 
-/* hack for IE 9+*/
-
-html[data-sap-ui-browser="ie8"] .sapUiUx3ShellCanvasBackground,
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellCanvasBackground,
-html[data-sap-ui-browser="ie8"] .sapUiUx3ShellCanvas,
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellCanvas,
-html[data-sap-ui-browser="ie8"] .sapUiUx3ShellBgImg,
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellBgImg,
-html[data-sap-ui-browser="ie8"] .sapUiUx3ShellBg,
-html[data-sap-ui-browser="ie9"] .sapUiUx3ShellBg {
-	background-color: transparent;
-	background-image: none;
-}
-
 .sapUiUx3ShellCanvas {
     padding:            0;
 }
@@ -562,5 +539,3 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellBg {
 .sapUiUx3TP-feeder > .sapUiUx3TPContent {
 	margin: 0;
 }
-
-

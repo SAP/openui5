@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="UTF-8">
+		<meta charset="utf-8">
 		<title>sap.m.Select</title>
 		<style type="text/css">
 			.vBoxSelectTestPage {
@@ -28,10 +28,10 @@
 				margin: 1rem 2rem 0 2rem;
 			}
 		</style>
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m"
-				data-sap-ui-theme="sap_bluecrystal">
+				data-sap-ui-libs="sap.m">
 		</script>
 		<script>
 		var oModel = new sap.ui.model.json.JSONModel();
@@ -403,6 +403,7 @@
 		});
 
 		var oSelect0 = new sap.m.Select({
+			id: "select_regular",
 			items: {
 				path: "/items",
 				template: oItemTemplate
@@ -485,6 +486,7 @@
 		});
 
 		var oSelect2 = new sap.m.Select({
+			id: "select_disabled",
 			items: [
 				new sap.ui.core.Item({
 					key: "0",
@@ -567,6 +569,7 @@
 		});
 
 		var oSelect8 = new sap.m.Select({
+			id: "select_footer",
 			items: [
 				new sap.ui.core.Item({
 					key: "0",
@@ -657,12 +660,10 @@
 		var oSelect10 = new sap.m.Select({
 			items: [
 				new sap.ui.core.Item({
-					key: "0",
 					text: "item 0"
 				}),
 
 				new sap.ui.core.Item({
-					key: "1",
 					text: "item 1"
 				}),
 			],
@@ -696,6 +697,7 @@
 		});
 
 		var oSelect12 = new sap.m.Select({
+			id: "select_icon",
 			type: sap.m.SelectType.IconOnly,
 			autoAdjustWidth: true,
 			icon: sap.ui.core.IconPool.getIconURI("add"),
@@ -1081,7 +1083,8 @@
 			design: sap.m.LabelDesign.Bold
 		}).addStyleClass("labelSelectTestPageHeader");
 
-		new sap.m.App().addPage(new sap.m.Page({
+		new sap.m.App().addPage(oPage = new sap.m.Page({
+			id: "select_page",
 			customHeader: oBar0 = new sap.m.Bar({
 
 				contentLeft: oSelect14,

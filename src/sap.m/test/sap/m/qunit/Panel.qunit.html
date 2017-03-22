@@ -1,23 +1,26 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>QUnit page for sap.m.Panel</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" data-sap-ui-noConflict="true"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
 <link rel="stylesheet" type="text/css" media="screen"
 	href="../../../../resources/sap/ui/thirdparty/qunit.css"/>
 
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script type="text/javascript">
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script>
 	QUnit.module("API", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -29,7 +32,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		}
@@ -113,8 +116,44 @@
 		assert.notStrictEqual(this.oPanel.oIconCollapsed, undefined, "should create an icon");
 	});
 
+	QUnit.test("Call to setExpanded() with null value", function (assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setExpanded(null);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getExpanded(), false, "should set the expanded property to false");
+	});
+
 	QUnit.test("Default Panel backgroundDesign", function (assert) {
 		assert.strictEqual(this.oPanel.getBackgroundDesign(), sap.m.BackgroundDesign.Translucent, "should be sap.m.BackgroundDesign.Translucent");
+	});
+
+	QUnit.test("Default accessibleRole", function (assert) {
+		assert.strictEqual(this.oPanel.getAccessibleRole(), sap.m.PanelAccessibleRole.Form, "should be sap.m.PanelAccessibleRole.Form");
+	});
+
+	QUnit.test("Call to setAccessibleRole() with Region value", function (assert) {
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Region);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getAccessibleRole(), sap.m.PanelAccessibleRole.Region, "should set the accessibleRole property to Region");
+		assert.strictEqual(this.oPanel.$().attr("role"), "region", "should set the role attribute in the DOM to region");
+	});
+
+	QUnit.test("Call to setAccessibleRole() with Form value", function (assert) {
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Form);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getAccessibleRole(), sap.m.PanelAccessibleRole.Form, "should set the accessibleRole property to Form");
+		assert.strictEqual(this.oPanel.$().attr("role"), "form", "should set the role attribute in the DOM to form");
+	});
+
+	QUnit.test("Call to setAccessibleRole() with Complementary value", function (assert) {
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Complementary);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getAccessibleRole(), sap.m.PanelAccessibleRole.Complementary, "should set the accessibleRole property to Complementary");
+		assert.strictEqual(this.oPanel.$().attr("role"), "complementary", "should set the role attribute in the DOM to complementary");
 	});
 
 	QUnit.module("Events", {
@@ -132,7 +171,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		}
@@ -167,7 +206,7 @@
 	});
 
 	QUnit.module("Rendering", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -179,7 +218,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		},
@@ -222,7 +261,7 @@
 	});
 
 	QUnit.module("CSS classes", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -234,7 +273,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		},
@@ -252,7 +291,42 @@
 		var $panel = this.oPanel.$();
 
 		assert.ok($panel.hasClass("sapMPanel"), "should have sapMPanel class on root element");
-		assert.ok(jQuery("div:first-of-type", $panel).hasClass("sapMPanelHdr"), "should have sapMPanelHdr class present on first div");
+		assert.ok(jQuery("h1:first-of-type", $panel).hasClass("sapMPanelHdr"), "should have sapMPanelHdr class present on first header");
+	});
+
+	QUnit.test("Expandable panel with headerText", function(assert) {
+		this.oPanel.setExpandable(true);
+		sap.ui.getCore().applyChanges();
+
+		var $panel = this.oPanel.$();
+
+		assert.strictEqual($panel.find(".sapMPanelWrappingDiv").length, 1, "should have wrapping div with sapMPanelWrappingDiv class");
+		assert.strictEqual($panel.find(".sapMPanelExpandablePart").length, 1, "should have content area with sapMPanelExpandablePart class");
+	});
+
+	QUnit.test("Expandable and expanded panel with headerText", function(assert) {
+		var panel = new sap.m.Panel({
+			headerText: "test",
+			expandable: true,
+			expanded: true
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(panel.$().find(".sapMPanelWrappingDiv").length, 1, "should have wrapping div with sapMPanelWrappingDiv class");
+		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivExpanded").length, 1, "should have wrapping div with sapMPanelWrappingDivExpanded class");
+	});
+
+	QUnit.test("Expandable and expanded panel with headerToolbar", function(assert) {
+		var panel = new sap.m.Panel({
+			headerToolbar: this.createToolbar(),
+			expandable: true,
+			expanded: true
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivTb").length, 1, "should have wrapping div with sapMPanelWrappingDivTb class");
+		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivTbExpanded").length, 1, "should have wrapping div with sapMPanelWrappingDivTbExpanded class");
+		assert.strictEqual(panel.$().find(".sapMPanelHeaderTB").length, 1, "should have a toolbar with sapMPanelHeaderToolbar class");
 	});
 
 	QUnit.test("Expandable panel with headerToolbar and infoToolbar", function(assert) {
@@ -265,8 +339,9 @@
 		var $panel = this.oPanel.$();
 
 		assert.strictEqual($panel.find(".sapMPanelWrappingDivTb").length, 1, "should have wrapping div with sapMPanelWrappingDivTb class");
-		assert.strictEqual($panel.find(".sapMPanelHdrExpandable").length, 1, "should have headerToolbar with sapMPanelHdrExpandable class");
 		assert.strictEqual($panel.find(".sapMPanelExpandablePart").length, 2, "should have infoToolbar and content area with sapMPanelExpandablePart class");
+		assert.strictEqual($panel.find(".sapMPanelHeaderTB").length, 1, "should have a toolbar with sapMPanelHeaderToolbar class");
+		assert.strictEqual($panel.find(".sapMPanelInfoTB").length, 1, "should have a toolbar with sapMPanelInfoToolbar class");
 	});
 
 	QUnit.test("Expandable Panel when expanded", function(assert) {
@@ -320,7 +395,7 @@
 	});
 
 	QUnit.module("Computed styles", {
-		setup: function () {
+		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({
 				headerText: "Panel Header",
 				content: [
@@ -332,7 +407,7 @@
 			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.oPanel.destroy();
 			this.oPanel = null;
 		},
@@ -408,11 +483,55 @@
 			"should have background-color:rgb(255, 255, 255) style present");
 	});
 
-	QUnit.test("Panel with translucent backgroundDesign", function(assert) {
-		var $panel = this.oPanel.$();
+	QUnit.test("Expandable panel with headerToolbar - toolbar should not have border", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
+		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual($panel.find(".sapMPanelBGTranslucent").css("background-color"), "rgba(255, 255, 255, 0.8)",
-			"should have background-color:rgba(255, 255, 255, 0.8) style present");
+		var $toolbar = this.oPanel.$().find(".sapMTB");
+
+		assert.equal($toolbar.css("border-bottom-width"), "0px", "toolbar border should be 0px");
+	});
+
+	QUnit.test("Expandable panel with headerToolbar - toolbar should not have padding-left", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
+		sap.ui.getCore().applyChanges();
+
+		var $toolbar = this.oPanel.$().find(".sapMTB");
+
+		assert.equal($toolbar.css("padding-left"), "0px", "toolbar padding-left should be 0px");
+	});
+
+	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 3rem", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
+		sap.ui.getCore().applyChanges();
+
+		var fontSize = parseInt(jQuery("body").css("font-size"), 10);
+		var $toolbar = this.oPanel.$().find(".sapMTB");
+
+		assert.equal(parseInt($toolbar.css("margin-left"), 10), 3 * fontSize, "toolbar margin-left should be " + (3*fontSize) + "px");
+	});
+
+	QUnit.test("Expandable panel with headerToolbar - first toolbar child should not have margin-left", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
+		sap.ui.getCore().applyChanges();
+
+		var $toolbar = this.oPanel.$().find(".sapMTB");
+		var $firstToolbarChild = $toolbar.children().eq(0);
+
+		assert.equal($firstToolbarChild.css("margin-left"), "0px", "first toolbar child margin-left should be 0px");
+	});
+
+	QUnit.test("Expandable panel with headerText - headerText should not have padding-left", function(assert) {
+		this.oPanel.setExpandable(true);
+		sap.ui.getCore().applyChanges();
+
+		var $header = this.oPanel.$().find(".sapMPanelHdr");
+
+		assert.equal($header.css("padding-left"), "0px", "headerText padding-left should be 0px");
 	});
 
 	QUnit.test("Container Padding Classes", function (assert) {
@@ -458,6 +577,101 @@
 
 		// Cleanup
 		oContainer.destroy();
+	});
+
+	QUnit.test("Container height exception handling", function (assert) {
+		// System under Test + Act
+		var oContainer = new sap.m.Panel({height: "100px"});
+		var oSpy = this.spy(oContainer, "_setContentHeight");
+
+		// Act
+		oContainer._setContentHeight();
+
+		// Assert
+		assert.strictEqual(oSpy.threw(), false, "Should not have thrown any exceptions.");
+
+		// Cleanup
+		oSpy.restore();
+		oContainer.destroy();
+	});
+
+	QUnit.module("ARIA attributes", {
+		beforeEach: function () {
+			this.oPanel = new sap.m.Panel({
+				headerText: "Panel Header",
+				content: [
+					new sap.m.Text({text: "This is a Text control"}),
+					new sap.m.Button({text: "Click me"})
+				]
+			});
+
+			this.oPanel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oPanel.destroy();
+			this.oPanel = null;
+		},
+		createToolbar: function () {
+			return new sap.m.Toolbar({
+				content : [new sap.m.Title({
+					text : "Panel header"
+				})]
+			});
+		}
+	});
+
+	QUnit.test("Panel with header text and content", function(assert) {
+		var $panel = this.oPanel.$(),
+			sPanelHeaderId = this.oPanel.getId() + '-header';
+
+		assert.strictEqual($panel.attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
+	});
+
+	QUnit.test("Panel with header text and header toolbar", function(assert) {
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), this.oPanel.getHeaderToolbar().getTitleId(), "should have a labelledby reference to the toolbar title.");
+	});
+
+	QUnit.test("Expandable panel with headerText", function(assert) {
+		var sPanelHeaderId = this.oPanel.getId() + '-header';
+
+		this.oPanel.setExpandable(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
+		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), sPanelHeaderId, "should have collapse button having a labelledby reference to the header");
+	});
+
+	QUnit.test("Expandable panel with headerText and header toolbar", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+
+		var sHeaderToolbarTitleId = this.oPanel.getHeaderToolbar().getTitleId();
+
+		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have a labelledby reference to the toolbar title");
+		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the toolbar title");
+	});
+
+	QUnit.test("Expandable panel with headerText and reinitialized header toolbar", function(assert) {
+		var sHeaderToolbarTitleId, sNewHeaderToolbarTitleId;
+
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+		sHeaderToolbarTitleId = this.oPanel.getHeaderToolbar().getTitleId();
+
+		// Initialize new header toolbar
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+		sNewHeaderToolbarTitleId = this.oPanel.getHeaderToolbar().getTitleId();
+
+		assert.notStrictEqual(sHeaderToolbarTitleId, sNewHeaderToolbarTitleId, "The new header toolbar should have different id than the initial one")
+		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have a labelledby reference to the new toolbar title");
+		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the new toolbar title");
 	});
 </script>
 </head>

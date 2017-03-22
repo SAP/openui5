@@ -40,7 +40,7 @@
 					minIntegerDigits: 3
 				}
 			}" />
-			
+
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/fileSize',
@@ -51,7 +51,7 @@
 			}" />
 		</form:content>
 	</form:SimpleForm>
-	
+
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -72,7 +72,7 @@
 					maxIntegerDigits: 2
 				}
 			}" />
-			
+
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/fileSize',
@@ -83,7 +83,7 @@
 			}" />
 		</form:content>
 	</form:SimpleForm>
-	
+
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -104,7 +104,7 @@
 					minFractionDigits: 2
 				}
 			}" />
-			
+
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/fileSize',
@@ -136,7 +136,7 @@
 					maxFractionDigits: 2
 				}
 			}" />
-			
+
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/fileSize',

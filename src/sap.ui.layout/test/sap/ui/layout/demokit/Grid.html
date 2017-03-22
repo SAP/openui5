@@ -1,10 +1,11 @@
 <!DOCTYPE HTML>
-<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.layout.Grid">
+<html data-sap-ui-dk-controls="sap.ui.layout.Grid">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Grid - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -31,7 +32,7 @@
 				padding-top: 45px;
 				text-align: center;
 			}
-			
+
 			#sample4 .sapUiRespGrid div p {
 				text-align: center;
 				margin-top: 45px;
@@ -41,7 +42,7 @@
 		<script id='sample1'>
 			var oGrid1 = new sap.ui.layout.Grid({
 					hSpacing: 1,
-					vSpacing: 1, 	
+					vSpacing: 1,
 					content: [
 						new sap.ui.commons.TextView({
 							text : 'Text spanned over 4 cols on large, 6 cols on medium, and 12 cols on small screens.',
@@ -66,7 +67,7 @@
 
 				var oGrid2 = new sap.ui.layout.Grid({
 					hSpacing: 0,
-					vSpacing: 0, 	
+					vSpacing: 0,
 					content: [
 						new sap.ui.commons.TextView({
 							text : 'Text spanned over 9 cols on large, 7 cols on medium, and 12 cols on small screens.',
@@ -90,7 +91,7 @@
 			<script id='sample2'>
 			var oGridForm = new sap.ui.layout.Grid({
 				hSpacing: 1,
-				vSpacing: 1, 	
+				vSpacing: 1,
 				content: [
 					new sap.ui.commons.Label({
 						text: 'Firstname',
@@ -150,14 +151,14 @@
 					})
 				]
 			});
-			
+
 			oGridForm.placeAt("sample2");
 			</script>
 
 			<script id="sample3">
 			var oGridIndent = new sap.ui.layout.Grid({
 				hSpacing: 2,
-				vSpacing: 2, 	
+				vSpacing: 2,
 				content: [
 					new sap.ui.commons.TextView({
 						text: 'Indent by 3 columns on large, 2 columns on medium, and 1 column on small screens.',
@@ -178,25 +179,25 @@
 
 			var oGridOrder = new sap.ui.layout.Grid({
 				hSpacing: 2,
-				vSpacing: 2, 	
+				vSpacing: 2,
 				content: [
 					new sap.ui.commons.TextView({
 						text: 'Left on large and medium screens. Right on small screens.',
 						layoutData : new sap.ui.layout.GridData({
 							span: "L6 M6 S6",
-							moveFwd: "S6" //??
+							moveForward: "S6" //??
 						})
 					}),
 					new sap.ui.commons.TextView({
 						text: 'Right on large and medium screens. Left on small screens.',
 						layoutData : new sap.ui.layout.GridData({
 							span: "L6 M6 S6",
-							moveBwd: "S6" //??
+							moveBackwards: "S6" //??
 						})
 					})
 				]
 			});
-			
+
 			oGridIndent.placeAt("sample3");
 			oGridOrder.placeAt("sample3");
 			</script>
@@ -213,7 +214,7 @@
 
 			var oGridTiles = new sap.ui.layout.Grid({
 				hSpacing: 1,
-				vSpacing: 1, 	
+				vSpacing: 1,
 				content: [
 					new sap.ui.core.HTML({
 						content: '<p>Normal Tile</p>',
@@ -257,9 +258,9 @@
 							span: "L3 M4 S6"
 						})
 					}),
-					
+
 					wideTile,
-					
+
 					new sap.ui.core.HTML({
 						content: '<p>Secondary Tile</p>',
 						width: "100%",
@@ -290,7 +291,7 @@
 					}),
 				]
 			});
-			
+
 			oGridTiles.placeAt("sample4");
 			</script>
 		</head>

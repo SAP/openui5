@@ -1,0 +1,217 @@
+/* ================================== */
+/* CSS for control sap.f/DynamicPage  */
+/* Base theme                         */
+/* ================================== */
+
+.sapFDynamicPage {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	isolation: isolate;
+	z-index: 0;
+}
+
+.sapFDynamicPage.sapFDynamicPageTitleClickEnabled {
+	.sapFDynamicPageTitle:hover {
+		cursor: pointer
+	}
+}
+
+.sapFDynamicPageContent {
+	-webkit-flex-grow: 1;
+	flex-grow: 1;
+
+	background: @sapUiGroupContentBackground;
+}
+
+.sapFDynamicPageContent,
+.sapFDynamicPageContentFitContainer {
+	padding-top: 1rem;
+}
+
+.sapFDynamicPageContentWrapper {
+	.sapFDynamicPageContentWrapperSpacer {
+		height: 4rem;
+		flex: 0 0 4rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageContentWrapper {
+		.sapFDynamicPageContentWrapperSpacer {
+			height: 3.5rem;
+			flex: 0 0 3.5rem;
+		}
+	}
+}
+
+.sapFDynamicPageContent,
+.sapFDynamicPageContentFitContainer {
+	position: relative;
+	padding-right: 2rem;
+	padding-left: 2rem;
+	padding-bottom: 1rem;
+}
+
+.sapFDynamicPageContent > .sapFDynamicPageContentFitContainer {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+
+	&.sapFDynamicPageContentFitContainerFooterVisible {
+		bottom: 4rem;
+	}
+}
+
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
+		padding-right: 1rem;
+		padding-left: 1rem;
+		padding-bottom: 1rem;
+	}
+}
+
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
+		padding-right: 0;
+		padding-left: 0;
+		padding-bottom: 0;
+	}
+}
+
+.sapFDynamicPageContentWrapper {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	will-change: transform;
+	-webkit-overflow-scrolling: touch;
+
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-flex-direction: column;
+	flex-direction: column;
+
+	// Scroll anchoring adjusts the scroll position to prevent visible jumps (or "reflows"),
+	// when content changes above the viewport.
+	// See: https://github.com/WICG/ScrollAnchoring/blob/master/explainer.md
+	overflow-anchor: none;
+}
+
+.sapFDynamicPageSupressScroll {
+	.sapFDynamicPageContentWrapper {
+		overflow: hidden;
+	}
+}
+
+.sapFDynamicPageScrollBar {
+	right: 0;
+	position: absolute;
+	z-index: 10;
+}
+
+.sapFDynamicPage .sapFDynamicPageTitleWrapper {
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: column;
+	-webkit-flex-direction: column;
+	flex-shrink: 0;
+	-webkit-flex-shrink: 0;
+}
+
+.sapFDynamicPageContentWrapper {
+	-webkit-flex-grow: 1;
+	flex-grow: 1;
+}
+
+.sapFDynamicPage,
+.sapFDynamicPage.sapFNavItem {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+}
+
+.sapFDynamicPage {
+	.sapFDynamicPageFooter {
+		position: relative;
+
+		.sapFDynamicPageActualFooterControl {
+			position: absolute;
+			height: 3rem;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			border-radius: 0.25rem;
+			margin-left: 0.5rem;
+			margin-right: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapFDynamicPage .sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+	height: 2.5rem;
+}
+
+html[data-sap-ui-animation='on'] .sapFDynamicPage {
+	.sapFDynamicPageActualFooterControlShow {
+		-webkit-animation: bounceShow 0.35s forwards ease-in-out;
+		animation: bounceShow 0.35s forwards ease-in-out;
+	}
+	.sapFDynamicPageActualFooterControlHide {
+		-webkit-animation: bounceHide 0.35s forwards ease-in-out;
+		animation: bounceHide 0.35s forwards ease-in-out;
+	}
+
+	@-webkit-keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@-webkit-keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+	@keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+}

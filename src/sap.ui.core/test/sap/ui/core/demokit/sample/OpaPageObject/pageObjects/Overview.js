@@ -1,19 +1,18 @@
-sap.ui.define(["sap/ui/test/Opa5"], function(Opa5){
+sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/actions/Press"], function(Opa5, Press){
 	"use strict";
 
 	//don't repeat yourself in tests
 	var fnPress = function(sId){
 		return this.waitFor({
 			id : sId,
-			success : function (oButton) {
-				oButton.$().trigger("tap");
-			}
+			actions: new Press()
 		});
 	};
 
 	Opa5.createPageObjects({
-		
+
 		onTheOverview : {
+			viewName: "Main",
 			actions : {
 				iPressOnGoToPage1 : function () {
 					//ensure to pass the correct 'this' scope
@@ -25,7 +24,7 @@ sap.ui.define(["sap/ui/test/Opa5"], function(Opa5){
 				}
 			}
 		}
-		
+
 	});
 
 });

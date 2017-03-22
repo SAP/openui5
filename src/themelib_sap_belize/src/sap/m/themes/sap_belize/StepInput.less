@@ -1,0 +1,31 @@
+/* ================================ */
+/* CSS for control sap.m/StepInput  */
+/* Belize theme                     */
+/* ================================ */
+
+.sapMStepInput-CTX {
+  &:focus {
+    .sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMStepInputReadOnly):not(.sapMStepInputDisabled) {
+      border: 1px solid @sapUiFieldBorderColor;
+    }
+  }
+  .sapMInput .sapMInputBaseInner:focus {
+    border: 1px solid @sapUiFieldBorderColor;
+  }
+}
+.sapMStepInput-CTX {
+  &:focus {
+      .sapMInput .sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMStepInputReadOnly):not(.sapMStepInputDisabled) {
+        &::before {
+          content: "";
+          position: absolute;
+          top: 3px;
+          left: 3px;
+          right: 3px;
+          bottom: 3px;
+          border: 1px dotted @sapUiContentFocusColor;
+          pointer-events: none;
+        }
+      }
+  }
+}

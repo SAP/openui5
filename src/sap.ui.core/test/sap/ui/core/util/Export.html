@@ -1,9 +1,10 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	<title>Export - sap.ui.core.util</title>
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="base">
@@ -30,27 +31,27 @@
 		</tr>
 		<tr class="data-source-json">
 			<td>Rows</td>
-			<td><input id="json-rows" value="10"/></td>
+			<td><input id="json-rows" value="10"></td>
 		</tr>
 		<tr class="data-source-json">
 			<td>Columns</td>
-			<td><input id="json-columns" value="4"/></td>
+			<td><input id="json-columns" value="4"></td>
 		</tr>
 		<tr class="data-source-odata" style="display:none">
 			<td>Service URL</td>
-			<td><input id="odata-service-url" value="../../../../../proxy/http/services.odata.org/Northwind/Northwind.svc/"/></td>
+			<td><input id="odata-service-url" value="../../../../../proxy/http/services.odata.org/Northwind/Northwind.svc/"></td>
 		</tr>
 		<tr class="data-source-odata" style="display:none">
 			<td>Collection</td>
-			<td><input id="odata-collection" value="Products"/></td>
+			<td><input id="odata-collection" value="Products"></td>
 		</tr>
 		<tr class="data-source-odata" style="display:none">
 			<td>Column name</td>
-			<td><input id="odata-column-name" value="Product Name"/></td>
+			<td><input id="odata-column-name" value="Product Name"></td>
 		</tr>
 		<tr class="data-source-odata" style="display:none">
 			<td>Column property</td>
-			<td><input id="odata-column-property" value="ProductName"/></td>
+			<td><input id="odata-column-property" value="ProductName"></td>
 		</tr>
 		<tr>
 			<td>Export type</td>
@@ -62,7 +63,17 @@
 		</tr>
 		<tr>
 			<td>Separator char</td>
-			<td><input id="separator-char" value="," maxlength="1"/></td>
+			<td><input id="separator-char" value="," maxlength="1"></td>
+		</tr>
+		<tr>
+			<td>Byte order mark</td>
+			<td>
+				<select id="byte-order-mark">
+					<option value="default">Default (utf-8 = true)</option>
+					<option value="false">false</option>
+					<option value="true">true</option>
+				</select>
+			</td>
 		</tr>
 		<tr>
 			<td></td>
@@ -72,20 +83,22 @@
 	<div id="result"></div>
 </div>
 <script>
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/model/odata/ODataModel', 'sap/ui/core/util/Export', 'sap/ui/core/util/ExportTypeCSV'],
+sap.ui.require(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/model/odata/ODataModel', 'sap/ui/core/util/Export', 'sap/ui/core/util/ExportTypeCSV'],
 		function($, JSONModel, ODataModel, Export, ExportTypeCSV) {
 		'use strict';
 
 		var getSettings = function() {
 
 			var sExportType = $('#export-type').val(),
-				sSeparatorChar = $('#separator-char').val();
+				sSeparatorChar = $('#separator-char').val(),
+				bByteOrderMark = $('#byte-order-mark').val() === "default" ? undefined : $('#byte-order-mark').val() === "true";
 
 			var oExportType;
 
 			if (sExportType === 'csv') {
 				oExportType = new ExportTypeCSV({
-					separatorChar: sSeparatorChar
+					separatorChar: sSeparatorChar,
+					byteOrderMark: bByteOrderMark
 				});
 			}
 
@@ -102,7 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/model
 				for (var i = 0; i < iRows; i++) {
 					var mRow = {};
 					for (var k = 0; k < iColumns; k++) {
-						mRow["column" + k] = (Math.random() + 1).toString(36).substring(7);
+						mRow["column" + k] = (Math.random() + 1).toString(36).substring(7) + " ✓ \t";
 					}
 					aData.push(mRow);
 				}
@@ -161,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/model
 
 			oExport.generate()
 			.then(function(sFile) {
-				$("#result").html(sFile.replace(/\n/g, '<br/>'));
+				$("#result").html(sFile.replace(/\n/g, '<br>'));
 			})
 			.then(destroyExportObject, destroyExportObject);
 		});

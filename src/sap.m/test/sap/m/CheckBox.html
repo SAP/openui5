@@ -3,13 +3,12 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>sap.m.CheckBox</title>
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
-		<script type="text/javascript">
+		<script>
 			jQuery.sap.initMobile();
 
 			/* Global helper objects */
@@ -17,6 +16,7 @@
 				enabled: true,
 				content: [
 					new sap.m.CheckBox({
+						id: "cb_in_toolbar",
 						text: "In toolbar"
 					})
 				]
@@ -31,26 +31,31 @@
 			function createContent() {
 				return [
 					new sap.m.CheckBox({
+						id:"cb_selected_enabled",
 						visible: true,
 						selected:true,
 						enabled: true
 					}),
 					new sap.m.CheckBox({
+						id:"cb_selected_disabled",
 						visible: true,
 						selected: true,
 						enabled: false
 					}),
 					new sap.m.CheckBox({
+						id:"cb_deselected_enabled",
 						visible: true,
 						selected: false,
 						enabled: true
 					}),
 					new sap.m.CheckBox({
+						id:"cb_disabled_deselected",
 						visible: true,
 						selected: false,
 						enabled: false
 					}),
 					new sap.m.CheckBox({
+						id:"cb_with_label_size",
 						visible:true,
 						selected: true,
 						enabled: true,
@@ -58,6 +63,7 @@
 						text: "Label 100px"
 					}),
 					new sap.m.CheckBox({
+						id:"cb_not_editable",
 						enabled: true,
 						visible: true,
 						selected: true,
@@ -73,6 +79,43 @@
 						text: "Text direcrtion RTL"
 					}),
 					new sap.m.CheckBox({
+						id:"cb_warning_deselected",
+						text: "Warning",
+						valueState: "Warning"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_warning_selected",
+						text: "Warning checked",
+						selected: true,
+						valueState: "Warning"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_warning_selected_disabled",
+						text: "Warning disabled",
+						selected: true,
+						enabled: false,
+						valueState: "Warning"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_error_deselected",
+						text: "Error",
+						valueState: "Error"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_error_selected",
+						text: "Error checked",
+						selected: true,
+						valueState: "Error"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_error_selected_disabled",
+						text: "Error disabled",
+						selected: true,
+						enabled: false,
+						valueState: "Error"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_enable_disable_toolbar",
 						visible:true,
 						selected: true,
 						enabled: true,
@@ -113,7 +156,7 @@
 					new sap.m.Toolbar({
 						content: [
 							new sap.m.CheckBox({
-								text: "+012 345 670", 
+								text: "+012 345 670",
 								textAlign: sap.ui.core.TextAlign.Right,
 								textDirection: sap.ui.core.TextDirection.LTR
 							}),

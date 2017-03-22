@@ -1,7 +1,10 @@
 src/*/target
 src/*/test
+!src/sap.m/test/sap/m/demokit
+!src/sap.ui.demokit/test
 
 # library specific excludes - need to be consistent with the library-local .eslintignore files
 src/sap.ui.core/src/sap/ui/thirdparty
 src/sap.ui.demokit/src/sap/ui/demokit/js
+src/sap.ui.codeeditor/src/sap/ui/codeeditor/js
 src/testsuite-utils

@@ -2,11 +2,12 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
 
+<script src="../shared-config.js"></script>
 <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
-	
+	data-sap-ui-libs="sap.m">
+
 </script>
 
 <link rel="stylesheet"
@@ -21,7 +22,7 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- use the sinon faketimers for this test -->
-<script type="text/javascript">
+<script>
 	sinon.config.useFakeTimers = true;
 </script>
 
@@ -45,7 +46,7 @@
 
 		var testTitle = "Selection on key=" + sKey + ", includeItemInSelection=" + bIncludeItemInSelection + ", mode=" + sListMode;
 
-		test(testTitle, function() {
+		QUnit.test(testTitle, function(assert) {
 			var oSpy = this.spy();
 			var oList = new sap.m.List("list1", {
 				items : [ new sap.m.ActionListItem("item1", {
@@ -62,18 +63,18 @@
 
 			this.clock.tick(50);
 
-			strictEqual(oSpy.callCount, 1, "Event 'press' should be fired");
-			ok(!oList.getItems()[0].getSelected(), "never selected");
+			assert.strictEqual(oSpy.callCount, 1, "Event 'press' should be fired");
+			assert.ok(!oList.getItems()[0].getSelected(), "never selected");
 			oList.destroy();// Clean up
 		});
 	}
 </script>
 
 <script>
-	module("Events");
+	QUnit.module("Events");
 
-	test("tap", function(assert) {
-		
+	QUnit.test("tap", function(assert) {
+
 		var oSpy = this.spy();
 
 		var oList = setup("item1", {
@@ -85,14 +86,14 @@
 
 		this.clock.tick(50);
 
-		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
 		oList.destroy();// Clean up
 	});
 
-	test("Press event on [ENTER]", function() {
+	QUnit.test("Press event on [ENTER]", function(assert) {
 
 		var oSpy = this.spy();
-		
+
 		var oList = setup("item1", {
 			text : "Action1",
 			press : oSpy
@@ -102,14 +103,14 @@
 
 		this.clock.tick(50);
 
-		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
 		oList.destroy();// Clean up
 	});
 
-	test("Press event on [SPACE]", function() {
-		
+	QUnit.test("Press event on [SPACE]", function(assert) {
+
 		var oSpy = this.spy();
-		
+
 		var oList = setup("item1", {
 			text : "Action1",
 			press : oSpy
@@ -119,7 +120,7 @@
 
 		this.clock.tick(50);
 
-		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
 		oList.destroy();// Clean up
 	});
 

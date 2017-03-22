@@ -2,8 +2,9 @@
  * ${copyright}
  */
 
-/*global QUnit, URI*/// declare unusual global vars for JSLint/SAPUI5 validation
+/*global jQuery, QUnit, URI*/// declare unusual global vars for JSLint/SAPUI5 validation
 (function() {
+	"use strict";
 
 	if (typeof QUnit !== "undefined") {
 
@@ -49,7 +50,7 @@
 			var $qunitDetails = jQuery('#qunit-header,#qunit-banner,qunit-userAgent,#qunit-testrunner-toolbar,#qunit-tests');
 			var $qunitFixture = jQuery("#qunit-fixture");
 			if ( $qunit.size() === 0 && $qunitDetails.size() > 0 ) {
-				// create a "qunit" section and place it before the existing detail DOM 
+				// create a "qunit" section and place it before the existing detail DOM
 				$qunit = jQuery("<div id='qunit'></div>").insertBefore($qunitDetails[0]);
 				// move the existing DOM into the wrapper
 				$qunit.append($qunitDetails);
@@ -72,7 +73,19 @@
 			window.assert = QUnit.config.current.assert;
 		});
 		QUnit.testDone(function(assert) {
-			delete window.assert;
+			try {
+				delete window.assert;
+			} catch (ex) {
+				// report that the cleanup of the window.assert compatibility object
+				// failed because some script loaded via script tag defined an assert
+				// function which finally causes the "delete window.assert" to fail
+				if (!window._$cleanupFailed) {
+					QUnit.test("A script loaded via script tag defines a global assert function!", function(assert) {
+						QUnit.ok(QUnit.config.ignoreCleanupFailure, ex);
+					});
+					window._$cleanupFailed = true;
+				}
+			}
 		});
 		QUnit.log(function(data) {
 			// manipulate data.message for failing tests with source info

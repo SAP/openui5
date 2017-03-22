@@ -16,8 +16,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 		onExit: function() {} ,
 
 		onContextChanged: function(oContext, oView) {
-			oView.setBindingContext(oContext);  
-		} 
+			oView.setBindingContext(oContext);
+		}
 
 	});
 

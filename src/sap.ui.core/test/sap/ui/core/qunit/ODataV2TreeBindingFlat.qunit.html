@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"></script>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.core.util.MockServer");
+</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+	var oModel, oBinding, fnOldSend, oMockServer;
+	var sServiceUrl = "/odataFake/";
+
+	sinon.config.useFakeTimers = false;
+
+	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
+
+	/**
+	* Creates a new Mock-Server, this makes sure that after deleting nodes the original data-set is restored.
+	* Called in the setup step of each test-module.
+	*/
+	var fnSetupNewMockServer = function () {
+		// clean up previous mock server
+		if (oMockServer) {
+			oMockServer.stop();
+			oMockServer.destroy();
+		}
+		
+		//Initialize mock servers
+		oMockServer = new sap.ui.core.util.MockServer({
+			rootUri: sServiceUrl
+		});
+		oMockServer.simulate("./model/metadata_orgHierarchy.xml", "./model/orgHierarchy/");
+		oMockServer.start();
+	};
+	
+	// create a dummy AMD fdefine to check if shim works for datajs
+	window.define = function() {
+		throw Error("define should not be called");
+	};
+	window.define.amd = { vendor : "SAPUI5 QUnit Test" };
+	
+	// create binding
+	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
+		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
+		oModel.addBinding(oBinding);
+	};
+</script>
+
+<script src="ODataV2TreeBindingFlat_Paging.qunit.js"></script>
+<script src="ODataV2TreeBindingFlat_Selection.qunit.js"></script>
+<script src="ODataV2TreeBindingFlat_ExpandCollapse.qunit.js"></script>
+<script src="ODataV2TreeBindingFlat_Remove.qunit.js"></script>
+<script src="ODataV2TreeBindingFlat_Requests.qunit.js"></script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: ODataTreeBindingFlat</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

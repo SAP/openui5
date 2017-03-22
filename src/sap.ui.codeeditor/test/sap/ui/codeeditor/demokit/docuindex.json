@@ -1,0 +1,30 @@
+{
+    "demo": { },
+    "explored": {
+        "entitiesDefaults": {
+            "formFactors": "ML"
+        },
+        "samplesRef": [
+	        {
+	            "namespace": "sap.ui.codeeditor.sample",
+	            "ref": "test-resources/sap/ui/codeeditor/demokit/sample"
+	        }
+        ],
+        "entities": [
+            {
+                "id": "sap.ui.codeeditor.CodeEditor",
+                "name": "Code Editor",
+                "category": "User Input",
+                "since": "1.46",
+                "samples": [ "sap.ui.codeeditor.sample.CodeEditor"]
+            }
+        ],
+        "samples": [
+            {
+                "id": "sap.ui.codeeditor.sample.CodeEditor",
+                "name": "Code Editor",
+                "description": "Display or edit  source code with syntax highlighting for various source types."
+            }
+        ]
+    }
+}

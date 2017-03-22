@@ -2,7 +2,6 @@
 	height: 5px;
 	width: 100%;
 
-	-moz-background-size: 40% 5px;
 	-webkit-background-size: 40% 5px;
 	background-size: 40% 5px;
 
@@ -14,7 +13,6 @@
 	background-repeat: no-repeat;
 
 	-webkit-animation: slide 1.5s linear infinite;
-	-moz-animation: slide 1.5s linear;
 	animation: slide 1.5s linear infinite;
 }
 
@@ -25,15 +23,6 @@ html[data-sap-ui-browser^=ie] .sapUiBusy {
 }
 
 @-webkit-keyframes slide {
-    0% {
-    	background-position: -500px 0;
-    }
-    100% {
-    	background-position: 250% 0;
-    }
-}
-
-@-moz-keyframes slide {
     0% {
     	background-position: -500px 0;
     }

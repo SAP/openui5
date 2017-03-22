@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested classes: sap.ui.core.support.Support/Plugin, sap.ui.core.support.plugins.*
+-->
+
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<title>QUnit tests: Support Tool</title>
+
+	<script src="../../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-noConflict="true">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+
+	<script>
+
+	jQuery.sap.registerModulePath("sap.ui.test", "./");
+
+	sap.ui.require([
+		"jquery.sap.global",
+		"sap/ui/thirdparty/qunit",
+		"sap/ui/qunit/qunit-junit",
+		"sap/ui/qunit/qunit-coverage",
+		"sap/ui/qunit/QUnitUtils",
+		"sap/ui/core/support/Support"
+	],
+	function(jQuery) {
+
+		var Support = sap.ui.require("sap/ui/core/support/Support");
+
+		QUnit.test("Load Support module and check App plugins", function(assert) {
+
+			// save plugin module names which will be replaced with the actual instances
+			var mLibs = sap.ui.getCore().getLoadedLibraries(),
+				aPluginModuleNames = [];
+			for (var n in mLibs) {
+				var oLib = mLibs[n],
+					aLibPlugins = [];
+				if (oLib.extensions && oLib.extensions["sap.ui.support"] && oLib.extensions["sap.ui.support"].diagnosticPlugins) {
+					aLibPlugins = oLib.extensions["sap.ui.support"].diagnosticPlugins;
+				}
+				if (aLibPlugins && Array.isArray(aLibPlugins)) {
+					for (var i = 0; i < aLibPlugins.length; i++) {
+						if (typeof aLibPlugins[i] === 'string' && aPluginModuleNames.indexOf(aLibPlugins[i]) === -1) {
+							aPluginModuleNames.push(aLibPlugins[i]);
+						}
+					}
+				}
+			}
+
+			var oSupport = Support.getStub();
+			assert.equal(oSupport.getType(), Support.StubType.APPLICATION, "Support stub type equals APPLICATION");
+
+			// Unable to open real window here as this causes problems in test execution (popup-blocker, ...)
+			//oSupport.openSupportTool();
+
+			// Load plugins directly
+			return Support.initPlugins(oSupport, false).then(function() {
+				// Check if all App plugins could be loaded
+				var aPlugins = Support.getAppPlugins();
+				for (var i = 0; i < aPlugins.length; i++) {
+					assert.equal(aPlugins[i].isActive(), true, "Plugin '" + aPlugins[i].getMetadata().getName() + "' successfully loaded");
+				}
+			}).then(function() {
+
+				// Unload plugins directly
+				Support.exitPlugins(oSupport, false);
+
+				// Check if all App plugins could be unloaded
+				var aPlugins = Support.getAppPlugins();
+				for (var i = 0; i < aPlugins.length; i++) {
+					assert.equal(aPlugins[i].isActive(), false, "Plugin '" + aPlugins[i].getMetadata().getName() + "' successfully unloaded");
+				}
+
+			});
+		});
+
+	});
+
+	</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

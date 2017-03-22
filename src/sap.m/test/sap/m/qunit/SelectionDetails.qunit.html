@@ -1,0 +1,779 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Test Page for sap.m.SelectionDetails</title>
+
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-language="en">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script>
+
+	QUnit.module("Default values", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Button text", function(assert) {
+		//Assert
+		assert.ok((this.oSelectionDetails.getAggregation("_button").getText().length > 0), "The button text is set.");
+	});
+
+	QUnit.test("Internal aggregations created on init", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getMetadata().getName(), "sap.m.Button", "Private button created");
+	});
+
+	QUnit.module("Basic Rendering", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Control is rendered", function(assert) {
+		//Assert
+		assert.ok(this.oSelectionDetails.$(), "Minimal dom strcture is present");
+	});
+
+	QUnit.test("Button is rendered", function(assert) {
+		//Assert
+		assert.ok(this.oSelectionDetails.getAggregation("_button").$(), "Button is rendered");
+	});
+
+	QUnit.test("Button has text 'Details' and is disabled if no items are present", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details", "The button text is 'Details'");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), false, "The button disabled");
+	});
+
+	QUnit.test("Toolbar button is up to date", function(assert) {
+		// Arrange
+		this.oSelectionDetails.addItem(new sap.m.SelectionDetailsItem());
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details (1)", "The button text is up to date");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), true, "The button enabled");
+	});
+
+	QUnit.module("API methods", {
+		beforeEach : function() {
+			this.oResponsivePopover = new sap.m.ResponsivePopover();
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.setAggregation("_popover", this.oResponsivePopover, true);
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Method 'isOpen' returns false as default", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.isOpen(), false, "Method 'isOpen' returns false");
+	});
+
+	QUnit.test("Method 'isOpen' returns true if SelectionDetails is open", function(assert) {
+		// Arrange
+		sinon.stub(this.oResponsivePopover, "isOpen").returns(true);
+
+		//Assert
+		assert.equal(this.oSelectionDetails.isOpen(), true, "Method 'isOpen' returns true");
+	});
+
+	QUnit.test("Method 'isOpen' returns false if SelectionDetails is closed", function(assert) {
+		//Arrange
+		sinon.stub(this.oResponsivePopover, "isOpen").returns(false);
+
+		//Assert
+		assert.equal(this.oSelectionDetails.isOpen(), false, "Method 'isOpen' returns false");
+	});
+
+	QUnit.test("Method isEnabled, aggregation 'items' is empty", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.isEnabled(), false, "Method isEnabled returns false if the aggregation 'items' is empty");
+	});
+
+	QUnit.test("Method isEnabled, aggregation 'items' contains items", function(assert) {
+		// Arrange
+		sinon.stub(this.oSelectionDetails, "getAggregation").returns([new sap.m.SelectionDetailsItem()]);
+
+		//Assert
+		assert.equal(this.oSelectionDetails.isEnabled(), true, "Method isEnabled returns true if the aggregation 'items' contains items");
+	});
+
+	QUnit.test("Method close", function(assert) {
+		// Arrange
+		this.oSelectionDetails.destroyAggregation("_popover");
+		var oSpy = sinon.spy(sap.m.ResponsivePopover.prototype, "close");
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.Button);
+
+		// Act
+		var oReturnedSelectionDetails = this.oSelectionDetails.close();
+
+		//Assert
+		assert.ok(oSpy.called, "The 'close' method was called");
+		assert.ok(oReturnedSelectionDetails instanceof sap.m.SelectionDetails, "Returned value is SelectionDetails control");
+	});
+
+	QUnit.module("Popover interaction", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Popover aggregation is filled when the Click handler is executed", function(assert) {
+		// Arrange
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+
+		//Assert
+		assert.ok(this.oSelectionDetails.getAggregation("_popover"), "The aggregation is filled");
+	});
+
+	QUnit.test("Click handler opens the popover", function(assert) {
+		// Arrange
+		var oSpy = sinon.spy(sap.m.ResponsivePopover.prototype, "openBy");
+
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+
+		//Assert
+		assert.ok(oSpy.calledOnce, "The 'openBy' function was called");
+
+		// Restore
+		oSpy.restore();
+	});
+
+	QUnit.test("Click handler creates list items and puts them in the list", function(assert) {
+		// Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oList = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-list");
+
+		//Assert
+		assert.equal(oList.getAggregation("items").length, 1, "One list item has been added to the list");
+	});
+
+	QUnit.test("Click handler creates buttons for actions", function(assert) {
+		// Arrange
+		var sText = "myText";
+		this.oSelectionDetails.addAction(new sap.ui.core.Item({text: sText, enabled: true}));
+
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+
+		//Assert
+		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
+		assert.equal(oButton.getText(), sText, "Button has correct text");
+		assert.equal(oButton.getEnabled(), true, "Button has correct text");
+	});
+
+	QUnit.test("Press on the button results in action Press event", function(assert) {
+		// Arrange
+		var oAction = new sap.ui.core.Item();
+		this.oSelectionDetails.addAction(oAction);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
+		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
+
+		// Act
+		oButton.firePress();
+
+		//Assert
+		assert.deepEqual(oSpy.getCall(0).args[0].action, oAction, "The actionPress event of SelectionDetails has been triggered");
+		assert.equal(oSpy.getCall(0).args[0].level, "List", "The action level is on list level")
+	});
+
+	QUnit.test("ActionListItem is created for actiongroups aggregation", function(assert) {
+		// Arrange
+		var oActionGroup = new sap.ui.core.Item();
+		this.oSelectionDetails.addActionGroup(oActionGroup);
+
+		// Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+
+		// Assert
+		assert.ok(sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actiongroup-0"), "ActionListItem has been created");
+	});
+
+	QUnit.test("Press on the ActionListItem triggers action press event", function(assert) {
+		// Arrange
+		var oActionGroup = new sap.ui.core.Item();
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addActionGroup(oActionGroup);
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oActionListItem = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actiongroup-0");
+		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
+
+		// Act
+		oActionListItem.firePress();
+
+		// Assert
+		assert.deepEqual(oSpy.getCall(0).args[0].action, oActionGroup, "The actionPress event of SelectionDetails has been triggered");
+		assert.deepEqual(oSpy.getCall(0).args[0].items, [oSelectionDetailsItem], "The items are attached in the actionPress event");
+		assert.equal(oSpy.getCall(0).args[0].level, "Group", "The action level is on group level")
+	});
+
+	QUnit.test("List is destroyed", function(assert) {
+		//Arrange
+		this.oSelectionDetails.addItem(new sap.m.SelectionDetailsItem);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oSpy = sinon.spy(this.oSelectionDetails._oList, "destroy");
+
+		//Act
+		this.oSelectionDetails.destroy();
+
+		//Assert
+		assert.ok(oSpy.calledOnce, "List is destroyed");
+	});
+
+	QUnit.test("Toolbar for list actions is destroyed", function(assert) {
+		//Arrange
+		this.oSelectionDetails.addAction(new sap.ui.core.Item());
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oSpy = sinon.spy(this.oSelectionDetails._oToolbar, "destroy");
+
+		//Act
+		this.oSelectionDetails.destroy();
+
+		//Assert
+		assert.ok(oSpy.calledOnce, "Toolbar for actions on list level is destroyed");
+	});
+
+	QUnit.module("Navigation", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("'_navigate' Event for the selectionDetailsItem results in navigate event on SelectionDetails", function(assert) {
+		//Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		var oSpy = sinon.spy(this.oSelectionDetails, "fireNavigate");
+
+		//Act
+		oSelectionDetailsItem.fireEvent("_navigate");
+		//Assert
+		assert.deepEqual(oSpy.getCall(0).args[0].item, oSelectionDetailsItem, "'navigate' event of SelectionDetails was called with correct 'item' parameter");
+		assert.deepEqual(oSpy.getCall(0).args[0].direction, "forward", "'navigate' event of SelectionDetails was called with correct 'direction' parameter");
+	});
+
+	QUnit.module("Control Facade", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Facade is not returning the original instance", function(assert) {
+		// Act
+		var oFacade = this.oSelectionDetails.getFacade();
+
+		//Assert
+		assert.notDeepEqual(this.oSelectionDetails, oFacade, "Proxy object is returned.");
+	});
+
+	QUnit.test("Facade proxy object is buffered on instance level", function(assert) {
+		// Act
+		var oFacadeFirstCall = this.oSelectionDetails.getFacade();
+		var oFacadeSecondCall = this.oSelectionDetails.getFacade();
+
+		//Assert
+		assert.equal(oFacadeFirstCall, oFacadeSecondCall, "Same proxy object is returned");
+	});
+
+	QUnit.test("Facade includes isOpen method", function(assert) {
+		// Act
+		var oFacade = this.oSelectionDetails.getFacade();
+
+		//Assert
+		assert.notOk(oFacade.isOpen(), "isOpen returns false");
+	});
+
+	QUnit.module("Factory Function", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Factory function not registered yet", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory, null, "Factory function is undefined");
+	});
+
+	QUnit.test("Factory Function - only function provided", function(assert) {
+		//Arrange
+		fnFunction = function(){};
+		this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
+
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory.factory, fnFunction, "Factory function is defined");
+		assert.ok(!this.oSelectionDetails._oItemFactory.data, "Factory data is undefined");
+	});
+
+	QUnit.test("Register Factory Function - data and function provided", function(assert) {
+		//Arrange
+		fnFunction = function(){};
+		oData = [1, 2];
+		this.oSelectionDetails.registerSelectionDetailsItemFactory(oData, fnFunction);
+
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory.factory, fnFunction, "Factory function is defined");
+		assert.equal(this.oSelectionDetails._oItemFactory.data, oData, "Factory data is defined");
+	});
+
+	QUnit.test("Factory Function - invalid data provided", function(assert) {
+		//Arrange
+		fnFunction = "Invalid data";
+		var oResult = this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
+
+		//Assert
+		assert.equal(this.oSelectionDetails._oItemFactory, null, "Factory function is undefined");
+		assert.equal(oResult, this.oSelectionDetails, "Factory function returns SelectionDetails");
+	});
+
+	QUnit.module("Events", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Event 'beforeOpen' is triggered", function(assert) {
+		assert.expect(1);
+		//Arrange
+		this.oSelectionDetails.attachBeforeOpen(fnBeforeOpen);
+
+		//Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+
+		//Assert
+		function fnBeforeOpen (oEvt) {
+			assert.ok(true, "Event was triggered");
+		}
+	});
+
+	QUnit.test("Event 'beforeClose' is triggered", function(assert) {
+		assert.expect(1);
+		//Arrange
+		this.oSelectionDetails.attachBeforeClose(fnBeforeClose);
+
+		//Act
+		this.oSelectionDetails._handlePressLazy(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.OverflowToolbar, sap.m.ToolbarSpacer, sap.m.Button, sap.m.List, sap.m.ActionListItem);
+		// On mobile devices the popover opens in fullscreen. The close needs to be done by hand.
+		if (sap.ui.Device.system.phone) {
+			this.oSelectionDetails.getAggregation("_popover").close();
+		}
+
+		//Assert
+		function fnBeforeClose (oEvt) {
+			assert.ok(true, "Event was triggered");
+		}
+	});
+
+	QUnit.test("Popover event 'beforeOpen' is delegated", function(assert) {
+		//Arrange
+		var oSpyBeforeOpen = sinon.spy(this.oSelectionDetails, "fireBeforeOpen");
+		var oSpyBeforeClose = sinon.spy(this.oSelectionDetails, "fireBeforeClose");
+
+		//Act
+		this.oSelectionDetails._delegatePopoverEvent({
+			sId: "beforeOpen"
+		});
+
+		//Assert
+		assert.ok(oSpyBeforeOpen.calledOnce, "Popover event 'beforeOpen' delegated.");
+		assert.notOk(oSpyBeforeClose.calledOnce, "Popover event 'beforeClose' not delegated.");
+	});
+
+	QUnit.module("Change Handler", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			this.oDummyControl = new sap.ui.base.ManagedObject();
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+			this.oDummyControl.destroy();
+			this.oDummyControl = null;
+		}
+	});
+
+	QUnit.test("Calling 'attachSelectionHandler' returns this", function(assert) {
+		//Act
+		var oResult = this.oSelectionDetails.attachSelectionHandler();
+
+		//Assert
+		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
+	});
+
+	QUnit.test("Wrong paramter ends in nothing", function(assert) {
+		//Act
+		var oResult = this.oSelectionDetails.attachSelectionHandler({}, "");
+
+		//Assert
+		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
+	});
+
+	QUnit.test("Save parameters to enable detach mechanism", function(assert) {
+		//Arrange
+		var oExpected = {
+			eventId: "myEventName",
+			listener: this.oDummyControl
+		};
+
+		//Act
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+
+		//Assert
+		assert.deepEqual(this.oSelectionDetails._oChangeHandler, oExpected, "Parameters are saved");
+	});
+
+	QUnit.test("Event listener is attached to listener object", function(assert) {
+		//Act
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+
+		//Assert
+		assert.ok(this.oDummyControl.mEventRegistry.myEventName, "Event registered");
+		assert.equal(this.oDummyControl.mEventRegistry.myEventName[0].fFunction, this.oSelectionDetails._handleSelectionChange, "Internal function assigned");
+		assert.equal(this.oDummyControl.mEventRegistry.myEventName[0].oListener, this.oSelectionDetails, "Listener assigned");
+	});
+
+	QUnit.test("Function 'detachSelectionHandler' without attach beforehand does nothing", function(assert) {
+		//Act
+		var oResult = this.oSelectionDetails.detachSelectionHandler();
+
+		//Assert
+		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
+	});
+
+	QUnit.test("Function 'detachSelectionHandler' detaches event on listener", function(assert) {
+		//Arrange
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+
+		//Act
+		this.oSelectionDetails.detachSelectionHandler();
+
+		//Assert
+		assert.notOk(this.oDummyControl.mEventRegistry.myEventName, "Event detached on listener object");
+	});
+
+	QUnit.module("Selection change handling", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Selection data is saved", function(assert) {
+		//Arrange
+		var oExpected = {
+			data: [{
+				data: [],
+				displayData: []
+			}, {
+				data: [],
+				displayData: []
+			}]
+		};
+
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oExpected.data;
+			}
+		});
+
+		//Assert
+		assert.equal(this.oSelectionDetails._oSelectionData, oExpected.data, "Event data is saved");
+	});
+
+	QUnit.test("Missleading event parameters end's in nothing", function(assert) {
+		//Arrange
+		var oEventParam = {
+			otto: [],
+			karl: []
+		};
+
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oEventParam;
+			}
+		});
+
+		//Assert
+		assert.notOk(this.oSelectionDetails._oSelectionData, "Misleading event parameter object end's in nothing");
+	});
+
+	QUnit.test("Selection data updates button text - add items", function(assert) {
+		//Arrange
+		var oEventParam = {
+			data: [{
+				data: [],
+				displayData: []
+			}, {
+				data: [],
+				displayData: []
+			}]
+		};
+
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oEventParam.data;
+			}
+		});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details (2)", "The button text is up to date");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), true, "The button is enabled");
+	});
+
+	QUnit.test("Selection data updates button text - remove items", function(assert) {
+		//Arrange
+		var oEventParam = {
+			data: [{
+				data: [],
+				displayData: []
+			}, {
+				data: [],
+				displayData: []
+			}]
+		};
+
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oEventParam.data;
+			}
+		});
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return [];
+			}
+		});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details", "The button text is up to date");
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), false, "The button is disabled");
+	});
+
+	QUnit.module("Factory integration", {
+		beforeEach : function() {
+			this.aCreatedItems = [];
+			this.fnFactory = function (aDisplayData, aData, oData) {
+				var oItem = new sap.m.SelectionDetailsItem();
+				this.aCreatedItems.push(oItem);
+				return oItem;
+			}.bind(this);
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.registerSelectionDetailsItemFactory(this.fnFactory);
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("Factory function call adds returned item to 'items' aggregation", function(assert) {
+		//Arrange
+		var oEventParam = {
+			data: [{
+				data: [],
+				displayData: []
+			}, {
+				data: [],
+				displayData: []
+			}]
+		};
+
+		//Act
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oEventParam.data;
+			}
+		});
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, [
+			sap.m.NavContainer,
+			sap.m.ResponsivePopover,
+			sap.m.Page,
+			sap.m.OverflowToolbar,
+			sap.m.ToolbarSpacer,
+			sap.m.Button,
+			sap.m.List,
+			sap.m.ActionListItem
+		]);
+
+		//Assert
+		assert.equal(this.oSelectionDetails.getItems().length, 2, "Items are added");
+	});
+
+	QUnit.test("Before factory is called existing items are destroyed", function(assert) {
+		//Arrange
+		var oEventParam = {
+			data: [{
+				data: [],
+				displayData: []
+			}, {
+				data: [],
+				displayData: []
+			}]
+		};
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oEventParam.data;
+			}
+		});
+		oSpy = sinon.spy(this.oSelectionDetails, "destroyAggregation");
+
+		//Act
+		this.oSelectionDetails._callFactory();
+
+		//Assert
+		assert.ok(oSpy.withArgs(["items", true]), "Correct aggregation destroyed");
+		assert.equal(this.oSelectionDetails.getItems().length, 2, "Items are added");
+	});
+
+	QUnit.test("Before factory is called event 'beforeUpdate' is triggered", function(assert) {
+		assert.expect(1);
+
+		//Arrange
+		var aOldItems = [
+			new sap.m.SelectionDetailsItem(),
+			new sap.m.SelectionDetailsItem()
+		];
+		this.oSelectionDetails.addItem(aOldItems[0]);
+		this.oSelectionDetails.addItem(aOldItems[1]);
+		var oEventParam = {
+			data: [{
+				data: [],
+				displayData: []
+			}, {
+				data: [],
+				displayData: []
+			}]
+		};
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oEventParam.data;
+			}
+		});
+
+		//Act
+		this.oSelectionDetails.attachEvent("beforeUpdate", onBeforeUpdate);
+		this.oSelectionDetails._callFactory();
+
+		//Assert
+		function onBeforeUpdate(oEvent) {
+			assert.deepEqual(oEvent.getParameter("items"), aOldItems, "Event includes old items as parameter");
+		};
+	});
+
+	QUnit.test("After factory is called event 'afterUpdate' is triggered", function(assert) {
+		assert.expect(1);
+
+		//Arrange
+		var oEventParam = {
+			data: [{
+				data: [],
+				displayData: []
+			}, {
+				data: [],
+				displayData: []
+			}]
+		};
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oEventParam.data;
+			}
+		});
+
+		//Act
+		this.oSelectionDetails.attachEvent("afterUpdate", onAfterUpdate.bind(this));
+		this.oSelectionDetails._callFactory();
+
+		//Assert
+		function onAfterUpdate(oEvent) {
+			assert.deepEqual(oEvent.getParameter("items"), this.aCreatedItems, "Event includes new items as parameter");
+		}
+	});
+
+</script>
+</head>
+<body class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

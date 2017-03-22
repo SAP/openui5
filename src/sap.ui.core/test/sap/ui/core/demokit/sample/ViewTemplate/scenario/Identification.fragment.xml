@@ -1,0 +1,15 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+
+	<scenario:Form title="Identification">
+		<!-- to show at most 3 ID fields, use:
+			list="{path:'entityType>com.sap.vocabularies.UI.v1.Identification',length:3}"
+		-->
+		<template:repeat list="{entityType>com.sap.vocabularies.UI.v1.Identification}" var="field">
+			<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
+		</template:repeat>
+	</scenario:Form>
+</core:FragmentDefinition>

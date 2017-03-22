@@ -12,8 +12,12 @@
 @sapUiContentForegroundTextColor: @sapContent_ForegroundTextColor;
 
 @sapUiShellBackground: @sapShell_Background;
+@sapUiShellBackgroundImage: @sapShell_BackgroundImage;
+@sapUiShellBackgroundImageOpacity: @sapShell_BackgroundImageOpacity;
+@sapUiShellBackgroundImageRepeat: @sapShell_BackgroundImageRepeat;
 @sapUiShellBorderColor: @sapShell_BorderColor;
 @sapUiShellTextColor: @sapShell_TextColor;
+@sapUiShellFavicon: @sapShell_Favicon;
 
 @sapUiButtonBackground: @sapButton_Background;
 @sapUiButtonBorderColor: @sapButton_BorderColor;
@@ -160,6 +164,8 @@
 @sapUiWarningBG: #FFFCB5;
 
 @sapUiPositiveBG: mix(@sapUiGreen, @sapUiWhite, 12%);   // #e0f1e7
+
+@sapUiSuccessBG: mix(@sapUiGreen, @sapUiWhite, 12%);   // #e0f1e7
 
 @sapUiReadOnlyBG: #EAEDF0;
 
@@ -389,7 +395,7 @@
 /* Exact */
 @sapUiUx3ExactLstExpandOffset: -1 -2;
 @sapUiUx3ExactLstRootExpandOffset: 0 3;
-@sapUiUx3ExactLstContentTop: 26px;
+@sapUiUx3ExactLstContentTop: 25px;
 
 /* Approved by UX to use a hard coded color value for this */
 @sapUiUx3ShellToolPaletteIconFontColor: #8899aa;
@@ -413,6 +419,9 @@
 @sapUiNotifierWidth: ~"40px";
 @sapUiNotifierSeparatorWidth: ~"2px";
 
+/* ToolPopup */
+@sapUiUx3ToolPopupArrowHeight: 20px;
+
 // @sapUiButtonBorderColor: darken(@sapUiButtonStandardBG, 25%);
 // @sapUiButtonDisabledBorderColor: lighten(@sapUiButtonBorderColor, 11.2%); // #BFBFBF
 // @sapUiButtonDisabledBackgroundColor: @sapUiButtonStandardBG;
@@ -420,6 +429,7 @@
 // @sapUiButtonHoverBackgroundColor: @sapUiHighlight;
 @sapUiButtonActiveBorderColor: darken(darken(@sapBaseColor, 46.7), 20%); // #333333
 @sapUiButtonActiveBackground: darken(@sapBaseColor, 46.7);
+@sapUiButtonActiveTextColor: contrast(@sapUiButtonActiveBackground, @sapUiButtonTextColor, #fff);
 // @sapUiButtonEmphasizedBorderColor: darken(@sapUiButtonEmphasizedBackground, 25%);
 @sapUiButtonEmphasizedHoverBorderColor: darken(@sapUiButtonEmphasizedBackground, 35%); // #444444
 @sapUiButtonEmphasizedHoverBackground: lighten(@sapUiButtonEmphasizedBackground, 7%);

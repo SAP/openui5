@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * The class <code>CORSFilter</code> is used to simply append the 
+ * The class <code>CORSFilter</code> is used to simply append the
  * Access-Control-Allow-Origin header to the response.
  * <p>
  * <i>This class must not be used in productive systems.</i>
- * 
+ *
  * @author Peter Muessig
  */
 public class CORSFilter implements Filter {
@@ -44,25 +44,25 @@ public class CORSFilter implements Filter {
    */
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    
+
     // make sure that the request/response are http request/response
     if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-      
+
       // determine the method of the request
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
       String method = httpRequest.getMethod().toUpperCase(); // NOSONAR
-      
+
       // only process GET or HEAD requests
       if (method.matches("GET|HEAD")) {
         httpResponse.setHeader("Access-Control-Allow-Origin", "*");
       }
-      
+
     }
-    
+
     // proceed in the filter chain
     chain.doFilter(request, response);
-    
+
   } // method: doFilter
 
 

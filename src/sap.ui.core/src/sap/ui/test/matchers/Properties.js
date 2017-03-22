@@ -1,26 +1,39 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _LogCollector) {
+	"use strict";
+	var oLogger = $.sap.log.getLogger("sap.ui.test.matchers.Properties", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
 
 	/**
-	 * @class Properties - checks if a control's properties have the following values
-	 * @param {object} the object with a properties to check { propertyName : propertyValue, ... }, if value is regexp, it evaluates regexp with a control's property value
+	 * @class Properties - checks if a control's properties have the provided values - all properties have to match their values.
+	 * @param {object} oProperties the object with the properties to be checked. Example:
+	 * <pre>
+	 * // Would filter for an enabled control with the text "Accept".
+	 * new Properties({
+	 *     // The property text has the exact value "Accept"
+	 *     text: "Accept",
+	 *     // The property enabled also has to be true
+	 *     enabled: true
+	 * })
+	 * </pre>
+	 * If the value is a RegExp, it tests the RegExp with the value. RegExp only works with string properties.
 	 * @public
-	 * @alias sap.ui.test.matchers.Properties
+	 * @name sap.ui.test.matchers.Properties
 	 * @author SAP SE
 	 * @since 1.27
 	 */
 	return function (oProperties) {
 		return function(oControl) {
 			var bIsMatching = true;
-			jQuery.each(oProperties, function(sPropertyName, oPropertyValue) {
-				var fnProperty = oControl["get" + jQuery.sap.charToUpperCase(sPropertyName, 0)];
+			$.each(oProperties, function(sPropertyName, oPropertyValue) {
+				var fnProperty = oControl["get" + $.sap.charToUpperCase(sPropertyName, 0)];
 
 				if (!fnProperty) {
 					bIsMatching = false;
-					jQuery.sap.log.error("Control " + oControl.sId + " does not have a property called: " + sPropertyName);
+					oLogger.error("Control '" + oControl.sId + "' does not have a property called: '" +
+						sPropertyName + "'");
 					return false;
 				}
 
@@ -32,6 +45,8 @@ sap.ui.define([], function () {
 				}
 
 				if (!bIsMatching) {
+					oLogger.debug("The property '" + sPropertyName + "' of the control '" + oControl + "' " +
+						"is '" + vCurrentPropertyValue + "', expected '" + oPropertyValue + "'");
 					return false;
 				}
 			});

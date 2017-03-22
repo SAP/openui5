@@ -2,17 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './TableRenderer'],
-	function(jQuery, Renderer, TableRenderer) {
+// Provides default renderer for control sap.ui.table.AnalyticalTable
+sap.ui.define(['sap/ui/table/AnalyticalTable'], function(Table) {
 	"use strict";
-
-
-	/**
-	 * AnalyticalTable renderer. 
-	 * @namespace
-	 */
-	var AnalyticalTableRenderer = Renderer.extend(TableRenderer);
-
-	return AnalyticalTableRenderer;
-
+	// Renderer defined already in AnalyticalTable.js -> Keep this file for legacy purposes (e.g. AMD module dependencies)
+	return Table.getMetadata().getRenderer();
 }, /* bExport= */ true);

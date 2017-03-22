@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Calendar ACC Test - sap.ui.unified</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.Calendar.gif">
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-trace="false"
-				type="text/javascript"
-				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				data-sap-ui-libs="sap.ui.unified"
 				src="../../../../../resources/sap-ui-core.js"
 		>
 		</script>
-		<script type="text/javascript">
+		<script>
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 
@@ -73,6 +72,12 @@
 					tooltip: aSpecialDay[2]
 				}));
 			}
+
+			var oDate = new Date();
+			oDate.setDate(oDate.getDate() + 2);
+			oCal.addDisabledDate(new sap.ui.unified.DateRange({
+				startDate: oDate
+			}));
 
 			// single interval selection
 			oCal = new sap.ui.unified.Calendar("Cal2",{

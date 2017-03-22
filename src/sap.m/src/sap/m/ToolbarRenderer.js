@@ -37,15 +37,11 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 				role: "button"
 			});
 		} else {
-			rm.writeAccessibilityState(oToolbar, {
-				role: "toolbar"
-			});
+			oToolbar._writeLandmarkInfo(rm, oToolbar);
 		}
 
 
-		if (!sap.m.Toolbar.hasFlexBoxSupport) {
-			rm.addClass("sapMTBNoFlex");
-		} else if (!sap.m.Toolbar.hasNewFlexBoxSupport) {
+		if (!sap.m.Toolbar.hasNewFlexBoxSupport) {
 			rm.addClass("sapMTBOldFlex");
 		} else {
 			rm.addClass("sapMTBNewFlex");

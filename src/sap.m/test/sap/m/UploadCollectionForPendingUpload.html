@@ -1,35 +1,117 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>sap.m.UploadCollection for Pending Upload File List</title>
 
-<script src="../../../resources/sap-ui-core.js" type="text/javascript"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
-	data-sap-ui-theme="sap_bluecrystal">
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
 </script>
 
-<script type="text/javascript">
+<script>
 
-/* =========================================================== */
-/* UploadCollection                                            */
-/* =========================================================== */
-// create JSON model instance
-	var oModel = new sap.ui.model.json.JSONModel();
-	// set the model to the core
-	sap.ui.getCore().setModel(oModel);
+	jQuery.sap.initMobile();
+	jQuery.sap.require("sap.m.MessageToast");
 
-	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
 	/* =========================================================== */
-	/* Handle UploadCollection Events                              */
+	/* UploadCollection                                            */
+	/* =========================================================== */
+
+	// The upper and lower case letters are on purpose to prove that they don't matter
+	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
+	var iRequestCounter = 0, sFileName;
+	var oUploadButton = new sap.m.Button({
+		text : "start upload",
+		press : fnUpload
+	});
+	var oRemoveButton = new sap.m.Button({
+		text : "Remove Selected Item",
+		press : fnRemove
+	});
+
+	var oUploadCollection = fnCreateUploadCollection();
+
+
+	/* =========================================================== */
+	/* Creates an instance of UploadCollection                     */
+	/* =========================================================== */
+	function fnCreateUploadCollection() {
+		return new sap.m.UploadCollection({
+			maximumFilenameLength : 55,
+			maximumFileSize : 50,
+			multiple : true,
+			sameFilenameAllowed : true,
+			instantUpload : false,
+			fileType : aFileTypes,
+			mode : "SingleSelectMaster",
+			toolbar : new sap.m.OverflowToolbar({
+				content : [
+					new sap.m.Title("attachmentTitle"),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.SearchField({
+						width : "10rem",
+						search : fnSearch
+					}),
+					new sap.m.UploadCollectionToolbarPlaceholder(),
+					new sap.m.Button({
+						icon : "sap-icon://money-bills",
+						enabled : false,
+						type : "Transparent"
+					}),
+					new sap.m.Button({
+						text : "Details",
+						press : fnDetailsPress,
+						type : "Transparent"
+					})
+				]
+			}),
+			// events
+			change : fnChange,
+			filenameLengthExceed : fnfilenameLengthExceed,
+			fileSizeExceed : fnFileSizeExceed,
+			typeMissmatch : fnTypeMissmatch,
+			uploadComplete : fnUploadComplete,
+			beforeUploadStarts : fnBeforeUploadStarts
+		}).addEventDelegate({
+			onBeforeRendering : function() {
+				fnUpdateAttachmentTitle();
+			}
+		});
+	}
+
+	/* =========================================================== */
+	/* Handles UploadCollection Events                              */
 	/* =========================================================== */
 	function fnChange(oEvent) {
 		sap.m.MessageToast.show("Event change triggered");
 	}
 
-	function fnFileDeleted(oEvent) {
-		sap.m.MessageToast.show("Event fileDeleted triggered");
+	function fnUpload(oEvent) {
+		if (oUploadCollection.getItems().length > 0) {
+			oUploadCollection.upload();
+			sap.m.MessageToast.show("Upload has been started");
+		}
+	}
+
+	function fnRemove(oEvent) {
+		oUploadCollection.removeItem(oUploadCollection.getSelectedItem());
+	}
+
+	function fnBeforeUploadStarts(oEvent) {
+		sFileName = oEvent.getParameter("fileName");
+		iRequestCounter++;
+		var oHeaderParameter = new sap.m.UploadCollectionParameter({
+			name : "FileNameForTesting",
+			value : sFileName
+		});
+		oEvent.getParameters().addHeaderParameter(oHeaderParameter);
+		// Delays the beforeUploadStarts message in order to see the upload message
+		setTimeout(function() {
+			sap.m.MessageToast.show("Event beforeUploadStarts triggered, see log for more ...");
+		}, 2000);
+		jQuery.sap.log.info("Event beforeUploadStarts triggered for file " + sFileName);
 	}
 
 	function fnfilenameLengthExceed(oEvent) {
@@ -44,38 +126,51 @@
 		sap.m.MessageToast.show("Event typeMissmatch triggered");
 	}
 
-	function fnUploadComplete(oEvent) {
-		sap.m.MessageToast.show("Event uploadComplete triggered");
+	function fnDetailsPress(oEvent) {
+		if (oUploadCollection.getSelectedItem()) {
+			sap.m.MessageToast.show("Details button was clicked for file: "
+									+ oUploadCollection.getSelectedItem().getFileName());
+		} else {
+			sap.m.MessageToast.show("First, select an item");
+		}
 	}
-	// create instance of UploadCollection and set model
-	var oUploadCollection = new sap.m.UploadCollection({
-		maximumFilenameLength : 55,
-		maximumFileSize: 50,
-		multiple : true,
-		fileType : aFileTypes,
-		sameFilenameAllowed : true,
-		instantUpload : false,
-	// events
-		change : fnChange,
-		fileDeleted : fnFileDeleted,
-		filenameLengthExceed : fnfilenameLengthExceed,
-		fileSizeExceed : fnFileSizeExceed,
-		typeMissmatch : fnTypeMissmatch,
-		uploadComplete : fnUploadComplete,
-		});
 
-/* =========================================================== */
-/* Create Page                   */
-/* =========================================================== */
+	function fnSearch(oEvent) {
+		sap.m.MessageToast.show("Search feature isn't available in this sample");
+	}
+
+	function fnUpdateAttachmentTitle() {
+		sap.ui.getCore().byId("attachmentTitle").setText("Attachments (" + oUploadCollection.getItems().length + ")");
+	}
+
+	function fnUploadComplete(oEvent) {
+		sFileName = oEvent.getParameter("files")[0].fileName;
+		// Delays the uploadComplete message in order to see the beforeUploadStarts message
+		setTimeout(function() {
+			sap.m.MessageToast.show("Event uploadComplete triggered, see log for more ...")
+		}, 4000);
+		jQuery.sap.log.info("Event uploadComplete triggered for file " + sFileName);
+		if (iRequestCounter <= 1) {
+			setTimeout(function() {
+				oUploadCollection.removeAllItems();
+			}, 6000);
+			iRequestCounter = 0;
+		} else {
+			iRequestCounter--;
+		}
+	}
+
+	/* ============================================================	*/
+	/* Creates Page                   								*/
+	/* ============================================================ */
+	// As jQuery.sap.initMobile() is used, it is not needed to create an app and the page can be put directly into the HTML document
 	var oPage = new sap.m.Page("page", {
-		title : "Test Page for sap.m.UploadCollection with Pending Uploading Files",
-		content : oUploadCollection
-		});
-// create a mobile App embedding the page and place the App into the HTML document
-	var app = new sap.m.App("myApp", {
-			pages : [oPage]
-		}).placeAt("body");
-
+		title : "Test Page for sap.m.UploadCollection with Pending Upload",
+		content : oUploadCollection,
+		footer : new sap.m.Bar({
+			contentMiddle : [ oUploadButton, oRemoveButton ]
+		})
+	}).placeAt("body");
 </script>
 
 </head>

@@ -6,11 +6,12 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<Label text="Label a" class="sapUiSmallMarginBottom" />
-			<Label text="Label b" class="sapUiSmallMarginBottom" />
-			<Label text="Label c" class="sapUiSmallMarginBottom" />
-			<Label text="Label d" class="sapUiSmallMarginBottom" design="Bold" />
-			<Label text="Label e" class="sapUiSmallMarginBottom" />
+			<Label text="Label A (required)" labelFor="input-a"/>
+			<Input id="input-a" required="true"/>
+			<Label text="Label B (bold)" labelFor="input-b" design="Bold" />
+			<Input id="input-b"/>
+			<Label text="Label C (normal)" labelFor="input-c"/>
+			<Input id="input-c"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

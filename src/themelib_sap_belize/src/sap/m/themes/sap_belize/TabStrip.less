@@ -1,0 +1,22 @@
+/* =============================== */
+/* CSS for control sap.m/TabStrip  */
+/* Belize theme                    */
+/* =============================== */
+
+@_sap_m_TabStrip_ItemHoverTextColor: darken(@sapUiGroupTitleTextColor, 10);
+@_sap_m_TabStrip_ItemSelectedTextColor: darken(@sapUiGroupTitleTextColor, 20);
+
+.sapMTabStrip {
+	.sapMTSTabsContainer {
+		.sapMTSTabs {
+			.sapMTabStripItem {
+				&:hover {
+					color: @_sap_m_TabStrip_ItemHoverTextColor;
+				}
+				&.sapMTabStripItemSelected {
+					color: @_sap_m_TabStrip_ItemSelectedTextColor;
+				}
+			}
+		}
+	}
+}

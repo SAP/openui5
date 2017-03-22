@@ -1,0 +1,14 @@
+[{
+	"PatientID": "X'49534830317A67634C684A75484848746B4C4372444A61477A5534'",
+	"SourcePatientID": "SourcePatientID 1",
+	"Source": "Source 1",
+	"FamilyName": "FamilyName 1",
+	"GivenName": "GivenName 1",
+	"TitleValue": "TitleValue 1",
+	"GenderValue": "GenderValue 1",
+	"BirthDate": "/Date(1438163744000)/",
+	"DeceasedDate": "/Date(1049363744000)/",
+	"MaritalStatusValue": "MaritalStatusValue 1",
+	"NationalityValue": "NationalityValue 1",
+	"RelatedDocumentCount": 380
+}]

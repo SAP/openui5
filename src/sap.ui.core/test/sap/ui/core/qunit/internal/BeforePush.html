@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+
+		<title>OData V4: Before Push Tests</title>
+
+		<script>
+		(function () {
+			"use strict";
+
+			var sBase = "../../../../../../",
+				sTestRunnerBase = "../../../../",
+				sTestPrefix = "test-resources/sap/ui/core/",
+				// The URLs are relative to sTestPrefix
+				aTests = [
+					'qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&coverage&sap-ui-logLevel=ERROR&realOData=true',
+					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html',
+					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true',
+					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html',
+					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true',
+					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html',
+					'demokit/sample/ViewTemplate/types/Opa.qunit.html'
+				];
+
+			window.runTests = function () {
+				var oLoginRequest = new XMLHttpRequest();
+
+				// send a request to the service document from the v4 sample service to ensure that
+				// the credentials are known before running the test suite.
+				oLoginRequest.open("GET", sBase + "proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/"
+					+ "IWBEP/V4_GW_SAMPLE_BASIC/0001/");
+				oLoginRequest.addEventListener("load", function (oEvent) {
+					if (oLoginRequest.status === 200) {
+						var oScriptElement = document.createElement("script");
+						oScriptElement.setAttribute("src",
+							sBase + "resources/sap/ui/qunit/qunit-redirect.js");
+						document.head.appendChild(oScriptElement);
+					} else {
+						alert("Could not access the real OData server: "
+							+ oLoginRequest.status + " " + oLoginRequest.statusText);
+					}
+				});
+				oLoginRequest.send();
+			}
+
+			window.addEventListener("load", runTests);
+
+			window.suite = function () {
+				var oSuite = new parent.jsUnitTestSuite();
+				aTests.forEach(function (sUrl) {
+					oSuite.addTestPage(sTestRunnerBase + sTestPrefix + sUrl);
+				});
+				return oSuite;
+			};
+		}());
+		</script>
+	</head>
+	<body>
+		<h1>UI Services Before Push Tests</h1>
+
+		<p><input type="button" value="Run" onclick="runTests()"></p>
+	</body>
+</html>

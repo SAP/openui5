@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.f.DynamicPage test page</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.f">
+	</script>
+
+	<style>html, body, .container {height: 100%}</style>
+
+	<script id="view1" type="sapui5/xmlview">
+		<core:View
+			id="view1"
+			height="100%"
+			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
+			xmlns="sap.m"
+			xmlns:f="sap.f">
+
+			<f:DynamicPage id="dynamicPageId">
+				<!-- DynamicPage Title -->
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading>
+							<Title text="My Products"/>
+						</f:heading>
+					</f:DynamicPageTitle>
+				</f:title>
+
+				<!-- DynamicPage Header -->
+				<f:header>
+					<f:DynamicPageHeader pinnable="true">
+						<f:content>
+							<VBox fitContainer="true">
+								<Button text="Button in header"/>
+								<Button text="Button in header"/>
+							</VBox>
+						</f:content>
+					</f:DynamicPageHeader>
+				</f:header>
+
+				<!-- DynamicPage Content -->
+				<f:content>
+					<VBox fitContainer="true">
+						<MessageStrip text="I am in DynamicPage content"/>
+						<MessageStrip text="I am in DynamicPage content"/>
+						<MessageStrip text="I am in DynamicPage content"/>
+						<MessageStrip text="I am in DynamicPage content"/>
+						<MessageStrip text="I am in DynamicPage content"/>
+					</VBox>
+				</f:content>
+
+				<!-- DynamicPage Footer -->
+				<f:footer>
+					<OverflowToolbar>
+						<ToolbarSpacer/>
+						<Button type="Accept" text="Accept"/>
+						<Button type="Reject" text="Reject"/>
+					</OverflowToolbar>
+				</f:footer>
+			</f:DynamicPage>
+		</core:View>
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<script>
+		(function (jQuery) {
+			sap.ui.xmlview({viewContent:jQuery('#view1').html()}).placeAt("content");
+		}(jQuery))
+	</script>
+	<div class="container" id="content"></div>
+</body>
+</html>

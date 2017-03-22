@@ -15,7 +15,7 @@
 				showAll="true"
 				count="{/ProductCollectionStats/Counts/Total}"
 				text="Products"
-				keys="All" />
+				key="All" />
 			<IconTabSeparator />
 			<IconTabFilter
 				icon="sap-icon://begin"

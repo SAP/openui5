@@ -1,0 +1,19 @@
+{
+	"1.38.0": {
+		"date": "April 2016",
+		"notes": [
+			{
+				"id": "c76c6579ed095977d2168e04d263d23f31138b64",
+				"type": "FIX",
+				"text": "Minor fixes after Refactoring",
+				"references": []
+			},
+			{
+				"id": "51632ba709489f182fc5bf9a7f8d62d4bb6637fc",
+				"type": "FIX",
+				"text": "detect application variant mode in case of smart templating apps",
+				"references": []
+			}
+		]
+	}
+}

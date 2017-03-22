@@ -1,0 +1,50 @@
+<mvc:View
+	controllerName="sap.m.sample.PlanningCalendarMinMax.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<PlanningCalendar
+			id="PC1"
+			showIntervalHeaders="false"
+			startDate="{path: '/startDate'}"
+			minDate="{path: '/minDate'}"
+			maxDate="{path: '/maxDate'}"
+			rows="{path: '/people'}"
+			appointmentsVisualization="Filled"
+			appointmentSelect="handleAppointmentSelect">
+			<toolbarContent>
+				<Title text="Title" titleStyle="H4"/>
+			</toolbarContent>
+			<rows>
+				<PlanningCalendarRow
+					icon="{pic}"
+					title="{name}"
+					text="{role}"
+					appointments="{path : 'appointments', templateShareable: 'true'}"
+					intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+					<appointments>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							text="{info}"
+							type="{type}"
+							tentative="{tentative}">
+						</unified:CalendarAppointment>
+					</appointments>
+					<intervalHeaders>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							type="{type}">
+						</unified:CalendarAppointment>
+					</intervalHeaders>
+				</PlanningCalendarRow>
+			</rows>
+		</PlanningCalendar>
+	</VBox>
+</mvc:View>

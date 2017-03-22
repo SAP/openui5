@@ -1,5 +1,5 @@
-/**
- * @copyright
+/*!
+ * ${copyright}
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	function(jQuery, IconPool) {
@@ -89,73 +89,68 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 	};
-	
+
 	/**
-	 * Renders hidden div with ARIA descriptions of the favorite and flag icons.
+	 * Gather all controls that should be rendered inside Object Header.
+	 *
+	 * @param {sap.m.ObjectHeader}
+	 *            oOH the ObjectHeader
+	 * @private
+	 */
+	ObjectHeaderRenderer._computeChildControlsToBeRendered = function(oOH){
+		oOH.__controlsToBeRendered = {};
+		var aChildren = oOH.getAttributes();
+		for (var i = 0; i < aChildren.length; i++) {
+			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
+		}
+		aChildren = oOH.getStatuses();
+		for (var i = 0; i < aChildren.length; i++) {
+			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
+		}
+		var oChild = oOH.getFirstStatus();
+		if (oChild) {
+			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
+		}
+		oChild = oOH.getSecondStatus();
+		if (oChild) {
+			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
+		}
+		oChild = oOH.getAggregation("_objectNumber");
+		if (oChild) {
+			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
+		}
+	};
+
+	/**
+	 * Delete all controls that were empty and were not rendered inside Object Header.
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
 	 *
 	 * @param {sap.m.ObjectHeader}
-	 *            oControl the ObjectHeader
-	 *
+	 *            oOH the ObjectHeader
 	 * @private
 	 */
-	ObjectHeaderRenderer._renderMarkersAria = function(oRM, oControl) {
-		var sAriaDescription = "", // ARIA description message
-			oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
-		
-			// check if flag mark is set
-			if (oControl.getMarkFlagged()) {
-				sAriaDescription += (oLibraryResourceBundle.getText("ARIA_FLAG_MARK_VALUE") + " ");
-			}
-		
-			// check if favorite mark is set
-			if (oControl.getMarkFavorite()) {
-				sAriaDescription += (oLibraryResourceBundle.getText("ARIA_FAVORITE_MARK_VALUE") + " ");
-			}
-		
-			// if there is a description render ARIA node
-			if (sAriaDescription !== "") {	
-				// BEGIN ARIA hidden node
-				oRM.write("<div");
-		
-				oRM.writeAttribute("id", oControl.getId() + "-markers-aria");
-				oRM.writeAttribute("aria-hidden", "false");
-				oRM.addClass("sapUiHidden");
-				oRM.writeClasses();
-				oRM.write(">");
-				oRM.writeEscaped(sAriaDescription);
-		
-				oRM.write("</div>");
-				// END ARIA hidden node
-			}
+	ObjectHeaderRenderer._cleanupNotRenderedChildControls = function(oRM, oOH){
+		for (var id in oOH.__controlsToBeRendered) {
+			oRM.cleanupControlWithoutRendering(oOH.__controlsToBeRendered[id]);
+		}
+		delete oOH.__controlsToBeRendered;
 	};
-	
+
+
 	/**
-	 * Returns the array of icons from ObjectHeader.
+	 * Returns the array of markers from ObjectHeader.
 	 *
 	 * @param {sap.m.ObjectHeader}
-	 *            oOH the ObjectHeader that contains icons
+	 *            oOH the ObjectHeader that contains markers
 	 *
-	 * @returns array of {sap.m.Image} controls
+	 * @returns array of {sap.m.ObjectMarker} controls
 	 *
 	 * @private
 	 */
-	ObjectHeaderRenderer._getIcons = function(oOH) {
-
-		var icons = [];
-
-		if (oOH.getShowMarkers()) {
-			oOH._oFavIcon.setVisible(oOH.getMarkFavorite());
-			oOH._oFlagIcon.setVisible(oOH.getMarkFlagged());
-
-			icons.push(oOH._oPlaceholderIcon);
-			icons.push(oOH._oFavIcon);
-			icons.push(oOH._oFlagIcon);
-		}
-
-		return icons;
+	ObjectHeaderRenderer._getMarkers = function(oOH) {
+		return oOH._getVisibleMarkers();
 	};
 
 	/**
@@ -271,13 +266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		for (var j = 0; j < aAttribs.length; j++) {
 			if (aAttribs[j].getVisible()) {
-				if (aAttribs[j] instanceof sap.m.ObjectAttribute || aAttribs[j] instanceof sap.m.Link) {
-					aVisibleAttribs.push(aAttribs[j]);
-				} else {
-					jQuery.sap.log.warning("Only sap.m.ObjectAttribute or instance of sap.m.Link (including sap.ui.comp.navpopover.SmartLink are allowed in \"sap.m.ObjectHeader.attributes\" aggregation." + " Current object is "
-							+ aAttribs[j].constructor.getMetadata().getName() + " with id \"" + aAttribs[j].getId() + "\"");
-				}
-				
+				aVisibleAttribs.push(aAttribs[j]);
 			}
 		}
 
@@ -330,10 +319,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.write("<div");
 			if (aRight[0] instanceof sap.m.ProgressIndicator) {
 				oRM.addClass("sapMOHStatusFixedWidth");
-			} else if (aRight[0] instanceof sap.ui.core.Icon) {
+			} else if (aRight[0] instanceof sap.m.ObjectMarker) {
 				oRM.addClass("sapMOHStatusFixedWidth");
 				oRM.addClass("sapMObjStatusMarker");
-				oRM.writeAttribute("aria-describedby", oOH.getId() + "-markers-aria");
 			} else {
 				oRM.addClass("sapMOHStatus");
 			}
@@ -368,27 +356,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		var iAttribsLength = aVisibleAttribs.length;
 
-		var aIconsAndStatuses = [];
-		var aIcons = ObjectHeaderRenderer._getIcons(oOH);
+		var aMarkersAndStatuses = [];
+		var aMarkers = ObjectHeaderRenderer._getMarkers(oOH);
 		// flag and favorite are not rendered here in responsive mode
-		if (!oOH.getResponsive() && !ObjectHeaderRenderer._isEmptyArray(aIcons)) {
-			aIconsAndStatuses.push(aIcons);
+		if (!oOH.getResponsive() && !ObjectHeaderRenderer._isEmptyArray(aMarkers)) {
+			aMarkersAndStatuses.push(aMarkers);
 		}
 
 		var aVisibleStatuses = this._getVisibleStatuses(oOH);
 
-		aIconsAndStatuses = aIconsAndStatuses.concat(aVisibleStatuses);
+		aMarkersAndStatuses = aMarkersAndStatuses.concat(aVisibleStatuses);
 
-		var iIconsAndStatusesLength = aIconsAndStatuses.length;
+		var iMarkersAndStatusesLength = aMarkersAndStatuses.length;
 
-		var iNoOfRows = iAttribsLength > iIconsAndStatusesLength ? iAttribsLength : iIconsAndStatusesLength;
+		var iNoOfRows = iAttribsLength > iMarkersAndStatusesLength ? iAttribsLength : iMarkersAndStatusesLength;
 
 		if (!oOH.getResponsive()) {
-			if (oOH.getShowMarkers()) {
-				this._renderMarkersAria(oRM, oOH);
-			}
 			for (var iCount = 0; iCount < iNoOfRows; iCount++) {
-				this._renderRow(oRM, oOH, aVisibleAttribs[iCount], aIconsAndStatuses[iCount]);
+				this._renderRow(oRM, oOH, aVisibleAttribs[iCount], aMarkersAndStatuses[iCount]);
 			}
 		}
 
@@ -399,12 +384,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderNumber = function(oRM, oOH) {
-		if (!oOH.getNumber()) {
+		var numbers = oOH.getAdditionalNumbers();
+
+		if (!oOH.getNumber() && (numbers && !numbers.length)) {
 			return;
 		}
 
@@ -421,8 +408,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oObjectNumber.setTextDirection(oOH.getNumberTextDirection());
 			this._renderChildControl(oRM, oOH, oObjectNumber);
 		}
-
 		oRM.write("</div>"); // End Number/units container
+
+		if (!oOH.getCondensed()) {
+			this._renderAdditionalNumbers(oRM, oOH);
+		}
+	};
+
+	/**
+	 * Renders the HTML for the provided in aggregation additionalNumbers {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader}
+	 *            oOH an object representation of the ObjectHeader
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderAdditionalNumbers = function(oRM, oOH) {
+		var numbers = oOH.getAdditionalNumbers();
+		if (numbers && !numbers.length) {
+			return;
+		}
+
+		if (numbers.length === 1) {
+			oRM.write("<div");
+			oRM.addClass("additionalOHNumberSeparatorDiv");
+			oRM.writeClasses();
+			oRM.write("></div>");
+		}
+
+		for (var i = 0; i < numbers.length; i++) {
+			oRM.write("<div");
+			oRM.writeAttribute("id", oOH.getId() + "-additionalNumber" + i);
+			oRM.addClass("sapMOHNumberDiv additionalOHNumberDiv");
+			if (numbers.length === 1) {
+				oRM.addClass("sapMOHOnlyANumber");
+			}
+			oRM.writeClasses();
+			oRM.write(">");
+			numbers[i].setTextDirection(oOH.getNumberTextDirection());
+			this._renderChildControl(oRM, oOH, numbers[i]);
+
+			oRM.write("</div>"); // End container
+		}
 	};
 
 	/**
@@ -430,12 +458,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderTitle = function(oRM, oOH) {
-	
+
 		// Start title text and title arrow container
 		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
 		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
@@ -446,6 +474,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		if (oOH.getTitle()) {
+			var sTitleLevel = (oOH.getTitleLevel() === sap.ui.core.TitleLevel.Auto) ? sap.ui.core.TitleLevel.H1 : oOH.getTitleLevel();
+
 			oOH._titleText.setText(oOH.getTitle());
 			// set text direction of the title
 			oOH._titleText.setTextDirection(oOH.getTitleTextDirection());
@@ -481,9 +511,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 			oRM.writeClasses();
 			oRM.write(">");
-			oRM.write("<h1>");
+			oRM.write("<" + sTitleLevel + ">");
 			this._renderChildControl(oRM, oOH, oOH._titleText);
-			oRM.write("</h1>");
+			oRM.write("</" + sTitleLevel + ">");
+
 			if (oOH.getTitleActive()) {
 				oRM.write("</a>"); // End Title Text container
 			} else {
@@ -510,12 +541,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderFullTitle = function(oRM, oOH) {
-		if (!oOH.getNumber()) {
+		var numbers = oOH.getAdditionalNumbers();
+
+		if (!oOH.getNumber() && (numbers && !numbers.length)) {
 			oRM.addClass("sapMOHTitleDivFull");
 		}
 	};
@@ -525,7 +558,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -582,7 +615,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		this._renderNumber(oRM, oOH);
 
-		oRM.write("<div class=\"sapMOHDivider\"/>");
+		oRM.write("<div class=\"sapMOHDivider\"></div>");
 		oRM.write("</div>"); // End Top row container
 
 		if (oOH._hasBottomContent()) {
@@ -593,7 +626,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 			this._renderAttributesAndStatuses(oRM, oOH);
 
-			oRM.write("<div class=\"sapMOHDivider\"/>");
+			oRM.write("<div class=\"sapMOHDivider\"></div>");
 			oRM.write("</div>"); // End Bottom row container
 		}
 	};
@@ -603,7 +636,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -636,7 +669,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 */
 	ObjectHeaderRenderer.render = function(oRM, oOH) {
@@ -649,15 +682,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		// === old renderer, no changes here for downwards compatibility
 
+		this._computeChildControlsToBeRendered(oOH);
+
 		var bCondensed = oOH.getCondensed();
 
 		oRM.write("<div"); // Start Main container
 		oRM.writeControlData(oOH);
 		oRM.addClass("sapMOH");
+
+		// set contrast container, only when the background is not transparent
+		if (oOH._getBackground() !== sap.m.BackgroundDesign.Transparent) {
+			oRM.addClass("sapContrastPlus");
+		}
+
 		if (bCondensed) {
 			oRM.addClass("sapMOHC");
-			oRM.addClass("sapMOHBg" + oOH.getBackgroundDesign());
 		}
+
+		oRM.addClass("sapMOHBg" + oOH._getBackground());
 
 		oRM.writeClasses();
 		var sTooltip = oOH.getTooltip_AsString();
@@ -681,9 +723,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			this._renderFullOH(oRM, oOH);
 		}
 
-		oRM.write("<div class=\"sapMOHLastDivider\"/>");
+		oRM.write("<div class=\"sapMOHLastDivider\"></div>");
 
 		oRM.write("</div>"); // End Main container\
+
+		this._cleanupNotRenderedChildControls(oRM, oOH);
 
 	};
 
@@ -692,14 +736,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
-	 * @param {sap.m.Control}
+	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the child control that should be rendered
 	 * @private
 	 **/
 	ObjectHeaderRenderer._renderChildControl = function(oRM, oOH, oControl){
 		oRM.renderControl(oControl);
+		if (!oOH.getResponsive() && oOH.__controlsToBeRendered) { // if control is rendered remove it from the array
+			oOH.__controlsToBeRendered[oControl.getId()] = undefined;
+		}
 	};
 
 	/**
@@ -707,7 +754,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 **/
@@ -720,6 +767,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<div");
 		oRM.addClass("sapMOHROuter");
 		oRM.writeClasses();
+
+		var sTooltip = oOH.getTooltip_AsString();
+		if (sTooltip) {
+			oRM.writeAttributeEscaped("title", sTooltip);
+		}
 
 		//ARIA attributes
 		oRM.writeAccessibilityState({
@@ -734,12 +786,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		oRM.write("<div");
 		oRM.addClass("sapMOHR");
+		// set contrast container, only when the background is not transparent
+		if (oOH._getBackground() !== sap.m.BackgroundDesign.Transparent) {
+			oRM.addClass("sapContrastPlus");
+		}
+
+		if (bTabs) {
+			oRM.addClass("sapMOHRNoBorder");
+		}
+
+		oRM.addClass("sapMOHRBg" + oOH._getBackground());
 		oRM.writeClasses();
 		oRM.write(">");
 		oRM.write("<div");
 
-		oRM.addClass("sapMOHRBg" + oOH.getBackgroundDesign());
-		if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
+		if (sap.ui.Device.system.desktop && oOH._isMediaSize("Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
 			oRM.addClass("sapMOHRStatesOneOrThree");
 		}
 
@@ -783,13 +844,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
+	 * @param {sap.m.ObjectHeader}
+	 *            oControl an object representation of the control that should be rendered
 	 * @private
 	 **/
 	ObjectHeaderRenderer._renderResponsiveTitleBlock = function(oRM, oControl) {
 		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
-		
+
 		// Title container displayed to the left of the number and number units container.
 		oRM.write("<div"); // Start Title and Number container (block1 and block2)
 		oRM.writeAttribute("id", oControl.getId() + "-titlenumdiv");
@@ -802,8 +863,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.addClass("sapMOHRTitleDiv");
 
 		if (oControl._hasIcon()) {
-			if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
-				if (sap.ui.Device.orientation.landscape || (jQuery('html').hasClass("sapUiMedia-Std-Phone") && !sap.ui.Device.system.phone)) {
+			if (sap.ui.Device.system.phone || oControl._isMediaSize("Phone")) {
+				if (sap.ui.Device.orientation.landscape || (oControl._isMediaSize("Phone") && !sap.ui.Device.system.phone)) {
 					oRM.addClass("sapMOHRTitleIcon");
 				}
 			} else {
@@ -811,7 +872,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		if (!oControl.getAggregation("_objectNumber")) {
+		if (!oControl.getNumber()) {
 			oRM.addClass("sapMOHRTitleDivFull");
 		}
 		oRM.writeClasses();
@@ -856,7 +917,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object to be rendered
+	 *            oControl an object to be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveStates = function(oRM, oControl) {
@@ -864,7 +925,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.writeAttribute("id", oControl.getId() + "-states");
 		oRM.addClass("sapMOHRStates");
 		oRM.writeClasses();
-		oRM.write("\">");
+		oRM.write(">");
 		this._renderResponsiveRow(oRM, oControl);
 		oRM.write("</div>");
 	};
@@ -874,7 +935,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -914,12 +975,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		if (sap.ui.Device.system.tablet || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Tablet"))) {
+		if ((sap.ui.Device.system.tablet && !sap.ui.Device.system.desktop) || (sap.ui.Device.system.desktop && oOH._isMediaSize("Tablet"))) {
 			if (!oOH.getFullScreenOptimized() || (sap.ui.Device.orientation.portrait && oOH.getFullScreenOptimized())) { // full screen portrait or master detail
 				iRenderCols = 2; //render two columns
 				sClassColCount = 'sapMOHRTwoCols';
 			} else {
-				if (oOH.getFullScreenOptimized() && ( sap.ui.Device.orientation.landscape || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Tablet")))) { //full screen landscape
+				if (oOH.getFullScreenOptimized() && ( sap.ui.Device.orientation.landscape || (sap.ui.Device.system.desktop && oOH._isMediaSize("Tablet")))) { //full screen landscape
 					if (iCountAttrAndStat >= 1 && iCountAttrAndStat <= 2) {
 						iRenderCols = 2; // render two columns
 						sClassColCount = 'sapMOHRTwoCols';
@@ -933,11 +994,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Phone"))) {
+		if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && oOH._isMediaSize("Phone"))) {
 			iRenderCols = 1; // render one column
 			sClassColCount = 'sapMOHROneCols';
 		}
-		
+
 		this._renderResponsiveStatesColumn(oRM, oOH, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
 	};
 
@@ -946,7 +1007,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {iRenderCols}
 	 *            number of columns that should be rendered
@@ -971,7 +1032,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				oRM.writeClasses();
 				oRM.write(">");
 			}
-		
+
 			if (i < iCountVisibleAttr) {
 				this._renderResponsiveAttribute(oRM, oOH, aVisibleAttrAndStat[i]);
 			} else {
@@ -991,7 +1052,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {sap.m.ObjectAtribute}
 	 *            oAttr an object representation of the sap.m.ObjectAtribute that should be rendered
@@ -1011,7 +1072,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {sap.m.ObjectStatus}
 	 *            oStatus an object representation of the sap.m.ObjectStatus that should be rendered
@@ -1031,42 +1092,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	* @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oControl an object representation of the control that should be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveMarkers = function(oRM, oControl) {
-		var aIcons = [],
+		var aMarkers = [],
 			sTextDir = oControl.getTitleTextDirection(),
 			bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 
-		// load icons based on control state
-		if (oControl.getShowMarkers()) {
-			oControl._oFavIcon.setVisible(oControl.getMarkFavorite());
-			oControl._oFlagIcon.setVisible(oControl.getMarkFlagged());
+		// load markers based on control state
+		aMarkers = oControl._getVisibleMarkers();
 
-			aIcons.push(oControl._oFavIcon);
-			aIcons.push(oControl._oFlagIcon);
+		// render markers
+		oRM.write("<span");
+		oRM.addClass("sapMObjStatusMarker");
 
-			this._renderMarkersAria(oRM, oControl); // render hidden aria description of flag and favorite icons
-
-			// render icons
-			oRM.write("<span");
-			oRM.addClass("sapMObjStatusMarker");
-
-			if ((sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) || (sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL)) {
-				oRM.addClass("sapMObjStatusMarkerOpposite");
-			}
-			oRM.writeClasses();
-			oRM.writeAttribute("id", oControl.getId() + "-markers");
-			oRM.writeAttribute("aria-describedby", oControl.getId() + "-markers-aria");
-
-			oRM.write(">");
-			for (var i = 0; i < aIcons.length; i++) {
-				this._renderChildControl(oRM, oControl, aIcons[i]);
-			}
-			oRM.write("</span>");
+		if ((sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) || (sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL)) {
+			oRM.addClass("sapMObjStatusMarkerOpposite");
 		}
+		oRM.writeClasses();
+		oRM.writeAttribute("id", oControl.getId() + "-markers");
+
+		oRM.write(">");
+		for (var i = 0; i < aMarkers.length; i++) {
+			this._renderChildControl(oRM, oControl, aMarkers[i]);
+		}
+		oRM.write("</span>");
 	};
 
 	/**
@@ -1074,7 +1126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oControl an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -1088,9 +1140,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	};
 
 	/**
-	 * helper function to determine wheter states need to be rendered or not
+	 * helper function to determine whether states need to be rendered or not
 	 *
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader} oControl
 	 *
 	 * @private
 	 */
@@ -1119,7 +1171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 	/**
 	 * helper function to determine whether tabs need to be rendered or not
-	 *  @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader} oControl
 	 *
 	 * @private
 	 */
@@ -1134,7 +1186,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oControl._iCountVisTabs = oIconTabHeader.getItems().length;
 					return !!oIconTabHeader.getItems().length;
 				}
-			} else if (sap.suite && sap.suite.ui && sap.suite.ui.commons && oHeaderContainer instanceof sap.suite.ui.commons.HeaderContainer) {
+			} else if (oHeaderContainer.getMetadata().getName() === "sap.m.HeaderContainer") {
+				return !!oHeaderContainer.getContent().length;
+			} else if (oHeaderContainer.getMetadata().getName() === "sap.suite.ui.commons.HeaderContainer") {
 				return !!oHeaderContainer.getItems().length;
 			}
 		}
@@ -1147,8 +1201,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
+	 * @param {sap.m.ObjectHeader}
+	 *            oControl an object representation of the control that should be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveTabs = function(oRM, oControl) {
@@ -1162,7 +1216,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				this._renderChildControl(oRM, oControl, oIconTabHeader);
 				// tell iconTabBar to not render the header
 				oHeaderContainer._bHideHeader = true;
-			} else if (sap.suite && sap.suite.ui && sap.suite.ui.commons && oHeaderContainer instanceof sap.suite.ui.commons.HeaderContainer) {
+			} else if (oHeaderContainer.getMetadata().getName() === "sap.m.HeaderContainer" || oHeaderContainer.getMetadata().getName() === "sap.suite.ui.commons.HeaderContainer") {
 				// render the header container
 				this._renderChildControl(oRM, oControl, oHeaderContainer);
 			} else {
@@ -1178,7 +1232,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -1193,7 +1247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.writeAttribute("id", oOH.getId() + "-title");
 		oRM.addClass("sapMOHRTitle");
 
-		if (oOH.getTitleActive()) {
+		if (oOH.getTitle().length && oOH.getTitleActive()) {
 			oRM.addClass("sapMOHRTitleActive");
 		}
 		if (oOH.getShowTitleSelector()) {
@@ -1209,7 +1263,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			nCutLen = 80;
 		}
 
+		oRM.write("<span"); // Start TitleArrow container
+		oRM.writeAttribute("id", oOH.getId() + "-title-arrow");
+		oRM.addStyle("display", "inline-block");
+		oRM.writeStyles();
+		oRM.write(">");
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
+		oRM.write("</span>");
 
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oOH.getIntro()) {
@@ -1224,7 +1284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {nCutLen}
 	 *            number of chars to which the title should be cutted
@@ -1234,7 +1294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var sId = oOH.getId();
 
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
-		oRM.flush(jQuery.sap.byId(sId + "-title"));
+		oRM.flush(jQuery.sap.byId(sId + "-title-arrow"));
 	};
 
 	/**
@@ -1242,7 +1302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {nCutLen}
 	 *            number of chars to which the title should be cutted
@@ -1250,9 +1310,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 */
 	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {
 		var sOHTitle, sEllipsis = '', sTextDir = oOH.getTitleTextDirection();
-		var bMarkers = (oOH.getShowMarkers() && (oOH.getMarkFavorite() || oOH.getMarkFlagged()));
-		
-		oRM.write("<h1>");
+		var bMarkers = !!oOH._getVisibleMarkers().length;
+		var sTitleLevel = (oOH.getTitleLevel() === sap.ui.core.TitleLevel.Auto) ? sap.ui.core.TitleLevel.H1 : oOH.getTitleLevel();
+
+		oRM.write("<" + sTitleLevel + ">");
 		oRM.write("<span");
 		oRM.addClass("sapMOHRTitleTextContainer");
 		oRM.writeClasses();
@@ -1261,7 +1322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 		oRM.write(">");
-		if (oOH.getTitleActive()) {
+		if (oOH.getTitle().length && oOH.getTitleActive()) {
 			oRM.write("<a");
 			if (oOH.getTitleHref()) { // if title is link write it
 				oRM.writeAttributeEscaped("href", oOH.getTitleHref());
@@ -1341,7 +1402,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
 			oRM.write("</span>"); // end title arrow container
 		}
-		oRM.write("</h1>");
+		oRM.write("</" + sTitleLevel + ">");
+
 	};
 
 	/**
@@ -1349,7 +1411,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */

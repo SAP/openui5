@@ -1,0 +1,36 @@
+{
+	"_version": "1.1.0",
+	"sap.app": {
+		"_version": "1.1.0",
+		"id": "samples.components.sample",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"_version": "1.1.0",
+		"rootView": "samples.components.sample.views.Products",
+		"dependencies": {
+			"minUI5Version": "1.38",
+			"libs": {
+				"sap.m": { }
+			}
+		},
+		"resources": {
+			"js": [
+				{
+					"uri": "js/script.js"
+				}
+			],
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		}
+	}
+}

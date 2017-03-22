@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/commons/TextView', 'sap/ui/core/
 			});
 			var ext3 = new VerticalLayout();
 			sap.ui.extensionpoint(this, "extension43", null,  ext3, "content");
-		
+
 			var fnCreateDefaultContent2 = function(){
 				return [
 				        new TextView(that.createId("iShouldBeDestroyed1"), {text: "Extension point 44: Default Content"}),
@@ -43,8 +43,8 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/commons/TextView', 'sap/ui/core/
 				content: [
 				           new TextView({text: "SAP View 'Sub4' - the text after this one is hidden by customizing: "}),
 				           new TextView("customizableText1", {text: "This text is made invisible by customization"}),
-				           ext1, 
-				           ext2, 
+				           ext1,
+				           ext2,
 				           ext3,
 				           ext4,
 				           ext5

@@ -1,0 +1,27 @@
+/* =========================================== */
+/* CSS for control sap.uxap/ObjectPageSection  */
+/* High Contrast Black theme                   */
+/* =========================================== */
+
+.sapUxAPObjectPageSectionHeader {
+	background-color: @sapUiListGroupHeaderBackground;
+	font-size: @sapMFontHeader2Size;
+	color: @sapUiGroupTitleTextColor;
+	border-top: 0.0625rem solid @sapUiListBorderColor;
+	border-bottom: 0.0625rem solid @sapUiListBorderColor;
+}
+
+.sapUxAPObjectPageSection:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+	border-color: transparent;
+	border-radius: 0;
+}
+
+.sapUxAPObjectPageSectionTitle {
+	line-height: 2.9rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionTitle {
+	line-height: 2.4rem;
+}

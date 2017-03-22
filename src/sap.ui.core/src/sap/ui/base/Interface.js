@@ -3,10 +3,11 @@
  */
 
 // Provides class sap.ui.base.Interface
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([], function() {
 	"use strict";
 
+	// lazy dependency to avoid cycle
+	var BaseObject;
 
 	/**
 	 * Constructs an instance of sap.ui.base.Interface which restricts access to methods marked as public.
@@ -25,38 +26,39 @@ sap.ui.define(['jquery.sap.global'],
 	 * @alias sap.ui.base.Interface
 	 */
 	var Interface = function(oObject, aMethods) {
-	
+
 		// if object is null or undefined, return itself
 		if (!oObject) {
 			return oObject;
 		}
-	
-		// this function is inline to not appear as a method on the interface
-	
+
+		// resolve lazy dependency
+		BaseObject = BaseObject || sap.ui.requireSync('sap/ui/base/Object');
+
 		function fCreateDelegator(oObject, sMethodName) {
 			return function() {
 	//				return oObject[sMethodName].apply(oObject, arguments);
 					var tmp = oObject[sMethodName].apply(oObject, arguments);
 					// to avoid to hide the implementation behind the interface you need
 					// to override the getInterface function in the object
-					return (tmp instanceof sap.ui.base.Object) ? tmp.getInterface() : tmp;
+					return (tmp instanceof BaseObject) ? tmp.getInterface() : tmp;
 				};
 		}
-	
+
 		// if there are no methods return
 		if (!aMethods) {
 			return {};
 		}
-	
+
 		var sMethodName;
-	
+
 		// create functions for all delegated methods
 		// PERFOPT: 'cache' length of aMethods to reduce # of resolutions
 		for (var i = 0, ml = aMethods.length; i < ml; i++) {
 			sMethodName = aMethods[i];
 			this[sMethodName] = fCreateDelegator(oObject, sMethodName);
 		}
-	
+
 	};
 
 	return Interface;

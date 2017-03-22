@@ -1,0 +1,24 @@
+{
+	"1.28.0": {
+		"date": "January 2015",
+		"notes": [
+			{
+				"id": "c1b808c90c04f76afcff169445f90c6d0997b016",
+				"type": "FIX",
+				"text": "sap.ui.comp.smartform.SmartForm: PersistencyKey removed",
+				"references": []
+			}
+		]
+	},
+	"1.28.1": {
+		"date": "March 2015",
+		"notes": [
+			{
+				"id": "5a79d408c1762fe4cc0538607a740a0ebc84ecd7",
+				"type": "FIX",
+				"text": "Replace call for getControlId by getId on Managed Object",
+				"references": []
+			}
+		]
+	}
+}

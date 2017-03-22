@@ -1,0 +1,1005 @@
+{
+	"d" : {
+		"results" : [
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AD",
+					"LANDX" : "Andorran",
+					"NATIO" : "Andorran"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AE')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AE')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AE",
+					"LANDX" : "Utd.Arab Emir.",
+					"NATIO" : "Unit.Arab Emir."
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AF",
+					"LANDX" : "Afghanistan",
+					"NATIO" : "Afghan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AG')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AG')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AG",
+					"LANDX" : "Antigua/Barbuda",
+					"NATIO" : "Antiguan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AI')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AI')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AI",
+					"LANDX" : "Anguilla",
+					"NATIO" : "Anguilla"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AL')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AL')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AL",
+					"LANDX" : "Albania",
+					"NATIO" : "Albanian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AM",
+					"LANDX" : "Armenia",
+					"NATIO" : "Armenian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AN",
+					"LANDX" : "",
+					"NATIO" : ""
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AO')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AO')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AO",
+					"LANDX" : "Angola",
+					"NATIO" : "Angolan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AQ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AQ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AQ",
+					"LANDX" : "Antarctica",
+					"NATIO" : "Antarctica"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AR",
+					"LANDX" : "Argentina",
+					"NATIO" : "Argentinian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AS",
+					"LANDX" : "Samoa, America",
+					"NATIO" : "Samoan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AT')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AT')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AT",
+					"LANDX" : "Austria",
+					"NATIO" : "Austrian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AU')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AU')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AU",
+					"LANDX" : "Australia",
+					"NATIO" : "Australian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AW')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AW')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AW",
+					"LANDX" : "Aruba",
+					"NATIO" : "Arubanic"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AX')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AX')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AX",
+					"LANDX" : "",
+					"NATIO" : ""
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AZ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('AZ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "AZ",
+					"LANDX" : "Azerbaijan",
+					"NATIO" : "Azerbaijani"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BA')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BA')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BA",
+					"LANDX" : "Bosnia-Herz.",
+					"NATIO" : "Bosnian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BB')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BB')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BB",
+					"LANDX" : "Barbados",
+					"NATIO" : "Barbadan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BD",
+					"LANDX" : "Bangladesh",
+					"NATIO" : "Bangladeshi"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BE')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BE')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BE",
+					"LANDX" : "Belgium",
+					"NATIO" : "Belgian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BF",
+					"LANDX" : "Burkina Faso",
+					"NATIO" : "Burkinabe"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BG')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BG')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BG",
+					"LANDX" : "Bulgaria",
+					"NATIO" : "Bulgarian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BH')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BH')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BH",
+					"LANDX" : "Bahrain",
+					"NATIO" : "Bahraini"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BI')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BI')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BI",
+					"LANDX" : "Burundi",
+					"NATIO" : "Burundi"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BJ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BJ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BJ",
+					"LANDX" : "Benin",
+					"NATIO" : "Beninese"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BM",
+					"LANDX" : "Bermuda",
+					"NATIO" : "Bermudan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BN",
+					"LANDX" : "Brunei Daruss.",
+					"NATIO" : "Brunei"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BO')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BO')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BO",
+					"LANDX" : "Bolivia",
+					"NATIO" : "Bolivian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BQ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BQ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BQ",
+					"LANDX" : "Bonaire, Saba",
+					"NATIO" : "Dutch"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BR",
+					"LANDX" : "Brazil",
+					"NATIO" : "Brazilian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BS",
+					"LANDX" : "Bahamas",
+					"NATIO" : "Bahaman"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BT')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BT')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BT",
+					"LANDX" : "Bhutan",
+					"NATIO" : "Bhutanese"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BV')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BV')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BV",
+					"LANDX" : "Bouvet Islands",
+					"NATIO" : "Bouvet Islands"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BW')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BW')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BW",
+					"LANDX" : "Botswana",
+					"NATIO" : "Botswanan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BY')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BY')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BY",
+					"LANDX" : "Belarus",
+					"NATIO" : "Belarusian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BZ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('BZ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "BZ",
+					"LANDX" : "Belize",
+					"NATIO" : "Belizean"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CA')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CA')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CA",
+					"LANDX" : "Canada",
+					"NATIO" : "Canadian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CC')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CC')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CC",
+					"LANDX" : "Coconut Islands",
+					"NATIO" : "Australian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CD",
+					"LANDX" : "Dem. Rep. Congo",
+					"NATIO" : "Congolese"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CF",
+					"LANDX" : "CAR",
+					"NATIO" : "Central African"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CG')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CG')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CG",
+					"LANDX" : "Rep.of Congo",
+					"NATIO" : "Congolese"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CH')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CH')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CH",
+					"LANDX" : "Switzerland",
+					"NATIO" : "Swiss"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CI')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CI')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CI",
+					"LANDX" : "Cote d'Ivoire",
+					"NATIO" : "Ivoirian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CK",
+					"LANDX" : "Cook Islands",
+					"NATIO" : "Cook Islands"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CL')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CL')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CL",
+					"LANDX" : "Chile",
+					"NATIO" : "Chilean"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CM",
+					"LANDX" : "Cameroon",
+					"NATIO" : "Cameroonian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CN",
+					"LANDX" : "China",
+					"NATIO" : "Chinese"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CO')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CO')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CO",
+					"LANDX" : "Colombia",
+					"NATIO" : "Colombian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CR",
+					"LANDX" : "Costa Rica",
+					"NATIO" : "Costa Rican"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CS",
+					"LANDX" : "Serbia/Monten.",
+					"NATIO" : "Serbian/Monten."
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CU')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CU')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CU",
+					"LANDX" : "Cuba",
+					"NATIO" : "Cuban"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CV')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CV')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CV",
+					"LANDX" : "Cape Verde",
+					"NATIO" : "Cape Verdean"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CW')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CW')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CW",
+					"LANDX" : "Curaçao",
+					"NATIO" : "Curaçaoan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CX')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CX')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CX",
+					"LANDX" : "Christmas Islnd",
+					"NATIO" : "Australian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CY')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CY')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CY",
+					"LANDX" : "Cyprus",
+					"NATIO" : "Cypriot"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CZ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('CZ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "CZ",
+					"LANDX" : "Czech Republic",
+					"NATIO" : "Czech"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DE')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DE')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "DE",
+					"LANDX" : "Germany",
+					"NATIO" : "German"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DJ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DJ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "DJ",
+					"LANDX" : "Djibouti",
+					"NATIO" : "Djiboutian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "DK",
+					"LANDX" : "Denmark",
+					"NATIO" : "Danish"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "DM",
+					"LANDX" : "Dominica",
+					"NATIO" : "Dominican"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DO')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DO')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "DO",
+					"LANDX" : "Dominican Rep.",
+					"NATIO" : "Dominican"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DZ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('DZ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "DZ",
+					"LANDX" : "Algeria",
+					"NATIO" : "Algerian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('EC')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('EC')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "EC",
+					"LANDX" : "Ecuador",
+					"NATIO" : "Ecuadorian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('EE')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('EE')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "EE",
+					"LANDX" : "Estonia",
+					"NATIO" : "Estonian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('EG')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('EG')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "EG",
+					"LANDX" : "Egypt",
+					"NATIO" : "Egyptian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('EH')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('EH')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "EH",
+					"LANDX" : "West Sahara",
+					"NATIO" : "French"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('ER')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('ER')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "ER",
+					"LANDX" : "Eritrea",
+					"NATIO" : "Eritrean"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('ES')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('ES')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "ES",
+					"LANDX" : "Spain",
+					"NATIO" : "Spanish"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('ET')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('ET')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "ET",
+					"LANDX" : "Ethiopia",
+					"NATIO" : "Ethiopian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FI')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FI')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "FI",
+					"LANDX" : "Finland",
+					"NATIO" : "Finnish"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FJ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FJ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "FJ",
+					"LANDX" : "Fiji",
+					"NATIO" : "Fijian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "FK",
+					"LANDX" : "Falkland Islnds",
+					"NATIO" : "British"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "FM",
+					"LANDX" : "Micronesia",
+					"NATIO" : "Micronesian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FO')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FO')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "FO",
+					"LANDX" : "Faroe Islands",
+					"NATIO" : "Danish"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('FR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "FR",
+					"LANDX" : "France",
+					"NATIO" : "French"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GA')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GA')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GA",
+					"LANDX" : "Gabon",
+					"NATIO" : "Gabonese"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GB')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GB')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GB",
+					"LANDX" : "United Kingdom",
+					"NATIO" : "British"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GD')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GD')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GD",
+					"LANDX" : "Grenada",
+					"NATIO" : "Grenadian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GE')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GE')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GE",
+					"LANDX" : "Georgia",
+					"NATIO" : "Georgian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GF')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GF')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GF",
+					"LANDX" : "French Guayana",
+					"NATIO" : "French"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GG')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GG')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GG",
+					"LANDX" : "Guernsey",
+					"NATIO" : "British"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GH')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GH')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GH",
+					"LANDX" : "Ghana",
+					"NATIO" : "Ghanian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GI')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GI')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GI",
+					"LANDX" : "Gibraltar",
+					"NATIO" : "Gibraltar"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GL')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GL')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GL",
+					"LANDX" : "Greenland",
+					"NATIO" : "Danish"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GM",
+					"LANDX" : "Gambia",
+					"NATIO" : "Gambian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GN",
+					"LANDX" : "Guinea",
+					"NATIO" : "Guinean"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GP')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GP')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GP",
+					"LANDX" : "Guadeloupe",
+					"NATIO" : "French"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GQ')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GQ')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GQ",
+					"LANDX" : "Equatorial Guin",
+					"NATIO" : "Equatorial Guin"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GR",
+					"LANDX" : "Greece",
+					"NATIO" : "Greek"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GS')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GS')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GS",
+					"LANDX" : "S. Sandwich Ins",
+					"NATIO" : "South Georgia"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GT')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GT')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GT",
+					"LANDX" : "Guatemala",
+					"NATIO" : "Guatemalan"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GU')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GU')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GU",
+					"LANDX" : "Guam",
+					"NATIO" : "American"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GW')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GW')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GW",
+					"LANDX" : "Guinea-Bissau",
+					"NATIO" : "Guinean"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GY')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('GY')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "GY",
+					"LANDX" : "Guyana",
+					"NATIO" : "Guyanese"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HK')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HK')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "HK",
+					"LANDX" : "Hong Kong",
+					"NATIO" : "Hong Kong"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HM')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HM')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "HM",
+					"LANDX" : "Heard/McDon.Isl",
+					"NATIO" : "Heard/McDon.Isl"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HN')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HN')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "HN",
+					"LANDX" : "Honduras",
+					"NATIO" : "Honduran"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HR')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HR')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "HR",
+					"LANDX" : "Croatia",
+					"NATIO" : "Croatian"
+				},
+{
+					"__metadata": {
+						"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HT')",
+						"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_FARP_T005('HT')",
+						"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_FARP_T005"
+					},
+					"LAND1" : "HT",
+					"LANDX" : "Haiti",
+					"NATIO" : "Haitian"
+				}]
+	}
+}

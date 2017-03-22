@@ -9,12 +9,12 @@
 		width="100%">
 		<l:content>
 			<Button
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				text="Show Table Select Dialog"
 				press="handleTableSelectDialogPress">
 			</Button>
 			<Button
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				text="Show Table Select Dialog (Multi)"
 				press="handleTableSelectDialogPress">
 				<customData>
@@ -24,7 +24,7 @@
 				</customData>
 			</Button>
 			<Button
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				text="Show Table Select Dialog (Remember)"
 				press="handleTableSelectDialogPress">
 				<customData>

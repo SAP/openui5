@@ -4,14 +4,14 @@
 <!--
 	Testing Suppression of Deactivation of Controller Code
 	Tested classes: sap.ui.core.Configuration, sap.ui.core.mvc.View
-	Author: d029698
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for Design Mode</title>
 
- <script id="sap-ui-bootstrap" type="text/javascript"
+ <script src="../shared-config.js"></script>
+ <script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons"
@@ -23,52 +23,55 @@
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript" src="AnyView.qunit.js"></script>
+<script src="AnyView.qunit.js"></script>
 
 <script>
-test("Get Design Mode and Suppression of Deactivation of Controller Code", 2, function() {
+QUnit.test("Get Design Mode and Suppression of Deactivation of Controller Code", function(assert) {
+	assert.expect(2);
 
 	var designMode = sap.ui.getCore().getConfiguration().getDesignMode();
-	equal(designMode, true, "Design Mode is on");
-	
+	assert.equal(designMode, true, "Design Mode is on");
+
 	var suppressDeactivationOfControllerCode = sap.ui.getCore().getConfiguration().getSuppressDeactivationOfControllerCode();
-	equal(suppressDeactivationOfControllerCode, true, "Suppression of Deactivation of Controller Code is on");
+	assert.equal(suppressDeactivationOfControllerCode, true, "Suppression of Deactivation of Controller Code is on");
 
 });
 
-test("Create an HTMLView instance and check controller methods are not replaced by empty ones", 6, function(){
+QUnit.test("Create an HTMLView instance and check controller methods are not replaced by empty ones", function(assert){
+	assert.expect(6);
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
 	var oController = oView.getController();
-	
+
 //check lifecycle hooks
-	equal(oController.onInit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-	equal(oController.onExit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-	equal(oController.onBeforeRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-	equal(oController.onAfterRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.onInit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.onExit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.onBeforeRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.onAfterRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
 
 //other methods
-	equal(oController.method1(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-	equal(oController.method2(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.method1(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	assert.equal(oController.method2(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
 
 	oView.destroy();
 });
 
-test("Create an HTMLView instance and check controller methods from base class(es) were not replaced", 1, function(){
+QUnit.test("Create an HTMLView instance and check controller methods from base class(es) were not replaced", function(assert){
+	assert.expect(1);
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
-	//equal(designMode, true, "Custom Data set properly");
+	//assert.equal(designMode, true, "Custom Data set properly");
 	var oController = oView.getController();
 
 	//as example, try "byId"
 	var oButton = oController.byId("Button01");
-	notEqual(typeof oButton, "undefined", "Tested method byId");
+	assert.notEqual(typeof oButton, "undefined", "Tested method byId");
 });
 
 </script>

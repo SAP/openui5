@@ -1,0 +1,251 @@
+/* ============================================ */
+/* CSS for control sap.m/NotificationListGroup  */
+/* Base theme                                   */
+/* ============================================ */
+
+@containerPadding: 1rem;
+@bottomMargin: 0.5rem;
+@notificationGroupBorderRadius: 0.25rem;
+
+.sapMNLG {
+  margin-bottom: @bottomMargin;
+  padding-right: 0.5rem;
+  position: relative;
+  background-color: @sapUiListBackground;
+  box-shadow: @sapUiShadowLevel0;
+}
+
+.sapMNLG.sapMLIB {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.sapMNLG .sapMLIB.sapMNLB:first-of-type {
+  margin-top: 0;
+}
+
+// Priority styles =====================================================================================================
+
+.sapMNLG-Header > .sapMNLB-Priority {
+  padding-top: @containerPadding;
+}
+
+// Header styles =======================================================================================================
+.sapMNLG-Header {
+  padding-bottom: 0.375rem;
+  border-radius: @notificationGroupBorderRadius @notificationGroupBorderRadius 0 0;
+  .sapMNLG-Title {
+    padding-right: 1.75rem;
+  }
+  .sapMNLGTitleUnread {
+    font-weight: bold;
+  }
+  .sapMNLG-Details {
+    padding-top: 0.375rem;
+    font-family: @sapUiFontFamily;
+    font-weight: normal;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    position: relative;
+    .sapMNLG-Description {
+      width: 100%;
+      padding-top: 0.375rem;
+    }
+    .sapMText.sapMNLI-Text {
+      display: inline;
+    }
+  }
+}
+
+// SubHeader styles =======================================================================================================
+
+.sapMNLG .sapMNLG-SubHeader {
+	border-radius: 0 0 @notificationGroupBorderRadius @notificationGroupBorderRadius;
+}
+
+.sapMNLG-SubHeader {
+  height: 3rem;
+}
+
+.sapMNLG-SubHeader {
+  .sapMBtn {
+    margin-left: 0.25rem;
+  }
+}
+
+.sapMNLG-SubHeader .sapMTB {
+  .sapMBtn {
+    margin-left: 0.25rem;
+    padding: 0;
+    border: none;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+}
+
+/* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
+html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
+  display: block;
+  width: auto;
+}
+
+.sapMNLG-SubHeader > .sapMBtn:first-of-type {
+  float: left;
+}
+
+.sapMNLG-Collapsed .sapMNLG-SubHeader {
+  border-top: 0;
+}
+
+.sapMNLG-SubHeader > .sapMNLB-Priority {
+	border-radius: 0;
+}
+
+// Body styles =========================================================================================================
+
+.sapMNLG-Body {
+  position: relative;
+  padding-left: 0;
+  padding-right: 0;
+  .sapMNLI {
+    margin: 0;
+    box-shadow: none;
+    border-bottom: none;
+    border-radius: 0;
+  }
+  .sapMNLG-MaxNotifications {
+    border-radius: 0 0 0.25rem 0.25rem;
+    padding: 1.5rem 0.5rem 1rem;
+    text-align: center;
+    line-height: 1.5rem;
+    span {
+     font-weight: bold;
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+.sapMText.sapMNLG-Datetime {
+  color: @sapUiLightText;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sapMLIB.sapMNLG-Collapsed .sapMNLG-Body{
+  display: none;
+}
+
+// Compact mode ========================================================================================================
+
+.sapUiSizeCompact .sapMNLG-Title {
+  padding-right: 1.25rem;
+}
+
+.sapUiSizeCompact .sapMNLG-SubHeader {
+  padding-top: 0.25rem;
+  padding-left: 0.75rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  box-sizing: border-box;
+}
+
+.sapUiSizeCompact .sapMNLG-SubHeader .sapMBtn {
+  margin-left: 0.25rem;
+  padding: 0;
+}
+
+.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
+	border: none;
+}
+
+// Single item mode ====================================================================================================
+
+.sapMNLG.sapMLIB.sapMNLGNoHdrFooter {
+  padding-top: 0;
+}
+
+.sapMNLG-Header > .sapMNLG-Title {
+  color: @sapUiListTextColor;
+  font-size: @sapMFontLargeSize;
+}
+
+.sapMNLG-None {
+  background-color: @sapUiNeutralBorder;
+}
+
+.sapMNLG-Low {
+  background-color: @sapUiSuccessBorder;
+}
+
+.sapMNLG-Medium {
+  background-color: @sapUiWarningBorder;
+}
+
+.sapMNLG-High {
+  background-color: @sapUiErrorBorder;
+}
+
+.sapMNLG {
+  .sapMNLG-Header {
+      .sapMNLG-Details {
+        color: @sapUiContentLabelColor;
+      }
+    }
+    .sapMNLI {
+      margin-top: 0;
+      border-top: 1px solid @sapUiListBorderColor;
+    }
+}
+
+html.sap-desktop .sapMNLG:focus::before {
+    border: 1px dotted @sapUiContentFocusColor;
+    position: absolute;
+    content: " ";
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    left: 1px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.sapMNLG.sapMNLG-Collapsed {
+	.sapMNLG-Header, .sapMNLG-SubHeader {
+		background-color: @sapUiListBackground;
+	}
+}
+.sapMNLG {
+  .sapMNLG-Header, .sapMNLG-SubHeader {
+    background-color: @sapUiListBackground;
+  }
+}
+.sapMNLG-Body {
+  .sapMNLG-MaxNotifications {
+    font-family: @sapUiFontFamily;
+    font-size: @sapMFontMediumSize;
+    color: @sapUiContentLabelColor;
+    border-top: 1px solid @sapUiListBorderColor;
+    background: @sapUiListBackground;
+    span {
+      font-family: @sapUiFontFamily;
+      font-size: @sapMFontLargeSize;
+      color: @sapUiBaseText;
+      font-weight: bold;
+    }
+  }
+}
+
+// Focus Style ========================================================================================================
+html.sap-desktop .sapMLIB.sapMNLG:focus {
+  outline: none;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+  .sapMNLG:focus::before {
+    border: 1px dashed @sapUiContentFocusColor;
+
+  }
+}

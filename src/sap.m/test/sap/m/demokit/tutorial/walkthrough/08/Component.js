@@ -7,13 +7,13 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			metadata: {
 				config: {
 					sample: {
-						iframe: "src/index.html",
+						iframe: "webapp/index.html",
 						stretch: true,
 						files: [
-							"src/controller/App.controller.js",
-							"src/i18n/i18n.properties",
-							"src/view/App.view.xml",
-							"src/index.html"
+							"webapp/controller/App.controller.js",
+							"webapp/i18n/i18n.properties",
+							"webapp/view/App.view.xml",
+							"webapp/index.html"
 						]
 					}
 				}

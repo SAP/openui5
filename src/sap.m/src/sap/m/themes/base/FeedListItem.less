@@ -1,25 +1,39 @@
+/* =================================== */
+/* CSS for control sap.m/FeedListItem  */
+/* Base theme                          */
+/* =================================== */
 
-/* ================================================= */
-/* CSS for control sap.m/FeedListItem.control (base) */
-/* ================================================= */
-
-.sapMFeedListItem{
+.sapMFeedListItem {
 	display: block;
 }
 
-.sapMFeedListShowSeparatorsAll .sapMFeedListItem{
+.sapMFeedListItem .sapUiSelectable > * {
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+
+	&::selection {
+		background: @sapUiSelected;
+		color: @sapUiContentContrastTextColor;
+	}
+
+	&::-moz-selection {
+		background: @sapUiSelected;
+		color: @sapUiContentContrastTextColor;
+	}
+}
+
+.sapMFeedListItemImageInactive {
+	cursor: default;
+}
+
+.sapMFeedListShowSeparatorsAll .sapMFeedListItem {
 	padding-top: 1rem;
 	padding-bottom: 1rem;
 }
 
-.sapMFeedListShowSeparatorsNone .sapMFeedListItem{
-	padding-top: 0.5rem;
-	padding-bottom: 0.5rem;
-}
-
-/*
-	Makes sure that floating image is not displayed in next	list item.
-*/
+/* Makes sure that floating image is not displayed in the next list item. */
 .sapMFeedListItem:after {
 	content: " ";
 	display: block;
@@ -29,43 +43,48 @@
 	visibility: hidden;
 }
 
-.sapMFeedListItem .sapMFeedListItemTextText a, 
-.sapMFeedListItem .sapMFeedListItemTextText span, 
-.sapMFeedListItem .sapMFeedListItemTextName a{
+.sapMFeedListItem .sapMFeedListItemTextText a,
+.sapMFeedListItem .sapMFeedListItemTextText span,
+.sapMFeedListItem .sapMFeedListItemTextName a {
 	font-family: @sapUiFontFamily;
 	font-weight: bold;
 	line-height: 1.4;
 }
 
 /*
- The following is necessary to make sure that image links 
+ The following is necessary to make sure that image links
  do not show a border when run in IE.
  */
 .sapMFeedListItemFigure img {
 	border: 0rem;
 }
 
-.sapMFeedListItemText{
+.sapMFeedListItemText {
 	vertical-align: top;
 	margin: 0rem;
+}
+
+.sapMFeedListItemTextString {
+	cursor: text;
 }
 
 .sapMFeedListItemText .sapMLnk {
 	vertical-align: top;
 }
 
-.sap-tablet .sapMFeedListItemHasFigure, .sap-desktop .sapMFeedListItemHasFigure{
+html.sap-tablet .sapMFeedListItemHasFigure,
+html.sap-desktop .sapMFeedListItemHasFigure {
 	margin-left: 3.75rem;
 }
 
-.sapMFeedListItemTextText{
+.sapMFeedListItemTextText {
 	margin: 0rem;
 	line-height: 1.4;
 	font-family: @sapUiFontFamily;
 	text-overflow: ellipsis;
 }
 
-.sapMFeedListItemFigure{
+.sapMFeedListItemFigure {
 	float: left;
 	height: 3rem;
 	width: 3rem;
@@ -73,11 +92,12 @@
 	margin: 0rem;
 }
 
-.sapMFeedListItemImage{
+.sapMFeedListItemImageInactive,
+.sapMFeedListItemImage {
 	width: 3rem;
-	height: 3rem;	
+	height: 3rem;
 	line-height: 3rem;
-	font-size: 3rem;
+	font-size: 2.5rem;
 	margin-left: 0rem;
 	margin-right: 0rem;
 	overflow: hidden;
@@ -87,6 +107,11 @@
 	line-height: auto;
 }
 
+.sapMFeedListItemTimestampText,
+.sapMFeedListItemInfoText {
+	cursor: text;
+}
+
 .sapMFeedListItemInfo {
 	line-height: auto;
 	white-space: nowrap;
@@ -94,22 +119,22 @@
 	text-overflow: ellipsis;
 }
 
-.sapMFeedListItemTextName{
+.sapMFeedListItemTextName {
 	line-height: 1.4;
-	font-family: @sapUiFontFamily;  
+	font-family: @sapUiFontFamily;
 	font-weight: bold;
 }
 
-html[dir=rtl] .sapMFeedListItemTextName{
-	/* 	In rtl mode, this will be converted to 'float: right;' which 
+html[dir=rtl] .sapMFeedListItemTextName {
+	/* 	In rtl mode, this will be converted to 'float: right;' which
 		is the correct value
 	*/
 	float: left;
 	margin-right: 0.3rem;
 }
 
-html[dir=rtl].sap-phone .sapMFeedListItemTextName{
-	/* 	Overwrite rtl values for phones 
+html[dir=rtl].sap-phone .sapMFeedListItemTextName {
+	/* 	Overwrite rtl values for phones
 	*/
 	float: none;
 	margin-right: 0;
@@ -121,15 +146,13 @@ html[dir=rtl].sap-phone .sapMFeedListItemTextName{
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	font-family: @sapUiFontFamily;  
+	font-family: @sapUiFontFamily;
 }
 
 .sapMFeedListItemTitleDiv.sapMLIB {
 	display: -webkit-box;
 	-webkit-box-orient: horizontal;
 	-webkit-box-align: center;
-/*	-ms-flex-direction: row; */
-/*	-ms-flex-align: center; */
 	flex-direction: row;
 	align-items: center;
 }
@@ -138,69 +161,212 @@ html[dir=rtl].sap-phone .sapMFeedListItemTextName{
 	border-bottom: 0;
 }
 
-html[data-sap-ui-browser="ie9"] .sapMFeedListItemTitleDiv {
-	display: block;
-}
-
-.sapMFeedListItemTitleDiv .sapMLIBContent {
+.sapMFeedListItemTitleDiv > .sapMLIBContent {
+	flex-basis: auto;
 	overflow: hidden;
 }
 
 
 /* phone adoption */
-.sap-phone .sapMFeedListItemHeader {
+html.sap-phone .sapMFeedListItemHeader {
 	white-space: nowrap;
 	overflow: hidden;
 }
 
-.sap-phone .sapMFeedListItemHeader.sapMFeedListItemFullHeight,
-.sap-phone .sapMFeedListItemHeader.sapMFeedListItemHasFigure {
-	height: 3rem;
+html.sap-phone .sapMFeedListItemHeader.sapMFeedListItemFullHeight,
+html.sap-phone .sapMFeedListItemHeader.sapMFeedListItemHasFigure {
+	height: 3.1rem;
 }
 
-.sap-phone .sapMFeedListItemImage {
+html.sap-phone .sapMFeedListItemImageInactive,
+html.sap-phone .sapMFeedListItemImage {
 	width: 3rem;
-	heigth: 3rem;
+	height: 3rem;
 	line-height: 3rem;
 	font-size: 2.5rem;
 }
 
-.sap-phone .sapMFeedListItemTextName {
+html.sap-phone .sapMFeedListItemTextName {
 	margin-top: 0.25rem;
 	margin-bottom: 0.25rem;
 }
 
-.sap-phone .sapMFeedListItemTextName a {
-	font-family: @sapUiFontFamily;  
-	font-weight: normal; 
+html.sap-phone .sapMFeedListItemTextName a {
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
 	width: 100%;
 }
 
-.sap-phone .sapMFeedListItemFigure {
+html.sap-phone .sapMFeedListItemFigure {
 	height: 3rem;
 	width: 3rem;
 	margin-right: 0.75rem
 }
 
-.sap-phone .sapMFeedListItemFooter {
+html.sap-phone .sapMFeedListItemFooter {
 	margin-top: 0.375rem;
 	margin-bottom: 0rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.sap-phone .sapMFeedListItemTimestamp {
+html.sap-phone .sapMFeedListItemTimestamp {
 	margin-top: 0;
 	margin-bottom: 0.25rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.sap-phone .sapMFeedListItemText{
+html.sap-phone .sapMFeedListItemText {
 	clear: left;
 	line-height: 1.4;
 	margin-top: 0.75rem;
 	margin-bottom: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.sapMFeedListItemTextText {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiListTextColor;
+	word-wrap: break-word;
+}
+
+.sapMFeedListItemImageInactive:focus,
+.sapMFeedListItemImage:focus {
+	outline-style: dotted;
+	outline-color: @sapUiContentFocusColor;
+	outline-width: 0.0625rem;
+}
+
+html.sap-tablet .sapMFeedListItem .sapMLnk:focus {
+	outline-style: dotted;
+	outline-color: @sapUiContentFocusColor;
+	outline-width: 0.0625rem;
+}
+
+/* Allow image outline(-left) to be rendered completely */
+.sapMFeedListShowSeparatorsAll .sapMFeedListItem {
+	padding-left: 0.0625rem;
+}
+
+.sapMFeedListItemTitleDiv.sapMLIB {
+	padding-left: 0.9375rem;
+}
+
+html.sap-desktop .sapMFeedListItem .sapMLnk:focus {
+	outline-color: @sapUiContentFocusColor;
+}
+
+.sapMFeedListItemImage,
+.sapMLIBActive .sapMFeedListItem span.sapMFeedListItemImage {
+	color: @sapUiContentIconColor;
+}
+
+.sapMFeedListItemImageInactive,
+.sapMLIBActive .sapMFeedListItem span.sapMFeedListItemImageInactive {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMFeedListItemTextName {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiListTextColor;
+}
+
+.sapMFeedListItemFooter {
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMFeedListItem .sapMFeedListItemTextText a,
+.sapMFeedListItem .sapMFeedListItemTextText span,
+.sapMFeedListItem .sapMFeedListItemTextName a {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiLink;
+}
+
+.sapMFeedListItemText {
+	color: @sapUiListTextColor;
+}
+
+
+.sapMLIBActive .sapMFeedListItem a,
+.sapMLIBActive .sapMFeedListItem span,
+.sapMLIBActive .sapMFeedListItem p,
+.sapMLIBActive .sapMFeedListItemFooter,
+.sapMLIBActive .sapMFeedListItemText,
+.sapMLIBActive .sapMFeedListItemTimestamp,
+.sapMLIBActive .sapMFeedListItem .sapMFeedListItemTextText .sapMFeedListItemTextString,
+.sapMLIBActive .sapMFeedListItem:hover .sapMFeedListItemTextText> .sapMFeedListItemLinkExpandCollapse,
+.sapMLIBActive .sapMFeedListItemTextText,
+.sapMLIBActive .sapMFeedListItemTextText>.sapMLnk,
+.sapMLIBActive .sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl
+.sapMLIBActive .sapMFeedListItemTextName>.sapMLnk,
+.sapMLIBActive .sapMFeedListItemTextName>.sapMLnk.sapMLnkDsbl {
+	color: @sapUiListActiveTextColor;
+	opacity: 1;
+	text-decoration: none;
+}
+
+.sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl,
+.sapMFeedListItemTextName>.sapMLnk.sapMLnkDsbl,
+html.sap-desktop .sapMFeedListItemTextName>.sapMLnk.sapMLnkDsbl:hover {
+	opacity: 1;
+	color: @sapUiListTextColor;
+}
+
+.sapMFeedListItemTextText>.sapMLnk {
+    display: inline;
+}
+
+.sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl {
+	color: @sapUiListTextColor;
+}
+
+html.sap-desktop .sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl:hover {
+	color: @sapUiListTextColor;
+}
+
+.sapMFeedListShowSeparatorsAll.sapMLIB {
+	border-bottom: 0.063rem solid @sapUiListBorderColor;
+}
+
+html.sap-phone .sapMFeedListItemTextName a {
+	line-height: normal;
+	font-size: @sapMFontLargeSize;
+}
+
+html.sap-phone .sapMFeedListItemText,
+html.sap-phone .sapMFeedListItemTimestamp {
+	font-size: @sapMFontMediumSize;
+}
+
+html.sap-phone .sapMFeedListItemFooter {
+	font-size: @sapMFontSmallSize;
+}
+
+html.sap-phone .sapMFeedListItemTimestamp {
+	color: @sapUiContentLabelColor;
+	line-height: normal;
+}
+
+.sapMFeedListItem .sapMFeedListItemTextText> .sapMFeedListItemLinkExpandCollapse {
+	font-weight: normal;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMFeedListItem:hover .sapMFeedListItemTextText> .sapMFeedListItemLinkExpandCollapse {
+	color: @sapUiLink;
+}
+
+.sapMFeedListItem .sapMFeedListItemTextText .sapMFeedListItemTextString {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-style: normal;
+	font-weight: normal;
+	color: @sapUiListTextColor;
+	line-height: 1.4;
 }

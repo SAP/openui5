@@ -1,0 +1,21 @@
+/* ============================ */
+/* CSS for control sap.m/Shell  */
+/* Belize theme                 */
+/* ============================ */
+
+/* background color class for Shell header */
+.sapMShellBackgroundColorOnlyIfDefaultMixin() when not (@sapUiGlobalBackgroundImage = '') {
+	background-color: transparent; /* custom BG image... just hide the background */
+}
+
+.sapMShellBackgroundColorOnlyIfDefaultMixin() when (@sapUiGlobalBackgroundImage = '') {
+	background-color: mix(@sapUiHighlight, #fff, 5); /* default BG image - display the default background color */
+}
+
+.sapMShellBackgroundColorOnlyIfDefault {
+	.sapMShellBackgroundColorOnlyIfDefaultMixin;
+}
+
+html.sap-desktop .sapMShellCentralBox {
+	box-shadow: 0 0 24px fade(@sapUiContentShadowColor, 15);
+}

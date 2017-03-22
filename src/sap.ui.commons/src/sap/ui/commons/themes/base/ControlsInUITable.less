@@ -1,0 +1,156 @@
+/*******************************************************************************
+ * STYLE ADAPTATIONS OF COMMONS CONTROLS FOR SAP.UI.TABLE.TABLE
+ ******************************************************************************/
+
+.sapUiTableCell {
+
+	> .sapUiTv,
+	> .sapUiLbl,
+	> .sapUiLnk {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	> .sapUiTv {
+		font-weight: normal;
+		font-size: 12px;
+	}
+	
+	> .sapUiTf,
+	> .sapUiSearchField,
+	> .sapUiSearchField > .sapUiTfCombo,
+	> .sapUiTfCombo {
+		border: none;
+		background: none;
+		padding: 0;
+		margin: 0;
+		width: 100%;
+	}
+
+	> .sapUiTf.sapUiTfErr.sapUiTfStd,
+	> .sapUiTfCombo.sapUiTfErr.sapUiTfStd {
+		background-color: @sapUiFieldInvalidBackground;
+	}
+
+	> .sapUiTf.sapUiTfWarn.sapUiTfStd,
+	> .sapUiTfCombo.sapUiTfWarn.sapUiTfStd {
+		background-color: @sapUiFieldWarningBackground;
+	}
+
+	> .sapUiTf.sapUiTfSucc.sapUiTfStd,
+	> .sapUiTfCombo.sapUiTfSucc.sapUiTfStd {
+		background-color: @sapUiFieldSuccessBackground;
+	}
+
+	> .sapUiTfCombo {
+		padding: 0 8px 0 0;
+	}
+
+	> .sapUiImg {
+		margin-top: 1px;
+	}
+
+	> .sapUiRating {
+		display: block;
+	}
+
+	> .sapUiLnk {
+		vertical-align: middle;
+	}
+
+	> .sapUiLnk:focus {
+		outline-offset: -1px;
+	}
+
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiTableCell,
+html[data-sap-ui-browser^="ed"] .sapUiTableCell {
+
+	> .sapUiLnk:focus {
+		outline: none;
+		position: relative;
+	}
+
+	> .sapUiLnk:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 1px dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+
+}
+
+.sapUiAnalyticalTable .sapUiTableCell > .sapUiTv {
+	font-size: 0.875rem;
+}
+
+.sapUiTableRowHidden .sapUiTableCell > .sapUiImg {
+	display: none; /* images will be removed to avoid pushing the height of the line */
+}
+
+tr.sapUiTableRowHvr {
+
+	.sapUiLbl,
+	.sapUiTf,
+	.sapUiLnk,
+	.sapUiLnk:visited,
+	.sapUiLnk:hover {
+		color: @sapUiListTextColor;
+		background-color: @sapUiListHoverBackground;
+	}
+
+}
+
+.sapUiAnalyticalTableSum .sapUiTv {
+	font-weight: bold !important;
+}
+
+.sapUiTableTbr .sapUiTb,
+.sapUiTableTbr .sapUiTbCont {
+	border: none;
+}
+
+.sapUiTableTbr > .sapUiTb {
+	background-color: @sapUiListBackground;
+}
+
+.sapUiTableColCell {
+
+	.sapUiLbl {
+		border: none;
+		background: none;
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		font-weight: normal;
+		font-size: 0.875rem;
+		color: @sapUiListTextColor;
+	}
+
+	.sapUiImg {
+		vertical-align: middle;
+	}
+}
+
+.sapUiAnalyticalTable .sapUiTableColCell .sapUiLbl {
+	font-weight: bold;
+}
+
+.sapUiTableCol:hover {
+
+	.sapUiLbl,
+	.sapUiTf,
+	.sapUiLnk,
+	.sapUiLnk:visited,
+	.sapUiLnk:hover {
+		color: @sapUiListTextColor;
+	}
+
+}

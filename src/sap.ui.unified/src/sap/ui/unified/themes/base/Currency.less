@@ -1,20 +1,19 @@
+/* ======================================== */
+/* CSS for control sap.ui.unified/Currency  */
+/* Base theme                               */
+/* ======================================== */
+
 .sapUiUfdCurrency {
 	display: inline-block;
 	width: 100%;
 	overflow: hidden;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	line-height: normal;
 }
 
 .sapUiUfdCurrencyAlign {
-	text-align: end;
-	width: 200px;
-	float: right;
-}
-/* special handling for IE, as it does not support text-align: end */
-html[data-sap-ui-browser^="ie"] .sapUiUfdCurrencyAlign {
 	text-align: right;
-}
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyAlign {
-	text-align: left;
 }
 
 .sapUiUfdCurrencyValue,
@@ -24,14 +23,7 @@ html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyAlign {
 }
 
 .sapUiUfdCurrencyValue {
-	text-align: end;
-}
-/* special handling for IE, as it does not support text-align: end */
-html[data-sap-ui-browser^="ie"] .sapUiUfdCurrencyValue {
 	text-align: right;
-}
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyValue {
-	text-align: left;
 }
 
 .sapUiUfdCurrencyCurrency {
@@ -44,4 +36,12 @@ html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyValue {
 .sapUiUfdCurrencyNoVal .sapUiUfdCurrencyValue,
 .sapUiUfdCurrencyNoVal .sapUiUfdCurrencyCurrency {
 	display: none;
+}
+
+.sapUiTableCell .sapUiUfdCurrency {
+	vertical-align: middle;
+}
+
+.sapUiAnalyticalTableSum .sapUiTableCell .sapUiUfdCurrency {
+	font-weight: bold;
 }

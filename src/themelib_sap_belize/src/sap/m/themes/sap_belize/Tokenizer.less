@@ -1,0 +1,29 @@
+/* ================================ */
+/* CSS for control sap.m/Tokenizer  */
+/* Belize theme                     */
+/* ================================ */
+
+html.sap-desktop .sapMTokenizer:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMTokenizer:focus {
+		&:before {
+			border: 1px dotted @sapUiContentFocusColor;
+		}
+	}
+}
+
+/* editable tokens in read-only tokenizer */
+.sapMTokenizer.sapMTokenizerReadonly {
+	.sapMToken {
+		color: @sapUiContentForegroundTextColor;
+
+		&.sapMTokenSelected {
+			color: @sapUiToggleButtonPressedTextColor;
+		}
+	}
+}

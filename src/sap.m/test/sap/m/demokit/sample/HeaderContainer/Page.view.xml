@@ -1,0 +1,45 @@
+<mvc:View
+	controllerName="sap.m.sample.HeaderContainer.Page"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
+	<HeaderContainer scrollStep="200">
+		<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
+		<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
+		<NumericContent value="1762" icon="sap-icon://line-charts"/>
+		<NumericContent value="1762" icon="sap-icon://area-chart"/>
+		<NumericContent size="S" scale="M" value="1.04" valueColor="Normal" indicator="Up" press="press" />
+		<NumericContent size="S" scale="M" value="3.65" valueColor="Good" indicator="Up" press="press" />
+		<NumericContent value="1762" icon="sap-icon://bar-chart"/>
+		<NumericContent size="S" scale="M" value="0.73" valueColor="Error" indicator="Down" press="press" />
+	</HeaderContainer>
+
+	<HeaderContainer scrollStep="200">
+		<TileContent unit="EUR" footer="Current Quarter">
+			<content>
+				<NumericContent value="1.96" valueColor="Error" indicator="Down" press="press"/>
+			</content>
+		</TileContent>
+		<TileContent footer="Leave Requests">
+			<content>
+				<NumericContent value="35" icon="sap-icon://travel-expense"/>
+			</content>
+		</TileContent>
+		<TileContent footer="Hours since last Activity">
+			<content>
+				<NumericContent value="9" icon="sap-icon://horizontal-bar-chart"/>
+			</content>
+		</TileContent>
+		<TileContent unit="EUR" footer="Current Quarter">
+			<content>
+				<NumericContent scale="M" value="88"
+								valueColor="Good" indicator="Up" />
+			</content>
+		</TileContent>
+		<TileContent unit="Unit" footer="Footer Text">
+			<content>
+				<NumericContent value="1522" icon="sap-icon://bubble-chart"/>
+			</content>
+		</TileContent>
+	</HeaderContainer>
+</mvc:View>

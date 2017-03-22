@@ -1,0 +1,10 @@
+<mvc:View controllerName="sap.m.sample.NumericContentIcon.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<NumericContent value="65" scale="MM"
+		valueColor="Error" indicator="Down" icon="sap-icon://travel-expense"
+		class="sapUiSmallMargin" press="press" />
+	<NumericContent value="11" scale="MM"
+		valueColor="Critical" indicator="Up"
+		icon="test-resources/sap/m/demokit/sample/NumericContentIcon/images/grass.jpg" class="sapUiSmallMargin"
+		press="press" />
+</mvc:View>

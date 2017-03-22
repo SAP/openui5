@@ -7,10 +7,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			metadata: {
 				config: {
 					sample: {
-						iframe: "src/index.html",
+						iframe: "webapp/index.html",
 						stretch: true,
 						files: [
-							"src/index.html"
+							"webapp/index.html"
 						]
 					}
 				}

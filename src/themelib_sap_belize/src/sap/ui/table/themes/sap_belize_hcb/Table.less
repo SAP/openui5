@@ -1,0 +1,45 @@
+/* =================================== */
+/* CSS for control sap.ui.table/Table  */
+/* Belize High Contrast Black theme    */
+/* =================================== */
+
+@_sapUiTableFocusOutlineWidth: 2px;
+@_sapUiTableFocusOutlineOffset: -3px;
+
+.sapUiTableHdr {
+	border-bottom: 3px solid @sapUiListHeaderBorderColor;
+}
+
+.sapUiTableTbr,
+.sapUiTableExt {
+	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+	padding: 0.125rem;
+	box-sizing: content-box;
+}
+
+.sapUiTableCnt {
+	border: 1px solid @sapUiListBorderColor;
+}
+
+.sapUiTableColHdrCnt {
+	border-bottom-width: 3px;
+}
+
+.sapUiTableCol:hover,
+.sapUiTableColRowHdr:hover {
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapUiTableRowHdr::after,
+.sapUiTableColRowHdrIco::after {
+	color: @sapUiContentIconColor;
+}
+
+.sapUiTableCtrl tr.sapUiTableRowHvr,
+.sapUiTableRowHdr.sapUiTableRowHvr {
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapUiTableRowHdr.sapUiTableRowHvr::after {
+	background-color: @sapUiSelected;
+}

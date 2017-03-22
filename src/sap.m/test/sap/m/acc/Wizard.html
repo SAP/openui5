@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>sap.m.Wizard</title>
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+	<script>
+		var step1 = new sap.m.WizardStep({
+			validated: false,
+			title: "User credentials",
+			icon: "sap-icon://permission",
+			content: [
+				new sap.m.Text({
+					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget turpis quis felis luctus consectetur. Nulla eros sem, tincidunt sit amet ipsum at, laoreet fringilla risus. Curabitur tempus arcu sit amet volutpat gravida. Sed blandit leo vel lectus tempus, ac laoreet dui tempus. Curabitur placerat orci a faucibus rutrum. Praesent mattis ante vel enim posuere, a luctus lacus posuere. Aliquam imperdiet leo sit amet auctor vestibulum. Nunc consequat, turpis faucibus porttitor eleifend, nisi eros auctor est, in ultricies magna elit in quam. Phasellus risus felis, cursus at libero sed, consequat tristique lectus. Nullam quis eros diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce dignissim turpis quis elit finibus elementum. Fusce aliquet enim ante. Morbi vitae turpis urna."
+				}),
+				new sap.ui.layout.form.SimpleForm({
+					minWidth: 1024,
+					maxContainerCols: 2,
+					editable: true,
+					content: [
+						new sap.m.Label({
+							text: "User name",
+							labelFor: "nameInput"
+						}),
+						new sap.m.Input("nameInput", {
+							liveChange: function (oEvent) {
+								var val = oEvent.getParameter("value");
+								if (val.length > 3) {
+									oWizard.validateStep(step1);
+								} else {
+									oWizard.invalidateStep(step1);
+								}
+							}
+						})
+					]
+				})
+			]
+		});
+		var step2 = new sap.m.WizardStep({
+			validated: true,
+			title: "Personal information",
+			icon: "sap-icon://person-placeholder",
+			content: [
+				new sap.m.Text({
+					text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
+				})
+			]
+		});
+		var step3 = new sap.m.WizardStep({
+			validated: true,
+			title: "Payment details",
+			icon: "sap-icon://simple-payment",
+			content: [
+				new sap.ui.layout.form.SimpleForm({
+					minWidth: 1024,
+					maxContainerCols: 2,
+					editable: true,
+					content: [
+						new sap.m.TextArea({
+							placeholder: "Please add your comment",
+							rows: 6,
+							maxLength: 255,
+							width: "100%"
+						})
+					]
+				})
+			]
+		});
+		var step4 = new sap.m.WizardStep({
+			validated: true,
+			title: "Credit card information",
+			icon: "sap-icon://credit-card",
+			content: [
+				new sap.ui.layout.form.SimpleForm({
+					minWidth: 1024,
+					maxContainerCols: 2,
+					editable: true,
+					content: [
+						new sap.m.Label({
+							text: "Check active element behaviour"
+						}),
+						new sap.m.Button({text: "Verification code", tooltip: "Simple Button"}),
+						new sap.m.Button({text: "Identification code", tooltip: "Simple Button"})
+					]
+				})
+			]
+		});
+
+		var oWizard = sap.m.Wizard({
+			width: "100%",
+			showNextButton: true,
+			steps: [step1, step2, step3, step4]
+		}).placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<div id="content">
+</div>
+</body>
+</html>

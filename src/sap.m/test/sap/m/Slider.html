@@ -2,12 +2,12 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="UTF-8">
+		<meta charset="utf-8">
 		<title>Slider - sap.m.Slider</title>
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m"
-				data-sap-ui-theme="sap_bluecrystal">
+				data-sap-ui-libs="sap.m">
 		</script>
 		<script>
 		var oApp = new sap.m.App("myApp", { initialPage: "page1" }),
@@ -115,7 +115,8 @@
 				},
 				change : function(oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
+				},
+				showAdvancedTooltip: true
 			}),
 
 			oSlider8 = new sap.m.Slider({
@@ -141,7 +142,9 @@
 				},
 				change : function(oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
+				},
+				showAdvancedTooltip: true,
+				inputsAsTooltips: true
 			}),
 
 			oSlider10 = new sap.m.Slider({
@@ -162,17 +165,25 @@
 				step: 0.01,
 				min: 10.4,
 				max: 500.5,
-				liveChange: function(oControlEvent) {
+				liveChange: function (oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
 				},
-				change : function(oControlEvent) {
+				change: function (oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 				}
 			}),
 
+			oSlider12 = new sap.m.Slider({enableTickmarks: true}),
+
+			oSlider13 = new sap.m.Slider({
+				enableTickmarks: true,
+				scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
+			});
+
 			oPage1 = new sap.m.Page("page1", {
 				title: "Mobile Slider Control",
-				content : [ oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8, oSlider9, oSlider10, oSlider11 ]
+				content: [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
+					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13]
 			});
 
 			oApp.addPage(oPage1);

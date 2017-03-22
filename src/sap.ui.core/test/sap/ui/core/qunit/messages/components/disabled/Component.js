@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 			}
 		}
 		oModel.setData(oData);
-	
+
 		var oLayout = new ResponsiveGridLayout();
 		var oForm = new Form({
 			models: oModel,
@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 							label: new Label({text:"Street"}),
 							fields: [
 								new Input({value: "{street}"}),
-								new Input({ 
+								new Input({
 									id:"nr_disabled",
 									value: {path: "nr", type: oInteger},
 									layoutData: new GridData({span: "L2 M2 S2"})
@@ -180,14 +180,14 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 				)
 			}
 		});
-	
+
 		var oButton4 = new Button({
 			text: "clear Messages",
 			press: function() {
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 			}
 		});
-	
+
 		return oForm;
 	};
 

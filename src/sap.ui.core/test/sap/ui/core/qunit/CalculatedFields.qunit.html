@@ -1,35 +1,39 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested calculated fields
-  Author: d050084
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <!-- Initialization -->
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.ui.commons, sap.ui.table"
-	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-language="en_US">
 	</script>
 
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <!-- Test functions -->
-<script language="javascript" charset="utf-8"> // IE needs this :-/
+<script charset="utf-8"> // IE needs this :-/
+
+jQuery.sap.require("sap.ui.thirdparty.sinon");
+jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 	var oModel;
 	var oModel2;
@@ -39,13 +43,12 @@
 	var oTxt;
 
 	function setup(){
-		
 		if (oTxt) {
 			oTxt.destroy();
 		}
-		
+
 		// reset bindings
-		bindings = new Array();
+		bindings = [];
 		testData = {
 	  		"teamMembers":[
 				{"firstName":"Andreas", "lastName":"Klark", "gender":"male"},
@@ -63,14 +66,14 @@
 				 {"value" : 222.322}
 			]
 		};
-		
+
 		testData2 = {
 				"values":
 					[
-					 {"value" : 7.55},
-					 {"value" : 555554.32241},
-					 {"value" : 2.418}
-				]	
+						{"value" : 7.55},
+						{"value" : 555554.32241},
+						{"value" : 2.418}
+				]
 		}
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testData);
@@ -83,59 +86,56 @@
 		oTxt.placeAt("txt");
 	};
 
-	function createPropertyBindings(path, property, context){
+	function createPropertyBindings(path, property, context) {
 		// create bindings
-
-		jQuery(testData[path.substr(1)]).each(function (i, entry){
+		jQuery(testData[path.substr(1)]).each(function (i) {
 			bindings[i] = oModel.bindProperty(path + "/" + i + "/" + property, context);
 		});
-		
 	};
-	
-	test("Binding syntax tests", function(){
+
+	QUnit.test("Binding syntax tests", function(assert) {
 		setup();
-		
+
 		oTxt.bindValue("/teamMembers/4/firstName");
-		equal(oTxt.getValue(), "Michael", "normal syntax 1");
+		assert.equal(oTxt.getValue(), "Michael", "normal syntax 1");
 		oTxt.unbindProperty("value");
-		
+
 		oTxt.bindValue({ path: "/teamMembers/4/firstName"});
-		equal(oTxt.getValue(), "Michael", "normal syntax 2");
+		assert.equal(oTxt.getValue(), "Michael", "normal syntax 2");
 		oTxt.unbindProperty("value");
-		
+
 		oTxt.bindValue({ path: "/teamMembers/4/firstName",
 				parts: [
 							{path: "/teamMembers/6/firstName"},
 							{path: "/teamMembers/6/lastName"}
-				        ]});
-		equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
+						]});
+		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
 		oTxt.unbindProperty("value");
-		
-		oTxt.bindValue({ 
+
+		oTxt.bindValue({
 			parts: [
 						"/teamMembers/2/firstName",
 						"/teamMembers/0/firstName",
 						"/teamMembers/2/lastName"
-			        ]});
-		equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields syntax 2");
-				
+					]});
+		assert.equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields syntax 2");
 	});
-	
-	test("Binding syntax constructor tests", function(){
+
+	QUnit.test("Binding syntax constructor tests", function(assert) {
 		setup();
-				
+
 		oTxt = new sap.ui.commons.TextField({
 			value: {
 				parts: [
-				    	{path: "/teamMembers/6/firstName"},
+						{path: "/teamMembers/6/firstName"},
 						{path: "/teamMembers/6/lastName"}
-				       ]
+						]
 			}
 		});
-		
+
 		oTxt.placeAt("txt");
-		equal(oTxt.getValue(), "Frank Wallace", "calculated fields constructor syntax 1");
-		
+		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields constructor syntax 1");
+
 		oTxt.destroy();
 		oTxt = new sap.ui.commons.TextField({
 			value: {
@@ -143,193 +143,187 @@
 						"/teamMembers/2/firstName",
 						"/teamMembers/0/firstName",
 						"/teamMembers/2/lastName"
-				       ]
+						]
 			}
 		});
 		oTxt.placeAt("txt");
-		equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields constructor syntax 2");
-		
+		assert.equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields constructor syntax 2");
 	});
-	
-	
-	test("Composite Binding tests", function(){
+
+	QUnit.test("Composite Binding tests", function(assert) {
 		setup();
-		
-		
+
 		oTxt.bindValue({ path: "/teamMembers/4/firstName",
 				parts: [
 							{path: "/teamMembers/6/firstName"},
 							{path: "/teamMembers/6/lastName",},
 							{path: "/teamMembers/3/lastName",},
 							{path: "/values/1/value", type: new sap.ui.model.type.Float()}
-				        ]});
-		
+						]});
+
 		var oComp = oTxt.getBinding("value");
-		ok(oComp);
-		equals(oComp.getType(), null, "Type should be null");
-		equals(oComp.getPath(), null, "Path should be null");
-		equals(oComp.getModel(), null, "Model should be null");
-		equals(oComp.getContext(), null, "Context should be null");
-		equals(oComp.getBindings().length, 4, "Bindings check");
-		equals(oComp.getBindings()[0].getValue(), "Frank", "Bindings value check");
-		equals(oComp.getBindings()[1].getValue(), "Wallace", "Bindings value check");
-		equals(oComp.getBindings()[2].getValue(), "Ander", "Bindings value check");
-		equals(oComp.getBindings()[3].getValue(), 5.322, "Bindings value check");
-		
-		equals(oComp.getBindings()[3].getExternalValue(), "5.322", "Bindings value check");
-		
+		assert.ok(oComp);
+		assert.equal(oComp.getType(), null, "Type should be null");
+		assert.equal(oComp.getPath(), null, "Path should be null");
+		assert.equal(oComp.getModel(), null, "Model should be null");
+		assert.equal(oComp.getContext(), null, "Context should be null");
+		assert.equal(oComp.getBindings().length, 4, "Bindings check");
+		assert.equal(oComp.getBindings()[0].getValue(), "Frank", "Bindings value check");
+		assert.equal(oComp.getBindings()[1].getValue(), "Wallace", "Bindings value check");
+		assert.equal(oComp.getBindings()[2].getValue(), "Ander", "Bindings value check");
+		assert.equal(oComp.getBindings()[3].getValue(), 5.322, "Bindings value check");
+
+		assert.equal(oComp.getBindings()[3].getExternalValue(), "5.322", "Bindings value check");
 	});
-	
-	test("Calculated fields model tests wrong path", function(){
+
+	QUnit.test("Calculated fields model tests wrong path", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/teamMembers/6/firstName"},
 						{path: "/tea/5/xyz"}
-			        ]});
-		equal(oTxt.getValue(), "Frank ", "calculated fields wrong path");
-		
+					]});
+		assert.equal(oTxt.getValue(), "Frank ", "calculated fields wrong path");
 	});
-	
-	test("Calculated fields model custom formatter", function(){
+
+	QUnit.test("Calculated fields model custom formatter", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/teamMembers/6/firstName"},
 						{path: "/teamMembers/6/lastName"},
 						{path: "/teamMembers/5/lastName"}
-			        ],
+					],
 			formatter: function(oV1, oV2, oV3){
-				equal(oV3, "Green", "name check");
+				assert.equal(oV3, "Green", "name check");
 				return "Dear " + oV1 + " " + oV2;
 			}
 		});
-		
-		equal(oTxt.getValue(), "Dear Frank Wallace", "calculated fields test custom formatter");
-		
+
+		assert.equal(oTxt.getValue(), "Dear Frank Wallace", "calculated fields test custom formatter");
 	});
-	
-	test("Calculated fields model tests wrong path", function(){
+
+	QUnit.test("Calculated fields model tests wrong path", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/teamMembers/6/firstName"},
 						{path: "/teamMembers/6/lastName"}
-			        ]});
-		equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
-		
-		
+					]});
+		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
 	});
-	
-	test("Calculated fields multi model tests", function(){
+
+	QUnit.test("Calculated fields multi model tests", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/values/1/value"},
 						{path: "model2>/values/1/value"},
 						{path: "model2>/values/2/value"}
-			        ],
-			formatter: function(oV1, oV2, oV3){				
+					],
+			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3;
 			}
 		});
-		
-		equal(oTxt.getValue(), "555562.06241" , "calculated fields multi model bindings ");
-		
+
+		assert.equal(oTxt.getValue(), "555562.06241" , "calculated fields multi model bindings ");
 	});
-	
-	test("Calculated fields multi model tests wrong path", function(){
+
+	QUnit.test("Calculated fields multi model tests wrong path", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/values/1/value"},
 						{path: "model2>/values/200/value"},
 						{path: "model2>/values/2/value"}
-			        ],
-			formatter: function(oV1, oV2, oV3){		
-				ok(!oV2, "value should be undefined");
+					],
+			formatter: function(oV1, oV2, oV3){
+				assert.ok(!oV2, "value should be undefined");
 				return oV1 + oV3;
 			}
 		});
-		
-		equal(oTxt.getValue(), "7.74" , "calculated fields multi model bindings ");
-		
-		
+
+		assert.equal(oTxt.getValue(), "7.74" , "calculated fields multi model bindings ");
 	});
-	
-	test("Calculated fields with types and raw values", function(){
+
+	QUnit.test("Calculated fields with types and raw values", function(assert) {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/values/1/value", type: new sap.ui.model.type.Float()},
-						{path: "model2>/values/1/value", type: new sap.ui.model.type.Float() },
+						{path: "model2>/values/1/value", type: new sap.ui.model.type.Float()},
 						{path: "model2>/values/2/value", type: new sap.ui.model.type.Float()}
-			        ],
-			formatter: function(oV1, oV2, oV3){				
+					],
+			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3; // strings are added
 			}
 		});
-		
-		equal(oTxt.getValue(), "5.322555,554.322412.418" , "calculated fields formatter");
+
+		assert.equal(oTxt.getValue(), "5.322555,554.322412.418" , "calculated fields formatter");
 		oTxt.unbindProperty("value");
-		
+
 		oTxt.bindValue({
 			parts: [
 						{path: "/values/1/value", type: new sap.ui.model.type.Float()},
 						{path: "model2>/values/1/value"},
 						{path: "model2>/values/2/value", type: new sap.ui.model.type.Float()},
 						{path: "/teamMembers/6/lastName"}
-			        ],
-			formatter: function(oV1, oV2, oV3, oV4){				
+					],
+			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3; // raw values
 			},
 			useRawValues : true
 		});
-		
-		equal(oTxt.getValue(), "555562.06241" , "calculated fields formatter raw values");
-		
+
+		assert.equal(oTxt.getValue(), "555562.06241" , "calculated fields formatter raw values");
+	});
+	QUnit.module("Table", {
+		beforeEach: function() {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function() {
+			this.clock.restore();
+		}
 	});
 
-	test("Calculated fields with table", function(){
+	QUnit.test("Calculated fields with table", function(assert) {
 		setup();
-		
 		 var oTable = new sap.ui.table.Table({
 			columns: [
-	                new sap.ui.table.Column({
-	                    label: new sap.ui.commons.Label({ text: "name" }),
-	                    template: new sap.ui.commons.TextView({ text: {
-	            			parts: [
-	        						{path: "firstName"},
-	        						{path: "lastName"}
-	        					],
-	                    	formatter: function (firstName, lastName){
-	                    		if (firstName && lastName) {
-	                    			return "Dear " + firstName + " " + lastName;	                    			
-	                    		}
-	                    		return null;
-	                    	}
-	                    } })
-	                })
-	            ]
+				new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({ text: "name" }),
+						template: new sap.ui.commons.TextView({ text: {
+							parts: [
+									{path: "firstName"},
+									{path: "lastName"}
+								],
+							formatter: function (firstName, lastName){
+								if (firstName && lastName) {
+									return "Dear " + firstName + " " + lastName;
+								}
+								return null;
+						}
+						}})
+					})
+				]
 		});
-		  
-	  oTable.bindRows("/teamMembers");
-	  oTable.placeAt("table");
-	 	 
-	  sap.ui.getCore().applyChanges();
-	  
-	  var counter = 0;
-	  
-	  jQuery.each(oTable.getRows(), function(i, oRow){
-		  if (oRow.getCells()[0].getText()) {
-			  equal(oRow.getCells()[0].getText(), "Dear " + testData.teamMembers[i].firstName + " " + testData.teamMembers[i].lastName, "check names");
-			  counter++;
-		  }
-	  });
-	  equal(counter, 7, "table entries");
-	  		
+
+		oTable.bindRows("/teamMembers");
+		oTable.placeAt("table");
+
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+		var counter = 0;
+
+		jQuery.each(oTable.getRows(), function(i, oRow){
+			if (oRow.getCells()[0].getText()) {
+				assert.equal(oRow.getCells()[0].getText(), "Dear " + testData.teamMembers[i].firstName + " " + testData.teamMembers[i].lastName, "check names");
+				counter++;
+			}
+		});
+		assert.equal(counter, 7, "table entries");
 	});
-	
+
 
 	</script>
 

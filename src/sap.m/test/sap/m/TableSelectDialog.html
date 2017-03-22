@@ -2,16 +2,15 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>TableSelectDialog - sap.m</title>
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.ui.commons,sap.m"
-			data-sap-ui-compatVersion="1.16"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-compatVersion="1.16">
 		</script>
-		<script type="text/javascript">
+		<script>
 		jQuery.sap.require("sap.ui.core.util.MockServer");
 		jQuery.sap.require("sap.ui.model.odata.ODataModel");
 
@@ -92,20 +91,15 @@
 			itemsBinding.filter(aFilters);
 		};
 
-		// cancel function to display a message
-		var fnCancelDialog = function (oEvent) {
-			sap.m.MessageBox.alert("Cancel Selected on " + (oEvent.oSource ? oEvent.oSource : oEvent.srcControl));
-		}
-
 		/* dialog data */
 		var oDialogData = {
 			title: "Choose your tech..",
-			noDataMessage: "We don't have any tech to show here and we are very sorry for that!",
+			noDataMessage: "We don't have any tech to show here and we are very sorry for that!"
 		};
-		
+
 		var oModelDialog = new sap.ui.model.json.JSONModel();
-		oModelDialog.setData(oDialogData);	
-		
+		oModelDialog.setData(oDialogData);
+
 		// create the data to be shown in the table
 		var oProductData1 = {
 		items : [{
@@ -135,7 +129,7 @@
 				price : "55.00 EUR"
 			}]
 		};
-		
+
 		// create the model to hold the data
 		var oModel1 = new sap.ui.model.json.JSONModel();
 		oModel1.setDefaultBindingMode("OneWay");
@@ -174,7 +168,7 @@
 		// create the model to hold the data
 		var oModel2 = new sap.ui.model.json.JSONModel();
 		oModel2.setDefaultBindingMode("OneWay");
-		oModel2.setData(oProductData2);		
+		oModel2.setData(oProductData2);
 
 		// create the data to be shown in the table
 		var oProductData3 = {
@@ -182,7 +176,7 @@
 				name : "Headphone",
 				lname : "Headphone 1234567890120 12345678",
 				ean13 : "1234567890120",
-				ean8 : "12345678",  
+				ean8 : "12345678",
 				qty : "10 EA",
 				limit : "15.00 Eur",
 				backorder : "10,000",
@@ -249,7 +243,7 @@
 		oModel3.setDefaultBindingMode("OneWay");
 		oModel3.setData(oProductData3);
 
-		// create our new Table Select Dialog		
+		// create our new Table Select Dialog
 		var oTableSelectDialog1 = new sap.m.TableSelectDialog("TableSelectDialog1", {
 			title: "Choose a piece of tech",
 			noDataText: "Sorry, no tech available today",
@@ -296,7 +290,7 @@
 				})
 			]
 		});
-			
+
 		// create the template for the items binding
 		var oItemTemplate1 = new sap.m.ColumnListItem({
 			type : "Active",
@@ -314,7 +308,7 @@
 				})
 			]
 		});
-		
+
 		// create the template for the items binding
 		var oItemTemplate2 = new sap.m.ColumnListItem({
 			type : "Active",
@@ -380,21 +374,18 @@
 		// set model & bind Aggregation
 		oTableSelectDialog1.setModel(oModel3);
 		oTableSelectDialog1.bindAggregation("items", "/items", oItemTemplate1);
-	
+
 		// attach confirm listener
 		oTableSelectDialog1.attachConfirm(function (evt) {
 			var selectedItem = evt.getParameter("selectedItem");
 			if (selectedItem) {
 				//Get all the cells and pull back the first one which will be the name content
 				var oCells = selectedItem.getCells();
-				var oCell = oCells[0];				
+				var oCell = oCells[0];
 				//Now update the input with the value
 				oInput1.setValue("Item selected is : " + oCell.getText());
 			}
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog1.attachCancel(fnCancelDialog);
 
 		var oInput1 = new sap.m.Input({
 			type: "Text",
@@ -409,7 +400,7 @@
 				fnPrefilterDialog(oInput1.getValue());
 			}
 		});
-		
+
 		/* 2) table select dialog with binding and dialog binding */
 		var oTableSelectDialog2 = new sap.m.TableSelectDialog("TableSelectDialog2", {
 			title: "{dialog>/title}",
@@ -457,35 +448,32 @@
 				})
 			]
 		});
-		
-		var oInput2 = new sap.m.Input({
+
+		var oInput2 = new sap.m.Input('tsdWithBindingInput', {
 			type: "Text",
 			placeholder: "Open TableSelectDialog with Dialog Binding & Items Binding",
 			showValueHelp: true,
 			valueHelpRequest: function () {
 				oTableSelectDialog2.open(oInput2.getValue());
-				
+
 				// then set model & bind Aggregation
 				oTableSelectDialog2.bindAggregation("items", "/items", oItemTemplate1);
 				oTableSelectDialog2.setModel(oModel1);
 				oTableSelectDialog2.setModel(oModelDialog,"dialog");
 			}
 		});
-		
+
 		// attach confirm listener
 		oTableSelectDialog2.attachConfirm(function (evt) {
 			var selectedItem = evt.getParameter("selectedItem");
 			if (selectedItem) {
 				//Get all the cells and pull back the first one which will be the name content
 				var oCells = selectedItem.getCells();
-				var oCell = oCells[0];				
+				var oCell = oCells[0];
 				//Now update the input with the value
 				oInput2.setValue("Item selected is : " + oCell.getText());
 			}
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog2.attachCancel(fnCancelDialog);
 
 		/* 3) table dialog with binding auto destroy on close */
 		var oTableSelectDialog3 = new sap.m.TableSelectDialog("TableSelectDialog3", {
@@ -530,14 +518,14 @@
 				})
 			]
 		});
-		
+
 		// attach confirm listener
 		oTableSelectDialog3.attachConfirm(function (evt) {
 			var selectedItem = evt.getParameter("selectedItem");
 			if (selectedItem) {
 				//Get all the cells and pull back the first one which will be the name content
 				var oCells = selectedItem.getCells();
-				var oCell = oCells[0];				
+				var oCell = oCells[0];
 				//Now update the input with the value
 				sap.m.MessageBox.alert("Item selected is : " + oCell.getText());
 			}
@@ -545,9 +533,6 @@
 			oTableSelectDialog3.destroy();
 			oTableSelectDialog3 = null;
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog3.attachCancel(fnCancelDialog);
 
 		var oButton3 = new sap.m.Button("Button3", {
 			text: "Open TableSelectDialog with destroy call in close event & late binding",
@@ -559,7 +544,7 @@
 				oTableSelectDialog3.setModel(oModel1);
 			}
 		});
-		
+
 		/* 4) multi select table dialog with binding  */
 		var oTableSelectDialog4 = new sap.m.TableSelectDialog("TableSelectDialog4", {
 			title: "Choose several tech products",
@@ -627,10 +612,7 @@
 			}
 		});
 
-		// attach Cancel listener
-		oTableSelectDialog4.attachCancel(fnCancelDialog);
-
-		var oButton4 = new sap.m.Button("Button4", {
+		var oButton4 = new sap.m.Button("tsdWithMultiSelectButton", {
 			text: "Open TableSelectDialog in MultiSelect mode",
 			press: function () {
 				// open dialog
@@ -671,7 +653,7 @@
 					}),
 					minScreenWidth : "Tablet",
 					demandPopin : true
-				}),				
+				}),
 				new sap.m.Column({
 					hAlign : "Center",
 					width : "150px",
@@ -720,10 +702,7 @@
 			}
 		});
 
-		// attach Cancel listener
-		oTableSelectDialog5.attachCancel(fnCancelDialog);
-
-		var oButton5 = new sap.m.Button("Button5", {
+		var oButton5 = new sap.m.Button("tsdWithLargeDataAndMultiSelectButton", {
 			text: "Open TableSelectDialog in MultiSelect mode with large data",
 			press: function () {
 				// open dialog
@@ -845,17 +824,14 @@
 				if (selectedItem) {
 					//Get all the cells and pull back the first one which will be the name content
 					var oCells = selectedItem.getCells();
-					var oCell = oCells[0];				
+					var oCell = oCells[0];
 					//Now update the input with the value
 					sap.m.MessageBox.alert("Item selected is : " + oCell.getText());
 				}
 			}
 		});
 
-		// attach Cancel listener
-		oTableSelectDialog6.attachCancel(fnCancelDialog);
-
-		var oButton6 = new sap.m.Button("Button6", {
+		var oButton6 = new sap.m.Button("tsdWithVeryLargeDataButton", {
 			text: "Open TableSelectDialog with very large data",
 			press: function () {
 				// open dialog
@@ -863,7 +839,7 @@
 				oTableSelectDialog6.open();
 			}
 		});
-		
+
 		var oButton7 = new sap.m.Button("Button7", {
 			text: "Open TableSelectDialog with multi Select and very large data",
 			press: function () {
@@ -946,15 +922,12 @@
 				if (selectedItem) {
 					//Get all the cells and pull back the first one which will be the name content
 					var oCells = selectedItem.getCells();
-					var oCell = oCells[0];				
+					var oCell = oCells[0];
 					//Now update the input with the value
 					sap.m.MessageBox.alert("Item selected is : " + oCell.getText());
 				}
 			}
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog8.attachCancel(fnCancelDialog);
 
 		var oButton8 = new sap.m.Button("Button8", {
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, prefiltered by \"id_1\" with web service binding and no fixed width",
@@ -974,7 +947,7 @@
 				oTableSelectDialog8.open("id_1");
 			}
 		});
-		
+
 
 		/* 9) table select dialog with web service binding, prefiltered by "id_1" and fixed width set to 800px */
 
@@ -1051,15 +1024,12 @@
 				if (selectedItem) {
 					//Get all the cells and pull back the first one which will be the name content
 					var oCells = selectedItem.getCells();
-					var oCell = oCells[0];				
+					var oCell = oCells[0];
 					//Now update the input with the value
 					sap.m.MessageBox.alert("Item selected is : " + oCell.getText());
 				}
 			}
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog9.attachCancel(fnCancelDialog);
 
 		var oButton9 = new sap.m.Button("Button9", {
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, late binding, with web service binding and 400px width",
@@ -1100,10 +1070,10 @@
 				})
 			]
 		});
-	
+
 		var oApp = new sap.m.App("myApp", {initialPage:"page"});
 		oApp.addPage(oPage).placeAt("content");
-			
+
 	</script>
 	</head>
 	<body id="body" class="sapUiBody">

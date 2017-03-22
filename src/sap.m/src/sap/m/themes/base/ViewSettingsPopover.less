@@ -1,0 +1,60 @@
+/* ========================================== */
+/* CSS for control sap.m/ViewSettingsPopover  */
+/* Base theme                                 */
+/* ========================================== */
+
+.sapUiSizeCompact .sapMBar.sapMVSPCompactHeaderBar {
+	/* fix nested layouts in the header of the details page */
+	position: relative;
+	top: -3px;
+	box-shadow: none;
+}
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn, .sapMVSPopover .sapMDialogTitle .sapMSegBBtn {
+	margin-right: 5px;
+	border-radius: 3px;
+}
+
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn,
+.sapMPopoverHeader .sapMSegBBtn:last-child,
+.sapMPopoverHeader .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
+	border-color: @sapUiButtonLiteBorderColor;
+}
+
+/* Custom focus outline: */
+html.sap-desktop .sapMVSPopover {
+	.sapMSegBBtnFocusable:focus + .sapMSegBBtn {
+		outline: none;
+		border-left: 1px solid @sapUiButtonLiteBorderColor;
+	}
+}
+
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn,
+.sapMVSPopover .sapMDialogTitle .sapMSegBBtn {
+	margin-right: 5px;
+	border-radius: 3px;
+	border: 1px solid @sapUiButtonLiteBorderColor;
+}
+
+.sapMVSPopover.sapMPopup-CTX .sapMIBar.sapMHeader-CTX {
+	background: @sapUiGroupContentBackground;
+}
+
+html.sap-phone,
+html.sap-tablet:not(.sap-desktop) {
+  .sapMVSPopover {
+	.sapMLIBSelectM > .sapMCb:focus,
+	.sapMBarChild.sapMCb:focus {
+	  outline: none;
+	}
+  }
+}
+
+/* ------------------------------------------------ */
+/* Compact size                                     */
+/* ------------------------------------------------ */
+
+.sapMVSPCloseBtn {
+	.sapMBtnIcon {
+		font-size: 1.000rem;
+	}
+}

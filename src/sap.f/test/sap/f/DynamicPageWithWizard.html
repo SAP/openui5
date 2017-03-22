@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>DynamicPage with wizard</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.f, sap.m, sap.ui.layout">
+	</script>
+	<script src="DynamicPageUtility.js"></script>
+	<script>
+		(function () {
+			var checkStep4 = function () {
+				var bSelected1 = sap.ui.getCore().byId("cBox1").getSelected(),
+					bSelected2 = sap.ui.getCore().byId("cBox2").getSelected(),
+					bSelected3 = sap.ui.getCore().byId("cBox3").getSelected(),
+					bSelected4 = sap.ui.getCore().byId("cBox4").getSelected(),
+					bSelected5 = sap.ui.getCore().byId("cBox5").getSelected();
+
+				if ((bSelected1 && bSelected2 && !bSelected5) || (bSelected3 && !bSelected4) || (bSelected4 && bSelected2 && bSelected1))
+					oWizard.validateStep(oStep4);
+			};
+
+			var oStep1 = new sap.m.WizardStep({
+				validated: false,
+				title: "User credentials",
+				icon: "sap-icon://permission",
+				complete: function () {
+					alert("First step is complete");
+				},
+				content: [
+					new sap.m.Text({
+						text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget turpis quis felis luctus consectetur. Nulla eros sem, tincidunt sit amet ipsum at, laoreet fringilla risus. Curabitur tempus arcu sit amet volutpat gravida. Sed blandit leo vel lectus tempus, ac laoreet dui tempus. Curabitur placerat orci a faucibus rutrum. Praesent mattis ante vel enim posuere, a luctus lacus posuere. Aliquam imperdiet leo sit amet auctor vestibulum. Nunc consequat, turpis faucibus porttitor eleifend, nisi eros auctor est, in ultricies magna elit in quam. Phasellus risus felis, cursus at libero sed, consequat tristique lectus. Nullam quis eros diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce dignissim turpis quis elit finibus elementum. Fusce aliquet enim ante. Morbi vitae turpis urna."
+					}),
+					new sap.ui.layout.form.SimpleForm({
+						minWidth: 1024,
+						maxContainerCols: 2,
+						editable: true,
+						content: [
+							getLabel("User name", "nameInput"),
+							new sap.m.Input("nameInput", {
+								liveChange: function (oEvent) {
+									var val = oEvent.getParameter("value");
+									if (val.length > 8)
+										oWizard.validateStep(oStep1);
+									else
+										oWizard.invalidateStep(oStep1);
+								}
+							}),
+							getLabel("E-mail"),
+							new sap.m.Input(),
+							getLabel("Male"),
+							new sap.m.CheckBox("maleIndicator"),
+							getLabel("Password"),
+							new sap.m.Input({
+								type: "Password"
+							}),
+							getLabel("Repeat Password"),
+							new sap.m.Input({
+								type: "Password"
+							})
+						]
+					})
+				]
+			});
+			var oStep2 = new sap.m.WizardStep({
+				validated: true,
+				title: "Personal information",
+				icon: "sap-icon://person-placeholder",
+				content: [
+					new sap.m.Text({
+						text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
+					})
+				]
+			});
+			var oStep3 = new sap.m.WizardStep({
+				validated: true,
+				title: "Payment details",
+				icon: "sap-icon://simple-payment",
+				content: [
+					new sap.ui.layout.form.SimpleForm({
+						minWidth: 1024,
+						maxContainerCols: 2,
+						editable: true,
+						content: [
+							getLabel('sap.m.Select'),
+							new sap.m.Select({
+								name: "select-name0",
+								items: [
+									oItem20 = new sap.ui.core.Item({
+										key: "0",
+										text: "item 0"
+									}),
+
+									oItem21 = new sap.ui.core.Item({
+										key: "1",
+										text: "item 1"
+									}),
+
+									oItem22 = new sap.ui.core.Item({
+										key: "2",
+										text: "item 2 is a little long"
+									}),
+
+									oItem23 = new sap.ui.core.Item({
+										key: "3",
+										text: "item 3"
+									})
+								]
+							}),
+							getLabel('sap.m.Link'),
+							new sap.m.Link({
+								text: 'SAP Germany',
+								href: 'http://www.sap.com',
+								target: '_blank'
+							}),
+							getLabel('sap.m.TextArea'),
+							new sap.m.TextArea({
+								placeholder: "Please add your comment",
+								rows: 6,
+								maxLength: 255,
+								width: "100%"
+							})
+						]
+					})
+				]
+			});
+			var oStep4 = new sap.m.WizardStep({
+				validated: false,
+				title: "Credit card information",
+				icon: "sap-icon://credit-card",
+				activate: function () {
+					alert("Credit card information step activated");
+				},
+				content: [
+					new sap.ui.layout.form.SimpleForm({
+						minWidth: 1024,
+						maxContainerCols: 2,
+						editable: true,
+						content: [
+							getLabel("CC Number"),
+							new sap.m.Input(),
+							getLabel("Verification code"),
+							new sap.m.Input(),
+							getLabel("Lorem ipsum"),
+							new sap.m.CheckBox("cBox1", {
+								text: "Ilbris",
+								select: checkStep4
+							}),
+							new sap.m.CheckBox("cBox2", {
+								text: "Mohaseed",
+								select: checkStep4
+							}),
+							new sap.m.CheckBox("cBox3", {
+								text: "Jukka",
+								select: checkStep4
+							}),
+							new sap.m.CheckBox("cBox4", {
+								text: "Valvet",
+								select: checkStep4
+							}),
+							new sap.m.CheckBox("cBox5", {
+								text: "Beerendes",
+								select: checkStep4
+							})
+						]
+					})
+				]
+			});
+			var oStep5 = new sap.m.WizardStep({
+				validated: true,
+				title: "Card contents",
+				icon: "sap-icon://bar-code",
+				content: [
+					getLabel("CC Number"),
+					new sap.m.Input(),
+					getLabel("Verification code"),
+					new sap.m.Input(),
+					getLabel("Lorem ipsum"),
+					new sap.m.CheckBox({
+						text: "Ilbris"
+					}),
+					new sap.m.CheckBox({
+						text: "Mohaseed"
+					}),
+					new sap.m.CheckBox({
+						text: "Jukka"
+					}),
+					new sap.m.CheckBox({
+						text: "Valvet"
+					}),
+					new sap.m.CheckBox({
+						text: "Beerendes"
+					})
+				]
+			});
+			var oStep6 = new sap.m.WizardStep({
+				title: "Finishing touches",
+				icon: "sap-icon://detail-view",
+				validated: false,
+				content: [
+					new sap.m.Text({
+						text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
+					}),
+					new sap.m.Button({
+						text: "Verify final step",
+						press: function () {
+							oWizard.validateStep(oStep6);
+						}
+					}),
+					new sap.m.Button({
+						text: "Discard progress",
+						press: function () {
+							oWizard.discardProgress(oStep1);
+						}
+					})
+				]
+			});
+
+			oWizard = new sap.m.Wizard({
+				width: "100%",
+				showNextButton: true,
+				complete: function () {
+					alert("Process finished");
+				},
+				steps: [oStep1, oStep2, oStep3, oStep4, oStep5, oStep6]
+			});
+		})();
+
+		var fnToggleFooter = function () {
+			oPage.setShowFooter(!oPage.getShowFooter());
+		};
+
+		var oToggleFooterButton = new sap.m.Button({
+			text: "Toggle footer",
+			press: fnToggleFooter
+		});
+
+		var oTitle = getTitle(oToggleFooterButton);
+		var oHeader = getHeader();
+		var oFooter = getFooter();
+
+		var oPage = getDynamicPage(true, oTitle, oHeader, oWizard, oFooter);
+
+		var oApp = new sap.m.App();
+		oApp.addPage(oPage).placeAt("body");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" role="application">
+</body>
+
+</html>

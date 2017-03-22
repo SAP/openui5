@@ -1,0 +1,18 @@
+/* ================================= */
+/* CSS for control sap.m/Tokenizer   */
+/* Belize High Contrast Black theme  */
+/* ================================= */
+
+html.sap-desktop .sapMTokenizer:focus{
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMTokenizer:focus {
+		&:before {
+			border: 0.125rem dotted @sapUiContentFocusColor;
+		}
+	}
+}

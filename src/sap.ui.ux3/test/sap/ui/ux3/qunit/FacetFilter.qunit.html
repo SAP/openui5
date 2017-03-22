@@ -1,30 +1,28 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.ux3.FacetFilterList, sap.ui.ux3.FacetFilter
-  Author: d029506
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>FacetFilter - sap.ui.ux3</title>
 	<!-- todo: link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.FacetFilter.gif"-->
-	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
 		data-sap-ui-language=en>
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Control initialization -->
-	<script language="javascript">
+	<script>
 	var oFacetFilter = new sap.ui.ux3.FacetFilter("myFacetFilter");
 
 	var oFFL1 = new sap.ui.ux3.FacetFilterList("ffl1", {
@@ -70,7 +68,7 @@
 	</script>
 
 	<!-- Test helper functions -->
-	<script language="javascript">
+	<script>
 
 		function getListItemRefs(oListBox) {
 			return jQuery(jQuery("#"+oListBox.getId()).children()[0]).children();
@@ -83,39 +81,39 @@
 	</script>
 
 	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
 		sap.ui.test.qunit.delayTestStart();
 
-		module("Public API");
+		QUnit.module("Public API");
 
-		test("Title", function() {
-			equals(oFFL1.getTitle(), "Car Brand", "Title is correct:");
-			equals(oFFL2.getTitle(), "Car Model", "Title is correct:");
-			equals(oFFL3.getTitle(), "Type", "Title is correct:");
+		QUnit.test("Title", function(assert) {
+			assert.equal(oFFL1.getTitle(), "Car Brand", "Title is correct:");
+			assert.equal(oFFL2.getTitle(), "Car Model", "Title is correct:");
+			assert.equal(oFFL3.getTitle(), "Type", "Title is correct:");
 		});
 
-		test("Multiselect", function() {
-			equals(oFFL1.getMultiSelect(), true, "Multiselection");
-			equals(oFFL2.getMultiSelect(), false, "Single selection");
-			equals(oFFL3.getMultiSelect(), true, "Multiselection");
+		QUnit.test("Multiselect", function(assert) {
+			assert.equal(oFFL1.getMultiSelect(), true, "Multiselection");
+			assert.equal(oFFL2.getMultiSelect(), false, "Single selection");
+			assert.equal(oFFL3.getMultiSelect(), true, "Multiselection");
 		});
 
-		module("Visual appearence");
+		QUnit.module("Visual appearence");
 
-		test("Visiblity", function() {
-			ok(oFacetFilter.getDomRef(), "Control is visible");
+		QUnit.test("Visiblity", function(assert) {
+			assert.ok(oFacetFilter.getDomRef(), "Control is visible");
 		});
 
-		test("Visible Items", function() {
-			equals(oFFL1._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
-			equals(oFFL2._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
-			equals(oFFL3._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+		QUnit.test("Visible Items", function(assert) {
+			assert.equal(oFFL1._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+			assert.equal(oFFL2._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+			assert.equal(oFFL3._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
 		});
 
 
-		test("Lists", function() {
-			equals(oFacetFilter.getLists().length, 3, "There are 3 lists");
+		QUnit.test("Lists", function(assert) {
+			assert.equal(oFacetFilter.getLists().length, 3, "There are 3 lists");
 		});
 
 

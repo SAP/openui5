@@ -1,0 +1,19 @@
+{
+  "_version": "0.1.0",
+  "sap.app": {
+    "_version": "1.2.0",
+    "id": "samples.components.button",
+    "text": "Taken from Manifest 2"
+  },
+  "sap.ui5": {
+    "resourceRoots": {
+      "foo": "foo",
+      "bar": "/../bar"
+    },
+    "dependencies": {
+      "libs": {
+        "sap.ui.ux3": {}
+      }
+    }
+  }
+}

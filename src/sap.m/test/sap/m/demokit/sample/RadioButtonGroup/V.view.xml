@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 		<VBox class="sapUiSmallMargin">
 			<Text text="An example with 'matrix' layout" textAlign="Center"/>
-			<RadioButtonGroup columns="3" width="500px" class="sapUiMediumMarginBottom">
+			<RadioButtonGroup columns="3" width="100%" class="sapUiMediumMarginBottom">
 				<buttons>
 					<RadioButton id="RB1-1" text="Long Option Number 1"/>
 					<RadioButton id="RB1-2" text="Option 2" enabled="false"/>

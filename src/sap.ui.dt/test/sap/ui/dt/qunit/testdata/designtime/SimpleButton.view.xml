@@ -1,5 +1,5 @@
-<core:View xmlns:core="sap.ui.core" 
-	xmlns:mvc="sap.ui.core.mvc" 
+<core:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m" controllerName="dt.view.SimpleButton">
 	<Page title="Title" id="Page" showFooter="true">
 		<content>

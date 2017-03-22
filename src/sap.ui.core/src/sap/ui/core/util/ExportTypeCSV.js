@@ -3,22 +3,33 @@
  */
 
 // Provides class sap.ui.core.util.ExportTypeCSV
-sap.ui.define(['jquery.sap.global', './ExportType'],
-	function(jQuery, ExportType) {
+sap.ui.define(['./ExportType'],
+	function(ExportType) {
 	'use strict';
+
+	// Matches CR, LF, double quote and common separator chars
+	// Used to detect whether content needs to be escaped (see #escapeContent)
+	var rContentNeedsEscaping = /[\r\n"\t;,]/;
+
+	// Matches a formula (for usage see #escapeContent):
+	// Starts with one of = + - @ but excludes "number only" formulas like -123,45 or =1.234e+5 as they are save to be used
+	var rFormula = /^[=\+\-@](?![\d.,]+(?:e[\+-]?\d+)?$)/i;
 
 	/**
 	 * Constructor for a new ExportTypeCSV.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * CSV export type. Can be used for {@link sap.ui.core.util.Export Export}.<br>
-	 * <br>
-	 * Please note that there could issues with the separator char depending on the user's system language in some programs such as Microsoft Excel.<br>
-	 * To prevent those issues use the data-import functionality which enables the possibility to explicitly set the separator char that should be used.<br>
+	 * CSV export type. Can be used for {@link sap.ui.core.util.Export Export}.
+	 *
+	 * Please note that there could be an issue with the separator char depending on the user's system language in some programs such as Microsoft Excel.
+	 * To prevent those issues use the data-import functionality which enables the possibility to explicitly set the separator char that should be used.
 	 * This way the content will be displayed correctly.
+	 *
+	 * Potential formulas (cell data starts with one of = + - @) will be escaped by prepending a single quote.
+	 * As the export functionality is intended to be used with actual (user) data there is no reason to allow formulas.
 	 *
 	 * @extends sap.ui.core.util.ExportType
 	 *
@@ -33,12 +44,12 @@ sap.ui.define(['jquery.sap.global', './ExportType'],
 	var CSV = ExportType.extend('sap.ui.core.util.ExportTypeCSV', {
 
 		metadata: {
-
+			library: "sap.ui.core",
 			properties: {
-				
+
 				/**
 				 * Separator char.
-				 * 
+				 *
 				 * Value needs to be exactly one character or empty for default.
 				 */
 				separatorChar: {
@@ -80,15 +91,44 @@ sap.ui.define(['jquery.sap.global', './ExportType'],
 	};
 
 	/**
-	 * Escapes the value if needed to prevent issues with separator-char and new-line.
+	 * Escapes the value to prevent issues with separator char, new line and
+	 * double quotes (only if required).
 	 *
+	 * @param {string} sVal content
+	 * @return {string} escaped content
 	 * @private
 	 */
 	CSV.prototype.escapeContent = function(sVal) {
-		if (sVal && (sVal.indexOf(this.getSeparatorChar()) > -1 || sVal.indexOf('\r\n') > -1)) {
-			sVal = sVal.replace(/"/g, '""');
-			sVal = '"' + sVal + '"';
+
+		// No need to escape undefined, null or empty string
+		if (!sVal) {
+			return sVal;
 		}
+
+		// Prepend single quote in case cell content is a formula.
+		// This will prevent it from beeing evaluated by other programs.
+		// As the export functionality is intended to be used with actual (user) data
+		// there is no reason to allow formulas in here.
+		if (rFormula.test(sVal)) {
+			sVal = "'" + sVal;
+		}
+
+		// Use indexOf instead of RegExp to be on the save side in case the separator
+		// would need to be escaped (such as \ ^ $ * + ? . ( ) | { } [ ])
+		var bContainsSeparatorChar = sVal.indexOf(this.getSeparatorChar()) > -1;
+
+		// Only wrap content with double quotes if it contains the separator char,
+		// a new line (CR / LF), a double quote or a common separator char
+		if (bContainsSeparatorChar || rContentNeedsEscaping.test(sVal)) {
+
+			// Escape double quotes by preceding them with another one
+			sVal = sVal.replace(/"/g, '""');
+
+			// Wrap final content with double quotes
+			sVal = '"' + sVal + '"';
+
+		}
+
 		return sVal;
 	};
 
@@ -153,5 +193,5 @@ sap.ui.define(['jquery.sap.global', './ExportType'],
 
 	return CSV;
 
-}, /* bExport= */ true
+}
 );

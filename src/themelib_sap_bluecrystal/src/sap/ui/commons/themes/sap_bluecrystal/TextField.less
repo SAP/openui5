@@ -11,21 +11,7 @@
 	padding: 2px 5px 3px 5px;
 	height: 22px;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	border-width: 1px;
-}
-
-/* in IE with monospace its not aligned */
-html[data-sap-ui-browser="ie8"] .sapUiTfMono.sapUiTf{
-	padding-top: 5px;
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiTfMono.sapUiTf{
-	padding-top: 4px;
-}
-
-html[data-sap-ui-browser="ie10"] .sapUiTf:not(.sapUiTfInner){
-	padding-top: 3px;
 }
 
 .sapUiTfBrd.sapUiTfStd:hover {
@@ -46,10 +32,6 @@ html[data-sap-ui-os^='iOS'] .sapUiTfBrd.sapUiTfWarn:not(.sapUiTfFoc):hover {
 
 .sapUiTfBrd > .sapUiTfInner {
 	padding: 0 2px 0 5px;
-}
-
-html[data-sap-ui-browser="ie8"] .sapUiTfBrd > .sapUiTfInner {
-	padding: 2px 2px 0 5px;
 }
 
 html[data-sap-ui-browser^="ff"] .sapUiTfBrd > .sapUiTfInner,
@@ -93,16 +75,10 @@ html[data-sap-ui-browser^="cr"] .sapUiTfBrd > .sapUiTfInner{
 /* Alignment in Form */
 /* ================= */
 
-/* GridLayout */
-html[data-sap-ui-browser="ie9"] .sapUiGrid td > .sapUiTfBrd,
-html[data-sap-ui-browser="ie10"] .sapUiGrid td > .sapUiTfBrd{
-	padding-top: 3px; /* in IE9 text of TextField it 1px moved */
-	padding-bottom: 2px;
-}
-
 /* ResponsiveGridLayout */
 html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > div > .sapUiTf,
 html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > div > .sapUiTf,
-html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > div > .sapUiTf {
+html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > div > .sapUiTf,
+html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > div > .sapUiTf {
 	line-height: 16px;
 }

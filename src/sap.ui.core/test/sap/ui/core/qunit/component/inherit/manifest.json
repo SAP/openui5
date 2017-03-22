@@ -13,6 +13,12 @@
 
 	"sap.ui5": {
 
+		"resourceRoots": {
+			"foo.bar": "../../foo/bar",
+			"absolute": "http://absolute/uri",
+			"server.absolute": "/server/absolute/uri"
+		},
+
 		"resources": {
 			"js": [
 				{
@@ -51,7 +57,7 @@
 			},
 			"sfapi": {
 				"type": "sap.ui.model.odata.ODataModel",
-				"uri": "/sap/opu/odata/snce/PO_S_SRV/"
+				"uri": "./some/odata/service"
 			}
 		},
 
@@ -66,7 +72,8 @@
 			},
 			"any3": {
 				"anyarray": [1, 2, 3]
-			}
+			},
+			"zero": 0
 		},
 
 		"routing": {
@@ -109,6 +116,9 @@
 			}
 		}
 
-	}
+	},
+
+	"foo": {},
+	"foo.bar": "string as entry value is not valid!"
 
 }

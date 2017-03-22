@@ -8,7 +8,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			rootView : "sap.m.sample.SegmentedButtonLI.List",
 			dependencies : {
 				libs : [
-					"sap.m"				
+					"sap.m"
 				]
 			},
 			config : {

@@ -1,0 +1,29 @@
+<mvc:View
+	controllerName="sap.m.sample.RangeSlider.RangeSlider"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout class="sapUiContentPadding">
+		<Text text="" />
+		<RangeSlider range="{/RS1}" min="0" max="100" width="80%" class="sapUiSmallMarginBottom" />
+		<Text text="" />
+		<RangeSlider range="{/RS2}" min="-50" max="50" width="10rem" class="sapUiSmallMarginBottom"/>
+		<Text text="" />
+		<RangeSlider range="{/RS3}" min="0" max="100" width="10rem" class="sapUiSmallMarginBottom" />
+		<Text text="" />
+		<RangeSlider range="{/RS4}" min="-1000" max="1000" width="500px" class="sapUiSmallMarginBottom" />
+		<Text text="" />
+		<RangeSlider range="{/RS5}" min="0" max="500" width="400px" class="sapUiSmallMarginBottom" />
+		<Text text="" />
+		<Text text="RangeSlider with Inputs" />
+		<RangeSlider range="0,100" min="0" max="500" width="400px" showHandleTooltip="false" inputsAsTooltips="true" class="sapUiSmallMarginBottom" />
+		<Text text="RangeSlider with tickmarks" />
+		<RangeSlider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiSmallMarginBottom"/>
+		<RangeSlider enableTickmarks="true" class="sapUiSmallMarginBottom"/>
+		<RangeSlider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiSmallMarginBottom"/>
+		<Text text="RangeSlider with tickmarks and labels"/>
+		<RangeSlider min="0" max="30" range="5,20" enableTickmarks="true" class="sapUiSmallMarginBottom">
+			<ResponsiveScale tickmarksBetweenLabels="3"/>
+		</RangeSlider>
+	</l:VerticalLayout>
+</mvc:View>

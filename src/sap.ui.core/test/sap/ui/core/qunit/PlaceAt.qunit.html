@@ -1,29 +1,28 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.core.Control.placeAt / sap.ui.core.Core.setRoot
-  Author: d046314
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Control.placeAt / Core.setRoot - sap.ui.core</title>
-	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons"
 		data-sap-ui-language=en>
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Control initialization -->
-	<script language="javascript">
+	<script>
 
 		var oPanel = new sap.ui.commons.Panel("myPanel");
 		oPanel.placeAt("uiArea1");
@@ -50,19 +49,19 @@
 		var doCheckPlaceAtResult = function(aCallResult, iExpectedLength, iExpectedIndex, sText){
 			sText = " after placeAt with '"+sText+"'";
 			var oContainer = aCallResult[1];
-			ok(oContainer, "Container available"+sText);
+			assert.ok(oContainer, "Container available"+sText);
 			if(oContainer){
-				equal(oContainer.getContent().length, iExpectedLength, "# Container children"+sText);
-				equal(oContainer.getContent()[iExpectedIndex].getId(), aCallResult[0], "Correct Position of child"+sText);
+				assert.equal(oContainer.getContent().length, iExpectedLength, "# Container children"+sText);
+				assert.equal(oContainer.getContent()[iExpectedIndex].getId(), aCallResult[0], "Correct Position of child"+sText);
 			}
 		};
 
 		var doCheckSetRootResult = function(aCallResult){
 			var oContainer = aCallResult[1];
-			ok(oContainer, "Container available after setRoot");
+			assert.ok(oContainer, "Container available after setRoot");
 			if(oContainer){
-				equal(oContainer.getContent().length, 1, "# Container children after setRoot");
-				equal(oContainer.getContent()[0].getId(), aCallResult[0], "Correct Position of child after setRoot");
+				assert.equal(oContainer.getContent().length, 1, "# Container children after setRoot");
+				assert.equal(oContainer.getContent()[0].getId(), aCallResult[0], "Correct Position of child after setRoot");
 			}
 		};
 
@@ -88,60 +87,60 @@
 			aResult = doPerformCall(oContainerRef, "only", sContainerId, bIsUiArea, true);
 			doCheckPlaceAtResult(aResult, 1, 0, "only");
 		};
-	
+
 	</script>
-	
+
 	<!-- Test functions -->
-	<script language="javascript">
-	
+	<script>
+
 		qutils.delayTestStart();
-	
-		module("sap.ui.core.Control.placeAt");
-	
-		test("Deferred call", function() {
+
+		QUnit.module("sap.ui.core.Control.placeAt");
+
+		QUnit.test("Deferred call", function(assert) {
 			doCheckPlaceAtResult(["myPanel", sap.ui.getCore().getUIArea("uiArea1")], 1, 0, "deferred call");
 		});
 
-		test("UIArea via ID", function() {
+		QUnit.test("UIArea via ID", function(assert) {
 			doTestPlaceAt("uiArea2", "uiArea2", true);
 		});
 
-		test("UIArea via DomRef", function() {
+		QUnit.test("UIArea via DomRef", function(assert) {
 			doTestPlaceAt(jQuery("#uiArea2")[0], "uiArea2", true);
 		});
 
-		test("Container Control via Control reference", function() {
+		QUnit.test("Container Control via Control reference", function(assert) {
 			doTestPlaceAt(oPanel, "myPanel", false);
 		});
 
-		test("Container Control via ID", function() {
+		QUnit.test("Container Control via ID", function(assert) {
 			doTestPlaceAt("myPanel", "myPanel", false);
 		});
 
-		module("sap.ui.core.Core.setRoot");
+		QUnit.module("sap.ui.core.Core.setRoot");
 
-		test("Deferred call", function() {
+		QUnit.test("Deferred call", function(assert) {
 			doCheckSetRootResult(["myPanel2", sap.ui.getCore().getUIArea("uiArea3")]);
 		});
 
-		test("UIArea via ID", function() {
+		QUnit.test("UIArea via ID", function(assert) {
 			doTestSetRoot("uiArea4", "uiArea4", true);
 		});
 
-		test("UIArea via DomRef", function() {
+		QUnit.test("UIArea via DomRef", function(assert) {
 			doTestSetRoot(jQuery("#uiArea4")[0], "uiArea4", true);
 		});
 
-		test("Container Control via Control reference", function() {
+		QUnit.test("Container Control via Control reference", function(assert) {
 			doTestSetRoot(oPanel2, "myPanel2", false);
 		});
 
-		test("Container Control via ID", function() {
+		QUnit.test("Container Control via ID", function(assert) {
 			doTestSetRoot("myPanel2", "myPanel2", false);
 		});
-	
+
 	</script>
-  
+
 </head>
 <body>
 	<h1 id="qunit-header">QUnit tests: sap.ui.core.Control.placeAt / sap.ui.core.Core.setRoot</h1>

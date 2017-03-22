@@ -2,28 +2,28 @@
 
 <!--
   Tested control/class: sap.ui.commons.Toolbar
-  Author: d046011
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
 	<title>Test Page for sap.ui.commons.Toolbar</title>
 
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		      type="text/javascript"
+
 		      src="../../../../../resources/sap-ui-core.js"
 		      data-sap-ui-theme="sap_bluecrystal"
 		      data-sap-ui-noConflict="true"
 		      data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	<script type="text/javascript">
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script>
 
 		// ==================================================
 		// test fixture for control properties and events
@@ -53,15 +53,14 @@
 			oCtrl.destroyItems();// because the same control is used again instead of creating a new Toolbar for each test
 			sap.ui.getCore().applyChanges();
 		}
-		module("Basic", {
-
-			setup: function() {
+		QUnit.module("Basic", {
+			beforeEach: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
-				ok(oCtrl);
-				ok(jQuery.sap.domById("Toolbar"));
+				assert.ok(oCtrl);
+				assert.ok(jQuery.sap.domById("Toolbar"));
 				initToolbar();
 			},
-			teardown: function() {
+			afterEach: function() {
 				oCtrl = null;
 			}
 		});
@@ -74,29 +73,29 @@
 		/**
 		 * Tests accessor method for property visible of control Toolbar.
 		 */
-		test("VisibleOk", function() {
-			strictEqual(oCtrl.getVisible(), bVisible);
+		QUnit.test("VisibleOk", function(assert) {
+			assert.strictEqual(oCtrl.getVisible(), bVisible);
 		});
 
 		/**
 		 * Tests accessor method for property width of control Toolbar.
 		 */
-		test("WidthOk", function() {
-			strictEqual(oCtrl.getWidth(), sWidth);
+		QUnit.test("WidthOk", function(assert) {
+			assert.strictEqual(oCtrl.getWidth(), sWidth);
 		});
 
 		/**
 		 * Tests accessor method for property design of control Toolbar.
 		 */
-		test("DesignOk", function() {
-			strictEqual(oCtrl.getDesign(), oDesign);
+		QUnit.test("DesignOk", function(assert) {
+			assert.strictEqual(oCtrl.getDesign(), oDesign);
 		});
 
 		/**
 		 * Tests accessor method for property standalone of control Toolbar.
 		 */
-		test("StandaloneOk", function() {
-			strictEqual(oCtrl.getStandalone(), bStandalone);
+		QUnit.test("StandaloneOk", function(assert) {
+			assert.strictEqual(oCtrl.getStandalone(), bStandalone);
 		});
 
 
@@ -107,39 +106,39 @@
 		/**
 		 * Test actual visibility
 		 */
-		test("Visibility", function() {
-			ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
+		QUnit.test("Visibility", function(assert) {
+			assert.ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
 			oCtrl.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.domById("Toolbar"), null, "Toolbar should not be rendered when set to invisible");
+			assert.equal(jQuery.sap.domById("Toolbar"), null, "Toolbar should not be rendered when set to invisible");
 			oCtrl.setVisible(true);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
+			assert.ok(jQuery.sap.domById("Toolbar"), "Toolbar should exist in page");
 		});
 
 		/**
 		 * Test actual width
 		 */
-		test("Width", function() {
-			strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, iWidth, "actual width is wrong");
+		QUnit.test("Width", function(assert) {
+			assert.strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, iWidth, "actual width is wrong");
 			oCtrl.setWidth("401px");
 			sap.ui.getCore().applyChanges();
-			strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, 401, "actual width is wrong after change");
+			assert.strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, 401, "actual width is wrong after change");
 			oCtrl.setWidth(sWidth);
 			sap.ui.getCore().applyChanges();
-			strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, iWidth, "actual width is wrong after change");
+			assert.strictEqual(jQuery.sap.domById("Toolbar").offsetWidth, iWidth, "actual width is wrong after change");
 		});
 
 		/**
 		 * Test Toolbar designs
 		 */
-		test("ToolbarDesigns", function() {
+		QUnit.test("ToolbarDesigns", function(assert) {
 			var oRootDomRef = jQuery.sap.domById("Toolbar");
 
 			// make sure the initial design is "Flat"
-			notStrictEqual(oRootDomRef.className.indexOf("sapUiTbDesignFlat"), -1, "Panel must have sapUiTbDesignFlat");
-			strictEqual(oRootDomRef.className.indexOf("sapUiTbDesignTransparent"), -1, "Panel must not have sapUiTbDesignTransparent");
-			strictEqual(oRootDomRef.className.indexOf("sapUiTbDesignStandard"), -1, "Panel must not have sapUiTbDesignStandard");
+			assert.notStrictEqual(oRootDomRef.className.indexOf("sapUiTbDesignFlat"), -1, "Panel must have sapUiTbDesignFlat");
+			assert.strictEqual(oRootDomRef.className.indexOf("sapUiTbDesignTransparent"), -1, "Panel must not have sapUiTbDesignTransparent");
+			assert.strictEqual(oRootDomRef.className.indexOf("sapUiTbDesignStandard"), -1, "Panel must not have sapUiTbDesignStandard");
 
 			// now switch to "Transparent" and do the same tests
 			oCtrl.setDesign(sap.ui.commons.ToolbarDesign.Transparent);
@@ -147,14 +146,14 @@
 			var oRootDomRef2 = jQuery.sap.domById(oCtrl.getId());
 
 			// make sure the change worked
-			notStrictEqual(oRootDomRef2.className.indexOf("sapUiTbDesignTransparent"), -1, "Panel must have sapUiTbDesignTransparent");
-			strictEqual(oRootDomRef2.className.indexOf("sapUiTbDesignFlat"), -1, "Panel must not have sapUiTbDesignFlat");
-			strictEqual(oRootDomRef2.className.indexOf("sapUiTbDesignStandard"), -1, "Panel must not have sapUiTbDesignStandard");
+			assert.notStrictEqual(oRootDomRef2.className.indexOf("sapUiTbDesignTransparent"), -1, "Panel must have sapUiTbDesignTransparent");
+			assert.strictEqual(oRootDomRef2.className.indexOf("sapUiTbDesignFlat"), -1, "Panel must not have sapUiTbDesignFlat");
+			assert.strictEqual(oRootDomRef2.className.indexOf("sapUiTbDesignStandard"), -1, "Panel must not have sapUiTbDesignStandard");
 
 			// make sure it is actually transparent
-			strictEqual(normalizeColor(jQuery(oRootDomRef2).css("backgroundColor")), "rgba(0,0,0,0)", "Panel root must be transparent");
-			strictEqual(normalizeColor(jQuery(oRootDomRef2.firstChild).css("backgroundColor")), "rgba(0,0,0,0)", "Panel firstChild must be transparent");
-			strictEqual(normalizeColor(jQuery(oRootDomRef2.firstChild.firstChild).css("backgroundColor")), "rgba(0,0,0,0)", "Panel second-level child must be transparent");
+			assert.strictEqual(normalizeColor(jQuery(oRootDomRef2).css("backgroundColor")), "rgba(0,0,0,0)", "Panel root must be transparent");
+			assert.strictEqual(normalizeColor(jQuery(oRootDomRef2.firstChild).css("backgroundColor")), "rgba(0,0,0,0)", "Panel firstChild must be transparent");
+			assert.strictEqual(normalizeColor(jQuery(oRootDomRef2.firstChild.firstChild).css("backgroundColor")), "rgba(0,0,0,0)", "Panel second-level child must be transparent");
 
 			// now switch back to "Flat"
 			oCtrl.setDesign(sap.ui.commons.ToolbarDesign.Flat);
@@ -162,27 +161,27 @@
 			var oRootDomRef3 = jQuery.sap.domById(oCtrl.getId());
 
 			// make sure the design is "Flat" again
-			notStrictEqual(oRootDomRef3.className.indexOf("sapUiTbDesignFlat"), -1, "Panel must have sapUiTbDesignFlat");
-			strictEqual(oRootDomRef3.className.indexOf("sapUiTbDesignTransparent"), -1, "Panel must not have sapUiTbDesignTransparent");
-			strictEqual(oRootDomRef3.className.indexOf("sapUiTbDesignStandard"), -1, "Panel must not have sapUiTbDesignStandard");
+			assert.notStrictEqual(oRootDomRef3.className.indexOf("sapUiTbDesignFlat"), -1, "Panel must have sapUiTbDesignFlat");
+			assert.strictEqual(oRootDomRef3.className.indexOf("sapUiTbDesignTransparent"), -1, "Panel must not have sapUiTbDesignTransparent");
+			assert.strictEqual(oRootDomRef3.className.indexOf("sapUiTbDesignStandard"), -1, "Panel must not have sapUiTbDesignStandard");
 		});
 
 		/**
 		 * Test standalone mode
 		 */
-		test("StandaloneMode", function() {
+		QUnit.test("StandaloneMode", function(assert) {
 			// make sure the class sapUiTbStandalone is there
-			notStrictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must have sapUiTbStandalone");
+			assert.notStrictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must have sapUiTbStandalone");
 
 			// now switch to not-standalone mode
 			oCtrl.setStandalone(false);
 			sap.ui.getCore().applyChanges();
-			strictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must not have sapUiTbStandalone");
+			assert.strictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must not have sapUiTbStandalone");
 
 			// ...and back again
 			oCtrl.setStandalone(true);
 			sap.ui.getCore().applyChanges();
-			notStrictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must have sapUiTbStandalone");
+			assert.notStrictEqual(jQuery.sap.domById("Toolbar").className.indexOf("sapUiTbStandalone"), -1, "Panel must have sapUiTbStandalone");
 		});
 
 
@@ -190,24 +189,24 @@
 //		          test "Items" aggregation
 		// ==================================================
 
-		test("InitialItems", function() {
-			strictEqual(oCtrl.getItems().length, 0, "Toolbar may not have any items initially");
+		QUnit.test("InitialItems", function(assert) {
+			assert.strictEqual(oCtrl.getItems().length, 0, "Toolbar may not have any items initially");
 		});
 
-		test("AddOneItem", function() {
+		QUnit.test("AddOneItem", function(assert) {
 			var oBtn = new sap.ui.commons.Button("testButton", {"text":"Test"});
 			oCtrl.addItem(oBtn);
-			strictEqual(oCtrl.getItems().length, 1, "Toolbar does not have the added item");
-			strictEqual(oCtrl.getItems()[0].getId(), "testButton", "Toolbar does not have the added item");
+			assert.strictEqual(oCtrl.getItems().length, 1, "Toolbar does not have the added item");
+			assert.strictEqual(oCtrl.getItems()[0].getId(), "testButton", "Toolbar does not have the added item");
 		});
 
-		test("TolerantTypeCheckForItems", function() {
+		QUnit.test("TolerantTypeCheckForItems", function(assert) {
 			var oItem = new sap.ui.layout.HorizontalLayout();
 			oCtrl.addItem(oItem);
 			oCtrl.removeItem(oItem);
 			// the above simply must not throw exceptions
 			// assertions could be checked but optimizer might remove them
-			ok(true, "must not throw exception for aggregations with interface types");
+			assert.ok(true, "must not throw exception for aggregations with interface types");
 			oItem.destroy();
 			sap.ui.getCore().applyChanges();
 		});
@@ -215,14 +214,14 @@
 		/**
 		 * Test how the toolbar adapts to its surroundings (width-wise)
 		 */
-		test("ToolbarAssumesOuterWidth", function() {
+		QUnit.test("ToolbarAssumesOuterWidth", function(assert) {
 			var uiArea = jQuery.sap.domById("content");
 			uiArea.style.width = "600px"; // make the parent div have a defined size
 
 			// check whether the "auto"-mode toolbar adapts to the parent
 			oCtrl.setWidth("auto");
 			sap.ui.getCore().applyChanges();
-			strictEqual(oCtrl.getDomRef().offsetWidth, 600, "Toolbar width should be adapted to parent DOM element");
+			assert.strictEqual(oCtrl.getDomRef().offsetWidth, 600, "Toolbar width should be adapted to parent DOM element");
 
 			// clean up
 			uiArea.style.width = "auto";
@@ -230,23 +229,23 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		test("Inner toolbar container has id", function() {
+		QUnit.test("Inner toolbar container has id", function(assert) {
 			var sExpectedId = oCtrl.getId() + "-inner";
-			ok(document.getElementById(sExpectedId), "The inner container must has an id [" + sExpectedId + "]");
+			assert.ok(document.getElementById(sExpectedId), "The inner container must has an id [" + sExpectedId + "]");
 		});
 
 		// ==================================================
 		// async1_addItems
 		// ==================================================
 
-		module("Overflow by addItems", {
-			setup: function() {
+		QUnit.module("Overflow by addItems", {
+			beforeEach: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
-				notStrictEqual(oCtrl, null, "oCtrl must exist");
-				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
+				assert.notStrictEqual(oCtrl, null, "oCtrl must exist");
+				assert.notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
-			teardown: function() {
+			afterEach: function() {
 				oCtrl = null;
 			}
 		});
@@ -254,12 +253,12 @@
 		/**
 		 * Toolbar is 300px(sWidth) wide; add one button of 100px width (which will not cause overflow for reasonable margins etc.)
 		 */
-		test("AddItemsUntilOverflowButtonAppears", function(assert) {
+		QUnit.test("AddItemsUntilOverflowButtonAppears", function(assert) {
 			var done = assert.async();
 			oCtrl = sap.ui.getCore().getControl("Toolbar");
-			notStrictEqual(oCtrl, null, "oCtrl must exist");
+			assert.notStrictEqual(oCtrl, null, "oCtrl must exist");
 
-			strictEqual(oCtrl.getDomRef().offsetWidth, iWidth, "Toolbar width is wrong");
+			assert.strictEqual(oCtrl.getDomRef().offsetWidth, iWidth, "Toolbar width is wrong");
 			setTimeout(function() {
 				verifyOverflowButtonIsNotVisible("none", "Overflow button may not be visible initially");
 
@@ -274,7 +273,7 @@
 			}, 400);
 		});
 
-		test("AddItemsUntilOverflowButtonAppears2", function(assert) {
+		QUnit.test("AddItemsUntilOverflowButtonAppears2", function(assert) {
 			var done = assert.async();
 			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"100px"});
 			// add a large button that surely causes overflow
@@ -288,7 +287,7 @@
 			}, 100);
 		});
 
-		test("AddItemsUntilOverflowButtonAppears2_InvisibleItemsDontCount", function(assert) {
+		QUnit.test("AddItemsUntilOverflowButtonAppears2_InvisibleItemsDontCount", function(assert) {
 			var done = assert.async();
 			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"100px"});
 			// add a large button that would have caused overflow if not invisible
@@ -302,7 +301,7 @@
 			}, 100);
 		});
 
-		test("AddItemsUntilOverflowButtonAppears3", function(assert) {
+		QUnit.test("AddItemsUntilOverflowButtonAppears3", function(assert) {
 			var done = assert.async();
 			// remove last item again
 			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"100px"});
@@ -326,14 +325,14 @@
 		// async2_resize
 		// ==================================================
 
-		module("Overflow due to resizing", {
-			setup: function() {
+		QUnit.module("Overflow due to resizing", {
+			beforeEach: function() {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
-				notStrictEqual(oCtrl, null, "oCtrl must exist");
-				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
+				assert.notStrictEqual(oCtrl, null, "oCtrl must exist");
+				assert.notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
-			teardown: function() {
+			afterEach: function() {
 				oCtrl = null;
 			}
 		});
@@ -343,12 +342,12 @@
 		 * Toolbar is 300px (sWidth) wide; add two buttons of 75px width (which will not cause overflow for reasonable margins etc.)
 		 * and then resize the toolbar to 199px width, which should trigger the overflow.
 		 */
-		test("ResizeUntilOverflowButtonAppears", function(assert) {
+		QUnit.test("ResizeUntilOverflowButtonAppears", function(assert) {
 			var done = assert.async();
 			oCtrl = sap.ui.getCore().getControl("Toolbar");
-			ok(oCtrl);
+			assert.ok(oCtrl);
 
-			strictEqual(oCtrl.getDomRef().offsetWidth, iWidth, "Toolbar width is wrong");
+			assert.strictEqual(oCtrl.getDomRef().offsetWidth, iWidth, "Toolbar width is wrong");
 			verifyOverflowButtonIsNotVisible("Overflow button may not be visible initially");
 
 			// add two buttons that surely fit
@@ -364,7 +363,7 @@
 			}, 10);
 		});
 
-		test("ResizeUntilOverflowButtonAppears2", function(assert) {
+		QUnit.test("ResizeUntilOverflowButtonAppears2", function(assert) {
 			var done = assert.async();
 			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"75px"});
 			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"75px"});
@@ -381,7 +380,7 @@
 		});
 
 
-		test("ResizeUntilOverflowButtonAppears2_InvisibleItemsDontCount", function(assert) {
+		QUnit.test("ResizeUntilOverflowButtonAppears2_InvisibleItemsDontCount", function(assert) {
 			var done = assert.async();
 			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"75px"});
 			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"75px", "visible" : false});
@@ -397,7 +396,7 @@
 			}, 10);
 		});
 
-		test("ResizeUntilOverflowButtonAppears3", function(assert) {
+		QUnit.test("ResizeUntilOverflowButtonAppears3", function(assert) {
 			var done = assert.async();
 			var oBtn1 = new sap.ui.commons.Button("testButton1", {"text":"Test","width":"75px"});
 			var oBtn2 = new sap.ui.commons.Button("testButton2", {"text":"Test","width":"75px"});
@@ -416,7 +415,7 @@
 			}, 10);
 		});
 
-		test("ResizeUntilOverflowButtonAppears3_ToolbarFullHeightSeparatorAtTheBeggining", function(assert) {
+		QUnit.test("ResizeUntilOverflowButtonAppears3_ToolbarFullHeightSeparatorAtTheBeggining", function(assert) {
 			var done = assert.async();
 			oCtrl.setWidth("149px");
 			var oToolbarSeparator = new sap.ui.commons.ToolbarSeparator({design : sap.ui.commons.ToolbarSeparatorDesign.FullHeight});
@@ -441,14 +440,14 @@
 		// async3_outerWidth
 		// ==================================================
 
-		module("outerWidth", {
-			setup: function () {
+		QUnit.module("outerWidth", {
+			beforeEach: function () {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
-				notStrictEqual(oCtrl, null, "oCtrl must exist");
-				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
+				assert.notStrictEqual(oCtrl, null, "oCtrl must exist");
+				assert.notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
-			teardown: function () {
+			afterEach: function () {
 				oCtrl = null;
 			}
 		});
@@ -456,10 +455,10 @@
 		/**
 		 * Test how the toolbar adapts to size changes of the surroundings (width-wise) and updates the overflow button
 		 */
-		test("ToolbarAdaptsToOuterWidthAndUpdates", function(assert) {
+		QUnit.test("ToolbarAdaptsToOuterWidthAndUpdates", function(assert) {
 			var done = assert.async();
 			oCtrl = sap.ui.getCore().getControl("Toolbar");
-			ok(oCtrl);
+			assert.ok(oCtrl);
 			var uiArea = jQuery.sap.domById("content");
 
 			uiArea.style.width = "600px"; // make the parent div have a defined size
@@ -472,13 +471,13 @@
 			oCtrl.setWidth("auto");
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				strictEqual(oCtrl.getDomRef().offsetWidth, 600, "Toolbar width should be adapted to parent DOM element");
-				strictEqual(getOverflowDomRef().style.display, "none", "Overflow button may not be visible with only two small items in the toolbar");
+				assert.strictEqual(oCtrl.getDomRef().offsetWidth, 600, "Toolbar width should be adapted to parent DOM element");
+				assert.strictEqual(getOverflowDomRef().style.display, "none", "Overflow button may not be visible with only two small items in the toolbar");
 				done();
 			}, 350);
 		});
 
-		test("ToolbarAdaptsToOuterWidthAndUpdates2", function(assert) {
+		QUnit.test("ToolbarAdaptsToOuterWidthAndUpdates2", function(assert) {
 			var done = assert.async();
 			oCtrl.setWidth("auto");
 			var uiArea = jQuery.sap.domById("content");
@@ -491,8 +490,8 @@
 			uiArea.style.width = "199px";
 
 			setTimeout(function() {
-					strictEqual(oCtrl.getDomRef().offsetWidth, 199, "Toolbar width should be in sync with parent DOM element");
-					strictEqual(getOverflowDomRef().style.display, "block", "Overflow button must be visible once parent has become too small");
+					assert.strictEqual(oCtrl.getDomRef().offsetWidth, 199, "Toolbar width should be in sync with parent DOM element");
+					assert.strictEqual(getOverflowDomRef().style.display, "block", "Overflow button must be visible once parent has become too small");
 					done();
 				}, 450);
 		});
@@ -501,14 +500,14 @@
 		// async5_overflowMenu
 		// ==================================================
 
-		module("Overflow Menu", {
-			setup: function () {
+		QUnit.module("Overflow Menu", {
+			beforeEach: function () {
 				oCtrl = sap.ui.getCore().getControl("Toolbar");
-				notStrictEqual(oCtrl, null, "oCtrl must exist");
-				notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
+				assert.notStrictEqual(oCtrl, null, "oCtrl must exist");
+				assert.notStrictEqual(jQuery.sap.domById("Toolbar"), null, "Toolbar DomRef must exist");
 				initToolbar();
 			},
-			teardown: function () {
+			afterEach: function () {
 				oCtrl = null;
 			}
 		});
@@ -516,13 +515,13 @@
 		/**
 		 * Tests the overflow menu for a toolbar with many buttons
 		 */
-		test("existance of menu", function(assert) {
+		QUnit.test("existance of menu", function(assert) {
 			var done = assert.async();
 			oCtrl = sap.ui.getCore().getControl("Toolbar");
-			ok(oCtrl);
+			assert.ok(oCtrl);
 
 			// check initial visibility of the overflow popup
-			ok((getPopupDomRef()==null)||(getPopupDomRef().style.visibility=="hidden"), "the Popup must be either invisible or not existing at all");
+			assert.ok((getPopupDomRef()==null)||(getPopupDomRef().style.visibility=="hidden"), "the Popup must be either invisible or not existing at all");
 
 			var aButtons = [];
 			for (var i = 0; i < 10; i++) {
@@ -566,10 +565,10 @@
 			}
 		}
 		function verifyOverflowButtonIsNotVisible(sErrorMessage) {
-			strictEqual(getDisplayStyle(getOverflowDomRef()), "none", sErrorMessage);
+			assert.strictEqual(getDisplayStyle(getOverflowDomRef()), "none", sErrorMessage);
 		};
 		function verifyOverflowButtonIsVisible(sErrorMessage) {
-			strictEqual(getDisplayStyle(getOverflowDomRef()), "block", sErrorMessage);
+			assert.strictEqual(getDisplayStyle(getOverflowDomRef()), "block", sErrorMessage);
 		};
 		(function() {
 

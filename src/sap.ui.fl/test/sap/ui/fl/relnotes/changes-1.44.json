@@ -1,0 +1,55 @@
+{
+  "1.44.0": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "c748d71255239119703f11bb214e9fee1f0eef81",
+        "type": "FEATURE",
+        "text": "Move sap.ui.fl library from internal sapui5.runtime to OpenUI5",
+        "references": []
+      },
+      {
+        "id": "e6a8280f72bf32dbf73610caf557b225df589772",
+        "type": "FEATURE",
+        "text": "sap.ui.fl applies changes when a control is created instead of when the view is processed.",
+        "references": []
+      },
+      {
+        "id": "b9c4e57906857cb4e09269154c65ab6b2278ad7f",
+        "type": "FEATURE",
+        "text": "sap.ui.fl remembers changes applied on control",
+        "references": []
+      },
+      {
+        "id": "b88c6cc828fd586a572a73f974086423685e4826",
+        "type": "FIX",
+        "text": "Transport Dialog: Re-enable transport of flexibility changes in CUSTOMER layer",
+        "references": []
+      },
+      {
+        "id": "76fcec2172bee4ec541ca1b8643e215d9ab640a8",
+        "type": "FIX",
+        "text": "sap.ui.fl UnstashControl - fix visible + optional move",
+        "references": []
+      },
+      {
+        "id": "4a7a686f975fb5b3ec6af372d4b1c0ab4db17b78",
+        "type": "FIX",
+        "text": "sap.ui.fl: Pass application component to applyChange methods",
+        "references": []
+      },
+      {
+        "id": "8500ca102726bd7b237170da7e0f04b51b3a1adc",
+        "type": "TEST",
+        "text": "sap.ui.fl tests use simpleForm controls",
+        "references": []
+      },
+      {
+        "id": "30c5e80bf162632432b27f3369e8d1114c17d008",
+        "type": "TEST",
+        "text": "sap.ui.fl tests use simpleForm controls",
+        "references": []
+      }
+    ]
+  }
+}

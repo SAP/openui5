@@ -1,0 +1,228 @@
+<mvc:View
+		controllerName="sap.m.sample.LightBox.C"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<Text text="Click on the images below. This will open the images in their real size if the image size is not bigger than the window size." width="100%"/>
+	<List>
+		<CustomListItem>
+			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
+				<Image src="test-resources/sap/ui/demokit/explored/img/HT-6100.jpg"
+						decorative="false"
+						width="170px"
+						densityAware="false">
+					<detailBox>
+						<LightBox>
+							<LightBoxItem
+									imageSrc="test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg"
+									alt="Beamer"
+									title="This is a beamer"
+									subtitle="This is beamer's description">
+							</LightBoxItem>
+						</LightBox>
+					</detailBox>
+					<!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0"/>
+					</layoutData>
+				</Image>
+				<VBox class="sapUiSmallMarginBegin">
+					<Title text="Beamer"/>
+					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam interdum lectus et tempus blandit.
+						Sed porta ex quis tortor gravida, ut suscipit felis dignissim. Ut iaculis elit vel ligula scelerisque,
+						et porttitor est pretium. Suspendisse purus dolor, fermentum in tortor eu, semper finibus velit.
+						Proin vel lobortis leo, vel eleifend lorem. Etiam ac erat sollicitudin, condimentum magna ac,
+						venenatis lacus. Pellentesque non mauris consectetur, tristique arcu id, aliquet tortor. "/>
+				</VBox>
+			</HBox>
+		</CustomListItem>
+		<CustomListItem>
+			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
+				<Image src="test-resources/sap/ui/demokit/explored/img/HT-6120.jpg"
+						decorative="false"
+						width="170px"
+						densityAware="false">
+					<detailBox>
+						<LightBox>
+							<LightBoxItem
+									imageSrc="test-resources/sap/ui/demokit/explored/img/HT-6120-large.jpg"
+									alt="USB"
+									title="This is a USB"
+									subtitle="This is USB's description">
+							</LightBoxItem>
+						</LightBox>
+					</detailBox>
+					<!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0"/>
+					</layoutData>
+				</Image>
+				<VBox class="sapUiSmallMarginBegin">
+					<Title text="USB"/>
+					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam interdum lectus et tempus blandit.
+						Sed porta ex quis tortor gravida, ut suscipit felis dignissim. Ut iaculis elit vel ligula scelerisque,
+						et porttitor est pretium. Suspendisse purus dolor, fermentum in tortor eu, semper finibus velit.
+						Proin vel lobortis leo, vel eleifend lorem. Etiam ac erat sollicitudin, condimentum magna ac,
+						venenatis lacus. Pellentesque non mauris consectetur, tristique arcu id, aliquet tortor. "/>
+				</VBox>
+			</HBox>
+		</CustomListItem>
+		<CustomListItem>
+			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
+				<Image src="test-resources/sap/ui/demokit/explored/img/HT-7777.jpg"
+						decorative="false"
+						width="170px"
+						densityAware="false">
+					<detailBox>
+						<LightBox>
+							<LightBoxItem
+									imageSrc="test-resources/sap/ui/demokit/explored/img/HT-7777-large.jpg"
+									alt="Speakers"
+									title="These are speakers"
+									subtitle="This is speakers' description">
+							</LightBoxItem>
+						</LightBox>
+					</detailBox>
+					<!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0"/>
+					</layoutData>
+				</Image>
+				<VBox class="sapUiSmallMarginBegin">
+					<Title text="Speakers"/>
+					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam interdum lectus et tempus blandit.
+						Sed porta ex quis tortor gravida, ut suscipit felis dignissim. Ut iaculis elit vel ligula scelerisque,
+						et porttitor est pretium. Suspendisse purus dolor, fermentum in tortor eu, semper finibus velit.
+						Proin vel lobortis leo, vel eleifend lorem. Etiam ac erat sollicitudin, condimentum magna ac,
+						venenatis lacus. Pellentesque non mauris consectetur, tristique arcu id, aliquet tortor. "/>
+				</VBox>
+			</HBox>
+		</CustomListItem>
+		<CustomListItem>
+			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
+				<Image src="test-resources/sap/ui/demokit/explored/img/nature/ALotOfElephants_small.jpg"
+						decorative="false"
+						width="170px"
+						densityAware="false">
+					<detailBox>
+						<LightBox>
+							<LightBoxItem
+									imageSrc="test-resources/sap/ui/demokit/explored/img/nature/ALotOfElephants.jpg"
+									alt="Nature image"
+									title="This is a sample image"
+									subtitle="This is a place for description">
+							</LightBoxItem>
+						</LightBox>
+					</detailBox>
+					<!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0"/>
+					</layoutData>
+				</Image>
+				<VBox class="sapUiSmallMarginBegin">
+					<Title text="Nature image"/>
+					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam interdum lectus et tempus blandit.
+						Sed porta ex quis tortor gravida, ut suscipit felis dignissim. Ut iaculis elit vel ligula scelerisque,
+						et porttitor est pretium. Suspendisse purus dolor, fermentum in tortor eu, semper finibus velit.
+						Proin vel lobortis leo, vel eleifend lorem. Etiam ac erat sollicitudin, condimentum magna ac,
+						venenatis lacus. Pellentesque non mauris consectetur, tristique arcu id, aliquet tortor. "/>
+				</VBox>
+			</HBox>
+		</CustomListItem>
+		<CustomListItem>
+			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
+				<Image src="test-resources/sap/ui/demokit/explored/img/nature/flatFish.jpg"
+						decorative="false"
+						width="170px"
+						densityAware="false">
+					<detailBox>
+						<LightBox>
+							<LightBoxItem
+									imageSrc="test-resources/sap/ui/demokit/explored/img/nature/flatFish.jpg"
+									alt="Nature image"
+									title="This is a sample image"
+									subtitle="This is a place for description">
+							</LightBoxItem>
+						</LightBox>
+					</detailBox>
+					<!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0"/>
+					</layoutData>
+				</Image>
+				<VBox class="sapUiSmallMarginBegin">
+					<Title text="Nature image"/>
+					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam interdum lectus et tempus blandit.
+						Sed porta ex quis tortor gravida, ut suscipit felis dignissim. Ut iaculis elit vel ligula scelerisque,
+						et porttitor est pretium. Suspendisse purus dolor, fermentum in tortor eu, semper finibus velit.
+						Proin vel lobortis leo, vel eleifend lorem. Etiam ac erat sollicitudin, condimentum magna ac,
+						venenatis lacus. Pellentesque non mauris consectetur, tristique arcu id, aliquet tortor. "/>
+				</VBox>
+			</HBox>
+		</CustomListItem>
+		<CustomListItem>
+			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
+				<Image src="test-resources/sap/ui/demokit/explored/img/nature/horses.jpg"
+						decorative="false"
+						width="170px"
+						densityAware="false">
+					<detailBox>
+						<LightBox>
+							<LightBoxItem
+									imageSrc="test-resources/sap/ui/demokit/explored/img/nature/horses.jpg"
+									alt="Nature image"
+									title="This is a sample image"
+									subtitle="This is a place for description">
+							</LightBoxItem>
+						</LightBox>
+					</detailBox>
+					<!-- Fixes Hbox layout on Android Stock Browser for Android 5.0 -->
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0"/>
+					</layoutData>
+				</Image>
+				<VBox class="sapUiSmallMarginBegin">
+					<Title text="Nature image"/>
+					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam interdum lectus et tempus blandit.
+						Sed porta ex quis tortor gravida, ut suscipit felis dignissim. Ut iaculis elit vel ligula scelerisque,
+						et porttitor est pretium. Suspendisse purus dolor, fermentum in tortor eu, semper finibus velit.
+						Proin vel lobortis leo, vel eleifend lorem. Etiam ac erat sollicitudin, condimentum magna ac,
+						venenatis lacus. Pellentesque non mauris consectetur, tristique arcu id, aliquet tortor. "/>
+				</VBox>
+			</HBox>
+		</CustomListItem>
+		<CustomListItem>
+			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
+				<Image src="test-resources/sap/ui/demokit/explored/img/nature/elephant.jpg"
+						decorative="false"
+						width="170px"
+						densityAware="false">
+					<detailBox>
+						<LightBox>
+							<imageContent>
+								<LightBoxItem
+										imageSrc="test-resources/sap/ui/demokit/explored/img/nature/image_does_not_exist.jpg"
+										alt="Nature image"
+										title="This is a sample image"
+										subtitle="This is a place for description">
+								</LightBoxItem>
+							</imageContent>
+						</LightBox>
+					</detailBox>
+					<!-- Fixes HBox layout on Android Stock Browser for Android 5.0 -->
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0"/>
+					</layoutData>
+				</Image>
+				<VBox class="sapUiSmallMarginBegin">
+					<Title text="Nature image"/>
+					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam interdum lectus et tempus blandit.
+						Sed porta ex quis tortor gravida, ut suscipit felis dignissim. Ut iaculis elit vel ligula scelerisque,
+						et porttitor est pretium. Suspendisse purus dolor, fermentum in tortor eu, semper finibus velit.
+						Proin vel lobortis leo, vel eleifend lorem. Etiam ac erat sollicitudin, condimentum magna ac,
+						venenatis lacus. Pellentesque non mauris consectetur, tristique arcu id, aliquet tortor. "/>
+				</VBox>
+			</HBox>
+		</CustomListItem>
+	</List>
+
+</mvc:View>

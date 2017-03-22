@@ -2,28 +2,32 @@
 	border: solid 1px @sapUiMediumBorder;
 	font-family: @sapUiFontFamily;
 	font-size: @sapUiFontSize;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	position:relative;
 }
 
 .sapUiTabBar {
+	position: relative;
+	white-space: nowrap;
 	cursor: default;
 }
 
 .sapUiTabBarCnt {
+	white-space: nowrap;
+	display: inline-block;
 	overflow:hidden;
 	margin-top: 0;
 	padding-left: 0;
+	outline: none;
 }
 
 .sapUiTab,
 .sapUiTabSel,
 .sapUiTabDsbl {
-	display: block;
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
 	white-space:nowrap;
-	float:left;
 }
 
 .sapUiTabL {
@@ -72,4 +76,61 @@ span.sapUiTabIco {
 .sapUiTabPanelHeight {
 	position: absolute;
 	bottom:0;
+}
+
+.sapUiTabStripNoSelection {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.sapUiTabBar .sapUiTabStripScrollContainer {
+	display: inline-block;
+	position: absolute;
+	overflow: hidden;
+
+	left: 0;
+	right: 0;
+}
+
+.sapUiTabBar .sapUiTabStripScrollIcon {
+	width: 16px;
+	height: 22px;
+	font-size: 10px;
+	margin-top: 6px;
+	padding-top: 4px;
+	vertical-align: top;
+	visibility: hidden;
+	display: none;
+
+	box-sizing: border-box;
+
+	outline: none;
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;
+}
+
+.sapUiTabBar .sapUiTabStripRightScrollIcon {
+	position: absolute;
+	right: 0;
+}
+
+.sapUiTabStrip {
+	&.sapUiTabStripScrollForward .sapUiTabStripRightScrollIcon,
+	&.sapUiTabStripScrollBack .sapUiTabStripLeftScrollIcon {
+		visibility: visible;
+	}
+}
+
+.sapUiTabStrip.sapUiTabStripScrollable .sapUiTabBar {
+	.sapUiTabStripScrollIcon {
+		display: inline-block;
+	}
+
+	.sapUiTabStripScrollContainer {
+		left: 16px;
+		right: 16px;
+	}
 }

@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var MatrixLayoutRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -28,25 +28,36 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 		var r = MatrixLayoutRenderer;
 		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
-	
+		var i = 0;
+		var j = 0;
+		var index = 0;
+		var iLength = 0;
+		var oMatrixLayoutRow;
+		var aCells;
+		var aContentControls;
+		var oMatrixHeight;
+		var oRowHeight;
+		var sSpanHeight;
+		var sVAlign;
+
 		//ARIA
 		rm.write("<TABLE role=\"presentation\"");
 		rm.writeControlData(oMatrixLayout);
 		rm.write(" cellpadding=\"0\" cellspacing=\"0\"");
 		rm.addStyle("border-collapse", "collapse");
-	
+
 		var sMatrixWidth = oMatrixLayout.getWidth();
 		if (sMatrixWidth) {
 			rm.addStyle("width", sMatrixWidth);
 		}
-	
+
 		var sMatrixHeight = oMatrixLayout.getHeight();
 		if (sMatrixHeight && sMatrixHeight != 'auto') {
 			rm.addStyle("height", sMatrixHeight);
 			// get value and unit of Layout height (to determine row heights if given in %)
-			var oMatrixHeight = r.getValueUnit( sMatrixHeight );
+			oMatrixHeight = r.getValueUnit( sMatrixHeight );
 		}
-	
+
 		if (oMatrixLayout.getLayoutFixed()) {
 			// table layout is fixed
 			rm.addStyle("table-layout", "fixed");
@@ -54,58 +65,58 @@ sap.ui.define(['jquery.sap.global'],
 				rm.addStyle("width", "100%");
 			}
 		}
-	
+
 		rm.addClass("sapUiMlt");
 		rm.writeStyles();
 		rm.writeClasses();
-	
+
 		if (oMatrixLayout.getTooltip_AsString()) {
 			rm.writeAttributeEscaped('title', oMatrixLayout.getTooltip_AsString());
 		}
-	
+
 		// close table-start-tag
 		rm.write('>');
-	
+
 		var aRows = oMatrixLayout.getRows();
 		var iCols = oMatrixLayout.getColumns();
 		if (iCols < 1) {
 			// determine number of columns
-			for (var i = 0; i < aRows.length; i++) {
-				var oMatrixLayoutRow = aRows[i];
-				var aCells = oMatrixLayoutRow.getCells();
+			for (i = 0; i < aRows.length; i++) {
+				oMatrixLayoutRow = aRows[i];
+				aCells = oMatrixLayoutRow.getCells();
 				if ( iCols < aCells.length) {
 					iCols = aCells.length;
 				}
 			}
 		}
-	
+
 		// create columns
 		if (iCols > 0) {
 			var aWidths = oMatrixLayout.getWidths();
 			rm.write("<colgroup>");
-			for (var j = 0; j < iCols; j++) {
+			for (j = 0; j < iCols; j++) {
 				rm.write("<col");
 				if (aWidths && aWidths[j] && aWidths[j] != "auto") {
 					rm.addStyle('width', aWidths[j]); // use style because col width in HTML supports only be px or %
 					rm.writeStyles();
 				}
-				rm.write("/>");
+				rm.write("></col>");
 			}
 			rm.write("</colgroup>");
 		}
-	
+
 		// in IE9 there is a problem with column width if too much colspans are used and not
 		// at least one cell per columns has colspan 1
 		// to keep the check simple just check if in every row colspans are used
 		var bDummyRow = true;
 		var bColspanInRow = false;
-	
+
 		rm.write('<TBODY style="width: 100%; height: 100%">');
-	
+
 		// for each row
-		for (var i = 0; i < aRows.length; i++) {
-			var oMatrixLayoutRow = aRows[i];
-	
+		for (i = 0; i < aRows.length; i++) {
+			oMatrixLayoutRow = aRows[i];
+
 			// get value and unit of Row height (to determine row heights if given in %)
 			var sRowHeight = oMatrixLayoutRow.getHeight();
 			if (sRowHeight == "auto") {
@@ -113,20 +124,20 @@ sap.ui.define(['jquery.sap.global'],
 				sRowHeight = "";
 			}
 			if (sRowHeight && oMatrixHeight) {
-				var oRowHeight = r.getValueUnit( sRowHeight );
+				oRowHeight = r.getValueUnit( sRowHeight );
 				if ( oRowHeight.Unit == '%' && oMatrixHeight.Unit != '%') {
 					// Matrix has fix height and Row % -> calculate Row height to fix value
 					sRowHeight = ( oMatrixHeight.Value * oRowHeight.Value / 100 ) + oMatrixHeight.Unit;
 				}
 			}
-	
+
 			rm.write("<tr");
 			rm.writeElementData(oMatrixLayoutRow);
 			rm.writeClasses(oMatrixLayoutRow);
 			if (oMatrixLayoutRow.getTooltip_AsString()) {
 				rm.writeAttributeEscaped('title', oMatrixLayoutRow.getTooltip_AsString());
 			}
-	
+
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version >= 9 && sRowHeight) {
 				// for IE9 and IE10 in some cases the height is needed on TR, so it's added here.
 				// Other browsers don't need it here
@@ -136,16 +147,16 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeStyles();
 			}
 			rm.write(">");
-	
+
 			// for each cell
-			var aCells = oMatrixLayoutRow.getCells();
-	
+			aCells = oMatrixLayoutRow.getCells();
+
 			var iColumns = iCols;
 			if (iCols < 1) {
 				// render only defined cells
 				iColumns = aCells.length;
 			}
-	
+
 			bColspanInRow = false;
 			var iColSpans = 0;
 			if (!oMatrixLayoutRow.RowSpanCells) {
@@ -153,29 +164,29 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				bColspanInRow = true; // not really but ok for this case
 			}
-	
-			for (var j = 0; j < iColumns; j++) {
+
+			for (j = 0; j < iColumns; j++) {
 				if (j >= (iColumns - iColSpans - oMatrixLayoutRow.RowSpanCells)) {
 				// no more cells because of Colspan
 					break;
 				}
-	
+
 				var oMatrixLayoutCell = aCells[j];
-	
+
 				rm.write("<td");
-	
+
 				if (sRowHeight && ( !oMatrixLayoutCell || oMatrixLayoutCell.getRowSpan() == 1 )) {
 					// set height only if cell has no rowspan or is not specified
 					rm.addStyle("height", sRowHeight);
 				}
-	
+
 				if (oMatrixLayoutCell) {
 					// if empty cell only render empty TD
 					rm.writeElementData(oMatrixLayoutCell);
 					if (oMatrixLayoutCell.getTooltip_AsString()) {
 						rm.writeAttributeEscaped('title', oMatrixLayoutCell.getTooltip_AsString());
 					}
-	
+
 					if (oMatrixLayout.getLayoutFixed() && oMatrixLayoutCell.getContent().length > 0) {
 						// table layout is fixed
 						rm.addStyle("overflow", "hidden");
@@ -185,12 +196,12 @@ sap.ui.define(['jquery.sap.global'],
 						// otherwise (if control is bigger) its only cut.
 						//rm.addStyle("text-overflow", "ellipsis");
 					}
-	
+
 					var sHAlign = r.getHAlignClass(oMatrixLayoutCell.getHAlign(), bRTL);
 					if (sHAlign) {
 						rm.addClass(sHAlign);
 					}
-					var sVAlign = r.getVAlign(oMatrixLayoutCell.getVAlign());
+					sVAlign = r.getVAlign(oMatrixLayoutCell.getVAlign());
 					if (sVAlign) {
 						rm.addStyle("vertical-align", sVAlign);
 					}
@@ -201,22 +212,22 @@ sap.ui.define(['jquery.sap.global'],
 					}
 					if (oMatrixLayoutCell.getRowSpan() > 1) {
 						rm.writeAttribute("rowspan", oMatrixLayoutCell.getRowSpan());
-	
+
 						// summarize height of all used rows
 						var fValue = 0;
 						var sUnit = "";
 						for (var x = 0; x < oMatrixLayoutCell.getRowSpan(); x++) {
 							var oRow = aRows[i + x];
-	
+
 							if (!oRow) {
 								sUnit = false;
 								break;
 							}
-	
+
 							if (!oRow.RowSpanCells) {
 								oRow.RowSpanCells = 0;
 							}
-	
+
 							if (x > 0) {
 								// add number of cells with rowspan to following rows to not render additional cells
 								oRow.RowSpanCells = oRow.RowSpanCells + oMatrixLayoutCell.getColSpan();
@@ -235,48 +246,45 @@ sap.ui.define(['jquery.sap.global'],
 								}
 								if (sUnit == "") {
 									sUnit = oHeight.Unit;
-								} else {
-									if (sUnit != oHeight.Unit) {
-										//different unit -> no summarize possible
-										sUnit = false;
-										//break;
-									}
+								} else if (sUnit != oHeight.Unit) {
+									//different unit -> no summarize possible
+									sUnit = false;
 								}
 								fValue = fValue + oHeight.Value;
 							}
 						}
 						if (sUnit != false) {
-							var sSpanHeight = fValue + sUnit;
+							sSpanHeight = fValue + sUnit;
 							rm.addStyle("height", sSpanHeight);
 						}
 					}
-	
+
 					// set CSS class for appropriate background
 					rm.addClass(r.getBackgroundClass(oMatrixLayoutCell.getBackgroundDesign()));
-	
+
 					// set CSS class for appropriate separator
 					rm.addClass(r.getSeparationClass(oMatrixLayoutCell.getSeparation()));
-	
+
 					if (!oMatrixLayout.getLayoutFixed() || !sRowHeight) {
 						// set CSS class for appropriate padding
 						rm.addClass(r.getPaddingClass(oMatrixLayoutCell.getPadding()));
-	
+
 						rm.addClass("sapUiMltCell");
 					} else {
 						rm.addStyle("white-space", "nowrap");
 					}
-	
-	
+
+
 					rm.writeClasses(oMatrixLayoutCell);
 				}
 				rm.writeStyles();
-	
+
 				// close td-start-tag
 				rm.write(">");
-	
+
 				if (oMatrixLayoutCell) {
 					// if empty cell only render empty TD
-	
+
 					if (oMatrixLayout.getLayoutFixed() && sRowHeight) {
 						// table layout is fixed
 						// in case of defined height some DIVs are needed.
@@ -284,7 +292,7 @@ sap.ui.define(['jquery.sap.global'],
 						// 2. DIV to set vertical alignment
 						// 3. DIV inside 2. DIV to set paddings for control inside.
 						rm.write('<div');
-	
+
 						if ( oMatrixLayoutCell.getRowSpan() != 1 && sSpanHeight && sSpanHeight.search('%') == -1) {
 							rm.addStyle("height", sSpanHeight);
 						} else if (sRowHeight.search('%') != -1 || (oMatrixLayoutCell.getRowSpan() != 1 && !sSpanHeight)) {
@@ -292,7 +300,7 @@ sap.ui.define(['jquery.sap.global'],
 						} else {
 							rm.addStyle("height", sRowHeight);
 						}
-	
+
 						rm.addStyle("display", "inline-block");
 						if (sVAlign) {
 							rm.addStyle("vertical-align", sVAlign);
@@ -317,8 +325,8 @@ sap.ui.define(['jquery.sap.global'],
 						var sDivHeight = "0";
 						var sDivUnit = "";
 						var sInnerDivHeight = "0";
-						var aContentControls = oMatrixLayoutCell.getContent();
-						for (var index = 0, length = aContentControls.length; index < length; index++) {
+						aContentControls = oMatrixLayoutCell.getContent();
+						for (index = 0, iLength = aContentControls.length; index < iLength; index++) {
 							if (aContentControls[index].getHeight && aContentControls[index].getHeight() != "") {
 								// check unit
 								var oControlHeight = r.getValueUnit( aContentControls[index].getHeight() );
@@ -352,7 +360,7 @@ sap.ui.define(['jquery.sap.global'],
 						rm.addStyle("width", "100%");
 						rm.writeStyles();
 						rm.writeClasses(false);
-	
+
 						rm.write("><div");
 						rm.addStyle("overflow", "hidden");
 						rm.addStyle("text-overflow", "inherit");
@@ -364,16 +372,16 @@ sap.ui.define(['jquery.sap.global'],
 							}
 						}
 						rm.addClass("sapUiMltCell");
-	
+
 						// set CSS class for appropriate padding
 						rm.addClass(r.getPaddingClass(oMatrixLayoutCell.getPadding()));
-	
+
 						rm.writeStyles();
 						rm.writeClasses(false);
 						rm.write(">"); // DIV
 					}
-					var aContentControls = oMatrixLayoutCell.getContent();
-					for (var index = 0, length = aContentControls.length; index < length; index++) {
+					aContentControls = oMatrixLayoutCell.getContent();
+					for (index = 0, iLength = aContentControls.length; index < iLength; index++) {
 						oRenderManager.renderControl(aContentControls[index]);
 					}
 					if (oMatrixLayout.getLayoutFixed() && sRowHeight) {
@@ -381,44 +389,45 @@ sap.ui.define(['jquery.sap.global'],
 						rm.write("</div></div>");
 					}
 				}
-	
+
 				// close cell
 				rm.write("</td>");
 			}
-	
+
 			// close row
 			rm.write("</tr>");
-	
+
 			// initialize RowSpanCounter after Row is rendered
 			oMatrixLayoutRow.RowSpanCells = undefined;
-	
+
 			if (!bColspanInRow) {
 				bDummyRow = false;
 			}
 		} // end of rows-rendering
-	
+
 		if (bDummyRow && sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version >= 9) {
 			// render dummy row to help IE9 to calculate column sizes
 			rm.write("<tr style='height:0;'>");
-			for ( var i = 0; i < iCols; i++) {
+			for (i = 0; i < iCols; i++) {
 				rm.write("<td></td>");
 			}
 			rm.write("</tr>");
 		}
-	
+
 		// close tbody, close table
 		rm.write("</TBODY></TABLE>");
-	
+
 	};
-	
+
 	/**
 	 * Returns the a classname according to the given
-	 * horizontal alignment and RTL mode or null if an invalid value.
+	 * horizontal alignment and RTL mode or null if an invalid value
 	 * was given.
 	 *
-	 * @param {sap.ui.commons.layout.HAlign} oHAlign
-	 * @param {boolean} bRTL
-	 * @type string
+	 * @param {sap.ui.commons.layout.HAlign} oHAlign horizontal alignment of the cell
+	 * @param {boolean} bRTL RTL mode
+	 * @return {string} classname
+	 * @protected
 	 */
 	MatrixLayoutRenderer.getHAlignClass = function(oHAlign, bRTL) {
 		var sClassPrefix = "sapUiMltCellHAlign";
@@ -445,194 +454,210 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 	};
-	
+
 	/**
 	 * Returns the value for the HTML "valign" attribute according to the given
 	 * vertical alignment, or NULL if the HTML default is fine.
 	 *
-	 * @param {sap.ui.commons.layout.VAlign} oVAlign
-	 * @type string
+	 * @param {sap.ui.commons.layout.VAlign} oVAlign vertical alignment of the cell
+	 * @return {string} value for the HTML "valign" attribute
+	 * @protected
 	 */
 	MatrixLayoutRenderer.getVAlign = function(oVAlign) {
-	  switch (oVAlign) {
+		switch (oVAlign) {
 		case sap.ui.commons.layout.VAlign.Bottom:
-		  return "bottom";
-	
+			return "bottom";
+
 		case sap.ui.commons.layout.VAlign.Middle:
 			return "middle";
 		case sap.ui.commons.layout.VAlign.Top:
-		  return "top";
-	  }
-	
-	  jQuery.sap.assert(false, "MatrixLayoutRenderer.getVAlign: oVAlign must be a known value");
-	  return null;
+			return "top";
+
+		default:
+			jQuery.sap.assert(false, "MatrixLayoutRenderer.getVAlign: oVAlign must be a known value");
+			return null;
+		}
+
 	};
-	
+
 	/**
 	 * Returns the class name according to the given background design or NULL of
 	 * none is needed.
 	 *
-	 * @param {sap.ui.commons.layout.BackgroundDesign} oBackgroundDesign
-	 * @type string
+	 * @param {sap.ui.commons.layout.BackgroundDesign} oBackgroundDesign background design of the cell
+	 * @return {string} classname
+	 * @protected
 	 */
 	MatrixLayoutRenderer.getBackgroundClass = function(oBackgroundDesign) {
-	  switch (oBackgroundDesign) {
+		switch (oBackgroundDesign) {
 		case sap.ui.commons.layout.BackgroundDesign.Border:
-		  return "sapUiMltBgBorder";
-	
+			return "sapUiMltBgBorder";
+
 		case sap.ui.commons.layout.BackgroundDesign.Fill1:
-		  return "sapUiMltBgFill1";
-	
+			return "sapUiMltBgFill1";
+
 		case sap.ui.commons.layout.BackgroundDesign.Fill2:
-		  return "sapUiMltBgFill2";
-	
+			return "sapUiMltBgFill2";
+
 		case sap.ui.commons.layout.BackgroundDesign.Fill3:
-		  return "sapUiMltBgFill3";
-	
+			return "sapUiMltBgFill3";
+
 		case sap.ui.commons.layout.BackgroundDesign.Header:
-		  return "sapUiMltBgHeader";
-	
+			return "sapUiMltBgHeader";
+
 		case sap.ui.commons.layout.BackgroundDesign.Plain:
-		  return "sapUiMltBgPlain";
-	
+			return "sapUiMltBgPlain";
+
 		case sap.ui.commons.layout.BackgroundDesign.Transparent:
-		  return null;
-	  }
-	
-	  jQuery.sap.assert(false, "MatrixLayoutRenderer.getBackgroundClass: oBackgroundDesign must be a known value");
-	  return null;
+			return null;
+
+		default:
+			jQuery.sap.assert(false, "MatrixLayoutRenderer.getBackgroundClass: oBackgroundDesign must be a known value");
+			return null;
+		}
+
 	};
-	
+
 	/**
 	 * Returns the class name according to the given padding or NULL of
 	 * none is needed.
 	 *
-	 * @param {sap.ui.commons.layout.Padding} oPadding
-	 * @type string
+	 * @param {sap.ui.commons.layout.Padding} oPadding padding of the cell
+	 * @return {string} classname
+	 * @protected
 	 */
 	MatrixLayoutRenderer.getPaddingClass = function(oPadding) {
-	  switch (oPadding) {
+		switch (oPadding) {
 		case sap.ui.commons.layout.Padding.None:
-		  return "sapUiMltPadNone";
-	
+			return "sapUiMltPadNone";
+
 		case sap.ui.commons.layout.Padding.Begin:
-		  return "sapUiMltPadLeft"; //TODO OK with RTL?
-	
+			return "sapUiMltPadLeft";
+
 		case sap.ui.commons.layout.Padding.End:
-		  return "sapUiMltPadRight"; //TODO OK with RTL?
-	
+			return "sapUiMltPadRight";
+
 		case sap.ui.commons.layout.Padding.Both:
-		  return "sapUiMltPadBoth";
-	
+			return "sapUiMltPadBoth";
+
 		case sap.ui.commons.layout.Padding.Neither:
-		  return "sapUiMltPadNeither";
-	  }
-	
-	  jQuery.sap.assert(false, "MatrixLayoutRenderer.getPaddingClass: oPadding must be a known value");
-	  return null;
+			return "sapUiMltPadNeither";
+
+		default:
+			jQuery.sap.assert(false, "MatrixLayoutRenderer.getPaddingClass: oPadding must be a known value");
+		return null;
+		}
+
 	};
-	
+
 	/**
 	 * Returns the class name according to the given separation or NULL of
 	 * none is needed.
 	 *
-	 * @param {sap.ui.commons.layout.Separation} oSeparation
-	 * @type string
+	 * @param {sap.ui.commons.layout.Separation} oSeparation separation of the cell
+	 * @return {string} classname
+	 * @protected
 	 */
 	MatrixLayoutRenderer.getSeparationClass = function(oSeparation) {
-	  switch (oSeparation) {
+		switch (oSeparation) {
 		case sap.ui.commons.layout.Separation.None:
-		  return null;
-	
+			return null;
+
 		case sap.ui.commons.layout.Separation.Small:
-		  return "sapUiMltSepS";
-	
+			return "sapUiMltSepS";
+
 		case sap.ui.commons.layout.Separation.SmallWithLine:
-		  return "sapUiMltSepSWL";
-	
+			return "sapUiMltSepSWL";
+
 		case sap.ui.commons.layout.Separation.Medium:
-		  return "sapUiMltSepM";
-	
+			return "sapUiMltSepM";
+
 		case sap.ui.commons.layout.Separation.MediumWithLine:
-		  return "sapUiMltSepMWL";
-	
+			return "sapUiMltSepMWL";
+
 		case sap.ui.commons.layout.Separation.Large:
-		  return "sapUiMltSepL";
-	
+			return "sapUiMltSepL";
+
 		case sap.ui.commons.layout.Separation.LargeWithLine:
-		  return "sapUiMltSepLWL";
-	  }
-	
-	  jQuery.sap.assert(false, "MatrixLayoutRenderer.getSeparationClass: oSeparation must be a known value");
-	  return null;
+			return "sapUiMltSepLWL";
+
+		default:
+			jQuery.sap.assert(false, "MatrixLayoutRenderer.getSeparationClass: oSeparation must be a known value");
+		return null;
+		}
+
 	};
-	
+
 	/**
 	 * get Value and Unit for size
+	 *
+	 * @param {string} sSize CSS size
+	 * @return {object} object containing value and unit
+	 * @protected
 	 */
 	MatrixLayoutRenderer.getValueUnit = function(sSize) {
-	
+
 		var fValue = 0;
 		var sUnit = "";
-	
+
 		var iPos = sSize.search('px');
 		if (iPos > -1) {
 			sUnit = "px";
 			fValue = parseInt(sSize.slice(0,iPos), 10);
 			return ({ Value: fValue, Unit: sUnit });
 		}
-	
+
 		iPos = sSize.search('pt');
 		if (iPos > -1) {
 			sUnit = "pt";
 			fValue = parseFloat(sSize.slice(0,iPos));
 			return ({ Value: fValue, Unit: sUnit });
 		}
-	
+
 		iPos = sSize.search('in');
 		if (iPos > -1) {
 			sUnit = "in";
 			fValue = parseFloat(sSize.slice(0,iPos));
 			return ({ Value: fValue, Unit: sUnit });
 		}
-	
+
 		iPos = sSize.search('mm');
 		if (iPos > -1) {
 			sUnit = "mm";
 			fValue = parseFloat(sSize.slice(0,iPos));
 			return ({ Value: fValue, Unit: sUnit });
 		}
-	
+
 		iPos = sSize.search('cm');
 		if (iPos > -1) {
 			sUnit = "cm";
 			fValue = parseFloat(sSize.slice(0,iPos));
 			return ({ Value: fValue, Unit: sUnit });
 		}
-	
+
 		iPos = sSize.search('em');
 		if (iPos > -1) {
 			sUnit = "em";
 			fValue = parseFloat(sSize.slice(0,iPos));
 			return ({ Value: fValue, Unit: sUnit });
 		}
-	
+
 		iPos = sSize.search('ex');
 		if (iPos > -1) {
 			sUnit = "ex";
 			fValue = parseFloat(sSize.slice(0,iPos));
 			return ({ Value: fValue, Unit: sUnit });
 		}
-	
+
 		iPos = sSize.search('%');
 		if (iPos > -1) {
 			sUnit = "%";
 			fValue = parseFloat(sSize.slice(0,iPos));
 			return ({ Value: fValue, Unit: sUnit });
 		}
-	
+
 	};
-	
+
 
 	return MatrixLayoutRenderer;
 

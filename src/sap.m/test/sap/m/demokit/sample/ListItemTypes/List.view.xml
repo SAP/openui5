@@ -34,7 +34,7 @@
 			description="{ProductId}"
 			icon="{ProductPicUrl}"
 			iconDensityAware="false"
-			iconInset="false" 
+			iconInset="false"
 			press="handlePress"
 			detailPress="handleDetailPress" />
 	</List>

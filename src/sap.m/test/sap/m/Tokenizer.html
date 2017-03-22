@@ -1,24 +1,23 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Tokenizer - sap.m</title>
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 
 		jQuery.sap.require("sap.m.MessageBox");
 		jQuery.sap.require("sap.m.Tokenizer");
-		jQuery.sap.require("sap.m.Token");		
-		jQuery.sap.require("sap.m.Table");	
-		
+		jQuery.sap.require("sap.m.Token");
+		jQuery.sap.require("sap.m.Table");
+
 		//*******************************
 		var oEventList = new sap.m.List();
 		var fEventWriter = function(eventArgs){
@@ -26,9 +25,9 @@
 			var item = new sap.m.StandardListItem({title: "token: " + type});
 			oEventList.addItem(item);
 		};
-		
+
 		//*******************************
-		var oTokenizer1 = new sap.m.Tokenizer({
+		var oTokenizer1 = new sap.m.Tokenizer("editableTokenizer", {
 			tokens: [
 			         new sap.m.Token({text: "Token 1", key: "0001"}),
 			         new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -41,12 +40,12 @@
 			         new sap.m.Token({text: "Token 9 - ABCDEF", key: "0009"}),
 			         new sap.m.Token({text: "Token 10 - ABCDEFGHIKL", key: "0010"}),
 			         new sap.m.Token({text: "Token 11", key: "0011"}),
-			         new sap.m.Token({text: "Token 12", key: "0012"})			         
-			         ],			
-			         tokenChange: fEventWriter,
+			         new sap.m.Token({text: "Token 12", key: "0012"})
+			         ],
+			         tokenChange: fEventWriter
 		});
 		//*******************************
-		var oTokenizer2 = new sap.m.Tokenizer({
+		var oTokenizer2 = new sap.m.Tokenizer("notEditableTokenizer",{
 			tokens: [
 			         new sap.m.Token({text: "Token 1", key: "0001"}),
 			         new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -62,37 +61,80 @@
 			         new sap.m.Token({text: "Token 12", key: "0012"})
 			         ],
 			         editable: false,
-			         tokenChange: fEventWriter,
+			         tokenChange: fEventWriter
 		});
 		//*******************************
-		oTokenizer3 = new sap.m.Tokenizer({
+		var oTokenizer3 = new sap.m.Tokenizer("editableAndNotEditable",{
 			tokens:[
 			        new sap.m.Token({text:"Dente", editable: false}),
 			        new sap.m.Token({text:"Friese", editable: false}),
 			        new sap.m.Token({text:"Mann", editable: true})
 			        ]
 		});
-		
-		var app = new sap.m.App("myApp");		
-		
+
+		var oTokenizer4 = new sap.m.Tokenizer("setWidth",{
+			tokens:[
+				new sap.m.Token({text:"Dente", editable: false}),
+				new sap.m.Token({text:"Friese", editable: false}),
+				new sap.m.Token({text:"Mann", editable: true})
+			],
+			width: "100px"
+		});
+
+		var oTokenizer5 = new sap.m.Tokenizer("editableAndReadonly",{
+			width: "200px",
+			tokens:[
+				new sap.m.Token({text:"One", editable: true}),
+				new sap.m.Token({text:"Two", editable: false}),
+				new sap.m.Token({text:"Three", editable: false}),
+				new sap.m.Token({text:"Four", editable: true}),
+				new sap.m.Token({text:"Five", editable: true}),
+				new sap.m.Token({text:"Six", editable: false}),
+				new sap.m.Token({text:"Seven", editable: true})
+			]
+		});
+
+		var oTokenizer6 = new sap.m.Tokenizer({
+			tokens: [
+				new sap.m.Token({text:"Dente"}),
+				new sap.m.Token({text:"Friese", editable: false})
+			],
+		});
+
+		var toggleReadOnlyBtn = new sap.m.Button({
+			text : "Toggle Read-only",
+			press : function() {
+				oTokenizer5.setEditable(!oTokenizer5.getEditable());
+			}
+		});
+
+		var app = new sap.m.App("myApp");
+
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile MultiInput Control",
-			content : [		
+			content : [
 					new sap.m.Label({ text : "Tokenizer.editable = true", width:"100%"}),
-					oTokenizer1,										
+					oTokenizer1,
 					new sap.m.Label({ text : "Tokenizer.editable = false", width:"100%"}),
 					oTokenizer2,
 					new sap.m.Label({ text : "set the first two tokens editable property to false", width:"100%"}),
 					oTokenizer3,
 					new sap.m.Label({ text : "Token events:", width: "100%"}),
-					oEventList
-			]			
+					oEventList,
+					new sap.m.Label({ text : "Tokenizer with set width", width: "100%"}),
+					oTokenizer4,
+					new sap.m.Label({ text : "Tokenizer with editable and non-editable tokens", width: "100%"}),
+					oTokenizer5,
+				    new sap.m.Label({ text : "Tokenizer with editable and non-editable tokens", width: "100%"}),
+					oTokenizer6,
+					toggleReadOnlyBtn
+			]
 		});
 
 		app.addPage(page1);
-		
+
 		app.placeAt("body");
-		
+
 </script>
 	<style>
 	body {
@@ -102,7 +144,7 @@
 		padding: 1rem;
 	}
 	.sapMILI-CTX .sapMInputValHelp {
-		margin-right: 0rem;
+		margin-right: 0;
 	}
 	</style>
 

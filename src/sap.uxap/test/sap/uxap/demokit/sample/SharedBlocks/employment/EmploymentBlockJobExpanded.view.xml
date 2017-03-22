@@ -1,0 +1,96 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:layout="sap.ui.layout"
+		xmlns="sap.m">
+
+	<layout:Grid defaultSpan="L4 M6 S12" hSpacing="0" width="100%">
+		<layout:content>
+			<layout:VerticalLayout>
+				<layout:HorizontalLayout>
+					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
+						<layout:content>
+							<layout:VerticalLayout>
+								<Label text="{emp1>name}"/>
+								<Label text="{emp1>job}"/>
+								<layout:layoutData>
+									<layout:GridData span="L12 M12 S12"/>
+								</layout:layoutData>
+							</layout:VerticalLayout>
+						</layout:content>
+					</layout:Grid>
+				</layout:HorizontalLayout>
+
+				<layout:HorizontalLayout>
+					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
+						<layout:VerticalLayout>
+							<Label text="{emp2>name}"/>
+							<Label text="{emp2>job}"/>
+							<layout:layoutData>
+								<layout:GridData span="L12 M12 S12"/>
+							</layout:layoutData>
+						</layout:VerticalLayout>
+					</layout:Grid>
+				</layout:HorizontalLayout>
+			</layout:VerticalLayout>
+
+			<layout:VerticalLayout>
+				<layout:HorizontalLayout>
+					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
+						<layout:content>
+							<layout:VerticalLayout>
+								<Label text="{emp3>name}"/>
+								<Label text="{emp3>job}"/>
+								<layout:layoutData>
+									<layout:GridData span="L12 M12 S12"/>
+								</layout:layoutData>
+							</layout:VerticalLayout>
+						</layout:content>
+					</layout:Grid>
+				</layout:HorizontalLayout>
+
+
+				<layout:HorizontalLayout>
+					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
+						<layout:VerticalLayout>
+							<Label text="{emp4>name}"/>
+							<Label text="{emp4>job}"/>
+							<layout:layoutData>
+								<layout:GridData span="L12 M12 S12"/>
+							</layout:layoutData>
+						</layout:VerticalLayout>
+					</layout:Grid>
+				</layout:HorizontalLayout>
+			</layout:VerticalLayout>
+
+			<layout:VerticalLayout>
+				<layout:HorizontalLayout>
+					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
+						<layout:content>
+							<layout:VerticalLayout>
+								<Label text="{emp5>name}"/>
+								<Label text="{emp5>job}"/>
+								<layout:layoutData>
+									<layout:GridData span="L12 M12 S12"/>
+								</layout:layoutData>
+							</layout:VerticalLayout>
+						</layout:content>
+					</layout:Grid>
+				</layout:HorizontalLayout>
+
+
+				<layout:HorizontalLayout>
+					<layout:Grid defaultSpan="L4 M4 S4" hSpacing="0" width="100%">
+						<layout:VerticalLayout>
+							<Label text="{emp6>name}"/>
+							<Label text="{emp6>job}"/>
+							<layout:layoutData>
+								<layout:GridData span="L12 M12 S12"/>
+							</layout:layoutData>
+						</layout:VerticalLayout>
+					</layout:Grid>
+				</layout:HorizontalLayout>
+			</layout:VerticalLayout>
+
+		</layout:content>
+	</layout:Grid>
+</mvc:View>

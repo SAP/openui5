@@ -1,0 +1,78 @@
+<core:View
+		xmlns:core="sap.ui.core"
+		xmlns="sap.uxap"
+		xmlns:layout="sap.ui.layout"
+		xmlns:m="sap.m"
+		xmlns:suite="sap.suite.ui.commons"
+		xmlns:comp="sap.ui.comp.variants"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:sample="sap.uxap.sample.ObjectPageOnJSON"
+		xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+		xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+		xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+		controllerName="sap.uxap.sample.KPIObjectPageHeader.KPIObjectPageHeader"
+		height="100%">
+
+
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageHeader id="headerForTest"
+							  headerDesign="Light"
+							  objectTitle="Generic T-Shirt Fa, SIZE AS, Colour blau"
+							  objectSubtitle="AAUFSA000100003002">
+
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="Open in..."/>
+					<ObjectPageHeaderActionButton icon="sap-icon://refresh" press="changeDesign" text="change design"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Label text="PC, Unrestricted-Use Stock"/>
+				<m:ObjectNumber number="219" numberUnit="K"/>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:Label text="Article Category"/>
+				<m:ObjectAttribute text="Single Material"/>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:Label text="Article Type"/>
+				<m:ObjectAttribute text="Trading Goods"/>
+			</layout:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Personal">
+				<subSections>
+					<ObjectPageSubSection title="Connect">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone"/>
+							<personal:BlockSocial id="social"/>
+							<personal:BlockAdresses id="adresses"/>
+							<personal:BlockMailing id="mailing" columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

@@ -23,7 +23,6 @@
 .sapUiTvErr {
 	transition: color .25s linear;
 	-webkit-transition: color .25s linear;
-	-moz-transition: color .25s linear;
 	background-color: transparent;
 }
 
@@ -31,7 +30,6 @@
 .sapUiTvWarn {
 	transition: color 1s linear;
 	-webkit-transition: color 1s linear;
-	-moz-transition: color 1s linear;
 	color: @sapUiCriticalText; /*looks more like yellow: darken(@sapUiFieldWarningColor, 17);*/
 	background-color: transparent;
 }
@@ -55,10 +53,6 @@
 	margin-top: 2px;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiGrid td > .sapUiTv{
-	margin-top: 1px;
-}
-
 /* ResponsiveLayout */
 .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiTv{
 	margin-top: 2px;
@@ -68,8 +62,8 @@ html[data-sap-ui-browser^="ie"] .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFL
 }
 
 /* ResponsiveGridLayout */
-.sapUiMedia-Std-Phone .sapUiFormResGridCont > div > .sapUiTv,
-.sapUiMedia-Std-Tablet .sapUiFormResGridCont > div > .sapUiTv,
-.sapUiMedia-Std-Desktop .sapUiFormResGridCont > div > .sapUiTv {
+html.sapUiMedia-Std-Phone .sapUiFormResGridCont > div > .sapUiTv,
+html.sapUiMedia-Std-Tablet .sapUiFormResGridCont > div > .sapUiTv,
+html.sapUiMedia-Std-Desktop .sapUiFormResGridCont > div > .sapUiTv {
 	margin-top: 2px;
 }

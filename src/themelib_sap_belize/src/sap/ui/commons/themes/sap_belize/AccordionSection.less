@@ -1,0 +1,79 @@
+/* ================================================ */
+/* CSS for control sap.ui.commons/AccordionSection  */
+/* Belize theme                                     */
+/* ================================================ */
+
+.sapUiAcdSection {
+  font-family: @sapUiDesktopFontFamily;
+  font-size: @sapUiDesktopFontSize;
+}
+
+.sapUiAcdSectionHdr {
+  color: darken(@sapUiTextTitle, 6.5); // @sapUiExtraDarkText = #222222
+  background-color: @sapUiListSelectionBackgroundColor;
+  min-height: 27px;
+  font-size: @sapUiDesktopFontSize;
+  border-bottom: 2px solid @sapUiContentForegroundBorderColor; // @sapUiDarkBorder = #bfbfbf
+}
+
+.sapUiAcdSectionColl .sapUiAcdSectionHdr {
+  background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiLightestBG = #ffffff
+}
+
+.sapUiAcdSectionHdr:hover {
+  color: @sapUiContentContrastTextColor;
+  background-color: @sapUiHighlight;
+}
+
+.sapUiAcdSectionDis .sapUiAcdSectionHdr {
+  background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiLightestBG = #ffffff
+  color: darken(@sapUiTextTitle, 6.5); // @sapUiExtraDarkText = #222222
+}
+
+.sapUiAcdSectionCont {
+  border-top-width: 0;
+  padding: 6px;
+  border-bottom: 2px solid @sapUiContentForegroundBorderColor; // @sapUiDarkBorder = #bfbfbf
+}
+
+.sapUiAcdSectionHdr > div > span {
+  margin-top: 5px;
+}
+
+.sapUiAcdSectionColl .sapUiAcdSectionHdr > div > span {
+  margin-top: 6px;
+}
+
+.sapUiAcdSectionDis .sapUiAcdSectionHdr > div > span {
+  opacity: 0.3;
+}
+
+.sapUiAcdSectionMinArrow {
+  /* the 'collapse' icon on the left-hand side of the panel header */
+  background-image: url(img/arrow_down.png);
+  width: 16px;
+  height: 16px;
+  margin-top: -1px;
+}
+
+.sapUiAcdSectionHdr:hover .sapUiAcdSectionMinArrow,
+.sapUiAcdSectionMinArrow:hover {
+  /* the 'collapse' icon on the left-hand side of the panel header */
+  background-image: url(img/arrow_down_hover.png);
+}
+
+.sapUiAcdSectionColl .sapUiAcdSectionMinArrow {
+  background-image: url(img/arrow_right.png);
+  width: 16px;
+  height: 16px;
+}
+
+.sapUiAcdSectionColl .sapUiAcdSectionHdr:hover .sapUiAcdSectionMinArrow,
+.sapUiAcdSectionColl .sapUiAcdSectionMinArrow:hover {
+  background-image: url(img/arrow_right_hover.png);
+}
+
+.sapUiAcdSectionDis.sapUiAcdSectionColl .sapUiAcdSectionHdr:hover .sapUiAcdSectionMinArrow,
+.sapUiAcdSectionDis.sapUiAcdSectionColl .sapUiAcdSectionMinArrow:hover {
+  background-image: url(img/arrow_right.png);
+}

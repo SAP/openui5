@@ -1,0 +1,89 @@
+/* ================================= */
+/* CSS for control sap.m/TimePicker  */
+/* Belize theme                      */
+/* ================================= */
+
+@_sap_m_TimePicker_ItemColor: lighten(@sapUiContentForegroundColor, 5);
+@_sap_m_TimePicker_ItemHoverColor: darken(@sapUiContentForegroundColor, 5);
+@_sap_m_TimePicker_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
+
+/* ======================================== */
+/* TimePicker Dropdown                      */
+/* ======================================== */
+
+.sapMTimePickerDropDown {
+	.sapMTimePickerContainer {
+		.sapMTPColumn {
+			.sapMTimePickerSlider {
+				.sapMTimePickerItem {
+					border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+					&:hover {
+						background: darken(@sapUiSelected, 10);
+					}
+				}
+			}
+			&.sapMTPSliderExpanded {
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						background: @_sap_m_TimePicker_ItemColor;
+						border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+						&:hover {
+							background: @_sap_m_TimePicker_ItemHoverColor;
+						}
+						&:active {
+							background: @sapUiHighlight;
+							color: @sapUiContentContrastTextColor;
+						}
+						
+					}
+					.sapMTPPickerSelectionFrame {
+						outline: 0.125rem solid @sapUiSelected;
+						outline-offset: -0.188rem;
+						&:hover {
+							+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: @_sap_m_TimePicker_ItemHoverColor;
+							}
+						}
+						&:active {
+							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: @sapUiSelected;
+								color: @sapUiContentContrastTextColor;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+/* PHONE STYLES */
+html.sap-phone {
+	/* ======================================== */
+	/* TimePicker Dropdown                      */
+	/* ======================================== */
+	
+	.sapMTimePickerDropDown {
+		.sapMTimePickerContainer {
+			.sapMTPColumn {
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+					}
+				}
+				&.sapMTPSliderExpanded {
+					.sapMTimePickerSlider {
+						.sapMTimePickerItem {
+							background: @_sap_m_TimePicker_ItemColor;
+							border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+						}
+						.sapMTPPickerSelectionFrame {
+							outline: 0.125rem solid @sapUiSelected;
+							outline-offset: -0.188rem;
+						}
+					}
+				}
+			}
+		}
+	}
+}

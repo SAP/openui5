@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.MessagePopover - Accessibility</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+	       
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "page"
+		});
+
+		var oData = [{
+			title: "First message",
+			type: "Error",
+			description: "Detailed description of the first error message"
+		}, {
+			title: "Second message",
+			type: "Error",
+			description: "Detailed description of the second error message"
+		}, {
+			title: "Third message",
+			type: "Warning",
+			description: "Detailed description of the first warning message"
+		}, {
+			title: "Fourth message",
+			type: "Success",
+			description: "Detailed description of the first success message"
+		}, {
+			title: "Fifth message",
+			type: "Information",
+			description: "Detailed description of the first information message"
+		}];
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oData);
+
+		var oTemplate = new sap.m.MessagePopoverItem({
+			title: "{title}",
+			type: "{type}",
+			description: "{description}"
+		});
+
+		var oMessagePopover = new sap.m.MessagePopover({
+			items: {
+				path: "/",
+				template: oTemplate
+			}
+		}).setModel(oModel);
+
+		var oButton = new sap.m.Button({
+			text: "Open MessagePopover",
+			press: function () {
+				oMessagePopover.openBy(this);
+			}
+		});
+
+		var oPage = new sap.m.Page("page", {
+			title: "Popover Control",
+			content: [
+				oButton
+			]
+		});
+
+		oApp.addPage(oPage).placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

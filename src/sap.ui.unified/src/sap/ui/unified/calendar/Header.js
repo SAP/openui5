@@ -2,20 +2,24 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.unified.Calendar.
+//Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/unified/library'],
-	function(jQuery, Control, LocaleData, library) {
+		function(jQuery, Control, LocaleData, library) {
 	"use strict";
 
 	/**
-	 * Constructor for a new MonthPicker.
+	 * Constructor for a new Header.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * renders a calendar header
-	 * This is used inside the calendar. Not for stand alone usage
+	 *
+	 * The calendar header consists of 3 buttons where the text can be set and a previous and a next button.
+	 * In the normal calendar the first button contains the displayed day, the second button the displayed month and the third button the displayed year.
+	 *
+	 * <b>Note:</b> This is used inside the calendar. Not for standalone usage
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -31,171 +35,296 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		properties : {
 
 			/**
-			 * Text of the first button (normally month)
+			 * Text of the first button (normally day)
+			 * @since 1.32.0
 			 */
-			textButton1 : {type : "string", group : "Misc"},
+			textButton0 : {type : "string", group : "Appearance"},
 
 			/**
-			 * aria-label of the first button (normally month)
+			 * Additional text of the first button (normally day)
+			 * @since 1.34.0
+			 */
+			additionalTextButton0 : {type : "string", group : "Appearance"},
+
+			/**
+			 * aria-label of the first button (normally day)
+			 * @since 1.32.0
+			 */
+			ariaLabelButton0 : {type : "string", group : "Misc"},
+
+			/**
+			 * If set, the first button will be displayed
+			 *
+			 * <b>Note:</b> The default is set to false to be compatible to older versions
+			 * @since 1.32.0
+			 */
+			visibleButton0 : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Text of the second button (normally month)
+			 */
+			textButton1 : {type : "string", group : "Appearance"},
+
+			/**
+			 * Additional text of the second button (normally month)
+			 * @since 1.34.0
+			 */
+			additionalTextButton1 : {type : "string", group : "Appearance"},
+
+			/**
+			 * aria-label of the second button (normally month)
 			 */
 			ariaLabelButton1 : {type : "string", group : "Misc"},
 
 			/**
-			 * Text of the second button (normally year)
+			 * If set, the second button will be displayed
+			 * @since 1.32.0
 			 */
-			textButton2 : {type : "string", group : "Misc"},
+			visibleButton1 : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * aria-label of the second button (normally year)
+			 * Text of the third button (normally year)
+			 */
+			textButton2 : {type : "string", group : "Appearance"},
+
+			/**
+			 * Additional text of the third button (normally year)
+			 * @since 1.34.0
+			 */
+			additionalTextButton2 : {type : "string", group : "Appearance"},
+
+			/**
+			 * aria-label of the third button (normally year)
 			 */
 			ariaLabelButton2 : {type : "string", group : "Misc"},
 
 			/**
-			 * enables the previous button
+			 * If set, the third button will be displayed
+			 * @since 1.32.0
 			 */
-			enabledPrevious : {type : "boolean", group : "Misc", defaultValue : true},
+			visibleButton2 : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * enables the Next button
+			 * Enables the previous button
 			 */
-			enabledNext : {type : "boolean", group : "Misc", defaultValue : true}
+			enabledPrevious : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * Enables the Next button
+			 */
+			enabledNext : {type : "boolean", group : "Behavior", defaultValue : true}
 
 		},
 		events : {
 
 			/**
-			 * previous button pressed
+			 * Previous button pressed
 			 */
 			pressPrevious : {},
 
 			/**
-			 * next button pressed
+			 * Next button pressed
 			 */
 			pressNext : {},
 
 			/**
-			 * first button pressed (normally month)
+			 * First button pressed (normally day)
+			 * @since 1.32.0
+			 */
+			pressButton0 : {},
+
+			/**
+			 * Second button pressed (normally month)
 			 */
 			pressButton1 : {},
 
 			/**
-			 * second button pressed (normally year)
+			 * Third button pressed (normally year)
 			 */
 			pressButton2 : {}
 
 		}
 	}});
 
-	(function() {
+	Header.prototype.setTextButton0 = function(sText){
 
-		Header.prototype.onAfterRendering = function(){
+		_setText.call(this, 0, sText);
 
-//			var that = this;
+		return this;
 
-		};
+	};
 
-		Header.prototype.setTextButton1 = function(sText){
+	Header.prototype.setAdditionalTextButton0 = function(sText){
 
-			this.setProperty("textButton1", sText, true);
+		_setAdditionalText.call(this, 0, sText);
 
-			if (this.getDomRef()) {
-				this.$("B1").text(sText);
+		return this;
+
+	};
+
+	Header.prototype.setAriaLabelButton0 = function(sText){
+
+		_setAriaLabel.call(this, 0, sText);
+
+		return this;
+
+	};
+
+	Header.prototype.setTextButton1 = function(sText){
+
+		_setText.call(this, 1, sText);
+
+		return this;
+
+	};
+
+	Header.prototype.setAdditionalTextButton1 = function(sText){
+
+		_setAdditionalText.call(this, 1, sText);
+
+		return this;
+
+	};
+
+	Header.prototype.setAriaLabelButton1 = function(sText){
+
+		_setAriaLabel.call(this, 1, sText);
+
+		return this;
+
+	};
+
+	Header.prototype.setTextButton2 = function(sText){
+
+		_setText.call(this, 2, sText);
+
+		return this;
+
+	};
+
+	Header.prototype.setAdditionalTextButton2 = function(sText){
+
+		_setAdditionalText.call(this, 2, sText);
+
+		return this;
+
+	};
+
+	Header.prototype.setAriaLabelButton2 = function(sText){
+
+		_setAriaLabel.call(this, 2, sText);
+
+		return this;
+
+	};
+
+	Header.prototype.setEnabledPrevious = function(bEnabled){
+
+		this.setProperty("enabledPrevious", bEnabled, true);
+
+		if (this.getDomRef()) {
+			if (bEnabled) {
+				this.$("prev").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
+			}else {
+				this.$("prev").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
 			}
+		}
 
-		};
+		return this;
 
-		Header.prototype.setAriaLabelButton1 = function(sText){
+	};
 
-			this.setProperty("ariaLabelButton1", sText, true);
+	Header.prototype.setEnabledNext = function(bEnabled){
 
-			if (this.getDomRef()) {
-				if (sText) {
-					this.$("B1").attr("aria-label", sText);
-				} else {
-					this.$("B1").removeAttr("aria-label");
-				}
+		this.setProperty("enabledNext", bEnabled, true);
+
+		if (this.getDomRef()) {
+			if (bEnabled) {
+				this.$("next").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
+			}else {
+				this.$("next").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
 			}
+		}
 
-		};
+		return this;
 
-		Header.prototype.setTextButton2 = function(sText){
+	};
 
-			this.setProperty("textButton2", sText, true);
+	Header.prototype.onclick = function(oEvent){
 
-			if (this.getDomRef()) {
-				this.$("B2").text(sText);
+		if (oEvent.isMarked("delayedMouseEvent") ) {
+			return;
+		}
+
+		if (jQuery.sap.containsOrEquals(this.getDomRef("prev"), oEvent.target) && this.getEnabledPrevious()) {
+			this.firePressPrevious();
+		} else if (jQuery.sap.containsOrEquals(this.getDomRef("next"), oEvent.target) && this.getEnabledNext()){
+			this.firePressNext();
+		} else if (jQuery.sap.containsOrEquals(this.getDomRef("B0"), oEvent.target)){
+			this.firePressButton0();
+		} else if (jQuery.sap.containsOrEquals(this.getDomRef("B1"), oEvent.target)){
+			this.firePressButton1();
+		} else if (jQuery.sap.containsOrEquals(this.getDomRef("B2"), oEvent.target)){
+			this.firePressButton2();
+		}
+
+	};
+
+	Header.prototype.onsapnext = function(oEvent){
+
+		//prevent browser scrolling
+		oEvent.preventDefault();
+
+	};
+
+	function _setText(iButton, sText){
+
+		this.setProperty("textButton" + iButton, sText, true);
+
+		if (this.getDomRef() && this["getVisibleButton" + iButton]()) {
+			if (this.$("B" + iButton + "-Text").get(0)) {
+				this.$("B" + iButton + "-Text").text(sText);
+			} else {
+				this.$("B" + iButton).text(sText);
 			}
+		}
 
-		};
+	}
 
-		Header.prototype.setAriaLabelButton2 = function(sText){
+	function _setAdditionalText(iButton, sText){
 
-			this.setProperty("ariaLabelButton2", sText, true);
+		var bRerender = false;
+		var sOldText = this["getAdditionalTextButton" + iButton]();
 
-			if (this.getDomRef()) {
-				if (sText) {
-					this.$("B2").attr("aria-label", sText);
-				} else {
-					this.$("B2").removeAttr("aria-label");
-				}
+		if (sOldText == sText) {
+			return;
+		}
+
+		if ((!sOldText && sText) || (sOldText && !sText)) {
+			bRerender = true;
+		}
+
+		this.setProperty("additionalTextButton" + iButton, sText, !bRerender);
+
+		if (!bRerender && this.getDomRef() && this["getVisibleButton" + iButton]()) {
+			this.$("B" + iButton + "-AddText").text(sText);
+		}
+
+	}
+
+	function _setAriaLabel(iButton, sText){
+
+		this.setProperty("ariaLabelButton" + iButton, sText, true);
+
+		if (this.getDomRef() && this["getVisibleButton" + iButton]()) {
+			if (sText) {
+				this.$("B" + iButton).attr("aria-label", sText);
+			} else {
+				this.$("B" + iButton).removeAttr("aria-label");
 			}
+		}
 
-		};
-
-		Header.prototype.setEnabledPrevious = function(bEnabled){
-
-			this.setProperty("enabledPrevious", bEnabled, true);
-
-			if (this.getDomRef()) {
-				if (bEnabled) {
-					this.$("prev").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
-				}else {
-					this.$("prev").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
-				}
-			}
-
-		};
-
-		Header.prototype.setEnabledNext = function(bEnabled){
-
-			this.setProperty("enabledNext", bEnabled, true);
-
-			if (this.getDomRef()) {
-				if (bEnabled) {
-					this.$("next").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
-				}else {
-					this.$("next").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
-				}
-			}
-
-		};
-
-		Header.prototype.onclick = function(oEvent){
-
-			if (oEvent.isMarked("delayedMouseEvent") ) {
-				return;
-			}
-
-			if (jQuery.sap.containsOrEquals(this.getDomRef("prev"), oEvent.target) && this.getEnabledPrevious()) {
-				this.firePressPrevious();
-			}	else if (jQuery.sap.containsOrEquals(this.getDomRef("next"), oEvent.target) && this.getEnabledNext()){
-				this.firePressNext();
-			} else if (oEvent.target.id == this.getId() + "-B1"){
-				this.firePressButton1();
-			} else if (oEvent.target.id == this.getId() + "-B2"){
-				this.firePressButton2();
-			}
-
-		};
-
-		Header.prototype.onsapnext = function(oEvent){
-
-			//prevent browser scrolling
-			oEvent.preventDefault();
-
-		};
-
-	}());
+	}
 
 	return Header;
 

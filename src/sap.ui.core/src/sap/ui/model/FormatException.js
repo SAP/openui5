@@ -3,8 +3,8 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Exception'],
-	function(jQuery, Exception) {
+sap.ui.define(['sap/ui/base/Exception'],
+	function(Exception) {
 	"use strict";
 
 
@@ -15,12 +15,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Exception'],
 	 * a specific property value in the UI.
 	 *
 	 * @alias sap.ui.model.FormatException
+	 * @public
 	 */
 	var FormatException = function(message) {
 		this.name = "FormatException";
 		this.message = message;
 	};
-	FormatException.prototype = jQuery.sap.newObject(Exception.prototype);
+	FormatException.prototype = Object.create(Exception.prototype);
 
 	return FormatException;
 

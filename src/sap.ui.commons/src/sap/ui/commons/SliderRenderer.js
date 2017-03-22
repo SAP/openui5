@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global'],
 						break;
 					}
 					if (useTextLabels) {
-						rm.write(oSlider.getLabels()[i]);
+						rm.writeEscaped(oSlider.getLabels()[i]);
 					} else {
 						rm.write(oSlider.getMin() + i * fStepSize);
 					}

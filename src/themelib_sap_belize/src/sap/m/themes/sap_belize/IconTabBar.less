@@ -1,0 +1,191 @@
+/* ================================= */
+/* CSS for control sap.m/IconTabBar  */
+/* Belize theme                      */
+/* ================================= */
+
+@_sap_m_IconTabBar_TextHoverColor: darken(@sapUiGroupTitleTextColor, 10);
+@_sap_m_IconTabBar_SelectedTextColor: darken(@sapUiSelected, 5);
+@_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
+
+/* Head Container */
+
+.sapMITH {
+	box-shadow: inset 0 -0.25rem 0 -0.125rem @sapUiObjectHeaderBorderColor;
+  	background-color: @sapUiObjectHeaderBackground;
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
+}
+
+/* Arrow */
+
+.sapMITBSelected > .sapMITBContentArrow {
+	border-bottom-color: @sapUiSelected;
+}
+
+.sapMITBSelected.sapMITBFilterNeutral > .sapMITBContentArrow {
+	border-bottom-color: @sapUiNeutralElement;
+}
+
+.sapMITBSelected.sapMITBFilterPositive > .sapMITBContentArrow {
+	border-bottom-color: @sapUiPositiveElement;
+}
+
+.sapMITBSelected.sapMITBFilterNegative > .sapMITBContentArrow {
+	border-bottom-color: @sapUiNegativeElement;
+}
+
+.sapMITBSelected.sapMITBFilterCritical > .sapMITBContentArrow {
+	border-bottom-color: @sapUiCriticalElement;
+}
+
+/* Content Container */
+
+.sapMITBContent {
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
+}
+
+.sapMITB.sapMITBNoContentPadding > .sapMITBContainerContent, /* legacy class */
+.sapMITB.sapUiNoContentPadding > .sapMITBContainerContent {
+	border-bottom: 0;
+	border-top: 0;
+}
+
+/* Tab Filter Item */
+
+.sapMITBTextOnly .sapMITBFilterDefault:hover > .sapMITBText {
+	color: @_sap_m_IconTabBar_TextHoverColor;
+}
+
+.sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected > .sapMITBText {
+	color: @_sap_m_IconTabBar_SelectedTextColor;
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected:hover > .sapMITBText {
+	color: @_sap_m_IconTabBar_SelectedTextHoverColor;
+}
+
+.sapMITBTextOnly .sapMITBFilterNeutral > .sapMITBText {
+	color: @sapUiNeutralText;
+}
+
+.sapMITBTextOnly .sapMITBFilterPositive > .sapMITBText {
+	color: @sapUiPositiveText;
+}
+
+.sapMITBTextOnly .sapMITBFilterPositive:hover > .sapMITBText {
+	color: darken(@sapUiPositiveText, 10);
+}
+
+.sapMITBTextOnly .sapMITBFilterNegative > .sapMITBText {
+	color: @sapUiNegativeText;
+}
+
+.sapMITBTextOnly .sapMITBFilterNegative:hover > .sapMITBText {
+  	color: darken(@sapUiNegativeText, 10);
+}
+
+.sapMITBTextOnly .sapMITBFilterCritical > .sapMITBText {
+	color: @sapUiCriticalText;
+}
+
+.sapMITBTextOnly .sapMITBFilterCritical:hover > .sapMITBText {
+	color: darken(@sapUiCriticalText, 10);
+}
+
+.sapMITBFilterIcon {
+	border: 1px solid @sapUiHighlight;
+
+  	&::before {
+		text-shadow: @sapUiShadowText;
+	}
+}
+
+.sapMITBSelected .sapMITBFilterIcon::before {
+	text-shadow: none;
+}
+
+.sapMITBFilterDefault {
+	color: @sapUiHighlight;
+}
+
+.sapMITBFilterNeutral {
+	border-color: @sapUiNeutralElement;
+	color: @sapUiNeutralElement;
+}
+
+.sapMITBFilterPositive {
+	border-color: @sapUiPositiveElement;
+	color: @sapUiPositiveElement;
+}
+
+.sapMITBFilterNegative {
+	border-color: @sapUiNegativeElement;
+	color: @sapUiNegativeElement;
+}
+
+.sapMITBFilterCritical {
+	border-color: @sapUiCriticalElement;
+	color: @sapUiCriticalElement;
+}
+
+.sapMITBSelected .sapMITBFilterDefault {
+	background: @sapUiSelected;
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapMITBSelected .sapMITBFilterNeutral {
+	background: @sapUiNeutralElement;
+	color: @sapUiGroupContentBackground;
+}
+
+.sapMITBSelected .sapMITBFilterPositive {
+	background: @sapUiPositiveElement;
+	color: @sapUiGroupContentBackground;
+}
+
+.sapMITBSelected .sapMITBFilterNegative {
+	background: @sapUiNegativeElement;
+	color: @sapUiGroupContentBackground;
+}
+
+.sapMITBSelected .sapMITBFilterCritical {
+	background: @sapUiCriticalElement;
+	color: @sapUiGroupContentBackground;
+}
+
+/* Tab Separator Item */
+
+html.sap-desktop .sapMITBArrowScroll:hover,
+html.sap-desktop .sapMITBArrowScroll:active {
+	color: @sapUiHighlight;
+}
+
+
+/* Custom focus outline */
+html.sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
+html.sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
+html.sap-desktop .sapMITBItem:focus.sapMITBAll {
+	&::after {
+		content: "";
+		position: absolute;
+		top: -1px;
+		bottom: -1px;
+		right: -1px;
+		left: -1px;
+		border: 1px dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+/* container background design */
+.sapMITBBackgroundDesignTranslucent > .sapMITBContainerContent > .sapMITBContent {
+	background-color: fade(@sapUiGroupContentBackground, 60);
+}
+
+/* header background design */
+.sapMITHBackgroundDesignTransparent {
+	background-color: transparent;
+}
+
+.sapMITHBackgroundDesignTranslucent {
+	background-color: fade(@sapUiGroupContentBackground, 60);
+}

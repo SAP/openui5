@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 	/**
 	 * Constructor for a new InPlaceEdit.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -21,6 +21,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 	 * @constructor
 	 * @public
 	 * @since 1.8.0
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.InPlaceEdit
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -297,7 +298,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 
 			var oContent = this.getContent();
 
-			if ((oContent.getEditable && !oContent.getEditable()) || (oContent.getEnabled && !oContent.getEnabled())) {
+			if (!oContent || (oContent.getEditable && !oContent.getEditable()) || (oContent.getEnabled && !oContent.getEnabled())) {
 				// readOnly or disabled -> only display mode
 				return false;
 			} else {
@@ -312,7 +313,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 				// Escape fires no keypress in webkit
 				// In Firefox value can not be changed in keydown (onsapescape) event
 				// So the escape event is stored in this._bEsc and the value in this._sValue
-				if (!!!sap.ui.Device.browser.firefox) {
+				if (!sap.ui.Device.browser.firefox) {
 					var that = this;
 					undoTextChange(that);
 				} else {
@@ -606,11 +607,21 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 		};
 
 
+		/**
+		 * @see sap.ui.core.Control#getAccessibilityInfo
+		 * @protected
+		 */
+		InPlaceEdit.prototype.getAccessibilityInfo = function() {
+			var oControl = this.getContent();
+			return oControl && oControl.getAccessibilityInfo ? oControl.getAccessibilityInfo() : null;
+		};
+
+
 		// Private variables
 
 		/**
 		 * Delegate object for listening to the child elements' events.
-		 * WARNING: this is set to the InPlaceEdit-instance. This is done by setting it as the second 
+		 * WARNING: this is set to the InPlaceEdit-instance. This is done by setting it as the second
 		 *          parameter of the addDelegate call. (See updateControls())
 		 * @private
 		 */
@@ -794,15 +805,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 		function iconForUndoButton(oInPlaceEdit){
 
 			if (oInPlaceEdit._oUndoButton) {
-				var sIcon = Parameters.get('sapUiIpeUndoImageURL');
-				var sIconHovered = Parameters.get('sapUiIpeUndoImageDownURL');
-				if (sIcon) {
-					sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon;
-				} else {
+				var sIcon = Parameters._getThemeImage('sapUiIpeUndoImageURL');
+				var sIconHovered = Parameters._getThemeImage('sapUiIpeUndoImageDownURL');
+				if (!sIcon) {
 					sIcon = "sap-icon://decline";
-				}
-				if (sIconHovered) {
-					sIconHovered = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIconHovered;
 				}
 				oInPlaceEdit._oUndoButton.setIcon(sIcon);
 				oInPlaceEdit._oUndoButton.setIconHovered(sIconHovered);
@@ -872,15 +878,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 		function iconForEditButton(oInPlaceEdit){
 
 			if (oInPlaceEdit._oEditButton) {
-				var sIcon = Parameters.get('sapUiIpeEditImageURL');
-				var sIconHovered = Parameters.get('sapUiIpeEditImageDownURL');
-				if (sIcon) {
-					sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon;
-				} else {
+				var sIcon = Parameters._getThemeImage('sapUiIpeEditImageURL');
+				var sIconHovered = Parameters._getThemeImage('sapUiIpeEditImageDownURL');
+				if (!sIcon) {
 					sIcon = "sap-icon://edit";
-				}
-				if (sIconHovered) {
-					sIconHovered = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIconHovered;
 				}
 				oInPlaceEdit._oEditButton.setIcon(sIcon);
 				oInPlaceEdit._oEditButton.setIconHovered(sIconHovered);

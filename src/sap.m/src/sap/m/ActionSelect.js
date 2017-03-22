@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		/**
 		 * Constructor for a new ActionSelect.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+		 * @param {string} [sId] id for the new control, generated automatically if no id is given
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 
 			library : "sap.m",
 			associations : {
-		
+
 				/**
 				 * Buttons to be added to the ActionSelect content.
 				 */
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		ActionSelect.prototype.init = function() {
 			Select.prototype.init.call(this);
 			this.getList().addEventDelegate({
-				onfocusin: this.onfocusinList 	
+				onfocusin: this.onfocusinList
 			}, this);
 		};
 		/* =========================================================== */
@@ -77,26 +77,26 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 				oPicker.addContent(oCore.byId(sButtonId));
 			});
 		};
-		
-		
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * Called after the ActionSelect picker pop-up is render.
-		 *
-		 * @override
-		 * @protected
-		 */
 		ActionSelect.prototype.onAfterRenderingPicker = function() {
 			Select.prototype.onAfterRenderingPicker.call(this);
-			this.getPicker().addStyleClass(sap.m.ActionSelectRenderer.CSS_CLASS + "Picker");
+			var oPicker = this.getPicker(),
+				oRenderer = this.getRenderer();
+
+			oPicker.addStyleClass(oRenderer.CSS_CLASS + "Picker");
+			oPicker.addStyleClass(oRenderer.ACTION_SELECT_CSS_CLASS + "Picker");
+			oPicker.addStyleClass(oRenderer.ACTION_SELECT_CSS_CLASS + "Picker-CTX");
 		};
 
 		/* =========================================================== */
 		/* API methods                                                 */
 		/* =========================================================== */
+
+		ActionSelect.prototype.createPickerCloseButton = function() {};
 
 		/* ----------------------------------------------------------- */
 		/* Public methods                                              */
@@ -142,59 +142,70 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 			return this.removeAllAssociation("buttons");
 		};
 
-		
-		//Keyboard Navigation for Action buttons
-		
+		// Keyboard Navigation for Action buttons
+
 		/**
 		 * Handler for SHIFT-TAB key  - 'tab previous' sap ui5 key event.
-		 * 
+		 *
 		 * @param oEvent - key event
 		 * @private
-		 * 
+		 *
 		 */
 		ActionSelect.prototype.onsaptabprevious = function(oEvent) {
+			var aButtons = this.getButtons(),
+				oPicker = this.getPicker(),
+				i;
+
 			// check whether event is marked or not
 			if ( oEvent.isMarked() || !this.getEnabled()) {
 				return;
 			}
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
-			var aButtons = this.getButtons();
-			var oPicker = this.getPicker();
 
 			if (oPicker && oPicker.isOpen() && aButtons.length > 0) {
-				sap.ui.getCore().byId(aButtons[aButtons.length - 1]).focus(); 
-				oEvent.preventDefault();
-			} 
-		};		
-		
-		
+				for (i = aButtons.length - 1; i >= 0; i--) {
+					if (sap.ui.getCore().byId(aButtons[i]).getEnabled()) {
+						sap.ui.getCore().byId(aButtons[i]).focus();
+						oEvent.preventDefault();
+						break;
+					}
+				}
+			}
+		};
+
 		/**
 		 * Handler for TAB key - sap 'tab next' key event.
-		 * 
+		 *
 		 * @param oEvent - key event
 		 * @private
-		 * 
+		 *
 		 */
 		ActionSelect.prototype.onsaptabnext = function(oEvent) {
+			var aButtons = this.getButtons(),
+				oPicker = this.getPicker(),
+				i;
+
 			// check whether event is marked or not
 			if ( oEvent.isMarked() || !this.getEnabled()) {
 				return;
 			}
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
-			
-			
-			var aButtons = this.getButtons();
-			var oPicker = this.getPicker();
 
 			if (oPicker && oPicker.isOpen() && aButtons.length > 0) {
-				sap.ui.getCore().byId(aButtons[0]).focus(); 
-				oEvent.preventDefault();
-			} 
-		};		
-		
-		
+				for (i = 0; i < aButtons.length; i++) {
+					if (sap.ui.getCore().byId(aButtons[i]).getEnabled()) {
+						sap.ui.getCore().byId(aButtons[i]).focus();
+						oEvent.preventDefault();
+						break;
+					}
+				}
+			}
+		};
+
 		/**
 		 * Handle the focus leave event.
 		 *
@@ -202,28 +213,29 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 * @private
 		 */
 		ActionSelect.prototype.onsapfocusleave = function(oEvent) {
-			// Keep focus on Action Select's input field if does not go to 
+
+			// Keep focus on Action Select's input field if does not go to
 			// the buttons in Action sheet part of the ActionSelect
 			var aButtons = this.getButtons();
-			var bKeepFocus = (aButtons.indexOf(oEvent.relatedControlId) == -1); 
+			var bKeepFocus = (aButtons.indexOf(oEvent.relatedControlId) == -1);
+
 			if (bKeepFocus) {
 				Select.prototype.onsapfocusleave.apply(this, arguments);
 			}
 		};
-		
-		
+
 		/**
 		 * Handler for focus in event on The Selection List.
-		 * 
+		 *
 		 * @param oEvent - key event
-		 * @private 
+		 * @private
 		 */
 		ActionSelect.prototype.onfocusinList = function(oEvent) {
 			if (document.activeElement !== this.getList().getDomRef()) {
 				this.focus();
 			}
 		};
-		
+
 		return ActionSelect;
 
 	}, /* bExport= */ true);

@@ -5,12 +5,12 @@
 
 	<!-- "field" MUST point to a com.sap.vocabularies.Communication.v1.DataField -->
 	<HBox>
-		<template:with path="field>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+		<template:with path="field>Value" helper=".AH.resolvePath" var="target">
 			<!-- go to entity type's property and check SAP Annotations for OData Version 2.0 -->
 			<template:if test="{= ${target>sap:semantics} === 'tel'}" >
 				<core:Icon src="sap-icon://phone" width="2em"/>
 			</template:if>
 		</template:with>
-		<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+		<Text text="{path: 'field>Value', formatter: '.AH.format'}"/>
 	</HBox>
 </core:FragmentDefinition>

@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Test Page for sap.ui.dt.DesignTime and invisible controls</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+			}
+			.sapUiDtElementOverlay {
+				box-sizing: border-box;
+				border: 1px dashed grey;
+			}
+		</style>
+
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+
+			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
+
+			QUnit.module("Given that a DesignTime is created for a SplitContainer with 2 pages, one is hidden and one is visible", {
+				beforeEach: function(assert) {
+					this.oButton1 = new sap.m.Button("button1", {text : "button"});
+					this.oButton2 = new sap.m.Button("button2", {text : "button"});
+
+					this.oPage1 = new sap.m.Page("page1", {
+						content : [
+							this.oButton1
+						],
+						visible : false
+					});
+					this.oPage2 = new sap.m.Page("page2", {
+						content : [
+							this.oButton2
+						]
+					});
+					this.oSplitContainer = new sap.m.SplitContainer({
+						masterPages: [
+							this.oPage1
+						],
+						detailPages: [
+							this.oPage2
+						]
+					});
+
+					this.oSplitContainer.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					var done = assert.async();
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements: [
+							this.oSplitContainer
+						]
+					});
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+
+					this.oSplitContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSplitContainer);
+					this.oSplitContainerMasterPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("masterPages");
+					this.oSplitContainerDetailPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("detailPages");
+
+					this.oPage1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage1);
+					this.oPage2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage2);
+
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function() {
+					this.oDesignTime.destroy();
+					this.oSplitContainer.destroy();
+				}
+			});
+
+
+			QUnit.test("when the SplitContainer is rendered", function(assert) {
+				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), undefined, "no overlays for controls in hidden page are created");
+				assert.ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2), "overlays for controls in visible page are created");
+			});
+
+			QUnit.test("when the visibility of hidden page is changed", function(assert) {
+				this.oPage1.setVisible(true);
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), "overlays for controls in this page are created");
+
+				this.oPage1.setVisible(false);
+				sap.ui.getCore().applyChanges();
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and invisible controls</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

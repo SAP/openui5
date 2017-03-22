@@ -1,5 +1,10 @@
-<mvc:View height="100%" controllerName="sap.m.sample.TableOutdated.Table"
-	 xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" xmlns="sap.m">
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.TableOutdated.Table"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m">
 
 	<Toolbar>
 		<ComboBox change="onChange" selectionChange="onChange" id="oComboBox"
@@ -7,8 +12,8 @@
 			<core:Item text="{text}" />
 		</ComboBox>
 
-		<Button  text="Filter" press="onSearch" icon="sap-icon://filter"/>
-		<Button  text="Reset" press="onReset" type="Transparent"/>
+		<Button	text="Filter" press="onSearch" icon="sap-icon://filter"/>
+		<Button	text="Reset" press="onReset" type="Transparent"/>
 		<ToolbarSpacer/>
 
 		<SegmentedButton enabled="false">

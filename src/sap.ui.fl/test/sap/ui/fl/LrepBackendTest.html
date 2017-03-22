@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Lrep Backendtest</title>
+
+    <script src="shared-config.js"></script>
+    <script id="sap-ui-bootstrap"
+        src="../../../../resources/sap-ui-core.js"
+        data-sap-ui-noconflict="true"
+        data-sap-ui-libs="sap.ui.fl">
+    </script>
+    <script>
+		jQuery.sap.require("sap.ui.fl.LrepConnector");
+		if (!window.location.origin) {
+			window.location.origin = window.location.protocol + "//" + window.location.host;
+		}
+		var options = {};
+
+		var getComponentChanges = function () {
+			var oLrepConnector = sap.ui.fl.LrepConnector.createConnector();
+			var result = oLrepConnector.loadChanges();
+		};
+
+		var createChange = function () {
+			var oLrepConnector = sap.ui.fl.LrepConnector.createConnector();
+			oLrepConnector.send(window.location.origin + "/sap/bc/lrep/changes/", "POST", options, {}).then(function (result) {
+				alert(JSON.stringify(result));
+			}, function (error) {
+				alert(JSON.stringify(error));
+			});
+		};
+
+		var listContent = function () {
+			var oLrepConnector = sap.ui.fl.LrepConnector.createConnector();
+			oLrepConnector.send(window.location.origin + "/sap/bc/lrep/content/", "GET", options, null).then(function (result) {
+				alert(JSON.stringify(result));
+			}, function (error) {
+				alert(JSON.stringify(error));
+			});
+		};
+    </script>
+</head>
+<body>
+
+    <button onclick="getComponentChanges">Get 'Component-changes.json'</button>
+    <button onclick="createChange()">Create (POST)</button>
+    <button onclick="listContent()">List content (GET)</button>
+</body>
+</html>

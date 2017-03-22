@@ -133,7 +133,7 @@ var oTestDataForJSONModel = {
 				res.name = oCountryData.name;
 				res.selected = true;
 				res.atts = [];
-				
+
 				var fnCreateAttributes = function(oCountry) {
 					var atts = [];
 					var aData = oCountry.attributes;
@@ -142,7 +142,7 @@ var oTestDataForJSONModel = {
 					}
 					return atts;
 				};
-				
+
 				for (var i = 0; i < aTestData[0].attributes.length; i++) {
 					var oCountry = aTestData[0].attributes[i];
 					var resCountry;
@@ -150,7 +150,7 @@ var oTestDataForJSONModel = {
 						resCountry = {name: oCountry};
 						if (oCountry != "Canada") {
 							/*subVals not set in case of 'Canada' to test the default behavior (arrow should appear initially and then should disappear on select)*/
-							resCountry.subVals = false; 
+							resCountry.subVals = false;
 						}
 					} else {
 						resCountry = {name: oCountry.name};
@@ -171,7 +171,7 @@ var oTestDataForJSONModel = {
 			})()
 		}
 	]
-}; 
+};
 
 
 exactTestData.getDataForJSONModel = function(){
@@ -236,7 +236,7 @@ exactTestData.initAttributes = function(oControl){
 	oControl.getAttributes()[2].setShowSubAttributesIndicator(true);
 	oControl.getAttributes()[2].setAutoActivateSupply(true);
 
-	//Init the Employees lazily and asynchronously and reload them on every select 
+	//Init the Employees lazily and asynchronously and reload them on every select
 	//oControl.getAttributes()[3].setSelected(true);
 	oControl.getAttributes()[3].attachSupplyAttributes(function(oEvent){
 		var oAttribute = oEvent.getParameter("attribute");
@@ -267,7 +267,7 @@ exactTestData.initAttributesForQUnit = function(oControl, sIdPrefix){
 		}
 		return oAttr;
 	}
-	
+
 	var att = createAttr(1, 1);
 	att.setSelected(true);
 	oControl.addAttribute(att);

@@ -1,21 +1,20 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Test Page for sap.m.ToggleButton</title>
+<script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-	type="text/javascript"
 	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m">
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -26,7 +25,7 @@
 }
 </style>
 
-<script type="text/javascript">
+<script>
 
 	var oToggleButton1 = new sap.m.ToggleButton("testToggleButton_1", {
 		text : "TestButton 1",
@@ -47,34 +46,34 @@
 	});
 	oToggleButton3.placeAt("uiArea3");
 
-	module("pressed state");
+	QUnit.module("pressed state");
 
-	test("TestGetPressedStateOK", function() {
-		equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
-		equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
+	QUnit.test("TestGetPressedStateOK", function(assert) {
+		assert.equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
+		assert.equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
 	});
 
-	test("Check Accessibility States", function() {
-		strictEqual(oToggleButton1.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_1");
-		strictEqual(oToggleButton2.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_2");
-		strictEqual(oToggleButton3.$().attr("aria-disabled"), "true", "aria-disabled status is set");
+	QUnit.test("Check Accessibility States", function(assert) {
+		assert.strictEqual(oToggleButton1.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_1");
+		assert.strictEqual(oToggleButton2.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_2");
+		assert.strictEqual(oToggleButton3.$().attr("aria-disabled"), "true", "aria-disabled status is set");
 	});
 
-	test("TestPressedToUnpressedOK", function() {
+	QUnit.test("TestPressedToUnpressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton1.getId());
 		sap.ui.getCore().applyChanges();
-		equal(oToggleButton1.getPressed(), false, "getPressedState");
-		strictEqual(oToggleButton1.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_1 after tap");
+		assert.equal(oToggleButton1.getPressed(), false, "getPressedState");
+		assert.strictEqual(oToggleButton1.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_1 after tap");
 	});
 
-	test("TestUnpressedToPressedOK", function() {
+	QUnit.test("TestUnpressedToPressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton2.getId());
 		sap.ui.getCore().applyChanges();
-		equal(oToggleButton2.getPressed(), true, "getPressedState");
-		strictEqual(oToggleButton2.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_2 after tap");
+		assert.equal(oToggleButton2.getPressed(), true, "getPressedState");
+		assert.strictEqual(oToggleButton2.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_2 after tap");
 	});
 
-	test("Should not change the pressed state, from toggled to untoggled, on a tap Event if the toggle button is disabled", function() {
+	QUnit.test("Should not change the pressed state, from toggled to untoggled, on a tap Event if the toggle button is disabled", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new sap.m.ToggleButton({
 				enabled : false,
@@ -89,12 +88,12 @@
 		qutils.triggerEvent("tap", oToggleButton.getId());
 
 		// Assert
-		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
-		strictEqual(oTapSpy.callCount, 1, "tap was fired");
-		strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
+		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
+		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
 	});
 
-	test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function() {
+	QUnit.test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new sap.m.ToggleButton({
 				enabled : false,
@@ -109,11 +108,11 @@
 		qutils.triggerEvent("tap", oToggleButton.getId());
 
 		// Assert
-		strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
-		strictEqual(oTapSpy.callCount, 1, "tap was fired");
+		assert.strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
+		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
 	});
 
-	test("Should change the pressed state, from toggled to untoggled, if it was called over the API", function() {
+	QUnit.test("Should change the pressed state, from toggled to untoggled, if it was called over the API", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new sap.m.ToggleButton({
 				enabled : false,
@@ -127,10 +126,10 @@
 		oToggleButton.setPressed(false);
 
 		// Assert
-		strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
+		assert.strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
 	});
 
-	test("Should change the pressed state, from untoggled to toggled, if it was called over the API", function() {
+	QUnit.test("Should change the pressed state, from untoggled to toggled, if it was called over the API", function(assert) {
 		// Arrange + System under Test
 		var oToggleButton = new sap.m.ToggleButton({
 				enabled : false,
@@ -144,13 +143,13 @@
 		oToggleButton.setPressed(true);
 
 		// Assert
-		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
 	});
 
 
-	module("Integration tests");
+	QUnit.module("Integration tests");
 
-	test("Should not change the pressed state on a tap Event if the toggle button is in a disabled Toolbar", function() {
+	QUnit.test("Should not change the pressed state on a tap Event if the toggle button is in a disabled Toolbar", function(assert) {
 		//Arrange
 		jQuery.sap.require("sap.m.Toolbar");
 		var oToolbar = new sap.m.Toolbar({
@@ -171,11 +170,43 @@
 		qutils.triggerEvent("tap", oToggleButton.getId());
 
 		// Assert
-		strictEqual(oToggleButton.getEnabled(), false, "the enabled state of the toolbar got propagated");
-		strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
-		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
-		ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class")
-		strictEqual(oTapSpy.callCount, 1, "tap was fired");
+		assert.strictEqual(oToggleButton.getEnabled(), false, "the enabled state of the toolbar got propagated");
+		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
+		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+		assert.ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class")
+		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
+	});
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("getAccessibilityInfo", function(assert) {
+		var oButton = new sap.m.ToggleButton({tooltip: "Tooltip"});
+		assert.ok(!!oButton.getAccessibilityInfo, "ToggleButton has a getAccessibilityInfo function");
+		var oInfo = oButton.getAccessibilityInfo();
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.strictEqual(oInfo.role, "button", "AriaRole");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.description, "Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		oButton.setText("Text");
+		oButton.setEnabled(false);
+		oInfo = oButton.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, "Text", "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
+		oButton.setText(null);
+		oButton.setTooltip(null);
+		oButton.setIcon("sap-icon://search");
+		oInfo = oButton.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("Icon.search"), "Description");
+		oButton.setPressed(true);
+		oInfo = oButton.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description,
+				sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("Icon.search") + " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PRESSED"),
+				"Description");
+		oButton.destroy();
 	});
 </script>
 

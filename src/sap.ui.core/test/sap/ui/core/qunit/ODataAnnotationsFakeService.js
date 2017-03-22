@@ -1,6 +1,7 @@
 /* global sinon */
 var xhr = sinon.useFakeXMLHttpRequest(),
-	responseDelay = 50,
+	maxResponseDelay = 250,
+	bRandomizeResponseDelay = false,
 	_setTimeout = window.setTimeout;
 
 xhr.useFilters = true;
@@ -15,6 +16,10 @@ xhr.onCreate = function(request) {
 		var sAnswer = "This should never be received as an answer!";
 
 		switch (request.url) {
+
+			case "fakeService://replay-headers":
+				sAnswer = createHeaderAnnotations(request);
+				break;
 
 			case "fakeService://testdata/odata/northwind/":
 			case "fakeService://testdata/odata/northwind-annotated/":
@@ -67,8 +72,8 @@ xhr.onCreate = function(request) {
 				sAnswer = sEPMAnnotationsComplex;
 				break;
 
-			case "fakeService://testdata/odata/2014-12-08-test.xml":
-				sAnswer = sTest20141208Annotations;
+			case "fakeService://testdata/odata/apply-function-test.xml":
+				sAnswer = sTestApplyFunctionAnnotations;
 				break;
 
 			case "fakeService://testdata/odata/multiple-property-annotations.xml":
@@ -98,7 +103,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/simple-values.xml":
 				sAnswer = sSimpleValues;
 				break;
-				
+
 			// Test multiple annotations loaded after each other...
 			case "fakeService://testdata/odata/multiple-annotations-01.xml":
 				sAnswer = sMultipleTest01;
@@ -109,7 +114,6 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/multiple-annotations-03.xml":
 				sAnswer = sMultipleTest03;
 				break;
-				
 
 			case "fakeService://testdata/odata/collection-with-namespace.xml":
 				sAnswer = sCollectionWithNamespace;
@@ -118,7 +122,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/UrlRef.xml":
 				sAnswer = sUrlRefTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/Aliases.xml":
 				sAnswer = sAliasesTest;
 				break;
@@ -126,37 +130,112 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/DynamicExpressions.xml":
 				sAnswer = sDynamicExpressionsTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/DynamicExpressions2.xml":
 				sAnswer = sDynamicExpressionsTest2;
 				break;
-				
+
 			case "fakeService://testdata/odata/collections-with-simple-values.xml":
 				sAnswer= sCollectionsWithSimpleValuesTest;
-				break;			
-				
+				break;
+
 			case "fakeService://testdata/odata/simple-values-2.xml":
 				sAnswer = sSimpleValuesTest2;
 				break;
-				
+
 			case "fakeService://testdata/odata/if-in-apply.xml":
 				sAnswer = sIfInApply;
 				break;
-				
+
 			case "fakeService://testdata/odata/labeledelement-other-values.xml":
 				sAnswer = sLabeledElementOtherValues;
 				break;
-				
+
+			case "fakeService://testdata/odata/apply-in-if.xml":
+				sAnswer = sApplyInIf;
+				break;
+
+			case "fakeService://testdata/odata/empty-collection.xml":
+				sAnswer = sEmptyCollection;
+				break;
+
+			case "fakeService://testdata/odata/multiple-enums.xml":
+				sAnswer = sMultipleEnums;
+				break;
+
+			case "fakeService://testdata/odata/valuelists/":
+				mHeaders = mMetaDataHeaders;
+				sAnswer = sNorthwindData;
+				break;
+
+			case "fakeService://testdata/odata/valuelists/$metadata":
+				sMetadataString = sNorthwindMetadataWithValueListPlaceholder.replace("{{ValueLists}}", "");
+				mHeaders = mMetaDataHeaders;
+				sAnswer = sMetadataString;
+				break;
+			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=none":
+			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=all":
+			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=1":
+			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=2":
+			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=3":
+				var sValueList = request.url.replace(/^.*?sap-value-list=(.*)$/, "$1");
+				var sAnnotations = "";
+				switch (sValueList) {
+					case "all":
+						sAnnotations = aValueListStrings.join("\n");
+						break;
+
+					case "1":
+						sAnnotations = aValueListStrings[0];
+						break;
+
+					case "2":
+						sAnnotations = aValueListStrings[1];
+						break;
+
+					case "3":
+						sAnnotations = aValueListStrings[2];
+						break;
+
+					default:
+					case "none":
+						sAnnotations = "";
+						break;
+				}
+				sMetadataString = sNorthwindMetadataWithValueListPlaceholder.replace("{{ValueLists}}", sAnnotations);
+				mHeaders = mMetaDataHeaders;
+				sAnswer = sMetadataString;
+				break;
+
+			case "fakeService://testdata/odata/overwrite-on-term-level-1":
+				sAnswer = aOverwriteOnTermLevel[0];
+				break;
+
+			case "fakeService://testdata/odata/overwrite-on-term-level-2":
+				sAnswer = aOverwriteOnTermLevel[1];
+				break;
+
+			case "fakeService://testdata/odata/edmtype-for-navigationproperties":
+				sAnswer = sEdmtypeForNavigationproperties;
+				break;
+
+			case "fakeService://testdata/odata/nested-annotations":
+				sAnswer = sNestedAnnotations;
+				break;
+
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
 				break;
 		}
 
+		mHeaders["Last-Modified"] = "Wed, 15 Nov 1995 04:58:08 GMT";
+
 		if (request.async === true) {
 			_setTimeout(function() {
+				jQuery.sap.log.info("[FakeService] Responding to: " + request.url);
 				request.respond(iStatus, mHeaders, sAnswer);
-			}, responseDelay);
+			}, bRandomizeResponseDelay ? Math.round(Math.random() * maxResponseDelay) : 50);
 		} else {
 			request.respond(iStatus, mHeaders, sAnswer);
 		}
@@ -164,7 +243,27 @@ xhr.onCreate = function(request) {
 	};
 };
 
+function createHeaderAnnotations(request) {
+	var sAnnotations = '<?xml version="1.0" encoding="utf-8"?>\
+	<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+		<edmx:DataServices>\
+			<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Test">\
+				<Annotations Target="Replay.Headers">';
 
+	Object.keys(request.requestHeaders).forEach(function(sHeader) {
+		sAnnotations += '\
+					<Annotation Term="' + sHeader + '" String="' + request.requestHeaders[sHeader] +'" />';
+	});
+
+
+	sAnnotations += '\
+				</Annotations>\
+			</Schema>\
+		</edmx:DataServices>\
+	</edmx:Edmx>';
+
+	return sAnnotations;
+}
 
 
 var mMetaDataHeaders = {
@@ -183,7 +282,6 @@ var mXMLHeaders = 	{
 //	"Content-Type": "text/plain;charset=utf-8",
 //	"DataServiceVersion": "2.0;"
 //};
-
 
 
 
@@ -727,6 +825,48 @@ var sNorthwindAnnotations = '\
 						</Record>\
 					</Collection>\
 			</Annotation>\
+			</Annotations>\
+			<Annotations Target="NorthwindModel.Category/CategoryID">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="LabelString" />\
+				<Annotation Term="annotationSource" String="Annotations" />\
+			</Annotations>\
+			<Annotations Target="Test.AnnotationInRecord">\
+				<Annotation Term="Test.AnnotationInRecord.Case1">\
+					<Record Type="Test.AnnotationInRecord.Case1.Record">\
+						<Annotation Term="Test.AnnotationInRecord.Case1.Record.SubAnnotation1" String="SubAnnotation1" />\
+						<PropertyValue Property="Label" String="Label1" />\
+						<Annotation Term="Label" String="Annotation" />\
+						<Annotation Term="Test.AnnotationInRecord.Case1.Record.SubAnnotation2">\
+							<If>\
+								<Eq>\
+									<Path>Condition</Path>\
+									<Bool>false</Bool>\
+								</Eq>\
+								<String>ConditionalValue</String>\
+							</If>\
+						</Annotation>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.AnnotationInRecord.Case2">\
+					<Record Type="Test.AnnotationInRecord.Case2.Record">\
+						<Annotation Term="Test.AnnotationInRecord.Case2.Record.SubAnnotation1" String="SubAnnotation1" />\
+						<Annotation Term="Label" String="Annotation" />\
+						<Annotation Term="Test.AnnotationInRecord.Case2.Record.SubAnnotation2">\
+							<If>\
+								<Eq>\
+									<Path>Condition</Path>\
+									<Bool>false</Bool>\
+								</Eq>\
+								<String>ConditionalValue</String>\
+							</If>\
+						</Annotation>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.AnnotationInRecord.Case3">\
+					<Record Type="Test.AnnotationInRecord.Case3.Record">\
+						<Null />\
+					</Record>\
+				</Annotation>\
 			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\
@@ -2533,26 +2673,28 @@ var sNorthwindMetadataAnnotated = '\
 				</AssociationSet>\
 			</EntityContainer>\
 		</Schema>\
-	</edmx:DataServices>\
-	<edmx:DataServices>\
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="NorthwindModelAnnotations">\
 			<Annotations Target="UnitTest">\
-			<Annotation Term="Test.FromMetadata">\
-					<Collection>\
-						<Record Type="Test.DataField">\
-							<PropertyValue Property="Label" String="From" />\
-							<PropertyValue Property="Value" Path="Metadata" />\
-						</Record>\
-					</Collection>\
-			</Annotation>\
-			<Annotation Term="Test.Merged">\
-					<Collection>\
-						<Record Type="Test.DataField">\
-							<PropertyValue Property="Label" String="From" />\
-							<PropertyValue Property="Value" Path="Metadata" />\
-						</Record>\
-					</Collection>\
-			</Annotation>\
+				<Annotation Term="Test.FromMetadata">\
+						<Collection>\
+							<Record Type="Test.DataField">\
+								<PropertyValue Property="Label" String="From" />\
+								<PropertyValue Property="Value" Path="Metadata" />\
+							</Record>\
+						</Collection>\
+				</Annotation>\
+				<Annotation Term="Test.Merged">\
+						<Collection>\
+							<Record Type="Test.DataField">\
+								<PropertyValue Property="Label" String="From" />\
+								<PropertyValue Property="Value" Path="Metadata" />\
+							</Record>\
+						</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="NorthwindModel.Category/CategoryID">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="LabelString" />\
+				<Annotation Term="annotationSource" String="Metadata" />\
 			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\
@@ -2576,13 +2718,13 @@ var sEPMAnnotationsComplex = '\
 		<edmx:Reference Uri="/epm_http/purchase/$metadata" >\
 			<edmx:Include Namespace="EPMDemo" Alias="EPMModel" />\
 		</edmx:Reference>\
-		<edmx:Reference Uri="/giq-100/ODATA/IWFND/RMTSAMPLEFLIGHT/$metadata" >\
+		<edmx:Reference Uri="/ODATA/IWFND/RMTSAMPLEFLIGHT/$metadata" >\
 			<edmx:Include Namespace="RMTSAMPLEFLIGHT" Alias="RMTSAMPLEFLIGHT" />\
 		</edmx:Reference>\
-		<edmx:Reference Uri="/vs6/sap/hba/apps/wcm/odata/wcm.xsodata/$metadata" >\
+		<edmx:Reference Uri="/sap/hba/apps/wcm/odata/wcm.xsodata/$metadata" >\
 			<edmx:Include Namespace="sap.hba.apps.wcm.odata.wcm" Alias="WCM" />\
 		</edmx:Reference>\
-		<edmx:Reference Uri="https://dewdfgwd01082.wdf.sap.corp:4080/sap/hba/r/ecc/odata/mm/pur/PurchaseContractQueries.xsodata;o=hanasys/$metadata" >\
+		<edmx:Reference Uri="/sap/hba/r/ecc/odata/mm/pur/PurchaseContractQueries.xsodata;o=hanasys/$metadata" >\
 			<edmx:Include Namespace="sap.hba.r.ecc.odata.mm.pur.PurchaseContractQueries" Alias="PurchaseContract" />\
 		</edmx:Reference>\
 		<edmx:DataServices>\
@@ -3276,7 +3418,7 @@ var sEPMAnnotationsComplex = '\
 		</edmx:DataServices>\
 	</edmx:Edmx>';
 
-var sTest20141208Annotations = '\
+var sTestApplyFunctionAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
 	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
@@ -3858,7 +4000,7 @@ var sUrlRefTest = '\
 
 var sMultipleTest01 = '\
 <?xml version="1.0" encoding="utf-8"?>\
-<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns:xml="http://www.w3.org/XML/1998/namespace" Version="4.0">\
 	<edmx:Reference Uri="/some/path/Test.xml">\
 		<edmx:Include Alias="Test" Namespace="internal.ui5.test"/>\
 	</edmx:Reference>\
@@ -4149,6 +4291,1079 @@ var sLabeledElementOtherValues = '\
 							</UrlRef>\
 						</PropertyValue>\
 					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sApplyInIf = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="ApplyInIf">\
+				<Annotation Term="Test.1">\
+					<Record Type="Value">\
+						<PropertyValue Property="Value">\
+							<If>\
+								<Ne>\
+									<Path>EmailAddress</Path>\
+									<Null/>\
+								</Ne>\
+								<Apply Function="odata.concat">\
+									<String>mailto:</String>\
+									<Path>EmailAddress</Path>\
+								</Apply>\
+								<Null/>\
+							</If>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.2">\
+					<Record Type="WithUrlRef">\
+						<PropertyValue Property="Url">\
+							<UrlRef>\
+								<If>\
+									<Ne>\
+										<Path>EmailAddress</Path>\
+										<Null/>\
+									</Ne>\
+									<Apply Function="odata.concat">\
+										<String>mailto:</String>\
+										<Path>EmailAddress</Path>\
+									</Apply>\
+									<Null/>\
+								</If>\
+							</UrlRef>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sEmptyCollection = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.FilledCollection">\
+					<Collection>\
+						<String>THIS</String>\
+						<String>IS</String>\
+						<String>ODATA!</String>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.EmptyCollection">\
+					<Collection />\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sMultipleEnums = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.SimpleEnum">\
+					<Record>\
+						<PropertyValue Property="Test" EnumMember="Test.Value"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.MultipleEnums">\
+					<Record>\
+						<PropertyValue Property="Test" EnumMember="Test.Value1 Test.Value2"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+
+var aValueListStrings = [ '\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.SimpleAnnotation-1">\
+					<String>From Metadata</String>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+				Target="ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/BooleanParameter">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="Label" String="boolean true/false" />\
+						<PropertyValue Property="CollectionPath" String="VL_FV_FARP_BOOLEAN" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="BooleanParameter" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="Code" />\
+								</Record>\
+								<Record\
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">\
+									<PropertyValue Property="ValueListProperty"\
+										String="Text" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>', '\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.SimpleAnnotation-2">\
+					<String>From Metadata</String>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+				Target="ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/Industry">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="Label" String="&quot;Industry Texts&quot;" />\
+						<PropertyValue Property="CollectionPath" String="VL_SH_H_T016" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="Industry" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="BRSCH" />\
+								</Record>\
+								<Record\
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">\
+									<PropertyValue Property="ValueListProperty"\
+										String="BRTXT" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>', '\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.SimpleAnnotation-3">\
+					<String>From Metadata</String>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+				Target="ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/PostingKey">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+					<Record>\
+						<PropertyValue Property="Label" String="Help_View for TBSL" />\
+						<PropertyValue Property="CollectionPath" String="VL_SH_H_TBSL" />\
+						<PropertyValue Property="SearchSupported" Bool="true" />\
+						<PropertyValue Property="Parameters">\
+							<Collection>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="PostingKey" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="BSCHL" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="FinancialAccountType" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="KOART" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="DebitCreditCode" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="SHKZG" />\
+								</Record>\
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">\
+									<PropertyValue Property="LocalDataProperty"\
+										PropertyPath="IndustryName" />\
+									<PropertyValue Property="ValueListProperty"\
+										String="LTEXT" />\
+								</Record>\
+							</Collection>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>'
+];
+
+
+
+var sNorthwindMetadataWithValueListPlaceholder = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" >\
+	<Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml" xmlns="http://docs.oasis-open.org/odata/ns/edmx">\
+		<Include Alias="Test" Namespace="ui5.test"/>\
+	</Reference>\
+	<edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0"\
+		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.SimpleAnnotation">\
+					<String>From Metadata</String>\
+				</Annotation>\
+			</Annotations>\
+			{{ValueLists}}\
+		</Schema>\
+		<Schema Namespace="NorthwindModel" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<EntityType Name="Category">\
+				<Key>\
+					<PropertyRef Name="CategoryID" />\
+				</Key>\
+				<Property Name="CategoryID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity"\
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" FixedLength="false"\
+					Unicode="true" />\
+				<Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />\
+				<Property Name="Picture" Type="Edm.Binary" MaxLength="Max" FixedLength="false" />\
+				<NavigationProperty Name="Products" Relationship="NorthwindModel.FK_Products_Categories" ToRole="Products"\
+					FromRole="Categories" />\
+			</EntityType>\
+			<EntityType Name="CustomerDemographic">\
+				<Key>\
+					<PropertyRef Name="CustomerTypeID" />\
+				</Key>\
+				<Property Name="CustomerTypeID" Type="Edm.String" Nullable="false" MaxLength="10" FixedLength="true"\
+					Unicode="true" />\
+				<Property Name="CustomerDesc" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />\
+				<NavigationProperty Name="Customers" Relationship="NorthwindModel.CustomerCustomerDemo" ToRole="Customers"\
+					FromRole="CustomerDemographics" />\
+			</EntityType>\
+			<EntityType Name="Customer">\
+				<Key>\
+					<PropertyRef Name="CustomerID" />\
+				</Key>\
+				<Property Name="CustomerID" Type="Edm.String" Nullable="false" MaxLength="5" FixedLength="true" Unicode="true" />\
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ContactName" Type="Edm.String" MaxLength="30" FixedLength="false" Unicode="true" />\
+				<Property Name="ContactTitle" Type="Edm.String" MaxLength="30" FixedLength="false" Unicode="true" />\
+				<Property Name="Address" Type="Edm.String" MaxLength="60" FixedLength="false" Unicode="true" />\
+				<Property Name="City" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="Region" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="PostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="Country" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="Phone" Type="Edm.String" MaxLength="24" FixedLength="false" Unicode="true" />\
+				<Property Name="Fax" Type="Edm.String" MaxLength="24" FixedLength="false" Unicode="true" />\
+				<NavigationProperty Name="Orders" Relationship="NorthwindModel.FK_Orders_Customers" ToRole="Orders"\
+					FromRole="Customers" />\
+				<NavigationProperty Name="CustomerDemographics" Relationship="NorthwindModel.CustomerCustomerDemo"\
+					ToRole="CustomerDemographics" FromRole="Customers" />\
+			</EntityType>\
+			<EntityType Name="Employee">\
+				<Key>\
+					<PropertyRef Name="EmployeeID" />\
+				</Key>\
+				<Property Name="EmployeeID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity"\
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+				<Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />\
+				<Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="Title" Type="Edm.String" MaxLength="30" FixedLength="false" Unicode="true" />\
+				<Property Name="TitleOfCourtesy" Type="Edm.String" MaxLength="25" FixedLength="false" Unicode="true" />\
+				<Property Name="BirthDate" Type="Edm.DateTime" />\
+				<Property Name="HireDate" Type="Edm.DateTime" />\
+				<Property Name="Address" Type="Edm.String" MaxLength="60" FixedLength="false" Unicode="true" />\
+				<Property Name="City" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="Region" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="PostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="Country" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="HomePhone" Type="Edm.String" MaxLength="24" FixedLength="false" Unicode="true" />\
+				<Property Name="Extension" Type="Edm.String" MaxLength="4" FixedLength="false" Unicode="true" />\
+				<Property Name="Photo" Type="Edm.Binary" MaxLength="Max" FixedLength="false" />\
+				<Property Name="Notes" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />\
+				<Property Name="ReportsTo" Type="Edm.Int32" />\
+				<Property Name="PhotoPath" Type="Edm.String" MaxLength="255" FixedLength="false" Unicode="true" />\
+				<NavigationProperty Name="Employees1" Relationship="NorthwindModel.FK_Employees_Employees"\
+					ToRole="Employees1" FromRole="Employees" />\
+				<NavigationProperty Name="Employee1" Relationship="NorthwindModel.FK_Employees_Employees" ToRole="Employees"\
+					FromRole="Employees1" />\
+				<NavigationProperty Name="Orders" Relationship="NorthwindModel.FK_Orders_Employees" ToRole="Orders"\
+					FromRole="Employees" />\
+				<NavigationProperty Name="Territories" Relationship="NorthwindModel.EmployeeTerritories" ToRole="Territories"\
+					FromRole="Employees" />\
+			</EntityType>\
+			<EntityType Name="Order_Detail">\
+				<Key>\
+					<PropertyRef Name="OrderID" />\
+					<PropertyRef Name="ProductID" />\
+				</Key>\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="ProductID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" Precision="19" Scale="4" />\
+				<Property Name="Quantity" Type="Edm.Int16" Nullable="false" />\
+				<Property Name="Discount" Type="Edm.Single" Nullable="false" />\
+				<NavigationProperty Name="Order" Relationship="NorthwindModel.FK_Order_Details_Orders" ToRole="Orders"\
+					FromRole="Order_Details" />\
+				<NavigationProperty Name="Product" Relationship="NorthwindModel.FK_Order_Details_Products"\
+					ToRole="Products" FromRole="Order_Details" />\
+			</EntityType>\
+			<EntityType Name="Order">\
+				<Key>\
+					<PropertyRef Name="OrderID" />\
+				</Key>\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity"\
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+				<Property Name="CustomerID" Type="Edm.String" MaxLength="5" FixedLength="true" Unicode="true" />\
+				<Property Name="EmployeeID" Type="Edm.Int32" />\
+				<Property Name="OrderDate" Type="Edm.DateTime" />\
+				<Property Name="RequiredDate" Type="Edm.DateTime" />\
+				<Property Name="ShippedDate" Type="Edm.DateTime" />\
+				<Property Name="ShipVia" Type="Edm.Int32" />\
+				<Property Name="Freight" Type="Edm.Decimal" Precision="19" Scale="4" />\
+				<Property Name="ShipName" Type="Edm.String" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipAddress" Type="Edm.String" MaxLength="60" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipCity" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipRegion" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipPostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipCountry" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<NavigationProperty Name="Customer" Relationship="NorthwindModel.FK_Orders_Customers" ToRole="Customers"\
+					FromRole="Orders" />\
+				<NavigationProperty Name="Employee" Relationship="NorthwindModel.FK_Orders_Employees" ToRole="Employees"\
+					FromRole="Orders" />\
+				<NavigationProperty Name="Order_Details" Relationship="NorthwindModel.FK_Order_Details_Orders"\
+					ToRole="Order_Details" FromRole="Orders" />\
+				<NavigationProperty Name="Shipper" Relationship="NorthwindModel.FK_Orders_Shippers" ToRole="Shippers"\
+					FromRole="Orders" />\
+			</EntityType>\
+			<EntityType Name="Product">\
+				<Key>\
+					<PropertyRef Name="ProductID" />\
+				</Key>\
+				<Property Name="ProductID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity"\
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="SupplierID" Type="Edm.Int32" />\
+				<Property Name="CategoryID" Type="Edm.Int32" />\
+				<Property Name="QuantityPerUnit" Type="Edm.String" MaxLength="20" FixedLength="false" Unicode="true" />\
+				<Property Name="UnitPrice" Type="Edm.Decimal" Precision="19" Scale="4" />\
+				<Property Name="UnitsInStock" Type="Edm.Int16" />\
+				<Property Name="UnitsOnOrder" Type="Edm.Int16" />\
+				<Property Name="ReorderLevel" Type="Edm.Int16" />\
+				<Property Name="Discontinued" Type="Edm.Boolean" Nullable="false" />\
+				<NavigationProperty Name="Category" Relationship="NorthwindModel.FK_Products_Categories" ToRole="Categories"\
+					FromRole="Products" />\
+				<NavigationProperty Name="Order_Details" Relationship="NorthwindModel.FK_Order_Details_Products"\
+					ToRole="Order_Details" FromRole="Products" />\
+				<NavigationProperty Name="Supplier" Relationship="NorthwindModel.FK_Products_Suppliers" ToRole="Suppliers"\
+					FromRole="Products" />\
+			</EntityType>\
+			<EntityType Name="Region">\
+				<Key>\
+					<PropertyRef Name="RegionID" />\
+				</Key>\
+				<Property Name="RegionID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="RegionDescription" Type="Edm.String" Nullable="false" MaxLength="50" FixedLength="true"\
+					Unicode="true" />\
+				<NavigationProperty Name="Territories" Relationship="NorthwindModel.FK_Territories_Region"\
+					ToRole="Territories" FromRole="Region" />\
+			</EntityType>\
+			<EntityType Name="Shipper">\
+				<Key>\
+					<PropertyRef Name="ShipperID" />\
+				</Key>\
+				<Property Name="ShipperID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity"\
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="Phone" Type="Edm.String" MaxLength="24" FixedLength="false" Unicode="true" />\
+				<NavigationProperty Name="Orders" Relationship="NorthwindModel.FK_Orders_Shippers" ToRole="Orders"\
+					FromRole="Shippers" />\
+			</EntityType>\
+			<EntityType Name="Supplier">\
+				<Key>\
+					<PropertyRef Name="SupplierID" />\
+				</Key>\
+				<Property Name="SupplierID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity"\
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ContactName" Type="Edm.String" MaxLength="30" FixedLength="false" Unicode="true" />\
+				<Property Name="ContactTitle" Type="Edm.String" MaxLength="30" FixedLength="false" Unicode="true" />\
+				<Property Name="Address" Type="Edm.String" MaxLength="60" FixedLength="false" Unicode="true" />\
+				<Property Name="City" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="Region" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="PostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="Country" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="Phone" Type="Edm.String" MaxLength="24" FixedLength="false" Unicode="true" />\
+				<Property Name="Fax" Type="Edm.String" MaxLength="24" FixedLength="false" Unicode="true" />\
+				<Property Name="HomePage" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />\
+				<NavigationProperty Name="Products" Relationship="NorthwindModel.FK_Products_Suppliers" ToRole="Products"\
+					FromRole="Suppliers" />\
+			</EntityType>\
+			<EntityType Name="Territory">\
+				<Key>\
+					<PropertyRef Name="TerritoryID" />\
+				</Key>\
+				<Property Name="TerritoryID" Type="Edm.String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />\
+				<Property Name="TerritoryDescription" Type="Edm.String" Nullable="false" MaxLength="50" FixedLength="true"\
+					Unicode="true" />\
+				<Property Name="RegionID" Type="Edm.Int32" Nullable="false" />\
+				NavigationProperty Name="Region" Relationship="NorthwindModel.FK_Territories_Region" ToRole="Region"\
+				FromRole="Territories" />\
+				<NavigationProperty Name="Employees" Relationship="NorthwindModel.EmployeeTerritories" ToRole="Employees"\
+					FromRole="Territories" />\
+			</EntityType>\
+			<EntityType Name="Alphabetical_list_of_product">\
+				<Key>\
+					<PropertyRef Name="CategoryName" />\
+					<PropertyRef Name="Discontinued" />\
+					<PropertyRef Name="ProductID" />\
+					<PropertyRef Name="ProductName" />\
+				</Key>\
+				<Property Name="ProductID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="SupplierID" Type="Edm.Int32" />\
+				<Property Name="CategoryID" Type="Edm.Int32" />\
+				<Property Name="QuantityPerUnit" Type="Edm.String" MaxLength="20" FixedLength="false" Unicode="true" />\
+				<Property Name="UnitPrice" Type="Edm.Decimal" Precision="19" Scale="4" />\
+				<Property Name="UnitsInStock" Type="Edm.Int16" />\
+				<Property Name="UnitsOnOrder" Type="Edm.Int16" />\
+				<Property Name="ReorderLevel" Type="Edm.Int16" />\
+				<Property Name="Discontinued" Type="Edm.Boolean" Nullable="false" />\
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" FixedLength="false"\
+					Unicode="true" />\
+			</EntityType>\
+			<EntityType Name="Category_Sales_for_1997">\
+				<Key>\
+					<PropertyRef Name="CategoryName" />\
+				</Key>\
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" FixedLength="false"\
+					Unicode="true" />\
+				<Property Name="CategorySales" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<EntityType Name="Current_Product_List">\
+				<Key>\
+					<PropertyRef Name="ProductID" />\
+					<PropertyRef Name="ProductName" />\
+				</Key>\
+				<Property Name="ProductID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity"\
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+			</EntityType>\
+			<EntityType Name="Customer_and_Suppliers_by_City">\
+				<Key>\
+					<PropertyRef Name="CompanyName" />\
+					<PropertyRef Name="Relationship" />\
+				</Key>\
+				<Property Name="City" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ContactName" Type="Edm.String" MaxLength="30" FixedLength="false" Unicode="true" />\
+				<Property Name="Relationship" Type="Edm.String" Nullable="false" MaxLength="9" FixedLength="false" Unicode="false" />\
+			</EntityType>\
+			<EntityType Name="Invoice">\
+				<Key>\
+					<PropertyRef Name="CustomerName" />\
+					<PropertyRef Name="Discount" />\
+					<PropertyRef Name="OrderID" />\
+					<PropertyRef Name="ProductID" />\
+					<PropertyRef Name="ProductName" />\
+					<PropertyRef Name="Quantity" />\
+					<PropertyRef Name="Salesperson" />\
+					<PropertyRef Name="ShipperName" />\
+					<PropertyRef Name="UnitPrice" />\
+				</Key>\
+				<Property Name="ShipName" Type="Edm.String" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipAddress" Type="Edm.String" MaxLength="60" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipCity" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipRegion" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipPostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipCountry" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="CustomerID" Type="Edm.String" MaxLength="5" FixedLength="true" Unicode="true" />\
+				<Property Name="CustomerName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false"\
+					Unicode="true" />\
+				<Property Name="Address" Type="Edm.String" MaxLength="60" FixedLength="false" Unicode="true" />\
+				<Property Name="City" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="Region" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="PostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="Country" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="Salesperson" Type="Edm.String" Nullable="false" MaxLength="31" FixedLength="false" Unicode="true" />\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="OrderDate" Type="Edm.DateTime" />\
+				<Property Name="RequiredDate" Type="Edm.DateTime" />\
+				<Property Name="ShippedDate" Type="Edm.DateTime" />\
+				<Property Name="ShipperName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ProductID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" Precision="19" Scale="4" />\
+				<Property Name="Quantity" Type="Edm.Int16" Nullable="false" />\
+				<Property Name="Discount" Type="Edm.Single" Nullable="false" />\
+				<Property Name="ExtendedPrice" Type="Edm.Decimal" Precision="19" Scale="4" />\
+				<Property Name="Freight" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<EntityType Name="Order_Details_Extended">\
+				<Key>\
+					<PropertyRef Name="Discount" />\
+					<PropertyRef Name="OrderID" />\
+					<PropertyRef Name="ProductID" />\
+					<PropertyRef Name="ProductName" />\
+					<PropertyRef Name="Quantity" />\
+					<PropertyRef Name="UnitPrice" />\
+				</Key>\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="ProductID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" Precision="19" Scale="4" />\
+				<Property Name="Quantity" Type="Edm.Int16" Nullable="false" />\
+				<Property Name="Discount" Type="Edm.Single" Nullable="false" />\
+				<Property Name="ExtendedPrice" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<EntityType Name="Order_Subtotal">\
+				<Key>\
+					<PropertyRef Name="OrderID" />\
+				</Key>\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="Subtotal" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<EntityType Name="Orders_Qry">\
+				<Key>\
+					<PropertyRef Name="CompanyName" />\
+					<PropertyRef Name="OrderID" />\
+				</Key>\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="CustomerID" Type="Edm.String" MaxLength="5" FixedLength="true" Unicode="true" />\
+				<Property Name="EmployeeID" Type="Edm.Int32" />\
+				<Property Name="OrderDate" Type="Edm.DateTime" />\
+				<Property Name="RequiredDate" Type="Edm.DateTime" />\
+				<Property Name="ShippedDate" Type="Edm.DateTime" />\
+				<Property Name="ShipVia" Type="Edm.Int32" />\
+				<Property Name="Freight" Type="Edm.Decimal" Precision="19" Scale="4" />\
+				<Property Name="ShipName" Type="Edm.String" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipAddress" Type="Edm.String" MaxLength="60" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipCity" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipRegion" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipPostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="ShipCountry" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="Address" Type="Edm.String" MaxLength="60" FixedLength="false" Unicode="true" />\
+				<Property Name="City" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="Region" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+				<Property Name="PostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />\
+				<Property Name="Country" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />\
+			</EntityType>\
+			<EntityType Name="Product_Sales_for_1997">\
+				<Key>\
+					<PropertyRef Name="CategoryName" />\
+					<PropertyRef Name="ProductName" />\
+				</Key>\
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" FixedLength="false"\
+					Unicode="true" />\
+				Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ProductSales" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<EntityType Name="Products_Above_Average_Price">\
+				<Key>\
+					<PropertyRef Name="ProductName" />\
+				</Key>\
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="UnitPrice" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<EntityType Name="Products_by_Category">\
+				<Key>\
+					<PropertyRef Name="CategoryName" />\
+					<PropertyRef Name="Discontinued" />\
+					<PropertyRef Name="ProductName" />\
+				</Key>\
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" FixedLength="false"\
+					Unicode="true" />\
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="QuantityPerUnit" Type="Edm.String" MaxLength="20" FixedLength="false" Unicode="true" />\
+				<Property Name="UnitsInStock" Type="Edm.Int16" />\
+				<Property Name="Discontinued" Type="Edm.Boolean" Nullable="false" />\
+			</EntityType>\
+			<EntityType Name="Sales_by_Category">\
+				<Key>\
+					<PropertyRef Name="CategoryID" />\
+					<PropertyRef Name="CategoryName" />\
+					<PropertyRef Name="ProductName" />\
+				</Key>\
+				<Property Name="CategoryID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" FixedLength="false"\
+					Unicode="true" />\
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ProductSales" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<EntityType Name="Sales_Totals_by_Amount">\
+				<Key>\
+					<PropertyRef Name="CompanyName" />\
+					<PropertyRef Name="OrderID" />\
+				</Key>\
+				<Property Name="SaleAmount" Type="Edm.Decimal" Precision="19" Scale="4" />\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />\
+				<Property Name="ShippedDate" Type="Edm.DateTime" />\
+			</EntityType>\
+			<EntityType Name="Summary_of_Sales_by_Quarter">\
+				<Key>\
+					<PropertyRef Name="OrderID" />\
+				</Key>\
+				<Property Name="ShippedDate" Type="Edm.DateTime" />\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="Subtotal" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<EntityType Name="Summary_of_Sales_by_Year">\
+				<Key>\
+					<PropertyRef Name="OrderID" />\
+				</Key>\
+				<Property Name="ShippedDate" Type="Edm.DateTime" />\
+				<Property Name="OrderID" Type="Edm.Int32" Nullable="false" />\
+				<Property Name="Subtotal" Type="Edm.Decimal" Precision="19" Scale="4" />\
+			</EntityType>\
+			<Association Name="FK_Products_Categories">\
+				<End Type="NorthwindModel.Category" Role="Categories" Multiplicity="0..1" />\
+				<End Type="NorthwindModel.Product" Role="Products" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Categories">\
+						<PropertyRef Name="CategoryID" />\
+					</Principal>\
+					<Dependent Role="Products">\
+						<PropertyRef Name="CategoryID" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="CustomerCustomerDemo">\
+				<End Type="NorthwindModel.Customer" Role="Customers" Multiplicity="*" />\
+				<End Type="NorthwindModel.CustomerDemographic" Role="CustomerDemographics" Multiplicity="*" />\
+			</Association>\
+			<Association Name="FK_Orders_Customers">\
+				<End Type="NorthwindModel.Customer" Role="Customers" Multiplicity="0..1" />\
+				<End Type="NorthwindModel.Order" Role="Orders" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Customers">\
+						<PropertyRef Name="CustomerID" />\
+					</Principal>\
+					<Dependent Role="Orders">\
+						<PropertyRef Name="CustomerID" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="FK_Employees_Employees">\
+				<End Type="NorthwindModel.Employee" Role="Employees" Multiplicity="0..1" />\
+				<End Type="NorthwindModel.Employee" Role="Employees1" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Employees">\
+						<PropertyRef Name="EmployeeID" />\
+					</Principal>\
+					<Dependent Role="Employees1">\
+						<PropertyRef Name="ReportsTo" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="FK_Orders_Employees">\
+				<End Type="NorthwindModel.Employee" Role="Employees" Multiplicity="0..1" />\
+				<End Type="NorthwindModel.Order" Role="Orders" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Employees">\
+						<PropertyRef Name="EmployeeID" />\
+					</Principal>\
+					<Dependent Role="Orders">\
+						<PropertyRef Name="EmployeeID" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="EmployeeTerritories">\
+				<End Type="NorthwindModel.Territory" Role="Territories" Multiplicity="*" />\
+				<End Type="NorthwindModel.Employee" Role="Employees" Multiplicity="*" />\
+			</Association>\
+			<Association Name="FK_Order_Details_Orders">\
+				<End Type="NorthwindModel.Order" Role="Orders" Multiplicity="1" />\
+				<End Type="NorthwindModel.Order_Detail" Role="Order_Details" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Orders">\
+						<PropertyRef Name="OrderID" />\
+					</Principal>\
+					<Dependent Role="Order_Details">\
+						<PropertyRef Name="OrderID" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="FK_Order_Details_Products">\
+				<End Type="NorthwindModel.Product" Role="Products" Multiplicity="1" />\
+				<End Type="NorthwindModel.Order_Detail" Role="Order_Details" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Products">\
+						<PropertyRef Name="ProductID" />\
+					</Principal>\
+					<Dependent Role="Order_Details">\
+						<PropertyRef Name="ProductID" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="FK_Orders_Shippers">\
+				<End Type="NorthwindModel.Shipper" Role="Shippers" Multiplicity="0..1" />\
+				<End Type="NorthwindModel.Order" Role="Orders" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Shippers">\
+						<PropertyRef Name="ShipperID" />\
+					</Principal>\
+					<Dependent Role="Orders">\
+						<PropertyRef Name="ShipVia" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="FK_Products_Suppliers">\
+				<End Type="NorthwindModel.Supplier" Role="Suppliers" Multiplicity="0..1" />\
+				<End Type="NorthwindModel.Product" Role="Products" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Suppliers">\
+						<PropertyRef Name="SupplierID" />\
+					</Principal>\
+					<Dependent Role="Products">\
+						<PropertyRef Name="SupplierID" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<Association Name="FK_Territories_Region">\
+				<End Type="NorthwindModel.Region" Role="Region" Multiplicity="1" />\
+				<End Type="NorthwindModel.Territory" Role="Territories" Multiplicity="*" />\
+				<ReferentialConstraint>\
+					<Principal Role="Region">\
+						<PropertyRef Name="RegionID" />\
+					</Principal>\
+					<Dependent Role="Territories">\
+						<PropertyRef Name="RegionID" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+		</Schema>\
+		<Schema Namespace="ODataWebV3.Northwind.Model" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<EntityContainer Name="NorthwindEntities" m:IsDefaultEntityContainer="true" p6:LazyLoadingEnabled="true"\
+				xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation">\
+				<EntitySet Name="Categories" EntityType="NorthwindModel.Category" />\
+				<EntitySet Name="CustomerDemographics" EntityType="NorthwindModel.CustomerDemographic" />\
+				<EntitySet Name="Customers" EntityType="NorthwindModel.Customer" />\
+				<EntitySet Name="Employees" EntityType="NorthwindModel.Employee" />\
+				<EntitySet Name="Order_Details" EntityType="NorthwindModel.Order_Detail" />\
+				<EntitySet Name="Orders" EntityType="NorthwindModel.Order" />\
+				<EntitySet Name="Products" EntityType="NorthwindModel.Product" />\
+				<EntitySet Name="Regions" EntityType="NorthwindModel.Region" />\
+				<EntitySet Name="Shippers" EntityType="NorthwindModel.Shipper" />\
+				<EntitySet Name="Suppliers" EntityType="NorthwindModel.Supplier" />\
+				<EntitySet Name="Territories" EntityType="NorthwindModel.Territory" />\
+				<EntitySet Name="Alphabetical_list_of_products" EntityType="NorthwindModel.Alphabetical_list_of_product" />\
+				<EntitySet Name="Category_Sales_for_1997" EntityType="NorthwindModel.Category_Sales_for_1997" />\
+				<EntitySet Name="Current_Product_Lists" EntityType="NorthwindModel.Current_Product_List" />\
+				<EntitySet Name="Customer_and_Suppliers_by_Cities" EntityType="NorthwindModel.Customer_and_Suppliers_by_City" />\
+				<EntitySet Name="Invoices" EntityType="NorthwindModel.Invoice" />\
+				<EntitySet Name="Order_Details_Extendeds" EntityType="NorthwindModel.Order_Details_Extended" />\
+				<EntitySet Name="Order_Subtotals" EntityType="NorthwindModel.Order_Subtotal" />\
+				<EntitySet Name="Orders_Qries" EntityType="NorthwindModel.Orders_Qry" />\
+				<EntitySet Name="Product_Sales_for_1997" EntityType="NorthwindModel.Product_Sales_for_1997" />\
+				<EntitySet Name="Products_Above_Average_Prices" EntityType="NorthwindModel.Products_Above_Average_Price" />\
+				<EntitySet Name="Products_by_Categories" EntityType="NorthwindModel.Products_by_Category" />\
+				<EntitySet Name="Sales_by_Categories" EntityType="NorthwindModel.Sales_by_Category" />\
+				<EntitySet Name="Sales_Totals_by_Amounts" EntityType="NorthwindModel.Sales_Totals_by_Amount" />\
+				<EntitySet Name="Summary_of_Sales_by_Quarters" EntityType="NorthwindModel.Summary_of_Sales_by_Quarter" />\
+				<EntitySet Name="Summary_of_Sales_by_Years" EntityType="NorthwindModel.Summary_of_Sales_by_Year" />\
+				<AssociationSet Name="FK_Products_Categories" Association="NorthwindModel.FK_Products_Categories">\
+					<End Role="Categories" EntitySet="Categories" />\
+					<End Role="Products" EntitySet="Products" />\
+				</AssociationSet>\
+				<AssociationSet Name="CustomerCustomerDemo" Association="NorthwindModel.CustomerCustomerDemo">\
+					<End Role="CustomerDemographics" EntitySet="CustomerDemographics" />\
+					<End Role="Customers" EntitySet="Customers" />\
+				</AssociationSet>\
+				<AssociationSet Name="FK_Orders_Customers" Association="NorthwindModel.FK_Orders_Customers">\
+					<End Role="Customers" EntitySet="Customers" />\
+					<End Role="Orders" EntitySet="Orders" />\
+				</AssociationSet>\
+				<AssociationSet Name="FK_Employees_Employees" Association="NorthwindModel.FK_Employees_Employees">\
+					<End Role="Employees" EntitySet="Employees" />\
+					<End Role="Employees1" EntitySet="Employees" />\
+				</AssociationSet>\
+				<AssociationSet Name="FK_Orders_Employees" Association="NorthwindModel.FK_Orders_Employees">\
+					<End Role="Employees" EntitySet="Employees" />\
+					<End Role="Orders" EntitySet="Orders" />\
+				</AssociationSet>\
+				<AssociationSet Name="EmployeeTerritories" Association="NorthwindModel.EmployeeTerritories">\
+					<End Role="Employees" EntitySet="Employees" />\
+					<End Role="Territories" EntitySet="Territories" />\
+				</AssociationSet>\
+				<AssociationSet Name="FK_Order_Details_Orders" Association="NorthwindModel.FK_Order_Details_Orders">\
+					<End Role="Order_Details" EntitySet="Order_Details" />\
+					<End Role="Orders" EntitySet="Orders" />\
+				</AssociationSet>\
+				<AssociationSet Name="FK_Order_Details_Products" Association="NorthwindModel.FK_Order_Details_Products">\
+					<End Role="Order_Details" EntitySet="Order_Details" />\
+					<End Role="Products" EntitySet="Products" />\
+				</AssociationSet>\
+				<AssociationSet Name="FK_Orders_Shippers" Association="NorthwindModel.FK_Orders_Shippers">\
+					<End Role="Orders" EntitySet="Orders" />\
+					<End Role="Shippers" EntitySet="Shippers" />\
+				</AssociationSet>\
+				<AssociationSet Name="FK_Products_Suppliers" Association="NorthwindModel.FK_Products_Suppliers">\
+					<End Role="Products" EntitySet="Products" />\
+					<End Role="Suppliers" EntitySet="Suppliers" />\
+				</AssociationSet>\
+				<AssociationSet Name="FK_Territories_Region" Association="NorthwindModel.FK_Territories_Region">\
+					<End Role="Region" EntitySet="Regions" />\
+					<End Role="Territories" EntitySet="Territories" />\
+				</AssociationSet>\
+			</EntityContainer>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+var aOverwriteOnTermLevel = ['\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.NorthwindEntities/X">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+						<PropertyValue Property="Deleted" String="1"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe1">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test/NorthwindEntities">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+						<PropertyValue Property="Deleted" String="1"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe1">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+						<PropertyValue Property="Deleted" String="1"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe1">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>', '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.NorthwindEntities/X">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe2">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test/NorthwindEntities">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe2">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe2">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>'];
+
+
+var sEdmtypeForNavigationproperties = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
+	</edmx:Reference>	\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="NorthwindModel.Product">\
+				<Annotation Term="UI.LineItem">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product ID" />\
+							<PropertyValue Property="Value" Path="ProductID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Name" />\
+							<PropertyValue Property="Value" Path="ProductName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Supplier/SupplierID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier Name" />\
+							<PropertyValue Property="Value" Path="Supplier/CompanyName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Category/CategoryName" />\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="NorthwindModel.Supplier">\
+				<Annotation Term="UI.LineItem">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="SupplierID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier Name" />\
+							<PropertyValue Property="Value" Path="CompanyName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Products/ProductID" />\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sNestedAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
+	</edmx:Reference>	\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="NorthwindModel.Product">\
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">\
+					<Collection>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Label" String="Business Partner"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"\
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High"/>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CategoryName">\
+					<!-- We are keeping this (invalid) example in to document the behavior of the parser in cases that are not allowed in actual annotation sources -->\
+					<Term Name="TextArrangement" Type="UI.TextArrangementType" AppliesTo="Annotation EntityType">\
+						<Annotation Term="Core.Description1" String="Describes the arrangement of the property values and its text"/>\
+						<Annotation Term="Core.Description2" String="If used for a single property the Common.Text annotation is annotated"/>\
+					</Term>\
+				</Annotation>\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text2" Path="CategoryName">\
+					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement" EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast" />\
+				</Annotation>\
+				<Annotation Term="unittest.ui5.parentAnnotation">\
+					<Annotation Term="unittest.ui5.constantExpressions">\
+						<String>Rosinenbroetchen</String>\
+						<Binary>1100101</Binary>\
+						<Bool>almost true</Bool>\
+						<Date>2016-04-14</Date>\
+						<DateTimeOffset>2016-04-14T16:19:00.000-02:00</DateTimeOffset>\
+						<Decimal>3.14159</Decimal>\
+						<Duration>P11D23H59M59.999999999999S</Duration>\
+						<EnumMember>unittest.ui5.enum/test1</EnumMember>\
+						<Float>6.28318</Float>\
+						<Guid>21EC2020-3AEA-1069-A2DD-08002B30309D</Guid>\
+						<Int>23</Int>\
+						<TimeOfDay>23:42:58</TimeOfDay>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression1">\
+						<Apply Function="odata.concat">\
+							<String>***</String>\
+							<String>, </String>\
+							<String>Drugs </String>\
+							<String> and </String>\
+							<String>Rock \'n Roll</String>\
+						</Apply>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression2">\
+						<Collection>\
+							<String>One</String>\
+							<String>Two</String>\
+							<String>Five</String>\
+						</Collection>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression3">\
+						<If>\
+							<Path>IsFemale</Path>\
+							<String>Iron Man</String>\
+							<String>Someone else</String>\
+						</If>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression4">\
+						<Null/>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression5">\
+						<Record>\
+							<PropertyValue Property="GivenName" Path="FirstName" />\
+							<PropertyValue Property="Surname" Path="LastName" />\
+							<PropertyValue Property="Manager" Path="DirectSupervisor" />\
+							<PropertyValue Property="CostCenter">\
+								<UrlRef>\
+									<Apply Function="odata.fillUriTemplate">\
+										<String>http://host/anotherservice/CostCenters(\'{ccid}\')</String>\
+										<LabeledElement Name="ccid" Path="CostCenterID" />\
+									</Apply>\
+								</UrlRef>\
+							</PropertyValue>\
+						</Record>\
+					</Annotation>\
 				</Annotation>\
 			</Annotations>\
 		</Schema>\

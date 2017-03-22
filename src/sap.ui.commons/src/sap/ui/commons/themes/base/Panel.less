@@ -4,46 +4,28 @@
 	display: inline-block;
 	position: relative;
 	vertical-align: top;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	border: 1px solid @sapUiMediumBorder;
-	-moz-border-radius: @sapUiPanelBorderRadius @sapUiPanelBorderRadius 0 0;
-	-webkit-border-radius: @sapUiPanelBorderRadius @sapUiPanelBorderRadius 0 0;
 	border-radius: @sapUiPanelBorderRadius @sapUiPanelBorderRadius 0 0;
 }
 
 .sapUiPanel:focus {
-	outline-width: 1px;
-	outline-style: dotted;
-	outline-color: invert;
+	outline: 1px dotted @sapUiFocus;
 }
 
 .sapUiPanel.sapUiPanelColl,
 .sapUiPanelColl > .sapUiPanelHdr  {
-	-moz-border-radius: @sapUiPanelBorderRadius;
-	-webkit-border-radius: @sapUiPanelBorderRadius;
 	border-radius: @sapUiPanelBorderRadius;
 }
 
 .sapUiPanelHdr {
-	-moz-border-radius: @sapUiPanelBorderRadius @sapUiPanelBorderRadius 0 0;
-	-webkit-border-radius: @sapUiPanelBorderRadius @sapUiPanelBorderRadius 0 0;
 	border-radius: @sapUiPanelBorderRadius @sapUiPanelBorderRadius 0 0;
-	display: -moz-box;
-	display: -ms-box;
 	display: -webkit-box;
-	display: box;
-	-moz-box-orient: horizontal;
-	-moz-box-align: center;
-	-moz-box-sizing: border-box;
-	-ms-box-orient: horizontal;
-	-ms-box-align: center;
+	display: flex;
 	-webkit-box-orient: horizontal;
 	-webkit-box-align: center;
-	-webkit-box-sizing: border-box;
-	box-orient: horizontal;
-	box-align: center;
+	flex-direction: row;
+	align-items: center;
 	box-sizing: border-box;
 	background-color: @sapUiExtraLightBG;
 	white-space: nowrap;
@@ -61,8 +43,6 @@
 .sapUiPanelHdrItem,
 .sapUiPanelHdrRightItem {
 	display: block;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -99,10 +79,8 @@
 	margin: 0; /* remove the H1 default style */
 	padding: 0;
 	font-size: 11px;
-	-moz-box-flex: 1;
-	-ms-box-flex: 1;
 	-webkit-box-flex: 1;
-	box-flex: 1;
+	flex-grow: 1;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-right: 10px;
@@ -111,10 +89,8 @@
 }
 
 .sapUiPanelTb {
-	-moz-box-flex: 1000;
-	-ms-box-flex: 1000;
 	-webkit-box-flex: 1000;
-	box-flex: 1000;
+	flex-grow: 1000;
 	min-width: 30px; /* the minimum width is also set to the width of the largest button through JS calculations */
 	margin: 2px 10px 0 10px;
 	white-space: normal;
@@ -135,8 +111,6 @@
 	border-top-color: @sapUiMediumBorder;
 	display: block;
 	overflow: auto;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
 

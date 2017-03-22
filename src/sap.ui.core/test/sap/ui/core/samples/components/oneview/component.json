@@ -1,0 +1,11 @@
+{
+	"name": "samples.components.oneview",
+	"version": "0.1.0",
+	"description": "Example with One View",
+	"keywords": [
+		"button",
+		"example"
+	],
+	"dependencies": {
+	}
+}

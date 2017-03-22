@@ -29,8 +29,13 @@ module.exports = function(grunt, config) {
 					src: '**/themes/*/library.source.less',
 					dest: 'target/openui5-' + library.name + '/resources'
 				}
-			]
-		}
+			],
+			options: {
+				library: {
+					name: library.name
+				}
+			}
+		};
 	});
 
 	return openui5_theme;

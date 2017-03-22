@@ -1,50 +1,57 @@
-/* ============================================= */
-/* CSS for control sap.m/InputListItem.control   */
-/* ============================================= */
+/* ==================================== */
+/* CSS for control sap.m/InputListItem  */
+/* Base theme                           */
+/* ==================================== */
+
 .sapMILI {
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
-	height: 2.75em;
+	height: 3rem;
 }
 
 .sapMILILabel {
 	-webkit-box-flex: 1;
-	-moz-box-flex: 1;
-	-ms-flex: auto;
 	flex: auto;
-	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: block;
+	font-size: 1.125rem;
+	max-width: 60%;	/*we can have very long title so lets give a limit */
+	color: @sapUiListTextColor;
 }
 
-.sap-desktop .sapMLIBCursor .sapMILILabel {
+.sapMLIBActionable .sapMILILabel {
 	cursor: pointer;
 }
 
 .sapMILI > .sapMLIBContent {
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-align: center;
-	-moz-box-align: center;
-	-ms-flex-align: center;
 	align-items: center;
 }
 
 .sapMILIDiv {
 	-webkit-box-flex: 9;
-	-moz-box-flex: 9;
-	-ms-flex: auto;
-	flex: auto;
-	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
+	flex: 1 0 auto;
 	text-align: right;
+	margin: 0 0 0 1rem;
 }
 
 html[dir=rtl] .sapMILIDiv {
 	text-align: left;
+}
+
+.sapMLIBActive .sapMILILabel {
+	color: @sapUiListActiveTextColor;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMILI {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMILILabel {
+	font-size: @sapMFontMediumSize;
 }

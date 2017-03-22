@@ -1,4 +1,4 @@
-/* global module start test asyncTest expect ok equal deepEqual */
+QUnit.config.testTimeout = 6000;
 
 /* eslint-disable no-unused-vars */
 function runODataMessagesTests() {
@@ -12,35 +12,34 @@ function runODataMessagesTests() {
 
 	var oInput = new sap.m.Input({value:"{json>/Products(1)/ProductName}"});
 	oInput.placeAt("content");
-	
+
 	var oInput2 = new sap.m.Input({value:"{xml>/Products(1)/ProductName}"});
 	oInput2.placeAt("content");
-	
-	
-	
-	var sServiceURI = "fakeService://testdata/odata/northwind/";
+
+	var sServiceURI = "fakeservice://testdata/odata/northwind/";
 	// var sServiceURI = "/testsuite/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
 	var mModelOptions = {
+		defaultBindingMode: sap.ui.model.BindingMode.TwoWay,
 		async: true,
 		useBatch: false
 	};
 
 	var oModelJson, oModelXml;
-	
+
 	// Create MessageManager instance and set Message Model in TimeOut...
 	sap.ui.getCore().getMessageManager();
-	
+
 	// Start delayed so the message model is available
 	setTimeout(function() {
-		start();
+		QUnit.start();
 	}, 100);
 
 
 
 
 	var oJsonLayout = new sap.ui.layout.VerticalLayout({
-		content: { 
-			path: "json>/Products", 
+		content: {
+			path: "json>/Products",
 			template: new sap.ui.commons.Button({
 				text: { path: "json>ProductName" }
 			})
@@ -48,72 +47,1173 @@ function runODataMessagesTests() {
 	});
 
 	var oXmlLayout = new sap.ui.layout.VerticalLayout({
-		content: { 
-			path: "xml>/Products", 
+		content: {
+			path: "xml>/Products",
 			template: new sap.ui.commons.Button({
 				text: { path: "xml>ProductName" }
 			})
 		}
 	});
-	
-	var oMainLayout = sap.ui.layout.HorizontalLayout({
+
+	var oMainLayout = new sap.ui.layout.HorizontalLayout({
 		content: [ oJsonLayout, oXmlLayout ]
 	});
 	oMainLayout.placeAt("content");
 
 
-	asyncTest("JSON format", function() {
+	QUnit.test("JSON format", function(assert) {
+		var done = assert.async();
 		mModelOptions.json = true;
 		oModelJson = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelJson, "json");
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		ok(oMessageModel.getProperty("/").length === undefined, "No message has been added");
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No message has been added");
 
-		ok(oInput.getValueState() === "None", "ValueState has not been set");
+		assert.ok(oInput.getValueState() === "None", "ValueState has not been set");
 
 		var iRequests = 0;
 		oModelJson.attachRequestCompleted(function(oRequest) {
 			iRequests++;
 			if (oRequest.getParameter("url").indexOf("$count") == -1) {
-				ok(iRequests === 2, "Two Requests (with messages) has been processed");
+				assert.ok(iRequests === 2, "Two Requests (with messages) has been processed");
 				setTimeout(function() {
-					ok(oInput.getValueState() === "Error", "ValueState has been set to 'Error'");
+					assert.ok(oInput.getValueState() === "Error", "ValueState has been set to 'Error'");
 
 					var iMessages = oMessageModel.getProperty("/").length;
-					ok(iMessages === 21, "One message has been added for every Item and one for the Collection");
-					start();
+					assert.equal(iMessages, 21, "One message has been added for every Item and one for the Collection");
+
+					oModelJson.destroy();
+					done();
 				}, 0);
 			}
 		});
 	});
 
-	asyncTest("XML format", function() {
+	QUnit.test("XML format", function(assert) {
+		var done = assert.async();
 		mModelOptions.json = false;
 		oModelXml = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 		sap.ui.getCore().setModel(oModelXml, "xml");
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
-		ok(oInput2.getValueState() === "None", "ValueState has not been set");
+		assert.ok(oInput2.getValueState() === "None", "ValueState has not been set");
 
 		var iRequests = 0;
 		oModelXml.attachRequestCompleted(function(oRequest) {
 			iRequests++;
 			var iMessages = oMessageModel.getProperty("/").length;
 			if (oRequest.getParameter("url").indexOf("$count") == -1) {
-				ok(iRequests === 2, "Two Requests (with messages) has been processed");
+				assert.ok(iRequests === 2, "Two Requests (with messages) has been processed");
 				setTimeout(function() {
-					ok(oInput2.getValueState() === "Error", "ValueState has been set to 'Error'");
+					assert.ok(oInput2.getValueState() === "Error", "ValueState has been set to 'Error'");
 
 					var iMessages = oMessageModel.getProperty("/").length;
-					ok(iMessages === 42, "One message has been added for every Item and one for the Collection");
-					start();
+					assert.equal(iMessages, 21, "One message has been added for every Item and one for the Collection");
+
+					oModelXml.destroy();
+					done();
 				}, 0);
 			}
 		});
 	});
-	
-	
-	
+
+
+	QUnit.test("Function Imports", function(assert) {
+		var done = assert.async();
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
+			useBatch: false,
+			json: false
+		});
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		oModel.attachMetadataLoaded(function() {
+			var mMessages = oMessageModel.getProperty("/");
+			var oMetadata = oModel.getServiceMetadata();
+
+			testFunctionTarget({
+				url: "/EditProduct",
+				parameters: {
+					"ProductUUID": "00000000-0000-0000-0000-000000000001",
+				},
+
+				numMessages: 1,
+				lastTarget: "/Products(guid'10000000-0000-0000-0000-000000000000')",
+				final: false
+			});
+
+			testFunctionTarget({
+				url: "/EditProduct",
+				parameters: {
+					"ProductUUID": "00000000-0000-0000-0000-000000000002",
+				},
+
+				numMessages: 2,
+				lastTarget: "/Products(guid'20000000-0000-0000-0000-000000000000')",
+				final: false
+			});
+
+			testFunctionTarget({
+				url: "/EditProduct",
+				parameters: {
+					"ProductUUID": "30000000-0000-0000-0000-000000000003",
+				},
+
+				numMessages: 3,
+				lastTarget: "/Products(guid'30000000-0000-0000-0000-000000000003')",
+				final: true
+			});
+
+
+			function testFunctionTarget(mTestOptions) {
+				// Set default values
+				mTestOptions.method      = mTestOptions.method      ? mTestOptions.method      : "POST";
+				mTestOptions.parameters  = mTestOptions.parameters  ? mTestOptions.parameters  : {};
+				mTestOptions.numMessages = mTestOptions.numMessages ? mTestOptions.numMessages : {};
+				mTestOptions.final       = mTestOptions.final       ? mTestOptions.final       : false;
+				mTestOptions.lastTarget  = mTestOptions.lastTarget  ? mTestOptions.lastTarget  : "INVALIDTARGET";
+
+				testFunctionTarget.aTests = testFunctionTarget.aTests ? testFunctionTarget.aTests : [];
+				testFunctionTarget.aTests.push(mTestOptions);
+
+				var fnNextTest = function() {
+					var mTestOptions;
+					if (testFunctionTarget.aTests.length > 0) {
+						mTestOptions = testFunctionTarget.aTests.shift();
+					} else {
+						testFunctionTarget._running = false;
+					}
+
+					oModel.callFunction(mTestOptions.url, {
+						method: mTestOptions.method,
+						urlParameters: mTestOptions.parameters,
+						success: function() {
+							var aMessages = oMessageModel.getProperty("/");
+							assert.equal(aMessages.length, mTestOptions.numMessages, mTestOptions.numMessages + " messages set after the function import");
+							assert.equal(aMessages[aMessages.length - 1].target, mTestOptions.lastTarget, "Message has correct target");
+
+							if (mTestOptions.final) {
+								testFunctionTarget._running = false;
+								oModel.destroy();
+								done();
+							} else {
+								fnNextTest();
+							}
+						}
+					});
+
+				};
+
+				if (!testFunctionTarget._running) {
+					testFunctionTarget._running = true;
+					fnNextTest();
+				}
+
+			}
+		});
+	});
+
+
+	var fnTestTechnicalErrors = function(bJson, assert) {
+		var done = assert.async();
+
+		assert.expect(20);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/technical-errors/", {
+			useBatch: false,
+			json: bJson
+		});
+
+		var iStartCounter = 4;
+		var fnStart = function() {
+			if (!--iStartCounter) {
+				oModel.destroy();
+				done();
+			}
+		};
+
+		var iExpectedMessages = 0;
+
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		oModel.attachMetadataLoaded(function() {
+			var mMessages = oMessageModel.getProperty("/");
+			var oMetadata = oModel.getServiceMetadata();
+
+			var fnCheckAddedMessages = function() {
+				iExpectedMessages += 2;
+
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
+
+				assert.equal(aMessages[iExpectedMessages - 2].getMessage(), "Field \"SALESORDERID\" cannot be changed since it is read only", "Correct message text");
+				assert.equal(aMessages[iExpectedMessages - 2].getType(), sap.ui.core.MessageType.Error, "Correct message severity");
+
+				assert.equal(aMessages[iExpectedMessages - 1].getMessage(), "Some other error", "Correct message text");
+				assert.equal(aMessages[iExpectedMessages - 1].getType(), sap.ui.core.MessageType.Error, "Correct message severity");
+
+				fnStart();
+			};
+
+			var fnCheckAddedMessages2 = function() {
+				iExpectedMessages += 6;
+
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
+
+				// Important: In this case the message order has been changed since errors come before warnings
+				var mAddesMessages = {
+					"Error|SY/530|/Error2(400)/|Warning": false,
+					"Error|/IWBEP/CX_MGW_BUSI_EXCEPTION|/Error2(400)/|Business Error with details in TEA application": false,
+					"Error||/Error2(400)/Property|Multiple error/warning messages": false,
+					"Error||/Error2(400)/Message|Inner error": false,
+					"Error||/Error2(400)/Type|Inner error 2": false,
+					"Warning||/Error2(400)/Type|Warning": false
+				};
+
+				for (var i = aMessages.length - 6; i < aMessages.length; ++i) {
+					var oM = aMessages[i]
+					var sIdentifier = [oM.getType(), oM.getCode(), oM.getTarget(), oM.getMessage()].join("|");
+
+					assert.equal(mAddesMessages[sIdentifier], false, "Message is as expected");
+					mAddesMessages[sIdentifier] = true;
+				}
+
+				var bAllMessagesArrived = Object.keys(mAddesMessages).reduce(function(vPrev, sCurrent) {
+					return vPrev && mAddesMessages[sCurrent] === true;
+				}, true);
+				assert.ok(bAllMessagesArrived, "All expected messages are there");
+
+				fnStart();
+			};
+
+			oModel.read("/Error(400)", {
+				success: function() {
+					assert.ok(false, "This should return an error from the server and thus fail");
+				},
+				error: fnCheckAddedMessages
+			});
+
+			oModel.read("/Error(500)", {
+				success: function() {
+					assert.ok(false, "This should return an error from the server and thus fail");
+				},
+				error: fnCheckAddedMessages
+			});
+
+			oModel.read("/Error2(400)", {
+				success: function() {
+					assert.ok(false, "This should return an error from the server and thus fail");
+				},
+				error: fnCheckAddedMessages2
+			});
+
+			oModel.read("/Error(900)", {
+				success: function() {
+					assert.ok(false, "This should return an error from the server and thus fail");
+				},
+				error: function() {
+					var aMessages = oMessageModel.getProperty("/");
+					assert.equal(aMessages.length, iExpectedMessages, "There should be no extra error messages for status 900");
+
+					fnStart();
+				}
+			});
+
+		});
+	};
+
+	QUnit.test("Technical Errors (JSON)", fnTestTechnicalErrors.bind(this, true));
+	QUnit.test("Technical Errors (XML)", fnTestTechnicalErrors.bind(this, false));
+
+	var fnTestLongtextUrl = function(bJson, assert) {
+		var done = assert.async();
+
+		assert.expect(15);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/technical-errors/", {
+			useBatch: false,
+			json: bJson
+		});
+
+		var iStartCounter = 4;
+		var fnStart = function() {
+			if (!--iStartCounter) {
+				oModel.destroy();
+				done();
+			}
+		};
+
+		var iExpectedMessages = 0;
+
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		oModel.attachMetadataLoaded(function() {
+			var mMessages = oMessageModel.getProperty("/");
+			var oMetadata = oModel.getServiceMetadata();
+
+			var fnCheckAddedMessages = function() {
+				iExpectedMessages += 2;
+
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
+
+				// All messages should have longtext URLs
+				for (var i = aMessages.length - 2; i < aMessages.length; ++i) {
+					assert.ok(aMessages[i].getDescriptionUrl(), "Message has longtext URL");
+				}
+
+				fnStart();
+			};
+
+			var fnCheckAddedMessages2 = function() {
+				iExpectedMessages += 6;
+
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, iExpectedMessages, "There should be more error messages");
+
+				// No messages should have longtext URLs
+				for (var i = aMessages.length - 6; i < aMessages.length; ++i) {
+					assert.ok(!aMessages[i].getDescriptionUrl(), "Message has no longtext URL");
+				}
+
+				fnStart();
+			};
+
+			oModel.read("/Error(400)", {
+				success: function() {
+					assert.ok(false, "This should return an error from the server and thus fail");
+				},
+				error: fnCheckAddedMessages
+			});
+
+			oModel.read("/Error(500)", {
+				success: function() {
+					assert.ok(false, "This should return an error from the server and thus fail");
+				},
+				error: fnCheckAddedMessages
+			});
+
+			oModel.read("/Error2(400)", {
+				success: function() {
+					assert.ok(false, "This should return an error from the server and thus fail");
+				},
+				error: fnCheckAddedMessages2
+			});
+
+			oModel.read("/Error(900)", {
+				success: function() {
+					assert.ok(false, "This should return an error from the server and thus fail");
+				},
+				error: function() {
+					var aMessages = oMessageModel.getProperty("/");
+					assert.equal(aMessages.length, iExpectedMessages, "There should be no extra error messages for status 900");
+
+					fnStart();
+				}
+			});
+
+		});
+	};
+
+
+	QUnit.test("LongText URL (JSON)", fnTestLongtextUrl.bind(this, true));
+	QUnit.test("LongText URL (XML)", fnTestLongtextUrl.bind(this, false));
+
+	QUnit.test("ODataMessageParser reads headers case-insensitive", function(assert) {
+		var done = assert.async();
+		var sServiceURI = "fakeservice://testdata/odata/northwind";
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+			// Get Messages sent to console
+			var fnError = jQuery.sap.log.error;
+			var fnWarn = jQuery.sap.log.warning;
+			var fnDebug = jQuery.sap.log.debug;
+			var fnInfo = jQuery.sap.log.info;
+
+			var iCounter = 0;
+			var fnCount = function(sMessage) {
+				if (sMessage.indexOf("[OData Message] ") > -1) {
+					iCounter++;
+				}
+			}
+
+			jQuery.sap.log.error = jQuery.sap.log.warning = jQuery.sap.log.debug = jQuery.sap.log.info = fnCount;
+
+			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+
+			var oRequest = {
+				requestUri: "fakeservice://testdata/odata/northwind/Test"
+			};
+
+			var oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"Sap-Message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+			oParser.parse(oResponse, oRequest);
+			assert.equal(iCounter, 1, "Message from 'Sap-Message' header was added");
+
+			var oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"sap-message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+			oParser.parse(oResponse, oRequest);
+			assert.equal(iCounter, 2, "Message from 'sap-message' header was added");
+
+
+			var oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"SAP-Message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+			oParser.parse(oResponse, oRequest);
+			assert.equal(iCounter, 3, "Message from 'SAP-Message' header was added");
+			done();
+		});
+	});
+
+	QUnit.test("ODataMessageParser without ODataModel", function(assert) {
+		var done = assert.async();
+		var sServiceURI = "fakeservice://testdata/odata/northwind";
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+			// Get Messages sent to console
+			var fnError = jQuery.sap.log.error;
+			var fnWarn = jQuery.sap.log.warning;
+			var fnDebug = jQuery.sap.log.debug;
+			var fnInfo = jQuery.sap.log.info;
+
+			var iCounter = 0;
+			var fnCount = function(sMessage) {
+				if (sMessage.indexOf("[OData Message] ") > -1) {
+					iCounter++;
+				}
+			}
+
+			jQuery.sap.log.error = jQuery.sap.log.warning = jQuery.sap.log.debug = jQuery.sap.log.info = fnCount;
+
+			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+
+			var oRequest = {
+				requestUri: "fakeservice://testdata/odata/northwind/Test"
+			};
+
+			var oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"sap-message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+			oParser.parse(oResponse, oRequest);
+			assert.equal(iCounter, 1, "Message from 'sap-message' header was added")
+
+			oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is an error test message",
+						"severity":	"error",
+						"details": [{
+							"code":		"999",
+							"message":	"This is a warning test message",
+							"severity":	"warning",
+						}, {
+							"code":		"999",
+							"message":	"This is a success test message",
+							"severity":	"success"
+						}, {
+							"code":		"999",
+							"message":	"This is an information test message",
+							"severity":	"info"
+						}]
+					})
+				}
+			};
+			oParser.setHeaderField("message");
+			oParser.parse(oResponse, oRequest);
+			assert.equal(iCounter, 5, "Message from 'message' header was added")
+
+			oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"invalid": "{ invalid: Json }"
+				}
+			};
+			oParser.setHeaderField("invalid");
+			oParser.parse(oResponse, oRequest);
+			assert.equal(iCounter, 5, "No message from 'invalid' header was added")
+
+			oParser.setHeaderField("none");
+			oParser.parse(oResponse, oRequest);
+			assert.equal(iCounter, 5, "No message from non-existant 'none' header was added")
+
+
+			// Clean up
+			jQuery.sap.log.error = fnError;
+			jQuery.sap.log.warning = fnWarn;
+			jQuery.sap.log.debug = fnDebug;
+			jQuery.sap.log.info = fnInfo;
+
+			oMetadata.destroy();
+			oParser.destroy();
+			done();
+		});
+
+
+
+	});
+
+
+	// TODO: Function imports with action-for annotation
+
+
+	QUnit.test("Function Imports with action-for annotation", function(assert) {
+		var done = assert.async();
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/function-imports/", {
+			useBatch: false,
+			json: false
+		});
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		oModel.attachMetadataLoaded(function() {
+			var mMessages = oMessageModel.getProperty("/");
+			var oMetadata = oModel.getServiceMetadata();
+
+			testFunctionTarget({
+				url: "/ActionForFunction",
+				parameters: {
+					"SupplierUUID": "00000000-0000-0000-0000-000000000001",
+				},
+
+				numMessages: 1,
+				lastTarget: "/Suppliers(guid'00000000-0000-0000-0000-000000000001')",
+				final: false
+			});
+
+			testFunctionTarget({
+				url: "/ActionForFunction",
+				parameters: {
+					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
+				},
+
+				numMessages: 2,
+				lastTarget: "/Products(999)/ProductName",
+				final: false
+			});
+
+			testFunctionTarget({
+				url: "/ActionForFunction",
+				parameters: {
+					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
+				},
+
+				numMessages: 2,
+				lastTarget: "/Products(999)/ProductName",
+				final: true
+			});
+
+
+			function testFunctionTarget(mTestOptions) {
+				// Set default values
+				mTestOptions.method      = mTestOptions.method      ? mTestOptions.method      : "POST";
+				mTestOptions.parameters  = mTestOptions.parameters  ? mTestOptions.parameters  : {};
+				mTestOptions.numMessages = mTestOptions.numMessages ? mTestOptions.numMessages : {};
+				mTestOptions.final       = mTestOptions.final       ? mTestOptions.final       : false;
+				mTestOptions.lastTarget  = mTestOptions.lastTarget  ? mTestOptions.lastTarget  : "INVALIDTARGET";
+
+				testFunctionTarget.aTests = testFunctionTarget.aTests ? testFunctionTarget.aTests : [];
+				testFunctionTarget.aTests.push(mTestOptions);
+
+				var fnNextTest = function() {
+					var mTestOptions;
+					if (testFunctionTarget.aTests.length > 0) {
+						mTestOptions = testFunctionTarget.aTests.shift();
+					} else {
+						testFunctionTarget._running = false;
+					}
+
+					oModel.callFunction(mTestOptions.url, {
+						method: mTestOptions.method,
+						urlParameters: mTestOptions.parameters,
+						success: function() {
+							var aMessages = oMessageModel.getProperty("/");
+							assert.equal(aMessages.length, mTestOptions.numMessages, mTestOptions.numMessages + " messages set after the function import");
+							assert.equal(aMessages[aMessages.length - 1].target, mTestOptions.lastTarget, "Message has correct target");
+
+							if (mTestOptions.final) {
+								testFunctionTarget._running = false;
+								oModel.destroy();
+								done();
+							} else {
+								fnNextTest();
+							}
+						}
+					});
+
+				};
+
+				if (!testFunctionTarget._running) {
+					testFunctionTarget._running = true;
+					fnNextTest();
+				}
+
+			}
+		});
+	});
+
+	// TODO: Function imports with multiple key fields
+
+
+	var fnTestBatchGroups = function(bUseBatch, bJSON, assert) {
+		var done = assert.async();
+
+		assert.expect(bUseBatch ? 9 : 5);
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
+			useBatch: bUseBatch,
+			json: bJSON
+		});
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		oModel.attachMetadataLoaded(function() {
+			var aMessages = oMessageModel.getProperty("/");
+
+			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded")
+
+			oModel.setDeferredBatchGroups(["deferredId"]);
+			oModel.read("/Products(1)", { batchGroupId : "deferredId" });
+			oModel.read("/Products(2)", { batchGroupId : "deferredId" });
+			oModel.read("/Products(3)", { batchGroupId : "deferredId" });
+
+			oModel.attachBatchRequestSent(function() {
+				assert.ok(bUseBatch, "Only receive batchRequestSent event in batch mode");
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, 0, "No messages when requests have been sent");
+			});
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				assert.ok(bUseBatch, "Only receive batchRequestCompleted event in batch mode");
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+
+				onCompleted();
+			});
+
+			var iRequestsCompleted = 0;
+			oModel.attachRequestCompleted(function(oEvent) {
+				++iRequestsCompleted;
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+
+				if (!bUseBatch && iRequestsCompleted === 3) {
+					onCompleted();
+				}
+			});
+
+			oModel.submitChanges();
+		});
+
+		function onCompleted() {
+			oModel.destroy();
+			done();
+		}
+	}
+
+	QUnit.test("Message with groups - Batch: off, JSON: true",  fnTestBatchGroups.bind(this, false, true));
+	QUnit.test("Message with groups - Batch: off, JSON: false", fnTestBatchGroups.bind(this, false, false));
+	QUnit.test("Message with groups - Batch: on,  JSON: true",  fnTestBatchGroups.bind(this, true,  true));
+	QUnit.test("Message with groups - Batch: on,  JSON: false", fnTestBatchGroups.bind(this, true,  false));
+
+
+
+	var fnTestWriteBatchGroups = function(bUseBatch, bJSON, assert) {
+		var done = assert.async();
+
+		assert.expect(bUseBatch ? 9 : 5);
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
+			useBatch: bUseBatch,
+			json: bJSON
+		});
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		oModel.attachMetadataLoaded(function() {
+			var aMessages = oMessageModel.getProperty("/");
+
+			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded")
+
+			oModel.setDeferredBatchGroups(["deferredId"]);
+			oModel.update("/Products(1)", { ProductName: "Updated 1" }, { batchGroupId : "deferredId" });
+			oModel.update("/Products(2)", { ProductName: "Updated 2" }, { batchGroupId : "deferredId" });
+			oModel.update("/Products(3)", { ProductName: "Updated 3" }, { batchGroupId : "deferredId" });
+
+			oModel.attachBatchRequestSent(function() {
+				assert.ok(bUseBatch, "Only receive batchRequestSent event in batch mode");
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, 0, "No messages when requests have been sent");
+			});
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				assert.ok(bUseBatch, "Only receive batchRequestCompleted event in batch mode");
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+
+				onCompleted();
+			});
+
+			var iRequestsCompleted = 0;
+			oModel.attachRequestCompleted(function(oEvent) {
+				++iRequestsCompleted;
+				var aMessages = oMessageModel.getProperty("/");
+				assert.equal(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+
+				if (!bUseBatch && iRequestsCompleted === 3) {
+					onCompleted();
+				}
+			});
+
+			oModel.submitChanges();
+		});
+
+		function onCompleted() {
+			oModel.destroy();
+			done();
+		}
+	}
+
+	QUnit.test("Message with groups (write) - Batch: off, JSON: true",  fnTestWriteBatchGroups.bind(this, false, true));
+	QUnit.test("Message with groups (write) - Batch: off, JSON: false", fnTestWriteBatchGroups.bind(this, false, false));
+	QUnit.test("Message with groups (write) - Batch: on,  JSON: true",  fnTestWriteBatchGroups.bind(this, true,  true));
+	QUnit.test("Message with groups (write) - Batch: on,  JSON: false", fnTestWriteBatchGroups.bind(this, true,  false));
+
+
+
+	var fnTestFunctionImport = function(assert) {
+		var done = assert.async();
+
+		assert.expect(10);
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		oModel.attachMetadataLoaded(function() {
+			var aMessages = oMessageModel.getProperty("/");
+
+			assert.equal(aMessages.length, 0, "No messages are set at the after metadata was loaded")
+
+			oModel.read("/Products(1)", {
+				success: function() {
+					var aMessages = oMessageModel.getProperty("/");
+					var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+					assert.equal(aMessages.length, 2, "Two messages are set at the beginning of the test")
+					assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
+					assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
+
+					oModel.read("/Products(1)/Supplier", {
+						success: function() {
+							var aMessages = oMessageModel.getProperty("/");
+							var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+							assert.equal(aMessages.length, 4, "Four messages are set at the beginning of the test")
+
+							assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
+							assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
+							assert.ok(aMessageTagets.indexOf("/Suppliers") > -1, "Message targetting '/Products' has been received.");
+							var sSupplierNameTarget = aMessageTagets.reduce(function(sPrevious, sValue) {
+								return sValue.indexOf(")/SupplierName") > -1 ? sValue : sPrevious;
+							});
+							assert.ok(/\/Suppliers\(.{1,2}\)\/SupplierName/.test(sSupplierNameTarget), "Message targetting '/Suppliers(XXX)/SupplierName' has been received.");
+
+							oModel.destroy();
+							done();
+						}
+					});
+				}
+			});
+
+
+
+		});
+	};
+
+	QUnit.test("Messages for NavigationProperties",  fnTestFunctionImport);
+
+
+
+	var fnTestFunctionImportWithInvalidTarget = function(assert) {
+		var done = assert.async();
+
+		assert.expect(20);
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		oModel.attachMetadataLoaded(function() {
+			var aMessages = oMessageModel.getProperty("/");
+
+			assert.equal(aMessages.length, 0, "No messages are set at the after metadata was loaded")
+
+			oModel.read("/Products(1)", {
+				success: function() {
+					var aMessages = oMessageModel.getProperty("/");
+					var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+					assert.equal(aMessages.length, 2, "Two messages are set after the entity was read");
+					assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
+					assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
+
+					oModel.callFunction("/functionWithInvalidTarget", {
+						method: "POST",
+						success: function() {
+							var aMessages = oMessageModel.getProperty("/");
+							var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+							assert.equal(aMessages.length, 3, "Three messages are set after the FunctionImport returned");
+
+							assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' is still there.");
+							assert.ok(aMessageTagets.indexOf("/Products(1)/SupplierID") > -1, "Message targetting '/Products(1)/SupplierID' has been received.");
+							assert.ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been received.");
+
+							assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
+
+							oModel.read("/Products(1)", {
+								success: function() {
+									var aMessages = oMessageModel.getProperty("/");
+									var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+									assert.equal(aMessages.length, 3, "Three messages are set after /Products(1) is requested again");
+
+									assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
+									assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
+									assert.ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been kept.");
+
+									assert.ok(aMessageTagets.indexOf("/Products(1)/SupplierID") === -1, "Message targetting '/Products(1)/SupplierID' has been removed.");
+
+									oModel.callFunction("/functionWithInvalidTarget", {
+										method: "POST",
+										success: function() {
+											var aMessages = oMessageModel.getProperty("/");
+											var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+											assert.equal(aMessages.length, 3, "Three messages are set after FunctionImport is called again");
+
+											assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' is still there.");
+											assert.ok(aMessageTagets.indexOf("/Products(1)/SupplierID") > -1, "Message targetting '/Products(1)/SupplierID' has been received.");
+											assert.ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been received.");
+
+											assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
+
+											oModel.destroy();
+											done();
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+
+
+
+		});
+	};
+
+	QUnit.test("Messages with 'invalid' targets",  fnTestFunctionImportWithInvalidTarget);
+
+	var fnTestRemoveMessagesWithBinding = function(assert) {
+		var done = assert.async();
+
+		assert.expect(11);
+
+		var oInput3 = new sap.m.Input({
+			value: {
+				path: "/Products(1)/ProductName",
+				type: new sap.ui.model.type.String(null, {
+					maxLength: 3
+				})
+			}
+		});
+
+		var wait = function() {
+			return new Promise(function(resolve) {
+				oInput3.getBinding("value").attachAggregatedDataStateChange(resolve);
+			});
+		};
+
+		var read = function(sPath) {
+			return new Promise(function(resolve) {
+				oModel.read(sPath, { success: resolve });
+			});
+		}
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		sap.ui.getCore().setModel(oModel);
+
+		oInput3.placeAt("content");
+		sap.ui.getCore().getMessageManager().registerObject(oInput3, true);
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/Products(1)").then(function() {
+			oInput3.setValue("123");
+
+			return wait();
+		}).then(function() {
+			assert.equal(oMessageModel.getProperty("/").length, 2, "Two messages from the OData service with a correct value set");
+			assert.equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 0, "No validation errors");
+
+			oInput3.setValue("1234");
+
+			return wait();
+		}).then(function() {
+			assert.equal(oMessageModel.getProperty("/").length, 3, "Two messages from the OData service and one from validation");
+			assert.equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 1, "One validation error");
+
+			oInput3.bindProperty("value",  {
+				path: "ProductName",
+				type: new sap.ui.model.type.String(null, {
+					maxLength: 3
+				})
+			});
+
+		}).then(function() {
+			assert.equal(oMessageModel.getProperty("/").length, 2, "Two messages from the OData service after rebinding");
+			assert.equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 0, "No validation errors");
+
+			oInput3.setValue("1234");
+
+			return wait();
+		}).then(function() {
+			assert.equal(oMessageModel.getProperty("/").length, 3, "Two messages from the OData service and one from validation");
+			assert.equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 1, "One validation error");
+
+			oInput3.setBindingContext(oModel.createBindingContext("/Products(1)"))
+
+			return wait();
+		}).then(function() {
+			assert.equal(oMessageModel.getProperty("/").length, 2, "Two messages from the OData service after changing the binding context");
+			assert.equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 0, "No validation errors");
+
+			oInput3.destroy();
+			oModel.destroy();
+			done();
+		});
+	};
+
+	QUnit.test("Delete control messages when the binding is destroyed and on rebinding",  fnTestRemoveMessagesWithBinding);
+
+
+	var fnTestTransientMessages = function(assert) {
+		var done = assert.async();
+
+		assert.expect(19);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		sap.ui.getCore().setModel(oModel);
+
+		var read = function(sPath) {
+			return new Promise(function(resolve) {
+				oModel.read(sPath, { success: resolve });
+			});
+		}
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/TransientTest1").then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length, 3, "Three messages from the back-end");
+			assert.equal(aMessages[0].persistent, false, "First message should not be persistent");
+			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
+			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
+			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			return read("/TransientTest1");
+		}).then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length, 5, "Five messages - 3 new ones from the back-end");
+
+			assert.equal(aMessages[0].persistent, true, "First message should be persistent");
+			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
+			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].persistent, false, "Third message should not be persistent");
+			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[3].persistent, true, "Fourth message should be persistent");
+			assert.equal(aMessages[3].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[4].persistent, true, "Fifth message should be persistent");
+			assert.equal(aMessages[4].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			oModel.destroy();
+			done();
+		});
+	};
+
+	QUnit.test("Transient messages with /#TRANSIENT#-target or transient-flag", fnTestTransientMessages);
+
+	var fnTestTransientMessageRemoval = function(assert) {
+		var done = assert.async();
+
+		assert.expect(35);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		sap.ui.getCore().setModel(oModel);
+
+		var read = function(sPath) {
+			return new Promise(function(resolve) {
+				oModel.read(sPath, { success: resolve });
+			});
+		}
+
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/TransientTest1").then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length, 3, "Three messages from the back-end");
+			assert.equal(aMessages[0].persistent, false, "First message should not be persistent");
+			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
+			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
+			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			oMessageManager.removeAllMessages();
+
+			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
+
+
+			return read("/TransientTest1");
+		}).then(function() {
+
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length, 3, "Three messages from the back-end");
+			assert.equal(aMessages[0].persistent, false, "First message should not be persistent");
+			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
+			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
+			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			oMessageManager.removeMessages(aMessages[0]);
+			oMessageManager.removeMessages(aMessages[2]);
+
+			aMessages = oMessageModel.getProperty("/");
+
+			assert.equal(aMessages.length, 1, "One message left after removal of two messages");
+			assert.equal(aMessages[0].persistent, true, "First message should not be persistent");
+			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			return read("/TransientTest1");
+		}).then(function() {
+
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length, 4, "Five messages - 3 new ones from the back-end");
+
+			assert.equal(aMessages[0].persistent, true, "First message should be persistent");
+			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].persistent, false, "Second message should not be persistent");
+			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
+			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[3].persistent, true, "Fourth message should be persistent");
+			assert.equal(aMessages[3].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			aMessages[0].setPersistent(false);
+			aMessages[2].setPersistent(false);
+			aMessages[3].setPersistent(false);
+
+			return read("/TransientTest1");
+		}).then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length, 3, "Three messages from the back-end, all previous messages removed after being set to non-persistent");
+			assert.equal(aMessages[0].persistent, false, "First message should not be persistent");
+			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
+			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
+			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+
+			oModel.destroy();
+			done();
+		});
+	};
+
+	QUnit.test("Transient message removal from MessageManager", fnTestTransientMessageRemoval);
 }

@@ -1,0 +1,40 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:with path="entityType>com.sap.vocabularies.UI.v1.Chart#Dimensions" var="chart">
+		<template:if test="{chart>}">
+			<Table headerText="{path: 'chart>Title', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+				items="{:= '{path:\'/' + ${meta>name} + '\', length: 3}' }">
+				<columns>
+					<Column>
+						<template:with path="chart>Dimensions/0" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="idcolumn">
+							<Text text="{path: 'idcolumn>com.sap.vocabularies.Common.v1.Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+						</template:with>
+					</Column>
+					<template:repeat list="{chart>Measures}" var="column">
+						<Column>
+							<template:with path="column>"
+								helper="sap.ui.model.odata.AnnotationHelper.resolvePath"
+								var="property">
+								<Text text="{path: 'property>com.sap.vocabularies.Common.v1.Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+							</template:with>
+						</Column>
+					</template:repeat>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{path: 'chart>Dimensions/0', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}" />
+						</cells>
+						<cells>
+							<template:repeat list="{chart>Measures}" var="column">
+								<Text text="{path: 'column>', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+							</template:repeat>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</template:if>
+	</template:with>
+</core:FragmentDefinition>

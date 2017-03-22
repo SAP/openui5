@@ -1,27 +1,26 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.ScrollBar
-  Author: d029506
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Control initialization -->
-	<script language="javascript">
+	<script>
 	// Vertical Scrollbar
     var oVSB = new sap.ui.core.ScrollBar("vertSB");
     oVSB.setVertical(true);
@@ -44,7 +43,7 @@
 	</script>
 
 	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
 	var vSB = undefined;
 	var hSB = undefined;
@@ -52,81 +51,84 @@
 	qutils.delayTestStart();
 
 
-	module("Initial check");
+	QUnit.module("Initial check");
 
 
-	test("Controls Check", function() {
+	QUnit.test("Controls Check", function(assert) {
 	 	 vSB = sap.ui.getCore().getControl("vertSB");
 		 hSB = sap.ui.getCore().getControl("horiSB");
 
-		ok((vSB !== undefined) && (vSB != null), "vSB should not be null or undefined");
-		ok((hSB !== undefined) && (hSB != null), "hSB should not be null or undefined");
+		assert.ok((vSB !== undefined) && (vSB != null), "vSB should not be null or undefined");
+		assert.ok((hSB !== undefined) && (hSB != null), "hSB should not be null or undefined");
 
 	});
 
-	test("Orientation", function() {
-		ok(((vSB.getVertical() !== undefined)), "should not be null or undefined");
-		equal(vSB.getVertical(), true, "This is vertical scrollbar");
-		ok(((hSB.getVertical() !== undefined)), "should not be null or undefined");
-		equal(hSB.getVertical(), false, "This is horizontal scrollbar");
+	QUnit.test("Orientation", function(assert) {
+		assert.ok(((vSB.getVertical() !== undefined)), "should not be null or undefined");
+		assert.equal(vSB.getVertical(), true, "This is vertical scrollbar");
+		assert.ok(((hSB.getVertical() !== undefined)), "should not be null or undefined");
+		assert.equal(hSB.getVertical(), false, "This is horizontal scrollbar");
 	});
 
-	test("Scroll Position", function() {
+	QUnit.test("Scroll Position", function(assert) {
 
-		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 4, "Initial scroll position is 4");
-		equal(jQuery("#horiSB-sb").scrollLeft(), 50, "Initial scroll position is 50");
+		assert.equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 4, "Initial scroll position is 4");
+		assert.equal(jQuery("#horiSB-sb").scrollLeft(), 50, "Initial scroll position is 50");
 	});
 
 
-	module("Properties");
+	QUnit.module("Properties");
 
 
-	test("Orientation", function() {
+	QUnit.test("Orientation", function(assert) {
 		vSB.setVertical(false);
-		equal(vSB.getVertical(), false, "This is not vertical scrollbar");
+		assert.equal(vSB.getVertical(), false, "This is not vertical scrollbar");
 		vSB.setVertical(true);
-		equal(vSB.getVertical(), true, "This is vertical scrollbar");
+		assert.equal(vSB.getVertical(), true, "This is vertical scrollbar");
 	});
 
-	test("Scroll Position", function() {
+	QUnit.test("Scroll Position", function(assert) {
 		vSB.setScrollPosition(5); // steps
 		hSB.setScrollPosition(38); // pixels
-		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 5, "scroll position should be 5");
-		equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");	
+		assert.equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 5, "scroll position should be 5");
+		assert.equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");
 	});
 
-	test("Size", function() {
+	QUnit.test("Size", function(assert) {
 		vSB.setSize("100px");
-		equal(vSB.getSize(), "100px", "size of vertical scrollbar is 100px");
-		equal(hSB.getSize(), "200px", "size of horizontal scrollbar is 200");	
+		assert.equal(vSB.getSize(), "100px", "size of vertical scrollbar is 100px");
+		assert.equal(hSB.getSize(), "200px", "size of horizontal scrollbar is 200");
 	});
 
-	test("Content Size and steps", function() {
-		equal(hSB.getContentSize(), "1000px", "size of content is 1000");
-		equal(vSB.getSteps(), 100, "number of steps for vertical scrollbar is 100");
+	QUnit.test("Content Size and steps", function(assert) {
+		assert.equal(hSB.getContentSize(), "1000px", "size of content is 1000");
+		assert.equal(vSB.getSteps(), 100, "number of steps for vertical scrollbar is 100");
 	});
 
 
-	module("Event handler");
+	QUnit.module("Event handler");
 
-	asyncTest("Rerender scrollbars", function() {
-		equal(vSB.getScrollPosition(), 5, "1scroll position should be 5");
-		equal(hSB.getScrollPosition(), 38, "1scroll position is 38");
+	QUnit.test("Rerender scrollbars", function(assert) {
+		var done = assert.async();
+		assert.equal(vSB.getScrollPosition(), 5, "1scroll position should be 5");
+		assert.equal(hSB.getScrollPosition(), 38, "1scroll position is 38");
 		vSB.rerender();
 		hSB.rerender();
 		window.setTimeout(function(){
-			equal(vSB.getScrollPosition(), 5, "2scroll position should be 5");
-			equal(hSB.getScrollPosition(), 38, "2scroll position is 38");
-		start();
+			assert.equal(vSB.getScrollPosition(), 5, "2scroll position should be 5");
+			assert.equal(hSB.getScrollPosition(), 38, "2scroll position is 38");
+			done();
 		}, 100);
 	});
 
 
-	asyncTest("Scroll Event", 3, function() {
+	QUnit.test("Scroll Event", function(assert) {
+		assert.expect(3);
+		var done = assert.async();
 
 		var bScrolled = false;
 		hSB.attachScroll( function() {bScrolled = true;});
-		notEqual(bScrolled, true, "Scroll event was not fired yet");
+		assert.notEqual(bScrolled, true, "Scroll event was not fired yet");
 		if ( sap.ui.getCore().getConfiguration().getRTL() && sap.ui.Device.browser.firefox){
 			jQuery('#'+ oHSB.getId() + ' > div').scrollLeft(-15);
 		} else {
@@ -134,46 +136,46 @@
 		}
 
 	 	setTimeout(function() {
-
-			start();
-	 		equal(bScrolled, true, "Scroll event was fired");
-	 		equal(jQuery("#horiSB-sb").scrollLeft(), 15, "New scroll position of horizontal scrollbar is 15 px");
-	 	}, 100);
+	 		assert.equal(bScrolled, true, "Scroll event was fired");
+			assert.equal(jQuery("#horiSB-sb").scrollLeft(), 15, "New scroll position of horizontal scrollbar is 15 px");
+			done();
+		}, 100);
 	});
 
-	asyncTest("Scroll Scrollbars", 1, function() {
+	QUnit.test("Scroll Scrollbars", function(assert) {
+		assert.expect(1);
+		var done = assert.async();
 		vSB.setScrollPosition(8);
 		jQuery("#horiSB-sb").scrollLeft(155);
 
 		setTimeout(function() {
-
-			start();
-			equal(vSB.getScrollPosition(), "8", "scroll position is 8 step");
+			assert.equal(vSB.getScrollPosition(), "8", "scroll position is 8 step");
 			// TODO: this is quite often failing! Check why! Maybe we increase the timeout!
-			//equal(hSB.getScrollPosition(), "155", "scroll position is 155 px");
-			
+			//assert.equal(hSB.getScrollPosition(), "155", "scroll position is 155 px");
+			done();
 		}, 10);
 
 	});
-	
-	
-	asyncTest("Scroll Huge Scrollbars", 1, function() {
+
+
+	QUnit.test("Scroll Huge Scrollbars", function(assert) {
+		assert.expect(1);
+		var done = assert.async();
 		// Suport of Huge number of steps
 		vSB.setSteps(1000000); //8000000px in Chrom
 		vSB.setScrollPosition(300000);
 		vSB.rerender();
 		setTimeout(function() {
-
-			start();
-			equal(vSB.getScrollPosition(), "300000", "scroll position is 300000 step");
+			assert.equal(vSB.getScrollPosition(), "300000", "scroll position is 300000 step");
+			done();
 		}, 500);
 
 	});
-	
-	
+
+
 	// Touch support
-	module("Touch Support", {
-		setup : function() {
+	QUnit.module("Touch Support", {
+		beforeEach : function() {
 			// Remember original touch event mode
 			this.touchEventMode = jQuery.sap.touchEventMode;
 			jQuery.sap.touchEventMode = "ON"
@@ -193,8 +195,8 @@
 			sap.ui.getCore().applyChanges();
 		},
 
-		
-		teardown : function() {
+
+		afterEach : function() {
 			this.oVSB.destroy();
 			this.oVSB = null;
 			this.oHSB.destroy();
@@ -204,15 +206,17 @@
 		}
 	});
 
-	asyncTest("Touch Scrolling", 2, function() {
+	QUnit.test("Touch Scrolling", function(assert) {
+		assert.expect(2);
+		var done = assert.async();
 		this.oVSB._handleTouchScroll(0,192);
 		this.oHSB._handleTouchScroll(155,0);
 
 		var self = this;
 		setTimeout(function() {
-			start();
-			equal(self.oVSB.getScrollPosition(), "8", "scroll position is 8 step");
-			equal(self.oHSB.getScrollPosition(), "155", "scroll position is 155 px");
+			assert.equal(self.oVSB.getScrollPosition(), "8", "scroll position is 8 step");
+			assert.equal(self.oHSB.getScrollPosition(), "155", "scroll position is 155 px");
+			done();
 		}, 10);
 	});
 

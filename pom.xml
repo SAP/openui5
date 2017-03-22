@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.29.1-SNAPSHOT</version>
+	<version>1.47.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 
@@ -38,17 +38,23 @@
 		<module>src/sap.ui.unified</module>
 		<module>src/sap.ui.layout</module>
 		<module>src/sap.m</module>
+		<module>src/sap.f</module>
 		<module>src/sap.ui.commons</module>
 		<module>src/sap.ui.table</module>
 		<module>src/sap.ui.ux3</module>
 		<module>src/sap.ui.suite</module>
 		<module>src/sap.ui.dt</module>
+		<module>src/sap.tnt</module>
 		<module>src/sap.ui.demokit</module>
+		<module>src/sap.uxap</module>
+		<module>src/sap.ui.fl</module>
+		<module>src/sap.ui.codeeditor</module>
 
 		<!-- theme libraries -->
 		<!-- TODO <module>src/themelib_sap_hcb</module> -->
 		<module>src/themelib_sap_bluecrystal</module>
 		<module>src/themelib_sap_goldreflection</module>
+		<module>src/themelib_sap_belize</module>
 
 	</modules>
 
@@ -69,8 +75,8 @@
 
 		<!-- filtering properties -->
 		<version>${project.version}</version>
-		<copyright><![CDATA[SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+		<copyright><![CDATA[UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 ]]></copyright>
 		<buildtime>${maven.build.timestamp}</buildtime>
@@ -104,6 +110,8 @@
 						<extension>png</extension>
 						<extension>ico</extension>
 						<extension>properties</extension><!-- excluded as those files don't use UTF-8 encoding and as no filtering is needed -->
+						<extension>woff</extension>
+						<extension>woff2</extension>
 					</nonFilteredFileExtensions>
 					<delimiters>
 						<delimiter>${*}</delimiter>
@@ -111,7 +119,7 @@
 					<useDefaultDelimiters>false</useDefaultDelimiters>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 
 	</build>
@@ -125,17 +133,17 @@
 
 		<!-- attach the LICENSE.txt file -->
 		<profile>
-		
+
 			<activation>
 				<file>
 					<exists>${basedir}/LICENSE.txt</exists>
 				</file>
 			</activation>
-		
+
 			<build>
-		
+
 				<plugins>
-		
+
 					<!-- attach the LICENSE.txt as separate artifact -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -160,11 +168,11 @@
 							</execution>
 						</executions>
 					</plugin>
-		
+
 				</plugins>
-		
+
 			</build>
-			
+
 		</profile>
 
 		<!-- internal build related plugins & configuration -->
@@ -173,7 +181,7 @@
 			<id>internal.build</id>
 
 			<properties>
-				<sap.ui5.translationArea>027001</sap.ui5.translationArea>
+				<sap.ui5.translationArea>073003</sap.ui5.translationArea>
 				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
 				<sap.ui5.translationDeveloper></sap.ui5.translationDeveloper>
 				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
@@ -181,7 +189,7 @@
 			</properties>
 
 			<build>
-			
+
 				<pluginManagement>
 					<plugins>
 
@@ -189,7 +197,7 @@
 						<plugin>
 							<groupId>com.sap.ui5.tools.build</groupId>
 							<artifactId>ui5builder-maven-plugin</artifactId>
-							<version>1.29.1-SNAPSHOT</version>
+							<version>1.47.0-SNAPSHOT</version>
 						</plugin>
 
 						<!-- translation support (for internal use) -->
@@ -215,9 +223,9 @@
 
 					</plugins>
 				</pluginManagement>
-				
+
 				<plugins>
-				
+
 					<!-- translation support (specify non-existent path to ignore it) -->
 					<plugin>
 						<groupId>com.sap.ldi</groupId>
@@ -229,9 +237,9 @@
 							</translationResources>
 						</configuration>
 					</plugin>
-					
+
 				</plugins>
-				
+
 			</build>
 
 		</profile>
@@ -244,10 +252,10 @@
 
 				<!-- skip eslint validation -->
 				<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
-				
+
 				<!-- fail on eslint error -->
 				<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
-				
+
 				<!-- only validate the changed files -->
 				<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
 
@@ -278,10 +286,11 @@
 							</artifactItems>
 						</configuration>
 					</plugin>
+					<!-- when adopting the plugin here please also adopt src/testsuite/pom.xml -->
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.7</version>
+						<version>0.1.14</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -291,7 +300,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<version>0.21.1</version>
+							<version>1.10.3</version>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
 							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>
@@ -333,6 +342,9 @@
 
 			<activation>
 				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>ui5workspace</name>
+				</property>
 			</activation>
 
 			<modules>

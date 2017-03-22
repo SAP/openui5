@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Toolbar', 'sap/ui/core/Contr
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ExactArea.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -25,16 +25,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Toolbar', 'sap/ui/core/Contr
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since version 1.6. 
+	 * @experimental Since version 1.6.
 	 * API is not yet finished and might change completely
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.ExactArea
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExactArea = Control.extend("sap.ui.ux3.ExactArea", /** @lends sap.ui.ux3.ExactArea.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * Specifies whether the tool bar shall be visible
 			 */
@@ -42,39 +43,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Toolbar', 'sap/ui/core/Contr
 		},
 		defaultAggregation : "content",
 		aggregations : {
-	
+
 			/**
 			 * Arbitrary child controls of the content area
 			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}, 
-	
+			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+
 			/**
 			 * Tool bar items which shall be shown in the tool bar.
 			 */
 			toolbarItems : {type : "sap.ui.commons.ToolbarItem", multiple : true, singularName : "toolbarItem"}
 		}
 	}});
-	
-	
+
+
 	(function() {
-	
+
 	//*************************************************************
 	//Define a private element to enable titles tin the toolbar
 	//*************************************************************
-	
+
 	sap.ui.core.Element.extend("sap.ui.ux3.ExactAreaToolbarTitle", {
-	  
+
 	  metadata: {
 	    interfaces : ["sap.ui.commons.ToolbarItem"],
 	    properties : {
 	      text : {name : "text", type : "string", group : "Appearance", defaultValue : ''}
 	    }
 	  }
-	
+
 	});
-	
+
 	//*************************************************************
-	
+
 	}());
 
 	return ExactArea;

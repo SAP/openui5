@@ -2,18 +2,17 @@
 <html>
 <head>
 	<title>Object List Item Performance - sap.m</title>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta charset="UTF-8">
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
+	<script src="shared-config.js"></script>
 	<script
 		id="sap-ui-bootstrap"
-		type="text/javascript"
 		src="../../../resources/sap-ui-core.js"
 		data-sap-ui-xx-bindingSyntax="complex"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.m" >
 	</script>
 	<script>
-	
+
 		/*
 		// monkey patch
 		jQuery.sap.require("sap.m.ObjectListItem");
@@ -25,9 +24,9 @@
 			}
 			return this._oTitleText;
 		};*/
-	
+
 		var onLoadList = function () {
-			
+
 			// set model
 			var title = (this.getId().indexOf("-S") !== -1) ? "Short Title" : "This is my title which is kind of very long and needs a second line in the very worst case and it could be even long if you do not take care.";
 			var oData = { items : [] };
@@ -41,7 +40,7 @@
 			var oModel = new sap.ui.model.json.JSONModel(oData);
 			oModel.setSizeLimit(iLength);
 			sap.ui.getCore().setModel(oModel);
-			
+
 			// get item template
 			var oItemTemplate;
 			if (this.getId().indexOf("STD") !== -1) {
@@ -63,7 +62,7 @@
 					secondStatus: new sap.m.ObjectStatus({text: "Status 2", state: "Error"})
 				})
 			}
-			
+
 			// add list
 			var oList = new sap.m.List({
 				items : {
@@ -73,11 +72,11 @@
 			});
 			sap.ui.getCore().byId("page").addContent(oList);
 		};
-		
+
 		var onReset = function () {
 			sap.ui.getCore().byId("page").removeAllContent();
 		};
-		
+
 		// create ui
 		new sap.m.App({
 			pages : [
@@ -117,7 +116,7 @@
 				})
 			]
 		}).placeAt("content");
-	
+
 	</script>
 </head>
 <body class="sapUiBody" id="content">

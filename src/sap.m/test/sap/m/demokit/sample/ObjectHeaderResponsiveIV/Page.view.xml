@@ -15,7 +15,11 @@
 		title="{Name}"
 		titleActive="true"
 		titlePress="handleTitlePress"
-		number="{Price}"
+		number="{
+			parts:[{path:'Price'},{path:'CurrencyCode'}],
+			type: 'sap.ui.model.type.Currency',
+			formatOptions: {showMeasure: false}
+		}"
 		numberUnit="{CurrencyCode}"
 		showTitleSelector="true"
 		titleSelectorPress="onPress"
@@ -39,13 +43,13 @@
 				text="{WeightMeasure} {WeightUnit}"/>
 			<ObjectAttribute
 				title="Dimension per unit"
-				text="{Width} x {Depth} x {Height} {DimUnit}"/>				
+				text="{Width} x {Depth} x {Height} {DimUnit}"/>
 		</attributes>
 		<statuses>
  			<ObjectStatus
 				title="Approval"
 				text="Pending"
-				state="Warning"/>				
+				state="Warning"/>
 		</statuses>
 		<headerContainer>
 			<IconTabBar

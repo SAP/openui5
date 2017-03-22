@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.TextField">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>TextField - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -32,7 +32,7 @@ var oInput2 = new sap.ui.commons.TextField({
 	tooltip : 'Change the Text',
 	width : '10em',
 	change : function(){
-		oInput2.setValueState( 
+		oInput2.setValueState(
 			oInput2.getValue() != 'Hello World!' ? sap.ui.core.ValueState.Error : sap.ui.core.ValueState.None
 		);
 	}
@@ -66,7 +66,7 @@ var oTextView = new sap.ui.commons.TextView("TextView",{ text: oInput3.getValue(
 		<h2>Overview</h2>
 		<p>The TextField is used for single-row text input. If the configured text value contains HTML or script tags, those will be escaped.
 		A maximal length for the field can be set using the <code>maxLength</code> property.
-		<br/>
+		<br>
 		The TextField can have the modes editable or read-only (property <code>editable</code>); and it can have status enabled or disabled (property <code>enabled)</code>.
 		To visualize some semantic states such as "error" or "warning", the <code>valueState</code> property is provided. When the user makes some changes on the text, the <code>change</code> event is fired. So it is possible to react on any text change.
 		</p>
@@ -77,17 +77,17 @@ var oTextView = new sap.ui.commons.TextView("TextView",{ text: oInput3.getValue(
 		</p>
 		<br>
 		<div code-sample="sample1" script="SimpleInput"></div>
-		<br/>
+		<br>
 
 		<h3>TextField With Status Check</h3>
 		<p>
 		The second example shows how to set a TextField to state <code>error</code> if the text is not equal "Hello World!".
 		Therefore, the text is checked on the <code>change</code> event, and the <code>valueState</code> property is set accordingly.
-		Note that the visualization of the different states depends on the used theme.  
+		Note that the visualization of the different states depends on the used theme.
 		</p>
 		<br>
 		<div code-sample="sample2" script="HelloWorld"></div>
-		<br/>
+		<br>
 
 		<h3>TextField With live Change</h3>
 		<p>
@@ -100,6 +100,6 @@ var oTextView = new sap.ui.commons.TextView("TextView",{ text: oInput3.getValue(
 		<p>
 		<h2>API Documentation</h2>
 		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TextField.html" >API documentation</a>
-		</p>  
+		</p>
 	</body>
 </html>

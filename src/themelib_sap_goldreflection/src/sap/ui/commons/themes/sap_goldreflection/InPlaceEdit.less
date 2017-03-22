@@ -10,9 +10,7 @@
 .sapUiIpe:not(.sapUiIpeEdit){
 	/* to fade success color out if removed after some seconds */
 	transition: background-color 1s linear;
-	-moz-transition: background-color 1s linear;
 	-webkit-transition: background-color 1s linear;
-	-ms-transition: background-color 1s linear;
 }
 
 .sapUiIpeUndo > .sapUiIpeCont > .sapUiTfBrd{
@@ -64,7 +62,7 @@ html[data-sap-ui-browser^="ie"] .sapUiIpeCont > .sapUiBtnS.sapUiBtnLite.sapUiBtn
 	padding-right: 0;
 }
 
-@sapUiIpeUndoImageURL: ~"/img/Delete_button.png";
-@sapUiIpeUndoImageDownURL: ~"/img/Delete_button_down.png";
-@sapUiIpeEditImageURL: ~"/img/Edit.png";
-@sapUiIpeEditImageDownURL: ~"/img/Edit_hover.png";
+@sapUiIpeUndoImageURL: url("img/Delete_button.png");
+@sapUiIpeUndoImageDownURL: url("img/Delete_button_down.png");
+@sapUiIpeEditImageURL: url("img/Edit.png");
+@sapUiIpeEditImageDownURL: url("img/Edit_hover.png");

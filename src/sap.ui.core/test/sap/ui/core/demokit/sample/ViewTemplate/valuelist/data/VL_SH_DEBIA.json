@@ -1,0 +1,145 @@
+{
+	"d" : {
+		"results" : [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='MAGOO',PSTLZ='99999',MCOD3='LA%20HOLLYWOOD',MCOD1='MAGOO',KUNNR='QIK001')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='MAGOO',PSTLZ='99999',MCOD3='LA%20HOLLYWOOD',MCOD1='MAGOO',KUNNR='QIK001')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "MAGOO",
+				"LAND1" : "US",
+				"PSTLZ" : "99999",
+				"MCOD3" : "LA HOLLYWOOD",
+				"MCOD1" : "MAGOO",
+				"KUNNR" : "QIK001"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='WERNERF',PSTLZ='20000',MCOD3='HAMBURG',MCOD1='FRANK%20WERNER',KUNNR='FW_1')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='WERNERF',PSTLZ='20000',MCOD3='HAMBURG',MCOD1='FRANK%20WERNER',KUNNR='FW_1')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "WERNERF",
+				"LAND1" : "DE",
+				"PSTLZ" : "20000",
+				"MCOD3" : "HAMBURG",
+				"MCOD1" : "FRANK WERNER",
+				"KUNNR" : "FW_1"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='MM%20IM%20TEST',PSTLZ='40882',MCOD3='RATINGEN',MCOD1='MMIMTESTJOSE',KUNNR='MMTESTCJO1')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='MM%20IM%20TEST',PSTLZ='40882',MCOD3='RATINGEN',MCOD1='MMIMTESTJOSE',KUNNR='MMTESTCJO1')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "MM IM TEST",
+				"LAND1" : "DE",
+				"PSTLZ" : "40882",
+				"MCOD3" : "RATINGEN",
+				"MCOD1" : "MMIMTESTJOSE",
+				"KUNNR" : "MMTESTCJO1"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='WACK',PSTLZ='12345',MCOD3='DUESSELDORF',MCOD1='GCQ-KW1',KUNNR='GCQ-KW1')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='WACK',PSTLZ='12345',MCOD3='DUESSELDORF',MCOD1='GCQ-KW1',KUNNR='GCQ-KW1')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "WACK",
+				"LAND1" : "DE",
+				"PSTLZ" : "12345",
+				"MCOD3" : "DUESSELDORF",
+				"MCOD1" : "GCQ-KW1",
+				"KUNNR" : "GCQ-KW1"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='SOMMER',PSTLZ='',MCOD3='',MCOD1='SOMMER',KUNNR='100053')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='SOMMER',PSTLZ='',MCOD3='',MCOD1='SOMMER',KUNNR='100053')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "SOMMER",
+				"LAND1" : "DE",
+				"PSTLZ" : "",
+				"MCOD3" : "",
+				"MCOD1" : "SOMMER",
+				"KUNNR" : "100053"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='',PSTLZ='69181',MCOD3='LEIMEN',MCOD1='PETER%20ANSELMANN',KUNNR='PA01')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='',PSTLZ='69181',MCOD3='LEIMEN',MCOD1='PETER%20ANSELMANN',KUNNR='PA01')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "",
+				"LAND1" : "DE",
+				"PSTLZ" : "69181",
+				"MCOD3" : "LEIMEN",
+				"MCOD1" : "PETER ANSELMANN",
+				"KUNNR" : "PA01"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='',PSTLZ='',MCOD3='',MCOD1='',KUNNR='TW')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='',PSTLZ='',MCOD3='',MCOD1='',KUNNR='TW')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "",
+				"LAND1" : "DE",
+				"PSTLZ" : "",
+				"MCOD3" : "",
+				"MCOD1" : "",
+				"KUNNR" : "TW"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='CALINIK001',PSTLZ='51147',MCOD3='K%C3%96LN',MCOD1='CUSTOMER%20CALINIK001',KUNNR='CALINIK001')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='CALINIK001',PSTLZ='51147',MCOD3='K%C3%96LN',MCOD1='CUSTOMER%20CALINIK001',KUNNR='CALINIK001')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "CALINIK001",
+				"LAND1" : "DE",
+				"PSTLZ" : "51147",
+				"MCOD3" : "KÖLN",
+				"MCOD1" : "CUSTOMER CALINIK001",
+				"KUNNR" : "CALINIK001"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='CALINIK002',PSTLZ='51147',MCOD3='K%C3%96LN',MCOD1='CUSTOMER%20CALINIK002',KUNNR='CALINIK002')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='CALINIK002',PSTLZ='51147',MCOD3='K%C3%96LN',MCOD1='CUSTOMER%20CALINIK002',KUNNR='CALINIK002')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "CALINIK002",
+				"LAND1" : "DE",
+				"PSTLZ" : "51147",
+				"MCOD3" : "KÖLN",
+				"MCOD1" : "CUSTOMER CALINIK002",
+				"KUNNR" : "CALINIK002"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='VACIADOR%20S',PSTLZ='28046',MCOD3='MADRID',MCOD1='VACIADOR%20S.L.',KUNNR='C0007')",
+					"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/VL_SH_DEBIA(SORTL='VACIADOR%20S',PSTLZ='28046',MCOD3='MADRID',MCOD1='VACIADOR%20S.L.',KUNNR='C0007')",
+					"type" : "FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"
+				},
+				"BEGRU" : "",
+				"SORTL" : "VACIADOR S",
+				"LAND1" : "ES",
+				"PSTLZ" : "28046",
+				"MCOD3" : "MADRID",
+				"MCOD1" : "VACIADOR S.L.",
+				"KUNNR" : "C0007"
+			}]
+	}
+}

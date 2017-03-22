@@ -2,25 +2,25 @@
 <html data-sap-ui-dk-category="Controls/UX3Controls"
 	data-sap-ui-dk-controls="sap.ui.ux3.NotificationBar,sap.ui.ux3.Notifier,sap.ui.core.Message">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8" />
-<meta name="keywords" content="Control NotificationBar" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<meta name="keywords" content="Control NotificationBar">
 <title>NotificationBar - SAPUI5 Demo Kit</title>
-<link rel="stylesheet" type="text/css"
-	href="../../../../../theme/default.css"></link>
+<link rel="stylesheet"
+	href="../../../../../theme/default.css">
 <script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
 	data-sap-ui-language="en">
-	
+
 </script>
 <script>
 	sap.ui.demokit._supportedThemes = [ "sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];
 </script>
 <script src="../../../../../js/utils.js"></script>
 
-<style type="text/css">
+<style>
 .sapUiNotificationBarDemokit { /*top: 40px;*/
 	bottom: 0;
 	left: 20px;
@@ -132,7 +132,7 @@ h2 {
 
 		if (bShow) {
 			/*
-			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus) 
+			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus)
 			 */
 			var sStatus = sap.ui.ux3.NotificationBarStatus.Default;
 			oNotiBar1.setVisibleStatus(sStatus);
@@ -172,7 +172,7 @@ h2 {
 
 		if (bShow) {
 			/*
-			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus) 
+			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus)
 			 */
 			var sStatus = sap.ui.ux3.NotificationBarStatus.Default;
 			oNotiBar2.setVisibleStatus(sStatus);
@@ -235,7 +235,7 @@ h2 {
 
 		if (bShow) {
 			/*
-			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus) 
+			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus)
 			 */
 			var sStatus = sap.ui.ux3.NotificationBarStatus.Default;
 			oNotiBar2.setVisibleStatus(sStatus);
@@ -344,7 +344,7 @@ h2 {
 
 		if (bShow) {
 			/*
-			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus) 
+			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus)
 			 */
 			var sStatus = sap.ui.ux3.NotificationBarStatus.Default;
 			oNotiBar4.setVisibleStatus(sStatus);
@@ -405,7 +405,7 @@ h2 {
 		and width is (since 1.13.0) per default at the bottom of the
 		corresponding page. If the NotificationBar should be smaller than per
 		default a separate CSS-class must be added to the NotificationBar - as
-		seen in Example1.<br /> <strong>IMPORTANT:</strong> to display the
+		seen in Example1.<br> <strong>IMPORTANT:</strong> to display the
 		bar an attached listener is mandatory! Otherwise the bar won't be
 		visible at all since the bar doesn't set its display-mode itself.
 	</p>
@@ -444,7 +444,7 @@ h2 {
 		interacts with the bar to display them. The lastes message within a
 		Notifier is shown on top. The bar differs in two kinds of Notifiers: a
 		normal Notifier that monitors something for the application (i.e. new
-		Feed-items) and the MessageNotifer.<br /> A MessageNotifier is
+		Feed-items) and the MessageNotifer.<br> A MessageNotifier is
 		responsible to show messages with a message level. These levels could
 		be information, warning or an error. There can be messages without any
 		level as well - that's up to the application. The latest message that

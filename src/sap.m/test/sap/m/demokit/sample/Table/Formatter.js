@@ -3,20 +3,31 @@ sap.ui.define(function() {
 
 	var Formatter = {
 
-		weightState :  function (fValue) {
-			try {
-				fValue = parseFloat(fValue);
-				if (fValue < 0) {
+		weightState :  function (fMeasure, sUnit) {
+
+			// Boarder values for different status of weight
+			var fMaxWeightSuccess = 1;
+			var fMaxWeightWarning = 5;
+			var fAdjustedMeasure = parseFloat(fMeasure);
+
+			// if the value of fMeasure is not a number, no status will be set
+			if (isNaN(fAdjustedMeasure)) {
+				return "None";
+			} else {
+
+				if (sUnit === "G") {
+					fAdjustedMeasure = fMeasure / 1000;
+				}
+
+				if (fAdjustedMeasure < 0) {
 					return "None";
-				} else if (fValue < 1000) {
+				} else if (fAdjustedMeasure < fMaxWeightSuccess) {
 					return "Success";
-				} else if (fValue < 2000) {
+				} else if (fAdjustedMeasure < fMaxWeightWarning) {
 					return "Warning";
 				} else {
 					return "Error";
 				}
-			} catch (err) {
-				return "None";
 			}
 		}
 	};

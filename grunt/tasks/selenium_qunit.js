@@ -2,18 +2,15 @@
  * grunt-selenium-qunit
  *
  *
- * Copyright (c) 2014-2015 SAP SE
+ * Copyright (c) 2014-2017 SAP SE
  */
 
 'use strict';
 
 var path = require('path');
 var webdriver = require('selenium-webdriver');
-var remote = require('selenium-webdriver/remote');
 var async = require('async');
 var multiline = require('multiline');
-var Download = require('download');
-var fs = require('fs');
 var prettyMs = require('pretty-ms');
 
 var testResourcesPattern = /.*test-resources\/(.*)/;
@@ -110,275 +107,222 @@ module.exports = function(grunt) {
 			return;
 		}
 
-		var binFolder = __dirname + '/../bin';
+		// loop over all browsers
+		async.concatSeries(options.browsers, function(browser, nextBrowser) {
 
-		var seleniumServerJar = binFolder + '/selenium-server-standalone-2.44.0.jar';
+			grunt.log.subhead(browser);
 
-		fs.stat(seleniumServerJar, function(err, stat) {
+			// create capabilities
+			var desiredCapabilities = webdriver.Capabilities[browser]();
 
-			if (err) {
-				grunt.log.writeln('selenium-server-standalone.jar not found. Downloading... (' + binFolder + ')');
-				new Download()
-				.get(
-					'http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar'
-				).dest(binFolder).run(function(err, files, stream) {
-
-					if (err) {
-						grunt.log.error(err);
-						done(err);
-						return;
-					}
-
-					startRunner();
-
+			// set custom capabilities (TODO: add option to pass in capabilities)
+			if (browser === 'chrome') {
+				desiredCapabilities.set('chromeOptions', {
+					args: [
+						'start-maximized', 'test-type'
+					]
 				});
-			} else {
-				startRunner();
 			}
 
-		});
+			// to collect all test results for current browser
+			var testResults = [];
 
-		function startRunner() {
+			// create new driver
+			var driver = new webdriver.Builder().
+			withCapabilities(desiredCapabilities).build();
 
-			// start selenium server
-			var server;
-			try {
-				server = new remote.SeleniumServer(seleniumServerJar, {
-					port: 4444
-				});
-				server.start();
-			} catch (e) {
-				grunt.log.error();
-				grunt.verbose.error(e);
-				done(e);
-				return;
-			}
+			// set async script timeout
+			driver.manage().timeouts().setScriptTimeout(30000).then(function() {
 
-			runDiscovery(server);
+				driver.getCapabilities().then(function(capabilities) {
 
-		}
+					// used as testsuite prefix for reporting
+					var browserInfoString = browser + '.' + capabilities.get('version').replace(/\./g, '_');
 
-		function runDiscovery(server) {
+					console.log(options.baseUrl + options.contextPath + '/test-resources/sap/ui/qunit/testrunner.html');
+					driver.get(options.baseUrl + options.contextPath + '/test-resources/sap/ui/qunit/testrunner.html').then(function() {
 
-			// loop over all browsers
-			async.concatSeries(options.browsers, function(browser, nextBrowser) {
+						// run discovery with all testPages
+						async.concatSeries(options.testPages, function(discoveryTestPage, nextDiscoveryTestPage) {
 
-				grunt.log.subhead(browser);
+							driver.executeAsyncScript(
+								'sap.ui.qunit.TestRunner.checkTestPage("' + options.contextPath + '" + arguments[0]).done(arguments[arguments.length - 1]);',
+								discoveryTestPage
+							).then(function(response) {
 
-				// create capabilities
-				var desiredCapabilities = webdriver.Capabilities[browser]();
+								var aTests = [];
 
-				// set custom capabilities (TODO: add option to pass in capabilities)
-				if (browser === 'chrome') {
-					desiredCapabilities.set('chromeOptions', {
-						args: [
-							'start-maximized', 'test-type'
-						]
-					});
-				}
-
-				// to collect all test results for current browser
-				var testResults = [];
-
-				// create new driver
-				var driver = new webdriver.Builder().
-				usingServer(server.address()).
-				withCapabilities(desiredCapabilities).build();
-
-				// set async script timeout
-				driver.manage().timeouts().setScriptTimeout(30000).then(function() {
-
-					driver.getCapabilities().then(function(capabilities) {
-
-						// used as testsuite prefix for reporting
-						var browserInfoString = browser + '.' + capabilities.get('version').replace(/\./g, '_');
-
-						console.log(options.baseUrl + options.contextPath + '/test-resources/sap/ui/qunit/testrunner.html');
-						driver.get(options.baseUrl + options.contextPath + '/test-resources/sap/ui/qunit/testrunner.html').then(function() {
-
-							// run discovery with all testPages
-							async.concatSeries(options.testPages, function(discoveryTestPage, nextDiscoveryTestPage) {
-
-								driver.executeAsyncScript(
-									'sap.ui.qunit.TestRunner.checkTestPage("' + options.contextPath + '" + arguments[0]).done(arguments[arguments.length - 1]);',
-									discoveryTestPage
-								).then(function(response) {
-
-									var aTests = [];
-
-									if (response) {
-										response.forEach(function(testPage) {
-											var testName = testPage;
-											var match = testResourcesPattern.exec(testName);
-											if (match) {
-												testName = match[1];
-											}
-											aTests.push({
-												url: testPage,
-												name: testName
-											});
-										});
-									}
-
-									nextDiscoveryTestPage(null, aTests);
-
-								});
-							}, function(err, aResults) {
-
-								// convert array with arrays to one array
-								// e.g. [ [ 'foo' ], [ 'bar', 'baz' ] ] -> [ 'foo', 'bar', 'baz' ]
-								var aTests = Array.prototype.concat.apply([], aResults);
-
-								async.concatSeries(aTests, function(oTest, nextTest) {
-
-									grunt.log.writeln();
-									grunt.log.writeln(options.baseUrl + oTest.url);
-
-									driver.get(options.baseUrl + oTest.url).then(function() {
-										var finished = false;
-
-										async.doUntil(function(callback) {
-											driver.executeScript(resultScript).then(function(response) {
-												finished = response.ready;
-
-												if (!finished) {
-													setTimeout(callback, 200);
-													return;
-												}
-
-												// add results to global array
-												testResults.push(response);
-
-												if (response.xml) {
-													var testsuiteName = oTest.url.replace(/[\/:*?\"<>|]/g, '.');
-													if (testsuiteName.substr(0, 1) === '.') {
-														testsuiteName = testsuiteName.substr(1);
-													}
-													var xmlFileName = 'TEST-' + browserInfoString + '.' + testsuiteName + '.xml';
-													var xmlPath = path.join(options.reportsDir, xmlFileName);
-
-													// prepend browser info (name + version) in testsuite names
-													response.xml = response.xml.replace(/<testsuite (.*) name="([^"]*)"/g, '<testsuite $1 name="' + browserInfoString + '.$2"');
-
-													grunt.file.write(xmlPath, response.xml);
-												} else {
-													// TODO: create xml report using parsed dom content? re-use qunit-junit-reporter lib?
-													grunt.log.error('No surefire-report XML received!');
-													grunt.log.writeln();
-												}
-
-												if (response.results) {
-
-													var status;
-													if (response.results.failed > 0) {
-														status = 'error';
-													} else {
-														status = 'ok';
-													}
-
-													var text = 'Took ' + prettyMs(response.results.runtime) + ' (' +
-														response.results.passed + ' passed, ' + response.results.failed + ' failed)';
-
-													grunt.log[status](text);
-
-													if (status === 'error') {
-														if (response.tests) {
-															response.tests.filter(function(test) {
-																return !test.pass;
-															}).forEach(function(test) {
-																grunt.log.writeln();
-																grunt.log.errorlns(test.text);
-															});
-														} else {
-															grunt.log.writeln();
-															grunt.log.errorlns('There were test failures, but detailed test results could not be retrieved!');
-														}
-													}
-
-												} else {
-													grunt.log.error('No result information received!');
-												}
-
-												callback();
-											});
-										}, function() {
-											return finished;
-										}, nextTest);
-									});
-								}, function(err) {
-
-									var currentResults = {
-										passed: 0,
-										failed: 0,
-										runtime: 0
-									};
-
-									testResults.forEach(function(testResult) {
-										if (testResult.results) {
-											currentResults.passed += testResult.results.passed;
-											currentResults.failed += testResult.results.failed;
-											currentResults.runtime += testResult.results.runtime;
+								if (response) {
+									response.forEach(function(testPage) {
+										var testName = testPage;
+										var match = testResourcesPattern.exec(testName);
+										if (match) {
+											testName = match[1];
 										}
+										aTests.push({
+											url: testPage,
+											name: testName
+										});
 									});
+								}
 
-									grunt.log.writeln();
+								nextDiscoveryTestPage(null, aTests);
 
-									var status;
-									if (currentResults.failed > 0) {
-										status = 'error';
-									} else {
-										status = 'ok';
+							});
+						}, function(err, aResults) {
+
+							// convert array with arrays to one array
+							// e.g. [ [ 'foo' ], [ 'bar', 'baz' ] ] -> [ 'foo', 'bar', 'baz' ]
+							var aTests = Array.prototype.concat.apply([], aResults);
+
+							async.concatSeries(aTests, function(oTest, nextTest) {
+
+								grunt.log.writeln();
+								grunt.log.writeln(options.baseUrl + oTest.url);
+
+								driver.get(options.baseUrl + oTest.url).then(function() {
+									var finished = false;
+
+									async.doUntil(function(callback) {
+										driver.executeScript(resultScript).then(function(response) {
+											finished = response.ready;
+
+											if (!finished) {
+												setTimeout(callback, 200);
+												return;
+											}
+
+											// add results to global array
+											testResults.push(response);
+
+											if (response.xml) {
+												var testsuiteName = oTest.url.replace(/[\/:*?\"<>|]/g, '.');
+												if (testsuiteName.substr(0, 1) === '.') {
+													testsuiteName = testsuiteName.substr(1);
+												}
+												var xmlFileName = 'TEST-' + browserInfoString + '.' + testsuiteName + '.xml';
+												var xmlPath = path.join(options.reportsDir, xmlFileName);
+
+												// prepend browser info (name + version) in testsuite names
+												response.xml = response.xml.replace(/<testsuite (.*) name="([^"]*)"/g, '<testsuite $1 name="' + browserInfoString + '.$2"');
+
+												grunt.file.write(xmlPath, response.xml);
+											} else {
+												// TODO: create xml report using parsed dom content? re-use qunit-junit-reporter lib?
+												grunt.log.error('No surefire-report XML received!');
+												grunt.log.writeln();
+											}
+
+											if (response.results) {
+
+												var status;
+												if (response.results.failed > 0) {
+													status = 'error';
+												} else {
+													status = 'ok';
+												}
+
+												var text = 'Took ' + prettyMs(response.results.runtime) + ' (' +
+													response.results.passed + ' passed, ' + response.results.failed + ' failed)';
+
+												grunt.log[status](text);
+
+												if (status === 'error') {
+													if (response.tests) {
+														response.tests.filter(function(test) {
+															return !test.pass;
+														}).forEach(function(test) {
+															grunt.log.writeln();
+															grunt.log.errorlns(test.text);
+														});
+													} else {
+														grunt.log.writeln();
+														grunt.log.errorlns('There were test failures, but detailed test results could not be retrieved!');
+													}
+												}
+
+											} else {
+												grunt.log.error('No result information received!');
+											}
+
+											callback();
+										});
+									}, function() {
+										return finished;
+									}, nextTest);
+								});
+							}, function(err) {
+
+								var currentResults = {
+									passed: 0,
+									failed: 0,
+									runtime: 0
+								};
+
+								testResults.forEach(function(testResult) {
+									if (testResult.results) {
+										currentResults.passed += testResult.results.passed;
+										currentResults.failed += testResult.results.failed;
+										currentResults.runtime += testResult.results.runtime;
 									}
+								});
 
-									grunt.log[status](
-										'Finished tests on ' + browser + '. All tests took ' + prettyMs(currentResults.runtime) + ' (' +
-										currentResults.passed + ' passed, ' + currentResults.failed + ' failed)'
-									);
+								grunt.log.writeln();
 
-									grunt.log.writeln();
+								var status;
+								if (currentResults.failed > 0) {
+									status = 'error';
+								} else {
+									status = 'ok';
+								}
 
-									driver.quit().then(function() {
-										nextBrowser(err, testResults);
-									});
+								grunt.log[status](
+									'Finished tests on ' + browser + '. All tests took ' + prettyMs(currentResults.runtime) + ' (' +
+									currentResults.passed + ' passed, ' + currentResults.failed + ' failed)'
+								);
+
+								grunt.log.writeln();
+
+								driver.quit().then(function() {
+									nextBrowser(err, testResults);
 								});
 							});
 						});
 					});
 				});
-			}, function(err, allTestResults) {
-
-				var overallResults = {
-					passed: 0,
-					failed: 0,
-					runtime: 0
-				};
-
-				allTestResults.forEach(function(testResult) {
-					if (testResult.results) {
-						overallResults.passed += testResult.results.passed;
-						overallResults.failed += testResult.results.failed;
-						overallResults.runtime += testResult.results.runtime;
-					}
-				});
-
-				grunt.log.writeln();
-
-				var status;
-				if (overallResults.failed > 0) {
-					status = 'error';
-				} else {
-					status = 'ok';
-				}
-
-				grunt.log[status](
-					'Finished tests on all browsers. All tests took ' + prettyMs(overallResults.runtime) + ' (' +
-					overallResults.passed + ' passed, ' + overallResults.failed + ' failed)'
-				);
-
-				server.stop();
-				done();
 			});
-		}
+		}, function(err, allTestResults) {
+
+			var overallResults = {
+				passed: 0,
+				failed: 0,
+				runtime: 0
+			};
+
+			allTestResults.forEach(function(testResult) {
+				if (testResult.results) {
+					overallResults.passed += testResult.results.passed;
+					overallResults.failed += testResult.results.failed;
+					overallResults.runtime += testResult.results.runtime;
+				}
+			});
+
+			grunt.log.writeln();
+
+			var status;
+			if (overallResults.failed > 0) {
+				status = 'error';
+			} else {
+				status = 'ok';
+			}
+
+			grunt.log[status](
+				'Finished tests on all browsers. All tests took ' + prettyMs(overallResults.runtime) + ' (' +
+				overallResults.passed + ' passed, ' + overallResults.failed + ' failed)'
+			);
+
+			done();
+		});
 
 	});
 

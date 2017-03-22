@@ -2,13 +2,23 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
-		'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONListBinding',
-		'sap/ui/model/json/JSONPropertyBinding', 'sap/ui/model/json/JSONTreeBinding',
-		'sap/ui/model/MetaModel', './_ODataMetaModelUtils'],
-	function (BindingMode, ClientContextBinding, FilterProcessor, JSONListBinding,
-		JSONPropertyBinding, JSONTreeBinding, MetaModel, Utils) {
+sap.ui.define([
+   'jquery.sap.global',
+   'sap/ui/model/BindingMode', 'sap/ui/base/BindingParser', 'sap/ui/model/Context',
+   'sap/ui/base/ManagedObject', 'sap/ui/model/ClientContextBinding',
+   'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONModel',
+   'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONPropertyBinding',
+   'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel', './_ODataMetaModelUtils'
+], function (jQuery, BindingMode, BindingParser, Context, ManagedObject, ClientContextBinding,
+		FilterProcessor, JSONModel, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
+		MetaModel, Utils) {
 	"use strict";
+
+	var sODataMetaModel = "sap.ui.model.odata.ODataMetaModel",
+		aPerformanceCategories = [sODataMetaModel],
+		sPerformanceLoad = sODataMetaModel + "/load",
+		// path to a type's property e.g. ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
+		rPropertyPath = /^((\/dataServices\/schema\/\d+)\/(?:complexType|entityType)\/\d+)\/property\/\d+$/;
 
 	/**
 	 * @class List binding implementation for the OData meta model which supports filtering on
@@ -23,11 +33,15 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @extends sap.ui.model.json.JSONListBinding
 	 * @private
 	 */
-	var ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.ODataMetaListBinding");
+	var ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.ODataMetaListBinding"),
+		Resolver = ManagedObject.extend("sap.ui.model.odata._resolver", {
+			metadata : {
+				properties : {
+					any : "any"
+				}
+			}
+		});
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaListBinding.prototype.applyFilter = function () {
 		var that = this;
 
@@ -42,16 +56,25 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataMetaModel</code>,
-	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel} instead!
+	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel getMetaModel} instead!
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
-	 *   the OData model's meta data object
-	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
+	 *   the OData model's metadata object
+	 * @param {sap.ui.model.odata.ODataAnnotations} [oAnnotations]
 	 *   the OData model's annotations object
+	 * @param {object} [oODataModelInterface]
+	 *   the private interface object of the OData model which provides friend access to
+	 *   selected methods
+	 * @param {function} [oODataModelInterface.addAnnotationUrl]
+	 *   the {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl addAnnotationUrl} method
+	 *   of the OData model, in case this feature is supported
+	 * @param {Promise} [oODataModelInterface.annotationsLoadedPromise]
+	 *   a promise which is resolved by the OData model once metadata and annotations have been
+	 *   fully loaded
 	 *
-	 * @class Implementation of an OData meta model which offers a unified access to both OData v2
-	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
-	 * as a foundation and merges v4 annotations from the existing
+	 * @class Implementation of an OData meta model which offers a unified access to both OData V2
+	 * metadata and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
+	 * as a foundation and merges V4 annotations from the existing
 	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding model element.
 	 *
 	 * Also, annotations from the "http://www.sap.com/Protocols/SAPData" namespace are lifted up
@@ -73,15 +96,18 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 *
 	 * As of 1.29.0, the corresponding vocabulary-based annotations for the following
 	 * "<a href="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a>"
-	 * are added, if they are not yet defined in the v4 annotations:
+	 * are added, if they are not yet defined in the V4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
 	 * <li><code>creatable</code>, <code>deletable</code>, <code>deletable-path</code>,
 	 * <code>pageable</code>, <code>requires-filter</code>, <code>searchable</code>,
 	 * <code>topable</code>, <code>updatable</code> and <code>updatable-path</code> on entity sets;
 	 * </li>
-	 * <li><code>creatable</code>, <code>display-format</code> ("UpperCase" and "NonNegative"),
-	 * <code>field-control</code>, <code>filterable</code>, <code>heading</code>,
+	 * <li><code>creatable</code>, <code>creatable-path</code>, <code>filterable</code>
+	 * on navigation properties;</li>
+	 * <li><code>aggregation-role</code> ("dimension" and "measure"), <code>creatable</code>,
+	 * <code>display-format</code> ("UpperCase" and "NonNegative"), <code>field-control</code>,
+	 * <code>filterable</code>, <code>filter-restriction</code>, <code>heading</code>,
 	 * <code>precision</code>, <code>quickinfo</code>, <code>required-in-filter</code>,
 	 * <code>sortable</code>, <code>text</code>, <code>unit</code>, <code>updatable</code> and
 	 * <code>visible</code> on properties;</li>
@@ -91,14 +117,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * "email;type=home,pref"), "familyname", "givenname", "honorific", "middlename", "name",
 	 * "nickname", "note", "org", "org-unit", "org-role", "photo", "pobox", "region", "street",
 	 * "suffix", "tel" (including support for types, for example "tel;type=cell,pref"), "title" and
-	 * "zip" (mapped to v4 annotation <code>com.sap.vocabularies.Communication.v1.Contact</code>);
+	 * "zip" (mapped to V4 annotation <code>com.sap.vocabularies.Communication.v1.Contact</code>);
 	 * </li>
 	 * <li>"class", "dtend", "dtstart", "duration", "fbtype", "location", "status", "transp" and
-	 * "wholeday" (mapped to v4 annotation
+	 * "wholeday" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Event</code>);</li>
-	 * <li>"body", "from", "received", "sender" and "subject" (mapped to v4 annotation
+	 * <li>"body", "from", "received", "sender" and "subject" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Message</code>);</li>
-	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to v4 annotation
+	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Task</code>).</li>
 	 * </ul>
 	 * </ul>
@@ -121,6 +147,25 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * {@link sap.ui.model.Model#event:requestFailed requestFailed},
 	 * {@link sap.ui.model.Model#event:requestSent requestSent}) are fired!
 	 *
+	 * Within the meta model, the objects are arranged in arrays.
+	 * <code>/dataServices/schema</code>, for example, is an array of schemas where each schema has
+	 * an <code>entityType</code> property with an array of entity types, and so on. So,
+	 * <code>/dataServices/schema/0/entityType/16</code> can be the path to the entity type with
+	 * name "Order" in the schema with namespace "MySchema". However, these paths are not stable:
+	 * If an entity type with lower index is removed from the schema, the path to
+	 * <code>Order</code> changes to <code>/dataServices/schema/0/entityType/15</code>.
+	 *
+	 * To avoid problems with changing indexes, {@link sap.ui.model.Model#getObject getObject} and
+	 * {@link sap.ui.model.Model#getProperty getProperty} support XPath-like queries for the
+	 * indexes (since 1.29.1). Each index can be replaced by a query in square brackets. You can,
+	 * for example, address the schema using the path
+	 * <code>/dataServices/schema/[${namespace}==='MySchema']</code> or the entity using
+	 * <code>/dataServices/schema/[${namespace}==='MySchema']/entityType/[${name}==='Order']</code>.
+	 *
+	 * The syntax inside the square brackets is the same as in expression binding. The query is
+	 * executed for each object in the array until the result is true (truthy) for the first time.
+	 * This object is then chosen.
+	 *
 	 * <b>BEWARE:</b> Access to this OData meta model will fail before the promise returned by
 	 * {@link #loaded loaded} has been resolved!
 	 *
@@ -131,19 +176,46 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @public
 	 * @since 1.27.0
 	 */
-	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
-			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {
+	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel", {
+			constructor : function (oMetadata, oAnnotations, oODataModelInterface) {
+				var that = this;
 
-			constructor : function (oMetadata, oAnnotations) {
+				function load() {
+					var oData;
+
+					if (that.bDestroyed) {
+						throw new Error("Meta model already destroyed");
+					}
+					jQuery.sap.measure.average(sPerformanceLoad, "", aPerformanceCategories);
+					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
+					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
+					that.oModel = new JSONModel(oData);
+					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
+					jQuery.sap.measure.end(sPerformanceLoad);
+				}
+
+				oODataModelInterface = oODataModelInterface || {};
+
 				MetaModel.apply(this); // no arguments to pass!
-				this.sDefaultBindingMode = BindingMode.OneTime;
-				this.mSupportedBindingModes = {"OneTime" : true};
 				this.oModel = null; // not yet available!
-				this.oLoadedPromise = Utils.load(this, oMetadata, oAnnotations);
-			},
 
-			metadata : {
-				publicMethods : ["loaded"]
+				// map path of property to promise for loading its value list
+				this.mContext2Promise = {};
+				this.sDefaultBindingMode = BindingMode.OneTime;
+				this.oLoadedPromise
+					= oODataModelInterface.annotationsLoadedPromise
+					? oODataModelInterface.annotationsLoadedPromise.then(load)
+					: new Promise(function (fnResolve, fnReject) {
+							load();
+							fnResolve();
+						}); // call load() synchronously!
+				this.oMetadata = oMetadata;
+				this.oODataModelInterface = oODataModelInterface;
+				this.mQueryCache = {};
+				// map qualified property name to internal "promise interface" for request bundling
+				this.mQName2PendingRequest = {};
+				this.oResolver = undefined;
+				this.mSupportedBindingModes = {"OneTime" : true};
 			}
 		});
 
@@ -161,76 +233,224 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @private
 	 */
 	ODataMetaModel.prototype._getObject = function (sPath, oContext) {
-		var i, oNode = oContext, aParts, sResolvedPath = sPath || "";
+		var oBaseNode = oContext,
+			oBinding,
+			sCacheKey,
+			i,
+			iEnd,
+			oNode,
+			vPart,
+			sProcessedPath,
+			sResolvedPath = sPath || "",
+			oResult;
 
-		if (!oContext || oContext instanceof sap.ui.model.Context){
+		if (!oContext || oContext instanceof Context) {
 			sResolvedPath = this.resolve(sPath || "", oContext);
 			if (!sResolvedPath) {
 				jQuery.sap.log.error("Invalid relative path w/o context", sPath,
-					"sap.ui.model.odata.ODataMetaModel");
+					sODataMetaModel);
 				return null;
 			}
 		}
 
 		if (sResolvedPath.charAt(0) === "/") {
-			oNode = this.oModel._getObject("/");
+			oBaseNode = this.oModel._getObject("/");
 			sResolvedPath = sResolvedPath.slice(1);
 		}
 
-		if (sResolvedPath) {
-			aParts = sResolvedPath.split("/");
-			for (i = 0; i < aParts.length; i += 1) {
-				if (!oNode) {
-					if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-						jQuery.sap.log.warning("Invalid part: " + aParts[i],
-							"path: " + sPath + ", context: "
-							+ (oContext instanceof sap.ui.model.Context ?
-								oContext.getPath() : oContext),
-							"sap.ui.model.odata.ODataMetaModel");
+		sProcessedPath = "/";
+		oNode = oBaseNode;
+		while (sResolvedPath) {
+			vPart = undefined;
+			oBinding = undefined;
+			if (sResolvedPath.charAt(0) === '[') {
+				try {
+					oResult = BindingParser.parseExpression(sResolvedPath, 1);
+					iEnd = oResult.at;
+					if (iEnd >= 0 && (sResolvedPath.length === iEnd + 1
+							|| sResolvedPath.charAt(iEnd + 1) === '/')) {
+						oBinding = oResult.result;
+						vPart = sResolvedPath.slice(0, iEnd + 1);
+						sResolvedPath = sResolvedPath.slice(iEnd + 2);
 					}
-					break;
+				} catch (ex) {
+					if (!(ex instanceof SyntaxError)) {
+						throw ex;
+					}
+					// do nothing, syntax error is logged already
 				}
-				oNode = oNode[aParts[i]];
 			}
+			if (vPart === undefined) {
+				// No query or unsuccessful query, simply take the next part until '/'
+				iEnd = sResolvedPath.indexOf("/");
+				if (iEnd < 0) {
+					vPart = sResolvedPath;
+					sResolvedPath = "";
+				} else {
+					vPart = sResolvedPath.slice(0, iEnd);
+					sResolvedPath = sResolvedPath.slice(iEnd + 1);
+				}
+			}
+			if (!oNode) {
+				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sODataMetaModel)) {
+					jQuery.sap.log.warning("Invalid part: " + vPart,
+						"path: " + sPath + ", context: "
+							+ (oContext instanceof Context ? oContext.getPath() : oContext),
+						sODataMetaModel);
+				}
+				break;
+			}
+			if (oBinding) {
+				if (oBaseNode === oContext) {
+					jQuery.sap.log.error(
+						"A query is not allowed when an object context has been given", sPath,
+						sODataMetaModel);
+					return null;
+				}
+				if (!Array.isArray(oNode)) {
+					jQuery.sap.log.error(
+						"Invalid query: '" + sProcessedPath + "' does not point to an array",
+						sPath, sODataMetaModel);
+					return null;
+				}
+				sCacheKey = sProcessedPath + vPart;
+				vPart = this.mQueryCache[sCacheKey];
+				if (vPart === undefined) {
+					// Set the resolver on the internal JSON model, so that resolving does not use
+					// this._getObject itself.
+					this.oResolver = this.oResolver || new Resolver({models: this.oModel});
+					for (i = 0; i < oNode.length; i++) {
+						this.oResolver.bindObject(sProcessedPath + i);
+						this.oResolver.bindProperty("any", oBinding);
+						try {
+							if (this.oResolver.getAny()) {
+								this.mQueryCache[sCacheKey] = vPart = i;
+								break;
+							}
+						} finally {
+							this.oResolver.unbindProperty("any");
+							this.oResolver.unbindObject();
+						}
+					}
+				}
+			}
+			oNode = oNode[vPart];
+			sProcessedPath = sProcessedPath + vPart + "/";
 		}
 		return oNode;
 	};
 
 	/**
-	 * @inheritdoc
+	 * Merges metadata retrieved via <code>this.oODataModelInterface.addAnnotationUrl</code>.
+	 *
+	 * @param {object} oResponse response from addAnnotationUrl.
+	 *
+	 * @private
 	 */
+	ODataMetaModel.prototype._mergeMetadata = function (oResponse) {
+		var oEntityContainer = this.getODataEntityContainer(),
+			mChildAnnotations = Utils.getChildAnnotations(oResponse.annotations,
+				oEntityContainer.namespace + "." + oEntityContainer.name, true),
+			iFirstNewEntitySet = oEntityContainer.entitySet.length,
+			aSchemas = this.oModel.getObject("/dataServices/schema"),
+			that = this;
+
+		// merge metadata for entity sets/types
+		oResponse.entitySets.forEach(function (oEntitySet) {
+			var oEntityType,
+				oSchema,
+				sTypeName = oEntitySet.entityType,
+				// Note: namespaces may contain dots themselves!
+				sNamespace = sTypeName.slice(0, sTypeName.lastIndexOf("."));
+
+			if (!that.getODataEntitySet(oEntitySet.name)) {
+				oEntityContainer.entitySet.push(JSON.parse(JSON.stringify(oEntitySet)));
+
+				if (!that.getODataEntityType(sTypeName)) {
+					oEntityType = that.oMetadata._getEntityTypeByName(sTypeName);
+					oSchema = Utils.getSchema(aSchemas, sNamespace);
+					oSchema.entityType.push(JSON.parse(JSON.stringify(oEntityType)));
+
+					// visit all entity types before visiting the entity sets to ensure that V2
+					// annotations are already lifted up and can be used for calculating entity
+					// set annotations which are based on V2 annotations on entity properties
+					Utils.visitParents(oSchema, oResponse.annotations,
+						"entityType", Utils.visitEntityType,
+						oSchema.entityType.length - 1);
+				}
+			}
+		});
+
+		Utils.visitChildren(oEntityContainer.entitySet, mChildAnnotations, "EntitySet", aSchemas,
+			/*fnCallback*/null, iFirstNewEntitySet);
+	};
+
+
+	/**
+	 * Send all currently pending value list requests as a single bundle.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype._sendBundledRequest = function () {
+		var mQName2PendingRequest = this.mQName2PendingRequest, // remember current state
+			aQualifiedPropertyNames = Object.keys(mQName2PendingRequest),
+			that = this;
+
+		if (!aQualifiedPropertyNames.length) {
+			return; // nothing to do
+		}
+
+		this.mQName2PendingRequest = {}; // clear pending requests for next bundle
+
+		// normalize URL to be browser cache friendly with value list request
+		aQualifiedPropertyNames = aQualifiedPropertyNames.sort();
+		aQualifiedPropertyNames.forEach(function (sQualifiedPropertyName, i) {
+			aQualifiedPropertyNames[i] = encodeURIComponent(sQualifiedPropertyName);
+		});
+
+		this.oODataModelInterface
+			.addAnnotationUrl("$metadata?sap-value-list=" + aQualifiedPropertyNames.join(","))
+			.then(
+				function (oResponse) {
+					var sQualifiedPropertyName;
+					that._mergeMetadata(oResponse);
+					for (sQualifiedPropertyName in mQName2PendingRequest) {
+						try {
+							mQName2PendingRequest[sQualifiedPropertyName].resolve(oResponse);
+						} catch (oError) {
+							mQName2PendingRequest[sQualifiedPropertyName].reject(oError);
+						}
+					}
+				},
+				function (oError) {
+					var sQualifiedPropertyName;
+					for (sQualifiedPropertyName in mQName2PendingRequest) {
+						mQName2PendingRequest[sQualifiedPropertyName].reject(oError);
+					}
+				}
+			);
+	};
+
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ClientContextBinding(this, sPath, oContext, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters,
 		mParameters) {
 		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new JSONPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.bindTree = function (sPath, oContext, aFilters, mParameters) {
 		return new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.destroy = function () {
 		MetaModel.prototype.destroy.apply(this, arguments);
-		return this.oModel.destroy.apply(this.oModel, arguments);
+		return this.oModel && this.oModel.destroy.apply(this.oModel, arguments);
 	};
 
 	/**
@@ -240,9 +460,9 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 *   an absolute path pointing to an entity or property, e.g.
 	 *   "/ProductSet(1)/ToSupplier/BusinessPartnerID"; this equals the
 	 *   <a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions#ResourcePath">
-	 *   resource path</a> component of a URI according to OData v2 URI conventions
+	 *   resource path</a> component of a URI according to OData V2 URI conventions
 	 * @returns {sap.ui.model.Context}
-	 *   the context for the corresponding meta data object, i.e. an entity type or its property,
+	 *   the context for the corresponding metadata object, i.e. an entity type or its property,
 	 *   or <code>null</code> in case no path is given
 	 * @throws {Error} in case no context can be determined
 	 * @public
@@ -400,18 +620,22 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @public
 	 */
 	ODataMetaModel.prototype.getODataEntityContainer = function (bAsPath) {
-		var vResult = bAsPath ? undefined : null;
+		var vResult = bAsPath ? undefined : null,
+			aSchemas = this.oModel.getObject("/dataServices/schema");
 
-		(this.oModel.getObject("/dataServices/schema") || []).forEach(function (oSchema, i) {
-			var j = Utils.findIndex(oSchema.entityContainer, "true", "isDefaultEntityContainer");
+		if (aSchemas) {
+			aSchemas.forEach(function (oSchema, i) {
+				var j = Utils.findIndex(oSchema.entityContainer, "true",
+						"isDefaultEntityContainer");
 
-			if (j >= 0) {
-				vResult = bAsPath
-					? "/dataServices/schema/" + i + "/entityContainer/" + j
-					: oSchema.entityContainer[j];
-				return false; //break
-			}
-		});
+				if (j >= 0) {
+					vResult = bAsPath
+						? "/dataServices/schema/" + i + "/entityContainer/" + j
+						: oSchema.entityContainer[j];
+					return false; //break
+				}
+			});
+		}
 
 		return vResult;
 	};
@@ -422,7 +646,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @param {string} sName
 	 *   a simple name, e.g. "ProductSet"
 	 * @param {boolean} [bAsPath=false]
-	 *   determines whether the entity type is returned as a path or as an object
+	 *   determines whether the entity set is returned as a path or as an object
 	 * @returns {object|string}
 	 *   (the path to) the entity set with the given simple name; <code>undefined</code> (for a
 	 *   path) or <code>null</code> (for an object) if no such set is found
@@ -567,53 +791,83 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * the annotation. The map is empty if the property has no
 	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
 	 *
-	 * @param {object} oProperty
-	 *   a property of an OData entity type or complex type as returned by
-	 *   {@link #getODataProperty getODataProperty}
+	 * @param {sap.ui.model.Context} oPropertyContext
+	 *   a model context for a structural property of an entity type or a complex type, as
+	 *   returned by {@link #getMetaContext getMetaContext}
 	 * @returns {Promise}
 	 *   a Promise that gets resolved as soon as the value lists as well as the required model
 	 *   elements have been loaded
-	 * @throws {Error} if <code>oProperty</code> is <code>null</code> or not an object
 	 * @since 1.29.1
 	 * @public
 	 */
-	ODataMetaModel.prototype.getODataValueLists = function (oProperty) {
-		if (oProperty === null || typeof oProperty !== "object") {
-			throw new Error("Given property " + oProperty + " is not an object");
+	ODataMetaModel.prototype.getODataValueLists = function (oPropertyContext) {
+		var bCachePromise = false, // cache only promises which trigger a request
+			aMatches,
+			sPropertyPath = oPropertyContext.getPath(),
+			oPromise = this.mContext2Promise[sPropertyPath],
+			that = this;
+
+		if (oPromise) {
+			return oPromise;
 		}
-		return new Promise(function (fnResolve, fnReject) {
-			var mValueLists = {};
 
-			jQuery.each(oProperty, function (sName, oValue) {
-				var sQualifier;
+		aMatches = rPropertyPath.exec(sPropertyPath);
+		if (!aMatches) {
+			throw new Error("Unsupported property context with path " + sPropertyPath);
+		}
 
-				if (jQuery.sap.startsWith(sName, "com.sap.vocabularies.Common.v1.ValueList")) {
-					sQualifier = sName.split("#")[1];
-					mValueLists[sQualifier ? sQualifier : ""] = oValue;
-				}
-			});
-			fnResolve(mValueLists);
+		oPromise = new Promise(function (fnResolve, fnReject) {
+			var oProperty = oPropertyContext.getObject(),
+				sQualifiedTypeName,
+				mValueLists = Utils.getValueLists(oProperty);
+
+			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]
+				&& that.oODataModelInterface.addAnnotationUrl) {
+				// property with value list which is not yet loaded
+				bCachePromise = true;
+				sQualifiedTypeName = that.oModel.getObject(aMatches[2]).namespace
+					+ "." + that.oModel.getObject(aMatches[1]).name;
+				that.mQName2PendingRequest[sQualifiedTypeName + "/" + oProperty.name] = {
+					resolve : function (oResponse) {
+						// enhance property by annotations from response to get value lists
+						jQuery.extend(oProperty,
+							((oResponse.annotations.propertyAnnotations || {})
+								[sQualifiedTypeName] || {})
+									[oProperty.name]
+						);
+						mValueLists = Utils.getValueLists(oProperty);
+						if (jQuery.isEmptyObject(mValueLists)) {
+							fnReject(new Error("No value lists returned for " + sPropertyPath));
+						} else {
+							delete that.mContext2Promise[sPropertyPath];
+							fnResolve(mValueLists);
+						}
+					},
+					reject : fnReject
+				};
+				// send bundled value list request once after multiple synchronous API calls
+				setTimeout(that._sendBundledRequest.bind(that), 0);
+			} else {
+				fnResolve(mValueLists);
+			}
 		});
+		if (bCachePromise) {
+			this.mContext2Promise[sPropertyPath] = oPromise;
+		}
+
+		return oPromise;
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.getProperty = function () {
 		return this._getObject.apply(this, arguments);
 	};
 
-	/**
-	 * @inheritdoc
-	 */
 	ODataMetaModel.prototype.isList = function () {
 		return this.oModel.isList.apply(this.oModel, arguments);
 	};
 
 	/**
 	 * Returns a promise which is fulfilled once the meta model data is loaded and can be used.
-	 * It is rejected with a corresponding <code>Error</code> object in case of errors, such as
-	 * failure to load meta data or annotations.
 	 *
 	 * @public
 	 * @returns {Promise} a Promise
@@ -661,4 +915,4 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	return ODataMetaModel;
-}, /* bExport= */ true);
+});

@@ -1,72 +1,125 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.SplitContainer</title>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<!--[if IE]>
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 		<![endif]-->
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
 			sinon.config.useFakeTimers = false;
 
 			// Setup viewport for mobile device because SplitContainer doesn't call this by default.
 			jQuery.sap.initMobile();
 
-			test("Should add a MasterPage only once", function() {
+			function splitContainerSetup(bNoPages) {
 				//System under Test
 				var	sut = new sap.m.SplitContainer();
 
-				var page = new sap.m.Page("master");
-				var page2 = new sap.m.Page("master2");
+				if (bNoPages) {
+					return sut;
+				}
 
-				//Act
-				sut.addMasterPage(page);
+				var page = new sap.m.Page("master", {
+					title: 'Master 1 Page 1'
+				});
+
+				var page2 = new sap.m.Page("master2", {
+					title: 'Master 2 Page 2'
+				});
+
+				//master pages
 				sut.addMasterPage(page);
 				sut.addMasterPage(page2);
 
-				//Assert
-				strictEqual(sut._aMasterPages.length, 2, "did add the master page only once");
-			});
+				//details pages
+				page = new sap.m.Page("detail");
+				page2 = new sap.m.Page("detail2");
 
-			test("Should add a DetailPage only once", function() {
-				//System under Test
-				var	sut = new sap.m.SplitContainer();
-
-				var page = new sap.m.Page("detail");
-				var page2 = new sap.m.Page("detail2");
-
-				//Act
-				sut.addDetailPage(page);
 				sut.addDetailPage(page);
 				sut.addDetailPage(page2);
 
-				//Assert
-				strictEqual(sut._aDetailPages.length, 2, "did add the detail page only once");
+				return sut;
+			};
+
+			QUnit.module("SplitContainer API and default values", {
+				beforeEach : function () {
+					this.sut = splitContainerSetup();
+//					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					this.sut.destroy();
+					this.sut = null;
+				}
 			});
 
-			asyncTest("Destroy showMasterBtn during page navigation", function(){
+			QUnit.test("Try add master page more than once", function(assert) {
+				//Assert
+				var page = new sap.m.Page("master3");
+				assert.strictEqual(this.sut.getMasterPages().length, 2, "initial master pages are 2");
+
+				this.sut.addMasterPage(page);
+				assert.strictEqual(this.sut.getMasterPages().length, 3, "Now master pages are 3");
+
+				// try to add it again
+				this.sut.addMasterPage(page);
+				assert.strictEqual(this.sut.getMasterPages().length, 3, "Now master pages should remain 3");
+
+			});
+
+			QUnit.test("Properties default values", function(assert) {
+				assert.strictEqual(this.sut.getDefaultTransitionNameDetail(), "slide", "Default value of the property is 'slide'");
+
+				assert.strictEqual(this.sut.getDefaultTransitionNameMaster(), "slide", "Default value of the property is 'slide'");
+
+				assert.strictEqual(this.sut.getMode(), sap.m.SplitAppMode.ShowHideMode, "Default value of the property mode is 'ShowHideMode'");
+
+				assert.strictEqual(this.sut.getMasterButtonText(), "", "Default value of the property masterButtonText is 'null'");
+
+				assert.strictEqual(this.sut.getBackgroundColor(), "", "Default value of the property backgroundColor is 'null'");
+
+				assert.strictEqual(this.sut.getBackgroundImage(), "", "Default value of the property backgroundImage is 'null'");
+
+				assert.strictEqual(this.sut.getBackgroundRepeat(), false, "Default value of the property backgroundRepeat is 'false'");
+
+				assert.strictEqual(this.sut.getBackgroundOpacity(), 1, "Default value of the property backgroundOpacity is '1'");
+			});
+
+			QUnit.test("Try add detail page twice", function(assert) {
+				var page = new sap.m.Page("detail3");
+				assert.strictEqual(this.sut.getDetailPages().length, 2, "initial detail pages are 2");
+
+				this.sut.addDetailPage(page);
+				assert.strictEqual(this.sut.getDetailPages().length, 3, "Now detail pages are 3");
+
+				// try to add it again
+				this.sut.addDetailPage(page);
+				assert.strictEqual(this.sut.getDetailPages().length, 3, "Now details pages should remain 3");
+			});
+
+			QUnit.test("Destroy showMasterBtn during page navigation", function(assert){
+				var done = assert.async();
 				var oSplitContainer = new sap.m.SplitContainer({
 					detailNavigate: function(){
-						ok(this._oShowMasterBtn.bIsDestroyed, "showMasterBtn is destroyed with the customHeader together");
+						assert.ok(this._oShowMasterBtn.bIsDestroyed, "showMasterBtn is destroyed with the customHeader together");
 					},
 					afterDetailNavigate: function(){
-						ok(!this._oShowMasterBtn.bIsDestroyed, "showMasterBtn should be recreated after page navigation");
+						assert.ok(!this._oShowMasterBtn.bIsDestroyed, "showMasterBtn should be recreated after page navigation");
 						this.destroy();
-						start();
+						done();
 					}
 				});
 				oSplitContainer.setMode(sap.m.SplitAppMode.HideMode);
@@ -102,7 +155,8 @@
 				oButton.firePress();
 			});
 
-			asyncTest("No endless rerendering triggered by invalidation after navigation", function(){
+			QUnit.test("No endless rerendering triggered by invalidation after navigation", function(assert){
+				var done = assert.async();
 				var oSystem = {
 						desktop: true,
 						phone: false,
@@ -169,9 +223,9 @@
 
 				var fnMasterClose = function() {
 					oSC.detachAfterMasterClose(fnMasterClose);
-					equal(oSpy.callCount, 1, "invalidate should be called once after rendering");
+					assert.equal(oSpy.callCount, 1, "invalidate should be called once after rendering");
 					oApp.destroy();
-					start();
+					done();
 				};
 
 				var fnMasterOpen = function() {
@@ -189,7 +243,8 @@
 				oSC.showMaster();
 			});
 
-			asyncTest("Master button should be hidden in portrait mode with ShowHideMode", function(){
+			QUnit.test("Master button should be hidden in portrait mode with ShowHideMode", function(assert){
+				var done = assert.async();
 				var oLandscape = {
 							landscape: true,
 							portrait: false
@@ -226,12 +281,12 @@
 						var toId = oEvent.getParameter("toId"),
 							isBack = oEvent.getParameter("isBack");
 						if (toId === "page1" && isBack) {
-							ok(oSplitContainer._oShowMasterBtn.$().hasClass("sapMSplitContainerMasterBtnHidden"), "Master button should be hidden how");
+							assert.ok(oSplitContainer._oShowMasterBtn.$().hasClass("sapMSplitContainerMasterBtnHidden"), "Master button should be hidden how");
 							oSplitContainer.destroy();
 							// restore the stubs
 							sap.ui.Device.orientation = oOldOrientation;
 							sap.ui.Device.system = oOldSystem;
-							start();
+							done();
 						} else if (toId === "page2") {
 							// manually sub the orientation object on sap.ui.Device
 							sap.ui.Device.orientation = oLandscape;
@@ -247,7 +302,8 @@
 				oSplitContainer.toDetail("page2");
 			});
 
-			asyncTest("activeElement in master area should be blurred after master area is closed", function(){
+			QUnit.test("activeElement in master area should be blurred after master area is closed", function(assert){
+				var done = assert.async();
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -270,13 +326,13 @@
 					],
 					afterMasterOpen: function(){
 						oInput.focus();
-						equal(oInput.getFocusDomRef(), document.activeElement, "Focus is set to input");
+						assert.equal(oInput.getFocusDomRef(), document.activeElement, "Focus is set to input");
 						oSplitContainer.hideMaster();
 					},
 					afterMasterClose: function(){
-						notEqual(oInput.getFocusDomRef(), document.activeElement, "Focus should be removed from the master area after master is closed");
+						assert.notEqual(oInput.getFocusDomRef(), document.activeElement, "Focus should be removed from the master area after master is closed");
 						oSplitContainer.destroy();
-						start();
+						done();
 					}
 				});
 
@@ -286,7 +342,7 @@
 				oSplitContainer.showMaster();
 			});
 
-			test("sap.ui.Device.resize event should be reacted also on phone", function() {
+			QUnit.test("sap.ui.Device.resize event should be reacted also on phone", function(assert) {
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -309,11 +365,48 @@
 
 				this.stub(sap.ui.Device, "orientation", oPortrait);
 				oSplitContainer._fnResize();
-				equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
+				assert.equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
 				oSplitContainer.destroy();
 			});
 
-			test("Should show and hide a masterButton with a toolbar", function() {
+			QUnit.test("Navigate and afterNavigate events should work in phone also", function(assert){
+				var oSystem = {
+							desktop: false,
+							phone: true,
+							tablet: false
+						},
+						oOldSystem = sap.ui.Device.system,
+						oOldOrientation = sap.ui.Device.orientation;
+
+				// stub the system object on sap.ui.Device
+				sap.ui.Device.system = oSystem;
+
+
+				var oSplitContainer = new sap.m.SplitContainer({
+					initialDetail: "page1",
+					detailPages: [
+						new sap.m.Page("page1", {
+
+						}),
+						new sap.m.Page("page2", {
+							showNavButton: true
+						})
+					]
+
+				});
+
+				oSplitContainer._handleNavigationEvent = this.spy();
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				oSplitContainer.toDetail("page2");
+				assert.notEqual(oSplitContainer._handleNavigationEvent.callCount, 0, "Events work on the phone also.");
+
+				oSplitContainer.destroy();
+				sap.ui.Device.system = oOldSystem;
+			});
+
+			QUnit.test("Should show and hide a masterButton with a toolbar", function(assert) {
 				// Arrange
 				var oPortrait = {
 						landscape: false,
@@ -346,7 +439,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert Button is shown
-				ok(!oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is shown");
+				assert.ok(!oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is shown");
 
 
 				// Act 2 - change orientation
@@ -354,12 +447,12 @@
 				oSplitContainer._fnResize();
 
 				// Asset Button is removed
-				ok(oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is hidden");
+				assert.ok(oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is hidden");
 
 				oSplitContainer.destroy();
 			});
 
-			test("Set custom header to current detail page after master button is already inserted", function(){
+			QUnit.test("Set custom header to current detail page after master button is already inserted", function(assert){
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -383,22 +476,22 @@
 				oSplitContainer.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
+				assert.ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
 
 				var oHeader = new sap.m.Bar();
 				oPage.setCustomHeader(oHeader);
 				sap.ui.getCore().applyChanges();
 
-				ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
+				assert.ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
 
 				oSplitContainer.removeDetailPage(oPage);
-				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");
+				assert.strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");
 
 				oPage.destroy();
 				oSplitContainer.destroy();
 			});
 
-			test("Add NavContainer to detail area of SplitContainer and test the show/hide master button", function() {
+			QUnit.test("Add NavContainer to detail area of SplitContainer and test the show/hide master button", function(assert) {
 				// Arrange
 				var oPortrait = {
 						landscape: false,
@@ -436,13 +529,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				ok(oPage._getAnyHeader(), "Header is in page");
-				strictEqual(oPage._getAnyHeader().getContentLeft()[0], oSC._oShowMasterBtn, "Master button is inserted into the page in nav container");
+				assert.ok(oPage._getAnyHeader(), "Header is in page");
+				assert.strictEqual(oPage._getAnyHeader().getContentLeft()[0], oSC._oShowMasterBtn, "Master button is inserted into the page in nav container");
 
 				oSC.destroy();
 			});
 
-			test("Overwrite and restore of methods on page in detail area of SplitContainer when not runs on phone", function() {
+			QUnit.test("Overwrite and restore of methods on page in detail area of SplitContainer when not runs on phone", function(assert) {
 				var oSystem = {
 						desktop: true,
 						phone: false,
@@ -456,16 +549,16 @@
 						detailPages: oPage
 					});
 
-				notEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be overwritten");
-				notEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be overwritten");
+				assert.notEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be overwritten");
+				assert.notEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be overwritten");
 
 				oSC.removeDetailPage(oPage);
 
-				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be restored");
-				strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be restored");
+				assert.strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be restored");
+				assert.strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be restored");
 			});
 
-			test("Functions on page shouldn't be patched when runs on phone", function() {
+			QUnit.test("Functions on page shouldn't be patched when runs on phone", function(assert) {
 				var oSystem = {
 						desktop: false,
 						phone: true,
@@ -479,13 +572,13 @@
 						detailPages: oPage
 					});
 
-				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader shouldn't be patched");
-				strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton shouldn't be patched");
+				assert.strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader shouldn't be patched");
+				assert.strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton shouldn't be patched");
 
 				oSC.destroy();
 			});
 
-			test("Hide hamburger button when page shows back button", function() {
+			QUnit.test("Hide hamburger button when page shows back button", function(assert) {
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -507,17 +600,17 @@
 				oSC.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				ok(oSC._oShowMasterBtn.$().is(":visible"), "Master button is shown");
+				assert.ok(oSC._oShowMasterBtn.$().is(":visible"), "Master button is shown");
 
 				oPage.setShowNavButton(true);
 				sap.ui.getCore().applyChanges();
 
-				ok(oSC._oShowMasterBtn.$().is(":hidden"), "Master button is now hidden");
+				assert.ok(oSC._oShowMasterBtn.$().is(":hidden"), "Master button is now hidden");
 
 				oSC.destroy();
 			});
 
-			test("Call preventDefault on masterNavigate or detailNavigate events should prevent the navigation", function() {
+			QUnit.test("Call preventDefault on masterNavigate or detailNavigate events should prevent the navigation", function(assert) {
 				var oLandscape = {
 						landscape: true,
 						portrait: false
@@ -551,19 +644,19 @@
 				oSC.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is 'mp1'");
-				equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is 'dp1'");
+				assert.equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is 'mp1'");
+				assert.equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is 'dp1'");
 
 				oSC.toMaster("mp2");
-				equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is still 'mp1'");
+				assert.equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is still 'mp1'");
 
 				oSC.toDetail("dp2");
-				equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is still 'dp1'");
+				assert.equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is still 'dp1'");
 
 				oSC.destroy();
 			});
-			
-			test("Show hamburger button when there's INVISIBLE back button in detail page's header", function() {
+
+			QUnit.test("Show hamburger button when there's INVISIBLE back button in detail page's header", function(assert) {
 				var oPortrait = {
 						landscape: false,
 						portrait: true
@@ -583,7 +676,7 @@
 							contentLeft: new sap.m.Button({
 								type: sap.m.ButtonType.Back,
 								text: "hidden button",
-								visible: false 
+								visible: false
 							})
 						})
 					}),
@@ -597,11 +690,417 @@
 
 				var oMasterButton = oSC._oShowMasterBtn;
 
-				ok(oMasterButton, "Hamburger button is created");
-				ok(oMasterButton.$().closest("#dp1").length, "master button is in detail page");
+				assert.ok(oMasterButton, "Hamburger button is created");
+				assert.ok(oMasterButton.$().closest("#dp1").length, "master button is in detail page");
 
 				oSC.destroy();
 			});
+
+			QUnit.test("restore the overwritten methods on pages when page is moved from splitcontainer to navcontainer", function(assert) {
+				var oDetailPage = new sap.m.Page(),
+					oSplitContainer = new sap.m.SplitContainer({
+						detailPages: oDetailPage
+					}),
+					oNavContainer = new sap.m.NavContainer();
+
+				assert.notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is already overwritten");
+				assert.notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already overwritten");
+
+
+				oNavContainer.addPage(oDetailPage);
+
+				assert.strictEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButtton is already restored");
+				assert.strictEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is already restored");
+
+
+				oSplitContainer.addDetailPage(oDetailPage);
+
+				assert.notEqual(oDetailPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "function setShowNavButton is overwritten again");
+				assert.notEqual(oDetailPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "function setCustomHeader is overwritten again");
+
+				oNavContainer.destroy();
+				oSplitContainer.destroy();
+			});
+
+			QUnit.test("Switch between different modes", function(assert) {
+				var done = assert.async();
+				var oSplitContainer = new sap.m.SplitContainer({
+						masterPages: new sap.m.Page(),
+						detailPages: new sap.m.Page()
+					}),
+					oSystem = {
+						desktop: true,
+						tablet: false,
+						phone: false
+					},
+					oLandscape = {
+						landscape: true,
+						portrait: false
+					},
+					oPortrait = {
+						landscape: false,
+						portrait: true
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oLandscape);
+
+				assert.equal(oSplitContainer.getMode(), sap.m.SplitAppMode.ShowHideMode, "The default mode is showhide mode");
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+				assert.ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
+
+				oSplitContainer.setMode(sap.m.SplitAppMode.HideMode);
+				assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class is set to master after switching to HideMode");
+				assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "visible class is removed from master after switching to HideMode");
+				assert.ok(!oSplitContainer._bMasterisOpen, "flag of whether master is open is correctly maintained after switching to HideMode");
+
+				oSplitContainer.showMaster();
+				assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
+				assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+
+				oSplitContainer.attachAfterMasterOpen(function() {
+					var oOldOrientation = sap.ui.Device.orientation;
+					sap.ui.Device.orientation = oPortrait;
+					oSplitContainer._handleResize();
+
+					oSplitContainer.setMode(sap.m.SplitAppMode.ShowHideMode);
+					qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
+					assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
+					assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
+
+					oSplitContainer.destroy();
+					sap.ui.Device.orientation = oOldOrientation;
+					done();
+				});
+			});
+
+			QUnit.test("Initialize the SplitContainer in portrait mode and switch to landscape, the sapMSplitContainerPortrait class should be correctly removed", function(assert) {
+				var oSystem = {
+						desktop: true,
+						tablet: false,
+						phone: false
+					},
+					oLandscape = {
+						landscape: true,
+						portrait: false
+					},
+					oPortrait = {
+						landscape: false,
+						portrait: true
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+
+				var oSplitContainer = new sap.m.SplitContainer({
+					masterPages: new sap.m.Page(),
+					detailPages: new sap.m.Page()
+				});
+
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be added as a control style class");
+				assert.ok(oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be output to the DOM node");
+
+				this.stub(sap.ui.Device, "orientation", oLandscape);
+				oSplitContainer._handleResize();
+
+				assert.ok(!oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from control style class");
+				assert.ok(!oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from the DOM node");
+
+				oSplitContainer.destroy();
+			});
+
+			QUnit.test("MasterButtonTooltip Property", function(assert) {
+
+				var oTooltip = 'Custom Tooltip';
+
+				this.sut.setMasterButtonTooltip(oTooltip);
+
+				this.sut.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(this.sut._oShowMasterBtn.getTooltip() == oTooltip, 'Tooltip is correct');
+			});
+
+			QUnit.module("SplitContainer Navigation test", {
+				beforeEach : function () {
+					this.sut = splitContainerSetup();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					this.sut.destroy();
+					this.sut = null;
+				}
+			});
+
+			QUnit.test("Test go to page navigation", function(assert) {
+				var MASTER_PAGE_ID = "master3",
+					DETAIL_PAGE_ID = "detail3";
+				//test master page navigation
+				var page = new sap.m.Page(MASTER_PAGE_ID);
+				this.sut.addMasterPage(page);
+				this.sut.to(MASTER_PAGE_ID);
+				assert.deepEqual(this.sut.getCurrentMasterPage(), page, "Current page should be master3");
+
+				//test detail page navigation
+				page = new sap.m.Page(DETAIL_PAGE_ID);
+				this.sut.addDetailPage(page);
+				this.sut.to(DETAIL_PAGE_ID);
+				assert.deepEqual(this.sut.getCurrentDetailPage(), page, "Current page should be detail3");
+			});
+
+			QUnit.test("Test backToPage ", function(assert) {
+				var MASTER_PAGE_ID = "master2",
+					DETAIL_PAGE_ID = "detail2";
+				//test master page navigation
+
+				this.sut.to(MASTER_PAGE_ID);
+				this.sut.to("master");
+				this.sut.backToPage(MASTER_PAGE_ID);
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+
+				//test detail page navigation
+				this.sut.to(DETAIL_PAGE_ID);
+				this.sut.to("detail");
+				this.sut.backToPage(DETAIL_PAGE_ID);
+				assert.strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+			});
+
+			QUnit.test("Test insertPreviousPage ", function(assert) {
+				var MASTER_PAGE_ID = "master2",
+					DETAIL_PAGE_ID = "detail2";
+				//test master page navigation
+
+				this.sut.insertPreviousPage(MASTER_PAGE_ID);
+				this.sut.to("master");
+				this.sut.backToPage(MASTER_PAGE_ID);
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+
+				//test detail page navigation
+				this.sut.insertPreviousPage(DETAIL_PAGE_ID);
+				this.sut.to("detail");
+				this.sut.backToPage(DETAIL_PAGE_ID);
+				assert.strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+			});
+
+			QUnit.test("Test backMaster  ", function(assert) {
+				var MASTER_PAGE_ID = "master2";
+				//test master page navigation
+
+				this.sut.to(MASTER_PAGE_ID);
+				this.sut.to("master");
+				this.sut.backMaster();
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+			});
+
+			QUnit.test("Test backMasterToPage", function(assert) {
+				var MASTER_PAGE_ID = "master2";
+
+				this.sut.to(MASTER_PAGE_ID);
+				this.sut.to("master");
+				this.sut.backMasterToPage(MASTER_PAGE_ID);
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master2");
+			});
+
+			QUnit.test("Test backDetailToPage  ", function(assert) {
+				var DETAIL_PAGE_ID = "detail2";
+
+				//test detail page navigation
+				this.sut.to(DETAIL_PAGE_ID);
+				this.sut.to("detail");
+				this.sut.backDetailToPage(DETAIL_PAGE_ID);
+				assert.strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail2");
+			});
+
+			QUnit.test("Test backToTopDetail   ", function(assert) {
+				var DETAIL_PAGE_ID = "detail";
+
+				//test detail page navigation
+				this.sut.to(DETAIL_PAGE_ID);
+				this.sut.to("detail2");
+				this.sut.backToTopDetail ();
+				assert.strictEqual(this.sut.getCurrentDetailPage().sId, DETAIL_PAGE_ID, "Current page should be detail");
+			});
+
+			QUnit.test("Test backToTopMaster ", function(assert) {
+				var MASTER_PAGE_ID = "master";
+
+				this.sut.to(MASTER_PAGE_ID);
+				this.sut.to("master2");
+				this.sut.backToTopMaster();
+				assert.strictEqual(this.sut.getCurrentMasterPage().sId, MASTER_PAGE_ID, "Current page should be master");
+			});
+
+			QUnit.test("Mater button tooltip updating", function(assert) {
+
+				this.sut.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 1 Page ', 'Initial tooltip is correct');
+
+				this.sut.to('master2', 'show');
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
+			});
+
+			QUnit.module("SplitContainer public API test", {
+				beforeEach : function () {
+					this.sut = splitContainerSetup();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					this.sut.destroy();
+					this.sut = null;
+				}
+			});
+
+			QUnit.test("Test indexOfMasterPage ", function(assert) {
+				var MASTER_PAGE_ID = "master3",
+					page = new sap.m.Page(MASTER_PAGE_ID);
+
+				this.sut.addMasterPage(page);
+
+				assert.strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
+			});
+
+			QUnit.test("Test indexOfDetailPage ", function(assert) {
+				var page = page = new sap.m.Page("detail3");
+
+				this.sut.addDetailPage(page);
+				assert.strictEqual(this.sut.indexOfDetailPage(page), 2, "Index should be 2");
+			});
+
+			QUnit.test("Test addPage ", function(assert) {
+				var page = new sap.m.Page("alabala");
+
+				this.sut.addPage(page, true);
+
+				assert.strictEqual(this.sut.indexOfMasterPage(page), 2, "Index should be 2");
+				assert.strictEqual(this.sut.getMasterPages().length, 3, "Master pages now are 3");
+
+				// remove page
+				this.sut.removeMasterPage(page, true);
+				assert.strictEqual(this.sut.getMasterPages().length, 2, "Master pages now are 2");
+
+				// add Detail Page
+				this.sut.addPage(page, false);
+				assert.strictEqual(this.sut.getDetailPages().length, 3, "Detail pages now are 3");
+			});
+
+			QUnit.test("Test getCurrentPage ", function(assert) {
+				assert.strictEqual(this.sut.getCurrentPage(true).sId, "master", "Current master page is 'master'");
+
+				assert.strictEqual(this.sut.getCurrentPage(false).sId, "detail", "Current detail page is 'detail'");
+			});
+
+			QUnit.test("Test getPreviousPage ", function(assert) {
+				this.sut.to("master2");
+				assert.strictEqual(this.sut.getPreviousPage(true).sId, "master", "Current master page is 'master'");
+
+				this.sut.to("detail2");
+				assert.strictEqual(this.sut.getPreviousPage(false).sId, "detail", "Current detail page is 'detail'");
+			});
+
+			QUnit.test("Test getMasterPage / getDetailPage ", function(assert) {
+				var PAGE_ID1 = "master",
+					PAGE_ID2 = "detail";
+
+				assert.strictEqual(this.sut.getMasterPage(PAGE_ID1).sId, PAGE_ID1, "Expected page is is 'master'");
+
+				assert.strictEqual(this.sut.getDetailPage(PAGE_ID2).sId, PAGE_ID2, "Expected page is is 'detail'");
+			});
+
+			QUnit.test("Test getPage ", function(assert) {
+				var PAGE_ID1 = "master",
+						PAGE_ID2 = "detail";
+
+				assert.strictEqual(this.sut.getPage(PAGE_ID1, true).sId, PAGE_ID1, "Expected page is is 'master'");
+
+				assert.strictEqual(this.sut.getPage(PAGE_ID2, false).sId, PAGE_ID2, "Expected page is is 'detail'");
+			});
+
+
+
+			QUnit.module("Remove All pages API test", {
+				beforeEach : function () {
+					this.sut = splitContainerSetup(true);
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					this.sut.destroy();
+					this.sut = null;
+				}
+			});
+
+			QUnit.test("Test insertDetailPage / removeAllDetailPages ", function(assert) {
+				var page = new sap.m.Page("detail3");
+
+				this.sut.insertDetailPage(page, 0, true);
+
+				assert.strictEqual(this.sut.indexOfDetailPage(page), 0, "Index should be 0");
+				assert.strictEqual(this.sut.getDetailPages().length, 1, "Detail pages now are 1");
+
+				// remove all detail pages
+				this.sut.removeAllDetailPages(false);
+				assert.strictEqual(this.sut.getDetailPages().length, 0, "Detail pages now are 0");
+			});
+
+			QUnit.test("Test insertMasterPage / removeMasterPage / removeAllMasterPages ", function(assert) {
+				var page = new sap.m.Page("master3");
+
+				this.sut.insertMasterPage(page, 0, true);
+
+				assert.strictEqual(this.sut.indexOfMasterPage(page), 0, "Index should be 0");
+				assert.strictEqual(this.sut.getMasterPages().length, 1, "Master pages now are 1");
+
+				// remove page
+				this.sut.removeMasterPage(page, true);
+				assert.strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
+
+				// remove all master pages
+				this.sut.insertMasterPage(page, 0, true);
+				this.sut.removeAllMasterPages(false);
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
+			});
+
+			QUnit.module("Add master and detail pages");
+
+			QUnit.test("Test pages order", function(assert) {
+				//arrange
+				var oSystem = {
+					desktop: false,
+					phone: true,
+					tablet: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				this.sut = new sap.m.SplitContainer({
+					initialMaster : "master2",
+					detailPages : new sap.m.Page("detail", {
+						title : "detail"
+					}),
+					masterPages : [
+						new sap.m.Page("master1", { title : "master1"}),
+						new sap.m.Page("master2", { title : "master2"})
+					]
+				});
+
+				var oMasterPage1 = sap.ui.getCore().byId("master1");
+
+				//assert
+				assert.strictEqual(this.sut._oMasterNav.getPages()[0].getId(), "master1", "First page should be master1");
+				assert.strictEqual(this.sut._oDetailNav.getPages()[0].getId(), "master1", "First page should be master1");
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

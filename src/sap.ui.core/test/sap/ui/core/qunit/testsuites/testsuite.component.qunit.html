@@ -1,8 +1,8 @@
 <html>
 	<head>
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/CONTROLS</title>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script language="javascript">
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script>
 
 		/**
 		 * Add test pages to this test suite function.
@@ -11,16 +11,21 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Component_async.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Component.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ComponentContainer.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/UIComponent.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Customizing.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Customizing.qunit.html?sap-ui-xx-debugCustomizing");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Customizing_disabled.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Customizing_multi.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/component/Manifest.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/component/Metadata.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/component/Models.qunit.html");
-			
+
 			return suite;
 		}
-		  
+
 		</script>
 	</head>
 	<body>

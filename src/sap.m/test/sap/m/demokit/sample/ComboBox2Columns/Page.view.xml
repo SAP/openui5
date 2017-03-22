@@ -1,0 +1,19 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ComboBox2Columns.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page showHeader="false">
+		<content>
+			<ComboBox
+				showSecondaryValues= "true"
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<core:ListItem key="{ProductId}" text="{Name}" additionalText = "{Price} {CurrencyCode}"/>
+			</ComboBox>
+		</content>
+	</Page>
+</mvc:View>

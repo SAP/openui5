@@ -1,32 +1,24 @@
-/* ============================================= */
-/* CSS for controlsap.m/StandardListItem.control */
-/* ============================================= */
+/* ======================================= */
+/* CSS for control sap.m/StandardListItem  */
+/* Base theme                              */
+/* ======================================= */
+
 .sapMSLI {
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
-	height: 2.75em;
+	height: 3rem;
 }
 
 .sapMSLIDiv {
 	-webkit-box-flex: 1;
-	-moz-box-flex: 1;
-	-ms-flex: auto;
 	flex: auto;
-	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-orient: vertical;
-	-moz-box-orient: vertical;
-	-ms-flex-direction: column;
 	flex-direction: column;
 	-webkit-box-pack: center;
-	-moz-box-pack: center;
-	-ms-justify-content: center;
 	justify-content: center;
+	overflow: hidden;
 }
 
 .sapMSLITitle,
@@ -36,28 +28,19 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	-webkit-box-flex: 9;
-	-moz-box-flex: 9;
-	-ms-flex: auto;
 	flex: auto;
-	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 }
 
 .sapMSLITitleDiv,
 .sapMSLIDescriptionDiv {
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
 }
 
 .sapMSLIDiv.sapMSLITitleDiv {
 	-webkit-box-orient: horizontal;
-	-moz-box-orient: horizontal;
-	-ms-flex-direction: row;
 	flex-direction: row;
 	-webkit-box-align: center;
-	-moz-box-align: center;
-	-ms-flex-align: center;
 	align-items: center;
 }
 
@@ -66,10 +49,10 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	-webkit-box-flex: 0;
-	-moz-box-flex: 0;
-	-ms-flex: none;
 	flex: none;
 	text-align: right;
+	margin: 0 0 0 1rem;
+	font-size: 0.875rem;
 }
 
 /* The info is aligned right and therefore in RTL mode should be aligned on the left */
@@ -82,16 +65,161 @@ html[dir=rtl] .sapMSLIInfo {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	-webkit-box-flex: 1;
-	-moz-box-flex: 1;
-	-ms-flex: auto;
 	flex: auto;
-	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-align: center;
-	-moz-box-align: center;
-	-ms-flex-align: center;
 	align-items: center;
+}
+
+/* IE10/11 flex implementation pushes contents disregarding flex: */
+html[data-sap-ui-browser*='ie1'] .sapMSLIDiv {
+	width: 100%;
+}
+
+.sapMSLIImg {
+	margin: 0.5rem 0.75rem 0.5rem 0rem;
+	height: 2rem;
+	width: 2rem;
+}
+
+.sapMSLIImgThumb,
+.sapMSLIImgIcon,
+.sapMSLIImgThumbIcon {
+	width: 3rem;
+	height: 3rem;
+	line-height: 3rem;
+	-webkit-box-flex: 0;
+	flex: none;
+}
+
+.sapMSLIImgThumb {
+	margin-right: 0.75rem;
+}
+
+.sapMSLIImgIcon {
+	font-size: 1.375rem;
+	color: @sapUiContentNonInteractiveIconColor;
+	margin-left: -1rem;
+}
+
+.sapMSLIImgThumbIcon {
+	font-size: 2.5rem;
+	color: @sapUiContentNonInteractiveIconColor;
+	margin-right: 0.75rem;
+}
+
+.sapMSLIIconActive {
+	color: @sapUiListActiveTextColor;
+	text-shadow: none;
+}
+
+.sapMLIBActive .sapMSLIImgThumbIcon,
+.sapMLIBActive .sapMSLIImgIcon {
+	color: @sapUiListActiveTextColor;
+	text-shadow: none;
+}
+
+.sapMSLITitle {
+	font-size: 1rem;
+	color: @sapUiListTextColor;
+	padding-bottom: 0.375rem;
+}
+
+.sapMSLIDescription {
+	font-size: 0.875rem;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMSLITitleOnly {
+	font-size: 1rem;
+	color: @sapUiListTextColor;
+}
+
+.sapMInputSuggestionPopup .sapMSLITitleOnly {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMSLIInfoNone {
+	color: @sapUiNeutralText;
+}
+
+.sapMListShowSeparatorsNone .sapMSLIInfoNone {
+	color: @sapUiNeutralText;
+}
+
+.sapMSLIInfoError {
+	color: @sapUiNegativeText;
+}
+
+.sapMSLIInfoWarning {
+	color: @sapUiCriticalText;
+}
+
+.sapMSLIInfoSuccess {
+	color: @sapUiPositiveText;
+}
+
+.sapMSLIIcon > .sapMLIBContent{
+	margin-left: -1rem;
+}
+
+.sapMSLIIconThumb,
+.sapMSLIDescNoIcon,
+.sapMSLIDescIcon {
+	height:	4rem;
+}
+
+.sapMSLIIconThumb > .sapMLIBSelectD,
+.sapMSLIDescNoIcon > .sapMLIBSelectD,
+.sapMSLIDescIcon > .sapMLIBSelectD,
+.sapMSLIIconThumb > .sapMLIBImgNav,
+.sapMSLIIconThumb > .sapMLIBIconDet,
+.sapMSLIIconThumb > .sapMLIBSelectD > .sapMLIBIconDel,
+.sapMSLIDescNoIcon > .sapMLIBImgNav,
+.sapMSLIDescNoIcon > .sapMLIBIconDet,
+.sapMSLIDescNoIcon > .sapMLIBSelectD > .sapMLIBIconDel,
+.sapMSLIDescIcon > .sapMLIBImgNav,
+.sapMSLIDescIcon > .sapMLIBIconDet,
+.sapMSLIDescIcon > .sapMLIBSelectD > .sapMLIBIconDel {
+	height: 4rem;
+	line-height: 4rem;
+}
+
+.sapMSLIIconThumb > .sapMLIBContent,
+.sapMSLIDescIcon > .sapMLIBContent{
+	padding: 0.5rem 0 0.5rem 1rem;
+}
+
+.sapMSLINoDescIcon > .sapMLIBContent{
+	padding-left: 1rem;
+}
+
+.sapMLIBActive .sapMSLITitle,
+.sapMLIBActive .sapMSLIDescription,
+.sapMLIBActive .sapMSLITitleOnly {
+	color: @sapUiListActiveTextColor;
+}
+
+/* Compact size */
+.sapUiSizeCompact{
+	.sapMSLI {
+		height: 2rem;
+	}
+
+	.sapMSLIImgIcon,
+	.sapMSLIImgThumbIcon {
+		height: 2rem;
+		line-height: 2rem;
+	}
+
+	.sapMSLIIconThumb,
+	.sapMSLIDescNoIcon,
+	.sapMSLIDescIcon {
+		height: 4rem;
+	}
+
+	.sapMSLITitleOnly {
+		font-size: @sapMFontMediumSize;
+	}
 }

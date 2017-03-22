@@ -1,0 +1,22 @@
+
+/* override background color for non-accessibility themes */
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .customBackground section {
+	background-color: #bad0e3;
+}
+
+.sapUiDemoCart .welcomePrice  {
+	width: 100%;
+	padding: 0;
+	border-bottom-width: 0;
+}
+
+.sapUiDemoCart .welcomeText {
+	display: block;
+	position: relative;
+	bottom: 4.5rem;
+	padding-left: 3rem;
+	background-color: rgba(255,255,255,0.5);
+	padding: 1rem;
+	font-size: 2rem;
+	font-weight: bold;
+}

@@ -174,7 +174,7 @@ function noConflict(){
     if (root.IPv6 === this) {
         root.IPv6 = _IPv6;
     }
-    
+
     return this;
 };
 

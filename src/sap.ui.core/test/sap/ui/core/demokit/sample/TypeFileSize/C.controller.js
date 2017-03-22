@@ -6,7 +6,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.TypeFileSize.C", {
-		
+
 		_data : {
 			"fileSize" : 100
 		},

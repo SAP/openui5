@@ -1,0 +1,89 @@
+/* ======================================= */
+/* CSS for control sap.ui.table/RowAction  */
+/* Base theme                              */
+/* ======================================= */
+
+@_sapUiTableRowActionSize: 1.625rem;
+@_sapUiTableRowActionSizeCozy: 2.5rem;
+@_sapUiTableRowActionSizeCondensed: 1.375rem;
+
+
+.sapUiTableAction {
+	position: relative;
+	white-space: nowrap;
+}
+
+.sapUiTableAction .sapUiIcon {
+	vertical-align: middle;
+}
+
+.sapUiTableAction > div {
+	display: inline-block;
+	font-size: 1rem;
+	color: @sapUiContentIconColor;
+	text-align: center;
+	vertical-align: top;
+	min-width: @_sapUiTableRowActionSize;
+}
+
+.sapUiTableAction,
+.sapUiTableAction > div {
+	display: inline-block;
+	height: @_sapUiTableRowHeight;
+	line-height: @_sapUiTableRowHeight;
+}
+
+.sapUiTableActionIcon {
+	height: @_sapUiTableRowActionSize;
+	width: @_sapUiTableRowActionSize;
+	line-height: @_sapUiTableRowActionSize;
+}
+
+.sapUiSizeCozy {
+
+	.sapUiTableAction,
+	.sapUiTableAction > div {
+		height: @_sapUiTableRowHeightCozy;
+		line-height: @_sapUiTableRowHeightCozy;
+	}
+
+	.sapUiTableAction > div {
+		min-width: @_sapUiTableRowActionSizeCozy;
+	}
+
+	.sapUiTableActionIcon {
+		height: @_sapUiTableRowActionSizeCozy;
+		width: @_sapUiTableRowActionSizeCozy;
+		line-height: @_sapUiTableRowActionSizeCozy;
+	}
+
+}
+
+.sapUiSizeCondensed {
+
+	.sapUiTableAction,
+	.sapUiTableAction > div {
+		height: @_sapUiTableRowHeightCondensed;
+		line-height: @_sapUiTableRowHeightCondensed;
+		font-size: 0.75rem;
+	}
+
+	.sapUiTableAction > div {
+		min-width: @_sapUiTableRowActionSizeCondensed;
+	}
+
+	.sapUiTableActionIcon {
+		height: @_sapUiTableRowActionSizeCondensed;
+		width: @_sapUiTableRowActionSizeCondensed;
+		line-height: @_sapUiTableRowActionSizeCondensed;
+	}
+
+}
+
+.sapUiTableAction.sapUiTableActionHidden,
+.sapUiTableRowHidden .sapUiTableAction,
+.sapUiTableGroupHeader .sapUiTableAction,
+.sapUiAnalyticalTableSum .sapUiTableAction,
+.sapUiTableAction > div.sapUiTableActionHidden > .sapUiTableActionIcon {
+	display: none;
+}

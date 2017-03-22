@@ -2,19 +2,21 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Legend - sap.ui.unified</title>
 <link rel="shortcut icon" type="image/x-icon"
 	href="images/controls/sap.ui.unified.Calendar.gif">
 
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-trace="false" type="text/javascript"
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	data-sap-ui-trace="false"
 	data-sap-ui-libs="sap.ui.unified, sap.ui.layout"
 	src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 
-<script type="text/javascript">
+<script>
 	var oLeg1 = new sap.ui.unified.CalendarLegend("Leg1", {}).placeAt("sample1");
 
 	var oLeg2 = new sap.ui.unified.CalendarLegend("Leg2", {}).placeAt("sample2");
@@ -24,7 +26,7 @@
 	var oLeg4 = new sap.ui.unified.CalendarLegend("Leg4", {});
 	for (var i = 0; i < 10; i++) {
 		oLeg4.addItem(new sap.ui.unified.CalendarLegendItem({
-			text : "Placeholder " + (i + 1)
+			text : "Placeholder" + (i + 1)
 		}));
 	}
 	oLeg4.placeAt("sample4");
@@ -35,9 +37,10 @@
 		pattern : "yyyyMMdd"
 	});
 
-	var aSpecialDays = [ [ "20140801", undefined, "Placeholder01", 1 ], [ "20140802", undefined, "Placeholder02", 2 ], [ "20140803", undefined, "Placeholder03", 3 ], [ "20140804", undefined, "Placeholder04", 4 ], [ "20140805", undefined, "Placeholder05", 5 ], [ "20140806", undefined, "Placeholder06", 6 ], [ "20140807", undefined, "Placeholder07", 7 ], [ "20140808", undefined, "Placeholder08", 8 ], [ "20140809", undefined, "Placeholder09", 9 ], [ "20140810", undefined, "Placeholder10", 10 ] ];
+	var aSpecialDays = [ [ "20140801", undefined, "Placeholder01", 1 ], [ "20140802", undefined, "Some very long Placeholder02, that will be not truncated but will go on couple of rows", 2 ], [ "20140803", undefined, "Placeholder03 ", 3 ], [ "20140804", undefined, "Placeholder04", 4 ], [ "20140805", undefined, "Placeholder05", 5 ], [ "20140806", undefined, "Placeholder06", 6 ], [ "20140807", undefined, "Placeholder07", 7 ], [ "20140808", undefined, "Placeholder08", 8 ], [ "20140809", undefined, "Placeholder09", 9 ], [ "20140810", undefined, "Placeholder10", 10 ] ];
 
 	var oCal = new sap.ui.unified.Calendar("Cal", {
+		selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
 		select : function(oEvent) {
 			alert("Select");
 		},
@@ -88,6 +91,7 @@
 	oLayout.placeAt("sample5");
 
 	var oCal2 = new sap.ui.unified.Calendar("Cal2", {
+		selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
 		select : function(oEvent) {
 			alert("Select");
 		},
@@ -137,6 +141,24 @@
 	oLayout2.addContent(oCal2);
 	oLayout2.addContent(oLeg6);
 	oLayout2.placeAt("sample6");
+
+	var oLeg7 = new sap.ui.unified.CalendarLegend("Leg7", {
+			items: [ new sap.ui.unified.CalendarLegendItem({text: "Type10", type: sap.ui.unified.CalendarDayType.Type10, tooltip: "Type 10"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "Type09", type: sap.ui.unified.CalendarDayType.Type09, tooltip: "Type 9"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "Type08", type: sap.ui.unified.CalendarDayType.Type08, tooltip: "Type 8"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "no type 1", tooltip: "no type 1"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "Type07", type: sap.ui.unified.CalendarDayType.Type07, tooltip: "Type 7"}),
+			         new sap.ui.unified.CalendarLegendItem({text: "no type 2", tooltip: "no type 2"})
+			        ]
+		}).placeAt("sample7");
+
+    var oLeg8 = new sap.ui.unified.CalendarLegend("Leg8", {
+        items: [ new sap.ui.unified.CalendarLegendItem({text: "Red", color: "red", tooltip: "Red"}),
+            new sap.ui.unified.CalendarLegendItem({text: "Green", color: "green", tooltip: "Green"}),
+            new sap.ui.unified.CalendarLegendItem({text: "Blue", color: "blue", tooltip: "Blue"})
+        ]
+    }).placeAt("sample8");
+
 </script>
 
 </head>
@@ -173,7 +195,7 @@
 	<div>
 		<div>Legend with calendar</div>
 		<br>
-		<div style="max-width: 480px; background: white">
+		<div style="max-width: 480px;">
 			<div id="sample5" />
 		</div>
 	</div>
@@ -181,9 +203,20 @@
 	<div>
 		<div>Legend with calendar (compact mode)</div>
 		<br>
-		<div style="max-width: 420px; background: white">
+		<div style="max-width: 420px;">
 			<div id="sample6" class="sapUiSizeCompact" />
 		</div>
 	</div>
-</body>
+	<br>
+	<div>Simple Legend example</div>
+	<br>
+	<div>
+		<div id="sample7"></div>
+	</div>
+	<div>Custom colors Legend example</div>
+	<br>
+	<div>
+		<div id="sample8"></div>
+	</div>
+	</body>
 </html>

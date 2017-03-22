@@ -1,0 +1,113 @@
+<mvc:View
+		xmlns:c="sap.ui.core"
+		controllerName="sap.f.sample.DynamicPageFreeStyle.DynamicPageFreeStyle"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:sf="sap.ui.layout.form"
+		xmlns:f="sap.f"
+		xmlns:layout="sap.ui.layout"
+		height="100%">
+		<f:DynamicPage id="dynamicPageId" headerExpanded="{/headerExpanded}" toggleHeaderOnTitleClick="{/titleClickable}">
+			<!-- DynamicPage Title -->
+			<f:title>
+				<f:DynamicPageTitle>
+					<f:heading>
+						<Title text="Product group"/>
+					</f:heading>
+					<f:expandedContent>
+						<Text text="Power Projectors"/>
+					</f:expandedContent>
+					<f:snappedContent>
+						<Text text="Power Projectors"/>
+					</f:snappedContent>
+					<f:actions>
+						<ToolbarSpacer/>
+						<Button
+								text="Global Action"
+								type="Transparent"/>
+						<Button
+								text="Toggle Footer"
+								type="Transparent"
+								press="onToggleFooter"/>
+						<Button
+								icon="sap-icon://action"
+								type="Transparent"/>
+					</f:actions>
+				</f:DynamicPageTitle>
+			</f:title>
+			<!-- DynamicPage Header -->
+			<f:header>
+				<f:DynamicPageHeader pinnable="true">
+					<f:content>
+						<FlexBox
+						alignItems="Start"
+						justifyContent="SpaceBetween">
+						<items>
+							<Panel backgroundDesign="Transparent">
+								<content>
+									<ObjectAttribute title="Functional Area" text="Development"/>
+									<ObjectAttribute title="Cost Center" text="PI DFA GD Programs and Product"/>
+									<ObjectAttribute title="Email" text="email@address.com"/>
+								</content>
+							</Panel>
+							<ObjectStatus text="In Stock" state="Success" />
+						</items>
+						</FlexBox>
+					</f:content>
+				</f:DynamicPageHeader>
+			</f:header>
+			<f:content>
+				<Table
+						id="idProductsTable"
+						inset="false"
+						items="{
+                            path: '/ProductCollection'
+                        }">
+
+					<columns>
+						<Column
+								minScreenWidth="Tablet"
+								demandPopin="true">
+							<Text text="Name"/>
+						</Column>
+						<Column
+								minScreenWidth="Tablet"
+								demandPopin="true">
+							<Text text="Category"/>
+						</Column>
+						<Column
+								minScreenWidth="Tablet"
+								demandPopin="true">
+							<Text text="SupplierName"/>
+						</Column>
+					</columns>
+
+					<items>
+						<ColumnListItem
+								vAlign="Middle">
+							<cells>
+								<ObjectIdentifier
+										title="{Name}"
+										text="{ProductId}"/>
+								<Text text="{Category}"/>
+								<Text text="{SupplierName}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</f:content>
+			<!-- DynamicPage Footer -->
+			<f:footer>
+				<OverflowToolbar>
+					<Button icon="sap-icon://message-popup"
+							text="{/messagesLength}"
+							type="Emphasized"
+							press="onMessageButtonPress"
+							visible="{= !!${/messagesLength}}"/>
+					<ToolbarSpacer/>
+					<Button type="Accept" text="Accept"/>
+					<Button type="Reject" text="Reject"/>
+				</OverflowToolbar>
+			</f:footer>
+		</f:DynamicPage>
+</mvc:View>

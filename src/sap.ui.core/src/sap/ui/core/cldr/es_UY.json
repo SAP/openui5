@@ -1,1 +1,3406 @@
-{"__license":"This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html","languages":{"aa":"afar","ab":"abjasio","ace":"acehnés","ach":"acoli","ada":"adangme","ady":"adigeo","ae":"avéstico","aeb":"aeb","af":"afrikáans","afh":"afrihili","agq":"aghem","ain":"ainu","ak":"akan","akk":"acadio","akz":"akz","ale":"aleutiano","aln":"aln","alt":"altái meridional","am":"amárico","an":"aragonés","ang":"inglés antiguo","anp":"angika","ar":"árabe","ar_001":"árabe estándar moderno","arc":"arameo","arn":"mapuche","aro":"aro","arp":"arapaho","arq":"arq","arw":"arahuaco","ary":"ary","arz":"arz","as":"asamés","asa":"asu","ase":"ase","ast":"asturiano","av":"avar","avk":"avk","awa":"avadhi","ay":"aimara","az":"azerbaiyano","az_alt-short":"azerí","azb":"azb","ba":"baskir","bal":"baluchi","ban":"balinés","bar":"bar","bas":"basa","bax":"bamun","bbc":"bbc","bbj":"ghomala","be":"bielorruso","bej":"beja","bem":"bemba","bew":"bew","bez":"bena","bfd":"bafut","bfq":"bfq","bg":"búlgaro","bho":"bhojpuri","bi":"bislama","bik":"bicol","bin":"bini","bjn":"bjn","bkm":"kom","bla":"siksika","bm":"bambara","bn":"bengalí","bo":"tibetano","bpy":"bpy","bqi":"bqi","br":"bretón","bra":"braj","brh":"brh","brx":"bodo","bs":"bosnio","bss":"akoose","bua":"buriat","bug":"buginés","bum":"bulu","byn":"blin","byv":"medumba","ca":"catalán","cad":"caddo","car":"caribe","cay":"cayuga","cch":"atsam","ce":"checheno","ceb":"cebuano","cgg":"chiga","ch":"chamorro","chb":"chibcha","chg":"chagatái","chk":"trukés","chm":"marí","chn":"jerga chinuk","cho":"choctaw","chp":"chipewyan","chr":"cheroqui","chy":"cheyene","ckb":"kurdo sorani","co":"corso","cop":"copto","cps":"cps","cr":"cree","crh":"tártaro de Crimea","cs":"checo","csb":"casubio","cu":"eslavo eclesiástico","cv":"chuvash","cy":"galés","da":"danés","dak":"dakota","dar":"dargva","dav":"taita","de":"alemán","de_AT":"alemán austríaco","de_CH":"alto alemán de Suiza","del":"delaware","den":"slave","dgr":"dogrib","din":"dinka","dje":"zarma","doi":"dogri","dsb":"sorbio inferior","dtp":"dtp","dua":"duala","dum":"neerlandés medieval","dv":"divehi","dyo":"jola-fonyi","dyu":"diula","dz":"dzongkha","dzg":"dazaga","ebu":"embu","ee":"ewé","efi":"efik","egl":"egl","egy":"egipcio antiguo","eka":"ekajuk","el":"griego","elx":"elamita","en":"inglés","en_AU":"inglés australiano","en_CA":"inglés canadiense","en_GB":"inglés británico","en_GB-alt-short":"inglés (R. U.)","en_US":"inglés estadounidense","en_US-alt-short":"inglés (EE. UU.)","enm":"inglés medieval","eo":"esperanto","es":"español","es_419":"español de América","es_ES":"español de España","es_MX":"español de México","esu":"esu","et":"estonio","eu":"vasco","ewo":"ewondo","ext":"ext","fa":"persa","fan":"fang","fat":"fanti","ff":"fula","fi":"finés","fil":"filipino","fit":"fit","fj":"fiyiano","fo":"feroés","fon":"fon","fr":"francés","fr_CA":"francés canadiense","fr_CH":"francés suizo","frc":"frc","frm":"francés medieval","fro":"francés antiguo","frp":"frp","frr":"frisón septentrional","frs":"frisón oriental","fur":"friulano","fy":"frisón occidental","ga":"irlandés","gaa":"ga","gag":"gagauzo","gan":"gan","gay":"gayo","gba":"gbaya","gbz":"gbz","gd":"gaélico escocés","gez":"geez","gil":"gilbertés","gl":"gallego","glk":"glk","gmh":"alemán de la alta edad media","gn":"guaraní","goh":"alemán de la alta edad antigua","gom":"gom","gon":"gondi","gor":"gorontalo","got":"gótico","grb":"grebo","grc":"griego antiguo","gsw":"alemán (Suiza)","gu":"gujarati","guc":"guc","gur":"gur","guz":"gusii","gv":"gaélico manés","gwi":"kutchin","ha":"hausa","hai":"haida","hak":"hak","haw":"hawaiano","he":"hebreo","hi":"hindi","hif":"hif","hil":"hiligaynon","hit":"hitita","hmn":"hmong","ho":"hiri motu","hr":"croata","hsb":"sorbio superior","hsn":"hsn","ht":"haitiano","hu":"húngaro","hup":"hupa","hy":"armenio","hz":"herero","ia":"interlingua","iba":"iban","ibb":"ibibio","id":"indonesio","ie":"interlingue","ig":"igbo","ii":"yi de Sichuán","ik":"inupiaq","ilo":"ilocano","inh":"ingush","io":"ido","is":"islandés","it":"italiano","iu":"inuktitut","izh":"izh","ja":"japonés","jam":"jam","jbo":"lojban","jgo":"ngomba","jmc":"machame","jpr":"judeo-persa","jrb":"judeo-árabe","jut":"jut","jv":"javanés","ka":"georgiano","kaa":"karakalpako","kab":"cabila","kac":"kachin","kaj":"jju","kam":"kamba","kaw":"kawi","kbd":"kabardiano","kbl":"kanembu","kcg":"tyap","kde":"makonde","kea":"criollo caboverdiano","ken":"ken","kfo":"koro","kg":"kongo","kgp":"kgp","kha":"khasi","kho":"kotanés","khq":"koyra chiini","khw":"khw","ki":"kikuyu","kiu":"kiu","kj":"kuanyama","kk":"kazajo","kkj":"kako","kl":"groenlandés","kln":"kalenjin","km":"jemer","kmb":"kimbundu","kn":"canarés","ko":"coreano","koi":"komi permio","kok":"konkaní","kos":"kosraeano","kpe":"kpelle","kr":"kanuri","krc":"karachay-balkar","kri":"kri","krj":"krj","krl":"carelio","kru":"kurukh","ks":"cachemiro","ksb":"shambala","ksf":"bafia","ksh":"kölsch","ku":"kurdo","kum":"kumyk","kut":"kutenai","kv":"komi","kw":"córnico","ky":"kirguís","la":"latín","lad":"ladino","lag":"langi","lah":"lahnda","lam":"lamba","lb":"luxemburgués","lez":"lezgiano","lfn":"lfn","lg":"ganda","li":"limburgués","lij":"lij","liv":"liv","lkt":"lakota","lmo":"lmo","ln":"lingala","lo":"laosiano","lol":"mongo","loz":"lozi","lt":"lituano","ltg":"ltg","lu":"luba-katanga","lua":"luba-lulua","lui":"luiseño","lun":"lunda","luo":"luo","lus":"lushai","luy":"luyia","lv":"letón","lzh":"lzh","lzz":"lzz","mad":"madurés","maf":"mafa","mag":"magahi","mai":"maithili","mak":"macasar","man":"mandingo","mas":"masái","mde":"maba","mdf":"moksha","mdr":"mandar","men":"mende","mer":"meru","mfe":"criollo mauriciano","mg":"malgache","mga":"irlandés medieval","mgh":"makhuwa-meetto","mgo":"meta’","mh":"marshalés","mi":"maorí","mic":"micmac","min":"minangkabau","mk":"macedonio","ml":"malayalam","mn":"mongol","mnc":"manchú","mni":"manipuri","moh":"mohawk","mos":"mossi","mr":"maratí","mrj":"mrj","ms":"malayo","mt":"maltés","mua":"mundang","mul":"lenguas múltiples","mus":"creek","mwl":"mirandés","mwr":"marwari","mwv":"mwv","my":"birmano","mye":"myene","myv":"erzya","mzn":"mzn","na":"nauruano","nan":"nan","nap":"napolitano","naq":"nama","nb":"bokmal noruego","nd":"ndebele septentrional","nds":"bajo alemán","ne":"nepalí","new":"newari","ng":"ndonga","nia":"nias","niu":"niueano","njo":"njo","nl":"neerlandés","nl_BE":"flamenco","nmg":"kwasio","nn":"nynorsk noruego","nnh":"ngiemboon","no":"noruego","nog":"nogai","non":"nórdico antiguo","nov":"nov","nqo":"n’ko","nr":"ndebele meridional","nso":"sotho septentrional","nus":"nuer","nv":"navajo","nwc":"newari clásico","ny":"nyanja","nym":"nyamwezi","nyn":"nyankole","nyo":"nyoro","nzi":"nzima","oc":"occitano","oj":"ojibwa","om":"oromo","or":"oriya","os":"osético","osa":"osage","ota":"turco otomano","pa":"punjabí","pag":"pangasinán","pal":"pahlavi","pam":"pampanga","pap":"papiamento","pau":"palauano","pcd":"pcd","pdc":"pdc","pdt":"pdt","peo":"persa antiguo","pfl":"pfl","phn":"fenicio","pi":"pali","pl":"polaco","pms":"pms","pnt":"pnt","pon":"pohnpeiano","prg":"prg","pro":"provenzal antiguo","ps":"pastún","ps_alt-variant":"Pastú","pt":"portugués","pt_BR":"portugués de Brasil","pt_PT":"portugués de Portugal","qu":"quechua","quc":"quiché","qug":"qug","raj":"rajasthani","rap":"rapanui","rar":"rarotongano","rgn":"rgn","rif":"rif","rm":"retorrománico","rn":"kiroundi","ro":"rumano","ro_MD":"moldavo","rof":"rombo","rom":"romaní","root":"raíz","rtm":"rtm","ru":"ruso","rue":"rue","rug":"rug","rup":"arrumano","rw":"kinyarwanda","rwk":"rwa","sa":"sánscrito","sad":"sandawe","sah":"sakha","sam":"arameo samaritano","saq":"samburu","sas":"sasak","sat":"santali","saz":"saz","sba":"ngambay","sbp":"sangu","sc":"sardo","scn":"siciliano","sco":"escocés","sd":"sindhi","sdc":"sdc","se":"sami septentrional","see":"seneca","seh":"sena","sei":"sei","sel":"selkup","ses":"koyraboro senni","sg":"sango","sga":"irlandés antiguo","sgs":"sgs","sh":"serbocroata","shi":"tashelhit","shn":"shan","shu":"árabe chadiano","si":"cingalés","sid":"sidamo","sk":"eslovaco","sl":"esloveno","sli":"sli","sly":"sly","sm":"samoano","sma":"sami meridional","smj":"sami lule","smn":"sami inari","sms":"sami skolt","sn":"shona","snk":"soninké","so":"somalí","sog":"sogdiano","sq":"albanés","sr":"serbio","srn":"sranan tongo","srr":"serer","ss":"siswati","ssy":"saho","st":"sesotho meridional","stq":"stq","su":"sundanés","suk":"sukuma","sus":"susu","sux":"sumerio","sv":"sueco","sw":"swahili","swb":"comorense","swc":"swahili del Congo","syc":"siríaco clásico","syr":"siriaco","szl":"szl","ta":"tamil","tcy":"tcy","te":"telugu","tem":"temne","teo":"teso","ter":"tereno","tet":"tetún","tg":"tayiko","th":"tailandés","ti":"tigriña","tig":"tigré","tiv":"tiv","tk":"turcomano","tkl":"tokelauano","tkr":"tkr","tl":"tagalo","tlh":"klingon","tli":"tlingit","tly":"tly","tmh":"tamashek","tn":"setchwana","to":"tongano","tog":"tonga del Nyasa","tpi":"tok pisin","tr":"turco","tru":"tru","trv":"taroko","ts":"tsonga","tsd":"tsd","tsi":"tsimshiano","tt":"tártaro","ttt":"ttt","tum":"tumbuka","tvl":"tuvaluano","tw":"twi","twq":"tasawaq","ty":"tahitiano","tyv":"tuviniano","tzm":"tamazight del Marruecos Central","udm":"udmurt","ug":"uigur","ug_alt-variant":"Uyghur","uga":"ugarítico","uk":"ucraniano","umb":"umbundu","und":"lengua desconocida","ur":"urdu","uz":"uzbeko","vai":"vai","ve":"venda","vec":"vec","vep":"vep","vi":"vietnamita","vls":"vls","vmf":"vmf","vo":"volapük","vot":"vótico","vro":"vro","vun":"kivunjo","wa":"valón","wae":"walser","wal":"walamo","war":"waray","was":"washo","wo":"wólof","wuu":"wuu","xal":"kalmyk","xh":"xhosa","xmf":"xmf","xog":"soga","yao":"yao","yap":"yapés","yav":"yangben","ybb":"yemba","yi":"yídish","yo":"yoruba","yrl":"yrl","yue":"cantonés","za":"zhuang","zap":"zapoteco","zbl":"símbolos Bliss","zea":"zea","zen":"zenaga","zgh":"tamazight","zh":"chino","zh_Hans":"chino simplificado","zh_Hant":"chino tradicional","zu":"zulú","zun":"zuni","zxx":"sin contenido lingüístico","zza":"zazaki"},"scripts":{"Afak":"Afak","Aghb":"Aghb","Arab":"árabe","Arab-alt-variant":"persa-árabe","Armi":"Armi","Armn":"armenio","Avst":"avéstico","Bali":"balinés","Bamu":"Bamu","Bass":"Bass","Batk":"batak","Beng":"bengalí","Blis":"símbolos blis","Bopo":"bopomofo","Brah":"brahmi","Brai":"braille","Bugi":"buginés","Buhd":"buhid","Cakm":"Cakm","Cans":"símbolos aborígenes canadienses unificados","Cari":"cario","Cham":"cham","Cher":"cherokee","Cirt":"cirth","Copt":"copto","Cprt":"chipriota","Cyrl":"cirílico","Cyrs":"cirílico del antiguo eslavo eclesiástico","Deva":"devanagari","Dsrt":"deseret","Dupl":"Dupl","Egyd":"egipcio demótico","Egyh":"egipcio hierático","Egyp":"jeroglíficos egipcios","Elba":"Elba","Ethi":"etiópico","Geok":"georgiano eclesiástico","Geor":"georgiano","Glag":"glagolítico","Goth":"gótico","Gran":"Gran","Grek":"griego","Gujr":"gujarati","Guru":"gurmuji","Hang":"hangul","Hani":"han","Hano":"hanunoo","Hans":"simplificado","Hans-alt-stand-alone":"Han simplificado","Hant":"tradicional","Hant-alt-stand-alone":"Han tradicional","Hebr":"hebreo","Hira":"hiragana","Hluw":"Hluw","Hmng":"pahawh hmong","Hrkt":"katakana o hiragana","Hung":"húngaro antiguo","Inds":"Indio (harappan)","Ital":"antigua bastardilla","Java":"javanés","Jpan":"japonés","Jurc":"Jurc","Kali":"kayah li","Kana":"katakana","Khar":"kharosthi","Khmr":"jemer","Khoj":"Khoj","Knda":"canarés","Kore":"coreano","Kpel":"Kpel","Kthi":"Kthi","Lana":"lanna","Laoo":"laosiano","Latf":"latino fraktur","Latg":"latino gaélico","Latn":"latín","Lepc":"lepcha","Limb":"limbu","Lina":"lineal A","Linb":"lineal B","Lisu":"Lisu","Loma":"Loma","Lyci":"licio","Lydi":"lidio","Mahj":"Mahj","Mand":"mandeo","Mani":"Mani","Maya":"jeroglíficos mayas","Mend":"Mend","Merc":"Merc","Mero":"meroítico","Mlym":"malayalam","Modi":"Modi","Mong":"mongol","Moon":"moon","Mroo":"Mroo","Mtei":"manipuri","Mymr":"birmano","Narb":"Narb","Nbat":"Nbat","Nkgb":"Nkgb","Nkoo":"n’ko","Nshu":"Nshu","Ogam":"ogham","Olck":"ol ciki","Orkh":"orkhon","Orya":"oriya","Osma":"osmaniya","Palm":"Palm","Pauc":"Pauc","Perm":"permiano antiguo","Phag":"phags-pa","Phli":"Phli","Phlp":"Phlp","Phlv":"Phlv","Phnx":"fenicio","Plrd":"Pollard Miao","Prti":"Prti","Qaaa":"Qaaa","Qaab":"Qaab","Qaac":"Qaac","Qaad":"Qaad","Qaae":"Qaae","Qaaf":"Qaaf","Qaag":"Qaag","Qaah":"Qaah","Qaaj":"Qaaj","Qaak":"Qaak","Qaal":"Qaal","Qaam":"Qaam","Qaan":"Qaan","Qaao":"Qaao","Qaap":"Qaap","Qaaq":"Qaaq","Qaar":"Qaar","Qaas":"Qaas","Qaat":"Qaat","Qaau":"Qaau","Qaav":"Qaav","Qaaw":"Qaaw","Qaax":"Qaax","Qaay":"Qaay","Qaaz":"Qaaz","Qaba":"Qaba","Qabb":"Qabb","Qabc":"Qabc","Qabd":"Qabd","Qabe":"Qabe","Qabf":"Qabf","Qabg":"Qabg","Qabh":"Qabh","Qabi":"Qabi","Qabj":"Qabj","Qabk":"Qabk","Qabl":"Qabl","Qabm":"Qabm","Qabn":"Qabn","Qabo":"Qabo","Qabp":"Qabp","Qabq":"Qabq","Qabr":"Qabr","Qabs":"Qabs","Qabt":"Qabt","Qabu":"Qabu","Qabv":"Qabv","Qabw":"Qabw","Qabx":"Qabx","Rjng":"rejang","Roro":"rongo-rongo","Runr":"rúnico","Samr":"Samr","Sara":"sarati","Sarb":"Sarb","Saur":"saurashtra","Sgnw":"SignWriting","Shaw":"shaviano","Shrd":"Shrd","Sidd":"Sidd","Sind":"Sind","Sinh":"sinhala","Sora":"Sora","Sund":"sundanés","Sylo":"syloti nagri","Syrc":"siriaco","Syre":"siriaco estrangelo","Syrj":"siriaco occidental","Syrn":"siriaco oriental","Tagb":"tagbanúa","Takr":"Takr","Tale":"tai le","Talu":"nuevo tai lue","Taml":"tamil","Tang":"Tang","Tavt":"Tavt","Telu":"telugu","Teng":"tengwar","Tfng":"tifinagh","Tglg":"tagalo","Thaa":"thaana","Thai":"tailandés","Tibt":"tibetano","Tirh":"Tirh","Ugar":"ugarítico","Vaii":"vai","Visp":"lenguaje visible","Wara":"Wara","Wole":"Wole","Xpeo":"persa antiguo","Xsux":"cuneiforme sumerio-acadio","Yiii":"yi","Zinh":"heredado","Zmth":"Zmth","Zsym":"símbolos","Zxxx":"no escrito","Zyyy":"común","Zzzz":"alfabeto desconocido"},"territories":{"142":"Asia","143":"Asia central","145":"Asia occidental","150":"Europa","151":"Europa oriental","154":"Europa septentrional","155":"Europa occidental","419":"Latinoamérica","001":"Mundo","002":"África","003":"América del Norte","005":"Suramérica","009":"Oceanía","011":"África occidental","013":"Centroamérica","014":"África oriental","015":"África septentrional","017":"África central","018":"África meridional","019":"América","021":"Norteamérica","029":"Caribe","030":"Asia oriental","034":"Asia meridional","035":"Sudeste asiático","039":"Europa meridional","053":"Australasia","054":"Melanesia","057":"Región de Micronesia","061":"Polinesia","AC":"Isla Ascensión","AD":"Andorra","AE":"Emiratos Árabes Unidos","AF":"Afganistán","AG":"Antigua y Barbuda","AI":"Anguila","AL":"Albania","AM":"Armenia","AN":"Antillas Neerlandesas","AO":"Angola","AQ":"Antártida","AR":"Argentina","AS":"Samoa Americana","AT":"Austria","AU":"Australia","AW":"Aruba","AX":"Islas Åland","AZ":"Azerbaiyán","BA":"Bosnia y Herzegovina","BB":"Barbados","BD":"Bangladés","BE":"Bélgica","BF":"Burkina Faso","BG":"Bulgaria","BH":"Baréin","BI":"Burundi","BJ":"Benín","BL":"San Bartolomé","BM":"Bermudas","BN":"Brunéi","BO":"Bolivia","BQ":"Caribe neerlandés","BR":"Brasil","BS":"Bahamas","BT":"Bután","BV":"Isla Bouvet","BW":"Botsuana","BY":"Bielorrusia","BZ":"Belice","CA":"Canadá","CC":"Islas Cocos","CD":"República Democrática del Congo","CD-alt-variant":"Congo (República Democrática del Congo)","CF":"República Centroafricana","CG":"República del Congo","CG-alt-variant":"Congo (República)","CH":"Suiza","CI":"Costa de Marfil","CI-alt-variant":"CI","CK":"Islas Cook","CL":"Chile","CM":"Camerún","CN":"China","CO":"Colombia","CP":"Isla Clipperton","CR":"Costa Rica","CU":"Cuba","CV":"Cabo Verde","CW":"Curazao","CX":"Isla Christmas","CY":"Chipre","CZ":"República Checa","DE":"Alemania","DG":"Diego García","DJ":"Yibuti","DK":"Dinamarca","DM":"Dominica","DO":"República Dominicana","DZ":"Argelia","EA":"Ceuta y Melilla","EC":"Ecuador","EE":"Estonia","EG":"Egipto","EH":"Sáhara Occidental","ER":"Eritrea","ES":"España","ET":"Etiopía","EU":"Unión Europea","FI":"Finlandia","FJ":"Fiyi","FK":"Islas Malvinas","FK-alt-variant":"Islas Malvinas (Islas Falkland)","FM":"Micronesia","FO":"Islas Feroe","FR":"Francia","GA":"Gabón","GB":"Reino Unido","GB-alt-short":"R. U.","GD":"Granada","GE":"Georgia","GF":"Guayana Francesa","GG":"Guernesey","GH":"Ghana","GI":"Gibraltar","GL":"Groenlandia","GM":"Gambia","GN":"Guinea","GP":"Guadalupe","GQ":"Guinea Ecuatorial","GR":"Grecia","GS":"Islas Georgia del Sur y Sandwich del Sur","GT":"Guatemala","GU":"Guam","GW":"Guinea-Bisáu","GY":"Guyana","HK":"RAE de Hong Kong (China)","HK-alt-short":"Hong Kong","HM":"Islas Heard y McDonald","HN":"Honduras","HR":"Croacia","HT":"Haití","HU":"Hungría","IC":"islas Canarias","ID":"Indonesia","IE":"Irlanda","IL":"Israel","IM":"Isla de Man","IN":"India","IO":"Territorio Británico del Océano Índico","IQ":"Irak","IR":"Irán","IS":"Islandia","IT":"Italia","JE":"Jersey","JM":"Jamaica","JO":"Jordania","JP":"Japón","KE":"Kenia","KG":"Kirguistán","KH":"Camboya","KI":"Kiribati","KM":"Comoras","KN":"San Cristóbal y Nieves","KP":"Corea del Norte","KR":"Corea del Sur","KW":"Kuwait","KY":"Islas Caimán","KZ":"Kazajistán","LA":"Laos","LB":"Líbano","LC":"Santa Lucía","LI":"Liechtenstein","LK":"Sri Lanka","LR":"Liberia","LS":"Lesoto","LT":"Lituania","LU":"Luxemburgo","LV":"Letonia","LY":"Libia","MA":"Marruecos","MC":"Mónaco","MD":"Moldavia","ME":"Montenegro","MF":"San Martín","MG":"Madagascar","MH":"Islas Marshall","MK":"Macedonia","MK-alt-variant":"Macedonia (ERYM)","ML":"Mali","MM":"Myanmar (Birmania)","MN":"Mongolia","MO":"RAE de Macao (China)","MO-alt-short":"Macao","MP":"Islas Marianas del Norte","MQ":"Martinica","MR":"Mauritania","MS":"Montserrat","MT":"Malta","MU":"Mauricio","MV":"Maldivas","MW":"Malaui","MX":"México","MY":"Malasia","MZ":"Mozambique","NA":"Namibia","NC":"Nueva Caledonia","NE":"Níger","NF":"Isla Norfolk","NG":"Nigeria","NI":"Nicaragua","NL":"Países Bajos","NO":"Noruega","NP":"Nepal","NR":"Nauru","NU":"Niue","NZ":"Nueva Zelanda","OM":"Omán","PA":"Panamá","PE":"Perú","PF":"Polinesia Francesa","PG":"Papúa Nueva Guinea","PH":"Filipinas","PK":"Pakistán","PL":"Polonia","PM":"San Pedro y Miquelón","PN":"Islas Pitcairn","PR":"Puerto Rico","PS":"Territorios Palestinos","PS-alt-short":"Palestina","PT":"Portugal","PW":"Palau","PY":"Paraguay","QA":"Catar","QO":"Territorios alejados de Oceanía","RE":"Reunión","RO":"Rumanía","RS":"Serbia","RU":"Rusia","RW":"Ruanda","SA":"Arabia Saudí","SB":"Islas Salomón","SC":"Seychelles","SD":"Sudán","SE":"Suecia","SG":"Singapur","SH":"Santa Elena","SI":"Eslovenia","SJ":"Svalbard y Jan Mayen","SK":"Eslovaquia","SL":"Sierra Leona","SM":"San Marino","SN":"Senegal","SO":"Somalia","SR":"Surinam","SS":"Sudán del Sur","ST":"Santo Tomé y Príncipe","SV":"El Salvador","SX":"Sint Maarten","SY":"Siria","SZ":"Suazilandia","TA":"Tristán da Cunha","TC":"Islas Turcas y Caicos","TD":"Chad","TF":"Territorios Australes Franceses","TG":"Togo","TH":"Tailandia","TJ":"Tayikistán","TK":"Tokelau","TL":"Timor Oriental","TL-alt-variant":"TL","TM":"Turkmenistán","TN":"Túnez","TO":"Tonga","TR":"Turquía","TT":"Trinidad y Tobago","TV":"Tuvalu","TW":"Taiwán","TZ":"Tanzania","UA":"Ucrania","UG":"Uganda","UM":"Islas menores alejadas de EE. UU.","US":"Estados Unidos","US-alt-short":"EE. UU.","UY":"Uruguay","UZ":"Uzbekistán","VA":"Ciudad del Vaticano","VC":"San Vicente y las Granadinas","VE":"Venezuela","VG":"Islas Vírgenes Británicas","VI":"Islas Vírgenes de EE. UU.","VN":"Vietnam","VU":"Vanuatu","WF":"Wallis y Futuna","WS":"Samoa","XK":"Kosovo","YE":"Yemen","YT":"Mayotte","ZA":"Sudáfrica","ZM":"Zambia","ZW":"Zimbabue","ZZ":"Región desconocida"},"orientation":"left-to-right","ca-gregorian":{"dateFormat-full":"EEEE, d 'de' MMMM 'de' y","dateFormat-long":"d 'de' MMMM 'de' y","dateFormat-medium":"d 'de' MMM 'de' y","dateFormat-short":"d/M/yy","timeFormat-full":"h:mm:ss a zzzz","timeFormat-long":"h:mm:ss a z","timeFormat-medium":"h:mm:ss a","timeFormat-short":"h:mm a","dateTimeFormat-full":"{1}, {0}","dateTimeFormat-long":"{1}, {0}","dateTimeFormat-medium":"{1} {0}","dateTimeFormat-short":"{1} {0}","intervalFormatFallback":"{0}–{1}","intervalFormat-H-H":"HH-HH","intervalFormat-Hm-H":"HH:mm–HH:mm","intervalFormat-Hm-m":"HH:mm–HH:mm","intervalFormat-Hmv-H":"HH:mm–HH:mm v","intervalFormat-Hmv-m":"HH:mm–HH:mm v","intervalFormat-Hv-H":"HH–HH v","intervalFormat-M-M":"M–M","intervalFormat-MEd-M":"E, d/M–E, d/M","intervalFormat-MEd-d":"E, d/M–E, d/M","intervalFormat-MMM-M":"MMM–MMM","intervalFormat-MMMEd-M":"E, d 'de' MMM-E, d 'de' MMM","intervalFormat-MMMEd-d":"E, d 'de' MMM-E, d 'de' MMM","intervalFormat-MMMd-M":"d 'de' MMM-d 'de' MMM","intervalFormat-MMMd-d":"d-d 'de' MMM","intervalFormat-Md-M":"d/M–d/M","intervalFormat-Md-d":"d/M–d/M","intervalFormat-d-d":"d–d","intervalFormat-h-a":"h a–h a","intervalFormat-h-h":"h–h a","intervalFormat-hm-a":"h:mm a–h:mm a","intervalFormat-hm-h":"h:mm–h:mm a","intervalFormat-hm-m":"h:mm–h:mm a","intervalFormat-hmv-a":"h:mm a–h:mm a v","intervalFormat-hmv-h":"h:mm–h:mm a v","intervalFormat-hmv-m":"h:mm–h:mm a v","intervalFormat-hv-a":"h a–h a v","intervalFormat-hv-h":"h–h a v","intervalFormat-y-y":"y–y","intervalFormat-yM-M":"M/y–M/y","intervalFormat-yM-y":"M/y–M/y","intervalFormat-yMEd-M":"E, d/M/y–E, d/M/y","intervalFormat-yMEd-d":"E, d/M/y–E, d/M/y","intervalFormat-yMEd-y":"E, d/M/y–E, d/M/y","intervalFormat-yMMM-M":"MMM-MMM 'de' y","intervalFormat-yMMM-y":"MMM 'de' y-MMM 'de' y","intervalFormat-yMMMEd-M":"E, d 'de' MMM–E, d 'de' MMM 'de' y","intervalFormat-yMMMEd-d":"E, d 'de' MMM–E, d 'de' MMM 'de' y","intervalFormat-yMMMEd-y":"E, d 'de' MMM 'de' y–E, d 'de' MMM 'de' y","intervalFormat-yMMMM-M":"MMMM–MMMM 'de' y","intervalFormat-yMMMM-y":"MMMM 'de' y–MMMM 'de' y","intervalFormat-yMMMd-M":"d 'de' MMM–d 'de' MMM 'de' y","intervalFormat-yMMMd-d":"d-d 'de' MMM 'de' y","intervalFormat-yMMMd-y":"d 'de' MMM 'de' y–d 'de' MMM 'de' y","intervalFormat-yMd-M":"d/M/y–d/M/y","intervalFormat-yMd-d":"d/M/y–d/M/y","intervalFormat-yMd-y":"d/M/y–d/M/y","months-format-abbreviated":["ene.","feb.","mar.","abr.","may.","jun.","jul.","ago.","set.","oct.","nov.","dic."],"months-format-narrow":["e","f","m","a","m","j","j","a","s","o","n","d"],"months-format-wide":["enero","febrero","marzo","abril","mayo","junio","julio","agosto","setiembre","octubre","noviembre","diciembre"],"months-standAlone-abbreviated":["Ene.","Feb.","Mar.","Abr.","May.","Jun.","Jul.","Ago.","Set.","Oct.","Nov.","Dic."],"months-standAlone-narrow":["E","F","M","A","M","J","J","A","S","O","N","D"],"months-standAlone-wide":["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Setiembre","Octubre","Noviembre","Diciembre"],"days-format-abbreviated":["dom.","lun.","mar.","mié.","jue.","vie.","sáb."],"days-format-narrow":["d","l","m","m","j","v","s"],"days-format-short":["dom.","lun.","mar.","mié.","jue.","vie.","sáb."],"days-format-wide":["domingo","lunes","martes","miércoles","jueves","viernes","sábado"],"days-standAlone-abbreviated":["Dom.","Lun.","Mar.","Mié.","Jue.","Vie.","Sáb."],"days-standAlone-narrow":["D","L","M","M","J","V","S"],"days-standAlone-short":["Dom.","Lun.","Mar.","Mié.","Jue.","Vie.","Sáb."],"days-standAlone-wide":["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"],"quarters-format-abbreviated":["1.er trim.","2.º trim.","3.er trim.","4.º trim."],"quarters-format-narrow":["1","2","3","4"],"quarters-format-wide":["1.er trimestre","2.º trimestre","3.er trimestre","4.º trimestre"],"quarters-standAlone-abbreviated":["1.er trim.","2.º trim.","3.er trim.","4.º trim."],"quarters-standAlone-narrow":["1","2","3","4"],"quarters-standAlone-wide":["1.er trimestre","2.º trimestre","3.er trimestre","4.º trimestre"],"dayPeriods-format-abbreviated":["a. m.","p. m."],"dayPeriods-format-narrow":["a. m.","p. m."],"dayPeriods-format-wide":["a. m.","p. m."],"dayPeriods-standAlone-abbreviated":["a. m.","p. m."],"dayPeriods-standAlone-narrow":["a. m.","p. m."],"dayPeriods-standAlone-wide":["a. m.","p. m."],"era-wide":{"0":"antes de Cristo","1":"después de Cristo"},"era-abbreviated":{"0":"a. C.","1":"d. C."},"era-narrow":{"0":"a. C.","1":"d. C."}},"ca-islamic":{"dateFormat-full":"EEEE, d 'de' MMMM 'de' y G","dateFormat-long":"d 'de' MMMM 'de' y G","dateFormat-medium":"dd/MM/y G","dateFormat-short":"dd/MM/yy GGGGG","timeFormat-full":"h:mm:ss a zzzz","timeFormat-long":"h:mm:ss a z","timeFormat-medium":"h:mm:ss a","timeFormat-short":"h:mm a","dateTimeFormat-full":"{1}, {0}","dateTimeFormat-long":"{1}, {0}","dateTimeFormat-medium":"{1} {0}","dateTimeFormat-short":"{1} {0}","intervalFormatFallback":"{0}–{1}","intervalFormat-H-H":"HH–HH","intervalFormat-Hm-H":"HH:mm – HH:mm","intervalFormat-Hm-m":"HH:mm – HH:mm","intervalFormat-Hmv-H":"HH:mm – HH:mm v","intervalFormat-Hmv-m":"HH:mm – HH:mm v","intervalFormat-Hv-H":"HH–HH v","intervalFormat-M-M":"M–M","intervalFormat-MEd-M":"E, d/M–E, d/M","intervalFormat-MEd-d":"E, d/M–E, d/M","intervalFormat-MMM-M":"MMM–MMM","intervalFormat-MMMEd-M":"E, d 'de' MMM–E, d 'de' MMM","intervalFormat-MMMEd-d":"E, d 'de' MMM–E, d 'de' MMM","intervalFormat-MMMd-M":"d 'de' MMM–d 'de' MMM","intervalFormat-MMMd-d":"d-d 'de' MMM","intervalFormat-Md-M":"d/M–d/M","intervalFormat-Md-d":"d/M–d/M","intervalFormat-d-d":"d–d","intervalFormat-h-a":"h a – h a","intervalFormat-h-h":"h–h a","intervalFormat-hm-a":"h:mm a – h:mm a","intervalFormat-hm-h":"h:mm – h:mm a","intervalFormat-hm-m":"h:mm – h:mm a","intervalFormat-hmv-a":"h:mm a – h:mm a v","intervalFormat-hmv-h":"h:mm – h:mm a v","intervalFormat-hmv-m":"h:mm – h:mm a v","intervalFormat-hv-a":"h a – h a v","intervalFormat-hv-h":"h–h a v","intervalFormat-y-y":"y–y G","intervalFormat-yM-M":"M/y–M/y GGGGG","intervalFormat-yM-y":"M/y–M/y GGGGG","intervalFormat-yMEd-M":"E, d/M/y–E, d/M/y GGGGG","intervalFormat-yMEd-d":"E, d/M/y–E, d/M/y GGGGG","intervalFormat-yMEd-y":"E, d/M/y–E, d/M/y GGGGG","intervalFormat-yMMM-M":"MMM–MMM 'de' y G","intervalFormat-yMMM-y":"MMM 'de' y–MMM 'de' y G","intervalFormat-yMMMEd-M":"E, d 'de' MMM–E, d 'de' MMM 'de' y G","intervalFormat-yMMMEd-d":"E, d 'de' MMM–E, d 'de' MMM 'de' y G","intervalFormat-yMMMEd-y":"E, d 'de' MMM 'de' y–E, d 'de' MMM 'de' y G","intervalFormat-yMMMM-M":"MMMM–MMMM 'de' y G","intervalFormat-yMMMM-y":"MMMM 'de' y–MMMM 'de' y G","intervalFormat-yMMMd-M":"d 'de' MMM–d 'de' MMM y G","intervalFormat-yMMMd-d":"d–d 'de' MMM 'de' y G","intervalFormat-yMMMd-y":"d 'de' MMM 'de' y–d 'de' MMM 'de' y G","intervalFormat-yMd-M":"d/M/y–d/M/y GGGGG","intervalFormat-yMd-d":"d/M/y–d/M/y GGGGG","intervalFormat-yMd-y":"d/M/y–d/M/y GGGGG","months-format-abbreviated":["Muh.","Saf.","Rab. I","Rab. II","Jum. I","Jum. II","Raj.","Sha.","Ram.","Shaw.","Dhuʻl-Q.","Dhuʻl-H."],"months-format-narrow":["1","2","3","4","5","6","7","8","9","10","11","12"],"months-format-wide":["Muharram","Safar","Rabiʻ I","Rabiʻ II","Jumada I","Jumada II","Rajab","Shaʻban","Ramadan","Shawwal","Dhuʻl-Qiʻdah","Dhuʻl-Hijjah"],"months-standAlone-abbreviated":["Muh.","Saf.","Rab. I","Rab. II","Jum. I","Jum. II","Raj.","Sha.","Ram.","Shaw.","Dhuʻl-Q.","Dhuʻl-H."],"months-standAlone-narrow":["1","2","3","4","5","6","7","8","9","10","11","12"],"months-standAlone-wide":["Muharram","Safar","Rabiʻ I","Rabiʻ II","Jumada I","Jumada II","Rajab","Shaʻban","Ramadan","Shawwal","Dhuʻl-Qiʻdah","Dhuʻl-Hijjah"],"days-format-abbreviated":["dom.","lun.","mar.","mié.","jue.","vie.","sáb."],"days-format-narrow":["d","l","m","m","j","v","s"],"days-format-short":["dom.","lun.","mar.","mié.","jue.","vie.","sáb."],"days-format-wide":["domingo","lunes","martes","miércoles","jueves","viernes","sábado"],"days-standAlone-abbreviated":["Dom.","Lun.","Mar.","Mié.","Jue.","Vie.","Sáb."],"days-standAlone-narrow":["D","L","M","M","J","V","S"],"days-standAlone-short":["Dom.","Lun.","Mar.","Mié.","Jue.","Vie.","Sáb."],"days-standAlone-wide":["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"],"quarters-format-abbreviated":["1.er trim.","2.º trim.","3.er trim.","4.º trim."],"quarters-format-narrow":["1","2","3","4"],"quarters-format-wide":["1.er trimestre","2.º trimestre","3.er trimestre","4.º trimestre"],"quarters-standAlone-abbreviated":["1.er trim.","2.º trim.","3.er trim.","4.º trim."],"quarters-standAlone-narrow":["1","2","3","4"],"quarters-standAlone-wide":["1.er trimestre","2.º trimestre","3.er trimestre","4.º trimestre"],"dayPeriods-format-abbreviated":["a. m.","p. m."],"dayPeriods-format-narrow":["a. m.","p. m."],"dayPeriods-format-wide":["a. m.","p. m."],"dayPeriods-standAlone-abbreviated":["a. m.","p. m."],"dayPeriods-standAlone-narrow":["a. m.","p. m."],"dayPeriods-standAlone-wide":["a. m.","p. m."],"era-wide":{"0":"AH"},"era-abbreviated":{"0":"AH"},"era-narrow":{"0":"AH"}},"dateField-year-displayName":"Año","dateField-year-relative--1":"Año pasado","dateField-year-relative-0":"Este año","dateField-year-relative-1":"Año próximo","dateField-year-relative-future-other":"En {0} años","dateField-year-relative-past-other":"hace {0} años","dateField-month-displayName":"Mes","dateField-month-relative--1":"El mes pasado","dateField-month-relative-0":"Este mes","dateField-month-relative-1":"Mes próximo","dateField-month-relative-future-other":"En {0} meses","dateField-month-relative-past-other":"hace {0} meses","dateField-day-displayName":"Día","dateField-day-relative--1":"ayer","dateField-day-relative-0":"hoy","dateField-day-relative-1":"mañana","dateField-day-relative-future-other":"En {0} días","dateField-day-relative-past-other":"hace {0} días","decimalFormat":{"standard":"#,##0.###"},"decimalFormat-long":{"1000-one":"0 mil","1000-other":"0 mil","10000-one":"00 mil","10000-other":"00 mil","100000-one":"000 mil","100000-other":"000 mil","1000000-one":"0 millón","1000000-other":"0 millones","10000000-one":"00 millones","10000000-other":"00 millones","100000000-one":"000 millones","100000000-other":"000 millones","1000000000-one":"0 mil millones","1000000000-other":"0 mil millones","10000000000-one":"00 mil millones","10000000000-other":"00 mil millones","100000000000-one":"000 mil millones","100000000000-other":"000 mil millones","1000000000000-one":"0 billón","1000000000000-other":"0 billones","10000000000000-one":"00 billones","10000000000000-other":"00 billones","100000000000000-one":"000 billones","100000000000000-other":"000 billones"},"decimalFormat-short":{"1000-one":"0","1000-other":"0","10000-one":"00k","10000-other":"00k","100000-one":"000k","100000-other":"000k","1000000-one":"0 M","1000000-other":"0 M","10000000-one":"00 M","10000000-other":"00 M","100000000-one":"000 M","100000000-other":"000 M","1000000000-one":"0k M","1000000000-other":"0k M","10000000000-one":"00k M","10000000000-other":"00k M","100000000000-one":"000k M","100000000000-other":"000k M","1000000000000-one":"0 B","1000000000000-other":"0 B","10000000000000-one":"00 B","10000000000000-other":"00 B","100000000000000-one":"000 B","100000000000000-other":"000 B"},"scientificFormat":{"standard":"#E0"},"percentFormat":{"standard":"#,##0 %"},"currencyFormat":{"standard":"¤ #,##0.00","accounting":"¤ #,##0.00;(¤ #,##0.00)"},"symbols-latn-decimal":",","symbols-latn-group":".","symbols-latn-list":";","symbols-latn-percentSign":"%","symbols-latn-plusSign":"+","symbols-latn-minusSign":"-","symbols-latn-exponential":"E","symbols-latn-superscriptingExponent":"×","symbols-latn-perMille":"‰","symbols-latn-infinity":"∞","symbols-latn-nan":"NaN","symbols-latn-timeSeparator":":","currencySymbols":{"ESP":"₧","USD":"US$","UYU":"$","XPF":"CFPF","ZMW":"ZMK"},"currencyDigits":{"ADP":0,"AFN":0,"ALL":0,"AMD":0,"BHD":3,"BIF":0,"BYR":0,"CAD":2,"CHF":2,"CLF":4,"CLP":0,"COP":0,"CRC":0,"CZK":2,"DEFAULT":2,"DJF":0,"ESP":0,"GNF":0,"GYD":0,"HUF":2,"IDR":0,"IQD":0,"IRR":0,"ISK":0,"ITL":0,"JOD":3,"JPY":0,"KMF":0,"KPW":0,"KRW":0,"KWD":3,"LAK":0,"LBP":0,"LUF":0,"LYD":3,"MGA":0,"MGF":0,"MMK":0,"MNT":0,"MRO":0,"MUR":0,"OMR":3,"PKR":0,"PYG":0,"RSD":0,"RWF":0,"SLL":0,"SOS":0,"STD":0,"SYP":0,"TMM":0,"TND":3,"TRL":0,"TWD":2,"TZS":0,"UGX":0,"UYI":0,"UZS":0,"VND":0,"VUV":0,"XAF":0,"XOF":0,"XPF":0,"YER":0,"ZMK":0,"ZWD":0},"weekData-minDays":1,"weekData-firstDay":1,"weekData-weekendStart":6,"weekData-weekendEnd":0}
+{
+	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
+	"languages": {
+		"aa": "afar",
+		"ab": "abjasio",
+		"ace": "acehnés",
+		"ach": "acoli",
+		"ada": "adangme",
+		"ady": "adigeo",
+		"ae": "avéstico",
+		"aeb": "aeb",
+		"af": "afrikáans",
+		"afh": "afrihili",
+		"agq": "aghem",
+		"ain": "ainu",
+		"ak": "akan",
+		"akk": "acadio",
+		"akz": "akz",
+		"ale": "aleutiano",
+		"aln": "aln",
+		"alt": "altái meridional",
+		"am": "amárico",
+		"an": "aragonés",
+		"ang": "inglés antiguo",
+		"anp": "angika",
+		"ar": "árabe",
+		"ar_001": "árabe estándar moderno",
+		"arc": "arameo",
+		"arn": "mapuche",
+		"aro": "aro",
+		"arp": "arapaho",
+		"arq": "arq",
+		"arw": "arahuaco",
+		"ary": "ary",
+		"arz": "arz",
+		"as": "asamés",
+		"asa": "asu",
+		"ase": "ase",
+		"ast": "asturiano",
+		"av": "avar",
+		"avk": "avk",
+		"awa": "avadhi",
+		"ay": "aimara",
+		"az": "azerbaiyano",
+		"az_alt-short": "azerí",
+		"ba": "baskir",
+		"bal": "baluchi",
+		"ban": "balinés",
+		"bar": "bar",
+		"bas": "basa",
+		"bax": "bamun",
+		"bbc": "bbc",
+		"bbj": "ghomala",
+		"be": "bielorruso",
+		"bej": "beja",
+		"bem": "bemba",
+		"bew": "bew",
+		"bez": "bena",
+		"bfd": "bafut",
+		"bfq": "bfq",
+		"bg": "búlgaro",
+		"bgn": "baluchi occidental",
+		"bho": "bhojpuri",
+		"bi": "bislama",
+		"bik": "bicol",
+		"bin": "bini",
+		"bjn": "bjn",
+		"bkm": "kom",
+		"bla": "siksika",
+		"bm": "bambara",
+		"bn": "bengalí",
+		"bo": "tibetano",
+		"bpy": "bpy",
+		"bqi": "bqi",
+		"br": "bretón",
+		"bra": "braj",
+		"brh": "brh",
+		"brx": "bodo",
+		"bs": "bosnio",
+		"bss": "akoose",
+		"bua": "buriat",
+		"bug": "buginés",
+		"bum": "bulu",
+		"byn": "blin",
+		"byv": "medumba",
+		"ca": "catalán",
+		"cad": "caddo",
+		"car": "caribe",
+		"cay": "cayuga",
+		"cch": "atsam",
+		"ce": "checheno",
+		"ceb": "cebuano",
+		"cgg": "chiga",
+		"ch": "chamorro",
+		"chb": "chibcha",
+		"chg": "chagatái",
+		"chk": "trukés",
+		"chm": "marí",
+		"chn": "jerga chinuk",
+		"cho": "choctaw",
+		"chp": "chipewyan",
+		"chr": "cheroqui",
+		"chy": "cheyene",
+		"ckb": "kurdo sorani",
+		"co": "corso",
+		"cop": "copto",
+		"cps": "cps",
+		"cr": "cree",
+		"crh": "tártaro de Crimea",
+		"cs": "checo",
+		"csb": "casubio",
+		"cu": "eslavo eclesiástico",
+		"cv": "chuvasio",
+		"cy": "galés",
+		"da": "danés",
+		"dak": "dakota",
+		"dar": "dargva",
+		"dav": "taita",
+		"de": "alemán",
+		"de_AT": "alemán austríaco",
+		"de_CH": "alto alemán suizo",
+		"del": "delaware",
+		"den": "slave",
+		"dgr": "dogrib",
+		"din": "dinka",
+		"dje": "zarma",
+		"doi": "dogri",
+		"dsb": "bajo sorbio",
+		"dtp": "dtp",
+		"dua": "duala",
+		"dum": "neerlandés medieval",
+		"dv": "divehi",
+		"dyo": "jola-fonyi",
+		"dyu": "diula",
+		"dz": "dzongkha",
+		"dzg": "dazaga",
+		"ebu": "embu",
+		"ee": "ewé",
+		"efi": "efik",
+		"egl": "egl",
+		"egy": "egipcio antiguo",
+		"eka": "ekajuk",
+		"el": "griego",
+		"elx": "elamita",
+		"en": "inglés",
+		"en_AU": "inglés australiano",
+		"en_CA": "inglés canadiense",
+		"en_GB": "inglés británico",
+		"en_GB-alt-short": "inglés (R. U.)",
+		"en_US": "inglés estadounidense",
+		"en_US-alt-short": "inglés (EE. UU.)",
+		"enm": "inglés medieval",
+		"eo": "esperanto",
+		"es": "español",
+		"es_419": "español latinoamericano",
+		"es_ES": "español de España",
+		"es_MX": "español de México",
+		"esu": "esu",
+		"et": "estonio",
+		"eu": "vasco",
+		"ewo": "ewondo",
+		"ext": "ext",
+		"fa": "persa",
+		"fan": "fang",
+		"fat": "fanti",
+		"ff": "fula",
+		"fi": "finés",
+		"fil": "filipino",
+		"fit": "fit",
+		"fj": "fiyiano",
+		"fo": "feroés",
+		"fon": "fon",
+		"fr": "francés",
+		"fr_CA": "francés canadiense",
+		"fr_CH": "francés suizo",
+		"frc": "frc",
+		"frm": "francés medieval",
+		"fro": "francés antiguo",
+		"frp": "frp",
+		"frr": "frisón septentrional",
+		"frs": "frisón oriental",
+		"fur": "friulano",
+		"fy": "frisón occidental",
+		"ga": "irlandés",
+		"gaa": "ga",
+		"gag": "gagauzo",
+		"gan": "gan",
+		"gay": "gayo",
+		"gba": "gbaya",
+		"gbz": "gbz",
+		"gd": "gaélico escocés",
+		"gez": "geez",
+		"gil": "gilbertés",
+		"gl": "gallego",
+		"glk": "glk",
+		"gmh": "alemán de la alta edad media",
+		"gn": "guaraní",
+		"goh": "alemán de la alta edad antigua",
+		"gom": "gom",
+		"gon": "gondi",
+		"gor": "gorontalo",
+		"got": "gótico",
+		"grb": "grebo",
+		"grc": "griego antiguo",
+		"gsw": "alemán suizo",
+		"gu": "gujarati",
+		"guc": "guc",
+		"gur": "gur",
+		"guz": "gusii",
+		"gv": "manés",
+		"gwi": "kutchin",
+		"ha": "hausa",
+		"hai": "haida",
+		"hak": "hak",
+		"haw": "hawaiano",
+		"he": "hebreo",
+		"hi": "hindi",
+		"hif": "hif",
+		"hil": "hiligaynon",
+		"hit": "hitita",
+		"hmn": "hmong",
+		"ho": "hiri motu",
+		"hr": "croata",
+		"hsb": "alto sorbio",
+		"hsn": "hsn",
+		"ht": "haitiano",
+		"hu": "húngaro",
+		"hup": "hupa",
+		"hy": "armenio",
+		"hz": "herero",
+		"ia": "interlingua",
+		"iba": "iban",
+		"ibb": "ibibio",
+		"id": "indonesio",
+		"ie": "interlingue",
+		"ig": "igbo",
+		"ii": "yi de Sichuán",
+		"ik": "inupiaq",
+		"ilo": "ilocano",
+		"inh": "ingush",
+		"io": "ido",
+		"is": "islandés",
+		"it": "italiano",
+		"iu": "inuktitut",
+		"izh": "izh",
+		"ja": "japonés",
+		"jam": "jam",
+		"jbo": "lojban",
+		"jgo": "ngomba",
+		"jmc": "machame",
+		"jpr": "judeo-persa",
+		"jrb": "judeo-árabe",
+		"jut": "jut",
+		"jv": "javanés",
+		"ka": "georgiano",
+		"kaa": "karakalpako",
+		"kab": "cabila",
+		"kac": "kachin",
+		"kaj": "jju",
+		"kam": "kamba",
+		"kaw": "kawi",
+		"kbd": "kabardiano",
+		"kbl": "kanembu",
+		"kcg": "tyap",
+		"kde": "makonde",
+		"kea": "criollo caboverdiano",
+		"ken": "ken",
+		"kfo": "koro",
+		"kg": "kongo",
+		"kgp": "kgp",
+		"kha": "khasi",
+		"kho": "kotanés",
+		"khq": "koyra chiini",
+		"khw": "khw",
+		"ki": "kikuyu",
+		"kiu": "kiu",
+		"kj": "kuanyama",
+		"kk": "kazajo",
+		"kkj": "kako",
+		"kl": "groenlandés",
+		"kln": "kalenjin",
+		"km": "jemer",
+		"kmb": "kimbundu",
+		"kn": "canarés",
+		"ko": "coreano",
+		"koi": "komi permio",
+		"kok": "konkaní",
+		"kos": "kosraeano",
+		"kpe": "kpelle",
+		"kr": "kanuri",
+		"krc": "karachay-balkar",
+		"kri": "kri",
+		"krj": "krj",
+		"krl": "carelio",
+		"kru": "kurukh",
+		"ks": "cachemiro",
+		"ksb": "shambala",
+		"ksf": "bafia",
+		"ksh": "kölsch",
+		"ku": "kurdo",
+		"kum": "kumyk",
+		"kut": "kutenai",
+		"kv": "komi",
+		"kw": "córnico",
+		"ky": "kirguís",
+		"la": "latín",
+		"lad": "ladino",
+		"lag": "langi",
+		"lah": "lahnda",
+		"lam": "lamba",
+		"lb": "luxemburgués",
+		"lez": "lezgiano",
+		"lfn": "lfn",
+		"lg": "ganda",
+		"li": "limburgués",
+		"lij": "lij",
+		"liv": "liv",
+		"lkt": "lakota",
+		"lmo": "lmo",
+		"ln": "lingala",
+		"lo": "laosiano",
+		"lol": "mongo",
+		"loz": "lozi",
+		"lrc": "lorí septentrional",
+		"lt": "lituano",
+		"ltg": "ltg",
+		"lu": "luba-katanga",
+		"lua": "luba-lulua",
+		"lui": "luiseño",
+		"lun": "lunda",
+		"luo": "luo",
+		"lus": "lushai",
+		"luy": "luyia",
+		"lv": "letón",
+		"lzh": "lzh",
+		"lzz": "lzz",
+		"mad": "madurés",
+		"maf": "mafa",
+		"mag": "magahi",
+		"mai": "maithili",
+		"mak": "macasar",
+		"man": "mandingo",
+		"mas": "masái",
+		"mde": "maba",
+		"mdf": "moksha",
+		"mdh": "mdh",
+		"mdr": "mandar",
+		"men": "mende",
+		"mer": "meru",
+		"mfe": "criollo mauriciano",
+		"mg": "malgache",
+		"mga": "irlandés medieval",
+		"mgh": "makhuwa-meetto",
+		"mgo": "meta’",
+		"mh": "marshalés",
+		"mi": "maorí",
+		"mic": "micmac",
+		"min": "minangkabau",
+		"mis": "mis",
+		"mk": "macedonio",
+		"ml": "malayalam",
+		"mn": "mongol",
+		"mnc": "manchú",
+		"mni": "manipuri",
+		"moh": "mohawk",
+		"mos": "mossi",
+		"mr": "maratí",
+		"mrj": "mrj",
+		"ms": "malayo",
+		"mt": "maltés",
+		"mua": "mundang",
+		"mul": "lenguas múltiples",
+		"mus": "creek",
+		"mwl": "mirandés",
+		"mwr": "marwari",
+		"mwv": "mwv",
+		"my": "birmano",
+		"mye": "myene",
+		"myv": "erzya",
+		"mzn": "mazandaraní",
+		"na": "nauruano",
+		"nan": "nan",
+		"nap": "napolitano",
+		"naq": "nama",
+		"nb": "noruego bokmal",
+		"nd": "ndebele septentrional",
+		"nds": "bajo alemán",
+		"nds_NL": "bajo alemán (Países Bajos)",
+		"ne": "nepalí",
+		"new": "newari",
+		"ng": "ndonga",
+		"nia": "nias",
+		"niu": "niueano",
+		"njo": "njo",
+		"nl": "neerlandés",
+		"nl_BE": "flamenco",
+		"nmg": "kwasio",
+		"nn": "noruego nynorsk",
+		"nnh": "ngiemboon",
+		"no": "noruego",
+		"nog": "nogai",
+		"non": "nórdico antiguo",
+		"nov": "nov",
+		"nqo": "n’ko",
+		"nr": "ndebele meridional",
+		"nso": "sotho septentrional",
+		"nus": "nuer",
+		"nv": "navajo",
+		"nwc": "newari clásico",
+		"ny": "nyanja",
+		"nym": "nyamwezi",
+		"nyn": "nyankole",
+		"nyo": "nyoro",
+		"nzi": "nzima",
+		"oc": "occitano",
+		"oj": "ojibwa",
+		"om": "oromo",
+		"or": "oriya",
+		"os": "osético",
+		"osa": "osage",
+		"ota": "turco otomano",
+		"pa": "panyabí",
+		"pag": "pangasinán",
+		"pal": "pahlavi",
+		"pam": "pampanga",
+		"pap": "papiamento",
+		"pau": "palauano",
+		"pcd": "pcd",
+		"pdc": "pdc",
+		"pdt": "pdt",
+		"peo": "persa antiguo",
+		"pfl": "pfl",
+		"phn": "fenicio",
+		"pi": "pali",
+		"pl": "polaco",
+		"pms": "pms",
+		"pnt": "pnt",
+		"pon": "pohnpeiano",
+		"prg": "prg",
+		"pro": "provenzal antiguo",
+		"ps": "pastún",
+		"ps_alt-variant": "pashtún",
+		"pt": "portugués",
+		"pt_BR": "portugués de Brasil",
+		"pt_PT": "portugués de Portugal",
+		"qu": "quechua",
+		"quc": "quiché",
+		"qug": "qug",
+		"raj": "rajasthani",
+		"rap": "rapanui",
+		"rar": "rarotongano",
+		"rgn": "rgn",
+		"rif": "rif",
+		"rm": "retorrománico",
+		"rn": "kiroundi",
+		"ro": "rumano",
+		"ro_MD": "moldavo",
+		"rof": "rombo",
+		"rom": "romaní",
+		"root": "raíz",
+		"rtm": "rtm",
+		"ru": "ruso",
+		"rue": "rue",
+		"rug": "rug",
+		"rup": "arrumano",
+		"rw": "kinyarwanda",
+		"rwk": "rwa",
+		"sa": "sánscrito",
+		"sad": "sandawe",
+		"sah": "sakha",
+		"sam": "arameo samaritano",
+		"saq": "samburu",
+		"sas": "sasak",
+		"sat": "santali",
+		"saz": "saz",
+		"sba": "ngambay",
+		"sbp": "sangu",
+		"sc": "sardo",
+		"scn": "siciliano",
+		"sco": "escocés",
+		"sd": "sindhi",
+		"sdc": "sdc",
+		"sdh": "kurdo meridional",
+		"se": "sami septentrional",
+		"see": "seneca",
+		"seh": "sena",
+		"sei": "sei",
+		"sel": "selkup",
+		"ses": "koyraboro senni",
+		"sg": "sango",
+		"sga": "irlandés antiguo",
+		"sgs": "sgs",
+		"sh": "serbocroata",
+		"shi": "tashelhit",
+		"shn": "shan",
+		"shu": "árabe chadiano",
+		"si": "cingalés",
+		"sid": "sidamo",
+		"sk": "eslovaco",
+		"sl": "esloveno",
+		"sli": "sli",
+		"sly": "sly",
+		"sm": "samoano",
+		"sma": "sami meridional",
+		"smj": "sami lule",
+		"smn": "sami inari",
+		"sms": "sami skolt",
+		"sn": "shona",
+		"snk": "soninké",
+		"so": "somalí",
+		"sog": "sogdiano",
+		"sq": "albanés",
+		"sr": "serbio",
+		"srn": "sranan tongo",
+		"srr": "serer",
+		"ss": "siswati",
+		"ssy": "saho",
+		"st": "sesotho meridional",
+		"stq": "stq",
+		"su": "sundanés",
+		"suk": "sukuma",
+		"sus": "susu",
+		"sux": "sumerio",
+		"sv": "sueco",
+		"sw": "swahili",
+		"sw_CD": "swahili del Congo",
+		"swb": "comorense",
+		"syc": "siríaco clásico",
+		"syr": "siriaco",
+		"szl": "szl",
+		"ta": "tamil",
+		"tcy": "tcy",
+		"te": "telugu",
+		"tem": "temne",
+		"teo": "teso",
+		"ter": "tereno",
+		"tet": "tetún",
+		"tg": "tayiko",
+		"th": "tailandés",
+		"ti": "tigriña",
+		"tig": "tigré",
+		"tiv": "tiv",
+		"tk": "turcomano",
+		"tkl": "tokelauano",
+		"tkr": "tkr",
+		"tl": "tagalo",
+		"tlh": "klingon",
+		"tli": "tlingit",
+		"tly": "tly",
+		"tmh": "tamashek",
+		"tn": "setchwana",
+		"to": "tongano",
+		"tog": "tonga del Nyasa",
+		"tpi": "tok pisin",
+		"tr": "turco",
+		"tru": "tru",
+		"trv": "taroko",
+		"ts": "tsonga",
+		"tsd": "tsd",
+		"tsi": "tsimshiano",
+		"tt": "tártaro",
+		"ttt": "ttt",
+		"tum": "tumbuka",
+		"tvl": "tuvaluano",
+		"tw": "twi",
+		"twq": "tasawaq",
+		"ty": "tahitiano",
+		"tyv": "tuviniano",
+		"tzm": "tamazight del Marruecos Central",
+		"udm": "udmurt",
+		"ug": "uigur",
+		"ug_alt-variant": "uighur",
+		"uga": "ugarítico",
+		"uk": "ucraniano",
+		"umb": "umbundu",
+		"und": "lengua desconocida",
+		"ur": "urdu",
+		"uz": "uzbeko",
+		"vai": "vai",
+		"ve": "venda",
+		"vec": "vec",
+		"vep": "vep",
+		"vi": "vietnamita",
+		"vls": "vls",
+		"vmf": "vmf",
+		"vo": "volapük",
+		"vot": "vótico",
+		"vro": "vro",
+		"vun": "vunjo",
+		"wa": "valón",
+		"wae": "walser",
+		"wal": "walamo",
+		"war": "waray",
+		"was": "washo",
+		"wbp": "warlpiri",
+		"wo": "wolof",
+		"wuu": "wuu",
+		"xal": "kalmyk",
+		"xh": "xhosa",
+		"xmf": "xmf",
+		"xog": "soga",
+		"yao": "yao",
+		"yap": "yapés",
+		"yav": "yangben",
+		"ybb": "yemba",
+		"yi": "yídish",
+		"yo": "yoruba",
+		"yrl": "yrl",
+		"yue": "cantonés",
+		"za": "zhuang",
+		"zap": "zapoteco",
+		"zbl": "símbolos Bliss",
+		"zea": "zea",
+		"zen": "zenaga",
+		"zgh": "tamazight estándar marroquí",
+		"zh": "chino",
+		"zh_Hans": "chino simplificado",
+		"zh_Hant": "chino tradicional",
+		"zu": "zulú",
+		"zun": "zuni",
+		"zxx": "sin contenido lingüístico",
+		"zza": "zazaki"
+	},
+	"scripts": {
+		"Adlm": "Adlm",
+		"Aghb": "Aghb",
+		"Ahom": "Ahom",
+		"Arab": "árabe",
+		"Arab-alt-variant": "perso-árabe",
+		"Armi": "Armi",
+		"Armn": "armenio",
+		"Avst": "avéstico",
+		"Bali": "balinés",
+		"Bamu": "Bamu",
+		"Bass": "Bass",
+		"Batk": "batak",
+		"Beng": "bengalí",
+		"Bhks": "Bhks",
+		"Blis": "símbolos blis",
+		"Bopo": "bopomofo",
+		"Brah": "brahmi",
+		"Brai": "braille",
+		"Bugi": "buginés",
+		"Buhd": "buhid",
+		"Cakm": "Cakm",
+		"Cans": "símbolos aborígenes canadienses unificados",
+		"Cari": "cario",
+		"Cham": "cham",
+		"Cher": "cherokee",
+		"Cirt": "cirth",
+		"Copt": "copto",
+		"Cprt": "chipriota",
+		"Cyrl": "cirílico",
+		"Cyrs": "cirílico del antiguo eslavo eclesiástico",
+		"Deva": "devanagari",
+		"Dsrt": "deseret",
+		"Dupl": "Dupl",
+		"Egyd": "egipcio demótico",
+		"Egyh": "egipcio hierático",
+		"Egyp": "jeroglíficos egipcios",
+		"Elba": "Elba",
+		"Ethi": "etiópico",
+		"Geok": "georgiano eclesiástico",
+		"Geor": "georgiano",
+		"Glag": "glagolítico",
+		"Goth": "gótico",
+		"Gran": "Gran",
+		"Grek": "griego",
+		"Gujr": "gujarati",
+		"Guru": "gurmuji",
+		"Hanb": "Hanb",
+		"Hang": "hangul",
+		"Hani": "han",
+		"Hano": "hanunoo",
+		"Hans": "simplificado",
+		"Hans-alt-stand-alone": "han simplificado",
+		"Hant": "tradicional",
+		"Hant-alt-stand-alone": "han tradicional",
+		"Hatr": "Hatr",
+		"Hebr": "hebreo",
+		"Hira": "hiragana",
+		"Hluw": "Hluw",
+		"Hmng": "pahawh hmong",
+		"Hrkt": "katakana o hiragana",
+		"Hung": "húngaro antiguo",
+		"Inds": "Indio (harappan)",
+		"Ital": "antigua bastardilla",
+		"Jamo": "Jamo",
+		"Java": "javanés",
+		"Jpan": "japonés",
+		"Kali": "kayah li",
+		"Kana": "katakana",
+		"Khar": "kharosthi",
+		"Khmr": "jemer",
+		"Khoj": "Khoj",
+		"Knda": "canarés",
+		"Kore": "coreano",
+		"Kthi": "Kthi",
+		"Lana": "lanna",
+		"Laoo": "lao",
+		"Latf": "latino fraktur",
+		"Latg": "latino gaélico",
+		"Latn": "latín",
+		"Lepc": "lepcha",
+		"Limb": "limbu",
+		"Lina": "lineal A",
+		"Linb": "lineal B",
+		"Lisu": "Lisu",
+		"Lyci": "licio",
+		"Lydi": "lidio",
+		"Mahj": "Mahj",
+		"Mand": "mandeo",
+		"Mani": "Mani",
+		"Marc": "Marc",
+		"Maya": "jeroglíficos mayas",
+		"Mend": "Mend",
+		"Merc": "Merc",
+		"Mero": "meroítico",
+		"Mlym": "malayálam",
+		"Modi": "Modi",
+		"Mong": "mongol",
+		"Moon": "moon",
+		"Mroo": "Mroo",
+		"Mtei": "manipuri",
+		"Mult": "Mult",
+		"Mymr": "birmano",
+		"Narb": "Narb",
+		"Nbat": "Nbat",
+		"Newa": "Newa",
+		"Nkoo": "n’ko",
+		"Ogam": "ogham",
+		"Olck": "ol ciki",
+		"Orkh": "orkhon",
+		"Orya": "oriya",
+		"Osge": "Osge",
+		"Osma": "osmaniya",
+		"Palm": "Palm",
+		"Pauc": "Pauc",
+		"Perm": "permiano antiguo",
+		"Phag": "phags-pa",
+		"Phli": "Phli",
+		"Phlp": "Phlp",
+		"Phnx": "fenicio",
+		"Plrd": "Pollard Miao",
+		"Prti": "Prti",
+		"Qaaa": "Qaaa",
+		"Qaab": "Qaab",
+		"Qaac": "Qaac",
+		"Qaad": "Qaad",
+		"Qaae": "Qaae",
+		"Qaaf": "Qaaf",
+		"Qaag": "Qaag",
+		"Qaah": "Qaah",
+		"Qaaj": "Qaaj",
+		"Qaak": "Qaak",
+		"Qaal": "Qaal",
+		"Qaam": "Qaam",
+		"Qaan": "Qaan",
+		"Qaao": "Qaao",
+		"Qaap": "Qaap",
+		"Qaaq": "Qaaq",
+		"Qaar": "Qaar",
+		"Qaas": "Qaas",
+		"Qaat": "Qaat",
+		"Qaau": "Qaau",
+		"Qaav": "Qaav",
+		"Qaaw": "Qaaw",
+		"Qaax": "Qaax",
+		"Qaay": "Qaay",
+		"Qaaz": "Qaaz",
+		"Qaba": "Qaba",
+		"Qabb": "Qabb",
+		"Qabc": "Qabc",
+		"Qabd": "Qabd",
+		"Qabe": "Qabe",
+		"Qabf": "Qabf",
+		"Qabg": "Qabg",
+		"Qabh": "Qabh",
+		"Qabi": "Qabi",
+		"Qabj": "Qabj",
+		"Qabk": "Qabk",
+		"Qabl": "Qabl",
+		"Qabm": "Qabm",
+		"Qabn": "Qabn",
+		"Qabo": "Qabo",
+		"Qabp": "Qabp",
+		"Qabq": "Qabq",
+		"Qabr": "Qabr",
+		"Qabs": "Qabs",
+		"Qabt": "Qabt",
+		"Qabu": "Qabu",
+		"Qabv": "Qabv",
+		"Qabw": "Qabw",
+		"Qabx": "Qabx",
+		"Rjng": "rejang",
+		"Roro": "rongo-rongo",
+		"Runr": "rúnico",
+		"Samr": "Samr",
+		"Sara": "sarati",
+		"Sarb": "Sarb",
+		"Saur": "saurashtra",
+		"Sgnw": "SignWriting",
+		"Shaw": "shaviano",
+		"Shrd": "Shrd",
+		"Sidd": "Sidd",
+		"Sind": "Sind",
+		"Sinh": "cingalés",
+		"Sora": "Sora",
+		"Sund": "sundanés",
+		"Sylo": "syloti nagri",
+		"Syrc": "siriaco",
+		"Syre": "siriaco estrangelo",
+		"Syrj": "siriaco occidental",
+		"Syrn": "siriaco oriental",
+		"Tagb": "tagbanúa",
+		"Takr": "Takr",
+		"Tale": "tai le",
+		"Talu": "nuevo tai lue",
+		"Taml": "tamil",
+		"Tang": "Tang",
+		"Tavt": "Tavt",
+		"Telu": "telugu",
+		"Teng": "tengwar",
+		"Tfng": "tifinagh",
+		"Tglg": "tagalo",
+		"Thaa": "thaana",
+		"Thai": "tailandés",
+		"Tibt": "tibetano",
+		"Tirh": "Tirh",
+		"Ugar": "ugarítico",
+		"Vaii": "vai",
+		"Visp": "lenguaje visible",
+		"Wara": "Wara",
+		"Xpeo": "persa antiguo",
+		"Xsux": "cuneiforme sumerio-acadio",
+		"Yiii": "yi",
+		"Zinh": "heredado",
+		"Zmth": "Zmth",
+		"Zsye": "Zsye",
+		"Zsym": "símbolos",
+		"Zxxx": "no escrito",
+		"Zyyy": "común",
+		"Zzzz": "alfabeto desconocido"
+	},
+	"territories": {
+		"142": "Asia",
+		"143": "Asia central",
+		"145": "Asia occidental",
+		"150": "Europa",
+		"151": "Europa oriental",
+		"154": "Europa septentrional",
+		"155": "Europa occidental",
+		"419": "Latinoamérica",
+		"001": "Mundo",
+		"002": "África",
+		"003": "América del Norte",
+		"005": "Sudamérica",
+		"009": "Oceanía",
+		"011": "África occidental",
+		"013": "Centroamérica",
+		"014": "África oriental",
+		"015": "África septentrional",
+		"017": "África central",
+		"018": "África meridional",
+		"019": "América",
+		"021": "Norteamérica",
+		"029": "Caribe",
+		"030": "Asia oriental",
+		"034": "Asia meridional",
+		"035": "Sudeste asiático",
+		"039": "Europa meridional",
+		"053": "Australasia",
+		"054": "Melanesia",
+		"057": "Región de Micronesia",
+		"061": "Polinesia",
+		"AC": "Isla de la Ascensión",
+		"AD": "Andorra",
+		"AE": "Emiratos Árabes Unidos",
+		"AF": "Afganistán",
+		"AG": "Antigua y Barbuda",
+		"AI": "Anguila",
+		"AL": "Albania",
+		"AM": "Armenia",
+		"AO": "Angola",
+		"AQ": "Antártida",
+		"AR": "Argentina",
+		"AS": "Samoa Americana",
+		"AT": "Austria",
+		"AU": "Australia",
+		"AW": "Aruba",
+		"AX": "Islas Åland",
+		"AZ": "Azerbaiyán",
+		"BA": "Bosnia-Herzegovina",
+		"BB": "Barbados",
+		"BD": "Bangladés",
+		"BE": "Bélgica",
+		"BF": "Burkina Faso",
+		"BG": "Bulgaria",
+		"BH": "Baréin",
+		"BI": "Burundi",
+		"BJ": "Benín",
+		"BL": "San Bartolomé",
+		"BM": "Bermudas",
+		"BN": "Brunéi",
+		"BO": "Bolivia",
+		"BQ": "Caribe neerlandés",
+		"BR": "Brasil",
+		"BS": "Bahamas",
+		"BT": "Bután",
+		"BV": "Isla Bouvet",
+		"BW": "Botsuana",
+		"BY": "Bielorrusia",
+		"BZ": "Belice",
+		"CA": "Canadá",
+		"CC": "Islas Cocos",
+		"CD": "República Democrática del Congo",
+		"CD-alt-variant": "Congo (República Democrática del Congo)",
+		"CF": "República Centroafricana",
+		"CG": "República del Congo",
+		"CG-alt-variant": "Congo (República)",
+		"CH": "Suiza",
+		"CI": "Costa de Marfil",
+		"CI-alt-variant": "CI",
+		"CK": "Islas Cook",
+		"CL": "Chile",
+		"CM": "Camerún",
+		"CN": "China",
+		"CO": "Colombia",
+		"CP": "Isla Clipperton",
+		"CR": "Costa Rica",
+		"CU": "Cuba",
+		"CV": "Cabo Verde",
+		"CW": "Curazao",
+		"CX": "Isla de Navidad",
+		"CY": "Chipre",
+		"CZ": "República Checa",
+		"DE": "Alemania",
+		"DG": "Diego García",
+		"DJ": "Yibuti",
+		"DK": "Dinamarca",
+		"DM": "Dominica",
+		"DO": "República Dominicana",
+		"DZ": "Argelia",
+		"EA": "Ceuta y Melilla",
+		"EC": "Ecuador",
+		"EE": "Estonia",
+		"EG": "Egipto",
+		"EH": "Sáhara Occidental",
+		"ER": "Eritrea",
+		"ES": "España",
+		"ET": "Etiopía",
+		"EU": "Unión Europea",
+		"FI": "Finlandia",
+		"FJ": "Fiyi",
+		"FK": "Islas Malvinas",
+		"FK-alt-variant": "Islas Malvinas (Islas Falkland)",
+		"FM": "Micronesia",
+		"FO": "Islas Feroe",
+		"FR": "Francia",
+		"GA": "Gabón",
+		"GB": "Reino Unido",
+		"GB-alt-short": "R. U.",
+		"GD": "Granada",
+		"GE": "Georgia",
+		"GF": "Guayana Francesa",
+		"GG": "Guernesey",
+		"GH": "Ghana",
+		"GI": "Gibraltar",
+		"GL": "Groenlandia",
+		"GM": "Gambia",
+		"GN": "Guinea",
+		"GP": "Guadalupe",
+		"GQ": "Guinea Ecuatorial",
+		"GR": "Grecia",
+		"GS": "Islas Georgia del Sur y Sandwich del Sur",
+		"GT": "Guatemala",
+		"GU": "Guam",
+		"GW": "Guinea-Bisáu",
+		"GY": "Guyana",
+		"HK": "RAE de Hong Kong (China)",
+		"HK-alt-short": "Hong Kong",
+		"HM": "Islas Heard y McDonald",
+		"HN": "Honduras",
+		"HR": "Croacia",
+		"HT": "Haití",
+		"HU": "Hungría",
+		"IC": "Canarias",
+		"ID": "Indonesia",
+		"IE": "Irlanda",
+		"IL": "Israel",
+		"IM": "Isla de Man",
+		"IN": "India",
+		"IO": "Territorio Británico del Océano Índico",
+		"IQ": "Irak",
+		"IR": "Irán",
+		"IS": "Islandia",
+		"IT": "Italia",
+		"JE": "Jersey",
+		"JM": "Jamaica",
+		"JO": "Jordania",
+		"JP": "Japón",
+		"KE": "Kenia",
+		"KG": "Kirguistán",
+		"KH": "Camboya",
+		"KI": "Kiribati",
+		"KM": "Comoras",
+		"KN": "San Cristóbal y Nieves",
+		"KP": "Corea del Norte",
+		"KR": "Corea del Sur",
+		"KW": "Kuwait",
+		"KY": "Islas Caimán",
+		"KZ": "Kazajistán",
+		"LA": "Laos",
+		"LB": "Líbano",
+		"LC": "Santa Lucía",
+		"LI": "Liechtenstein",
+		"LK": "Sri Lanka",
+		"LR": "Liberia",
+		"LS": "Lesoto",
+		"LT": "Lituania",
+		"LU": "Luxemburgo",
+		"LV": "Letonia",
+		"LY": "Libia",
+		"MA": "Marruecos",
+		"MC": "Mónaco",
+		"MD": "Moldavia",
+		"ME": "Montenegro",
+		"MF": "San Martín",
+		"MG": "Madagascar",
+		"MH": "Islas Marshall",
+		"MK": "Macedonia",
+		"MK-alt-variant": "Macedonia (ERYM)",
+		"ML": "Mali",
+		"MM": "Myanmar (Birmania)",
+		"MN": "Mongolia",
+		"MO": "RAE de Macao (China)",
+		"MO-alt-short": "Macao",
+		"MP": "Islas Marianas del Norte",
+		"MQ": "Martinica",
+		"MR": "Mauritania",
+		"MS": "Montserrat",
+		"MT": "Malta",
+		"MU": "Mauricio",
+		"MV": "Maldivas",
+		"MW": "Malaui",
+		"MX": "México",
+		"MY": "Malasia",
+		"MZ": "Mozambique",
+		"NA": "Namibia",
+		"NC": "Nueva Caledonia",
+		"NE": "Níger",
+		"NF": "Isla Norfolk",
+		"NG": "Nigeria",
+		"NI": "Nicaragua",
+		"NL": "Países Bajos",
+		"NO": "Noruega",
+		"NP": "Nepal",
+		"NR": "Nauru",
+		"NU": "Niue",
+		"NZ": "Nueva Zelanda",
+		"OM": "Omán",
+		"PA": "Panamá",
+		"PE": "Perú",
+		"PF": "Polinesia Francesa",
+		"PG": "Papúa Nueva Guinea",
+		"PH": "Filipinas",
+		"PK": "Pakistán",
+		"PL": "Polonia",
+		"PM": "San Pedro y Miquelón",
+		"PN": "Islas Pitcairn",
+		"PR": "Puerto Rico",
+		"PS": "Territorios Palestinos",
+		"PS-alt-short": "Palestina",
+		"PT": "Portugal",
+		"PW": "Palaos",
+		"PY": "Paraguay",
+		"QA": "Catar",
+		"QO": "Territorios alejados de Oceanía",
+		"RE": "Reunión",
+		"RO": "Rumanía",
+		"RS": "Serbia",
+		"RU": "Rusia",
+		"RW": "Ruanda",
+		"SA": "Arabia Saudí",
+		"SB": "Islas Salomón",
+		"SC": "Seychelles",
+		"SD": "Sudán",
+		"SE": "Suecia",
+		"SG": "Singapur",
+		"SH": "Santa Elena",
+		"SI": "Eslovenia",
+		"SJ": "Svalbard y Jan Mayen",
+		"SK": "Eslovaquia",
+		"SL": "Sierra Leona",
+		"SM": "San Marino",
+		"SN": "Senegal",
+		"SO": "Somalia",
+		"SR": "Surinam",
+		"SS": "Sudán del Sur",
+		"ST": "Santo Tomé y Príncipe",
+		"SV": "El Salvador",
+		"SX": "Sint Maarten",
+		"SY": "Siria",
+		"SZ": "Suazilandia",
+		"TA": "Tristán da Cunha",
+		"TC": "Islas Turcas y Caicos",
+		"TD": "Chad",
+		"TF": "Territorios Australes Franceses",
+		"TG": "Togo",
+		"TH": "Tailandia",
+		"TJ": "Tayikistán",
+		"TK": "Tokelau",
+		"TL": "Timor Oriental",
+		"TL-alt-variant": "TL",
+		"TM": "Turkmenistán",
+		"TN": "Túnez",
+		"TO": "Tonga",
+		"TR": "Turquía",
+		"TT": "Trinidad y Tobago",
+		"TV": "Tuvalu",
+		"TW": "Taiwán",
+		"TZ": "Tanzania",
+		"UA": "Ucrania",
+		"UG": "Uganda",
+		"UM": "Islas menores alejadas de EE. UU.",
+		"US": "Estados Unidos",
+		"US-alt-short": "EE. UU.",
+		"UY": "Uruguay",
+		"UZ": "Uzbekistán",
+		"VA": "Ciudad del Vaticano",
+		"VC": "San Vicente y las Granadinas",
+		"VE": "Venezuela",
+		"VG": "Islas Vírgenes Británicas",
+		"VI": "Islas Vírgenes de EE. UU.",
+		"VN": "Vietnam",
+		"VU": "Vanuatu",
+		"WF": "Wallis y Futuna",
+		"WS": "Samoa",
+		"XK": "Kosovo",
+		"YE": "Yemen",
+		"YT": "Mayotte",
+		"ZA": "Sudáfrica",
+		"ZM": "Zambia",
+		"ZW": "Zimbabue",
+		"ZZ": "Región desconocida"
+	},
+	"orientation": "left-to-right",
+	"ca-gregorian": {
+		"dateFormats": {
+			"full": "EEEE, d 'de' MMMM 'de' y",
+			"long": "d 'de' MMMM 'de' y",
+			"medium": "d MMM y",
+			"short": "d/M/yy"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d 'de' MMM 'de' y G",
+				"GyMMMEd": "E, d MMM y G",
+				"GyMMMM": "MMMM 'de' y G",
+				"GyMMMMd": "d 'de' MMMM 'de' y G",
+				"GyMMMMEd": "E, d 'de' MMMM 'de' y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "H:mm:ss v",
+				"hmsvvvv": "h:mm:ss a (vvvv)",
+				"Hmsvvvv": "H:mm:ss (vvvv)",
+				"hmv": "h:mm a v",
+				"Hmv": "H:mm v",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMd": "d/M",
+				"MMdd": "d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMdd": "dd-MMM",
+				"MMMEd": "E, d MMM",
+				"MMMMd": "d 'de' MMMM",
+				"MMMMEd": "E, d 'de' MMMM",
+				"ms": "mm:ss",
+				"y": "y",
+				"yM": "M/y",
+				"yMd": "d/M/y",
+				"yMEd": "E d/M/y",
+				"yMM": "M/y",
+				"yMMM": "MMMM 'de' y",
+				"yMMMd": "d 'de' MMMM 'de' y",
+				"yMMMEd": "E, d 'de' MMM 'de' y",
+				"yMMMM": "MMMM 'de' y",
+				"yMMMMd": "d 'de' MMMM 'de' y",
+				"yMMMMEd": "EEE, d 'de' MMMM 'de' y",
+				"yQQQ": "QQQ 'de' y",
+				"yQQQQ": "QQQQ 'de' y"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0}–{1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a–h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH – HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm – h:mm a",
+					"m": "h:mm – h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm – HH:mm",
+					"m": "HH:mm – HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a–h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm – HH:mm v",
+					"m": "HH:mm – HH:mm v"
+				},
+				"hv": {
+					"a": "h a–h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH – HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "d/M–d/M",
+					"M": "d/M–d/M"
+				},
+				"MEd": {
+					"d": "E, d/M–E, d/M",
+					"M": "E, d/M–E, d/M"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d – d 'de' MMM",
+					"M": "d 'de' MMM – d 'de' MMM"
+				},
+				"MMMEd": {
+					"d": "E, d 'de' MMM – E, d 'de' MMM",
+					"M": "E, d 'de' MMM – E, d 'de' MMM"
+				},
+				"MMMMd": {
+					"d": "d–d 'de' MMMM",
+					"M": "d 'de' MMMM–d 'de' MMMM"
+				},
+				"MMMMEd": {
+					"d": "E, d 'de' MMMM–E, d 'de' MMMM",
+					"M": "E, d 'de' MMMM–E, d 'de' MMMM"
+				},
+				"y": {
+					"y": "y–y"
+				},
+				"yM": {
+					"M": "M/y–M/y",
+					"y": "M/y–M/y"
+				},
+				"yMd": {
+					"d": "d/M/y–d/M/y",
+					"M": "d/M/y–d/M/y",
+					"y": "d/M/y–d/M/y"
+				},
+				"yMEd": {
+					"d": "E, d/M/y–E, d/M/y",
+					"M": "E, d/M/y–E, d/M/y",
+					"y": "E, d/M/y–E, d/M/y"
+				},
+				"yMMM": {
+					"M": "MMM–MMM y",
+					"y": "MMM 'de' y – MMM 'de' y"
+				},
+				"yMMMd": {
+					"d": "d – d 'de' MMM 'de' y",
+					"M": "d 'de' MMM – d 'de' MMM 'de' y",
+					"y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y"
+				},
+				"yMMMEd": {
+					"d": "E, d 'de' MMM – E, d 'de' MMM 'de' y",
+					"M": "E, d 'de' MMM – E, d 'de' MMM 'de' y",
+					"y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM 'de' y",
+					"y": "MMMM 'de' y–MMMM 'de' y"
+				},
+				"yMMMMd": {
+					"d": "d–d 'de' MMMM 'de' y",
+					"M": "d 'de' MMMM–d 'de' MMMM 'de' y",
+					"y": "d 'de' MMMM 'de' y–d 'de' MMMM 'de' y"
+				},
+				"yMMMMEd": {
+					"d": "E, d 'de' MMMM–E, d 'de' MMMM 'de' y",
+					"M": "E, d 'de' MMMM–E, d 'de' MMMM 'de' y",
+					"y": "E, d 'de' MMMM 'de' y–E, d 'de' MMMM 'de' y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"ene.",
+					"feb.",
+					"mar.",
+					"abr.",
+					"may.",
+					"jun.",
+					"jul.",
+					"ago.",
+					"set.",
+					"oct.",
+					"nov.",
+					"dic."
+				],
+				"narrow": [
+					"e",
+					"f",
+					"m",
+					"a",
+					"m",
+					"j",
+					"j",
+					"a",
+					"s",
+					"o",
+					"n",
+					"d"
+				],
+				"wide": [
+					"enero",
+					"febrero",
+					"marzo",
+					"abril",
+					"mayo",
+					"junio",
+					"julio",
+					"agosto",
+					"setiembre",
+					"octubre",
+					"noviembre",
+					"diciembre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Ene.",
+					"Feb.",
+					"Mar.",
+					"Abr.",
+					"May.",
+					"Jun.",
+					"Jul.",
+					"Ago.",
+					"Set.",
+					"Oct.",
+					"Nov.",
+					"Dic."
+				],
+				"narrow": [
+					"E",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"Enero",
+					"Febrero",
+					"Marzo",
+					"Abril",
+					"Mayo",
+					"Junio",
+					"Julio",
+					"Agosto",
+					"Setiembre",
+					"Octubre",
+					"Noviembre",
+					"Diciembre"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"dom.",
+					"lun.",
+					"mar.",
+					"mié.",
+					"jue.",
+					"vie.",
+					"sáb."
+				],
+				"narrow": [
+					"d",
+					"l",
+					"m",
+					"m",
+					"j",
+					"v",
+					"s"
+				],
+				"short": [
+					"DO",
+					"LU",
+					"MA",
+					"MI",
+					"JU",
+					"VI",
+					"SA"
+				],
+				"wide": [
+					"domingo",
+					"lunes",
+					"martes",
+					"miércoles",
+					"jueves",
+					"viernes",
+					"sábado"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"dom.",
+					"lun.",
+					"mar.",
+					"mié.",
+					"jue.",
+					"vie.",
+					"sáb."
+				],
+				"narrow": [
+					"D",
+					"L",
+					"M",
+					"M",
+					"J",
+					"V",
+					"S"
+				],
+				"short": [
+					"DO",
+					"LU",
+					"MA",
+					"MI",
+					"JU",
+					"VI",
+					"SA"
+				],
+				"wide": [
+					"domingo",
+					"lunes",
+					"martes",
+					"miércoles",
+					"jueves",
+					"viernes",
+					"sábado"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1.er trimestre",
+					"2.º trimestre",
+					"3.er trimestre",
+					"4.º trimestre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1.er trimestre",
+					"2.º trimestre",
+					"3.er trimestre",
+					"4.º trimestre"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"a.m.",
+					"p.m."
+				],
+				"narrow": [
+					"a. m.",
+					"p. m."
+				],
+				"wide": [
+					"a.m.",
+					"p.m."
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"a.m.",
+					"p.m."
+				],
+				"narrow": [
+					"a.m.",
+					"p.m."
+				],
+				"wide": [
+					"a.m.",
+					"p.m."
+				]
+			}
+		},
+		"era-wide": {
+			"0": "antes de Cristo",
+			"1": "después de Cristo"
+		},
+		"era-abbreviated": {
+			"0": "a. C.",
+			"1": "d. C."
+		},
+		"era-narrow": {
+			"0": "a. C.",
+			"1": "d. C."
+		}
+	},
+	"ca-islamic": {
+		"dateFormats": {
+			"full": "EEEE, d 'de' MMMM 'de' y G",
+			"long": "d 'de' MMMM 'de' y G",
+			"medium": "d/M/y G",
+			"short": "dd/MM/yy GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM 'de' y G",
+				"GyMMMd": "d 'de' MMM 'de' y G",
+				"GyMMMEd": "E, d MMM y G",
+				"GyMMMM": "MMMM 'de' y G",
+				"GyMMMMd": "d 'de' MMMM 'de' y G",
+				"GyMMMMEd": "E, d 'de' MMMM 'de' y G",
+				"h": "hh a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d 'de' MMM",
+				"MMMEd": "E, d 'de' MMM",
+				"MMMMd": "d 'de' MMMM",
+				"MMMMEd": "E, d 'de' MMMM",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yMEd": "E d/M/y G",
+				"yyyy": "y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
+				"yyyyMEd": "E, d/M/y GGGGG",
+				"yyyyMMM": "MMM y G",
+				"yyyyMMMd": "d MMM y G",
+				"yyyyMMMEd": "EEE, d MMM y G",
+				"yyyyMMMM": "MMMM 'de' y G",
+				"yyyyMMMMd": "d 'de' MMMM 'de' y G",
+				"yyyyMMMMEd": "EEE, d 'de' MMMM 'de' y G",
+				"yyyyQQQ": "QQQ y G",
+				"yyyyQQQQ": "QQQQ 'de' y G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0}–{1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm – h:mm a",
+					"m": "h:mm – h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm – HH:mm",
+					"m": "HH:mm – HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm – h:mm a v",
+					"m": "h:mm – h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm – HH:mm v",
+					"m": "HH:mm – HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "d/M–d/M",
+					"M": "d/M–d/M"
+				},
+				"MEd": {
+					"d": "E, d/M–E, d/M",
+					"M": "E, d/M–E, d/M"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d–d 'de' MMM",
+					"M": "d 'de' MMM–d 'de' MMM"
+				},
+				"MMMEd": {
+					"d": "E, d 'de' MMM–E, d 'de' MMM",
+					"M": "E, d 'de' MMM–E, d 'de' MMM"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"yMd": {
+					"d": "d/M/y – d/M/y GGGGG",
+					"M": "d/M/y – d/M/y GGGGG",
+					"y": "d/M/y – d/M/y GGGGG"
+				},
+				"yMEd": {
+					"d": "E, d/M/y – E, d/M/y GGGGG",
+					"M": "E, d/M/y – E, d/M/y GGGGG",
+					"y": "E, d/M/y – E, d/M/y GGGGG"
+				},
+				"yMMM": {
+					"M": "MMM–MMM 'de' y G",
+					"y": "MMM 'de' y – MMM 'de' y G"
+				},
+				"yMMMd": {
+					"d": "d–d 'de' MMM 'de' y G",
+					"M": "d 'de' MMM – d 'de' MMM y G",
+					"y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
+				},
+				"yMMMEd": {
+					"d": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+					"M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+					"y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM 'de' y G",
+					"y": "MMMM 'de' y – MMMM 'de' y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"dom.",
+					"lun.",
+					"mar.",
+					"mié.",
+					"jue.",
+					"vie.",
+					"sáb."
+				],
+				"narrow": [
+					"d",
+					"l",
+					"m",
+					"m",
+					"j",
+					"v",
+					"s"
+				],
+				"short": [
+					"DO",
+					"LU",
+					"MA",
+					"MI",
+					"JU",
+					"VI",
+					"SA"
+				],
+				"wide": [
+					"domingo",
+					"lunes",
+					"martes",
+					"miércoles",
+					"jueves",
+					"viernes",
+					"sábado"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"dom.",
+					"lun.",
+					"mar.",
+					"mié.",
+					"jue.",
+					"vie.",
+					"sáb."
+				],
+				"narrow": [
+					"D",
+					"L",
+					"M",
+					"M",
+					"J",
+					"V",
+					"S"
+				],
+				"short": [
+					"DO",
+					"LU",
+					"MA",
+					"MI",
+					"JU",
+					"VI",
+					"SA"
+				],
+				"wide": [
+					"domingo",
+					"lunes",
+					"martes",
+					"miércoles",
+					"jueves",
+					"viernes",
+					"sábado"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1.er trimestre",
+					"2.º trimestre",
+					"3.er trimestre",
+					"4.º trimestre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1.er trimestre",
+					"2.º trimestre",
+					"3.er trimestre",
+					"4.º trimestre"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"a.m.",
+					"p.m."
+				],
+				"narrow": [
+					"a. m.",
+					"p. m."
+				],
+				"wide": [
+					"a.m.",
+					"p.m."
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"a.m.",
+					"p.m."
+				],
+				"narrow": [
+					"a.m.",
+					"p.m."
+				],
+				"wide": [
+					"a.m.",
+					"p.m."
+				]
+			}
+		},
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
+	},
+	"ca-japanese": {
+		"dateFormats": {
+			"full": "EEEE, d 'de' MMMM 'de' y G",
+			"long": "d 'de' MMMM 'de' y G",
+			"medium": "dd/MM/y G",
+			"short": "dd/MM/yy GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM 'de' y G",
+				"GyMMMd": "d 'de' MMM 'de' y G",
+				"GyMMMEd": "E, d MMM y G",
+				"GyMMMM": "MMMM 'de' y G",
+				"GyMMMMd": "d 'de' MMMM 'de' y G",
+				"GyMMMMEd": "E, d 'de' MMMM 'de' y G",
+				"h": "hh a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d 'de' MMM",
+				"MMMEd": "E, d 'de' MMM",
+				"MMMMd": "d 'de' MMMM",
+				"MMMMEd": "E, d 'de' MMMM",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yMEd": "E d/M/y G",
+				"yyyy": "y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
+				"yyyyMEd": "E, d/M/y GGGGG",
+				"yyyyMMM": "MMM y G",
+				"yyyyMMMd": "d MMM y G",
+				"yyyyMMMEd": "EEE, d MMM y G",
+				"yyyyMMMM": "MMMM 'de' y G",
+				"yyyyMMMMd": "d 'de' MMMM 'de' y G",
+				"yyyyMMMMEd": "EEE, d 'de' MMMM 'de' y G",
+				"yyyyQQQ": "QQQ y G",
+				"yyyyQQQQ": "QQQQ 'de' y G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0}–{1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm – h:mm a",
+					"m": "h:mm – h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm – HH:mm",
+					"m": "HH:mm – HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm – h:mm a v",
+					"m": "h:mm – h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm – HH:mm v",
+					"m": "HH:mm – HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "d/M–d/M",
+					"M": "d/M–d/M"
+				},
+				"MEd": {
+					"d": "E, d/M–E, d/M",
+					"M": "E, d/M–E, d/M"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d–d 'de' MMM",
+					"M": "d 'de' MMM–d 'de' MMM"
+				},
+				"MMMEd": {
+					"d": "E, d 'de' MMM–E, d 'de' MMM",
+					"M": "E, d 'de' MMM–E, d 'de' MMM"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"yMd": {
+					"d": "d/M/y – d/M/y GGGGG",
+					"M": "d/M/y – d/M/y GGGGG",
+					"y": "d/M/y – d/M/y GGGGG"
+				},
+				"yMEd": {
+					"d": "E, d/M/y – E, d/M/y GGGGG",
+					"M": "E, d/M/y – E, d/M/y GGGGG",
+					"y": "E, d/M/y – E, d/M/y GGGGG"
+				},
+				"yMMM": {
+					"M": "MMM–MMM 'de' y G",
+					"y": "MMM 'de' y – MMM 'de' y G"
+				},
+				"yMMMd": {
+					"d": "d–d 'de' MMM 'de' y G",
+					"M": "d 'de' MMM – d 'de' MMM y G",
+					"y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
+				},
+				"yMMMEd": {
+					"d": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+					"M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+					"y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM 'de' y G",
+					"y": "MMMM 'de' y – MMMM 'de' y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"ene.",
+					"feb.",
+					"mar.",
+					"abr.",
+					"may.",
+					"jun.",
+					"jul.",
+					"ago.",
+					"set.",
+					"oct.",
+					"nov.",
+					"dic."
+				],
+				"narrow": [
+					"e",
+					"f",
+					"m",
+					"a",
+					"m",
+					"j",
+					"j",
+					"a",
+					"s",
+					"o",
+					"n",
+					"d"
+				],
+				"wide": [
+					"enero",
+					"febrero",
+					"marzo",
+					"abril",
+					"mayo",
+					"junio",
+					"julio",
+					"agosto",
+					"setiembre",
+					"octubre",
+					"noviembre",
+					"diciembre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Ene.",
+					"Feb.",
+					"Mar.",
+					"Abr.",
+					"May.",
+					"Jun.",
+					"Jul.",
+					"Ago.",
+					"Set.",
+					"Oct.",
+					"Nov.",
+					"Dic."
+				],
+				"narrow": [
+					"E",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"Enero",
+					"Febrero",
+					"Marzo",
+					"Abril",
+					"Mayo",
+					"Junio",
+					"Julio",
+					"Agosto",
+					"Setiembre",
+					"Octubre",
+					"Noviembre",
+					"Diciembre"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"dom.",
+					"lun.",
+					"mar.",
+					"mié.",
+					"jue.",
+					"vie.",
+					"sáb."
+				],
+				"narrow": [
+					"d",
+					"l",
+					"m",
+					"m",
+					"j",
+					"v",
+					"s"
+				],
+				"short": [
+					"DO",
+					"LU",
+					"MA",
+					"MI",
+					"JU",
+					"VI",
+					"SA"
+				],
+				"wide": [
+					"domingo",
+					"lunes",
+					"martes",
+					"miércoles",
+					"jueves",
+					"viernes",
+					"sábado"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"dom.",
+					"lun.",
+					"mar.",
+					"mié.",
+					"jue.",
+					"vie.",
+					"sáb."
+				],
+				"narrow": [
+					"D",
+					"L",
+					"M",
+					"M",
+					"J",
+					"V",
+					"S"
+				],
+				"short": [
+					"DO",
+					"LU",
+					"MA",
+					"MI",
+					"JU",
+					"VI",
+					"SA"
+				],
+				"wide": [
+					"domingo",
+					"lunes",
+					"martes",
+					"miércoles",
+					"jueves",
+					"viernes",
+					"sábado"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1.er trimestre",
+					"2.º trimestre",
+					"3.er trimestre",
+					"4.º trimestre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1.er trimestre",
+					"2.º trimestre",
+					"3.er trimestre",
+					"4.º trimestre"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"a.m.",
+					"p.m."
+				],
+				"narrow": [
+					"a. m.",
+					"p. m."
+				],
+				"wide": [
+					"a.m.",
+					"p.m."
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"a.m.",
+					"p.m."
+				],
+				"narrow": [
+					"a.m.",
+					"p.m."
+				],
+				"wide": [
+					"a.m.",
+					"p.m."
+				]
+			}
+		},
+		"era-wide": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-abbreviated": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
+	"ca-persian": {
+		"dateFormats": {
+			"full": "EEEE, d 'de' MMMM 'de' y G",
+			"long": "d 'de' MMMM 'de' y G",
+			"medium": "d/M/y G",
+			"short": "dd/MM/yy GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM 'de' y G",
+				"GyMMMd": "d 'de' MMM 'de' y G",
+				"GyMMMEd": "E, d MMM y G",
+				"GyMMMM": "MMMM 'de' y G",
+				"GyMMMMd": "d 'de' MMMM 'de' y G",
+				"GyMMMMEd": "E, d 'de' MMMM 'de' y G",
+				"h": "hh a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d 'de' MMM",
+				"MMMEd": "E, d 'de' MMM",
+				"MMMMd": "d 'de' MMMM",
+				"MMMMEd": "E, d 'de' MMMM",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yMEd": "E d/M/y G",
+				"yyyy": "y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
+				"yyyyMEd": "E, d/M/y GGGGG",
+				"yyyyMMM": "MMM y G",
+				"yyyyMMMd": "d MMM y G",
+				"yyyyMMMEd": "EEE, d MMM y G",
+				"yyyyMMMM": "MMMM 'de' y G",
+				"yyyyMMMMd": "d 'de' MMMM 'de' y G",
+				"yyyyMMMMEd": "EEE, d 'de' MMMM 'de' y G",
+				"yyyyQQQ": "QQQ y G",
+				"yyyyQQQQ": "QQQQ 'de' y G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0}–{1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm – h:mm a",
+					"m": "h:mm – h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm – HH:mm",
+					"m": "HH:mm – HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm – h:mm a v",
+					"m": "h:mm – h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm – HH:mm v",
+					"m": "HH:mm – HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "d/M–d/M",
+					"M": "d/M–d/M"
+				},
+				"MEd": {
+					"d": "E, d/M–E, d/M",
+					"M": "E, d/M–E, d/M"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d–d 'de' MMM",
+					"M": "d 'de' MMM–d 'de' MMM"
+				},
+				"MMMEd": {
+					"d": "E, d 'de' MMM–E, d 'de' MMM",
+					"M": "E, d 'de' MMM–E, d 'de' MMM"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"yMd": {
+					"d": "d/M/y – d/M/y GGGGG",
+					"M": "d/M/y – d/M/y GGGGG",
+					"y": "d/M/y – d/M/y GGGGG"
+				},
+				"yMEd": {
+					"d": "E, d/M/y – E, d/M/y GGGGG",
+					"M": "E, d/M/y – E, d/M/y GGGGG",
+					"y": "E, d/M/y – E, d/M/y GGGGG"
+				},
+				"yMMM": {
+					"M": "MMM–MMM 'de' y G",
+					"y": "MMM 'de' y – MMM 'de' y G"
+				},
+				"yMMMd": {
+					"d": "d–d 'de' MMM 'de' y G",
+					"M": "d 'de' MMM – d 'de' MMM y G",
+					"y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
+				},
+				"yMMMEd": {
+					"d": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+					"M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+					"y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM 'de' y G",
+					"y": "MMMM 'de' y – MMMM 'de' y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Farvardin",
+					"Ordibehesht",
+					"Khordad",
+					"Tir",
+					"Mordad",
+					"Shahrivar",
+					"Mehr",
+					"Aban",
+					"Azar",
+					"Dey",
+					"Bahman",
+					"Esfand"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Farvardin",
+					"Ordibehesht",
+					"Khordad",
+					"Tir",
+					"Mordad",
+					"Shahrivar",
+					"Mehr",
+					"Aban",
+					"Azar",
+					"Dey",
+					"Bahman",
+					"Esfand"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Farvardin",
+					"Ordibehesht",
+					"Khordad",
+					"Tir",
+					"Mordad",
+					"Shahrivar",
+					"Mehr",
+					"Aban",
+					"Azar",
+					"Dey",
+					"Bahman",
+					"Esfand"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Farvardin",
+					"Ordibehesht",
+					"Khordad",
+					"Tir",
+					"Mordad",
+					"Shahrivar",
+					"Mehr",
+					"Aban",
+					"Azar",
+					"Dey",
+					"Bahman",
+					"Esfand"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"dom.",
+					"lun.",
+					"mar.",
+					"mié.",
+					"jue.",
+					"vie.",
+					"sáb."
+				],
+				"narrow": [
+					"d",
+					"l",
+					"m",
+					"m",
+					"j",
+					"v",
+					"s"
+				],
+				"short": [
+					"DO",
+					"LU",
+					"MA",
+					"MI",
+					"JU",
+					"VI",
+					"SA"
+				],
+				"wide": [
+					"domingo",
+					"lunes",
+					"martes",
+					"miércoles",
+					"jueves",
+					"viernes",
+					"sábado"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"dom.",
+					"lun.",
+					"mar.",
+					"mié.",
+					"jue.",
+					"vie.",
+					"sáb."
+				],
+				"narrow": [
+					"D",
+					"L",
+					"M",
+					"M",
+					"J",
+					"V",
+					"S"
+				],
+				"short": [
+					"DO",
+					"LU",
+					"MA",
+					"MI",
+					"JU",
+					"VI",
+					"SA"
+				],
+				"wide": [
+					"domingo",
+					"lunes",
+					"martes",
+					"miércoles",
+					"jueves",
+					"viernes",
+					"sábado"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1.er trimestre",
+					"2.º trimestre",
+					"3.er trimestre",
+					"4.º trimestre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1.er trimestre",
+					"2.º trimestre",
+					"3.er trimestre",
+					"4.º trimestre"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"a.m.",
+					"p.m."
+				],
+				"narrow": [
+					"a. m.",
+					"p. m."
+				],
+				"wide": [
+					"a.m.",
+					"p.m."
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"a.m.",
+					"p.m."
+				],
+				"narrow": [
+					"a.m.",
+					"p.m."
+				],
+				"wide": [
+					"a.m.",
+					"p.m."
+				]
+			}
+		},
+		"era-wide": {
+			"0": "AP"
+		},
+		"era-abbreviated": {
+			"0": "AP"
+		},
+		"era-narrow": {
+			"0": "AP"
+		}
+	},
+	"dateFields": {
+		"era": {
+			"displayName": "era"
+		},
+		"year-wide": {
+			"displayName": "año",
+			"relative-type--1": "el año pasado",
+			"relative-type-0": "este año",
+			"relative-type-1": "el próximo año",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} año",
+				"relativeTimePattern-count-other": "dentro de {0} años"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} año",
+				"relativeTimePattern-count-other": "hace {0} años"
+			}
+		},
+		"year-short": {
+			"displayName": "a",
+			"relative-type--1": "el año pasado",
+			"relative-type-0": "este año",
+			"relative-type-1": "el próximo año",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} a",
+				"relativeTimePattern-count-other": "dentro de {0} a"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} a",
+				"relativeTimePattern-count-other": "hace {0} a"
+			}
+		},
+		"year-narrow": {
+			"displayName": "a",
+			"relative-type--1": "el año pasado",
+			"relative-type-0": "este año",
+			"relative-type-1": "el próximo año",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} a",
+				"relativeTimePattern-count-other": "dentro de {0} a"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} a",
+				"relativeTimePattern-count-other": "hace {0} a"
+			}
+		},
+		"quarter-wide": {
+			"displayName": "trimestre",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} trimestre",
+				"relativeTimePattern-count-other": "dentro de {0} trimestres"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} trimestre",
+				"relativeTimePattern-count-other": "hace {0} trimestres"
+			}
+		},
+		"quarter-short": {
+			"displayName": "trim.",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} trim.",
+				"relativeTimePattern-count-other": "dentro de {0} trim."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} trim.",
+				"relativeTimePattern-count-other": "hace {0} trim."
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "trim.",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} trim.",
+				"relativeTimePattern-count-other": "dentro de {0} trim."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} trim.",
+				"relativeTimePattern-count-other": "hace {0} trim."
+			}
+		},
+		"month-wide": {
+			"displayName": "mes",
+			"relative-type--1": "el mes pasado",
+			"relative-type-0": "este mes",
+			"relative-type-1": "el próximo mes",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} mes",
+				"relativeTimePattern-count-other": "dentro de {0} meses"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} mes",
+				"relativeTimePattern-count-other": "hace {0} meses"
+			}
+		},
+		"month-short": {
+			"displayName": "m",
+			"relative-type--1": "el mes pasado",
+			"relative-type-0": "este mes",
+			"relative-type-1": "el próximo mes",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} m",
+				"relativeTimePattern-count-other": "dentro de {0} m"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} m",
+				"relativeTimePattern-count-other": "hace {0} m"
+			}
+		},
+		"month-narrow": {
+			"displayName": "m",
+			"relative-type--1": "el mes pasado",
+			"relative-type-0": "este mes",
+			"relative-type-1": "el próximo mes",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} m",
+				"relativeTimePattern-count-other": "dentro de {0} m"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} m",
+				"relativeTimePattern-count-other": "hace {0} m"
+			}
+		},
+		"week-wide": {
+			"displayName": "semana",
+			"relative-type--1": "la semana pasada",
+			"relative-type-0": "esta semana",
+			"relative-type-1": "la próxima semana",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} semana",
+				"relativeTimePattern-count-other": "dentro de {0} semanas"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} semana",
+				"relativeTimePattern-count-other": "hace {0} semanas"
+			}
+		},
+		"week-short": {
+			"displayName": "sem.",
+			"relative-type--1": "la semana pasada",
+			"relative-type-0": "esta semana",
+			"relative-type-1": "la próxima semana",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} sem.",
+				"relativeTimePattern-count-other": "dentro de {0} sem."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} sem.",
+				"relativeTimePattern-count-other": "hace {0} sem."
+			}
+		},
+		"week-narrow": {
+			"displayName": "sem.",
+			"relative-type--1": "la semana pasada",
+			"relative-type-0": "esta semana",
+			"relative-type-1": "la próxima semana",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} sem.",
+				"relativeTimePattern-count-other": "dentro de {0} sem."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} sem.",
+				"relativeTimePattern-count-other": "hace {0} sem."
+			}
+		},
+		"day-wide": {
+			"displayName": "día",
+			"relative-type--2": "anteayer",
+			"relative-type--1": "ayer",
+			"relative-type-0": "hoy",
+			"relative-type-1": "mañana",
+			"relative-type-2": "pasado mañana",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} día",
+				"relativeTimePattern-count-other": "dentro de {0} días"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} día",
+				"relativeTimePattern-count-other": "hace {0} días"
+			}
+		},
+		"day-short": {
+			"displayName": "d",
+			"relative-type--2": "anteayer",
+			"relative-type--1": "ayer",
+			"relative-type-0": "hoy",
+			"relative-type-1": "mañana",
+			"relative-type-2": "pasado mañana",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} día",
+				"relativeTimePattern-count-other": "dentro de {0} días"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} día",
+				"relativeTimePattern-count-other": "hace {0} días"
+			}
+		},
+		"day-narrow": {
+			"displayName": "d",
+			"relative-type--2": "anteayer",
+			"relative-type--1": "ayer",
+			"relative-type-0": "hoy",
+			"relative-type-1": "mañana",
+			"relative-type-2": "pasado mañana",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} día",
+				"relativeTimePattern-count-other": "dentro de {0} días"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} día",
+				"relativeTimePattern-count-other": "hace {0} días"
+			}
+		},
+		"weekday": {
+			"displayName": "día de la semana"
+		},
+		"hour-wide": {
+			"displayName": "hora",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} hora",
+				"relativeTimePattern-count-other": "dentro de {0} horas"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} hora",
+				"relativeTimePattern-count-other": "hace {0} horas"
+			}
+		},
+		"hour-short": {
+			"displayName": "h",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} h",
+				"relativeTimePattern-count-other": "dentro de {0} h"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} h",
+				"relativeTimePattern-count-other": "hace {0} h"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "h",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} h",
+				"relativeTimePattern-count-other": "dentro de {0} h"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} h",
+				"relativeTimePattern-count-other": "hace {0} h"
+			}
+		},
+		"minute-wide": {
+			"displayName": "minuto",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} minuto",
+				"relativeTimePattern-count-other": "dentro de {0} minutos"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} minuto",
+				"relativeTimePattern-count-other": "hace {0} minutos"
+			}
+		},
+		"minute-short": {
+			"displayName": "min",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} min",
+				"relativeTimePattern-count-other": "dentro de {0} min"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} min",
+				"relativeTimePattern-count-other": "hace {0} min"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "min",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} min",
+				"relativeTimePattern-count-other": "dentro de {0} min"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} min",
+				"relativeTimePattern-count-other": "hace {0} min"
+			}
+		},
+		"second-wide": {
+			"displayName": "segundo",
+			"relative-type-0": "ahora",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} segundo",
+				"relativeTimePattern-count-other": "dentro de {0} segundos"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} segundo",
+				"relativeTimePattern-count-other": "hace {0} segundos"
+			}
+		},
+		"second-short": {
+			"displayName": "s",
+			"relative-type-0": "ahora",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} s",
+				"relativeTimePattern-count-other": "dentro de {0} s"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} s",
+				"relativeTimePattern-count-other": "hace {0} s"
+			}
+		},
+		"second-narrow": {
+			"displayName": "s",
+			"relative-type-0": "ahora",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dentro de {0} s",
+				"relativeTimePattern-count-other": "dentro de {0} s"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} s",
+				"relativeTimePattern-count-other": "hace {0} s"
+			}
+		},
+		"zone": {
+			"displayName": "Zona horaria"
+		}
+	},
+	"decimalFormat": {
+		"standard": "#,##0.###"
+	},
+	"decimalFormat-long": {
+		"1000-one": "0 mil",
+		"1000-other": "0 mil",
+		"10000-one": "00 mil",
+		"10000-other": "00 mil",
+		"100000-one": "000 mil",
+		"100000-other": "000 mil",
+		"1000000-one": "0 millón",
+		"1000000-other": "0 millones",
+		"10000000-one": "00 millones",
+		"10000000-other": "00 millones",
+		"100000000-one": "000 millones",
+		"100000000-other": "000 millones",
+		"1000000000-one": "0 mil millones",
+		"1000000000-other": "0 mil millones",
+		"10000000000-one": "00 mil millones",
+		"10000000000-other": "00 mil millones",
+		"100000000000-one": "000 mil millones",
+		"100000000000-other": "000 mil millones",
+		"1000000000000-one": "0 billón",
+		"1000000000000-other": "0 billones",
+		"10000000000000-one": "00 billones",
+		"10000000000000-other": "00 billones",
+		"100000000000000-one": "000 billones",
+		"100000000000000-other": "000 billones"
+	},
+	"decimalFormat-short": {
+		"1000-one": "0",
+		"1000-other": "0",
+		"10000-one": "00k",
+		"10000-other": "00k",
+		"100000-one": "000k",
+		"100000-other": "000k",
+		"1000000-one": "0 M",
+		"1000000-other": "0 M",
+		"10000000-one": "00 M",
+		"10000000-other": "00 M",
+		"100000000-one": "000 M",
+		"100000000-other": "000 M",
+		"1000000000-one": "0k M",
+		"1000000000-other": "0k M",
+		"10000000000-one": "00k M",
+		"10000000000-other": "00k M",
+		"100000000000-one": "000k M",
+		"100000000000-other": "000k M",
+		"1000000000000-one": "0 B",
+		"1000000000000-other": "0 B",
+		"10000000000000-one": "00 B",
+		"10000000000000-other": "00 B",
+		"100000000000000-one": "000 B",
+		"100000000000000-other": "000 B"
+	},
+	"scientificFormat": {
+		"standard": "#E0"
+	},
+	"percentFormat": {
+		"standard": "#,##0 %"
+	},
+	"currencyFormat": {
+		"standard": "¤ #,##0.00",
+		"accounting": "¤ #,##0.00;(¤ #,##0.00)",
+		"currencySpacing": {
+			"beforeCurrency": {
+				"currencyMatch": "[:^S:]",
+				"surroundingMatch": "[:digit:]",
+				"insertBetween": " "
+			},
+			"afterCurrency": {
+				"currencyMatch": "[:^S:]",
+				"surroundingMatch": "[:digit:]",
+				"insertBetween": " "
+			}
+		}
+	},
+	"symbols-latn-decimal": ",",
+	"symbols-latn-group": ".",
+	"symbols-latn-list": ";",
+	"symbols-latn-percentSign": "%",
+	"symbols-latn-plusSign": "+",
+	"symbols-latn-minusSign": "-",
+	"symbols-latn-exponential": "E",
+	"symbols-latn-superscriptingExponent": "×",
+	"symbols-latn-perMille": "‰",
+	"symbols-latn-infinity": "∞",
+	"symbols-latn-nan": "NaN",
+	"symbols-latn-timeSeparator": ":",
+	"currencySymbols": {
+		"ESP": "₧",
+		"USD": "US$",
+		"UYU": "$",
+		"XPF": "CFPF"
+	},
+	"currencyDigits": {
+		"ADP": 0,
+		"AFN": 0,
+		"ALL": 0,
+		"AMD": 0,
+		"BHD": 3,
+		"BIF": 0,
+		"BYR": 0,
+		"CAD": 2,
+		"CHF": 2,
+		"CLF": 4,
+		"CLP": 0,
+		"COP": 0,
+		"CRC": 0,
+		"CZK": 0,
+		"DEFAULT": 2,
+		"DJF": 0,
+		"ESP": 0,
+		"GNF": 0,
+		"GYD": 0,
+		"HUF": 0,
+		"IDR": 0,
+		"IQD": 0,
+		"IRR": 0,
+		"ISK": 0,
+		"ITL": 0,
+		"JOD": 3,
+		"JPY": 0,
+		"KMF": 0,
+		"KPW": 0,
+		"KRW": 0,
+		"KWD": 3,
+		"LAK": 0,
+		"LBP": 0,
+		"LUF": 0,
+		"LYD": 3,
+		"MGA": 0,
+		"MGF": 0,
+		"MMK": 0,
+		"MNT": 0,
+		"MRO": 0,
+		"MUR": 0,
+		"OMR": 3,
+		"PKR": 0,
+		"PYG": 0,
+		"RSD": 0,
+		"RWF": 0,
+		"SLL": 0,
+		"SOS": 0,
+		"STD": 0,
+		"SYP": 0,
+		"TMM": 0,
+		"TND": 3,
+		"TRL": 0,
+		"TWD": 0,
+		"TZS": 0,
+		"UGX": 0,
+		"UYI": 0,
+		"UZS": 0,
+		"VND": 0,
+		"VUV": 0,
+		"XAF": 0,
+		"XOF": 0,
+		"XPF": 0,
+		"YER": 0,
+		"ZMK": 0,
+		"ZWD": 0
+	},
+	"weekData-minDays": 1,
+	"weekData-firstDay": 1,
+	"weekData-weekendStart": 6,
+	"weekData-weekendEnd": 0,
+	"timeData": {
+		"_allowed": "H hB h hb",
+		"_preferred": "H"
+	},
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-persian": {
+		"0": {
+			"_start": "622-01-01"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	}
+}

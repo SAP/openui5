@@ -1,0 +1,252 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm"
+			Namespace="FAC_CHART_OF_ACCOUNTS_SRV" xml:lang="en"
+			sap:schema-version="0000">
+			<EntityType Name="GLAccountHierarchyInChartOfAccounts"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="P_MANDT" />
+					<PropertyRef Name="P_VERSN" />
+					<PropertyRef Name="P_KTOPL" />
+				</Key>
+				<Property Name="P_MANDT" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Client" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="P_VERSN" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Financial Statement Variant"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="P_KTOPL" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Chart of Accts" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<NavigationProperty Name="Result"
+					Relationship="FAC_CHART_OF_ACCOUNTS_SRV.GLAccountHierarchyInCOA"
+					FromRole="FromRole_GLAccountHierarchyInCOA" ToRole="ToRole_GLAccountHierarchyInCOA" />
+			</EntityType>
+			<EntityType Name="GLAccountHierarchyInChartOfAccountsList"
+				sap:label="GL Account Hierarchy In Chart Of Accounts List"
+				sap:semantics="aggregate" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="FinancialStatementVariant" />
+					<PropertyRef Name="HierarchyNode" />
+				</Key>
+				<Property Name="NotAssignableFinStatementItem" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="Not Assignable Financial Statement Item" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="IsUnassigned" Type="Edm.String" Nullable="false"
+					MaxLength="1" sap:aggregation-role="dimension" sap:label="Is Unassigned"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="AccountIsBlockedForPostingInChartOfAcct"
+					Type="Edm.String" Nullable="false" MaxLength="1"
+					sap:aggregation-role="dimension" sap:label="Posting Block"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="AccountIsBlockedForCreation" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:aggregation-role="dimension"
+					sap:label="Creation block" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="IsDebitBalanceRelevant" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:aggregation-role="dimension"
+					sap:label="Debit posting" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="AccountIsMarkedForDeletion" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:aggregation-role="dimension"
+					sap:label="Deletion flag" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="IsCreditBalanceRelevant" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:aggregation-role="dimension"
+					sap:label="Credit posting" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="FunctionalAreaIsUsed" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:aggregation-role="dimension"
+					sap:label="Fun.area perm." sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="GroupChartOfAccountsIsUsed" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:aggregation-role="dimension"
+					sap:label="Group Chart Of Accounts Is Used" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="FinancialStatementVariant" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:aggregation-role="dimension"
+					sap:label="Financial Statement Variant" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="PartnerCompany" Type="Edm.String" Nullable="false"
+					MaxLength="6" sap:aggregation-role="dimension" sap:label="Company ID"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+				<Property Name="NodeType" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:aggregation-role="dimension" sap:label="Type"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="FinancialStatementItemText" Type="Edm.String"
+					Nullable="false" MaxLength="45" sap:aggregation-role="dimension"
+					sap:label="Financial Statement Item Text" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="FinStatementHierarchyLevelVal" Type="Edm.Int32"
+					Nullable="false" MaxLength="2" sap:aggregation-role="dimension"
+					sap:hierarchy-level-for="HierarchyNode" sap:label="Hierarchy level"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="GLAccountName" Type="Edm.String" Nullable="false"
+					MaxLength="50" sap:aggregation-role="dimension" sap:label="G/L Account Name"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="GLAccount" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:aggregation-role="dimension" sap:label="G/L Account"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+				<Property Name="LiabilitiesFinStatementItem" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="Liabilities" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="ParentNode" Type="Edm.Guid" Nullable="false"
+					MaxLength="6" sap:aggregation-role="dimension"
+					sap:hierarchy-parent-node-for="HierarchyNode" sap:label="Parent Node"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="SiblingNode" Type="Edm.String" Nullable="false"
+					MaxLength="6" sap:aggregation-role="dimension" sap:label="Sibling Node"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="ChartOfAccountsName" Type="Edm.String"
+					Nullable="false" MaxLength="50" sap:aggregation-role="dimension"
+					sap:label="Description" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="ChartOfAccounts" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:aggregation-role="dimension"
+					sap:label="Chart of Accts" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" />
+				<Property Name="GLAccountGroup" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:aggregation-role="dimension" sap:label="Account Group"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+				<Property Name="CorporateGroupChartOfAccountsName" Type="Edm.String"
+					Nullable="false" MaxLength="50" sap:aggregation-role="dimension"
+					sap:label="Group ChtAccts Name" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="CorporateGroupChartOfAccounts" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:aggregation-role="dimension"
+					sap:label="Group ChtAccts" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="HierarchyNode" Type="Edm.Guid" Nullable="false"
+					MaxLength="6" sap:aggregation-role="dimension"
+					sap:hierarchy-node-for="GLAccount" sap:label="ID" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="FunctionalAreaName" Type="Edm.String"
+					Nullable="false" MaxLength="25" sap:aggregation-role="dimension"
+					sap:label="FunctArea text" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="FunctionalArea" Type="Edm.String" Nullable="false"
+					MaxLength="16" sap:aggregation-role="dimension" sap:label="Functional Area"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="CreatedBy" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:aggregation-role="dimension" sap:label="Created by"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="FinancialStatementItem" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="FS Item" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="OffsetItem" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:aggregation-role="dimension" sap:label="Offset Item"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="NetProfitFinStatementItem" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="Net profit/year" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="ProfitLossFinStatementItem" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="P+L profit" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="NetLossFinancialStatementItem" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="Net loss" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="CreationDate" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:aggregation-role="dimension" sap:label="Created on"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="DrilldownState" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:hierarchy-drill-state-for="HierarchyNode"
+					sap:label="Drilldown State" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="ChildNode" Type="Edm.String" Nullable="false"
+					MaxLength="6" sap:aggregation-role="dimension" sap:label="Child Node"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="CorporateGroupAccountName" Type="Edm.String"
+					Nullable="false" MaxLength="50" sap:aggregation-role="dimension"
+					sap:label="Group account number name" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="CorporateGroupAccount" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="Group account number" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="NotesFinancialStatementItem" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="Fin.stmnt notes" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="AssetsFinancialStatementItem" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="Assets" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="GLAccountNumberLenght" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="G/L account number, significant length" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="RetainedEarningsAccount" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:aggregation-role="dimension"
+					sap:label="Retained Earnings Account" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="ProfitLossAccountType" Type="Edm.String"
+					Nullable="false" MaxLength="2" sap:aggregation-role="dimension"
+					sap:label="PL Stmt A/c Ty" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="IsBalanceSheetAccount" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:aggregation-role="dimension"
+					sap:label="Balance Sheet Acct" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="AccountIsBlockedForPlanning" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:aggregation-role="dimension"
+					sap:label="Planning block" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+			</EntityType>
+			<Association Name="ChartOfAccountsAssoc"
+				sap:content-version="1">
+				<End Type="FAC_CHART_OF_ACCOUNTS_SRV.ChartOfAccounts"
+					Multiplicity="1" Role="FromRole_ChartOfAccountsAssoc" />
+				<End Type="FAC_CHART_OF_ACCOUNTS_SRV.ChartOfAccountsList"
+					Multiplicity="*" Role="ToRole_ChartOfAccountsAssoc" />
+			</Association>
+			<Association Name="GLAccountHierarchyInCOA"
+				sap:content-version="1">
+				<End Type="FAC_CHART_OF_ACCOUNTS_SRV.GLAccountHierarchyInChartOfAccounts"
+					Multiplicity="1" Role="FromRole_GLAccountHierarchyInCOA" />
+				<End
+					Type="FAC_CHART_OF_ACCOUNTS_SRV.GLAccountHierarchyInChartOfAccountsList"
+					Multiplicity="*" Role="ToRole_GLAccountHierarchyInCOA" />
+			</Association>
+			<EntityContainer Name="FAC_CHART_OF_ACCOUNTS_SRV_Entities"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="GLAccountHierarchyInChartOfAccountsSet"
+					EntityType="FAC_CHART_OF_ACCOUNTS_SRV.GLAccountHierarchyInChartOfAccounts"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+				<EntitySet Name="GLAccountHierarchyInChartOfAccountsLiSet"
+					EntityType="FAC_CHART_OF_ACCOUNTS_SRV.GLAccountHierarchyInChartOfAccountsList"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1" />
+				<AssociationSet Name="GLAccountHierarchyInCOASet"
+					Association="FAC_CHART_OF_ACCOUNTS_SRV.GLAccountHierarchyInCOA"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1">
+					<End EntitySet="GLAccountHierarchyInChartOfAccountsSet" Role="FromRole_GLAccountHierarchyInCOA" />
+					<End EntitySet="GLAccountHierarchyInChartOfAccountsLiSet" Role="ToRole_GLAccountHierarchyInCOA" />
+				</AssociationSet>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

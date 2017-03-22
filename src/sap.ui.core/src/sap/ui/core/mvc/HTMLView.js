@@ -3,10 +3,12 @@
  */
 
 // Provides control sap.ui.core.mvc.HTMLView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/RenderManager', 'sap/ui/core/library', './View'],
-	function(jQuery, DeclarativeSupport1, RenderManager, library, View) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', 'sap/ui/model/resource/ResourceModel', './View'],
+	function(jQuery, ManagedObject, DeclarativeSupport, library, ResourceModel, View) {
 	"use strict";
 
+	// shortcut for enum(s)
+	var ViewType = library.mvc.ViewType;
 
 
 	/**
@@ -58,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		 * @return {sap.ui.core.mvc.HTMLView | undefined} the created HTMLView instance in the creation case, otherwise undefined
 		 */
 		sap.ui.htmlview = function(sId, vView) {
-			return sap.ui.view(sId, vView, sap.ui.core.mvc.ViewType.HTML);
+			return sap.ui.view(sId, vView, ViewType.HTML);
 		};
 
 		/**
@@ -67,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		 * view type.
 		 * @private
 		 */
-		HTMLView._sType = sap.ui.core.mvc.ViewType.HTML;
+		HTMLView._sType = ViewType.HTML;
 
 		/**
 		 * Flag for feature detection of asynchronous loading/rendering
@@ -211,7 +213,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				var oProperties = that.getMetadata().getAllProperties();
 
 				if (oMetaElement) {
-					var DeclarativeSupport = DeclarativeSupport1;
 					jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
 						var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
 						var sValue = oAttr.value;
@@ -240,7 +241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				  that._controllerName = mSettings.controllerName;
 				}
 				if ((mSettings.resourceBundleName || mSettings.resourceBundleUrl) && (!mSettings.models || !mSettings.models[mSettings.resourceBundleAlias])) {
-					var model = new sap.ui.model.resource.ResourceModel({bundleName:mSettings.resourceBundleName, bundleUrl:mSettings.resourceBundleUrl, bundleLocale:mSettings.resourceBundleLocale});
+					var model = new ResourceModel({bundleName:mSettings.resourceBundleName, bundleUrl:mSettings.resourceBundleUrl, bundleLocale:mSettings.resourceBundleLocale});
 					that.setModel(model, mSettings.resourceBundleAlias);
 				}
 			}
@@ -274,8 +275,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		HTMLView.prototype.onControllerConnected = function(oController) {
 			// unset any preprocessors (e.g. from an enclosing HTML view)
 			var that = this;
-			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
-				DeclarativeSupport1.compile(that._oTemplate, that);
+			ManagedObject.runWithPreprocessors(function() {
+				DeclarativeSupport.compile(that._oTemplate, that);
 			}, {
 				settings: this._fnSettingsPreprocessor
 			});
@@ -312,4 +313,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 
 	return HTMLView;
 
-}, /* bExport= */ true);
+});

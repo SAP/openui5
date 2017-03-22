@@ -1,0 +1,6 @@
+{
+  "sEntity": "Theme",
+  "sId": "sap_belize_hcb",
+  "oExtends": "base",
+  "sVendor": "SAP"
+}

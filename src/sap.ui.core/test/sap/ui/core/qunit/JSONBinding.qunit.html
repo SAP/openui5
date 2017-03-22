@@ -1,22 +1,22 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <!-- Initialization -->
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-language="en_US">
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js" data-sap-ui-language="en_US">
 </script>
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <!-- Test functions -->
-<script language="javascript" charset="utf-8"> // IE needs this :-/
+<script charset="utf-8"> // IE needs this :-/
 
 	var oModel;
 	var testData;
@@ -53,7 +53,7 @@
 		};
 
 	};
-	
+
 	var attach = false;
 	var detach = true;
 
@@ -62,29 +62,29 @@
 		detach = false;
 	};
 
-	test("Binding getPath", function(){
+	QUnit.test("Binding getPath", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers", "firstName");
 
-		equal(bindings.length, testData.teamMembers.length, "amount of bindings");
+		assert.equal(bindings.length, testData.teamMembers.length, "amount of bindings");
 		jQuery(bindings).each(function (i, binding){
-			equal(binding.getPath(), "/teamMembers/" + i + "/firstName", "Binding path");
+			assert.equal(binding.getPath(), "/teamMembers/" + i + "/firstName", "Binding path");
 		});
 
 	});
 
-	test("Binding getModel", function(){
+	QUnit.test("Binding getModel", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers", "lastName");
 
 		jQuery(bindings).each(function (i, binding){
 			// check model of each binding...should be the same
-			equal(binding.getModel(), oModel, "Binding model");
+			assert.equal(binding.getModel(), oModel, "Binding model");
 		});
 
 	});
 
-	test("Binding set/getContext", function(){
+	QUnit.test("Binding set/getContext", function(assert) {
 		setup();
 		var oContext = oModel.getContext("/teamMembers/0"),
 			oNewContext = new sap.ui.model.Context();
@@ -92,13 +92,29 @@
 
 		jQuery(bindings).each(function (i, binding){
 			// check model of each binding...should be the same
-			equal(binding.getContext(), oContext, "Binding context");
+			assert.equal(binding.getContext(), oContext, "Binding context");
 			binding.setContext(oNewContext);
-			equal(binding.getContext(), oNewContext, "Binding context");
+			assert.equal(binding.getContext(), oNewContext, "Binding context");
 		});
 	});
 
-	test("Binding changeEvent", function(){
+	QUnit.test("Binding isResolved", function(assert) {
+		setup();
+		var oNewContext = oModel.getContext("/");
+
+		var oBinding = oModel.bindProperty("lastName");
+		assert.ok(!oBinding.isResolved(), "Binding should not be resolved yet!");
+		oBinding.setContext(oNewContext);
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
+
+		oBinding = oModel.bindProperty("/lastName");
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
+
+		oBinding = oModel.bindProperty("lastName", oNewContext);
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
+	});
+
+	QUnit.test("Binding changeEvent", function(assert) {
 		setup();
 		createPropertyBindings("/teamMembers", "firstName");
 
@@ -107,24 +123,24 @@
 			binding.attachChange(callBackOnChange);
 
 			// model stores the binding first when attach change was called
-			equal(oModel.aBindings.length, 1, "number of model bindings: 1")
+			assert.equal(oModel.aBindings.length, 1, "number of model bindings: 1")
 
 			// fire change event
 			binding._fireChange();
-			ok(attach, "call back method was attached");
-			ok(!detach, "call back method was not detached");
+			assert.ok(attach, "call back method was attached");
+			assert.ok(!detach, "call back method was not detached");
 
 			binding.detachChange(callBackOnChange);
 			attach = false;
 			detach = true;
 			//refire change event
 			binding._fireChange();
-			ok(!attach, "call back method was not attached");
-			ok(detach, "call back method was detached");
+			assert.ok(!attach, "call back method was not attached");
+			assert.ok(detach, "call back method was detached");
 			attach = false;
 			detach = true;
 
-			equal(oModel.aBindings.length, 0, "number of model bindings after detach: 0")
+			assert.equal(oModel.aBindings.length, 0, "number of model bindings after detach: 0")
 
 		});
 

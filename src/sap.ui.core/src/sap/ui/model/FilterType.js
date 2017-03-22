@@ -3,15 +3,14 @@
  */
 
 // Provides enumeration sap.ui.model.FilterType
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
 	/**
-	* Operators for the Filter.
+	* Types of Filters.
 	*
-	* @namespace
+	* @enum {string}
 	* @public
 	* @alias sap.ui.model.FilterType
 	*/
@@ -21,7 +20,7 @@ sap.ui.define(['jquery.sap.global'],
 			 * @public
 			 */
 			Application: "Application",
-	
+
 			/**
 			 * Filters which are set by the different controls
 			 * @public

@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.Button">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Button - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -28,7 +28,7 @@ oButton1.placeAt("sample1");
 var oButton2 = new sap.ui.commons.Button({
 	text : "200px wide Button with icon",
 	icon : "images/save-icon.gif",
-	width: "200px", 
+	width: "200px",
 	press : function() {alert('Alert from ' + oButton2.getText());}
 });
 // attach it to some other element in the page
@@ -119,9 +119,9 @@ var oButton9 = new sap.ui.commons.Button({
 
   <h2>Introduction</h2>
 		<p>
-		The button control represents a simple push button. 
+		The button control represents a simple push button.
 		It is used for initiating actions, such as save or print.
-		It can contain some text, an icon, or both; the order of the two can be configured. 
+		It can contain some text, an icon, or both; the order of the two can be configured.
 		By applying additional styles by custom classes, applications can give a different style to any button.
 		</p>
 
@@ -141,13 +141,13 @@ var oButton9 = new sap.ui.commons.Button({
 
 	<h3>Special buttons</h3>
 		<p>
-		There are different special layouts for buttons, emphasized, accept and reject. These designs can be activated using the <code>style</code> property. 
+		There are different special layouts for buttons, emphasized, accept and reject. These designs can be activated using the <code>style</code> property.
 		</p>
 	<div code-sample="sample4" script="SpecialButton"></div>
 
 	<h3>Unstyled buttons</h3>
 		<p>
-		Buttons can be displayed "native" without any own CSS-styling using the <code>styled</code> property. 
+		Buttons can be displayed "native" without any own CSS-styling using the <code>styled</code> property.
 		This is useful for applications which need a special application-dependent style for buttons. Using the function <code>addStyleClass</code> applications can add their own style to the button.
 		</p>
 	<div code-sample="sample5" script="UnstyledButton"></div>

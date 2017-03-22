@@ -1,0 +1,18 @@
+<mvc:View
+	controllerName="myCompany.myApp.controller.NotFound"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<MessagePage
+		id="page"
+		description=""
+		icon="{sap-icon://document}"
+		text="{i18n>notFoundText}"
+		title="{i18n>notFoundTitle}">
+		<customDescription>
+			<Link
+				id="link"
+				press="onLinkPressed"
+				text="{i18n>backToWorklist}"/>
+		</customDescription>
+	</MessagePage>
+</mvc:View>

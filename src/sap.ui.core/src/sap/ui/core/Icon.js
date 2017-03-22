@@ -3,11 +3,12 @@
  */
 
 // Provides control sap.ui.core.Icon.
-sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
-	function(jQuery, Control, IconPool, library) {
+sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './InvisibleText', './library'],
+	function(jQuery, Device, Control, IconPool, InvisibleText, library) {
 	"use strict";
 
-
+	// shortcut
+	var IconColor = library.IconColor;
 
 	/**
 	 * Constructor for a new Icon.
@@ -16,7 +17,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Icon uses embeded font instead of pixel image. Comparing to image, Icon is easily scalable, color can be altered live and various effects can be added using css.
+	 * Icon uses embedded font instead of pixel image. Comparing to image, Icon is easily scalable, color can be altered live and various effects can be added using css.
 	 *
 	 * A set of built in Icons is available and they can be fetched by calling sap.ui.core.IconPool.getIconURI and set this value to the src property on the Icon.
 	 * @extends sap.ui.core.Control
@@ -86,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			activeBackgroundColor : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * A decorative icon is included for design reasons. Accessibility tools will ignore decorative icons. Decorative icons don't have tab stop.
+			 * A decorative icon is included for design reasons. Accessibility tools will ignore decorative icons. Tab stop isn't affected by this property anymore and it's now controlled by the existence of press event handler and the noTabStop property.
 			 * @since 1.16.4
 			 */
 			decorative : {type : "boolean", group : "Accessibility", defaultValue : true},
@@ -95,8 +96,27 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			 * Decides whether a default Icon tooltip should be used if no tooltip is set.
 			 * @since 1.30.0
 			 */
-			useIconTooltip : {type : "boolean", group : "Accessibility", defaultValue : true}
+			useIconTooltip : {type : "boolean", group : "Accessibility", defaultValue : true},
 
+			/**
+			 * This defines the alternative text which is used for outputting the aria-label attribute on the DOM.
+			 * @since 1.30.0
+			 */
+			alt : {type : "string", group : "Accessibility", defaultValue : null},
+
+			/**
+			 * Defines whether the tab stop of icon is controlled by the existence of press event handler. When it's set to false, Icon control has tab stop when press event handler is attached.
+			 * If it's set to true, Icon control never has tab stop no matter whether press event handler exists or not.
+			 * @since 1.30.1
+			 */
+			noTabStop : {type : "boolean", group : "Accessibility", defaultValue : false}
+		},
+		aggregations: {
+
+			/**
+			 * Hidden aggregation for holding the InvisibleText instance which is used for outputing the text labeling the control
+			 */
+			_invisibleText : {type : "sap.ui.core.InvisibleText", multiple : false, visibility : "hidden"}
 		},
 		associations : {
 
@@ -108,35 +128,11 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 		events : {
 
 			/**
-			 * This event is fired when icon is pressed/activated by the user.
+			 * This event is fired when icon is pressed/activated by the user. When a handler is attached to this event, the Icon gets tab stop. If you want to disable this behavior, set the noTabStop property to true.
 			 */
 			press : {}
 		}
 	}});
-
-
-	/* =========================================================== */
-	/* Lifecycle methods                                           */
-	/* =========================================================== */
-
-	/**
-	 * Required adaptations after rendering.
-	 *
-	 * @private
-	 */
-	Icon.prototype.onAfterRendering = function() {
-		var $Icon = this.$();
-
-		if (this.hasListeners("press")) {
-			$Icon.css("cursor", "pointer");
-		}
-		// This is to check if no cursor property inherited from parent DOM.
-		// If the current value is auto, set it to default.
-		// This is to fix the cursor: auto interpreted as text cursor in firefox and IE.
-		if ($Icon.css("cursor") === "auto") {
-			$Icon.css("cursor", "default");
-		}
-	};
 
 	/* =========================================================== */
 	/* Event handlers                                              */
@@ -148,10 +144,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
-	Icon.prototype.onmousedown = function(oEvent) {
-
-		this._bPressFired = false;
-
+	Icon.prototype[Device.support.touch ? "ontouchstart" : "onmousedown"] = function(oEvent) {
 		if (this.hasListeners("press") || this.hasListeners("tap")) {
 
 			// mark the event for components that needs to know if the event was handled
@@ -182,20 +175,12 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	};
 
 	/**
-	 * Handle the touchstart event on the Icon.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
-	 */
-	Icon.prototype.ontouchstart = Icon.prototype.onmousedown;
-
-	/**
 	 * Handle the mouseup event on the Icon.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
-	Icon.prototype.onmouseup = function(oEvent) {
+	Icon.prototype[Device.support.touch ? "ontouchend" : "onmouseup"] = function(oEvent) {
 
 		// change the source back only when all fingers leave the icon
 		if (!oEvent.targetTouches || (oEvent.targetTouches && oEvent.targetTouches.length === 0)) {
@@ -204,22 +189,6 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			this._restoreColors();
 		}
 	};
-
-	/**
-	 * Handle the touchend event on the Icon.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
-	 */
-	Icon.prototype.ontouchend = Icon.prototype.onmouseup;
-
-	/**
-	 * Handle the touchcancel event on the Icon.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
-	 */
-	Icon.prototype.ontouchcancel = Icon.prototype.onmouseup;
 
 	/**
 	 * Handle the mouseover event on the Icon.
@@ -254,16 +223,9 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	 *
 	 * @private
 	 */
-	Icon.prototype.onclick = function() {
-		if (this._bPressFired) {
-			return;
-		}
-
+	Icon.prototype[Device.support.touch && !Device.system.desktop ? "ontap" : "onclick"] = function() {
 		this.firePress({/* no parameters */});
-		this._bPressFired = true;
 	};
-
-	Icon.prototype.ontap = Icon.prototype.onclick;
 
 	/* ----------------------------------------------------------- */
 	/* Keyboard handling                                           */
@@ -329,23 +291,42 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 
 	Icon.prototype.setSrc = function(sSrc) {
 		var oIconInfo = IconPool.getIconInfo(sSrc),
-			bTextNeeded = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9,
-			$Icon = this.$();
-
-		if (oIconInfo) {
-			$Icon.css("font-family", oIconInfo.fontFamily);
-
-			if (bTextNeeded) {
-				$Icon.text(oIconInfo.content);
-			} else {
-				$Icon.attr("data-sap-ui-icon-content", oIconInfo.content);
-			}
-
-			$Icon.toggleClass("sapUiIconMirrorInRTL", !oIconInfo.suppressMirroring);
-		}
+			$Icon = this.$(),
+			bOutputIconLabel, sIconLabel, sTooltip, bUseIconTooltip, aLabelledBy, oInvisibleText;
 
 		// when the given sSrc can't be found in IconPool, rerender the icon is needed.
 		this.setProperty("src", sSrc, !!oIconInfo);
+
+		if (oIconInfo && $Icon.length) {
+			$Icon.css("font-family", oIconInfo.fontFamily);
+			$Icon.attr("data-sap-ui-icon-content", oIconInfo.content);
+			$Icon.toggleClass("sapUiIconMirrorInRTL", !oIconInfo.suppressMirroring);
+
+			sTooltip = this.getTooltip_AsString();
+			aLabelledBy = this.getAriaLabelledBy();
+			bUseIconTooltip = this.getUseIconTooltip();
+			bOutputIconLabel = this._shouldOutputIconLabel();
+			sIconLabel = this._getIconLabel();
+
+			if (sTooltip || (bUseIconTooltip && oIconInfo.text)) {
+				$Icon.attr("title", sTooltip || oIconInfo.text);
+			} else {
+				$Icon.attr("title", null);
+			}
+
+			if (aLabelledBy.length === 0) { // Only adapt "aria-label" if there is no "labelledby" as this is managed separately
+				if (bOutputIconLabel) {
+					$Icon.attr("aria-label", sIconLabel);
+				} else {
+					$Icon.attr("aria-label", null);
+				}
+			} else { // adapt the text in InvisibleText control
+				oInvisibleText = this.getAggregation("_invisibleText");
+				if (oInvisibleText) {
+					oInvisibleText.setText(sIconLabel);
+				}
+			}
+		}
 
 		return this;
 	};
@@ -394,11 +375,11 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			return;
 		}
 
-		jQuery.each(sap.ui.core.IconColor, function(sPropertyName, sPropertyValue) {
+		jQuery.each(IconColor, function(sPropertyName, sPropertyValue) {
 			that.removeStyleClass(sCSSClassNamePrefix + sPropertyValue);
 		});
 
-		if (sColor in sap.ui.core.IconColor) {
+		if (sColor in IconColor) {
 			// reset the relevant css property
 			$Icon.css(sCSSPropName, "");
 			this.addStyleClass(sCSSClassNamePrefix + sColor);
@@ -430,45 +411,128 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 		return this.setProperty("hoverBackgroundColor", sColor, true);
 	};
 
-	Icon.prototype.attachPress = function() {
+	Icon.prototype.attachPress = function () {
 		var aMyArgs = Array.prototype.slice.apply(arguments);
-		aMyArgs.splice(0, 0, "press");
-		this.$().css("cursor", "pointer");
-		return Control.prototype.attachEvent.apply(this, aMyArgs);
+		aMyArgs.unshift("press");
+
+		Control.prototype.attachEvent.apply(this, aMyArgs);
+
+		if (this.hasListeners("press")) {
+			this.$().toggleClass("sapUiIconPointer", true)
+					.attr({
+						role: "button",
+						tabindex: this.getNoTabStop() ? undefined : 0
+					});
+		}
+
+		return this;
 	};
 
 	Icon.prototype.detachPress = function() {
 		var aMyArgs = Array.prototype.slice.apply(arguments);
-		aMyArgs.splice(0, 0, "press");
+		aMyArgs.unshift("press");
+
 		Control.prototype.detachEvent.apply(this, aMyArgs);
+
 		if (!this.hasListeners("press")) {
-			this.$().css("cursor", "default");
+			this.$().toggleClass("sapUiIconPointer", false)
+					.attr({
+						role: this.getDecorative() ? "presentation" : "img"
+					})
+					.removeAttr("tabindex");
 		}
+
 		return this;
 	};
 
-	Icon.prototype._getAccessibilityAttributes = function() {
+	Icon.prototype._shouldOutputIconLabel = function() {
 		var oIconInfo = IconPool.getIconInfo(this.getSrc()),
-			alabelledBy = this.getAriaLabelledBy(),
-			mAccAttributes = {};
+			sAlt = this.getAlt(),
+			sTooltip = this.getTooltip_AsString(),
+			bUseIconTooltip = this.getUseIconTooltip();
+
+		return !!(sAlt || sTooltip || (bUseIconTooltip && oIconInfo));
+	};
+
+	Icon.prototype._getIconLabel = function() {
+		var oIconInfo = IconPool.getIconInfo(this.getSrc()),
+			sAlt = this.getAlt(),
+			sTooltip = this.getTooltip_AsString();
+
+		return sAlt || sTooltip || oIconInfo.text || oIconInfo.name;
+	};
+
+	Icon.prototype._createInvisibleText = function(sText) {
+		var oInvisibleText = this.getAggregation("_invisibleText");
+
+		if (!oInvisibleText) {
+			oInvisibleText = new InvisibleText(this.getId() + "-label", {
+				text: sText
+			});
+
+			this.setAggregation("_invisibleText", oInvisibleText, true);
+		} else {
+			// avoid triggering invalidation during rendering
+			oInvisibleText.setProperty("text", sText, true);
+		}
+
+		return oInvisibleText;
+	};
+
+	Icon.prototype._getAccessibilityAttributes = function() {
+		var aLabelledBy = this.getAriaLabelledBy(),
+			mAccAttributes = {},
+			bOutputIconLabel = this._shouldOutputIconLabel(),
+			oInvisibleText, sIconLabel;
 
 		if (this.getDecorative()) {
 			mAccAttributes.role = "presentation";
 			mAccAttributes.hidden = "true";
 		} else {
-			mAccAttributes.role = "button";
+			if (this.hasListeners("press")) {
+				mAccAttributes.role = "button";
+			} else {
+				mAccAttributes.role = "img";
+			}
 		}
 
-		if (alabelledBy.length > 0) {
-			mAccAttributes.labelledby = alabelledBy.join(" ");
-		} else if (oIconInfo) {
-			// TODO: should the tooltip property be used here as well?
-			mAccAttributes.label = oIconInfo.text;
+		if (bOutputIconLabel) {
+			sIconLabel = this._getIconLabel();
+		}
+
+		if (aLabelledBy.length > 0) {
+			if (bOutputIconLabel) {
+				oInvisibleText = this._createInvisibleText(sIconLabel);
+				aLabelledBy.push(oInvisibleText.getId());
+			}
+			mAccAttributes.labelledby = aLabelledBy.join(" ");
+		} else if (bOutputIconLabel) {
+			mAccAttributes.label = sIconLabel;
 		}
 
 		return mAccAttributes;
 	};
 
+	/**
+	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @protected
+	 */
+	Icon.prototype.getAccessibilityInfo = function() {
+		if (this.getDecorative()) {
+			return null;
+		}
+
+		var bHasPressListeners = this.hasListeners("press");
+		var oIconInfo = IconPool.getIconInfo(this.getSrc());
+
+		return {
+			role: bHasPressListeners ? "button" : "img",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
+			description: this.getAlt() || this.getTooltip_AsString() || (oIconInfo ? oIconInfo.text || oIconInfo.name : ""),
+			focusable: bHasPressListeners
+		};
+	};
+
 	return Icon;
 
-}, /* bExport= */ true);
+});

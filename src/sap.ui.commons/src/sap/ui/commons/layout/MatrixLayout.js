@@ -7,8 +7,6 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 	function(jQuery, MatrixLayoutCell, MatrixLayoutRow, library, Control, EnabledPropagator) {
 	"use strict";
 
-
-
 	/**
 	 * Constructor for a new layout/MatrixLayout.
 	 *
@@ -43,6 +41,7 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.ui.layout.Grid</code> control.
 	 * @alias sap.ui.commons.layout.MatrixLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -107,6 +106,7 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MatrixLayout.prototype.createRow = function() {
+
 		var oRow = new MatrixLayoutRow();
 		this.addRow(oRow);
 		for (var i = 0; i < arguments.length; i++) {
@@ -117,18 +117,19 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 				oCell = oContent;
 			} else if (oContent instanceof Control) {
 				// any control given, wrap with matrix layout cell first
-				   oCell = new MatrixLayoutCell({content : oContent});
+				oCell = new MatrixLayoutCell({content : oContent});
 			} else if (oContent instanceof Object && oContent.height) {
 				oRow.setHeight(oContent.height);
 			} else {
 				// any string(?) given, display it
 				var sText = oContent ? oContent.toString() : "";
-					oCell = new MatrixLayoutCell({
-						content : new sap.ui.commons.TextView({text : sText})});
+				oCell = new MatrixLayoutCell({
+					content : new sap.ui.commons.TextView({text : sText})});
 			}
-				oRow.addCell(oCell);
+			oRow.addCell(oCell);
 		}
 		return this;
+
 	};
 
 	/*
@@ -160,6 +161,7 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 		this.setProperty("widths", aSetWidths);
 
 		return this;
+
 	};
 
 	return MatrixLayout;

@@ -1,0 +1,56 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap"
+		   height="100%"
+		   controllerName="sap.uxap.component.ObjectPageLayoutUXDrivenFactory"
+>
+	<ObjectPageLayout id="ObjectPageLayout"
+					  subSectionLayout="{objectPageLayoutMetadata>/subSectionLayout}"
+					  showAnchorBar="{objectPageLayoutMetadata>/showAnchorBar}"
+					  height="{objectPageLayoutMetadata>/height}"
+					  enableLazyLoading="{objectPageLayoutMetadata>/enableLazyLoading}"
+					  sections="{objectPageLayoutMetadata>/sections}"
+					  headerContent="{path:'objectPageLayoutMetadata>/headerContent', factory:'.controlFactory'}"
+					  showAnchorBarPopover="{objectPageLayoutMetadata>/showAnchorBarPopover}"
+					  upperCaseAnchorBar="{objectPageLayoutMetadata>/upperCaseAnchorBar}"
+					  useIconTabBar="{objectPageLayoutMetadata>/useIconTabBar}"
+					  showHeaderContent="{objectPageLayoutMetadata>/showHeaderContent}"
+					  useTwoColumnsForLargeScreen="{objectPageLayoutMetadata>/useTwoColumnsForLargeScreen}"
+					  showTitleInHeaderContent="{objectPageLayoutMetadata>/showTitleInHeaderContent}"
+					  showOnlyHighImportance="{objectPageLayoutMetadata>/showOnlyHighImportance}"
+					  isChildPage="{objectPageLayoutMetadata>/isChildPage}"
+					  alwaysShowContentHeader="{objectPageLayoutMetadata>/alwaysShowContentHeader}"
+					  showEditHeaderButton="{objectPageLayoutMetadata>/showEditHeaderButton}"
+	>
+
+		<!-- template for objectPageSection -->
+		<sections>
+			<ObjectPageSection id="ObjectPageSection"
+							   title="{objectPageLayoutMetadata>title}"
+							   importance="{objectPageLayoutMetadata>importance}"
+							   showTitle="{objectPageLayoutMetadata>showTitle}"
+							   subSections="{objectPageLayoutMetadata>subSections}"
+							   visible="{objectPageLayoutMetadata>visible}">
+
+				<!-- template for objectPageSubSection -->
+				<subSections>
+					<ObjectPageSubSection id="ObjectPageSubSection"
+										  title="{objectPageLayoutMetadata>title}"
+										  visible="{objectPageLayoutMetadata>visible}"
+										  mode="{objectPageLayoutMetadata>mode}"
+										  importance="{objectPageLayoutMetadata>importance}"
+										  actions="{path:'objectPageLayoutMetadata>actions', factory:'.controlFactory'}"
+										  blocks="{path:'objectPageLayoutMetadata>blocks', factory:'.controlFactory'}"
+										  moreBlocks="{path:'objectPageLayoutMetadata>moreBlocks', factory:'.controlFactory'}">
+
+						<!-- factory for actions, blocks and moreBlocks as the type is coming from the model -->
+
+					</ObjectPageSubSection>
+				</subSections>
+				<!-- end template for objectPageSubSection -->
+
+			</ObjectPageSection>
+		</sections>
+		<!-- template for objectPageSection -->
+	</ObjectPageLayout>
+
+</core:View>

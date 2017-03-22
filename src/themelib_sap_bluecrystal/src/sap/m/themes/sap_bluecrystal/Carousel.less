@@ -1,205 +1,97 @@
-/* ============================================= */
-/* CSS for control sap.m/Carousel.control        */
-/* BlueCrystal theme                             */
-/* ============================================= */
+/* =============================== */
+/* CSS for control sap.m/Carousel  */
+/* BlueCrystal theme               */
+/* =============================== */
 
-/*
-  Carousel control base styling
-*/
-.sapMCrslControls {
-	padding-top: 0.625rem;
-	text-align: center;
+.sapMCrslControls.sapMCrslControlsTop,
+.sapMCrslControlsNoArrows.sapMCrslControlsTop {
+	background: transparent;
+	border-color: transparent;
 }
 
-.sapMCrslControls a {
-	padding: 0.3125rem;
-	-webkit-user-select: none;
-	-moz-user-select: -moz-none;
-	user-select: none;
-	-webkit-user-drag: none;
-	-moz-user-drag: -moz-none;
-	user-drag: none;
+.sapMCrslControls.sapMCrslControlsBottom,
+.sapMCrslControlsNoArrows.sapMCrslControlsBottom {
+	background: transparent;
+	border-color: transparent;
 }
 
-.sapMCrslBulleted.sapMCrslBottomOffset {
-	position: absolute;
-	padding-top: 0;
-	bottom: 0.3125rem;
-	width: 100%;
-	z-index: 10;
-}
-
-.sapMCrslBulleted:not(.sapMCrslBottomOffset){
-	padding-bottom: 0.1875rem;
-	padding-top: 0.125rem;
-}
-
-/* Carousel controls: Bulleted */
 .sapMCrslBulleted > span {
-	text-indent: 2rem;
-	line-height: 0;
-	text-decoration: none;
-	overflow: hidden;
-	display: inline-block;
-	padding: 0.25rem;
-	width: 0;
-	height: 0;
-	margin: 0 0.25rem;
-	color: @sapUiExtraDarkBorder;
-	background-color: @sapUiExtraDarkBorder;
-	-webkit-transition: background-color 0.1s ease-in;
-	-moz-transition: background-color 0.1s ease-in;
-	transition: background-color 0.1s ease-in;
-	-webkit-box-shadow: 0px 0px 0.0625rem 0.0625rem @sapUiLightestBorder;
-	-moz-box-shadow: 0px 0px 0.0625rem 0.0625rem @sapUiLightestBorder;
-	box-shadow: 0px 0px 0.0625rem 0.0625rem @sapUiLightestBorder;
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
-	border-radius: 50%;
+	background-color : darken(@sapUiContentForegroundColor, 10);
 }
-
-.sapMCrslBulleted > span:hover,.sapMCrslBulleted > span:focus {
-	cursor: default;
-	outline: none;
-}
-
-.sapMCrslBulleted > span.sapMCrslActive {
-	color: @sapUiHighlight;
-	background-color: @sapUiHighlight;
-}
-
 
 /* Carousel controls: HUD */
-.sapMCrslHud {
-	padding-top: 0;
-}
-
 .sapMCrslHud a {
-	z-index: 2;
-	opacity: 0;
-	position: absolute;
-	top: calc(50% - 3.875rem);
-	width: 3rem;
-	height: 3rem;
-	margin: -1.5625px 0 0 0;
-	padding: 0;
-	text-decoration: none;
-	overflow: hidden;
-	background-color: @sapUiLightestBorder;
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
-	border-radius: 50%;
-	color: @sapUiInvertedElement;
-	-webkit-transition: opacity 0.1s ease-in;
-	-moz-transition: opacity 0.1s ease-in;
-	transition: opacity 0.1s ease-in;
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
-	border-radius: 50%;
-	-webkit-box-shadow: fade(@sapUiShadowTint,30%) 0 0.0625rem 0.25rem;
-	-moz-box-shadow: fade(@sapUiShadowTint,30%) 0 0.0625rem 0.25rem;
-	-ms-box-shadow: fade(@sapUiShadowTint,30%) 0 0.0625rem 0.25rem;
-	box-shadow: 0px 0.0625rem 0.25rem fade(@sapUiShadowTint,30%);
-}
-
-.sapMCrsl{
-	box-sizing: border-box;
-	border:1px solid transparent;
-}
-.sapMCrsl:focus {
-	outline: none;
-	border: 1px dotted @sapUiFocus;
-}
-
-.sapMCrsl:hover .sapMCrslHud a {
-	opacity: 0.3;
+	opacity: 0.5;
+	box-shadow: @sapUiShadowLevel1;
 }
 
 .sapMCrsl .sapMCrslHud a:hover,
 .sapMCrsl .sapMCrslHud a:focus {
-	opacity: 1;
+	box-shadow: @sapUiShadowLevel1;
+	border: 1px solid @sapUiButtonBorderColor;
 }
 
-.sapMCrsl .sapMCrslHud.sapMCrslLeftmost a.sapMCrslPrev,
-.sapMCrsl .sapMCrslHud.sapMCrslRightmost a.sapMCrslNext {
-	opacity: 0;
-	display: none;
+.sapMCrsl .sapMCrslHud a:active {
+	box-shadow: @sapUiShadowLevel1;
 }
 
-.sapMCrslHud .sapMCrslHudInner {
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
-	border-radius: 50%;
-	margin:0.25rem;
-	background-color: @sapUiHighlight;
-	color: @sapUiInvertedElement;
-	font-family: "SAP-icons";
-	font-size: 1.375rem;
-	font-weight: bold;
-	text-indent: 0;
-	text-align: center;
-	display: table;
-	z-index: 9;
-	width: 2.5rem;
-	height: 2.5rem;
+.sapMCrsl:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
 }
 
-
-
-.sapMCrslHud .sapMCrslPrev {
-	left: 0.625rem;
+.sapMCrslPrev:focus,
+.sapMCrslNext:focus,
+.sapMCrslPrev .sapUiIcon:focus,
+.sapMCrslNext .sapUiIcon:focus {
+  outline: none;
 }
 
-.sapMCrslHud .sapMCrslNext {
-	right: 0.625rem;
+html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
+html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
+  	&::before {
+		content: "";
+		position: absolute;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		pointer-events: none;
+		border: 1px solid @sapUiContentContrastFocusColor;
+	}
+
+  	&::after {
+		content: "";
+		position: absolute;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		pointer-events: none;
+		border: 1px dotted @sapUiContentFocusColor;
+	}
 }
 
-.sapMCrslHud .sapMCrslPrev:focus,
-.sapMCrslHud .sapMCrslNext:focus {
-  outline: 1px dotted @sapUiFocus;
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev:focus .sapUiIcon,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext:focus .sapUiIcon,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev .sapUiIcon:focus,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext .sapUiIcon:focus {
+  	&::before {
+		position: absolute;
+		padding-top: 0.425rem;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		border: 1px solid @sapUiContentContrastFocusColor;
+	}
+
+  	&::after {
+		content: "";
+		position: absolute;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		border: 1px dotted @sapUiContentFocusColor;
+	}
 }
-
-html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,
-.sapMCrslNext > .sapMCrslHudInner > .sapUiIcon {
-	left: auto;
-	right: 0;
-	text-indent: 0.0625rem;
-}
-
-html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
-.sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon {
-	right: auto;
-	left: 0;
-	text-indent: -0.0625rem;
-}
-
-.sapMCrslHudInner > .sapUiIcon {
-	display: table-cell;
-	vertical-align: middle;
-	cursor: inherit !important;
-}
-
-/* extra bits */
-
-/* captions */
-.sapMCrslCaption {
-	margin: 0;
-	padding: 0.625rem;
-	height: auto;
-	text-align: center;
-}
-
-
-/* Default Themes/Sytles for Slider */
-.sapMCrslFluid .sapMCrslItem {
-	margin-right: 1.25rem;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-}
-
-.sapMCrslItem.sapMCrslBottomOffset {
-	padding-bottom: 1.6875rem;
-}
-
-

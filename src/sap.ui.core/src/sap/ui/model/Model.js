@@ -16,7 +16,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * A model implementation should specify its supported binding modes and set the default binding mode accordingly
 	 * (e.g. if the model supports only one way binding the default binding mode should also be set to one way).
 	 *
-	 * This MessageProcessor is able to handle Messages with the normal binding syntax as target.
+	 * The default size limit for models is 100. The size limit determines the number of entries used for the list bindings.
+	 *
 	 *
 	 * @namespace
 	 * @name sap.ui.model
@@ -25,6 +26,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 
 	/**
 	 * Constructor for a new Model.
+	 *
+	 * Every Model is a MessageProcessor that is able to handle Messages with the normal binding path syntax in the target.
 	 *
 	 * @class
 	 * This is an abstract base class for model objects.
@@ -63,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 				"bindProperty", "bindList", "bindTree", "bindContext", "createBindingContext", "destroyBindingContext", "getProperty",
 				"getDefaultBindingMode", "setDefaultBindingMode", "isBindingModeSupported", "attachParseError", "detachParseError",
 				"attachRequestCompleted", "detachRequestCompleted", "attachRequestFailed", "detachRequestFailed", "attachRequestSent",
-				"detachRequestSent", "setSizeLimit", "refresh", "isList", "getObject"
+				"detachRequestSent", "attachPropertyChange", "detachPropertyChange", "setSizeLimit", "refresh", "isList", "getObject"
 		  ]
 
 		  /* the following would save code, but requires the new ManagedObject (1.9.1)
@@ -111,7 +114,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		 * Contains Parameters: url, type, async, info (<strong>deprecated</strong>), infoObject, success, errorobject
 		 *
 		 */
-		RequestCompleted : "requestCompleted"
+		RequestCompleted : "requestCompleted",
+
+		/**
+		 * Event is fired when changes occur to a property value in the model. The event contains a reason parameter which describes the cause of the property value change.
+		 * Currently the event is only fired with reason <code>sap.ui.model.ChangeReason.Binding</code> which is fired when two way changes occur to a value of a property binding.
+		 * Contains the parameters:
+		 * reason, path, context, value
+		 *
+		 */
+		PropertyChange : "propertyChange"
 	};
 
 	/**
@@ -121,14 +133,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *
 	 * @name sap.ui.model.Model#requestFailed
 	 * @event
-	 * @param {sap.ui.base.Event} oControlEvent
-	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	 * @param {object} oControlEvent.getParameters
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
 
-	 * @param {string} oControlEvent.getParameters.message A text that describes the failure.
-	 * @param {string} oControlEvent.getParameters.statusCode HTTP status code returned by the request (if available)
-	 * @param {string} oControlEvent.getParameters.statusText The status as a text, details not specified, intended only for diagnosis output
-	 * @param {string} [oControlEvent.getParameters.responseText] Response that has been received for the request ,as a text string
+	 * @param {string} oEvent.getParameters.message A text that describes the failure.
+	 * @param {string} oEvent.getParameters.statusCode HTTP status code returned by the request (if available)
+	 * @param {string} oEvent.getParameters.statusText The status as a text, details not specified, intended only for diagnosis output
+	 * @param {string} [oEvent.getParameters.responseText] Response that has been received for the request, as a text string
 	 * @public
 	 */
 
@@ -192,17 +204,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *
 	 * @name sap.ui.model.Model#parseError
 	 * @event
-	 * @param {sap.ui.base.Event} oControlEvent
-	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	 * @param {object} oControlEvent.getParameters
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
 
-	 * @param {int} oControlEvent.getParameters.errorCode
-	 * @param {string} oControlEvent.getParameters.url
-	 * @param {string} oControlEvent.getParameters.reason
-	 * @param {string} oControlEvent.getParameters.srcText
-	 * @param {int} oControlEvent.getParameters.line
-	 * @param {int} oControlEvent.getParameters.linepos
-	 * @param {int} oControlEvent.getParameters.filepos
+	 * @param {int} oEvent.getParameters.errorCode
+	 * @param {string} oEvent.getParameters.url
+	 * @param {string} oEvent.getParameters.reason
+	 * @param {string} oEvent.getParameters.srcText
+	 * @param {int} oEvent.getParameters.line
+	 * @param {int} oEvent.getParameters.linepos
+	 * @param {int} oEvent.getParameters.filepos
 	 * @public
 	 */
 
@@ -270,14 +282,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *
 	 * @name sap.ui.model.Model#requestSent
 	 * @event
-	 * @param {sap.ui.base.Event} oControlEvent
-	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	 * @param {object} oControlEvent.getParameters
-	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
-	 * @param {string} [oControlEvent.getParameters.type] The type of the request (if available)
-	 * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
-	 * @param {string} [oControlEvent.getParameters.info] Additional information for the request (if available) <strong>deprecated</strong>
-	 * @param {object} [oControlEvent.getParameters.infoObject] Additional information for the request (if available)
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.url The url which is sent to the backend
+	 * @param {string} [oEvent.getParameters.type] The type of the request (if available)
+	 * @param {boolean} [oEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+	 * @param {string} [oEvent.getParameters.info] Additional information for the request (if available) <strong>deprecated</strong>
+	 * @param {object} [oEvent.getParameters.infoObject] Additional information for the request (if available)
 	 * @public
 	 */
 
@@ -343,16 +355,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *
 	 * @name sap.ui.model.Model#requestCompleted
 	 * @event
-	 * @param {sap.ui.base.Event} oControlEvent
-	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	 * @param {object} oControlEvent.getParameters
-	 * @param {string} oControlEvent.getParameters.url The url which was sent to the backend
-	 * @param {string} [oControlEvent.getParameters.type] The type of the request (if available)
-	 * @param {boolean} oControlEvent.getParameters.success if the request has been successful or not. In case of errors consult the optional errorobject parameter.
-	 * @param {object} [oControlEvent.getParameters.errorobject] If the request failed the error if any can be accessed in this property.
-	 * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
-	 * @param {string} [oControlEvent.getParameters.info] Additional information for the request (if available) <strong>deprecated</strong>
-	 * @param {object} [oControlEvent.getParameters.infoObject] Additional information for the request (if available)
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.url The url which was sent to the backend
+	 * @param {string} [oEvent.getParameters.type] The type of the request (if available)
+	 * @param {boolean} oEvent.getParameters.success if the request has been successful or not. In case of errors consult the optional errorobject parameter.
+	 * @param {object} [oEvent.getParameters.errorobject] If the request failed the error if any can be accessed in this property.
+	 * @param {boolean} [oEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+	 * @param {string} [oEvent.getParameters.info] Additional information for the request (if available) <strong>deprecated</strong>
+	 * @param {object} [oEvent.getParameters.infoObject] Additional information for the request (if available)
 	 * @public
 	 */
 
@@ -421,6 +433,80 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		return this;
 	};
 
+	/**
+	 * Fire event propertyChange to attached listeners.
+	 *
+	 * @param {object} [mArguments] the arguments to pass along with the event.
+	 * @param {sap.ui.model.ChangeReason} [mArguments.reason] The reason of the property change
+	 * @param {string} [mArguments.path] The path of the property
+	 * @param {object} [mArguments.context] the context of the property
+	 * @param {object} [mArguments.value] the value of the property
+	 *
+	 * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	Model.prototype.firePropertyChange = function(mArguments) {
+		this.fireEvent("propertyChange", mArguments);
+		return this;
+	};
+
+	/**
+	 *
+	 *
+	 * The 'propertyChange' event is fired when changes occur to a property value in the model. The event contains a reason parameter which describes the cause of the property value change.
+	 * Currently the event is only fired with reason <code>sap.ui.model.ChangeReason.Binding</code> which is fired when two way changes occur to a value of a property binding.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.Model#propertyChange
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason The cause of the property value change
+	 * @param {string} oEvent.getParameters.path The path of the property
+	 * @param {sap.ui.model.Context} [oEvent.getParameters.context] The binding context (if available)
+	 * @param {object} oEvent.getParameters.value The current value of the property
+	 * @public
+	 */
+
+	/**
+	 * Attach event-handler <code>fnFunction</code> to the 'propertyChange' event of this <code>sap.ui.model.Model</code>.
+	 *
+	 *
+	 * @param {object}
+	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs. This function will be called on the
+	 *            oListener-instance (if present) or in a 'static way'.
+	 * @param {object}
+	 *            [oListener] Object on which to call the given function. If empty, the global context (window) is used.
+	 *
+	 * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	Model.prototype.attachPropertyChange = function(oData, fnFunction, oListener) {
+		this.attachEvent("propertyChange", oData, fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Detach event-handler <code>fnFunction</code> from the 'propertyChange' event of this <code>sap.ui.model.Model</code>.
+	 *
+	 * The passed function and listener object must match the ones previously used for event registration.
+	 *
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs.
+	 * @param {object}
+	 *            oListener Object on which the given function had to be called.
+	 * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	Model.prototype.detachPropertyChange = function(fnFunction, oListener) {
+		this.detachEvent("propertyChange", fnFunction, oListener);
+		return this;
+	};
+
 	// the 'abstract methods' to be implemented by child classes
 
 	/**
@@ -475,6 +561,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *         [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional)
+	 * @param {array}
+	 *         [aSorters=null] predefined sap.ui.model.sorter/s contained in an array (optional)
 	 * @return {sap.ui.model.TreeBinding}
 
 	 * @public
@@ -535,10 +623,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *         sPath the path to where to read the object
 	 * @param {object}
 	 *		   [oContext=null] the context with which the path should be resolved
+	 * @param {object}
+	 *         [mParameters] additional model specific parameters
+	 *
 	 * @public
 	 */
-	Model.prototype.getObject = function(sPath, oContext) {
-		return this.getProperty(sPath, oContext);
+	Model.prototype.getObject = function(sPath, oContext, mParameters) {
+		return this.getProperty(sPath, oContext, mParameters);
 	};
 
 
@@ -606,7 +697,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 				sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
 			}
 		}
-
+		if (!sPath && oContext) {
+			sResolvedPath = oContext.getPath();
+		}
 		// invariant: path never ends with a slash ... if root is requested we return /
 		if (sResolvedPath && sResolvedPath !== "/" && jQuery.sap.endsWith(sResolvedPath, "/")) {
 			sResolvedPath = sResolvedPath.substr(0, sResolvedPath.length - 1);
@@ -705,7 +798,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	};
 
 	/**
-	 * Set the maximum number of entries which are used for for list bindings.
+	 * Set the maximum number of entries which are used for list bindings.
 	 * @param {int} iSizeLimit collection size limit
 	 * @public
 	 */
@@ -766,8 +859,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @public
 	 */
 	Model.prototype.setMessages = function(mMessages) {
-		this.mMessages = mMessages || {};
-		this.checkMessages();
+		mMessages = mMessages || {};
+		if (!jQuery.sap.equal(this.mMessages, mMessages)) {
+			this.mMessages = mMessages;
+			this.checkMessages();
+		}
 	};
 
 	/**
@@ -777,7 +873,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @protected
 	 */
 	Model.prototype.getMessagesByPath = function(sPath) {
-		return this.mMessages[sPath];
+		if (this.mMessages) {
+			return this.mMessages[sPath] || [];
+		}
+		return null;
 	};
 
 	/**
@@ -785,9 +884,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @private
 	 */
 	Model.prototype.checkMessages = function() {
-		var aBindings = this.aBindings.slice(0);
-		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkMessages();
+		jQuery.each(this.aBindings, function(iIndex, oBinding) {
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState();
+			}
 		});
 	};
 
@@ -822,6 +922,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		return undefined;
 	};
 
+	/**
+	 * Returns the original value for the property with the given path and context.
+	 * The original value is the value that was last responded by a server if using a server model implementation.
+	 *
+	 * @param {string} sPath the path/name of the property
+	 * @param {object} [oContext] the context if available to access the property value
+	 * @returns {any} vValue the value of the property
+	 * @public
+	 */
+	Model.prototype.getOriginalProperty = function(sPath, oContext) {
+		return this.getProperty(sPath, oContext);
+	};
+
+	/**
+	 * Returns whether a given path relative to the given contexts is in laundering state.
+	 * If data is send to the server the data state becomes laundering until the
+	 * data was accepted or rejected
+	 *
+	 * @param {string} sPath path to resolve
+	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+	 * @returns {boolean} true if the data in this path is laundering
+	 */
+	Model.prototype.isLaundering = function(sPath, oContext) {
+		return false;
+	};
 	return Model;
 
-}, /* bExport= */ true);
+});

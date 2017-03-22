@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/layout/Verti
 
 
 	var VerticalLayoutRenderer = Renderer.extend(VerticalLayoutRenderer1);
-	
+
 
 	return VerticalLayoutRenderer;
 

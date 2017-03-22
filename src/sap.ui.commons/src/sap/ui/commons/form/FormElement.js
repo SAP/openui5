@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/for
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new form/FormElement.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -25,23 +25,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/for
 	 * @constructor
 	 * @public
 	 * @since 1.9.1
-	 * @deprecated Since version 1.16.0. 
+	 * @deprecated Since version 1.16.0.
 	 * moved to sap.ui.layout library. Please use this one.
 	 * @alias sap.ui.commons.form.FormElement
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormElement = FormElement1.extend("sap.ui.commons.form.FormElement", /** @lends sap.ui.commons.form.FormElement.prototype */ { metadata : {
-	
+
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
-	
+
 	/**
 	 * This file defines behavior for the control,
 	 */
-	
+
 	/* Overwrite to have right "since" in there */
-	
+
 	/**
 	* Getter for property <code>visible</code>.
 	* Invisible FormElements are not rendered.

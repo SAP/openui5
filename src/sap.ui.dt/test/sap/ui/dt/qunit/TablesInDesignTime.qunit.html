@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Test Page for sap.ui.dt.DesignTime and Form with different layouts</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+				z-index: 1000;
+			}
+
+			#overlay-container {
+				z-index: 1000;
+			}
+		</style>
+
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout,sap.ui.table"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+			jQuery.sap.require("sap.ui.table.Table");
+			jQuery.sap.require("sap.ui.table.AnalyticalTable");
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
+
+			// ----- sap.ui.table.Table -----
+			QUnit.module("Given that design time is created for a sap.ui.table.Table", {
+				beforeEach : function(assert) {
+					var done = assert.async();
+
+					this.oTable = new sap.ui.table.Table({
+						title: "Table Example",
+						visibleRowCount: 5,
+						width : "200px"
+					});
+
+					this.oColumn = new sap.ui.table.Column({
+						label: new sap.m.Label({text: "Last Name"}),
+						width: "200px"
+					});
+
+					this.oTable.addColumn(this.oColumn);
+					this.oTable.addColumn(new sap.ui.table.Column({
+						label: new sap.m.Label({text: "First Name"}),
+						width: "100px"
+					}));
+					this.oTable.addColumn(new sap.ui.table.Column({
+						label: new sap.m.Label({text: "Checked"}),
+						width: "75px"
+					}));
+					this.oTable.addColumn(new sap.ui.table.Column({
+						label: new sap.m.Label({text: "Web Site"})
+					}));
+					this.oTable.addColumn(new sap.ui.table.Column({
+						label: new sap.m.Label({text: "Image"}),
+						width: "75px"
+					}));
+
+					this.oTable.placeAt("content");
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [this.oTable]
+					});
+
+					sap.ui.getCore().applyChanges();
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						sap.ui.getCore().applyChanges();
+
+						done();
+					});
+				},
+				afterEach : function() {
+					this.oTable.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("when Table is scrolled horizontally via aggregationOverlay hScroll...", function(assert) {
+				var done = assert.async();
+
+				sap.ui.getCore().applyChanges();
+				var oTableOverlay = OverlayRegistry.getOverlay(this.oTable);
+				var oInitialColumnOffset = this.oColumn.$().offset();
+
+				var oColumnsOverlay = oTableOverlay.getAggregationOverlay("columns");
+
+				var oScrollOverlay = oTableOverlay.getAggregationOverlay("hScroll");
+
+				oColumnsOverlay.$().on("scroll", function() {
+					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBar") > -1, "then the ScrollBar Style Class was set");
+					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") > -1, "then the ScrollBar Horizontal Style Class was set");
+					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "then columns are also scrolled");
+					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "if this test fails, check Table.designtime.js : hScroll and vScroll domRefs!");
+
+					done();
+				}.bind(this));
+
+				oScrollOverlay.$().scrollLeft(20);
+			});
+
+
+			// ----- sap.ui.table.AnalyticalTable -----
+			QUnit.module("Given that design time is created for a sap.ui.table.AnalyticalTable", {
+				beforeEach : function(assert) {
+					var done = assert.async();
+
+					this.oTable = new sap.ui.table.AnalyticalTable({
+						title: "Table Example",
+						visibleRowCount: 5,
+						width : "200px"
+					});
+
+					this.oColumn = new sap.ui.table.AnalyticalColumn({
+						label: new sap.m.Label({text: "Last Name"}),
+						width: "200px"
+					});
+
+					this.oTable.addColumn(this.oColumn);
+					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
+						label: new sap.m.Label({text: "First Name"}),
+						width: "100px"
+					}));
+					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
+						label: new sap.m.Label({text: "Checked"}),
+						width: "75px"
+					}));
+					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
+						label: new sap.m.Label({text: "Web Site"})
+					}));
+					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
+						label: new sap.m.Label({text: "Image"}),
+						width: "75px"
+					}));
+
+					this.oTable.placeAt("content");
+
+					sap.ui.getCore().applyChanges();
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [this.oTable]
+					});
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						sap.ui.getCore().applyChanges();
+
+						done();
+					});
+				},
+				afterEach : function() {
+					this.oTable.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("when AnalyticalTable is scrolled horizontally via aggregationOverlay hScroll...", function(assert) {
+				var done = assert.async();
+
+				sap.ui.getCore().applyChanges();
+				var oTableOverlay = OverlayRegistry.getOverlay(this.oTable);
+				var oInitialColumnOffset = this.oColumn.$().offset();
+
+				var oColumnsOverlay = oTableOverlay.getAggregationOverlay("columns");
+
+				var oScrollOverlay = oTableOverlay.getAggregationOverlay("hScroll");
+
+				oColumnsOverlay.$().on("scroll", function() {
+					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBar") > -1, "then the ScrollBar Style Class was set");
+					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") > -1, "then the ScrollBar Horizontal Style Class was set");
+					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "then columns are also scrolled");
+					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "if this test fails, check AnalyticalTable.designtime.js : hScroll and vScroll domRefs!");
+
+					done();
+				}.bind(this));
+
+				oScrollOverlay.$().scrollLeft(20);
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Page for Tables enablement in sap.ui.dt.DesignTime</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

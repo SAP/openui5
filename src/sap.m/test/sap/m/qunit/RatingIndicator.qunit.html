@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <title>Test Page for sap.m.RatingIndicator</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <style>
 .sapMRI { /* formatter to display each rating in a single line */
-	display: block; 
+	display: block;
 	margin-bottom: 1rem;
 }
 </style>
@@ -27,7 +28,7 @@
 	// default rating with no properties
 	var oRating0 = new sap.m.RatingIndicator({
 	});
-	
+
 	// default rating with value 1
 	var oRating1 = new sap.m.RatingIndicator({
 		value: 1,
@@ -78,7 +79,7 @@
 		maxValue: 5,
 		iconSize: "3rem"
 	});
-	
+
 	// invisible rating
 	var oRating8 = new sap.m.RatingIndicator({
 		visible: false
@@ -95,11 +96,11 @@
 		enabled: false,
 		value: 1
 	});
-	
+
 	// default rating for icon test
 	var oRatingTemp = new sap.m.RatingIndicator({
 	});
-	
+
 	var	aRatings = [oRating0, oRating1, oRating2, oRating3, oRating4, oRating5, oRating6, oRating7, oRating8, oRating9, oRating10, oRatingTemp];
 
 	var oPage1 = new sap.m.Page("page1", {
@@ -123,7 +124,7 @@
 			return;
 		}
 		$RatingContainer = oRating.$();
-				
+
 		// save a global reference on all needed DOM elements
 		$SelectedDiv = oRating.$("sel");
 		$UnselectedDiv = oRating.$("unsel");
@@ -132,170 +133,168 @@
 		$HoveredDiv = oRating.$("hov");
 	};
 
-	module("Properties");
+	QUnit.module("Properties");
 
 	// check all properties
-	test("default Values", function() {
-		strictEqual(oRating0.getVisible(), true, "By default the rating is visible on " + oRating0);
-		strictEqual(oRating0.getEnabled(), true, "By default the rating is enabled " + oRating0);
-		strictEqual(oRating0.getMaxValue(), 5, "By default the rating max value is 5 on " + oRating0);
-		strictEqual(oRating0.getValue(), 0, "By default the rating value is 0 on " + oRating0);
-		strictEqual(oRating0._iPxIconSize, 22, "By default the rating size is 22 px on " + oRating0);
-		strictEqual(oRating0.getIconSelected(), "", "By default the selected icon is empty on " + oRating0);
-		strictEqual(oRating0.getIconUnselected(), "", "By default the unselected icom is empty on " + oRating0);
-		strictEqual(oRating0.getIconHovered(), "", "By default the hovered icon is empty on " + oRating0);
-		strictEqual(oRating0.getVisualMode(), "Half", "By default the visual mode is \"Half\" on " + oRating0);
+	QUnit.test("default Values", function(assert) {
+		assert.strictEqual(oRating0.getVisible(), true, "By default the rating is visible on " + oRating0);
+		assert.strictEqual(oRating0.getEnabled(), true, "By default the rating is enabled " + oRating0);
+		assert.strictEqual(oRating0.getMaxValue(), 5, "By default the rating max value is 5 on " + oRating0);
+		assert.strictEqual(oRating0.getValue(), 0, "By default the rating value is 0 on " + oRating0);
+		assert.strictEqual(oRating0._iPxIconSize, 16, "By default the rating size is 16 px on " + oRating0);
+		assert.strictEqual(oRating0.getIconSelected(), "", "By default the selected icon is empty on " + oRating0);
+		assert.strictEqual(oRating0.getIconUnselected(), "", "By default the unselected icom is empty on " + oRating0);
+		assert.strictEqual(oRating0.getIconHovered(), "", "By default the hovered icon is empty on " + oRating0);
+		assert.strictEqual(oRating0.getVisualMode(), "Half", "By default the visual mode is \"Half\" on " + oRating0);
 	});
 
-	module("HTML");
+	QUnit.module("HTML");
 
 	// check existence of all rendered divs
-	test("rendering", function() {
-		var i = 0;
-
-		// check HTML divs
-		for (; i < aRatings.length; i++) {
-			init(aRatings[i].getId());
-			if (oRating.getVisible()) {			
-				ok($SelectedDiv.length, "The selected HTML DIV element exist on " + oRating);
-				ok($UnselectedDiv.length, "The unselected HTML DIV element exist on " + oRating);
-				ok($UnselectedContainerDiv.length, "The unselected container HTML DIV element exist on " + oRating);
-				if (oRating.getEnabled()) {
-					ok($SelectorDiv.length, "The selector HTML DIV element exist on " + oRating);
-					ok($HoveredDiv.length, "The hovered HTML DIV element exist on " + oRating);
-				}
-			}
-		}
-	});
-	
-	// check if the ARIA attributes are rendered
-	test("aria attributes", function() {
+	QUnit.test("rendering", function(assert) {
 		var i = 0;
 
 		// check HTML divs
 		for (; i < aRatings.length; i++) {
 			init(aRatings[i].getId());
 			if (oRating.getVisible()) {
-				ok($RatingContainer.attr('role') == 'slider', "ARIA role is 'slider' on " + oRating);
-				ok($RatingContainer.attr('aria-valuenow') == oRating.getValue(), "aria-valuenow is correct on " + oRating);
-				ok($RatingContainer.attr('aria-valuemin') == 0, "aria-valuemin is correct on " + oRating);
-				ok($RatingContainer.attr('aria-valuemax') == oRating.getMaxValue(), "aria-valuemax is correct on " + oRating);
+				assert.ok($SelectedDiv.length, "The selected HTML DIV element exist on " + oRating);
+				assert.ok($UnselectedDiv.length, "The unselected HTML DIV element exist on " + oRating);
+				assert.ok($UnselectedContainerDiv.length, "The unselected container HTML DIV element exist on " + oRating);
+				if (oRating.getEnabled()) {
+					assert.ok($SelectorDiv.length, "The selector HTML DIV element exist on " + oRating);
+					assert.ok($HoveredDiv.length, "The hovered HTML DIV element exist on " + oRating);
+				}
 			}
 		}
 	});
 
-	module("CSS and DOM");
+	// check if the ARIA attributes are rendered
+	QUnit.test("aria attributes", function(assert) {
+		var i = 0;
 
-	test("css class and attributes", function() {
+		// check HTML divs
+		for (; i < aRatings.length; i++) {
+			init(aRatings[i].getId());
+			if (oRating.getVisible()) {
+				assert.ok($RatingContainer.attr('role') == 'slider', "ARIA role is 'slider' on " + oRating);
+				assert.ok($RatingContainer.attr('aria-valuenow') == oRating.getValue(), "aria-valuenow is correct on " + oRating);
+				assert.ok($RatingContainer.attr('aria-valuemin') == 0, "aria-valuemin is correct on " + oRating);
+				assert.ok($RatingContainer.attr('aria-valuemax') == oRating.getMaxValue(), "aria-valuemax is correct on " + oRating);
+			}
+		}
+	});
+
+	QUnit.module("CSS and DOM");
+
+	QUnit.test("css class and attributes", function(assert) {
 		var i = 0;
 
 		// check css classes
 		for (; i < aRatings.length; i++) {
 			init(aRatings[i].getId());
 			if (oRating.getVisible()) {
-				ok($RatingContainer.hasClass("sapMRI"), 'The rating root HTML Div element "must have" the CSS class "sapMRI" on ' + oRating);
-				ok($SelectedDiv.hasClass("sapMRISel"), 'The rating selected HTML Div element "must have" the CSS class "sapMRISel" on ' + oRating);
-				ok($UnselectedDiv.hasClass("sapMRIUnsel"), 'The rating unselectedHTML Div element "must have" the CSS class "sapMRIUnsel" on ' + oRating);
+				assert.ok($RatingContainer.hasClass("sapMRI"), 'The rating root HTML Div element "must have" the CSS class "sapMRI" on ' + oRating);
+				assert.ok($SelectedDiv.hasClass("sapMRISel"), 'The rating selected HTML Div element "must have" the CSS class "sapMRISel" on ' + oRating);
+				assert.ok($UnselectedDiv.hasClass("sapMRIUnsel"), 'The rating unselectedHTML Div element "must have" the CSS class "sapMRIUnsel" on ' + oRating);
 				if (oRating.getEnabled()) {
-					ok($SelectorDiv.hasClass("sapMRISelector"), 'The selector HTML DIV element "must have" the CSS class "sapMRISelector" on ' + oRating);
-					ok($HoveredDiv.hasClass("sapMRIHov"), 'The rating hovered HTML Div element "must have" the CSS class "sapMRIHov" on ' + oRating);
+					assert.ok($SelectorDiv.hasClass("sapMRISelector"), 'The selector HTML DIV element "must have" the CSS class "sapMRISelector" on ' + oRating);
+					assert.ok($HoveredDiv.hasClass("sapMRIHov"), 'The rating hovered HTML Div element "must have" the CSS class "sapMRIHov" on ' + oRating);
 				}
 			}
 		}
 
-		// check selected width
-		strictEqual(oRating0.$().children(".sapMRISel").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "0%" on ' + oRating0);
-		strictEqual(oRating1.$().children(".sapMRISel").css("width"), "22px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "20%" on ' + oRating1);
-		strictEqual(oRating2.$().children(".sapMRISel").css("width"), "256px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "100%" on ' + oRating2);
-		
-		// check unselected width
-		strictEqual(oRating0.$().children(".sapMRIUnselWrapper").css("width"), "126px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "100%" on ' + oRating0);
-		strictEqual(oRating1.$().children(".sapMRIUnselWrapper").css("width"), "104px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "80%" on ' + oRating1);
-		strictEqual(oRating2.$().children(".sapMRIUnselWrapper").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "0%" on ' + oRating2);
-
 		// check visibility false = no rendering
-		strictEqual(oRating8.$().length, 0, 'The rating is not visible on' + oRating8);
+		assert.strictEqual(oRating8.$().length, 0, 'The rating is not visible on' + oRating8);
 	});
 
 
-	module("Methods");
+	QUnit.module("Methods");
 
-	test("getter / setter", function() {
+	QUnit.test("getter / setter", function(assert) {
 		sap.ui.getCore().applyChanges();
 
 		// 0
-		strictEqual(oRating0.getValue(), 0, "The rating value is 0 on " + oRating0);
-		strictEqual(oRating0.getMaxValue(), 5, "The max rating value is 5 on " + oRating0);
+		assert.strictEqual(oRating0.getValue(), 0, "The rating value is 0 on " + oRating0);
+		assert.strictEqual(oRating0.getMaxValue(), 5, "The max rating value is 5 on " + oRating0);
 
 		// 1
-		strictEqual(oRating1.getValue(), 1, "The rating value is 1 on " + oRating1);
-		strictEqual(oRating1.getMaxValue(), 5, "The max rating value is 5 on " + oRating1);
+		assert.strictEqual(oRating1.getValue(), 1, "The rating value is 1 on " + oRating1);
+		assert.strictEqual(oRating1.getMaxValue(), 5, "The max rating value is 5 on " + oRating1);
 
 		// 2
-		strictEqual(oRating2.getValue(), 10, "The rating value is 10 on " + oRating2);
-		strictEqual(oRating2.getMaxValue(), 10, "The max rating value is 10 on " + oRating2);
+		assert.strictEqual(oRating2.getValue(), 10, "The rating value is 10 on " + oRating2);
+		assert.strictEqual(oRating2.getMaxValue(), 10, "The max rating value is 10 on " + oRating2);
 
 		// 3
-		strictEqual(oRating3.getValue(), 2.5, "The rating value is 2.5 on " + oRating3);
-		strictEqual(oRating3.getMaxValue(), 9, "The max rating value is 10 on " + oRating3);
+		assert.strictEqual(oRating3.getValue(), 2.5, "The rating value is 2.5 on " + oRating3);
+		assert.strictEqual(oRating3.getMaxValue(), 9, "The max rating value is 10 on " + oRating3);
 
 		// 4
-		strictEqual(oRating4.getValue(), 3.5, "The rating value is 3.5 on " + oRating4);
-		strictEqual(oRating4.getMaxValue(), 8, "The max rating value is 10 on " + oRating4);
+		assert.strictEqual(oRating4.getValue(), 3.5, "The rating value is 3.5 on " + oRating4);
+		assert.strictEqual(oRating4.getMaxValue(), 8, "The max rating value is 10 on " + oRating4);
 
 		// check that acutal value is not rounded even though display is showing the rounded value
-		strictEqual(oRating9.getValue(), 3.5, "The rating value must be 3.5 on " + oRating9);
-		strictEqual(oRating9._roundValueToVisualMode(oRating9.getValue()), 4, "The rounded rating value must be 4 on " + oRating9);
+		assert.strictEqual(oRating9.getValue(), 3.5, "The rating value must be 3.5 on " + oRating9);
+		assert.strictEqual(oRating9._roundValueToVisualMode(oRating9.getValue()), 4, "The rounded rating value must be 4 on " + oRating9);
 
-		// check exceeding value change 
+		// check the the calculation of _toPx function are correct
+		assert.strictEqual(oRating9._toPx(), false, "The result of undefined must be false");
+		assert.strictEqual(oRating9._toPx("0"), 0, "The result of 0 must be 0");
+		assert.strictEqual(oRating9._toPx("10px"), 10, "The result of 10px must be 10");
+		assert.strictEqual(oRating9._toPx("2rem"), 32, "The result of 2rem must be 32");
+		assert.strictEqual(oRating9._toPx("0.2rem"), 3, "The result of 0.2rem must be 3");
+		assert.strictEqual(oRating9._toPx("1em"), 16, "The result of 1em must be 16");
+
+		// check exceeding value change
 		oRating0.setValue(-99); // too small
-		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
+		assert.strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
 		oRating0.setValue(99); // too large
-		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
-		throws(function () {
+		assert.strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
+		assert.throws(function () {
 			oRating0.setValue("Querstromzerspaner")
 		}, /expected float/, "Passing in a wrong type should throw an error")
-		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
+		assert.strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
 
 		// change icons
 		oRating0.setIconSelected(sap.ui.core.IconPool.getIconURI("umbrella"));
 		oRating0.setIconUnselected(sap.ui.core.IconPool.getIconURI("nutrition-activity"));
 		oRating0.setIconHovered(sap.ui.core.IconPool.getIconURI("media-play"));
 
-		strictEqual(oRating0.getIconSelected(), sap.ui.core.IconPool.getIconURI("umbrella"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
-		strictEqual(oRating0.getIconUnselected(), sap.ui.core.IconPool.getIconURI("nutrition-activity"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
-		strictEqual(oRating0.getIconHovered(), sap.ui.core.IconPool.getIconURI("media-play"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
+		assert.strictEqual(oRating0.getIconSelected(), sap.ui.core.IconPool.getIconURI("umbrella"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
+		assert.strictEqual(oRating0.getIconUnselected(), sap.ui.core.IconPool.getIconURI("nutrition-activity"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
+		assert.strictEqual(oRating0.getIconHovered(), sap.ui.core.IconPool.getIconURI("media-play"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
 
 		// change size
 		oRating0.setIconSize("50px");
-		strictEqual(oRating0.getIconSize(), "50px", 'Check if the icon size is 50x on ' + oRating0);
+		assert.strictEqual(oRating0.getIconSize(), "50px", 'Check if the icon size is 50x on ' + oRating0);
 		oRating0.setIconSize("20pt");
-		strictEqual(oRating0.getIconSize(), "20pt", 'Check if the icon size is 20pt on ' + oRating0);
+		assert.strictEqual(oRating0.getIconSize(), "20pt", 'Check if the icon size is 20pt on ' + oRating0);
 		oRating0.setIconSize("10%");
-		strictEqual(oRating0.getIconSize(), "10%", 'Check if the icon size is 10% on ' + oRating0);
+		assert.strictEqual(oRating0.getIconSize(), "10%", 'Check if the icon size is 10% on ' + oRating0);
 	});
-	
-	test("value setter defaults", function() {
+
+	QUnit.test("value setter defaults", function(assert) {
 		var oRating = new sap.m.RatingIndicator({
 			value: 5
 		});
 
 		oRating.setValue(undefined);
-		strictEqual(oRating.getValue(), 0, "The rating value is 0 after calling the setter with \"undefined\" on " + oRating);
+		assert.strictEqual(oRating.getValue(), 0, "The rating value is 0 after calling the setter with \"undefined\" on " + oRating);
 
 		oRating.setValue(5);
-		strictEqual(oRating.getValue(), 5, "The rating value is 5 after reset on " + oRating);
+		assert.strictEqual(oRating.getValue(), 5, "The rating value is 5 after reset on " + oRating);
 
 		oRating.setValue(null);
-		strictEqual(oRating.getValue(), 0, "The rating value is 0 after calling the setter with \"null\" on " + oRating);
+		assert.strictEqual(oRating.getValue(), 0, "The rating value is 0 after calling the setter with \"null\" on " + oRating);
 
 		oRating.destroy();
 	});
 
-	module("Events");
+	QUnit.module("Events");
 
-	test("Firing events", function() {
-		expect(12);
+	QUnit.test("Firing events", function(assert) {
+		assert.expect(6);
 		var touches = {
 				0: {
 						pageX: 150,
@@ -339,11 +338,11 @@
 
 		// check touch start
 		oRating4.ontouchstart(oEventTouchStart);
-		strictEqual(oRating4.$("hov").css("display"), "block", 'On touchstart event the rating hover div must be visible on control ' + oRating4);
+		assert.strictEqual(oRating4.$("hov").css("display"), "block", 'On touchstart event the rating hover div must be visible on control ' + oRating4);
 
 		// check touch end
 		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.$().children(".sapMRIHov").css("display"), "none", 'On touchend event the rating hover div must be invisible on control ' + oRating4);
+		assert.strictEqual(oRating4.$().children(".sapMRIHov").css("display"), "none", 'On touchend event the rating hover div must be invisible on control ' + oRating4);
 
 		var setEventValue = function (x) {
 			// set event to x
@@ -351,54 +350,20 @@
 			oEventTap.pageX = x;
 		};
 
-		var roundRatingValue = function(fValue) {
-			if (fValue < 0.25) { // to be able to also select 0 stars
-				fValue = 0;
-			} else if (fValue < 4.75) {
-				fValue += 0.25;
-			}
-			return Math.round(fValue); 
-		};
-
-		var calculateRatingValue = function() {
-			// calculate the selected value based on the percentage value of the event position
-			var percentageWidth = (touches[0].pageX - oRating4.$().offset().left - parseFloat(oRating4.$().css("padding-left"))) / oRating4.$().width();
-			selectedValue = percentageWidth * oRating4.getMaxValue();
-			var result = roundRatingValue(selectedValue);
-			return ( result > oRating4.getMaxValue() ? oRating4.getMaxValue() : result );
-		};
-
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
-		setEventValue(180);
-		oRating4.ontouchstart(oEventTouchStart);
-		oRating4._ontouchmove(oEventTouchStart);
-		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
-		setEventValue(20);
-		oRating4.ontouchstart(oEventTouchStart);
-		oRating4._ontouchmove(oEventTouchStart);
-		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
 		// special case (first 1/4 of first icon returns 0 to allow selection of 0 stars)
-		setEventValue(5);
+		setEventValue(4);
 		oRating4.ontouchstart(oEventTouchStart);
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
+		assert.strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
 
-		setEventValue(202);
+		// special case - when the value is one and the first star is selected again the value should toggle to 0
+		setEventValue(20);
+		oRating4.setValue(1);
 		oRating4.ontouchstart(oEventTouchStart);
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
-		// change event test
-		oRating4.attachChange(function onChangeHandler(oEvent) {
-			strictEqual(oEvent.getParameter("value"), calculateRatingValue(), "On change event at " + oEventTap.pageX + "px  the rating value is " + oEvent.getParameter("value") + " on control " + oRating4);
-		}, oRating4);
+		assert.strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px and starting value 1 the rating value should be toggled to 0 on control " + oRating4);
 
 		setEventValue(120);
 		oRating4.ontouchstart(oEventTouchStart);
@@ -406,52 +371,52 @@
 		oRating4._ontouchend(oEventTouchEnd);
 
 		var tempValue = oRating4.getValue();
-		
+
 		// change event with invalid values
 		setEventValue(9999);
 		oRating4.ontouchstart(oEventTouchStart);
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), oRating4.getMaxValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is the maximum on control " + oRating4);
-		
+		assert.strictEqual(oRating4.getValue(), oRating4.getMaxValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is the maximum on control " + oRating4);
+
 		// change event with invalid values
 		setEventValue(-9999);
 		oRating4.ontouchstart(oEventTouchStart);
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
+		assert.strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
 	});
 
-	test("Keyboard navigation", function() {
-		expect(5);
+	QUnit.test("Keyboard navigation events", function(assert) {
+		assert.expect(5);
 		// default rating with no properties
 		var oRating = new sap.m.RatingIndicator({ visualMode: sap.m.RatingIndicatorVisualMode.Full }),
 			check0function = function (evt) {
-				strictEqual(evt.getParameter("value"), 0, "The keyboard event has set the rating value to 0");
+				assert.strictEqual(evt.getParameter("value"), 0, "The keyboard event has set the rating value to 0");
 				oRating.detachLiveChange(check0function);
 			},
 			check1function = function (evt) {
-				strictEqual(evt.getParameter("value"), 1, "The keyboard event has set the rating value to 1");
+				assert.strictEqual(evt.getParameter("value"), 1, "The keyboard event has set the rating value to 1");
 				oRating.detachLiveChange(check1function);
 				oRating.detachChange(check1function);
 			},
 			check2function = function (evt) {
-				strictEqual(evt.getParameter("value"), 2, "The keyboard event has set the rating value to 2");
+				assert.strictEqual(evt.getParameter("value"), 2, "The keyboard event has set the rating value to 2");
 				oRating.detachLiveChange(check2function);
 				oRating.detachChange(check2function);
 			},
 			check3function = function (evt) {
-				strictEqual(evt.getParameter("value"), 3, "The keyboard event has set the rating value to 3");
+				assert.strictEqual(evt.getParameter("value"), 3, "The keyboard event has set the rating value to 3");
 				oRating.detachLiveChange(check3function);
 				oRating.detachChange(check3function);
 			},
 			check4function = function (evt) {
-				strictEqual(evt.getParameter("value"), 4, "The keyboard event has set the rating value to 4");
+				assert.strictEqual(evt.getParameter("value"), 4, "The keyboard event has set the rating value to 4");
 				oRating.detachLiveChange(check4function);
 				oRating.detachChange(check4function);
 			},
 			check5function = function (evt) {
-				strictEqual(evt.getParameter("value"), 5, "The keyboard event has set the rating value to 5");
+				assert.strictEqual(evt.getParameter("value"), 5, "The keyboard event has set the rating value to 5");
 				oRating.detachLiveChange(check5function);
 				oRating.detachChange(check5function);
 			};
@@ -486,8 +451,24 @@
 		oRating.onsapdecrease();
 	});
 
-	
-	test("NUMBER keys", function() {
+	QUnit.test("Keyboard navigation events - boundary conditions", function(assert) {
+		var oRating = new sap.m.RatingIndicator();
+
+		oRating.onsapdecrease();
+		assert.strictEqual(oRating.getValue(), 0, "When value is 0 and onsapdecrease is invoked, Rating Indicator has value 0");
+
+		oRating.setValue(5);
+		oRating.onsapincrease();
+		assert.strictEqual(oRating.getValue(), 5, "When value is 5 and onsapincrease is invoked, Rating Indicator has value 5");
+
+		oRating.onsapselect();
+		assert.strictEqual(oRating.getValue(), 0, "When value is 5 and onsapselect is invoked, Rating Indicator has value 0");
+
+		// Clean up
+		oRating.destroy();
+	});
+
+	QUnit.test("NUMBER keys", function(assert) {
 
 		//Arrange
 		var oRating = new sap.m.RatingIndicator({maxValue:6});
@@ -499,58 +480,69 @@
 		oRating.$().focus(); // set focus on RatingIndicator
 
 		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_1); // trigger number 1 on RatingIndicator
-		strictEqual(oRating.getValue(), 1, "Number 1 is pressed, RatingIndicator has value 1");
+		assert.strictEqual(oRating.getValue(), 1, "Number 1 is pressed, RatingIndicator has value 1");
 
 		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.NUMPAD_3); // trigger number 3 on RatingIndicator
-		strictEqual(oRating.getValue(), 3, "Number 3 from the numpad is pressed, RatingIndicator has value 3");
+		assert.strictEqual(oRating.getValue(), 3, "Number 3 from the numpad is pressed, RatingIndicator has value 3");
 
 		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_5); // trigger number 5 on RatingIndicator
-		strictEqual(oRating.getValue(), 5, "Number 5 is pressed, RatingIndicator has value 5");
+		assert.strictEqual(oRating.getValue(), 5, "Number 5 is pressed, RatingIndicator has value 5");
 
 		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_0); // trigger number 0 on RatingIndicator
-		strictEqual(oRating.getValue(), 0, "Number 0 is pressed, RatingIndicator has value 0");
+		assert.strictEqual(oRating.getValue(), 0, "Number 0 is pressed, RatingIndicator has value 0");
 
 		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.NUMPAD_7); // trigger number 7 on RatingIndicator
-		strictEqual(oRating.getValue(), 6, "Number 7 from the numpad is pressed, RatingIndicator has value 6 (default maxValue is 6)");
+		assert.strictEqual(oRating.getValue(), 6, "Number 7 from the numpad is pressed, RatingIndicator has value 6 (default maxValue is 6)");
 
 		// Clean up
 		oRating.destroy();
 	});
-	
-	test("Icon Handling & Destroying", function() {
-		var destroyTest = function(oControl) {
-			var oFirstSelectedIcon = oControl.getAggregation("_iconsSelected")[0],
-				oFirstUnselectedIcon = oControl.getAggregation("_iconsUnselected")[0],
-				oFirstHoveredIcon = (oControl.getEnabled() ? oControl.getAggregation("_iconsHovered")[0] : null),
-				sFirstSelectedIconId = oFirstSelectedIcon.getId(),
-				sFirstUnselectedIconId = oFirstUnselectedIcon.getId(),
-				sFirstHoveredIconId = (oControl.getEnabled() ? oFirstHoveredIcon.getId() : "");
 
-			strictEqual(sFirstSelectedIconId.substr(sFirstSelectedIconId.length - 5), "icon0", "The id of the selected icon with id \"" + sFirstSelectedIconId + "\" ends with  icon0 on " + oControl);
-			strictEqual(sFirstUnselectedIconId.substr(sFirstUnselectedIconId.length - (5 + oControl.getMaxValue().toString().length - 1)), "icon" + oControl.getMaxValue(), "The id of the unselected icon with id \"" + sFirstUnselectedIconId + "\" ends with  icon5 on " + oControl);
-			if(oControl.getEnabled()) {
-				strictEqual(sFirstHoveredIconId.substr(sFirstHoveredIconId.length - (5 + (2 * oControl.getMaxValue()).toString().length - 1)), "icon" + (2 * oControl.getMaxValue()), "The id of the hovered icon with id \"" + sFirstHoveredIconId + "\" ends with  icon10 on " + oControl);
-			}
+	QUnit.test("Keyboard handling events in half mode", function(assert) {
+		assert.expect(10);
+		var oRating = new sap.m.RatingIndicator("asd", {visualMode: sap.m.RatingIndicatorVisualMode.Half}),
+			fnTestIncreaseAndDecrease = function (fInitialRatingValue, fExpectedValueAfterDecrease, fExpectedValueAfterIncrease){
+				oRating.setValue(fInitialRatingValue);
+				oRating.onsapdecrease();
+				assert.strictEqual(oRating.getValue(), fExpectedValueAfterDecrease,
+						"When arrow left is pressed and value is " + fInitialRatingValue +", Rating Indicator has value " + fExpectedValueAfterDecrease);
 
-			oControl.destroy();
+				oRating.setValue(fInitialRatingValue);
+				oRating.onsapincrease();
+				assert.strictEqual(oRating.getValue(), fExpectedValueAfterIncrease,
+						"When arrow right is pressed and value is" + fInitialRatingValue +", Rating Indicator has value " + fExpectedValueAfterDecrease);
+			};
 
-			strictEqual(oFirstSelectedIcon.bIsDestroyed, true, "The selected icon with id \"" + sFirstSelectedIconId + "\" was successfully destroyed on " + oControl);
-			strictEqual(oFirstUnselectedIcon.bIsDestroyed, true, "The unselected icon with id \"" + sFirstUnselectedIconId + "\" was successfully destroyed on " + oControl);
-			if(oControl.getEnabled()) {
-				strictEqual(oFirstHoveredIcon.bIsDestroyed, true, "The hovered icon with id \"" + sFirstHoveredIconId + "\" was successfully destroyed on " + oControl);
-			}
-			strictEqual(oControl.bIsDestroyed, true, "The rating control was successfully destroyed on " + oControl);
-		},
-		i = 0;
+		fnTestIncreaseAndDecrease(2, 1, 3);
+		fnTestIncreaseAndDecrease(1.24, 0, 2); // 1.24 is rounded and visualized as 1
+		fnTestIncreaseAndDecrease(1.25, 1, 2); // 1.25 is rounded and visualized as 1.5
+		fnTestIncreaseAndDecrease(1.74, 1, 2); // 1.74 is rounded and visualized as 1.5
+		fnTestIncreaseAndDecrease(1.75, 1, 3); // 1.75 is rounded and visualized as 2
 
-		for (; i < aRatings.length; i++) {
-			if(aRatings[i].getVisible()) {
-				destroyTest(aRatings[i]);
-			} else {
-				aRatings[i].destroy();
-				strictEqual(aRatings[i].bIsDestroyed, true, "The rating control was successfully destroyed on " + aRatings[i]);
-			}
-		}
+		// Clean up
+		oRating.destroy();
+	});
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("getAccessibilityInfo", function(assert) {
+		var oControl = new sap.m.RatingIndicator({value: 5, maxValue: 10});
+		assert.ok(!!oControl.getAccessibilityInfo, "RatingIndicator has a getAccessibilityInfo function");
+		var oInfo = oControl.getAccessibilityInfo();
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.strictEqual(oInfo.role, "slider", "AriaRole");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_RATING"), "Type");
+		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [5, 10]), "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		oControl.setValue(0);
+		oControl.setEnabled(false);
+		oInfo = oControl.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [0, 10]), "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
+		oControl.destroy();
 	});
 </script>
 

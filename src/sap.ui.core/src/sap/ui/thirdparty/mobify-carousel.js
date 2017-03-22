@@ -274,7 +274,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     //SAP MODIFICATION
     //added private changeAnimation function
     Carousel.prototype.changeAnimation = function(sTransitionClass, fnCallback, oCallbackContext, aCallbackParams) {
-    	if(!(jQuery.browser.msie && jQuery.browser.fVersion < 10) && this.$inner){
+    	if ( this.$inner ){
 	    	var $carouselInner = this.$inner,
 	    		sTransitionEvents = 'transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd';
 
@@ -315,6 +315,12 @@ Mobify.UI.Carousel = (function($, Utils) {
     }
 
     Carousel.prototype.touchmove = function(e) {
+        // SAP MODIFICATION START
+        if (jQuery(e.target).is("input, textarea, select, [contenteditable='true']")) {
+            return;
+        }
+        // SAP MODIFICATION END
+
     	if(this._fnDrag) {
     		this._fnDrag.call(this, e);
     	} else {
@@ -468,6 +474,16 @@ Mobify.UI.Carousel = (function($, Utils) {
 
 
         $element.on('click', '[data-slide]', function(e){
+
+	        // SAP MODIFICATION BEGIN
+	        // The event might bubble up from another carousel inside of this one.
+	        // In this case we ignore the event.
+	        var oCarousel = jQuery(e.target).closest('.sapMCrsl');
+	        if (oCarousel[0] != $element[0]) {
+		        return;
+	        }
+	        // SAP MODIFICATION END
+
             e.preventDefault();
             var action = $(this).attr('data-slide')
               , index = parseInt(action, 10);
@@ -482,11 +498,36 @@ Mobify.UI.Carousel = (function($, Utils) {
         });
 
         $element.on('afterSlide', function(e, previousSlide, nextSlide) {
-            self.$items.eq(previousSlide - 1).removeClass(self._getClass('active'));
+
+	        // SAP MODIFICATION BEGIN
+	        // The event might bubble up from another carousel inside of this one.
+	        // In this case we ignore the event.
+	        if (e.target != this) {
+		        return;
+	        }
+	        // SAP MODIFICATION END
+
+            // SAP MODIFICATION BEGIN
+            // due to JIRA BGSOFUIRODOPI-828
+            // self.$items.eq(previousSlide - 1).removeClass(self._getClass('active'));
+            var bActive = self._getClass('active'),
+	            sPageIndicatorId = self.$element[0].id + '-pageIndicator',
+                oItems = self.$items, iStart, iStop;
+            if (previousSlide === 1 && nextSlide === oItems.length ||
+                previousSlide === oItems.length && nextSlide === 1) {
+                // the border use cases
+                iStart = Math.min(previousSlide, nextSlide);
+                iStop = Math.max(previousSlide, nextSlide);
+                for(var i = iStart; i < iStop - 1; i++) {
+                    jQuery(oItems[i]).removeClass(bActive);
+                }
+            }
+            // SAP MODIFICATION ENDS
+
             self.$items.eq(nextSlide - 1).addClass(self._getClass('active'));
 
-            self.$element.find('[data-slide=\'' + previousSlide + '\']').removeClass(self._getClass('active'));
-            self.$element.find('[data-slide=\'' + nextSlide + '\']').addClass(self._getClass('active'));
+            self.$element.find('#' + sPageIndicatorId + ' > [data-slide=\'' + previousSlide + '\']').removeClass(self._getClass('active'));
+            self.$element.find('#' + sPageIndicatorId + ' > [data-slide=\'' + nextSlide + '\']').addClass(self._getClass('active'));
 
             // SAP MODIFICATION BEGIN
             if (self.$items[nextSlide - 1]) {
@@ -541,7 +582,7 @@ Mobify.UI.Carousel = (function($, Utils) {
         	//SAP MODIFICATION
             //if looping move to last index
         	if(this._bLoop) {
-        		this.changeAnimation('sapMCrslNoTransition');
+        		// this.changeAnimation('sapMCrslNoTransition');
         		newIndex = this._length;
         	} else {
         		newIndex = 1;
@@ -550,7 +591,7 @@ Mobify.UI.Carousel = (function($, Utils) {
         	//SAP MODIFICATION
             //if looping move to first index
         	if(this._bLoop) {
-        		this.changeAnimation('sapMCrslNoTransition');
+        		// this.changeAnimation('sapMCrslNoTransition');
         		newIndex = 1;
         	} else {
         		newIndex = length;

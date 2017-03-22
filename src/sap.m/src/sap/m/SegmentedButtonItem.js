@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SegmentedButtonItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
-	function(jQuery, library, Item) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/m/Button', 'sap/ui/core/CustomStyleClassSupport'],
+	function(jQuery, library, Item, Button, CustomStyleClassSupport) {
 		"use strict";
 
 
@@ -12,12 +12,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		/**
 		 * Constructor for a new SegmentedButtonItem.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * SegmentedButtonItem is used for creating buttons for the sap.m.SegmentedButton.
-		 * It is derived from a core sap.ui.core.Item
+		 * The SegmentedButtonItem control is used for creating buttons for the sap.m.SegmentedButton.
+		 * It is derived from a core sap.ui.core.Item.
 		 * @extends sap.ui.core.Item
 		 *
 		 * @author SAP SE
@@ -35,10 +35,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			properties : {
 
 				/**
-				 * The icon belonging to the button.
+				 * The icon, which belongs to the button.
 				 * This can be an URI to an image or an icon font URI.
 				 */
 				icon : {type : "string", group : "Appearance", defaultValue : null},
+
+				/**
+				 * Whether the button should be visible on the screen. If set to false, a placeholder is rendered instead of the real button.
+				 */
+				visible : {type: "boolean", group : "Appearance", defaultValue: true},
 
 				/**
 				 * Sets the width of the buttons.
@@ -49,17 +54,66 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			events: {
 
 				/**
-				 * Event is fired when the user clicks on a individual button.
+				 * Fires when the user clicks on an individual button.
 				 */
 				press : {}
 			}
 
 		}});
 
+		// Add custom style class support
+		CustomStyleClassSupport.apply(SegmentedButtonItem.prototype);
+
 		/**
-		 * Overwrite property setters to update buttons on item property change
-		 * @overwrite
+		 * Called once during the element's initialization
+		 * @override
+		 * @protected
 		 */
+		SegmentedButtonItem.prototype.init = function () {
+			// Create internal button with a stable ID
+			var oButton = new Button(this.getId() + "-button");
+
+			// Create objects first so they can be referenced in the button
+			this.aCustomStyleClasses;
+			this.mCustomStyleClassMap;
+
+			// Reference's between button and item objects related to customStyleClasses so they will be in sync
+			oButton.aCustomStyleClasses = this.aCustomStyleClasses;
+			oButton.mCustomStyleClassMap = this.mCustomStyleClassMap;
+
+			// Attach CustomData and LayoutData function copy's with bound context to the button
+			oButton.getCustomData = this.getCustomData.bind(this);
+			oButton.getLayoutData = this.getLayoutData.bind(this);
+
+			// Hook on firePress method of the button so we can fire local press event also
+			oButton.firePress = function () {
+				this.firePress();
+				Button.prototype.firePress.call(oButton);
+			}.bind(this);
+
+			// We return DOM reference from the button so for example CustomData.setKey method checks
+			// for parent DOM reference and does a live update only of the attribute.
+			this.getDomRef = oButton.getDomRef.bind(oButton);
+
+			// Keep in mind that we are using property instead of private aggregation because
+			// we need to add this button to the SegmentedButton buttons aggregation
+			this.oButton = oButton;
+		};
+
+		/**
+		 * Cleanup
+		 * @override
+		 * @protected
+		 */
+		SegmentedButtonItem.prototype.exit = function () {
+			// Destroy button only in case of standalone use
+			// In case the element is set as aggregation of the SegmentedButton the latter one takes care for the cleanup
+			if (this.oButton && !(this.oButton.getParent() instanceof sap.m.SegmentedButton)) {
+				this.oButton.destroy();
+				this.oButton = null;
+			}
+		};
+
 		SegmentedButtonItem.prototype.setText = function (sValue) {
 			this.setProperty("text", sValue, true);
 			if (this.oButton) {
@@ -85,6 +139,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			this.setProperty("textDirection", sValue, true);
 			if (this.oButton) {
 				this.oButton.setTextDirection(this.getTextDirection());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setVisible = function (bVisible) {
+			this.setProperty("visible", bVisible, true);
+			if (this.oButton) {
+				this.oButton.setVisible(bVisible);
 			}
 			return this;
 		};

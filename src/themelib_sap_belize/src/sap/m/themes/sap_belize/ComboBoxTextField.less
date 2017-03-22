@@ -1,0 +1,55 @@
+/* ======================================== */
+/* CSS for control sap.m/ComboBoxTextField  */
+/* Belize theme                             */
+/* ======================================== */
+
+/* ------------------------------ */
+/* text field                     */
+/* ------------------------------ */
+
+/* states */
+
+.sapMComboBoxTextFieldState {
+	border-width: 2px;
+}
+
+.sapMComboBoxTextFieldWarning {
+	border-color: @sapUiFieldWarningColor;
+}
+
+.sapMComboBoxTextFieldError {
+	border-color: @sapUiFieldInvalidColor;
+}
+
+.sapMComboBoxTextFieldSuccess {
+	border-color: @sapUiFieldSuccessColor;
+}
+
+.sapMComboBoxTextFieldReadonly {
+	border-color: @sapUiFieldReadOnlyBorderColor;
+}
+
+/* focus and hover */
+
+.sapMFocus.sapMComboBoxTextField:not(.sapMComboBoxTextFieldReadonly):not(.sapMComboBoxTextFieldState):not(.sapMComboBoxTextFieldDisabled),
+.sapMComboBoxTextField:not(.sapMComboBoxTextFieldReadonly):not(.sapMComboBoxTextFieldState):not(.sapMComboBoxTextFieldDisabled):hover {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
+
+.sapMComboBoxTextFieldState .sapMComboBoxTextFieldArrow {
+	line-height: 2.25rem;
+}
+
+/* compact size */
+
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
+
+.sapUiSizeCompact .sapMComboBoxTextFieldState .sapMComboBoxTextFieldArrow {
+	line-height: 1.375rem;
+}

@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
-<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.layout.form.GridLayout,sap.ui.layout.form.GridElementData">
+<html data-sap-ui-dk-controls="sap.ui.layout.form.GridLayout,sap.ui.layout.form.GridElementData">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control GridLayout Form" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control GridLayout Form">
 		<title>GridLayout - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -80,7 +81,7 @@
 					formElements: [
 						new sap.ui.layout.form.FormElement({
 							label: new sap.ui.commons.Label({text: "User ID"}),
-							fields: [new sap.ui.commons.TextField({value: "D012345", required: true, layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
+							fields: [new sap.ui.commons.TextField({value: "U1234", required: true, layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
 									new sap.ui.commons.Image({src: "../../commons/demokit/images/male.jpg", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells: 4})})
 							]
 						}),
@@ -326,18 +327,18 @@
 		<h3>Keyboard Navigation:</h3>
 		<p>The <code>GridLayout</code> supports the basic Form Keyboard Navigation. In addition when using the arrow keys you are able to move up (Arrow Up) or down (Arrow Down)
 		within the Form Fields.</p>
-		<br/>
+		<br>
 
 		<h2>Basic Example</h2>
 		<p>A simple Form with a GridLayout. The several FormElements contain various number of Textfields which are of different widths.</p>
 		<div code-sample="sample1" script="samplescript1"></div>
-		<br/><br/>
+		<br><br>
 
 		<h2>Complex Example</h2>
-		<p>Another Form with a GridLayout which shows a more complex approach of a Company Address Page. The Form consists of several 
+		<p>Another Form with a GridLayout which shows a more complex approach of a Company Address Page. The Form consists of several
 		FormContainers combining one and two column Layouts.</p>
 		<div code-sample="sample2" script="samplescript2"></div>
-		<br/><br/>
+		<br><br>
 
 		<p>
 		<h2>API Documentation</h2>

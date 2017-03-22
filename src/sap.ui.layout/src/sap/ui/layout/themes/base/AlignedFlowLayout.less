@@ -1,0 +1,41 @@
+.sapUiAFLayout {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sapUiAFLayoutItem {
+	flex-grow: 1;
+	flex-shrink: 0;
+	/* text-align: center;  TODO: ? good for galleries, maybe not good for other usages... maybe a property? */
+}
+
+/* the dummy elements for the last line */
+.sapUiAFLayoutSpacer {
+	height: 0;
+	visibility: hidden;
+}
+
+.sapUiAFLayoutEnd {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	text-align: end;
+	display: inline-block;
+}
+
+.sapUiAFLayoutEnd:only-child {
+	position: relative;
+}
+
+.sapUiAFLayoutOneLine > .sapUiAFLayoutSpacer {
+	display: none;
+}
+
+.sapUiAFLayoutOneLine > li:last-child {
+	flex-basis: auto !important; /* needs to override inline style */
+	flex-grow: 0;
+}

@@ -5,8 +5,6 @@
 @sapUiTextFieldHeight: 16px;
 
 .sapUiTf{
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	vertical-align: top;
 	font-family: @sapUiFontFamily;
@@ -36,11 +34,6 @@ html[data-sap-ui-os^='mac'] .sapUiTfDsbl .sapUiTfInner.sapUiTf{
 	color: darken(@sapUiContentDisabledTextColor, 25); /* color for disabled inputs is lighter by browser */
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiTfInner.sapUiTf{ /* in IE8 above statement is overwritten */
-	height: 100%;
-	border: none;
-}
-
 .sapUiTfBrd{
 	border: 1px solid @sapUiFieldBorderColor;
 	-webkit-border-radius: 0px; /*Needed for safari mobile*/
@@ -64,7 +57,7 @@ html[data-sap-ui-browser="ie8"] .sapUiTfInner.sapUiTf{ /* in IE8 above statement
 	color: @sapUiBaseText;
 }
 
-.sapUiTfRo > .sapUiTfInner{ 
+.sapUiTfRo > .sapUiTfInner{
 	cursor: default; /* in ComboBox Cursor is overwitten */
 }
 
@@ -83,6 +76,10 @@ html[data-sap-ui-browser="ie8"] .sapUiTfInner.sapUiTf{ /* in IE8 above statement
 
 .sapUiTfBrd.sapUiTfWarn {
 	border-color: @sapUiFieldWarningColor;
+}
+
+.sapUiTfBrd.sapUiTfSucc {
+	border-color: @sapUiFieldSuccessColor;
 }
 
 .sapUiTfErr.sapUiTfStd{

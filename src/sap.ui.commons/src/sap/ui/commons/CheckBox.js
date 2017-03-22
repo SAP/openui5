@@ -8,15 +8,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new CheckBox.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * 
+	 *
 	 * Provides a box which can be flagged, the box has a label. A check box can either stand alone, or in a group with other check boxes. As an option, the boxes can initially be set to status 'Not Editable'.
 	 * @extends sap.ui.core.Control
 	 *
@@ -25,77 +25,78 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.CheckBox</code> control.
 	 * @alias sap.ui.commons.CheckBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CheckBox = Control.extend("sap.ui.commons.CheckBox", /** @lends sap.ui.commons.CheckBox.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Contains the state of the control whether it is flagged with a check mark, or not
 			 */
 			checked : {type : "boolean", group : "Data", defaultValue : false, bindable : "bindable"},
-	
+
 			/**
 			 * Defines the text displayed next to the check box
 			 */
 			text : {type : "string", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Using this property, the control could be disabled, if required.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Specifies whether the user shall be allowed to select the check box.
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Accepts the core enumeration ValueState.type that supports 'None', 'Error', 'Warning' and 'Success'.
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
-	
+
 			/**
 			 * The width can be set to an absolute value. If no value is set, the control width results from the text length.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * The value can be set to LTR or RTL. Otherwise, the control inherits the text direction from its parent control.
 			 */
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
-	
+
 			/**
 			 * The 'name' property to be used in the HTML code, for example for HTML forms that send data to the server via submit.
 			 */
 			name : {type : "string", group : "Misc", defaultValue : null}
 		},
 		associations : {
-	
+
 			/**
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
-	
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
 			/**
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
-	
+
 			/**
-			 * 
+			 *
 			 * Event is triggered when the control status is changed by the user by flagging or unflagging the checkbox.
 			 */
 			change : {
 				parameters : {
-	
+
 					/**
-					 * 
+					 *
 					 * Checks whether the box is flagged or not flagged.
 					 */
 					checked : {type : "boolean"}
@@ -103,8 +104,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Event handler called when the check box is clicked.
 	 *
@@ -123,10 +124,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			// as long as CheckBox is focused
 			this.$().attr("tabindex", 0).addClass("sapUiCbFoc"); // the CSS class itself is not used, but IE only draws the standard focus outline when it is added
 		}
-	
+
 		this.userToggle(oEvent);
 	};
-	
+
 	/**
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -144,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.$().attr("tabindex", -1).removeClass("sapUiCbFoc");
 		}
 	};
-	
+
 	/**
 	 * Event handler called when the space key is pressed.
 	 *
@@ -154,7 +155,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	CheckBox.prototype.onsapspace = function(oEvent) {
 		this.userToggle(oEvent);
 	};
-	
+
 	/**
 	 * This method is used internally whenever the user toggles the check box value.
 	 * Purpose: Event cancellation and change event firing.
@@ -172,11 +173,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.getDomRef().focus();
 		}
 	};
-	
+
 	// implement public method toggle()
 
 	/**
-	 * 
+	 *
 	 * Inverts the current value of the control.
 	 *
 	 * @type sap.ui.commons.CheckBox
@@ -187,7 +188,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.setChecked(!this.getChecked());
 		return this;
 	};
-	
+
+	/**
+	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @protected
+	 */
+	CheckBox.prototype.getAccessibilityInfo = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
+		return {
+			role: "checkbox",
+			type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
+			description: (this.getText() || "") + (this.getChecked() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled(),
+			editable: this.getEditable()
+		};
+	};
+
 
 	return CheckBox;
 

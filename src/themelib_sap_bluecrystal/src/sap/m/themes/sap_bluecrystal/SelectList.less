@@ -1,78 +1,29 @@
-/* ====================================================== */
-/* CSS for control sap.m/Select.control BlueCrystal theme */
-/* ====================================================== */
-
-/* ====================================================== */
-/* Select List                                            */
-/* ====================================================== */
-
-/* ------------------------------ */
-/* List                           */
-/* ------------------------------ */
-
-.sapMSelectList {
-	border: 0.0625rem solid @sapUiSelectListBorder;
-	background: @sapUiSelectListLightestBG;
-}
-
-/* ------------------------------ */
-/* Item                           */
-/* ------------------------------ */
-
-.sapMSelectListItem {
-	font-size: @sapMFontMediumSize;
-	padding: 0 1rem 0 1rem;
-	height: 2.5rem;
-	line-height: 2.5rem;
-	cursor: pointer;
-}
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* BlueCrystal theme                 */
+/* ================================= */
 
 /* selected */
-
-.sapMSelectListItemSelected {
-	background: @sapUiSelectListActiveBG;
-}
-
-/* hover */
-
-.sapMSelectListItemHoverable:hover {
-	background: @sapUiSelectListLightestBGHover;
-}
-
-/* pressed */
-
-.sapMSelectListItem.sapMSelectListItemPressed {
-	color: @sapUiSelectListLITextInverted;
-	background: @sapUiSelectListHighlight;
+.sapMSelectListItemBaseSelected {
+	background: @sapUiListSelectionBackgroundColor;
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
 }
 
 /* disabled */
-
-.sapMSelectListItemDisabled {
+.sapMSelectListItemBaseDisabled {
 	opacity: 0.5;
 }
 
 /* focus */
-
-.sap-desktop .sapMSelectListItem:focus {
-	outline: 1px dotted @sapUiFocus;
+html.sap-desktop .sapMSelectListItemBase:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
 }
 
-/* ------------------------------ */
-/* SeparatorItem                  */
-/* ------------------------------ */
-
-.sapMSelectListSeparatorItem {
-	border: 1px solid @sapUiSelectListMediumBorder;
-}
-
-/* Compact size  */
-
-/* ------------------------------ */
-/* commons styles                 */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMSelectListItem {
-	height: 2rem;
-	line-height: 2rem;
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
+		border: 1px dotted @sapUiContentFocusColor;
+	}
 }

@@ -2,7 +2,8 @@
 <html>
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <title>Table - sap.ui.table</title>
 <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
@@ -11,18 +12,32 @@
 <!-- SAPUI5 Bootstrap:                                                     -->
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
+<script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-		type="text/javascript"
-		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified,sap.ui.layout"
-		data-sap-ui-theme="sap_bluecrystal"
-		src="../../../../resources/sap-ui-core.js"></script>
+	data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified,sap.ui.layout"
+	src="../../../../resources/sap-ui-core.js"></script>
 
-<script type="text/javascript">
+<script>
 
 	var oModel,
 		oTable,
 		iColumns = 0,
 		iRows = 0;
+
+	function storageAvailable(type) {
+		try {
+			var storage = window[type],
+					x = '__storage_test__';
+			storage.setItem(x, x);
+			storage.removeItem(x);
+			return true;
+		}
+		catch(e) {
+			return false;
+		}
+	}
+
+	var bStorageAvailable = storageAvailable('localStorage');
 
 	function fnCreateDataModel () {
 		var oDataColumns = {};
@@ -58,16 +73,28 @@
 		width: "100%"
 	});
 
+	var iColumns;
+	var iRows;
+	var iVisibleRowCountInput;
+	var bFixedColumnWidth;
+
+	if (bStorageAvailable) {
+		iColumns = localStorage.getItem("columns") || 5;
+		iRows = localStorage.getItem("rows") || 100;
+		iVisibleRowCountInput = localStorage.getItem("visiblerows") || 10;
+		bFixedColumnWidth = JSON.parse(localStorage.getItem("fixedcolumns")) || false;
+	};
+
 	var oColumnsInput = new sap.m.Input({
 		width: "3rem",
 		type: sap.m.InputType.Number,
-		value: 5
+		value: iColumns
 	});
 
 	var oRowsInput = new sap.m.Input({
 		width: "3rem",
 		type: sap.m.InputType.Number,
-		value: 100
+		value: iRows
 	});
 
 	var oCreateDataModelButton = new sap.m.Button({
@@ -78,7 +105,7 @@
 	var oVisibleRowCountInput = new sap.m.Input({
 		width: "3rem",
 		type: sap.m.InputType.Number,
-		value: 10
+		value: iVisibleRowCountInput
 	});
 
 	var oCreateTableButton = new sap.m.Button({
@@ -87,7 +114,8 @@
 	});
 
 	var oFixedColumnWidth = new sap.m.CheckBox({
-		text: "Fixed Column Width"
+		text: "Fixed Column Width",
+		selected: bFixedColumnWidth
 	});
 
 	var oGetResults = new sap.m.Button({
@@ -157,20 +185,37 @@
 	function fnCreateTable () {
 		// create columns
 		var oControl, oColumn, i;
-	
+
+		if (document.activeElement) {
+			document.activeElement.blur();
+		}
+
 		jQuery.sap.measure.setActive(true);
-		
+
+		if (bStorageAvailable) {
+			localStorage.setItem("columns", oColumnsInput.getValue());
+			localStorage.setItem("rows", oRowsInput.getValue());
+			localStorage.setItem("visiblerows", oVisibleRowCountInput.getValue());
+			localStorage.setItem("fixedcolumns", JSON.stringify(oFixedColumnWidth.getSelected()));
+		};
+
 		if (!console.timeStamp) {
 			console.timeStamp = function () {};
+		}
+		if (!console.profile) {
+			console.profile = function () {};
+			console.profileEnd = function () {};
 		}
 
 		jQuery.sap.delayedCall(0, this, function() {
 			console.timeStamp("DestroyTable");
-			oTable && oTable.destroy()
+			oTable && oTable.destroy();
 
 			jQuery.sap.delayedCall(100, this, function() {
+
 				console.timeStamp("CreateTable");
-				jQuery.sap.measure.start("createTable");
+				window.performance.mark("createTable");
+				console.profile("performance");
 
 				var iVisibleRowCount = parseInt(oVisibleRowCountInput.getValue(), 10);
 				if (parseInt(oRowsInput.getValue(), 10) < parseInt(oVisibleRowCountInput.getValue(), 10)) {
@@ -180,42 +225,45 @@
 				oTable = new sap.ui.table.Table({
 					visibleRowCount: iVisibleRowCount
 				});
-				
-				
-				
+
+
+
 				oTable.addDelegate({
 					onBeforeRendering: function () {
-						jQuery.sap.measure.start("onBeforeRendering");
-						jQuery.sap.measure.start("rendering");
+						window.performance.mark("onBeforeRendering");
+						window.performance.mark("rendering");
 					},
 					onAfterRendering: function () {
-						jQuery.sap.measure.start("onAfterRendering");
+						window.performance.mark("onAfterRendering");
 					}
 				}, true);
 
 				oTable.addDelegate({
 					onBeforeRendering: function () {
-						jQuery.sap.measure.end("onBeforeRendering");
+						window.performance.measure("onBeforeRenderingMeasure", "onBeforeRendering");
 					},
 					onAfterRendering: function () {
-						jQuery.sap.measure.end("onAfterRendering");
-						jQuery.sap.measure.end("rendering");
+						window.performance.measure("onAfterRenderingMeasure", "onAfterRendering");
+						window.performance.measure("renderingMeasure", "rendering");
+
 					}
 				}, false);
 
 				var iColumnWidth;
 				var fnRowsUpdated = function() {
+					console.profileEnd("performance");
 					oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
 					console.timeStamp("RowsUpdated");
 
-					var iOverall = jQuery.sap.measure.end("createTable").duration;
-					var iRendering = jQuery.sap.measure.getMeasurement("rendering").duration;
-					var iBeforeRendering = jQuery.sap.measure.getMeasurement("onBeforeRendering").duration;
-					var iAfterRendering = jQuery.sap.measure.getMeasurement("onAfterRendering").duration;
+					window.performance.measure("createTableMeasure","createTable")
+					var iOverall = window.performance.getEntriesByName("createTableMeasure")[0].duration;
+					var iRendering = window.performance.getEntriesByName("renderingMeasure")[0].duration;
+					var iBeforeRendering = window.performance.getEntriesByName("onBeforeRenderingMeasure")[0].duration;
+					var iAfterRendering = window.performance.getEntriesByName("onAfterRenderingMeasure")[0].duration;
 					var iTableCreate = (iOverall - iRendering);
 					var iFactor = Math.round(iAfterRendering / iRendering * 100);
-					
-					
+
+
 					var sKey = iColumns + "_" + iRows + "_" + iVisibleRowCount + "_" + (iColumnWidth || "");
 					if (!oResults[sKey]) {
 						oResults[sKey] = {
@@ -266,13 +314,16 @@
 					oResults[sKey].avg.factor = iFactorSum / iLength;
 
 					oMessageLabel.setText(
-									"Overall: " + iOverall + "ms, " +
-									"Rendering: " + iRendering + "ms, " +
-									"OnBeforeRendering: " + iBeforeRendering + "ms, " +
-									"OnAfterRendering: " + iAfterRendering + "ms, " +
-									"Table Create: " + iTableCreate + "ms, " +
-									"Factor AfterRendering in Rendering: " + iFactor + "%"
+							"Overall: " + iOverall + "ms, " +
+							"Rendering: " + iRendering + "ms, " +
+							"OnBeforeRendering: " + iBeforeRendering + "ms, " +
+							"OnAfterRendering: " + iAfterRendering + "ms, " +
+							"Table Create: " + iTableCreate + "ms, " +
+							"Factor AfterRendering in Rendering: " + iFactor + "%"
 					);
+
+					window.performance.clearMarks();
+					window.performance.clearMeasures();
 				};
 
 				oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
@@ -312,7 +363,6 @@
 	}
 
 	fnCreateDataModel();
-
 
 </script>
 </head>

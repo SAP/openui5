@@ -1,0 +1,13 @@
+{
+	"1.42.0": {
+		"date": "August 2016",
+		"notes": [
+			{
+				"id": "602a21fa50547d0e3e91830329b4bb6b25163c05",
+				"type": "FIX",
+				"text": "appdescr_app_setTitle,... use dot instead of / in text key",
+				"references": []
+			}
+		]
+	}
+}

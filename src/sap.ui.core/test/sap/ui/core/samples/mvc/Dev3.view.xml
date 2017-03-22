@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMLView 
-	xmlns="sap.ui.core" 
-	xmlns:commons="sap.ui.commons"   
+<XMLView
+	xmlns="sap.ui.core"
+	xmlns:commons="sap.ui.commons"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <HTML content="asdasdasd" />
   <commons:Button text="asdasdasd" press="onclick"/>

@@ -190,15 +190,15 @@ sap.ui.core.Control.extend("SearchFieldPlaceHolder", {
             "search" : {}
         }
     },
-	
+
 	renderer: function(rm, ctrl){
-		rm.write("<div"); 
+		rm.write("<div");
 		rm.writeControlData(ctrl);
 		rm.writeAttribute("class", "SearchFieldPlaceHolder");
 		rm.writeAttribute("tabindex", "0");
-		rm.write(">Placeholder for a SearchField Control</div>"); 
+		rm.write(">Placeholder for a SearchField Control</div>");
 	},
-	
+
 	onclick: function(evt){
 		this.fireSearch();
 	}
@@ -211,10 +211,10 @@ sap.ui.core.Control.extend("CurtainContent", {
 			"headerHidden" : "boolean"
         },
         aggregations: {
-        	"content" : {type : "sap.ui.core.Control", multiple : true} 
+        	"content" : {type : "sap.ui.core.Control", multiple : true}
         }
     },
-	
+
 	renderer: function(rm, ctrl){
 		rm.write("<div");
 		rm.addClass("CurtainContent");
@@ -232,7 +232,7 @@ sap.ui.core.Control.extend("CurtainContent", {
 		}
 		rm.write("</div></div>");
 	},
-	
+
 	setHeaderHidden: function(bHidden){
 		this.setProperty("headerHidden", !!bHidden, true);
 		this.$().toggleClass("CurtainContentHeaderHidden", !!bHidden);

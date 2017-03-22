@@ -1,0 +1,28 @@
+/* ================================= */
+/* CSS for control sap.m/Table       */
+/* Belize High Contrast White theme  */
+/* ================================= */
+
+html[data-sap-ui-browser='ie11'] .sapMListTbl {
+	padding: 2px; /* outline must be visible */
+}
+
+.sapMListTblHeader,
+.sapMListTblFooter {
+	background: @sapUiListBackground;
+}
+
+.sapMListTbl {
+	/* HCB Additional Style */
+	border: 1px solid @sapUiListHeaderBorderColor;
+}
+
+/* table column header */
+.sapMListTbl th {
+	border-bottom: 0.125rem solid @sapUiListHeaderBorderColor;
+}
+
+/* table footer */
+.sapMListTblFooter > td {
+	border-top: 0.125rem solid @sapUiListTableFooterBorder;
+}

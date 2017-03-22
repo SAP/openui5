@@ -1,0 +1,135 @@
+#interactionSlider {
+    position: absolute;
+    top: 34px;
+    right: 0;
+    bottom: 0;
+    left: 0px;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    height: 15px;
+    opacity: 0.7;
+}
+
+#interactionSlideHandle,
+#interactionLeftHandle,
+#interactionRightHandle,
+#interactionSlideHandleBottom,
+#interactionLeftHandleBottom,
+#interactionRightHandleBottom {
+    display: inline-block;
+}
+
+#interactionSlideHandle {
+    position: relative;
+    height: 50px;
+    box-sizing: border-box;
+    top: -1px;
+}
+
+#interactionSlideHandle::before,
+#interactionSlideHandle::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: #D9E6EF;
+    width: 10000px;
+    pointer-events: none;
+}
+
+#interactionSlideHandle::before {
+    margin-right: 100%;
+    right: 1px;
+}
+
+#interactionSlideHandle::after {
+    margin-left: 100%;
+    left: 1px;
+}
+
+#interactionLeftHandle,
+#interactionRightHandle {
+    position: absolute;
+    height: 100%;
+    width: 3px;
+    cursor: ew-resize;
+    overflow: hidden;
+    background: #457BAA;
+    /*background: rgba(66, 124, 172, 0.2);*/
+}
+
+#interactionLeftHandle {
+    left: 0;
+}
+
+#interactionRightHandle {
+    right: 0;
+}
+
+/**************** Slider bottom part **********************/
+#interactionSliderBottom {
+    position: absolute;
+    top: 49px;
+    right: 0;
+    bottom: 0;
+    left: 0px;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    height: 35px;
+}
+
+#interactionLeftHandleBottom,
+#interactionRightHandleBottom {
+    position: absolute;
+    height: 100%;
+    width: 1px;
+    cursor: ew-resize;
+    overflow: hidden;
+    background: #111;
+    border-left-color: transparent;
+    border-left-width: 1px;
+    border-right-color: transparent;
+    border-right-width: 1px;
+}
+
+#interactionSlideHandleBottom {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+#interactionSlideHandleBottom::before,
+#interactionSlideHandleBottom::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10000px;
+    pointer-events: none;
+}
+
+#interactionSlideHandleBottom::before {
+    margin-right: 100%;
+    right: 1px;
+}
+
+#interactionSlideHandleBottom::after {
+    margin-left: 100%;
+    left: 1px;
+}
+
+#interactionLeftHandleBottom {
+    left: 1px;
+}
+
+#interactionRightHandleBottom {
+    right: 1px;
+}

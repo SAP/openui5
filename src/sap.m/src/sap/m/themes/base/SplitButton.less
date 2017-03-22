@@ -1,0 +1,83 @@
+/* ================================== */
+/* CSS for control sap.m/SplitButton  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMSB {
+	display: inline-block;
+	position: relative;
+	vertical-align: top;
+}
+
+.sapMSB .sapMSBInner .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
+	margin-right: 2.5rem;
+}
+
+.sapMSB .sapMSBArrow {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.sapMSB .sapMSBArrow .sapMBtnIcon {
+	font-size: 0.75rem;
+}
+
+.sapMSB .sapMSBText .sapMBtnInner {
+	text-align: left;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right-width: 0;
+}
+
+.sapMSB .sapMSBArrow .sapMBtnInner {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.sapMSB:focus {
+	outline: none;
+}
+
+.sapMSB:focus .sapMSBInner::after {
+	content: '';
+	pointer-events: none;
+	position: absolute;
+}
+
+//ie
+.sapMSBTextIE.sapMSBText {
+	padding-right: 2.5rem;
+}
+
+.sapUiSizeCompact {
+	.sapMSB .sapMSBInner .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
+		margin-right: 2rem;
+	}
+
+	//ie
+	.sapMSBTextIE.sapMSBText {
+		padding-right: 2rem;
+	}
+}
+
+.sapMSB:focus .sapMSBInner::after {
+	top: 0.3125rem;
+	bottom: 0.3125rem;
+	left: 0.0625rem;
+	right: 0.0625rem;
+	border: 0.0625rem dotted @sapUiContentFocusColor;
+}
+
+.sapUiSizeCompact {
+	.sapMSB:focus .sapMSBInner::after {
+		top: 0.25rem;
+		bottom: 0.25rem;
+	}
+}
+
+html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
+	.sapMSB:focus .sapMSBInner::after {
+		border-style: dashed;
+	}
+}

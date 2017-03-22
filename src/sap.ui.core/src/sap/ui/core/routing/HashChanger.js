@@ -15,13 +15,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @alias sap.ui.core.routing.HashChanger
 	 */
 	var HashChanger = EventProvider.extend("sap.ui.core.routing.HashChanger", {
-	
+
 		constructor : function() {
-	
+
 			EventProvider.apply(this);
-	
+
 		}
-	
+
 	});
 
 	/**
@@ -52,6 +52,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 
 	/**
+	 * The 'hashChanged' event is fired when the URL hash is changed
+	 *
+	 * @name sap.ui.core.routing.HashChanger#hashChanged
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.oldHash The URL hash before it's changed
+	 * @param {object} oEvent.getParameters.newHash The new URL hash
+	 * @protected
+	 */
+
+	/**
+	 * The 'hashSet' event is fired when {@link sap.ui.core.routing.HashChanger#setHash} is called
+	 *
+	 * @name sap.ui.core.routing.HashChanger#hashSet
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.sHash The URL hash
+	 * @protected
+	 */
+
+	/**
+	 * The 'hashReplaced' event is fired when {@link sap.ui.core.routing.HashChanger#replaceHash} is called
+	 *
+	 * @name sap.ui.core.routing.HashChanger#hashReplaced
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.sHash The URL hash
+	 * @protected
+	 */
+
+	/**
 	 * Fires the hashchanged event, may be extended to modify the hash before fireing the event
 	 * @param {string} newHash the new hash of the browser
 	 * @param {string} oldHash - the previous hash
@@ -62,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 
 	/**
-	 * Sets the hash to a certain value. When using the set function a browser history  entry is written. 
+	 * Sets the hash to a certain value. When using the set function a browser history  entry is written.
 	 * If you do not want to have an entry in the browser history, please use set replaceHash function.
 	 * @param {string} sHash the hash
 	 * @public
@@ -73,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 
 	/**
-	 * Replaces the hash to a certain value. When using the replace function no browser history is written. 
+	 * Replaces the hash to a certain value. When using the replace function no browser history is written.
 	 * If you want to have an entry in the browser history, please use set setHash function.
 	 * @param {string} sHash the hash
 	 * @public
@@ -85,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 	/**
 	 * Gets the current hash
-	 * 
+	 *
 	 * @return {string} the current hash
 	 * @public
 	 */
@@ -102,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		hasher.changed.remove(this.fireHashChanged, this);
 		EventProvider.prototype.destroy.apply(this, arguments);
 	};
-	
+
 	(function() {
 
 		var _oHashChanger = null;
@@ -119,22 +156,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			return _oHashChanger;
 		};
 
+		function extendHashChangerEvents (oHashChanger) {
+			var sEventName,
+				aExistingEventListeners,
+				aNewEventListeners;
+
+			for (sEventName in _oHashChanger.mEventRegistry) {
+				// only modify the new event registry if the old one contains the entry
+				if (_oHashChanger.mEventRegistry.hasOwnProperty(sEventName)) {
+
+					aExistingEventListeners = _oHashChanger.mEventRegistry[sEventName];
+					aNewEventListeners = oHashChanger.mEventRegistry[sEventName];
+
+					if (aNewEventListeners) {
+						// Both instances have the same event: merge the arrays
+						oHashChanger.mEventRegistry[sEventName] = aExistingEventListeners.concat(aNewEventListeners);
+					} else {
+						// Only the previous hashchanger has the event - add it to the new hashCHanger
+						oHashChanger.mEventRegistry[sEventName] = aExistingEventListeners;
+					}
+				}
+			}
+		}
+
 		/**
 		 * Sets the hashChanger to a new instance, destroys the old one and copies all its event listeners to the new one
 		 * @param {sap.ui.core.routing.HashChanger} oHashChanger the new instance for the global singleton
 		 * @protected
 		 */
 		HashChanger.replaceHashChanger = function(oHashChanger) {
-			if (_oHashChanger) {
-				jQuery.extend(oHashChanger.mEventRegistry, _oHashChanger.mEventRegistry);
+			if (_oHashChanger && oHashChanger) {
+
+				var fnGetHistoryInstance = jQuery.sap.getObject("sap.ui.core.routing.History.getInstance"),
+					oHistory;
+
+				if (fnGetHistoryInstance) {
+					oHistory = fnGetHistoryInstance();
+					// unregister the hashChanger so the events don't get fired twice
+					oHistory._unRegisterHashChanger();
+				}
+
+				extendHashChangerEvents(oHashChanger);
 				_oHashChanger.destroy();
+
+				if (oHistory) {
+					// check if the history got loaded yet - if not there is no need to replace its hashchanger since it will ask for the global one
+					oHistory._setHashChanger(oHashChanger);
+				}
 			}
 
 			_oHashChanger = oHashChanger;
 		};
-		
+
 	}());
 
 	return HashChanger;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,143 @@
+<View xmlns="sap.m" displayBlock="true" height="100%">
+	<Page id="detailDetailPage" title="DetailDetail page" backgroundDesign="Transparent">
+		<Table>
+			<columns>
+				<Column><Label text="DetailDetail List" /></Column>
+			</columns>
+			<items>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<Text text="No more columns"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</View>
+
+

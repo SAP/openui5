@@ -1,0 +1,22 @@
+/* ================================== */
+/* CSS for control sap.m/RangeSlider  */
+/* Belize theme                       */
+/* ================================== */
+
+@_sap_m_Slider_HandleHoverBackground: fade(darken(@sapUiFieldBackground, 15), 60);
+@_sap_m_Slider_HandleBorderColor: darken(@sapUiFieldBorderColor, 15);
+
+/* overlap */
+.sapMSliderHandle.sapMSliderHandleOverlap {
+  border: 0.125rem solid darken(@sapUiFieldActiveBorderColor, 5);
+}
+
+/* pressed */
+.sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
+  background: fade(@sapUiFieldActiveBorderColor, 30);
+}
+
+.sapMSliderProgress:hover ~ .sapMSliderHandle {
+  background-color: @_sap_m_Slider_HandleHoverBackground;
+  border: 0.125rem solid @_sap_m_Slider_HandleBorderColor;
+}

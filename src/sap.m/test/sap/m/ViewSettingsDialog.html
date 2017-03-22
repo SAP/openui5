@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>ViewSettingsDialog - sap.m</title>
 
-		<script src="../../../resources/sap-ui-core.js" type="text/javascript"
-			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.commons" data-sap-ui-theme="sap_bluecrystal"
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
 			data-sap-ui-xx-bindingSyntax="complex">
 		</script>
 
@@ -640,7 +641,7 @@
 			]
 		}));
 
-		vsd1.addFilterItem(new sap.m.ViewSettingsFilterItem({
+		vsd1.insertFilterItem(new sap.m.ViewSettingsFilterItem({
 			key: "myStatusFilter",
 			text: "Status",
 			items: [
@@ -869,6 +870,7 @@
 								case "value4": aFilters = new sap.ui.model.Filter("limit", sap.ui.model.FilterOperator.BT, 50, 70); break;
 								case "value5": aFilters = new sap.ui.model.Filter("limit", sap.ui.model.FilterOperator.GT, 70); break;
 							}
+
 							// add filters
 							if (aFilters) {
 								// the filter could be an array of filters or a single filter so we transform it to an array
@@ -902,7 +904,8 @@
 					"composed sorters: " + JSON.stringify(aTableSorters) + "\n" +
 					"composed filters: " + JSON.stringify(aTableFilters)
 				);
-			}
+			},
+			filterSearchOperator: sap.m.StringFilterOperator.Contains
 		});
 
 		// init sorting (with simple sorters as custom data for all fields)

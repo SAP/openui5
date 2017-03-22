@@ -14,7 +14,12 @@
 		<content>
 			<ObjectHeader
 				title="{Name}"
-				number="{Price}"
+				backgroundDesign="Solid"
+				number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
 				numberUnit="{CurrencyCode}" >
 				<attributes>
 					<ObjectAttribute title="Weight" text="{WeightMeasure} {WeightUnit}" />

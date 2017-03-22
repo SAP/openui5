@@ -6,7 +6,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComp
 	function(jQuery, Button, UIComponent) {
 	"use strict";
 
-
 	// new Component
 	var Component = UIComponent.extend("samples.components.button.Component", {
 
@@ -20,7 +19,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComp
 
 	Component.prototype.createContent = function() {
 		this.oButton = new Button(this.createId("mybutn"));
-		return this.oButton; 
+		// Use value of manifest if given
+		if(this.getManifestEntry("sap.app").text){
+			this.oButton.setText(this.getManifestEntry("sap.app").text);
+		}
+		return this.oButton;
 	};
 
 
@@ -29,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComp
 	//=============================================================================
 
 	/*
-	* Overrides setText method of the component to set this text in the button
+	* Overrides <code>setText</code> method of the component to set this text in the button
 	*/
 	Component.prototype.setText = function(sText) {
 		this.oButton.setText(sText);

@@ -1,0 +1,7 @@
+<!-- Note: "facet>" MUST point to a com.sap.vocabularies.UI.v1.ReferenceFacet! -->
+<core:FragmentDefinition  xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Label labelFor="{path: 'facet>Target', formatter: '.id'}.AnnotationPath"
+		text="Target/AnnotationPath"/>
+	<Text id="{path: 'facet>Target', formatter: '.id'}.AnnotationPath"
+		text="{facet>Target/AnnotationPath}"/>
+</core:FragmentDefinition>

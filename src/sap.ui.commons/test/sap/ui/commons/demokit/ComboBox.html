@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.ComboBox,sap.ui.commons.ListBox,sap.ui.core.ListItem">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control TextField ComboBox" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control TextField ComboBox">
 		<title>ComboBox - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -72,7 +72,7 @@ oModel.setData({
 		{device:"Mouse", enabled:true},
 		{device:"Speaker", enabled:false},
 		{device:"Printer", enabled:true}],
-	editable: true, 
+	editable: true,
 	tooltip: "Device"});
 sap.ui.getCore().setModel(oModel);
 
@@ -110,7 +110,7 @@ var oComboBox4 = new sap.ui.commons.ComboBox("ComboBox4",{
 var oLabel1 = new sap.ui.commons.Label("LabelCombo",{ text: "Weekday:", labelFor: oComboBox4});
 
 var oTextField2 = new sap.ui.commons.TextField("TextFieldKey", {
-	tooltip:"selectedKey", 
+	tooltip:"selectedKey",
 	value:oComboBox4.getSelectedKey(),
 	change: function(oEvent) {
 		var oCombo = sap.ui.getCore().getControl("ComboBox4");
@@ -122,7 +122,7 @@ var oTextField2 = new sap.ui.commons.TextField("TextFieldKey", {
 var oLabel2 = new sap.ui.commons.Label("LabelKey",{ text: "selectedKey:", labelFor: oTextField2});
 
 var oTextField3 = new sap.ui.commons.TextField("TextFieldId", {
-	tooltip:"selectedItemId", 
+	tooltip:"selectedItemId",
 	value:oComboBox4.getSelectedItemId(),
 	change: function(oEvent) {
 		var oCombo = sap.ui.getCore().getControl("ComboBox4");
@@ -171,7 +171,7 @@ var oLayout = new sap.ui.commons.layout.MatrixLayout("Matrix1",{
 	<p>
 	At first, the items are added to a ListBox control. The ListBox also contains additional texts. The ListBox is assigned to the ComboBox using the <code>setListBox</code> method.
 	Assigning the ListBox to the ComboBox allows a reuse of the same ListBox in multiple ComboBoxes. A typical use case for this is a table where the possible values are the same in every row.
-	In this case, the ListBox must not be rendered somewhere. But if you want to bind the items to a model the ListBox must be part of the control tree. So we suggest to add it as dependent to the view 
+	In this case, the ListBox must not be rendered somewhere. But if you want to bind the items to a model the ListBox must be part of the control tree. So we suggest to add it as dependent to the view
 	or the fist uses ComboBox.
 	<br>
 	In the example the <code>change</code> event is assigned to a function that fills the TextField next to the ComboBox. So you can see when the <code>change</code> event is fired.
@@ -185,7 +185,7 @@ var oLayout = new sap.ui.commons.layout.MatrixLayout("Matrix1",{
 	The items are filled with the corresponding information using data binding. The data is bound to the properties using the <code>bindProperty</code> method.
 	Changes on the data model immediately will change the ComboBox content.
 	</p>
-	<br/>
+	<br>
 	<div code-sample="sample3" script="ComboBoxDataBinding"></div>
 
 	<h3>Using Item Id and Key</h3>
@@ -198,7 +198,7 @@ var oLayout = new sap.ui.commons.layout.MatrixLayout("Matrix1",{
 	<br>
 	In the example you can see how to set and get the ComboBox value using <code>selectedKey</code> and <code>selectedItemId</code>.
 	</p>
-	<br/>
+	<br>
 	<div code-sample="sample4" script="ComboBoxIdKey"></div>
 
 	<p>

@@ -1,0 +1,88 @@
+/* ============================================= */
+/* CSS for control sap.ui.layout/BlockLayoutRow  */
+/* Base theme                                    */
+/* ============================================= */
+
+.sapUiBlockScrollingRow {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	overflow: auto;
+
+	.sapUiBlockScrollableCell {
+		-webkit-flex-shrink: 0;
+		flex-shrink: 0;
+		width: 40%;
+	}
+}
+
+.sapUiBlockLayoutSizeL,
+.sapUiBlockLayoutSizeXL,
+.sapUiBlockLayoutSizeM {
+	.sapUiBlockHorizontalCellsRow {
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+	}
+
+	.sapUiBlockSmallCell {
+		-webkit-flex-shrink: 1;
+		-webkit-flex-grow: 1;
+		-webkit-flex-basis: 0;
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 0;
+	}
+
+	.sapUiBlockMediumCell {
+		-webkit-flex-grow: 2;
+		-webkit-flex-shrink: 1;
+		-webkit-flex-basis: 0;
+		flex-grow: 2;
+		flex-shrink: 1;
+		flex-basis: 0;
+	}
+}
+
+.sapUiBlockLayoutSizeL,
+.sapUiBlockLayoutSizeXL {
+	.sapUiBlockScrollingNarrowCells {
+		.sapUiBlockScrollableCell {
+			width: 25%;
+		}
+	}
+}
+
+.sapUiBlockLayoutSizeS {
+	.sapUiBlockRowSCase {
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-flex-wrap: wrap;
+		flex-wrap: wrap;
+	}
+
+	.sapUiBlockSmallCell {
+		width: 100%;
+	}
+
+	.sapUiBlockMediumCell {
+		width: 100%;
+	}
+
+	.sapUiBlockScrollingRow {
+		.sapUiBlockScrollableCell:first-child .sapUiBlockCellContent {
+			padding-left: 2rem;
+		}
+
+		.sapUiBlockScrollableCell:last-child .sapUiBlockCellContent {
+			padding-right: 2rem;
+		}
+
+		.sapUiBlockScrollableCell {
+			min-width: 90%;
+		}
+	}
+}

@@ -1,24 +1,23 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.layout.VerticalLayout
   Author: SAP
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Control initialization -->
 	<script language="javascript">
@@ -29,10 +28,10 @@
 		          new sap.ui.commons.Image("I1",{src:"http://www.sap.com/global/images/SAPLogo.gif"})]
 	});
 	oLayout1.placeAt("uiArea1");
-		
+
 	oLayout2 = new sap.ui.layout.VerticalLayout("Layout2", {
 		width: "200px",
-		content: [new sap.ui.commons.Slider("S2",{Value:25, tooltip:"Slider tooltip", width: "300px"}),
+		content: [new sap.ui.commons.Slider("S2",{value:25, tooltip:"Slider tooltip", width: "300px"}),
 		          new sap.ui.commons.TextArea("TA2",{value:"Test \n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "250px", height: "150px"}),
 		          new sap.ui.commons.RatingIndicator("RI2",{value: 4}),
 					    new sap.ui.commons.CheckBox("CB2",{text: "Test"})]
@@ -44,47 +43,47 @@
 	<script language="javascript">
 
 	qutils.delayTestStart();
-	
-	module("Properties");
 
-	test("Default Values", function() {
-		equals(oLayout1.getWidth(), "", "Default 'Width':");
+	QUnit.module("Properties");
+
+	QUnit.test("Default Values", function(assert) {
+		assert.equal(oLayout1.getWidth(), "", "Default 'Width':");
 	});
 
-	test("Custom Values", function() {
-		equals(oLayout2.getWidth(), "200px", "Custom 'Width':");
+	QUnit.test("Custom Values", function(assert) {
+		assert.equal(oLayout2.getWidth(), "200px", "Custom 'Width':");
 	});
 
-	module("Visual Appearence");
+	QUnit.module("Visual Appearence");
 
-	test("Visibility", function() {
+	QUnit.test("Visibility", function(assert) {
 		// controls must be one below the other -> same X coordinate, nut higher Y coordinate
 		var oButtonDom = jQuery.sap.domById('B1');
 		var oTextDom = jQuery.sap.domById('TF1');
 		var oImageDom = jQuery.sap.domById('I1');
-		equals(oButtonDom.offsetLeft, oTextDom.offsetLeft, "Left offset of Button same as for TextField");
-		equals(oButtonDom.offsetLeft, oImageDom.offsetLeft, "Left offset of Button same as for Image");
-		ok(oButtonDom.offsetTop < oTextDom.offsetTop, "Top offset of Button < TextField");
-		ok(oTextDom.offsetTop < oImageDom.offsetTop, "Top offset of TextField < Image");
+		assert.equal(oButtonDom.offsetLeft, oTextDom.offsetLeft, "Left offset of Button same as for TextField");
+		assert.equal(oButtonDom.offsetLeft, oImageDom.offsetLeft, "Left offset of Button same as for Image");
+		assert.ok(oButtonDom.offsetTop < oTextDom.offsetTop, "Top offset of Button < TextField");
+		assert.ok(oTextDom.offsetTop < oImageDom.offsetTop, "Top offset of TextField < Image");
 
 		// width must fit to defined one even if content is larger
 		var oLayout2Dom = jQuery.sap.domById('Layout2');
-		equals(oLayout2Dom.offsetWidth, 200, "Width of Layout fits defined one");
+		assert.equal(oLayout2Dom.offsetWidth, 200, "Width of Layout fits defined one");
 		var oSliderDom = jQuery.sap.domById('S2');
 		var oTextADom = jQuery.sap.domById('TA2');
 		var oRatingDom = jQuery.sap.domById('RI2');
 		var oCheckBDom = jQuery.sap.domById('CB2');
-		equals(oSliderDom.offsetLeft, oTextADom.offsetLeft, "Left offset of Slider same as for TextArea");
-		equals(oSliderDom.offsetLeft, oRatingDom.offsetLeft, "Left offset of Slider same as for RatingIndicator");
-		equals(oSliderDom.offsetLeft, oCheckBDom.offsetLeft, "Left offset of Slider same as for CheckBox");
-		ok(oSliderDom.offsetTop < oTextADom.offsetTop, "Top offset of Slider < TextArea");
-		ok(oTextADom.offsetTop < oRatingDom.offsetTop, "Top offset of TextArea < RatingIndicator");
-		ok(oRatingDom.offsetTop < oCheckBDom.offsetTop, "Top offset of RatingIndicator < CheckBox");
+		assert.equal(oSliderDom.offsetLeft, oTextADom.offsetLeft, "Left offset of Slider same as for TextArea");
+		assert.equal(oSliderDom.offsetLeft, oRatingDom.offsetLeft, "Left offset of Slider same as for RatingIndicator");
+		assert.equal(oSliderDom.offsetLeft, oCheckBDom.offsetLeft, "Left offset of Slider same as for CheckBox");
+		assert.ok(oSliderDom.offsetTop < oTextADom.offsetTop, "Top offset of Slider < TextArea");
+		assert.ok(oTextADom.offsetTop < oRatingDom.offsetTop, "Top offset of TextArea < RatingIndicator");
+		assert.ok(oRatingDom.offsetTop < oCheckBDom.offsetTop, "Top offset of RatingIndicator < CheckBox");
 
 
 	});
 
-	test("Container Padding Classes", function () {
+	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new sap.ui.layout.VerticalLayout(),
 			sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
@@ -99,35 +98,57 @@
 		$containerContent = oContainer.$();
 
 		// Assert
-		strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
-		strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
-		strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
-		strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
+		assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
+		assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
+		assert.strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
+		assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
 
 		// Act
 		oContainer.removeStyleClass("sapUiNoContentPadding");
 		oContainer.addStyleClass("sapUiContentPadding");
 
 		// Assert
-		strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
-		strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
-		strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
-		strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+		assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
+		assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
+		assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
+		assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
 
 		// Act
 		oContainer.removeStyleClass("sapUiContentPadding");
 		oContainer.addStyleClass("sapUiResponsiveContentPadding");
 
 		// Assert
-		strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+		assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+		assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+		assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+		assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 
 		// Cleanup
 		oContainer.destroy();
 	});
-	
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("getAccessibilityInfo", function(assert) {
+		var oLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				new sap.ui.layout.VerticalLayout(),
+				new sap.ui.layout.VerticalLayout()
+			]
+		});
+		assert.ok(!!oLayout.getAccessibilityInfo, "VerticalLayout has a getAccessibilityInfo function");
+		var oInfo = oLayout.getAccessibilityInfo();
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(oInfo.role === undefined || oInfo.editable === null, "AriaRole");
+		assert.ok(oInfo.type === undefined || oInfo.editable === null, "Type");
+		assert.ok(oInfo.description === undefined || oInfo.editable === null, "Description");
+		assert.ok(oInfo.focusable === undefined || oInfo.editable === null, "Focusable");
+		assert.ok(oInfo.enabled === undefined || oInfo.editable === null, "Enabled");
+		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
+		oLayout.destroy();
+	});
+
 	</script>
 
 	<title>qunit Test for VerticalLayout</title>

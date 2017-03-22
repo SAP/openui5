@@ -8,32 +8,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ActionBar.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * A special toolbar with predefined social actions which can be shown as needed. These are: Create an update (Feed), Follow, Mark for Follow Up, Mark as Favorite and Open Thing.
-	 * 
+	 *
 	 * In addition business actions (ThingAction instances) can be added which are either displayed as MenuItems of the 'More' menu button or as individual tool bar buttons.
-	 * 
+	 *
 	 * When using this control, please be aware that it fulfills rather specific requirements: it has been designed for and is used within composite controls QuickView and ThingInspector.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Toolbar</code> or <code>sap.m.OverflowToolbar</code> control.
 	 * @alias sap.ui.ux3.ActionBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ActionBar = Control.extend("sap.ui.ux3.ActionBar", /** @lends sap.ui.ux3.ActionBar.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * Keeps track of the actionBars Follow/Unfollow button’s state. Its value is one of
 			 * - FollowActionState.Default
@@ -41,81 +42,81 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			 * - FollowActionState.Hold
 			 */
 			followState : {type : "sap.ui.ux3.FollowActionState", group : "Misc", defaultValue : sap.ui.ux3.FollowActionState.Default},
-	
+
 			/**
 			 * Indicates whether “Mark for Follow Up” is active
 			 */
 			flagState : {type : "boolean", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Indicates whether “Favorite” is active
 			 */
 			favoriteState : {type : "boolean", group : "Misc", defaultValue : null},
-			
+
 			/**
 			 * Indicates whether “Update” is active
 			 */
 			updateState : {type : "boolean", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * The thing icon uri. Icon will be displayed in Feeder
 			 */
 			thingIconURI : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * If true, business actions are rendered as menu items of the 'More' menu button. Otherwise, 'More' menu button is only displayed for overflow and business actions are rendered as inidividual buttons.
 			 */
 			alwaysShowMoreMenu : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Indicates whether social action “Update” is shown, default is ‘true’
 			 */
 			showUpdate : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Indicates whether social action “Follow” is shown, default is ‘true’
 			 */
 			showFollow : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Indicates whether social action “Mark for Follow Up” is shown, default is ‘true’
 			 */
 			showFlag : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Indicates whether social action “Favorite” is shown, default is ‘true’
 			 */
 			showFavorite : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Indicates whether social action “Open” is shown, default is ‘true’
 			 */
 			showOpen : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * The minimum width of ActionBar's the social actions part: business action controls have to be rendered outside this area
 			 */
 			dividerWidth : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Displayed on the actionBar's right hand-side, either as menu item under 'More' or as individual buttons
 			 */
-			businessActions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "businessAction"}, 
-	
+			businessActions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "businessAction"},
+
 			/**
 			 * Buttons for the business actions - managed by this ActionBar
 			 */
-			_businessActionButtons : {type : "sap.ui.commons.Button", multiple : true, singularName : "_businessActionButton", visibility : "hidden"}, 
-	
+			_businessActionButtons : {type : "sap.ui.commons.Button", multiple : true, singularName : "_businessActionButton", visibility : "hidden"},
+
 			/**
 			 * The social actions which are managed by this ActionBar
 			 */
 			_socialActions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "_socialAction", visibility : "hidden"}
 		},
 		events : {
-	
+
 			/**
 			 * Fired when any of the social action’s toolbar buttons except ‘Update’ or any of the business action’s menu items resp. buttons is pressed. The selected action can be identified by its id and newState (the latter if applicable only)
 			 * ‘Follow’ button + menu: id: follow, newState: Follow/Hold/Default
@@ -123,35 +124,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			 * ‘Favorite’ button: id: favorite, newState: true/false
 			 * ‘Open Thing Inspector’ button id: open
 			 * Business Actions: id: the ThingAction id
-			 * 
+			 *
 			 * For ‘Update’, please refer to event ‘feedSubmit’
 			 */
 			actionSelected : {
 				parameters : {
-	
+
 					/**
 					 * Id of selected ThingAction
 					 */
-					id : {type : "string"}, 
-	
+					id : {type : "string"},
+
 					/**
 					 * Selected ThingAction
 					 */
-					action : {type : "sap.ui.ux3.ThingAction"}, 
-	
+					action : {type : "sap.ui.ux3.ThingAction"},
+
 					/**
 					 * New State of the selected action.Only filled if the respective action maintains a state property, for example 'FollowUp' or 'Favorite'
 					 */
 					newState : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Fired when a new feed entry is submitted.
 			 */
 			feedSubmit : {
 				parameters : {
-	
+
 					/**
 					 * Feed text
 					 */
@@ -160,13 +161,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Initialization hook for the Actionbar. Creates the empty action map instance
 	 * 'mActionMap' and provides the convenience member 'mActionKeys' to access static
-	 * 'sap.ui.ux3.ActionBar.M_ACTION_KEYS'  
-	 * 
+	 * 'sap.ui.ux3.ActionBar.M_ACTION_KEYS'
+	 *
 	 * @private
 	 */
 	ActionBar.prototype.init = function(){
@@ -174,9 +175,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.mActionMap = {};
 		//Provide convenient access to the static array of action identifiers for "mActionMap"
 		this.mActionKeys = sap.ui.ux3.ActionBarSocialActions;
-		
+
 		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
-		
+
 		//Show social actions. No need to call the property setters because the prperties are true
 		//by default, so there is no property change
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Update), true);
@@ -184,40 +185,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Flag), true);
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Favorite), true);
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Open), true);
-		
+
 		// Initialize the ItemNavigation if required
 		if (!this._oItemNavigation) {
 			this._oItemNavigation = new ItemNavigation();
 			this.addDelegate(this._oItemNavigation);
 		}
 	};
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Destroys this instance of ActionBar, called by Element#destroy()
-	 * 
+	 *
 	 * @private
 	 */
 	ActionBar.prototype.exit = function() {
 		this.closePopups();
-		
+
 		if (this._oUpdatePopup) {
 			this._oUpdatePopup.destroy();
 			this._oUpdatePopup = null;
 		}
-		
+
 		if (this._oMoreMenuButton) {
 			this._oMoreMenuButton.destroy();
 			this._oMoreMenuButton = null;
 		}
-		
+
 		if (this._oMoreMenu) {
 			this._oMoreMenu.destroy();
 			this._oMoreMenu = null;
 		}
-		
+
 		if (this._oHoldItem) {
 			this._oHoldItem.destroy();
 		}
@@ -232,23 +233,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
-		
+
 		this.mActionKeys = null;
 		this.mActionKeys = null;
 		this.oRb = null;
-		
+
 		this.destroyAggregation("_socialActions");
 		this.destroyAggregation("_businessActionButtons");
-	
+
 		if (this._oItemNavigation) {
 			this.removeDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
 			delete this._oItemNavigation;
 		}
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Checks whether the control is still valid (is in the DOM). ActionBar
 	 * instance is rendered if and only if 'isActive' returns 'true'. This
@@ -259,19 +260,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype.isActive = function() {
 		var bResult = this.getDomRef() != null;
-		
+
 		return bResult;
 	};
-		
-		
+
+
 	/**
 	 * Load language dependent text for given resource bundle key and optional
 	 * arguments, if the resource contains dynamic content
 	 *
 	 * @param sKey resource bundle key
-	 * @param aArgs used to fill dynamic resource content 
+	 * @param aArgs used to fill dynamic resource content
 	 * @return the resource if it was found in the bundle or 'sKey' if no matching
-	 *		 resource was available. 
+	 *		 resource was available.
 	 * @private
 	 */
 	ActionBar.prototype._getLocalizedText = function(sKey, aArgs) {
@@ -286,19 +287,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return sText ? sText : sKey;
 	};
-	
-	
+
+
 	/**
-	 * Creates a new social action for the specified 'sActionId' or returns the 
-	 * pooled instance of that social action. Assumes 
+	 * Creates a new social action for the specified 'sActionId' or returns the
+	 * pooled instance of that social action. Assumes
 	 * that 'sActionId' taken from 'this.mActionKeys', otherwise
 	 * a warning will be logged and 'undefined is returned'
-	 * 
+	 *
 	 * @param sActionId
 	 * @return new or pooled instance of the specified action or 'undefined'
 	 */
 	ActionBar.prototype._getSocialAction = function (sActionId) {
-		
+
 		var oResult = this.mActionMap[sActionId];
 		if (!oResult) {
 			//no instance of the social action created for this action bar instance so far
@@ -308,13 +309,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 					oResult.name = this.mActionKeys.Update;
 					oResult.tooltipKey = "ACTIONBAR_UPDATE_ACTION_TOOLTIP";
 					oResult.cssClass = "sapUiUx3ActionBarUpdateAction";
-					//prepares the feeder popup 
+					//prepares the feeder popup
 					oResult.fnInit = function ( oActionBar ) {
 						oActionBar._oUpdatePopup = new sap.ui.ux3.ToolPopup({
 						id : oActionBar.getId() + "-UpdateActionPopup"
 						}).addStyleClass("sapUiUx3ActionBarUpdatePopup");
 						oActionBar._oUpdatePopup._ensurePopup().setAutoClose(true);
-						
+
 						oActionBar._feeder = new sap.ui.ux3.Feeder({
 							id: oActionBar.getId() + "-Feeder",
 							type: sap.ui.ux3.FeederType.Comment,
@@ -339,7 +340,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 							oActionBar._oUpdatePopup.close();
 						} else {
 							var oDomRef, iTIHeight, iContentHeight;
-							
+
 							oActionBar._oUpdatePopup.setPosition(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop, oEvent.getSource().getDomRef(), "-8 -13", "none");
 							oActionBar._oUpdatePopup.open();
 							oDomRef = jQuery(oActionBar._oUpdatePopup.getDomRef());
@@ -349,7 +350,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 							jQuery.sap.delayedCall(1000, this, function() {
 								jQuery.sap.focus(oActionBar._feeder.getFocusDomRef());
 							});
-							
+
 						}
 						oActionBar._updateSocialActionDomRef(oResult);
 					};
@@ -384,10 +385,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 								state : "followState",
 								action : followAction
 							});
-							
-							
+
+
 							this._fnPrepareFollowMenu(oEvent, oActionBar);
-							
+
 						} else {
 							var eDock = sap.ui.core.Popup.Dock;
 							oActionBar._oMenu.open(false, followAction.getFocusDomRef(), eDock.BeginBottom, eDock.BeginTop, followAction.getDomRef());
@@ -425,7 +426,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 							oActionBar._oMenu = new sap.ui.commons.Menu({
 								id : oActionBar.getId() + "-followActionMenu"
 							});
-							
+
 							oActionBar._oMenu.attachItemSelect(jQuery.proxy(function(oControlEvent) {
 								this._fnFollowMenuSelected(oControlEvent, oActionBar);
 							}, this));
@@ -466,13 +467,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 						} else if (sId + "-unholdState") {
 							oActionBar._setFollowState(sap.ui.ux3.FollowActionState.Follow);
 						}
-						
+
 						oActionBar.fireActionSelected({
 							id : followAction.name,
 							state: sId,
 							action : followAction
 						});
-						
+
 						this._fnPrepareFollowMenu(oEvent, oActionBar);
 					}
 				};
@@ -540,22 +541,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return oResult;
 	};
-		
-		
-		
+
+
+
 	/*=================================================================================
 	 * Re-Rendering
-	 * 
+	 *
 	 */
-	
-	/**    
-	  * Updates css classes and aria description for a social action    
-	  *    
-	  * @param oSocialAction social action to be re-rendered    
-	  * @private    
+
+	/**
+	  * Updates css classes and aria description for a social action
+	  *
+	  * @param oSocialAction social action to be re-rendered
+	  * @private
 	  */
 	ActionBar.prototype._updateSocialActionDomRef = function(oSocialAction) {
-		
+
 		var content = oSocialAction.$();
 		if (content) {
 			//Replace css classes with action's standard css
@@ -574,10 +575,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 		}
 	};
-	
-	 
-	
-		
+
+
+
+
 	/**
 	 * Re-renders all content of the '-socialActions' list
 	 *
@@ -592,8 +593,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			rm.destroy();
 		}
 	};
-	
-	
+
+
 	/**
 	 * Re-renders single business action toolbar button.
 	 *
@@ -609,8 +610,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			rm.destroy();
 		}
 	};
-	
-	
+
+
 	/**
 	 * Re-renders all content of the '-businessActions' list
 	 *
@@ -629,10 +630,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		//make sure that more menu button's visibility is up to date
 		this._onresize();
 	};
-	
+
 	/*=============================================================================
 	 * Overwrite setter methods for show<SocialAction> properties
-	 * - setShowUpdate 
+	 * - setShowUpdate
 	 * - setShowFollow
 	 * - setShowFlag
 	 * - setShowFavorite
@@ -640,7 +641,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * Private method _setShowSocialActionProperty to be used within these setters
 	 */
-	
+
 	/*
 	 * Sets follow state and triggering re-rendering
 	 *
@@ -656,9 +657,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return this;
 	};
-	
-	
-	 
+
+
+
 	/*
 	 * Shows or hides standard button 'Update' on toolbar
 	 *
@@ -670,7 +671,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("showUpdate", bFlag, true);
 		return this;
 	};
-	
+
 	/*
 	 * Shows or hides standard button 'Follow' on toolbar
 	 *
@@ -682,7 +683,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("showFollow", bFlag, true);
 		return this;
 	};
-	
+
 	/*
 	 * Shows or hides standard button 'Flag' on toolbar
 	 *
@@ -694,7 +695,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("showFlag", bFlag, true);
 		return this;
 	};
-	
+
 	/*
 	 * Shows or hides standard button 'Favorite' on toolbar
 	 *
@@ -706,7 +707,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("showFavorite", bFlag, true);
 		return this;
 	};
-	
+
 	/*
 	 * Shows or hides standard button 'Open' on toolbar
 	 *
@@ -718,7 +719,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("showOpen", bFlag, true);
 		return this;
 	};
-	
+
 	/**
 	 * Sets follow state without triggering re-rendering
 	 *
@@ -730,7 +731,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("followState", oFollowState, true);
 		return this;
 	};
-	
+
 	/**
 	 * Sets flag state without triggering re-rendering
 	 *
@@ -742,7 +743,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("flagState", oFlagState, true);
 		return this;
 	};
-	
+
 	/**
 	 * Sets update state without triggering re-rendering
 	 *
@@ -765,10 +766,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("favoriteState", oFavoriteState, true);
 		return this;
 	};
-	
+
 	// Implementation of API method
 	ActionBar.prototype.setThingIconURI = function(oIcon) {
-	    // supress rendering 
+	    // supress rendering
 		this.setProperty("thingIconURI", oIcon, true);
 		var oUpdateAction = this.mActionMap[this.mActionKeys.Update];
 		if (oUpdateAction && this._feeder) {
@@ -779,9 +780,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return this;
 	};
-	
+
 	/*
-	 * Sets the minimum width of ActionBar's the social actions part: 
+	 * Sets the minimum width of ActionBar's the social actions part:
 	 * business action controls have to be rendered outside this area
 	 *
 	 * @param oWidth the new width as CSSSize
@@ -793,23 +794,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("dividerWidth", oWidth);
 		return this;
 	};
-	
+
 	/*
-	 * Renders business actions as menu items of the 'Other Actions' 
-	 * toolbar button if 'bFlag' is true. Otherwise, 'Other Actions' toolbar button disappears and 
+	 * Renders business actions as menu items of the 'Other Actions'
+	 * toolbar button if 'bFlag' is true. Otherwise, 'Other Actions' toolbar button disappears and
 	 * business actions are rendered as individual buttons.
 	 *
-	 * @param {boolean} bFlag If true, business actions are rendered as menu items of the 'Other Actions' 
-	 *        toolbar button. Otherwise, 'Other Actions' toolbar button disappears and 
+	 * @param {boolean} bFlag If true, business actions are rendered as menu items of the 'Other Actions'
+	 *        toolbar button. Otherwise, 'Other Actions' toolbar button disappears and
 	 *        business actions are rendered as individual buttons.
 	 */
 	ActionBar.prototype.setAlwaysShowMoreMenu = function(bFlag) {
 		var bOldValue = this.getProperty("alwaysShowMoreMenu");
 		var businessActionsList = this.getAggregation("businessActions", []);
 		this.setProperty("alwaysShowMoreMenu", bFlag, true);
-		
+
 		if (bOldValue != bFlag && businessActionsList) {
-			
+
 			if (!bFlag) {
 				for (var i = 0; i < businessActionsList.length; i++) {
 					var oBusinessAction = businessActionsList[i];
@@ -832,7 +833,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this._rerenderBusinessActions();
 		return this;
 	};
-	
+
 	/**
 	 * Closes all popups which might be opened as ActionBar children
 	 * These are the more- and follow menu and the feeder popup
@@ -851,18 +852,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._oMenu.close();
 		}
 	};
-	
+
 	/*=============================================================================
 	 * Methods for aggregation '_socialActions':
-	 * 
+	 *
 	 */
-	
-	
-		
+
+
+
 	/**
 	 * Removes the specified social action, if it was added before
-	 * and re-renders the actionbar instance. 
-	 * 
+	 * and re-renders the actionbar instance.
+	 *
 	 * @param oSocialAction social action to remove from the actionbar.
 	 * @return the sap.ui.ux3.ActionBar instance if 'oSocialAction' was removed successfully,
 	 * null otherwise.
@@ -886,10 +887,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return result;
 	};
-	
+
 	/**
-	 * Removes all social actions and re-renders the actionbar instance. 
-	 * 
+	 * Removes all social actions and re-renders the actionbar instance.
+	 *
 	 * @return the sap.ui.ux3.ActionBar instance
 	 * @private
 	 */
@@ -906,20 +907,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this._rerenderSocialActions();
 		return result;
 	};
-	
-	
+
+
 	/**
 	 * Checks if given 'oSocialAction' has already been added. If not, it is passed on
 	 * to private method 'sap.ui.ux3.ActionBar.prototype._prepareSocialAction'. After that,
 	 * the action's 'fnInit' exit is called, if it is defined.
-	 * 
+	 *
 	 * @param oSocialAction social action to add to the actionbar
 	 * @param iIndex position at which new action shall be inserted. If not defined, new action will be appended
 	 *		to the end od the aggregation.
 	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance if 'oSocialAction' was added successfully,
 	 * null otherwise.
 	 * @private
-	 * @see sap.ui.ux3.ActionBar.prototype._prepareSocialAction 
+	 * @see sap.ui.ux3.ActionBar.prototype._prepareSocialAction
 	 */
 	ActionBar.prototype._addSocialAction = function(oSocialAction, iIndex) {
 		//make sure that each social action is only added once
@@ -927,7 +928,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		var result = null;
 		if (!this.mActionMap[oSocialAction.name]) {
 			result = this._prepareSocialAction(oSocialAction, iIndex);
-		
+
 			if ( oSocialAction.fnInit ) {
 				// call the action's 'fnInit' exit
 				oSocialAction.fnInit(this);
@@ -935,30 +936,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._iSocActListWidth = null; //needs to be re-calculated
 		}
 		if (result) {
-			//Only if social action was actually added, the actionbar is 
-			//rendered again 
+			//Only if social action was actually added, the actionbar is
+			//rendered again
 			this._rerenderSocialActions();
 		}
 		return result;
 	};
-	
-		
+
+
 	/**
 	 * Attaches a 'Select' listener to the passed in 'oSocialAction', which will call the
 	 * actions 'fnActionSelected'. Uses the action's tooltip key to generate the i18n tooltip
-	 * text of the action's button. Finally, adds 'oSocialAction' to the actionbar's 
+	 * text of the action's button. Finally, adds 'oSocialAction' to the actionbar's
 	 * action map and its '_socialActions' aggregation.
 	 *
 	 * @param oSocialAction social action to add to the actionbar.
 	 * @param iIndex position at which new action shall be inserted. If not defined, new action will be appended
 	 *		to the end od the aggregation.
-	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance 
+	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
 	 */
 	ActionBar.prototype._prepareSocialAction = function(oSocialAction, iIndex) {
-		
+
 		// if 'Select' event is triggered on the action (this is done by a 'press' event
-		// on the action's toolbar button'), the action's 'fnActionSelected' function is 
+		// on the action's toolbar button'), the action's 'fnActionSelected' function is
 		// executed
 		oSocialAction.attachSelect(jQuery.proxy(function(oControlEvent) {
 			if (oSocialAction.fnActionSelected) {
@@ -977,75 +978,75 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		} else {
 			this.addAggregation("_socialActions", oSocialAction, true);
 		}
-		
+
 		return oSocialAction;
 	};
-	
+
 	/**
 	 * Calls '_addSocialAction' or '_removeSocialAction' depending on 'bFlag'.
 	 *
 	 * @param oSocialAction social action to deal with.
 	 * @param bFlag show the action or not.
-	 * @return the sap.ui.ux3.ActionBar instance 
+	 * @return the sap.ui.ux3.ActionBar instance
 	 * @see sap.ui.ux3.ActionBar._addSocialAction
-	 * @see sap.ui.ux3.ActionBar._removeSocialAction  
+	 * @see sap.ui.ux3.ActionBar._removeSocialAction
 	 * @private
 	 */
 	ActionBar.prototype._setShowSocialAction = function (oSocialAction, bFlag) {
 		return bFlag ? this._addSocialAction(oSocialAction) : this._removeSocialAction(oSocialAction);
 	};
-	
+
 	/*=============================================================================
 	 * Implementation of generated API methods for aggregation 'businessActions':
-	 * - addBusinessAction 
+	 * - addBusinessAction
 	 * - insertBusinessAction
 	 * - removeBusinessAction
 	 * - removeAllBusinessActions
 	 */
-	
+
 	/**
 	 * Implementation of API method addBusinessAction.
-	 * 
-	 * @param oBusinessAction business action to be added 
-	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance 
+	 *
+	 * @param oBusinessAction business action to be added
+	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 */
 	ActionBar.prototype.addBusinessAction = function(oBusinessAction) {
 		return this._addBusinessAction(oBusinessAction);
 	};
-	
+
 	/**
 	 * Implementation of API method insertBusinessAction.
-	 * 
-	 * @param oBusinessAction business action to be added 
-	 * @param iIndex position at which the business action is to be displayed amidst the 
-	 *		other business actions 
-	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance 
+	 *
+	 * @param oBusinessAction business action to be added
+	 * @param iIndex position at which the business action is to be displayed amidst the
+	 *		other business actions
+	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 */
 	ActionBar.prototype.insertBusinessAction = function(oBusinessAction, iIndex) {
 		return this._addBusinessAction(oBusinessAction, iIndex);
 	};
-	
+
 	/**
 	 * Implementation of API method removeBusinessAction.
-	 * 
-	 * @param oBusinessAction business action to be removed 
-	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance 
+	 *
+	 * @param oBusinessAction business action to be removed
+	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 */
 	ActionBar.prototype.removeBusinessAction = function(oBusinessAction) {
 		return this._removeBusinessAction(oBusinessAction, true);
 	};
-	
+
 	/**
 	 * Removes oBusinessAction and cleans up corresponding menu item
 	 * and buttons. Calls rerenderBusinessActions if param 'bRerender' is true
-	 * 
-	 * @param oBusinessAction business action to be removed 
+	 *
+	 * @param oBusinessAction business action to be removed
 	 * @param bRerender if this flag is set, business actions are re-rendered.
-	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance 
+	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
 	 */
 	ActionBar.prototype._removeBusinessAction = function(oBusinessAction, bRerender) {
-			
+
 		//Make sure that remove works for action Ids as well
 		//CSN 0001948046 2013
 		if (typeof oBusinessAction === "string") {
@@ -1060,14 +1061,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 			oBusinessAction = oCorrespondingAction;
 		}
-		
+
 		if (this._oMoreMenu) {
 			var oMenuItem = this._oMoreMenu._getMenuItemForAction(oBusinessAction);
 			if (oMenuItem) {
 				this._oMoreMenu.removeItem(oMenuItem);
 				oMenuItem.destroy();
 			}
-			
+
 			// Check if there are any menu items left. If not,
 			// destroy the 'More' menu and corresponding menu button
 			if (this._oMoreMenu.getItems().length == 0) {
@@ -1077,18 +1078,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				this._oMoreMenu = null;
 			}
 		}
-		
+
 		if (!this.getAlwaysShowMoreMenu()) {
 			var oButton = this._getButtonForAction(oBusinessAction);
 			if (oButton) {
-				
+
 				this.removeAggregation("_businessActionButtons", oButton, true);
 				oButton.destroy();
 			}
 		}
 		// do not use flag'bRerender' as parameter here since
 		// only the businessActionButtons section shall be
-		// rendered. This is taken care of at the end of this 
+		// rendered. This is taken care of at the end of this
 		// function
 		var result = this.removeAggregation("businessActions", oBusinessAction, true);
 		if (bRerender) {
@@ -1096,11 +1097,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return result;
 	};
-	
+
 	/**
 	 * Implementation of API method removeAllBusinessAction.
-	 * 
-	 * @return sap.ui.ux3.ActionBar the ActionBar instance for method chaining 
+	 *
+	 * @return sap.ui.ux3.ActionBar the ActionBar instance for method chaining
 	 */
 	ActionBar.prototype.removeAllBusinessActions = function() {
 		var businessActionsList = this.getAggregation("businessActions", []);
@@ -1118,14 +1119,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		var result = this.removeAllAggregation("businessActions", true);
 		return result;
 	};
-	
+
 	/**
 	 * Implementation of API method destroyBusinessActions.
-	 * 
+	 *
 	 * @return sap.ui.ux3.ActionBar the ActionBar instance for method chaining
 	 */
 	ActionBar.prototype.destroyBusinessActions = function() {
-		
+
 		var businessActionsList = this.getAggregation("businessActions", []);
 		if (businessActionsList) {
 			for (var i = 0; i < businessActionsList.length; i++) {
@@ -1145,58 +1146,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		var result = this.destroyAggregation("businessActions", true);
 		return result;
 	};
-	
+
 	/**
 	 * Returns the aggregation for the business action buttons
-	 * @private  
+	 * @private
 	 */
 	ActionBar.prototype._getBusinessActionButtons = function() {
 		return this.getAggregation("_businessActionButtons", []);
 	};
-	
+
 	/**
-	 * Checks if property 'showBusinessActionsMenu' is set. If so, it first checks if the 
+	 * Checks if property 'showBusinessActionsMenu' is set. If so, it first checks if the
 	 * 'Other Actions' toolbar button is available and creates it if necessary. After that
 	 * it adds the new business action as a menu item to the 'Other Actions' toolbar button.
 	 * If the flag is not set, the a new '_businessActionButton' is created which is added to the
 	 * private aggregation '_businessActionButtons'. If an 'iIndex' is present, it is taken into
 	 * consideration in all of these cases.
-	 * 
-	 * @param oBusinessAction business action to be added 
+	 *
+	 * @param oBusinessAction business action to be added
 	 * @param iIndex position at which new action shall be inserted. If not defined, new action will be appended
 	 *		to the end of the aggregation.
-	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance 
+	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
 	 */
 	ActionBar.prototype._addBusinessAction = function(oBusinessAction, iIndex) {
-		
+
 		var result;
-		
+
 		if (!iIndex && iIndex != 0) {
 			result = this.addAggregation("businessActions", oBusinessAction, true);
 		} else {
 			result = this.insertAggregation("businessActions", oBusinessAction, iIndex, true);
 		}
-		
-		// Prepare the 'Other Actions' toolbar button and add business actions as menu items to the 
+
+		// Prepare the 'Other Actions' toolbar button and add business actions as menu items to the
 		// 'Other Actions' toolbar button
 		if (!this._oMoreMenuButton) {
 			this._oMoreMenuButton = new sap.ui.commons.MenuButton(this.getId() + "-MoreMenuButton");
 			this._oMoreMenuButton.setText(this._getLocalizedText("ACTIONBAR_BUTTON_MORE_TEXT"));
 			this._oMoreMenuButton.setTooltip(this._getLocalizedText("ACTIONBAR_BUTTON_MORE_TOOLTIP"));
 			var eDock = sap.ui.core.Popup.Dock;
-			
+
 			//make sure menu is displayed OVER the more button and towards the inside of the containing
 			//control
 			this._oMoreMenuButton.setDockButton(eDock.EndTop);
 			this._oMoreMenuButton.setDockMenu(eDock.EndBottom);
-			
+
 			this._styleMoreMenuButton();
-			
+
 			this._oMoreMenu = new sap.ui.commons.Menu(this.getId() + "-MoreMenu", {
 				ariaDescription: this._getLocalizedText("ACTIONBAR_BUTTON_MORE_TOOLTIP")
 			});
-			
+
 			this._oMoreMenu._getMenuItemForAction = function (oAction) {
 				for (var i = 0; i < this.getItems().length; i++) {
 					var oMenuItem = this.getItems()[i];
@@ -1206,7 +1207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				}
 				return null;
 			};
-			
+
 			this._oMoreMenuButton.setMenu(this._oMoreMenu);
 		}
 		var sMenuItemID = this._oMoreMenu.getId() + "-MenuItem-" + oBusinessAction.getId();
@@ -1218,65 +1219,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				action : oBusinessAction
 			});
 		}, this));
-		
+
 		if (iIndex) {
 			this._oMoreMenu.insertItem(oMenuItem, iIndex);
 		} else {
 			this._oMoreMenu.addItem(oMenuItem);
 		}
-		
+
 		this._createButtonForAction(oBusinessAction, oMenuItem, iIndex);
 		this._rerenderBusinessActions();
 		return result;
 	};
-	
+
 	/**
 	 * Returns the "More" menu button or null, if it has not been created.
 	 *
-	 * @return the "More" menu button 
+	 * @return the "More" menu button
 	 */
 	ActionBar.prototype._getMoreMenuButton = function() {
 		return this._oMoreMenuButton;
 	};
-	
-	
+
+
 	/**
 	 * Will be called by the ResizeHandler listening to size changes of the actionBar
 	 * control depending on the DOM element or window size changes.
 	 * If the "alwaysShowMoreMenu" property is not set, this will check if there is
 	 * enough room to render the business actions individually (it does so by checking the
 	 * vertical offset of the businessActions' div).
-	 * If there is not enough room, the "Other Actions" toolbar button is displayed even 
+	 * If there is not enough room, the "Other Actions" toolbar button is displayed even
 	 * though "alwaysShowMoreMenu" is not set
 	 *
-	 * @private  
+	 * @private
 	 */
 	ActionBar.prototype._onresize = function(oEvent) {
-	
+
 		//set min width for action bar
 		var oActionBarDomRef = this.$();
-		
+
 		if (oActionBarDomRef) {
 			var sActionBarMinWidth = this.getActionBarMinWidth() + "px";
-		
+
 			if (oActionBarDomRef.css('minWidth') != sActionBarMinWidth) {
 				oActionBarDomRef.css('minWidth', sActionBarMinWidth);
 			}
 		}
-		
+
 		if (!this.getAlwaysShowMoreMenu() && this._oMoreMenuButton ) {
 			//Only show 'More' menu button if there is more than one business action
 			var bShowMoreMenuButton = false;
 			if ( this._getBusinessActionButtons().length > 1) {
 				var iMoreMenuButtonWidth = this._oMoreMenuButton.$().outerWidth();
-				
+
 				var iMaxButtonsWidth = oActionBarDomRef.outerWidth()
 					- this._getSocialActionListMinWidth()
 					- iMoreMenuButtonWidth;
 				var actionButtons = this._getBusinessActionButtons();
-				
+
 				var iButtonWidth = 0;
-				
+
 				for (var iIndex = 0; iIndex < actionButtons.length; iIndex++) {
 					var oIthButtonDomRef = actionButtons[iIndex].$().parent();
 					iButtonWidth += oIthButtonDomRef.outerWidth();
@@ -1284,7 +1285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 						//special treatment for last button since it toggles with more menu button
 						iButtonWidth -= iMoreMenuButtonWidth;
 					}
-					
+
 					if (iButtonWidth >= iMaxButtonsWidth) {
 						if (oIthButtonDomRef.length > 0) {
 							oIthButtonDomRef.css('display', 'none');
@@ -1308,13 +1309,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 						}
 					}
 				}
-				
+
 				//if there is more business actions than action buttons, there is at least
 				//one business action which shall only be displayed in the 'More' menu.
 				//In that case, the 'More' menu button MUST be displayed
 				bShowMoreMenuButton |= this.getAggregation("businessActions").length > actionButtons.length;
 			}
-			
+
 			var oMoreMenuButtonDomRef = this._oMoreMenuButton.$().parent();
 			if (oMoreMenuButtonDomRef.length > 0) {
 				bShowMoreMenuButton ? oMoreMenuButtonDomRef.css('display', '') : oMoreMenuButtonDomRef.css('display', 'none');
@@ -1324,9 +1325,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 		}
 		this._setItemNavigation();
-		
+
 	};
-	
+
 	/**
 	 * Rerendering handling
 	 * @private
@@ -1335,7 +1336,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
 		this._sResizeListenerId = null;
 	};
-	
+
 	/**
 	 * Rerendering handling
 	 * @private
@@ -1351,8 +1352,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		//at least once
 		this._setItemNavigation();
 	};
-	
-	
+
+
 	/**
 	 * Get the min width of the social action list
 	 * @return min width of the social action list
@@ -1360,14 +1361,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype._getSocialActionListMinWidth = function() {
 		//determine minimum width for actionBar and socialActionsList
-		
+
 		if (!this._iSocActListWidth) {
 			if (this.getDividerWidth()) {
 				this._iSocActListWidth = parseInt(this.getDividerWidth(), 10);
 			} else {
-				// min width of the social actions part is determined by the number of 
+				// min width of the social actions part is determined by the number of
 				// actually displayed social actions
-				
+
 				var oSocialActions = this.getAggregation("_socialActions", []);
 				var iActionCount = oSocialActions.length;
 				this._iSocActListWidth = 24 * iActionCount + 12; //add some padding
@@ -1375,13 +1376,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return this._iSocActListWidth;
 	};
-	
+
 	/**
 	 * Get the min width of the social action list and add the width of the "More" button
 	 * @return min width of ActionBar
 	 */
 	ActionBar.prototype.getActionBarMinWidth = function() {
-		
+
 		var iResult = this._getSocialActionListMinWidth();
 		var oRightControl = this._oMoreMenuButton;
 		if (!this.getAlwaysShowMoreMenu() &&  this._getBusinessActionButtons().length == 1) {
@@ -1390,7 +1391,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		if (oRightControl) {
 			// use parent's outer width because the menu button's outer width
-			// has turned out to change, depending on the speed in which you resize 
+			// has turned out to change, depending on the speed in which you resize
 			// the browser window.
 			var oParentDomRef =  oRightControl.$().parent();
 			if (oParentDomRef) {
@@ -1399,7 +1400,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return iResult;
 	};
-	
+
 	/**
 	 * Delivers action button for a specified action
 	 * @param oAction the action for which the button should be found
@@ -1415,9 +1416,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 		return null;
 	};
-	
+
 	/**
-	 * Creates an action button for a specified action if 
+	 * Creates an action button for a specified action if
 	 * @param oBusinessAction the action for which the button should be found
 	 * @param oMenuItem menu item which corresponds to the button
 	 * @param iIndex position at which button shall be shown
@@ -1433,7 +1434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				tooltip : oBusinessAction.getTooltip(),
 				enabled : oBusinessAction.getEnabled()
 			});
-			
+
 			oButton.attachPress(jQuery.proxy(function(oControlEvent) {
 				this.fireActionSelected({
 					id : oBusinessAction.getId(),
@@ -1443,7 +1444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			//Link menu item to new button
 			oButton.oMenuItem = oMenuItem;
 			oButton.action = oBusinessAction;
-			
+
 			if (iIndex) {
 				this.insertAggregation("_businessActionButtons", oButton, iIndex, true);
 			} else {
@@ -1452,14 +1453,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			return oButton;
 		}
 		return null;
-			
+
 	};
-	
+
 	/**
 	 * Changes css class of 'More' menu button depending on whether 'alwaysShowMoreMenu'
-	 * property is set. If business actions are always displayed in the menu, 
+	 * property is set. If business actions are always displayed in the menu,
 	 * it should be rendered as a lite button.
-	 * 
+	 *
 	 * @private
 	 */
 	ActionBar.prototype._styleMoreMenuButton = function() {
@@ -1474,18 +1475,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 	    }
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Add Social- and Business Actions to ItemNavigation
 	 *
 	 * @private
 	 */
 	ActionBar.prototype._setItemNavigation = function() {
-	
+
 		if (this.getDomRef()) {
-			
+
 			this._oItemNavigation.setRootDomRef(jQuery(this.getDomRef()).get(0));
 			// only if already rendered, otherwise not DOM elements exists
 			var aItemDomRefs = [];
@@ -1503,9 +1504,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._oItemNavigation.setItemDomRefs(aItemDomRefs);
 		}
 	};
-	
+
 	/**
-	 * ActionBar invalidation: If ThingActions get invalidated the action buttons/items need to be updated 
+	 * ActionBar invalidation: If ThingActions get invalidated the action buttons/items need to be updated
 	 *
 	 * @private
 	 */

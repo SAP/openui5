@@ -1,25 +1,25 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.layout.form.Form
   Author: SAP
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="../../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.layout, sap.ui.commons">
+		data-sap-ui-libs="sap.ui.layout, sap.m">
 	</script>
-	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-	<script language="javascript">
+	<script>
 
 		// create Form
 
@@ -36,17 +36,17 @@
 					formElements: [
 						new sap.ui.layout.form.FormElement("C1E1",{
 							label: "Label1",
-							fields: [new sap.ui.commons.TextField("TF1", {required:true})]
+							fields: [new sap.m.Input("I1", {width: "10rem", required:true})]
 						}),
 						new sap.ui.layout.form.FormElement("C1E2",{
-							label: new sap.ui.commons.Label("L1",{text:"Label2"}),
-							fields: [new sap.ui.commons.DatePicker("DP1",{ariaLabelledBy: "dummy"})]
+							label: new sap.m.Label("L1",{text:"Label2"}),
+							fields: [new sap.m.DatePicker("DP1",{width: "10rem", ariaLabelledBy: "dummy"})]
 						}),
 						new sap.ui.layout.form.FormElement("C1E3",{
-							label: new sap.ui.commons.Label("L2",{text:"Label3", icon:"../../../commons/images/help.gif"}),
-							fields: [new sap.ui.commons.RadioButtonGroup("RBG1",{
-								items: [new sap.ui.core.Item({text: "true"}),
-								        new sap.ui.core.Item({text: "false"})]
+							label: new sap.m.Label("L2",{text:"Label3", icon:"../../../commons/images/help.gif"}),
+							fields: [new sap.m.RadioButtonGroup("RBG1",{
+								buttons: [new sap.m.RadioButton({text: "true"}),
+								          new sap.m.RadioButton({text: "false"})]
 							})]
 						})
 					]
@@ -55,13 +55,13 @@
 					title: new sap.ui.core.Title("C2T",{text: "Container2", icon: "../../images/controls/sap.ui.layout.form.FormContainer.gif", tooltip: "Title tooltip"}),
 					formElements: [
 						new sap.ui.layout.form.FormElement("C2E1",{
-							label: new sap.ui.commons.Label("L4",{text:"Label4"}),
-							fields: [new sap.ui.commons.TextField("TF3"),
-							         new sap.ui.commons.TextField("TF4",{width: "5em", required: true})]
+							label: new sap.m.Label("L4",{text:"Label4"}),
+							fields: [new sap.m.Input("I3", {width: "10rem"}),
+							         new sap.m.Input("I4",{width: "3rem", required: true})]
 						}),
 						new sap.ui.layout.form.FormElement("C3E3",{
 							label: "Label5",
-							fields: [new sap.ui.commons.DropdownBox("DdB1",{
+							fields: [new sap.m.Select("Sel1",{
 								items: [new sap.ui.core.ListItem({text: "one"}),
 								        new sap.ui.core.ListItem({text: "two"}),
 								        new sap.ui.core.ListItem({text: "three"})]
@@ -75,23 +75,23 @@
 					expandable: true,
 					formElements: [
 						new sap.ui.layout.form.FormElement("C3E1",{
-							fields: [new sap.ui.commons.CheckBox({text: 'one'}),
-							         new sap.ui.commons.CheckBox({text: 'two'})]
+							fields: [new sap.m.CheckBox("CB1", {text: 'one'}),
+							         new sap.m.CheckBox("CB2", {text: 'two'})]
 						}),
 						new sap.ui.layout.form.FormElement("C3E2",{
-							fields: [new sap.ui.commons.CheckBox({text: 'three'})]
+							fields: [new sap.m.CheckBox("CB3", {text: 'three'})]
 						})
 					]
 				}),
 				new sap.ui.layout.form.FormContainer("C4",{
 					formElements: [
 						new sap.ui.layout.form.FormElement("C4E1",{
-							fields: [new sap.ui.commons.Button({text: 'OK'}),
-							         new sap.ui.commons.Button({text: 'Cancel'})]
+							fields: [new sap.m.Button({text: 'OK'}),
+							         new sap.m.Button({text: 'Cancel'})]
 						}),
 						new sap.ui.layout.form.FormElement("C4E2",{
 							visible: false,
-							fields: [new sap.ui.commons.TextField("C4E2T1", {value: 'invisible'})]
+							fields: [new sap.m.Input("C4E2T1", {width: "10rem", value: 'invisible'})]
 						})
 					]
 				}),
@@ -100,7 +100,7 @@
 					visible: false,
 					formElements: [
 						new sap.ui.layout.form.FormElement("C5E1",{
-							fields: [new sap.ui.commons.TextField("C5E1T1", {value: 'invisible'})]
+							fields: [new sap.m.Input("C5E1T1", {width: "10rem", value: 'invisible'})]
 						})
 					]
 				})]
@@ -118,8 +118,8 @@
 					title: "Container1",
 					formElements: [
 						new sap.ui.layout.form.FormElement("F2C1E1",{
-							label: "Label1",
-							fields: [new sap.ui.commons.TextField("F2C1E1TF1", {required:true})]
+							label: "Label 1",
+							fields: [new sap.m.Input("F2C1E1TF1", {width: "10rem", required:true})]
 						})
 					]
 				})]
@@ -137,7 +137,7 @@
 					formElements: [
 						new sap.ui.layout.form.FormElement("F3C1E1",{
 							label: "Label1",
-							fields: [new sap.ui.commons.TextField("F3C1E1TF1", {required:true})]
+							fields: [new sap.m.Input("F3C1E1TF1", {width: "10rem", required:true})]
 						})
 					]
 				})]
@@ -146,128 +146,144 @@
 		// test functions
 		qutils.delayTestStart();
 
-		module("Contol functions");
+		QUnit.module("Contol functions");
 
-		test("Form", function() {
+		QUnit.test("Form", function(assert) {
 			var oForm = sap.ui.getCore().byId("F1");
 
-			equal(oForm.getLayout().getId(), "Layout1", "getLayout() returns layout.")
+			assert.equal(oForm.getLayout().getId(), "Layout1", "getLayout() returns layout.")
 		});
 
-		test("Container", function() {
+		QUnit.test("Container", function(assert) {
 			var oContainer1 = sap.ui.getCore().byId("C1");
 			var oContainer2 = sap.ui.getCore().byId("C2");
 			var oContainer4 = sap.ui.getCore().byId("C4");
 
 			//title must return text if text entered, control if control enterd
-			equal(oContainer1.getTitle(), "Container1", "getTitle(): Title as text entered must return text");
-			ok(oContainer2.getTitle() instanceof sap.ui.core.Title, "getTitle(): Title as control entered must return control");
+			assert.equal(oContainer1.getTitle(), "Container1", "getTitle(): Title as text entered must return text");
+			assert.ok(oContainer2.getTitle() instanceof sap.ui.core.Title, "getTitle(): Title as control entered must return control");
 
-			equal(oContainer1.getRenderedDomRef().id, oContainer1.getId(), "DOM for FormContainer rendered");
+			assert.equal(oContainer1.getRenderedDomRef().id, oContainer1.getId(), "DOM for FormContainer rendered");
 		});
 
-		test("Element", function() {
+		QUnit.test("Element", function(assert) {
 			var oElement = sap.ui.getCore().byId("C1E1");
 			//label must return text if text entered, control if control enterd
-			equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
-			ok(!(oElement.getAggregation("label") instanceof sap.ui.commons.Label), "Label as text entered must not be an control in aggregation");
-			ok(oElement.getLabelControl() instanceof sap.ui.commons.Label, "Label as text endeted must be an control in getLabelControl");
+			assert.equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
+			assert.ok(!(oElement.getAggregation("label") instanceof sap.m.Label), "Label as text entered must not be an control in aggregation");
+			assert.ok(oElement.getLabelControl() instanceof sap.m.Label, "Label as text endeted must be an control in getLabelControl");
 			oElement = sap.ui.getCore().byId("C1E2");
-			ok(oElement.getLabel() instanceof sap.ui.commons.Label, "getLabel(): Label as control entered must return control");
-			equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
+			assert.ok(oElement.getLabel() instanceof sap.m.Label, "getLabel(): Label as control entered must return control");
+			assert.equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
 
-			equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
+			assert.equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
 		});
 
-		module("Rendering");
+		QUnit.module("Rendering");
 
-		test("Form", function() {
-			ok(jQuery.sap.domById("F1"), "Form is rendered");
-			ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
-			equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
-			ok(jQuery.sap.domById("F1T"), "Form title is rendered");
-			ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
-			ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
-			ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
-			equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
-			equal(jQuery("#F2T").width(), jQuery("#F2").children().first().innerWidth(), "Form2 title rendered as large as the Layout");
-			ok(jQuery("#F2T").hasClass("sapUiFormTitleEmph"), "Form2 title rendered emphasized");
-			ok(jQuery("#F2T").is("h1"), "Form2 title is rendered as H1 as set on control");
-			ok(!jQuery.sap.domById("F3"), "invisible Form is not rendered");
+		QUnit.test("Form", function(assert) {
+			assert.ok(jQuery.sap.domById("F1"), "Form is rendered");
+			assert.ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
+			assert.equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
+			assert.ok(jQuery.sap.domById("F1T"), "Form title is rendered");
+			assert.ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
+			assert.ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
+			assert.ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
+			assert.equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
+			assert.equal(jQuery("#F2T").width(), jQuery("#F2").children().first().innerWidth(), "Form2 title rendered as large as the Layout");
+			assert.ok(jQuery("#F2T").hasClass("sapUiFormTitleEmph"), "Form2 title rendered emphasized");
+			assert.ok(jQuery("#F2T").is("h1"), "Form2 title is rendered as H1 as set on control");
+			assert.ok(!jQuery.sap.domById("F3"), "invisible Form is not rendered");
 		});
 
-		test("Container", function() {
-			ok(jQuery.sap.domById("C1"), "Container is rendered");
-			ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
-			ok(jQuery('h4:contains("Container1")').get(0), "Title (as text) is renderd");
-			ok(jQuery.sap.domById("C2T"), "Title (as Control) is rendered");
-			ok(jQuery("#C2T").is("h4"), "Container title is rendered as H4 as default");
-			ok(jQuery("#C3T").is("h3"), "Container title is rendered as H3 as set there");
-			ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
-			ok(jQuery.sap.domById("C3-content"), "Container3 contetnt area is rendered");
-			ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible");
-			ok(!jQuery.sap.domById("C5"), "invisible Container is not rendered");
+		QUnit.test("Container", function(assert) {
+			assert.ok(jQuery.sap.domById("C1"), "Container is rendered");
+			assert.ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
+			assert.ok(jQuery('h4:contains("Container1")').get(0), "Title (as text) is renderd");
+			assert.ok(jQuery.sap.domById("C2T"), "Title (as Control) is rendered");
+			assert.ok(jQuery("#C2T").is("h4"), "Container title is rendered as H4 as default");
+			assert.ok(jQuery("#C3T").is("h3"), "Container title is rendered as H3 as set there");
+			assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+			assert.ok(jQuery.sap.domById("C3-content"), "Container3 contetnt area is rendered");
+			assert.ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible");
+			assert.ok(!jQuery.sap.domById("C5"), "invisible Container is not rendered");
 		});
 
-		test("Element", function() {
-			ok(jQuery.sap.domById("C1E1"), "Element is rendered");
-			ok(!jQuery.sap.domById("C4E2"), "invisible Element is not rendered");
+		QUnit.test("Element", function(assert) {
+			assert.ok(jQuery.sap.domById("C1E1"), "Element is rendered");
+			assert.ok(!jQuery.sap.domById("C4E2"), "invisible Element is not rendered");
 		});
 
-		test("FormControls", function() {
-			ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
-			ok(jQuery('label:contains("Label1")').hasClass("sapUiLblReq"), "Label1 is renderd as required");
-			equal(jQuery('label:contains("Label1")').attr("for"), "TF1", "Label1 (as text) is renderd for TextField1");
-			ok(jQuery("#L4").hasClass("sapUiLblReq"), "Label4 is renderd as required");
-			ok(jQuery.sap.domById("TF1"), "TextField is rendered");
-			equal(jQuery("#TF1").attr("aria-labelledby"), jQuery('label:contains("Label1")').attr("id"), "TextField aria-labelledby points to label")
-			equal(jQuery("#TF3").attr("aria-labelledby"), "L4", "TextField3 aria-labelledby points to label")
-			equal(jQuery("#TF4").attr("aria-labelledby"), "L4", "TextField4 aria-labelledby points to label")
-			ok(jQuery.sap.domById("L1"), "Label (as control) is rendered");
-			equal(jQuery("#L1").attr("for"), "DP1-input", "Label1 is renderd for DatePicker");
-			ok(jQuery.sap.domById("DP1"), "DatePicker is rendered");
-			equal(jQuery("#DP1-input").attr("aria-labelledby"), "L1 dummy", "DatePicker aria-labelledby changed (contains reference to label)");
-			ok(jQuery.sap.domById("RBG1"), "RadioButtonGroup is rendered");
-			ok(!jQuery.sap.domById("C4E2T1"), "Content of invisible Element is not rendered");
-			ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");
+		QUnit.test("FormControls", function(assert) {
+			assert.ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
+			assert.ok(jQuery('label:contains("Label1")').hasClass("sapMLabelRequired"), "Label1 is renderd as required");
+			assert.equal(jQuery('label:contains("Label1")').attr("for"), "I1-inner", "Label1 (as text) is renderd for Input1");
+			assert.ok(jQuery("#L4").hasClass("sapMLabelRequired"), "Label4 is renderd as required");
+			assert.ok(jQuery.sap.domById("I1"), "Input is rendered");
+			assert.equal(jQuery("#I1-inner").attr("aria-labelledby"), jQuery('label:contains("Label1")').attr("id"), "Input aria-labelledby points to label")
+			assert.equal(jQuery("#I3-inner").attr("aria-labelledby"), "L4", "Input3 aria-labelledby points to label")
+			assert.equal(jQuery("#I4-inner").attr("aria-labelledby"), "L4", "Input4 aria-labelledby points to label")
+			assert.ok(jQuery.sap.domById("L1"), "Label (as control) is rendered");
+			assert.equal(jQuery("#L1").attr("for"), "DP1-inner", "Label1 is renderd for DatePicker");
+			assert.ok(jQuery.sap.domById("DP1"), "DatePicker is rendered");
+			assert.ok(jQuery("#DP1-inner").attr("aria-labelledby").search("L1 dummy") >= 0, "DatePicker aria-labelledby changed (contains reference to label)");
+			assert.ok(jQuery.sap.domById("RBG1"), "RadioButtonGroup is rendered");
+			assert.ok(!jQuery.sap.domById("C4E2T1"), "Content of invisible Element is not rendered");
+			assert.ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");
 		});
 
-		test("Aria", function() {
-			equal(jQuery("#F1").attr("role"), "form", "Form1: role \"form\" set");
-			equal(jQuery("#F1").attr("aria-labelledby"), "F1T", "Form1: aria-labelledby set");
-			ok(!jQuery("#F1").attr("aria-readonly"), "Form1: aria-readonly not set");
-			equal(jQuery("#F2").attr("aria-readonly"), "true", "Form2: aria-readonly set");
-			equal(jQuery("#F2").attr("aria-labelledby"), "TestLabel F2T", "Form2: aria-labelledby set");
+		QUnit.test("Aria", function(assert) {
+			assert.equal(jQuery("#F1").attr("role"), "form", "Form1: role \"form\" set");
+			assert.equal(jQuery("#F1").attr("aria-labelledby"), "F1T", "Form1: aria-labelledby set");
+			assert.ok(!jQuery("#F1").attr("aria-readonly"), "Form1: aria-readonly not set");
+			assert.equal(jQuery("#F2").attr("aria-readonly"), "true", "Form2: aria-readonly set");
+			assert.equal(jQuery("#F2").attr("aria-labelledby"), "TestLabel F2T", "Form2: aria-labelledby set");
 
-			equal(jQuery("#C1").attr("role"), "form", "Container1: role \"form\" set");
-			equal(jQuery("#C1").attr("aria-labelledby"), "C1--title", "Container1: aria-labelledby set");
-			equal(jQuery("#C2").attr("aria-labelledby"), "C2T", "Container2: aria-labelledby set");
-			ok(!jQuery("#C4").attr("aria-labelledby"), "Container4: aria-labelledby not set");
+			assert.equal(jQuery("#C1").attr("role"), "form", "Container1: role \"form\" set");
+			assert.equal(jQuery("#C1").attr("aria-labelledby"), "C1--title", "Container1: aria-labelledby set");
+			assert.equal(jQuery("#C2").attr("aria-labelledby"), "C2T", "Container2: aria-labelledby set");
+			assert.ok(!jQuery("#C4").attr("aria-labelledby"), "Container4: aria-labelledby not set");
 		});
 
-		module("Interaction");
+		QUnit.module("Interaction");
 
-//		test("Form", 0, function() {
-//
-//		});
-
-		test("Container", function() {
+		QUnit.test("Container", function(assert) {
 			//expander function
 			var oContainer = sap.ui.getCore().byId("C3");
-			qutils.triggerMouseEvent("C3--Exp", "click");
-			ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after click on expander");
-			equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
-		});
+			qutils.triggerEvent("tap", "C3--Exp");
+			assert.ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after click on expander");
+			assert.equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
 
-//		test("Element", 0, function() {
-//
-//		});
+			jQuery("#C3--Exp").focus();
+			qutils.triggerKeydown(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyup(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			assert.ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible after ENTER on expander");
+			assert.equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
+
+			jQuery("#CB1").focus();
+			qutils.triggerKeydown(jQuery("#CB1").get(0), jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
+			assert.ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after NumpadMinus on control");
+			assert.equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
+
+			jQuery("#C3--Exp").focus();
+			qutils.triggerKeydown(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
+			assert.ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible after NumpadPlus on expander");
+			assert.equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
+
+			// container navigation
+			jQuery("#I1").focus();
+			qutils.triggerKeydown(jQuery("#I1").get(0), jQuery.sap.KeyCodes.F6, false, false, false);
+			assert.equal(document.activeElement.getAttribute("id"), "I3-inner", "Container2 focused after F6 on Container1");
+
+			jQuery("#I3").focus();
+			qutils.triggerKeydown(jQuery("#I3").get(0), jQuery.sap.KeyCodes.F6, true, false, false);
+			assert.equal(document.activeElement.getAttribute("id"), "I1-inner", "Container1 focused after Shift+F6 on Container2");
+		});
 
 		</script>
 
 	<title>qUnit Test for Form</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../../images/controls/sap.ui.layout.form.Form.gif">
-
 
 </head>
 <body class="sapUiBody">

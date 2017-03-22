@@ -18,13 +18,11 @@ sap.ui.define(['sap/m/MessageBox','sap/m/Token','sap/ui/core/mvc/Controller'],
 				}
 			});
 
-			var iValidationCounter = 0;
 			//*** add text change validator
 			oMultiInput1.addValidator(function(args){
 				if (args.suggestedToken){
 					var text = args.suggestedToken.getText();
-					iValidationCounter++;
-					return new Token({key: text, text: "#"+ iValidationCounter+": " + text});
+					return new Token({key: text, text: "#: " + text});
 				}
 			});
 
@@ -35,8 +33,7 @@ sap.ui.define(['sap/m/MessageBox','sap/m/Token','sap/ui/core/mvc/Controller'],
 						if (oAction === MessageBox.Action.OK){
 							var oToken = new Token({key: args.text, text: args.text});
 							args.asyncCallback(oToken);
-						}
-						else{
+						} else {
 							args.asyncCallback(null);
 						}
 					},

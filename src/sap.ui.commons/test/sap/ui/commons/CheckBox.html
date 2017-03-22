@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>CheckBox - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.CheckBox.gif">
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_goldreflection"
-				type="text/javascript"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../resources/sap-ui-core.js"
 				>
 		</script>
 
-		<script type="text/javascript">
-			var oCore = sap.ui.getCore(); 
+		<script>
+			var oCore = sap.ui.getCore();
 
 			function alertChecked(oEvent) {
 				var oCheckBox = oEvent.oSource;
@@ -39,8 +39,9 @@
 				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
 
 				// a plain checkbox
-        var oCheckBox = new sap.ui.commons.CheckBox("c1"); 
-        oCheckBox.setText("Just a plain vanilla CheckBox"); 
+        var oCheckBox = new sap.ui.commons.CheckBox("c1");
+        oCheckBox.setText("Just a plain vanilla CheckBox");
+        oCheckBox.setTooltip("Hello world");
 				oCheckBox.placeAt("target1");
 
 				oCheckBox = new sap.ui.commons.CheckBox("c2");
@@ -61,15 +62,15 @@
         oCheckBox.setChecked(true);
 				oCheckBox.placeAt("target4");
 
-				oCheckBox = new sap.ui.commons.CheckBox("c5"); 
+				oCheckBox = new sap.ui.commons.CheckBox("c5");
 				oCheckBox.setText("CheckBox with warning state (toggles the error-state checkbox below)");
 				oCheckBox.setValueState(sap.ui.core.ValueState.Warning);
         oCheckBox.attachChange(toggleErrorCheckBox);
 				oCheckBox.placeAt("target5");
 
-				oCheckBox = new sap.ui.commons.CheckBox("c6"); 
+				oCheckBox = new sap.ui.commons.CheckBox("c6");
 		    oCheckBox.setText("CHECKED CheckBox with error state");
-		    oCheckBox.setChecked(true); 
+		    oCheckBox.setChecked(true);
 		    oCheckBox.setValueState(sap.ui.core.ValueState.Error);
 				oCheckBox.placeAt("target6");
 
@@ -115,7 +116,7 @@
 				oCheckBox.placeAt("target10");
 
 				// invisible CheckBox
-				oCheckBox = new sap.ui.commons.CheckBox("c11"); 
+				oCheckBox = new sap.ui.commons.CheckBox("c11");
 				oCheckBox.setText("This CheckBox must not be visible");
 				oCheckBox.setVisible(false);
 				oCheckBox.placeAt("target11");

@@ -1,0 +1,53 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns:forms="sap.ui.layout.form" xmlns="sap.m">
+	<forms:SimpleForm
+			maxContainerCols="1"
+			layout="ResponsiveGridLayout"
+			width="100%">
+		<layout:VerticalLayout>
+			<Panel>
+				<VBox>
+					<Image src="{emp1>picture}"/>
+					<Label text="{emp1>name}"/>
+					<Label text="{emp1>job}"/>
+				</VBox>
+
+			</Panel>
+			<Panel>
+				<VBox>
+					<Image src="{emp2>picture}"/>
+					<Label text="{emp2>name}"/>
+					<Label text="{emp2>job}"/>
+				</VBox>
+			</Panel>
+			<Panel>
+				<VBox>
+					<Image src="{emp3>picture}"/>
+					<Label text="{emp3>name}"/>
+					<Label text="{emp3>job}"/>
+				</VBox>
+			</Panel>
+			<Panel>
+				<VBox>
+					<Image src="{emp4>picture}"/>
+					<Label text="{emp4>name}"/>
+					<Label text="{emp4>job}"/>
+				</VBox>
+			</Panel>
+			<Panel>
+				<VBox>
+					<Image src="{emp5>picture}"/>
+					<Label text="{emp5>name}"/>
+					<Label text="{emp5>job}"/>
+				</VBox>
+			</Panel>
+			<Panel>
+				<VBox>
+					<Image src="{emp6>picture}"/>
+					<Label text="{emp6>name}"/>
+					<Label text="{emp6>job}"/>
+				</VBox>
+			</Panel>
+
+		</layout:VerticalLayout>
+	</forms:SimpleForm>
+</mvc:View>

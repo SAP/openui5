@@ -1,0 +1,82 @@
+[
+	{
+		"CategoryName" : "Accessories",
+		"Category" : "AC",
+		"NumberOfProducts" : 34
+	},
+	{
+		"CategoryName" : "Desktop Computers",
+		"Category" : "DC",
+		"NumberOfProducts" : 5
+	},
+	{
+		"CategoryName" : "Flat Screens",
+		"Category" : "FS",
+		"NumberOfProducts" : 3
+	},
+	{
+		"CategoryName" : "Keyboards",
+		"Category" : "KB",
+		"NumberOfProducts" : 4
+	},
+	{
+		"CategoryName" : "Laptops",
+		"Category" : "LT",
+		"NumberOfProducts" : 11
+	},
+	{
+		"CategoryName" : "Printers",
+		"Category" : "PR",
+		"NumberOfProducts" : 9
+	},
+	{
+		"CategoryName" : "Smartphones and Tablets",
+		"Category" : "ST",
+		"NumberOfProducts" : 9
+	},
+	{
+		"CategoryName" : "Mice",
+		"Category" : "MI",
+		"NumberOfProducts" : 7
+	},
+	{
+		"CategoryName" : "Computer System Accessories",
+		"Category" : "CSA",
+		"NumberOfProducts" : 7
+	},
+	{
+		"CategoryName" : "Graphics Card",
+		"Category" : "GC",
+		"NumberOfProducts" : 4
+	},
+	{
+		"CategoryName" : "Scanners",
+		"Category" : "SC",
+		"NumberOfProducts" : 4
+	},
+	{
+		"CategoryName" : "Speakers",
+		"Category" : "SP",
+		"NumberOfProducts" : 3
+	},
+	{
+		"CategoryName" : "Software",
+		"Category" : "SW",
+		"NumberOfProducts" : 8
+	},
+	{
+		"CategoryName" : "Telecommunication",
+		"Category" : "TC",
+		"NumberOfProducts" : 3
+	},
+	{
+		"CategoryName" : "Servers",
+		"Category" : "SV",
+		"NumberOfProducts" : 3
+	},
+	{
+		"CategoryName" : "Flat Screen TVs",
+		"Category" : "FST",
+		"NumberOfProducts" : 3
+	}
+]

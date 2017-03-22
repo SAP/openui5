@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Token.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Tokenizer'],
+	function(jQuery, library, Control, Tokenizer) {
 	"use strict";
 
 
@@ -12,12 +12,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Constructor for a new Token.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * renders a token containing text and an optional delete icon
-	 * @extends sap.ui.core.Control
+	 * <h3>Overview</h3>
+	 * Tokens are small items of information (similar to tags) that mainly serve to visualize previously selected items.
+	 * Tokens are manipulated by a {@link sap.m.Tokenizer Tokenizer}.
+	 * <h3>Structure</h3>
+	 * The tokens store single text items or sometimes key-value pairs, such as "John Miller (ID1234567)".
+	 * Each token also contains a delete icon, which is invisible if the token is in edit mode.
+	 *
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * Tokens can only be used with the Tokenizer as a container.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -33,25 +41,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		properties : {
 
 			/**
-			 * current selection status of token
+			 * Indicates the current selection status of the token.
 			 */
 			selected : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * token's identifier key
+			 * Key of the token.
 			 */
 			key : {type : "string", group : "Misc", defaultValue : ""},
 
 			/**
-			 * token's display text
+			 * Displayed text of the token.
 			 */
 			text : {type : "string", group : "Misc", defaultValue : ""},
 
 			/**
-			 * if true, token displays delete icon and fires events accordingly
+			 * Indicates the editable status of the token. If it is set to <code>true</code>, token displays a delete icon.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : true},
-			
+
 			/**
 			 * This property specifies the text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
@@ -68,130 +76,196 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		associations : {
 
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
 		},
 		events : {
 
 			/**
-			 * Fired if the user click the token's delete button.
+			 * This event is fired if the user clicks the token's delete icon.
 			 */
 			"delete" : {},
 
 			/**
-			 * Event is fired when the user clicks on the control.
+			 * This event is fired when the user clicks on the token.
 			 */
 			press : {},
 
 			/**
-			 * Event is fired when the user selects a token (could be a keyboard navigation, could be a press)
+			 * This event is fired when the token gets selected.
 			 */
-			select : {}
+			select : {},
+
+			/**
+			 * This event is fired when the token gets deselected.
+			 */
+			deselect : {}
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an ARIA announcement and remember its ID for later use in the renderer:
+	Token.prototype._sAriaTokenLabelId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKEN_ARIA_LABEL")
+	}).toStatic().getId();
+
+	Token.prototype._sAriaTokenDeletableId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKEN_ARIA_DELETABLE")
+	}).toStatic().getId();
+
+	/**
+	 * This file defines behavior for the control,
+	 */
 	Token.prototype.init = function() {
+		var that = this;
 		this._deleteIcon = new sap.ui.core.Icon({
-			src : "sap-icon://sys-cancel"
+			id : that.getId() + "-icon",
+			src : "sap-icon://sys-cancel",
+			noTabStop: true,
+			press : function(oEvent) {
+				var oParent = that.getParent();
+
+				// fire "delete" event before Tokenizer's _onTokenDelete because the Tokenizer will destroy the token
+				// and the token's delete handler will not be executed
+				that.fireDelete({
+					token : that
+				});
+
+				if (oParent instanceof Tokenizer) {
+					oParent._onTokenDelete(that);
+				}
+
+				oEvent.preventDefault();
+			}
 		});
 
 		this._deleteIcon.addStyleClass("sapMTokenIcon");
 		this.setAggregation("deleteIcon", this._deleteIcon);
-	};
-
-	Token.prototype.setEditable = function(bEditable){
-		this.setProperty("editable", bEditable);
-		if (bEditable) {
-			this.removeStyleClass("sapMTokenReadOnly");
-			this.$().attr("aria-readonly", "true");
-		} else {
-			this.addStyleClass("sapMTokenReadOnly");
-			this.$().attr("aria-readonly", "false");
-			
-		}
+		this._deleteIcon.setUseIconTooltip(false);
 	};
 
 	/**
-	 * Event handler called when control is touched, registers left mouse down
+	 * Handles the touch start event on the token.
 	 *
-	 * @param {jQuery.Event}
-	 * 			oEvent
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	Token.prototype.ontouchstart = function(oEvent) {
-		this.$().toggleClass("sapMTokenActive", true);
-		if (sap.ui.Device.system.desktop && oEvent.originalEvent.button) {
-			/* there are two cases that should fire touch start event:
-				left button click in desktop, where value of button event is 0; 
-				touch event in combi device, where value of button event is undefined.*/
-			return;
-		}
-
-		this._oSrcStartId = oEvent.target.id;
-
-		if (this._oSrcStartId === this._deleteIcon.getId()) {
+		if (oEvent.target.id === this.getId() + "-icon") {
+			// prevent default or else the icon may get focused
 			oEvent.preventDefault();
 		}
 	};
 
-	Token.prototype.setSelected = function(bSelected, bMultiSelect) {
+	/**
+	 * Sets the selection status of the token.
+	 *
+	 * @param {boolean} bSelected Indicates if the token is selected.
+	 * @return {sap.m.Token} this for chaining
+	 * @public
+	 */
+	Token.prototype.setSelected = function(bSelected) {
 
-		if (bSelected && !bMultiSelect) {
-			this.focus();
+		if (this.getSelected() === bSelected) {
+			return this;
 		}
 
 		var $this = this.$();
 
 		if ($this) {
-			if (bSelected) {
-				$this.addClass("sapMTokenSelected");
-				$this.attr('aria-selected', "true");
-			} else {
-				$this.removeClass("sapMTokenSelected");
-				$this.attr('aria-selected', "false");
-			}
-		} else {
-			if (bSelected) {
-				this.addStyleClass("sapMTokenSelected");
-				this.attr('aria-selected', "true");
-			} else {
-				this.removeStyleClass("sapMTokenSelected");
-				this.attr('aria-selected', "false");
-			}
-
+			$this.toggleClass("sapMTokenSelected", bSelected);
+			$this.attr('aria-selected', bSelected);
 		}
 
 		this.setProperty("selected", bSelected, true);
 
-		if (bSelected) {
-			this.fireSelect();
+		return this;
+	};
+
+	/**
+	 * Sets the editable status of the token.
+	 *
+	 * @param {boolean} bEditable Indicates if the token is editable.
+	 * @return {sap.m.Token} this for chaining
+	 * @public
+	 */
+	Token.prototype.setEditable = function(bEditable) {
+		var oParent = this.getParent();
+
+		this.setProperty("editable", bEditable, true);
+
+		this.$().toggleClass("sapMTokenReadOnly", !bEditable);
+
+		if (oParent instanceof Tokenizer) {
+			oParent.invalidate();
 		}
 
+		return this;
 	};
 
 	/**
 	 * Function is called when token is pressed to select/deselect token.
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent
 	 */
-	Token.prototype._onTokenPress = function() {
-		var bSelected = this.getSelected();
-		this.setSelected(!bSelected);
+	Token.prototype._onTokenPress = function(oEvent) {
+		var bSelected = this.getSelected(),
+			bCtrlKey = oEvent.ctrlKey || oEvent.metaKey,
+			bShiftKey = oEvent.shiftKey,
+			bNewSelectedValue = true,
+			oParent;
 
-		if (!bSelected) {
-			this.fireSelect({});
+		if (bCtrlKey) {
+			bNewSelectedValue = !bSelected;
 		}
 
+		this.setSelected(bNewSelectedValue);
+
+		this.firePress();
+
+		if (bSelected != bNewSelectedValue) {
+			if (bNewSelectedValue) {
+				this.fireSelect();
+			} else {
+				this.fireDeselect();
+			}
+		}
+
+		oParent = this.getParent();
+		if (oParent instanceof Tokenizer) {
+			oParent._onTokenSelect(this, bCtrlKey, bShiftKey);
+		}
+
+		if (this.getSelected()) {
+			this.focus();
+		}
+	};
+
+	/**
+	 * Sets the selection status of the token and fires the correct "select" or "deselect" event.
+	 *
+	 * @param {boolean} bSelected Indicates if the token is selected.
+	 * @private
+	 */
+	Token.prototype._changeSelection = function(bSelected) {
+		if (this.getSelected() == bSelected) {
+			return;
+		}
+
+		this.setSelected(bSelected);
+
+		if (bSelected) {
+			this.fireSelect();
+		} else {
+			this.fireDeselect();
+		}
 	};
 
 
@@ -203,54 +277,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Token.prototype.ontap = function(oEvent) {
-		this._onTokenPress();
-	};
-
-	/**
-	 * Event handler called when control touch ends, triggers possible click events / selects token
-	 *
-	 * @param {jQuery.Event}
-	 * 			oEvent
-	 * @private
-	 */
-	Token.prototype.ontouchend = function(oEvent) {
-		this.$().toggleClass("sapMTokenActive", false);
-		var oSrc = oEvent.target;
-		if (this._oSrcStartId !== oSrc.id) {
-			delete this._oSrcStartId;
-			return;
-		}
-
-		// we only allow deletion on touch devices when the Token is selected - this is to avoid accidental deletion when
-		// swiping
-		var bTouch = sap.m.MultiInput.prototype._bDoTouchScroll;
-		var bTouchDeleteAllow = false;
-		if (bTouch && this.getSelected()) {
-			bTouchDeleteAllow = true;
-		}
-
-		if (oSrc.id === this._deleteIcon.getId()) {
-			if (bTouchDeleteAllow || !bTouch) {
-				this.fireDelete({
-					token : this
-				});
-			} else {
-				// in this case we at least make sure the element gets selected
-				this.firePress({
-					token : this
-				});
-			}
-			oEvent.preventDefault();
-
-		} else {
-			this.firePress({
-				token : this
-			});
-			oEvent.preventDefault();
-		}
-
-		delete this._oSrcStartId;
-
+		this._onTokenPress(oEvent);
 	};
 
 	/**
@@ -261,6 +288,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Token.prototype.onsapfocusleave = function(oEvent) {
+		if (this.getParent() instanceof Tokenizer) {
+			return;
+		}
+
 		this.setSelected(false);
 	};
 
@@ -272,14 +303,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *          oEvent
 	 */
 	Token.prototype.onsapbackspace = function(oEvent) {
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		if (this.getSelected() && this.getEditable()) {
-			this.fireDelete({
-				token : this
-			});
-
-		}
+		this._deleteToken(oEvent);
 	};
 
 	/**
@@ -290,11 +314,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *          oEvent
 	 */
 	Token.prototype.onsapdelete = function(oEvent) {
+		this._deleteToken(oEvent);
+	};
+
+	Token.prototype._deleteToken = function(oEvent) {
+		if (this.getParent() instanceof Tokenizer) {
+			return;
+		}
+
 		if (this.getEditable()) {
 			this.fireDelete({
 				token : this
 			});
 		}
+
 		oEvent.preventDefault();
 	};
 
@@ -306,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Token.prototype.onsapspace = function(oEvent) {
 
-		this._onTokenPress();
+		this._onTokenPress(oEvent);
 		// stop browsers default behavior
 		if (oEvent) {
 			oEvent.preventDefault();
@@ -322,9 +355,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Token.prototype.onkeydown = function(oEvent) {
-		
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) { 
-			//metaKey for MAC command		
+
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+			//metaKey for MAC command
 			this.onsapspace(oEvent);
 			oEvent.preventDefault();
 		}

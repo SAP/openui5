@@ -2,7 +2,7 @@
 <html>
 <head>
 
-  	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<title>Data Binding Test Page with Master Detail and JSONModel</title>
 
@@ -11,13 +11,12 @@
     <!-- Extend the "libs" property if you like to import additional libraries  -->
     <!-- ********************************************************************** -->
     <script id="sap-ui-bootstrap"
-        type="text/javascript"
         src="../../../../../../resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-theme="sap_bluecrystal"
         data-sap-ui-trace="true">
     </script>
 
-	<script type="text/javascript">
+	<script>
 
 		try{
 			sap.ui.getCore().loadLibrary("sap.ui.commons");
@@ -35,7 +34,7 @@
 		var mdData = {
             clients:[
                 {firstName:"Donald", lastName:"Duck", id: "1",
-                 items: [{name : "Gold"}, {name: "Diamonds"}, {name: "Jewelry Gems"}] },                
+                 items: [{name : "Gold"}, {name: "Diamonds"}, {name: "Jewelry Gems"}] },
                 {firstName:"Lucky", lastName:"Luke", id: "2",
                   items: [{name : "Jolly Jumper"}, {name: "Pistol"}] },
                 {firstName:"Micky", lastName:"Mouse", id: "3",
@@ -55,7 +54,7 @@
 		sap.ui.getCore().setModel(oModel);
 
 		// clients table
-		var oTable = new sap.ui.table.DataTable({
+		var oTable = new sap.ui.table.Table({
 			title : "Clients",
 			width : "100%",
 			visibleRowCount : 5,
@@ -81,7 +80,7 @@
 		oTable.placeAt("master");
 
         // items table
-		var oItemsTable = new sap.ui.table.DataTable({
+		var oItemsTable = new sap.ui.table.Table({
 			title : "Items",
 			width : "100%",
 			visibleRowCount : 3,
@@ -101,7 +100,7 @@
 		oTable.attachRowSelect(function(oEvent){
 			// get the binding context of the first selected row
 			var selectedRowContext = oEvent.getParameter("rowContext");
-            oItemsTable.setBindingContext(selectedRowContext);		
+            oItemsTable.setBindingContext(selectedRowContext);
 		});
 
 

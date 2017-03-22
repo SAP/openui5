@@ -43,6 +43,10 @@
 	right: 0;
 }
 
+.sapUiSearchFieldIco {
+	background-image: url("img/search/search.png");
+}
+
 .sapUiSearchFieldIco:hover {
 	background-image: url("img/search/search_hover.png");
 	background-color: @sapUiFieldHoverHelpBackground;
@@ -88,7 +92,7 @@
 .sapUiSearchFieldClear.sapUiSearchFieldVal > .sapUiSearchFieldTf > .sapUiSearchFieldIco,
 .sapUiSearchFieldClear.sapUiSearchFieldVal > .sapUiSearchFieldCb > .sapUiSearchFieldIco{
 	font-size: 0;
-	color: transparent; 
+	color: transparent;
 	background-image: url("img/search/clear.png");
 	background-position: center center;
 }
@@ -105,8 +109,4 @@
 .sapUiSearchFieldClear.sapUiSearchFieldDsbl > .sapUiSearchFieldCb > .sapUiSearchFieldIco:hover {
 	background-image: url("img/search/search_dsbl.png");
 	background-color: transparent;
-}
-
-html[data-sap-ui-browser='ie8'] .sapUiSearchFieldCb.sapUiSearchFieldCbProv > .sapUiTf {
-	padding-left: 20px;
 }

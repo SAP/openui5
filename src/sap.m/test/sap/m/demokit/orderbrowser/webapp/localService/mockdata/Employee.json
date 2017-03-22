@@ -1,0 +1,43 @@
+[
+  {
+    "EmployeeID": 7424,
+    "FirstName": "Jack",
+    "LastName": "Smith",
+    "Title": "Developer",
+    "HomePhone": "01781163487",
+    "Photo": ""
+    },
+  {
+    "EmployeeID": 7827,
+    "FirstName": "Loura",
+    "LastName": "Hajjar",
+    "Title": "Developer",
+    "HomePhone": "01781237845",
+    "Photo": ""
+  },
+  {
+    "EmployeeID": 7829,
+    "FirstName": "Steven",
+    "LastName": "Buchanan",
+    "Title": "Manager",
+    "HomePhone": "01787650439",
+    "Photo": ""
+
+  },
+  {
+    "EmployeeID": 7830,
+    "FirstName": "Andrew",
+    "LastName": "Fuller",
+    "Title": "Designer",
+    "HomePhone": "01781234598",
+    "Photo": ""
+  },
+  {
+    "EmployeeID": 7840,
+    "FirstName": "Anne",
+    "LastName": "Dodsworth",
+    "Title": "Developer",
+    "HomePhone": "01796577660",
+    "Photo": ""
+  }
+]

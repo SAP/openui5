@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global QUnit, equal, deepEqual, ok, start, stop */
+/*global QUnit, Date:true */
 
 /**
  * SAPUI5 test utilities
@@ -12,141 +12,164 @@
  * @public
  */
 
-/**
- * The <code>sap.ui.test.qunit</code> namespace contains helper functionality for
- * QUnit tests.
- *
- * @version ${version}
- * @namespace
- * @name sap.ui.test.qunit
- * @public
- */
-
-sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType', 'jquery.sap.script'],
+	function(jQuery, Device, DataType /*, jQuerySap1 */) {
 	"use strict";
 
+	if ( typeof QUnit !== 'undefined' ) {
 
-	jQuery.sap.getObject("sap.ui.test.qunit", 0);
-	
-	
-	(function() {
-		if (typeof QUnit !== "undefined") {
-	
-			// extract the URL parameters
-			var mParams = jQuery.sap.getUriParameters();
-			
-			// TODO: Remove deprecated code once all projects adapted
-			QUnit.equals = window.equals = window.equal;
+		// extract the URL parameters
+		var mParams = jQuery.sap.getUriParameters();
 
-			// Set global timeout for all tests
-			var sTimeout = mParams.get("sap-ui-qunittimeout");
-			if (!sTimeout || isNaN(sTimeout)) {
-				sTimeout = "30000"; // 30s: default timeout of an individual QUnit test!
-			}
-			QUnit.config.testTimeout = parseInt(sTimeout, 10);
-			
-			// Do not reorder tests, as most of the tests depend on each other
-			QUnit.config.reorder = false;
-			
-			// only when instrumentation is done on server-side blanket itself doesn't
-			// take care about rendering the report - in this case we do it manually
-			// when the URL parameter "coverage-report" is set to true or x
-			if (window["sap-ui-qunit-coverage"] !== "client" && /x|true/i.test(jQuery.sap.getUriParameters().get("coverage-report"))) {
-				QUnit.done(function(failures, total) {
-					// only when coverage is available and modern browser (not IE8!)
-					if (window._$blanket && document.addEventListener) {
-						// we remove the QUnit object to avoid blanket to automatically
-						// trigger start on QUnit which leads to failures in qunit-junit-reporter
-						var QUnit = window.QUnit;
-						window.QUnit = undefined;
-						// load the blanket instance
-						jQuery.sap.require("sap.ui.thirdparty.blanket");
-						// reset the QUnit object 
-						window.QUnit = QUnit;
-						// trigger blanket to display the coverage report
-						window.blanket.report({});
-					}
-				});
-			}
-			
-			// PhantomJS patch for Focus detection via jQuery:
-			// ==> https://code.google.com/p/phantomjs/issues/detail?id=427
-			//     ==> https://github.com/ariya/phantomjs/issues/10427
-			if (sap.ui.Device.browser.phantomJS) {
-				// workaround copied from above bug report
-				var $is = jQuery.fn.is;
-				jQuery.fn.is = function(sSelector) {
-					if (sSelector === ":focus") {
-						return this.get(0) === document.activeElement;
-					}
-					return $is.apply(this, arguments);
-				};
-			}
-			
-			// PhantomJS fix for invalid date handling:
-			// ==> https://github.com/ariya/phantomjs/issues/11151
-			if (sap.ui.Device.browser.phantomJS) {
-				
-				/*eslint-disable */
-				// patch the parse function of the Date
-				var fnParse = Date.parse;
-				Date.parse = function(sDateString) {
-					var iMillis = fnParse.apply(Date, arguments);
-					if (sDateString && typeof sDateString === "string") {
-						// if the year is gt/eq 2034 we need to increment the 
-						// date by one additional day since this is broken in 
-						// PhantomJS => this is a workaround for the upper BUG!
-						var m = /^(\d{4})(?:-(\d+)?-(\d+))(?:[T ](\d+):(\d+)(?::(\d+)(?:\.(\d+))?)?)?(?:Z(-?\d*))?$/.exec(sDateString);
-						if (m && parseInt(m[1], 10) >= 2034) {
-							iMillis += 24 * 60 * 60 * 1000;
-						}
-					}
-					return iMillis;
-				};
-				
-				// override the constructor of the Date object
-				var fnDate = Date;
-				Date = function() {
-					var args = Array.prototype.slice.call(arguments);
-					if (args.length === 1 && typeof args[0] === "string") {
-						return new fnDate(Date.parse(args[0]));
-					}
-					args.unshift(window);
-					if (this instanceof Date) {
-						// usage of new Date(...):
-						// simulate a new call with Function.prototype.bind.apply(fnClass, args)
-						return new (Function.prototype.bind.apply(fnDate, args));
-					} else {
-						// usage of Date(...):
-						return fnDate.apply(window, args);
-					}
-				};
-				
-				// take over the static properties from the original date object
-				Date.parse = fnDate.parse;
-				Date.now = fnDate.now;
-				Date.UTC = fnDate.UTC;
-				Date.prototype = fnDate.prototype;
-				/*eslint-enable */
-				
-			}
-			
+		// TODO: Remove deprecated code once all projects adapted
+		QUnit.equals = window.equals = window.equal;
+
+		// Set global timeout for all tests
+		var sTimeout = mParams.get("sap-ui-qunittimeout");
+		if (!sTimeout || isNaN(sTimeout)) {
+			sTimeout = "30000"; // 30s: default timeout of an individual QUnit test!
 		}
-	}());
-	
-	//TODO: Get rid of the old namespace and adapt the existing tests accordingly
-	window.qutils = sap.ui.test.qunit;
-	
+		QUnit.config.testTimeout = parseInt(sTimeout, 10);
+
+		// Do not reorder tests, as most of the tests depend on each other
+		QUnit.config.reorder = false;
+
+		// only when instrumentation is done on server-side blanket itself doesn't
+		// take care about rendering the report - in this case we do it manually
+		// when the URL parameter "coverage-report" is set to true or x
+		if (window["sap-ui-qunit-coverage"] !== "client" && /x|true/i.test(mParams.get("coverage-report"))) {
+			QUnit.done(function(failures, total) {
+				// only when coverage is available
+				if (window._$blanket) {
+					// we remove the QUnit object to avoid blanket to automatically
+					// trigger start on QUnit which leads to failures in qunit-reporter-junit
+					var QUnit = window.QUnit;
+					window.QUnit = undefined;
+					// load the blanket instance
+					sap.ui.requireSync("sap/ui/thirdparty/blanket");
+					// restore the QUnit object
+					window.QUnit = QUnit;
+					// trigger blanket to display the coverage report
+					window.blanket.report({});
+				}
+			});
+		}
+
+	}
+
+	// PhantomJS patch for Focus detection via jQuery:
+	// ==> https://code.google.com/p/phantomjs/issues/detail?id=427
+	//     ==> https://github.com/ariya/phantomjs/issues/10427
+	if (Device.browser.phantomJS) {
+		// workaround copied from above bug report
+		var $is = jQuery.fn.is;
+		jQuery.fn.is = function(sSelector) {
+			if (sSelector === ":focus") {
+				return this.get(0) === document.activeElement;
+			}
+			return $is.apply(this, arguments);
+		};
+	}
+
+	// Re-implement jQuery.now to always delegate to Date.now.
+	//
+	// Otherwise, fake timers that are installed after jQuery don't work with jQuery animations
+	// as those animations internally use jQuery.now which then is a reference to the original,
+	// native Date.now.
+	jQuery.now = function() {
+		return Date.now();
+	};
+
+	// PhantomJS fix for invalid date handling:
+	// ==> https://github.com/ariya/phantomjs/issues/11151
+	if (Device.browser.phantomJS) {
+
+		/*eslint-disable */
+		var NativeDate = Date,
+			NativeDate_parse = NativeDate.parse;
+
+		// override the constructor of the Date object
+		Date = function(sDateString) {
+			if ( arguments.length === 1 && typeof sDateString === 'string' ) {
+				return new NativeDate(Date.parse(sDateString));
+			}
+
+			// signature variant with 2..6 individual date components
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(window);
+			if (this instanceof NativeDate) {
+				// usage of new Date(...):
+				// simulate a new call with Function.prototype.bind.apply(fnClass, args)
+				return new (Function.prototype.bind.apply(NativeDate, args));
+			} else {
+				// usage of Date(...):
+				return NativeDate.apply(window, args);
+			}
+		};
+
+		// patch the parse function of the Date
+		var parse = function (sDateString) {
+			var iMillis = NativeDate_parse.apply(Date, arguments);
+			if (sDateString && typeof sDateString === "string") {
+				// if the year is gt/eq 2034 we need to increment the
+				// date by one additional day since this is broken in
+				// PhantomJS => this is a workaround for the upper BUG!
+				var m = /^(\d{4})(?:-(\d+)?-(\d+))(?:[T ](\d+):(\d+)(?::(\d+)(?:\.(\d+))?)?)?(?:Z(-?\d*))?$/.exec(sDateString);
+				if (m && parseInt(m[1], 10) >= 2034) {
+					iMillis += 24 * 60 * 60 * 1000;
+				}
+			}
+			return iMillis;
+		};
+
+		// Add the static functions to Date with 'enumerable=false',
+		// otherwise, Sinon will copy them over his own modified versions
+		// of e.g. Date.now, thereby breaking the fakeTimer feature.
+		Object.defineProperties(Date, {
+			"parse": {
+				value: parse,
+				enumerable: false
+			},
+			"toString": {
+				value: function() {
+					return NativeDate.toString.call(this);
+				},
+				enumerable: false
+			},
+			"now": {
+				value: NativeDate.now,
+				enumerable: false
+			},
+			"UTC": {
+				value: NativeDate.UTC,
+				enumerable: false
+			},
+			"prototype": {
+				value: NativeDate.prototype,
+				enumerable :false
+			}
+		});
+		/*eslint-enable */
+	}
+
+	/**
+	 * Contains helper functionality for QUnit tests.
+	 *
+	 * @namespace
+	 * @alias sap.ui.test.qunit
+	 * @public
+	 */
+	var QUtils = {};
+
 	/**
 	 * Delays the start of the test until everything is rendered or - if given - for the specified milliseconds.
 	 * This function must be called before the first test function.
 	 *
 	 * @param {int} [iDelay] optional delay in milliseconds
-	 * 
+	 *
 	 * @public
 	 */
-	sap.ui.test.qunit.delayTestStart = function(iDelay){
+	QUtils.delayTestStart = function(iDelay){
 		QUnit.config.autostart = false;
 		if (iDelay) {
 			window.setTimeout(function() {
@@ -158,9 +181,77 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			});
 		}
 	};
-	
+
+	var fixOriginalEvent = jQuery.noop;
+
+	try {
+
+		// check whether preventDefault throws an error for a dummy event
+		new jQuery.Event({type: "mousedown"}).preventDefault();
+
+	} catch (e) {
+
+		// if so, we might be running on top of jQuery 2.2.0 or higher and we have to add the native Event methods to the 'originalEvent'
+		fixOriginalEvent = function(origEvent) {
+			if ( origEvent ) {
+				origEvent.preventDefault = origEvent.preventDefault || jQuery.noop;
+				origEvent.stopPropagation = origEvent.stopPropagation || jQuery.noop;
+				origEvent.stopImmediatePropagation = origEvent.stopImmediatePropagation || jQuery.noop;
+			}
+		};
+
+		var OrigjQEvent = jQuery.Event;
+		jQuery.Event = function(src, props) {
+			var event = new OrigjQEvent(src, props);
+			fixOriginalEvent(event.originalEvent);
+			return event;
+		};
+		jQuery.Event.prototype = OrigjQEvent.prototype;
+	}
+
+	/*
+	 * Creates a fake event of type jQuery.Event, according to current UI5 practices; it will always
+	 * contain a pseudo browser event (property <code>originalEvent</code>).
+	 *
+	 * Please note that the <code>originalEvent</code> could be created as a native browser event (class <code>Event</code>)
+	 * as some existing test cases specify a <code>target</code> property which is readonly in the <code>Event</code> class.
+	 *
+	 * Any given <code>oParams</code> are added to the new <code>jQuery.Event</code> as well as to its <code>originalEvent</code>
+	 * object. To be compatible with older versions, this function does not propagate properties to <code>originalEvent</code> when
+	 * they are given before an eventual <code>originalEvent</code> property in <code>oParams</code>.
+	 *
+	 * @param {string} sEventName mandatory name (type) of the newly created event
+	 * @param {EventTarget} [oTarget] optional target of the event
+	 * @param {object} [oParams] optional map of properties to be added to the event
+	 */
+	function fakeEvent(sEventName, oTarget, oParams) {
+
+		var oEvent = jQuery.Event({type : sEventName});
+		if ( oTarget != null ) {
+			oEvent.target = oTarget;
+		}
+
+		if (oParams) {
+			for (var x in oParams) {
+
+				// propagate property to event
+				oEvent[x] = oParams[x];
+
+				if ( x === 'originalEvent' ) {
+					// if 'originalEvent' has been changed, fix it
+					fixOriginalEvent(oEvent[x]);
+				} else {
+					// otherwise propagate property to 'originalEvent' as well
+					oEvent.originalEvent[x] = oParams[x];
+				}
+			}
+		}
+
+		return oEvent;
+	}
+
 	/**
-	 * Programmtically triggers an event specified by its name on a specified target with some optional parameters.
+	 * Programmatically triggers an event specified by its name on a specified target with some optional parameters.
 	 * @see http://api.jquery.com/trigger/
 	 *
 	 * @param {string} sEventName The name of the browser event (like "click")
@@ -168,24 +259,19 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @param {object} [oParams] The parameters which should be attached to the event in JSON notation (depending on the event type).
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerEvent = function(sEventName, oTarget, oParams) {
-		var tmpEvent = jQuery.Event(sEventName);
-		tmpEvent.originalEvent = tmpEvent.originalEvent || {};
-		
-		if (oParams) {
-			for (var x in oParams) {
-				tmpEvent[x] = oParams[x];
-				tmpEvent.originalEvent[x] = oParams[x];
-			}
-		}
-	
+	QUtils.triggerEvent = function(sEventName, oTarget, oParams) {
+
 		if (typeof (oTarget) == "string") {
-			oTarget = jQuery.sap.domById(oTarget);
+			oTarget = oTarget ? document.getElementById(oTarget) : null;
 		}
-		jQuery(oTarget).trigger(tmpEvent);
+
+		var oEvent = fakeEvent(sEventName, /* no target */ null, oParams);
+
+		jQuery(oTarget).trigger(oEvent);
+
 	};
-	
-	
+
+
 	/**
 	 * Programmatically triggers a touch event specified by its name.
 	 * The onEVENTNAME functions are called directly on the "nearest" control / element of the given target.
@@ -193,33 +279,28 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @param {string} sEventName The name of the touch event (touchstart, touchmove, touchend)
 	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {object} [oParams] The parameters which should be attached to the event in JSON notation (depending on the event type).
+	 * @param {string} [sEventHandlerPrefix='on'] prefix to use for the event handler name, defaults to 'on'
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerTouchEvent = function(sEventName, oTarget, oParams) {
+	QUtils.triggerTouchEvent = function(sEventName, oTarget, oParams, sEventHandlerPrefix) {
+
 		if (typeof (oTarget) == "string") {
-			oTarget = jQuery.sap.domById(oTarget);
+			oTarget = oTarget ? document.getElementById(oTarget) : null;
 		}
-		var $Target = jQuery(oTarget);
-	
-		var oEvent = jQuery.Event(sEventName);
-		oEvent.originalEvent = {};
-		oEvent.target = oTarget;
-		if (oParams) {
-			for (var x in oParams) {
-				oEvent[x] = oParams[x];
-				oEvent.originalEvent[x] = oParams[x];
-			}
+
+		var oEvent = fakeEvent(sEventName, oTarget, oParams),
+			oElement = jQuery(oTarget).control(0),
+			sEventHandlerName = (sEventHandlerPrefix == null ? 'on' : sEventHandlerPrefix) + sEventName;
+
+		if (oElement && oElement[sEventHandlerName]) {
+			oElement[sEventHandlerName].call(oElement, oEvent);
 		}
-	
-		var oElement = $Target.control(0);
-		if (oElement && oElement["on" + sEventName]) {
-			oElement["on" + sEventName].apply(oElement, [oEvent]);
-		}
+
 	};
-	
-	
+
+
 	/**
-	 * Programmtically triggers a keyboard event specified by its name on a specified target.
+	 * Programmatically triggers a keyboard event specified by its name on a specified target.
 	 * @see sap.ui.test.qunit.triggerEvent
 	 *
 	 * @param {string} sEventType The name of the browser keyboard event (like "keydown")
@@ -230,7 +311,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @param {boolean} bCtrlKey Indicates whether the ctrl key is down in addition
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerKeyEvent = function(sEventType, oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
+	QUtils.triggerKeyEvent = function(sEventType, oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
 		var oParams = {};
 		oParams.keyCode = isNaN(sKey) ? jQuery.sap.KeyCodes[sKey] : sKey;
 		oParams.which = oParams.keyCode;
@@ -238,12 +319,12 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 		oParams.altKey = bAltKey;
 		oParams.metaKey = bCtrlKey;
 		oParams.ctrlKey = bCtrlKey;
-		sap.ui.test.qunit.triggerEvent(sEventType, oTarget, oParams);
+		QUtils.triggerEvent(sEventType, oTarget, oParams);
 	};
-	
-	
+
+
 	/**
-	 * Programmtically triggers a keydown event on a specified target.
+	 * Programmatically triggers a 'keydown' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerKeyEvent
 	 *
 	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
@@ -253,13 +334,13 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @param {boolean} bCtrlKey Indicates whether the ctrl key is down in addition
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerKeydown = function(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
-		sap.ui.test.qunit.triggerKeyEvent("keydown", oTarget, sKey, bShiftKey, bAltKey, bCtrlKey);
+	QUtils.triggerKeydown = function(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
+		QUtils.triggerKeyEvent("keydown", oTarget, sKey, bShiftKey, bAltKey, bCtrlKey);
 	};
-	
-	
+
+
 	/**
-	 * Programmtically triggers a keydup event on a specified target.
+	 * Programmatically triggers a 'keyup' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerKeyEvent
 	 *
 	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
@@ -269,11 +350,11 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @param {boolean} bCtrlKey Indicates whether the ctrl key is down in addition
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerKeyup = function(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
-		sap.ui.test.qunit.triggerKeyEvent("keyup", oTarget, sKey, bShiftKey, bAltKey, bCtrlKey);
+	QUtils.triggerKeyup = function(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
+		QUtils.triggerKeyEvent("keyup", oTarget, sKey, bShiftKey, bAltKey, bCtrlKey);
 	};
-	
-	
+
+
 	/**
 	 * @param {object} oTarget
 	 * @param {string} sKey
@@ -284,13 +365,13 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @see sap.ui.test.qunit.triggerKeydown
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerKeyboardEvent = function(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
-		sap.ui.test.qunit.triggerKeydown(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey);
+	QUtils.triggerKeyboardEvent = function(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
+		QUtils.triggerKeydown(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey);
 	};
-	
-	
+
+
 	/**
-	 * Programmtically triggers a keypress event on a specified target.
+	 * Programmatically triggers a 'keypress' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerEvent
 	 *
 	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
@@ -300,13 +381,13 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @param {boolean} bCtrlKey Indicates whether the ctrl key is down in addition
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerKeypress = function(oTarget, sChar, bShiftKey, bAltKey, bCtrlKey) {
+	QUtils.triggerKeypress = function(oTarget, sChar, bShiftKey, bAltKey, bCtrlKey) {
 		var _sChar = sChar && sChar.toUpperCase();
 		if (jQuery.sap.KeyCodes[_sChar] === null) {
-			ok(false, "Invalid character for triggerKeypress: '" + sChar + "'");
+			QUnit.ok(false, "Invalid character for triggerKeypress: '" + sChar + "'");
 		}
 		var _iCharCode = sChar.charCodeAt(0);
-	
+
 		var oParams = {};
 		oParams.charCode = _iCharCode;
 		oParams.which = _iCharCode;
@@ -314,12 +395,12 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 		oParams.altKey = !!bAltKey;
 		oParams.metaKey = !!bCtrlKey;
 		oParams.ctrlKey = !!bCtrlKey;
-		sap.ui.test.qunit.triggerEvent("keypress", oTarget, oParams);
+		QUtils.triggerEvent("keypress", oTarget, oParams);
 	};
-	
-	
+
+
 	/**
-	 * Programmtically triggers a keypress event on a specified input field target and appends the character to the value
+	 * Programmatically triggers a 'keypress' event on a specified input field target and appends the character to the value
 	 * of this input field.
 	 * @see sap.ui.test.qunit.triggerKeypress
 	 *
@@ -327,17 +408,17 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @param {string} sChar Only the first char of the string will be passed via keypress event
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerCharacterInput = function(oInput, sChar) {
-		sap.ui.test.qunit.triggerKeypress(oInput, sChar);
-	
+	QUtils.triggerCharacterInput = function(oInput, sChar) {
+		QUtils.triggerKeypress(oInput, sChar);
+
 		if (typeof (oInput) == "string") {
-			oInput = jQuery.sap.domById(oInput);
+			oInput = oInput ? document.getElementById(oInput) : null;
 		}
 		var $Input = jQuery(oInput);
 		$Input.val($Input.val() + sChar);
 	};
-	
-	
+
+
 	/**
 	 * Programmatically triggers a mouse event specified by its name on a specified target.
 	 * @see sap.ui.test.qunit.triggerEvent
@@ -351,145 +432,131 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 * @param {int} iButton The button of the mouse during the event (e.g. 0: LEFT, 1: MIDDLE, 2: RIGHT)
 	 * @public
 	 */
-	sap.ui.test.qunit.triggerMouseEvent = function(oTarget, sEventType, iOffsetX, iOffsetY, iPageX, iPageY, iButton) {
+	QUtils.triggerMouseEvent = function(oTarget, sEventType, iOffsetX, iOffsetY, iPageX, iPageY, iButton) {
 		var oParams = {};
 		oParams.offsetX = iOffsetX;
 		oParams.offsetY = iOffsetY;
 		oParams.pageX = iPageX;
 		oParams.pageY = iPageY;
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
-			switch (iButton) {
-				case 0:
-					oParams.button = 1;
-					break;
-				case 1:
-					oParams.button = 0;
-					break;
-				default:
-					oParams.button = iButton;
-			}
-		} else {
-			oParams.button = iButton;
-		}
-		sap.ui.test.qunit.triggerEvent(sEventType, oTarget, oParams);
+		oParams.button = iButton;
+		QUtils.triggerEvent(sEventType, oTarget, oParams);
 	};
-	
-	(function() {
-	
-		var FONT_WEIGHTS = {
-			'normal': 400,
-			'bold': 700
-		};
-		
-		jQuery.fn.extend({
-		
-			/**
-			 * jQuery plugin (function) to retrieve the internal event data even for jQuery >= 1.9
-			 *
-			 * This is only a HACK and not guaranteed to work with future versions of jQuery. 
-			 * It is only intended to be used in test cases.
-			 * 
-			 * @see http://jquery.com/upgrade-guide/1.9/#data-events-
-			 *  
-			 * @public
-			 * @name jQuery#_sapTest_dataEvents
-			 * @deprecated Tests that rely on this function should try to substitute it with other tests
-			 */
-			_sapTest_dataEvents : function() {
-				var elem = this[0];
-				return elem ? jQuery._data(elem, "events") : null;
-			},
-		
-			/**
-			 * jQuery plugin (function) that normalizes textual font-weight values to numerical ones.
-			 *
-			 * Webkit browsers preserve string values and even convert well known numerical values to
-			 * string values (e.g. 700 -> bold, 400 -> normal).
-			 * 
-			 * Starting with jQuery 1.10, jQuery normalizes some of these values to a numerical value.
-			 * 
-			 * This method hides all these differences (browser, jQuery version) and returns a numerical value
-			 *  
-			 * @public
-			 * @name jQuery#_sapTest_cssFontWeight
-			 * @deprecated Tests that rely on this function should try to substitute it with other tests
-			 */
-			_sapTest_cssFontWeight : function() {
-				var v = this.css("font-weight");
-				return v ? FONT_WEIGHTS[v] || v : v;
-			}
-		});
-	
-	}());
-	
+
+	// --------------------------------------------------------------------------------------------------
+
+	var FONT_WEIGHTS = {
+		'normal': 400,
+		'bold': 700
+	};
+
+	jQuery.fn.extend({
+
+		/**
+		 * jQuery plugin (function) to retrieve the internal event data even for jQuery >= 1.9
+		 *
+		 * This is only a HACK and not guaranteed to work with future versions of jQuery.
+		 * It is only intended to be used in test cases.
+		 *
+		 * @see http://jquery.com/upgrade-guide/1.9/#data-events-
+		 *
+		 * @public
+		 * @name jQuery#_sapTest_dataEvents
+		 * @deprecated Tests that rely on this function should try to substitute it with other tests
+		 */
+		_sapTest_dataEvents : function() {
+			var elem = this[0];
+			return elem ? jQuery._data(elem, "events") : null;
+		},
+
+		/**
+		 * jQuery plugin (function) that normalizes textual font-weight values to numerical ones.
+		 *
+		 * Webkit browsers preserve string values and even convert well known numerical values to
+		 * string values (e.g. 700 -> bold, 400 -> normal).
+		 *
+		 * Starting with jQuery 1.10, jQuery normalizes some of these values to a numerical value.
+		 *
+		 * This method hides all these differences (browser, jQuery version) and returns a numerical value
+		 *
+		 * @public
+		 * @name jQuery#_sapTest_cssFontWeight
+		 * @deprecated Tests that rely on this function should try to substitute it with other tests
+		 */
+		_sapTest_cssFontWeight : function() {
+			var v = this.css("font-weight");
+			return v ? FONT_WEIGHTS[v] || v : v;
+		}
+	});
+
+
 	//************************************
 	//TODO: Check JS Doc starting here -> describe and check visibility for stuff in namespace sap.ui.test.qunit
-	
-	
+
+
 	(function() {
-	
+
 		/*
 		 * wrapper around window.console
 		 */
 		function info(msg) {
 			jQuery.sap.log.info(msg);
 		}
-	
+
 		var M_DEFAULT_TEST_VALUES = {
 			"boolean" : [false, true],
 			"int" : [0, 1, 5, 10, 100],
 			"float" : [NaN, 0.0, 0.01, 3.14, 97.7],
 			"string" : ["", "some", "very long otherwise not normal and so on whatever", "<" + "script>alert('XSS attack!');</" + "script>"]
 		};
-	
-		var mDefaultTestValues = jQuery.sap.newObject(M_DEFAULT_TEST_VALUES);
-	
+
+		var mDefaultTestValues = Object.create(M_DEFAULT_TEST_VALUES);
+
 		function ensureArray(o) {
 			return o && !(o instanceof Array) ? [o] : o;
 		}
-	
+
 		/**
 		 * @TODO DESCRIBE AND CHECK VISIBILITY!
 		 * @private
 		 */
-		sap.ui.test.qunit.resetDefaultTestValues = function(sType) {
+		QUtils.resetDefaultTestValues = function(sType) {
 			if ( typeof sType === "string" ) {
 				delete mDefaultTestValues[sType];
 			} else {
-				mDefaultTestValues = jQuery.sap.newObject(M_DEFAULT_TEST_VALUES);
+				mDefaultTestValues = Object.create(M_DEFAULT_TEST_VALUES);
 			}
 		};
-	
+
 		/**
 		 * @TODO DESCRIBE AND CHECK VISIBILITY!
 		 * @private
 		 */
-		sap.ui.test.qunit.setDefaultTestValues = function(sType, aValues) {
+		QUtils.setDefaultTestValues = function(sType, aValues) {
 			if ( typeof sType === "string" ) {
 				mDefaultTestValues[sType] = ensureArray(aValues);
 			} else if ( typeof sType === "object" ) {
 				jQuery.extend(mDefaultTestValues, sType);
 			}
 		};
-	
+
 		/**
 		 * @TODO DESCRIBE AND CHECK VISIBILITY!
 		 * @private
 		 */
-		sap.ui.test.qunit.createSettingsDomain = function(oClass, oPredefinedValues) {
-	
+		QUtils.createSettingsDomain = function(oClass, oPredefinedValues) {
+
 			function createValues(sType) {
 				if ( mDefaultTestValues[sType] ) {
 					return mDefaultTestValues[sType];
 				}
-	
+
 				try {
 					jQuery.sap.require(sType);
 				} catch (e) {
 					//escape eslint check for empty block
 				}
 				var oType = jQuery.sap.getObject(sType);
-				if ( !(oType instanceof sap.ui.base.DataType) ) {
+				if ( !(oType instanceof DataType) ) {
 					var r = [];
 					for (var n in oType) {
 						r.push(oType[n]);
@@ -498,9 +565,9 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 					return r;
 				}
 				return [];
-	
+
 			}
-	
+
 			var oClass = new oClass().getMetadata().getClass(); // resolves proxy
 			var oPredefinedValues = oPredefinedValues || {};
 			var result = {};
@@ -518,21 +585,21 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			*/
 			return result;
 		};
-	
+
 		/**
 		 * @TODO DESCRIBE AND CHECK VISIBILITY!
 		 * @private
 		 */
-		sap.ui.test.qunit.genericTest = function(oClass, sUIArea, oTestConfig) {
-	
+		QUtils.genericTest = function(oClass, sUIArea, oTestConfig) {
+
 			if ( oTestConfig && oTestConfig.skip === true ) {
 				return;
 			}
-	
+
 			var oClass = new oClass().getMetadata().getClass(); // resolves proxy
 			var oTestConfig = oTestConfig || {};
-			var oTestValues = sap.ui.test.qunit.createSettingsDomain(oClass, oTestConfig.allPairTestValues || {});
-	
+			var oTestValues = QUtils.createSettingsDomain(oClass, oTestConfig.allPairTestValues || {});
+
 			info("domain");
 			for (var name in oTestValues) {
 				var l = oTestValues[name].length;
@@ -544,11 +611,11 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 				s.push("]");
 				info(s.join(""));
 			}
-	
+
 			function method(sPrefix, sName) {
 				return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
 			}
-	
+
 			function getActualSettings(oControl, oSettings) {
 				var oActualSettings = {};
 				for (var settingsName in oSettings) {
@@ -558,75 +625,75 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 				}
 				return oActualSettings;
 			}
-	
+
 			var oControl;
 			var oSettings;
-	
+
 			// generate "AllPairs" test cases
-			var apg = new sap.ui.test.qunit.AllPairsGenerator(oTestValues);
+			var apg = new QUtils.AllPairsGenerator(oTestValues);
 			var aTestCases = [];
 			while ( apg.hasNext() ) {
 				aTestCases.push(apg.next());
 			}
-	
+
 			var index = 0;
 			function testNextCombination() {
 				info("testNextCombination(" + index + ")");
 				if ( index >= aTestCases.length ) {
 					// continue with other tests
 					info("last combination -> done");
-					start();
+					QUnit.start();
 					return;
 				}
-	
+
 				// constructor test
 				oControl = new oClass(oSettings);
 				var oActualSettings = getActualSettings(oControl, oSettings);
-				deepEqual(oActualSettings, oSettings, "settings");
-	
+				QUnit.deepEqual(oActualSettings, oSettings, "settings");
+
 				/*
 				// individual setters
 				oControl = new oClass();
 				for(var name in oSettings) {
 					var r = oControl[method("set", name)](oSettings[name]);
-					equal(oControl[method("get", name)](), oSettings[name], "setter for property '" + name + "'");
-					ok(r == oControl, "setter for property '" + name + "' supports chaining");
+					QUnit.equal(oControl[method("get", name)](), oSettings[name], "setter for property '" + name + "'");
+					QUnit.ok(r == oControl, "setter for property '" + name + "' supports chaining");
 				}
 				*/
-	
+
 				// rendering test
 				oControl.placeAt(sUIArea);
 				info("before explicit rerender");
 				oControl.getUIArea().rerender();
 				info("after explicit rerender");
-	
+
 				info("info");
 				setTimeout(continueAfterRendering, 0);
-	
+
 			}
-	
-			stop(15000);
+
+			QUnit.stop(15000);
 			testNextCombination();
-	
+
 			function continueAfterRendering() {
 				info("continueAfterRendering(" + index + ")");
 				var oTestSettings = aTestCases[aTestCases.length - index - 1];
 				for (var settingsName in oTestSettings) {
 					var r = oControl[method("set", settingsName)](oTestSettings[settingsName]);
-					equal(oControl[method("get", settingsName)](), oTestSettings[settingsName], "setter for property '" + settingsName + "'");
-					ok(r == oControl, "setter for property '" + settingsName + "' supports chaining (after rendering)");
+					QUnit.equal(oControl[method("get", settingsName)](), oTestSettings[settingsName], "setter for property '" + settingsName + "'");
+					QUnit.ok(r == oControl, "setter for property '" + settingsName + "' supports chaining (after rendering)");
 				}
 				index = index + 1;
 				setTimeout(testNextCombination, 0);
 			}
-	
+
 		};
-	
+
 		/**
 		 * @TODO DESCRIBE AND CHECK VISIBILITY!
 		 * @private
 		 */
-		sap.ui.test.qunit.suppressErrors = function(bSuppress) {
+		QUtils.suppressErrors = function(bSuppress) {
 			//var lastErrorHandler;
 			if ( bSuppress !== false ) {
 				info("suppress global errors");
@@ -641,13 +708,13 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 				//lastErrorHandler = undefined;
 			}
 		};
-	
+
 		/**
 		 * @TODO DESCRIBE AND CHECK VISIBILITY!
 		 * @private
 		 */
-		sap.ui.test.qunit.RandomPairsGenerator = function(oDomain) {
-	
+		QUtils.RandomPairsGenerator = function(oDomain) {
+
 			var iCombinations = 0;
 			for (var name in oDomain) {
 				if ( oDomain[name] && !(oDomain[name] instanceof Array) ) {
@@ -661,7 +728,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 					}
 				}
 			}
-	
+
 			function createSettings(iCombination) {
 				var oSettings = {};
 				for (var domainName in oDomain) {
@@ -677,23 +744,23 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 				}
 				return oSettings;
 			}
-	
+
 			this.hasNext = function() {
 				return true;
 			};
-	
+
 			this.next = function() {
 				return createSettings(Math.floor(100 * iCombinations * Math.random()));
 			};
-	
+
 		};
-	
+
 		/**
 		 * @TODO DESCRIBE AND CHECK VISIBILITY!
 		 * @private
 		 */
-		sap.ui.test.qunit.AllPairsGenerator = function (oDomain) {
-	
+		QUtils.AllPairsGenerator = function (oDomain) {
+
 			// more suitable access to the params
 			var params = [];
 			for (var name in oDomain) {
@@ -704,7 +771,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 				});
 			}
 			var N = params.length;
-	
+
 			/**
 			 * Number of occurrences for each possible property value pair.
 			 * A value of 0 indicates that there is no test case yet, so the pair must
@@ -734,22 +801,22 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			 * params.indexOf(a) < params.indexOf(b)) are filled.
 			 */
 			var occurs = [];
-	
+
 			/**
 			 * Offset for a given combination of properties (a,b) into the occurs[]
 			 * array. For a details description see the occurs[] array.
 			 */
 			var abOffset = [];
-	
+
 			/**
 			 * Number of pairs for which occurs[(a,b)] == 0.
 			 *
 			 * Note: during initialization, this variable also represents the number
 			 * of created entries in the occurs[] array. As all entries are created with
-			 * a value of 0, the definiton above still holds.
+			 * a value of 0, the definition above still holds.
 			 */
 			var nPairs = 0;
-	
+
 			/*
 			 * Initialization. Loops over all a,b combinations with (a<b)
 			 * and creates the initial occurs[] and abOccurs[] values.
@@ -766,7 +833,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 					}
 				}
 			}
-	
+
 			/**
 			 * Helper that calculates the offset into the occurs array
 			 * for a given combination of a,b and the values of a and b.
@@ -774,11 +841,11 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			function offset(a,b,va,vb) {
 				return abOffset[a * N + b] + va * params[b].n + vb;
 			}
-	
+
 			function findTestCase() {
-	
+
 				var value_index = [];
-	
+
 				/**
 				 * Calculates a cost function for the case where for
 				 * property 'a' the value 'va' is taken.
@@ -813,7 +880,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 					}
 					return score;
 				}
-	
+
 				// loop over all properties and find the "best" value
 				for (var d = 0; d < N; d++) {
 					var pd = params[d];
@@ -828,13 +895,13 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 							bestCost = cost;
 						}
 					}
-	
+
 					value_index[d] = bestCost.va;
 				}
-	
+
 				return value_index;
 			}
-	
+
 			/**
 			 * Iff there are still unused pairs, then there will be another test case.
 			 * @return whether another test cases is needed.
@@ -843,10 +910,10 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			this.hasNext = function() {
 				return nPairs > 0;
 			};
-	
+
 			var lastTest;
 			var lastPairs = -1;
-	
+
 			/**
 			 *
 			 * @return
@@ -855,7 +922,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			this.next = function() {
 				lastTest = findTestCase();
 				lastPairs = 0;
-	
+
 				var test = {};
 				for (var a = 0; a < N; a++) {
 					for (var b = a + 1; b < N; b++) {
@@ -868,17 +935,22 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 					}
 					test[params[a].name] = params[a].values[lastTest[a]];
 				}
-	
+
 				return test;
 			};
-	
+
 			this.lastPairs = function() {
 				return lastPairs;
 			};
 		};
-		
+
 	}());
 
-	return sap.ui.test.qunit;
+	// export
+	// TODO: Get rid of the old namespace and adapt the existing tests accordingly
+	jQuery.sap.setObject("sap.ui.test.qunit", QUtils);
+	window.qutils = QUtils;
+
+	return QUtils;
 
 }, /* bExport= */ true);

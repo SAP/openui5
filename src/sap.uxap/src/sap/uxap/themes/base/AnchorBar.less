@@ -1,0 +1,369 @@
+/* =================================== */
+/* CSS for control sap.uxap/AnchorBar  */
+/* Base theme                          */
+/* =================================== */
+
+/**********************************
+Common Compact/Cozy
+**********************************/
+
+/* BAR */
+
+.sapUxAPAnchorBar {
+	height: 3rem;
+}
+
+.sapUxAPAnchorBar.sapMTB {
+	padding-left: 0;
+	box-shadow: @sapUiShadowHeader;
+}
+
+/* M, L or splitview paddings */
+.sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapMTB,
+.sapUiMedia-Std-Desktop .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB,
+html .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB,
+html .sapUiContainer-Wide .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB {
+	padding-left: 1rem;
+}
+
+.sapUxAPAnchorBar {
+	vertical-align: middle;
+}
+
+.sapUxAPAnchorBarScrollContainer {
+	width: 100%;
+}
+
+/* navigation arrows for desktop and tablet only */
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBar,
+.sapUiMedia-Std-Tablet .sapUxAPAnchorBar,
+html .sapUiContainer-Wide .sapUxAPAnchorBar,
+html .sapUiContainer-Medium .sapUxAPAnchorBar {
+	position: relative;
+	width: 100%;
+	padding: 0;
+}
+
+/* leave space for the overflow button to the right */
+.sapUiMedia-Std-Tablet .sapUxAPAnchorBarOverflow,
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow,
+html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow,
+html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow {
+	padding-right: 4rem;
+}
+
+/* not display the select if the bar does not overflow */
+.sapUiMedia-Std-Tablet .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
+html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
+html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect {
+	display: none;
+}
+
+/* BAR ITEMS */
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer .sapMBarChild {
+	display: inline-block;
+}
+
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild:first-child {
+	margin-left: 0;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton {
+	height: 3rem;
+	padding: 0;
+
+	.sapMBtnInner {
+		padding-left: 1rem;
+		padding-right: 1rem;
+		height: 3rem;
+
+		.sapMBtnContent,
+		.sapMBtnIcon {
+			height: 2.8rem;
+			line-height: 3rem;
+		}
+	}
+}
+
+.sapUxAPAnchorBar .sapMBarChild {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon {
+	font-size: 0.75rem;
+	width: 1.5rem;
+	right: 0.875rem;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton > .sapMBtnIconLast > .sapMBtnContent {
+	padding-right: 1.375rem;
+}
+
+.sapUxAPAnchorBarUpperCase .sapUxAPAnchorBarButton {
+	text-transform: uppercase;
+}
+
+/* visual in anchor bar */
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:hover,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable {
+	background: none;
+	border: none;
+}
+
+.sapUxAPAnchorBarButton .sapMBtnInner,
+.sapUxAPAnchorBarButton .sapMBtnInner:hover {
+	background: transparent;
+	border: none;
+	text-shadow: none;
+}
+
+.sapUxAPAnchorBarButton {
+	border: none;
+}
+
+.sapUxAPAnchorBar .sapMBtnInner,
+.sapUxAPAnchorBar .sapMBtnInner:hover {
+	background: transparent;
+	border: none;
+}
+
+/***********************/
+/* BEGIN Scroll Arrows */
+/***********************/
+
+// Not displayed on phone
+.sapUiMedia-Std-Phone .sapUxAPAnchorBar .anchorBarArrowLeft,
+.sapUiMedia-Std-Phone .sapUxAPAnchorBar .anchorBarArrowRight,
+.sapUiMedia-Std-Phone .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer,
+html .sapUiContainer-Narrow .sapUxAPAnchorBar .anchorBarArrowLeft,
+html .sapUiContainer-Narrow .sapUxAPAnchorBar .anchorBarArrowRight,
+html .sapUiContainer-Narrow .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer {
+	display: none;
+}
+
+// Gradient mask + arrows container
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	width: 3rem;
+	height: 3rem;
+	position: absolute;
+	top: 0;
+	z-index: 1;
+}
+
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	right: 2.5rem;
+}
+
+// Full-screen alignment (L + XL)
+.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+	left: 1rem;
+}
+
+.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	right: 3rem;
+}
+
+// Split-screen alignment in Detail (M)
+.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+	left: 0.5rem;
+}
+
+.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	right: 2.5rem;
+}
+
+// Tablet alignment
+.sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+html .sapUiContainer-Medium .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+	left: 0;
+}
+
+// Hides the gradient mask + arrows container when it is not needed
+.sapUxAPAnchorBar:not(.sapUxAPAnchorBarScrollLeft) .anchorBarArrowLeft,
+.sapUxAPAnchorBar:not(.sapUxAPAnchorBarScrollRight) .anchorBarArrowRight {
+	display: none;
+}
+
+// Scroll buttons
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+	width: 1.625rem;
+	height: 1.625rem;
+	position: absolute;
+	top: 0.6875rem;
+	padding: 0;
+}
+
+.sapUxAPAnchorBar .anchorBarArrowLeft .sapMBtn {
+	left: 0;
+}
+
+.sapUxAPAnchorBar .anchorBarArrowRight .sapMBtn {
+	right: 0;
+}
+
+// Inner button elements
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnInner,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnInner {
+	min-width: 1.625rem;
+	width: 1.625rem;
+	height: 1.625rem;
+	padding: 0;
+	border-radius: 0.125rem;
+}
+
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnIcon {
+	position: relative;
+	font-size: 1rem;
+	width: 1.625rem;
+	height: 1.625rem;
+	line-height: 1.625rem;
+}
+
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon::before,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnIcon::before {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 1.625rem;
+	height: 1.625rem;
+}
+
+// Scroll button container
+.sapUxAPAnchorBar .anchorBarArrow > .sapUiHLayoutChildWrapper {
+	width: 2rem;
+	height: 3rem;
+	position: absolute;
+}
+
+.sapUxAPAnchorBar .anchorBarArrowLeft > .sapUiHLayoutChildWrapper {
+	left: 0;
+}
+
+.sapUxAPAnchorBar .anchorBarArrowRight > .sapUiHLayoutChildWrapper {
+	right: 0;
+}
+
+/*********************/
+/* END Scroll Arrows */
+/*********************/
+
+/* POPOVER */
+
+.sapMPopover.sapUxAPAnchorBarPopover > .sapMPopoverArr {
+	display: none;
+}
+
+.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton {
+	padding: 0;
+	display: block;
+	width: 100%;
+}
+
+.sapMPopover.sapUxAPAnchorBarPopover button.sapMBtn > .sapMBtnInner {
+	padding-right: 1.75rem;
+	padding-left: 1rem;
+}
+
+.sapMPopover.sapUxAPAnchorBarPopover button.sapMBtn > .sapMBtnInner > .sapMBtnContent {
+	text-shadow: none;
+	text-align: left;
+	overflow: visible;
+}
+
+/**********************************
+COZY
+**********************************/
+.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton {
+	height: 3rem;
+}
+
+.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner {
+	height: 3rem;
+	border-radius: 0;
+}
+
+.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
+	line-height: 3rem;
+}
+
+/**********************************
+Compact
+**********************************/
+
+.sapUiSizeCompact .sapUxAPAnchorBar,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnText > .sapMBtnIcon {
+	top: 0.1rem
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBarButton .sapMBtnInner {
+	padding-bottom: 1px;
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	width: 2rem;
+	height: 2rem;
+}
+
+// Scroll buttons
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+	top: 0.125rem;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnIcon {
+	margin-left: 0rem;
+	margin-right: 0rem;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnIcon {
+	height: 1.8rem;
+	line-height: 1.8rem;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnIconLast {
+	padding-right: 0;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon {
+	right: 0;
+	line-height: 1.5rem;
+	margin: 0;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBarButton > sapMBtnIconLast > .sapMBtnContent {
+	padding-right: 0;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBarButton .sapMBtnContent {
+	line-height: 1.375rem;
+}
+
+.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton,
+.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner {
+	height: 2rem;
+	border-radius: 0;
+}
+
+.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner {
+	padding-left: 0.5rem;
+}
+
+// Scroll button container
+.sapUiSizeCompact .sapUxAPAnchorBar .anchorBarArrow > .sapUiHLayoutChildWrapper {
+	height: 2rem;
+}

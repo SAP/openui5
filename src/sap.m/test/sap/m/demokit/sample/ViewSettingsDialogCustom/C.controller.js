@@ -18,7 +18,7 @@ sap.ui.define([
 		},
 
 		handleViewSettingsDialogPress: function (oEvent) {
-			if (! this._oDialog) {
+			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.ViewSettingsDialogCustom.Dialog", this);
 				// Set initial and reset value for Slider in custom control
 				var oSlider = this._oDialog.getFilterItems()[0].getCustomControl();

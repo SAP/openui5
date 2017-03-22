@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>sap.m.OverflowToolbar</title>
 
+<script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.layout">
 </script>
 
 <style type="text/css"></style>
@@ -18,15 +19,8 @@
 	jQuery.sap.require("sap.m.OverflowToolbarLayoutData");
 
 	// for behaviour testing
-	if (oUriParameters.get("noFlex")) {
+	if (oUriParameters.get("oldFlex")) {
 		sap.m.Toolbar.hasNewFlexBoxSupport = false;
-		sap.m.Toolbar.hasFlexBoxSupport = false;
-	} else if (oUriParameters.get("oldFlex")) {
-		sap.m.Toolbar.hasNewFlexBoxSupport = false;
-		sap.m.Toolbar.hasFlexBoxSupport = true;
-	} else if (oUriParameters.get("newFlex")) {
-		sap.m.Toolbar.hasNewFlexBoxSupport = true;
-		sap.m.Toolbar.hasFlexBoxSupport = true;
 	}
 
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
@@ -36,34 +30,259 @@
 	var sRequestIconURI = sap.ui.core.IconPool.getIconURI("request");
 	var sReceiptIconURI = sap.ui.core.IconPool.getIconURI("receipt");
 
-	var toolbarContent1 = [
+	var oActionSheet = new sap.m.ActionSheet("actionSheet1", {
+		buttons: [
+			new sap.m.Button({
+				icon: "sap-icon://accept",
+				text: "Close",
+				press: function () {
+					sap.ui.getCore().byId("otb0").closeOverflow();
+				}
+			}),
+			new sap.m.Button({
+				icon: "sap-icon://decline",
+				text: "Do not close"
+			})
+		]
+	});
+
+	var oPopover = new sap.m.ResponsivePopover("popover1", {
+		placement: sap.m.PlacementType.Horizontal,
+		title: "Popover",
+		showHeader: true,
+		content: [
+			new sap.ui.layout.VerticalLayout({
+				content: [
+					new sap.m.Button({
+						icon: "sap-icon://accept",
+						text: "Close",
+						press: function () {
+							sap.ui.getCore().byId("otb0").closeOverflow();
+						}
+					}),
+					new sap.m.Button({
+						icon: "sap-icon://decline",
+						text: "Do not close"
+					})
+				]
+			})
+		]
+	});
+
+	var oMenu = new sap.m.Menu({
+		title: "random 2",
+		itemSelected: function(oEvent) {
+			var oItem = oEvent.getParameter("item"),
+				sItemPath = "";
+			while (oItem instanceof sap.m.MenuItem) {
+				sItemPath = oItem.getText() + " > " + sItemPath;
+				oItem = oItem.getParent();
+			}
+
+			sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+
+			sap.m.MessageToast.show("itemSelected: " + sItemPath);
+		},
+		items: [
+			new sap.m.MenuItem({
+				text: "fridge",
+				icon: "sap-icon://fridge",
+				items: [
+					new sap.m.MenuItem({
+						text: "accidental leave",
+						icon: "sap-icon://accidental-leave",
+						items: [
+							new sap.m.MenuItem({
+								icon: "sap-icon://factory",
+								text: "factory"
+							}),
+							new sap.m.MenuItem({
+								icon: "sap-icon://flag",
+								text: "flag"
+							}),
+							new sap.m.MenuItem({
+								icon: "sap-icon://flight",
+								text: "flight"
+							})
+						]
+					}),
+					new sap.m.MenuItem({
+						text: "iphone",
+						icon: "sap-icon://iphone",
+						items: [
+							new sap.m.MenuItem({
+								icon: "sap-icon://video",
+								text: "video"
+							}),
+							new sap.m.MenuItem({
+								icon: "sap-icon://loan",
+								text: "loan"
+							}),
+							new sap.m.MenuItem({
+								icon: "sap-icon://commission-check",
+								text: "commission check"
+							}),
+							new sap.m.MenuItem({
+								icon: "sap-icon://doctor",
+								text: "doctor"
+							})
+						]
+					})
+				]
+			}),
+			new sap.m.MenuItem({
+				text: "globe",
+				icon: "sap-icon://globe",
+				items: [
+					new sap.m.MenuItem({
+						text: "e-care",
+						icon: "sap-icon://e-care"
+					})
+				]
+			})
+		]
+	});
+
+	var toolbarContent0 = [
 		new sap.m.Label({
-			text : "This is an old player"
+			text : "Group Toolbar"
 		}),
 		new sap.m.ToolbarSpacer(),
 		new sap.m.Button({
-			text : "Fast Rewind"
+			text : "Always 1",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: false}),
+			width: "125px",
+			press: function () {
+				oActionSheet.openBy(this);
+			}
 		}),
 		new sap.m.Button({
-			text : "Rewind"
+			text : "Always 2",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: false}),
+			width: "125px",
+			press: function () {
+				oPopover.openBy(this);
+			}
 		}),
 		new sap.m.Button({
-			text : "Record"
+			text : "G1 High",
+			type : sap.m.ButtonType.Emphasized,
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1,
+				priority: sap.m.OverflowToolbarPriority.High
+			}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Play"
+			text : "G1 Low",
+			type : sap.m.ButtonType.Emphasized,
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1,
+				priority: sap.m.OverflowToolbarPriority.Low
+			}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Pause"
+			text : "Never 1",
+			type : sap.m.ButtonType.Reject,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Stop"
+			text : "Never 2",
+			type : sap.m.ButtonType.Reject,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Forward"
+			text : "Single Low",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Low}),
+			width: "125px"
 		}),
 		new sap.m.Button({
-			text : "Fast Forward"
+			text : "Single Disappear",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Disappear}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Single Default",
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "G2 Low",
+			type : sap.m.ButtonType.Accept,
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2,
+				priority: sap.m.OverflowToolbarPriority.Low
+			}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "G2 Low",
+			type : sap.m.ButtonType.Accept,
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2,
+				priority: sap.m.OverflowToolbarPriority.Low
+			}),
+			width: "125px"
+		})
+	];
+
+	var toolbarContent1 = [
+		new sap.m.Label({
+			text : "Priority Toolbar"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Always 1",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Always 2",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "High 1",
+			type : sap.m.ButtonType.Accept,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.High}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Low 1",
+			type : sap.m.ButtonType.Emphasized,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Low}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Never 1",
+			type : sap.m.ButtonType.Reject,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Never 2",
+			type : sap.m.ButtonType.Reject,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Low 2",
+			type : sap.m.ButtonType.Emphasized,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Low}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Disappear",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Disappear}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "High 2",
+			type : sap.m.ButtonType.Accept,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.High}),
+			width: "125px"
 		})
 	];
 
@@ -114,6 +333,7 @@
 			text: "About"
 		}),
 		new sap.m.Label({
+			id: "hotelsLabel",
 			text : "Find hotels"
 		}),
 		new sap.m.ToolbarSpacer(),
@@ -168,7 +388,7 @@
 	var toolbarContent4 = [
 
 		new sap.m.Label({
-			text : "Nothing on this toolbar can overflow"
+			text : "The ComboBox control can overflow"
 		}),
 		new sap.m.ToolbarSpacer(),
 		new sap.m.ComboBox({
@@ -199,11 +419,11 @@
 		new sap.m.ToolbarSeparator(),
 		new sap.m.Button({
 			text : "VERY LONG ACCEPT TEXT",
-			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow})
 		}),
 		new sap.m.Button({
 			text : "VERY LONG REJECT TEXT",
-			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow})
 		})
 	];
 
@@ -215,7 +435,7 @@
 			layoutData : new sap.m.OverflowToolbarLayoutData({
 				shrinkable : true,
 				minWidth: "100px",
-				moveToOverflow: false
+				priority: sap.m.OverflowToolbarPriority.NeverOverflow
 			})
 		}),
 
@@ -271,7 +491,12 @@
 					text : "Left Button"
 				}),
 				new sap.m.Button({
-					text : "Middle Button"
+					icon: sNotesIconURI,
+					tooltip: "Notes"
+				}),
+				new sap.m.Button({
+					text : "Disabled Button",
+					enabled: false
 				}),
 				new sap.m.Button({
 					text : "Right Button"
@@ -282,8 +507,8 @@
 			placeholder: "Input",
 			width: "150px"
 		}),
-		new sap.m.DateTimeInput({
-			placeholder: "DateTimeInput",
+		new sap.m.DateTimePicker({
+			placeholder: "DateTimePicker",
 			width: "150px"
 		}),
 		new sap.m.CheckBox({
@@ -296,6 +521,79 @@
 		new sap.m.RadioButton({
 			text : "Option b",
 			groupName : "a"
+		})
+	];
+
+	var toolbarContent7 = [
+		new sap.m.Label({
+			text : "MenuButton controls"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.MenuButton({
+			text: "RglrMB autoClose",
+			layoutData: new sap.m.OverflowToolbarLayoutData({ priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: true}),
+			type : sap.m.ButtonType.Transparent,
+			icon: "sap-icon://e-care",
+			menu: oMenu.clone(),
+			defaultAction: function() {
+				sap.m.MessageToast.show("Default action is used until a menu item is selected");
+			}
+		}),
+		new sap.m.MenuButton({
+			text: "RglrMB noClose",
+			layoutData: new sap.m.OverflowToolbarLayoutData({ priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: false}),
+			type : sap.m.ButtonType.Transparent,
+			icon: "sap-icon://e-care",
+			menu: oMenu.clone(),
+			defaultAction: function() {
+				sap.m.MessageToast.show("Default action is used until a menu item is selected");
+			}
+		}),
+		new sap.m.MenuButton({
+			text: "SplitMB autoClose",
+			layoutData: new sap.m.OverflowToolbarLayoutData({ priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: true}),
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type : sap.m.ButtonType.Transparent,
+			icon: "sap-icon://e-care",
+			menu: oMenu.clone(),
+			defaultAction: function() {
+				sap.m.MessageToast.show("Default action is used until a menu item is selected");
+			}
+		}),
+		new sap.m.MenuButton({
+			text: "SplitMB NoClose",
+			layoutData: new sap.m.OverflowToolbarLayoutData({ priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: false}),
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type : sap.m.ButtonType.Transparent,
+			icon: "sap-icon://e-care",
+			menu: oMenu.clone(),
+			defaultAction: function() {
+				sap.m.MessageToast.show("Default action is used until a menu item is selected");
+			}
+		}),
+		new sap.m.MenuButton({
+			text: "SplitMBd autoClose",
+			useDefaultActionOnly: true,
+			layoutData: new sap.m.OverflowToolbarLayoutData({ priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: true}),
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type : sap.m.ButtonType.Transparent,
+			icon: "sap-icon://e-care",
+			menu: oMenu.clone(),
+			defaultAction: function() {
+				sap.m.MessageToast.show("Default action is used until a menu item is selected");
+			}
+		}),
+		new sap.m.MenuButton({
+			text: "SplitMBd NoClose",
+			useDefaultActionOnly: true,
+			layoutData: new sap.m.OverflowToolbarLayoutData({ priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: false}),
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type : sap.m.ButtonType.Transparent,
+			icon: "sap-icon://e-care",
+			menu: oMenu.clone(),
+			defaultAction: function() {
+				sap.m.MessageToast.show("Default action is used until a menu item is selected");
+			}
 		})
 	];
 
@@ -342,6 +640,11 @@
 	];
 
 	var aAllToolbars = [
+		new sap.m.OverflowToolbar("otb0", {
+			width: 'auto',
+			content : toolbarContent0
+		}),
+
 		new sap.m.OverflowToolbar("otb1", {
 			width: 'auto',
 			content : toolbarContent1
@@ -351,7 +654,6 @@
 			width: 'auto',
 			content : toolbarContent2
 		}),
-
 		new sap.m.OverflowToolbar("otb3", {
 			width: 'auto',
 			content : toolbarContent3
@@ -372,6 +674,11 @@
 			content : toolbarContent6
 		}),
 
+		new sap.m.OverflowToolbar("otb7", {
+			width: 'auto',
+			content : toolbarContent7
+		}),
+
 		new sap.m.OverflowToolbar("otbFooter", {
 			width: 'auto',
 			content : toolbarContentFooter
@@ -379,7 +686,7 @@
 	];
 
 
-	var oPage = new sap.m.Page({
+	var oPage = new sap.m.Page("toolbar-page", {
 		title : "Overflow Toolbar - the buttons that do not fit go to an action sheet",
 		enableScrolling : true,
 		subHeader: aAllToolbars[0],
@@ -453,11 +760,29 @@
 		]
 	});
 
-//	oWorkExample.placeAt("body");
-	oApp.addPage(oPage).placeAt("body");
+
+	sap.ui.getCore().byId("sf1").attachSearch(function (oParams) {
+		sap.ui.getCore().byId("hotelsLabel").setText(oParams.getParameter("query"));
+	});
+
+	oApp.addPage(oPage).placeAt("content");
+
+	var oB = new sap.m.Button("size_btn", {
+		text : "Change page size to 480px",
+		press : function() { jQuery("#toolbar-page").width("480px"); }
+	});
+
+	var oB2 = new sap.m.Button("size_btn2", {
+		text : "Change page size to 700px",
+		press : function() { jQuery("#toolbar-page").width("700px"); }
+	});
+
+	oB2.placeAt("content");
+	oB.placeAt("content");
 
 </script>
 </head>
 <body id="body" class="sapUiBody">
+	<div id="content"></div>
 </body>
 </html>

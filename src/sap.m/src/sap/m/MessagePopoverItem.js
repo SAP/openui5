@@ -2,9 +2,8 @@
  * ${copyright}
  */
 
-// Provides control sap.m.MessagePopoverItem.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
-	function(jQuery, library, Item) {
+sap.ui.define(["jquery.sap.global", "./library", "./MessageItem"],
+	function(jQuery, library, MessageItem) {
 		"use strict";
 
 		/**
@@ -15,7 +14,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		 *
 		 * @class
 		 * Items provide information about Error Messages in the page.
-		 * @extends sap.ui.core.Element
+		 * @extends sap.ui.core.Item
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -23,31 +22,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		 * @constructor
 		 * @public
 		 * @since 1.28
+		 * @deprecated Since version 1.46, use MessageItem instead
 		 * @alias sap.m.MessagePopoverItem
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var MessagePopoverItem = Item.extend("sap.m.MessagePopoverItem", /** @lends sap.m.MessagePopoverItem.prototype */ {
-				metadata: {
-					library: "sap.m",
-					properties: {
-						/**
-						 * Specifies the type of the message
-						 */
-						type: { type: "sap.ui.core.MessageType", group: "Appearance", defaultValue: sap.ui.core.MessageType.Error },
 
-						/**
-						 * Specifies the title of the message
-						 */
-						title: { type: "string", group: "Misc" },
-
-						/**
-						 * Specifies detailed description of the message
-						 */
-						description: { type: "string", group: "Misc" }
-					}
-				}
-			});
+		var MessagePopoverItem = MessageItem.extend("sap.m.MessagePopoverItem", /** @lends sap.m.MessagePopoverItem.prototype */ {});
 
 		return MessagePopoverItem;
-
 	}, /* bExport= */true);

@@ -1,39 +1,38 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.InstanceManager</title>
 
-		<script id="sap-ui-bootstrap" 
-			type="text/javascript"
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-		<script language="javascript">
+		<script>
 			sinon.config.useFakeTimers = false;
 			QUnit.config.autostart = false;
 			jQuery(document).ready(function() {
 				QUnit.start();
 			});
-			
+
 			jQuery.sap.require("sap.m.InstanceManager");
 			var im = sap.m.InstanceManager;
-			
+
 			var oList2 = new sap.m.List({
 				inset : true
 			});
-			
+
 			var data = {
 				navigation : [ {
 					title : "Travel Expend",
@@ -72,7 +71,7 @@
 					press : 'detailPage'
 				} ]
 			};
-			
+
 			var oItemTemplate1 = new sap.m.StandardListItem({
 				title : "{title}",
 				description : "{description}",
@@ -80,7 +79,7 @@
 				iconInset : "{iconInset}",
 				type : "{type}"
 			});
-			
+
 			function bindListData(data, itemTemplate, list)
 			{
 				var oModel = new sap.ui.model.json.JSONModel();
@@ -88,7 +87,7 @@
 				list.setModel(oModel);
 				list.bindAggregation("items", "/navigation", itemTemplate);
 			}
-			
+
 			bindListData(data, oItemTemplate1, oList2)
 
 			var oScrollContainer = new sap.m.ScrollContainer({
@@ -96,35 +95,35 @@
 				vertical: true,
 				content: oList2
 			});
-			
+
 			var oPopover = new sap.m.Popover("popover", {
 				placement: sap.m.PlacementType.Bottom,
 				title: "Popover",
 				showHeader: true,
 				afterOpen: function(){
-					ok(im.hasOpenPopover(), "There is popover open");
-					ok(im.isPopoverOpen(this), "This popover is open");
-					equal(im.getOpenPopovers().length, 1, "There is one popover open");
-					start();
+					assert.ok(im.hasOpenPopover(), "There is popover open");
+					assert.ok(im.isPopoverOpen(this), "This popover is open");
+					assert.equal(im.getOpenPopovers().length, 1, "There is one popover open");
+					QUnit.start();
 				},
 				afterClose:function(){
-					ok(!im.hasOpenPopover(), "There is popover open");
-					ok(!im.isPopoverOpen(this), "This Popover isn't open");
-					equal(im.getOpenPopovers().length, 0, "There is no dialog open");
-					start();
+					assert.ok(!im.hasOpenPopover(), "There is popover open");
+					assert.ok(!im.isPopoverOpen(this), "This Popover isn't open");
+					assert.equal(im.getOpenPopovers().length, 0, "There is no dialog open");
+					QUnit.start();
 				},
 				content: [
 					oScrollContainer
 				]
 			});
-			
+
 			var oDialog = new sap.m.Dialog("dialog", {
 				title: "World Domination",
 				content: [
 					new sap.ui.core.HTML({content:"<p>Do you want to start a new world domination campaign?</p>"}),
 				],
 				icon: "../images/SAPUI5Icon.png",
-				leftButton: 
+				leftButton:
 					new sap.m.Button("leftButton", {
 						text: "Reject",
 						type: sap.m.ButtonType.Reject,
@@ -141,78 +140,80 @@
 						}
 					}),
 				afterOpen: function(){
-					ok(im.hasOpenDialog(), "There is dialog open");
-					ok(im.isDialogOpen(this), "This dialog is open");
-					equal(im.getOpenDialogs().length, 1, "There is one dialog open");
-					start();
+					assert.ok(im.hasOpenDialog(), "There is dialog open");
+					assert.ok(im.isDialogOpen(this), "This dialog is open");
+					assert.equal(im.getOpenDialogs().length, 1, "There is one dialog open");
+					QUnit.start();
 				},
 				afterClose: function(){
-					ok(!im.hasOpenDialog(), "There is dialog open");
-					ok(!im.isDialogOpen(this), "This dialog isn't open");
-					equal(im.getOpenDialogs().length, 0, "There is no dialog open");
-					start();
+					assert.ok(!im.hasOpenDialog(), "There is dialog open");
+					assert.ok(!im.isDialogOpen(this), "This dialog isn't open");
+					assert.equal(im.getOpenDialogs().length, 0, "There is no dialog open");
+					QUnit.start();
 				}
 			});
-			
+
 			var oButton = new sap.m.Button({
 				text : "Open"
 			});
-			
+
 			var page = new sap.m.Page("myFirstPage", {
 				title : "Instance Mananger Test",
 				showNavButton : true,
 				enableScrolling : true,
 				content : oButton
 			});
-			
+
 			var app = new sap.m.App("myApp", {
-				initPage: "myFirstPage"
+				initialPage: "myFirstPage"
 			});
 			app.addPage(page).placeAt("content");
-			
+
 			var sCategoryId = "_category_",
 				oInstance = {property: "Property"};
-			
-			module("Initial Check");
-			test("Initialization", function() {
-				ok(sap.m.InstanceManager, "Instance Manager module has been loaded");
+
+			QUnit.module("Initial Check");
+			QUnit.test("Initialization", function(assert) {
+				assert.ok(sap.m.InstanceManager, "Instance Manager module has been loaded");
 			});
-			
-			module("Add and remove normal object");
-			test("Add object", function(){
-				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
+
+			QUnit.module("Add and remove normal object");
+			QUnit.test("Add object", function(assert){
+				assert.ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
 				im.addInstance(sCategoryId, oInstance);
-				ok(!im.isCategoryEmpty(sCategoryId), "Category is not empty anymore");
-				equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance array is not empty and length should equal 1");
-				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is managed");
+				assert.ok(!im.isCategoryEmpty(sCategoryId), "Category is not empty anymore");
+				assert.equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance array is not empty and length should equal 1");
+				assert.ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is managed");
 				// add the same instance again
 				im.addInstance(sCategoryId, oInstance);
-				equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance shouldn't be added again");
-				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is still managed");
+				assert.equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance shouldn't be added again");
+				assert.ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is still managed");
 			});
-			
-			test("Remove object", function(){
+
+			QUnit.test("Remove object", function(assert){
 				im.removeInstance(sCategoryId, oInstance);
-				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
-				ok(!im.isInstanceManaged(sCategoryId, oInstance), "Instance is not managed any more");
-				ok(im.getInstancesByCategoryId(sCategoryId).length === 0, "Intance array is empty");
+				assert.ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
+				assert.ok(!im.isInstanceManaged(sCategoryId, oInstance), "Instance is not managed any more");
+				assert.ok(im.getInstancesByCategoryId(sCategoryId).length === 0, "Intance array is empty");
 			});
-			
-			
-			module("Open and close Dialog");
-			asyncTest("Open Dialog", function(){
+
+
+			QUnit.module("Open and close Dialog");
+			QUnit.test("Open Dialog", function(assert){
+				var done = assert.async();
 				oDialog.open();
-				expect(3);
+				assert.expect(3);
 			});
-			
-			asyncTest("Close Dialog", function(){
+
+			QUnit.test("Close Dialog", function(assert){
+				var done = assert.async();
 				im.closeAllDialogs();
-				expect(3);
+				assert.expect(3);
 			});
-						
-            module("callbacks");
-            
-            test("Should close all dialogs and trigger a callback", function() {
+
+            QUnit.module("callbacks");
+
+            QUnit.test("Should close all dialogs and trigger a callback", function(assert) {
 
                     //Arrange
 
@@ -227,41 +228,43 @@
                         },
                         dialogs = [ fakeDialog , fakeDialog ];
 
-                    
+
 
                     this.stub(im, "getOpenDialogs").returns(dialogs)
 
-                    
+
                     //System under Test + Act
                     im.closeAllDialogs(callback);
 
 
                     //Assert
-                    strictEqual(events.length, dialogs.length, "registered to event");
-                    strictEqual(closeSpy.callCount, dialogs.length, "close was called");
+                    assert.strictEqual(events.length, dialogs.length, "registered to event");
+                    assert.strictEqual(closeSpy.callCount, dialogs.length, "close was called");
 
 
                     //fire first close event
                     events[0]();
-                    strictEqual(callback.callCount, 0, "callback was not executed yet");
+                    assert.strictEqual(callback.callCount, 0, "callback was not executed yet");
 
 
 
 
                     //fire second close event
                     events[1]();
-                    strictEqual(callback.callCount, 1, "callback was executed");
+                    assert.strictEqual(callback.callCount, 1, "callback was executed");
             });
-			
-			module("Open and close Popover");
-			asyncTest("Open Dialog", function(){
+
+			QUnit.module("Open and close Popover");
+			QUnit.test("Open Dialog", function(assert){
+				var done = assert.async();
 				oPopover.openBy(oButton);
-				expect(3);
+				assert.expect(3);
 			});
-			
-			asyncTest("Close Dialog", function(){
+
+			QUnit.test("Close Dialog", function(assert){
+				var done = assert.async();
 				im.closeAllPopovers();
-				expect(3);
+				assert.expect(3);
 			});
 		</script>
 	</head>

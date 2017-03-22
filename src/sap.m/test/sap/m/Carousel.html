@@ -1,14 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>sap.m.Carousel Test</title>
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-compatVersion="1.20">
 		</script>
 
@@ -43,7 +42,7 @@
 			</mvc:View>
 		</script>
 
-		<script type="text/javascript">
+		<script>
 
 
 		//Create demo page for mobile controls
@@ -197,12 +196,6 @@
 				press : openPopover
 			}),
 
-			new sap.m.Slider({
-				min : 0,
-				max : 100,
-				value : 50
-			}),
-
 			new sap.m.HBox({
 				items : [ new sap.m.Label({
 					text : "This is a Switch:"
@@ -299,8 +292,8 @@
 			items: [
 					{ name: "Michelle", color: "orange", number: 3.14 },
 					{ name: "Joseph", color: "blue", number: 1.618 },
-					{ name: "David", color: "green", number: 0 },
-			],
+					{ name: "David", color: "green", number: 0 }
+			]
 		}));
 
 
@@ -310,7 +303,7 @@
 			metadata: {
 				properties: {
 					large: "sap.ui.core.URI"
-				},
+				}
 			},
 			// set up the inner controls
 			init: function () {
@@ -330,7 +323,7 @@
 					stretch: sap.ui.Device.system.phone,
 					customHeader: new sap.m.Bar({
 						contentLeft: new sap.m.Label({
-							text: this.getAlt(),
+							text: this.getAlt()
 						}),
 						contentRight: new sap.m.Button({
 							icon: "sap-icon://decline",
@@ -344,8 +337,8 @@
 					afterClose: fnClose,
 					content: [
 						new sap.m.Image({
-							src: this.getLarge(),
-						}).attachPress(fnClose),
+							src: this.getLarge()
+						}).attachPress(fnClose)
 					]
 				}).addStyleClass("lightboxDialog");
 				oDialog.open();
@@ -374,12 +367,12 @@
 			decorative: false
 		});
 
-		var imgFishImg = new Lightbox("fish", {
-			src: "images/demo/nature/fish.jpg",
-			large: "images/demo/nature/fish.jpg",
-			alt: "Lively Fish",
+		var imgDesert2 = new sap.m.Image("desert2", {
+			src: "images/demo/nature/desert.jpg",
+			alt: "Majestic Desert",
+			densityAware: false,
+			decorative: false
 		});
-
 
 		var imgForest =  new sap.m.Image("forest", {
 			src: "images/demo/nature/forest.jpg",
@@ -393,7 +386,7 @@
 			vertical: true,
 			content:[imgForest],
 			width:'100%',
-			height:'100%',
+			height:'100%'
 		});
 
 
@@ -447,21 +440,203 @@
 			decorative: false
 		});
 
+		var carouselImages = [imgDesert, oView, imgElephant, imgDesert2, demoPage, imgPrairie, scrollForest, imgWaterfall, imgLeopard, imgWaterfall2, imgLeopard2, imgWaterfall3];
+
 		//Please uncomment any of the following lines to test the corresponding
 		//carousel attribute
 		var carousel = new sap.m.Carousel("myCarousel", {
 			//pageIndicatorPlacement: sap.m.PlacementType.Top,
 			//pageIndicatorPlacement: sap.m.PlacementType.Bottom,
-			activePage: imgElephant,
+			activePage: carouselImages[2],
 			//width: "50%",
 			//height: "50%",
 			//showPageIndicator: false,
 			loop: true,
 			//showBusyIndicator: false,
-			pages: [imgDesert, oView, imgElephant, imgFishImg, demoPage, imgPrairie, scrollForest, imgWaterfall, imgLeopard, imgWaterfall2, imgLeopard2, imgWaterfall3]
-			//pages: [imgDesert, imgElephant, imgFishImg]
+			pages: [carouselImages[0], carouselImages[1], carouselImages[2], carouselImages[3], carouselImages[4]]
 		});
 
+		// Radio button group arrowsPlacement
+
+		var oRBGroupArrowsPlacement = new sap.m.RadioButtonGroup("RBArrowsPlacement");
+		oRBGroupArrowsPlacement.setColumns(2);
+
+		var oButtonContent = new sap.m.RadioButton("RB-Content");
+		oButtonContent.setText("Content");
+		oButtonContent.setTooltip("Places the arrows on the sides of the content");
+		oRBGroupArrowsPlacement.addButton(oButtonContent);
+
+		oButtonIndicator = new sap.m.RadioButton("RB-Indicator");
+		oButtonIndicator.setText("PageIndicator");
+		oButtonIndicator.setTooltip("Places the arrows on the sides of the page indicator");
+		oRBGroupArrowsPlacement.addButton(oButtonIndicator);
+
+		var oRBGroupArrowsPlacementLabel = new sap.m.Label({ text: "Carousel arrow placement", labelFor: oRBGroupArrowsPlacement });
+		oRBGroupArrowsPlacement.attachSelect(function () {
+			var sSelectedValue = oRBGroupArrowsPlacement.getSelectedButton().getText();
+			if (sSelectedValue === "Content") {
+				carousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.Content);
+			} else if (sSelectedValue === "PageIndicator") {
+				carousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.PageIndicator);
+			}
+		});
+
+		// Radio button group pageIndicatorPlacement
+
+		var oRBGroupPageIndicatorPlacement = new sap.m.RadioButtonGroup("RBPageIndicatorPlacement");
+		oRBGroupPageIndicatorPlacement.setColumns(2);
+
+		var oButtonBottom = new sap.m.RadioButton("RB-Bottom");
+		oButtonBottom.setText("Bottom");
+		oButtonBottom.setTooltip("Places the page indicator on the bottom of the carousel");
+		oRBGroupPageIndicatorPlacement.addButton(oButtonBottom);
+
+		oButtonTop = new sap.m.RadioButton("RB-Top");
+		oButtonTop.setText("Top");
+		oButtonTop.setTooltip("Places the page indicator on the top of the carousel");
+		oRBGroupPageIndicatorPlacement.addButton(oButtonTop);
+
+		var oRBGroupPageIndicatorPlacementLabel = new sap.m.Label({ text: "Page indicator placement", labelFor: oRBGroupPageIndicatorPlacement });
+		oRBGroupPageIndicatorPlacement.attachSelect(function () {
+			var sSelectedValue = oRBGroupPageIndicatorPlacement.getSelectedButton().getText();
+			if (sSelectedValue === "Bottom") {
+				carousel.setPageIndicatorPlacement(sap.m.PlacementType.Bottom);
+			} else if (sSelectedValue === "Top") {
+				carousel.setPageIndicatorPlacement(sap.m.PlacementType.Top);
+			}
+		});
+
+		// Radio button group showPageIndicator
+
+		var oRBGroupShowPageIndicator = new sap.m.RadioButtonGroup("RBShowPageIndicator");
+		oRBGroupShowPageIndicator.setColumns(2);
+
+		var oButtonYes = new sap.m.RadioButton("RB-Yes");
+		oButtonYes.setText("Yes");
+		oButtonYes.setTooltip("Shows the page indicator of the carousel");
+		oRBGroupShowPageIndicator.addButton(oButtonYes);
+
+		oButtonNo = new sap.m.RadioButton("RB-No");
+		oButtonNo.setText("No");
+		oButtonNo.setTooltip("Hides the page indicator of the carousel");
+		oRBGroupShowPageIndicator.addButton(oButtonNo);
+
+		var oRBGroupShowPageIndicatorLabel = new sap.m.Label({ text: "Show page indicator", labelFor: oRBGroupShowPageIndicator });
+		oRBGroupShowPageIndicator.attachSelect(function () {
+			var sSelectedValue = oRBGroupShowPageIndicator.getSelectedButton().getText();
+			if (sSelectedValue === "Yes") {
+				carousel.setShowPageIndicator(true);
+			} else if (sSelectedValue === "No") {
+				carousel.setShowPageIndicator(false);
+			}
+		});
+
+		// Input for setting the number of images to show in the carousel
+
+		var oNumberOfImagesInput = new sap.m.Input("input-slides-number", {
+			type: "Number",
+			value: "5",
+			width: "320px",
+			liveChange: function (oEvent) {
+				var numberOfImages = Number(oEvent.getSource().getValue());
+				if (!numberOfImages || numberOfImages < 1 || numberOfImages > 9){
+					return;
+				}
+
+				var imagesArrayCopy = carouselImages.slice(0);
+
+				var oCarousel = sap.ui.getCore().byId("myCarousel");
+				oCarousel.removeAllPages();
+
+				for (var i = 0; i < numberOfImages; i++) {
+					var img = imagesArrayCopy[i];
+					oCarousel.addPage(img);
+				}
+			}
+		});
+		var oNumberOfImagesInputLabel = new sap.m.Label({
+			text: "Number of images to display (Can be a number between 1 and 9)",
+			labelFor: oNumberOfImagesInput
+		});
+
+		// Slider with 5 values, used to shrink the container of the carousel
+
+		var oScreenSizes = [
+			"35%",
+			"45%",
+			"60%",
+			"80%",
+			"100%"
+		];
+
+		var oSlider = new sap.m.Slider({
+			value: 5,
+			width: "320px",
+			step: 1,
+			min: 1,
+			max: 5,
+			liveChange: function (oEvent) {
+				var originalHeight = 650;
+
+				var iValue = oEvent.getParameter("value");
+				var screenWidth = oScreenSizes[Number(iValue) - 1];
+				var oCarouselContainer = sap.ui.getCore().byId("carouselContainer");
+				oCarouselContainer.setWidth(screenWidth);
+				var heightConstant = screenWidth === "100%" ? 0 : 25; // Add an additional 25% height
+				var screenHeight = originalHeight * (parseFloat(screenWidth) + heightConstant) / 100;
+				oCarouselContainer.setHeight(screenHeight + 'px');
+			}
+		});
+		var oSliderLabel = new sap.m.Label({ text: "Shrink carousel container", labelFor: oSlider });
+
+		// SimpleForm to hold the slider for shrinking the carousel container
+
+		var appearanceForm1 = new sap.ui.layout.form.SimpleForm({
+			labelSpanL : 6,
+			labelSpanM : 6,
+			editable : true,
+			layout : "ResponsiveGridLayout",
+			content : [
+				oSliderLabel,
+				oSlider
+			]
+		});
+
+		// SimpleForm to hold the radio buttons and the input field
+
+		var appearanceForm2 = new sap.ui.layout.form.SimpleForm({
+			labelSpanL : 6,
+			labelSpanM : 6,
+			editable : true,
+			layout : "ResponsiveGridLayout",
+			content : [
+				oRBGroupArrowsPlacementLabel,
+				oRBGroupArrowsPlacement,
+				oRBGroupPageIndicatorPlacementLabel,
+				oRBGroupPageIndicatorPlacement,
+				oRBGroupShowPageIndicatorLabel,
+				oRBGroupShowPageIndicator,
+				oNumberOfImagesInputLabel,
+				oNumberOfImagesInput
+			]
+		});
+
+		var carouselContainer = new sap.m.Panel("carouselContainer", {
+			height: "650px"
+		});
+
+		carouselContainer.addContent(carousel);
+
+		var toolbar = new sap.m.Toolbar({
+			height: "auto"
+		});
+
+		var toolbarSpacer1 = new sap.m.ToolbarSpacer();
+		var toolbarSpacer2 = new sap.m.ToolbarSpacer();
+
+		toolbar.addContent(toolbarSpacer1);
+		toolbar.addContent(carouselContainer);
+		toolbar.addContent(toolbarSpacer2);
 
 		//Listen to 'pageChanged' events
 		carousel.attachPageChanged(function(oControlEvent) {
@@ -504,10 +679,57 @@
 
 		var carouselPage = new sap.m.Page("carouselPage",
 			{title: "Carousel Test Page",
-			enableScrolling: false }
+			enableScrolling: true }
 		);
 
-		carouselPage.addContent(carousel);
+
+		var buttonChangeHeightTo50Percents = new sap.m.Button("btnHeight50", {
+			text: "change height to 50%",
+			press: function () {
+				carousel.setHeight("50%")
+			}
+		});
+
+		var buttonChangeHeightTo600px = new sap.m.Button("btnHeight600px", {
+			text: "change height to 600 px",
+			press: function () {
+				carousel.setHeight("600px");
+			}
+		});
+
+		var buttonChangeWidthTo60Percents = new sap.m.Button("btnWidth60", {
+			text: "change width to 60%",
+			press: function () {
+				carousel.setWidth("60%");
+				carousel.rerender();
+			}
+		});
+
+		var buttonChangeWidthTo400px = new sap.m.Button("btnWidth400px", {
+			text: "change width to 400 px",
+			press: function () {
+				carousel.setWidth("400px");
+				carousel.rerender();
+			}
+		});
+
+		var buttonResetCarousel = new sap.m.Button("btnReset", {
+			text: "Reset",
+			press: function () {
+				carousel.setWidth("100%");
+				carousel.setHeight("100%");
+				carousel.rerender();
+			}
+		});
+
+		carouselPage.addContent(appearanceForm1);
+		carouselPage.addContent(toolbar);
+		carouselPage.addContent(appearanceForm2);
+		carouselPage.addContent(buttonChangeHeightTo50Percents);
+		carouselPage.addContent(buttonChangeHeightTo600px);
+		carouselPage.addContent(buttonChangeWidthTo60Percents);
+		carouselPage.addContent(buttonChangeWidthTo400px);
+		carouselPage.addContent(buttonResetCarousel);
 		appCarousel.addPage(carouselPage);
 		appCarousel.placeAt("body");
 

@@ -1,14 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+
+<title>QUnit tests: Messaging</title>
 
 <!-- Initialization -->
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script src="../../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.m,sap.ui.layout"
-	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-bindingSyntax='complex'
 	data-sap-ui-language='en'>
 </script>
@@ -16,19 +18,37 @@
 <link rel="stylesheet"
 	href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script
+	src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script
+		src="../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script
+	src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- Test functions -->
-<script language="javascript" charset="utf-8"> // IE needs this :-/
-	
+<script charset="utf-8"> // IE needs this :-/
+
 	var oModel;
-	
-	//create some components for testing 
+
+	function spyDataState(oControl, fnTest) {
+		if (oControl.refreshDataState) {
+			var fnRefresh = oControl.refreshDataState;
+			oControl.refreshDataState = function(sName, oDataState) {
+				sap.m.Input.prototype.refreshDataState.apply(oControl, arguments);
+				fnTest(sName, oDataState);
+				oControl.refreshDataState = fnRefresh;
+			}
+		}
+	};
+	//create some components for testing
 	sap.ui.localResources("components");
 	var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
 		name: "components",
@@ -44,11 +64,11 @@
 		id: "myMessageTest3",
 		handleValidation: true
 	});
-	
+
 	oCompCont.placeAt("content");
 	oCompCont2.placeAt("content");
 	oCompCont3.placeAt("content");
-	
+
 	var initModel = function(sType) {
 		if (sType === "json") {
 			oModel = new sap.ui.model.json.JSONModel();
@@ -65,84 +85,293 @@
 		}
 		sap.ui.getCore().setModel(oModel);
 	}
-	module("MessageManager components", {
-		setup : function() {
-			initModel("json");	
+	QUnit.module("MessageManager components", {
+		beforeEach : function() {
+			initModel("json");
 		},
-		
-		teardown : function() {
+
+		afterEach : function() {
 			oModel.destroy();
 		}
 	});
 
-	test("componentEnabled", function() {
+	QUnit.test("componentEnabled", function(assert) {
+		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
-		
-		var oChangeHandler = function(oEvent) {
-			ok(oEvent.getParameters('messages').messages.length == 1, 'Format Message created');
-			ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
-			oCompZip.getBinding("value").detachMessageChange(oChangeHandler);
-		};
-		var oChangeHandler2 = function(oEvent) {
-			ok(oEvent.getParameters('messages').messages.length == 0, 'Validation Message deleted');
-			ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
-			ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
-			oCompZip.getBinding("value").detachMessageChange(oChangeHandler);
-		};
-		oCompZip.getBinding("value").attachMessageChange(oChangeHandler);
+
+		spyDataState(oCompZip, function(sName, oDataState) {
+			assert.ok(oDataState.getMessages().length == 1, 'Format Message created');
+			assert.ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			assert.ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
+		});
 		var oCoreValHandler = function(oEvent) {
-			ok(false,"should never be called");
+			assert.ok(false,"should never be called");
 		};
 		sap.ui.getCore().attachValidationError(oCoreValHandler);
 		oCompZip.setValue('123456');
-		oCompZip.getBinding("value").attachMessageChange(oChangeHandler2);
-		oCompZip.setValue('12345');
-		sap.ui.getCore().detachValidationError(oCoreValHandler);
+
+		jQuery.sap.delayedCall(0, this, function() {
+			spyDataState(oCompZip, function(sName, oDataState) {
+				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
+				assert.ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				assert.ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
+				done();
+			});
+			oCompZip.setValue('12345');
+			sap.ui.getCore().detachValidationError(oCoreValHandler);
+		});
+
 	});
-	
-	test("componentDisabled", function() {
+
+	QUnit.test("componentDisabled", function(assert) {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_disabled");
-		
+
 		var oValHandler = function(oEvent) {
-			ok(false,"should never be called");
+			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
+				assert.ok(false,"should never be called");
+			}
 		};
-		oCompZip.getBinding("value").attachMessageChange(oValHandler);
+		oCompZip.getBinding("value").attachDataStateChange(oValHandler);
 		sap.ui.getCore().attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
-		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+		assert.ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 		sap.ui.getCore().detachValidationError(oValHandler);
 	});
-	
-	test("component handle validation undefined", function() {
+
+	QUnit.test("component handle validation undefined", function(assert) {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip");
 		var oChangeHandler = function(oEvent) {
-			ok(false,"should never be called");
+			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
+				assert.ok(false,"should never be called");
+			}
 		};
 		var oValHandler = function(oEvent) {
-			ok(true,oEvent.sId);
+			assert.ok(true,oEvent.sId);
 			sap.ui.getCore().detachValidationError(oValHandler);
 		};
-		oCompZip.getBinding("value").attachMessageChange(oChangeHandler);
+		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler);
 		sap.ui.getCore().attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
-		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+		assert.ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});
+
+	QUnit.module("Component: handleValidation / registerObject");
+
+	QUnit.test("Metadata: n/a, instance: n/a", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.na.na";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 0);
+
+	});
+
+	QUnit.test("Metadata: n/a, instance: false", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.na.false";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName,
+			handleValidation: false
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 0);
+
+	});
+
+	QUnit.test("Metadata: n/a, instance: true", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.na.true";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName,
+			handleValidation: true
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 1);
+		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
+
+	});
+
+	QUnit.test("Metadata: false, instance: false", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.false.false";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {
+				handleValidation: false
+			}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName,
+			handleValidation: false
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 1);
+		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
+
+	});
+
+	QUnit.test("Metadata: false, instance: n/a", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.false.na";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {
+				handleValidation: false
+			}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 1);
+		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
+
+	});
+
+	QUnit.test("Metadata: false, instance: true", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.false.true";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {
+				handleValidation: false
+			}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName,
+			handleValidation: true
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 1);
+		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
+
+	});
+
+	QUnit.test("Metadata: true, instance: true", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.true.true";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {
+				handleValidation: true
+			}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName,
+			handleValidation: true
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 1);
+		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
+
+	});
+
+	QUnit.test("Metadata: true, instance: n/a", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.true.na";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {
+				handleValidation: true
+			}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 1);
+		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
+
+	});
+
+	QUnit.test("Metadata: true, instance: false", function(assert) {
+		var sComponentName = "sap.ui.test.handlevalidation.true.false";
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
+
+		jQuery.sap.declare(sComponentName + ".Component");
+		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+			metadata: {
+				handleValidation: true
+			}
+		});
+
+		var oComponent = sap.ui.component({
+			name: sComponentName,
+			handleValidation: false
+		});
+
+		sinon.assert.callCount(oRegisterObjectSpy, 1);
+		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
+
+	});
+
+	QUnit.test("Model: checkMessages", function(assert) {
+		var oCheckMessagesSpy = sinon.spy(sap.ui.model.Model.prototype, "checkMessages");
+		var oModel = new sap.ui.model.Model();
+		var mMessages = {"foo": {"key1": "value1"}};
+
+		oModel.mMessages = mMessages
+		oModel.setMessages(mMessages);
+		assert.equal(oCheckMessagesSpy.callCount, 0, "No changes detected - Skip check messages");
+
+		oModel.setMessages({"foo": {"key2": "value2"}});
+		assert.equal(oCheckMessagesSpy.callCount, 1, "Changes detected - Check messages");
+
+		oModel.setMessages();
+		assert.equal(oCheckMessagesSpy.callCount, 2, "Changes detected - Check messages");
+		assert.deepEqual(oModel.mMessages, {}, "Model messages cleared");
+	});
+
 </script>
 
 </head>
 <body>
-<h1 id="qunit-header">QUnit tests: Messaging</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
+<div id="qunit"></div>
 <br>
 <div id="content"></div>
 </body>

@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 			oRouter.attachRouteMatched(function(oEvent) {
 				if (oEvent.getParameter("name") == "_testapp_detail") {
 					var oArguments = oEvent.getParameter("arguments");
-				
+
 					sap.ui.getCore().getModel().createBindingContext("/" + oArguments.selectedIndex + "/details", function(oBindingContext) {
 						that.getView().setBindingContext(oBindingContext);
 					});

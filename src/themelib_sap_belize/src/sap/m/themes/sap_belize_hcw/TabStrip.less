@@ -1,0 +1,54 @@
+/* ================================= */
+/* CSS for control sap.m/TabStrip    */
+/* Belize High Contrast White theme  */
+/* ================================= */
+
+.sapMTabStrip {
+	border-bottom: solid 1px @sapUiObjectHeaderBorderColor;
+	/* This class can override the default border-top style */
+	&.sapMTabStripTopBorderVisible {
+		border-top: 1px solid @sapUiPageHeaderBorderColor;
+	}
+	.sapMTSTabsContainer {
+		.sapMTSTabs {
+			.sapMTabStripItem {
+				border-right: 1px solid @sapUiPageHeaderBorderColor;
+				&.sapMTabStripItemSelected {
+					background: @sapUiSegmentedButtonSelectedBackground;
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+					border-bottom: none;
+				}
+				&:hover {
+					background: @sapUiSegmentedButtonHoverBackground;
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+				}
+				&:active {
+					background: @sapUiSegmentedButtonActiveBackground;
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+				}
+				.sapMTSItemCloseBtnCnt {
+					.sapMBtn {
+						.sapMBtnInner  {
+							&:active {
+								background-color: @sapUiSegmentedButtonActiveBackground;	
+							}
+						}
+					}
+				}
+				&:first-child {
+					border-left: 1px solid @sapUiPageHeaderBorderColor;
+				}
+				&:focus::before {
+					pointer-events: none;
+					content: "";
+					position: absolute;
+					top: 0.0625rem;
+					left: 0.0625rem;
+					right: 0.0625rem;
+					bottom: 0.0625rem;
+					border: 0.125rem dotted @sapUiContentFocusColor;
+				}
+			}
+		}
+	}
+}

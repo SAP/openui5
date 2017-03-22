@@ -1,0 +1,15 @@
+/* ================================== */
+/* CSS for control sap.m/TileContent  */
+/* Belize theme                       */
+/* ================================== */
+
+@_sap_m_TileContent_NewsFooterTextColor: lighten(@sapUiTileTextColor, 45);
+
+.sapMTileCnt.News {
+	background-color: fade(darken(@sapUiBrand, 18), 85);
+}
+
+.sapMTileCnt.News .sapMTileCntFtrTxt {
+	color: @_sap_m_TileContent_NewsFooterTextColor;
+	text-shadow: 0 0 0.125rem @sapUiContentShadowColor;
+}

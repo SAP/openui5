@@ -1,0 +1,244 @@
+/* ============================= */
+/* CSS for sap.m/NumericContent  */
+/* Base theme                    */
+/* ============================= */
+
+.sapMNC {
+	position: relative;
+	box-sizing: border-box;
+	outline: none;
+
+	height: 3.875rem;
+	width: 9rem;
+
+	&.WithoutMargin {
+		width: auto;
+		height: auto;
+	}
+}
+
+.sapMNCInner {
+	position: absolute;
+	right: 0;
+	left: 0;
+
+	padding-top: 0.5rem;
+
+	&.WithoutMargin {
+		top: 0;
+		width: auto;
+		height: auto;
+		position: relative;
+		overflow: visible;
+		white-space: nowrap;
+		display: inline-block;
+	}
+}
+
+.sapMNCIconImage {
+	position: relative;
+	float: left;
+	padding-right: 0.625rem;
+	font-size: 1.75rem;
+	line-height: 1.65rem;
+	height: 1.75rem;
+	width: 1.75rem;
+	margin-top: 0.625rem;
+	vertical-align: top;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiTileIconColor;
+	float: none;
+
+	&.WithoutMargin {
+		display: inline-block;
+	}
+}
+
+.sapMNCValueScr {
+	overflow: hidden;
+	left: 0;
+	width: 100%;
+	text-align: right;
+}
+
+.sapMNCValue {
+	position: relative;
+	width: auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size: 2.5rem;
+	line-height: 3rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+
+	&.WithoutMargin {
+		float: left;
+		display: inline-block;
+	}
+}
+
+html[dir=rtl] .sapMNCValueScr {
+	text-align: left;
+}
+
+.sapMNCIndScale {
+	position: relative;
+	float: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: center;
+
+	height: 2.875rem;
+	min-width: 1rem;
+	max-width: 2.5rem;
+
+	padding-top: 0.5rem;
+	margin-left: 0.625rem;
+
+	&.WithoutMargin {
+		float: left;
+		display: inline-block;
+	}
+}
+
+.sapMNCIndicator {
+	position: absolute;
+	left: 0;
+	right: 0;
+	display: block;
+	width: 0;
+	height: 0;
+	margin: 0 auto;
+
+	border-left: 0.5rem solid transparent;
+	border-right: 0.5rem solid transparent;
+
+	&.Up {
+		border-bottom: 0.625rem solid;
+	}
+	&.Down {
+		border-top: 0.625rem solid;
+	}
+}
+
+.sapMNCScale {
+	display: block;
+	height: 18px;
+	margin-top: 0.938rem;
+	font-size: 1rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+}
+
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMNC {
+		height: 3.438rem;
+		width: 8rem;
+	}
+
+	.sapMNCInner {
+		padding-top: 1.063rem;
+	}
+
+	.sapMNCIconImage {
+		font-size: 1.5rem;
+		height: 1.5rem;
+		line-height: 1.4rem;
+		width: 1.5rem;
+		margin-top: 0.375rem;
+		padding-right: 0.5rem;
+	}
+
+	.sapMNCValueScr {
+		margin-top: 0.125rem;
+	}
+
+	.sapMNCValue {
+		font-size: 2rem;
+		height: 2.5rem;
+		line-height: normal;
+	}
+
+	.sapMNCIndScale {
+		height: 2rem;
+		min-width: 1rem;
+		max-width: 2.25rem;
+	}
+
+	.sapMNCIndicator {
+		border-left: 0.438rem solid transparent; /*0.4375rem*/
+		border-right: 0.438rem solid transparent; /*0.4375rem*/
+
+		&.Up {
+			border-bottom: 0.5rem solid;
+		}
+		&.Down {
+			border-top: 0.5rem solid;
+		}
+	}
+
+	.sapMNCScale {
+		height: 17px;
+		margin-top: 0.625rem;
+		font-size: 0.875rem;
+	}
+}
+
+.sapMNCValue.Neutral,
+.sapMNCIndicator.Neutral,
+.sapMNCScale.Neutral {
+	color: @sapUiNeutralText;
+}
+
+.sapMNCValue.Good,
+.sapMNCIndicator.Good,
+.sapMNCScale.Good {
+	color: @sapUiPositiveText;
+}
+
+.sapMNCValue.Error,
+.sapMNCIndicator.Error,
+.sapMNCScale.Error {
+	color: @sapUiNegativeText;
+}
+
+.sapMNCValue.Critical,
+.sapMNCIndicator.Critical,
+.sapMNCScale.Critical {
+	color: @sapUiCriticalText;
+}
+
+.sapMNCIndicator.Loading,
+.sapMNCValue.Loading,
+.sapMNCScale.Loading,
+.sapMNCIconImage.Loading,
+.sapMNCIndicator.Failed,
+.sapMNCValue.Failed,
+.sapMNCScale.Failed,
+.sapMNCIconImage.Failed {
+	color: @sapUiContentLabelColor;
+	opacity: 0.25;
+}
+
+.sapMNC:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMNC:focus:not([tabindex]) {
+	outline: none;
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMGTHdrTxt > .sapMText {
+		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMNCValue {
+		font-size: 2rem;
+	}
+}

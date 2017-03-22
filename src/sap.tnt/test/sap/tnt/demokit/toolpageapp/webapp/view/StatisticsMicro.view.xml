@@ -1,0 +1,336 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:mc="sap.suite.ui.microchart">
+
+	<l:BlockLayout
+		id="statisticsBlockLayout"
+		busy="false"
+		background="Dashboard">
+		<l:BlockLayoutRow
+			rowColorSet="ColorSet2">
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>sysResUsage}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>orderStatusDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+					<mc:ComparisonMicroChart
+						width="12rem"
+						height="8rem">
+						<mc:data>
+							<mc:ComparisonMicroChartData
+								color="Good"
+								title="{i18n>initCalls}"
+								displayValue="91"
+								value="91" />
+							<mc:ComparisonMicroChartData
+								color="Error"
+								title="{downtime}"
+								displayValue="-46"
+								value="-46" />
+							<mc:ComparisonMicroChartData
+								color="Critical"
+								title="{maintenance}"
+								displayValue="13"
+								value="6" />
+							<mc:ComparisonMicroChartData
+									color="Good"
+									title="{i18n>reLoads}"
+									displayValue="6"
+									value="6" />
+							<mc:ComparisonMicroChartData
+									color="Error"
+									title="{i18n>maxMemUsage}"
+									displayValue="18"
+									value="18" />
+						</mc:data>
+					</mc:ComparisonMicroChart>
+
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>ovSysUptime}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>customerRatingDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+					<mc:ColumnMicroChart
+						height="8rem"
+						width="12rem">
+						<mc:columns>
+							<mc:ColumnMicroChartData
+								value="10"
+								color="Good" />
+							<mc:ColumnMicroChartData
+								value="2"
+								color="Error" />
+							<mc:ColumnMicroChartData
+								value="4"
+								color="Critical" />
+						</mc:columns>
+					</mc:ColumnMicroChart>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>memTrendTitle}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>salesTrendDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<mc:AreaMicroChart
+						width="20rem"
+						height="8rem"
+						minXValue="0"
+						maxXValue="100">
+					<mc:firstXLabel>
+						<mc:AreaMicroChartLabel
+							label="{i18n>salesTrendLabelXStart}"
+							color="Error" />
+					</mc:firstXLabel>
+
+					<mc:lastXLabel>
+						<mc:AreaMicroChartLabel
+							label="{i18n>salesTrendLabelXEnd}"
+							color="Good" />
+					</mc:lastXLabel>
+
+					<mc:firstYLabel>
+						<mc:AreaMicroChartLabel
+							label="{i18n>salesTrendLabelYStart}"
+							color="Error" />
+					</mc:firstYLabel>
+
+					<mc:lastYLabel>
+						<mc:AreaMicroChartLabel
+							label="{i18n>salesTrendLabelYEnd}"
+							color="Good"/>
+					</mc:lastYLabel>
+
+					<mc:chart>
+						<mc:AreaMicroChartItem>
+							<mc:points>
+								<mc:AreaMicroChartPoint x="0" y="0" />
+								<mc:AreaMicroChartPoint x="20" y="31" />
+								<mc:AreaMicroChartPoint x="36" y="27" />
+								<mc:AreaMicroChartPoint x="48" y="55" />
+								<mc:AreaMicroChartPoint x="91" y="81" />
+							</mc:points>
+						</mc:AreaMicroChartItem>
+					</mc:chart>
+					<mc:target>
+						<mc:AreaMicroChartItem>
+							<mc:points>
+								<mc:AreaMicroChartPoint x="0" y="0" />
+								<mc:AreaMicroChartPoint x="30" y="25" />
+								<mc:AreaMicroChartPoint x="55" y="64" />
+								<mc:AreaMicroChartPoint x="67" y="68" />
+								<mc:AreaMicroChartPoint x="81" y="89" />
+							</mc:points>
+						</mc:AreaMicroChartItem>
+					</mc:target>
+					<mc:maxThreshold>
+						<mc:AreaMicroChartItem color="Good">
+							<mc:points>
+								<mc:AreaMicroChartPoint x="0" y="0" />
+								<mc:AreaMicroChartPoint x="30" y="40" />
+								<mc:AreaMicroChartPoint x="60" y="50" />
+								<mc:AreaMicroChartPoint x="100" y="100" />
+							</mc:points>
+						</mc:AreaMicroChartItem>
+					</mc:maxThreshold>
+					<mc:minThreshold>
+						<mc:AreaMicroChartItem color="Error">
+							<mc:points>
+								<mc:AreaMicroChartPoint x="0" y="0" />
+								<mc:AreaMicroChartPoint x="30" y="20" />
+								<mc:AreaMicroChartPoint x="60" y="30" />
+								<mc:AreaMicroChartPoint x="100" y="70" />
+							</mc:points>
+						</mc:AreaMicroChartItem>
+					</mc:minThreshold>
+				</mc:AreaMicroChart>
+
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>maintCompl}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>canceledOrdersDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<FlexBox
+					height="8rem"
+					width="12rem">
+					<items>
+						<mc:RadialMicroChart
+							percentage="39"
+							valueColor="Critical"/>
+					</items>
+				</FlexBox>
+			</l:BlockLayoutCell>
+
+		</l:BlockLayoutRow>
+
+		<l:BlockLayoutRow
+			rowColorSet="ColorSet1">
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>costUpgStor}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>netPromoterDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<FlexBox
+					height="8rem"
+					width="12rem"
+					direction="Column"
+					alignItems="Center">
+
+					<mc:BulletMicroChart
+						targetValue="100">
+						<mc:actual>
+							<mc:BulletMicroChartData
+								value="87"
+								color="Good" />
+						</mc:actual>
+						<mc:thresholds>
+							<mc:BulletMicroChartData
+								value="0"
+								color="Error" />
+							<mc:BulletMicroChartData
+								value="20"
+								color="Error" />
+							<mc:BulletMicroChartData
+								value="21"
+								color="Critical" />
+							<mc:BulletMicroChartData
+								value="49"
+								color="Critical" />
+							<mc:BulletMicroChartData value="75" color="Good" />
+						</mc:thresholds>
+					</mc:BulletMicroChart>
+
+					<mc:BulletMicroChart
+						targetValue="100">
+						<mc:actual>
+							<mc:BulletMicroChartData
+								value="19"
+								color="Error" />
+						</mc:actual>
+						<mc:thresholds>
+							<mc:BulletMicroChartData
+								value="0"
+								color="Error" />
+							<mc:BulletMicroChartData
+								value="20"
+								color="Error" />
+							<mc:BulletMicroChartData
+								value="21"
+								color="Critical" />
+							<mc:BulletMicroChartData
+								value="49"
+								color="Critical" />
+							<mc:BulletMicroChartData
+								value="75"
+								color="Good" />
+						</mc:thresholds>
+					</mc:BulletMicroChart>
+				</FlexBox>
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>databaseUsage}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>revenueDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<FlexBox
+					alignItems="Center"
+					width="12rem"
+					height="8rem"
+					direction="Column">
+
+					<mc:HarveyBallMicroChart
+						total="100"
+						totalScale="Hz"
+						showFractions="true"
+						isResponsive="true">
+						<mc:items>
+							<mc:HarveyBallMicroChartItem
+								fraction="56.5"
+								color="Critical"
+								fractionScale="Mrd" />
+						</mc:items>
+					</mc:HarveyBallMicroChart>
+				</FlexBox>
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>impCostCenter}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>goalProgressDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<FlexBox
+					width="12rem"
+					height="8rem">
+					<items>
+						<mc:RadialMicroChart
+							percentage="78"
+							valueColor="Good"/>
+					</items>
+				</FlexBox>
+
+			</l:BlockLayoutCell>
+
+			<l:BlockLayoutCell>
+				<Title
+					text="{i18n>costUpgStor}"
+					titleStyle="H2"
+					width="100%"/>
+				<Title
+					text="{i18n>profitMarginDate}"
+					width="100%"
+					class="sapUiSmallMarginBottom"/>
+				<FlexBox
+					width="20rem"
+					height="8rem"
+					alignItems="Center"
+					direction="Column">
+
+					<mc:DeltaMicroChart
+						value1="60"
+						value2="87"
+						title1="{i18n>profitMarginStartLabel}"
+						title2="{i18n>profitMarginEndLabel}"
+						deltaDisplayValue="27"
+						color="Good"
+						width="16rem"
+						isResponsive="true"/>
+				</FlexBox>
+			</l:BlockLayoutCell>
+
+		</l:BlockLayoutRow>
+	</l:BlockLayout>
+</mvc:View>

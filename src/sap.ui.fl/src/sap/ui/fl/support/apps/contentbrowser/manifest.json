@@ -1,0 +1,115 @@
+{
+	"_version": "1.1.0",
+	"sap.app": {
+		"_version": "1.1.0",
+		"id": "sap.ui.fl.support.apps.contentbrowser.app",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-FL",
+		"resources": "resources.json"
+	},
+	"sap.ui": {
+		"_version": "1.1.0",
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_bluecrystal"
+		]
+	},
+	"sap.ui5": {
+		"_version": "1.1.0",
+		"rootView": "sap.ui.fl.support.apps.contentbrowser.view.MainView",
+		"dependencies": {
+			"minUI5Version": "1.45",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.fl.support.apps.contentbrowser.i18n.i18n"
+				}
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.fl.support.apps.contentbrowser.i18n.i18n"
+				}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.fl.support.apps.contentbrowser.view",
+				"controlId": "sap.ui.fl.support.apps.contentbrowser.App",
+				"controlAggregation": "masterPages"
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "Layers",
+					"target": "Layers"
+				},
+				{
+					"pattern": "{layer}/:namespace:",
+					"name": "LayerContentMaster",
+					"target": ["LayerContentMaster", "EmptyDetails"],
+					"subroutes": [
+						{
+							"pattern": "{layer}/{namespace}/{fileName}.{fileType}",
+							"name": "ContentDetailsFlip",
+							"target": "ContentDetailsFlip"
+						},
+						{
+							"pattern": "{layer}/{namespace}/{fileName}.{fileType}",
+							"name": "ContentDetails",
+							"target": "ContentDetails"
+						}
+					]
+				}
+			],
+			"targets": {
+				"overview": {
+					"viewName": "Overview"
+				},
+				"Layers": {
+					"viewName": "Layers",
+					"viewLevel": 1
+				},
+				"LayerContentMaster": {
+					"viewName": "LayerContentMaster",
+					"viewLevel": 2
+				},
+				"EmptyDetails": {
+					"viewName": "EmptyDetails",
+					"controlAggregation": "detailPages"
+				},
+				"ContentDetails": {
+					"viewName": "ContentDetails",
+					"controlAggregation": "detailPages"
+				},
+				"ContentDetailsFlip": {
+					"viewName": "ContentDetails",
+					"transition": "flip",
+					"controlAggregation": "detailPages"
+				}
+			}
+		},
+		"contentDensities": {
+			"compact": false,
+			"cozy": false
+		}
+	}
+}

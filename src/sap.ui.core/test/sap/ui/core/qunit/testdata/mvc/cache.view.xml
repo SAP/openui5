@@ -1,0 +1,9 @@
+<mvc:XMLView xmlns:m="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns="http://www.w3.org/1999/xhtml">
+	<m:Panel>
+		<m:Label id="Label1" text="Label" labelFor="Button1" />
+		<m:Button id="Button1"></m:Button>
+		<m:content>
+			<m:Button id="Button2"></m:Button>
+		</m:content>
+	</m:Panel>
+</mvc:XMLView>

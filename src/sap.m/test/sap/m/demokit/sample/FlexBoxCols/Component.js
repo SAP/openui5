@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					"sap.ui.layout"
 				]
 			},
-			includes : [ "FlexBoxCols/style.css" ],
+			includes : [ "style.css" ],
 			config : {
 				sample : {
 					files : [

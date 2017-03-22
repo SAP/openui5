@@ -1,0 +1,39 @@
+/* ============================ */
+/* CSS for control sap.m/Token  */
+/* Belize theme                 */
+/* ============================ */
+
+@_sap_m_Token_BorderColor: darken(@sapUiButtonBackground, 10);
+@_sap_m_Token_HoverBorderColor: darken(@sapUiButtonHoverBackground, 5);
+
+.sapMToken {
+	border: 1px solid @_sap_m_Token_BorderColor;
+}
+
+html.sap-desktop .sapMToken:hover {
+	border: 1px solid @_sap_m_Token_HoverBorderColor;
+}
+
+html.sap-desktop .sapMToken:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:focus {
+	outline: 1px dotted @sapUiContentContrastFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMToken:focus {
+		.sapMTokenText:before {
+			border: 1px dashed @sapUiContentFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+		}
+	}
+
+	.sapMToken.sapMTokenSelected:focus {
+		.sapMTokenText:before {
+			border: 1px dashed @sapUiContentContrastFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+		}
+	}
+}

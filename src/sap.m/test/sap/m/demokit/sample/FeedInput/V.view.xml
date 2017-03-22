@@ -6,7 +6,7 @@
 	<FeedInput
 		post="onPost"
 		showIcon="false" />
-		
+
 	<Label text="With Icon Placeholder" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
 		post="onPost"
@@ -16,12 +16,12 @@
 	<FeedInput
 		post="onPost"
 		showIcon="true"
-		icon="http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg" />
+		icon="test-resources/sap/m/images/george_washington.jpg" />
 
 	<Label text="Disabled" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
 		post="onPost"
 		enabled="false"
 		showIcon="true"
-		icon="http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg" />
+		icon="test-resources/sap/m/images/george_washington.jpg" />
 </mvc:View>

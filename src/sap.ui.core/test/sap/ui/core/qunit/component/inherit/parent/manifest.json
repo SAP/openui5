@@ -3,13 +3,17 @@
 	"name": "sap.ui.test.inherit.parent.Component",
 
 	"sap.app": {
-		"id": "sap.ui.test.inherit.parent.Component",
+		"id": "sap.ui.test.inherit.parent",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 
 	"sap.ui5": {
+
+		"resourceRoots": {
+			"x.y.z": "anypath"
+		},
 
 		"dependencies": {
 			"minUI5Version": "1.22.5",
@@ -33,7 +37,7 @@
 			},
 			"sfapi_1": {
 				"type": "sap.ui.model.odata.ODataModel",
-				"uri": "/sap/opu/odata/snce/PO_S_SRV/"
+				"uri": "./some/odata/service"
 			}
 		},
 

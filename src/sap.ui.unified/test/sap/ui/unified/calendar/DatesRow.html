@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>DatesRow - sap.ui.unified.calendar</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.calendar.DatesRow.gif">
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-trace="false"
-				type="text/javascript"
 				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
 				src="../../../../../resources/sap-ui-core.js"
 		>
 		</script>
-		<script type="text/javascript">
+		<script>
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 
@@ -258,7 +259,18 @@
 				width: "8em"
 			}).placeAt("event3");
 
-		</script>
+			// without day names line
+			oDatesRow = new sap.ui.unified.calendar.DatesRow("DR4",{
+				days: 14,
+				showDayNamesLine: false
+			}).placeAt("sample4");
+
+			oDatesRow = new sap.ui.unified.calendar.DatesRow("DR5",{
+				days: 14,
+				showDayNamesLine: false
+			}).placeAt("sample5");
+
+			</script>
 
 	</head>
 	<body class="sapUiBody" role="application">
@@ -283,6 +295,16 @@
 		<div>
 		<div id="sample3" style="display:inline-block;"></div>
 		<div id="event3" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+		<br>
+		<div>
+		<div id="sample4" style="display:inline-block; width: 1000px; max-width: 100%;"></div>
+		<div id="event4" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+		<br>
+		<div>
+		<div id="sample5" style="display:inline-block; width: 800px; max-width: 100%;" class="sapUiSizeCompact"></div>
+		<div id="event5" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 
 	</body>

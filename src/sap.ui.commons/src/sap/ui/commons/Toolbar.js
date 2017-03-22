@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *
 		 * @constructor
 		 * @public
+		 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Toolbar</code> control.
 		 * @alias sap.ui.commons.Toolbar
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -83,7 +84,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// Buffer for performance, updated after rendering
 			this.oDomRef = null;
 			this.oInnerRef = null;
+			//reference to the menu button
 			this.oOverflowDomRef = null;
+			//reference to the overflow content
+			this._oOverflowPopup = null;
 		    this.sOriginalStylePropertyWidth = null;
 			this.bHasRightItems = false;
 			this._bRendering = false;
@@ -185,6 +189,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.oItemDelegate = undefined;
 			jQuery(window).unbind("resize", this.onwindowresize);
 
+			removeOverflowContentAndPopup.call(this);
 			// No super.exit() to call
 		};
 
@@ -324,14 +329,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (bClearTabStops) {
 				for (var i = iAllItemsBeforeBreak; i < aLeftItemsWithVisibilityTrue.length; i++) {
 					var oDomRef = aLeftItemsWithVisibilityTrue[i].getFocusDomRef();
-					var $Item = jQuery(oDomRef);
-					if (oDomRef && ($Item.attr("tabindex") == "0")) { // set tabindex to -1 only if already set to 0
-						$Item.attr("tabIndex", -1);
-					}
-				}
-
-				for (var i = 0; i < aRightItems.length; i++) {
-					var oDomRef = aRightItems[i].getFocusDomRef();
 					var $Item = jQuery(oDomRef);
 					if (oDomRef && ($Item.attr("tabindex") == "0")) { // set tabindex to -1 only if already set to 0
 						$Item.attr("tabIndex", -1);
@@ -507,7 +504,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		Toolbar.prototype.handleOverflowButtonTriggered = function () {
 			// Initialize the popup
 			if (!this.bPopupInitialized) {
-				this.popup = new Popup(new sap.ui.commons.ToolbarOverflowPopup(this), false, true, true);
+				this._oOverflowPopup = new sap.ui.commons.ToolbarOverflowPopup(this);
+				this.popup = new Popup(this._oOverflowPopup, false, true, true);
 				this.popup.setAutoCloseAreas([this.getId() + "-mn"]);
 				this.bPopupInitialized = true;
 			}
@@ -546,8 +544,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// Register for window resize event during the popup is opened, so that the popup will be closed if the window is resized.
 			jQuery(window).bind("resize", jQuery.proxy(this.onwindowresize, this));
 
-			//Open popup with a little delay in IE8 to avoid focus calls when the popup is not yet opened
-			var iDuration = !!sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version == 7 || sap.ui.Device.browser.version == 8) ? 1 : 0;
+			var iDuration = 0;
 			this.popup.open(iDuration, Popup.Dock.EndTop, Popup.Dock.EndBottom, this.$("mn"), "", "fit", true);
 		};
 
@@ -741,7 +738,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					if (sChildId === this.getId()) {
 						return;
 					}
-					var oCtrl = sap.ui.getCore().getControl(sChildId);
+					var oCtrl = sap.ui.getCore().byId(sChildId);
 					//else
 					var oContent;
 					if (oCtrl && this.popup && (oContent = this.popup.getContent()) &&
@@ -775,6 +772,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				// Call super constructor
 				sap.ui.core.Element.call(this, sId);
+			},
+
+			exit: function() {
+				this.$().remove();
 			},
 
 			/**
@@ -1007,5 +1008,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return Toolbar;
+
+		/**
+		 * Destroy/Remove overflow menu content that is inside the popup and the popup itself
+		 * @private
+		 */
+		function removeOverflowContentAndPopup() {
+			if (this.bPopupInitialized) {
+				this._oOverflowPopup.destroy();
+				this._oOverflowPopup = null;
+				this.popup.detachOpened(this.handlePopupOpened, this);
+				this.popup.detachClosed(this.handlePopupClosed, this);
+				this.popup.destroy();
+				this.popup = null;
+				this.bPopupInitialized = false;
+			}
+		}
 
 	}, /* bExport= */ true);

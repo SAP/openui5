@@ -1,12 +1,15 @@
-/* ============================================================ */
-/* CSS for control sap.m/Tile.control High Contrast Black theme */
-/* ============================================================ */
+/* =========================== */
+/* CSS for control sap.m/Tile  */
+/* High Contrast Black theme   */
+/* =========================== */
+
 .sapMTile,
 .sapMCustomTile {
+	border: 1px solid @sapUiTileBorderColor;
 	border-radius: 0.25rem;
 	-webkit-transition-property: none;
-	-moz-transition-property: none;
 	transition-property: none;
+	background-color: @sapUiTileBackground;
 }
 
 .sapMTile:focus,
@@ -30,12 +33,13 @@
 
 .sapMTile:focus::before,
 .sapMCustomTile:focus .sapMTile::before {
-	border: 0.125rem dotted @sapHCStandardFG;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.25rem;
 }
 
 .sapMTile:hover::before,
 .sapMCustomTile:hover .sapMTile::before {
-	border: 0.1875rem solid @sapHCStandardFG;
+	border: 0.188rem solid @sapUiTileBorderColor;
 }
 
 .sapMTile:hover,
@@ -46,35 +50,16 @@
 }
 
 .sapMTile.sapMTileActive {
-	background-color: @sapHCStandardBG;
+	background-color: @sapUiTileBackground;
 }
 
 .sapMTile .sapUiLocalBusyIndicator {
-	background-color: @sapHCStandardBG;
+	background-color: @sapUiTileBackground;
 	border-radius: 0.25rem;
 	margin: 0.125rem;
 	.sapUiLocalBusyIndicatorAnimation {
 		border: none;
 		box-shadow: none;
-	}
-}
-
-.sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
-	position: relative;
-	padding: 0;
-	cursor: pointer;
-	box-shadow: none;
-	background-color: @sapHCStandardBG;
-	width: 1.375rem;
-	height: 1.375rem;
-	font-size: 22px;
-	&:hover {
-		background-color: @sapHCHighlightBG;
-	}
-	&::before {
-		position: absolute;
-		top: -0.125rem;
-		pointer-events: none;
 	}
 }
 

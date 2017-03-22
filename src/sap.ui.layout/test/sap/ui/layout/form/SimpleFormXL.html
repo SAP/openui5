@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<title>SimpleForm - sap.ui.layout.form</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.ui.layout, sap.m"
+	        src="../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script>
+
+		var oSimpleForm = new sap.ui.layout.form.SimpleForm(
+				"SF1",
+				{
+					layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+					columnsXL:3,
+					editable: true,
+					content:[
+					        new sap.ui.core.Title({text:"Title 1"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I1",{value:"Value 1"}),
+					        new sap.m.Label({text:"Label 2"}),
+					        new sap.m.Input("I2",{value:"Value 2/1"}),
+					        new sap.m.Input("I3",{value:"Value 2/2",
+					        	layoutData: new sap.ui.layout.GridData({span: "XL3 L6 M2 S2", linebreakL: true})}),
+
+					        new sap.ui.core.Title({text:"Title 2"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input({value:"Value 1"}),
+					        new sap.m.Label({text:"Label 2"}),
+					        new sap.m.Input({value:"Value 2/1"}),
+					        new sap.m.Input({value:"Value 2/2"}),
+					        new sap.ui.core.Title({text:"Title 3"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I4",{value:"Value 1"}),
+					        new sap.m.Label({text:"Label 2"}),
+					        new sap.m.Input("I5",{value:"Value 2/1"}),
+					        new sap.m.Input("I6",{value:"Value 2/2",
+					        	layoutData: new sap.ui.layout.GridData({span: "XL4 L7 M2 S2", linebreakXL: true})}),
+
+					        new sap.ui.core.Title({text:"Title 4"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I7",{value:"Value 4"}),
+					        new sap.ui.core.Title({text:"Title 5"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I8",{value:"Value 1"}),
+					        new sap.ui.core.Title({text:"Title 6"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I9",{value:"Value 1"})
+					]
+				}).placeAt('content');
+
+
+
+		</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="header">Test Page for <code>sap.ui.layout.form.SimpleForm</code> using Mobile controls and XL breakpoint</h1>
+
+	<div id="button"></div>
+	<br>
+	<div id="content"></div>
+
+</body>
+</html>

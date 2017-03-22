@@ -1,7 +1,8 @@
 <html>
 	<head>
 		<title>QUnit TestSuite for sap.m</title>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="../shared-config.js"></script>
 		<script
 			id="sap-ui-bootstrap"
 			src='../../../../resources/sap-ui-core.js'>
@@ -16,24 +17,22 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite(),
 				contextPath = "/" + window.location.pathname.split("/")[1],
-				ie9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9);
+				ie9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9),
+				ie10 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 10);
 
-			if (!navigator.userAgent.match(/MSIE 8.0/g) && navigator.platform.indexOf("Linux") === -1) {
+			if (!navigator.userAgent.match(/MSIE 8.0/g) && (navigator.platform.indexOf("Linux") === -1 || !sap.ui.Device.system.desktop)) {
 
-				// Cart Application
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/cart/test/BuyProductJourney.qunit.html");
+				// Apps and samples
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuites/testsuite.demokit.qunit.html");
+
+				// ActionListItem
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionListItem.qunit.html");
 
 				// ActionSelect
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSelect.qunit.html");
 
 				// ActionSheet
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSheet.qunit.html");
-				// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-				if (!sap.ui.Device.browser.phantomJS) {
-					// the device simulation overrides the PhantomJS browser detection
-					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSheet.qunit.html?sap-ui-xx-fakeOS=ipad"); // actionsheet has different behavior between phone and tablet
-					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSheet.qunit.html?sap-ui-xx-fakeOS=iphone"); // actionsheet has different behavior between phone and tablet
-				}
 
 				// App
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/App.qunit.html");
@@ -50,16 +49,16 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/BusyDialog.qunit.html");
 
 				// BusyIndicator
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/BusyIndicator_desktop.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/BusyIndicator.qunit.html");
 
 				// Button
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Button.qunit.html");
 
+				// Breadcrumbs
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Breadcrumbs.qunit.html");
+
 				// Carousel
-				//Commented out since there have been failing tests during Git/Gerrit Builds.
-				//Seems like this happens since the sinon clock had been introduced to simulate
-				//delays.Needs further investigation
-				//suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Carousel.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Carousel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Carousel_tablet.qunit.html?sap-ui-xx-fakeOS=ipad");
 
 				// CheckBox
@@ -80,6 +79,9 @@
 				// CSSClassesFromParameters
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/CSSClassesFromParameters.qunit.html");
 
+				// CustomTile
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/CustomTile.qunit.html");
+
 				// DatePicker
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/DatePicker.qunit.html");
 
@@ -89,14 +91,26 @@
 				// DateTimeInput
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/DateTimeInput.qunit.html");
 
+				// DateTimePicker
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/DateTimePicker.qunit.html");
+
+				// DraftIndicator
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/DraftIndicator.qunit.html");
+
 				// Dialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Dialog.qunit.html");
+
+				// DisplayListItem
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/DisplayListItem.qunit.html");
 
 				// load all explored samples
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ExploredSamples.qunit.html");
 
 				// FacetFilter
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/FacetFilter.qunit.html");
+
+				// FeedContent
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/FeedContent.qunit.html");
 
 				// FeedInput
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/FeedInput.qunit.html");
@@ -112,6 +126,12 @@
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/FlexBoxFitPage.qunit.html");
 				}
 
+				// FormattedText
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/FormattedText.qunit.html");
+
+				// GenericTile
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/GenericTile.qunit.html");
+
 				// GrowingList
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/GrowingEnablement.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/GrowingList_databinding.qunit.html");
@@ -120,6 +140,9 @@
 				if(!ie9) {
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/HBox.qunit.html");
 				}
+
+				// HeaderContainer
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/HeaderContainer.qunit.html");
 
 				// IconTabBar
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/IconTabBar.qunit.html");
@@ -140,6 +163,11 @@
 				// Label
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Label.qunit.html");
 
+				// LightBox
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/LightBox.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/LightBoxItem.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/LightBoxMemoryLeak.qunit.html");
+
 				// Link
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Link.qunit.html");
 
@@ -151,6 +179,13 @@
 				// Predefined Margins
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MarginCssClasses.qunit.html");
 
+				// Mask Input
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MaskInput.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MaskInputRule.qunit.html");
+
+				// MenuButton
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MenuButton.qunit.html");
+
 				// MessageBox
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageBox.qunit.html");
 
@@ -159,6 +194,12 @@
 
 				// MessagePopover
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessagePopover.qunit.html");
+
+				// MessageItem
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageItem.qunit.html");
+
+				// MessageView
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageView.qunit.html");
 
 				// MessageStrip
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageStrip.qunit.html");
@@ -175,6 +216,19 @@
 				// NavContainer
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NavContainer.qunit.html");
 
+				// NewsContent
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NewsContent.qunit.html");
+
+				// NotificationListGroup
+				// NotificationListItem
+				if (!ie9 && !ie10) {
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListGroup.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListItem.qunit.html");
+				}
+
+				// NumericContent
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NumericContent.qunit.html");
+
 				// ObjectAttribute
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ObjectAttribute.qunit.html");
 
@@ -190,6 +244,9 @@
 				// ObjectListItem
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ObjectListItem.qunit.html");
 
+				// ObjectMarker
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ObjectMarker.qunit.html");
+
 				// ObjectNumber
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ObjectNumber.qunit.html");
 
@@ -199,6 +256,12 @@
 				// Page
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Page.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Page_part2.qunit.html");
+
+				// PageAccessibleLandmarkInfo
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PageAccessibleLandmarkInfo.qunit.html");
+
+				// PagingButton
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PagingButton.qunit.html");
 
 				// Panel
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Panel.qunit.html");
@@ -210,6 +273,15 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nSortPanel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nGroupPanel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDimMeasurePanel.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nSelectionPanel.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nChartSelectionPanel.qunit.html");
+
+			//	suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nMemoryLeakChecks-createAndDestroy.qunit.html");
+			//	suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nMemoryLeakChecks-createAndDestroy2x.qunit.html");
+
+				// PlanningCalendar
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PlanningCalendar.qunit.html");
 
 				// Popover
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Popover.qunit.html");
@@ -221,11 +293,19 @@
 				// PullToRefresh
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PullToRefresh_desktop.qunit.html");
 
+				// QuickView
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QuickView.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QuickViewCard.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QuickViewPage.qunit.html");
+
 				// RadioButton
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/RadioButton.qunit.html");
 
 				// RadioButtonGroup
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/RadioButtonGroup.qunit.html");
+
+				// RangeSlider
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/RangeSlider.qunit.html");
 
 				// RatingIndicator
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/RatingIndicator.qunit.html");
@@ -235,6 +315,9 @@
 
 				// Routing
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuites/testsuite.routing.qunit.html");
+
+				// ResponsiveScale
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ResponsiveScale.qunit.html");
 
 				// ScrollContainer
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ScrollContainer.qunit.html");
@@ -246,6 +329,7 @@
 
 				// SearchField
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SearchField.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SearchField_suggestions.qunit.html");
 
 				// SegmentedButton
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SegmentedButton.qunit.html");
@@ -256,6 +340,9 @@
 				// SelectDialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SelectDialog.qunit.html");
 
+				// SelectList
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SelectList.qunit.html");
+
 				// SemanticPage
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/semantic/SemanticButton.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/semantic/SemanticSelect.qunit.html");
@@ -263,11 +350,18 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/semantic/Segment.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/semantic/ShareMenu.qunit.html");
 
+				// SelectionDetails
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SelectionDetails.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SelectionDetailsItem.qunit.html");
+
 				// Shell
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Shell.qunit.html");
 
 				// Slider
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Slider.qunit.html");
+
+				// SlideTile
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SlideTile.qunit.html");
 
 				// SplitApp
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SplitApp.qunit.html");
@@ -278,11 +372,17 @@
 				// StandardTile
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/StandardTile.qunit.html");
 
+				// StepInput
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/StepInput.qunit.html");
+
 				// Support
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Support.qunit.html");
 
 				// Switch
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Switch.qunit.html");
+
+				// TabContainer
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TabContainer.qunit.html");
 
 				// Table
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Table.qunit.html");
@@ -295,6 +395,15 @@
 				// TableSelectDialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TableSelectDialog.qunit.html");
 
+				// TabStrip
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TabStrip.qunit.html");
+
+				// TabStripSelect
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TabStripSelect.qunit.html");
+
+				// TabStripItem
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TabStripItem.qunit.html");
+
 				// Text
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Text.qunit.html");
 
@@ -305,10 +414,16 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Tile.qunit.html");
 
 				// TileContainer
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TileContainer.qunit.html");
+			//	suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TileContainer.qunit.html");
+
+				// TileContent
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TileContent.qunit.html");
 
 				// Title
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Title.qunit.html");
+
+				// TimePicker
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TimePicker.qunit.html");
 
 				// ToggleButton
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ToggleButton.qunit.html");
@@ -325,9 +440,16 @@
 				// Tokenizer
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Tokenizer.qunit.html");
 
+				// Tree
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Tree.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/CustomTreeItem.qunit.html");
+
 				// UploadCollection
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/UploadCollection.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/UploadCollectionItem.qunit.html");
+
+				// ValueCssColor
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ValueCSSColor.qunit.html");
 
 				// VBox
 				if (!ie9) {
@@ -336,10 +458,61 @@
 
 				// ViewSettingsDialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ViewSettingsDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ViewSettingsDialogCustomTabs.qunit.html");
 
 				// QUnit Tests for responsive behaviour (for example Responsive Margins)
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QUnitCompositesUsingIFrames.qunit.html");
 
+				// Wizard
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Wizard.qunit.html");
+
+				// WizardProgressNavigator
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/WizardProgressNavigator.qunit.html");
+
+				// WizardStep
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/WizardStep.qunit.html");
+
+				// ValueStateMessage
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ValueStateMessage.qunit.html");
+
+				// ViewSettingsPopover
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ViewSettingsPopover.qunit.html");
+
+				// DesignTime
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Button.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CustomTile.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/InputListItem.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Select.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/SplitContainer.qunit.html");
+
+				// Design Time & RTA Enabling
+				try {
+					sap.ui.getCore().loadLibrary("sap.ui.rta");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Bar.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CustomListItem.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CheckBox.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/DatePicker.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Image.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/InputBase.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/InputListItem.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Label.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Link.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/ListBase.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/ListItemBase.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Page.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Panel.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/RadioButton.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/RatingIndicator.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/ScrollContainer.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Slider.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/StandardListItem.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Table.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Text.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Title.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Toolbar.qunit.html");
+				} catch (e) {
+					jQuery.sap.log.info("sap.ui.rta not available", "enabling tests are skipped, ensure sap.ui.rta from sapui5.runtime is loaded to execute them");
+				}
 			}
 
 			return suite;

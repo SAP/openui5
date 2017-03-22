@@ -1,28 +1,29 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>QUnit Tests - sap.m.Tile</title>
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_bluecrystal"
-			type="text/javascript"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m"
+			data-sap-ui-language="en-US"
 			src="../../../../resources/sap-ui-core.js">
 	</script>
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script>
 
 		var core = sap.ui.getCore();
 
-		module("Dimensions");
+		QUnit.module("Dimensions");
 
 
-		test("ShouldRoundDimensionsToFloor", function() {
+		QUnit.test("ShouldRoundDimensionsToFloor", function(assert) {
 			// SUT
 			var sut = new sap.m.Tile();
 
@@ -30,11 +31,12 @@
 			sut.setPos(1.8,2.4);
 
 			// Assert
-			equals(sut._posX,1)
-			equals(sut._posY,2)
+			assert.equal(sut._posX,1)
+			assert.equal(sut._posY,2)
 		});
 
-		asyncTest("ShouldSetStyledForPosition", function() {
+		QUnit.test("ShouldSetStyledForPosition", function(assert) {
+			var done = assert.async();
 			// Arrange
 			var sut, $sut,
 				xPosition = 5,
@@ -58,15 +60,15 @@
 
 				// Assert
 				if (result.indexOf('matrix3d')==0) {
-					equal(result,"matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, " + xPosition + ", " + yPosition + ", 0, 1)" );
+					assert.equal(result,"matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, " + xPosition + ", " + yPosition + ", 0, 1)" );
 								} else {
-					equal(result,"matrix(1, 0, 0, 1, " + xPosition + ", " + yPosition + ")" );
+					assert.equal(result,"matrix(1, 0, 0, 1, " + xPosition + ", " + yPosition + ")" );
 				}
-				start();
+				done();
 			},800);
 		});
 
-		test("ShouldSetTheSize", function() {
+		QUnit.test("ShouldSetTheSize", function(assert) {
 			// Arrange
 			var sut,
 				width = 3,
@@ -79,15 +81,15 @@
 			sut.setSize(width,height);
 
 			// Assert
-			equal(sut._width,width);
-			equal(sut._height,height);
+			assert.equal(sut._width,width);
+			assert.equal(sut._height,height);
 		});
 
 
-		module("Properties");
+		QUnit.module("Properties");
 
 
-		test("ShouldSetRemoveable", function() {
+		QUnit.test("ShouldSetRemoveable", function(assert) {
 			// SUT
 			var sut = new sap.m.Tile();
 
@@ -95,11 +97,11 @@
 			sut.isEditable(false);
 
 			// Assert
-			equals(sut._bIsEditable,false)
+			assert.equal(sut._bIsEditable,false)
 		});
 
 
-		test("ShouldSetIfATileIsDragged", function() {
+		QUnit.test("ShouldSetIfATileIsDragged", function(assert) {
 				// SUT
 				var sut = new sap.m.Tile();
 				sut.isEditable(true);
@@ -112,12 +114,37 @@
 
 				// Assert
 
-				ok(sut.$().hasClass("sapMTileDrag"),"has drag class set");
+				assert.ok(sut.$().hasClass("sapMTileDrag"),"has drag class set");
 		});
 
-		module("Events");
 
-		test("ShouldReactOnTouchstart", function() {
+		QUnit.test("Should Set Visibility and trigger rerender of the TileContainer", function(assert) {
+			//Arrange
+			var result ,
+			//SUT
+			sut = new sap.m.Tile(),
+			sut2 = new sap.m.Tile(),
+			container = new sap.m.TileContainer({tiles: [sut, sut2]});
+
+			sinon.spy(container, "rerender");
+
+			container.placeAt("qunit-fixture");
+			core.applyChanges();
+
+			//Act
+			sut.setVisible(false);
+			core.applyChanges();
+
+			//Assert
+			assert.ok(container.rerender.calledOnce, "Tile container is rerendered when tile visibility is changed");
+			container.destroy();
+		});
+
+
+
+		QUnit.module("Events");
+
+		QUnit.test("ShouldReactOnTouchstart", function(assert) {
 			// SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
@@ -128,11 +155,11 @@
 			sap.ui.test.qunit.triggerTouchEvent("touchstart",sut.getDomRef(),{clientX: 0, clientY: 0});
 
 			// Assert
-			ok(sut.$().hasClass("sapMTileActive"));
-			ok(sut.$().hasClass("sapMTileActive-CTX"));
+			assert.ok(sut.$().hasClass("sapMTileActive"));
+			assert.ok(sut.$().hasClass("sapMTileActive-CTX"));
 		});
 
-		test("ShouldReactOnTouchEnd", function() {
+		QUnit.test("ShouldReactOnTouchEnd", function(assert) {
 			//SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
@@ -145,12 +172,12 @@
 			sap.ui.test.qunit.triggerTouchEvent("touchend",sut.getDomRef());
 
 			//Assert
-			ok(!sut.$().hasClass("sapMTileActive"));
-			ok(!sut.$().hasClass("sapMTileActive-CTX"))
+			assert.ok(!sut.$().hasClass("sapMTileActive"));
+			assert.ok(!sut.$().hasClass("sapMTileActive-CTX"))
 
 		});
 
-		test("ShouldReactOnTouchMove", function() {
+		QUnit.test("ShouldReactOnTouchMove", function(assert) {
 			//SUT
 			var sut = new sap.m.Tile();
 			sut.placeAt("qunit-fixture");
@@ -162,12 +189,12 @@
 			sap.ui.test.qunit.triggerTouchEvent("touchmove",sut.getDomRef(), {clientX: 100, clientY: 100});
 
 			//Assert
-			ok(!sut.$().hasClass("sapMTileActive"));
-			ok(!sut.$().hasClass("sapMTileActive-CTX"))
+			assert.ok(!sut.$().hasClass("sapMTileActive"));
+			assert.ok(!sut.$().hasClass("sapMTileActive-CTX"))
 
 		});
 
-		test("ShouldPreventTapEventForChildren", function() {
+		QUnit.test("ShouldPreventTapEventForChildren", function(assert) {
 			//Arrange
 			var result ,
 
@@ -185,14 +212,14 @@
 			sut._parentPreventsTapEvent = 5;
 
 			//Assert
-			equal(result,true);
-			equal(result,sut._parentPreventsTapEvent);
+			assert.equal(result,true);
+			assert.equal(result,sut._parentPreventsTapEvent);
 			container.destroy();
 		});
 
-        module("Keyboard handling");
+        QUnit.module("Keyboard handling");
 
-        test("ShouldFirePressOnEnterOrSpace", function() {
+        QUnit.test("ShouldFirePressOnEnterOrSpace", function(assert) {
             //Arrange
             var result = 0,
             //SUT
@@ -208,16 +235,16 @@
             //Act
             sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.ENTER);
             //Assert
-            equal(result, 1);
+            assert.equal(result, 1);
 
             //Act
             sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.SPACE);
             //Assert
-            equal(result, 2);
+            assert.equal(result, 2);
         });
 
 
-		test('ShouldHaveAccessibilityAttributes', function () {
+		QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 			// SUT
 			var m 	  	= sap.m,
 				sut 	= new m.Tile(),
@@ -230,10 +257,37 @@
 			core.applyChanges();
 
 			// Assert
-			equal(sut.$().attr('role'), 'option', 'option, option; equal success');
+			assert.equal(sut.$().attr('role'), 'option', 'option, option; equal success');
+			assert.equal(sut.$().attr('aria-posinset'), "1", 'position in the set must equal to 1');
+			assert.equal(sut.$().attr('aria-setsize'), "2", 'the size of the set must equal to 2');
 
 			cnt.destroy();
 		});
+
+		QUnit.test("ShouldHaveAriaDescribedByAttribute", function (assert) {
+			var m = sap.m,
+					sut = new m.Tile(),
+					tiles = [sut, new m.Tile()],
+					cnt = new m.TileContainer({tiles: tiles});
+
+			cnt.placeAt("qunit-fixture");
+
+			// Act
+			core.applyChanges();
+
+			// Assert
+			assert.equal(sut.$().attr('aria-describedby'), null, 'When tile is not editable, aria-describedBy should not exist');
+
+			// Act
+			sut.isEditable(true);
+			//Assert
+			assert.equal(sut.$().attr('aria-describedby'), sut._getAriaDescribedByDeleteLabel().getId(), 'When tile is editable, aria-describedBy should exist');
+			assert.equal(sut._getAriaDescribedByDeleteLabel().getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
+					'When tile is editable, aria-describedBy should point to a label with certain text');
+
+			cnt.destroy();
+		})
+
 
 	</script>
 </head>

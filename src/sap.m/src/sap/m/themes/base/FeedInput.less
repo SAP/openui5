@@ -1,18 +1,152 @@
-
-/* ======================================= */
-/* CSS for control sap.m/FeedInput.control */
-/* ======================================= */
+/* ================================ */
+/* CSS for control sap.m/FeedInput  */
+/* Base theme                       */
+/* ================================ */
 
 .sapMFeedIn {
 	display: block;
 	position: relative;
+	padding: 0.5rem 0.5rem 0.5rem 5rem;
+	width: 100%;
+	box-sizing: border-box;
 }
 
-.sapMFeedInImage{
+
+.sapMFeedIn.sapMFeedInDisabled {
+	opacity: 0.5;
+}
+
+/*hide the icon if the width of the screen <=25rem */
+@media (max-width: 25rem) {
+	.sapMFeedInFigure {
+		display: none;
+	}
+
+	.sapMFeedIn {
+		padding-left: 0.5rem;
+	}
+}
+
+.sapMFeedInNoIcon {
+	padding-left: 0.5rem;
+}
+
+.sapMFeedInFigure {
+	position: absolute;
+	height: 4rem;
 	width: 4rem;
-	line-height: 4rem;
-	font-size: 3rem;
+	margin: 0 0 0 0.5rem;
+	background-color: @sapUiContentImagePlaceholderBackground;
+	box-sizing: border-box;
+	left: 0;
+	overflow: hidden;
+	border-width: 0.125rem;
+	border-style: solid;
+	border-color: @sapUiFieldBackground; /* the background parameter is used for to ensure the border theme is aligned with the text area background */
+}
+
+.sapMFeedInImage {
+	width: 3.75rem;;
+	line-height: 3.75rem;
+	font-size: 2.25rem;
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+	background-color: @sapUiContentImagePlaceholderBackground;
+	color: @sapUiContentImagePlaceholderForegroundColor;
+}
+
+.sapMFeedIn:not(.sapMFeedInDisabled) .sapMFeedInContainer {
+	background-color: @sapUiFieldBackground;
+}
+
+.sapMFeedIn .sapMFeedInContainer {
+	width: 100%;
+	height: 4rem;
+	position: relative;
+}
+
+.sapMFeedIn >.sapMFeedInContainer >.sapMInputBase {
+	width: 100%;
+	padding: 0 4.0rem 0 0;
+	margin: 0;
+	min-height: 4rem;
+}
+
+.sapMFeedIn >.sapMFeedInContainer > .sapMTextArea> .sapMInputBaseInner {
+	border-bottom-style: hidden;
+	border-top-style: hidden;
+	border-left-style: hidden;
+	border-right-style: hidden;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-style: normal;
+	font-weight: normal;
+	color: @sapUiFieldTextColor;
+	line-height: 1.4;
+	padding: 0.5rem 0.05rem 0.5rem 0.5rem;
+	min-height: 4rem;
+}
+
+.sapMFeedInContainer .sapMInputBaseInner {
+	border: none;
+}
+
+.sapMFeedIn .sapMBtn {
+	width: 4.0rem;
+	height: 3.75rem;
+	padding-top: 0.25rem;
+	padding-right: 0.25rem;
+	padding-bottom: 0.25rem;
+	position: absolute;
+	right: -0.25rem;
+	bottom: 0.25rem;
+}
+
+html[data-sap-ui-browser*='ie'] .sapMFeedIn .sapMBtnInner {
+	width: 3.5rem;
+	display: block;
+}
+
+.sapMFeedIn .sapMBtnInner {
+	width: 3.5rem;
+	height: 3.5rem;
+	padding: 0;
+}
+
+.sapMFeedIn .sapMBtnIcon{
+	width: 3.5rem;
+	height: 3.5rem;
+}
+
+.sapMFeedIn .sapMBtnIcon {
+	width: 2.375rem;
+	height: 2.375rem;
+	padding: 0.5rem;
+	font-size: 1.5rem;
+	line-height: 2.375rem;
+}
+
+.sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
+	height: 4rem;
+}
+
+/* 1px too much in firefox */
+html[data-sap-ui-browser^="ff"] .sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
+	height: ~"calc(4rem - 1px)";
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMFeedIn .sapMBtnIcon {
+	margin-left: 0;
+}
+.sapUiSizeCompact .sapMFeedIn >.sapMFeedInContainer >.sapMInputBase {
+	margin: 0;
+}
+.sapUiSizeCompact .sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
+	height: 4rem;
+}
+/* 1px too much in firefox */
+html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapMFeedIn .sapMInputBase.sapMTextArea .sapMTextAreaInner {
+	height: ~"calc(4rem - 1px)";
 }

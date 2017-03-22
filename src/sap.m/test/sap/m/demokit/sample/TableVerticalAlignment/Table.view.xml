@@ -1,6 +1,5 @@
 <mvc:View
 	controllerName="sap.m.sample.TableVerticalAlignment.Table"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Table id="idProductsTable"
@@ -35,7 +34,7 @@
 				<Text text="Weight" />
 			</Column>
 			<Column
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Unit Price" />
 			</Column>
 		</columns>
@@ -45,7 +44,7 @@
 					<ObjectIdentifier
 						title="{Name}"
 						text="{ProductId}" />
-					
+
 					<Input value="{Quantity}" type="{Text}" description="{UoM}" fieldWidth="{60%}"/>
 
 					<ObjectNumber
@@ -56,8 +55,12 @@
 							formatter: 'sap.m.sample.TableVerticalAlignment.Formatter.weightState'
 						}" />
 					<ObjectNumber
-						number="{Price}"
-						unit="{CurrencyCode}" />
+                        number="{
+                            parts:[{path:'Price'},{path:'CurrencyCode'}],
+                            type: 'sap.ui.model.type.Currency',
+                            formatOptions: {showMeasure: false}
+                        }"
+                        unit="{CurrencyCode}" />
 				</cells>
 			</ColumnListItem>
 		</items>

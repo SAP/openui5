@@ -1,9 +1,9 @@
 <html>
 	<head>
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/UTILS</title>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
 		<script src="../../../../../../resources/sap/ui/Device.js"></script>
-		<script language="javascript">
+		<script>
 
 
 			/**
@@ -13,12 +13,23 @@
 			function suite() {
 				var suite = new parent.jsUnitTestSuite();
 				var contextPath = "/" + window.location.pathname.split("/")[1];
+				var bIsIE = sap.ui.Device.browser.msie;
+
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BusyIndicator.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BusyIndicatorNoCore.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BusyIndicatorRTL.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Device.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Encoding.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/HTMLSanitizer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.dom.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.encoder.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.measure.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions-meta-tag-override-mode.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions-meta-tag-override-service.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions-meta-tag.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions.qunit.html");
+				// This test should only be executed on browser != Internet Explorer, as it shows unreliable results on IE!!
+				if (!bIsIE) {
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.history.qunit.html");
+				}
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.logger.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.promise.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.properties.qunit.html");
@@ -26,21 +37,18 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.script.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.strings.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.storage.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.trace.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.unicode.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.Version.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.xml.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/LabelEnablement.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/PerformanceMeasurement.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Popup.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/SelectionModel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Serializer.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/support/SupportTool.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/util/Export.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/util/ExportTypeCSV.qunit.html");
-				if (sap.ui.Device.browser.mobile == false){
-					//do not run the test on mobile browsers, because the feature does not support them (see UnicodeNormalizer.js)
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/util/UNorm.qunit.html");
-				}
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/util/XMLPreprocessor.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ValidateUrl.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ValueStateSupport.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ViewSerializer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ws/SapPcpWebSocket.qunit.html");

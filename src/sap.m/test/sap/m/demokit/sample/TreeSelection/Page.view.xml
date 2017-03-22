@@ -1,0 +1,33 @@
+<mvc:View
+	controllerName="sap.m.sample.TreeSelection.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	 	<Tree
+			id="Tree"
+		 	items="{path: '/'}"
+		 	mode="MultiSelect"
+			includeItemInSelection="true">
+			<headerToolbar>
+                <Toolbar>
+                    <content>
+                        <Title text="Nodes" level="H2" />
+                        <ToolbarSpacer />
+                        <Select
+                            selectedKey="MultiSelect"
+                            change="handleSelectChange">
+                            <items>
+                                <core:Item key="None" text="No Selection" />
+                                <core:Item key="SingleSelect" text="Single Selection" />
+                                <core:Item key="SingleSelectLeft" text="Single Selection Left" />
+                                <core:Item key="SingleSelectMaster" text="Single Selection (Master)" />
+                                <core:Item key="MultiSelect" text="Multi Selection" />
+                            </items>
+                        </Select>
+                    </content>
+                </Toolbar>
+            </headerToolbar>
+		    <StandardTreeItem
+			    title="{text}"/>
+		</Tree>
+</mvc:View>

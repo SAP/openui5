@@ -1,0 +1,121 @@
+/* ================================= */
+/* CSS for control sap.m/TimePicker  */
+/* Belize High Contrast White theme  */
+/* ================================= */
+
+/* ======================================== */
+/* TimePicker Input Field                   */
+/* ======================================== */
+
+.sapMTimePicker {
+	&.sapMTPInputActive {
+		.sapUiIcon {
+			border-left: 1px solid @sapUiFieldActiveBorderColor;
+			margin-left: -1px;
+		}
+	}
+}
+
+/* ======================================== */
+/* TimePicker Dropdown                      */
+/* ======================================== */
+
+.sapMTimePickerDropDown {
+	.sapMTimePickerContainer {
+		.sapMTPColumn {
+			.sapMTimePickerSlider {
+				.sapMTimePickerItem {
+					&:focus {
+						outline: 0.125rem dotted @sapUiContentContrastFocusColor;
+					}
+				}
+			}
+			&.sapMTPSliderExpanded {
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						&:focus {
+							outline: 0.125rem dotted @sapUiContentFocusColor;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+/* IE mobile and desktop ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"] {
+	.sapMTimePickerDropDown .sapMTimePickerContainer .sapMTPColumn.sapMTPSliderExpanded .sapMTPPickerSelectionFrame {
+		outline: none;
+	}
+	.sapMTPPickerSelectionFrame:before {
+		content: " ";
+		box-sizing: border-box;
+		position: absolute;
+		left: 0.1875rem;
+		top: 0.1875rem;
+		bottom: 0.0625rem;
+		right: 0.0625rem;
+		border: 0.125rem solid @sapUiContentForegroundBorderColor;
+		pointer-events: none;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMTPColumn:not(.sapMTimePickerSliderShort) {
+		.sapMTimePickerSlider {
+			box-shadow: 0 0 0 1px @sapUiListBorderColor;
+		}
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sapUiSizeCompact,
+html[data-sap-ui-browser^="ie"] .sapUiSizeCompact {
+	.sapMTPPickerSelectionFrame:before {
+		left: 0.375rem;
+		top: 0.375rem;
+		bottom: 0.125rem;
+		right: 0.125rem;
+	}
+}
+
+/* PHONE STYLES */
+html.sap-phone {
+	/* ======================================== */
+	/* TimePicker Input Field                   */
+	/* ======================================== */
+	.sapMTimePicker {
+		&.sapMTPInputActive {
+			.sapUiIcon {
+				border-left: 1px solid @sapUiFieldActiveBorderColor;
+				margin-left: -1px;
+			}
+		}
+	}
+
+	/* ======================================== */
+	/* TimePicker Dropdown                      */
+	/* ======================================== */
+	.sapMTimePickerDropDown {
+		.sapMTimePickerContainer {
+			.sapMTPColumn {
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						&:focus {
+							outline: 0.125rem dotted @sapUiContentContrastFocusColor;
+						}
+					}
+				}
+				&.sapMTPSliderExpanded {
+					.sapMTimePickerSlider {
+						.sapMTimePickerItem {
+							&:focus {
+								outline: 0.125rem dotted @sapUiContentFocusColor;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

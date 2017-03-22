@@ -1,51 +1,38 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer'],
-	function(jQuery, Renderer, InputBaseRenderer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
+	function(jQuery, Renderer) {
 	"use strict";
 
-
-	
 	/**
 	 * DateTimeInput renderer.
 	 * @namespace
-	 *
-	 * For a common look & feel,
-	 * DateTimeInputRenderer extends the InputRenderer
 	 */
-	var DateTimeInputRenderer = Renderer.extend(InputBaseRenderer);
-	
-	/**
-	 * Adds control specific class
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	DateTimeInputRenderer.addOuterClasses = function(oRm, oControl) {
+	var DateTimeInputRenderer = {};
+
+	DateTimeInputRenderer.render = function(oRm, oControl) {
+
+		oRm.write("<div");
+		oRm.writeControlData(oControl);
 		oRm.addClass("sapMDTI");
-	};
-	
-	/**
-	 * Add pointer cursor to date-time input
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	DateTimeInputRenderer.addCursorClass = function(oRm, oControl) {
-		if (oControl.getEnabled() && oControl.getEditable()) {
-			oRm.addClass("sapMPointer");
+
+		var sWidth = oControl.getWidth();
+		if (sWidth) {
+			oRm.addStyle("width", sWidth);
 		}
-	};
-	
-	/**
-	 * Add extra styles for input container
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	DateTimeInputRenderer.addOuterStyles = function(oRm, oControl) {
-		oRm.addStyle("width", oControl.getWidth());
+
+		oRm.writeStyles();
+		oRm.writeClasses();
+		oRm.write(">");
+
+		var oPicker = oControl.getAggregation("_picker");
+		if (oPicker) {
+			oRm.renderControl(oPicker);
+		}
+
+		oRm.write("</div>");
+
 	};
 
 	return DateTimeInputRenderer;

@@ -1,0 +1,22 @@
+/* ================================================= */
+/* CSS for control sap.ui.layout/ResponsiveSplitter  */
+/* High Contrast Black theme                         */
+/* ================================================= */
+
+.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	background-color: @sapUiHcReducedAltForeground;
+}
+
+.sapUiResponsiveSplitterPaginatorButton {
+	&:focus:before {
+		border: 1px dotted @sapUiContentFocusColor;
+		margin: 2px 0 0 2px;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorButton {
+	&:after {
+		background-color: @sapUiHcReducedAltForeground;
+	};
+}

@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>sap.m.Toolbar</title>
 
+<script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
 </script>
 
 <style type="text/css"></style>
@@ -19,26 +20,19 @@
 	jQuery.sap.require("sap.ui.core.IconPool");
 
 	// for behaviour testing
-	if (oUriParameters.get("noFlex")) {
+	if (oUriParameters.get("oldFlex")) {
 		sap.m.Toolbar.hasNewFlexBoxSupport = false;
-		sap.m.Toolbar.hasFlexBoxSupport = false;
-	} else if (oUriParameters.get("oldFlex")) {
-		sap.m.Toolbar.hasNewFlexBoxSupport = false;
-		sap.m.Toolbar.hasFlexBoxSupport = true;
-	} else if (oUriParameters.get("newFlex")) {
-		sap.m.Toolbar.hasNewFlexBoxSupport = true;
-		sap.m.Toolbar.hasFlexBoxSupport = true;
 	}
 
 	var oApp = new sap.m.App();
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
 
-	function getToolbarContent (sText) {
+	function getToolbarContent (sText, sSelId) {
 		return [
 			new sap.m.Button({text : "Button"}),
 			new sap.m.ToolbarSeparator(),
 			new sap.m.Button({text : "Test"}),
-			new sap.m.Select({
+			new sap.m.Select(sSelId, {
 				autoAdjustWidth: true,
 				items : [
 					new sap.ui.core.Item({
@@ -61,17 +55,17 @@
 						type: sap.m.ButtonType.Default,
 						icon: sAddIconURI,
 						enabled: true
-					}), 
+					}),
 					new sap.m.Button({
 						type: sap.m.ButtonType.Default,
 						icon: sAddIconURI,
 						enabled: true
-					}), 
+					}),
 					new sap.m.Button({
 						type: sap.m.ButtonType.Default,
 						icon: sAddIconURI,
 						enabled: true
-					}), 
+					}),
 					new sap.m.Button({
 						type: sap.m.ButtonType.Default,
 						icon: sAddIconURI,
@@ -80,7 +74,7 @@
 				]
 			}),
 			new sap.m.Button({text : "Button"}),
-			new sap.m.Select({ 
+			new sap.m.Select({
 				type: sap.m.SelectType.IconOnly,
 				icon: sap.ui.core.IconPool.getIconURI("filter"),
 				autoAdjustWidth: true,
@@ -98,7 +92,7 @@
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Label({ text : sText }),
 			new sap.m.ToolbarSpacer(),
-			new sap.m.Select({ 
+			new sap.m.Select({
 				items : [
 					new sap.ui.core.Item({
 						key: "0",
@@ -126,8 +120,8 @@
 				placeholder: "Input",
 				width: "150px"
 			}),
-			new sap.m.DateTimeInput({
-				placeholder: "DateTimeInput",
+			new sap.m.DateTimePicker({
+				placeholder: "DateTimePicker",
 				width: "150px"
 			}),
 			new sap.m.CheckBox({
@@ -146,17 +140,17 @@
 
 	TBHeader = new sap.m.Toolbar({
         active: true,
-		content : getToolbarContent("This is a Header")
+		content : getToolbarContent("This is a Header", "selH")
 	});
 
 	TBSubHeader = new sap.m.Toolbar({
         active: true,
-		content : getToolbarContent("This is a SubHeader")
+		content : getToolbarContent("This is a SubHeader", "selSubH")
 	});
 
 	TBFooter = new sap.m.Toolbar({
         active: true,
-		content : getToolbarContent("This is a Footer")
+		content : getToolbarContent("This is a Footer", "selF")
 	});
 
 	// test toolbars in dialog
@@ -166,11 +160,11 @@
 			oList = new sap.m.List({
 				headerToolbar : new sap.m.Toolbar({
 					content : [
-						new sap.m.Label({ 
+						new sap.m.Label({
 							text : "This is a header"
 						}),
 						new sap.m.ToolbarSpacer(),
-						new sap.m.Button({ 
+						new sap.m.Button({
 							text : "Remove",
 							type : "Reject",
 							press : function() {
@@ -191,7 +185,7 @@
 	});
 
 	// add toolbars to the page
-	var oPage = new sap.m.Page({
+	var oPage = new sap.m.Page("toolbar-page", {
 		customHeader : TBHeader,
 		subHeader : TBSubHeader,
 		footer : TBFooter,
@@ -204,7 +198,7 @@
 			}
 		}),
 		content : [
-			new sap.m.Toolbar({
+			new sap.m.Toolbar("info_bar", {
 				active : true,
 				design : sap.m.ToolbarDesign.Info,
 				tooltip : "This is a info bar",
@@ -212,7 +206,11 @@
 					new sap.m.Label({
 						text : "Plain old infobar"
 					}),
+					new sap.m.Label({text: "Text"}),
+					new sap.m.Label({text: "Text"}),
 					new sap.m.ToolbarSpacer(),
+					new sap.m.Label({text: "Text"}),
+					new sap.m.Label({text: "Text"}),
 					new sap.ui.core.Icon({
 						src : "sap-icon://undo",
 						width : "2rem",
@@ -274,13 +272,13 @@
 					new sap.m.ToolbarSpacer(),
 					new sap.m.SegmentedButton({
 						selectedButton : "sbi1",
-						buttons : [ 
+						buttons : [
 							new sap.m.Button("sbi1", {
 								text : "Seg-"
-							}), 
+							}),
 							new sap.m.Button({
 								text : "-men-"
-							}), 
+							}),
 							new sap.m.Button({
 								text : "-ted Button"
 							})
@@ -388,6 +386,13 @@
 
 	var oApp = new sap.m.App();
 	oApp.addPage(oPage).placeAt("body");
+
+	var oB = new sap.m.Button("size_btn", {
+		text : "Change page size",
+		press : function() { jQuery("#toolbar-page").width("300px"); }
+	});
+	
+	oB.placeAt("body");
 </script>
 </head>
 <body id="body" class="sapUiBody">

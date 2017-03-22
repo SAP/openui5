@@ -1,0 +1,92 @@
+{
+	"actionsScope": false,
+	"tiles": [
+		{
+			"title": "Jessica Danielle Johnson ",
+			"subtitle": "Senior Consultant, Department Sales & Distribution",
+			"footer": "Current Quarter",
+			"unit": "EUR",
+			"kpivalue": 12,
+			"scale": "k",
+			"color": "Good",
+			"trend": "Up"
+		},
+		{
+			"title": "Manage Master Data Type Activity With a Long Title and Without an Icon",
+			"subtitle": "Subtitle for Activity",
+			"footer": "Current Quarter",
+			"unit": "EUR",
+			"kpivalue": 5,
+			"scale": "",
+			"color": "Critical",
+			"trend": "Down"
+		},
+		{
+			"title": "Business Decisions",
+			"subtitle": "Approval Needed",
+			"footer": "Current Quarter",
+			"unit": "EUR",
+			"kpivalue": 12,
+			"scale": "",
+			"state": "Loading",
+			"color": "Critical",
+			"trend": "Down"
+		},
+		{
+			"title": "Manage Assets",
+			"subtitle": "",
+			"footer": "",
+			"kpivalue": 500,
+			"scale": "",
+			"color": "Error",
+			"trend": "Up",
+			"state": "Failed"
+		},
+		{
+			"title": "Manage Invoices",
+			"subtitle": "Payment Open",
+			"footer": "",
+			"kpivalue": 1,
+			"scale": "k",
+			"color": "Critical",
+			"trend": "Down",
+			"state": "Disabled"
+		}
+	],
+	"slideTile1": [
+		{
+			"backgroundImage": "test-resources/sap/m/demokit/sample/GenericTileLineMode/images/NewsImage2.png",
+			"footer": "August 22, 2016",
+			"contentText": "SAP Unveils Powerful New Player Comparision Tool Exclusively on NFL.com",
+			"subtitle": "Today, SAP News",
+			"state": "",
+			"tooltip": "NewsTile 1 of SlideTile 1"
+		},
+		{
+			"backgroundImage": "test-resources/sap/m/demokit/sample/GenericTileLineMode/images/NewsImage1.png",
+			"footer": "August 21, 2016",
+			"contentText": "Wind Map: Monitoring Real-Time and Forecasted Wind Conditions across the Globe",
+			"subtitle": "Today, SAP News",
+			"state": "",
+			"tooltip": "NewsTile 2 of SlideTile 1"
+		}
+	],
+	"slideTile2": [
+		{
+			"backgroundImage": "test-resources/sap/m/demokit/sample/GenericTileLineMode/images/NewsImage1.png",
+			"footer": "August 21, 2016",
+			"contentText": "Wind Map: Monitoring Real-Time and Forecasted Wind Conditions across the Globe",
+			"subtitle": "Today, SAP News",
+			"state": "Loading",
+			"tooltip": "NewsTile 1 of SlideTile 2"
+		},
+		{
+			"backgroundImage": "test-resources/sap/m/demokit/sample/GenericTileLineMode/images/NewsImage2.png",
+			"footer": "August 22, 2016",
+			"contentText": "SAP Unveils Powerful New Player Comparision Tool Exclusively on NFL.com",
+			"subtitle": "Today, SAP News",
+			"state": "Failed",
+			"tooltip": "NewsTile 2 of SlideTile 2"
+		}
+	]
+}

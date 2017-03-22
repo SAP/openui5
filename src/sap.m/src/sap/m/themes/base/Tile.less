@@ -1,21 +1,23 @@
-/* ====================================== */
-/* CSS for control sap.m/Tile control     */
-/* ====================================== */
+/* =========================== */
+/* CSS for control sap.m/Tile  */
+/* Base theme                  */
+/* =========================== */
 
 .sapMTile {
-	border: 1px solid @sapUiLightBorder;
 	display: inline-block;
 	-webkit-transition-property: transform3d;
 	-webkit-transition-duration: 0.2s;
-	-moz-transition-property: transform3d;
-	-moz-transition-duration: 0.2s;
 	transition-property: transform3d;
 	transition-duration: 0.2s;
 	width: 12rem;
 	height: 14rem;
-	margin:0.5rem;
+	margin: 0.5rem;
 	-webkit-touch-callout: none;
-	background-color: @sapUiWhite;
+	background-color: @sapUiTileBackground;
+	border: 1px solid @sapUiTileBorderColor;
+	border-radius: 0.125rem;
+	box-shadow: @sapUiShadowLevel0;
+	/*margin:0.6em;*/ /* in case of some behavior problems uncomment this line, it was comment because the margin causes the blurring of the focus rectangle in IE9*/
 }
 
 .sapMTile * {   /* FIXME!!! (star rule with any-parent selector...) */
@@ -26,7 +28,7 @@
 }
 
 .sapMTCEditable .sapMTile {
-	background-color: fade(@sapUiWhite, 50%);
+	background-color: fade(@sapUiTileBackground, 50);
 }
 
 html[data-sap-ui-browser*='ie'] .sapMTile {
@@ -37,13 +39,13 @@ html[data-sap-ui-browser*='ie'] .sapMTile {
 	background: @sapUiHighlight;
 }
 
-.sap-phone .sapMTile {
+html.sap-phone .sapMTile {
 	width: 8.5rem;
 	height: 10rem;
 	margin: 0.5rem;
 }
 
-.sap-phone .sapMTileContent {
+html.sap-phone .sapMTileContent {
 	width: 8.5rem;
 	height: 10rem;
 }
@@ -58,9 +60,18 @@ html[data-sap-ui-browser*='ie'] .sapMTile {
 	opacity : 0.8;
 	z-index : 10;
 	-webkit-transition-property : none;
-	-moz-transition-property: none;
 	transition-property: none;
 }
-.sapMNavItemFlipping .sapMTile{
-	opacity:0.01;
+
+.sapMNavItemFlipping .sapMTile {
+	opacity: 0.01;
+}
+
+.sapMTile:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMTile .sapMTileDrag {
+	opacity : 0.6;
+	box-shadow: 0px 1px 3px fade(@sapUiContentShadowColor,60);
 }

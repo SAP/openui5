@@ -2,12 +2,12 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="UTF-8">
+		<meta charset="utf-8">
 		<title>sap.m.Select</title>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-xx-bindingSyntax="complex">
 		</script>
 		<style type="text/css">
@@ -386,9 +386,10 @@
 		oModel.setData(mData);
 		sap.ui.getCore().setModel(oModel);
 
-		var oItemTemplate = new sap.ui.core.Item({
+		var oItemTemplate = new sap.ui.core.ListItem({
 			key: "{key}",
-			text: "{text}"
+			text: "{text}",
+			additionalText: "{key}"
 		});
 
 		var oSelect = new sap.m.Select({
@@ -398,7 +399,19 @@
 				template: oItemTemplate
 			},
 			change: function(oControlEvent) {
-				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+
+				if (oSelectedItem) {
+					jQuery.sap.log.info("Event fired: 'change' value to " + oSelectedItem.getText() + " on " + this);
+				}
+			}
+		});
+
+		var oSelectTwoColumn = new sap.m.Select({
+			showSecondaryValues: true,
+			items: {
+				path: "/items",
+				template: oItemTemplate
 			}
 		});
 
@@ -407,7 +420,14 @@
 				path: "/items",
 				template: oItemTemplate
 			},
-			selectedKey: "GER"
+			selectedKey: "GER",
+			change: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+
+				if (oSelectedItem) {
+					jQuery.sap.log.info("Event fired: 'change' value to " + oSelectedItem.getText() + " on " + this);
+				}
+			}
 		});
 
 		var oLabel = new sap.m.Label({
@@ -433,6 +453,40 @@
 			}
 		});
 
+		var oSelectSuccess = new sap.m.Select({
+			width: "15rem",
+			valueState: sap.ui.core.ValueState.Success,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oSelectWarning = new sap.m.Select({
+			width: "15rem",
+			valueState: sap.ui.core.ValueState.Warning,
+			valueStateText: "value state text",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oLabelWarning = new sap.m.Label({
+			text: "Choose your country",
+			labelFor: oSelectWarning
+		}).addStyleClass("customLabel");
+
+		var oSelectError = new sap.m.Select({
+			width: "15rem",
+			valueState: sap.ui.core.ValueState.Error,
+			valueStateText: "value state text",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
 		var oSelectBusy = new sap.m.Select({
 			busy: true,
 			items: {
@@ -448,6 +502,10 @@
 				oSelect,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
+				new sap.ui.core.HTML({ content: "<h3>Two column layout</h3>" }),
+				oSelectTwoColumn,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
 				new sap.ui.core.HTML({ content: "<h3>Labeled</h3>" }),
 				oLabel,
 				oSelectLabeled,
@@ -459,6 +517,19 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
 				oSelectDisabled,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Warning state with label</h3>" }),
+				oLabelWarning,
+				oSelectWarning,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
+				oSelectSuccess,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
+				oSelectError,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),

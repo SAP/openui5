@@ -1,49 +1,75 @@
-/* ============================================= */
-/* CSS for controlsap.m/DisplayListItem.control  */
-/* ============================================= */
+/* ====================================== */
+/* CSS for control sap.m/DisplayListItem  */
+/* Base theme                             */
+/* ====================================== */
+
 .sapMDLI {
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
-	height: 2.75em;
+	height: 3rem;
 }
 
 .sapMDLILabel {
 	-webkit-box-flex: 1;
-	-moz-box-flex: 1;
-	-ms-flex: auto;
 	flex: auto;
-	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	min-width: 3rem;
 	display: block;
+	font-size: 1.125rem;
+	-webkit-box-align: center;
+	align-items: center;
+	color: @sapUiListTextColor;
 }
 
-.sap-desktop .sapMLIBCursor .sapMDLILabel {
+.sapMLIBActionable .sapMDLILabel {
 	cursor: pointer;
 }
 
 .sapMDLIValue {
 	-webkit-box-flex: 1;
-	-moz-box-flex: 1;
-	-ms-flex: auto;
 	flex: auto;
-	-ms-flex-negative: 1; /* IE10 does not shrink by auto */
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	min-width: 3rem;
+	font-size: 0.875rem;
+	margin-left: 1rem;
+	text-align: right;
+	color: @sapUiContentLabelColor;
 }
 
-.sapMDLI > .sapMLIBContent{
+.sapMDLI > .sapMLIBContent {
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	line-height: 3rem;
+}
+
+html[dir=rtl] .sapMDLIValue {
+	text-align: left;
+}
+
+.sapMLIBActive .sapMDLILabel {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMLIBActive .sapMDLIValue {
+	color: @sapUiListActiveTextColor;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMDLI {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMDLI > .sapMLIBContent {
+	line-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMDLILabel {
+	font-size: @sapMFontMediumSize;
 }

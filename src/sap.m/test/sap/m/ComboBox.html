@@ -2,12 +2,12 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="UTF-8">
+		<meta charset="utf-8">
 		<title>sap.m.ComboBox</title>
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m"
-				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
 				data-sap-ui-xx-bindingSyntax="complex">
 		</script>
 		<style type="text/css">
@@ -19,7 +19,6 @@
 		</style>
 		<script>
 		var oModel = new sap.ui.model.json.JSONModel();
-
 		var mData = {
 			"items": [
 				{
@@ -48,6 +47,7 @@
 				},
 
 				{
+					"id": "belgium",
 					"key": "BE",
 					"text": "Belgium"
 				},
@@ -381,17 +381,125 @@
 					"key": "YE",
 					"text": "Yemen"
 				}
-		]};
+		],
+			"testItems": [
+				{
+					"key": "1234",
+					"text": "Test"
+				},
+
+				{
+					"key": "2341",
+					"text": "1Test"
+				},
+
+				{
+					"key": "T234",
+					"text": "Sonne"
+				},
+
+				{
+					"key": "3433",
+					"text": "Wolke"
+				},
+		],
+			"addText": [
+				{
+					"key": "1234",
+					"text": "Test",
+					"addText" : "1234"
+				},
+
+				{
+					"key": "2341",
+					"text": "1Test",
+					"addText" : "2341"
+				},
+
+				{
+					"key": "T234",
+					"text": "Sonne",
+					"addText" : ""
+				},
+
+				{
+					"key": "3433",
+					"text": "Wolke",
+					"addText" : ""
+				}
+			],
+			"special": [
+				{
+					"key": "1",
+					"text": "NoMatchText",
+					"addText" : "NoMatchAddText"
+				},
+				{
+					"key": "2",
+					"text": "NoMatchText",
+					"addText" : "MatchAddText"
+				},
+				{
+					"key": "3",
+					"text": "MatchText",
+					"addText" : "NoMatchAddText"
+				},
+				{
+					"key": "4",
+					"text": "MatchText",
+					"addText" : "MatchAddText"
+				},
+				{
+					"key": "5",
+					"text": "NoMatchText",
+					"addText" : "MatchAddText"
+				},
+				{
+					"key": "6",
+					"text": "NoMatchText",
+					"addText" : "NoMatchAddText"
+				},
+				{
+					"key": "7",
+					"text": "MatchText",
+					"addText" : "NoMatchAddText"
+				}
+			],
+			"selectedKey1" : "",
+			"value1" : "",
+			"selectedKey2" : ""
+		};
 
 		oModel.setData(mData);
 		sap.ui.getCore().setModel(oModel);
 
-		var oItemTemplate = new sap.ui.core.Item({
+		var oItemTemplate = new sap.ui.core.ListItem({
 			key: "{key}",
-			text: "{text}"
+			text: "{text}",
+			additionalText: "{key}"
 		});
 
-		var oComboBox = new sap.m.ComboBox({
+		var oItemTemplate2 = new sap.ui.core.ListItem({
+			key: "{key}",
+			text: "{text}",
+			additionalText: "{addText}"
+		});
+
+		var fnFormatter = function (text, key) {
+			var sText = "";
+
+			if (text !== undefined) {
+				sText += text + " ";
+			}
+
+			if (key !== undefined) {
+				sText += key;
+			}
+
+			return sText;
+		};
+
+		var oComboBox = new sap.m.ComboBox("box_default",{
 
 			items: {
 				path: "/items",
@@ -399,15 +507,129 @@
 			},
 
 			change: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on", this);
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
 			},
 
 			selectionChange: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("selectedItem") + " on", this);
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
 			}
 		});
 
-		var oComboBoxDefault = new sap.m.ComboBox({
+		var oComboBoxTwoColumn = new sap.m.ComboBox("box_two_column",{
+			showSecondaryValues: true,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBoth = new sap.m.ComboBox({
+			showSecondaryValues: true,
+			filterSecondaryValues: true,
+			value: "{/value1}",
+			selectedKey: "{/selectedKey1}",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBoth2 = new sap.m.ComboBox({
+			showSecondaryValues: true,
+			filterSecondaryValues: true,
+			selectedKey: "{/selectedKey2}",
+			items: {
+				path: "/testItems",
+				template: oItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBoth3 = new sap.m.ComboBox({
+			showSecondaryValues: true,
+			filterSecondaryValues: true,
+			items: {
+				path: "/addText",
+				template: oItemTemplate2
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBothShowOne = new sap.m.ComboBox({
+			showSecondaryValues: false,
+			filterSecondaryValues: true,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxTwoColumnSearchBothSpecial = new sap.m.ComboBox({
+			showSecondaryValues: true,
+			filterSecondaryValues: true,
+			items: {
+				path: "/special",
+				template: oItemTemplate2
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+			}
+		});
+
+		var oComboBoxDefault = new sap.m.ComboBox("box_label_placeholder",{
 			placeholder: "List of countries",
 			items: {
 				path: "/items",
@@ -420,7 +642,7 @@
 			labelFor: oComboBoxDefault
 		}).addStyleClass("customLabel");
 
-		var oComboBoxWithPlaceholder  = new sap.m.ComboBox({
+		var oComboBoxWithPlaceholder  = new sap.m.ComboBox("box_placeholder",{
 			placeholder: "Choose your country",
 
 			items: {
@@ -429,7 +651,7 @@
 			}
 		});
 
-		var oComboBoxDisabled  = new sap.m.ComboBox({
+		var oComboBoxDisabled  = new sap.m.ComboBox("box_disabled",{
 			enabled: false,
 			placeholder: "Choose your country",
 			items: {
@@ -438,7 +660,7 @@
 			}
 		});
 
-		var oComboBoxReadOnly  = new sap.m.ComboBox({
+		var oComboBoxReadOnly  = new sap.m.ComboBox("box_read_only",{
 			editable: false,
 			items: {
 				path: "/items",
@@ -447,7 +669,7 @@
 			selectedKey: "GER"
 		});
 
-		var oComboBoxSuccess = new sap.m.ComboBox({
+		var oComboBoxSuccess = new sap.m.ComboBox("box_success",{
 			valueState: sap.ui.core.ValueState.Success,
 			items: {
 				path: "/items",
@@ -455,7 +677,7 @@
 			}
 		});
 
-		var oComboBoxWarning = new sap.m.ComboBox({
+		var oComboBoxWarning = new sap.m.ComboBox("box_warning",{
 			placeholder: "List of countries",
 			valueState: sap.ui.core.ValueState.Warning,
 			valueStateText: "value state text",
@@ -470,7 +692,7 @@
 			labelFor: oComboBoxWarning
 		}).addStyleClass("customLabel");
 
-		var oComboBoxError = new sap.m.ComboBox({
+		var oComboBoxError = new sap.m.ComboBox("box_error",{
 			valueState: sap.ui.core.ValueState.Error,
 			valueStateText: "value state text",
 			items: {
@@ -479,28 +701,112 @@
 			}
 		});
 
-		var oComboBoxBusy = new sap.m.ComboBox({
-			busy: true,
-			items: {
-				path: "/items",
-				template: oItemTemplate
-			}
+		var oSpecialCharsModel = new sap.ui.model.json.JSONModel();
+		var mSpecialCharsData = {
+			"special": [
+				{"text" : "product", "pey" : "productId"},
+				{"text" : "näme", "key" : "name"},
+				{"text" : "categöry", "key" : "category"},
+				{"text" : "süppliername", "key" : "supplierName"},
+				{"text" : "description", "key" : "description"},
+
+				{"text" : "Абакан", "pey" : "productId"},
+				{"text" : "Архангельск", "key" : "name"},
+				{"text" : "Апатиты", "key" : "category"},
+				{"text" : "Барнаул", "key" : "supplierName"},
+				{"text" : "Белгород", "key" : "description"}
+			]
+
+		};
+
+		oSpecialCharsModel.setData(mSpecialCharsData);
+
+		var oSpecialCharsItemTemplate = new sap.ui.core.ListItem({
+			key: "{key}",
+			text: "{text}"
 		});
 
-		new sap.m.App().addPage(new sap.m.Page({
+		var oSpecialCharsComboBox = new sap.m.ComboBox({
+			items: {
+				path: "/special",
+				template: oSpecialCharsItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
+				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
+			},
+
+			selectionChange: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+				oSelectedItem = oSelectedItem ? oSelectedItem.getText() : oSelectedItem;
+				jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem + " on", this);
+				oSpecialCharsComboBox.rerender();
+			}
+
+		});
+
+		oSpecialCharsComboBox.setModel(oSpecialCharsModel);
+
+		new sap.m.App().addPage(new sap.m.Page("page",{
 			title: "sap.m.ComboBox",
 			content: [
-				new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
+				new sap.ui.core.HTML("title_default",{ content: "<h3>Default</h3>" }),
 				oComboBox,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Placeholder</h3>" }),
+				new sap.ui.core.HTML({ content: "<h3>Two column layout</h3>" }),
+				oComboBoxTwoColumn,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Two column layout, search in both columns</h3>" }),
+				new sap.ui.core.HTML({ content: "<h4>Show both, search in both:</h4>" }),
+				new sap.ui.layout.HorizontalLayout({
+					content: [
+						oComboBoxTwoColumnSearchBoth,
+						new sap.m.Label({text: "Selected key:"}),
+						new sap.m.Text({text: "{/selectedKey1}"}),
+						new sap.m.Label({text: "Formatted pair:"}),
+						new sap.m.Text({text: {
+							parts: [
+								{path: "/value1"},
+								{path: "/selectedKey1"}
+							],
+							formatter: fnFormatter
+						}}),
+					]
+				}),
+				new sap.ui.core.HTML({ content: "<br>" }),
+				new sap.ui.core.HTML({ content: "<h4>Show both, search in both (test scenarios with binding shown):</h4>" }),
+				new sap.ui.layout.HorizontalLayout({
+						content: [
+							oComboBoxTwoColumnSearchBoth2,
+							new sap.m.Label({text: "Selected key:"}),
+							new sap.m.Text({text: "{/selectedKey2}"}),
+						]
+				}),
+				new sap.ui.core.HTML({ content: "<br>" }),
+				new sap.ui.core.HTML({ content: "<h4>Show both, search in both, not all items have additional text:</h4>" }),
+				oComboBoxTwoColumnSearchBoth3,
+				new sap.ui.core.HTML({ content: "<br>" }),
+				new sap.ui.core.HTML({ content: "<h4>Show single column, search in both columns:</h4>" }),
+				oComboBoxTwoColumnSearchBothShowOne,
+				new sap.ui.core.HTML({ content: "<br>" }),
+				new sap.ui.core.HTML({ content: "<h4>Special test case (test with letter \"m\"):</h4>" }),
+				oComboBoxTwoColumnSearchBothSpecial,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML("title_placeholder",{ content: "<h3>Placeholder</h3>" }),
 				oComboBoxWithPlaceholder,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Label and placeholder</h3>" }),
-				oLabel,
-				oComboBoxDefault,
+				new sap.ui.core.HTML("title_label_placeholder",{ content: "<h3>Label and placeholder</h3>" }),
+				new sap.ui.layout.HorizontalLayout("layout_label_placeholder",{
+					content: [
+						oLabel,
+						oComboBoxDefault
+					]
+				}),
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
@@ -511,22 +817,26 @@
 				oComboBoxReadOnly,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Warring state (with label and placeholder)</h3>" }),
-				oLabelWarning,
-				oComboBoxWarning,
+				new sap.ui.core.HTML("title_warning",{ content: "<h3>Warning state (with label and placeholder)</h3>" }),
+				new sap.ui.layout.HorizontalLayout("layout_warning",{
+					content: [
+						oLabelWarning,
+						oComboBoxWarning
+					]}
+				),
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
+				new sap.ui.core.HTML("title_success",{ content: "<h3>Success state</h3>" }),
 				oComboBoxSuccess,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
+				new sap.ui.core.HTML("title_error",{ content: "<h3>Error state</h3>" }),
 				oComboBoxError,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),
-				oComboBoxBusy,
-				new sap.ui.core.HTML({ content: "<hr>" })
+				new sap.ui.core.HTML({ content: "<h3>ComboBox with Accented characters</h3>" }),
+				oSpecialCharsComboBox,
+				new sap.ui.core.HTML({ content: "<hr>" }),
 			]
 		}).addStyleClass("sapUiContentPadding")).placeAt("body");
 		</script>

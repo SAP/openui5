@@ -3,8 +3,7 @@
  */
 
 // A renderer for the ScrollBar control
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
@@ -14,23 +13,23 @@ sap.ui.define(['jquery.sap.global'],
 	 * @alias sap.ui.core.tmpl.TemplateControlRenderer
 	 */
 	var TemplateControlRenderer = {};
-	
+
 	/**
 	 * Renders the Template for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM RenderManager that can be used for writing to the
 	 *            Render-Output-Buffer
 	 * @param {sap.ui.core.tmpl.TemplateControl}
-	 *            oControl Object representation of the template control 
+	 *            oControl Object representation of the template control
 	 *            that should be rendered
 	 */
 	TemplateControlRenderer.render = function(oRM, oControl) {
-		
+
 		// check the control being inlined or renders the control data itself
 		var bSkipRootElement = oControl.isInline() || this.hasControlData;
-		
+
 		// we need to make sure to have a common root tag (therefore we add a DIV)
 		// if we have no common root tag, the re-rendering would not clean up
 		// the old markup properly.
@@ -41,7 +40,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRM.writeClasses();
 			oRM.write(">");
 		}
-		
+
 		// in case of declaring a control the renderTemplate function is part of the
 		// specific renderer implementation - in case of anonymous template controls
 		// the renderer is defined at the control instance
@@ -49,13 +48,13 @@ sap.ui.define(['jquery.sap.global'],
 		if (fnRenderer) {
 			fnRenderer.apply(this, arguments);
 		}
-		
+
 		if (!bSkipRootElement) {
 			oRM.write("</div>");
 		}
-		
+
 	};
-	
+
 
 	return TemplateControlRenderer;
 

@@ -7,7 +7,8 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 	function(jQuery, ColumnMenu, library) {
 	"use strict";
 
-
+	// shortcut
+	var GroupEventType = library.GroupEventType;
 
 	/**
 	 * Constructor for a new AnalyticalColumnMenu.
@@ -29,14 +30,12 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 	 * @alias sap.ui.table.AnalyticalColumnMenu
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var AnalyticalColumnMenu = ColumnMenu.extend("sap.ui.table.AnalyticalColumnMenu", /** @lends sap.ui.table.AnalyticalColumnMenu.prototype */ { metadata : {
-
-		library : "sap.ui.table"
-	}});
-
-	AnalyticalColumnMenu.prototype.init = function() {
-		ColumnMenu.prototype.init.apply(this);
-	};
+	var AnalyticalColumnMenu = ColumnMenu.extend("sap.ui.table.AnalyticalColumnMenu", /** @lends sap.ui.table.AnalyticalColumnMenu.prototype */ {
+		metadata : {
+			library : "sap.ui.table"
+		},
+		renderer: "sap.ui.table.ColumnMenuRenderer"
+	});
 
 	/**
 	 * Adds the menu items to the menu.
@@ -56,25 +55,26 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 	 */
 	AnalyticalColumnMenu.prototype._addGroupMenuItem = function() {
 		var oColumn = this._oColumn,
-			oTable = this._oTable,
-			oBinding = oTable.getBinding("rows"),
-			oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
+			oTable = this._oTable;
 
-		if (oTable && oResultSet && oResultSet.findDimensionByPropertyName(oColumn.getLeadingProperty())
-				&& jQuery.inArray(oColumn.getLeadingProperty(), oBinding.getSortablePropertyNames()) > -1
-				&& jQuery.inArray(oColumn.getLeadingProperty(), oBinding.getFilterablePropertyNames()) > -1) {
+		if (oColumn.isGroupableByMenu()) {
 			this._oGroupIcon = this._createMenuItem(
 				"group",
 				"TBL_GROUP",
 				oColumn.getGrouped() ? "accept" : null,
-				jQuery.proxy(function(oEvent) {
-					var oMenuItem = oEvent.getSource(),
-						bGrouped = oColumn.getGrouped();
+				function(oEvent) {
+					var oMenuItem = oEvent.getSource();
+					var bGrouped = oColumn.getGrouped();
+					var sGroupEventType = bGrouped ? GroupEventType.group : GroupEventType.ungroup;
 
 					oColumn.setGrouped(!bGrouped);
-					oTable.fireGroup({column: oColumn, groupedColumns: oTable._aGroupedColumns, type: sap.ui.table.GroupEventType.group});
+					oTable.fireGroup({column: oColumn, groupedColumns: oTable._aGroupedColumns, type: sGroupEventType});
 					oMenuItem.setIcon(!bGrouped ? "sap-icon://accept" : null);
-				}, this)
+
+					// Grouping is not executed directly. The table will be configured accordingly and then be rendered to reflect the changes
+					// of the columns. We need to trigger a context update manually to also update the rows.
+					oTable._getRowContexts();
+				}
 			);
 			this.addItem(this._oGroupIcon);
 		}
@@ -101,6 +101,10 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 
 					oColumn.setSummed(!bSummed);
 					oMenuItem.setIcon(!bSummed ? "sap-icon://accept" : null);
+
+					// Summing of a column is not executed directly. The table will be configured accordingly and then we need to trigger a
+					// context update manually to update the rows.
+					oTable._getRowContexts();
 				}, this)
 			);
 			this.addItem(this._oSumItem);
@@ -114,9 +118,8 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 		var oColumn = this._oColumn;
 		this._oSumItem && this._oSumItem.setIcon(oColumn.getSummed() ? "sap-icon://accept" : null);
 		this._oGroupIcon && this._oGroupIcon.setIcon(oColumn.getGrouped() ? "sap-icon://accept" : null);
-		this._oGroupIcon && this._oGroupIcon.setVisible(!oColumn._isLastGroupableLeft);
 	};
 
 	return AnalyticalColumnMenu;
 
-}, /* bExport= */ true);
+});

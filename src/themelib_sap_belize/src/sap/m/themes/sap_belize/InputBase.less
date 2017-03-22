@@ -1,0 +1,40 @@
+/* ================================ */
+/* CSS for control sap.m/InputBase  */
+/* Belize theme                     */
+/* ================================ */
+
+.sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):active {
+  	border-color: @sapUiFieldBorderColor;
+}
+
+.sapMInputBaseReadonlyInner .sapMInputBaseInner {
+	border-color: @sapUiFieldReadOnlyBorderColor;
+	background: @sapUiFieldReadOnlyBackground;
+}
+
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner),
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
+	outline: none;
+}
+
+.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner) {
+	&::before {
+		content: "";
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		right: 2px;
+		bottom: 2px;
+		border: 1px dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+.sapMFocus.sapMInputBaseState .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner) {
+	&::before {
+		top: 3px;
+		left: 3px;
+		right: 3px;
+		bottom: 3px;
+	}
+}

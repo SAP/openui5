@@ -2,15 +2,15 @@
 
 <!--
   Tested sap.ui.core.format.DateFormat
-  Author: d040216
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <!-- Initialization -->
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"
 	data-sap-ui-language="en-US"
@@ -20,15 +20,16 @@
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 
 <!-- Test functions -->
-<script language="javascript">
+<script>
 
 	jQuery.sap.require("sap.ui.core.format.DateFormat");
 	var oDateTime = new Date("Tue Sep 11 08:46:13 2001"),
@@ -37,43 +38,86 @@
 		oDefaultDateTime = sap.ui.core.format.DateFormat.getDateTimeInstance(),
 		oDefaultTime = sap.ui.core.format.DateFormat.getTimeInstance();
 
-	test("format default date", function(){
-		equal(oDefaultDate.format(oDateTime), "Sep 11, 2001", "default date");
-		equal(oDefaultDateTime.format(oDateTime), "Sep 11, 2001, 8:46:13 AM", "default datetime");
-		equal(oDefaultTime.format(oDateTime), "8:46:13 AM", "default time");
+	QUnit.test("format invalid date", function(assert) {
+		var oDate = new Date("");
+		assert.ok(isNaN(oDate.getTime()), "This is an invalid date");
+		assert.strictEqual(oDefaultDate.format(oDate), "", "Formatting an invalid date should return ''");
 	});
 
-	test("format default date UTC", function(){
-		equal(oDefaultDate.format(oTZDateTime, true), "Sep 10, 2001", "default date UTC");
-		equal(oDefaultDateTime.format(oTZDateTime, true), "Sep 10, 2001, 10:16:13 PM", "default datetime UTC");
-		equal(oDefaultTime.format(oTZDateTime, true), "10:16:13 PM", "default time UTC");
+	QUnit.test("format undefined date", function(assert) {
+		var oDate;
+		assert.strictEqual(oDefaultDate.format(oDate), "", "Formatting an undefined date should return ''");
 	});
 
-	test("format date for a specific locale", function(){
+	QUnit.test("format default date", function(assert){
+		assert.equal(oDefaultDate.format(oDateTime), "Sep 11, 2001", "default date");
+		assert.equal(oDefaultDateTime.format(oDateTime), "Sep 11, 2001, 8:46:13 AM", "default datetime");
+		assert.equal(oDefaultTime.format(oDateTime), "8:46:13 AM", "default time");
+	});
+
+	QUnit.test("format default date UTC", function(assert){
+		assert.equal(oDefaultDate.format(oTZDateTime, true), "Sep 10, 2001", "default date UTC");
+		assert.equal(oDefaultDateTime.format(oTZDateTime, true), "Sep 10, 2001, 10:16:13 PM", "default datetime UTC");
+		assert.equal(oDefaultTime.format(oTZDateTime, true), "10:16:13 PM", "default time UTC");
+	});
+
+	QUnit.test("format date with given style", function(assert){
+		var oDateTime = new Date("Tue Sep 11 08:46:13 2001");
+		// Overwrite getTimezoneOffset to get reproducible results independent of the
+		// timezone where the test is run in
+		oDateTime.getTimezoneOffset = function() { return -120; };
+		assert.equal(sap.ui.core.format.DateFormat.getDateInstance({style: "short"}).format(oDateTime), "9/11/01", "short date");
+		assert.equal(sap.ui.core.format.DateFormat.getDateInstance({style: "medium"}).format(oDateTime), "Sep 11, 2001", "medium date");
+		assert.equal(sap.ui.core.format.DateFormat.getDateInstance({style: "long"}).format(oDateTime), "September 11, 2001", "long date");
+		assert.equal(sap.ui.core.format.DateFormat.getDateInstance({style: "full"}).format(oDateTime), "Tuesday, September 11, 2001", "full date");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "short"}).format(oDateTime), "9/11/01, 8:46 AM", "short datetime");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "medium"}).format(oDateTime), "Sep 11, 2001, 8:46:13 AM", "medium datetime");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long"}).format(oDateTime), "September 11, 2001 at 8:46:13 AM GMT+02:00", "long datetime");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "full"}).format(oDateTime), "Tuesday, September 11, 2001 at 8:46:13 AM GMT+02:00", "full datetime");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "medium/short"}).format(oDateTime), "Sep 11, 2001, 8:46 AM", "medium/short datetime");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long/medium"}).format(oDateTime), "September 11, 2001 at 8:46:13 AM", "long/medium datetime");
+		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "short"}).format(oDateTime), "8:46 AM", "short time");
+		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "medium"}).format(oDateTime), "8:46:13 AM", "medium time");
+		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "long"}).format(oDateTime), "8:46:13 AM GMT+02:00", "long time");
+		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "full"}).format(oDateTime), "8:46:13 AM GMT+02:00", "full time");
+	});
+
+	QUnit.test("format date for a specific locale", function(assert){
 		var oLocale = new sap.ui.core.Locale("de-DE");
-		equal(sap.ui.core.format.DateFormat.getDateInstance(oLocale).format(oDateTime), "11.09.2001", "date with defaults for given locale");
-		equal(sap.ui.core.format.DateFormat.getDateTimeInstance(oLocale).format(oDateTime), "11.09.2001, 08:46:13", "datetime with defaults for given locale");
-		equal(sap.ui.core.format.DateFormat.getTimeInstance(oLocale).format(oDateTime), "08:46:13", "time with defaults for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getDateInstance(oLocale).format(oDateTime), "11.09.2001", "date with defaults for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance(oLocale).format(oDateTime), "11.09.2001, 08:46:13", "datetime with defaults for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance(oLocale).format(oDateTime), "08:46:13", "time with defaults for given locale");
 	});
 
-	test("format custom date", function(){
+	QUnit.test("format date with custom pattern for a specific locale", function (assert) {
+		var oLocale = new sap.ui.core.Locale("de-DE");
+		assert.equal(sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd MMM yyyy"}, oLocale).format(oDateTime), "11 Sep. 2001", "date with custom pattern for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "dd MMM yyyy hh:mm:ss a"}, oLocale).format(oDateTime), "11 Sep. 2001 08:46:13 vorm.", "datetime with custom pattern for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a"}, oLocale).format(oDateTime), "08:46:13 vorm.", "datetime with custom pattern for given locale");
+	});
+
+	QUnit.test("format custom date", function(assert){
 		var oDate = new Date("Wed Jul 4 12:08:56 2001"),
 			sCustomPattern,
 			oCustomDate,
 			oCustomDatePatterns = {
 				"yyyy.MM.dd G 'at' HH:mm:ss z": "2001.07.04 AD at 12:08:56 PDT",
 				"EEE, MMM d, ''yy": "Wed, Jul 4, '01",
+				"EEEE, MMM d, ''yy": "Wednesday, Jul 4, '01",
+				"EEEEE, MMM d, ''yy": "W, Jul 4, '01",
+				"EEEEEE, MMM d, ''yy": "We, Jul 4, '01",
 				"h:mm a": "12:08 PM",
 				"hh 'o''clock' a, zzzz": "12 o'clock PM, Pacific Daylight Time",
 				"K:mm a, z": "0:08 PM, PDT",
-				"yyyyy.MMMMM.dd GGG hh:mm aaa": "02001.July.04 AD 12:08 PM",
-				"yyyy.MMMMM.dd GGGG hh:mm aaa": "2001.July.04 Anno Domini 12:08 PM",
-				"yyyy.MMMMM.dd GGGGG hh:mm:ss aaa": "2001.July.04 A 12:08:56 PM",
+				"yyyyy.MMMM.dd GGG hh:mm aaa": "02001.July.04 AD 12:08 PM",
+				"yyyy.MMMM.dd GGGG hh:mm aaa": "2001.July.04 Anno Domini 12:08 PM",
+				"yyyy.MMMM.dd GGGGG hh:mm:ss aaa": "2001.July.04 A 12:08:56 PM",
+				"yyyy.MMMMM.dd GGGGG hh:mm:ss aaa": "2001.J.04 A 12:08:56 PM",
 				"EEE, d MMM yyyy HH:mm:ss Z": "Wed, 4 Jul 2001 12:08:56 +0700",
 				"yyMMddHHmmssZ": "010704120856+0700",
 				"yyyy-MM-dd'T'HH:mm:ss.SSSZ": "2001-07-04T12:08:56.235+0700",
 				"yyyy-MM-dd'T'HH:mm:ss.SSSXXX": "2001-07-04T12:08:56.235+07:00",
-				"YYYY-'W'ww-u": "2001-W27-3",
+				"YYYY-'W'ww-u": "2001-W27-4",
 				"'datetime'''yyyy-MM-dd'T'HH:mm:ss''": "datetime'2001-07-04T12:08:56'"
 			};
 
@@ -83,16 +127,15 @@
 		oDate.getTimezoneOffset = function() { return -420 };
 		oDate.getTimezoneShort = function() { return "PDT" };
 		oDate.getTimezoneLong = function() { return "Pacific Daylight Time" };
-		oDate.getWeek = function() { return 27 };
 		oDate.setMilliseconds(235);
 
 		for (sCustomPattern in oCustomDatePatterns) {
 			oCustomDate = sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: sCustomPattern});
-			equal(oCustomDate.format(oDate), oCustomDatePatterns[sCustomPattern], sCustomPattern);
+			assert.equal(oCustomDate.format(oDate), oCustomDatePatterns[sCustomPattern], sCustomPattern);
 		}
 	});
 
-	test("format custom date UTC", function(){
+	QUnit.test("format custom date UTC", function(assert){
 		var oDate = new Date("Wed Jul 4 12:08:56 2001 UTC"),
 			oCustomDate;
 
@@ -102,11 +145,10 @@
 		oDate.getTimezoneOffset = function() { return 0 };
 		oDate.getTimezoneShort = function() { return "UTC" };
 		oDate.getTimezoneLong = function() { return "Coordinated Universal Time" };
-		oDate.getWeek = function() { return 27 };
 		oDate.setMilliseconds(235);
 
 		oCustomDate = sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSX"});
-		equal(oCustomDate.format(oDate, true), "2001-07-04T12:08:56.235Z", "yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		assert.equal(oCustomDate.format(oDate, true), "2001-07-04T12:08:56.235Z", "yyyy-MM-dd'T'HH:mm:ss.SSSX");
 	});
 
 
@@ -124,30 +166,31 @@
 			return [sTargetDate, sTargetDate];
 		}
 
-		return [oLocaleData.getRelativeDay(iDiff).replace("{0}", iDays), sTargetDate];
+		return [oLocaleData.getRelativeDay(iDiff, oFormatOptions.relativeStyle).replace("{0}", iDays), sTargetDate];
 	}
 
 	function doTestRelative(bFormat, oFormatOptions, sLocale, sTestInfo){
-		var oFormat1 = sap.ui.core.format.DateFormat.getDateInstance(jQuery.extend({relative: bFormat}, oFormatOptions), new sap.ui.core.Locale(sLocale)),
-			oFormat2 = sap.ui.core.format.DateFormat.getDateInstance(oFormatOptions, new sap.ui.core.Locale(sLocale)),
-			oToday = new Date(),
-			iToday = oToday.getTime(),
-			iTarget, aExpected;
+		[undefined, 'wide', 'short', 'narrow'].forEach(function(sStyle) {
+			oFormatOptions.relativeStyle = sStyle;
+			var oFormat1 = sap.ui.core.format.DateFormat.getDateInstance(jQuery.extend({relative: bFormat}, oFormatOptions), new sap.ui.core.Locale(sLocale)),
+				oFormat2 = sap.ui.core.format.DateFormat.getDateInstance(oFormatOptions, new sap.ui.core.Locale(sLocale)),
+				oToday = new Date(),
+				iToday = oToday.getTime(),
+				iTarget, aExpected;
 
-		for(var i=-10; i<=10; i++){
-			iTarget = iToday + i * (24 * 60 * 60 * 1000);
-			var aExpected = getExpectedRelativeDate(i, iTarget, oFormatOptions, sLocale);
-			if(bFormat){
-				equal(oFormat1.format(new Date(iTarget)), aExpected[0], sTestInfo+" ----------- Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[0]+" "+(aExpected[0] == aExpected[1] ? "" : "("+aExpected[1]+")"));
-			}else{
-				equal(oFormat2.format(oFormat1.parse(aExpected[0]))+"", aExpected[1], sTestInfo+" ----------- "+aExpected[0]+" -> Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[1]);
+			for(var i=-10; i<=10; i++){
+				iTarget = iToday + i * (24 * 60 * 60 * 1000);
+				var aExpected = getExpectedRelativeDate(i, iTarget, oFormatOptions, sLocale);
+				if(bFormat){
+					assert.equal(oFormat1.format(new Date(iTarget)), aExpected[0], sTestInfo+" ----------- Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[0]+" "+(aExpected[0] == aExpected[1] ? "" : "("+aExpected[1]+")"));
+				}else{
+					assert.equal(oFormat2.format(oFormat1.parse(aExpected[0]))+"", aExpected[1], sTestInfo+" ----------- "+aExpected[0]+" -> Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[1]);
+				}
 			}
-;
-		}
+		});
 	}
 
-
-	test("format date relative", function(){
+	QUnit.test("format date relative", function(assert){
 		doTestRelative(true, {pattern: "yyyy-MM-dd"}, "en", "yyyy-MM-dd, default range, en");
 		doTestRelative(true, {pattern: "yyyy-MM-dd"}, "de", "yyyy-MM-dd, default range, de");
 		doTestRelative(true, {relativeRange: [-9, 0]}, "en", "default style, range [-9, 0], en");
@@ -156,7 +199,7 @@
 		doTestRelative(true, {style: "long", relativeRange: [1, 5]}, "de", "style long, range [1, 5], de");
 	});
 
-	test("parse date relative", function(){
+	QUnit.test("parse date relative", function(assert){
 		doTestRelative(false, {pattern: "yyyy-MM-dd"}, "en", "yyyy-MM-dd, default range, en");
 		doTestRelative(false, {pattern: "yyyy-MM-dd"}, "de", "yyyy-MM-dd, default range, de");
 		doTestRelative(false, {relativeRange: [-9, 0]}, "en", "default style, range [-9, 0], en");
@@ -165,54 +208,80 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5]}, "de", "style long, range [1, 5], de");
 	});
 
-	test("parse default date", function(){
+	QUnit.test("parse default date", function(assert){
 		var oDate = oDefaultDate.parse("May 23, 2008");
-		equal(oDate.getFullYear(), 2008, "Year 2008");
-		equal(oDate.getMonth(), 4, "Month May");
-		equal(oDate.getDate(), 23, "Day 23rd");
+		assert.equal(oDate.getFullYear(), 2008, "Year 2008");
+		assert.equal(oDate.getMonth(), 4, "Month May");
+		assert.equal(oDate.getDate(), 23, "Day 23rd");
 		var oDate = oDefaultDateTime.parse("May 23, 2008, 5:23:00 PM");
-		equal(oDate.getFullYear(), 2008, "Year 2008");
-		equal(oDate.getMonth(), 4, "Month May");
-		equal(oDate.getDate(), 23, "Day 23rd");
-		equal(oDate.getHours(), 17, "Hours 17");
-		equal(oDate.getMinutes(), 23, "Minutes 23");
+		assert.equal(oDate.getFullYear(), 2008, "Year 2008");
+		assert.equal(oDate.getMonth(), 4, "Month May");
+		assert.equal(oDate.getDate(), 23, "Day 23rd");
+		assert.equal(oDate.getHours(), 17, "Hours 17");
+		assert.equal(oDate.getMinutes(), 23, "Minutes 23");
 	});
 
-	test("parse date two digit year", function(){
+	QUnit.test("parse empty string", function(assert){
+		var oDate = oDefaultDate.parse("");
+		assert.equal(oDate, null, "parsing empty string returns null");
+	});
+
+	QUnit.test("parse date two digit year", function(assert){
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd"}),
 			oDate;
 		oDate = oFormat.parse("2014-03-12");
-		equal(oDate.getFullYear(), 2014, "Year 2014");
+		assert.equal(oDate.getFullYear(), 2014, "Year 2014");
 		oDate = oFormat.parse("0014-03-12");
-		equal(oDate.getFullYear(), 14, "Year 14");
+		assert.equal(oDate.getFullYear(), 14, "Year 14");
 		oDate = oFormat.parse("04-03-12");
-		equal(oDate.getFullYear(), 2004, "Year 2004");
+		assert.equal(oDate.getFullYear(), 2004, "Year 2004");
 		oDate = oFormat.parse("14-03-12");
-		equal(oDate.getFullYear(), 2014, "Year 2014");
+		assert.equal(oDate.getFullYear(), 2014, "Year 2014");
 		oDate = oFormat.parse("34-03-12");
-		equal(oDate.getFullYear(), 2034, "Year 2034");
+		assert.equal(oDate.getFullYear(), 2034, "Year 2034");
 		oDate = oFormat.parse("54-03-12");
-		equal(oDate.getFullYear(), 1954, "Year 1954");
+		assert.equal(oDate.getFullYear(), 1954, "Year 1954");
 		oDate = oFormat.parse("74-03-12");
-		equal(oDate.getFullYear(), 1974, "Year 1974");
+		assert.equal(oDate.getFullYear(), 1974, "Year 1974");
 		oDate = oFormat.parse("94-03-12");
-		equal(oDate.getFullYear(), 1994, "Year 1994");
+		assert.equal(oDate.getFullYear(), 1994, "Year 1994");
 	});
 
-	test("parse default date UTC", function(){
+	QUnit.test("parse date two digit year UTC", function(assert){
+		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC: true}),
+			oDate;
+		oDate = oFormat.parse("2014-03-12");
+		assert.equal(oDate.getFullYear(), 2014, "Year 2014");
+		oDate = oFormat.parse("0014-03-12");
+		assert.equal(oDate.getFullYear(), 14, "Year 14");
+		oDate = oFormat.parse("04-03-12");
+		assert.equal(oDate.getFullYear(), 2004, "Year 2004");
+		oDate = oFormat.parse("14-03-12");
+		assert.equal(oDate.getFullYear(), 2014, "Year 2014");
+		oDate = oFormat.parse("34-03-12");
+		assert.equal(oDate.getFullYear(), 2034, "Year 2034");
+		oDate = oFormat.parse("54-03-12");
+		assert.equal(oDate.getFullYear(), 1954, "Year 1954");
+		oDate = oFormat.parse("74-03-12");
+		assert.equal(oDate.getFullYear(), 1974, "Year 1974");
+		oDate = oFormat.parse("94-03-12");
+		assert.equal(oDate.getFullYear(), 1994, "Year 1994");
+	});
+
+	QUnit.test("parse default date UTC", function(assert){
 		var oDate = oDefaultDate.parse("May 23, 2008", true);
-		equal(oDate.getUTCFullYear(), 2008, "Year 2008");
-		equal(oDate.getUTCMonth(), 4, "Month May");
-		equal(oDate.getUTCDate(), 23, "Day 23rd");
+		assert.equal(oDate.getUTCFullYear(), 2008, "Year 2008");
+		assert.equal(oDate.getUTCMonth(), 4, "Month May");
+		assert.equal(oDate.getUTCDate(), 23, "Day 23rd");
 		var oDate = oDefaultDateTime.parse("May 23, 2008, 5:23:00 PM", true);
-		equal(oDate.getUTCFullYear(), 2008, "Year 2008");
-		equal(oDate.getUTCMonth(), 4, "Month May");
-		equal(oDate.getUTCDate(), 23, "Day 23rd");
-		equal(oDate.getUTCHours(), 17, "Hours 17");
-		equal(oDate.getUTCMinutes(), 23, "Minutes 23");
+		assert.equal(oDate.getUTCFullYear(), 2008, "Year 2008");
+		assert.equal(oDate.getUTCMonth(), 4, "Month May");
+		assert.equal(oDate.getUTCDate(), 23, "Day 23rd");
+		assert.equal(oDate.getUTCHours(), 17, "Hours 17");
+		assert.equal(oDate.getUTCMinutes(), 23, "Minutes 23");
 	});
 
-	test("parse custom date", function(){
+	QUnit.test("parse custom date", function(assert){
 
 		function inclTimezoneOffset(iTimestamp){
 			return iTimestamp + (new Date(iTimestamp)).getTimezoneOffset()*60*1000;
@@ -237,126 +306,596 @@
 
 		for (sCustomPattern in oCustomDatePatterns) {
 			var oCustomDate = sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: sCustomPattern});
-			equal(oCustomDate.parse(oCustomDatePatterns[sCustomPattern][0]).getTime(), oCustomDatePatterns[sCustomPattern][1], sCustomPattern);
+			assert.equal(oCustomDate.parse(oCustomDatePatterns[sCustomPattern][0]).getTime(), oCustomDatePatterns[sCustomPattern][1], sCustomPattern);
 
 		}
 	});
 
-	test("parse with strict check", function(){
+	QUnit.test("parse custom format", function(assert){
+
+		var oCustomDateFormats = {
+			"y": ["2001", 978307200000],
+			"yM": ["3/2001", 983404800000],
+			"yq": ["Q1 2001", 978307200000],
+			"yqq": ["2nd quarter 2001", 986083200000],
+			"yqqq": ["Q3 2001", 993945600000],
+			"yqqqq": ["4th quarter 2001", 1001894400000],
+			"Q": ["4", 23587200000],
+			"Md": ["3/7", 5616000000]
+		};
+
+		for (sCustomFormat in oCustomDateFormats) {
+			var oCustomDate = sap.ui.core.format.DateFormat.getDateTimeInstance({format: sCustomFormat, UTC: true});
+			assert.equal(oCustomDate.parse(oCustomDateFormats[sCustomFormat][0]).getTime(), oCustomDateFormats[sCustomFormat][1], sCustomFormat);
+
+		}
+	});
+
+	QUnit.test("parse with strict check", function(assert){
 
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", strictParsing: true}),
 		    oDate;
 		oDate = oFormat.parse("2014-02-28");
-		ok((oDate.getFullYear() == 2014 && oDate.getMonth() == 1 && oDate.getDate() == 28), "2014-02-28 parsed fine");
+		assert.ok((oDate.getFullYear() == 2014 && oDate.getMonth() == 1 && oDate.getDate() == 28), "2014-02-28 parsed fine");
 
 		oDate = oFormat.parse("2014-02-29");
-		ok(!oDate, "2014-02-29 no date returned");
+		assert.ok(!oDate, "2014-02-29 no date returned");
 
 		oDate = oFormat.parse("2014-01-33");
-		ok(!oDate, "2014-01-33 no date returned");
+		assert.ok(!oDate, "2014-01-33 no date returned");
 
 		oDate = oFormat.parse("2014-13-10");
-		ok(!oDate, "2014-13-10 no date returned");
+		assert.ok(!oDate, "2014-13-10 no date returned");
 
 		oFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh-mm-ss", strictParsing: true}),
 		oDate = oFormat.parse("10-11-12");
-		ok((oDate.getHours() == 10 && oDate.getMinutes() == 11 && oDate.getSeconds() == 12), "10-11-12 parsed fine");
+		assert.ok((oDate.getHours() == 10 && oDate.getMinutes() == 11 && oDate.getSeconds() == 12), "10-11-12 parsed fine");
 
 		oDate = oFormat.parse("25-11-12");
-		ok(!oDate, "25-11-12 no date returned");
+		assert.ok(!oDate, "25-11-12 no date returned");
 
 		oDate = oFormat.parse("10-61-12");
-		ok(!oDate, "10-61-12 no date returned");
+		assert.ok(!oDate, "10-61-12 no date returned");
 
 		oDate = oFormat.parse("10-11-62");
-		ok(!oDate, "10-11-62 no date returned");
+		assert.ok(!oDate, "10-11-62 no date returned");
 
 	});
 
-	test("parse short format without delimiter", function() {
+	QUnit.test("parse short format without delimiter", function(assert) {
 		var oDate = new Date("Mon Apr 7 00:00:00 2014"),
 			oFormat = sap.ui.core.format.DateFormat.getDateInstance(),
 			sDateIn = "040714", oDateOut = oFormat.parse(sDateIn);
-		ok((oDateOut.toString() === oDate.toString()), "6 digit fallback: "+sDateIn + " to " + oDateOut);
+		assert.ok((oDateOut.toString() === oDate.toString()), "6 digit fallback: "+sDateIn + " to " + oDateOut);
+
+		oDateOut = oFormat.parse("000100");
+		assert.strictEqual(oDateOut, null, "000100 shouldn't be parsed as a valid date");
+
+		oDateOut = oFormat.parse("010000");
+		assert.strictEqual(oDateOut, null, "010000 shouldn't be parsed as a valid date");
+
 		sDateIn = "04072014";
 		oDateOut = oFormat.parse(sDateIn);
-		ok((oDateOut.toString() === oDate.toString()), "8 digit fallback: "+sDateIn + " to " + oDateOut);
+		assert.ok((oDateOut.toString() === oDate.toString()), "8 digit fallback: "+sDateIn + " to " + oDateOut);
 		sDateIn = "20140407";
 		oDateOut = oFormat.parse(sDateIn);
-		ok((oDateOut.toString() === oDate.toString()), "ISO fallback: "+sDateIn + " to " + oDateOut);
+		assert.ok((oDateOut.toString() === oDate.toString()), "ISO fallback: "+sDateIn + " to " + oDateOut);
 	});
 
-	test("parse and format two digit years", function() {
+	QUnit.test("parse and format two digit years", function(assert) {
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern:"M/d/y"}),
 			sDate, oDate;
 		oDate = oFormat.parse("1/1/1");
-		equal(oDate.getFullYear(), 2001, "Parsed as 2001");
+		assert.equal(oDate.getFullYear(), 2001, "Parsed as 2001");
 		sDate = oFormat.format(oDate);
-		equal(sDate, "1/1/2001", "Formatted as 2001");
+		assert.equal(sDate, "1/1/2001", "Formatted as 2001");
 		oDate = new Date();
 		oDate.setFullYear(1);
 		oDate.setMonth(0);
 		oDate.setDate(1);
-		equal(oDate.getFullYear(), 1, "Fullyear is 1");
+		assert.equal(oDate.getFullYear(), 1, "Fullyear is 1");
 		sDate = oFormat.format(oDate);
-		equal(sDate, "1/1/0001", "Formatted as 0001");
+		assert.equal(sDate, "1/1/0001", "Formatted as 0001");
 		oDate = oFormat.parse(sDate);
-		equal(oDate.getFullYear(), 1, "Fullyear is still 1");
+		assert.equal(oDate.getFullYear(), 1, "Fullyear is still 1");
 	});
-	
-	test("parse and format quarters", function(){
+
+	QUnit.test("parse and format quarters", function(assert){
 		var oDate = new Date("Wed Jul 4 2001"),
 			oQuarter1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qq"}),
 			oQuarter2 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqq"}),
 			oQuarter3 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqqq"}),
+			oQuarter4 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqqqq"}),
+			oQuarter5 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "QQQQQ"})
 			oQuarterCombined = sap.ui.core.format.DateFormat.getDateInstance({pattern: "EEE, MMM d yyyy, QQQ"});
-		
-		equal(oQuarter1.format(oDate), "03", "03");
-		equal(oQuarter2.format(oDate), "Q3", "Q3");
-		equal(oQuarter3.format(oDate), "3rd quarter", "3rd quarter");
-		equal(oQuarterCombined.format(oDate), "Wed, Jul 4 2001, Q3", "Wed, Jul 4 2001, Q3");
-		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
-	});
-	
-	test("origin info", function() {
-		var oOriginDate = sap.ui.core.format.DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
-		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
-		equal(oInfo.locale, "en-US", "Origin Info: locale")
-		equal(oInfo.style, "medium", "Origin Info: style")
-		equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern")
+
+		assert.equal(oQuarter1.format(oDate), "03", "03");
+		assert.equal(oQuarter2.format(oDate), "Q3", "Q3");
+		assert.equal(oQuarter3.format(oDate), "3rd quarter", "3rd quarter");
+		assert.equal(oQuarter4.format(oDate), "3", "3");
+		assert.equal(oQuarter5.format(oDate), "3", "3");
+		assert.equal(oQuarterCombined.format(oDate), "Wed, Jul 4 2001, Q3", "Wed, Jul 4 2001, Q3");
+		assert.equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
 	});
 
-	module("Islamic Date in locale en");
+	QUnit.test("parse with fallback patterns", function(assert){
+		var oLocaleEN = new sap.ui.core.Locale("en_US"),
+			oLocaleDE = new sap.ui.core.Locale("de_DE"),
+			oFormat,
+			iCompare = new Date(1975, 3, 16).getTime(),
+			iFallbackOptionsLength = sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length;
+
+		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long"}, oLocaleEN);
+		assert.equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
+		assert.equal(oFormat.parse("April 16, 1975").getTime(), iCompare, "Parse long style");
+		assert.equal(oFormat.parse("Apr 16, 1975").getTime(), iCompare, "Parse fallback medium style");
+		assert.equal(oFormat.parse("4/16/75").getTime(), iCompare, "Parse fallback short style");
+		assert.equal(oFormat.parse("04161975").getTime(), iCompare, "Parse fallback without separators");
+		assert.equal(oFormat.parse("041675").getTime(), iCompare, "Parse fallback without separators, short year");
+		assert.equal(oFormat.parse("1975-04-16").getTime(), iCompare, "Parse fallback ISO");
+		assert.equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
+
+		oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.yyyy"}, oLocaleEN);
+		assert.equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
+		assert.equal(oFormat.parse("16041975").getTime(), iCompare, "Parse fallback from removing delimiters from given pattern");
+		assert.equal(oFormat.parse("Apr 16, 1975").getTime(), iCompare, "Parse fallback medium style");
+		assert.equal(oFormat.parse("4/16/75").getTime(), iCompare, "Parse fallback short style");
+		assert.equal(oFormat.parse("04161975").getTime(), iCompare, "Parse fallback without separators");
+		assert.equal(oFormat.parse("041675").getTime(), iCompare, "Parse fallback without separators, short year");
+		assert.equal(oFormat.parse("1975-04-16").getTime(), iCompare, "Parse fallback ISO");
+		assert.equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
+
+		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long", calendarType: sap.ui.core.CalendarType.Islamic}, oLocaleEN);
+		assert.equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
+		assert.equal(oFormat.parse("Rabiʻ II 4, 1395 AH").getTime(), iCompare, "Parse long style");
+		assert.equal(oFormat.parse("Rab. II 4, 1395 AH").getTime(), iCompare, "Parse fallback medium style");
+		assert.equal(oFormat.parse("4/4/1395 AH").getTime(), iCompare, "Parse fallback short style");
+		assert.equal(oFormat.parse("04041395").getTime(), iCompare, "Parse fallback without separators");
+		assert.equal(oFormat.parse("040495").getTime(), iCompare, "Parse fallback without separators, short year");
+		assert.equal(oFormat.parse("1395-04-04").getTime(), iCompare, "Parse fallback ISO");
+		assert.equal(oFormat.parse("13950404").getTime(), iCompare, "Parse fallback ABAP");
+
+		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long"}, oLocaleDE);
+		assert.equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
+		assert.equal(oFormat.parse("16. April 1975").getTime(), iCompare, "Parse long style");
+		assert.equal(oFormat.parse("16.4.1975").getTime(), iCompare, "Parse fallback medium style");
+		assert.equal(oFormat.parse("16.4.75").getTime(), iCompare, "Parse fallback short style");
+		assert.equal(oFormat.parse("16041975").getTime(), iCompare, "Parse fallback without separators");
+		assert.equal(oFormat.parse("160475").getTime(), iCompare, "Parse fallback without separators, short year");
+		assert.equal(oFormat.parse("1975-04-16").getTime(), iCompare, "Parse fallback ISO");
+		assert.equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
+
+	});
+
+	QUnit.test("parse and format fractional seconds", function(assert){
+		var oDate1 = new Date(1234),
+			oDate2 = new Date(14),
+			oMS1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.S"}),
+			oMS2 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.SSS"}),
+			oMS3 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.SSSSSS"});
+
+		assert.equal(oMS1.format(oDate1, true), "1.2", "1.2");
+		assert.equal(oMS2.format(oDate1, true), "1.234", "1.234");
+		assert.equal(oMS3.format(oDate1, true), "1.234000", "1.234000");
+		assert.equal(oMS1.format(oDate2, true), "0.0", "0.0");
+		assert.equal(oMS2.format(oDate2, true), "0.014", "0.014");
+		assert.equal(oMS3.format(oDate2, true), "0.014000", "0.014000");
+		assert.equal(oMS1.parse("0.1", true).valueOf(), 100, "0.1");
+		assert.equal(oMS1.parse("0.003", true), null, "0.003");
+		assert.equal(oMS1.parse("0.123", true), null, "0.123");
+		assert.equal(oMS1.parse("0.123456", true), null, "0.123456");
+		assert.equal(oMS2.parse("0.1", true).valueOf(), 100, "0.1");
+		assert.equal(oMS2.parse("0.003", true).valueOf(), 3, "0.003");
+		assert.equal(oMS2.parse("0.123", true).valueOf(), 123, "0.123");
+		assert.equal(oMS2.parse("0.123456", true), null, "0.123456");
+		assert.equal(oMS3.parse("0.1", true).valueOf(), 100, "0.1");
+		assert.equal(oMS3.parse("0.003", true).valueOf(), 3, "0.003");
+		assert.equal(oMS3.parse("0.123", true).valueOf(), 123, "0.123");
+		assert.equal(oMS3.parse("0.123456", true).valueOf(), 123, "0.123456");
+	});
+
+	QUnit.test("parse time format with am/pm appearing at the beginning", function(assert) {
+		var oTimeStart = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "ah:mm:ss"});
+		assert.notEqual(oTimeStart.parse("PM12:22:52").getTime(), oTimeStart.parse("AM12:22:52").getTime(), "PM/AM info should be correctly considered");
+	});
+
+
+	/** TODO: Move to sap.ui.core.date.Gregorian
+	QUnit.test("DateFormat.calculateWeekNumber", function(assert) {
+		var DateFormat = sap.ui.core.format.DateFormat;
+
+		var oDate = new Date(Date.UTC(2015, 5, 8));
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {UTC: true}), 24, "week number with UTC Date");
+
+		oDate = new Date(Date.UTC(2000, 0, 1));
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2000
+		}), 1, "01.01.2000 baseYear 2000 is in week 1");
+
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 1999
+		}), 53, "01.01.2000 baseYear 1999 is in week 53");
+
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			locale: "de",
+			baseYear: 1999
+		}), 52, "01.01.2000 in 'de' locale is in week 52");
+
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			locale: "de",
+			baseYear: 2000
+		}), 52, "baseYear doesn't have effect when locale isn't en-US");
+
+		oDate = new Date(Date.UTC(2001, 0, 1));
+
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2001
+		}), 1, "01.01.2001 baseYear 2001 is in week 1");
+
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2000
+		}), 54, "01.01.2001 baseYear 2000 is in week 54");
+
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			locale: "de"
+		}), 1, "01.01.2001 in 'de' locale is in week 1");
+
+		oDate - new Date(Date.UTC(2000, 11, 31));
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2001
+		}), 1, "31.12.2000 baseYear 2001 is in week 1");
+
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2000
+		}), 54, "31.12.2000 baseYear 2000 is in week 54");
+
+		assert.equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			locale: "de"
+		}), 1, "31.12.2000 in 'de' locale is in week 1");
+	});
+	**/
+
+	QUnit.test("format and parse weekInYear pattern", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "'W'w"
+		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
+		assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "W1", "week format with pattern 'w'");
+		assert.ok(oDateFormat.parse("W1") instanceof Date, "Date can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "'W'ww"
+		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
+		assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "W01", "week format with pattern 'ww'");
+		assert.ok(oDateFormat.parse("W01") instanceof Date, "Date can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "www"
+		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
+		assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "CW 01", "week format with pattern 'www'");
+		assert.ok(oDateFormat.parse("CW 01") instanceof Date, "Date can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "wwww"
+		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
+		assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week format with pattern 'wwww'");
+		assert.ok(oDateFormat.parse("Calendar Week 01") instanceof Date, "Date can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "wwww",
+			calendarType: sap.ui.core.CalendarType.Islamic
+		});
+		assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 11", "week number in Islamic calendar");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "wwww",
+			calendarType: sap.ui.core.CalendarType.Japanese
+		});
+		assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week number in Japanese calendar");
+	});
+
+	QUnit.test("format and parse weekYear/weekInYear pattern", function(assert) {
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "Y-w"
+		});
+		assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For en-US 1st of January is always week 1");
+		assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For en-US 1st of January is always week 1");
+		assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2016-1", "For en-US 1st of January is always week 1");
+		assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2014-53", "For en-US 31st of December is always week 53");
+		assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For en-US 31st of December is always week 53");
+		assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-53", "For en-US 31st of December is always week 53");
+		assert.equal(oDateFormat.parse("2015-1").valueOf(), new Date(2015, 0, 1).valueOf(), "Date can be correctly parsed to 1st of January 2015");
+
+		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "Y-w"
+		});
+		assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For de-DE 1st of January 2014 is week 1/2014");
+		assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For de-DE 1st of January 2015 is week 1/2015");
+		assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2015-53", "For de-DE 1st of January 2016 is week 53/2015");
+		assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2015-1", "For de-DE 31st of December 2014 is week 1/2015");
+		assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For de-DE 31st of December 2015 is week 53/2015");
+		assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-52", "For de-DE 31st of December 2016 is week 52/2016");
+		assert.equal(oDateFormat.parse("2015-1").valueOf(), new Date(2014, 11, 29).valueOf(), "Date can be correctly parsed to 29th of December 2014");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+
+	QUnit.test("format and parse weekInYear and dayNumberOfWeek", function(assert) {
+		var oDate = new Date(2016, 10, 13); // 13th, November, 2016, Sunday
+		var sPattern = "Y/ww/u";
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		});
+		var sFormatted = "2016/47/1";
+
+		assert.equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the first day of week 46 in en-US");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		});
+		sFormatted = "2016/45/7";
+
+		assert.equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the 7th day of week 45 in de-DE");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+
+	QUnit.test("origin info", function(assert) {
+		var oOriginDate = sap.ui.core.format.DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
+		assert.equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
+		assert.equal(oInfo.locale, "en-US", "Origin Info: locale")
+		assert.equal(oInfo.style, "medium", "Origin Info: style")
+		assert.equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern")
+	});
+
+	QUnit.module("Scaling: Relative Time Formater", {
+		beforeEach: function() {
+			this.clock = sinon.useFakeTimers(1444724476000);
+			var oDate = new Date();
+			var oJan = new Date(oDate.getFullYear(), 0, 1);
+			var oJul = new Date(oDate.getFullYear(), 6, 1);
+			// check whether the Daylight Saving Time is used in the current timezone
+			this.dst = oJan.getTimezoneOffset() !== oJul.getTimezoneOffset();
+		},
+		afterEach: function() {
+			this.clock.restore();
+		}
+	})
+
+	function date(scale, diff) {
+		var oNow = new Date(),
+			oResult = new Date(Date.UTC(oNow.getFullYear(), oNow.getMonth(), oNow.getDate(), oNow.getHours(), oNow.getMinutes(), oNow.getSeconds(), oNow.getMilliseconds()));
+		switch(scale) {
+			case "second": oResult.setUTCSeconds(oResult.getUTCSeconds() + diff); break;
+			case "minute": oResult.setUTCMinutes(oResult.getUTCMinutes() + diff); break;
+			case "hour": oResult.setUTCHours(oResult.getUTCHours() + diff); break;
+			case "day": oResult.setUTCDate(oResult.getUTCDate() + diff); break;
+			case "month": oResult.setUTCMonth(oResult.getUTCMonth() + diff); break;
+			case "year": oResult.setUTCFullYear(oResult.getUTCFullYear() + diff); break;
+		}
+		return new Date(oResult.getUTCFullYear(), oResult.getUTCMonth(), oResult.getUTCDate(), oResult.getUTCHours(), oResult.getUTCMinutes(), oResult.getUTCSeconds(), oResult.getUTCMilliseconds());
+	}
+
+	QUnit.test("Time relative: format and parse", function(assert) {
+		var aStyles = [undefined, 'wide', 'short', 'narrow'],
+			aTestData = [{
+				scale: "auto",
+				data: [
+					{unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "now"},
+					{unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second"},
+					{unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago"},
+					{unit: "second", diff: 2, results: ["in 2 seconds", "in 2 seconds", "in 2 sec.", "in 2 sec."], description: "Now + 2 Seconds --> in 2 seconds"},
+					{unit: "second", diff: -7, results: ["7 seconds ago", "7 seconds ago", "7 sec. ago", "7 sec. ago"], description: "Now + 2 Seconds --> in 2 seconds"},
+					{unit: "second", diff: 61, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 61 Seconds --> in 1 minute", parseDiff: 1000},
+					{unit: "second", diff: 3601, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 3601 Seconds --> in 1 hour", parseDiff: 1000},
+					{unit: "minute", diff: 1, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 1 Minute --> in 1 minute"},
+					{unit: "minute", diff: -1, results: ["1 minute ago", "1 minute ago", "1 min. ago", "1 min. ago"], description: "Now - 1 Minute --> 1 minute ago"},
+					{unit: "minute", diff: 13, results: ["in 13 minutes", "in 13 minutes", "in 13 min.", "in 13 min."], description: "Now + 13 Minutes --> in 13 minutes"},
+					{unit: "minute", diff: -54, results: ["54 minutes ago", "54 minutes ago", "54 min. ago", "54 min. ago"], description: "Now - 54 Minutes --> 54 minutes ago"},
+					{unit: "minute", diff: 95, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 95 Minutes --> in 1 hour", parseDiff: 35*60*1000},
+					{unit: "hour", diff: 1, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 1 Hour --> in 1 hour"},
+					{unit: "day", diff: -5, results: ["120 hours ago", "120 hours ago", "120 hr. ago", "120 hr. ago"], description: "Now - 5 Days --> 120 hours ago"}
+				]
+			}, {
+				scale: "hour",
+				data: [
+					{unit: "second", diff: 0, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now --> 0 hours ago"},
+					{unit: "second", diff: 1, results: ["in 0 hours", "in 0 hours", "in 0 hr.", "in 0 hr."], description: "Now + 1 Second --> in 0 hours", parseDiff: 1000},
+					{unit: "second", diff: -1, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now - 1 Second --> 0 hours ago", parseDiff: -1000},
+					{unit: "minute", diff: 30, results: ["in 0 hours", "in 0 hours", "in 0 hr.", "in 0 hr."], description: "Now + 30 Minutes --> in 0 hours", parseDiff: 30*60*1000},
+					{unit: "minute", diff: -30, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now - 30 Minutes --> 0 hours ago", parseDiff: -30*60*1000},
+					{unit: "hour", diff: 4, results: ["in 4 hours", "in 4 hours", "in 4 hr.", "in 4 hr."], description: "Now + 4 Hours --> in 4 hours"},
+					{unit: "hour", diff: -10, results: ["10 hours ago", "10 hours ago", "10 hr. ago", "10 hr. ago"], description: "Now - 10 Hours --> 10 hours ago"}
+				]
+			}, {
+				scale: "minute",
+				data: [
+					{unit: "second", diff: 0, results: ["0 minutes ago", "0 minutes ago", "0 min. ago", "0 min. ago"], description: "Now --> 0 minutes ago"},
+					{unit: "second", diff: 1, results: ["in 0 minutes", "in 0 minutes", "in 0 min.", "in 0 min."], description: "Now + 1 Second --> in 0 minutes", parseDiff: 1000},
+					{unit: "second", diff: -1, results: ["0 minutes ago", "0 minutes ago", "0 min. ago", "0 min. ago"], description: "Now - 1 Second --> 0 minutes ago", parseDiff: -1000},
+					{unit: "minute", diff: 30, results: ["in 30 minutes", "in 30 minutes", "in 30 min.", "in 30 min."], description: "Now + 30 Minutes --> in 30 minutes"},
+					{unit: "minute", diff: -30, results: ["30 minutes ago", "30 minutes ago", "30 min. ago", "30 min. ago"], description: "Now - 30 Minutes --> 30 minutes ago"},
+					{unit: "hour", diff: 1, results: ["in 60 minutes", "in 60 minutes", "in 60 min.", "in 60 min."], description: "Now + 4 Hours --> in 60 minutes"}
+				]
+			}, {
+				scale: "second",
+				data: [
+					{unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "Now --> now"},
+					{unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second"},
+					{unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago"},
+					{unit: "minute", diff: 1, results: ["in 60 seconds", "in 60 seconds", "in 60 sec.", "in 60 sec."], description: "Now + 1 Minute --> in 60 seconds"},
+					{unit: "minute", diff: -1, results: ["60 seconds ago", "60 seconds ago", "60 sec. ago", "60 sec. ago"], description: "Now - 1 Minute --> 60 seconds ago"}
+				]
+			}];
+
+		aStyles.forEach(function(sStyle, index) {
+			aTestData.forEach(function(oTestData) {
+				var oTime = sap.ui.core.format.DateFormat.getTimeInstance({
+							relative: true,
+							relativeScale: oTestData.scale,
+							relativeStyle: sStyle
+						});
+
+				oTestData.data.forEach(function(data) {
+					if (!data.parseOnly) {
+						assert.equal(oTime.format(date(data.unit, data.diff)), data.results[index], data.description + " (" + sStyle + ")");
+					}
+					assert.equal(oTime.parse(data.results[index]).getTime() + (data.parseDiff || 0), date(data.unit, data.diff).getTime(), "Parse: " + data.results[index] + " (" + sStyle + ")");
+				});
+			});
+		});
+	});
+
+	QUnit.test("Date relative: format and parse", function(assert) {
+		var oDate = sap.ui.core.format.DateFormat.getDateInstance({
+					relative: true,
+					relativeScale: "auto"
+				});
+
+		var that = this;
+
+		var aStyles = [undefined, 'wide', 'short', 'narrow'],
+			aTestData = [{
+				scale: "auto",
+				data: [
+					{unit: "second", diff: 0, results: ["today", "today", "today", "today"], description: "today"},
+					{unit: "second", diff: 1, results: ["today", "today", "today", "today"], description: "Today + 1 Second --> today", parseDiff: 1000},
+					{unit: "second", diff: -86400, results: ["yesterday", "yesterday", "yesterday", "yesterday"], description: "Today - 86400 Seconds --> yesterday"},
+					{unit: "minute", diff: 1440, results: ["tomorrow", "tomorrow", "tomorrow", "tomorrow"], description: "Today + 1440 Minutes --> tomorrow"},
+					{unit: "hour", diff: 24, results: ["tomorrow", "tomorrow", "tomorrow", "tomorrow"], description: "Today + 24 Hours --> tomorrow"},
+					{unit: "day", diff: 5, results: ["in 5 days", "in 5 days", "in 5 days", "in 5 days"], description: "Today + 5 Days --> in 5 days"},
+					{unit: "day", diff: -5, results: ["5 days ago", "5 days ago", "5 days ago", "5 days ago"], description: "Today - 5 Days --> 5 days ago"},
+					{unit: "day", diff: 8, results: ["next week", "next week", "next wk.", "next wk."], description: "Today + 8 Days --> next week", parseDiff: 24*60*60*1000},
+					{unit: "day", diff: -8, results: ["last week", "last week", "last wk.", "last wk."], description: "Today - 8 Days --> last week", parseDiff: -24*60*60*1000},
+					{unit: "day", diff: -32, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 32 Days --> last month", parseDiff: -2*24*60*60*1000},
+					{unit: "month", diff: 1, results: ["next month", "next month", "next mo.", "next mo."], description: "Today + 1 Month --> next month"},
+					{unit: "month", diff: -1, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 1 Month --> last month"},
+					{unit: "month", diff: 15, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 15 Months --> next year", parseDiff: (92 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000},
+					{unit: "month", diff: 28, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 28 Months --> in 2 years", parseDiff: (123 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000},
+					{unit: "day", diff: 90, results: ["next quarter", "next quarter", "next qtr.", "next qtr."], description: "Today + 90 Days", parseOnly: true, parseDiff: -2*24*60*60*1000},
+					{unit: "hour", diff: 24, results: ["in 24 hours", "in 24 hours", "in 24 hr.", "in 24 hr."], description: "Today + 1 Days", parseOnly: true},
+					{unit: "hour", diff: 72, results: ["in 72 hours", "in 72 hours", "in 72 hr.", "in 72 hr."], description: "Today + 3 Days", parseOnly: true},
+					{unit: "minute", diff: -4320, results: ["4320 minutes ago", "4320 minutes ago", "4320 min. ago", "4320 min. ago"], description: "Today - 3 Days", parseOnly: true}
+				]
+			}];
+
+		aStyles.forEach(function(sStyle, index) {
+			aTestData.forEach(function(oTestData) {
+				var oDate = sap.ui.core.format.DateFormat.getDateInstance({
+							relative: true,
+							relativeScale: "auto",
+							relativeStyle: sStyle
+						});
+
+				oTestData.data.forEach(function(data) {
+					if (!data.parseOnly) {
+						assert.equal(oDate.format(date(data.unit, data.diff)), data.results[index], data.description + " (" + sStyle + ")");
+					}
+					assert.equal(oDate.parse(data.results[index]).getTime() + (data.parseDiff || 0), date(data.unit, data.diff).getTime(), "Parse: " + data.results[index] + " (" + sStyle + ")");
+				});
+			});
+		});
+	});
+
+	QUnit.test("DateTime relative: format and parse", function(assert) {
+		var aStyles = [undefined, 'wide', 'short', 'narrow'],
+			that = this,
+			aTestData = [{
+				scale: "auto",
+				data: [
+					{unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "now"},
+					{unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second"},
+					{unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago"},
+					{unit: "second", diff: 2, results: ["in 2 seconds", "in 2 seconds", "in 2 sec.", "in 2 sec."], description: "Now + 2 Second --> in 2 seconds"},
+					{unit: "second", diff: -7, results: ["7 seconds ago", "7 seconds ago", "7 sec. ago", "7 sec. ago"], description: "Now - 7 Second --> 7 seconds ago"},
+					{unit: "second", diff: 61, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 61 Seconds --> in 1 minute", parseDiff: 1000},
+					{unit: "second", diff: 3601, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 3601 Seconds --> in 1 hour", parseDiff: 1000},
+					{unit: "second", diff: -86401, results: ["yesterday", "yesterday", "yesterday", "yesterday"], description: "Today - 86401 Seconds --> yesterday", parseDiff: -1000},
+					{unit: "minute", diff: 1, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 1 Minute --> in 1 minute"},
+					{unit: "minute", diff: -1, results: ["1 minute ago", "1 minute ago", "1 min. ago", "1 min. ago"], description: "Now - 1 Minute --> 1 minute ago"},
+					{unit: "minute", diff: 13, results: ["in 13 minutes", "in 13 minutes", "in 13 min.", "in 13 min."], description: "Now + 13 Mintues --> in 13 minutes"},
+					{unit: "minute", diff: -54, results: ["54 minutes ago", "54 minutes ago", "54 min. ago", "54 min. ago"], description: "Now - 54 Minutes --> 54 minutes ago"},
+					{unit: "minute", diff: 95, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 95 Minutes --> in 1 hour", parseDiff: 35*60*1000},
+					{unit: "minute", diff: 1440, results: ["tomorrow", "tomorrow", "tomorrow", "tomorrow"], description: "Today + 1440 Minutes --> tomorrow"},
+					{unit: "hour", diff: 1, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 1 Hour --> in 1 hour"},
+					{unit: "day", diff: 5, results: ["in 5 days", "in 5 days", "in 5 days", "in 5 days"], description: "Today + 5 Days --> in 5 days"},
+					{unit: "day", diff: -5, results: ["5 days ago", "5 days ago", "5 days ago", "5 days ago"], description: "Today - 5 Days --> 5 days ago"},
+					{unit: "day", diff: 8, results: ["next week", "next week", "next wk.", "next wk."], description: "Today + 8 Days --> next week", parseDiff: 24*60*60*1000},
+					{unit: "day", diff: -8, results: ["last week", "last week", "last wk.", "last wk."], description: "Today - 8 Days --> last week", parseDiff: -24*60*60*1000},
+					{unit: "day", diff: -32, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 32 Days --> last month", parseDiff: -2*24*60*60*1000},
+					{unit: "month", diff: 1, results: ["next month", "next month", "next mo.", "next mo."], description: "Today + 1 Month --> next month"},
+					{unit: "month", diff: -1, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 1 Month --> last month"},
+					{unit: "month", diff: 15, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 15 Months --> next year", parseDiff: (92 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000},
+					{unit: "month", diff: 28, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 28 Months --> in 2 years", parseDiff: (123 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000},
+					{unit: "year", diff: 1, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 1 year --> next year"}
+				]
+			}];
+
+		aStyles.forEach(function(sStyle, index) {
+			aTestData.forEach(function(oTestData) {
+				var oDateTime = sap.ui.core.format.DateFormat.getDateTimeInstance({
+							relative: true,
+							relativeScale: "auto",
+							relativeStyle: sStyle
+						});
+
+				oTestData.data.forEach(function(data) {
+					if (!data.parseOnly) {
+						assert.equal(oDateTime.format(date(data.unit, data.diff)), data.results[index], data.description + " (" + sStyle + ")");
+					}
+					assert.equal(oDateTime.parse(data.results[index]).getTime() + (data.parseDiff || 0), date(data.unit, data.diff).getTime(), "Parse: " + data.results[index] + " (" + sStyle + ")");
+				});
+			});
+		});
+	 });
+
+	QUnit.module("Islamic Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");
 
-	test("format date to Islamic type with locale en", function() {
+	QUnit.test("format date to Islamic type with locale en", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Islamic
 			});
 
-		equal(oDateFormat.format(oDate), "Rab. II 12, 1422 AH", "Date is formatted in Islamic calendar");
+		assert.equal(oDateFormat.format(oDate), "Rab. II 12, 1422 AH", "Date is formatted in Islamic calendar");
 	});
 
-	test("format date to Islamic type with relative and locale en", function() {
+	QUnit.test("format date to Islamic type with relative and locale en", function(assert) {
 		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Islamic}, "en", "yyyy-MM-dd, default range, en with calendar type Islamic");
 		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "default style, range [-9, 0], en with calendar type Islamic");
 		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "style long, range [1, 5], en with calendar type Islamic");
 	});
 
-	test("parse date to Islamic type with locale en", function() {
+	QUnit.test("parse date to Islamic type with locale en", function(assert) {
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				calendarType: sap.ui.core.CalendarType.Islamic
 			});
 
 		var oDate = oDateFormat.parse("Rab. II 12, 1422 AH");
-		ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
-		equal(oDate.getFullYear(), 2001, "Year 2011");
-		equal(oDate.getMonth(), 6, "Month July");
-		equal(oDate.getDate(), 4, "Day 4th");
+		assert.ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		assert.equal(oDate.getFullYear(), 2001, "Year 2011");
+		assert.equal(oDate.getMonth(), 6, "Month July");
+		assert.equal(oDate.getDate(), 4, "Day 4th");
 	});
 
-	test("parse date to Islamic type with relative and locale en", function() {
+	QUnit.test("parse date to Islamic type with relative and locale en", function(assert) {
 		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Islamic}, "en", "yyyy-MM-dd, default range, en with calendar type Islamic");
 		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "default style, range [-9, 0], en with calendar type Islamic");
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Islamic}, "en", "style long, range [1, 5], en with calendar type Islamic");
@@ -364,48 +903,193 @@
 
 	var aResultLocal = [
 		"12 ربيع الآخر، 1422 هـ",
-		"12‏ ربيع الآخر‏، 1422 ‏هـ",
+		"12 ربيع الآخر، 1422 هـ",
 		"12 ربيع الآخر، 1422 هـ",
 		"12 ברביע ב׳ 1422 שנת היג׳רה"
 	];
 
-	module("Islamic Date in other locales", {
-		setup: function() {
+	QUnit.module("Islamic Date in other locales", {
+		beforeEach: function() {
 			sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
 		},
-		teardown: function() {
+		afterEach: function() {
 			sap.ui.getCore().getConfiguration().setCalendarType(null);
 		}
 	});
 
 	["ar", "ar_EG", "ar_SA", "he"].forEach(function(sLocale, index) {
-		test("format Islamic date " + sLocale, function() {
+		QUnit.test("format Islamic date " + sLocale, function(assert) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance(new sap.ui.core.Locale(sLocale));
-			equal(oDateFormat.format(oDate), aResultLocal[index], "Date is formatted to Islamic Date in " + sLocale + " locale");
+			assert.equal(oDateFormat.format(oDate), aResultLocal[index], "Date is formatted to Islamic Date in " + sLocale + " locale");
 		});
 
-		test("format Islamic date relative " + sLocale, function() {
+		QUnit.test("format Islamic date relative " + sLocale, function(assert) {
 			doTestRelative(true, {pattern: "yyyy-MM-dd"}, sLocale, "yyyy-MM-dd, default range, " + sLocale);
 			doTestRelative(true, {relativeRange: [-9, 0]}, sLocale, "default style, range [-9, 0], " + sLocale);
 			doTestRelative(true, {style: "long", relativeRange: [1, 5]}, sLocale, "style long, range [1, 5], " + sLocale);
 		});
 
-		test("parse Islamic date " + sLocale, function() {
+		QUnit.test("parse Islamic date " + sLocale, function(assert) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance(new sap.ui.core.Locale(sLocale));
 
 			var oDate = oDateFormat.parse(aResultLocal[index]);
-			ok(oDate instanceof Date, "Date is parsed always as instance of Javascript Date");
-			equal(oDate.getFullYear(), 2001, "Year 2001");
-			equal(oDate.getMonth(), 6, "Month July");
-			equal(oDate.getDate(), 4, "Day 4th");
+			assert.ok(oDate instanceof Date, "Date is parsed always as instance of Javascript Date");
+			assert.equal(oDate.getFullYear(), 2001, "Year 2001");
+			assert.equal(oDate.getMonth(), 6, "Month July");
+			assert.equal(oDate.getDate(), 4, "Day 4th");
 		});
 
-		test("parse Islamic date relative " + sLocale, function() {
+		QUnit.test("parse Islamic date relative " + sLocale, function(assert) {
 			doTestRelative(false, {pattern: "yyyy-MM-dd"}, sLocale, "yyyy-MM-dd, default range, " + sLocale);
 			doTestRelative(false, {relativeRange: [-9, 0]}, sLocale, "default style, range [-9, 0], " + sLocale);
 			doTestRelative(false, {style: "long", relativeRange: [1, 5]}, sLocale, "style long, range [1, 5], " + sLocale);
 		});
 	});
+
+	QUnit.module("Japanese Date");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	QUnit.test("format date to Japanese type", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Japanese
+			}, new sap.ui.core.Locale("ja_JP"));
+
+		assert.equal(oDateFormat.format(oDate), "平成13年7月4日", "Date is formatted in Japanese calendar");
+	});
+
+	QUnit.test("format date to Japanese type with relative", function(assert) {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "yyyy-MM-dd, default range, en with calendar type Japanese");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "default style, range [-9, 0], en with calendar type Japanese");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "style long, range [1, 5], en with calendar type Japanese");
+	});
+
+	QUnit.test("parse date to Japanese type", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Japanese
+			}, new sap.ui.core.Locale("ja_JP"));
+
+		var oDate = oDateFormat.parse("平成13年7月4日");
+		assert.ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		assert.equal(oDate.getFullYear(), 2001, "Year 2011");
+		assert.equal(oDate.getMonth(), 6, "Month July");
+		assert.equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	QUnit.test("parse date to Japanese type with relative", function(assert) {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "yyyy-MM-dd, default range, en with calendar type Japanese");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "default style, range [-9, 0], en with calendar type Japanese");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "ja_JP", "style long, range [1, 5], en with calendar type Japanese");
+	});
+
+	QUnit.module("Japanese Date in locale en");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	QUnit.test("format date to Japanese type with locale en", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Japanese
+			});
+
+		assert.equal(oDateFormat.format(oDate), "Jul 4, 13 Heisei", "Date is formatted in Japanese calendar");
+	});
+
+	QUnit.test("format date to Japanese type with relative and locale en", function(assert) {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "en", "yyyy-MM-dd, default range, en with calendar type Japanese");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "default style, range [-9, 0], en with calendar type Japanese");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
+	});
+
+	QUnit.test("parse date to Japanese type with locale en", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Japanese
+			});
+
+		var oDate = oDateFormat.parse("Jul 4, 13 Heisei");
+		assert.ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		assert.equal(oDate.getFullYear(), 2001, "Year 2011");
+		assert.equal(oDate.getMonth(), 6, "Month July");
+		assert.equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	QUnit.test("parse date to Japanese type with relative and locale en", function(assert) {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Japanese}, "en", "yyyy-MM-dd, default range, en with calendar type Japanese");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "default style, range [-9, 0], en with calendar type Japanese");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
+	});
+
+	QUnit.module("Persian Date");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	QUnit.test("format date to Persian type", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Persian
+			}, new sap.ui.core.Locale("fa_IR"));
+
+		assert.equal(oDateFormat.format(oDate), "13 تیر 1380 ه‍.ش.", "Date is formatted in Persian calendar");
+	});
+
+	QUnit.test("format date to Persian type with relative", function(assert) {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "yyyy-MM-dd, default range, en with calendar type Persian");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "default style, range [-9, 0], en with calendar type Persian");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "style long, range [1, 5], en with calendar type Persian");
+	});
+
+	QUnit.test("parse date to Persian type", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Persian
+			}, new sap.ui.core.Locale("fa_IR"));
+
+		var oDate = oDateFormat.parse("13 تیر 1380 ه‍.ش.");
+		assert.ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		assert.equal(oDate.getFullYear(), 2001, "Year 2011");
+		assert.equal(oDate.getMonth(), 6, "Month July");
+		assert.equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	QUnit.test("parse date to Persian type with relative", function(assert) {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "yyyy-MM-dd, default range, en with calendar type Persian");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "default style, range [-9, 0], en with calendar type Persian");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "style long, range [1, 5], en with calendar type Persian");
+	});
+
+	QUnit.module("Persian Date in locale en");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	QUnit.test("format date to Persian type with locale en", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Persian
+			});
+
+		assert.equal(oDateFormat.format(oDate), "Tir 13, 1380 AP", "Date is formatted in Persian calendar");
+	});
+
+	QUnit.test("format date to Persian type with relative and locale en", function(assert) {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "en", "yyyy-MM-dd, default range, en with calendar type Persian");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "en", "default style, range [-9, 0], en with calendar type Persian");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "en", "style long, range [1, 5], en with calendar type Persian");
+	});
+
+	QUnit.test("parse date to Persian type with locale en", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Persian
+			});
+
+		var oDate = oDateFormat.parse("Tir 13, 1380 AP");
+		assert.ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		assert.equal(oDate.getFullYear(), 2001, "Year 2001");
+		assert.equal(oDate.getMonth(), 6, "Month July");
+		assert.equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	QUnit.test("parse date to Persian type with relative and locale en", function(assert) {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "en", "yyyy-MM-dd, default range, en with calendar type Persian");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "en", "default style, range [-9, 0], en with calendar type Persian");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "en", "style long, range [1, 5], en with calendar type Persian");
+	});
+
 </script>
 
 </head>

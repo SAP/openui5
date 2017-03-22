@@ -1,10 +1,11 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>TreeMultiSelection - sap.ui.commons</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons">
@@ -12,10 +13,10 @@
 
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"	type="text/css" media="screen" />
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script language="javascript">
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script>
 
 	function createStandardTree() {
 		var oTree = new sap.ui.commons.Tree("tree", {title : "Tree with Header", width : "90%", height : "500px", showHearderIcons : true, showHorizontalScrollbar : false});
@@ -66,106 +67,179 @@
 		return oTree;
 	}
 
-	var oStandardTree
+	var oStandardTree;
 
 	qutils.delayTestStart();
 
-	module("Rendering", {
-		setup: function() {
+	QUnit.module("Rendering", {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
 	});
 
-	test("Rendering of Standard tree",
-		function() {
-			notEqual(jQuery.sap.domById("tree"), null,	"Tree is rendered.");
-			notEqual(jQuery.sap.domById("tree" + "-Header"), null,	"Tree header is there.");
-			notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
-		});
+	QUnit.test("Rendering of Standard tree", function(assert) {
+		assert.notEqual(jQuery.sap.domById("tree"), null,	"Tree is rendered.");
+		assert.notEqual(jQuery.sap.domById("tree" + "-Header"), null,	"Tree header is there.");
+		assert.notEqual(jQuery.sap.domById("tree" + "-TreeCont"),	null, "Tree content is there");
+	});
 
-	module("Selection Mode 'Single'", {
-		setup: function() {
+	QUnit.module("Selection Mode 'Single'", {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
 	});
 
-	test("Node selection", function() {
+	QUnit.test("Node selection", function(assert) {
 		var firstSelection = sap.ui.getCore().getControl("node1");
 		firstSelection.select();
-		ok(firstSelection.getIsSelected(), "Node 1 is selected");
+		assert.ok(firstSelection.getIsSelected(), "Node 1 is selected");
 		var secondSelection = sap.ui.getCore().getControl("node2");
 		secondSelection.select();
-		ok(secondSelection.getIsSelected(), "Node 2 is now selected");
-		ok(!firstSelection.getIsSelected(), "Node 1 is not selected anymore");
+		assert.ok(secondSelection.getIsSelected(), "Node 2 is now selected");
+		assert.ok(!firstSelection.getIsSelected(), "Node 1 is not selected anymore");
 	});
 
-	test("Node selection and collapsing (old)", function() {
+	QUnit.test("Node selection and collapsing (old)", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
-		equal(tree.getSelectionMode(), "Legacy", "SelectionMode should be 'Legacy' by default");
+		assert.equal(tree.getSelectionMode(), "Legacy", "SelectionMode should be 'Legacy' by default");
 		var node1 = sap.ui.getCore().getControl("node1");
-		ok(node1.getExpanded(), "Node 1 is expanded");
+		assert.ok(node1.getExpanded(), "Node 1 is expanded");
 		var node11 = sap.ui.getCore().getControl("node11");
 		node11.select();
-		ok(node11.getIsSelected(), "Node 1.1 is selected");
+		assert.ok(node11.getIsSelected(), "Node 1.1 is selected");
 		node1.collapse();
-		ok(!node1.getExpanded(), "Node 1 is now collapsed");
-		ok(node11.getIsSelected(), "Node 1.1 selected");
+		assert.ok(!node1.getExpanded(), "Node 1 is now collapsed");
+		assert.ok(node11.getIsSelected(), "Node 1.1 selected");
 		node1.expand();
-		ok(node1.getExpanded(), "Node 1 is expanded");
-		ok(node11.getIsSelected(), "Node 1.1 is selected");
+		assert.ok(node1.getExpanded(), "Node 1 is expanded");
+		assert.ok(node11.getIsSelected(), "Node 1.1 is selected");
 	});
 
-	module("Selection Mode 'Multi'", {
-		setup: function() {
+	QUnit.module("Selection Mode 'Multi'", {
+		beforeEach: function() {
 			oStandardTree = createStandardTree();
 			oStandardTree.placeAt("target1");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			oStandardTree.destroy();
 			oStandardTree = null;
 		}
 	});
 
-	test("SelectionType Single", function() {
+	QUnit.test("SelectionType Single", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
 		tree.setSelectionMode("Multi");
-		equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
+		assert.equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
 		var node1 = sap.ui.getCore().getControl("node1");
 		node1.select();
-		ok(node1.getIsSelected(), "Node 1 is selected");
+		assert.ok(node1.getIsSelected(), "Node 1 is selected");
 		var node2 = sap.ui.getCore().getControl("node2");
 		node2.select();
-		ok(node2.getIsSelected(), "Node 2 is selected");
-		ok(!node1.getIsSelected(), "Node 1 is not selected");
+		assert.ok(node2.getIsSelected(), "Node 2 is selected");
+		assert.ok(!node1.getIsSelected(), "Node 1 is not selected");
 	});
 
-	test("Node selection and collapsing (new)", function() {
+	QUnit.test("Node selection and collapsing (new)", function(assert) {
 		var tree = sap.ui.getCore().getControl("tree");
 		tree.setSelectionMode("Multi");
-		equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
+		assert.equal(tree.getSelectionMode(), "Multi", "SelectionMode is set to 'Multi' now");
 		var node1 = sap.ui.getCore().getControl("node1");
-		ok(node1.getExpanded(), "Node 1 is expanded");
+		assert.ok(node1.getExpanded(), "Node 1 is expanded");
 		var node11 = sap.ui.getCore().getControl("node11");
 		node11.select();
-		ok(node11.getIsSelected(), "Node 1.1 is selected");
+		assert.ok(node11.getIsSelected(), "Node 1.1 is selected");
 		node1.collapse();
-		ok(!node1.getExpanded(), "Node 1 is now collapsed");
+		assert.ok(!node1.getExpanded(), "Node 1 is now collapsed");
 		node1.expand();
-		ok(node1.getExpanded(), "Node 1 is expanded");
-		ok(!node11.getIsSelected(), "Node 1.1 is not selected");
+		assert.ok(node1.getExpanded(), "Node 1 is expanded");
+		assert.ok(node11.getIsSelected(), "Node 1.1 is selected");
+	});
+
+	QUnit.module("Multiselect interactions", {
+		beforeEach: function () {
+			var oData = {
+				"children": [
+					{"NAME": "A"},
+					{"NAME": "B"},
+					{"NAME": "C"},
+					{"NAME": "D"},
+					{"NAME": "E"},
+					{"NAME": "F"},
+					{"NAME": "G"},
+					{"NAME": "H"},
+					{"NAME": "I"},
+					{"NAME": "J"},
+					{"NAME": "K"},
+					{"NAME": "L"},
+					{"NAME": "M"},
+					{"NAME": "N"},
+					{"NAME": "O"},
+					{"NAME": "P"},
+					{"NAME": "Q"},
+					{"NAME": "R"},
+					{"NAME": "S"},
+					{"NAME": "T"},
+					{"NAME": "U"},
+					{"NAME": "V"},
+					{"NAME": "W"},
+					{"NAME": "X"},
+					{"NAME": "Y"},
+					{"NAME": "Z"}
+				]
+			};
+
+			oStandardTree = new sap.ui.commons.Tree({
+				id: "tree",
+				title: "Tree",
+				width: "300px",
+				height: "300px",
+				selectionMode: "Multi",
+				nodes: {
+					path: "/hierarchy",
+					template: new sap.ui.commons.TreeNode({
+						text: {
+							path: "NAME"
+						}
+					}),
+					parameters: {
+						arrayNames: ["children"]
+					}
+				}
+			}).setModel(new sap.ui.model.json.JSONModel({hierarchy: oData}));
+
+			oStandardTree.placeAt("target1");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			oStandardTree.destroy();
+			oStandardTree = null;
+		}
+	});
+
+	QUnit.test("animate only last selection", function (assert) {
+		var oTree = oStandardTree,
+			aNodes = oTree.getNodes(),
+			$TreeCont = oTree.$().find(".sapUiTreeCont");
+
+		aNodes.forEach(function (oNode) {
+			oTree.setSelection(oNode, true, sap.ui.commons.Tree.SelectionType.Range);
+		});
+
+
+		assert.strictEqual($TreeCont.queue().length, 1, "Only the last selection to be animated");
 	});
 	</script>
 </head>

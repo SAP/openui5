@@ -1,7 +1,16 @@
+var semver = require('semver');
+
 // create library-preload.json for a library
 module.exports = function(grunt, config) {
 
-	var openui5_preload = {};
+	// Get current version from package.json to set compatVersion accordingly
+	var version = grunt.file.readJSON(__dirname + '/../../package.json').version;
+
+	var openui5_preload = {
+		options: {
+			compatVersion: semver.major(version) + "." + semver.minor(version)
+		}
+	};
 
 	config.libraries.forEach(function(library) {
 

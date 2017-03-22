@@ -1,0 +1,23 @@
+<core:View xmlns:core="sap.ui.core"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="sap.ui.codeeditor.sample.CodeEditor.CodeEditor"
+	xmlns:m="sap.m"
+	xmlns:ce="sap.ui.codeeditor" height="100%">	
+
+<ce:CodeEditor value='\{
+		"Chinese" : "你好世界",
+		"Dutch" : "Hallo wereld",
+		"English" : "Hello world",
+		"French" : "Bonjour monde",
+		"German" : "Hallo Welt",
+		"Greek" : "γειά σου κόσμος",
+		"Italian" : "Ciao mondo",
+		"Japanese" : "こんにちは世界",
+		"Korean" : "여보세요 세계",
+		"Portuguese" : "Olá mundo",
+		"Russian" : "Здравствуй мир",
+		"Spanish" : "Hola mundo"
+	}' height="300px" type="json"></ce:CodeEditor>
+
+</core:View>

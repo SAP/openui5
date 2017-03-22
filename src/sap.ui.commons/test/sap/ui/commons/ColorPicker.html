@@ -1,19 +1,19 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>ColorPicker - sap.ui.commons</title>
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-trace="true"
-			type="text/javascript"
 			data-sap-ui-libs="sap.ui.commons"
 			src="../../../../resources/sap-ui-core.js"
 		>
 		</script>
 
-		<script type="text/javascript">
+		<script>
 
 			//	create and place a ColorPicker
 				var oColorPicker = new sap.ui.commons.ColorPicker({colorString : "rgba20,30,40,0.3"});
@@ -190,7 +190,7 @@
 					var css_color;
 					if(colors.alpha && colors.alpha !== 1){
 						// Transparency
-						css_color = "rgba(" + colors.r + "," + colors.g + "," + colors.r + "," + colors.alpha + ")";
+						css_color = "rgba(" + colors.r + "," + colors.g + "," + colors.b + "," + colors.alpha + ")";
 					} else {
 						css_color = colors.hex;
 					}
@@ -211,7 +211,7 @@
 					var css_color;
 					if(colors.alpha && colors.alpha !== 1){
 						// Transparency
-						css_color = "rgba(" + colors.r + "," + colors.g + "," + colors.r + "," + colors.alpha + ")";
+						css_color = "rgba(" + colors.r + "," + colors.g + "," + colors.b + "," + colors.alpha + ")";
 					} else {
 						css_color = colors.hex;
 					}

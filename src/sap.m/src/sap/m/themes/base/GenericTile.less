@@ -1,0 +1,675 @@
+/* ================================== */
+/* CSS for control sap.m/GenericTile  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMGT {
+	display: inline-block;
+	border-radius: 0.125rem;
+	position: relative;
+	outline: none;
+	box-sizing: border-box;
+	background-position: 0px;
+	background: @sapUiTileBackground;
+	border: 1px solid transparent;
+	box-shadow: @sapUiShadowLevel0;
+}
+
+.sapMGT.sapMPointer * {
+	cursor: pointer;
+}
+
+.sapMGT:focus {
+	outline: none;
+}
+
+.sapMGT.OneByOne {
+	width: 11rem;
+	height: 11rem;
+}
+
+.sapMGT.TwoByOne {
+	width: 22.5rem;
+	height: 11rem;
+}
+
+.sapMGTHdrTxt,
+.sapMGTHdrTxt > .sapMGTTitle,
+.sapMGTSubHdrTxt,
+.sapMGT .sapMGTContent {
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+}
+
+.sapMGTHdrTxt > .sapMGTTitle,
+.sapMGenericTileFtrFldTxt>.sapMGTFailed {
+	cursor: inherit;
+}
+
+.sapMGTInnrCnt {
+	display: inline-block;
+}
+
+.sapMGTContent {
+	height: 6.375rem;
+	display: inline-block;
+	white-space: nowrap;
+	width: 100%;
+	overflow: hidden;
+}
+
+.sapMGTHdrTxt {
+	overflow: hidden;
+
+	.sapMText {
+		display: inline;
+		line-height: 1.375rem;
+	}
+}
+
+.sapMGTHdrTxt > .sapMText {
+	color: @sapUiTileTitleTextColor;
+	font-weight: normal;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontHeader5Size;
+}
+
+.sapMGTSubHdrTxt {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 1.375rem;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiTileTextColor;
+}
+
+.sapMGTHdrContent {
+	height: 4rem;
+	margin-top: 0.625rem;
+	margin-left: 0.94rem;
+	margin-right: 0.94rem;
+}
+
+.sapMGTHdrIconImage {
+	float: right;
+	width: 2.5rem;
+	min-height: 2.5rem;
+	font-size: 2.5rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiTileIconColor;
+}
+
+.sapMGenericTileFtrFldTxt {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiTileTextColor;
+}
+
+.sapMGenericTileFtrFldIcn {
+	color: @sapUiTileTextColor;
+}
+
+html.sap-desktop .sapMGT:focus:not([tabindex]) {
+	border-color: transparent;
+}
+
+.sapMGTOverlay {
+	background-color: @sapUiTileBackground;
+}
+
+.sapMGTOverlayMixin(@offset: 0px, @z-index: 0) {
+	position: absolute !important;
+	pointer-events: none;
+	left: @offset;
+	top: @offset;
+	right: @offset;
+	bottom: @offset;
+	& when not (@z-index = 0) {
+		z-index: @z-index;
+	}
+}
+
+.sapMGT.sapMGTScopeActions {
+
+	.sapMTileCntContent {
+		position: relative;
+
+		&:after {
+			.sapMGTOverlayMixin();
+			display: block;
+			content: "";
+			background-color: fade(@sapUiTileBackground, 70);
+		}
+	}
+
+	.sapMGTMoreIcon {
+		height: 1rem;
+		position: absolute;
+		right: 0.75rem;
+		bottom: 0.563rem;
+		z-index: 1; // Remark: If increased, this will break FLP footer visualization.
+		color: @sapUiButtonIconColor;
+		&:focus {
+			outline: none;
+		}
+	}
+
+	.sapMGTRemoveButton {
+		width: 1.375rem;
+		height: 1.375rem;
+		border-radius: 50%;
+		padding: 0px;
+		position: absolute;
+		top: -0.5rem;
+		right: -0.5rem;
+		z-index: 3; // Remark: If increased, this will break FLP footer visualization.
+		background-color: @sapUiButtonBackground;
+		border: 1px solid @sapUiButtonBorderColor;
+		color: @sapUiButtonTextColor;
+		overflow: visible;
+
+		.sapMBtnFocusDiv {
+			display: none;
+		}
+
+		.sapMBtnInner {
+			width: 100%;
+			height: 100%;
+			min-width: 0px;
+			border-radius: 50%;
+			border: none;
+			outline-offset: -2px;
+		}
+
+		.sapMBtnIcon {
+			font-size: 0.75rem;
+			margin: 0px;
+			width: 100%;
+
+			&:before {
+				position: relative;
+				top: -0.125rem;
+			}
+		}
+
+		&:focus > .sapMFocusable {
+			outline: none;
+			border-radius: 50%;
+		}
+
+		/* The touch area has a different size and is slightly moved to the left and bottom */
+		&:before {
+			content: "";
+			color: @sapUiButtonIconColor;
+			position: absolute;
+			top: -1px;
+			bottom: -0.6875rem;
+			left: -0.6875rem;
+			right: -0.0625rem;
+		}
+	}
+}
+
+.sapMGT.sapMGTScopeActions.sapMGTBackgroundImage {
+
+	.sapMTileCntContent {
+		&:after {
+		  content: none;
+		}
+	}
+
+	.sapMGTContent {
+		&:before {
+			.sapMGTOverlayMixin();
+			display: block;
+			content: "";
+			background-color: fade(@sapUiTileBackground, 70);
+			border-radius: 0.125rem;
+		}
+	}
+}
+
+/************************ LINE MODE COZY ********************/
+
+.sapMGTLineMode.sapMGT {
+	display: block;
+	min-height: 2.5rem;
+	min-width: 2rem;
+	border-radius: 0.2rem;
+	box-shadow: none;
+	transition: background-color 0.2s;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	margin-bottom: 0.125rem;
+	pointer-events: none;
+}
+
+.sapMGTLineMode .sapMGTTouchArea {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-flex-direction: row;
+	flex-direction: row;
+
+	min-height: 2.750rem;
+	width: 100%;
+	margin-top: -0.125rem;
+	margin-bottom: -0.125rem;
+	pointer-events: auto;
+}
+
+/* mixin for flex-box entries */
+.sapMGTFlexEntry(@resizable: 0) {
+	display: block;
+	-webkit-box-flex: @resizable;
+	flex: @resizable @resizable auto;
+	-webkit-flex: @resizable @resizable auto;
+}
+
+.sapMGTLineMode .sapMGTLineModeHelpContainer {
+	.sapMGTFlexEntry(1);
+
+	padding: 0.5rem 0 0.5rem 0;
+	margin-top: 0.175rem;
+	overflow: hidden;
+}
+
+.sapMGTLineMode .sapMGTHdrTxt {
+	position: relative;
+	font-size: @sapMFontMediumSize;
+	display: inline-block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	line-height: 1.375rem;
+}
+
+.sapMGTLineMode .sapMGTHdrTxt:after {
+	content: " ";
+	margin-right: 0.5rem;
+}
+
+.sapMGTLineMode .sapMGTSubHdrTxt {
+	display: inline-block;
+	font-size: @sapMFontMediumSize;
+	max-width: 100%;
+	line-height: 1.375rem;
+}
+
+.sapMGTLineMode .sapMGTLineModeFailedIcon {
+	.sapMGTFlexEntry;
+
+	line-height: 1.375rem;
+	vertical-align: top;
+	width: 1.75rem;
+	margin-top: 0.625rem;
+	text-align: left;
+}
+
+/* IE does not support text-align: start, this is a workaround:*/
+html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
+	text-align: right;
+}
+
+.sapMGTLineMode .sapMGTActionsContainer {
+	.sapMGTFlexEntry;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-flex-direction: row;
+	flex-direction: row;
+
+	align-items: center;
+	-webkit-box-align: center;
+
+	line-height: 1.375rem;
+	margin-left: 0.25rem;
+	width: 4rem;
+	overflow: hidden;
+
+	&, * {
+		pointer-events: auto;
+	}
+
+	.sapMGTMoreIcon {
+		display: block;
+		position: static;
+		right: 0px;
+		bottom: 0px;
+		width: 2rem;
+		height: 1.375rem;
+	}
+
+	.sapMGTRemoveButton {
+		display: block;
+		margin: 0px 0.3125rem;
+		left: 2rem;
+		position: static;
+		top: 0px;
+		right: 0px;
+		z-index: 0; // Remark: If increased, this will break FLP footer visualization.
+
+		&:before {
+			content: none;
+		}
+
+		.sapMBtnIcon::before {
+			width: 1.25rem;
+			height: 1.5rem;
+			padding: 0.75rem 0.3125rem;
+			margin-top: -0.75rem;
+			margin-left: -0.3125rem;
+			display: inline-block;
+		}
+	}
+}
+
+/************************ LINE MODE COMPACT *****************/
+
+.sapUiSizeCompact {
+	&.sapMGTLineModeContainer, .sapMGTLineModeContainer {
+		padding-right: 1.0rem;
+		box-sizing: border-box;
+		position: relative; /* make the tile's parent <<positioned>>, in order to make JS get the correct offsetParent */
+	}
+
+	.sapMGT.sapMGTLineMode {
+		user-select: none;
+		-webkit-user-select: none;
+		-moz-user-select: -moz-none;
+		-ms-user-select: none;
+	}
+
+	.sapMGT.sapMGTLineMode {
+		float: none;
+		clear: none;
+		margin-bottom: 0px;
+
+		display: inline;
+		min-width: 2rem;
+		border-radius: 0px;
+		box-shadow: none;
+		background: none !important;
+		border: 1px solid transparent !important;
+		position: relative;
+
+		@line-height: 1.875rem;
+		@padding-top: 0.125rem;
+		@padding-bottom: 0.125rem;
+		margin-top: @padding-top + @padding-bottom; /* used as hover-style bar-offset top, does not have an effect for inline elements */
+		min-height: @line-height - @padding-top - @padding-bottom; /* used as hover-style bar height */
+		line-height: @line-height !important;
+		height: @line-height;
+		padding: (@line-height / 2) - (@sapMFontMediumSize / 2) 0;
+		pointer-events: none;
+	}
+
+	.sapMGTLineMode .sapMGTHdrTxt, .sapMGTLineMode .sapMGTSubHdrTxt {
+		word-break: normal;
+		display: inline;
+		white-space: normal;
+		position: relative;
+		left: 0.5rem;
+		top: 1px;
+		border-top: 2px solid transparent;
+		border-bottom: 2px solid transparent;
+		z-index: 2;
+
+		padding-right: 0.5rem;
+
+		&:after {
+			content: none;
+		}
+	}
+
+	.sapMGTLineMode .sapMGTSubHdrTxt {
+		margin-right: 0.5rem;
+
+		&:before { //this is needed to enable line-wrapping between header end and subheader beginning
+			content: "";
+			display: inline-block;
+		}
+	}
+
+	.sapMGTLineMode .sapMGTLineModeFailedIcon {
+		display: inline-block;
+		line-height: 1.375rem;
+		width: 1.625rem;
+		vertical-align: top;
+		padding-top: 0.25rem;
+		padding-right: 0px;
+		margin-top: 1px;
+		position: relative;
+		left: 0.5rem;
+		border-right: 0.375rem solid transparent;
+		box-sizing: border-box;
+	}
+	.sapMGTLineMode .sapMGTHdrTxt {
+		border-left: 0.5rem solid transparent;
+		margin-left: -0.5rem;
+	}
+
+	.sapMGTLineMode .sapMGTHdrTxt:last-of-type {
+		padding-right: 0.5rem;
+		margin-right: 0.5rem;
+	}
+
+	.sapMGTLineMode.sapMGTScopeActions:not(.sapMGTDisabled) {
+		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
+			padding-right: 4rem;
+		}
+	}
+
+	.sapMGTActionsContainer {
+		position: absolute;
+		right: 0px;
+		bottom: 0px;
+		line-height: 1.375rem;
+		z-index: 2; // Remark: If increased, this will break FLP footer visualization.
+		padding: 0px;
+		height: 1.5rem;
+
+		&, * {
+			pointer-events: auto;
+		}
+
+		.sapMGTRemoveButton .sapMBtnIcon::before {
+			padding: 0px;
+			margin: 0px;
+		}
+	}
+
+	.sapMGTStartMarker, .sapMGTEndMarker {
+		display: inline-block;
+		position: relative;
+		top: 0.5rem;
+		z-index: 3; // Remark: If increased, this will break FLP footer visualization.
+	}
+
+	.sapMGTStyleHelper {
+		position: absolute;
+		top: 0px;
+		width: 100%;
+	}
+
+	.sapMGTLineStyleHelper {
+		position: absolute;
+		pointer-events: auto;
+
+		.sapMGTLineStyleHelperInner {
+			.sapMGTOverlayMixin();
+		}
+
+		&:not(:last-child) {
+			border-bottom: 0.25rem solid transparent;
+		}
+	}
+
+	.sapMGTLineMode .sapMGTHdrTxt {
+		max-height: none !important;
+	}
+}
+
+/* Fix for rendering order on tablets in RTL */
+html[dir=rtl] .sapMGTLineMode {
+	.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+		unicode-bidi: -webkit-isolate; /* needs to be prefixed for older webkit browsers */
+	}
+}
+
+/******************* OVERLAYS AND HELPERS *******************/
+.sapMGTOverlay {
+	.sapMGTOverlayMixin();
+	opacity: 0.8;
+}
+
+.sapMGT .sapMGTFocusDiv {
+	.sapMGTOverlayMixin(0px, 2);
+	border-radius: 0.25rem;
+}
+.sapMGT.sapMGTBackgroundImage .sapMGTFocusDiv {
+	.sapMGTOverlayMixin(1px, 2);
+}
+
+.sapMGTLineMode .sapMGTFocusDiv {
+	top: 1px;
+	right: 1px;
+	left: 1px;
+	bottom: 1px;
+	border-radius: 0.25rem;
+}
+
+.sapMGenericTileFtrFld {
+	left: 0.4375rem;
+	right: 0.4375rem;
+	bottom: 0.4375rem;
+	position: absolute;
+}
+
+.sapMGenericTileFtrFldTxt {
+	font-weight: normal;
+	display:table-cell;
+	padding-left: 0.5rem;
+	vertical-align: bottom;
+	width: 100%;
+}
+
+html[dir=rtl] .sapMGenericTileFtrFldTxt {
+	padding-right:0.5rem;
+}
+
+.sapMGenericTileFtrFldIcn {
+	margin-right: 0.5rem;
+	display: table-cell;
+	vertical-align: bottom;
+}
+
+.sapMGenericTileFtrFldIcn>.sapMGTFtrFldIcnMrk {
+	vertical-align: bottom;
+}
+
+.sapMGT.sapMGTBackgroundImage {
+	border: none;
+}
+
+/* the following is needed for non-webkit browsers that don't support line-clamping */
+
+/* some places should be left for subheader when the subheader exists*/
+.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
+	max-height: 5.48rem;
+}
+
+.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2){
+	max-height: 2.74rem;
+}
+
+/* the max-height is calculated the same as webkit-line-clamping and supported to work when
+the screen size changes between small and large (e.g. mobile devices auto rotation) without rerendering*/
+html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+	.sapMGT.sapMGTHeaderMode .sapMGTHdrContent .sapMTextMaxLine {
+		max-height: 6.85rem !important;
+	}
+}
+
+html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+	.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrContent .sapMTextMaxLine {
+		max-height: 4.11rem !important;
+	}
+}
+
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMGTHdrTxt .sapMText {
+		line-height: 1.1875rem;
+	}
+
+	.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt {
+		line-height: 1.1875rem;
+	}
+
+	.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
+		max-height: 4.72rem;
+	}
+
+	.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2) {
+		max-height: 2.36rem;
+	}
+
+	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+		.sapMGT.sapMGTHeaderMode > .sapMGTHdrContent .sapMTextMaxLine {
+			max-height: 5.9rem !important;
+		}
+	}
+
+	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+		.sapMGT:not(.sapMGTHeaderMode) > .sapMGTHdrContent .sapMTextMaxLine {
+			max-height: 3.54rem !important;
+		}
+	}
+
+	.sapMGT.OneByOne {
+		width: 9.25rem;
+		height: 9.25rem;
+	}
+	.sapMGT.TwoByOne {
+		width: 19rem;
+		height: 9.25rem;
+	}
+
+	.sapMGTContent {
+		height: 5.5rem;
+	}
+
+	.sapMGTHdrContent {
+		height: 3.5rem;
+		margin-top: 0.25rem;
+		margin-left: 0.5625rem;
+		margin-right: 0.5625rem;
+	}
+
+	.sapMGT.sapMGTScopeActions {
+		.sapMGTMoreIcon {
+			right: 0.5rem;
+			bottom: 0.313rem;
+		}
+	}
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMGTHdrTxt > .sapMText {
+		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMGTSubHdrTxt {
+		font-size: @sapMFontSmallSize;
+	}
+}

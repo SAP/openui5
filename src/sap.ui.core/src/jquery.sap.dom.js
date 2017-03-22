@@ -8,45 +8,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	"use strict";
 
 	/**
-	 * Shortcut for document.getElementById() with additionally an IE6/7 bug fixed.
-	 * Used to replace the jQuery.sap.domById when running in IE < v8.
-	 *
-	 * @param {string} sId the id of the DOM element to return
-	 * @param {Window} oWindow the window (optional)
-	 * @return {Element} the DOMNode identified by the given sId
-	 * @private
-	 */
-	var domByIdInternal = function(sId, oWindow) {
-
-		if (!oWindow) {
-			oWindow = window;
-		}
-		if (!sId || sId == "") {
-			return null;
-		}
-
-		var oDomRef = oWindow.document.getElementById(sId);
-
-		// IE also returns the element with the name or id whatever is first
-		// => the following line makes sure that this was the id
-		if (oDomRef && oDomRef.id == sId) {
-			return oDomRef;
-		}
-
-		// otherwise try to lookup the name
-		var oRefs = oWindow.document.getElementsByName(sId);
-		for (var i = 0;i < oRefs.length;i++) {
-			oDomRef = oRefs[i];
-			if (oDomRef && oDomRef.id == sId) {
-				return oDomRef;
-			}
-		}
-
-		return null;
-
-	};
-
-	/**
 	 * Shortcut for document.getElementById(), including a bug fix for older IE versions.
 	 *
 	 * @param {string} sId The id of the DOM element to return
@@ -56,10 +17,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @function
 	 * @since 0.9.0
 	 */
-	jQuery.sap.domById = !!Device.browser.internet_explorer && Device.browser.version < 8 ? domByIdInternal : function domById(sId, oWindow) {
+	jQuery.sap.domById = function domById(sId, oWindow) {
 		return sId ? (oWindow || window).document.getElementById(sId) : null;
 	};
-
 
 	/**
 	 * Shortcut for jQuery("#" + id) with additionally the id being escaped properly.
@@ -78,6 +38,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.byId = function byId(sId, oContext) {
 		var escapedId = "";
 		if (sId) {
+			// Note: This does not escape all relevant characters according to jQuery's documentation
+			// (see http://api.jquery.com/category/selectors/)
+			// As the behavior hasn't been changed for a long time it is not advisable to change it in
+			// future as users might be already escaping characters on their own or relying on the fact
+			// selector like jQuery.sap.byId("my-id > div") can be used.
 			escapedId = "#" + sId.replace(/(:|\.)/g,'\\$1');
 		}
 		return jQuery(escapedId, oContext);
@@ -85,8 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 
 	/**
-	 * Calls focus() on the given DOM element, but catches and ignores any errors that occur when doing so.
-	 * (i.e. IE8 throws an error when the DOM element is invisible or disabled)
+	 * Calls focus() on the given DOM element.
 	 *
 	 * @param {Element} oDomRef The DOM element to focus (or null - in this case the method does nothing)
 	 * @return {boolean} Whether the focus() command was executed without an error
@@ -97,13 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (!oDomRef) {
 			return;
 		}
-		try {
-			oDomRef.focus();
-		} catch (e) {
-			var id = (oDomRef && oDomRef.id) ? " (ID: '" + oDomRef.id + "')" : "";
-			jQuery.sap.log.warning("Error when trying to focus a DOM element" + id + ": " + e.message);
-			return false;
-		}
+		oDomRef.focus();
 		return true;
 	};
 
@@ -121,7 +79,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 */
 	jQuery.fn.cursorPos = function cursorPos(iPos) {
 		var len = arguments.length,
-			oTextRange,iLength,
 			sTagName,
 			sType;
 
@@ -135,76 +92,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 			if (len > 0) { // SET
 
-				if (typeof (oDomRef.selectionStart) == "number") { // FF and IE9+ method
+				if (typeof (oDomRef.selectionStart) == "number") {
 					oDomRef.focus();
 					oDomRef.selectionStart = iPos;
 					oDomRef.selectionEnd = iPos;
-				} else if (oDomRef.createTextRange) { // IE method
-					oTextRange = oDomRef.createTextRange();
-					var iMaxLength = oDomRef.value.length;
-
-					if (iPos < 0 || iPos > iMaxLength) {
-						iPos = iMaxLength;
-					}
-					if (oTextRange) {
-						oTextRange.collapse();
-						oTextRange.moveEnd("character",iPos);
-						oTextRange.moveStart("character",iPos);
-						oTextRange.select();
-					}
 				}
 
 				return this;
 				// end of SET
 
 			} else { // GET
-				if (typeof (oDomRef.selectionStart) == "number") { // Firefox etc.
+				if (typeof (oDomRef.selectionStart) == "number") {
 					return oDomRef.selectionStart;
-				} else if (oDomRef.createTextRange) { // IE 8
-					oTextRange = window.document.selection.createRange();
-					var oCopiedTextRange = oTextRange.duplicate();
-					// Logic in TEXTAREA and INPUT is different in IE -> check for element type
-					if (oDomRef.tagName == "TEXTAREA") {
-						oCopiedTextRange.moveToElementText(oDomRef);
-						var oCheckTextRange = oCopiedTextRange.duplicate();
-						iLength = oCopiedTextRange.text.length;
-
-						// first check if cursor on last position
-						oCheckTextRange.moveStart("character", iLength);
-						var iStart = 0;
-						if (oCheckTextRange.inRange(oTextRange)) {
-							iStart = iLength;
-						} else {
-							// find out cursor position using a bisection algorithm
-							var iCheckLength = iLength;
-							while (iLength > 1) {
-								iCheckLength = Math.round(iLength / 2);
-								iStart = iStart + iCheckLength;
-
-								oCheckTextRange = oCopiedTextRange.duplicate();
-								oCheckTextRange.moveStart("character", iStart);
-								if (oCheckTextRange.inRange(oTextRange)) {
-									//cursor is after or on iStart -> Length = not checked Length
-									iLength = iLength - iCheckLength;
-
-								} else {
-									//cursor is before iStart  -> Length = checked Length
-									iStart = iStart - iCheckLength;
-									iLength = iCheckLength;
-								}
-							}
-						}
-						return iStart;
-					} else if (oCopiedTextRange.parentElement() === oDomRef) {
-						// ensure there is only the cursor and not the range (as this would create erroneous position)!
-						oCopiedTextRange.collapse();
-						// now, move the selection range to the beginning of the inputField and simply get the selected range's length
-						var iLength = oDomRef.value.length;
-						oCopiedTextRange.moveStart('character', -iLength);
-						return oCopiedTextRange.text.length;
-					}
 				}
-
 				return -1;
 			} // end of GET
 		} else {
@@ -215,7 +115,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 	/**
 	 * Sets the text selection in the first element of the collection.
-	 * note: This feature is only supported for input element’s type of text, search, url, tel and password.
+	 *
+	 * <b>Note</b>: This feature is only supported for input element’s type of text, search, url, tel and password.
 	 *
 	 * @param {int} iStart Start position of the selection (inclusive)
 	 * @param {int} iEnd End position of the selection (exclusive)
@@ -230,26 +131,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var oDomRef = this.get(0);
 
 		try {
-			if (typeof (oDomRef.selectionStart) === "number") { // Firefox and IE9+
-
+			if (typeof (oDomRef.selectionStart) === "number") {
 				oDomRef.setSelectionRange(iStart, iEnd);
-			} else if (oDomRef.createTextRange) { // IE
-				var oTextEditRange = oDomRef.createTextRange();
-				oTextEditRange.collapse();
-				oTextEditRange.moveStart('character', iStart);
-				oTextEditRange.moveEnd('character', iEnd - iStart);
-				oTextEditRange.select();
 			}
 		} catch (e) {
 			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
-		}	
+		}
 
 		return this;
 	};
 
 	/**
 	 * Retrieve the selected text in the first element of the collection.
-	 * note: This feature is only supported for input element’s type of text, search, url, tel and password.
+	 *
+	 * <b>Note</b>: This feature is only supported for input element’s type of text, search, url, tel and password.
 	 *
 	 * @return {string} The selected text.
 	 * @public
@@ -265,14 +160,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			if (typeof oDomRef.selectionStart === "number") {
 				return oDomRef.value.substring(oDomRef.selectionStart, oDomRef.selectionEnd);
 			}
-
-			// older versions of Internet Explorer do not support the HTML5 "selectionStart" and "selectionEnd" properties
-			if (document.selection) {
-				return document.selection.createRange().text;
-			}
 		} catch (e) {
 			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
-		}	
+		}
 
 		return "";
 	};
@@ -303,17 +193,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 
 	/**
-	 * Returns whether oDomRefChild is oDomRefContainer or is contained in oDomRefContainer.
+	 * Returns whether <code>oDomRefChild</code> is contained in or equal to <code>oDomRefContainer</code>.
 	 *
 	 * This is a browser-independent version of the .contains method of Internet Explorer.
-	 * For compatibility reasons it returns true if oDomRefContainer and oDomRefChild are equal.
+	 * For compatibility reasons it returns <code>true</code> if <code>oDomRefContainer</code> and
+	 * <code>oDomRefChild</code> are equal.
 	 *
-	 * This method intentionally does not operate on the jQuery object, as the original jQuery.contains()
+	 * This method intentionally does not operate on the jQuery object, as the original <code>jQuery.contains()</code>
 	 * method also does not do so.
 	 *
 	 * @param {Element} oDomRefContainer The container element
 	 * @param {Element} oDomRefChild The child element (must not be a text node, must be an element)
-	 * @return {boolean} 'true' if oDomRefChild is contained in oDomRefContainer or oDomRefChild is oDomRefContainer
+	 * @return {boolean} Whether <code>oDomRefChild</code> is contained in or equal to <code>oDomRefContainer</code>
 	 * @public
 	 * @author SAP SE
 	 * @since 0.9.0
@@ -328,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 	/**
 	 * Returns a rectangle describing the current visual positioning of the first DOM object in the collection
-	 * (or null if no element was given)
+	 * (or <code>null</code> if no element was given)
 	 *
 	 * @return {object} An object with left, top, width and height
 	 * @public
@@ -392,9 +283,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return false;
 	};
 
+	function hasTabIndex(oElem) {
+
+		var iTabIndex = jQuery.prop(oElem, "tabIndex");
+
+		// compensate for 'specialties' in the implementation of jQuery.prop:
+		// - it returns undefined for text, comment and attribute nodes
+		// - when calculating an implicit tabindex for focusable/clickable elements, it ignores the 'disabled' attribute
+		return iTabIndex != null && iTabIndex >= 0 &&
+			( !jQuery.attr(oElem, "disabled") || jQuery.attr(oElem, "tabindex") );
+
+	}
 
 	/**
-	 * Returns true if the first element has a set tabindex
+	 * Returns <code>true</code> if the first element has a set tabindex
 	 *
 	 * @return {boolean} If the first element has a set tabindex
 	 * @public
@@ -403,16 +305,66 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @since 0.9.0
 	 * @function
 	 */
-	jQuery.fn.hasTabIndex = function hasTabIndex() {
-		var iTabIndex = this.prop("tabIndex");
+	jQuery.fn.hasTabIndex = function() {
+		return hasTabIndex(this.get(0));
+	};
 
-		if (this.attr("disabled") && !this.attr("tabindex")) {
-			// disabled field with not explicit set tabindex -> not in tab chain (bug of jQuery prop function)
-			iTabIndex = -1;
+	/**
+	 * Checks whether an Element is invisible for the end user.
+	 *
+	 * This is a combination of jQuery's :hidden selector (but with a slightly
+	 * different semantic, see below) and a check for CSS visibility 'hidden'.
+	 *
+	 * Since jQuery 2.x, inline elements (SPAN etc.) might be considered 'visible'
+	 * although they have zero dimensions (e.g. an empty span). In jQuery 1.x such
+	 * elements had been treated as 'hidden'.
+	 *
+	 * As some UI5 controls rely on the old behavior, this method restores it.
+	 *
+	 * @param {Element} oElem Element to check the dimensions for
+	 * @returns {boolean} whether the Element either has only zero dimensions or has visiblity:hidden (CSS)
+	 * @private
+	 */
+	function isHidden(oElem) {
+		return (oElem.offsetWidth <= 0 && oElem.offsetHeight <= 0) || jQuery.css(oElem, 'visibility') === 'hidden';
+	}
+
+	/**
+	 * Searches for a descendant of the given node that is an Element and focusable and visible.
+	 *
+	 * The search is executed 'depth first'.
+	 *
+	 * @param {Node} oContainer Node to search for a focusable descendant
+	 * @param {boolean} bForward Whether to search forward (true) or backwards (false)
+	 * @returns {Element} Element node that is focusable and visible or null
+	 * @private
+	 */
+	function findFocusableDomRef(oContainer, bForward) {
+
+		var oChild = bForward ? oContainer.firstChild : oContainer.lastChild,
+			oFocusableDescendant;
+
+		while (oChild) {
+
+			if ( oChild.nodeType == 1 && !isHidden(oChild) ) {
+
+				if ( hasTabIndex(oChild) ) {
+					return oChild;
+				}
+
+				oFocusableDescendant = findFocusableDomRef(oChild, bForward);
+				if (oFocusableDescendant) {
+					return oFocusableDescendant;
+				}
+
+			}
+
+			oChild = bForward ? oChild.nextSibling : oChild.previousSibling;
+
 		}
 
-		return !isNaN(iTabIndex) && iTabIndex >= 0;
-	};
+		return null;
+	}
 
 
 	/**
@@ -427,34 +379,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 */
 	jQuery.fn.firstFocusableDomRef = function firstFocusableDomRef() {
 		var oContainerDomRef = this.get(0);
-		var visibilityHiddenFilter = function (idx){
-			return jQuery(this).css("visibility") == "hidden";
-		};
-		if (!oContainerDomRef || jQuery(oContainerDomRef).is(':hidden') ||
-				jQuery(oContainerDomRef).filter(visibilityHiddenFilter).length == 1) {
+
+		if ( !oContainerDomRef || isHidden(oContainerDomRef) ) {
 			return null;
 		}
 
-		var oCurrDomRef = oContainerDomRef.firstChild,
-			oDomRefFound = null;
-
-		while (oCurrDomRef) {
-			if (oCurrDomRef.nodeType == 1 && jQuery(oCurrDomRef).is(':visible')) {
-				if (jQuery(oCurrDomRef).hasTabIndex()) {
-					return oCurrDomRef;
-				}
-
-				if (oCurrDomRef.childNodes) {
-					oDomRefFound = jQuery(oCurrDomRef).firstFocusableDomRef();
-					if (oDomRefFound) {
-						return oDomRefFound;
-					}
-				}
-			}
-			oCurrDomRef = oCurrDomRef.nextSibling;
-		}
-
-		return null;
+		return findFocusableDomRef(oContainerDomRef, /* search forward */ true);
 	};
 
 
@@ -470,34 +400,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 */
 	jQuery.fn.lastFocusableDomRef = function lastFocusableDomRef() {
 		var oContainerDomRef = this.get(0);
-		var visibilityHiddenFilter = function (idx){
-			return jQuery(this).css("visibility") == "hidden";
-		};
-		if (!oContainerDomRef || jQuery(oContainerDomRef).is(':hidden') ||
-				jQuery(oContainerDomRef).filter(visibilityHiddenFilter).length == 1) {
+
+		if ( !oContainerDomRef || isHidden(oContainerDomRef) ) {
 			return null;
 		}
 
-		var oCurrDomRef = oContainerDomRef.lastChild,
-			oDomRefFound = null;
-
-		while (oCurrDomRef) {
-			if (oCurrDomRef.nodeType == 1 && jQuery(oCurrDomRef).is(':visible')) {
-				if (oCurrDomRef.childNodes) {
-					oDomRefFound = jQuery(oCurrDomRef).lastFocusableDomRef();
-					if (oDomRefFound) {
-						return oDomRefFound;
-					}
-				}
-
-				if (jQuery(oCurrDomRef).hasTabIndex()) {
-					return oCurrDomRef;
-				}
-			}
-			oCurrDomRef = oCurrDomRef.previousSibling;
-		}
-
-		return null;
+		return findFocusableDomRef(oContainerDomRef, /* search backwards */ false);
 	};
 
 
@@ -524,13 +432,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (oDomRef) {
 
 			if (iPos === undefined) { // GETTER code
-				if (!!Device.browser.internet_explorer) {
+				if (Device.browser.msie || Device.browser.edge) {
 					return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
 
-				} else if (!!Device.browser.webkit) {
+				} else if (Device.browser.webkit) {
 					return oDomRef.scrollLeft;
 
-				} else if (!!Device.browser.firefox) {
+				} else if (Device.browser.firefox) {
 					return oDomRef.scrollWidth + oDomRef.scrollLeft - oDomRef.clientWidth;
 
 				} else {
@@ -566,13 +474,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var oDomRef = this.get(0);
 		if (oDomRef) {
 
-			if (!!Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				return oDomRef.scrollLeft;
 
-			} else if (!!Device.browser.webkit) {
+			} else if (Device.browser.webkit) {
 				return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
 
-			} else if (!!Device.browser.firefox) {
+			} else if (Device.browser.firefox) {
 				return (-oDomRef.scrollLeft);
 
 			} else {
@@ -603,13 +511,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.denormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
 
 		if (oDomRef) {
-			if (!!Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollLeft;
 
-			} else if (!!Device.browser.webkit) {
+			} else if (Device.browser.webkit) {
 				return iNormalizedScrollLeft;
 
-			} else if (!!Device.browser.firefox) {
+			} else if (Device.browser.firefox) {
 				return oDomRef.clientWidth + iNormalizedScrollLeft - oDomRef.scrollWidth;
 
 			} else {
@@ -644,13 +552,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.denormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
 
 		if (oDomRef) {
-			if (!!Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				return iNormalizedScrollBegin;
 
-			} else if (!!Device.browser.webkit) {
+			} else if (Device.browser.webkit) {
 				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
 
-			} else if (!!Device.browser.firefox) {
+			} else if (Device.browser.firefox) {
 				return -iNormalizedScrollBegin;
 
 			} else {
@@ -741,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
 				return false;
 			}
-			img = jQuery( "img[usemap=#" + mapName + "]" )[0];
+			img = jQuery( "img[usemap='#" + mapName + "']" )[0];
 			return !!img && visible( img );
 		}
 		/*eslint-disable no-nested-ternary */
@@ -976,14 +884,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return _oScrollbarSize[sKey];
 	};
 
+	// handle weak dependency to sap/ui/core/Control
+	var _Control;
+
+	function getControl() {
+		return _Control || (_Control = sap.ui.require('sap/ui/core/Control'));
+	}
+
 	/**
 	 * Search ancestors of the given source DOM element for the specified CSS class name.
 	 * If the class name is found, set it to the root DOM element of the target control.
 	 * If the class name is not found, it is also removed from the target DOM element.
 	 *
 	 * @param {string} sStyleClass CSS class name
-	 * @param {jQuery|Control|string} vSource jQuery object, control or an id of the source element.
-	 * @param {jQuery|Control} vDestination target jQuery object or a control.
+	 * @param {jQuery|sap.ui.core.Control|string} vSource jQuery object, control or an id of the source element.
+	 * @param {jQuery|sap.ui.core.Control} vDestination target jQuery object or a control.
 	 * @return {jQuery|Element} Target element
 	 * @public
 	 * @since 1.22
@@ -994,7 +909,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			return vDestination;
 		}
 
-		if (vSource instanceof sap.ui.core.Control) {
+		var Control = getControl();
+
+		if (Control && vSource instanceof Control) {
 			vSource = vSource.$();
 		} else if (typeof vSource === "string") {
 			vSource = jQuery.sap.byId(vSource);
@@ -1007,7 +924,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		if (vDestination instanceof jQuery) {
 			vDestination.toggleClass(sStyleClass, bClassFound);
-		} else if (vDestination instanceof sap.ui.core.Control) {
+		} else if (Control && vDestination instanceof Control) {
 			vDestination.toggleStyleClass(sStyleClass, bClassFound);
 		} else {
 			jQuery.sap.assert(false, 'jQuery.sap.syncStyleClass(): vDestination must be a jQuery object or a Control');
@@ -1015,7 +932,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		return vDestination;
 	};
-	
+
 	/**
 	 * Adds space separated value to the given attribute.
 	 * This method ignores when the value is already available for the given attribute.
@@ -1023,13 +940,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @this {jQuery} jQuery context
 	 * @param {string} sAttribute The name of the attribute.
 	 * @param {string} sValue The value of the attribute to be inserted.
+	 * @param {string} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @function
 	 * @private
 	 */
-	function addToAttributeList(sAttribute, sValue) {
+	function addToAttributeList(sAttribute, sValue, bPrepend) {
 		var sAttributes = this.attr(sAttribute);
 		if (!sAttributes) {
 			return this.attr(sAttribute, sValue);
@@ -1037,13 +955,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		var aAttributes = sAttributes.split(" ");
 		if (aAttributes.indexOf(sValue) == -1) {
-			aAttributes.push(sValue);
+			bPrepend ? aAttributes.unshift(sValue) : aAttributes.push(sValue);
 			this.attr(sAttribute, aAttributes.join(" "));
 		}
 
 		return this;
 	}
-	
+
 	/**
 	 * Remove space separated value from the given attribute.
 	 *
@@ -1079,6 +997,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * Adds the given ID reference to the the aria-labelledby attribute.
 	 *
 	 * @param {string} sID The ID reference of an element
+	 * @param {boolean} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @name jQuery#addAriaLabelledBy
 	 * @public
@@ -1086,10 +1005,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @since 1.30.0
 	 * @function
 	 */
-	jQuery.fn.addAriaLabelledBy = function (sId) {
-		return addToAttributeList.call(this, "aria-labelledby", sId);
+	jQuery.fn.addAriaLabelledBy = function (sId, bPrepend) {
+		return addToAttributeList.call(this, "aria-labelledby", sId, bPrepend);
 	};
-	
+
 	/**
 	 * Removes the given ID reference from the aria-labelledby attribute.
 	 *
@@ -1104,11 +1023,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.removeAriaLabelledBy = function (sId) {
 		return removeFromAttributeList.call(this, "aria-labelledby", sId);
 	};
-	
+
 	/**
 	 * Adds the given ID reference to the aria-describedby attribute.
 	 *
 	 * @param {string} sID The ID reference of an element
+	 * @param {boolean} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @name jQuery#addAriaDescribedBy
 	 * @public
@@ -1116,10 +1036,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @since 1.30.0
 	 * @function
 	 */
-	jQuery.fn.addAriaDescribedBy = function (sId) {
-		return addToAttributeList.call(this, "aria-describedby", sId);
+	jQuery.fn.addAriaDescribedBy = function (sId, bPrepend) {
+		return addToAttributeList.call(this, "aria-describedby", sId, bPrepend);
 	};
-	
+
 	/**
 	 * Removes the given ID reference from the aria-describedby attribute.
 	 *
@@ -1135,6 +1055,126 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return removeFromAttributeList.call(this, "aria-describedby", sId);
 	};
 
+
+	/**
+	 * This method try to patch two HTML elements according to changed attributes.
+	 *
+	 * @param {HTMLElement} oOldDom existing element to be patched
+	 * @param {HTMLElement} oNewDom is the new node to patch old dom
+	 * @return {Boolean} true when patch is applied correctly or false when nodes are replaced.
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @private
+	 */
+	function patchDOM(oOldDom, oNewDom) {
+
+		// start checking with most common use case and backwards compatible
+		if (oOldDom.childElementCount != oNewDom.childElementCount ||
+			oOldDom.tagName != oNewDom.tagName) {
+			oOldDom.parentNode.replaceChild(oNewDom, oOldDom);
+			return false;
+		}
+
+		// go with native... if nodes are equal there is nothing to do
+		// http://www.w3.org/TR/DOM-Level-3-Core/core.html#Node3-isEqualNode
+		if (oOldDom.isEqualNode(oNewDom)) {
+			return true;
+		}
+
+		// remove outdated attributes from old dom
+		var aOldAttributes = oOldDom.attributes;
+		for (var i = 0, ii = aOldAttributes.length; i < ii; i++) {
+			var sAttrName = aOldAttributes[i].name;
+			if (oNewDom.getAttribute(sAttrName) === null) {
+				oOldDom.removeAttribute(sAttrName);
+				ii = ii - 1;
+				i = i - 1;
+			}
+		}
+
+		// patch new or changed attributes to the old dom
+		var aNewAttributes = oNewDom.attributes;
+		for (var i = 0, ii = aNewAttributes.length; i < ii; i++) {
+			var sAttrName = aNewAttributes[i].name,
+				vOldAttrValue = oOldDom.getAttribute(sAttrName),
+				vNewAttrValue = oNewDom.getAttribute(sAttrName);
+
+			if (vOldAttrValue === null || vOldAttrValue !== vNewAttrValue) {
+				oOldDom.setAttribute(sAttrName, vNewAttrValue);
+			}
+		}
+
+		// check whether more child nodes to continue or not
+		var iNewChildNodesCount = oNewDom.childNodes.length;
+		if (!iNewChildNodesCount && !oOldDom.hasChildNodes()) {
+			return true;
+		}
+
+		// maybe no more child elements
+		if (!oNewDom.childElementCount) {
+			// but child nodes(e.g. Text Nodes) still needs to be replaced
+			if (!iNewChildNodesCount) {
+				// new dom does not have any child node, so we can clean the old one
+				oOldDom.textContent = "";
+			} else if (iNewChildNodesCount == 1 && oNewDom.firstChild.nodeType == 3 /* TEXT_NODE */) {
+				// update the text content for the first text node
+				oOldDom.textContent = oNewDom.textContent;
+			} else {
+				// in case of comments or other node types are used
+				oOldDom.innerHTML = oNewDom.innerHTML;
+			}
+			return true;
+		}
+
+		// patch child nodes
+		for (var i = 0, r = 0, ii = iNewChildNodesCount; i < ii; i++) {
+			var oOldDomChildNode = oOldDom.childNodes[i],
+				oNewDomChildNode = oNewDom.childNodes[i - r];
+
+			if (oNewDomChildNode.nodeType == 1 /* ELEMENT_NODE */) {
+				// recursively patch child elements
+				if (!patchDOM(oOldDomChildNode, oNewDomChildNode)) {
+					// if patch is not possible we replace nodes
+					// in this case replaced node is removed
+					r = r + 1;
+				}
+			} else {
+				// when not element update only node values
+				oOldDomChildNode.nodeValue = oNewDomChildNode.nodeValue;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * This method try to replace two HTML elements according to changed attributes.
+	 * As a fallback it replaces DOM nodes.
+	 *
+	 * @param {HTMLElement} oOldDom existing element to be patched
+	 * @param {HTMLElement|String} vNewDom is the new node to patch old dom
+	 * @param {Boolean} bCleanData wheter jQuery data should be removed or not
+	 * @return {Boolean} true when patch is applied correctly or false when nodes are replaced.
+	 * @author SAP SE
+	 * @since 1.30.0
+	 * @private
+	 */
+	jQuery.sap.replaceDOM = function(oOldDom, vNewDom, bCleanData) {
+		var oNewDom;
+		if (typeof vNewDom === "string") {
+			oNewDom = jQuery.parseHTML(vNewDom)[0];
+		} else {
+			oNewDom = vNewDom;
+		}
+
+		if (bCleanData) {
+			jQuery.cleanData([oOldDom]);
+			jQuery.cleanData(oOldDom.getElementsByTagName("*"));
+		}
+
+		return patchDOM(oOldDom, oNewDom);
+	};
+
 	return jQuery;
 
-}, /* bExport= */ false);
+});

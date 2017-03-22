@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>DynamicPage with IconTabBar</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.f, sap.m, sap.ui.layout">
+	</script>
+	<script src="DynamicPageUtility.js"></script>
+	<script>
+		jQuery.sap.require("sap.ui.core.format.NumberFormat");
+		var oFloat = sap.ui.core.format.NumberFormat.getFloatInstance({minFractionDigits: 2, maxFractionDigits: 2});
+
+		var oModel = new sap.ui.model.json.JSONModel({
+			items: [
+				{id: 5163, name: "Lorem Ipsum", amount: 1, price: 23.45, status: "Open"},
+				{id: 6342, name: "Dolor Sit Amet", amount: 1, price: 233.22, status: "In Process"},
+				{id: 1634, name: "Consectetur Adipisicing", amount: 1, price: 23.45, status: "Shipped"},
+				{id: 7856, name: "Elit Sed Do", amount: 3, price: 23.45, status: "Shipped"},
+				{id: 7245, name: "Eiusmod Tempor", amount: 1, price: 23.45, status: "Shipped"},
+				{id: 8342, name: "Incididunt Ut", amount: 1, price: 23.45, status: "Open"},
+				{id: 3462, name: "Labore Et Dolore", amount: 1, price: 23.45, status: "In Process"},
+				{id: 4572, name: "Magna Aliqua", amount: 5, price: 23.45, status: "Open"}
+			]
+		});
+		sap.ui.getCore().setModel(oModel);
+
+		var aTabItems = [];
+		for (var i = 1; i <= 30; i++) {
+			aTabItems.push(new sap.m.IconTabFilter({
+				text: 'Tab ' + i,
+				content: new sap.m.Text({
+					text: 'Content ' + i
+				})
+			}));
+		}
+
+		var fnToggleFooter = function () {
+			oPage.setShowFooter(!oPage.getShowFooter());
+		};
+
+		var oToggleFooterButton = new sap.m.Button({
+			text: "Toggle footer",
+			press: fnToggleFooter
+		});
+
+		var oTitle = getTitle(oToggleFooterButton);
+		var oHeader = getHeader();
+		var oFooter = getFooter();
+		var oContent = new sap.m.IconTabBar("itb1", {
+			expandable: false,
+			items: [
+				new sap.m.IconTabFilter({
+					showAll: true,
+					count: "8",
+					text: "Orders Productive",
+					key: "All",
+					iconColor: sap.ui.core.IconColor.Neutral
+				}),
+				new sap.m.IconTabSeparator(),
+				new sap.m.IconTabFilter({
+					icon: "sap-icon://task",
+					iconColor: sap.ui.core.IconColor.Critical,
+					count: "3",
+					text: "Open",
+					key: "Open"
+				}),
+				new sap.m.IconTabFilter("itf1", {
+					icon: "sap-icon://instance",
+					iconColor: sap.ui.core.IconColor.Negative,
+					count: "2",
+					text: "In Process",
+					key: "In Process"
+				}),
+				new sap.m.IconTabFilter({
+					icon: "sap-icon://shipping-status",
+					iconColor: sap.ui.core.IconColor.Positive,
+					count: "3",
+					text: "Shipped",
+					key: "Shipped"
+				})
+			],
+			select: function (oEvent) {
+				var oBinding = this.getContent()[0].getBinding("items"),
+					sKey = oEvent.getParameter("key"),
+					oFilter;
+				if (sKey == "All") {
+					oBinding.filter([]);
+				}
+				else {
+					oFilter = new sap.ui.model.Filter("status", "EQ", sKey);
+					oBinding.filter([oFilter]);
+				}
+			},
+			content: new sap.m.Table("list", {
+				growing: true,
+				growingThreshold: 200,
+				columns: [
+					new sap.m.Column({
+						width: "2em",
+						header: getLabel("ID")
+					}),
+					new sap.m.Column({
+						width: "7em",
+						header: getLabel("Name")
+					}),
+					new sap.m.Column({
+						width: "3em",
+						header: getLabel("Status")
+					}),
+					new sap.m.Column({
+						width: "2em",
+						minScreenWidth: "Tablet",
+						hAlign: "Right",
+						header: getLabel("Amount")
+					}),
+					new sap.m.Column({
+						width: "3em",
+						hAlign: "Right",
+						minScreenWidth: "Tablet",
+						header: getLabel("Price")
+					})
+				],
+				items: {
+					path: "/items",
+					template: new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({text: "{id}"}),
+							new sap.m.Text({text: "{name}"}),
+							new sap.m.ObjectStatus({
+								text: "{status}",
+								state: {
+									path: "status",
+									formatter: function (value) {
+										switch (value) {
+											case "Open":
+												return "Warning";
+											case "In Process":
+												return "Error";
+											case "Shipped":
+												return "Success";
+										}
+									}
+								}
+							}),
+							new sap.m.Text({text: "{amount}"}),
+							new sap.m.Text({
+								text: {
+									path: "price",
+									formatter: function (value) {
+										if (value !== undefined) {
+											return "$ " + oFloat.format(value);
+										}
+									}
+								}
+							})
+						]
+					})
+				}
+			})
+		});
+
+		var oPage = getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
+
+		var oApp = new sap.m.App;
+		oApp.addPage(oPage).placeAt("body");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" role="application">
+</body>
+
+</html>

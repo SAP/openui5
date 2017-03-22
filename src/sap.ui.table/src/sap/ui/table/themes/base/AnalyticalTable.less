@@ -1,6 +1,36 @@
-/* ======================================================== */
-/* CSS for control sap.ui.analytics/AnalyticalTable.control */
-/* ======================================================== */
+/* ============================================= */
+/* CSS for control sap.ui.table/AnalyticalTable  */
+/* Base theme                                    */
+/* ============================================= */
+
+.sapUiAnalyticalTable .sapUiTableRowHdr {
+
+	&.sapUiAnalyticalTableSum {
+		border-left: 0;
+		border-right: 0;
+		background-color: @sapUiListBackground;
+	}
+
+	&.sapUiAnalyticalTableDummy {
+		font-size: 14px;
+		line-height: 28px;
+		color: @sapUiContentLabelColor;
+	}
+
+}
+
+.sapUiAnalyticalTable tr.sapUiAnalyticalTableSum {
+	background-color: @sapUiListBackground;
+}
+
+.sapUiAnalyticalTable tr.sapUiAnalyticalTableSum > td {
+	border-left: 0;
+	border-right: 0;
+}
+
+.sapUiAnalyticalTable tr.sapUiAnalyticalTableSum > td.sapUiTableTdLast {
+	border-right: 1px solid @sapUiListVerticalBorderColor;
+}
 
 .sapUiAnalyticalTable tr.sapUiAnalyticalTableDummy td {
 	border-right-width: 0;
@@ -8,22 +38,4 @@
 
 .sapUiAnalyticalTable tr.sapUiAnalyticalTableDummy td:last-child {
 	border-right-width: 1px;
-}
-
-.sapUiAnalyticalTable .sapUiAnalyticalTableLoading {
-	margin-left: 40px;
-}
-
-/*******************************************************************************
- * CHILD CONTROL STYLES
- ******************************************************************************/
-
-.sapUiAnalyticalTable .sapUiTableCol .sapMLabel,
-.sapUiAnalyticalTable .sapUiTableCell > .sapMLabel,
-.sapUiAnalyticalTable .sapUiTableCell > .sapMText {
-	width: 100%;
-}
-
-.sapUiSizeCompact .sapUiAnalyticalTable .sapUiTableGroupIcon::before {
-	line-height: @sapUiTableRowHeight;
 }

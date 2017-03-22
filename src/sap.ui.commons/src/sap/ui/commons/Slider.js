@@ -10,13 +10,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	/**
-	 * Constructor for a new Slider.
+	 * Constructor for a new <code>Slider</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The interactive control is displayed as a horizontal line with a pointer and units of measurement.
+	 * The interactive control is displayed either as a horizontal or a vertical line with a pointer and units of measurement.
 	 * Users can move the pointer along the line to change values with graphical support.
 	 * @extends sap.ui.core.Control
 	 *
@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Slider</code> control.
 	 * @alias sap.ui.commons.Slider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -40,16 +41,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Minimal value of the slider.
+			 *
+			 * <b>Note:</b> If <code>min</code> is larger than <code>max</code> both values will be switched
 			 */
 			min : {type : "float", group : "Appearance", defaultValue : 0},
 
 			/**
 			 * Maximal value of the slider
+			 *
+			 * <b>Note:</b> If <code>min</code> is larger than <code>max</code> both values will be switched
 			 */
 			max : {type : "float", group : "Appearance", defaultValue : 100},
 
 			/**
 			 * Current value of the slider. (Position of the grip.)
+			 *
+			 * <b>Note:</b> If the value is not in the valid range (between <code>min</code> and <code>max</code>) it will be changed to be in the valid range.
 			 */
 			value : {type : "float", group : "Appearance", defaultValue : 50},
 
@@ -80,6 +87,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Labels to be displayed instead of numbers. Attribute totalUnits and label count should be the same
+			 *
+			 * <b>Note:</b> To show the labels <code>stepLabels</code> must be activated.
 			 */
 			labels : {type : "string[]", group : "Misc", defaultValue : null},
 
@@ -98,12 +107,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		associations : {
 
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
@@ -154,13 +163,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			ResizeHandler.deregister(this.sResizeListenerId);
 			this.sResizeListenerId = null;
 		}
+
+		// Warning in the case of wrong properties
+		var fMin = this.getMin();
+		var fMax = this.getMax();
+		if ( fMin > fMax ) {
+			jQuery.sap.log.warning('Property wrong: Min:' + fMin + ' > Max:' + fMax + '; values switched', this);
+			this.setMin(fMax);
+			this.setMax(fMin);
+			fMax = fMin;
+			fMin = this.getMin();
+		}
+
 	};
 
 	Slider.prototype.onAfterRendering = function () {
-		// Warning in the case of wrong properties
-		if ( this.getMin() >= this.getMax() ) {
-			jQuery.sap.log.warning('Property wrong: Min:' + this.getMin() + ' > Max:' + this.getMax() );
-		}
 
 		this.oGrip = this.getDomRef("grip");
 		this.oBar  = this.getDomRef("bar");
@@ -170,15 +187,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.bTextLabels = (this.getLabels() && this.getLabels().length > 0);
 		this.oMovingGrip = this.oGrip;
 
-		var fNewValue = this.getValue();
-		if ( fNewValue >= this.getMax() ) {
-			fNewValue   = this.getMax();
-		} else if ( fNewValue <= this.getMin() ) {
-			fNewValue   = this.getMin();
-		}
-
 		if (this.bTextLabels && (this.getLabels().length - 1) != this.getTotalUnits()) {
-			jQuery.sap.log.warning('label count should be one more than total units','sap.ui.commons.Slider');
+			jQuery.sap.log.warning('label count should be one more than total units', this);
 		}
 
 		this.iDecimalFactor = this.calcDecimalFactor(this.getSmallStepWidth());
@@ -187,14 +197,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.iShiftGrip = Math.round(this.getOffsetWidth(this.oGrip) / 2);
 
 		// Calculate grip position
-		var iNewPos = ( fNewValue - this.getMin() ) / ( this.getMax() - this.getMin() ) * this.getBarWidth();
+		var fValue = this.getValue();
+		var fMin = this.getMin();
+		var fMax = this.getMax();
+		if ( fValue > fMax ) {
+			jQuery.sap.log.warning('Property wrong: value:' + fValue + ' > Max:' + fMax + '; value set to Max', this);
+			fValue = fMax;
+		} else if ( fValue < fMin ) {
+			jQuery.sap.log.warning('Property wrong: value:' + fValue + ' < Min:' + fMin + '; value set to Min', this);
+			fValue = fMin;
+		}
+
+		var iNewPos = ( fValue - this.getMin() ) / ( this.getMax() - this.getMin() ) * this.getBarWidth();
 
 		if (this.bRtl || this.getVertical()) {
 			iNewPos = this.getBarWidth() - iNewPos;
 		}
 
 		// Move grip to hit the point in the middle
-		this.changeGrip(fNewValue, iNewPos, this.oGrip);
+		this.changeGrip(fValue, iNewPos, this.oGrip);
 
 		this.repositionTicksAndLabels();
 
@@ -1230,12 +1251,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (bEditable) {
 				jQuery(this.oDomRef).removeClass('sapUiSliRo').addClass('sapUiSliStd');
 				if (this.bAcc) {
-					jQuery(this.oGrip).attr('aria-disabled', false);
+					jQuery(this.oGrip).attr('aria-disabled', false).attr('aria-readonly', false);
 				}
 			} else {
 				jQuery(this.oDomRef).removeClass('sapUiSliStd').addClass('sapUiSliRo');
 				if (this.bAcc) {
-					jQuery(this.oGrip).attr('aria-disabled', true);
+					jQuery(this.oGrip).attr('aria-disabled', true).attr('aria-readonly', true);
 				}
 			}
 		}
@@ -1310,51 +1331,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	Slider.prototype.setValue = function(fValue) {
+		var iNewPos, fMin, fMax, fBarWidth, bIsVertical,
+			fNewValue = parseFloat(fValue);
 
 		this.setProperty('value', fValue, true); // No re-rendering
-
 		this._lastValue = fValue;
 
-		// Check for number -> if NaN -> no change
-		if ( isNaN(fValue) ) {
+		if (!this.oBar || isNaN(fValue)) {
 			return this;
 		}
 
-		if (!this.oBar) {
-			// Not already rendered -> return and render
-			return this;
-		}
+		fMin = this.getMin();
+		fMax = this.getMax();
+		fBarWidth = this.getBarWidth();
+		bIsVertical = this.getVertical();
 
-		var fNewValue = parseFloat( fValue );
-		var iNewPos;
-
-		if ( fNewValue >= this.getMax() ) {
-			fNewValue   = this.getMax();
-			if (this.getVertical()) {
-				iNewPos = 0;
-			} else {
-				iNewPos = this.getBarWidth();
-			}
-		} else if ( fNewValue <= this.getMin() ) {
-			fNewValue   = this.getMin();
-			if (this.getVertical()) {
-				iNewPos = this.getBarWidth();
-			} else {
-				iNewPos = 0;
-			}
+		if (fNewValue > fMax) {
+			fNewValue = fMax;
+			iNewPos = fBarWidth;
+		} else if (fNewValue < fMin) {
+			fNewValue = fMin;
+			iNewPos = 0;
 		} else {
-			iNewPos = ( fNewValue - this.getMin() ) / ( this.getMax() - this.getMin() ) * this.getBarWidth();
+			iNewPos = (( fNewValue - fMin ) / ( fMax - fMin )) * fBarWidth;
 		}
 
-		if (this.bRtl && !this.getVertical()) {
-			iNewPos = this.getBarWidth() - iNewPos;
+		if (this.bRtl || bIsVertical) {
+			iNewPos = fBarWidth - iNewPos;
 		}
 
-		this.changeGrip( fNewValue, iNewPos, this.oGrip );
+		this.changeGrip(fNewValue, iNewPos, this.oGrip);
 		this._lastValue = fNewValue;
 
 		return this;
-
 	};
 
 	/*
@@ -1476,7 +1485,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 * @param {int} iOffset Offset relative to Bar
 	 * @returns {Element} DOM-Ref of grip
-	 * 
+	 *
 	 */
 	Slider.prototype.getNearestGrip = function(iOffset) {
 		return this.oGrip;

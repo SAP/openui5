@@ -6,12 +6,12 @@
 sap.ui.define([],
 	function() {
 	"use strict";
-	
+
 	return {
 		css: "Button.designtime.css",
 		icon: "Button.png",
 		name: "{name}",
 		description: "{description}",
 	};
-	
+
 }, /* bExport= */ false);

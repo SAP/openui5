@@ -1,58 +1,33 @@
-.sapMPI {
-	outline: none;
-	background: @sapHCStandardBG;
-	border-color: @sapHCStandardFG;
-	height: 2.5rem;
-}
+/* ======================================== */
+/* CSS for control sap.m/ProgressIndicator  */
+/* High Contrast Black theme                */
+/* ======================================== */
 
 .sapMPIBarNeutral {
-	background: @sapHCNeutral;
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
 }
 
 .sapMPIBarPositive {
-	background: @sapHCPositive;
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
 }
 
 .sapMPIBarNegative {
-	background: @sapHCNegative;
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
 }
 
 .sapMPIBarCritical {
-	background: @sapHCCritical;
-}
-
-.sapMPIText {
-	font-family: @sapUiFontFamily;
-	font-weight: bold;
-	line-height: 2.25rem;
-}
-
-.sapUiSizeCompact .sapMPI {
-	height: 1.625rem;
-}
-
-.sapUiSizeCompact .sapMPIText{
-	line-height: 1.375rem;
-}
-
-.sapUiSizeCondensed .sapMPI {
-	height: 1.5rem;
-	margin: 0;
-}
-
-.sapUiSizeCondensed .sapMPIText {
-	line-height: 1.25rem;
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
 }
 
 /* HCB Additional Styles */
-.sapMPIText {
-	color: @sapHCStandardFG;
-}
-
-.sapMPITextLeft {
-	color: @sapHCStandardBG;
-}
-
 .sapMPIText::before {
 	font-family: 'SAP-icons';
 	font-size: 0.875rem;
@@ -61,53 +36,43 @@
 }
 
 .sapMPIBarPositive > .sapMPITextLeft::before,
-.sapMPIBarPositive + .sapMPITextRight::before {
+.sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before {
 	content: '\e1ab';
 }
 
-.sapMPIBarPositive + .sapMPITextRight::before {
-	color: @sapHCPositive;
-}
-
 .sapMPIBarNegative > .sapMPITextLeft::before,
-.sapMPIBarNegative + .sapMPITextRight::before {
+.sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before {
 	content: '\e1ac';
 }
 
-.sapMPIBarNegative + .sapMPITextRight::before {
-	color: @sapHCNegative;
-}
-
 .sapMPIBarCritical > .sapMPITextLeft::before,
-.sapMPIBarCritical + .sapMPITextRight::before {
+.sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before {
 	content: '\e1ae';
 }
 
-.sapMPIBarCritical + .sapMPITextRight::before {
-	color: @sapHCCritical;
+.sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before,
+.sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before,
+.sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before {
+	color: @sapUiContentForegroundTextColor;
 }
 
 .sapMPIBarDisabled {
 	opacity: 1;
-	border-color: @sapHCReducedAltFG;
+	border-color: @sapUiHcReducedAltForeground;
 
 	.sapMPITextLeft {
-		color: @sapHCReducedAltFG;
-	}
-
-	.sapMPITextLeft::before {
-		color: @sapHCStandardBG;
+		color: @sapUiHcReducedAltForeground;
 	}
 
 	.sapMPITextRight,
-	.sapMPITextRight::before {
-		color: @sapHCReducedFG;
+	.sapMPIBarRemaining > .sapMPITextRight::before {
+		color: @sapUiHcReducedForeground;
 	}
 
 	.sapMPIBarNeutral,
 	.sapMPIBarPositive,
 	.sapMPIBarNegative,
 	.sapMPIBarCritical {
-		background: @sapHCReducedFG;
+		background: @sapUiHcReducedForeground;
 	}
 }

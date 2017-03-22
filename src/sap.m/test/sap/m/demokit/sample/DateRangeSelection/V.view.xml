@@ -12,7 +12,15 @@
 			secondDateValue="{path:'/secondDateValueDRS1'}"
 			displayFormat="{path:'/dateFormatDRS1'}"
 			change="handleChange"
-			class="sapUiMediumMarginBottom"
+		/>
+		<Label text="DateRangeSelection with minDate=2016-01-01 and maxDate=2016-12-31:" labelFor="DRS2"/>
+		<DateRangeSelection
+			id="DRS2"
+			dateValue="{path:'/dateValueDRS2'}"
+			secondDateValue="{path:'/secondDateValueDRS2'}"
+			minDate="{path:'/dateMinDRS2'}"
+			maxDate="{path:'/dateMaxDRS2'}"
+			change="handleChange"
 		/>
 
 		<Label text="Change event" labelFor="TextEvent" />

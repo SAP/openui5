@@ -5,31 +5,31 @@
   The focus is on the correct calculation of the number of visible items. When toolbar item widths are influenced
   by images and these images are only loaded AFTER onAfterRendering (which happens sometimes in Safari and always in Chrome)
   the calculation is wrong and not repeated after the images are loaded.
-  Author: d029506
 -->
 
 <html>
 
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
 	<title>Test Page for sap.ui.commons.Toolbar with Right Side Items</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			      type="text/javascript"
+
 			      src="../../../../../resources/sap-ui-core.js"
 			      data-sap-ui-theme="sap_bluecrystal"
 			      data-sap-ui-noConflict="true"
 			      data-sap-ui-libs="sap.ui.commons">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-	<script type="text/javascript">
+	<script>
 		function addManyItems(oToolbar) {
 			var id = oToolbar.getId();
 
@@ -126,13 +126,13 @@
 		// ========================================================
 		// test number of toolbar items on right and left sides
 		// ========================================================
-		test("VisibleItems calculation with images involved", function(assert) {
+		QUnit.test("VisibleItems calculation with images involved", function(assert) {
 			var done = assert.async();
-			expect(3);
+			assert.expect(3);
 			setTimeout(function(){ // give the Toolbar some time to recognize the change
-				equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible on the left side (6 Buttons + 2 Separators)");
-				equal(oCtrl.iItemDomRefCount, 11, "There should be 11 items considered navigable by the ItemNavigation (6 Left items + 1 overflow button + 4 right items)");
-				equal(oCtrl.getRightItems().length, 6, "4 buttons + 2 Separators on the right side");
+				assert.equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible on the left side (6 Buttons + 2 Separators)");
+				assert.equal(oCtrl.iItemDomRefCount, 11, "There should be 11 items considered navigable by the ItemNavigation (6 Left items + 1 overflow button + 4 right items)");
+				assert.equal(oCtrl.getRightItems().length, 6, "4 buttons + 2 Separators on the right side");
 				done();
 			}, 500);
 		});
@@ -145,32 +145,32 @@
 		/**
 		 * Tests accessor method for property visible of the whole Toolbar.
 		 */
-		test("VisibleOk", function() {
-			strictEqual(oCtrl.getVisible(), true);
+		QUnit.test("VisibleOk", function(assert) {
+			assert.strictEqual(oCtrl.getVisible(), true);
 		});
 
 		/**
 		 * Tests accessor method for property width of the whole Toolbar.
 		 */
-		test("WidthOk", function() {
-			strictEqual(oCtrl.getWidth(), "490px");
+		QUnit.test("WidthOk", function(assert) {
+			assert.strictEqual(oCtrl.getWidth(), "490px");
 		});
 
-		test("VisibleItems calculation with item size change", function(assert) {
+		QUnit.test("VisibleItems calculation with item size change", function(assert) {
 			var done = assert.async();
-			expect(3);
-			strictEqual(oCtrl.getWidth(), "490px");
+			assert.expect(3);
+			assert.strictEqual(oCtrl.getWidth(), "490px");
 			oCtrl.setWidth("350px");
 			sap.ui.getCore().applyChanges();
 			setTimeout(function(){ // give the Toolbar some time to recognize the change
-				equal(oCtrl.getVisibleItemInfo().count, 5, "5 item should be considered visible on the left side");
-				equal(oCtrl.iItemDomRefCount, 9, "There should be 9 items considered navigable by the ItemNavigation (4 left items + 1 overflow button + 4 right items)");
+				assert.equal(oCtrl.getVisibleItemInfo().count, 5, "5 item should be considered visible on the left side");
+				assert.equal(oCtrl.iItemDomRefCount, 9, "There should be 9 items considered navigable by the ItemNavigation (4 left items + 1 overflow button + 4 right items)");
 				done();
 			}, 500);
 		});
 
-		test("WidthOk after resize", function() {
-			strictEqual(sap.ui.getCore().byId("Toolbar").getWidth(), "350px");
+		QUnit.test("WidthOk after resize", function(assert) {
+			assert.strictEqual(sap.ui.getCore().byId("Toolbar").getWidth(), "350px");
 		});
 
 		// ==================================================

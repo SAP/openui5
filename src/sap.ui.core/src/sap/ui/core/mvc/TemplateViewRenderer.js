@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for JSView
-sap.ui.define(['jquery.sap.global', './ViewRenderer'],
-	function(jQuery, ViewRenderer) {
+sap.ui.define(['./ViewRenderer'],
+	function(ViewRenderer) {
 	"use strict";
 
 
@@ -15,8 +15,8 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 */
 	var TemplateViewRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the Template, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	TemplateViewRenderer.render = function(oRenderManager, oControl){
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		// write the HTML into the render manager
 		rm.write("<div");
 		rm.writeControlData(oControl);
@@ -38,9 +38,9 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 		rm.writeStyles();
 		rm.writeClasses();
 		rm.write(">");
-		
+
 		rm.renderControl(oControl._oTemplate);
-	
+
 		rm.write("</div>");
 	};
 

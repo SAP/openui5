@@ -26,7 +26,7 @@
 
 
 .sapUiUx3ActionBarAction:focus {
-	outline: none; 
+	outline: none;
 }
 
 .sapUiUx3ActionBarAction:hover {
@@ -59,43 +59,32 @@ button.sapUiUx3ActionBarLiteMoreButton:focus>span.sapUiBtnTxt  {
 /* ============================================= */
 /* Update                                        */
 .sapUiUx3ActionBarUpdateAction {
-	background-image: url("img/update_hover.png");
-	background-repeat: no-repeat;
-	background-position: center center;
+	background-image: url("../base/img/update_hover.png");
 }
-
-/*.sapUiUx3ActionBarUpdateAction:hover {
-	background-image: url("img/update_regular.png");
-	background-color: @sapUiBase;
-}*/
 
 .sapUiUx3ActionBarUpdateAction:focus,
 .sapUiUx3ActionBarUpdateAction:hover,
 .sapUiUx3ActionBarUpdateAction:active {
-	background-image: url("img/update_hover.png");
+	background-image: url("../base/img/update_hover.png");
 	background-color: @sapUiHighlight;
 }
 
 .sapUiUx3ActionBarUpdateAction.Selected {
-	background-image: url("img/update_hover.png");
 	background-color: transparent;
 	border: 1px solid @sapUiBase;
 }
 
 .sapUiUx3ActionBarUpdateAction.Selected:hover {
-	background-image: url("img/update_hover.png");
 	background-color: @sapUiHighlight;
 }
 
 .sapUiUx3ActionBarUpdateAction.Selected:active {
-	background-image: url("img/update_hover.png");
 	background-color: @sapUiHighlight;
 }
 
 .sapUiUx3ActionBarUpdateAction.Selected:focus,
 .sapUiUx3ActionBarUpdateAction.Selected:hover,
 .sapUiUx3ActionBarUpdateAction.Selected:active {
-	background-image: url("img/update_hover.png");
 	background-color: @sapUiHighlight;
 }
 
@@ -111,89 +100,42 @@ button.sapUiUx3ActionBarLiteMoreButton:focus>span.sapUiBtnTxt  {
 /* ============================================= */
 /* Follow (Feed)                                 */
 .sapUiUx3ActionBarFollowAction {
-	background-repeat: no-repeat;
-	background-position: center center;
 	background-color: transparent;
 	border: 1px solid transparent;
 }
 
 .sapUiUx3ActionBarFollowAction.Default {
-	background-image: url("img/not_following_hover.png");
+	background-image: url("../base/img/not_following_hover.png");
 	border: 1px solid transparent;
 }
-
-/*.sapUiUx3ActionBarFollowAction.Default:hover {
-	background-image: url("img/not_following_regular.png");
-	background-color: @sapUiBase;
-	border: 1px solid transparent;
-}
-
-.sapUiUx3ActionBarFollowAction.Default:active {
-	background-image: url("img/not_following_regular.png");
-	background-color: @sapUiBase;
-	border: 1px solid transparent;
-}*/
 
 .sapUiUx3ActionBarFollowAction.Default:focus,
 .sapUiUx3ActionBarFollowAction.Default:hover,
 .sapUiUx3ActionBarFollowAction.Default:active {
-	background-image: url("img/not_following_hover.png");
 	background-color: @sapUiHighlight;
 	border: 1px solid transparent;
 }
 
-.sapUiUx3ActionBarFollowAction.Default:disabled {
-	opacity: 0.25;
-}
-
 .sapUiUx3ActionBarFollowAction.Follow {
-	background-image: url("img/following_hover.png");
 	background-color: transparent;
 	border: 1px solid @sapUiBase;
 }
 
-/*.sapUiUx3ActionBarFollowAction.Follow:hover {
-	background-image: url("img/following_regular_bw.png");
-	background-color: @sapUiBase;
-	border: 1px solid @sapUiBase;
-}
-
-.sapUiUx3ActionBarFollowAction.Follow:active {
-	background-image: url("img/following_regular_bw.png");
-	background-color: @sapUiBase;
-	border: 1px solid @sapUiBase;
-}*/
-
 .sapUiUx3ActionBarFollowAction.Follow:focus,
 .sapUiUx3ActionBarFollowAction.Follow:hover,
 .sapUiUx3ActionBarFollowAction.Follow:active {
-	background-image: url("img/following_hover.png");
 	background-color: @sapUiHighlight;
 	border: 1px solid @sapUiBase;
 }
 
 .sapUiUx3ActionBarFollowAction.Hold {
-	background-image: url("img/hold_hover.png");
 	background-color: transparent;
 	border: 1px solid transparent;
 }
 
-/*.sapUiUx3ActionBarFollowAction.Hold:hover {
-	background-image: url("img/hold_regular_bw.png");
-	background-color: @sapUiBase;
-	border: 1px solid transparent;
-}
-
-.sapUiUx3ActionBarFollowAction.Hold:active {
-	background-image: url("img/hold_regular_bw.png");
-	background-color: @sapUiBase;
-	border: 1px solid transparent;
-}*/
-
 .sapUiUx3ActionBarFollowAction.Hold:focus,
 .sapUiUx3ActionBarFollowAction.Hold:hover,
 .sapUiUx3ActionBarFollowAction.Hold:active {
-	background-image: url("img/hold_hover.png");
 	background-color: @sapUiHighlight;
 	border: 1px solid transparent;
 }
@@ -201,131 +143,62 @@ button.sapUiUx3ActionBarLiteMoreButton:focus>span.sapUiBtnTxt  {
 /* ============================================= */
 /* Flag                                     */
 .sapUiUx3ActionBarFlagAction {
-	background-image: url("img/flag_hover.png");
-	background-repeat: no-repeat;
-	background-position: center center;
+	background-image: url("../base/img/flag_hover.png");
 	border: 1px solid transparent;
-}
-
-.sapUiUx3ActionBarFlagAction:disabled {
-	opacity: 0.25;
 }
 
 .sapUiUx3ActionBarFlagAction:focus,
 .sapUiUx3ActionBarFlagAction:hover,
 .sapUiUx3ActionBarFlagAction:active {
-	background-image: url("img/flag_hover.png");
+	background-image: url("../base/img/flag_hover.png");
 	background-color: @sapUiHighlight;
 	border: 1px solid transparent;
 }
 
-/*.sapUiUx3ActionBarFlagAction:hover {
-	background-image: url("img/flag_regular.png");
-	background-color: @sapUiBase;
-	border: 1px solid transparent;
-}
-
-.sapUiUx3ActionBarFlagAction:active {
-	background-image: url("img/flag_regular.png");
-	background-color: @sapUiBase;
-	border: 1px solid transparent;
-}*/
-
 .sapUiUx3ActionBarFlagAction.Selected {
-	background-image: url("img/flag_hover.png");
 	background-color: transparent;
 	border: 1px solid @sapUiBase;
 }
 
-/*.sapUiUx3ActionBarFlagAction.Selected:hover {
-	background-image: url("img/flag_regular.png");
-	background-color: @sapUiBase;
-}
-
-.sapUiUx3ActionBarFlagAction.Selected:active {
-	background-image: url("img/flag_regular.png");
-	background-color: @sapUiBase;
-}*/
-
 .sapUiUx3ActionBarFlagAction.Selected:focus,
 .sapUiUx3ActionBarFlagAction.Selected:hover,
 .sapUiUx3ActionBarFlagAction.Selected:active {
-	background-image: url("img/flag_hover.png");
 	background-color: @sapUiHighlight;
 }
 
 /* ============================================= */
 /* Favorite                                     */
 .sapUiUx3ActionBarFavoriteAction {
-	background-image: url("img/favorite_hover.png");
-	background-repeat: no-repeat;
-	background-position: center center;
+	background-image: url("../base/img/favorite_hover.png");
 	border: 1px solid transparent;
-}
-
-.sapUiUx3ActionBarFavoriteAction:disabled {
-	opacity: 0.25;
 }
 
 .sapUiUx3ActionBarFavoriteAction:focus,
 .sapUiUx3ActionBarFavoriteAction:hover,
 .sapUiUx3ActionBarFavoriteAction:active {
-	background-image: url("img/favorite_hover.png");
 	background-color: @sapUiHighlight;
 	border: 1px solid transparent;
 }
 
-/*.sapUiUx3ActionBarFavoriteAction:hover {
-	background-image: url("img/favorite_regular.png");
-	background-color: @sapUiBase;
-	border: 1px solid transparent;
-}
-
-.sapUiUx3ActionBarFavoriteAction:active {
-	background-image: url("img/favorite_regular.png");
-	background-color: @sapUiBase;
-	border: 1px solid transparent;
-}*/
-
 .sapUiUx3ActionBarFavoriteAction.Selected {
-	background-image: url("img/favorite_hover.png");
 	background-color: transparent;
 	border: 1px solid @sapUiBase;
 }
 
-/*.sapUiUx3ActionBarFavoriteAction.Selected:hover {
-	background-image: url("img/favorite_regular.png");
-	background-color: @sapUiBase;
-}
-
-.sapUiUx3ActionBarFavoriteAction.Selected:active {
-	background-image: url("img/favorite_regular.png");
-	background-color: @sapUiBase;
-}*/
-
 .sapUiUx3ActionBarFavoriteAction.Selected:focus,
 .sapUiUx3ActionBarFavoriteAction.Selected:hover,
 .sapUiUx3ActionBarFavoriteAction.Selected:active {
-	background-image: url("img/favorite_hover.png");
 	background-color: @sapUiHighlight;
 }
 
 /* ============================================= */
 /* Open Thing                                    */
 .sapUiUx3ActionBarOpenThingAction {
-	background-image: url("img/inspect_hover.png");
-	background-repeat: no-repeat;
-	background-position: center center;
+	background-image: url("../base/img/inspect_hover.png");
 }
-
-/*.sapUiUx3ActionBarOpenThingAction:hover {
-	background-image: url("img/inspect_regular.png");
-	background-color: @sapUiBase;
-}*/
 
 .sapUiUx3ActionBarOpenThingAction:focus,
 .sapUiUx3ActionBarOpenThingAction:hover,
 .sapUiUx3ActionBarOpenThingAction:active {
-	background-image: url("img/inspect_hover.png");
 	background-color: @sapUiHighlight;
 }

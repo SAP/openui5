@@ -3,10 +3,10 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>MessageToast - sap.m</title>
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.m"
-				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_bluecrystal">
+				src="../../../resources/sap-ui-core.js">
 		</script>
 		<script>
 
@@ -17,7 +17,7 @@
 
 			// duration
 			oInput0 = new sap.m.Input({
-				value: 3000,
+				value: 10000,
 				type: "Number",
 				placeholder: "Duration"
 			}),
@@ -48,7 +48,7 @@
 			}),
 
 			// button to show the message toast notification
-			oButton0 = new sap.m.Button({
+			oButton0 = new sap.m.Button("show-button", {
 				text: "Show",
 				press: function() {
 					var sKey;
@@ -73,85 +73,85 @@
 			}),
 
 			// select
-			oSelect0 = new sap.m.Select({
+			oSelect0 = new sap.m.Select("select-list", {
 				items: [
-					oItem0 = new sap.ui.core.Item({
+					oItem0 = new sap.ui.core.Item("begin-bottom" ,{
 						key: "begin bottom",
 						text: "begin bottom"
 					}),
 
-					oItem1 = new sap.ui.core.Item({
+					oItem1 = new sap.ui.core.Item("begin-center" ,{
 						key: "begin center",
 						text: "begin center"
 					}),
 
-					oItem2 = new sap.ui.core.Item({
+					oItem2 = new sap.ui.core.Item("begin-top" ,{
 						key: "begin top",
 						text: "begin top"
 					}),
 
-					oItem3 = new sap.ui.core.Item({
+					oItem3 = new sap.ui.core.Item("center-bottom" ,{
 						key: "center bottom",
 						text: "center bottom",
 					}),
 
-					oItem4 = new sap.ui.core.Item({
+					oItem4 = new sap.ui.core.Item("center-center" ,{
 						key: "center center",
 						text: "center center"
 					}),
 
-					oItem5 = new sap.ui.core.Item({
+					oItem5 = new sap.ui.core.Item("center-top" ,{
 						key: "center top",
 						text: "center top"
 					}),
 
-					oItem6 = new sap.ui.core.Item({
+					oItem6 = new sap.ui.core.Item("end-bottom" ,{
 						key: "end bottom",
 						text: "end bottom"
 					}),
 
-					oItem7 = new sap.ui.core.Item({
+					oItem7 = new sap.ui.core.Item("end-center" ,{
 						key: "end center",
 						text: "end center"
 					}),
 
-					oItem8 = new sap.ui.core.Item({
+					oItem8 = new sap.ui.core.Item("end-top" ,{
 						key: "end top",
 						text: "end top",
 					}),
 
-					oItem9 = new sap.ui.core.Item({
+					oItem9 = new sap.ui.core.Item("left-bottom" ,{
 						key: "left bottom",
 						text: "left bottom"
 					}),
 
-					oItem10 = new sap.ui.core.Item({
+					oItem10 = new sap.ui.core.Item("left-center" ,{
 						key: "left center",
 						text: "left center"
 					}),
 
-					oItem11 = new sap.ui.core.Item({
+					oItem11 = new sap.ui.core.Item("left-top" ,{
 						key: "left top",
 						text: "left top"
 					}),
 
-					oItem12 = new sap.ui.core.Item({
+					oItem12 = new sap.ui.core.Item("right-bottom" ,{
 						key: "right bottom",
 						text: "right bottom"
 					}),
 
-					oItem13 = new sap.ui.core.Item({
+					oItem13 = new sap.ui.core.Item("right-center" ,{
 						key: "right center",
 						text: "right center"
 					}),
 
-					oItem14 = new sap.ui.core.Item({
+					oItem14 = new sap.ui.core.Item("right-top" ,{
 						key: "right top",
 						text: "right top"
 					})
 				],
 
-				selectedItemId: "__item4"
+				selectedItemId: "center-center"
 			}),
 
 			// list
@@ -196,18 +196,6 @@
 			oApp.addPage(oPage1);
 			oApp.placeAt("body");
 
-			jQuery(function() {	// $(document).ready(handler);
-				jQuery.sap.require("sap.m.MessageToast");
-
-				// To show a message toast on Android 2.3 inside a document ready callback,
-				// a wrapping setTimeout() function is required to avoid centering problems.
-				setTimeout(function() {
-
-					// message toast basic example
-					sap.m.MessageToast.show("Message toast control test page.");
-
-				}, 0);
-			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

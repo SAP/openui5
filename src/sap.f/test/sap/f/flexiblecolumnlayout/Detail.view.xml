@@ -1,0 +1,384 @@
+<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexiblecolumnlayout.Detail"
+		height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout"
+					  showTitleInHeaderContent="true">
+		<headerTitle>
+			<ObjectPageHeader id="headerForTest"
+							  headerDesign="Light"
+							  objectTitle="Denise Smith"
+							  showTitleSelector="true"
+							  showMarkers="true"
+							  markFavorite="true"
+							  markFlagged="true"
+							  markChanges="true"
+							  markChangesPress="handleMarkChangesPress"
+							  objectSubtitle="Senior Developer"
+							  objectImageURI="test-resources/sap/uxap/images/imageID_273624.png"
+							  objectImageShape="Circle"
+							  isObjectIconAlwaysVisible="false"
+							  isObjectTitleAlwaysVisible="false"
+							  isObjectSubtitleAlwaysVisible="false"
+							  isActionAreaAlwaysVisible="true"
+							  showPlaceholder="true">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"></ObjectPageHeaderActionButton>
+					<ObjectPageHeaderActionButton icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"></ObjectPageHeaderActionButton>
+					<ObjectPageHeaderActionButton icon="sap-icon://decline" press="handleClose" tooltip="Close column" visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"></ObjectPageHeaderActionButton>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Link text="denise-smith"/>
+				<m:Button text="To detail detail" press="handleDetailPress" />
+				<m:Link text="DeniseSmith@sap.com"/>
+				<layout:HorizontalLayout>
+				</layout:HorizontalLayout>
+			</layout:VerticalLayout>
+			<m:Text width="200px"
+					text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+			<layout:VerticalLayout>
+				<m:Label text="Profile completion"/>
+				<m:ProgressIndicator
+						percentValue="30"
+						displayValue="30%"
+						showValue="true"
+						state="None"/>
+			</layout:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Personal">
+				<subSections>
+					<ObjectPageSubSection title="Connect">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+							<m:Button text="To detail detail" press="handleDetailPress" />
+							<m:Button text="To detail detail" press="handleDetailPress" />
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+						<moreBlocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section">
+				<subSections>
+					<ObjectPageSubSection title="Subsection">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection2">
+						<blocks>
+							<m:Button text="To detail detail" press="handleDetailPress" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+		</sections>
+	</ObjectPageLayout>
+</m:View>
+		<!--
+        <View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.Detail" height="100%">
+            <Page id="detailPage" title="Detail page" backgroundDesign="Transparent">
+                <headerContent>
+                    <Button icon="{/detail/fullScreenButton/icon}" press="handleFullScreen" visible="{/detail/fullScreenButton/visible}"></Button>
+                    <Button icon="sap-icon://decline" press="handleClose" visible="{/detail/closeButton/visible}"></Button>
+                </headerContent>
+                <content>
+                    <Table>
+                        <columns>
+                            <Column><Label text="Detail List" /></Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                                <cells>
+                                    <Text text="To the next page"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </content>
+            </Page>
+        </View>
+        -->

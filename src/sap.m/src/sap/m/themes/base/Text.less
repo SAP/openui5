@@ -1,14 +1,34 @@
+/* =========================== */
+/* CSS for control sap.m/Text  */
+/* Base theme                  */
+/* =========================== */
+
 .sapMText {
 	display: inline-block;
 	box-sizing: border-box;
 	white-space: pre-line;
 	word-wrap: break-word; /* works only if browser knows the width */
 	cursor: text;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	line-height: normal;
+	color: @sapUiBaseText;
+}
+html[data-sap-ui-browser="sf10"] {
+	.sapUiVltCell, .sapuiVltCell {
+		.sapMText {
+			display: block;
+		} 
+	}
 }
 
 .sapMTextNoWrap,
-.sapMTextMaxLine{
+.sapMTextMaxLine {
 	overflow: hidden;
+}
+
+.sapMTextMaxLine {
+  display: block;
 }
 
 .sapMTextNoWrap {
@@ -32,7 +52,79 @@
 	max-width: 100%;
 }
 
-.sapMLIBCursor .sapMText,
-.sapMLIBCursor + .sapMListTblSubRow .sapMText{
+.sapMLIBActionable .sapMText {
 	cursor: pointer;
+}
+
+/* Navigation List Item Context */
+.sapMLIBTypeNavigation span.sapMText {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/*Necessary to align vertically to labels */
+.sapUiForm .sapMText {
+	overflow: hidden;
+}
+
+.sapUiFormEdit .sapMText {
+	display: block;
+	min-height: 3rem; /* for empty text */
+	line-height: 1.375rem;
+	padding-top: 0.8125rem;
+	padding-bottom: 0.8125rem;
+}
+
+.sapMLIBActive .sapMText,
+.sapMLIBActive .sapMListTblCell .sapMText,
+.sapMLIBActive .sapMListTblSubCntRow .sapMText {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMLIBUnread .sapMText,
+.sapMLIBUnread + .sapMListTblSubRow .sapMText {
+	font-family: @sapUiFontFamily;
+	font-weight: bold;
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX .sapMText {
+	font-style: italic;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+}
+
+/* Transparent Toolbar Context*/
+.sapMTB-Transparent-CTX .sapMText {
+	font-weight: @sapUiFontHeaderWeight;
+	font-family: @sapUiFontHeaderFamily;
+	text-shadow: 0 1px 0 @sapUiContentContrastShadowColor;
+	color: @sapUiGroupTitleTextColor;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapMText {
+	min-height: 2rem; /* for empty text */
+	padding-top: 0.3125rem;
+	padding-bottom: 0.3125rem;
+}
+
+/* Condensed size / Table Specifics */
+.sapUiTableCell .sapMText {
+	vertical-align: middle;
+}
+
+.sapUiSizeCondensed .sapUiTableCell .sapMText {
+	line-height: 1.5rem;
+}
+
+.sapUiAnalyticalTable .sapUiTableCell > .sapMText {
+	width: 100%;
+}
+
+.sapUiAnalyticalTable .sapUiAnalyticalTableSum .sapUiTableCell .sapMText {
+	font-weight: bold;
 }

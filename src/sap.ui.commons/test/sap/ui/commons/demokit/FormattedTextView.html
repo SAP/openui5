@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.FormattedTextView,sap.ui.commons.FormattedTextViewControl">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>TextView - SAPUI5 Demo Kit</title>
-<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
-<style type="text/css">
+<link rel="stylesheet" href="../../../../../theme/default.css">
+<style>
 .sapUiFTVBold {
 	font-weight: bold;
 }
@@ -24,14 +24,14 @@
 	sHtmlText += 'Some link goes here: <embed data-index=\"0\"><br>';
 	sHtmlText += '<ul><li>vehicula vitae eleifend luctus, ultrices quis metus.</li><li>Vestibulum tristique nulla pellentesque</li>';
 	sHtmlText += '<li>tellus posuere ac imperdiet nulla viverra.</li><li>Aenean eu dolor lacus.</li></ul>';
-	
+
 	var oLink = new sap.ui.commons.Link("l1", {
 		text: "Click me",
 		href: "http://www.sap.com",
 		title: "SAP Homepage",
 		target: "_blank"
 	});
-	
+
 	var oFTV1 = new sap.ui.commons.FormattedTextView("otv1");
 	//set the text with placeholders inside
 	oFTV1.setHtmlText(sHtmlText);

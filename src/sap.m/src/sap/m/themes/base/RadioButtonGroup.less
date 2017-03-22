@@ -1,24 +1,21 @@
 
-/* ======================================================= */
-/* CSS for control sap.ui.commons/RadioButtonGroup.control */
-/* ======================================================= */
-
-.sapMRbG:not(.sapMRbGTab){
+/* ======================================= */
+/* CSS for control sap.m/RadioButtonGroup  */
+/* Base theme                              */
+/* ======================================= */
+.sapMRbG{
 	display: inline-block;
 }
 
 .sapMRbGTab{
-	display: box;
-	display: -moz-box;
 	display: -webkit-box;
-}
-
-html[data-sap-ui-browser^="ie"] .sapMRbGTab{
-	display: table;
-	table-layout: fixed;
+	display: -webkit-flex;
+	display: flex;
 }
 
 .sapMRbGCol{
+	-webkit-box-flex: 1;
+	flex-grow: 1;
 	vertical-align: top;
 	min-width: 10px;
 	margin-right: 0;
@@ -26,27 +23,9 @@ html[data-sap-ui-browser^="ie"] .sapMRbGTab{
 	overflow: hidden; /* needed in Safari */
 }
 
-.sapMRbGTabFlex > .sapMRbGCol{
-	-moz-box-flex: 1;
-	-webkit-box-flex: 1;
-	box-flex: 1;
-}
-
-html[data-sap-ui-browser^="ie"] .sapMRbGCol{
-	display: table-cell;
-	padding-right: 15px;
-}
-
-.sapMRbGDummy{
-	-moz-box-flex: 1000;
-	-webkit-box-flex: 1000;
-	box-flex: 1000;
-	min-width: 1px;
-}
-
-html[data-sap-ui-browser^="ie"] .sapMRbGDummy{
-	display: table-cell;
-	width: 1px;
+.sapMRbGDummy {
+	-webkit-box-flex: 100;
+	flex-grow: 100;
 }
 
 .sapMRbG > .sapMRb,
@@ -58,7 +37,7 @@ html[data-sap-ui-browser^="ie"] .sapMRbGDummy{
 
 .sapMRbG.sapMRbG1Row > .sapMRb{
 	clear: none;
-	margin-right: 15px;
+	padding: 1px;
 }
 
 .sapMRbGCol > .sapMRb{
@@ -71,15 +50,58 @@ html[data-sap-ui-browser^="ie"] .sapMRbGDummy{
 	left: 0;
 }
 
+.sapMRbG  .sapMRbHasLabel .sapMRbB {
+	width: 3rem;
+}
+
 .sapMRbG .sapMRbBLabel {
-	padding-left: 2.875rem;
+	margin-left: 0;
+	padding-left: 3rem;
 	display: inline-block;
 }
 
+.sapMRbG .sapMRbHasLabel .sapMRbBOut {
+	margin: 0.8125rem;
+}
+
+/* Read only */
+.sapMRbGRo {
+	.sapMRb .sapMRbBOut {
+		background-color: @sapUiFieldReadOnlyBackground;
+		border-color: @sapUiFieldReadOnlyBorderColor;
+	}
+
+	.sapMRb.sapMRbSel .sapMRbBInn {
+		background-color: @sapUiContentNonInteractiveIconColor;
+	}
+}
+
+/* Right to left */
 .sapMRbG[dir=rtl] .sapMRbB {
 	right: 0;
 }
 
 .sapMRbG[dir=rtl] .sapMRbBLabel {
-	padding-right: 2.875rem;
+	padding-left: 0;
+	padding-right: 3rem;
+}
+
+/* Compact Size */
+.sapUiSizeCompact {
+	.sapMRbG .sapMRbHasLabel .sapMRbB {
+		width: 2rem;
+	}
+
+	.sapMRbG .sapMRbHasLabel .sapMRbBOut {
+		margin: 0.5rem;
+	}
+
+	.sapMRbG .sapMRbBLabel {
+		padding-left: 2rem;
+	}
+
+	.sapMRbG[dir=rtl] .sapMRbBLabel {
+		padding-left: 0;
+		padding-right: 2rem;
+	}
 }

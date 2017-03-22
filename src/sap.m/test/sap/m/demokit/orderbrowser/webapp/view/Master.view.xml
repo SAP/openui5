@@ -1,0 +1,137 @@
+<mvc:View
+	controllerName="sap.ui.demo.orderbrowser.controller.Master"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:semantic="sap.m.semantic">
+
+	<semantic:MasterPage
+		id="page"
+		title="{
+			parts: [
+				'i18n>masterTitleCount',
+				'masterView>/titleCount'
+			],
+			formatter: 'jQuery.sap.formatMessage'
+		}"
+		navButtonPress="onNavBack"
+		showNavButton="true">
+		<semantic:subHeader>
+			<Bar id="headerBar">
+				<contentMiddle>
+					<SearchField
+						id="searchField"
+						showRefreshButton="{= !${device>/support/touch} }"
+						tooltip="{i18n>masterSearchTooltip}"
+						width="100%"
+						search="onSearch">
+					</SearchField>
+				</contentMiddle>
+			</Bar>
+		</semantic:subHeader>
+
+		<semantic:content>
+			<PullToRefresh
+				id="pullToRefresh"
+				visible="{device>/support/touch}"
+				refresh="onRefresh" />
+			<!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
+			<List
+				id="list"
+				items="{
+					path: '/Orders',
+					parameters: {expand: 'Customer'},
+					sorter: {
+						path: 'OrderID',
+						descending: true
+					},
+					groupHeaderFactory: '.createGroupHeader'
+				}"
+				busyIndicatorDelay="{masterView>/delay}"
+				noDataText="{masterView>/noDataText}"
+				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
+				growing="true"
+				growingScrollToLoad="true"
+				updateFinished="onUpdateFinished"
+				selectionChange="onSelectionChange">
+				<infoToolbar>
+					<Toolbar
+						active="true"
+						id="filterBar"
+						visible="{masterView>/isFilterBarVisible}"
+						press="onOpenViewSettings">
+						<Title
+							id="filterBarLabel"
+							text="{masterView>/filterBarLabel}" />
+					</Toolbar>
+				</infoToolbar>
+				<items>
+					<ObjectListItem
+						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
+						press="onSelectionChange"
+						title="{
+							parts: [
+								'i18n>commonItemTitle',
+								'OrderID'
+							],
+							formatter: 'jQuery.sap.formatMessage'
+						}"
+						number="{
+							path: 'OrderDate',
+							type: 'sap.ui.model.type.Date',
+							formatOptions: { style: 'short' }
+						}">
+						<firstStatus>
+							<ObjectStatus
+								state="{
+									parts: [
+										{path: 'RequiredDate'},
+										{path: 'ShippedDate'},
+										{path: 'OrderID'}
+									],
+									formatter:'.formatter.deliveryState'
+								}"
+								text="{
+									parts: [
+										{path: 'RequiredDate'},
+										{path: 'ShippedDate'},
+										{path: 'OrderID'}
+									],
+									formatter:'.formatter.deliveryText'
+								}"/>
+
+						</firstStatus>
+						<attributes>
+							<ObjectAttribute id="companyName" text="{Customer/CompanyName}" />
+							<ObjectAttribute title="{i18n>commonItemShipped}"
+								text="{= ${ShippedDate}
+									? ${ path: 'ShippedDate',
+										 type: 'sap.ui.model.type.Date',
+										 formatOptions: { style: 'medium' } }
+									: ${i18n>commonItemNotYetShipped} }" />
+						</attributes>
+					</ObjectListItem>
+				</items>
+			</List>
+		</semantic:content>
+
+		<semantic:group>
+			<semantic:GroupSelect change="onGroup">
+				<core:Item key="NO_GROUPING" text="{i18n>masterGroupNoGrouping}" />
+				<core:Item key="CompanyName" text="{i18n>masterGroupCustomer}" />
+				<core:Item key="OrderPeriod" text="{i18n>masterGroupOrderPeriod}" />
+				<core:Item key="ShippedPeriod" text="{i18n>masterGroupShippedPeriod}" />
+			</semantic:GroupSelect>
+		</semantic:group>
+
+		<semantic:filter>
+			<semantic:FilterSelect change="onFilter">
+				<core:Item key="NoFilter" text="{i18n>masterFilterNoFilter}" />
+				<core:Item key="Shipped" text="{i18n>masterFilterShipped}" />
+				<core:Item key="NotShipped" text="{i18n>masterFilterNotShipped}" />
+			</semantic:FilterSelect>
+		</semantic:filter>
+
+	</semantic:MasterPage>
+
+</mvc:View>

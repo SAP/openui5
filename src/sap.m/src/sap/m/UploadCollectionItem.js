@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.UploadCollectionItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus'],
-	function(jQuery, library, Element, ObjectAttribute, ObjectStatus) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus', 'sap/m/ObjectMarker', 'sap/ui/core/util/File'],
+	function(jQuery, library, Element, ObjectAttribute, ObjectStatus, ObjectMarker, FileUtil) {
 	"use strict";
 
 	/**
@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Specifies the date on which the file was uploaded. 
+				 * Specifies the date on which the file was uploaded.
 				 * The application has to define the date format.
 				 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 				 */
@@ -102,6 +102,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 
 				/**
 				 * Specifies the URL where the file is located.
+				 * If the application doesn't provide a value for this property, the icon and the file name of the UploadCollectionItem are not clickable.
 				 */
 				url : {
 					type : "string",
@@ -110,8 +111,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Enables/Disables the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
+				 * Enables/Disables the Edit button.
+				 * If the value is true, the Edit button is enabled and the edit function can be used.
 				 * If the value is false, the edit function is not available.
 				 */
 				enableEdit : {
@@ -121,9 +122,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Enables/Disables the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
-				 * If the value is false, the edit function is not available.
+				 * Enables/Disables the Delete button.
+				 * If the value is true, the Delete button is enabled and the delete function can be used.
+				 * If the value is false, the delete function is not available.
 				 */
 				enableDelete : {
 					type : "boolean",
@@ -132,9 +133,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Show/Hide the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is visible.
-				 * If the value is false, the Edit pushbutton is not visible.
+				 * Show/Hide the Edit button.
+				 * If the value is true, the Edit button is visible.
+				 * If the value is false, the Edit button is not visible.
 				 */
 				visibleEdit : {
 					type : "boolean",
@@ -143,34 +144,55 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Show/Hide the Delete pushbutton.
-				 * If the value is true, the Delete pushbutton is visible.
-				 * If the value is false, the Delete pushbutton is not visible.
+				 * Show/Hide the Delete button.
+				 * If the value is true, the Delete button is visible.
+				 * If the value is false, the Delete button is not visible.
 				 */
 				visibleDelete : {
 					type : "boolean",
 					group : "Behavior",
 					defaultValue : true
+				},
+
+				/**
+				 * Aria label for the icon (or for the image).
+				 * @experimental since version 1.30. The behavior of the property might change in the next version.
+				 */
+				ariaLabelForPicture : {type : "string",
+					group : "Accessibility",
+					defaultValue : null
+				},
+
+				/**
+				 * Defines the selected state of the UploadCollectionItem.
+				 * @since 1.34
+				 */
+				selected : {
+					type : "boolean",
+					group : "Behavior",
+					defaultValue : false
 				}
 			},
+			defaultAggregation : "attributes",
 			aggregations : {
 				/**
 				 * Attributes of an uploaded item, for example, 'Uploaded By', 'Uploaded On', 'File Size'
-				 * Attributes are displayed after an item has been uploaded.
-				 * The Active property of sap.m.ObjectAttribute is not supported.
-				 * @experimental since version 1.30. The behavior of aggregations might change in the next version.
+				 * attributes are displayed after an item has been uploaded.
+				 * Additionally, the Active property of sap.m.ObjectAttribute is supported.<br>
 				 * Note that if one of the deprecated properties contributor, fileSize or UploadedDate is filled in addition to this attribute, two attributes with the same title
 				 * are displayed as these properties get displayed as an attribute.
 				 * Example: An application passes the property ‘contributor’ with the value ‘A’ and the aggregation attributes ‘contributor’: ‘B’. As a result, the attributes
 				 * ‘contributor’:’A’ and ‘contributor’:’B’ are displayed. To make sure the title does not appear twice, check if one of the properties is filled.
+				 * @since 1.30
 				 */
 				attributes : {
 					type : "sap.m.ObjectAttribute",
-					multiple : true
+					multiple : true,
+					bindable : "bindable"
 				},
 				/**
 				 * Hidden aggregation for the attributes created from the deprecated properties uploadedDate, contributor and fileSize
-				 * @experimental since version 1.30. The behavior of aggregations might change in the next version.
+				 * @since 1.30
 				 */
 				_propertyAttributes : {
 					type : "sap.m.ObjectAttribute",
@@ -180,11 +202,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				/**
 				 * Statuses of an uploaded item
 				 * Statuses will be displayed after an item has been uploaded
-				 * @experimental since version 1.30. The behavior might change in the next version.
+				 * @since 1.30
 				 */
 				statuses : {
 					type : "sap.m.ObjectStatus",
-					multiple : true
+					multiple : true,
+					bindable : "bindable"
+				},
+				/**
+				 * Markers of an uploaded item
+				 * Markers will be displayed after an item has been uploaded
+				 * But not in Edit mode
+				 * @since 1.40
+				 */
+				markers : {
+					type : "sap.m.ObjectMarker",
+					multiple : true,
+					bindable : "bindable"
+				}
+			},
+
+			associations : {
+				/**
+				 * ID of the FileUploader instance
+				 * since version 1.30
+				 */
+				fileUploader : {
+					type : "sap.ui.unified.FileUploader",
+					group : "misc",
+					multiple : false
 				}
 			}
 		}
@@ -197,6 +243,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated contributor property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setContributor = function(sContributor) {
 		this.setProperty("contributor", sContributor, false);
@@ -207,6 +254,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated uploadedDate property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setUploadedDate = function(sUploadedDate) {
 		this.setProperty("uploadedDate", sUploadedDate, false);
@@ -217,6 +265,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	/**
 	 * @description Setter of the deprecated fileSize property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
+	 * @public
 	 */
 	UploadCollectionItem.prototype.setFileSize = function(sFileSize) {
 		this.setProperty("fileSize", sFileSize, false);
@@ -225,40 +274,113 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	};
 
 	/**
+	 * @description Setter of the selected property.
+	 * @param {boolean} selected value to set on Selected property
+	 * @since 1.34
+	 * @public
+	 * @returns {sap.m.UploadCollectionItem} The current UploadCollectionItem
+	 */
+	UploadCollectionItem.prototype.setSelected = function(selected) {
+		if (selected !== this.getSelected()) {
+			this.setProperty("selected", selected, true);
+			this.fireEvent("selected");
+		}
+		return this;
+	};
+
+	/**
+	 * Downloads the item.
+	 * The sap.ui.core.util.File method is used here. For further details on this method, see {sap.ui.core.util.File.save}.
+	 * @param {boolean} askForLocation Decides whether to ask for a location to download or not.
+	 * @since 1.36.0
+	 * @public
+	 */
+	UploadCollectionItem.prototype.download = function(askForLocation) {
+		// File.save doesn't work in Safari but URLHelper.redirect does work.
+		// So, this overwrites the value of askForLocation in order to make it work.
+		if (sap.ui.Device.browser.name === "sf") {
+			askForLocation = false;
+		}
+		// If there isn't URL, download is not possible
+		if (!this.getUrl()) {
+			jQuery.sap.log.warning("Items to download do not have an URL.");
+			return false;
+		} else if (askForLocation) {
+			var oBlob = null;
+			var oXhr = new window.XMLHttpRequest();
+			oXhr.open("GET", this.getUrl());
+			oXhr.responseType = "blob";// force the HTTP response, response-type header to be blob
+			oXhr.onload = function() {
+				var sFileName = this.getFileName();
+				var oFileNameAndExtension = this._splitFileName(sFileName, false);
+				var sFileExtension = oFileNameAndExtension.extension;
+				sFileName = oFileNameAndExtension.name;
+				oBlob = oXhr.response; // oXhr.response is now a blob object
+				FileUtil.save(oBlob, sFileName, sFileExtension, this.getMimeType(), 'utf-8');
+			}.bind(this);
+			oXhr.send();
+			return true;
+		} else {
+			library.URLHelper.redirect(this.getUrl(), true);
+			return true;
+		}
+	};
+
+	/**
+	 * @description Split file name into name and extension.
+	 * @param {string} fileName Full file name inclusive the extension
+	 * @param {boolean} withDot True if the extension should be returned starting with a dot (ie: '.jpg'). False for no dot. If not value is provided, the extension name is given without dot
+	 * @returns {object} oResult Filename and Extension
+	 * @private
+	 */
+	UploadCollectionItem.prototype._splitFileName = function(fileName, withDot) {
+		var oResult = {};
+		var oRegex = /(?:\.([^.]+))?$/;
+		var aFileExtension = oRegex.exec(fileName);
+		oResult.name = fileName.slice(0, fileName.indexOf(aFileExtension[0]));
+		if (withDot) {
+			oResult.extension = aFileExtension[0];
+		} else {
+			oResult.extension = aFileExtension[1];
+		}
+		return oResult;
+	};
+
+	/**
 	 * @description Update deprecated properties aggregation
 	 * @private
-	 * @experimental since version 1.30. The behavior might change in the next version.
+	 * @since 1.30.
 	 */
 	UploadCollectionItem.prototype._updateDeprecatedProperties = function() {
 		var aProperties = ["uploadedDate", "contributor", "fileSize"];
-		this.removeAllAggregation("_propertyAttributes");
+		this.removeAllAggregation("_propertyAttributes", true);
 		jQuery.each(aProperties, function(i, sName) {
 			var sValue = this.getProperty(sName),
-				oAttribute = this._mDeprecatedProperties[sName];
-			if (sValue) {
-				if (oAttribute) {
-					oAttribute.setText(sValue);
-				} else {
+					oAttribute = this._mDeprecatedProperties[sName];
+			if (jQuery.type(sValue) === "number" && !!sValue  || !!sValue) {
+				if (!oAttribute) {
 					oAttribute = new ObjectAttribute({
-						active : false,
-						text : sValue
+						active : false
 					});
 					this._mDeprecatedProperties[sName] = oAttribute;
+					this.addAggregation("_propertyAttributes", oAttribute, true);
+					oAttribute.setText(sValue);
+				} else {
+					oAttribute.setText(sValue);
+					this.addAggregation("_propertyAttributes", oAttribute, true);
 				}
-				this.addAggregation("_propertyAttributes", oAttribute);
-			} else {
-				if (oAttribute) {
-					oAttribute.destroy();
-					delete this._mDeprecatedProperties[sName];
-				}
+			} else if (oAttribute) {
+				oAttribute.destroy();
+				delete this._mDeprecatedProperties[sName];
 			}
 		}.bind(this));
+		this.invalidate();
 	};
 
 	/**
 	 * @description Return all attributes, the deprecated property attributes and the aggregated attributes in one array
 	 * @private
-	 * @experimental since version 1.30. The behavior might change in the next version.
+	 * @since 1.30.
 	 */
 	UploadCollectionItem.prototype.getAllAttributes = function() {
 		return this.getAggregation("_propertyAttributes", []).concat(this.getAttributes());

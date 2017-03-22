@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 		metadata : {
 			rootView : "sap.m.sample.TextMaxLines.V",
-			includes : [ "TextMaxLines/style.css" ],
+			includes : [ "style.css" ],
 			dependencies : {
 				libs : [
 					"sap.m"

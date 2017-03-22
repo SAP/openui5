@@ -1,3 +1,8 @@
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* BlueCrystal theme                      */
+/* ====================================== */
+
 /* ===================================== */
 /* Less helper functions for gradients   */
 /* ===================================== */
@@ -9,70 +14,37 @@
 	-webkit-text-fill-color: transparent; /* Chrome & Safari only */
 }
 
-.sapMRIIcon { /* required for size calculation */
-	height: 1.375rem; /* default size */
-	overflow: hidden;
-}
-
 .sapMRIIconSel {
-	color: lighten(@sapUiRIIconColor,12);
-	-webkit-text-stroke: 1px darken(@sapUiAccent1,3);
+	color: lighten(@sapUiAccent1, 12);
+	-webkit-text-stroke: 1px darken(@sapUiAccent1, 3);
 }
 
 .sapMRIIconUnsel  {
-	color: darken(@sapUiLightBG,10);
-	-webkit-text-stroke: 1px darken(@sapUiLightBG,15);
+	color: darken(@sapUiContentForegroundColor, 10);
+	-webkit-text-stroke: 1px darken(@sapUiContentForegroundColor, 15);
 }
 
 /* gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry*/
 .sapMRIGrd > .sapMRIIconSel {
-	.sapMRIGradient(@sapUiRIIconColor);
+	.sapMRIGradient(@sapUiAccent1);
 }
 .sapMRIGrd > .sapMRIIconUnsel  {
-	.sapMRIGradient(@sapUiLightBG, 10);
-}
-
-.sapMRIDisabled{
-	outline: none;
-	cursor: default;
-}
-
-html[data-sap-ui-browser^='ie10'] .sapMRIDisabled .sapMRIIconSel {
-	text-shadow: 0px 0px 0px @sapUiBlack;
+	.sapMRIGradient(@sapUiContentForegroundColor, 10);
 }
 
 .sapMRIIconHov {
-	color: @sapUiRIIconColor;
-	-webkit-text-stroke: 1px darken(@sapUiAccent1,3);
+	color: @sapUiAccent1;
+	-webkit-text-stroke: 1px darken(@sapUiAccent1, 3);
 }
-
-html[data-sap-ui-browser^='ie10'] .sapMRIIconHov {
-	text-shadow: 0px 0px 0px @sapUiBlack;
-}
-
-html[data-sap-ui-browser^='ie10'] .sapMRIIconUnsel {
-	text-shadow: 0px 0px 0px @sapUiBlack;
-}
-
-.sapMRI .sapUiIcon,
-.sapMRI .sapMImg {
-	padding-right: @sapUiRIIconPadding;
-}
-
-.sapMRI .sapUiIcon:last-child,
-.sapMRI .sapMImg:last-child {
-	padding-right: 0rem;
-}
-
 
 /* Custom focus outline */
-.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
-	outline: 1px dotted @sapUiFocus;
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
+	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
-.sap-desktop[data-sap-ui-browser^="ie"]{
+html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapMRI:focus {
 		outline: none;
 		position: relative;
@@ -85,17 +57,6 @@ html[data-sap-ui-browser^='ie10'] .sapMRIIconUnsel {
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 1px dotted @sapUiFocus;
+		border: 1px dotted @sapUiContentFocusColor;
 	}
-}
-
-/* Compact mode */
-.sapUiSizeCompact .sapMRIIcon {
-	height: 1rem; /* default size for the compact mode */
-}
-
-/* Condensed mode */
-.sapUiSizeCondensed .sapMRI .sapUiIcon,
-.sapUiSizeCondensed .sapMRI .sapMImg{
-	vertical-align: top;
 }

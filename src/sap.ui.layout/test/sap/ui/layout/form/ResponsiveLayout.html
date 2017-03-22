@@ -2,15 +2,16 @@
 <html>
 	<head>
 
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 		<title>ResponsiveLayout - sap.ui.layout.form</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.ResponsiveLayout.gif">
-		<script id="sap-ui-bootstrap" type="text/javascript"
-				data-sap-ui-theme="sap_bluecrystal"
-				data-sap-ui-libs="sap.ui.layout, sap.ui.commons"
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
 				src="../../../../../resources/sap-ui-core.js"></script>
 
-		<script type="text/javascript">
+		<script>
 
 			var moveContainer = function(oEvent){
 
@@ -140,33 +141,33 @@
 						tooltip: "Test",
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"ID"}),
-								fields: [new sap.ui.commons.TextField({value: "SAP SE", required: true})]
+								label: new sap.m.Label({text:"ID"}),
+								fields: [new sap.m.Input({value: "SAP SE", required: true})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Street / Number",
-								fields: [new sap.ui.commons.TextField({value: "Dietmar-Hopp-Allee"}),
-												 new sap.ui.commons.TextField({value: "16", width: "4em"})]
+								fields: [new sap.m.Input({value: "Dietmar-Hopp-Allee"}),
+												 new sap.m.Input({value: "16", width: "4em"})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text: "Post code / City"}),
-								fields: [new sap.ui.commons.TextField({value: "69190", width: "5em"}),
-												 new sap.ui.commons.TextField({value: "Walldorf"})]
+								label: new sap.m.Label({text: "Post code / City"}),
+								fields: [new sap.m.Input({value: "69190", width: "5em"}),
+												 new sap.m.Input({value: "Walldorf"})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Country",
-								fields: [new sap.ui.commons.TextField({value: "DE", width: "3em"}),
-												 new sap.ui.commons.TextField({value: "Germany"})]
+								fields: [new sap.m.Input({value: "DE", width: "3em"}),
+												 new sap.m.Input({value: "Germany"})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Date of birth",
-								fields: [new sap.ui.commons.DatePicker({yyyymmdd: "20121212"})]
+								fields: [new sap.m.DatePicker({dateValue: new Date(2012, 11, 12)})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Gender",
-								fields: [new sap.ui.commons.RadioButtonGroup({
-									items: [new sap.ui.core.Item({text: "male"}),
-											new sap.ui.core.Item({text: "female"})]
+								fields: [new sap.m.RadioButtonGroup({
+									buttons: [new sap.m.RadioButton({text: "male"}),
+									          new sap.m.RadioButton({text: "female"})]
 								})]
 							})
 						]
@@ -176,26 +177,26 @@
 						expandable: true,
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"Label1"}),
-								fields: [new sap.ui.commons.TextField({value: "Text1", required: true}),
-								         new sap.ui.commons.TextField({value: "Text2"}),
-								         new sap.ui.commons.TextField({value: "Text3"})]
+								label: new sap.m.Label({text:"Label1"}),
+								fields: [new sap.m.Input({value: "Text1", required: true}),
+								         new sap.m.Input({value: "Text2"}),
+								         new sap.m.Input({value: "Text3"})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Label2",
-								fields: [new sap.ui.commons.TextField({value: "1"}),
-												 new sap.ui.commons.TextField({value: "2"})]
+								fields: [new sap.m.Input({value: "1"}),
+												 new sap.m.Input({value: "2"})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.TextField({value: "A"}),
-												 new sap.ui.commons.TextField({value: "B"})]
+								fields: [new sap.m.Input({value: "A"}),
+												 new sap.m.Input({value: "B"})]
 							})
 						]
 					}),
 					new sap.ui.layout.form.FormContainer("C3",{
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.TextArea({value: "Text", width: "100%",
+								fields: [new sap.m.TextArea({value: "Text", width: "100%",
 												layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({minWidth: 300})})]
 							})
 						]
@@ -206,42 +207,42 @@
 						expandable: true,
 						formElements: [
 							new sap.ui.layout.form.FormElement("C4E1",{
-								label: new sap.ui.commons.Label({text:"ID"}),
-								fields: [new sap.ui.commons.TextField({value: "SAP SE", required: true, layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 3})})],
+								label: new sap.m.Label({text:"ID"}),
+								fields: [new sap.m.Input({value: "SAP SE", required: true, layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 3})})],
 								layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, margin: false})
 							}),
 							new sap.ui.layout.form.FormElement("C4E2",{
 								label: "Street / Number",
-								fields: [new sap.ui.commons.TextField({value: "Dietmar-Hopp-Allee", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 2})}),
-												 new sap.ui.commons.TextField({value: "16", width: "4em", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 1})})],
+								fields: [new sap.m.Input({value: "Dietmar-Hopp-Allee", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 2})}),
+												 new sap.m.Input({value: "16", width: "4em", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 1})})],
 								layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, margin: false})
 							}),
 							new sap.ui.layout.form.FormElement("C4E3",{
-								label: new sap.ui.commons.Label({text: "Post code / City"}),
-								fields: [new sap.ui.commons.TextField({value: "69190", width: "5em", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 1})}),
-												 new sap.ui.commons.TextField({value: "Walldorf", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 2})})],
+								label: new sap.m.Label({text: "Post code / City"}),
+								fields: [new sap.m.Input({value: "69190", width: "5em", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 1})}),
+												 new sap.m.Input({value: "Walldorf", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 2})})],
 								layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, margin: false})
 							}),
 							new sap.ui.layout.form.FormElement("C4E4",{
 								label: "Country",
-								fields: [new sap.ui.commons.TextField({value: "DE", width: "3em", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 1})}),
-												 new sap.ui.commons.TextField({value: "Germany", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 2})})],
+								fields: [new sap.m.Input({value: "DE", width: "3em", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 1})}),
+												 new sap.m.Input({value: "Germany", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight: 2})})],
 								layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, margin: false})
 							}),
 							new sap.ui.layout.form.FormElement("C4E5",{
 								label: "Date of birth",
-								fields: [new sap.ui.commons.DatePicker({yyyymmdd: "20121212"})],
+								fields: [new sap.m.DatePicker({dateValue: new Date(2012, 11, 12)})],
 								layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, margin: false})
 							}),
 							new sap.ui.layout.form.FormElement("C4E6",{
 								label: "Gender",
-								fields: [new sap.ui.commons.RadioButtonGroup({
-									items: [new sap.ui.core.Item({text: "male"}),
-											new sap.ui.core.Item({text: "female"})]
+								fields: [new sap.m.RadioButtonGroup({
+									buttons: [new sap.m.RadioButton({text: "male"}),
+									          new sap.m.RadioButton({text: "female"})]
 								})]
 							}),
 							new sap.ui.layout.form.FormElement("C4E7",{
-								fields: [new sap.ui.commons.Button({text: "Visibility", press: switchVisible})],
+								fields: [new sap.m.Button({text: "Visibility", press: switchVisible})],
 								layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, margin: false, weight: 2})
 							})
 						],
@@ -250,16 +251,16 @@
 					new sap.ui.layout.form.FormContainer("C5",{
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.ToggleButton("B1",{text: "move Container", press: moveContainer}),
-								         new sap.ui.commons.ToggleButton("B2",{text: "new Container", press: newContainer}),
-								         new sap.ui.commons.ToggleButton("B3",{text: "new Element", press: newElement}),
-								         new sap.ui.commons.ToggleButton("B4",{text: "new Field", press: newField}),
-								         new sap.ui.commons.ToggleButton("B5",{text: "expandable", press: toggleExpandable}),
-								         new sap.ui.commons.ToggleButton("B6",{text: "title",pressed: true, press: toggleTitle}),
-								         new sap.ui.commons.ToggleButton("B7",{text: "LineBreak Container",pressed: true, press: lineBreakContainer,
+								fields: [new sap.m.ToggleButton("B1",{text: "move Container", press: moveContainer}),
+								         new sap.m.ToggleButton("B2",{text: "new Container", press: newContainer}),
+								         new sap.m.ToggleButton("B3",{text: "new Element", press: newElement}),
+								         new sap.m.ToggleButton("B4",{text: "new Field", press: newField}),
+								         new sap.m.ToggleButton("B5",{text: "expandable", press: toggleExpandable}),
+								         new sap.m.ToggleButton("B6",{text: "title",pressed: true, press: toggleTitle}),
+								         new sap.m.ToggleButton("B7",{text: "LineBreak Container",pressed: true, press: lineBreakContainer,
 								          		layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true})}),
-								         new sap.ui.commons.ToggleButton("B8",{text: "LineBreak Element", press: lineBreakElement}),
-								         new sap.ui.commons.ToggleButton("B9",{text: "LineBreak Field", press: lineBreakField})
+								         new sap.m.ToggleButton("B8",{text: "LineBreak Element", press: lineBreakElement}),
+								         new sap.m.ToggleButton("B9",{text: "LineBreak Field", press: lineBreakField})
 												]
 							})
 						],
@@ -273,21 +274,21 @@
 					title: oTitle,
 					formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"Label1"}),
-								fields: [new sap.ui.commons.TextField({value: "Text1", required: true}),
-								         new sap.ui.commons.TextField({value: "Text2"}),
-								         new sap.ui.commons.TextField({value: "Text3"})]
+								label: new sap.m.Label({text:"Label1"}),
+								fields: [new sap.m.Input({value: "Text1", required: true}),
+								         new sap.m.Input({value: "Text2"}),
+								         new sap.m.Input({value: "Text3"})]
 							})
 					],
 					layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, margin: false})
 			});
 
 			var oElement = new sap.ui.layout.form.FormElement("EX",{
-				label: new sap.ui.commons.Label({text:"new Label"}),
-				fields: [new sap.ui.commons.TextField({value: "new Text", required: true})]
+				label: new sap.m.Label({text:"new Label"}),
+				fields: [new sap.m.Input({value: "new Text", required: true})]
 			});
 
-			var oField = new sap.ui.commons.TextField("TX", {value: "new Field", valueState: sap.ui.core.ValueState.Warning});
+			var oField = new sap.m.Input("TX", {value: "new Field", valueState: sap.ui.core.ValueState.Warning});
 
 		</script>
 

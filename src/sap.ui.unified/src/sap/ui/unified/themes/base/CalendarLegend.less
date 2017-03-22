@@ -1,50 +1,90 @@
-/* ============================================= */
-/* CSS for control sap.ui.unified/Legend.control */
-/* ============================================= */
+/* ============================================== */
+/* CSS for control sap.ui.unified/CalendarLegend  */
+/* Base theme                                     */
+/* ============================================== */
+
 .sapUiUnifiedLegend {
-	color: #666666;
-	font-familiy: @sapUiFontFamily;
+	color: @sapUiContentLabelColor;
+	font-family: @sapUiFontFamily;
 	font-size: @sapUiFontSmallSize;
 	font-weight: normal;
 	padding: 12px;
 	column-gap: 8px;
 	-moz-column-gap: 8px; /* Firefox */
 	-webkit-column-gap: 8px; /* Safari and Chrome */
-}
-
-.sapUiUnifiedLegendItem {
-	display: inline-block;
-	width: 100%;
-	margin: 4px;
+	background-color: @sapUiListBackground;
 }
 
 .sapUiUnifiedLegendDescription {
-	vertical-align: middle;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
+	display: inline-block;
+	line-height: 16px;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	/* width is 100% without the width and margin of sapUiUnifiedLegendSquare
+	(the square in front of the legend description) */
+	width: calc(100% - 28px);
 	cursor: default;
 }
 
 .sapUiUnifiedLegendSquare {
+	display: inline-block;
+	vertical-align: top;
 	height: 16px;
 	width: 16px;
-	margin-right: 8px;
-	background: lighten(@sapBaseColor, 100);
-	float: left;
+	margin: 4px 8px 4px 4px;
+	background: @sapUiListBackground;
 }
 
 .sapUiUnifiedLegendSquareColor {
 	height: 14px;
 	width: 14px;
 	margin: 1px;
-	background: @sapBaseColor;
+	background: lighten(@sapUiContentForegroundColor, 5);
 }
 
 .sapUiUnifiedLegendSquareSelected {
 	height: 10px;
 	width: 10px;
-	background: white;
-	border: 2px solid @sapUiPurple;
-	
+	background: @sapUiListBackground;
+	border: 2px solid @sapUiCalendarColorToday;
+
+}
+
+/*** compact mode (desktop size) ***/
+
+.sapUiSizeCompact .sapUiUnifiedLegend,
+.sapUiSizeCompact.sapUiUnifiedLegend {
+	padding: 8px;
+	column-gap: 6px;
+	-moz-column-gap: 6px; /* Firefox */
+	-webkit-column-gap: 6px; /* Safari and Chrome */
+}
+
+.sapUiSizeCompact .sapUiUnifiedLegendSquare {
+	margin: 2px 8px 2px 2px;
+}
+
+.sapUiSizeCompact .sapUiUnifiedLegendDescription {
+	line-height: 12px;
+}
+
+/*** items and colors ***/
+
+.sapUiUnifiedLegendToday > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	height: 10px;
+	width: 10px;
+	background-color: @sapUiListBackground;
+	border: 2px solid @sapUiCalendarColorToday;
+}
+
+.sapUiUnifiedLegendSelected > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	background: @sapUiSelected;
+}
+
+.sapUiUnifiedLegendNormalDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	background: lighten(@sapUiContentForegroundColor, 5);
+}
+
+.sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	background: @sapUiContentForegroundColor;
 }

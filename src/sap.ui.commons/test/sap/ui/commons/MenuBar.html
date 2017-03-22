@@ -1,20 +1,20 @@
 <!DOCTYPE HTML>
  <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>MenuBar - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.MenuBar.gif">
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_goldreflection"
-				type="text/javascript"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../resources/sap-ui-core.js"
 				>
 		</script>
 
-		<script type="text/javascript">
+		<script>
 			var oMenuBar1 = new sap.ui.commons.MenuBar("menubar1",{tooltip: "Menubar Tooltip"});
 			var oMenuItem1 = new sap.ui.commons.MenuItem("menuitem1",{text:"Item1", tooltip: "Item1 Tooltip"});
 			var oMenuItem2 = new sap.ui.commons.MenuItem("menuitem2",{text:"�ag�yfox"});
@@ -79,7 +79,7 @@
 			oMenu1.addItem(oMenuItem5);
 			oMenu1.addItem(oMenuItem6);
 			oMenu1.addItem(oMenuItem7);
-			
+
 			var fnSelect = function (oEvent) {
 				alert("You selected " + oEvent.getParameter("item").getText());
 			};
@@ -99,7 +99,7 @@
 			oMenuBar1.placeAt("target1");
 			new sap.ui.commons.TextField().placeAt("target1");
 
-			var oButton = new sap.ui.commons.Button("BTypeSwitch", {text:"Switch Type", enabled: sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection"});
+			var oButton = new sap.ui.commons.Button("BTypeSwitch", {text:"Switch Type", enabled: sap.ui.getCore().getConfiguration().getTheme() == "sap_bluecrystal"});
 			var bIsTopMenubar = false;
 			var fToggleDesign = function(){
 				oMenuBar1.setDesign(bIsTopMenubar ? "Standard" : "Header");
@@ -110,11 +110,11 @@
 			oButton.placeAt("target2");
 
 			sap.ui.getCore().attachThemeChanged(function(){
-				oButton.setEnabled(sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection");
+				oButton.setEnabled(sap.ui.getCore().getConfiguration().getTheme() == "sap_bluecrystal");
 				bIsTopMenubar = true;
 				fToggleDesign();
 			});
-			
+
 			oMenuBar1.addItem(new sap.ui.commons.MenuItem({
 				text: "Item without submenu",
 				select : function () {

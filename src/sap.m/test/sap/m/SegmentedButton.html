@@ -3,20 +3,40 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Segmented - sap.m</title>
+<!--<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js"-->
+<!--<script src="https://openui5.hana.ondemand.com/1.36.4/resources/sap-ui-core.js"-->
 <script src="../../../resources/sap-ui-core.js"
-		type="text/javascript"
 		id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.m"
-		data-sap-ui-theme="sap_bluecrystal">
+		data-sap-ui-libs="sap.m">
 </script>
 <style type="text/css">
 	.vBoxSBTestPage {
 		margin: 1rem 1rem 1rem 1rem;
 	}
-	.segCont {
-		margin: 10px;
+	.sap-phone .sapMPanel .sapMBtnContent {
+		font-size: 0.625rem;
 	}
 </style>
+<script id="simpleFormExample" type="text/xmldata">
+	<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" displayBlock="true"
+	xmlns:f="sap.ui.layout.form">
+		<f:SimpleForm layout="ResponsiveGridLayout">
+			<f:content>
+				<Label text="Segmented button in simple form"/>
+				<SegmentedButton selectedKey="two" width="100%">
+					<items>
+						<SegmentedButtonItem text="Some looong text" key="one"/>
+						<SegmentedButtonItem text="Some loooooong text" key="two"/>
+						<SegmentedButtonItem text="Some looooooooong text" key="three"/>
+					</items>
+				</SegmentedButton>
+			</f:content>
+		</f:SimpleForm>
+	</mvc:View>
+</script>
 <script>
 	jQuery.sap.require("sap.ui.core.HTML");
 	jQuery.sap.require("sap.ui.core.IconPool");
@@ -157,7 +177,6 @@
 	oSegmented2.setSelectedButton(button4);
 	oSegmented2.createButton('100% Width', null, true);
 	oSegmented2.createButton('This is a Very Very Very Long Text', null, true);
-	oSegmented2.addStyleClass('segCont');
 	page.addContent(oSegmented2);
 
 	var oSegmented3 = new sap.m.SegmentedButton('SegmentedCnt2', {
@@ -195,7 +214,7 @@
 		select: function(oEvent) {
 			jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
 		}
-	}).addStyleClass('segCont');
+	});
 	page.addContent(oSegmentedIcons);
 
 	var oButton1 = new sap.m.Button("segbtn1", {text:"first button"}),
@@ -237,7 +256,7 @@
 		// Helper functions start
 		function createSpacer() {
 			return new sap.ui.core.HTML({
-				content: "<br/>"
+				content: "<br>"
 			});
 		}
 
@@ -323,17 +342,20 @@
 				new sap.m.Button({
 					type: sap.m.ButtonType.Default,
 					icon: "images/candy_v_46x46.png",
-					enabled: true
+					enabled: true,
+					tooltip: "Accept"
 				}),
 				new sap.m.Button({
 					type: sap.m.ButtonType.Default,
 					icon: "images/candy_x_46x46.png",
-					enabled: true
+					enabled: true,
+					tooltip: "Reject"
 				}),
 				new sap.m.Button({
 					type: sap.m.ButtonType.Default,
 					icon: "images/candy_star_46x46.png",
-					enabled: false
+					enabled: false,
+					tooltip: "Star"
 				})
 			],
 			select: function(oEvent) {
@@ -432,33 +454,82 @@
 		 * Images and state End                 *
 		 ****************************************/
 
+		vBox.addItem(new sap.m.SegmentedButton({
+			items : [
+				new sap.m.SegmentedButtonItem({text: "Some loooong text"}),
+				new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("drill-down")}),
+				new sap.m.SegmentedButtonItem({text: "Some loooong text"})
+			]
+		}));
+
+		vBox.addItem(createSpacer());
+
+		vBox.addItem(new sap.m.SegmentedButton({
+			items : [
+				new sap.m.SegmentedButtonItem({text: "Some loooong text"}),
+				new sap.m.SegmentedButtonItem({width: "60%", icon: sap.ui.core.IconPool.getIconURI("drill-down")}),
+				new sap.m.SegmentedButtonItem({text: "Some loooong text"})
+			]
+		}));
+
+		vBox.addItem(createSpacer());
+
+		vBox.addItem(new sap.m.SegmentedButton({
+			items : [
+				new sap.m.SegmentedButtonItem({text: "Some loooong text"}),
+				new sap.m.SegmentedButtonItem({width: "200px", icon: sap.ui.core.IconPool.getIconURI("drill-down")}),
+				new sap.m.SegmentedButtonItem({text: "Some loooong text"})
+			]
+		}));
+
+		vBox.addItem(createSpacer());
+
 		/****************************************
 		 * sap.m.Dialog Start                   *
 		 ****************************************/
-		var oBar = new sap.m.Bar({
-			contentMiddle : [
-				new sap.m.SegmentedButton({
-					width : "100%",
-					buttons : [
-						new sap.m.Button({text: "Button1"}),
-						new sap.m.Button({text: "Button2"}),
-						new sap.m.Button({text: "Button3"})
-					]
-				})
-			]
-		});
 
 		var oDialog = new sap.m.Dialog({
-			subHeader : oBar,
+			subHeader : new sap.m.Bar({
+				contentMiddle : [
+					new sap.m.SegmentedButton({
+						width : "100%",
+						buttons : [
+							new sap.m.Button({text: "Approved  1111111111"}),
+							new sap.m.Button({text: "Rejected 2222222222"}),
+							new sap.m.Button({text: "Lookup 3333333333"})
+						]
+					})]
+			}),
+			beginButton: new sap.m.Button({text: "Close  1111111111", press: function() {oDialog.close();}})
+		});
+
+		var oDialog11 = new sap.m.Dialog({
 			content : [
-				new sap.m.Button({
-					text : "long button",
-					width : "600px",
-					press: function () {
-						oDialog.close();
-					}
-				})
-			]
+				new sap.m.Bar({
+					contentMiddle : [
+						new sap.m.SegmentedButton({
+							width : "100%",
+							buttons : [
+								new sap.m.Button({text: "Approved  1111111111"}),
+								new sap.m.Button({text: "Button2"}),
+								new sap.m.Button({text: "Button3"})
+							]
+						})]
+			})],
+			beginButton: new sap.m.Button({text: "Close  very long text", press: function() {oDialog11.close();}})
+		});
+
+		var oDialog12 = new sap.m.Dialog({
+			content : [
+				new sap.m.SegmentedButton({
+				width : "100%",
+				buttons : [
+					new sap.m.Button({text: "Approved  long text1"}),
+					new sap.m.Button({text: "Rejected long text2"}),
+					new sap.m.Button({text: "Lookup long text3"})
+				]
+			})],
+			beginButton: new sap.m.Button({text: "Close  1111111111", press: function() {oDialog12.close();}})
 		});
 
 		var oDialog2 = new sap.m.Dialog({
@@ -513,21 +584,34 @@
 		var oPanel1 = new sap.m.Panel();
 
 		oPanel1.addContent(new sap.m.Button({
-			text: "In Dialog",
+			text: "SB(w.100%)->Bar(middle)->Dialog(subHeader)",
 			press: function () {
 				oDialog.open();
 			}
 		}));
 
 		oPanel1.addContent(new sap.m.Button({
-			text: "In Dialog - mixed content",
+			text: "SB(w.100%)->Bar(middle)->Dialog(content)",
+			press: function () {
+				oDialog11.open();
+			}
+		}));
+
+		oPanel1.addContent(new sap.m.Button({
+			text: "SB(w.100%)->Dialog(content)",
+			press: function () {
+				oDialog12.open();
+			}
+		}));
+		oPanel1.addContent(new sap.m.Button({
+			text: "SB(w.100%)->Bar(middle)->Dialog(subHeader)-mixed content",
 			press: function() {
 				oDialog2.open();
 			}
 		}));
 
 		oPanel1.addContent(new sap.m.Button({
-			text: "In Dialog - icons",
+			text: "SB(w.100%)->Bar(middle)->Dialog(subHeader)-icons",
 			press: function() {
 				oDialog3.open();
 			}
@@ -607,10 +691,24 @@
 			]
 		});
 
+		var oSBInToolBar3 = new sap.m.SegmentedButton({
+			items : [
+				new sap.m.SegmentedButtonItem({text: "All"}),
+				new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("comment"), text: "Button1"}),
+				new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("create-leave-request"), text: "Button2"}),
+				new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("database"), text: "Button3"})
+			]
+		});
+
+		// We add the class .sapMSegmentedButtonNoAutoWidth which is forcing the control to skip all width calculations
+		// and make every button take the width it actually needs rather equalizing all button widths.
+		oSBInToolBar3.addStyleClass("sapMSegmentedButtonNoAutoWidth");
+
 		var oToolbar2 = new sap.m.Toolbar({
 			content: [
 				oSBInToolBar1,
-				oSBInToolBar2
+				oSBInToolBar2,
+				oSBInToolBar3
 			]
 		});
 
@@ -624,6 +722,24 @@
 
 		/****************************************
 		 * sap.m.ToolBar End                    *
+		 ****************************************/
+
+		/****************************************
+		 * sap.ui.SimpleForm                    *
+		 ****************************************/
+
+
+		var oSimpleFormView = sap.ui.view({
+			viewContent: jQuery('#simpleFormExample').html(),
+			type: sap.ui.core.mvc.ViewType.XML
+		});
+
+		vBox.addItem(createSpacer());
+		vBox.addItem(createLabel("SegmentedButton in sap.ui.SimpleForm:"));
+		vBox.addItem(oSimpleFormView);
+
+		/****************************************
+		 * sap.ui.SimpleForm                    *
 		 ****************************************/
 
 		/****************************************

@@ -1,23 +1,22 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+
 		<title>App with background images - sap.m</title>
-		
+
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
-		
-		<script type="text/javascript">
+
+		<script>
 			var app = new sap.m.App("myApp", {
 				initialPage:"page1"
 			});
-			
+
 			var page1 = new sap.m.Page("page1", {
 				title:"Page 1",
 				content : [
@@ -27,9 +26,10 @@
 							app.to("page2");
 						}
 					}),
-					
+
 					// background image switches
 					new sap.m.Button({
+						id : "streched-cheetah-btn",
 						text : "Stretched Cheetah",
 						press : function() {
 							app.setBackgroundImage("images/demo/nature/huntingLeopard.jpg");
@@ -40,8 +40,9 @@
 							sap.ui.getCore().byId("repeatSelect").setSelectedKey("stretch");
 						}
 					}),
-					
+
 					new sap.m.Button({
+						id : "repeating-translucent-cheetah-btn",
 						text : "Repeating translucent Cheetah",
 						press : function() {
 							app.setBackgroundImage("images/demo/nature/huntingLeopard.jpg");
@@ -52,7 +53,7 @@
 							sap.ui.getCore().byId("repeatSelect").setSelectedKey("repeat");
 						}
 					}),
-					
+
 					new sap.m.Button({
 						text : "Clear Background",
 						press : function() {
@@ -64,7 +65,7 @@
 							sap.ui.getCore().byId("repeatSelect").setSelectedKey("stretch");
 						}
 					}),
-					
+
 					new sap.m.Select("repeatSelect", {items:[
 							new sap.ui.core.Item({text:"Stretch background",key:"stretch"}),
 							new sap.ui.core.Item({text:"Repeat background",key:"tile"})
@@ -74,7 +75,7 @@
 							app.setBackgroundRepeat(selectedItem.getKey() === "stretch" ? false : true);
 						}
 					}),
-					
+
 					new sap.m.Slider("opacitySlider", {
 						width: "50%",
 						min: 0,
@@ -86,7 +87,7 @@
 						}
 					}),
 				]
-				
+
 			});
 
 			var page2 = new sap.m.Page("page2", {
@@ -94,7 +95,7 @@
 				showNavButton: true,
 				navButtonText: "Page 1",
 				navButtonPress: function(){ app.back(); },
-				content : [ 
+				content : [
 					new sap.m.Button({
 						text : "Back to Page 1",
 						press : function() {
@@ -107,7 +108,7 @@
 
 			app.placeAt("body");
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

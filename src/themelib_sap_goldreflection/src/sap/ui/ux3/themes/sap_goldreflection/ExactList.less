@@ -28,13 +28,6 @@
 	content: "";
 }
 
-/* List - Focus, Hover, Select */
-html[data-sap-ui-browser="ie8"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel,
-html[data-sap-ui-browser="ie9"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel,
-html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel {
-	border: 1px solid @sapUiHighlight;
-}
-
 /* Expander */
 .sapUiUx3ExactLstExp {
 	background-color: @sapUiMediumBG;
@@ -89,6 +82,14 @@ html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel {
 	top: 5px;
 }
 
+.sapUiUx3ExactLstHeadTopIco {
+	background-image: url("img/exact/tophead_regular.png");
+}
+
+.sapUiUx3ExactLstTopActive.sapUiUx3ExactLstTop > .sapUiUx3ExactLstHead:hover > .sapUiUx3ExactLstHeadTopTxt > .sapUiUx3ExactLstHeadTopIco {
+	background-image: url("img/exact/tophead_hover.png");
+}
+
 .sapUiUx3ExactLstCollapsed > .sapUiUx3ExactLstHead > .sapUiUx3ExactLstHeadAct {
 	left: 4px;
 }
@@ -141,10 +142,6 @@ html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel {
 	border-bottom: 1px solid @sapUiExtraLightBorder;
 }
 
-html[dir=rtl][data-sap-ui-browser="ie8"] .sapUiUx3ExactLstCollapsed > .sapUiUx3ExactLstHead > .sapUiUx3ExactLstHeadTxt {
-	left: -4px; /*should be right -> swapped with right by RTL transformation*/
-}
-
 /* Content */
 .sapUiUx3ExactLstTop > .sapUiUx3ExactLstCntnt {
 	border: 0px solid transparent;
@@ -154,7 +151,7 @@ html[dir=rtl][data-sap-ui-browser="ie8"] .sapUiUx3ExactLstCollapsed > .sapUiUx3E
 }
 
 /* Resize */
-.sapUiUx3ExactLstRSz.sapUiUx3ExactLstRSzDrag, 
+.sapUiUx3ExactLstRSz.sapUiUx3ExactLstRSzDrag,
 .sapUiUx3ExactLstRSz:hover {
 	background-image: url("img/exact/resize.gif");
 	background-position: center;

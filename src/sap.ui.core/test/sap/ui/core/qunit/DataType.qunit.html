@@ -1,291 +1,459 @@
 <!DOCTYPE HTML>
-
-<!-- 
+<!--
   Tested class: sap.ui.base.DataType
-  Author: d046314
 -->
-
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>DataType (sap.ui.base) - QUnit Test</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.core">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script>
 
-	<!-- Initialization -->
-	<script language="javascript">
-		jQuery.sap.require("sap.ui.base.DataType");
-	</script>
-	
-	<!-- Control initialization -->
-	<script language="javascript">
-	</script>
-	
-	<!-- Test functions -->
-	<script language="javascript">
+		QUnit.config.autostart = false;
 
-		qutils.delayTestStart();
+		sap.ui.require(['sap/ui/base/DataType'], function(DataType) {
 
-		module("Basic");
+			var PUBLIC_PRIMITIVE_TYPES = ["any", "boolean", "int", "float", "string", "object"];
 
-		test("primitive types exist", function() {
-			var _float = sap.ui.base.DataType.getType("float");
-			var _string = sap.ui.base.DataType.getType("string");
-			ok(!!_float, "type 'float' exists");
-			ok(!!_string, "type 'string' exists");
-		});
+			QUnit.module("Basic");
 
-		test("array types exist", function() {
-			var _boolean = sap.ui.base.DataType.getType("boolean[]");
-			var _float = sap.ui.base.DataType.getType("float[]");
-			ok(!!_boolean, "type 'boolean[]' exists");
-			ok(!!_float, "type 'float[]' exists");
-		});
-
-		test("type boolean", function() {
-			var _boolean = sap.ui.base.DataType.getType("boolean");
-			ok(!!_boolean, "type 'boolean' exists");
-			ok(_boolean instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(_boolean.getName(), "boolean", "type name");
-			equal(_boolean.getDefaultValue(), false, "default value");
-			equal(_boolean.getBaseType(), undefined, "base type is undefined");
-			equal(_boolean.getPrimitiveType().getName(), "boolean", "primitive type is boolean");
-
-			equal(_boolean.isValid(false), true, "accepted value 1");
-			equal(_boolean.isValid(true), true, "accepted value 2");
-			equal(_boolean.isValid("yes"), false, "not accepted value 1");
-			equal(_boolean.isValid(0), false, "not accepted value 2");
-		});
-
-		test("type int", function() {
-			var _int = sap.ui.base.DataType.getType("int");
-			ok(!!_int, "type 'int' exists");
-			ok(_int instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(_int.getName(), 'int', "type name");
-			equal(_int.getDefaultValue(), 0, "default value");
-			equal(_int.getBaseType(), undefined, "base type is undefined");
-			equal(_int.getPrimitiveType().getName(), "int", "primitive type is int");
-
-			equal(_int.isValid(0), true, "accepted value 0");
-			equal(_int.isValid(-42), true, "accepted value -42");
-			equal(_int.isValid('0'), false, "int.isValid('0')");
-			equal(_int.isValid(0.5), false, "int.isValid(0.5)");
-		});
-
-		test("type object", function() {
-			var _object = sap.ui.base.DataType.getType("object");
-			ok(!!_object, "type 'object' exists");
-			ok(_object instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(_object.getName(), 'object', "type name");
-			equal(_object.getDefaultValue(), null, "default value");
-			equal(_object.getBaseType(), undefined, "base type is undefined");
-			equal(_object.getPrimitiveType().getName(), "object", "primitive type is object");
-
-			equal(_object.isValid({}), true, "accepted value {}");
-			equal(_object.isValid([]), true, "accepted value []");
-			equal(_object.isValid(function(){}), true, "accepted value function(){}");
-			equal(_object.isValid(String), true, "accepted value String");
-			equal(_object.isValid(document), true, "accepted value document");
-			equal(_object.isValid(null), true, "accepted value null");
-			equal(_object.isValid(new Object()), true, "accepted value new Object()");
-			equal(_object.isValid(undefined), false, "not accepted value undefined");
-			equal(_object.isValid("abc"), false, "not accepted value \"abc\"");
-			equal(_object.isValid(123), false, "not accepted value 123");
-		});
-
-		test("type int[]", function() {
-			var _int = sap.ui.base.DataType.getType("int[]");
-			ok(!!_int, "type 'int[]' exists");
-			ok(_int instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(_int.getName(), 'int[]', "type name");
-			equal(_int.getDefaultValue(), null, "default value");
-			equal(_int.getBaseType().getName(), "array", "base type is array");
-			equal(_int.getPrimitiveType().getName(), "array", "primitive type is array");
-			equal(_int.getComponentType().getName(), "int", "primitive type is int");
-
-			equal(_int.isValid([1,2,3]), true, "accepted value [1,2,3]");
-			equal(_int.isValid([]), true, "accepted value []");
-			equal(_int.isValid([1,2,"3"]), false, "not accepted value [1,2,\"3\"]");
-			equal(_int.isValid([1,0.2,3]), false, "not accepted value [1,0.2,3]");
-			equal(_int.isValid(0), false, "not accepted value 0");
-			equal(_int.isValid("test"), false, "not accepted value \"test\"");
-		});
-
-		test("type string[]", function() {
-			var _string = sap.ui.base.DataType.getType("string[]");
-			ok(!!_string, "type 'string[]' exists");
-			ok(_string instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(_string.getName(), 'string[]', "type name");
-			equal(_string.getDefaultValue(), null, "default value");
-			equal(_string.getBaseType().getName(), "array", "base type is array");
-			equal(_string.getPrimitiveType().getName(), "array", "primitive type is array");
-			equal(_string.getComponentType().getName(), "string", "primitive type is string");
-
-			equal(_string.isValid(["a","b","c"]), true, "accepted value [\"a\",\"b\",\"c\"]");
-			equal(_string.isValid([]), true, "accepted value []");
-			equal(_string.isValid([true,"b","c"]), false, "not accepted value [true,\"b\",\"c\"]");
-			equal(_string.isValid(0), false, "not accepted value 0");
-			equal(_string.isValid("test"), false, "not accepted value \"test\"");
-		});
-
-		test("type ID", function() {
-			var type = sap.ui.base.DataType.getType("sap.ui.core.ID");
-			ok(!!type, "type 'sap.ui.core.ID' exists");
-			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(type.getName(), 'sap.ui.core.ID', "type name");
-			equal(type.getDefaultValue(), "", "default value");
-			equal(type.getBaseType().getName(), "string", "base type is string");
-			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
-
-			equal(type.isValid("a"), true, "accepted value a");
-			equal(type.isValid("someid"), true, "accepted value someid");
-			equal(type.isValid("Z0_-:."), true, "accepted value z0_-:.");
-			equal(type.isValid("123"), false, "not accepted 123");
-			equal(type.isValid("#$%^"), false, "not accepted #$%^");
-			equal(type.isValid("-abc"), false, "not accepted -abc");
-			equal(type.isValid("__abc"), true, "accepted __abc");
-			equal(type.isValid(""), false, "not accepted empty string");
-			equal(type.isValid(" id"), false, "a partial match should not be valid");
-			equal(type.isValid("id id"), false, "a partial match should not be valid");
-			equal(type.isValid("id "), false, "a partial match should not be valid");
-		});
-
-		test("type CSSSize", function() {
-			var type = sap.ui.base.DataType.getType("sap.ui.core.CSSSize");
-			ok(!!type, "type 'sap.ui.core.CSSSize' exists");
-			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(type.getName(), 'sap.ui.core.CSSSize', "type name");
-			equal(type.getDefaultValue(), "", "default value");
-			equal(type.getBaseType().getName(), "string", "base type is string");
-			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
-
-			equal(type.isValid("0"), true, "accepted value 0");
-			equal(type.isValid("10px"), true, "accepted value 10px");
-			equal(type.isValid("-22pt"), true, "accepted value -22pt");
-			equal(type.isValid("1"), false, "value other than 0 without unit must not be accepted");
-			equal(type.isValid(42), false, "number value must not be accepted");
-			equal(type.isValid({}), false, "object value must not be accepted");
-			equal(type.isValid(""), true, "empty string must be valid");
-			equal(type.isValid(" 20px"), false, "a partial match must not be valid");
-			equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
-			equal(type.isValid("100% "), false, "a partial match must not be valid");
-		});
-
-		test("type CSSSize[]", function() {
-			var type = sap.ui.base.DataType.getType("sap.ui.core.CSSSize[]");
-			ok(!!type, "type 'sap.ui.core.CSSSize[]' exists");
-			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(type.getName(), 'sap.ui.core.CSSSize[]', "type name");
-			equal(type.getDefaultValue(), null, "default value");
-			equal(type.getBaseType().getName(), "array", "base type is array");
-			equal(type.getPrimitiveType().getName(), "array", "primitive type is array");
-			equal(type.getComponentType().getName(), "sap.ui.core.CSSSize", "primitive type is CSSSize");
-
-			equal(type.isValid(["0"]), true, "accepted value 0");
-			equal(type.isValid(["10px","20px"]), true, "accepted value 10px,20px");
-			equal(type.isValid(["-22pt","10%","50px"]), true, "accepted value -22pt,10%,50px");
-			equal(type.isValid("1"), false, "isValid('1')");
-			equal(type.isValid([42]), false, "isValid([42])");
-		});
-
-		test("type CSSSizeShortHand", function(){
-			var type = sap.ui.base.DataType.getType("sap.ui.core.CSSSizeShortHand");
-			ok(!!type, "type 'sap.ui.core.CSSSizeShortHand' exists");
-			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(type.getBaseType().getName(), "string", "base type is string");
-			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
-
-			equal(type.isValid("0"), true, "single 0 allowed");
-			equal(type.isValid("0px"), true, "0 with unit allowed");
-			equal(type.isValid("0 1px 1px 1px"), true, "0 1px 1px 1px allowed");
-			equal(type.isValid("1px 0 1px 1px"), true, "1px 0 1px 1px allowed");
-			equal(type.isValid("0 0 0 0"), true, "0 0 0 0 allowed");
-			
-			equal(type.isValid("1px"), true, "1px allowed");
-			equal(type.isValid("1em 1ex"), true, "2 values allowed");
-			equal(type.isValid("1% 1in 1cm"), true, "3 values allowed");
-			equal(type.isValid("1mm 1pt 1pc 1px"), true, "4 values allowed");
-			equal(type.isValid("1px1px"), false, "values without space NOT allowed");
-			
-			equal(type.isValid("auto"), true, "'auto' allowed");
-			equal(type.isValid("auto 1px -1px 1px"), true, "4 values with 'auto' at begin and -1px allowed");
-			equal(type.isValid("-auto 1px -1px 1px"), false, "4 values with '-auto' NOT allowed");
-			equal(type.isValid("1px auto 1px 1px"), true, "4 values with 'auto' in the middle");
-			equal(type.isValid("1px -1px -auto 1px"), false, "4 values with '-auto' in the midle and -1px NOT allowed");
-			equal(type.isValid("auto auto auto auto"), true, "4 times 'auto' allowed");
-			
-			equal(type.isValid("inherit"), true, "inherit allowed");
-			equal(type.isValid("inherit inherit"), false, "inherit only once allowed");
-			equal(type.isValid("1px 1px inherit 1px"), false, "inherit NOT allowed with other valid values");
-		});
-
-		test("Normalizer", function() {
-			var _uri = sap.ui.base.DataType.getType("sap.ui.core.URI");
-			var _string = sap.ui.base.DataType.getType("string");
-			ok(!!_uri, "type 'URI' exists");
-			ok(!_uri._fnNormalizer, "no normalizer is set");
-			equal(_uri.isValid("http://www.sap.com"), true, "the given url is valid for the URI type");
-			equal(_uri.normalize("http://www.sap.com"), "http://www.sap.com", "the url is not formatted");
-			_uri.setNormalizer(function(sValue) {
-				return "/proxy/http/" + sValue.substr(7);
+			QUnit.test("constructor", function(assert) {
+				assert.equal(typeof DataType, 'function', "DataType must be a function to allow instanceof operator");
+				assert['throws'](function() {
+					new DataType();
+				}, Error, "DataType constructor must not be called and throws exception");
 			});
-			ok(!!_uri._fnNormalizer, "normalizer is set");
-			equal(_uri.normalize("http://www.sap.com"), "/proxy/http/www.sap.com", "the url is not formatted");
-			equal(_string.normalize("test"), "test", "the formatter is not applied for other types");
-		});
 
-		test("enum type sap.ui.core.TextAlign", function() {
-			var type = sap.ui.base.DataType.getType("sap.ui.core.TextAlign");
-			ok(!!type, "type 'sap.ui.core.TextAlign' exists");
-			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(type.getName(), 'sap.ui.core.TextAlign', "type name");
-			equal(type.getDefaultValue(), "Begin", "default value");
-			equal(type.getBaseType().getName(), "string", "base type is string");
-			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+			QUnit.test("primitive types", function(assert) {
 
-			jQuery.each(sap.ui.core.TextAlign, function(i,v) {
-				equal(type.isValid(v), true, "accepts value " + v);
-				equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+				PUBLIC_PRIMITIVE_TYPES.forEach(function(type) {
+					var typeObject = DataType.getType(type);
+					assert.ok(typeObject, "primitive type '" + type + "' exists");
+					assert.strictEqual(typeObject.getBaseType(), undefined, "primitive types should have no base type");
+					assert.strictEqual(typeObject.getPrimitiveType(), typeObject, "primitive types should return themeselves as their primitive type");
+					assert.strictEqual(typeObject.getName(), type, "type object should have the correct name");
+					assert.strictEqual(typeObject.isArrayType(), false, "type must not be marked as array type");
+				});
+
 			});
-			equal(type.isValid("something"), false, "should not accept 'something'");
-			ok(sap.ui.base.DataType.getType("sap.ui.core.TextAlign") === type, "multiple calls should return same type object");
-		});
 
-		test("enum type sap.ui.core.Popup.Dock", function() {
-			jQuery.sap.require("sap.ui.core.Popup");
-			var type = sap.ui.base.DataType.getType("sap.ui.core.Popup.Dock");
-			ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");
-			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
-			equal(type.getName(), 'sap.ui.core.Popup.Dock', "type name");
-			equal(type.getDefaultValue(), "begin top", "default value");
-			equal(type.getBaseType().getName(), "string", "base type is string");
-			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+			QUnit.test("array types", function(assert) {
 
-			jQuery.each(sap.ui.core.Popup.Dock, function(i,v) {
-				equal(type.isValid(v), true, "'" + v + "' should be a valid value");
-				equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+				assert.equal(DataType.getType("array"), undefined, "generic type 'array' should be hidden from 'getType' API");
+
+				PUBLIC_PRIMITIVE_TYPES.forEach(function(type) {
+					var typeObject = DataType.getType(type);
+					var arrayTypeObject = DataType.getType(type + '[]');
+					assert.ok(arrayTypeObject, "type '" + type + "[]' exists");
+					assert.strictEqual(arrayTypeObject.getComponentType(), typeObject, "component type should be the expected type");
+					assert.ok(
+						arrayTypeObject.getBaseType() instanceof DataType && arrayTypeObject.getBaseType().getName() === 'array',
+						"array types should have 'array' as base type");
+					assert.strictEqual(arrayTypeObject.getName(), type + '[]', "type object should have the correct name");
+					assert.strictEqual(arrayTypeObject.isArrayType(), true, "type should be marked as array type");
+				});
+
 			});
-			equal(type.isValid("something"), false, "should not accept 'something'");
-			// TODO parsing of illegal values?
-			ok(sap.ui.base.DataType.getType("sap.ui.core.Popup.Dock") === type, "multiple calls should return same type object");
+
+			QUnit.test("multi-dim array types", function(assert) {
+				var arrayType = DataType.getType('int[]');
+				var twoDimArrayType = DataType.getType('int[][]');
+				var multiDimArrayType = DataType.getType('int[][][][][]');
+
+				assert.ok(twoDimArrayType, "a 2-dim int array type can be retrieved");
+				assert.equal(twoDimArrayType.getComponentType(), arrayType, "component type should be the 1-dim int array");
+				assert.ok(twoDimArrayType.isValid([[1], [2,3], []]), "2-dim int array should be accepted");
+
+				assert.ok(multiDimArrayType, "a 5-dim int array type can be retrieved");
+				assert.ok(multiDimArrayType.isValid([[[[[1], [2,3], []]]], [[[]]], []]), "5-dim int array should be accepted");
+
+			});
+
+			QUnit.test("non-existing type", function(assert) {
+				var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+				var oErrorSpy = this.spy(jQuery.sap.log, "error");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+				// check precondition
+				assert.equal(typeof nonExistingType, "undefined", "[precondition] There should be no global var 'nonExistingType'");
+
+				assert.strictEqual(DataType.getType("nonExistingType"), undefined, "for a non-existing type, undefined is returned");
+				assert.ok(oErrorSpy.calledWith(sinon.match(/data type/).and(sinon.match(/could not be found/))), "access to non-existing type should produce an error message in the log");
+				assert.ok(!oWarningSpy.called, "no warnings should be produced");
+			});
+
+			QUnit.test("invalid type", function(assert) {
+				var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+				var oErrorSpy = this.spy(jQuery.sap.log, "error");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+				// check precondition
+				assert.ok(!!sap.ui.core.Core && !jQuery.isPlainObject(sap.ui.core.Core), "[precondition] Object with name sap.ui.core.Core exists and is not a plain object");
+
+
+				assert.strictEqual(DataType.getType("sap.ui.core.Core"), DataType.getType("any"), "access to an invalid type should fallback to type 'any'");
+				assert.ok(oWarningSpy.calledWith(sinon.match(/not a valid data type/)), "access to an invalid type should produce a warning message in the log");
+				assert.ok(!oErrorSpy.called, "no errors should be produced");
+			});
+
+
+			QUnit.module("Specific Types");
+
+			QUnit.test("boolean", function(assert) {
+				var _boolean = DataType.getType("boolean");
+				assert.ok(!!_boolean, "type 'boolean' exists");
+				assert.ok(_boolean instanceof DataType, "type is a DataType");
+				assert.equal(_boolean.getName(), "boolean", "type name");
+				assert.equal(_boolean.getDefaultValue(), false, "default value");
+				assert.equal(_boolean.getBaseType(), undefined, "base type is undefined");
+				assert.equal(_boolean.getPrimitiveType().getName(), "boolean", "primitive type is boolean");
+
+				assert.equal(_boolean.isValid(false), true, "accepted value 1");
+				assert.equal(_boolean.isValid(true), true, "accepted value 2");
+				assert.equal(_boolean.isValid("yes"), false, "not accepted value 1");
+				assert.equal(_boolean.isValid(0), false, "not accepted value 2");
+			});
+
+			QUnit.test("int", function(assert) {
+				var _int = DataType.getType("int");
+				assert.ok(!!_int, "type 'int' exists");
+				assert.ok(_int instanceof DataType, "type is a DataType");
+				assert.equal(_int.getName(), 'int', "type name");
+				assert.equal(_int.getDefaultValue(), 0, "default value");
+				assert.equal(_int.getBaseType(), undefined, "base type is undefined");
+				assert.equal(_int.getPrimitiveType().getName(), "int", "primitive type is int");
+
+				assert.equal(_int.isValid(0), true, "accepted value 0");
+				assert.equal(_int.isValid(-42), true, "accepted value -42");
+				assert.equal(_int.isValid('0'), false, "int.isValid('0')");
+				assert.equal(_int.isValid(0.5), false, "int.isValid(0.5)");
+			});
+
+			QUnit.test("object", function(assert) {
+				var _object = DataType.getType("object");
+				assert.ok(!!_object, "type 'object' exists");
+				assert.ok(_object instanceof DataType, "type is a DataType");
+				assert.equal(_object.getName(), 'object', "type name");
+				assert.equal(_object.getDefaultValue(), null, "default value");
+				assert.equal(_object.getBaseType(), undefined, "base type is undefined");
+				assert.equal(_object.getPrimitiveType().getName(), "object", "primitive type is object");
+
+				assert.equal(_object.isValid({}), true, "accepted value {}");
+				assert.equal(_object.isValid([]), true, "accepted value []");
+				assert.equal(_object.isValid(function(){}), true, "accepted value function(){}");
+				assert.equal(_object.isValid(String), true, "accepted value String");
+				assert.equal(_object.isValid(document), true, "accepted value document");
+				assert.equal(_object.isValid(null), true, "accepted value null");
+				assert.equal(_object.isValid(new Object()), true, "accepted value new Object()");
+				assert.equal(_object.isValid(undefined), false, "not accepted value undefined");
+				assert.equal(_object.isValid("abc"), false, "not accepted value \"abc\"");
+				assert.equal(_object.isValid(123), false, "not accepted value 123");
+			});
+
+			QUnit.test("int[]", function(assert) {
+				var _int = DataType.getType("int[]");
+				assert.ok(!!_int, "type 'int[]' exists");
+				assert.ok(_int instanceof DataType, "type is a DataType");
+				assert.equal(_int.getName(), 'int[]', "type name");
+				assert.equal(_int.getDefaultValue(), null, "default value");
+				assert.equal(_int.getBaseType().getName(), "array", "base type is array");
+				assert.equal(_int.getPrimitiveType().getName(), "array", "primitive type is array");
+				assert.equal(_int.getComponentType().getName(), "int", "primitive type is int");
+
+				assert.equal(_int.isValid([1,2,3]), true, "accepted value [1,2,3]");
+				assert.equal(_int.isValid([]), true, "accepted value []");
+				assert.equal(_int.isValid([1,2,"3"]), false, "not accepted value [1,2,\"3\"]");
+				assert.equal(_int.isValid([1,0.2,3]), false, "not accepted value [1,0.2,3]");
+				assert.equal(_int.isValid(0), false, "not accepted value 0");
+				assert.equal(_int.isValid("test"), false, "not accepted value \"test\"");
+			});
+
+			QUnit.test("string[]", function(assert) {
+				var _string = DataType.getType("string[]");
+				assert.ok(!!_string, "type 'string[]' exists");
+				assert.ok(_string instanceof DataType, "type is a DataType");
+				assert.equal(_string.getName(), 'string[]', "type name");
+				assert.equal(_string.getDefaultValue(), null, "default value");
+				assert.equal(_string.getBaseType().getName(), "array", "base type is array");
+				assert.equal(_string.getPrimitiveType().getName(), "array", "primitive type is array");
+				assert.equal(_string.getComponentType().getName(), "string", "primitive type is string");
+
+				assert.equal(_string.isValid(["a","b","c"]), true, "accepted value [\"a\",\"b\",\"c\"]");
+				assert.equal(_string.isValid([]), true, "accepted value []");
+				assert.equal(_string.isValid([true,"b","c"]), false, "not accepted value [true,\"b\",\"c\"]");
+				assert.equal(_string.isValid(0), false, "not accepted value 0");
+				assert.equal(_string.isValid("test"), false, "not accepted value \"test\"");
+			});
+
+			QUnit.test("ID", function(assert) {
+				var type = DataType.getType("sap.ui.core.ID");
+				assert.ok(!!type, "type 'sap.ui.core.ID' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.ID', "type name");
+				assert.equal(type.getDefaultValue(), "", "default value");
+				assert.equal(type.getBaseType().getName(), "string", "base type is string");
+				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+				assert.equal(type.isValid("a"), true, "accepted value a");
+				assert.equal(type.isValid("someid"), true, "accepted value someid");
+				assert.equal(type.isValid("Z0_-:."), true, "accepted value z0_-:.");
+				assert.equal(type.isValid("123"), false, "not accepted 123");
+				assert.equal(type.isValid("#$%^"), false, "not accepted #$%^");
+				assert.equal(type.isValid("-abc"), false, "not accepted -abc");
+				assert.equal(type.isValid("__abc"), true, "accepted __abc");
+				assert.equal(type.isValid(""), false, "not accepted empty string");
+				assert.equal(type.isValid(" id"), false, "a partial match should not be valid");
+				assert.equal(type.isValid("id id"), false, "a partial match should not be valid");
+				assert.equal(type.isValid("id "), false, "a partial match should not be valid");
+			});
+
+			QUnit.test("AbsoluteCSSSize", function(assert) {
+				var type = DataType.getType("sap.ui.core.AbsoluteCSSSize");
+				assert.ok(!!type, "type 'sap.ui.core.AbsoluteCSSSize' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.AbsoluteCSSSize', "type name");
+				assert.equal(type.getDefaultValue(), "", "default value");
+				assert.equal(type.getBaseType().getName(), "string", "base type is string");
+				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+				assert.equal(type.isValid("0"), true, "accepted value 0");
+				assert.equal(type.isValid("10px"), true, "accepted value 10px");
+				assert.equal(type.isValid("-22pt"), true, "accepted value -22pt");
+				assert.equal(type.isValid("100%"), false, "percentage value must not be accepted");
+				assert.equal(type.isValid("auto"), false, "special value 'auto' must not be accepted");
+				assert.equal(type.isValid("inherit"), false, "special value 'inherit' must not be accepted");
+				assert.equal(type.isValid("1"), false, "value other than 0 without unit must not be accepted");
+				assert.equal(type.isValid(42), false, "number value must not be accepted");
+				assert.equal(type.isValid({}), false, "object value must not be accepted");
+				assert.equal(type.isValid(""), true, "empty string must be valid");
+				assert.equal(type.isValid(" 20px"), false, "a partial match must not be valid");
+				assert.equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
+				assert.equal(type.isValid("100% "), false, "a partial match must not be valid");
+
+				assert.equal(type.isValid("calc(100px - 20rem)"), true, "can substract two arguments");
+				assert.equal(type.isValid("calc(100% - 20rem)"), false, "can not use percentages in calculations");
+				assert.equal(type.isValid("calc(100px - 20%)"), false, "can not use percentages in calculations");
+				assert.equal(type.isValid("calc(100rem- 20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100rem -20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100rem-20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100rem + 20rem)"), true, "can add two arguments");
+				assert.equal(type.isValid("calc(100rem+ 20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(100rem +20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(100rem+20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(10 * 20rem)"), true, "can multiply two arguments");
+				assert.equal(type.isValid("calc(10* 20rem)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(10rem *20)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(10rem*20)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(100rem / 20)"), true, "can divide two arguments");
+				assert.equal(type.isValid("calc(100rem/ 20)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(100rem /20)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(100rem/20)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(2 * -20rem / 23)"), true, "arguments dont always need units");
+				assert.equal(type.isValid("calc(2 * (-20rem / 23))"), true, "parenthesis can be used for grouping (simple)");
+				assert.equal(type.isValid("calc(((2)) * (-20rem / (((14) + 23)))"), true, "parenthesis can be used for grouping (complex, no whitespace)");
+				assert.equal(type.isValid("calc( ( ( 2 ) ) * ( -20rem / ( ( ( 14 ) + 23 ) ) )"), true, "parenthesis can be used for grouping (complex, whitespace)");
+				assert.equal(type.isValid("calc(     2 ) ) * ( -20rem / ( ( ( 14 ) + 23     )"), true, "unbalanced parenthesis are not detected by the regexp");
+				assert.equal(type.isValid("calc(100px)"), true, "a single value is valid");
+				assert.equal(type.isValid("calc(10 3rem)"), false, "an operand is mandatory between values");  // this has a valid syntax but isn't a valid expression
+				assert.equal(type.isValid("calc(10 + 3rem)"), true, "a valid calc() expression must be valid");  // this has a valid syntax but isn't a valid expression
+				assert.equal(type.isValid("calc(100px-"), false, "can't substract undefined");
+				assert.equal(type.isValid("calc(* - 100px)"), false, "arguments need to have digits");
+			});
+
+			QUnit.test("AbsoluteCSSSize[]", function(assert) {
+				var type = DataType.getType("sap.ui.core.AbsoluteCSSSize[]");
+				assert.ok(!!type, "type 'sap.ui.core.AbsoluteCSSSize[]' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.AbsoluteCSSSize[]', "type name");
+				assert.equal(type.getDefaultValue(), null, "default value");
+				assert.equal(type.getBaseType().getName(), "array", "base type is array");
+				assert.equal(type.getPrimitiveType().getName(), "array", "primitive type is array");
+				assert.equal(type.getComponentType().getName(), "sap.ui.core.AbsoluteCSSSize", "primitive type is AbsoluteCSSSize");
+
+				assert.equal(type.isValid(["0"]), true, "accepted value 0");
+				assert.equal(type.isValid(["10px","20px"]), true, "accepted value 10px,20px");
+				assert.equal(type.isValid(["-22pt","10em","50px"]), true, "accepted value with percentage: -22pt,10em,50px");
+				assert.equal(type.isValid(["-22pt","10%","50px"]), false, "not accepted value -22pt,10%,50px");
+				assert.equal(type.isValid(["-22pt","calc(10rem / 2)","50px"]), true, "calc() expressions are allowed as element values");
+				assert.equal(type.isValid(["-22pt","calc(10% / 2)","50px"]), false, "calc() expressions are not allowed when they contain percentage values");
+				assert.equal(type.isValid("1"), false, "isValid('1')");
+				assert.equal(type.isValid([42]), false, "isValid([42])");
+			});
+
+			QUnit.test("CSSSize", function(assert) {
+				var type = DataType.getType("sap.ui.core.CSSSize");
+				assert.ok(!!type, "type 'sap.ui.core.CSSSize' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.CSSSize', "type name");
+				assert.equal(type.getDefaultValue(), "", "default value");
+				assert.equal(type.getBaseType().getName(), "string", "base type is string");
+				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+				assert.equal(type.isValid("0"), true, "accepted value 0");
+				assert.equal(type.isValid("10px"), true, "accepted value 10px");
+				assert.equal(type.isValid("-22pt"), true, "accepted value -22pt");
+				assert.equal(type.isValid("1"), false, "value other than 0 without unit must not be accepted");
+				assert.equal(type.isValid(42), false, "number value must not be accepted");
+				assert.equal(type.isValid({}), false, "object value must not be accepted");
+				assert.equal(type.isValid(""), true, "empty string must be valid");
+				assert.equal(type.isValid(" 20px"), false, "a partial match must not be valid");
+				assert.equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
+				assert.equal(type.isValid("100% "), false, "a partial match must not be valid");
+
+				assert.equal(type.isValid("calc(100% - 20rem)"), true, "can substract two arguments");
+				assert.equal(type.isValid("calc(100%- 20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100% -20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100%-20rem)"), false, "whitespace is mandatory around '-' operator");
+				assert.equal(type.isValid("calc(100% + 20rem)"), true, "can add two arguments");
+				assert.equal(type.isValid("calc(100%+ 20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(100% +20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(100%+20rem)"), false, "whitespace is mandatory around '+' operator");
+				assert.equal(type.isValid("calc(10 * 20rem)"), true, "can multiply two arguments");
+				assert.equal(type.isValid("calc(10* 20rem)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(100% *2)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(100%*2)"), true, "whitespace is optional around '*' operator");
+				assert.equal(type.isValid("calc(100% / 2)"), true, "can divide two arguments");
+				assert.equal(type.isValid("calc(100%/ 2)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(100% /2)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(100%/2)"), true, "whitespace is optional around '/' operator");
+				assert.equal(type.isValid("calc(2 * -20rem / 23)"), true, "arguments dont always need units");
+				assert.equal(type.isValid("calc(2 * (-20rem / 23))"), true, "parenthesis can be used for grouping (simple)");
+				assert.equal(type.isValid("calc(((2)) * (-20rem / (((14) + 23)))"), true, "parenthesis can be used for grouping (complex, no whitespace)");
+				assert.equal(type.isValid("calc( ( ( 2 ) ) * ( -20rem / ( ( ( 14 ) + 23 ) ) )"), true, "parenthesis can be used for grouping (complex, whitespace)");
+				assert.equal(type.isValid("calc(     2 ) ) * ( -20rem / ( ( ( 14 ) + 23     )"), true, "unbalanced parenthesis are not detected by the regexp");
+				assert.equal(type.isValid("calc(100%)"), true, "a single value is valid");
+				assert.equal(type.isValid("calc(10 3rem)"), false, "an operand is mandatory between values");  // this has a valid syntax but isn't a valid expression
+				assert.equal(type.isValid("calc(10 + 3rem)"), true, "a valid calc() expression must be valid");  // this has a valid syntax but isn't a valid expression
+				assert.equal(type.isValid("calc(100%-"), false, "can't substract undefined");
+				assert.equal(type.isValid("calc(* - 100%)"), false, "arguments need to have digits");
+			});
+
+			QUnit.test("CSSSize[]", function(assert) {
+				var type = DataType.getType("sap.ui.core.CSSSize[]");
+				assert.ok(!!type, "type 'sap.ui.core.CSSSize[]' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.CSSSize[]', "type name");
+				assert.equal(type.getDefaultValue(), null, "default value");
+				assert.equal(type.getBaseType().getName(), "array", "base type is array");
+				assert.equal(type.getPrimitiveType().getName(), "array", "primitive type is array");
+				assert.equal(type.getComponentType().getName(), "sap.ui.core.CSSSize", "primitive type is CSSSize");
+
+				assert.equal(type.isValid(["0"]), true, "accepted value 0");
+				assert.equal(type.isValid(["10px","20px"]), true, "accepted value 10px,20px");
+				assert.equal(type.isValid(["-22pt","10%","50px"]), true, "accepted value -22pt,10%,50px");
+				assert.equal(type.isValid(["-22pt","calc(10% / 2)","50px"]), true, "calc() expressions are allowed as element values");
+				assert.equal(type.isValid("1"), false, "isValid('1')");
+				assert.equal(type.isValid([42]), false, "isValid([42])");
+			});
+
+			QUnit.test("CSSSizeShortHand", function(assert) {
+				var type = DataType.getType("sap.ui.core.CSSSizeShortHand");
+				assert.ok(!!type, "type 'sap.ui.core.CSSSizeShortHand' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getBaseType().getName(), "string", "base type is string");
+				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+				assert.equal(type.isValid("0"), true, "single 0 allowed");
+				assert.equal(type.isValid("0px"), true, "0 with unit allowed");
+				assert.equal(type.isValid("0 1px 1px 1px"), true, "0 1px 1px 1px allowed");
+				assert.equal(type.isValid("1px 0 1px 1px"), true, "1px 0 1px 1px allowed");
+				assert.equal(type.isValid("0 0 0 0"), true, "0 0 0 0 allowed");
+
+				assert.equal(type.isValid("1px"), true, "1px allowed");
+				assert.equal(type.isValid("1em 1ex"), true, "2 values allowed");
+				assert.equal(type.isValid("1% 1in 1cm"), true, "3 values allowed");
+				assert.equal(type.isValid("1mm 1pt 1pc 1px"), true, "4 values allowed");
+				assert.equal(type.isValid("1px1px"), false, "values without space NOT allowed");
+
+				assert.equal(type.isValid("auto"), true, "'auto' allowed");
+				assert.equal(type.isValid("auto 1px -1px 1px"), true, "4 values with 'auto' at begin and -1px allowed");
+				assert.equal(type.isValid("-auto 1px -1px 1px"), false, "4 values with '-auto' NOT allowed");
+				assert.equal(type.isValid("1px auto 1px 1px"), true, "4 values with 'auto' in the middle");
+				assert.equal(type.isValid("1px -1px -auto 1px"), false, "4 values with '-auto' in the midle and -1px NOT allowed");
+				assert.equal(type.isValid("auto auto auto auto"), true, "4 times 'auto' allowed");
+
+				assert.equal(type.isValid("inherit"), true, "inherit allowed");
+				assert.equal(type.isValid("inherit inherit"), false, "inherit only once allowed");
+				assert.equal(type.isValid("1px 1px inherit 1px"), false, "inherit NOT allowed with other valid values");
+			});
+
+			QUnit.test("enum sap.ui.core.TextAlign", function(assert) {
+				var type = DataType.getType("sap.ui.core.TextAlign");
+				assert.ok(!!type, "type 'sap.ui.core.TextAlign' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.TextAlign', "type name");
+				assert.equal(type.getDefaultValue(), "Begin", "default value");
+				assert.equal(type.getBaseType().getName(), "string", "base type is string");
+				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+				jQuery.each(sap.ui.core.TextAlign, function(i,v) {
+					assert.equal(type.isValid(v), true, "accepts value " + v);
+					assert.equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+				});
+				assert.equal(type.isValid("something"), false, "should not accept 'something'");
+				assert.ok(DataType.getType("sap.ui.core.TextAlign") === type, "multiple calls should return same type object");
+			});
+
+			QUnit.test("enum sap.ui.core.Popup.Dock", function(assert) {
+				jQuery.sap.require("sap.ui.core.Popup");
+				var type = DataType.getType("sap.ui.core.Popup.Dock");
+				assert.ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");
+				assert.ok(type instanceof DataType, "type is a DataType");
+				assert.equal(type.getName(), 'sap.ui.core.Popup.Dock', "type name");
+				assert.equal(type.getDefaultValue(), "begin top", "default value");
+				assert.equal(type.getBaseType().getName(), "string", "base type is string");
+				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+				jQuery.each(sap.ui.core.Popup.Dock, function(i,v) {
+					assert.equal(type.isValid(v), true, "'" + v + "' should be a valid value");
+					assert.equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+				});
+				assert.equal(type.isValid("something"), false, "should not accept 'something'");
+				// TODO parsing of illegal values?
+				assert.ok(DataType.getType("sap.ui.core.Popup.Dock") === type, "multiple calls should return same type object");
+			});
+
+
+			QUnit.module("Normalizer");
+
+			QUnit.test("basics", function(assert) {
+				var _uri = DataType.getType("sap.ui.core.URI");
+				var _string = DataType.getType("string");
+
+				// preconditon for the test
+				assert.ok(!!_uri, "[precondition] type 'URI' should exist");
+
+				assert.ok(!_uri._fnNormalizer, "no normalizer should be set");
+				assert.equal(_uri.isValid("http://www.sap.com"), true, "the given url should be valid for the URI type");
+				assert.equal(_uri.normalize("http://www.sap.com"), "http://www.sap.com", "the url must not be normalized");
+				_uri.setNormalizer(function(sValue) {
+					return "/proxy/http/" + sValue.substr(7);
+				});
+				assert.ok(!!_uri._fnNormalizer, "normalizer should be set");
+				assert.equal(_uri.normalize("http://www.sap.com"), "/proxy/http/www.sap.com", "the url should be normalized");
+				assert.equal(_string.normalize("test"), "test", "the normalizer must not be applied for other types");
+			});
+
+			QUnit.start();
 		});
-		
+
 	</script>
 
 </head>
 <body>
-	<h1 id="qunit-header">QUnit tests: sap.ui.base.DataType</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
+	<div id="qunit"></div>
 </body>
 </html>

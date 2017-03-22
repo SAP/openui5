@@ -6,7 +6,7 @@
   <copyright>${copyright}</copyright>
   <version>${version}</version>
 
-  <documentation>SAPUI5 library with controls specialized for mobile devices.</documentation>
+  <documentation>The main UI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers.</documentation>
 
   <dependencies>
     <dependency>
@@ -34,7 +34,7 @@
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
         <component>
-            <name>CA-UI5-BS-FCP</name>
+            <name>CA-UI5-CTR-BAL</name>
             <modules>
                 <module>sap/m/FacetFilter</module>
             </modules>
@@ -45,15 +45,69 @@
                 <module>sap/m/FeedInput</module>
                 <module>sap/m/FeedListItem</module>
                 <module>sap/m/UploadCollection</module>
+                <module>sap/m/SlideTile</module>
+                <module>sap/m/GenericTile</module>
+                <module>sap/m/TileContent</module>
+                <module>sap/m/FeedContent</module>
+                <module>sap/m/NewsContent</module>
+                <module>sap/m/NumericContent</module>
+                <module>sap/m/ImageContent</module>
+                <module>sap/m/HeaderContainer</module>
+                <module>sap/m/GenericTileMode</module>
+                <module>sap/m/GenericTileScope</module>
+                <module>sap/m/Size</module>
+                <module>sap/m/ValueColor</module>
+                <module>sap/m/ValueCSSColor</module>
+                <module>sap/m/FrameType</module>
+                <module>sap/m/UploadCollectionItem</module>
+                <module>sap/m/UploadCollectionParameter</module>
+                <module>sap/m/LoadState</module>
+                <module>sap/m/SelectionDetails</module>
+                <module>sap/m/SelectionDetailsItem</module>
+                <module>sap/m/SelectionDetailsLine</module>
             </modules>
         </component>
         <component>
-            <name>CA-UI5-DOC</name>
+            <name>CA-UI5-FST</name>
             <modules>
                 <module>sap/m/tutorial/Walkthrough</module>
                 <module>sap/m/tutorial/Testing-BulletinBoard</module>
                 <module>sap/m/tutorial/MasterDetail-DisplayOrders</module>
                 <module>sap/m/tutorial/Worklist-ManageProductStock</module>
+            </modules>
+        </component>
+         <component>
+            <name>CA-UI5-CMP</name>
+            <modules>
+                <module>sap/m/P13nDialog</module>
+                <module>sap/m/P13nColumnsPanel</module>
+                <module>sap/m/P13nFilterPanel</module>
+                <module>sap/m/P13nGroupPanel</module>
+                <module>sap/m/P13nSortPanel</module>
+            </modules>
+        </component>
+        <component>
+            <name>CA-UI5-TBL</name>
+            <modules>
+                <module>sap/m/ListBase</module>
+                <module>sap/m/List</module>
+                <module>sap/m/Tree</module>
+                <module>sap/m/Table</module>
+                <module>sap/m/ListItemBase</module>
+                <module>sap/m/DisplayListItem</module>
+                <module>sap/m/GroupHeaderListItem</module>
+                <module>sap/m/InputListItem</module>
+                <module>sap/m/StandardListItem</module>
+                <module>sap/m/CustomListItem</module>
+                <module>sap/m/CustomTreeItem</module>
+                <module>sap/m/GrowingList</module>
+                <module>sap/m/Column</module>
+                <module>sap/m/ColumnListItem</module>
+                <module>sap/m/FlexBox</module>
+                <module>sap/m/FlexItemData</module>
+                <module>sap/m/HBox</module>
+                <module>sap/m/VBox</module>
+                <module>sap/m/Title</module>
             </modules>
         </component>
     </ownership>

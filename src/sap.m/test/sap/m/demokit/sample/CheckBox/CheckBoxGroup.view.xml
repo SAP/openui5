@@ -1,5 +1,6 @@
 <mvc:View
 	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<VBox>
@@ -8,5 +9,33 @@
 		<CheckBox text="Option c" selected="true" />
 		<CheckBox text="Option d" />
 		<CheckBox text="Option e" enabled="false" />
+		<CheckBox text="Warning" valueState="Warning" />
+		<CheckBox text="Warning disabled" valueState="Warning" enabled="false" selected="true" />
+		<CheckBox text="Error" valueState="Error" />
+		<CheckBox text="Error disabled" valueState="Error" enabled="false" selected="true" />
 	</VBox>
+	<f:SimpleForm
+		editable="true"
+		layout="ResponsiveGridLayout"
+		labelSpanL="4"
+		labelSpanM="4">
+		<f:content>
+			<Label text="Clearing with Customer" />
+			<CheckBox text="Option" />
+			<CheckBox text="Option 2" selected="true">
+				<layoutData>
+					<l:GridData linebreak="true"
+						indentL="4"
+						indentM="4" />
+				</layoutData>
+			</CheckBox>
+			<CheckBox id="focusMe" text="Option 3">
+				<layoutData>
+					<l:GridData linebreak="true"
+						indentL="4"
+						indentM="4" />
+				</layoutData>
+			</CheckBox>
+		</f:content>
+	</f:SimpleForm>
 </mvc:View>

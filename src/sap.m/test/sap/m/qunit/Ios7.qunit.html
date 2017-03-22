@@ -1,30 +1,29 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.Ios7</title>
 
-		<script id="sap-ui-bootstrap" 
-			type="text/javascript"
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
+		<script>
 			sinon.config.useFakeTimers = true;
 		</script>
 
-		<script language="javascript">
+		<script>
 			function stubIos7 (oSinonSandbox) {
 				oSinonSandbox.stub(sap.ui.Device, "os", { ios : true, version : 7 });
 				oSinonSandbox.stub(sap.ui.Device.system, "phone", true);
@@ -78,43 +77,43 @@
 
 				jQuery.sap.require("sap.m.ios7");
 
-				module("initialization");
+				QUnit.module("initialization");
 
-				test("Should do nothing when not in ios 7", function () {
+				QUnit.test("Should do nothing when not in ios 7", function (assert) {
 					//System under Test + Act
 					var sut = new sap.m._Ios7();
 
-					strictEqual(sut._bIntervallAttached, undefined, "the interval property was not initialized");
-					strictEqual(sut._bInputIsOpen, undefined, "the keyboard property was not initialized");
-					strictEqual(sut._bNavigationBarEventFired, undefined, "the navBar property was not initialized");
+					assert.strictEqual(sut._bIntervallAttached, undefined, "the interval property was not initialized");
+					assert.strictEqual(sut._bInputIsOpen, undefined, "the keyboard property was not initialized");
+					assert.strictEqual(sut._bNavigationBarEventFired, undefined, "the navBar property was not initialized");
 
 					//Cleanup
 					sut.destroy();
 				});
 
-				test("Should have initialized the class", function() {
+				QUnit.test("Should have initialized the class", function(assert) {
 					stubIos7(this);
 
 					//System under Test + Act
 					var sut = new sap.m._Ios7();
 
 					//Assert
-					strictEqual(sut._bIntervallAttached, false, "the interval property was initialized");
-					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
-					strictEqual(sut._bNavigationBarEventFired, false, "the navBar property was initialized");
-					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was initialized");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+					assert.strictEqual(sut._bNavigationBarEventFired, false, "the navBar property was initialized");
+					assert.strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
 
 					//Cleanup
 					sut.destroy();
 				});
 
-				module("events", {
-					setup : function() {
+				QUnit.module("events", {
+					beforeEach : function() {
 						simulateKeyboardClose();
 					}
 				});
 
-				test("Should handle portrait orientation change", function() {
+				QUnit.test("Should handle portrait orientation change", function(assert) {
 					stubIos7(this);
 					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
 					var oDetachSpy = this.spy(sap.m._Ios7.prototype, "_detachNavigationBarPolling");
@@ -129,16 +128,16 @@
 					//Act
 					simulateOrietationChange(this, false);
 
-					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
-					strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
-					strictEqual(oDetachSpy.callCount, 1, "polling was detached, since we are in portrait");
-					strictEqual(oAttachSpy.callCount, 0, "polling not attached, since we are in portrait");
+					assert.strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					assert.strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
+					assert.strictEqual(oDetachSpy.callCount, 1, "polling was detached, since we are in portrait");
+					assert.strictEqual(oAttachSpy.callCount, 0, "polling not attached, since we are in portrait");
 
 					//Cleanup
 					sut.destroy();
 				});
 
-				test("Should handle landscape orientation change without keyboard open", function() {
+				QUnit.test("Should handle landscape orientation change without keyboard open", function(assert) {
 					//Arrange
 					stubIos7(this);
 					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
@@ -153,16 +152,16 @@
 					//Act
 					simulateOrietationChange(this, true);
 
-					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
-					strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
-					strictEqual(oDetachSpy.callCount, 0, "polling was not detached, since we are in landscape");
-					strictEqual(oAttachSpy.callCount, 1, "polling was attached, since we are in landscape and the keyboard was closed");
+					assert.strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					assert.strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
+					assert.strictEqual(oDetachSpy.callCount, 0, "polling was not detached, since we are in landscape");
+					assert.strictEqual(oAttachSpy.callCount, 1, "polling was attached, since we are in landscape and the keyboard was closed");
 
 					//Cleanup
 					sut.destroy();
 				});
 
-				test("Should handle landscape orientation change with keyboard open", function() {
+				QUnit.test("Should handle landscape orientation change with keyboard open", function(assert) {
 					//Arrange
 					stubIos7(this);
 					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
@@ -181,17 +180,17 @@
 					simulateOrietationChange(this, true);
 					simulateKeyboardOpen();
 
-					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
-					strictEqual(oScrollToSpy.callCount, 2, "scroll to was called");
-					strictEqual(oDetachSpy.callCount, 2, "polling was detached, since we are in landscape and the keyboard was open");
-					strictEqual(oAttachSpy.callCount, 1, "polling was attached on orientation change");
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape and open keyboard");
+					assert.strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					assert.strictEqual(oScrollToSpy.callCount, 2, "scroll to was called");
+					assert.strictEqual(oDetachSpy.callCount, 2, "polling was detached, since we are in landscape and the keyboard was open");
+					assert.strictEqual(oAttachSpy.callCount, 1, "polling was attached on orientation change");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape and open keyboard");
 
 					//Cleanup
 					sut.destroy();
 				});
 
-				test("Should attach the intervall properly", function () {
+				QUnit.test("Should attach the intervall properly", function (assert) {
 					stubIos7(this);
 					stubOrentationChange(this);
 					simulateWindowDifference(this, 0); // no navigation bar
@@ -200,26 +199,26 @@
 					var sut = new sap.m._Ios7();
 
 					simulateKeyboardOpen();
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
 
 					simulateOrietationChange(this, true);
 					simulateKeyboardOpen();
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
 
 					simulateKeyboardClose();
-					strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
+					assert.strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
 
 					simulateKeyboardOpen();
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
 
 					simulateKeyboardClose();
-					strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
+					assert.strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
 
 					simulateOrietationChange(this, false);
-					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
+					assert.strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
 				});
 
-				test("Should fire the navigation bar event", function () {
+				QUnit.test("Should fire the navigation bar event", function (assert) {
 					//Arrange
 					stubIos7(this);
 					stubOrentationChange(this);
@@ -229,33 +228,33 @@
 					//System under Test
 					var sut = new sap.m._Ios7();
 					sut.attachEvent("navigationBarShownInLandscape", oEventSpy);
-					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
 
 					simulateKeyboardOpen();
-					strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
+					assert.strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
 					simulateOrietationChange(this, true);
-					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
 					simulateKeyboardOpen();
 					//simulate the nav bar opening
 					simulateWindowDifference(this, 100);
 					this.clock.tick(1000);
 
-					strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
-					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+					assert.strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
+					assert.strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
 
 					simulateKeyboardClose();
 					this.clock.tick(1000)
-					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
-					strictEqual(oEventSpy.callCount, 1, "event was fired");
-					strictEqual(sut.getNavigationBarHeight(), 100, "the navBar height was 100");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
+					assert.strictEqual(oEventSpy.callCount, 1, "event was fired");
+					assert.strictEqual(sut.getNavigationBarHeight(), 100, "the navBar height was 100");
 
 					simulateOrietationChange(this, false);
-					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+					assert.strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
 					//Cleanup
 					sut.destroy();
 				});
 
-				test("Should not fire the navigation bar event", function () {
+				QUnit.test("Should not fire the navigation bar event", function (assert) {
 					//Arrange
 					stubIos7Ipad(this);
 					stubOrentationChange(this);
@@ -265,23 +264,23 @@
 					//System under Test
 					var sut = new sap.m._Ios7();
 					sut.attachEvent("navigationBarShownInLandscape", oEventSpy);
-					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
 
 					simulateKeyboardOpen();
-					strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
+					assert.strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
 					simulateOrietationChange(this, true);
-					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
 					simulateKeyboardOpen();
 					//simulate the nav bar opening
 					simulateWindowDifference(this, 100);
 					this.clock.tick(1000);
 
-					strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
+					assert.strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
 
 					simulateKeyboardClose();
 					this.clock.tick(1000)
-					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
-					strictEqual(oEventSpy.callCount, 0, "event was fired");
+					assert.strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
+					assert.strictEqual(oEventSpy.callCount, 0, "event was fired");
 
 					//Cleanup
 					sut.destroy();
@@ -297,7 +296,7 @@
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
 	<div id="qunit-fixture"></div>
-	<input id="input"></input>
+	<input id="input">
 	<button id="button"></button>
 	</body>
 

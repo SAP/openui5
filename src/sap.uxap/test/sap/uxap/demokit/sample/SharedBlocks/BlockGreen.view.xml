@@ -1,0 +1,5 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:html="http://www.w3.org/1999/xhtml">
+	<html:div style="height:24em; background-color: #008000;"></html:div>
+</mvc:View>

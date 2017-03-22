@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.RadioButtonGroup,sap.ui.core.Item">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	  <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta charset="utf-8">
     <title>RadioButtonGroup - SAPUI5 Demo Kit</title>
-    <link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+    <link rel="stylesheet" href="../../../../../theme/default.css">
     <script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -17,20 +17,20 @@
 // Create a simple RadioButtonGroup with three items
 var oRBG1 = new sap.ui.commons.RadioButtonGroup({
 	tooltip : "This is a test tooltip for the first RadioButtonGroup",
-	select : function() {alert('RadioButton ' + oRBG1.getSelectedItem().getText());} 
+	select : function() {alert('RadioButton ' + oRBG1.getSelectedItem().getText());}
 	});
 var oItem = new sap.ui.core.Item({
-	text : "Option 1", 
+	text : "Option 1",
 	tooltip : "Tooltip 1",
 	key : "Key1"});
 oRBG1.addItem(oItem);
 oItem = new sap.ui.core.Item({
-	text : "Option 2", 
+	text : "Option 2",
 	tooltip : "Tooltip 2",
 	key : "Key2"});
 oRBG1.addItem(oItem);
 oItem = new sap.ui.core.Item({
-	text : "Option 3", 
+	text : "Option 3",
 	tooltip : "Tooltip 3",
 	key : "Key3"});
 oRBG1.addItem(oItem);
@@ -137,7 +137,7 @@ oLayout.placeAt("sample3");
 	in this example an alert popup is called where the popup is displaying the text of the selected radio button item, this of course also could be any other text.</p>
 	<br>
 	<div code-sample="sample1" script="SimpleRBGroup"></div>
-	<br />
+	<br>
 
 	<h3>Multi-Column-Group With Preset Radio Button</h3>
 	<p>A RadioButtonGroup can have multiple columns. In the following example, the radio buttons are created row-wise.
@@ -146,7 +146,7 @@ oLayout.placeAt("sample3");
 	<br>
 	<div code-sample="sample2" script="MultiColumnRBGroup"></div>
 
-	<br />
+	<br>
 	<h3>Properties <code>editable</code> and <code>enabled</code></h3>
 	<p>A RadioButtonGroup as a whole can be set to editable true or false. The single radio buttons can have an enabled or disabled status.</p>
 	<br>

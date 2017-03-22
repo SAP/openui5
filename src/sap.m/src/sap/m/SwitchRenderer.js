@@ -2,8 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([], function() {
 		"use strict";
 
 		/**
@@ -32,7 +31,6 @@ sap.ui.define(['jquery.sap.global'],
 				bEnabled = oSwitch.getEnabled(),
 				sName = oSwitch.getName(),
 				bAccessibilityEnabled = sap.ui.getCore().getConfiguration().getAccessibility(),
-				oRb = oSwitch.constructor._oRb,
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
 			oRm.write("<div");
@@ -98,7 +96,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (bAccessibilityEnabled) {
 				this.renderInvisibleElement(oRm, oSwitch, {
 					id: oSwitch.getInvisibleElementId(),
-					text: oRb.getText(oSwitch.getInvisibleElementText())
+					text: oSwitch.getInvisibleElementText(bState)
 				});
 			}
 
@@ -157,11 +155,6 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttribute("id", oSwitch.getId() + "-handle");
 			oRm.writeAttributeEscaped("data-sap-ui-swt", sState);
 			oRm.addClass(CSS_CLASS + "Handle");
-
-			if (sap.ui.Device.browser.webkit && Number(sap.ui.Device.browser.webkitVersion).toFixed(2) === "537.35") {
-				oRm.addClass(CSS_CLASS + "WebKit537-35");
-			}
-
 			oRm.writeClasses();
 			oRm.write("></div>");
 		};

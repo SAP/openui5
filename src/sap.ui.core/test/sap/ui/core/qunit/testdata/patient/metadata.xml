@@ -1,0 +1,61 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" Version="1.0">
+<edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="2.0">
+<Schema xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="sap.hc.hph.patient.odata">
+<EntityType Name="PatientType">
+<Key>
+<PropertyRef Name="PatientID"/>
+</Key>
+<Property Name="PatientID" Type="Edm.Binary" Nullable="false"/>
+<Property Name="SourcePatientID" Type="Edm.String" MaxLength="100"/>
+<Property Name="Source" Type="Edm.String" MaxLength="5"/>
+<Property Name="FamilyName" Type="Edm.String" MaxLength="100"/>
+<Property Name="GivenName" Type="Edm.String" MaxLength="100"/>
+<Property Name="TitleValue" Type="Edm.String" MaxLength="100"/>
+<Property Name="GenderValue" Type="Edm.String" MaxLength="100"/>
+<Property Name="BirthDate" Type="Edm.DateTime"/>
+<Property Name="DeceasedDate" Type="Edm.DateTime"/>
+<Property Name="MaritalStatusValue" Type="Edm.String" MaxLength="100"/>
+<Property Name="NationalityValue" Type="Edm.String" MaxLength="100"/>
+<Property Name="RelatedDocumentCount" Type="Edm.Int64" Nullable="false"/>
+<NavigationProperty Name="RelatedDocuments" Relationship="sap.hc.hph.patient.odata.Patient_DocumentType" FromRole="PatientPrincipal" ToRole="PatientRelatedDocumentsDependent"/>
+</EntityType>
+<EntityType Name="PatientRelatedDocumentsType">
+<Key>
+<PropertyRef Name="PatientID"/>
+<PropertyRef Name="DocumentID"/>
+</Key>
+<Property Name="PatientID" Type="Edm.Binary" Nullable="false"/>
+<Property Name="InteractionID" Type="Edm.Binary" Nullable="false"/>
+<Property Name="DocumentID" Type="Edm.Binary" Nullable="false"/>
+<Property Name="Title" Type="Edm.String" MaxLength="1024"/>
+<Property Name="Author" Type="Edm.String" MaxLength="1024"/>
+<Property Name="FileName" Type="Edm.String" MaxLength="256"/>
+<Property Name="Type" Type="Edm.String" MaxLength="128"/>
+<Property Name="TypeName" Type="Edm.String" MaxLength="128"/>
+<Property Name="MIMEType" Type="Edm.String" MaxLength="256"/>
+<Property Name="LanguageCode" Type="Edm.String" MaxLength="2"/>
+<Property Name="URLToOriginal" Type="Edm.String" MaxLength="122"/>
+</EntityType>
+<EntityType Name="SessionLanguageType">
+<Key>
+<PropertyRef Name="UserName"/>
+</Key>
+<Property Name="UserName" Type="Edm.String" Nullable="false" MaxLength="256"/>
+<Property Name="LanguageCode" Type="Edm.String" MaxLength="2"/>
+</EntityType>
+<Association Name="Patient_DocumentType">
+<End Type="sap.hc.hph.patient.odata.PatientType" Role="PatientPrincipal" Multiplicity="1"/>
+<End Type="sap.hc.hph.patient.odata.PatientRelatedDocumentsType" Role="PatientRelatedDocumentsDependent" Multiplicity="*"/>
+</Association>
+<EntityContainer Name="Patient" m:IsDefaultEntityContainer="true">
+<EntitySet Name="Patient" EntityType="sap.hc.hph.patient.odata.PatientType"/>
+<EntitySet Name="PatientRelatedDocuments" EntityType="sap.hc.hph.patient.odata.PatientRelatedDocumentsType"/>
+<EntitySet Name="SessionLanguage" EntityType="sap.hc.hph.patient.odata.SessionLanguageType"/>
+<AssociationSet Name="Patient_Document" Association="sap.hc.hph.patient.odata.Patient_DocumentType">
+<End Role="PatientPrincipal" EntitySet="Patient"/>
+<End Role="PatientRelatedDocumentsDependent" EntitySet="PatientRelatedDocuments"/>
+</AssociationSet>
+</EntityContainer>
+</Schema>
+</edmx:DataServices>
+</edmx:Edmx>

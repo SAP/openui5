@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/sap/ZUI5_EDM_TYPES">
+		<edmx:Include Namespace="com.sap.ui5.OData"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="foo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<Annotations Target="com.sap.ui5.OData.EdmTypes/Decimal">
+				<Annotation Term="Org.OData.Validation.V1.Minimum" String="0.00"/>
+				<Annotation Term="Org.OData.Validation.V1.Maximum" String="100000.00">
+					<Annotation Term="Org.OData.Validation.V1.Exclusive" Bool="true"/>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.ui5.OData.EdmTypes/DigitSequence">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence" />
+			</Annotations>
+			<Annotations Target="com.sap.ui5.OData.EdmTypes">
+				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="ID"/>
+							<PropertyValue Property="Value" Path="ID"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Boolean"/>
+							<PropertyValue Property="Value" Path="Boolean"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Byte"/>
+							<PropertyValue Property="Value" Path="Byte"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Date"/>
+							<PropertyValue Property="Value" Path="Date"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="DateTime"/>
+							<PropertyValue Property="Value" Path="DateTime"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="DateTimeOffset"/>
+							<PropertyValue Property="Value" Path="DateTimeOffset"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Decimal"/>
+							<PropertyValue Property="Value" Path="Decimal"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="DigitSequence"/>
+							<PropertyValue Property="Value" Path="DigitSequence"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Double"/>
+							<PropertyValue Property="Value" Path="Double"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Float"/>
+							<PropertyValue Property="Value" Path="Float"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="GlobalUID"/>
+							<PropertyValue Property="Value" Path="GlobalUID"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Int16"/>
+							<PropertyValue Property="Value" Path="Int16"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Int32"/>
+							<PropertyValue Property="Value" Path="Int32"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Int64"/>
+							<PropertyValue Property="Value" Path="Int64"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="SByte"/>
+							<PropertyValue Property="Value" Path="SByte"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Single"/>
+							<PropertyValue Property="Value" Path="Single"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="String"/>
+							<PropertyValue Property="Value" Path="String"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="String40"/>
+							<PropertyValue Property="Value" Path="String40"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Time"/>
+							<PropertyValue Property="Value" Path="Time"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="TimeStampLong"/>
+							<PropertyValue Property="Value" Path="TimeStampLong"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="TimeStampShort"/>
+							<PropertyValue Property="Value" Path="TimeStampShort"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,32 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form">
+	<VBox>
+		<f:SimpleForm id="SimpleFormShipAddress"
+			minWidth="1024"
+			maxContainerCols="2"
+			editable="false"
+			layout="ResponsiveGridLayout"
+			title="{i18n>detailShippingAddressTitle}"
+			labelSpanL="3"
+			labelSpanM="3"
+			emptySpanL="4"
+			emptySpanM="4"
+			columnsL="1"
+			columnsM="1" >
+			<f:content>
+				<Label text="{i18n>detailName}" />
+				<Text text="{ShipName}" />
+				<Label text="{i18n>detailShippingStreet}" />
+				<Text text="{ShipAddress}" />
+				<Label text="{i18n>detailShippingZIPCodeCity}" />
+				<Text text="{ShipPostalCode} {ShipCity}" />
+				<Label text="{i18n>detailShippingRegion}" />
+				<Text text="{ShipRegion}" />
+				<Label text="{i18n>detailShippingCountry}" />
+				<Text text="{ShipCountry}" />
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+</mvc:View>

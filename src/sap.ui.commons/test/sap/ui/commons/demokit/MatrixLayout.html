@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.layout.MatrixLayout,sap.ui.commons.layout.MatrixLayoutRow,sap.ui.commons.layout.MatrixLayoutCell">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>MatrixLayout - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -30,7 +30,7 @@ var oImage2 = new sap.ui.commons.Image({
 	alt : "alternative text for image"
 	});
 
-oLayout.createRow( oImage1, oImage2 );	
+oLayout.createRow( oImage1, oImage2 );
 
 var oImage3 = new sap.ui.commons.Image({
 	src : "http://www.sap.com/global/images/SAPLogo.gif",
@@ -42,7 +42,7 @@ var oImage4 = new sap.ui.commons.Image({
 	alt : "alternative text for image"
 	});
 
-oLayout.createRow( oImage3, oImage4 );	
+oLayout.createRow( oImage3, oImage4 );
 
 // attach it to some element in the page
 oLayout.placeAt("sample1");
@@ -256,11 +256,11 @@ var oTF2 = new sap.ui.commons.TextField({
 	value : '10',
 	width : '50px',
 	maxLength : 5 });
-	
+
 //multiple controls within one cell
 oCell = new sap.ui.commons.layout.MatrixLayoutCell();
-oCell.addContent(oTF); 
-oCell.addContent(oTF2); 
+oCell.addContent(oTF);
+oCell.addContent(oTF2);
 oMatrix.createRow(oLabel, oCell);
 
 oLabel = new sap.ui.commons.Label({
@@ -275,7 +275,7 @@ oTF = new sap.ui.commons.TextField({
 	width : '200px' });
 oLabel.setLabelFor(oTF);
 oMatrix.createRow(oLabel, oTF);
-	
+
 oLabel = new sap.ui.commons.Label({
 	id : 'L-Country',
 	text : 'Country' });
@@ -376,7 +376,7 @@ oLabel.setLabelFor(oTA);
 oCell.addContent(oTA);
 oMatrix.createRow(oLabel, oCell);
 
-var oRtt = new sap.ui.commons.RichTooltip( 
+var oRtt = new sap.ui.commons.RichTooltip(
 		'Rtt-Change',
 		{title: 'Change Button',
 		text:"If you like to change this data press this button. If not, don't press it."
@@ -423,7 +423,7 @@ var oButton1 = new sap.ui.commons.Button({
 		}
 	}
 	});
-oRtt = new sap.ui.commons.RichTooltip( 
+oRtt = new sap.ui.commons.RichTooltip(
 		'Rtt-Save',
 		{title: 'Save Button',
 		imageSrc: '../images/save-icon.png',
@@ -466,7 +466,7 @@ oMatrix.placeAt('sample4');
 		If the value is <code>true</code>, the cell size must be defined by the caller. For the columns, you can make width settings, for the rows height settings.
 		If you would like to provide scrollbars inside the matrix cells, embed a container inside the cell.
 		For performance reasons it is better to provide the number of columns to the <code>columns</code> property. Otherwise, the
-		number of columns must be calculated by the system. 
+		number of columns must be calculated by the system.
 		</p>
 
 		<p>
@@ -477,33 +477,33 @@ oMatrix.placeAt('sample4');
 		<p>
 		This example shows a simple MatixLayout with <code>layoutFixed = false</code>.
 		</p>
-		<br><br> 
+		<br><br>
 		<div code-sample="sample1" script="SimpleMatrix"></div>
-		<br/>
+		<br>
 		<h3>MatrixLayout With Fixed Cell Sizes</h3>
 		<p>
 		This example shows a simple MatrixLayout with <code>layoutFixed = true</code>. If the content of a cell is larger than the size, the cell content is cut off.
 		</p>
-		<br><br> 
+		<br><br>
 		<div code-sample="sample2" script="FixedLayout"></div>
 
-		<br/>
+		<br>
 		<h3>Cell Concatenation</h3>
 		<p>
 		This example shows the usage of <code>colSpan</code> and <code>rowSpan</code>. If you would like to use the concatenation feature, the MatrixLayout's cells need to
 		be defined as own controls. By doing this, they can have different style options like for example background colors. In the example you also can see that a MatrixLayout
 		can contain empty cells. These are useful if you need placeholders, for example. Depending on the use case, they also can be used for purely visual reasons.
 		</p>
-		<br/><br>
+		<br><br>
 
 		<div code-sample="sample3" script="ColRowSpan" style="min-width:700px;"></div>
-		<br/>
+		<br>
 
 		<h3>MatrixLayout Used to Create a Form</h3>
 		<br><br>
 
 		<div code-sample="sample4" script="ContactData" style="min-width:1111px;"></div>
-		<br/>
+		<br>
 
 		<p>
 		<h2>API Documentation</h2>

@@ -1,0 +1,11 @@
+<mvc:View
+	controllerName="sap.m.sample.IconTabBarDragDrop.IconTabBarDragDrop"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<IconTabBar
+		id="idIconTabBar"
+		showOverflowSelectList="true"
+		enableTabReordering="true"
+		class="sapUiResponsiveContentPadding">
+	</IconTabBar>
+</mvc:View>

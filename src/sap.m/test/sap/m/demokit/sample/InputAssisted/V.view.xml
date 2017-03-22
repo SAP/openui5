@@ -8,7 +8,7 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<Label text="Product" />
+			<Label text="Product" labelFor="productInput"/>
 			<Input
 				id="productInput"
 				type="Text"

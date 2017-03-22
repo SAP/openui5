@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, ValueState, ValueStateSupport) {
 	"use strict";
 
 
@@ -18,22 +18,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oCheckBox an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oCheckBox An object representation of the control that should be rendered
 	 */
 	CheckBoxRenderer.render = function(oRm, oCheckBox){
 		// get control properties
-		var bEnabled = oCheckBox.getEnabled();
-		var bEditable = oCheckBox.getEditable();
-		var bInteractible = oCheckBox.getEnabled() && oCheckBox.getEditable();
+		var sId = oCheckBox.getId(),
+			bEnabled = oCheckBox.getEnabled(),
+			bEditable = oCheckBox.getEditable(),
+			oCbLabel = oCheckBox.getAggregation("_label"),
+			bInErrorState = ValueState.Error === oCheckBox.getValueState(),
+			bInWarningState = ValueState.Warning === oCheckBox.getValueState();
 
 		// CheckBox wrapper
 		oRm.write("<div");
 		oRm.addClass("sapMCb");
-
-		if (bInteractible) {
-			oRm.addClass("sapMPointer");
-		}
 
 		if (!bEditable) {
 			oRm.addClass("sapMCbRo");
@@ -41,6 +40,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 		if (!bEnabled) {
 			oRm.addClass("sapMCbBgDis");
+		}
+
+		if (bInErrorState) {
+			oRm.addClass("sapMCbErr");
+		} else if (bInWarningState) {
+			oRm.addClass("sapMCbWarn");
+		}
+
+		if (oCheckBox.getText()) {
+			oRm.addClass("sapMCbHasLabel");
 		}
 
 		oRm.writeControlData(oCheckBox);
@@ -57,10 +66,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 		//ARIA attributes
 		oRm.writeAccessibilityState(oCheckBox, {
-			role: 'checkbox',		
+			role: "checkbox",
 			selected: null,
-			checked: oCheckBox.getSelected()
-		});		
+			checked: oCheckBox.getSelected(),
+			describedby: sTooltip ? sId + "-Descr" : undefined
+		});
 
 		oRm.write(">");		// DIV element
 
@@ -108,7 +118,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		}
 
 		oRm.write(" /></div>");
-		oRm.renderControl(oCheckBox._oLabel);
+		oRm.renderControl(oCbLabel);
+
+		if (sTooltip && sap.ui.getCore().getConfiguration().getAccessibility()) {
+			// for ARIA, the tooltip must be in a separate SPAN and assigned via aria-describedby.
+			// otherwise, JAWS does not read it.
+			oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiHidden\">");
+			oRm.writeEscaped(sTooltip);
+			oRm.write("</span>");
+		}
+
 		oRm.write("</div>");
 	};
 

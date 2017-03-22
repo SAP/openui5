@@ -1,21 +1,54 @@
+/* ================================= */
+/* CSS for control sap.m/BusyDialog  */
+/* Base theme                        */
+/* ================================= */
 
-/* ============================================= */
-/* CSS for controlsap.m/BusyScreen.control */
-/* ============================================= */
-
-.sapMBusyDialog{
-	width: 18.75em;
+//this selectors need to be more specific from the Dialog's
+.sapMBusyDialog.sapMDialog {
+	min-width: 18.75rem !important;
 	text-align: center;
-	outline: none;
+	width: 18.75rem !important;
+
+	.sapMBusyIndicator {
+		margin: 1em;
+	}
+
+	&.sapUiPopupWithPadding .sapMDialogScrollCont {
+		padding: 0 !important;
+	}
+
+	.sapMDialogSection {
+		overflow: hidden !important;
+	}
+
+	&.sapMBusyDialog-Light {
+		//lightBusyDialog
+		box-shadow: none;
+		background: transparent;
+		border: none;
+
+		.sapMDialogSection {
+			background: transparent;
+		}
+	}
 }
 
-.sapMLabel.sapMBusyDialogLabel{
+.sapMLabel.sapMBusyDialogLabel {
 	display: block;
-	white-space: normal;
-	font-family: @sapUiFontFamily;
-	font-size: @sapUiFontSize;
+	font-size: 1rem;
 	line-height: 1.5em;
-	margin-right: 1em;
-	margin-left: 1em;
+	margin: 1rem 1rem 0;
 	text-align: center !important;
+	white-space: normal;
+}
+
+// compact sizing
+.sapUiSizeCompact .sapMBusyDialog {
+	.sapMBusyDialogLabel {
+		margin-top: 0.5rem;
+	}
+
+	.sapMBusyIndicator {
+		margin: 0.5rem;
+	}
 }

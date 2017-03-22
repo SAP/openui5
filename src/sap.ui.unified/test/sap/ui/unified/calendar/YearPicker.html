@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>YearPicker - sap.ui.unified.calendar</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.calendar.YearPicker.gif">
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-trace="false"
-				type="text/javascript"
 				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
 				src="../../../../../resources/sap-ui-core.js"
 		>
 		</script>
-		<script type="text/javascript">
+		<script>
+
+			jQuery.sap.require("sap.ui.core.date.UniversalDate");
+			var UniversalDate = sap.ui.core.date.UniversalDate;
 
 			var oYearPicker = new sap.ui.unified.calendar.YearPicker("YP1",{
 				select: function(oEvent){
 					var oTF = sap.ui.getCore().byId("TF1");
 					var oYP = oEvent.oSource;
-					var iYear = oYP.getYear();
-					oTF.setValue(iYear);
+					var oDate = new UniversalDate(oYP.getDate());
+					oTF.setValue(oDate.getFullYear());
 				}
 			}).placeAt("sample1");
 
@@ -34,19 +38,29 @@
 					var oYP = sap.ui.getCore().byId("YP1");
 					if(sValue && !isNaN(sValue)){
 						var iYear = parseInt(sValue);
-						oYP.setYear(iYear);
+//						var oDate = new UniversalDate(iYear, 0, 1);
+//						if(iYear < 100) {
+//							oDate.setFullYear(iYear);
+//						}
+						var oDate = new UniversalDate();
+						oDate.setFullYear(iYear);
+						oDate.setMonth(0);
+						oDate.setDate(1);
+						oYP.setDate(oDate.getJSDate());
 					}
 				}
 			}).placeAt("event1");
 
+			var oDate = new Date(2015,0,1);
 			oYearPicker = new sap.ui.unified.calendar.YearPicker("YP2",{
 				years: 5,
 				columns: 0,
+				date: oDate,
 				select: function(oEvent){
 					var oTF = sap.ui.getCore().byId("TF2");
 					var oYP = oEvent.oSource;
-					var iYear = oYP.getYear();
-					oTF.setValue(iYear);
+					var oDate = new UniversalDate(oYP.getDate());
+					oTF.setValue(oDate.getFullYear());
 				}
 			}).placeAt("sample2");
 
@@ -59,7 +73,15 @@
 					var oYP = sap.ui.getCore().byId("YP2");
 					if(sValue && !isNaN(sValue)){
 						var iYear = parseInt(sValue);
-						oYP.setYear(iYear);
+//					var oDate = new UniversalDate(iYear, 0, 1);
+//					if(iYear < 100) {
+//						oDate.setFullYear(iYear);
+//					}
+						var oDate = new UniversalDate();
+						oDate.setFullYear(iYear);
+						oDate.setMonth(0);
+						oDate.setDate(1);
+						oYP.setDate(oDate.getJSDate());
 					}
 				}
 			}).placeAt("event2");

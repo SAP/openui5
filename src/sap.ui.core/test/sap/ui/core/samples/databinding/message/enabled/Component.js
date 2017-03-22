@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 				)
 			}
 		});
-	
+
 		var oButton4 = new Button({
 			text: "clear Messages",
 			press: function() {

@@ -1,28 +1,30 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.RichTooltip, sap.ui.core.TooltipBase
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>RichTooltip - sap.ui.commons</title>
-	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
-		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
-		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
-		data-sap-ui-language=en>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-language=en>
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Test preparation -->
-	<script type="text/javascript">
+	<script>
 
 		function openRtt(sId, bWithKeyboard) {
 			if(bWithKeyboard){
@@ -45,22 +47,21 @@
 		}
 
 
-		var sText = "This is the correct long text", 
+		var sText = "This is the correct long text",
 			sTitle = "This is the expected title",
 			sDefaultTitle = "this tooltip must be gone",
-			sImageSrc = "../images/SAPLogo.gif", 
-			oPopup = null;
+			sImageSrc = "../images/SAPLogo.gif";
 
 
-		//RichTooltip with default values 
+		//RichTooltip with default values
 		var oRtt0 = new sap.ui.commons.RichTooltip("rtt0");
 
-		//RichTooltip with standard positioning and animation 
+		//RichTooltip with standard positioning and animation
 		var oRtt1 = new sap.ui.commons.RichTooltip("rtt1", {
 			text : sText,
 			title : sTitle,
 			imageSrc : sImageSrc,
-			collision : "none" //just to avoid positioning issues during test 
+			collision : "none" //just to avoid positioning issues during test
 		});
 
 		var oButton1 = new sap.ui.commons.Button("c1", {
@@ -69,13 +70,13 @@
 		});
 		oButton1.placeAt("uiArea1");
 
-		//RichTooltip with custom positioning and animation 
-		
+		//RichTooltip with custom positioning and animation
+
 		var sRtt2Offset = "10 8";
-		
+
 		var sRtt2HtmlText = "Make it <strong>strong</strong>";
 		var sRtt2ValueStateText = "This is an individual message";
-		
+
 		var oRtt2 = new sap.ui.commons.RichTooltip("rtt2", {
 			text : sText,
 			title : sTitle,
@@ -97,45 +98,44 @@
 	</script>
 
 	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
 		sap.ui.test.qunit.delayTestStart();
 
-		module("API");
+		QUnit.module("API");
 
-		test("Default Values", function() {
-			equals(oRtt0.getTitle(), "", "Default 'title':");
-			equals(oRtt0.getImageSrc(), "", "Default 'imageSrc':");
-			equals(oRtt0.getText(), "", "Default 'text':");
-			equals(oRtt0.getOpenDuration(), 200, "Default 'openDuration':");
-			equals(oRtt0.getCloseDuration(), 200, "Default 'closeDuration':");
-			equals(oRtt0.getMyPosition(), "begin top", "Default 'myPosition':");
-			equals(oRtt0.getAtPosition(), "begin bottom", "Default 'atPosition':");
-			equals(oRtt0.getOffset(), "10 3", "Default 'offset':");
-			equals(oRtt0.getCollision(), "flip", "Default 'collision':");
+		QUnit.test("Default Values", function(assert) {
+			assert.equal(oRtt0.getTitle(), "", "Default 'title':");
+			assert.equal(oRtt0.getImageSrc(), "", "Default 'imageSrc':");
+			assert.equal(oRtt0.getText(), "", "Default 'text':");
+			assert.equal(oRtt0.getOpenDuration(), 200, "Default 'openDuration':");
+			assert.equal(oRtt0.getCloseDuration(), 200, "Default 'closeDuration':");
+			assert.equal(oRtt0.getMyPosition(), "begin top", "Default 'myPosition':");
+			assert.equal(oRtt0.getAtPosition(), "begin bottom", "Default 'atPosition':");
+			assert.equal(oRtt0.getOffset(), "10 3", "Default 'offset':");
+			assert.equal(oRtt0.getCollision(), "flip", "Default 'collision':");
 		});
 
-		test("Custom Values", function() {
-			equals(oRtt2.getTitle(), sTitle, "Custom 'title':");
-			equals(oRtt2.getImageSrc(), sImageSrc, "Custom 'imageSrc':");
-			equals(oRtt2.getText(), sText, "Custom 'text':");
-			equals(oRtt2.getOpenDuration(), 600, "Custom 'openDuration':");
-			equals(oRtt2.getCloseDuration(), 600, "Custom 'closeDuration':");
-			equals(oRtt2.getMyPosition(), "begin bottom", "Custom 'myPosition':");
-			equals(oRtt2.getAtPosition(), "begin top", "Custom 'atPosition':");
-			equals(oRtt2.getOffset(), sRtt2Offset, "Custom 'offset':");
-			equals(oRtt2.getCollision(), "none", "Custom 'collision':");
+		QUnit.test("Custom Values", function(assert) {
+			assert.equal(oRtt2.getTitle(), sTitle, "Custom 'title':");
+			assert.equal(oRtt2.getImageSrc(), sImageSrc, "Custom 'imageSrc':");
+			assert.equal(oRtt2.getText(), sText, "Custom 'text':");
+			assert.equal(oRtt2.getOpenDuration(), 600, "Custom 'openDuration':");
+			assert.equal(oRtt2.getCloseDuration(), 600, "Custom 'closeDuration':");
+			assert.equal(oRtt2.getMyPosition(), "begin bottom", "Custom 'myPosition':");
+			assert.equal(oRtt2.getAtPosition(), "begin top", "Custom 'atPosition':");
+			assert.equal(oRtt2.getOffset(), sRtt2Offset, "Custom 'offset':");
+			assert.equal(oRtt2.getCollision(), "none", "Custom 'collision':");
 		});
 
-		test("Control Attachment", function() {
-			equals(oButton1.$().attr("title"), sDefaultTitle, "Default tooltip set when no RichTooltip is attached");
+		QUnit.test("Control Attachment", function(assert) {
+			assert.equal(oButton1.$().attr("title"), sDefaultTitle, "Default tooltip set when no RichTooltip is attached");
 			oButton1.setTooltip(oRtt1);
 			sap.ui.getCore().applyChanges();
-			ok(!oButton1.$().attr("title"), "No default tooltip set when RichTooltip is attached");
+			assert.ok(!oButton1.$().attr("title"), "No default tooltip set when RichTooltip is attached");
 		});
 
-
-		module("Open and Close");
+		QUnit.module("Open and Close");
 
 		function checkOpenClose(iTestSet, bWithKeyboard, iOpenTimeout, iCloseTimeout, fCheckOpen, fCheckClose) {
 			if(bWithKeyboard){
@@ -152,155 +152,211 @@
 						if(fCheckClose){
 							fCheckClose(isRttVisible("rtt"+iTestSet));
 						}
-						start();
 					}, iCloseTimeout);
 				}, iOpenTimeout);
 			}, 10);
 		}
 
-		asyncTest("Open/Close via mouse hover", function() {
-			checkOpenClose(1, false, 2500 /*500 delay + 200 duration + 1800 buffer*/, 1000, function(bOpen) {
-				ok(bOpen, "RichTooltip is visible after mouseover");
-			}, function(bOpen) {
-				ok(!bOpen, "RichTooltip is not visible after mouseout");
+		QUnit.test("Custom Position", function(assert) {
+			var done = assert.async();
+			checkOpenClose(2, true, 1600, 800, function() {
+				var $textField = oTextField1.$();
+				var oTextFieldOffset = $textField.offset();
+				var iTFOuterH = $textField.outerHeight();
+
+				var $rtt2 = oRtt2.$();
+				var oRttOffset = $rtt2.offset();
+				var iRttOuterH = $rtt2.outerHeight();
+
+				var result = Math.abs((oTextFieldOffset.left + 10) - (oRttOffset.left));
+				assert.ok(oRtt2._getPopup().isOpen(), "popup is open");
+				assert.ok(result <= 2, "Position from left is less than 2: " + result);
+				// rounding needed since FireFox returns floating pixel values...
+				result = Math.round(Math.abs((oTextFieldOffset.top + iTFOuterH - 10) - (oRttOffset.top + iRttOuterH)));
+				assert.ok(result <= 7, "Position from top is less than 7: " + result);
+				done();
 			});
 		});
 
-		asyncTest("No Open via \"fast\" mouse hover", function() {
-			checkOpenClose(1, false, 300 /*< 500 delay*/, 800, function(bOpen) {
-				ok(!bOpen, "RichTooltip is not visible after mouseover");
-			}, function(bOpen) {
-				ok(!bOpen, "RichTooltip is still not visible after mouseout");
-			});
-		});
-
-		asyncTest("Open/Close via keyboard", function() {
-			checkOpenClose(1, true, 400 /*200 duration + 200 buffer (no delay)*/, 400, function(bOpen) {
-				ok(bOpen, "RichTooltip is visible after press Ctrl+I");
-			}, function(bOpen) {
-				ok(!bOpen, "RichTooltip is visible after press Escape");
-			});
-		});
-
-		asyncTest("Default Position", function() {
-			checkOpenClose(1, true, 400, 400, function() {
+		QUnit.test("Default Position", function(assert) {
+			var done = assert.async();
+			checkOpenClose(1, true, 400, undefined, function() {
 				var jCtrl = oButton1.$();
 				var oCtrlOffset = jCtrl.offset();
 				var jRtt = oRtt1.$();
 				var oRttOffset = jRtt.offset();
-				ok(Math.abs(oCtrlOffset.left - oRttOffset.left + 10) <= 2, "Position from left");
-				ok(Math.abs((oCtrlOffset.top + jCtrl.outerHeight()) - oRttOffset.top + 3) <= 2, "Position from top");
+
+				var result = Math.abs(oCtrlOffset.left - oRttOffset.left + 10);
+				assert.ok(oRtt1._getPopup().isOpen());
+				assert.ok(result <= 2, "Position from left is less than 2: " + result);
+				result = Math.abs((oCtrlOffset.top + jCtrl.outerHeight()) - oRttOffset.top + 3);
+				assert.ok(result <= 2, "Position from top is less than 5: " + result);
+				done();
 			});
 		});
 
-		asyncTest("Custom Position", function() {
-			checkOpenClose(2, true, 800, 800, function() {
-				var $textField = oTextField1.$();
-				var oTextFieldOffset = $textField.offset();
-				var iTFOuterH = $textField.outerHeight();
-				
-				var $rtt2 = oRtt2.$();
-				var oRttOffset = $rtt2.offset();
-				var iRttOuterH = $rtt2.outerHeight();
-				
-				var result = Math.abs((oTextFieldOffset.left + 10) - (oRttOffset.left));
-				ok(result <= 2, "Position from left");
-				// rounding needed since FireFox returns floating pixel values...
-				result = Math.round(Math.abs((oTextFieldOffset.top + iTFOuterH - 10) - (oRttOffset.top + iRttOuterH))); 
-				ok(result <= 5, "Position from top");
+		QUnit.test("Open/Close via mouse hover", function(assert) {
+			var done = assert.async();
+			checkOpenClose(1, false, 2500 /*500 delay + 200 duration + 1800 buffer*/, 1000, function(bOpen) {
+				assert.ok(bOpen, "RichTooltip is visible after mouseover");
+			}, function(bOpen) {
+				assert.ok(!bOpen, "RichTooltip is not visible after mouseout");
+				done();
 			});
 		});
 
+		QUnit.test("No Open via \"fast\" mouse hover", function(assert) {
+			var done = assert.async();
+			checkOpenClose(1, false, 300 /*< 500 delay*/, 800, function(bOpen) {
+				assert.ok(!bOpen, "RichTooltip is not visible after mouseover");
+			}, function(bOpen) {
+				assert.ok(!bOpen, "RichTooltip is still not visible after mouseout");
+				done();
+			});
+		});
 
-		module("Content");
+		QUnit.test("Open/Close via keyboard", function(assert) {
+			var done = assert.async();
+			checkOpenClose(1, true, 400 /*200 duration + 200 buffer (no delay)*/, 400, function(bOpen) {
+				assert.ok(bOpen, "RichTooltip is visible after press Ctrl+I");
+			}, function(bOpen) {
+				assert.ok(!bOpen, "RichTooltip is visible after press Escape");
+				done();
+			});
+		});
+
+		QUnit.test("Not Visible tooltip", function(assert) {
+			var done = assert.async();
+			oRtt2.setVisible(false);
+			sap.ui.getCore().byId("c2").focus();
+			setTimeout(function() {
+				openRtt("c2", true);
+				setTimeout(function() {
+					assert.strictEqual(oRtt2.getDomRef(), null, "Tooltip should not be rendered");
+					closeRtt("c2", true);
+					setTimeout(function() {
+						oRtt2.setVisible(true);
+						done();
+					}, 600);
+				}, 600);
+			}, 600);
+		});
+
+		QUnit.module("Content");
 
 		function checkContent(bTitleExpected, bIconExpected) {
+			var done = assert.async();
 			sap.ui.getCore().applyChanges();
-			checkOpenClose(1, true, 400, 400, function() {
+			checkOpenClose(1, true, 400, undefined, function() {
 				var jRtt1 = jQuery.sap.byId("rtt1");
 
 				var jObj = jRtt1.find(".sapUiRttText");
-				ok(jObj.size() == 1, "RichTooltip text section is available");
-				equals(jObj.text(), sText, "Text in text section ok:");
+				assert.ok(jObj.size() == 1, "RichTooltip text section is available");
+				assert.equal(jObj.text(), sText, "Text in text section ok:");
 
 				jObj = jRtt1.find(".sapUiRttImage");
-				ok(jObj.size() == bIconExpected ? 1 : 0, "RichTooltip image section is "+(bIconExpected ? "" : "not ")+"available");
+				assert.ok(jObj.size() == bIconExpected ? 1 : 0, "RichTooltip image section is "+(bIconExpected ? "" : "not ")+"available");
 				if(bIconExpected){
-					equals(jObj.attr("src"), sImageSrc, "Image Source ok:");
+					assert.equal(jObj.attr("src"), sImageSrc, "Image Source ok:");
 				}
 
 				jObj = jRtt1.find(".sapUiRttTitle");
-				ok(jObj.size() == bTitleExpected ? 1 : 0, "RichTooltip title section is "+(bTitleExpected ? "" : "not ")+"available");
+				assert.ok(jObj.size() == bTitleExpected ? 1 : 0, "RichTooltip title section is "+(bTitleExpected ? "" : "not ")+"available");
 				if(bTitleExpected){
-					equals(jObj.text(), sTitle, "Text in title section ok:");
+					assert.equal(jObj.text(), sTitle, "Text in title section ok:");
 				}
 
-				ok(jRtt1.find(".sapUiRttSep").size() == bTitleExpected ? 1 : 0, "RichTooltip title seperator section is "+(bTitleExpected ? "" : "not ")+"available");
+				assert.ok(jRtt1.find(".sapUiRttSep").size() == bTitleExpected ? 1 : 0, "RichTooltip title seperator section is "+(bTitleExpected ? "" : "not ")+"available");
+				done();
 			});
 		}
 
-		asyncTest("RichTooltip with Title, Icon and Text", function() {
+		QUnit.test("RichTooltip with Title, Icon and Text", function(assert) {
 			checkContent(true, true);
 		});
 
-		asyncTest("RichTooltip with Title and Text (no Icon)", function() {
+		QUnit.test("RichTooltip with Title and Text (no Icon)", function(assert) {
 			oRtt1.setImageSrc(null);
 			checkContent(true, false);
 		});
 
-		asyncTest("RichTooltip with Text (no Title and Icon)", function() {
+		QUnit.test("RichTooltip with Text (no Title and Icon)", function(assert) {
 			oRtt1.setTitle(null);
 			checkContent(false, false);
 		});
 
-		asyncTest("RichTooltip with Icon and Text (no Title)", function() {
+		QUnit.test("RichTooltip with Icon and Text (no Title)", function(assert) {
 			oRtt1.setImageSrc(sImageSrc);
 			checkContent(false, true);
 		});
 
-		asyncTest("RichTooltip Text for control with Value State", function() {
-			expect(4);
-			
-			checkOpenClose(2, true, 400, 400, function() {
+		QUnit.test("RichTooltip Text for control with Value State", function(assert) {
+			var done = assert.async();
+			assert.expect(4);
+
+			checkOpenClose(2, true, 400, undefined, function() {
 				var jObjValueStateText = jQuery.sap.byId("rtt2").find(".sapUiRttValueStateText");
 				var jObjText = jQuery.sap.byId("rtt2").find(".sapUiRttText");
-				
-				ok(jObjValueStateText.size() == 1, "ValueState text section is available");
-				ok(jObjText.size() == 1, "RichTooltip text section is available");
-				
+
+				assert.ok(jObjValueStateText.size() == 1, "ValueState text section is available");
+				assert.ok(jObjText.size() == 1, "RichTooltip text section is available");
+
 				// fetch the default text to prevent any wrongly set language
 				var valueStateText = sap.ui.core.ValueStateSupport.getAdditionalText(oRtt2.getParent());
-				
-				ok(jObjValueStateText.text() === valueStateText, "ValueState text contains default state information.");
-				ok(jObjText.text() === sText, "RichTooltip text section is the original text.");
+
+				assert.ok(jObjValueStateText.text() === valueStateText, "ValueState text contains default state information.");
+				assert.ok(jObjText.text() === sText, "RichTooltip text section is the original text.");
+				done();
 			});
 		});
-		
-		asyncTest("RichTooltip with individual ValueState text and html text", function() {
-			expect(2);
+
+		QUnit.test("RichTooltip with individual ValueState text and html text", function(assert) {
+			var done = assert.async();
+			assert.expect(2);
 			oRtt2.setText(sRtt2HtmlText);
 			oRtt2.setValueStateText(sRtt2ValueStateText);
 			oRtt2.invalidate();
 			sap.ui.getCore().applyChanges();
-			
+
 			setTimeout(function(){
-				checkOpenClose(2, true, 800, 400, function() {
+				checkOpenClose(2, true, 800, undefined, function() {
 					var jObjText = jQuery.sap.byId("rtt2").find(".sapUiRttText");
-					
+
 					// since IE8 transforms all tags into upper case it has to be transfered back into lower case
 					var sText = jObjText.html().toLowerCase();
 					var sLowerOriginal = sRtt2HtmlText.toLowerCase();
-					
-					ok(sText === sLowerOriginal, "HTML text as content text");
-					
+
+					assert.ok(sText === sLowerOriginal, "HTML text as content text");
+
 					var jObjValueStateText = jQuery.sap.byId("rtt2").find(".sapUiRttValueStateText");
-					ok(jObjValueStateText.html() === sRtt2ValueStateText, "Custom 'ValueStateMessage':");
+					assert.ok(jObjValueStateText.html() === sRtt2ValueStateText, "Custom 'ValueStateMessage':");
+					done();
 				});
 			}, 400);
+		});
+
+		QUnit.module("Data binding");
+
+		QUnit.test("Should bind properly values with curly braces", function (assert) {
+			var sText = "Title 1{<br>Id 1";
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({
+				text: sText
+			});
+
+			var oRTT = new sap.ui.commons.RichTooltip({
+				text: "{/text}"
+			}).setModel(oModel);
+
+			assert.strictEqual(oRTT.getText(), sText, "text should equal " + sText);
+
+			oRTT.destroy();
+			oModel.destroy();
 		});
 	</script>
 
 </head>
+
 <body>
 	<h1 id="qunit-header">QUnit tests: sap.ui.commons.RichTooltip</h1>
 	<h2 id="qunit-banner"></h2>

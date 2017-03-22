@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>ObjectIdentifier - sap.m</title>
 
 <link rel="stylesheet"
@@ -10,28 +10,28 @@
 	type="text/css" media="screen" />
 
 <!-- UI5 Bootstrap -->
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m"></script>
 
 <!-- QUnit libraries -->
 
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- use the sinon faketimers for this test -->
-<script type="text/javascript">
+<script>
 	sinon.config.useFakeTimers = true;
 </script>
 
-<script type="text/javascript">
+<script>
 	/***********************************************************************************************************************/
-	module("Control Lifecycle");
+	QUnit.module("Control Lifecycle");
 
-	test("Render", function() {
+	QUnit.test("Render", function(assert) {
 
 		//SUT
 		var sTitle = "My Title";
@@ -50,21 +50,23 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
 
-		var children = $("#" + sut.getId()).children();
-		equal($(children[0]).text(), sTitle, "Title is rendered.");
-		equal($(children[1]).text(), sText, "Text is rendered.");
+		var childrenTitle = $("#" + sut.getId()+"-title").children();
+		var childrenText = $("#" + sut.getId()+"-text").children();
+		assert.equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
+		assert.equal($(childrenTitle[1]).text(), sap.m.ObjectIdentifier.OI_ARIA_ROLE, "Aria is rendered.");
+		assert.equal($(childrenText[0]).text(), sText, "Text is rendered.");
 
-		ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
-		ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
-		ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
 
 		//Cleanup
 		sut.destroy();
 	});
 
-	test("NotVisible", function() {
+	QUnit.test("NotVisible", function(assert) {
 		//SUT
 		var sTitle = "My Title";
 		var sText = "My Text";
@@ -76,14 +78,14 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		equals(jQuery("#NotVisible").get(0), undefined, "ObjectIdentifier is not being rendered.");
+		assert.equal(jQuery("#NotVisible").get(0), undefined, "ObjectIdentifier is not being rendered.");
 
 		//Cleanup
 		sut.destroy();
 
 	});
 
-	test("Destroy", function() {
+	QUnit.test("Destroy", function(assert) {
 
 		//SUT
 		var sTitle = "My Title";
@@ -101,31 +103,33 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
 
-		var children = $("#" + sut.getId()).children();
-		equal($(children[0]).text(), sTitle, "Title is rendered.");
-		equal($(children[1]).text(), sText, "Text is rendered.");
+		var childrenTitle = $("#" + sut.getId()+"-title").children();
+		var childrenText = $("#" + sut.getId()+"-text").children();
 
-		ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
-		ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
-		ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
+		assert.equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
+		assert.equal($(childrenText[0]).text(), sText, "Text is rendered.");
+
+		assert.ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
+		assert.ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
 
 		sut.destroy();
 
 		var sDestroyed = " should be destroyed";
-		ok(!sap.ui.getCore().byId(sut.getId() + "-attachments-icon"), "Attachments icon" + sDestroyed);
-		ok(!sap.ui.getCore().byId(sut.getId() + "-notes-icon"), "Notes icon" + sDestroyed);
-		ok(!sap.ui.getCore().byId(sut.getId() + "-people-icon"), "People icon" + sDestroyed);
+		assert.ok(!sap.ui.getCore().byId(sut.getId() + "-attachments-icon"), "Attachments icon" + sDestroyed);
+		assert.ok(!sap.ui.getCore().byId(sut.getId() + "-notes-icon"), "Notes icon" + sDestroyed);
+		assert.ok(!sap.ui.getCore().byId(sut.getId() + "-people-icon"), "People icon" + sDestroyed);
 
 		//Cleanup
 		sut.destroy();
 	});
 
 	/***********************************************************************************************************************/
-	module("Internals");
+	QUnit.module("Internals");
 
-	test("Icon Getters", function() {
+	QUnit.test("Icon Getters", function(assert) {
 
 		//SUT
 		var sTitle = "My Title";
@@ -139,16 +143,16 @@
 		});
 
 		//Assert
-		equal(sut._getAttachmentsIcon().getSrc(), sap.ui.core.IconPool.getIconURI("attachment"),
+		assert.equal(sut._getAttachmentsIcon().getSrc(), sap.ui.core.IconPool.getIconURI("attachment"),
 				"Attachments icon is returned.");
-		equal(sut._getNotesIcon().getSrc(), sap.ui.core.IconPool.getIconURI("notes"), "Notes icon is returned.");
-		equal(sut._getPeopleIcon().getSrc(), sap.ui.core.IconPool.getIconURI("group"), "People icon is returned.");
+		assert.equal(sut._getNotesIcon().getSrc(), sap.ui.core.IconPool.getIconURI("notes"), "Notes icon is returned.");
+		assert.equal(sut._getPeopleIcon().getSrc(), sap.ui.core.IconPool.getIconURI("group"), "People icon is returned.");
 
 		//Cleanup
 		sut.destroy();
 	});
-	
-	test("Should not rerender the ObjectIdentifier if the title is changed", function() {
+
+	QUnit.test("Should not rerender the ObjectIdentifier if the title is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
@@ -166,16 +170,16 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		ok(!/.*<script>.*/.test(oObjectIdentifier.$().find(".sapMObjectIdentifierTitle").html()), "Did not contain an unescaped script tag");
-		strictEqual(oObjectIdentifier.getTitle(), sTextToSet, "Did set the non encoded string as value");
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.ok(!/.*<script>.*/.test(oObjectIdentifier.$().find(".sapMObjectIdentifierTitle").html()), "Did not contain an unescaped script tag");
+		assert.strictEqual(oObjectIdentifier.getTitle(), sTextToSet, "Did set the non encoded string as value");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should not rerender the ObjectIdentifier if the new  title is empty", function() {
+
+	QUnit.test("Should not rerender the ObjectIdentifier if the new  title is empty", function(assert) {
 		// Arrange
 		var sTextToSet = undefined,
 			oRenderSpy,
@@ -193,14 +197,14 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-	
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should not rerender the ObjectIdentifier if the title is empty initially", function() {
+
+	QUnit.test("Should not rerender the ObjectIdentifier if the title is empty initially", function(assert) {
 		// Arrange
 		var sTextToSet = "non empty",
 			oRenderSpy,
@@ -218,14 +222,14 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-	
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should not rerender the ObjectIdentifier if the text is changed", function() {
+
+	QUnit.test("Should not rerender the ObjectIdentifier if the text is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
@@ -243,17 +247,17 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
-		strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
-		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
+		assert.strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
+		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should not rerender the ObjectIdentifier if the new  text is empty", function() {
+
+	QUnit.test("Should not rerender the ObjectIdentifier if the new  text is empty", function(assert) {
 		// Arrange
 		var sTextToSet = undefined,
 			oRenderSpy,
@@ -271,15 +275,15 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
-	
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should not rerender the ObjectIdentifier if the text is empty initially", function() {
+
+	QUnit.test("Should not rerender the ObjectIdentifier if the text is empty initially", function(assert) {
 		// Arrange
 		var sTextToSet = "non empty",
 			oRenderSpy,
@@ -297,67 +301,132 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
-	
+		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("The text control should be invisible if the text is empty", function() {
-		
+
+	QUnit.test("The title control should be invisible if the title is empty", function(assert) {
+
+		//Arrange
+		var sEmptyTitle = "",
+			sDummyTitle = "Dummy title",
+			oObjectIdentifier = new sap.m.ObjectIdentifier();
+
+		//System under test
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
+		assert.equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty initially");
+
+		//Act
+		oObjectIdentifier.setTitle(sDummyTitle);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sDummyTitle, "The title text is correctly set");
+		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should be visible if title is not empty");
+
+		//Act
+		oObjectIdentifier.setTitle(sEmptyTitle);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual($(oObjectIdentifier.$("title").children()[0]).text(), sEmptyTitle, "The title text is empty as expected");
+		assert.equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	QUnit.test("The title control should be visible if the title is not empty", function(assert) {
+
 		//Arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "Title"
 		});
-		
+
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
-		equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
-		
+		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The text control is visible");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("The text control should be visible if the text is not empty", function() {
-		
+
+	QUnit.test("The text control should be invisible if the text is empty", function(assert) {
+
+		//Arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title : "Title"
+		});
+
+		//System under test
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	QUnit.test("The text control should be visible if the text is not empty", function(assert) {
+
 		//Arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "Title",
 			text : "Text"
 		});
-		
+
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
-		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
-		
+		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	module("API");
-	
-	test("default values", function() {
+
+	QUnit.module("API");
+
+	QUnit.test("default values", function(assert) {
 
 		// arrange
-		var oObjectIdentifier = new sap.m.ObjectIdentifier();
+		var oObjectIdentifier = new sap.m.ObjectIdentifier(),
+			oObjectIdentifierTitleControl = oObjectIdentifier._getTitleControl(),
+			oObjectIdentifierTitleText = oObjectIdentifier.getTitle(),
+			oObjectIdentifierTextControl = oObjectIdentifier._getTextControl(),
+			oObjectIdentifierTextControlText = oObjectIdentifierTextControl.getText();
 
-		// assertions
-		strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
+		// assertions for title
+		assert.strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
+		assert.ok(oObjectIdentifierTitleControl === oObjectIdentifier.getAggregation("_titleControl"), 'The title control is present and properly assigned to its private aggregation');
+		assert.ok(oObjectIdentifierTitleControl instanceof sap.m.Text, 'The default type of title control is correct');
+		assert.strictEqual(oObjectIdentifierTitleControl.getVisible(), false, 'No title control is visible');
+		assert.strictEqual(oObjectIdentifierTitleText.length === 0, true, 'The title text is empty');
+		// assertions for text
+		assert.ok(oObjectIdentifierTextControl === oObjectIdentifier.getAggregation("_textControl"), 'The text control is present and properly assigned to its private aggregation');
+		assert.strictEqual(oObjectIdentifierTextControl.getVisible(), false, 'No text control is visible');
+		assert.ok(oObjectIdentifierTextControlText.length === 0, 'The text of ObjectIdentifier\'s text is empty');
 
 		// cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("setTitleActive()", function() {
-		
+
+	QUnit.test("setTitleActive()", function(assert) {
+
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title: 'Test title',
@@ -365,16 +434,16 @@
 		});
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		// assertions
-		equal(oObjectIdentifier.getTitleActive(), true, "The ObjectIdentifier's title should be active");
-		equal(oObjectIdentifier.$('title').children(0).hasClass("sapMLnk"), true, "A Link control should be rendered inside the title");
-		
+		assert.equal(oObjectIdentifier.getTitleActive(), true, "The ObjectIdentifier's title should be active");
+		assert.equal(oObjectIdentifier.$('title').children(0).hasClass("sapMLnk"), true, "A Link control should be rendered inside the title");
+
 		// cleanup
 		oObjectIdentifier.destroy();
 	});
 
-	test("Setting textDirection to RTL", function() {
+	QUnit.test("Setting textDirection to RTL", function(assert) {
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title: 'Test title',
@@ -388,13 +457,13 @@
 
 		// Assert
 		var sTextDir = oObjectIdentifier.getAggregation("_textControl").getTextDirection();
-		equal(sTextDir, "RTL", "Control has 'dir' property set to right-to-left");
+		assert.equal(sTextDir, "RTL", "Control has 'dir' property set to right-to-left");
 
 		// Clean up
 		oObjectIdentifier.destroy();
 	});
 
-	test("Setting textDirection to LTR", function() {
+	QUnit.test("Setting textDirection to LTR", function(assert) {
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title: 'Test title',
@@ -408,38 +477,40 @@
 
 		// Assert
 		var sTextDir = oObjectIdentifier.getAggregation("_textControl").getTextDirection();
-		equal(sTextDir, "LTR", "Control has 'dir' property set to left-to-right");
+		assert.equal(sTextDir, "LTR", "Control has 'dir' property set to left-to-right");
 
 		// Clean up
 		oObjectIdentifier.destroy();
 	});
 
-	
-	module("Keyboard handling");
-	
+
+	QUnit.module("Keyboard handling");
+
 	function checkKeyboardEventhandling(sTestName, oOptions) {
-		test(sTestName, function() {
+		QUnit.test(sTestName, function(assert) {
 			// arrange
 			var oObjectIdentifier = new sap.m.ObjectIdentifier({
-				titleActive: true
+				titleActive: true,
+				title: "Title example",
+				text: "Text example"
 			});
-			
+
 			oObjectIdentifier.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 				// act
 			var fnFireSelectSpy = this.spy(oObjectIdentifier, "fireTitlePress");
-			sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title').children(0), oOptions.keyCode);
+			sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
 			this.clock.tick(1);
 
-			// assertions	
-			strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired");
-			
+			// assertions
+			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired");
+
 			// cleanup
-			 oObjectIdentifier.destroy(); 
-			
+			 oObjectIdentifier.destroy();
+
 		});
-	};
+	}
 
 	checkKeyboardEventhandling("Firing ENTER event", {
 		keyCode : jQuery.sap.KeyCodes.ENTER
@@ -447,18 +518,19 @@
 
 	checkKeyboardEventhandling("Firing SPACE event", {
 		keyCode : jQuery.sap.KeyCodes.SPACE
-	}); 
-	
-	module("Event testing");
-	
-	test("ObjectIdentifier titlePress Event", function() {
-		
+	});
+
+	QUnit.module("Event testing");
+
+	QUnit.test("ObjectIdentifier titlePress Event", function(assert) {
+
 		// arrange
 		var oObjectIdentifier1 = new sap.m.ObjectIdentifier({
-			titleActive: true
+			titleActive: true,
+			title: "Title example"
 		});
 		var oObjectIdentifier2 = new sap.m.ObjectIdentifier();
-		
+
 		oObjectIdentifier1.placeAt("qunit-fixture");
 		oObjectIdentifier2.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -466,23 +538,23 @@
 		// act
 		var fnFireSelectSpy1 = this.spy(oObjectIdentifier1, "fireTitlePress");
 		var fnFireSelectSpy2 = this.spy(oObjectIdentifier2, "fireTitlePress");
-		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier1.$('title').children(0), jQuery.sap.KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier2.$('title').children(0), jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier1.$('title').children()[0], jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier2.$('title').children()[0], jQuery.sap.KeyCodes.ENTER);
 		this.clock.tick(1);
-		
-		// assertions	
-		strictEqual(fnFireSelectSpy1.callCount, 1, "Event should be fired once");
-		strictEqual(fnFireSelectSpy2.callCount, 0, "Event should not be fired, ObjectIdentifier's titleActive property is false");			
+
+		// assertions
+		assert.strictEqual(fnFireSelectSpy1.callCount, 1, "Event should be fired once");
+		assert.strictEqual(fnFireSelectSpy2.callCount, 0, "Event should not be fired, ObjectIdentifier's titleActive property is false");
 
 		// cleanup
-		oObjectIdentifier1.destroy(); 
-		oObjectIdentifier2.destroy(); 
+		oObjectIdentifier1.destroy();
+		oObjectIdentifier2.destroy();
 	});
-	
+
 	/***********************************************************************************************************************/
-	module("Styles");
-	
-	test("Should add separator class if title added at runtime", function() {
+	QUnit.module("Styles");
+
+	QUnit.test("Should add separator class if title added at runtime", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
@@ -491,15 +563,15 @@
 		// act
 		oObjectIdentifier.setTitle("not empty title");
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
-		
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should add separator class if text added at runtime", function() {
+
+	QUnit.test("Should add separator class if text added at runtime", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
@@ -508,15 +580,15 @@
 		// act
 		oObjectIdentifier.setText("not empty text");
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
-		
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should remove separator class if title removed at runtime", function() {
+
+	QUnit.test("Should remove separator class if title removed at runtime", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
@@ -526,15 +598,15 @@
 		// act
 		oObjectIdentifier.setTitle("");
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
-		
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should remove separator class if text removed at runtime", function() {
+
+	QUnit.test("Should remove separator class if text removed at runtime", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
@@ -544,15 +616,15 @@
 		// act
 		oObjectIdentifier.setText("");
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
-		
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should have separator class if both title and text nonempty initially", function() {
+
+	QUnit.test("Should have separator class if both title and text nonempty initially", function(assert) {
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
@@ -560,107 +632,107 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), "Should have separator class");
-		
+		assert.ok(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), "Should have separator class");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should have no separator class if title is empty initially", function() {
+
+	QUnit.test("Should have no separator class if title is empty initially", function(assert) {
 
 		// System under Test
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("Should have no separator class if text is empty initially", function() {
+
+	QUnit.test("Should have no separator class if text is empty initially", function(assert) {
 
 		// System under Test
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
+		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	module("Databinding");
-	
-	test("Model sets titleActive = true", function() {
-		
+
+	QUnit.module("Databinding");
+
+	QUnit.test("Model sets titleActive = true", function(assert) {
+
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
  			"text": "Title Active",
 			"titleActive" : true
 		});
-		
+
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "{/text}",
 			text : "Model sets true",
 			titleActive : "{/titleActive}"
 		});
-		
+
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
-		ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
-		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
-		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
-		
+		assert.ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
+		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
+		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 		oModel.destroy()
-		
+
 	});
-	
-	test("Model sets titleActive = false", function() {
-		
+
+	QUnit.test("Model sets titleActive = false", function(assert) {
+
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
  			"text": "Title Not Active",
 			"titleActive" : false
 		});
-		
+
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "{/text}",
 			text : "Model sets false",
 			titleActive : "{/titleActive}"
 		});
-		
+
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
-		ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
-		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
-		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
-		
+		assert.ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
+		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
+		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 		oModel.destroy()
 	});
-	
-	test("Formatter sets titleActive = true", function() {
-		
+
+	QUnit.test("Formatter sets titleActive = true", function(assert) {
+
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
  			"text": "Title Active",
 			"formatterString" : "active"
 		});
-		
+
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "{/text}",
 			text : "Model sets true",
@@ -671,30 +743,30 @@
 				}
 			}
 		});
-		
+
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
-		ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
-		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
-		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
-		
+		assert.ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
+		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
+		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 		oModel.destroy()
 	});
-	
-	test("Formatter sets titleActive = false", function() {
-		
+
+	QUnit.test("Formatter sets titleActive = false", function(assert) {
+
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
  			"text": "Title Active",
 			"formatterString" : "notActive"
 		});
-		
+
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "{/text}",
 			text : "Model sets true",
@@ -705,19 +777,88 @@
 				}
 			}
 		});
-		
+
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
-		ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
-		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
-		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
-		
+		assert.ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
+		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
+		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
+		oModel.destroy()
+	});
+
+	QUnit.test("Binding a table cell item after table column has been destroyed", function(assert) {
+
+		//Arrange
+		var oTable = new sap.m.Table({
+			columns: [
+				new sap.m.Column({
+					header: new sap.m.Label({
+						text: "Label1"
+					})
+				}),
+				new sap.m.Column({
+					header: new sap.m.Label({
+						text: "Label2"
+					})
+				})
+			],
+			items: [
+				new sap.m.ColumnListItem("item", {
+					cells: [
+						new sap.m.ObjectIdentifier({
+							title: "title1",
+							text: "text1"
+						}),
+						new sap.m.ObjectIdentifier({
+							title: "title2",
+							text: "text2"
+						})
+					]
+				})
+			]
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel({
+			items:[
+				{ "title": "New Title" }
+			]
+		});
+
+		//System under test
+		oTable.setModel(oModel);
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		var oColumn = oTable.getColumns()[0];
+		oTable.removeColumn(0);
+		oColumn.destroy();
+
+		oTable.removeItem(0);
+
+		var oItemTemplate = sap.ui.getCore().byId('item');
+		oItemTemplate.getCells()[0].bindProperty('title', {
+			path:'title'
+		});
+
+		oTable.bindAggregation('items', {
+			path:'/items',
+			template: oItemTemplate
+		});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(oTable.getColumns().length, 1, "The table has just one column");
+
+		//Cleanup
+		oTable.destroy();
 		oModel.destroy()
 	});
 
@@ -729,7 +870,6 @@
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
-	</div>
 	<div id="content"></div>
 	<div id="qunit-fixture"></div>
 </body>

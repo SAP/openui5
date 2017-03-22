@@ -1,0 +1,9 @@
+<core:View xmlns:phx="sap.ui.commons" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">
+	<phx:Panel>
+		<phx:Label id="Label1" text="Label" labelFor="Button1" />
+		<phx:Button id="Button1" text="HEY default aggregation!" press="doIt"></phx:Button>
+		<phx:content>
+			<phx:Button id="Button2" text="HEY named aggregation!" press="doIt"></phx:Button>
+		</phx:content>
+	</phx:Panel>
+</core:View>

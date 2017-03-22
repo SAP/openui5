@@ -2,18 +2,19 @@
 <html>
 	<head>
 
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 		<title>GridLayout - sap.ui.layout.form</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.GridLayout.gif">
-		<script id="sap-ui-bootstrap" type="text/javascript"
-				data-sap-ui-theme="sap_bluecrystal"
-				data-sap-ui-libs="sap.ui.layout, sap.ui.commons"
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
 				src="../../../../../resources/sap-ui-core.js"></script>
 
-		<script type="text/javascript">
+		<script>
 
 			var changeLayoutData = function(oEvent){
-				var oControl = sap.ui.getCore().byId("DDB_C5");
+				var oControl = sap.ui.getCore().byId("Sel_C5");
 				var oLayoutData = oControl.getLayoutData();
 				if(!oLayoutData){
 					oLayoutData = new sap.ui.layout.form.GridElementData({hCells: "3"});
@@ -28,7 +29,7 @@
 			};
 
 			var deleteLayoutData = function(oEvent){
-				var oControl = sap.ui.getCore().byId("DDB_C5");
+				var oControl = sap.ui.getCore().byId("Sel_C5");
 				var oLayoutData = oControl.getLayoutData();
 				if(oLayoutData){
 					oControl.setLayoutData(null);
@@ -49,33 +50,33 @@
 						title: "contact data",
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"ID"}),
-								fields: [new sap.ui.commons.TextField({value: "SAP SE", required: true})]
+								label: new sap.m.Label({text:"ID"}),
+								fields: [new sap.m.Input({value: "SAP SE", required: true})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Street / Number",
-								fields: [new sap.ui.commons.TextField({value: "Dietmar-Hopp-Allee", layoutData: new sap.ui.layout.form.GridElementData({hCells: "12"})}),
-												 new sap.ui.commons.TextField({value: "16", layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
+								fields: [new sap.m.Input({value: "Dietmar-Hopp-Allee", layoutData: new sap.ui.layout.form.GridElementData({hCells: "12"})}),
+												 new sap.m.Input({value: "16", layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text: "Post code / City"}),
-								fields: [new sap.ui.commons.TextField({value: "69190", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
-												 new sap.ui.commons.TextField({value: "Walldorf", layoutData: new sap.ui.layout.form.GridElementData({hCells: "11"})})]
+								label: new sap.m.Label({text: "Post code / City"}),
+								fields: [new sap.m.Input({value: "69190", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
+												 new sap.m.Input({value: "Walldorf", layoutData: new sap.ui.layout.form.GridElementData({hCells: "11"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Country",
-								fields: [new sap.ui.commons.TextField({value: "DE", layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
-												 new sap.ui.commons.TextField({value: "Germany", layoutData: new sap.ui.layout.form.GridElementData({hCells: "12"})})]
+								fields: [new sap.m.Input({value: "DE", layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
+												 new sap.m.Input({value: "Germany", layoutData: new sap.ui.layout.form.GridElementData({hCells: "12"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Date of birth",
-								fields: [new sap.ui.commons.DatePicker({yyyymmdd: "20121212", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
+								fields: [new sap.m.DatePicker({dateValue: new Date(2012, 11, 12), layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Gender",
-								fields: [new sap.ui.commons.RadioButtonGroup({
-									items: [new sap.ui.core.Item({text: "male"}),
-											new sap.ui.core.Item({text: "female"})]
+								fields: [new sap.m.RadioButtonGroup({
+									buttons: [new sap.m.RadioButton({text: "male"}),
+									          new sap.m.RadioButton({text: "female"})]
 								})]
 							})
 						]
@@ -85,7 +86,7 @@
 						formElements: [
 							new sap.ui.layout.form.FormElement({
 								label: "Text Area",
-								fields: [new sap.ui.commons.TextArea({layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
+								fields: [new sap.m.TextArea({layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
 							})
 						]
 					}),
@@ -93,23 +94,23 @@
 						title: new sap.ui.core.Title({text: "Two Column", level: sap.ui.core.TitleLevel.H5}),
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"Required"}),
-								fields: [new sap.ui.commons.TextField({required: true})]
+								label: new sap.m.Label({text:"Required"}),
+								fields: [new sap.m.Input({required: true})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Colspan 4 / 1",
-								fields: [new sap.ui.commons.TextView({text: "4 cells", layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})}),
-										new sap.ui.commons.TextView({text: "1 cell", layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
+								fields: [new sap.m.Text({text: "4 cells", layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})}),
+												 new sap.m.Text({text: "1 cell", layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text: "Colspan 2 / 3"}),
-								fields: [new sap.ui.commons.TextView({text: "2 cells", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
-										new sap.ui.commons.TextView({text: "3 cells", layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
+								label: new sap.m.Label({text: "Colspan 2 / 3"}),
+								fields: [new sap.m.Text({text: "2 cells", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
+												 new sap.m.Text({text: "3 cells", layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Colspan 1 / 4",
-								fields: [new sap.ui.commons.Link({text: "1 cell", layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})})]
+								fields: [new sap.m.Link({text: "1 cell", layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})})]
 							})
 						],
 					layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -118,31 +119,31 @@
 						title: new sap.ui.core.Title({text: "Form Layout", level: sap.ui.core.TitleLevel.H5}),
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"ID"}),
-								fields: [new sap.ui.commons.TextField({required: true})]
+								label: new sap.m.Label({text:"ID"}),
+								fields: [new sap.m.Input({required: true})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Street / Number",
-								fields: [new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
+								fields: [new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text: "Post code / City"}),
-								fields: [new sap.ui.commons.ValueHelpField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
+								label: new sap.m.Label({text: "Post code / City"}),
+								fields: [new sap.m.Input({showValueHelp: true, valueHelpRequest: function(oEvent) { sap.m.MessageBox.alert("Value help requested"); }, layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Country",
-								fields: [new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})})]
+								fields: [new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Text Area",
-								fields: [new sap.ui.commons.TextArea({required: true, layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
+								fields: [new sap.m.TextArea({required: true, layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Image",
-								fields: [new sap.ui.commons.Image({src: "../../commons/images/SAPLogo.gif", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
+								fields: [new sap.m.Image({src: "../../commons/images/SAPLogo.gif", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
 							})
 						],
 					layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -151,26 +152,26 @@
 						title: new sap.ui.core.Title({text: "Address", icon: "../../commons/images/mail.gif", tooltip: "Title tooltip", level: sap.ui.core.TitleLevel.H5}),
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"Street"}),
-								fields: [new sap.ui.commons.TextField(),
-										new sap.ui.commons.TextField({enabled: false})]
+								label: new sap.m.Label({text:"Street"}),
+								fields: [new sap.m.Input(),
+												 new sap.m.Input({enabled: false})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "City",
-								fields: [new sap.ui.commons.TextField(),
-										new sap.ui.commons.TextField({editable: false, layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
+								fields: [new sap.m.Input(),
+												 new sap.m.Input({editable: false, layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text: "Post code", icon:"../../commons/images/help.gif"}),
-								fields: [new sap.ui.commons.TextField()]
+								label: new sap.m.Label({text: "Post code"}),
+								fields: [new sap.m.Input()]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Country",
-								fields: [new sap.ui.commons.DropdownBox("DDB_C5",{
+								fields: [new sap.m.Select("Sel_C5",{
 									items: [new sap.ui.core.ListItem({text: "Germany"}),
-											new sap.ui.core.ListItem({text: "USA"}),
-											new sap.ui.core.ListItem({text: "England"})]
+													new sap.ui.core.ListItem({text: "USA"}),
+													new sap.ui.core.ListItem({text: "England"})]
 								})]
 							})
 						],
@@ -182,17 +183,17 @@
 						expandable: true,
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.CheckBox({text: 'Kindergarden'}),
-										new sap.ui.commons.CheckBox({text: 'primary school'})]
+								fields: [new sap.m.CheckBox({text: 'Kindergarden'}),
+												 new sap.m.CheckBox({text: 'primary school'})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.CheckBox({text: 'high school'})]
+								fields: [new sap.m.CheckBox({text: 'high school'})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.CheckBox({text: 'college'})]
+								fields: [new sap.m.CheckBox({text: 'college'})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.CheckBox({text: 'university'})]
+								fields: [new sap.m.CheckBox({text: 'university'})]
 							})
 						],
 						layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -200,15 +201,15 @@
 					new sap.ui.layout.form.FormContainer("C7",{
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.Button({text: 'Change LayoutData',
+								fields: [new sap.m.Button({text: 'Change LayoutData',
 																	press: changeLayoutData,
 																	layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})}),
-										new sap.ui.commons.Button({text: 'Reset LayoutData',
+												 new sap.m.Button({text: 'Reset LayoutData',
 																	press: deleteLayoutData,
 																	layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})}),
-										new sap.ui.commons.Button({text: 'OK',
+												 new sap.m.Button({text: 'OK',
 																	layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
-										new sap.ui.commons.Button({text: 'Cancel',
+												 new sap.m.Button({text: 'Cancel',
 																	layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
 							})
 						],
@@ -218,29 +219,27 @@
 						title: new sap.ui.core.Title({text: "Test for vCells"}),
 						formElements: [
 										new sap.ui.layout.form.FormElement({
-											label: new sap.ui.commons.Label({text:"Label1"}),
-											fields: [new sap.ui.commons.TextArea({height: "72px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 3})}),
-													new sap.ui.commons.TextArea({height: "47px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})}),
-													new sap.ui.commons.TextArea({height: "22px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
+											label: new sap.m.Label({text:"Label1"}),
+											fields: [new sap.m.TextArea({height: "10rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 3})}),
+															 new sap.m.TextArea({height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})}),
+															 new sap.m.TextArea({height: "3rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
 																]
 										}),
 										new sap.ui.layout.form.FormElement({
-											fields: [new sap.ui.commons.TextArea({height: "22px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})}),
-													new sap.ui.commons.TextArea({height: "47px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})})
+											fields: [new sap.m.TextArea({height: "3rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})}),
+															 new sap.m.TextArea({height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})})
 																]
 										}),
 										new sap.ui.layout.form.FormElement({
-											label: new sap.ui.commons.Label({text:"Label3"}),
-											fields: [new sap.ui.commons.TextArea({height: "22px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
+											label: new sap.m.Label({text:"Label3"}),
+											fields: [new sap.m.TextArea({height: "3rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
 																]
 										})
 						],
 						layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
 					})
 				]
-			});
-
-			oForm1.placeAt("content");
+			}).placeAt("content");
 
 			var oForm2 = new sap.ui.layout.form.Form("F2",{
 				title: new sap.ui.core.Title({text: "Form: One Column (Fixed Width)"}),
@@ -250,31 +249,29 @@
 					new sap.ui.layout.form.FormContainer("C9",{
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"ID"}),
-								fields: [new sap.ui.commons.TextField({required: true})]
+								label: new sap.m.Label({text:"ID"}),
+								fields: [new sap.m.Input({required: true})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Street / Number",
-								fields: [new sap.ui.commons.TextField(),
-										new sap.ui.commons.TextField()]
+								fields: [new sap.m.Input(),
+												 new sap.m.Input()]
 							}),
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text: "Post code / City"}),
-								fields: [new sap.ui.commons.TextField(),
-										new sap.ui.commons.TextField()]
+								label: new sap.m.Label({text: "Post code / City"}),
+								fields: [new sap.m.Input(),
+												 new sap.m.Input()]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Country",
-								fields: [new sap.ui.commons.TextField(),
-										new sap.ui.commons.TextField(),
-										new sap.ui.commons.TextField()]
+								fields: [new sap.m.Input(),
+												 new sap.m.Input(),
+												 new sap.m.Input()]
 							})
 						]
 					})
 				]
-			});
-
-			oForm2.placeAt("content");
+			}).placeAt("content");
 
 			var oForm3 = new sap.ui.layout.form.Form("F3",{
 				title: new sap.ui.core.Title({text: "Form: One Column A (Responsive)"}),
@@ -284,30 +281,28 @@
 					new sap.ui.layout.form.FormContainer("C10",{
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"ID"}),
-								fields: [new sap.ui.commons.TextField({required: true})]
+								label: new sap.m.Label({text:"ID"}),
+								fields: [new sap.m.Input({required: true})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Street / Number",
-								fields: [new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
+								fields: [new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text: "Post code / City"}),
-								fields: [new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
+								label: new sap.m.Label({text: "Post code / City"}),
+								fields: [new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Country",
-								fields: [new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})})]
+								fields: [new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})})]
 							})
 						]
 					})
 				]
-			});
-
-			oForm3.placeAt("content2");
+			}).placeAt("content2");
 
 			var oForm4 = new sap.ui.layout.form.Form("F4",{
 				title: new sap.ui.core.Title({text: "Form: One Column B (Responsive)"}),
@@ -317,30 +312,28 @@
 					new sap.ui.layout.form.FormContainer("C11",{
 						formElements: [
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"ID"}),
-								fields: [new sap.ui.commons.TextField({required: true})]
+								label: new sap.m.Label({text:"ID"}),
+								fields: [new sap.m.Input({required: true})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Street / Number",
-								fields: [new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
+								fields: [new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text: "Post code / City"}),
-								fields: [new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
+								label: new sap.m.Label({text: "Post code / City"}),
+								fields: [new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Country",
-								fields: [new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
-										new sap.ui.commons.TextField({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})})]
+								fields: [new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})}),
+												 new sap.m.Input({layoutData: new sap.ui.layout.form.GridElementData({hCells: "4"})})]
 							})
 						]
 					})
 				]
-			});
-
-			oForm4.placeAt("content3");
+			}).placeAt("content3");
 
 		</script>
 

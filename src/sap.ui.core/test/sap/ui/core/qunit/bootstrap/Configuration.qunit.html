@@ -1,54 +1,55 @@
 <!DOCTYPE HTML>
-
-<!-- 
-  Tested class: sap.ui.core.Configuration
-  Author: d020684
--->
-
+<!--
+  Tested class: Configuration
+  -->
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
 	<!-- Initialization -->
-	<script language="javascript">
-		window["sap-ui-config"] = {
-			theme : "sap_bluecrystal"
-		}
-	</script>
-	
-	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
+	<script src="../../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
 		src="../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-calendarType="islamic"
 		data-sap-ui-language="en"
+		data-sap-ui-log-level="WARNING"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.core">
 	</script>
-	
-	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-	<!-- Test functions -->
-	<script language="javascript">
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-		module("Basic");
+	<script>
 
-		test("Settings", function() {
-			var oCfg = new sap.ui.core.Configuration();
-			equal(oCfg.theme, "sap_bluecrystal", "tag config should override global config");
-			deepEqual(oCfg.modules, ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
+	QUnit.config.autostart = false;
+
+	sap.ui.require(['sap/ui/core/Configuration', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/Locale'],
+		function(Configuration, Core, coreLibrary, Locale) {
+
+		var CalendarType = coreLibrary.CalendarType;
+
+		QUnit.module("Basic");
+
+		QUnit.test("Settings", function(assert) {
+			var oCfg = new Configuration();
+			assert.equal(oCfg.theme, "sap_belize", "tag config should override global config");
+			assert.deepEqual(oCfg.modules, ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
 		});
 
-		test("jQuery and $", function() {
+		QUnit.test("jQuery and $", function(assert) {
 			// we configured noConflict=true, so $ shouldn'T be the same as jQuery
-			ok(window.jQuery, "window.jQuery is available");
-			ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
+			assert.ok(window.jQuery, "window.jQuery is available");
+			assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
 		});
 
-		test("LegacyDateCalendarCustomizing", function() {
-			var oCfg = new sap.ui.core.Configuration(),
+		QUnit.test("LegacyDateCalendarCustomizing", function(assert) {
+			var oCfg = new Configuration(),
 				oFormatSettings = oCfg.getFormatSettings();
 
 			var aData = [{
@@ -65,43 +66,570 @@
 				"gregDate": "20141123"
 			}];
 
-			ok(oFormatSettings, "FormatSettings object is created");
+			assert.ok(oFormatSettings, "FormatSettings object is created");
 			oFormatSettings.setLegacyDateCalendarCustomizing(aData);
-			strictEqual(oFormatSettings.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
+			assert.strictEqual(oFormatSettings.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
 		});
 
-		test("getter and setter for option 'calendar'", function() {
-			var oCfg = new sap.ui.core.Configuration(),
+		QUnit.test("getter and setter for option 'calendar'", function(assert) {
+			var oCfg = new Configuration(),
 				oFormatSettings = oCfg.getFormatSettings();
 
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The bootstrap parameter is respected");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The bootstrap parameter is respected");
 
 			oCfg.setCalendarType(null);
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The default calendar type is determined using the current locale");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The default calendar type is determined using the current locale");
 
 			oFormatSettings.setLegacyDateFormat("A");
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
 
-			oCfg.setCalendarType(sap.ui.core.CalendarType.Gregorian);
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
+			oCfg.setCalendarType(CalendarType.Gregorian);
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
 
 			oCfg.setCalendarType(null);
 			oFormatSettings.setLegacyDateFormat("B");
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
+
+			oFormatSettings.setLegacyDateFormat("7");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Japanese, "The legacy date format '7' changes the calendar type to japanese");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+			oFormatSettings.setLegacyDateFormat("8");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Japanese, "The legacy date format '8' changes the calendar type to japanese");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+			oFormatSettings.setLegacyDateFormat("9");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Japanese, "The legacy date format '9' changes the calendar type to japanese");
 		});
-	</script>
-  
+
+
+		QUnit.module("localization change", {
+			beforeEach: function(assert) {
+				this.reset = function() {
+					this.eventsReceived = 0;
+					this.changes = [];
+				};
+				this.reset();
+				this.oCoreMock = {
+					fireLocalizationChanged: function(changes) {
+						this.eventsReceived++;
+						this.changes.push(changes);
+					}.bind(this)
+				};
+				window['sap-ui-config'] = {
+					language: 'en'
+				};
+				this.oConfig = new Configuration(this.oCoreMock);
+			}
+		});
+
+		QUnit.test("setLanguage(en) - noop", function(assert) {
+			this.oConfig.setLanguage("en");
+			assert.equal(this.oConfig.getLanguage(), "en", "language still should be 'en'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
+			assert.equal(this.eventsReceived, 0, "one localizationChange event should have been fired");
+		});
+
+		QUnit.test("setLanguage(de) - simple", function(assert) {
+			this.oConfig.setLanguage("de");
+			assert.equal(this.oConfig.getLanguage(), "de", "language should have changed to 'de'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]), ['language'], "event should have reported 'language' as changed");
+		});
+
+		QUnit.test("setLanguage(he) - multi", function(assert) {
+			this.oConfig.setLanguage("he");
+			assert.equal(this.oConfig.getLanguage(), "he", "language should have changed to 'he'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['language', 'rtl'], "event should have reported 'language' and 'rtl' as changed");
+		});
+
+		QUnit.test("setLanguage(invalid)", function(assert) {
+			var that = this;
+			assert.throws(function() {
+				that.oConfig.setLanguage(new Date());
+			}, "setting anything but a string should cause an error");
+			assert.throws(function() {
+				that.oConfig.setLanguage({ toString : function() { return "en-GB"; }});
+			}, "setting anything that only looks like a string should throw error");
+		});
+
+		QUnit.test("setRTL(null) - noop", function(assert) {
+			assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
+			this.oConfig.setRTL(null);
+			assert.equal(this.oConfig.getRTL(), false, "RTL still should be false for 'en'");
+			assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
+			this.oConfig.setLanguage("he");
+			assert.equal(this.oConfig.getRTL(), true, "language 'he' should change the RTL flag when none (null) had been set");
+		});
+
+		QUnit.test("setRTL(false) - noop", function(assert) {
+			assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
+			this.oConfig.setRTL(false);
+			assert.equal(this.oConfig.getRTL(), false, "RTL still should be false for 'en'");
+			assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
+			this.oConfig.setLanguage("he");
+			assert.equal(this.oConfig.getRTL(), false, "language 'he' must not change the explicitily configured RTL flag");
+		});
+
+		QUnit.test("setRTL(true) - change", function(assert) {
+			assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
+			this.oConfig.setRTL(true);
+			assert.equal(this.oConfig.getRTL(), true, "RTL still should be false for 'en'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['rtl'], "event should have reported 'rtl' as changed");
+		});
+
+		QUnit.test("setLegacyDateFormat", function(assert) {
+			this.oConfig.getFormatSettings().setLegacyDateFormat("1");
+			assert.equal(this.oConfig.getFormatSettings().getLegacyDateFormat(), "1", "legacy date format should have changed to '1'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['dateFormats-medium', 'dateFormats-short', 'legacyDateFormat'], "event should have reported 'language' and 'rtl' as changed");
+			assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+
+			// unset again
+			this.oConfig.getFormatSettings().setLegacyDateFormat();
+			assert.notOk(this.oConfig.getFormatSettings().getLegacyDateFormat(), "legacy date format should have been unset");
+			assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		});
+
+		QUnit.test("setLegacyTimeFormat", function(assert) {
+			this.oConfig.getFormatSettings().setLegacyTimeFormat("1");
+			assert.equal(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "1", "legacy time format should have changed to '1'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['dayPeriods-format-abbreviated', 'legacyTimeFormat', 'timeFormats-medium', 'timeFormats-short'], "event should have reported 'language' and 'rtl' as changed");
+			assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+
+			// unset again
+			this.oConfig.getFormatSettings().setLegacyTimeFormat();
+			assert.notOk(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "legacy date format should have been unset");
+			assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		});
+
+		QUnit.test("applySettings", function(assert) {
+			this.oConfig.applySettings({
+				language: 'he',
+				formatSettings: {
+					legacyDateFormat: '1',
+					legacyTimeFormat: '1'
+				},
+				calendarType: 'Islamic'
+			});
+			assert.equal(this.oConfig.getLanguage(), "he", "language should have changed to 'he'");
+			assert.equal(this.oConfig.getRTL(), true, "RTL should have changed to true");
+			assert.equal(this.oConfig.getFormatSettings().getLegacyDateFormat(), "1", "legacy date format should have changed to '1'");
+			assert.equal(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "1", "legacy time format should have changed to '1'");
+			assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), [
+				'calendarType',
+				'dateFormats-medium',
+				'dateFormats-short',
+				'dayPeriods-format-abbreviated',
+				'language',
+				'legacyDateFormat',
+				'legacyTimeFormat',
+				'rtl',
+				'timeFormats-medium',
+				'timeFormats-short'], "event should have reported the expected settings as changed");
+
+			// unset again
+			this.oConfig.applySettings({
+				language: 'en',
+				formatSettings: {
+					legacyDateFormat: null,
+					legacyTimeFormat: null
+				},
+				calendarType: null
+			});
+			assert.equal(this.oConfig.getLanguage(), "en", "language should have been reset to 'en'");
+			assert.equal(this.oConfig.getRTL(), false, "RTL should have changed to false");
+			assert.notOk(this.oConfig.getFormatSettings().getLegacyDateFormat(), "legacy date format should have been reset");
+			assert.notOk(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "legacy time format should have been reset");
+			assert.equal(this.oConfig.getCalendarType(), CalendarType.Gregorian, "calendar type should be 'Gregorian' again");
+			assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		});
+
+		QUnit.module("SAP Logon Language");
+
+		QUnit.test("derived from language - simple", function(assert) {
+			var oConfig = Core.getConfiguration();
+			// SAP language derived by UI5 - simple
+			oConfig.setLanguage("en-US");
+			assert.equal(oConfig.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
+			oConfig.setLanguage("de-CH");
+			assert.equal(oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
+		});
+
+		QUnit.test("derived from language - special cases", function(assert) {
+			var oConfig = Core.getConfiguration();
+			//  SAP language derived by UI5 - special cases
+			oConfig.setLanguage("zh-CN");
+			assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			oConfig.setLanguage("zh-Hans");
+			assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			oConfig.setLanguage("zh-Hans-CN");
+			assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			oConfig.setLanguage("zh-TW");
+			assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			oConfig.setLanguage("zh-Hant");
+			assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			oConfig.setLanguage("zh-Hant-TW");
+			assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			oConfig.setLanguage("en-US-x-saptrc");
+			assert.equal(oConfig.getSAPLogonLanguage(), "1Q", "SAP Logon language should be '1Q'");
+			oConfig.setLanguage("en-US-x-sappsd");
+			assert.equal(oConfig.getSAPLogonLanguage(), "2Q", "SAP Logon language should be '2Q'");
+		});
+
+		QUnit.test("configured via API", function(assert) {
+			oConfig = Core.getConfiguration();
+			//  SAP language provided by caller of setLanguage
+			oConfig.setLanguage("en-GB");
+			assert.equal(oConfig.getSAPLogonLanguage(), "EN", "setting only BCP47 language can only return 'EN'");
+			oConfig.setLanguage("en-GB", "6N"); // note: only SAPLanguage changes!
+			assert.equal(oConfig.getSAPLogonLanguage(), "6N", "setting both values must return the extected SAP Language '6N'");
+			oConfig.setLanguage("en-GB");
+			assert.equal(oConfig.getSAPLogonLanguage(), "EN", "setting only BCP47 language again must reset the knowledge about SAP Language");
+		});
+
+		QUnit.module("SAP Logon Language (via url)", {
+			beforeEach: function(assert) {
+				var getUriParameters = jQuery.sap.getUriParameters;
+				this.setupConfig = function(sLanguage, sUrl) {
+					var oCoreMock = {
+						fireLocalizationChanged: function() {}
+					};
+					if ( typeof jQuery.sap.getUriParameters.restore === 'function' ) {
+						jQuery.sap.getUriParameters.restore();
+					}
+					window["sap-ui-config"] = window["sap-ui-config"] || {};
+					window["sap-ui-config"].language = sLanguage;
+					this.stub(jQuery.sap, 'getUriParameters').returns( getUriParameters.call(jQuery.sap, sUrl) );
+					return new Configuration(oCoreMock);
+				};
+			}
+		});
+
+		[
+		 	/* URL parameter							language			languageTag 		SAP-L	Caption */
+			[ "?sap-language=EN",						"EN",				"en",				"EN",	"sap-language is the valid ISO language EN"],
+			[ "?sap-language=ZH",						"zh-Hans",			"zh-Hans",			"ZH",	"sap-language is the known SAP language ZN"],
+			[ "?sap-language=ZF",						"zh-Hant",			"zh-Hant",			"ZF",	"sap-language is the known SAP language ZF"],
+			[ "?sap-language=1Q",						"en-US-x-saptrc",	"en-US-x-saptrc",	"1Q",	"sap-language is the known SAP language 1Q"],
+			[ "?sap-language=2Q",						"en-US-x-sappsd",	"en-US-x-sappsd",	"2Q",	"sap-language is the known SAP language 2Q"],
+			[ "?sap-language=6N",						"de",				"de",				"6N",	"sap-language is the unknown SAP language 6N"],
+			[ "?sap-locale=fr_CH",						"fr_CH",			"fr-CH",			"FR",	"sap-locale is the accepted BCP47 tag fr_CH"],
+			[ "?sap-locale=En_gb&sap-language=6N",		"En_gb",			"en-GB",			"6N",	"valid combination of sap-locale and sap-language (En_gb, 6N)"],
+			[ "?sap-ui-language=en_GB&sap-language=6N",	"en_GB",			"en-GB",			"6N",	"valid combination of sap-ui-language and sap-language (en_GB, 6N)"],
+
+		].forEach(function( data ) {
+
+			QUnit.test(data[4], function(assert) {
+
+				var oConfig = this.setupConfig("de", data[0]);
+				assert.equal(oConfig.getLanguage(), data[1], "the effective language should be '" + data[1] + "'");
+				assert.equal(oConfig.getLanguageTag(), data[2], "the effective language tag should be '" + data[2] + "'");
+				assert.equal(oConfig.getSAPLogonLanguage(), data[3], "the SAP Logon language should be '" + data[3] + "'");
+
+			});
+
+		});
+
+		QUnit.test("language via url, locale+language via API", function(assert) {
+
+			var oConfig = this.setupConfig("de", "?sap-language=6N");
+			assert.equal(oConfig.getLanguage(), "de", "the effective language still should be 'de'");
+			assert.equal(oConfig.getLanguageTag(), "de", "the effective language tag still should be 'de'");
+			assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N' already");
+
+			// without the second parameter, the sap language now would be 'EN' only
+			oConfig.setLanguage("en-GB");
+			assert.equal(oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+			assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
+			assert.equal(oConfig.getSAPLogonLanguage(), "EN", "the SAP Logon language should be 'EN'");
+
+			// but with the second parameter, everything should be fine
+			oConfig.setLanguage("en-GB", "6N");
+			assert.equal(oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+			assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
+			assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N'");
+
+		});
+
+		QUnit.test("error reporting", function(assert) {
+			this.stub(jQuery.sap.log, 'warning');
+			var oConfig = this.setupConfig("de", "?sap-language=6N&sap-locale=en-GB");
+			assert.strictEqual(jQuery.sap.log.warning.called, false, "no warning should be written if accompanied by sap-locale");
+			var oConfig = this.setupConfig("de", "?sap-language=6N&sap-ui-language=en-GB");
+			assert.strictEqual(jQuery.sap.log.warning.called, false, "no warning should be written if accompanied by sap-ui-language");
+			var oConfig = this.setupConfig("de", "?sap-language=6N");
+			assert.ok(jQuery.sap.log.warning.calledWith(sinon.match(/6N/).and(sinon.match(/BCP-?47/i))), "warning must have been written");
+			assert.throws(function() {
+				var oConfig = this.setupConfig("de", "?sap-locale=6N&sap-language=6N");
+			}, "setting an invalid (non-BCP-47) sap-locale should cause an error");
+			assert.throws(function() {
+				var oConfig = this.setupConfig("de", "?sap-ui-language=6N&sap-language=6N");
+			}, "setting an invalid (non-BCP-47) sap-ui-language should cause an error");
+		});
+
+		QUnit.test("Format Locale", function(assert) {
+			window['sap-ui-config'].formatlocale = 'fr-CH'; // Note: Configuration expects sap-ui-config names converted to lowercase (done by bootstrap)
+			var oConfig = this.setupConfig("fr-FR", "");
+			assert.equal(oConfig.getLanguageTag(), "fr-FR", "language should be fr-FR");
+			assert.equal(oConfig.getFormatLocale(), "fr-CH", "format locale string should be fr-CH");
+			assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Locale, "format locale should exist");
+			assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "fr-CH", "format locale should be fr-CH");
+
+			window['sap-ui-config'].formatlocale = null;
+			var oConfig = this.setupConfig("fr-FR", "");
+			assert.equal(oConfig.getLanguageTag(), "fr-FR", "language should be fr-FR");
+			assert.equal(oConfig.getFormatLocale(), "fr-FR", "format locale string should be fr-CH");
+			assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Locale, "format locale should exist");
+			assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "fr-FR", "format locale should be fr-CH");
+			delete window['sap-ui-config'].formatlocale;
+
+			var oConfig = this.setupConfig("de", "?sap-language=EN&sap-ui-formatLocale=en-AU");
+			assert.equal(oConfig.getLanguageTag(), "en", "language should be en");
+			assert.equal(oConfig.getFormatLocale(), "en-AU", "format locale string should be en-AU");
+			assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Locale, "format locale should exist");
+			assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "en-AU", "format locale should be en-AU");
+
+			oConfig.setFormatLocale("en-CA");
+			assert.equal(oConfig.getFormatLocale(), "en-CA", "format locale string should be en-CA");
+			assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Locale, "format locale should exist");
+			assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "en-CA", "format locale should be en-CA");
+
+			oConfig.setFormatLocale();
+			assert.equal(oConfig.getFormatLocale(), "en", "format locale string should be en");
+			assert.ok(oConfig.getFormatSettings().getFormatLocale() instanceof Locale, "format locale should exist");
+			assert.equal(oConfig.getFormatSettings().getFormatLocale().toString(), "en", "format locale should be en");
+
+			assert.throws(function() {
+				oConfig.setFormatLocale('6N');
+			}, "setting an invalid (non-BCP-47) format locale should cause an error");
+			assert.throws(function() {
+				oConfig.setFormatLocale(new Date());
+			}, "setting a non-string value as format locale should cause an error");
+		});
+
+
+
+		QUnit.module("Format settings", {
+			beforeEach: function(assert) {
+				this.oGetParameterStub = sinon.stub();
+			}
+		});
+
+		QUnit.test("Read 'sap-ui-legacy-number-format' from URL", function(assert) {
+
+			var oSpySetLegacyNumberFormat = sinon.spy(Configuration.FormatSettings.prototype, "setLegacyNumberFormat");
+
+			[
+				{ param: '', expected: undefined },
+				{ param: ' ', expected: ' ' },
+				{ param: 'X', expected: 'X' },
+				{ param: 'x', expected: 'X' },
+				{ param: 'Y', expected: 'Y' },
+				{ param: 'y', expected: 'Y' }
+			].forEach(function (data) {
+
+				// setup
+				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-number-format=' + encodeURIComponent(data.param));
+				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				oSpySetLegacyNumberFormat.reset();
+
+				// call method under test
+				var oConfig = new Configuration();
+
+				// verify results
+				assert.equal(oSpySetLegacyNumberFormat.callCount, 1, "setLegacyNumberFormat with value: '" + data.param + "' must be called");
+				assert.equal(oConfig.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
+
+				oGetUriParametersStub.restore();
+				oConfig.destroy();
+
+			});
+		});
+
+		QUnit.test("Read 'sap-ui-legacy-date-format' from URL", function(assert) {
+
+			var oSpySetLegacyDateFormat = sinon.spy(Configuration.FormatSettings.prototype, "setLegacyDateFormat");
+
+			[
+				{ param: '', expected: undefined },
+				{ param: '1', expected: '1' },
+				{ param: '2', expected: '2' },
+				{ param: '3', expected: '3' },
+				{ param: '4', expected: '4' },
+				{ param: '5', expected: '5' },
+				{ param: '6', expected: '6' },
+				{ param: '7', expected: '7' },
+				{ param: '8', expected: '8' },
+				{ param: '9', expected: '9' },
+				{ param: 'A', expected: 'A' },
+				{ param: 'B', expected: 'B' },
+				{ param: 'C', expected: undefined }, // Note: C is currently ignored
+				{ param: 'a', expected: 'A' },
+				{ param: 'b', expected: 'B' },
+				{ param: 'c', expected: undefined }, // Note: C is currently ignored
+			].forEach(function (data) {
+
+				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-date-format=' + encodeURIComponent(data.param));
+				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				oSpySetLegacyDateFormat.reset();
+
+				var oConfig = new Configuration();
+
+				assert.equal(oSpySetLegacyDateFormat.callCount, 1, "setLegacyDateFormat must have been called one time");
+				assert.equal(oConfig.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
+
+				oGetUriParametersStub.restore();
+				oConfig.destroy();
+
+			});
+		});
+
+		QUnit.test("Read 'sap-ui-legacy-time-format' from URL", function(assert) {
+			var oSpySetLegacyTimeFormat = sinon.spy(Configuration.FormatSettings.prototype, "setLegacyTimeFormat");
+
+			[
+				{ param: '', expected: undefined },
+				{ param: '0', expected: '0' },
+				{ param: '1', expected: '1' },
+				{ param: '2', expected: '2' },
+				{ param: '3', expected: '3' },
+				{ param: '4', expected: '4' },
+			].forEach(function (data) {
+
+				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-time-format=' + encodeURIComponent(data.param));
+				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				oSpySetLegacyTimeFormat.reset();
+
+				var oConfig = new Configuration();
+
+				assert.equal(oSpySetLegacyTimeFormat.callCount, 1, "setLegacyTimeFormat must be called one time");
+				assert.equal(oConfig.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
+
+				oGetUriParametersStub.restore();
+				oConfig.destroy();
+
+			});
+		});
+
+		QUnit.module("SAP parameters", {
+			beforeEach: function(assert) {
+				this.oGetParameterStub = sinon.stub();
+				window["sap-ui-config"].language = "en";
+			}
+		});
+
+		QUnit.test("Read SAP parameters from URL", function(assert) {
+
+			// setup
+			var oParams = jQuery.sap.getUriParameters('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=en');
+			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+
+			// call method under test
+			var oConfig = new Configuration();
+
+			// verify results
+			assert.equal(oConfig.getSAPParam('sap-client'), 'foo', 'SAP parameter sap-client=foo');
+			assert.equal(oConfig.getSAPParam('sap-server'), 'bar', 'SAP parameter sap-server=bar');
+			assert.equal(oConfig.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-system=abc');
+			assert.equal(oConfig.getSAPParam('sap-language'), 'en', 'SAP parameter sap-language=en');
+
+			oGetUriParametersStub.restore();
+			oConfig.destroy();
+
+		});
+
+		QUnit.test("Read SAP parameters from URL (ignoreUrlParams)", function(assert) {
+
+			// setup
+			var oParams = jQuery.sap.getUriParameters('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=de');
+			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+			window["sap-ui-config"].ignoreurlparams = true;
+
+			// call method under test
+			var oConfig = new Configuration();
+
+			// verify results
+			assert.equal(oConfig.getSAPParam('sap-client'), undefined, 'SAP parameter sap-client=foo');
+			assert.equal(oConfig.getSAPParam('sap-server'), undefined, 'SAP parameter sap-server=bar');
+			assert.equal(oConfig.getSAPParam('sap-system'), undefined, 'SAP parameter sap-system=abc');
+			assert.equal(oConfig.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=en');
+
+			oGetUriParametersStub.restore();
+			oConfig.destroy();
+			delete window["sap-ui-config"].ignoreurlparams;
+
+		});
+
+		QUnit.test("Set SAPLogonLanguage and SAP parameter is updated", function(assert) {
+
+			// setup
+			var oParams = jQuery.sap.getUriParameters('?sap-language=EN');
+			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns(oParams);
+
+			// call method under test
+			var oConfig = new Configuration();
+
+			// verify results
+			assert.equal(oConfig.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=EN');
+			oConfig.setLanguage("es");
+			assert.equal(oConfig.getSAPParam('sap-language'), 'ES', 'SAP parameter sap-language=ES');
+
+			oGetUriParametersStub.restore();
+			oConfig.destroy();
+
+		});
+
+		QUnit.test("Read SAP parameters from <meta> tag", function(assert) {
+
+			// setup
+			var metaTagClient = document.createElement("meta");
+			metaTagClient.setAttribute("name", "sap-client");
+			metaTagClient.setAttribute("content", "foo");
+			document.head.appendChild(metaTagClient);
+
+			var metaTagServer = document.createElement("meta");
+			metaTagServer.setAttribute("name", "sap-server");
+			metaTagServer.setAttribute("content", "bar");
+			document.head.appendChild(metaTagServer);
+
+			var metaTagSystem = document.createElement("meta");
+			metaTagSystem.setAttribute("name", "sap-system");
+			metaTagSystem.setAttribute("content", "abc");
+			document.head.appendChild(metaTagSystem);
+
+			// call method under test
+			var oConfig = new Configuration();
+
+			// verify results
+			assert.equal(oConfig.getSAPParam('sap-client'), 'foo', 'SAP parameter sap-client=foo');
+			assert.equal(oConfig.getSAPParam('sap-server'), 'bar', 'SAP parameter sap-system=bar');
+			assert.equal(oConfig.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-client=abc');
+
+			oConfig.destroy();
+			document.head.removeChild(metaTagClient);
+			document.head.removeChild(metaTagServer);
+			document.head.removeChild(metaTagSystem);
+
+		});
+
+		QUnit.start();
+
+	});
+
+ 	</script>
+
 </head>
 <body>
-	<h1 id="qunit-header">QUnit tests: SAPUI5 Configuration (results)</h1>
-	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<br>
-	<div id="uiArea1"></div>
-	<div id="uiArea2"></div>
-	<div id="uiArea3"></div>
-	<input id="customInput" type="text"></input>
+	<div id="qunit"></div>
 </body>
 </html>

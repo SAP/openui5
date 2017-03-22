@@ -2,8 +2,8 @@
 <html>
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <title>NotificationBar - sap.ui.ux3</title>
 <link rel="shortcut icon" type="image/x-icon"
@@ -11,12 +11,12 @@
 <link rel="shortcut icon" type="image/x-icon"
 	href="images/controls/sap.ui.commons.Notifier.gif">
 
-<script id="sap-ui-bootstrap" type="text/javascript"
-	data-sap-ui-theme="sap_goldreflection"
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3"
 	src="../../../../resources/sap-ui-core.js"></script>
 
-<script type="text/javascript">
+<script>
 	function pressHandler(oEvent) {
 		var oMessage = oEvent.getParameter("message");
 		var oNotifier = oEvent.getParameter("notifier");
@@ -121,8 +121,8 @@
 	function themeChanged(oEvent) {
 		var sTheme = oEvent.getParameter("newValue");
 
-		if (sTheme == "Gold Reflection") {
-			sap.ui.getCore().applyTheme('sap_goldreflection');
+		if (sTheme == "Blue Crystal") {
+			sap.ui.getCore().applyTheme('sap_bluecrystal');
 		} else {
 			sap.ui.getCore().applyTheme('sap_hcb');
 		}
@@ -145,7 +145,7 @@
 
 		if (bShow) {
 			/*
-			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus) 
+			 * Now the application can decide how to display the bar. It can be maximized, default, minimized (please see NotificationBarStatus)
 			 */
 			var sStatus = sap.ui.ux3.NotificationBarStatus.Default;
 			oNotificationBar.setVisibleStatus(sStatus);
@@ -163,15 +163,15 @@
 }
 </style>
 
-<script type="text/javascript">
+<script>
 	var oDropdownTheme = new sap.ui.commons.DropdownBox({
 		items : [ new sap.ui.core.ListItem("reflect", {
-			text : "Gold Reflection",
+			text : "Blue Crystal",
 		}), new sap.ui.core.ListItem("hcb", {
 			text : "High Contrast Black"
 		}) ],
 
-		value : "Gold Reflection",
+		value : "Blue Crystal",
 		change : themeChanged
 	});
 	oDropdownTheme.placeAt("themeSelect");

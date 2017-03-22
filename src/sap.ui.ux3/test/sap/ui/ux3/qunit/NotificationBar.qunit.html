@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>NotificationBar - sap.ui.ux3</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.ux3">
 
 </script>
@@ -14,18 +14,16 @@
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
 	type="text/css" media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
+	src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-<script language="javascript">
-	<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
+<script>
 
 	function openHandler(oEvent) {
 		var bShow = oEvent.getParameter("show");
@@ -37,7 +35,7 @@
 		sap.ui.getCore().applyChanges();
 	};
 
-	function minimize(oNBar, sFrom, sTo) {
+	function minimize(oNBar, sFrom, sTo, done) {
 		oNBar.setVisibleStatus(sFrom);
 		sap.ui.getCore().applyChanges();
 
@@ -50,7 +48,11 @@
 		var sMessage = "Bar minimized from " + sFrom + " to " + sTo;
 		var bTest = (iBefore > iAfter) ? true : false;
 
-		ok(bTest, sMessage);
+		assert.ok(bTest, sMessage);
+
+		if (done) {
+			done();
+		}
 	};
 
 	function maximize(oNBar, sFrom, sTo) {
@@ -66,7 +68,7 @@
 		var bTest = (iBefore < iAfter) ? true : false;
 		var sMessage = "Bar maximized from " + sFrom + " to " + sTo;
 
-		ok(bTest, sMessage);
+		assert.ok(bTest, sMessage);
 	};
 
 	function toggleVisibility(oNBar, sFrom, sTo) {
@@ -82,12 +84,12 @@
 		var bTest = (sBefore != sAfter) ? true : false;
 		var sMessage = "Bar toggled from " + sFrom + " to " + sTo;
 
-		ok(bTest, sMessage);
+		assert.ok(bTest, sMessage);
 	};
 </script>
 
 
-<script language="javascript">
+<script>
 	var fx = jQuery.fx.off;
 
 	var oNotiBar = new sap.ui.ux3.NotificationBar("my-very-long-id", {
@@ -99,16 +101,16 @@
 		title : "Messages"
 	});
 
-	module("Messages", {
-		setup : function() {
+	QUnit.module("Messages", {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
-	test("Adding/removing messages", function() {
-		expect(9);
+	QUnit.test("Adding/removing messages", function(assert) {
+		assert.expect(9);
 
 		var now = (new Date()).toUTCString();
 		var sText = "Lorem Ipsum";
@@ -133,15 +135,15 @@
 		oMN.addMessage(oMessage);
 		sap.ui.getCore().applyChanges();
 
-		ok(oMN.hasItems(), "Message added to Notifier")
-		ok(oNotiBar.hasItems(), "Message reached NotificationBar");
+		assert.ok(oMN.hasItems(), "Message added to Notifier")
+		assert.ok(oNotiBar.hasItems(), "Message reached NotificationBar");
 
 		var bTest = oNotiBar.getVisibleStatus() != "None";
-		ok(bTest, "Visibility correctly changed");
+		assert.ok(bTest, "Visibility correctly changed");
 
 		var sDisplay = oNotiBar.$().css("display");
 		bTest = sDisplay === "block";
-		ok(bTest, "Bar displayed in DOM");
+		assert.ok(bTest, "Bar displayed in DOM");
 
 		/*
 		 * Removing messages
@@ -149,25 +151,25 @@
 		oMN.removeMessage(oMessage);
 		sap.ui.getCore().applyChanges();
 		var iCounter = oNotiBar.getMessageNotifier().getMessages().length;
-		ok(iCounter === 1, "One single message was removed");
+		assert.ok(iCounter === 1, "One single message was removed");
 
 		oMN.removeAllMessages();
 		sap.ui.getCore().applyChanges();
 
-		ok(!oMN.hasItems(), "All Messages removed from Notifier");
+		assert.ok(!oMN.hasItems(), "All Messages removed from Notifier");
 
-		ok(!oNotiBar.hasItems(), "Messages removed from bar");
+		assert.ok(!oNotiBar.hasItems(), "Messages removed from bar");
 
 		var bTest = oNotiBar.getVisibleStatus() === "None";
-		ok(bTest, "Visibility status correctly set to None");
+		assert.ok(bTest, "Visibility status correctly set to None");
 
 		var sDisplay = oNotiBar.$().css("display");
 		bTest = sDisplay === "none";
-		ok(bTest, "Bar invisible in DOM");
+		assert.ok(bTest, "Bar invisible in DOM");
 	});
 
-	test("Read-Only Messages", function() {
-		expect(3);
+	QUnit.test("Read-Only Messages", function(assert) {
+		assert.expect(3);
 
 		oNotiBar.setMessageNotifier(oMN);
 
@@ -183,7 +185,7 @@
 
 		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
 		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
-		ok(!bTest, "Inplace text for common message is not selectable - there is no event listener")
+		assert.ok(!bTest, "Inplace text for common message is not selectable - there is no event listener")
 
 		// test if common message with event listener is selectable
 		oMN.attachMessageSelected(function() {
@@ -191,7 +193,7 @@
 		sap.ui.getCore().applyChanges();
 		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
 		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
-		ok(bTest, "Inplace text for common message is selectable")
+		assert.ok(bTest, "Inplace text for common message is selectable")
 
 		// test if read only message is selectable (event listener needed of course)
 		now = (new Date()).toUTCString();
@@ -206,22 +208,22 @@
 
 		var $InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
 		var bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
-		ok(!bTest, "Inplace text is not selectable because it's read only")
+		assert.ok(!bTest, "Inplace text is not selectable because it's read only")
 	});
 
 	/*
 	 * Testing from None
 	 */
-	module("Resizing", {
-		setup : function() {
+	QUnit.module("Resizing", {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
-	test("From None", function() {
-		expect(3);
+	QUnit.test("From None", function(assert) {
+		assert.expect(3);
 		toggleVisibility(oNotiBar, "None", "Min");
 		toggleVisibility(oNotiBar, "None", "Default");
 		toggleVisibility(oNotiBar, "None", "Max");
@@ -230,8 +232,8 @@
 	/*
 	 * Testing from Minimized
 	 */
-	test("From Minimized", function() {
-		expect(2);
+	QUnit.test("From Minimized", function(assert) {
+		assert.expect(2);
 		toggleVisibility(oNotiBar, "Min", "None");
 		maximize(oNotiBar, "Min", "Default");
 	});
@@ -239,8 +241,8 @@
 	/*
 	 * Testing from Default
 	 */
-	test("From Default", function() {
-		expect(3);
+	QUnit.test("From Default", function(assert) {
+		assert.expect(3);
 		toggleVisibility(oNotiBar, "Default", "None");
 		minimize(oNotiBar, "Default", "Min");
 		maximize(oNotiBar, "Default", "Max");
@@ -249,8 +251,8 @@
 	/*
 	 * Testing from Maximized
 	 */
-	test("From Maximized", function() {
-		expect(2);
+	QUnit.test("From Maximized", function(assert) {
+		assert.expect(2);
 		toggleVisibility(oNotiBar, "Max", "None");
 		minimize(oNotiBar, "Max", "Default");
 	});
@@ -258,36 +260,34 @@
 	/*
 	 * Testing whether the resize event is fired
 	 */
-	asyncTest("Resize event", function() {
-		expect(2);
-
-		var bEventFired = false;
+	QUnit.test("Resize event", function(assert) {
+		var done = assert.async();
+		assert.expect(2);
 
 		var fnResizeHandler = function() {
 			oNotiBar.detachResize(fnResizeHandler);
-
-			start();
-			ok(true, "Resize event was fired by the NotificationBar");
+			assert.ok(true, "Resize event was fired by the NotificationBar");
 		};
 
 		oNotiBar.attachResize(fnResizeHandler);
 
-		minimize(oNotiBar, "Max", "Default");
+		minimize(oNotiBar, "Max", "Default", done);
 	});
 
 	/*
 	 * Testing if a Callout opens and the message is displayed
 	 */
-	module("Open Callouts", {
-		setup : function() {
+	QUnit.module("Open Callouts", {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 		}
 	});
-	asyncTest("Open it", function() {
-		expect(1);
+	QUnit.test("Open it", function(assert) {
+		var done = assert.async();
+		assert.expect(1);
 
 		var oNotifier = new sap.ui.ux3.Notifier({
 			title : "First Notifier",
@@ -305,21 +305,21 @@
 		$notifier.trigger(oEvt);
 
 		oNotifier._oCallout.attachOpened(function() {
-			start();
 			var $message = jQuery(".sapUiNotifierMessage");
 			var $child = jQuery($message.children()[0]);
-
 			var sHtml = $child.html();
+
 			var bTest = !!(sHtml === "Lorem Ipsum");
-			ok(bTest, "Notifier opened and message displayed");
+			assert.ok(bTest, "Notifier opened and message displayed");
+			done();
 		});
 	});
 
-	module("Testing ItemNavigation", {
-		setup : function() {
+	QUnit.module("Testing ItemNavigation", {
+		beforeEach : function() {
 			jQuery.fx.off = true;
 		},
-		teardown : function() {
+		afterEach : function() {
 			jQuery.fx.off = fx;
 
 			oNotiBar.destroyMessageNotifier()
@@ -327,8 +327,9 @@
 			oNotiBar.setVisibleStatus(sap.ui.ux3.NotificationBarStatus.None);
 		}
 	});
-	asyncTest("Navigate through Notifiers (minimized)", function() {
-		expect(2);
+	QUnit.test("Navigate through Notifiers (minimized)", function(assert) {
+		var done = assert.async();
+		assert.expect(2);
 
 		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
 		var sKeyRight = jQuery.sap.KeyCodes.ARROW_RIGHT;
@@ -360,23 +361,24 @@
 			var after = document.activeElement;
 
 			var bTest = before.id !== after.id;
-			ok(bTest, "Moved from Notifier to MessageNotifier");
+			assert.ok(bTest, "Moved from Notifier to MessageNotifier");
 
 			setTimeout(function() {
-				start();
-
 				sap.ui.test.qunit.triggerKeydown(oMN.$(), sKeyLeft);
 
 				var after = document.activeElement;
 
 				var bTest = before.id === after.id;
-				ok(bTest, "Moved back to Notifier");
+
+				assert.ok(bTest, "Moved back to Notifier");
+				done();
 			}, 100);
 		}, 1000);
 	});
 
-	asyncTest("Navigate through messages (maximized)", function() {
-		expect(5);
+	QUnit.test("Navigate through messages (maximized)", function(assert) {
+		var done = assert.async();
+		assert.expect(5);
 
 		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
 		var sKeyRight = jQuery.sap.KeyCodes.ARROW_RIGHT;
@@ -419,10 +421,10 @@
 				var after = document.activeElement;
 
 				var bTest = before.id !== after.id;
-				ok(bTest, "Moved from first message to next one");
+				assert.ok(bTest, "Moved from first message to next one");
 
 				bTest = after.id === "messageNotifier-messageNotifierView-messageView-messageMaximized1";
-				ok(bTest, "Next message notifier message focused");
+				assert.ok(bTest, "Next message notifier message focused");
 
 				oDomRef = jQuery.sap.domById(after.id);
 				before = after;
@@ -432,21 +434,21 @@
 					after = document.activeElement;
 
 					bTest = before.id !== after.id;
-					ok(bTest, "Moved to message of common notifier");
+					assert.ok(bTest, "Moved to message of common notifier");
 
 					oDomRef = jQuery.sap.domById(after.id);
 					before = after;
 					sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyRight);
 
 					setTimeout(function() {
-						start();
 						after = document.activeElement;
-
 						bTest = before.id !== after.id;
-						ok(bTest, "Moved to message of common notifier");
 
+						assert.ok(bTest, "Moved to message of common notifier");
 						bTest = after.id === "messageNotifier-messageNotifierView-messageView-messageMaximized2";
-						ok(bTest, "Cycled through all messages and first one is focused again");
+
+						assert.ok(bTest, "Cycled through all messages and first one is focused again");
+						done();
 					}, 100);
 				}, 100);
 			}, 100);

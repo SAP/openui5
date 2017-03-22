@@ -1,0 +1,6 @@
+<core:FragmentDefinition xmlns="sap.ui.commons" xmlns:core="sap.ui.core">
+	<Panel text="Fragment 2">
+		<TextView text="SAP Fragment in Fragment with extension Point:"></TextView>
+		<core:ExtensionPoint name="epFrag2" />
+	</Panel>
+</core:FragmentDefinition>

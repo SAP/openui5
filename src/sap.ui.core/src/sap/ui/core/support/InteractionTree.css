@@ -1,0 +1,402 @@
+/* ============================================= */
+/* CSS for support performance statistics                  */
+/* ============================================= */
+
+.sapUiInteractionTreeContainer {
+	position: relative;
+}
+
+.sapUiInteractionTree {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sapUiInteractionTree ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sapUiInteractionTreeItem {
+	box-sizing: border-box;
+
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+.sapUiInteractionTreeItemLeft {
+	width: 320px;
+	box-sizing: border-box;
+	border-right: 1px solid #e5e5e5;
+	background-color: #fafafa;
+}
+
+.sapUiInteractionLeft {
+	cursor: pointer;
+}
+
+.sapUiInteractionItemExpanded .sapUiInteractionTreeItemLeft {
+	background-color: #f2f2f2;
+	border-right: 1px solid #e5e5e5;
+}
+
+.sapUiInteractionTreeItemLeft div {
+	display: inline-block;
+	padding: 0.3125rem 0;
+
+	max-width: 280px;
+
+	pointer-events: none;
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;
+}
+
+.sapUiInteractionTreeItemRight {
+	position: relative;
+	-webkit-box-flex: 1;
+	-webkit-flex-grow: 1;
+	-ms-flex: 1 1;
+	flex-grow: 1;
+
+	box-sizing: border-box;
+	border-right: 1px solid #e5e5e5;
+}
+
+.sapUiInteractionItemComponentText {
+	color: #000;
+	font-size: 14px;
+	margin-left: 1rem;
+	display: inline-block;
+
+	max-width: 260px;
+}
+
+.sapUiInteractionItemTriggerText {
+	color: #666;
+	font-size: 12px;
+	margin-left: 1rem;
+	display: inline-block;
+
+	max-width: 260px;
+	word-wrap: break-word;
+}
+
+.sapUiHiddenUiInteractionItems {
+	display: none;
+}
+
+.sapUiIcon.sapUiInteractionTreeIcon {
+	display: inline-block;
+	color: #666;
+	float: right;
+	padding: 0.75rem 0.5rem 0.75rem 0.1rem;
+	text-align: right;
+	height: 1rem;
+	width: 1rem;
+
+	pointer-events: none;
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;
+}
+
+.sapUiInteractionHeader.sapUiInteractionItemDiv  {
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
+	border-bottom: 1px solid #bfbfbf;
+	position: relative;
+	/*z-index: 100;*/
+}
+
+.sapUiInteractionTree li[data-interaction-index="0"] .sapUiInteractionItemDiv  {
+	border-top: 1px solid transparent;
+}
+
+.sapUiInteractionTreeItemLeft .sapUiInteractionHeaderIcon {
+	float: right;
+	padding: 0.875rem 0 0 0;
+}
+
+.sapUiInteractionRequestLeft .sapUiInteractionRequestHeaderIcon {
+	float: right;
+	padding: 0;
+	margin-right: 1.6125rem;
+}
+
+.sapUiInteractionSvgImage {
+	background-color: #007cc0;
+	width: 6px;
+	height: 8px;
+	border-radius: 50%;
+	padding: 2px 3px;
+}
+
+.sapUiInteractionItemDiv {
+	border-top: 1px solid #f2f2f2;
+}
+
+.sapUiInteractionItemDiv:not(.sapUiInteractionHeader):hover {
+	background-color: rgba(0, 157, 224, 0.05);
+}
+
+.sapUiInteractionItemDiv:not(.sapUiInteractionHeader):hover .sapUiInteractionTreeItemLeft {
+	background-color: transparent;
+	border-right: 1px solid transparent;
+}
+
+.sapUiInteractionItemExpanded .sapUiInteractionItemDiv {
+	border-top: 1px solid #e5e5e5;
+}
+
+.sapUiInteractionItemExpanded + li .sapUiInteractionItemDiv {
+	border-top: none;
+}
+
+li.sapUiInteractionItemExpanded {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.sapUiInteractionRequestLeft {
+	box-sizing: border-box;
+	padding-top: 2px;
+	overflow-y: hidden;
+}
+
+.sapUiInteractionRequest.sapUiInteractionTreeItem:hover {
+	background-color: rgba(0, 157, 224, 0.05);
+}
+
+.sapUiInteractionRequest.sapUiInteractionTreeItem:hover .sapUiInteractionTreeItemLeft {
+	background-color: transparent;
+	border-right: 1px solid transparent;
+}
+
+.sapUiInteractionTimeframe {
+	display: inline-block;
+	min-width: 1px;
+	position: absolute;
+}
+
+.sapUiInteractionTimeInteractionFrame {
+	box-sizing: border-box;
+	height: 1.75rem;
+	margin: 0.375rem 0 0 0;
+}
+
+.sapUiInteractionBlue {
+	border: 1px solid rgb(0, 124, 192);
+	background-color: rgba(0, 124, 192, 0.8);
+
+	border-radius: 2px;
+}
+
+.sapUiInteractionBlueLight {
+	border: 1px solid rgb(0, 124, 192);
+	background-color: rgba(0, 124, 192, 0.7);
+
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
+}
+
+.sapUiInteractionTimeframe.sapUiInteractionTimeRequestFrame {
+	margin-top: 0.2rem;
+	height: 0.625rem;
+	left: 0;
+	top: 0;
+}
+
+.sapUiInteractionRequestIcon {
+	margin: 0 0.25rem 0 1rem;
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 100%;
+}
+
+.sapUiBlue {
+	background-color: #007cc0;
+}
+
+.sapUiBlue70 {
+	background-color: rgba(0, 124, 192, 0.7);
+}
+
+.sapUiPurple {
+	background-color: #ab218e;
+}
+
+.sapUiPurple70 {
+	background-color: rgba(171, 33, 142, 0.7);
+}
+
+.sapUiRed {
+	background-color: #e52929;
+}
+
+.sapUiRed70 {
+	background-color: rgba(229, 41, 41, 0.7);
+}
+
+.sapUiAccent1 {
+	background-color: rgb(240, 171, 0);
+}
+
+.sapUiAccent170 {
+	background-color: rgba(240, 171, 0, 0.7);
+}
+
+.sapUiAccent8 {
+	background-color: rgb(0, 157, 224);
+}
+
+.sapUiAccent870 {
+	background-color: rgba(0, 157, 224, 0.7);
+}
+
+.sapUiInteractionRequest {
+	height: 1.125rem;
+}
+
+.sapUiInteractionHeader {
+
+}
+
+.sapUiInteractionGridLinesContainer {
+	background-color: white;
+	position: absolute;
+	left: 320px;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.sapUiInteractionItemExpanded .sapUiInteractionTreeItemRight {
+	background-color: rgba(242, 242, 242, 0.4);
+}
+
+.sapUiInteractionGridLine {
+	background-color: #f2f2f2;
+	position: absolute;
+	width: 1px;
+	height: 100%;
+}
+
+.sapUiInteractionGridLineIntervalText {
+	position: absolute;
+	top: 1.5rem;
+	color: #707070;
+}
+
+.sapUiInteractionItemEntryTypeText {
+	color: #333;
+	font-size: 12px;
+	display: inline-block;
+
+	max-width: 240px;
+}
+
+.sapUiSupportIntProgressBarParent {
+	position: relative;
+	height: 10px;
+	margin : 0 1rem;
+}
+
+.sapUiSupportIntProgressBarSeparator {
+	width: 1px;
+	background-color: white;
+	height: inherit;
+	float: left;
+}
+
+.sapUiSupportIntProgressBar {
+	height: inherit;
+	float: left;
+	min-width: 1px;
+	max-width: calc(100% - 4px)
+}
+
+.sapUiInteractionTitle {
+	margin : 1rem;
+	width: calc(100% - 80px);
+}
+
+.sapUiInteractionTitleSection {
+	display: inline-block;
+	width: 33%;
+}
+
+.sapUiInteractionTitleText {
+	font-size: 10px;
+	color: #666;
+}
+
+.sapUiInteractionTitleSubText {
+	font-size: 16px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiFormM .sapUiFormContainerTitle > .sapUiFormTitle  {
+	font-size: 12px;
+	color: #666;
+	height: 1rem;
+	line-height: 1rem;
+}
+
+.sapUiSupportPopover .sapUiFormM .sapUiFormResGridLastContXL  {
+	margin-top: 1rem;
+}
+
+
+.sapUiSupportIntHidden {
+	display: none;
+}
+
+.sapUiSupportPopover .sapMLabel.sapUiSupportIntRequestLabel {
+	font-weight: bold;
+	font-size: 12px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiSupportIntRequestText.sapMText  {
+	font-size: 12px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiRGLContainerCont,
+.sapUiSupportPopover .sapUiFormResGridCont {
+	padding-bottom: 0;
+}
+
+.sapMBtn.sapUiSupportReqPopoverCloseButton,
+.sapMBtn.sapUiSupportIntPopoverCloseButton {
+	position: absolute;
+	top: 4px;
+	right: 10px;
+	height: 30px;
+	width: 20px;
+}
+
+.sapMBtn.sapUiSupportReqPopoverCloseButton .sapMBtnInner,
+.sapMBtn.sapUiSupportIntPopoverCloseButton .sapMBtnInner{
+	height: 20px;
+	width: 20px;
+	min-width: 20px;
+}
+
+.sapMBtn.sapUiSupportReqPopoverCloseButton .sapMBtnInner .sapMBtnIcon,
+.sapMBtn.sapUiSupportIntPopoverCloseButton .sapMBtnInner .sapMBtnIcon{
+	font-size: 12px;
+	line-height: 20px;
+	width: 20px;
+	margin: 0;
+}
+
+.sapUiSupportIntPopoverForm .sapUiForm .sapUiFormTitle {
+	width: calc(100% - 80px);
+}

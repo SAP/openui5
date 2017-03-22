@@ -39,15 +39,25 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	FormLayoutRenderer.renderForm = function(rm, oLayout, oForm){
 
+		var oToolbar = oForm.getToolbar();
+
 		rm.write("<div");
 		rm.writeControlData(oLayout);
 		rm.addClass(this.getMainClass());
+		if (oToolbar) {
+			rm.addClass("sapUiFormToolbar");
+		}
+		this.addBackgroundClass(rm, oLayout);
 		rm.writeClasses();
 		rm.write(">");
 
 		// Form header
-		var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormTitleSize');
-		this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
+		if (oToolbar) {
+			rm.renderControl(oToolbar);
+		} else {
+			var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
+			this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
+		}
 
 		this.renderContainers(rm, oLayout, oForm);
 
@@ -56,6 +66,15 @@ sap.ui.define(['jquery.sap.global'],
 
 	FormLayoutRenderer.getMainClass = function(){
 		return "sapUiFormLayout";
+	};
+
+	FormLayoutRenderer.addBackgroundClass = function(rm, oLayout){
+
+		var sBackgroundDesign = oLayout.getBackgroundDesign();
+		if (sBackgroundDesign != sap.ui.layout.BackgroundDesign.Transparent) {
+			rm.addClass("sapUiFormBackgr" + sBackgroundDesign);
+		}
+
 	};
 
 	FormLayoutRenderer.renderContainers = function(rm, oLayout, oForm){
@@ -73,10 +92,18 @@ sap.ui.define(['jquery.sap.global'],
 	FormLayoutRenderer.renderContainer = function(rm, oLayout, oContainer){
 
 		var bExpandable = oContainer.getExpandable();
+		var oToolbar = oContainer.getToolbar();
+		var oTitle = oContainer.getTitle();
 
 		rm.write("<section");
 		rm.writeElementData(oContainer);
 		rm.addClass("sapUiFormContainer");
+
+		if (oToolbar) {
+			rm.addClass("sapUiFormContainerToolbar");
+		} else if (oTitle) {
+			rm.addClass("sapUiFormContainerTitle");
+		}
 
 		if (oContainer.getTooltip_AsString()) {
 			rm.writeAttributeEscaped('title', oContainer.getTooltip_AsString());
@@ -86,7 +113,12 @@ sap.ui.define(['jquery.sap.global'],
 		this.writeAccessibilityStateContainer(rm, oContainer);
 
 		rm.write(">");
-		this.renderTitle(rm, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, sap.ui.core.TitleLevel.H4, oContainer.getId());
+
+		if (oToolbar) {
+			rm.renderControl(oToolbar);
+		} else {
+			this.renderTitle(rm, oTitle, oContainer._oExpandButton, bExpandable, sap.ui.core.TitleLevel.H4, oContainer.getId());
+		}
 
 		if (bExpandable) {
 			rm.write("<div id='" + oContainer.getId() + "-content'");
@@ -116,13 +148,17 @@ sap.ui.define(['jquery.sap.global'],
 
 	FormLayoutRenderer.renderElement = function(rm, oLayout, oElement){
 
+		var oLabel = oElement.getLabelControl();
+
 		rm.write("<div");
 		rm.writeElementData(oElement);
 		rm.addClass("sapUiFormElement");
+		if (oLabel) {
+			rm.addClass("sapUiFormElementLbl");
+		}
 		rm.writeClasses();
 		rm.write(">");
 
-		var oLabel = oElement.getLabelControl();
 		if (oLabel) {
 			rm.renderControl(oLabel);
 		}
@@ -146,7 +182,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (oTitle) {
 			//determine title level -> if not set use H4 as default
-			var sLevel = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormSubTitleSize');
+			var sLevel = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize');
 			if (sLevelDefault) {
 				sLevel = sLevelDefault;
 			}
@@ -185,7 +221,9 @@ sap.ui.define(['jquery.sap.global'],
 
 				if (sIcon) {
 					var aClasses = [];
-					var mAttributes = {};
+					var mAttributes = {
+						"title": null // prevent default icon tooltip
+					};
 
 					mAttributes["id"] = oTitle.getId() + "-ico";
 					rm.writeIcon(sIcon, aClasses, mAttributes);
@@ -205,7 +243,13 @@ sap.ui.define(['jquery.sap.global'],
 
 		var mAriaProps = {role: "form"};
 		var oTitle = oContainer.getTitle();
-		if (oTitle) {
+		var oToolbar = oContainer.getToolbar();
+		if (oToolbar) {
+			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
+				// no aria-label -> use complete Toolbar as fallback
+				mAriaProps["labelledby"] = oToolbar.getId();
+			}
+		} else if (oTitle) {
 			var sId = "";
 			if (typeof oTitle == "string") {
 				sId = oContainer.getId() + "--title";

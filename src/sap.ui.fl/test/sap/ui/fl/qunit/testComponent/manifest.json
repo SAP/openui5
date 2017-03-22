@@ -1,0 +1,43 @@
+{
+	"_version": "1.1.0",
+	"sap.app": {
+		"_version": "1.2.0",
+		"id": "testComponent",
+		"type": "application",
+		"title": "fl lib test component",
+		"description": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "",
+		"crossNavigation": {
+			"inbounds": {}
+		}
+	},
+	"sap.ui": {
+		"_version": "1.1.0",
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": ["sap_bluecrystal"]
+	},
+	"sap.ui5": {
+		"_version": "1.1.0",
+		"rootView": "testComponent.View",
+		"dependencies": {
+			"minUI5Version": "1.37",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"resourceBundle": {}
+		},
+		"models": {},
+		"routing": {},
+		"contentDensities": {}
+	}
+}

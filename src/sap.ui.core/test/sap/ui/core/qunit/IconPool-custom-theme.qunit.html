@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>qUnit Page for sap.ui.core.IconPool (with custom theme)</title>
+		<script>
+			window["sap-ui-config"] = {
+				themeroots: {
+					"base": {
+						"sap.ui.core": "./testdata/customcss/"
+					},
+					"customcss": {
+						"sap.ui.core": "./testdata/customcss/"
+					}
+				}
+			};
+		</script>
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="customcss"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.core">
+		</script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+
+		QUnit.config.autostart = false;
+
+			sap.ui.require([
+				"sap/ui/core/IconPool"
+			], function(IconPool) {
+
+				QUnit.test("insertFontFaceStyle", function(assert) {
+
+					assert.equal(jQuery("head > style[type='text/css']").get(0), null, "Style should not have been inserted.");
+
+					IconPool.insertFontFaceStyle();
+
+					var sCss = jQuery("head > style[type='text/css']").text()
+					assert.ok(sCss.indexOf("url('./testdata/customcss/sap/ui/core/themes/base/fonts/SAP-icons") !== -1,
+						"Font should have been include from custom theme folder.");
+
+				});
+
+				QUnit.start();
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

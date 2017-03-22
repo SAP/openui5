@@ -1,28 +1,106 @@
+/* =================================== */
+/* CSS for control sap.m/ObjectStatus  */
+/* Base theme                          */
+/* =================================== */
 
-/* ============================================= */
-/* CSS for control sap.m/ObjectStatus.control */
-/* ============================================= */
-
-.sapMObjStatus {	
+.sapMObjStatus {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiNeutralText;
+	display: inline-block;
 }
 
-.sapMObjStatusText {
+.sapMObjStatus > .sapMObjStatusTitle {
+	color: @sapUiContentLabelColor;
 }
 
-.sapMObjStatusIcon {
+.sapMObjStatusNone > .sapMObjStatusText
+.sapMObjStatusNone > .sapMObjStatusIcon {
+	color: @sapUiNeutralText;
 }
+
+.sapMObjStatusError > .sapMObjStatusText,
+.sapMObjStatusError > .sapMObjStatusIcon {
+	color: @sapUiNegativeText;
+}
+
+.sapMObjStatusWarning > .sapMObjStatusText,
+.sapMObjStatusWarning > .sapMObjStatusIcon {
+	color: @sapUiCriticalText;
+}
+
+.sapMObjStatusSuccess > .sapMObjStatusText,
+.sapMObjStatusSuccess > .sapMObjStatusIcon {
+	color: @sapUiPositiveText;
+}
+
 .sapMObjStatusIcon > .sapUiIcon {
 	font-size: 1rem;
 }
 
 .sapMObjStatusIcon {
-	padding-right: .25rem;
-}
-
-.sap-phone .sapMObjStatusIcon {
+	padding-right: .5rem;
 }
 
 .sapMObjStatus > .sapMObjStatusTitle {
 	padding-right: .25rem;
 }
 
+.sapUiTableCell .sapMObjStatus {
+	font-size: @sapMFontMediumSize;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.sapUiTableCell .sapMObjStatusText,
+.sapUiTableCell .sapMObjStatusTitle,
+.sapUiTableCell .sapMObjStatusIcon .sapUiIcon,
+.sapMListTbl .sapMObjStatusText,
+.sapMListTbl .sapMObjStatusTitle,
+.sapMListTbl .sapMObjStatusIcon .sapUiIcon {
+	vertical-align: middle;
+}
+
+.sapUiForm .sapMObjStatusIcon,
+.sapUiForm .sapMObjStatusTitle,
+.sapUiForm .sapMObjStatusText {
+	display: inline-block;
+	line-height: normal;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
+/*
+	FIX for 1580155978 and 1680267289.
+	Fiori design guidelines say that statuses should be specially styled for forms
+	and share looks with other text only controls.
+*/
+.sapUiForm.sapUiFormEdit .sapMObjStatus {
+	line-height: 3rem;
+}
+
+.sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjStatus {
+	line-height: 2rem;
+}
+
+/* ============================================= */
+/* FIX: CSS 0120061532 0001316230 2014 */
+/* ============================================= */
+.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusError > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusError > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusIcon {
+	color: @sapUiListActiveTextColor;
+}
+
+/* Condensed size */
+.sapUiSizeCondensed .sapUiTableCell>.sapMObjStatus>.sapMObjStatusText {
+	line-height: 1.5rem;
+	vertical-align: middle;
+	font-size: @sapMFontMediumSize;
+}

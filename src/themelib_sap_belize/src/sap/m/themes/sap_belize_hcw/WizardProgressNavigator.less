@@ -1,0 +1,30 @@
+/* ============================================== */
+/* CSS for control sap.m/WizardProgressNavigator  */
+/* Belize High Contrast White theme               */
+/* ============================================== */
+
+.sapMWizardProgressNavAnchor:focus {
+	outline: 2px dotted @sapUiContentFocusColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+	& .sapMWizardProgressNavAnchor::after {
+		background: @sapUiObjectHeaderBorderColor;
+	}
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+
+	/* anchors in all steps after the active one have inactive style */
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
+		background: @sapUiHcReducedBackground;
+		border-color: @sapUiHcReducedAltForeground;
+		color: @sapUiHcReducedAltForeground;
+	}
+
+	/* all separators after (and including) the active step have inactive style */
+	&::after,
+	& ~ .sapMWizardProgressNavStep::after {
+		border-bottom-color: @sapUiHcReducedAltForeground;
+	}
+}

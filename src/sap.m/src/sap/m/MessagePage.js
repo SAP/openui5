@@ -19,7 +19,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *		- The app contains no items
 		 *		- There are too many items
 		 *		- The application is loading
-		 *	The layout is unchanged but the text varies depending on the use case.
+		 * The layout is unchanged but the text varies depending on the use case.
+		 * <br><b>Note:</b> The <code>MessagePage</code> is not intended to be used as a top-level control,
+		 * but rather used within controls such as <code>NavContainer</code>, <code>App</code>, <code>Shell</code> or other container controls.
+		 *
 		 * @extends sap.ui.core.Control
 		 * @version ${version}
 		 *
@@ -34,31 +37,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			library : "sap.m",
 			properties : {
 				/**
-				 * Determines the main text displayed on the MessagePage
+				 * Determines the main text displayed on the MessagePage.
 				 */
 				text : {type : "string", group : "Misc", defaultValue : "No matching items found."},
 				/**
-				 * Determines the detailed description that shows additional information on the MessagePage
+				 * Determines the detailed description that shows additional information on the MessagePage.
 				 */
 				description : {type : "string", group : "Misc", defaultValue : "Check the filter settings."},
 				/**
-				 * Determines the title in the header of MessagePage
+				 * Determines the title in the header of MessagePage.
 				 */
 				title : { type : "string", group : "Misc", defaultValue : null },
 				/**
-				 * Determines whether the header of the MessagePage is rendered when it's embedded in another page.
+				 * Determines the visibility of the MessagePage header.
+				 * Can be used to hide the header of the MessagePage when it's embedded in another page.
 				 */
 				showHeader : { type : "boolean", group : "Appearance", defaultValue : true },
 				/**
-				 * If this property is set to true, a navigation button will be rendered in the header.
+				 * Determines the visibility of the navigation button in MessagePage header.
 				 */
 				showNavButton : {type : "boolean", group : "Appearance", defaultValue : false},
 				/**
-				 * Determines the icon displayed on the MessagePage
+				 * Determines the icon displayed on the MessagePage.
 				 */
 				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : "sap-icon://documents" },
 				/**
-				 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * Determines the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 */
 				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 			},
@@ -76,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 */
 				customDescription : {type : "sap.m.Link", multiple : false},
 				/**
-				 * A Page control which is managed internally by the MessagePage control
+				 * A Page control which is managed internally by the MessagePage control.
 				 */
 				_page : {type : "sap.m.Page", multiple : false, visibility : "hidden"}
 			},
@@ -94,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 			events : {
 				/**
-				 * this event is fired when Nav Button is pressed
+				 * This event is fired when Nav Button is pressed.
 				 * @since 1.28.1
 				 */
 				navButtonPress : {}
@@ -105,6 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			this.setAggregation("_page", new sap.m.Page({
+				id: this.getId() + "-page",
 				showHeader : this.getShowHeader(),
 				navButtonPress : jQuery.proxy(function() {
 					this.fireNavButtonPress();
@@ -145,32 +150,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		MessagePage.prototype.setTitle = function(sTitle) {
 			this.setProperty("title", sTitle, true); // no re-rendering
 			this.getAggregation("_page").setTitle(sTitle);
+			return this;
 		};
 
 		MessagePage.prototype.setText = function(sText) {
 			this.setProperty("text", sText, true); // no re-rendering
 			this._oText && this._oText.setText(sText);
+			return this;
 		};
 
 		MessagePage.prototype.setDescription = function(sDescription) {
 			this.setProperty("description", sDescription, true); // no re-rendering
 			this._oDescription && this._oDescription.setText(sDescription);
+			return this;
 		};
 
 		MessagePage.prototype.setShowHeader = function(bShowHeader) {
 			this.setProperty("showHeader", bShowHeader, true); // no re-rendering
 			this.getAggregation("_page").setShowHeader(bShowHeader);
+			return this;
 		};
 
 		MessagePage.prototype.setShowNavButton = function(bShowNavButton) {
 			this.setProperty("showNavButton", bShowNavButton, true); // no re-rendering
 			this.getAggregation("_page").setShowNavButton(bShowNavButton);
+			return this;
 		};
 
 		MessagePage.prototype.setTextDirection = function(sTextDirection) {
 			this.setProperty("textDirection", sTextDirection, true); // no re-rendering
 			this._oText && this._oText.setTextDirection(sTextDirection);
 			this._oDescription && this._oDescription.setTextDirection(sTextDirection);
+			return this;
 		};
 
 		MessagePage.prototype.setIcon = function(sIconUri) {
@@ -189,6 +200,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this._oIconControl.setSrc(sIconUri);
 				}
 			}
+			return this;
 		};
 
 		MessagePage.prototype._addPageContent = function() {
@@ -198,6 +210,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oText = this.getAggregation("customText");
 			} else {
 				this._oText = new sap.m.Text({
+					id: this.getId() + "-customText",
 					text: this.getText(),
 					textAlign: sap.ui.core.TextAlign.Center,
 					textDirection: this.getTextDirection()
@@ -208,6 +221,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oDescription = this.getAggregation("customDescription");
 			} else {
 				this._oDescription = new sap.m.Text({
+					id: this.getId() + "-customDescription",
 					text: this.getDescription(),
 					textAlign: sap.ui.core.TextAlign.Center,
 					textDirection: this.getTextDirection()
@@ -223,7 +237,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oIconControl = IconPool.createControlByURI({
 				id: this.getId() + "-pageIcon",
 				src: this.getIcon(),
-				height: "8rem"
+				height: "8rem",
+				useIconTooltip: true,
+				decorative: false
 			}, sap.m.Image).addStyleClass("sapMMessagePageIcon");
 
 			return this._oIconControl;
@@ -235,7 +251,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 * @returns {sap.m.IBar}
 		 */
-		MessagePage.prototype._getAnyHeader = function() {
+		MessagePage.prototype._getAnyHeader = function() {
 			return this._getInternalHeader();
 		};
 
@@ -245,8 +261,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 
-		MessagePage.prototype._getInternalHeader = function() {
-			return this.getAggregation("_page").getAggregation("_internalHeader");
+		MessagePage.prototype._getInternalHeader = function() {
+			return this.getAggregation("_page").getAggregation("_internalHeader");
 		};
 
 

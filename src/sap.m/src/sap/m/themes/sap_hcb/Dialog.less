@@ -1,46 +1,25 @@
-.sapMDialog {
-  border-radius: 0.250rem;
-  border: 0.125rem solid @sapHCStandardFG;
-  -webkit-box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-  -moz-box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-  box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-}
+/* ============================= */
+/* CSS for control sap.m/Dialog  */
+/* High Contrast Black theme     */
+/* ============================= */
 
-.sapMDialogSection {
-  background-color: @sapHCStandardBG;
-}
-
-.sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle{
-  background-color: @sapHCStandardBG;
+.sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle {
+	background-color: @sapUiGroupContentBackground;
 }
 
 .sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMTitle {
-  color: @sapHCStandardFG;
-}
-
-.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
-  color: @sapHCStandardFG;
-}
-
-.sapMTB.sapMTBNoBorders {
-  border-bottom: none;
+	color: @sapUiPageHeaderTextColor;
 }
 
 .sapMDialog > footer.sapMDialogActions {
-  background-color: @sapHCStandardBG;
-  border-top: 0.125rem solid  @sapHCStandardFG;
+	background-color: @sapUiPageFooterBackground;
+	border-top: 0.125rem solid  @sapUiPageFooterBorderColor;
 }
 
 .sapMDialog > footer.sapMDialogActions {
-  background-color: @sapUiFooterBG;
+	background-color: @sapUiPageFooterBackground;
 }
 
-.sapMDialogResizeHandler {
-  &:before {
-    border-color: transparent transparent @sapHCStandardFG transparent;
-  }
-
-  &:hover:before {
-    border-color: transparent transparent lighten(@sapHCStandardFG, 15%) transparent;
-  }
+.sapMDialogResizeHandler::before {
+	color: @sapUiContentIconColor;
 }

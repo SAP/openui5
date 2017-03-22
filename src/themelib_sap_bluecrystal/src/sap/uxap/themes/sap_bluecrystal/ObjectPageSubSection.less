@@ -1,0 +1,21 @@
+/* ============================================== */
+/* CSS for control sap.uxap/ObjectPageSubSection  */
+/* BlueCrystal theme                              */
+/* ============================================== */
+
+.sapUxAPObjectPageSubSection {
+	border-bottom: 0.125rem solid lighten(@sapUiListBorderColor, 5);
+}
+
+.sapUxAPObjectPageSection .sapUxAPObjectPageSubSection:last-child {
+	border-bottom: none;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitleUppercase {
+	text-transform: uppercase;
+}
+
+.sapUxAPObjectPageSubSection:focus, .sapUxAPObjectPageSubSectionHeaderTitle:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}

@@ -1,0 +1,57 @@
+/* =================================== */
+/* CSS for control sap.m/ComboBoxBase  */
+/* Belize theme                        */
+/* =================================== */
+
+/* ------------------------------ */
+/* text field                     */
+/* ------------------------------ */
+
+/* hover */
+
+.sapMComboBoxBasePressed:not(.sapMComboBoxTextFieldReadonly):not(.sapMComboBoxTextFieldState):not(.sapMComboBoxTextFieldDisabled) {
+	border-color: @sapUiFieldActiveBorderColor;
+}
+
+/* ------------------------------ */
+/* picker                         */
+/* ------------------------------ */
+
+div.sapMComboBoxBasePicker {
+	box-shadow: @sapUiShadowLevel1;
+	border: none;
+
+	& .sapMComboBoxBasePickerValueState .sapMComboBoxBasePickerTitle.sapMTitle {
+		margin-left: 0.75rem;
+	}
+}
+
+.sapMComboBoxBaseBar {
+	box-shadow: none;
+}
+
+div.sapMComboBoxBasePicker .sapMComboBoxBasePickerValueState {
+	font-size: @sapMFontSmallSize;
+	height: 2rem;
+	line-height: 2rem;
+	padding-left: 1rem;
+
+	&.sapMComboBoxBasePickerErrorState {
+		background: @sapUiErrorBG;
+		color: @sapUiBaseText;
+	}
+
+	&.sapMComboBoxBasePickerSuccessState {
+		background: @sapUiSuccessBG;
+		color: @sapUiBaseText;
+	}
+
+	&.sapMComboBoxBasePickerWarningState {
+		background: @sapUiWarningBG;
+		color: @sapUiBaseText;
+	}
+}
+
+.sapMComboBoxBasePickerNoneState {
+	display: none;
+}

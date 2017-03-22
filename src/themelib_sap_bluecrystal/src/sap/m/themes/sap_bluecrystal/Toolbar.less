@@ -1,73 +1,35 @@
-.sapMTB {
-	padding: 0;
-	height: 3rem;
-	background: @sapUiToolbarBG;
-	border-bottom: 1px solid @sapUiToolbarBorder;
-}
-
-.sapMTBShrinkItem {
-	min-width: 2.5rem; /* default min-width value for the shrinkable items */
-}
-
-/* Transparent Toolbar Context */
-.sapMTB-Transparent-CTX.sapMTB {
-	padding-left: 1rem;
-}
-
-/* Overwrite the margin of the IBar for Transparent context*/
-.sapMIBar.sapMTB-Transparent-CTX.sapMTB > :first-child {
-	margin-left: 0;
-}
-
-/* Solid Toolbar Context */
-.sapMTB-Solid-CTX.sapMTB {
-	background: @sapUiToolbarSolidBG;
-}
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* BlueCrystal theme              */
+/* ============================== */
 
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
 	height: 2rem;
-	padding: 0 .5rem;
-	background: @sapUiToolbarInfoBG;
-	border-bottom: 1px solid @sapUiToolbarInfoBorder;
+	padding: 0 .25rem 0 0.5rem;
+	border-bottom: 1px solid @sapUiListBorderColor;
 }
 
-.sapMTB-Info-CTX.sapMTBActive:hover {
-	background: @sapUiToolbarInfoHoverBG;
-}
-
-.sapMTB-Info-CTX.sapMTBActive:active {
-	background: @sapUiToolbarInfoActiveBG;
-}
-
-.sap-desktop .sapMTBActive:focus {
-	outline: 1px dotted @sapUiFocus;
+html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
+	outline: 1px dotted @sapUiContentContrastFocusColor;
 	outline-offset: -0.125rem;
 }
 
-.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
-	outline-color: @sapUiInvertedFocus;
-}
-
-.sapMTB-Info-CTX.sapMTB > * {
-	margin: 0 .5rem;
-}
-
-/* Overwrite the margin of the IBar for Info context */
-.sapMIBar.sapMTB-Info-CTX.sapMTB > :first-child {
-	margin: 0 .5rem;
-}
-
-
-/********** COMPACT DESIGN ************/
-
-/* toolbar has 2rem height in compact mode */
-.sapUiSizeCompact .sapMTB {
-	height: 2rem;
-}
-
-/* default min-width value for the shrinkable items */
-.sapUiSizeCompact .sapMTBShrinkItem,
-.sapUiSizeCondensed .sapMTBShrinkItem{
-	min-width: 2rem; 
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapMTB-Info-CTX.sapMTBActive:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMTB-Info-CTX.sapMTBActive:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: calc(~'100% - 0.0625rem');
+		height: calc(~'100% - 0.0625rem');
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dotted @sapUiContentContrastFocusColor;
+		pointer-events: none;
+	}
 }

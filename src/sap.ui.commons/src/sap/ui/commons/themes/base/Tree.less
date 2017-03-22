@@ -7,7 +7,7 @@
 	color: @sapUiBaseText;
 }
 
-/* if the Tree is used within another control that 
+/* if the Tree is used within another control that
 has a black/dark background the Tree itself has to
 invert its text to white as well */
 .sapUiInverted-CTX .sapUiTree {
@@ -31,11 +31,9 @@ invert its text to white as well */
 	padding-right: 2px;
 }
 
-html:not([data-sap-ui-browser="ie8"]) .sapUiTreeContScroll .sapUiTreeList {
+.sapUiTreeContScroll .sapUiTreeList {
 	float: left;
 	min-width: 100%;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
@@ -123,37 +121,25 @@ html[dir=rtl] .sapUiTreeTitle {
 
 .sapUiTreeNode {
 	list-style: none;
-	background: url(img/tree/TreeNode.gif) no-repeat left 4px;
+	background: none no-repeat left 4px;
 	padding-left: 14px;
 	line-height: 18px;
 	white-space: nowrap;
 	margin-bottom: 3px;
 	border: 1px solid transparent;
-	-moz-border-radius: 1px;
 	border-radius: 1px;
 	-moz-user-select: none;
 }
 
-html:not([data-sap-ui-browser="ie8"]) .sapUiTreeContScroll .sapUiTreeNode {
+.sapUiTreeContScroll .sapUiTreeNode {
 	float: left;
 	clear: left;
 	width: 100%;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-}
-
-/* use the white icon on black background */
-.sapUiInverted-CTX .sapUiTreeNode {
-	background-image: url(img/tree/TreeNode-inverted.gif);
 }
 
 .sapUiInverted-CTX .sapUiTreeNode:hover {
 	background-color: mix(@sapUiHighlight, @sapUiBlackBG, 60%);
-}
-
-html[data-sap-ui-browser="ie8"] .sapUiTreeNode{
-	padding-right:2px;
 }
 
 .sapUiTreeNodeContent {
@@ -176,24 +162,12 @@ html[data-sap-ui-browser="ie8"] .sapUiTreeNode{
 
 .sapUiTreeNodeExpanded {
 	list-style: none;
-	background-image: url(img/tree/TreeNode_Exp.gif);
 	cursor: pointer;
-}
-
-/* use the white icon on black background */
-.sapUiInverted-CTX .sapUiTreeNodeExpanded {
-	background-image: url(img/tree/TreeNode_Exp-inverted.gif)
 }
 
 .sapUiTreeNodeCollapsed {
 	list-style: none;
-	background-image: url(img/tree/TreeNode_Coll.gif);
 	cursor: pointer;
-}
-
-/* use the white icon on black background */
-.sapUiInverted-CTX .sapUiTreeNodeCollapsed {
-	background-image: url(img/tree/TreeNode_Coll-inverted.gif)
 }
 
 .sapUiTreeChildrenNodes {

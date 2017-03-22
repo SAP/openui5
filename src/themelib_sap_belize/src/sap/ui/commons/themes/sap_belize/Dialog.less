@@ -1,0 +1,114 @@
+/* ====================================== */
+/* CSS for control sap.ui.commons/Dialog  */
+/* Belize theme                           */
+/* ====================================== */
+
+@sapUiDlgHeaderHeight: 40px;
+@sapUiDlgFooterHeight: 44px;
+
+.sapUiDlg {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	background-color: @sapUiGroupContentBackground; // @sapUiLightestBG = #ffffff
+	border: 1px solid @sapUiContentForegroundBorderColor; // @sapUiDarkBorder = #bfbfbf
+}
+
+.sapUiDlg.sapUiDlgModal {
+	border: 1px solid darken(@sapUiContentForegroundBorderColor, 35); // @sapUiDarkBorder = #bfbfbf
+}
+
+.sapUiDlgHdr {
+	height: @sapUiDlgHeaderHeight;
+	color: @sapUiPageHeaderTextColor; // @sapUiLightText = #666666
+	border-bottom: 0;
+	margin-top: 0;
+}
+
+.sapUiDlgHdr > .sapUiDlgHdrLeft {
+	color: @sapUiPageHeaderTextColor; // @sapUiLightText = #666666
+	font-size: 16px;
+	top: 30%;
+	position: relative;
+}
+
+.sapUiDlgHdrSep {
+	height: 1px;
+	background-color: @sapUiPageHeaderBorderColor; // @sapUiLightBorder = #dddddd
+}
+
+.sapUiDlgHdrBtns {
+	padding: 0;
+	right: 10px;
+}
+
+.sapUiDlgHdrBtns > a {
+	margin: 12px 0 0;
+}
+
+.sapUiDlgCloseBtn {
+	background-image: url(img/dlg-close.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	outline: none;
+}
+
+.sapUiDlgCloseBtn:hover,
+.sapUiDlgCloseBtn:focus {
+	background-image: url(img/dlg-close-hov.png);
+	background-color: @sapUiHighlight;
+}
+
+.sapUiDlgCloseBtn:active {
+	background-image: url(img/dlg-close-hov.png);
+	background-color: @sapUiButtonLiteActiveBackground; // @sapUiDarkBG = #777777
+}
+
+.sapUiDlgCont {
+	background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiLightestBG = #ffffff
+	padding: 10px 10px 12px;
+	font-size: 13px;
+	top: 41px;
+	border-width: 0;
+	bottom: 44px;
+}
+.sapUiDlgFlexHeight.sapUiDlgNoButtons .sapUiDlgCont {
+	margin-bottom: 4px;
+}
+.sapUiDlgNoButtons .sapUiDlgCont {
+	bottom: 4px;
+	margin-bottom: 0;
+}
+
+.sapUiDlgFooterSep {
+	height: 1px;
+	position: absolute;
+	bottom: 44px;
+	background: @sapUiListBorderColor; // @sapUiExtraLightBorder = #e5e5e5
+	width: 100%;
+}
+
+.sapUiDlgFooter {
+	padding: 0 10px 0;
+	background-color: @sapUiPageFooterBackground; // @sapUiExtraDarkBG = #333333
+	height: 44px;
+	box-sizing: border-box;
+}
+
+.sapUiDlgFlexHeight .sapUiDlgFooter {
+	position: relative;
+}
+
+.sapUiDlgNoButtons .sapUiDlgFooter {
+	display: none;
+}
+
+.sapUiDlgBtns {
+	padding: 11px 0 0 0;
+}
+
+.sapUiDlgGrip {
+	bottom: 0;
+	right: 0;
+	height: 12px;
+	width: 12px;
+}

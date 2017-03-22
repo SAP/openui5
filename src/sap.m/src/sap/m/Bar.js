@@ -12,11 +12,12 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	/**
 	 * Constructor for a new Bar.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A bar that may be used as a header of a page. It has the capability to center a content like a title, while having few controls on the left and right side.
+	 * The Bar control can be used as a header, sub-header and a footer in a page.
+	 * It has the capability to center a content like a title, while having other controls on the left and right side.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.m.IBar
 	 *
@@ -37,14 +38,14 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 		properties : {
 
 			/**
-			 * If this flag is set to true, contentMiddle will be rendered as a HBox and layoutData can be used to allocate available space
+			 * If this flag is set to true, contentMiddle will be rendered as a HBox and layoutData can be used to allocate available space.
 			 * @deprecated Since version 1.16.
 			 * This property is no longer supported, instead, contentMiddle will always occupy 100% width when no contentLeft and contentRight are being set.
 			 */
 			enableFlexBox : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
 			/**
-			 * A boolean value indicating whether the bar is partially translucent.
+			 * Indicates whether the Bar is partially translucent.
 			 * It is only applied for touch devices.
 			 * @since 1.12
 			 * @deprecated Since version 1.18.6.
@@ -53,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 			translucent : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
-			 * The design of the bar. If set to auto it is dependent on the place, where the bar is placed.
+			 * Determines the design of the bar. If set to auto, it becomes dependent on the place where the bar is placed.
 			 * @since 1.22
 			 */
 			design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : sap.m.BarDesign.Auto}
@@ -61,26 +62,30 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 		aggregations : {
 
 			/**
-			 * this is the left content area, usually containing a button or an app icon. If this is overlapped by the right content, its content will disappear and text will show an elipsis.
+			 * Represents the left content area, usually containing a button or an app icon. If it is overlapped by the right content, its content will disappear and the text will show an ellipsis.
 			 */
 			contentLeft : {type : "sap.ui.core.Control", multiple : true, singularName : "contentLeft"},
 
 			/**
-			 * This is the middle content area. Controls such as label, segmented buttons or select should be placed here. Content that is placed here will be centrally positioned, if there is enough space. If the right or left content overlaps the middle content, the middle content will be centered in the space between the left and the right content.
+			 * Represents the middle content area. Controls such as label, segmented buttons or select can be placed here. The content is centrally positioned if there is enough space. If the right or left content overlaps the middle content, the middle content will be centered in the space between the left and the right content.
 			 */
 			contentMiddle : {type : "sap.ui.core.Control", multiple : true, singularName : "contentMiddle"},
 
 			/**
-			 * this is the right content area. Controls such as action buttons or search field could be placed here.
+			 *  Represents the right content area. Controls such as action buttons or search field can be placed here.
 			 */
 			contentRight : {type : "sap.ui.core.Control", multiple : true, singularName : "contentRight"}
-		}
+		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
+		designTime: true
 	}});
 
-
-	/**
-	 * @private
-	 */
 	Bar.prototype.onBeforeRendering = function() {
 		this._removeAllListeners();
 	};
@@ -91,7 +96,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 
 	/**
 	 * Called when the control is initialized.
-	 * @private
 	 */
 	Bar.prototype.init = function() {
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
@@ -99,9 +103,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 
 	/**
 	 * Called when the control is destroyed.
-	 * Clean up resize listeners and destroy flexbox,
-	 * emties cache
-	 * @private
 	 */
 	Bar.prototype.exit = function() {
 		this._removeAllListeners();
@@ -124,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	Bar._aResizeHandlers = ["_sResizeListenerId", "_sResizeListenerIdMid", "_sResizeListenerIdRight", "_sResizeListenerIdLeft"];
 
 	/**
-	 * removes all resize listeners, that the bar could have registered.
+	 * Removes all resize listeners the Bar has registered.
 	 * @private
 	 */
 	Bar.prototype._removeAllListeners = function() {
@@ -138,8 +139,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	};
 
 	/**
-	 * Removes a listener with the specified name and sets it to null, if the listener is defined.
-	 * @param sListenerName the name of the listener that has to be removed
+	 * Removes the listener with the specified name and sets it to null if the listener is defined.
+	 * @param {string} sListenerName The name of the listener to be removed
 	 *
 	 * @private
 	 */
@@ -153,7 +154,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	};
 
 	/**
-	 * Invoked, when bar is rerendered, its size changed, or the size of one for the content bars changed.
+	 * Handles resize changes.
+	 * Invoked when the bar is re-rendered, its size has changed or the size of one of the bars content has changed.
 	 * @private
 	 */
 	Bar.prototype._handleResize = function() {
@@ -200,33 +202,22 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 
 	/**
 	 * Repositions the bar.
-	 * If there is only one aggregation filled, this aggregation will take 100% of the bars space.
-	 * @param bContentLeft indicates if there is left content in the bar
-	 * @param bContentMiddle indicates if there is middle content in the bar
-	 * @param bContentRight indicates if there is right content in the bar
+	 * If there is only one aggregation filled, this aggregation will take 100% of the Bar space.
+	 * @param {boolean} bContentLeft Indicates whether there is content on the left side of the Bar
+	 * @param {boolean} bContentMiddle Indicates whether there is content in the middle section of the Bar
+	 * @param {boolean} bContentRight Indicates whether there is content on the right side of the Bar
 	 * @private
 	 */
 	Bar.prototype._updatePosition = function(bContentLeft, bContentMiddle, bContentRight) {
-
-		if (!bContentLeft && !bContentRight) {
-
-			this._$MidBarPlaceHolder.css({ width : '100%'});
+		if (!bContentLeft && !bContentRight && bContentMiddle) {
 			return;
-
 		}
-
 		if (bContentLeft && !bContentMiddle && !bContentRight) {
-
-			this._$LeftBar.css({ width : '100%'});
 			return;
-
 		}
 
 		if (!bContentLeft && !bContentMiddle && bContentRight) {
-
-			this._$RightBar.css({ width : '100%'});
 			return;
-
 		}
 
 		var iBarWidth = this.$().outerWidth(true);
@@ -263,8 +254,12 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 			// hence we make sure the rightContent always has enough space and reduce the left content area width accordingly
 			iLeftBarWidth = iBarWidth - iRightBarWidth;
 
-			this._$LeftBar.width(iLeftBarWidth);
-			this._$MidBarPlaceHolder.width(0);
+			// using .css("width",...) sets the width of the element including the borders
+			// and using only .width sets the width without the borders
+			// in our case we have style box-sizing: border-box, so we need the borders
+			this._$LeftBar.css({ width : iLeftBarWidth + "px" });
+
+			this._$MidBarPlaceHolder.css({ width : "0px" });
 			return;
 
 		}
@@ -275,12 +270,13 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	};
 
 	/**
-	 * Returns the css for the contentMiddle aggregation. It is centered if there is enough space for it to fit between the left and right content.
+	 * Returns the CSS for the contentMiddle aggregation.
+	 * It is centered if there is enough space for it to fit between the left and the right content, otherwise it is centered between them.
 	 * If not it will be centered between those two.
-	 * @param iRightBarWidth the width in pixel
-	 * @param iBarWidth the width in pixel
-	 * @param iLeftBarWidth the width in pixel
-	 * @returns {object} the new _$MidBarPlaceHolder css value
+	 * @param {int} iRightBarWidth The width in px
+	 * @param {int} iBarWidth The width in px
+	 * @param {int} iLeftBarWidth The width in px
+	 * @returns {object} The new _$MidBarPlaceHolder CSS value
 	 * @private
 	 */
 	Bar.prototype._getMidBarCss = function(iRightBarWidth, iBarWidth, iLeftBarWidth) {
@@ -330,8 +326,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	/**
 	 * Gets the width of a container.
 	 * @static
-	 * @param $Container a container with children
-	 * @returns {number} the width of one of the bar containers
+	 * @param {object} $Container A container with children
+	 * @returns {number} The width of one of the Bar containers
 	 * @private
 	 */
 	Bar.prototype._getBarContainerWidth = function($Container) {
@@ -342,7 +338,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 
 		// Chrome browser has a problem in providing the correct div size when image inside does not have width explicitly set
 		//since ff version 24 the calculation is correct, since we don't support older versions we won't check it
-		if (sap.ui.Device.browser.webkit || sap.ui.Device.browser.firefox) {
+		// Edge also works correctly with this calculation unlike IE
+		if (sap.ui.Device.browser.webkit || sap.ui.Device.browser.firefox || sap.ui.Device.browser.edge) {
 
 			for (i = 0; i < aContainerChildren.length; i++) {
 
@@ -399,35 +396,94 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	/////////////////
 	//Bar in page delegation
 	/////////////////
+
+	// Provides helper sap.m.BarInAnyContentEnabler
 	/**
-	 * Determines whether the bar is sensitive to the container context.
+	 * @class Helper Class for implementing additional contexts of the Bar.
+	 * e.g. in sap.m.Dialog
+	 *
+	 * @version 1.40
+	 * @protected
+	 */
+	var BarInAnyContentEnabler = BarInPageEnabler.extend("sap.m.BarInAnyContentEnabler", /** @lends sap.m.BarInAnyContentEnabler.prototype */ {});
+
+	BarInAnyContentEnabler.mContexts = {
+		dialogFooter : {
+			contextClass : "sapMFooter-CTX",
+			tag : "Footer",
+			internalAriaLabel: "BAR_ARIA_DESCRIPTION_FOOTER"
+		}
+	};
+
+	/**
+	 * Gets the available Bar contexts from the BarInPageEnabler and adds the additional contexts from BarInAnyContentEnabler.
+	 *
+	 * @returns {Object} with all available contexts
+	 */
+	BarInAnyContentEnabler.prototype.getContext = function() {
+		var oParentContexts = BarInPageEnabler.prototype.getContext.call();
+
+		for (var key in BarInAnyContentEnabler.mContexts) {
+			oParentContexts[key] = BarInAnyContentEnabler.mContexts[key];
+		}
+
+		return oParentContexts;
+	};
+
+	/**
+	 * Gets the available Bar contexts.
+	 *
+	 * @returns {Object} with all available contexts
+	 * @protected
+	 */
+	Bar.prototype.getContext = BarInAnyContentEnabler.prototype.getContext;
+
+	/**
+	 * Determines whether the Bar is sensitive to the container context.
 	 *
 	 * Implementation of the IBar interface.
 	 * @returns {boolean} isContextSensitive
 	 * @protected
 	 */
-	Bar.prototype.isContextSensitive = BarInPageEnabler.prototype.isContextSensitive;
+	Bar.prototype.isContextSensitive = BarInAnyContentEnabler.prototype.isContextSensitive;
 
 	/**
 	 * Sets the HTML tag of the root element.
-	 * @param {sap.m.IBarHTMLTag} sTag
+	 * @param {sap.m.IBarHTMLTag} sTag The HTML tag of the root element
 	 * @returns {sap.m.IBar} this for chaining
 	 * @protected
 	 */
-	Bar.prototype.setHTMLTag = BarInPageEnabler.prototype.setHTMLTag;
+	Bar.prototype.setHTMLTag = BarInAnyContentEnabler.prototype.setHTMLTag;
 	/**
 	 * Gets the HTML tag of the root element.
-	 * @returns {sap.m.IBarHTMLTag} the HTML-tag
+	 * @returns {sap.m.IBarHTMLTag} The HTML-tag
 	 * @protected
 	 */
-	Bar.prototype.getHTMLTag  = BarInPageEnabler.prototype.getHTMLTag;
+	Bar.prototype.getHTMLTag  = BarInAnyContentEnabler.prototype.getHTMLTag;
 
 	/**
-	 * Sets classes and tag according to the context in the page. Possible contexts are header, footer, subheader.
+	 * Sets classes and tag according to the context of the page. Possible contexts are header, footer and sub-header.
 	 * @returns {sap.m.IBar} this for chaining
 	 * @protected
 	 */
-	Bar.prototype.applyTagAndContextClassFor  = BarInPageEnabler.prototype.applyTagAndContextClassFor;
+	Bar.prototype.applyTagAndContextClassFor  = BarInAnyContentEnabler.prototype.applyTagAndContextClassFor;
+
+	/**
+	 * Sets landmarks members to the bar instance
+	 *
+	 * @param bHasLandmarkInfo {boolean} indicates that bar has landmarkinfo
+	 * @param sContext {string} context of the bar
+	 * @private
+	 */
+	Bar.prototype._setLandmarkInfo  = BarInAnyContentEnabler.prototype._setLandmarkInfo;
+
+	/**
+	 * Writes landmarks info to the bar
+	 *
+	 * @private
+	 */
+	Bar.prototype._writeLandmarkInfo  = BarInAnyContentEnabler.prototype._writeLandmarkInfo;
+
 
 	return Bar;
 

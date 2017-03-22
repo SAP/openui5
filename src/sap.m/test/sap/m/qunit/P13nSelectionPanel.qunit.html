@@ -1,0 +1,720 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>Test Page for sap.m.P13nSelectionPanel</title>
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+
+</script>
+
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script>
+	jQuery.sap.require("sap.m.P13nSelectionPanel");
+
+	// =========================================================== //
+	// Check UX requirements on                                    //
+	// =========================================================== //
+
+	// =========================================================== //
+	// API module                                                  //
+	// =========================================================== //
+
+	QUnit.module("API");
+
+	// ------------------------------ //
+	// tests for default values       //
+	// ------------------------------ //
+	QUnit.test("constructor - items: []", function(assert) {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: []
+		});
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getTitle(), "");
+		assert.strictEqual(oSelectionPanel.getTitleLarge(), "");
+		assert.strictEqual(oSelectionPanel.getType(), sap.m.P13nPanelType.selection);
+		assert.deepEqual(oSelectionPanel.getItems(), []);
+		assert.deepEqual(oSelectionPanel.getSelectionItems(), []);
+		assert.deepEqual(oSelectionPanel._getInternalModel().getData().items, []);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - items: [aItems]", function(assert) {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getItems().length, 3);
+		assert.deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemB, oItemA
+		]);
+		// The table items order has been changed to: A, B, C
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
+		// The table selection is: A=off, B=off, C=off
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - [], addItem", function(assert) {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel();
+		var oItemA = new sap.m.P13nItem({
+			columnKey: "keyA",
+			text: "A"
+		}), oItemB = new sap.m.P13nItem({
+			columnKey: "keyB",
+			text: "B"
+		}), oItemC = new sap.m.P13nItem({
+			columnKey: "keyC",
+			text: "C"
+		});
+		oSelectionPanel.addItem(oItemC);
+		oSelectionPanel.addItem(oItemB);
+		oSelectionPanel.addItem(oItemA);
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getItems().length, 3);
+		assert.deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemB, oItemA
+		]);
+		// The table items order has been changed to: A, B, C
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
+		// The table selection is: A=off, B=off, C=off
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - items: [aItems], insertItem", function(assert) {
+
+		// system under test
+		var oItemA, oItemB = new sap.m.P13nItem({
+			columnKey: "keyB",
+			text: "B"
+		}), oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		oSelectionPanel.insertItem(oItemB, 1);
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getItems().length, 3);
+		assert.deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemB, oItemA
+		]);
+		// The table items order has been changed to: A, B, C
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
+		// The table selection is: A=off, B=off, C=off
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - items: [aItems], removeItem", function(assert) {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		var oItem = oSelectionPanel.removeItem(oItemB);
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.deepEqual(oItem, oItemB);
+		assert.strictEqual(oSelectionPanel.getItems().length, 2);
+		assert.deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemA
+		]);
+		// The table items order has been changed to: A, C
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemA.getColumnKey());
+		// The table selection is: A=off, C=off
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - items: [aItems], removeItem dummy", function(assert) {
+
+		// system under test
+		var oItemA, oItemB = new sap.m.P13nItem({
+			columnKey: "keyB",
+			text: "B"
+		}), oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		var oItem = oSelectionPanel.removeItem(oItemB);
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oItem, null);
+		assert.strictEqual(oSelectionPanel.getItems().length, 2);
+		assert.deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemA
+		]);
+		// The table items order has been changed to: A, C
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemA.getColumnKey());
+		// The table selection is: A=off, C=off
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - items: [aItems], removeAllItems", function(assert) {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		var aItems = oSelectionPanel.removeAllItems();
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.deepEqual(aItems, [
+			oItemC, oItemB, oItemA
+		]);
+		assert.strictEqual(oSelectionPanel.getItems().length, 0);
+		// The table items order has been changed to: []
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items.length, 0);
+		// The table selection is: []
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - items: [aItems], destroyItems", function(assert) {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		oSelectionPanel.destroyItems();
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getItems().length, 0);
+		// The table items order has been changed to: []
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items.length, 0);
+		// The table selection is: []
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - items: [aItems], selectionItems: [aSelectionItems]", function(assert) {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			selectionItems: [
+				oSelectionItemC = new sap.m.P13nSelectionItem({
+					columnKey: "keyC",
+					index: 1,
+					selected: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		// The table items order has been changed to: C, A, B
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
+		// The table selection is: C=on, A=off, B=off
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		// Index of SelectionItem has not been changed
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - selectionItems: [aSelectionItems], items: [aItems]", function(assert) {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			selectionItems: [
+				oSelectionItemC = new sap.m.P13nSelectionItem({
+					columnKey: "keyC",
+					selected: true,
+					index: 1
+				})
+			],
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		// The table items order has been changed to: C, A, B
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
+		// The table selection is: C=on, A=off, B=off
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		// Index of SelectionItem has not been changed
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("constructor - items: [aItems], selectionItems: [aSelectionItems]", function(assert) {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			selectionItems: [
+				oSelectionItemC = new sap.m.P13nSelectionItem({
+					columnKey: "keyC",
+					index: 1,
+					selected: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oSelectionPanel.removeSelectionItem(oSelectionItemC);
+
+		// assertions
+		// The table items order has been changed to: A, B, C
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
+		// The table selection is: A=off, B=off, C=off
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		// Index of SelectionItem has not been changed
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 0);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("getOkPayload: â0 -> a0", function(assert) {
+
+		// system under test
+		var oSelectionItemA;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			selectionItems: [
+				oSelectionItemA = new sap.m.P13nSelectionItem({
+					columnKey: "keyA",
+					index: 0,
+					selected: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel._getInternalModel().getData();
+		oData.items[0].persistentSelected = false;
+		oData.items[0].persistentIndex = -1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0], oSelectionItemA);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), false);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), -1);
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("getOkPayload: a0 -> â0", function(assert) {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			selectionItems: []
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel._getInternalModel().getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 0;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 0);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("getOkPayload: a0 -> a1", function(assert) {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			selectionItems: []
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel._getInternalModel().getData();
+		oData.items[0].persistentSelected = undefined;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 0);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("getOkPayload: a0 -> â1", function(assert) {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			selectionItems: []
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel._getInternalModel().getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("getOkPayload: â0 -> â1", function(assert) {
+
+		// system under test
+		var oSelectionItemsA;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			selectionItems: [
+				oSelectionItemA = new sap.m.P13nSelectionItem({
+					columnKey: "keyA",
+					index: 0,
+					selected: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel._getInternalModel().getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0], oSelectionItemA);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	QUnit.test("getOkPayload: â0 -> a1", function(assert) {
+
+		// system under test
+		var oSelectionItemsA;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			selectionItems: [
+				oSelectionItemA = new sap.m.P13nSelectionItem({
+					columnKey: "keyA",
+					index: 0,
+					selected: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel._getInternalModel().getData();
+		oData.items[0].persistentSelected = false;
+		oData.items[0].persistentIndex = -1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		assert.strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0], oSelectionItemA);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), false);
+		assert.strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), -1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.P13nSelectionPanel</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+
+	<div id="content"></div>
+</body>
+</html>
+

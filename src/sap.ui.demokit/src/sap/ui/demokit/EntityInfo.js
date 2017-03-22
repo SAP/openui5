@@ -1,14 +1,14 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Provides reuse functionality for reading documentation from metamodel entities
-sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
-	function(jQuery, analyzer) {
+sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer', './util/APIInfo'],
+	function(jQuery, analyzer, APIInfo) {
 	"use strict";
 
 	var oRootPackageInfo = {};
-	
+
 	function getPackageInfo(sName) {
 		var aParts = sName.split('.');
 		var oPackageInfo = oRootPackageInfo;
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 
 	// just a hack, needs proper type resolution
 	var CORE_TYPES = "boolean int float number function object string void any Element Control Component";
-		
+
 	function resolve(sType, sContextName) {
 		if ( sType.indexOf("/") >= 0 ) {
 			return sType.replace(/\//g, ".");
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 	}
 
 	function parseControlMetamodel(oData, sEntityName) {
-		
+
 		var $control = jQuery(oData.documentElement);
 		var oEntityDoc = {
 			metatype : 'control',
@@ -49,10 +49,10 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 
 		var sBaseType = $control.children("baseType").text();
 		oEntityDoc.baseType = (sBaseType) ? resolve(sBaseType, sEntityName) : null;
-		
+
 		oEntityDoc.doc = doc($control);
 		oEntityDoc.deprecation = depr($control);
-		
+
 		each($control, "properties/property", function($prop) {
 			oEntityDoc.properties[$prop.attr("name")] = {
 				kind : 0,
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 				since : $prop.attr("since") || null
 			};
 		});
-		
+
 		oEntityDoc.defaultAggregation = oEntityDoc.defaultAggregation || $control.children("aggregations").attr("default");
 		each($control, "aggregations/aggregation", function($aggr) {
 			oEntityDoc.aggregations[$aggr.attr("name")] = {
@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 				since : $aggr.attr("since") || null
 			};
 		});
-		
+
 		each($control, "associations/association", function($assoc) {
 			oEntityDoc.associations[$assoc.attr("name")] = {
 				kind : $assoc.attr("cardinality") === "0..n" ? 4 : 3,
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 				since : $assoc.attr("since") || null
 			};
 		});
-		
+
 		each($control, "events/event", function($event) {
 			var sName = $event.attr("name");
 			oEntityDoc.events[sName] = {
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 				};
 			});
 		});
-		
+
 		each($control, "methods/method", function($method) {
 			var sName = $method.attr("name");
 			oEntityDoc.methods[sName] = {
@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 
 		return oEntityDoc;
 	}
-		
+
 	function parseTypeMetamodel(oData, sEntityName) {
 
 		var $type = jQuery(oData.documentElement);
@@ -142,10 +142,10 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 			deprecation : false,
 			values : {}
 		};
-		
+
 		oEntityDoc.doc = doc($type);
 		oEntityDoc.deprecation = depr($type);
-		
+
 		each($type, "enumeration/value", function($value) {
 			var sName = $value.attr("name");
 			oEntityDoc.values[sName] = {
@@ -154,20 +154,20 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 				deprecation : depr($value)
 			};
 		});
-		
+
 		oEntityDoc.pattern = $type.children("pattern").text();
 		oEntityDoc.baseType = resolve($type.children("baseType").text(), sEntityName);
-		
+
 		return oEntityDoc;
 	}
-	
+
 	function parseJavascript(oData, sEntityName, sModuleName) {
-		
+
 		// delegate Javascript parsing to ModuleAnalyzer
 		return analyzer.analyze(oData, sEntityName, sModuleName);
 
 	}
-				
+
 	function each($,sNames,fnCallback) {
 		jQuery.each(sNames.split("/"), function(i,n) {
 			$ = $.children(n);
@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 			fnCallback(jQuery(e));
 		});
 	}
-	
+
 	function doc($) {
 		return $.children("documentation").text();
 	}
@@ -184,11 +184,11 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 	function depr($) {
 		return $.children("deprecation").text();
 	}
-	
+
 	function load(sName, sType, sDataType, fnParser, sEntityName) {
 
 		var oEntityDoc;
-		
+
 		jQuery.ajax({
 			async: false,
 			url : jQuery.sap.getModulePath(sName, sType),
@@ -200,18 +200,30 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 				jQuery.sap.log.debug("tried to load entity docu for: " + sName + sType);
 			}
 		});
-		
+
 		return oEntityDoc;
 
 	}
 
 	function get(sEntityName, sType) {
-		
+
 		var bControl = !sType || sType === "control";
 		var bType = !sType || sType === "type";
 		var oPackageInfo = getPackageInfo(sEntityName);
 		var oEntityDoc;
-		
+
+		// api.json per library
+		if ( !oEntityDoc && !oPackageInfo.__noAPIJson ) {
+			oEntityDoc = APIInfo.getEntityInfo(sEntityName);
+			if ( oEntityDoc ) {
+				oPackageInfo.__noSource = true;
+				oPackageInfo.__noMetamodel = true;
+			}
+		} else if ( oPackageInfo.__noAPIJson ) {
+			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
+		}
+
+		// legacy metamodel files
 		if ( !oEntityDoc && !oPackageInfo.__noMetamodel ) {
 			if ( !oEntityDoc && bControl ) {
 				oEntityDoc = load(sEntityName, ".control", "xml", parseControlMetamodel, sEntityName);
@@ -225,6 +237,8 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 		} else if ( oPackageInfo.__noMetamodel ) {
 			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
 		}
+
+		// source code analysis
 		if ( !oEntityDoc && !oPackageInfo.noSource ) {
 			if ( !oEntityDoc && bType ) {
 				var sLibraryName = sEntityName.replace(/\.[^.]+$/, ".library");
@@ -239,15 +253,15 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 		} else if ( oPackageInfo.__noSource ) {
 			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noSource'");
 		}
-		
+
 		return oEntityDoc;
-	
+
 	}
 
 	var EntityInfo = {
-	
+
 		getEntityDocu : function (sEntityName, sType, bResolveInheritance) {
-		
+
 			function merge(a,b) {
 				for (var n in b) {
 					if ( b.hasOwnProperty(n) && !a.hasOwnProperty(n) ) { // do not overwrite existing entries
@@ -255,11 +269,11 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 					}
 				}
 			}
-			
+
 			// read info from first document
 			var oEntityDoc = get(sEntityName, sType);
 
-			// collect entries from base types 
+			// collect entries from base types
 			if ( bResolveInheritance ) {
 				var oDoc = oEntityDoc;
 				while ( oDoc && oDoc.baseType ) {
@@ -273,13 +287,13 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 					}
 				}
 			}
-			
+
 			return oEntityDoc;
-			
+
 		}
-		
+
 	};
-	
+
 	return EntityInfo;
 
 }, /* bExport= */ true);

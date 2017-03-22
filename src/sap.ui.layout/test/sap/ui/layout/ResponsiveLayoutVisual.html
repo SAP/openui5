@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+		<title>ResponsiveLayout - sap.ui.layout.form</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.layout.form.ResponsiveLayout.gif">
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				src="../../../../resources/sap-ui-core.js"></script>
+
+		<style>
+			.myPadding {
+				margin-top: 1rem;
+			}
+		</style>
+
+		<script>
+
+			var aContentEdit = [
+			                    new sap.ui.core.Title({text:"Person"}),
+			                    new sap.m.Label({text:"Name"}),
+			                    new sap.m.Input({value:"Max Mustermann", required: true}),
+			                    new sap.m.Label({text:"Street/ No."}),
+			                    new sap.m.Input({value:"Musterweg"}),
+			                    new sap.m.Input({value:"10"}),
+			                    new sap.m.Label({text:"PostCode / City"}),
+			                    new sap.m.Input({value:"12345"}),
+			                    new sap.m.Input({value:"Musterstadt"}),
+			                    new sap.ui.core.Title({text:"Contact"}),
+			                    new sap.m.Label({text:"Phone"}),
+			                    new sap.m.Input({value:"0123456789"}),
+			                    new sap.m.Label({text:"Mail"}),
+			                    new sap.m.Input({value:"max@mustermann.de"}),
+			                    new sap.m.Label({text:"Web"}),
+			                    new sap.m.Input({value:"http://www.mustermann.de"})
+			                    ];
+
+			var aContentEditToolbar = [
+			                           new sap.m.Toolbar({
+			                          	 content: [new sap.m.Title({text: "Person", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
+			                          	           new sap.m.ToolbarSpacer(),
+			                          	           new sap.m.Button({icon: "sap-icon://sap-ui5"})
+			                          	 ]
+			                           }),
+			                           new sap.m.Label({text:"Name"}),
+			                           new sap.m.Input({value:"Max Mustermann", required: true}),
+			                           new sap.m.Label({text:"Street/ No."}),
+			                           new sap.m.Input({value:"Musterweg"}),
+			                           new sap.m.Input({value:"10"}),
+			                           new sap.m.Label({text:"PostCode / City"}),
+			                           new sap.m.Input({value:"12345"}),
+			                           new sap.m.Input({value:"Musterstadt"}),
+			                           new sap.m.Toolbar({
+			                          	 content: [new sap.m.Title({text: "Contact", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
+			                          	           new sap.m.ToolbarSpacer(),
+			                          	           new sap.m.Button({icon: "sap-icon://sap-ui5"})
+			                          	 ]
+			                           }),
+			                           new sap.m.Label({text:"Phone"}),
+			                           new sap.m.Input({value:"0123456789"}),
+			                           new sap.m.Label({text:"Mail"}),
+			                           new sap.m.Input({value:"max@mustermann.de"}),
+			                           new sap.m.Label({text:"Web"}),
+			                           new sap.m.Input({value:"http://www.mustermann.de"})
+			                           ];
+
+			var aContentEditOneContainer = [
+			                          new sap.m.Label({text:"Name"}),
+			                          new sap.m.Input({value:"Max Mustermann", required: true}),
+			                          new sap.m.Label({text:"Street/ No."}),
+			                          new sap.m.Input({value:"Musterweg"}),
+			                          new sap.m.Input({value:"10"}),
+			                          new sap.m.Label({text:"PostCode / City"}),
+			                          new sap.m.Input({value:"12345"}),
+			                          new sap.m.Input({value:"Musterstadt"}),
+			                          ];
+
+			var aContentDisplay = [
+			                       new sap.ui.core.Title({text:"Person"}),
+			                       new sap.m.Label({text:"Name"}),
+			                       new sap.m.Text({text:"Max Mustermann"}),
+			                       new sap.m.Label({text:"Street/ No."}),
+			                       new sap.m.Text({text:"Musterweg 10"}),
+			                       new sap.m.Label({text:"PostCode / City"}),
+			                       new sap.m.Text({text:"12345 Musterstadt"}),
+			                       new sap.ui.core.Title({text:"Contact"}),
+			                       new sap.m.Label({text:"Phone"}),
+			                       new sap.m.Text({text:"0123456789"}),
+			                       new sap.m.Label({text:"Mail"}),
+			                       new sap.m.Link({text:"max@mustermann.de", href:"mailto:max@mustermann.de"}),
+			                       new sap.m.Label({text:"Web"}),
+			                       new sap.m.Link({text:"http://www.mustermann.de", href: "http://www.mustermann.de"})
+			                       ];
+
+			var oSimpleForm = new sap.ui.layout.form.SimpleForm( "SF1", {
+				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout,
+				width : "100%",
+				maxContainerCols: 2,
+				editable: true,
+				title: "Person data",
+				content: aContentEdit
+			});
+
+			var oHeaderToolbar = new sap.m.Toolbar({
+				content: [new sap.m.Title({text: "Person data", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
+				          new sap.m.ToolbarSpacer(),
+				          new sap.m.Button({icon: "sap-icon://sap-ui5"})
+				          ]
+			});
+
+
+			var oSegmentedButton = new sap.m.SegmentedButton("SB1", {
+				selectedKey: "B1",
+				items: [ new sap.m.SegmentedButtonItem("B1", {key: "B1", text: "Edit"}),
+				         new sap.m.SegmentedButtonItem("B2", {key: "B2", text: "Display"}),
+				         new sap.m.SegmentedButtonItem("B3", {key: "B3", text: "Toolbar"}),
+				         new sap.m.SegmentedButtonItem("B4", {key: "B4", text: "one Container"})
+				        ],
+				select: function(oEvent) {
+					var aContent = [];
+					switch (oEvent.getParameter("key")) {
+					case "B1":
+						aContent = aContentEdit;
+						oSimpleForm.setEditable(true);
+						oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Translucent);
+						oSimpleForm.setToolbar();
+						oSimpleForm.removeStyleClass("sapUiFormLblColon");
+						break;
+
+					case "B2":
+						aContent = aContentDisplay;
+						oSimpleForm.setEditable(false);
+						oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Transparent);
+						oSimpleForm.setToolbar();
+						oSimpleForm.removeStyleClass("sapUiFormLblColon");
+						break;
+
+					case "B3":
+						aContent = aContentEditToolbar;
+						oSimpleForm.setToolbar(oHeaderToolbar);
+						oSimpleForm.setEditable(true);
+						oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Solid);
+						oSimpleForm.addStyleClass("sapUiFormLblColon");
+						break;
+
+					case "B4":
+						aContent = aContentEditOneContainer;
+						oSimpleForm.setEditable(true);
+						oSimpleForm.setToolbar();
+						oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Solid);
+						oSimpleForm.removeStyleClass("sapUiFormLblColon");
+						break;
+
+					default:
+						break;
+					}
+					oSimpleForm.removeAllContent();
+					for (var i = 0; i < aContent.length; i++) {
+						var oControl = aContent[i];
+						oSimpleForm.addContent(oControl);
+					}
+				}
+			}).addStyleClass("myPadding");
+
+			var oApp = new sap.m.App("myApp").placeAt("body");
+
+			var oPage = new sap.m.Page({
+				title: "ResponsiveLayout",
+				content : [
+					oSimpleForm,
+					oSegmentedButton
+				]
+			});
+
+			oApp.addPage(oPage);
+
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody" role="application">
+	</body>
+</html>

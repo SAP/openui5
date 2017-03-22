@@ -12,8 +12,6 @@
 .sapUiIpe{
 	border: 1px solid transparent; /* to avoid reposition if border is painted on focus */
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	overflow: hidden;
 	position: relative;
 	display: inline-block;
@@ -59,6 +57,7 @@
 /* success state */
 .sapUiIpeSucc,
 .sapUiIpeUndo.sapUiIpeSucc{
+	border-color: @sapUiFieldSuccessColor;
 	background-color: @sapUiFieldSuccessBackground;
 }
 
@@ -72,6 +71,7 @@
 /* warning state */
 .sapUiIpeWarn,
 .sapUiIpeUndo.sapUiIpeWarn{
+	border-color: @sapUiFieldWarningColor;
 	background-color: @sapUiFieldWarningBackground;
 }
 
@@ -85,20 +85,12 @@
 .sapUiIpeLink > .sapUiIpeCont{
 	display: inline-block;
 	box-sizing: border-box;
-	-moz-box-sizing: padding-box;
-	-webkit-box-sizing: border-box;
 	max-width: 100%;
-}
-
-html[data-sap-ui-browser="ie8"] .sapUiIpeLink > .sapUiIpeCont{
-	width:100%; /* as max-width seems not to work in IE8 */
 }
 
 .sapUiIpeEdit.sapUiIpeLink > .sapUiIpeCont{
 	display: block;
 	box-sizing: content-box;
-	-moz-box-sizing: content-box;
-	-webkit-box-sizing: content-box;
 	padding-right: auto;
 }
 

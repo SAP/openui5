@@ -3,19 +3,52 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
-		<Label text="Date" />
+		<MessageStrip
+		text="Deprecated since version 1.32.8. Instead, dedicated sap.m.DatePicker, sap.m.TimePicker or sap.m.DateTimePicker controls should be used."
+		type="Warning"
+		class="sapUiSmallMarginTop sapUiSmallMarginBottom"
+		showIcon="true" />
+		<Label text="Date" labelFor="DTI1"/>
 		<DateTimeInput
+			id="DTI1"
 			type="Date"
 			placeholder="Enter Date ..."
 			class="sapUiSmallMarginBottom" />
-		<Label text="Time" />
+		<Label text="Time" labelFor="DTI2"/>
 		<DateTimeInput
+			id="DTI2"
 			type="Time"
 			placeholder="Enter Time ..."
 			class="sapUiSmallMarginBottom" />
-		<Label text="Date &amp; Time" />
+		<Label text="Date &amp; Time" labelFor="DTI3"/>
 		<DateTimeInput
+			id="DTI3"
 			type="DateTime"
+			placeholder="Enter Date &amp; Time ..."
+			class="sapUiSmallMarginBottom" />
+	</VBox>
+
+	<VBox class="sapUiSmallMargin">
+		<MessageStrip
+		text="Dedicated sap.m.DatePicker, sap.m.TimePicker and sap.m.DateTimePicker usage."
+		type="Success"
+		class="sapUiMediumMarginTop sapUiSmallMarginBottom"
+		showIcon="true" />
+		<Label text="Date" labelFor="DP1"/>
+		<DatePicker
+			id="DP1"
+			placeholder="Enter Date ..."
+			class="sapUiSmallMarginBottom" />
+		<Label text="Time" labelFor="TP1"/>
+		<TimePicker
+			id="TP1"
+			width="100%"
+			placeholder="Enter Time ..."
+			class="sapUiSmallMarginBottom" />
+		<Label text="Date &amp; Time" labelFor="DTP1"/>
+		<DateTimePicker
+			id="DTP1"
+			width="100%"
 			placeholder="Enter Date &amp; Time ..."
 			class="sapUiSmallMarginBottom" />
 	</VBox>

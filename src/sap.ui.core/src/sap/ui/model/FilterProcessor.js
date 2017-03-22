@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(['jquery.sap.global', "jquery.sap.unicode"],
 	function(jQuery) {
 	"use strict";
-	
+
 	/**
 	 * Clientside Filter processor
 	 * @namespace sap.ui.model.FilterProcessor
@@ -20,16 +20,17 @@ sap.ui.define(['jquery.sap.global'],
 	 * Usually this means, all filters applied to a single table column
 	 * are ORed, while filters on different table columns are ANDed.
 	 * Multiple MultiFilters are ORed.
-	 * 
+	 *
 	 * @param {array} aData the data array to be filtered
 	 * @param {array} aFilters the filter array
 	 * @param {function} fnGetValue the method to get the actual value to filter on
+	 * @return {array} a new array instance containing the filtered data set
 	 *
 	 * @public
 	 */
 	FilterProcessor.apply = function(aData, aFilters, fnGetValue){
 		if (!aFilters || aFilters.length == 0) {
-			return aData;
+			return aData.slice();
 		}
 		var that = this,
 			oFilterGroups = {},
@@ -37,7 +38,7 @@ sap.ui.define(['jquery.sap.global'],
 			aFiltered = [],
 			bGroupFiltered = false,
 			bFiltered = true;
-	
+
 		jQuery.each(aFilters, function(j, oFilter) {
 			if (oFilter.sPath !== undefined) {
 				aFilterGroup = oFilterGroups[oFilter.sPath];
@@ -89,11 +90,16 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Normalize filter value
-	 * 
+	 *
 	 * @private
 	 */
 	FilterProcessor.normalizeFilterValue = function(oValue){
 		if (typeof oValue == "string") {
+			// use canonical composition as recommended by W3C
+			// http://www.w3.org/TR/2012/WD-charmod-norm-20120501/#sec-ChoiceNFC
+			if (String.prototype.normalize) {
+				oValue = oValue.normalize("NFC");
+			}
 			return oValue.toUpperCase();
 		}
 		if (oValue instanceof Date) {
@@ -101,7 +107,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return oValue;
 	};
-	
+
 	/**
 	 * Resolve the client list binding and check if an index matches
 	 *
@@ -109,9 +115,9 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	FilterProcessor._resolveMultiFilter = function(oMultiFilter, vRef, fnGetValue){
 		var that = this,
-			bMatched = false,
+			bMatched = !!oMultiFilter.bAnd,
 			aFilters = oMultiFilter.aFilters;
-		
+
 		if (aFilters) {
 			jQuery.each(aFilters, function(i, oFilter) {
 				var bLocalMatch = false;
@@ -125,21 +131,22 @@ sap.ui.define(['jquery.sap.global'],
 						bLocalMatch = true;
 					}
 				}
-				if (bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = true;
-				} else if (!bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = false;
-					return false;
-				} else if (bLocalMatch) {
-					bMatched = true;
+
+				if ( bLocalMatch !== bMatched ) {
+					// (invariant: bMatched is still the same as oMultiFilter.bAnd)
+					// local match is false and mode is AND -> result is false
+					// local match is true and mode is OR -> result is true
+					bMatched = bLocalMatch;
 					return false;
 				}
 			});
 		}
-		
+		// mode is AND and no local match was false -> result is true
+		// mode is OR and no local match was true -> result is false
+
 		return bMatched;
 	};
-	
+
 	/**
 	 * Provides a JS filter function for the given filter
 	 */
@@ -149,7 +156,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		var oValue1 = this.normalizeFilterValue(oFilter.oValue1),
 			oValue2 = this.normalizeFilterValue(oFilter.oValue2);
-	
+
 		switch (oFilter.sOperator) {
 			case "EQ":
 				oFilter.fnTest = function(value) { return value == oValue1; }; break;
@@ -203,12 +210,12 @@ sap.ui.define(['jquery.sap.global'],
 				};
 				break;
 			default:
+				jQuery.sap.log.error("The filter operator \"" + oFilter.sOperator + "\" is unknown, filter will be ignored.");
 				oFilter.fnTest = function(value) { return true; };
 		}
 		return oFilter.fnTest;
 	};
-	
+
 	return FilterProcessor;
-	
+
 });
-	

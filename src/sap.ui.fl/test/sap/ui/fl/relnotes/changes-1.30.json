@@ -1,0 +1,13 @@
+{
+	"1.30.0": {
+		"date": "April 2015",
+		"notes": [
+			{
+				"id": "fb02ebabbfa55f1cfa432fc4e7677c3abad2c137",
+				"type": "FIX",
+				"text": "Enabled message to show that merge errors have occurred",
+				"references": []
+			}
+		]
+	}
+}

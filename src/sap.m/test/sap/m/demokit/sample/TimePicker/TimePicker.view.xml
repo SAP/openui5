@@ -1,0 +1,49 @@
+<mvc:View controllerName="sap.m.sample.TimePicker.TimePicker"
+	height="100%"
+
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+
+	<VBox class="sapUiSmallMargin">
+
+		<Label text = "HH:mm"/>
+		<TimePicker
+				id="TP1"
+				value="19:15"
+				valueFormat="HH:mm"
+				displayFormat="HH:mm"
+				change="handleChange"
+				placeholder="Enter meeting start time"/>
+
+		<Label text="HH:mm:ss"/>
+		<TimePicker
+				id="TP2"
+				valueFormat="HH:mm:ss"
+				displayFormat="HH:mm:ss"
+				change="handleChange"
+				placeholder="Enter meeting end time"/>
+
+		<Label text="hh:mm a"/>
+		<TimePicker
+				id="TP3"
+				valueFormat="hh:mm a"
+				displayFormat="hh:mm a"
+				change="handleChange"
+				placeholder="Enter daily task deadline"/>
+
+		<Label text="hh:mm:ss a"/>
+		<TimePicker
+				id="TP4"
+				valueFormat="hh:mm:ss a"
+				displayFormat="hh:mm:ss a"
+				change="handleChange"
+				placeholder="Enter time"/>
+		<Text
+				id="T1"
+				text="change event result"
+				class="sapUiSmallMarginTop"
+				/>
+	</VBox>
+
+</mvc:View>

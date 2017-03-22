@@ -1,0 +1,47 @@
+/* ================================ */
+/* CSS for control sap.m/SlideTile  */
+/* High Contrast Black theme        */
+/* ================================ */
+
+.sapMSTFocusDiv {
+	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv,
+html.sap-desktop .sapMST:active .sapMGTFocusDiv {
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMST:focus:not([tabindex]) {
+	border-color: transparent;
+}
+
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted > span {
+	background-color: @sapUiTileBackground;
+	border-color: 1px solid @sapUiTileBorderColor;
+}
+
+.sapMSTBulleted > span.sapMSTActive {
+	background-color: @sapUiContentContrastIconColor;
+}
+
+.sapMST .sapMSTIconDisplayArea {
+	background-color: darken(@sapUiHighlight, 18);
+}
+
+.sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	background-color: @sapUiHighlight;
+}
+
+.sapMST .sapMGT {
+	border-radius: 0px;
+
+	&:active .sapMGTFocusDiv {
+		border: none;
+	}
+}

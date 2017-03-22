@@ -5,7 +5,11 @@ sap.ui.define([
 	], function(UIComponent, View, JSONModel) {
 	"use strict";
 
-	var Component = UIComponent.extend("appUnderTest.Component", {
+	return UIComponent.extend("appUnderTest.Component", {
+
+		metadata: {
+			rootView: "appUnderTest.view.Main"
+		},
 
 		init : function() {
 			UIComponent.prototype.init.apply(this, arguments);
@@ -30,7 +34,7 @@ sap.ui.define([
 									name: "subsubitem3"
 								}
 							}
-						
+
 						},
 						1:{
 							name: "item2",
@@ -38,22 +42,13 @@ sap.ui.define([
 								name: "subitem3"
 							}
 						}
-					
+
 					}
 			};
 			var oModel = new JSONModel(oData);
 			this.setModel(oModel);
-		},
-
-		createContent : function () {
-			return sap.ui.view({
-				viewName : "view.Main",
-				type : "XML"
-			});
 		}
 
 	});
-
-	return Component;
 
 });

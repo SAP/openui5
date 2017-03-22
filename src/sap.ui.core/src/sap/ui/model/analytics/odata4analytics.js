@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)), valid-jsdoc (not completed yet), no-warning-comments (some TODOs are left)
@@ -7,8 +7,8 @@
 /*eslint-disable camelcase, valid-jsdoc, no-warning-comments */
 
 // Provides API for analytical extensions in OData service metadata
-sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
-	function(jQuery, AnalyticalVersionInfo) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/Sorter', './AnalyticalVersionInfo'],
+	function(jQuery, Filter, FilterOperator, Sorter, AnalyticalVersionInfo) {
 	"use strict";
 
 	/**
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 	 * @author SAP SE
 	 * @experimental This module is only for experimental use!
 	 * @namespace
-	 * @name sap.ui.model.analytics.odata4analytics
+	 * @alias sap.ui.model.analytics.odata4analytics
 	 * @protected
 	 */
 	var odata4analytics = odata4analytics || {};
@@ -101,10 +101,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 	 *            ReferenceWithWorkaround for locating the OData service.
 	 * @param {object}
 	 * 	          [mParameter] Additional parameters for controlling the model construction. Currently supported are:
-	 *            <li> sAnnotationJSONDoc - A JSON document providing extra annotations to the elements of the 
+	 *            <li> sAnnotationJSONDoc - A JSON document providing extra annotations to the elements of the
 	 *                 structure of the given service
 	 *            </li>
-	 *            <li> modelVersion - Parameter to define which ODataModel version should be used, in you use 
+	 *            <li> modelVersion - Parameter to define which ODataModel version should be used, in you use
 	 *                 'odata4analytics.Model.ReferenceByURI': 1 (default), 2
 	 *                 see also: AnalyticalVersionInfo constants
 	 *            </li>
@@ -160,7 +160,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 	 * workaround is an implementation that changes the standard behavior of the API
 	 * to overcome some gap or limitation in the OData provider. The workaround
 	 * implementation can be conditionally activated by passing the identifier in
-	 * the contructor.
+	 * the constructor.
 	 *
 	 * Known workaround identifiers are:
 	 *
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				throw "Deprecated second argument: Adjust your invocation by passing an object with a property sAnnotationJSONDoc as a second argument instead";
 			}
 			this._mParameter = mParameter;
-			
+
 			var that = this;
 			/*
 			 * get access to OData model
@@ -232,12 +232,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 			} else {
 				// Check if the user wants a V2 model
 				if (mParameter && mParameter.modelVersion === AnalyticalVersionInfo.V2) {
-					this._oModel = new sap.ui.model.odata.v2.ODataModel(oModelReference.sServiceURI);
+					var V2ODataModel = sap.ui.requireSync("sap/ui/model/odata/v2/ODataModel");
+					this._oModel = new V2ODataModel(oModelReference.sServiceURI);
 					this._iVersion = AnalyticalVersionInfo.V2;
 					checkForMetadata();
 				} else {
 					//default is V1 Model
-					this._oModel = new sap.ui.model.odata.ODataModel(oModelReference.sServiceURI);
+					var ODataModel = sap.ui.requireSync("sap/ui/model/odata/ODataModel");
+					this._oModel = new ODataModel(oModelReference.sServiceURI);
 					this._iVersion = AnalyticalVersionInfo.V1;
 					checkForMetadata();
 				}
@@ -246,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 			if (this._oModel.getServiceMetadata().dataServices == undefined) {
 				throw "Model could not be loaded";
 			}
-	
+
 			/**
 			 * Check if the metadata is already available, if not defere the interpretation of the Metadata
 			 */
@@ -271,22 +273,22 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				if (that.bIsInitialized) {
 					return;
 				}
-				
+
 				//mark analytics model as initialized
 				that.bIsInitialized = true;
-				
+
 				/*
 				 * add extra annotations if provided
 				 */
 				if (mParameter && mParameter.sAnnotationJSONDoc) {
 					that.mergeV2Annotations(mParameter.sAnnotationJSONDoc);
 				}
-				
+
 				that._interpreteMetadata(that._oModel.getServiceMetadata().dataServices);
 			}
 
 		},
-		
+
 		/**
 		 * @private
 		 */
@@ -712,7 +714,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get the names of all query results (entity sets) offered by the model
 		 *
-		 * @returns {array(string)} List of all query result names
+		 * @returns {string[]} List of all query result names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.Model#getAllQueryResultNames
@@ -957,7 +959,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get the names of all dimensions included in the query result
 		 *
-		 * @returns {array(string)} List of all dimension names
+		 * @returns {string[]} List of all dimension names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResult#getAllDimensionNames
@@ -969,8 +971,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 			this._aDimensionNames = [];
 
-			for ( var sName in this._oDimensionSet)
+			for ( var sName in this._oDimensionSet) {
 				this._aDimensionNames.push(this._oDimensionSet[sName].getName());
+			}
 
 			return this._aDimensionNames;
 		},
@@ -994,7 +997,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get the names of all measures included in the query result
 		 *
-		 * @returns {array(string)} List of all measure names
+		 * @returns {string[]} List of all measure names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResult#getAllMeasureNames
@@ -1006,8 +1009,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 			this._aMeasureNames = [];
 
-			for ( var sName in this._oMeasureSet)
+			for ( var sName in this._oMeasureSet) {
 				this._aMeasureNames.push(this._oMeasureSet[sName].getName());
+			}
 
 			return this._aMeasureNames;
 		},
@@ -1283,7 +1287,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get the names of all parameters part of the parameterization
 		 *
-		 * @returns {array(string)} List of all parameter names
+		 * @returns {string[]} List of all parameter names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.Parameterization#getAllParameterNames
@@ -1295,8 +1299,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 			this._aParameterNames = [];
 
-			for ( var sName in this._oParameterSet)
+			for ( var sName in this._oParameterSet) {
 				this._aParameterNames.push(this._oParameterSet[sName].getName());
+			}
 
 			return this._aParameterNames;
 		},
@@ -1790,7 +1795,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get the names of all attributes included in this dimension
 		 *
-		 * @returns {array(string)} List of all attribute names
+		 * @returns {string[]} List of all attribute names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.Dimension#getAllAttributeNames
@@ -1802,8 +1807,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 			this._aAttributeNames = [];
 
-			for ( var sName in this._oAttributeSet)
+			for ( var sName in this._oAttributeSet) {
 				this._aAttributeNames.push(this._oAttributeSet[sName].getName());
+			}
 
 			return this._aAttributeNames;
 		},
@@ -2540,7 +2546,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get key properties of this type
 		 *
-		 * @returns {array(string)} The list of key property names
+		 * @returns {string[]} The list of key property names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.EntityType#getKeyProperties
@@ -2709,7 +2715,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 * Get names of properties that can be filtered, that is they can be used in
 		 * $filter expressions
 		 *
-		 * @returns {array(string)} Array with names of properties that can be
+		 * @returns {string[]} Array with names of properties that can be
 		 *          filtered.
 		 * @public
 		 * @function
@@ -2723,7 +2729,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 * Get names of properties that can be sorted, that is they can be used in
 		 * $orderby expressions
 		 *
-		 * @returns {array(string)} Array with names of properties that can be
+		 * @returns {string[]} Array with names of properties that can be
 		 *          sorted.
 		 * @public
 		 * @function
@@ -2737,7 +2743,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 * Get names of properties that must be filtered, that is they must appear
 		 * in every $filter expression
 		 *
-		 * @returns {array(string)} Array with names of properties that must be
+		 * @returns {string[]} Array with names of properties that must be
 		 *          filtered.
 		 * @public
 		 * @function
@@ -2765,7 +2771,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get the names of all properties with an associated hierarchy
 		 *
-		 * @returns {array(string)} List of all property names
+		 * @returns {string[]} List of all property names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.EntityType#getAllHierarchyPropertyNames
@@ -2777,8 +2783,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 			this._aHierarchyPropertyNames = [];
 
-			for ( var sName in this._oRecursiveHierarchySet)
+			for ( var sName in this._oRecursiveHierarchySet) {
 				this._aHierarchyPropertyNames.push(this._oRecursiveHierarchySet[sName].getNodeValueProperty().name);
+			}
 
 			return this._aHierarchyPropertyNames;
 		},
@@ -2861,7 +2868,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 	 * Create a representation of a recursive hierarchy defined on one multiple
 	 * properties in an OData entity type query. Do not create your own instances.
 	 *
-	 * @param {EntityType}
+	 * @param {sap.ui.model.analytics.odata4analytics.EntityType}
 	 *            oEntityType object for the entity type
 	 * @param {object}
 	 *            oNodeIDProperty DataJS object for the property holding the
@@ -3058,7 +3065,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 					return;
 				}
 			}
-			this._aConditionUI5Filter.push(new sap.ui.model.Filter(sProperty, sOperator, oValue1, oValue2));
+			this._aConditionUI5Filter.push(new Filter(sProperty, sOperator, oValue1, oValue2));
 		},
 
 		/**
@@ -3157,7 +3164,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				throw "Cannot add filter condition for not filterable property name " + sPropertyName; // TODO
 			}
 			for ( var i = -1, oValue; (oValue = aValues[++i]) !== undefined;) {
-				this._addCondition(sPropertyName, sap.ui.model.FilterOperator.EQ, oValue);
+				this._addCondition(sPropertyName, FilterOperator.EQ, oValue);
 			}
 			return this;
 		},
@@ -3168,7 +3175,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 * The UI5 filter condition is combined with the other given conditions using a logical AND. This method
 		 * is particularly useful for passing forward already created UI5 filter arrays.
 		 *
-		 * @param {array(sap.ui.model.Filter)}
+		 * @param {sap.ui.model.Filter[]}
 		 *            aUI5Filter Array of UI5 filter objects
 		 * @returns {sap.ui.model.analytics.odata4analytics.FilterExpression} This object for method chaining
 		 * @public
@@ -3176,7 +3183,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 * @name sap.ui.model.analytics.odata4analytics.FilterExpression#addUI5FilterConditions
 		 */
 		addUI5FilterConditions : function(aUI5Filter) {
-			if (!jQuery.isArray(aUI5Filter)) {
+			if (!Array.isArray(aUI5Filter)) {
 				throw "Argument is not an array";
 			}
 			if (aUI5Filter.length == 0) {
@@ -3205,7 +3212,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get an array of SAPUI5 Filter objects corresponding to this expression.
 		 *
-		 * @returns {array(sap.ui.model.Filter)} List of filter objects representing this expression
+		 * @returns {sap.ui.model.Filter[]} List of filter objects representing this expression
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.FilterExpression#getExpressionAsUI5FilterArray
@@ -3277,20 +3284,20 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 			var sFilterExpression = null;
 			switch (oUI5Filter.sOperator) {
-			case sap.ui.model.FilterOperator.BT:
+			case FilterOperator.BT:
 				sFilterExpression = "(" + oUI5Filter.sPath + " "
-						+ sap.ui.model.FilterOperator.GE.toLowerCase() + " "
+						+ FilterOperator.GE.toLowerCase() + " "
 						+ this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type)
-						+ " and " + oUI5Filter.sPath + " " + sap.ui.model.FilterOperator.LE.toLowerCase() + " "
+						+ " and " + oUI5Filter.sPath + " " + FilterOperator.LE.toLowerCase() + " "
 						+ this._renderPropertyFilterValue(oUI5Filter.oValue2, oProperty.type)
 						+ ")";
 				break;
-			case sap.ui.model.FilterOperator.Contains:
+			case FilterOperator.Contains:
 				sFilterExpression = "substringof("
 								+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String") + "," +  oUI5Filter.sPath + ")";
 				break;
-			case sap.ui.model.FilterOperator.StartsWith:
-			case sap.ui.model.FilterOperator.EndsWith:
+			case FilterOperator.StartsWith:
+			case FilterOperator.EndsWith:
 				sFilterExpression = oUI5Filter.sOperator.toLowerCase() + "("
 						+ oUI5Filter.sPath + ","
 						+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String") + ")";
@@ -3373,7 +3380,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 					sPropertyName = oUI5Filter.sPath;
 					aNEFilter = [];
 				}
-				if (oUI5Filter.sOperator == sap.ui.model.FilterOperator.NE) {
+				if (oUI5Filter.sOperator == FilterOperator.NE) {
 					aNEFilter.push(oUI5Filter);
 					continue;
 				}
@@ -3444,9 +3451,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 				if (sFilterRestriction == odata4analytics.EntityType.propertyFilterRestriction.SINGLE_VALUE) {
 					if (oPropertiesInFilterExpression[sPropertyName2] != undefined) {
-						if (oPropertiesInFilterExpression[sPropertyName2].length > 1
-								|| oPropertiesInFilterExpression[sPropertyName2][0].sOperator != sap.ui.model.FilterOperator.EQ) {
-							throw "filter expression may use " + sPropertyName2 + " only with a single EQ condition"; // TODO
+						if (oPropertiesInFilterExpression[sPropertyName2].length > 1) {
+							// check if all filter instances of the current property have the same single value
+							var vTheOnlyValue = oPropertiesInFilterExpression[sPropertyName2][0].oValue1;
+							for (var j = 0; j < oPropertiesInFilterExpression[sPropertyName2].length; j++) {
+								// check if we have a value change, this means we got another value in one of the filters
+								if (oPropertiesInFilterExpression[sPropertyName2][j].oValue1 != vTheOnlyValue
+									|| oPropertiesInFilterExpression[sPropertyName2][j].sOperator != FilterOperator.EQ) {
+									throw "filter expression may use " + sPropertyName2 + " only with a single EQ condition";
+								}
+							}
 						}
 					}
 				}
@@ -3488,10 +3502,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 	/** ******************************************************************** */
 
 	/**
-	 * @class Sort order of a property
-	 * @name sap.ui.model.analytics.odata4analytics.SortOrder
+	 * Sort order of a property.
 	 *
-	 * @static
+	 * @enum {string}
 	 * @public
 	 */
 	odata4analytics.SortOrder = {
@@ -3657,7 +3670,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Get an array of SAPUI5 Sorter objects corresponding to this expression.
 		 *
-		 * @returns {array(sap.ui.model.Sorter)} List of sorter objects representing
+		 * @returns {sap.ui.model.Sorter[]} List of sorter objects representing
 		 *          this expression
 		 * @public
 		 * @function
@@ -3667,7 +3680,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 			var aSorterObjects = [];
 
 			for (var i = -1, oCondition; (oCondition = this._aSortCondition[++i]) !== undefined;) {
-				aSorterObjects.push(new sap.ui.model.Sorter(oCondition.property.name,
+				aSorterObjects.push(new Sorter(oCondition.property.name,
 						oCondition.order == odata4analytics.SortOrder.Descending));
 			}
 
@@ -4021,7 +4034,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		/**
 		 * Retrieves the current parametrization request
 		 *
-		 * @returns {sap.ui.model.analytics.odata4analytics.ParametrizationRequest}
+		 * @returns {sap.ui.model.analytics.odata4analytics.ParameterizationRequest}
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResultRequest#getParameterizationRequest
@@ -4403,16 +4416,26 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 *            bIncludeCount Indicates whether or not the result shall
 		 *            include a count for the returned entities. Default is not to
 		 *            include it. Pass null to keep current setting.
+		 * @param {Boolean}
+		 *            bReturnNoEntities Indicates whether or not the result shall
+		 *            be empty. This will translate to $top=0 in the OData request and override
+		 *            any setting done with setResultPageBoundaries. The default is not to
+		 *            suppress entities in the result. Pass null to keep current setting.
+		 *            The main use case for this option is to create a request
+		 *            with $inlinecount returning an entity count.
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResultRequest#setRequestOptions
 		 */
-		setRequestOptions : function(bIncludeEntityKey, bIncludeCount) {
+		setRequestOptions : function(bIncludeEntityKey, bIncludeCount, bReturnNoEntities) {
 			if (bIncludeEntityKey != null) {
 				this._bIncludeEntityKey = bIncludeEntityKey;
 			}
 			if (bIncludeCount != null) {
 				this._bIncludeCount = bIncludeCount;
+			}
+			if (bReturnNoEntities != null) {
+				this._bReturnNoEntities = bReturnNoEntities;
 			}
 		},
 
@@ -4612,13 +4635,19 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				break;
 			}
 			case "$top": {
-				if (this._iTopRequestOption !== null) {
+				sQueryOptionValue = null;
+				if (this._bReturnNoEntities) {
+					sQueryOptionValue = 0;
+				} else if (this._iTopRequestOption !== null) {
 					sQueryOptionValue = this._iTopRequestOption;
 				}
 				break;
 			}
 			case "$skip": {
-				sQueryOptionValue = this._iSkipRequestOption;
+				sQueryOptionValue = null;
+				if (!this._bReturnNoEntities) {
+					sQueryOptionValue = this._iSkipRequestOption;
+				}
 				break;
 			}
 			case "$inlinecount": {
@@ -4671,11 +4700,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 			var sURI = sResourcePath;
 			var bQuestionmark = false;
 
-			if (sSelectOption) {
+			if (sSelectOption !== null) {
 				sURI += "?$select=" + sSelectOption;
 				bQuestionmark = true;
 			}
-			if (this._oFilterExpression && sFilterOption) {
+			if (this._oFilterExpression && sFilterOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4684,7 +4713,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				}
 				sURI += "$filter=" + sFilterOption;
 			}
-			if (this._oSortExpression && sSortOption) {
+			if (this._oSortExpression && sSortOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4694,7 +4723,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				sURI += "$orderby=" + sSortOption;
 			}
 
-			if (this._iTopRequestOption && sTopOption) {
+			if ((this._iTopRequestOption || this._bReturnNoEntities) && sTopOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4703,7 +4732,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				}
 				sURI += "$top=" + sTopOption;
 			}
-			if (this._iSkipRequestOption && sSkipOption) {
+			if (this._iSkipRequestOption && sSkipOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4712,7 +4741,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				}
 				sURI += "$skip=" + sSkipOption;
 			}
-			if (this._bIncludeCount && sInlineCountOption) {
+			if (this._bIncludeCount && sInlineCountOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4734,9 +4763,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		_oMeasures : null,
 		_bIncludeEntityKey : null,
 		_bIncludeCount : null,
+		_bReturnNoEntities : null,
 		_oFilterExpression : null,
 		_oSortExpression : null,
-		_iSkipRequestOption : 0,
+		_iSkipRequestOption : null,
 		_iTopRequestOption : null
 	};
 

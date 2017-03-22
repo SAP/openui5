@@ -1,0 +1,331 @@
+/*******************************************************************************
+ * HORIZONTAL / VERTICAL SCROLLBAR
+ ******************************************************************************/
+
+/*
+ * BEHAVIOR CLASSES:
+ * -----------------
+ * sapUiTableVScr   - display vertical scrollbar
+ * sapUiTableHScr   - display horizontal scrollbar
+ */
+
+@_sapUiTableDefaultScrollBarSize: 16px;
+@_sapUiTableScrollBarSizeIE: 18px;   /* scroll bar sizes do not depend on the base font size in IE */
+@_sapUiTableScrollBarSizeEDGE: 12px; /* scroll bar sizes do not depend on the base font size in Edge */
+@_sapUiTableScrollBarSizeMOBILE: 8px;
+@_sapUiTableScrollBarBg: @sapUiListHeaderBackground;
+
+
+
+.sapUiTableVSb,
+.sapUiTableVSbBg {
+	display: none;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	width: @_sapUiTableDefaultScrollBarSize;
+	box-sizing: border-box;
+}
+
+.sapUiTableVSb {
+	overflow-x: hidden;
+	overflow-y: scroll;
+	background-color: @sapUiListBackground;
+	z-index: 4; /* Ensure Scrollbar before Resize/Reorder bars*/
+}
+
+.sapUiTableVSbBg {
+	background-color: @_sapUiTableScrollBarBg;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiTableVSb,
+html[data-sap-ui-browser^="ie"] .sapUiTableVSbBg {
+	width: @_sapUiTableScrollBarSizeIE;
+}
+
+html[data-sap-ui-browser^="ed"] .sapUiTableVSb,
+html[data-sap-ui-browser^="ed"] .sapUiTableVSbBg {
+	width: @_sapUiTableScrollBarSizeEDGE;
+	-ms-overflow-style: scrollbar;
+}
+
+.sapUiTableVSbContent {
+	width: 1px;
+}
+
+.sapUiTableVScr {
+
+	.sapUiTableVSb, .sapUiTableVSbBg {
+		display: block;
+	}
+
+	.sapUiTableHSb, .sapUiTableCtrlScr, .sapUiTableColHdrScr, .sapUiTableRowActionScr  {
+		margin-right: @_sapUiTableDefaultScrollBarSize;
+	}
+
+}
+
+._sapUiTableVScrWithActionsInnerMixin_CalcMarginRight(@ScrollbarSize, @RowActionWidth) {
+	@_prefixWebKit: "-webkit-calc(";
+	@_prefix: "calc(";
+	@_operator: " + ";
+	@_suffix: ")";
+	margin-right: ~"@{_prefixWebKit}@{ScrollbarSize}@{_operator}@{RowActionWidth}@{_suffix}";
+	margin-right: ~"@{_prefix}@{ScrollbarSize}@{_operator}@{RowActionWidth}@{_suffix}";
+}
+
+._sapUiTableVScrWithActionsInnerMixin(@ScrollbarSize, @RowHdrWidth, @Factor) {
+
+	.sapUiTableHSb, .sapUiTableCtrlScr, .sapUiTableColHdrScr {
+		._sapUiTableVScrWithActionsInnerMixin_CalcMarginRight(@ScrollbarSize, @Factor * @RowHdrWidth);
+	}
+
+	.sapUiTableRowActionHeader {
+		width: @Factor * @RowHdrWidth;
+		margin-right: @ScrollbarSize;
+	}
+
+}
+
+._sapUiTableVScrWithActionsMixin(@ScrollbarSize) {
+
+	.sapUiTableVScr.sapUiTableRAct {
+		._sapUiTableVScrWithActionsInnerMixin(@ScrollbarSize, @_sapUiTableRowHdrWidth, 2);
+	}
+
+	.sapUiSizeCozy.sapUiTableVScr.sapUiTableRAct,
+	.sapUiSizeCozy .sapUiTableVScr.sapUiTableRAct {
+		._sapUiTableVScrWithActionsInnerMixin(@ScrollbarSize, @_sapUiTableRowHdrWidthCozy, 2);
+	}
+
+	.sapUiSizeCondensed.sapUiTableVScr.sapUiTableRAct,
+	.sapUiSizeCondensed .sapUiTableVScr.sapUiTableRAct {
+		._sapUiTableVScrWithActionsInnerMixin(@ScrollbarSize, @_sapUiTableRowHdrWidthCondensed, 2);
+	}
+
+	.sapUiTableVScr.sapUiTableRActS {
+		._sapUiTableVScrWithActionsInnerMixin(@ScrollbarSize, @_sapUiTableRowHdrWidth, 1);
+	}
+
+	.sapUiSizeCozy.sapUiTableVScr.sapUiTableRActS,
+	.sapUiSizeCozy .sapUiTableVScr.sapUiTableRActS {
+		._sapUiTableVScrWithActionsInnerMixin(@ScrollbarSize, @_sapUiTableRowHdrWidthCozy, 1);
+	}
+
+	.sapUiSizeCondensed.sapUiTableVScr.sapUiTableRActS,
+	.sapUiSizeCondensed .sapUiTableVScr.sapUiTableRActS {
+		._sapUiTableVScrWithActionsInnerMixin(@ScrollbarSize, @_sapUiTableRowHdrWidthCondensed, 1);
+	}
+
+}
+
+.sapUiTableRAct:not(.sapUiTableVScr) {
+	._sapUiTableVScrWithActionsInnerMixin(0px, @_sapUiTableRowHdrWidth, 2);
+}
+
+.sapUiSizeCozy.sapUiTableRAct:not(.sapUiTableVScr),
+.sapUiSizeCozy .sapUiTableRAct:not(.sapUiTableVScr) {
+	._sapUiTableVScrWithActionsInnerMixin(0px, @_sapUiTableRowHdrWidthCozy, 2);
+}
+
+.sapUiSizeCondensed.sapUiTableRAct:not(.sapUiTableVScr),
+.sapUiSizeCondensed .sapUiTableRAct:not(.sapUiTableVScr) {
+	._sapUiTableVScrWithActionsInnerMixin(0px, @_sapUiTableRowHdrWidthCondensed, 2);
+}
+
+.sapUiTableRActS:not(.sapUiTableVScr) {
+	._sapUiTableVScrWithActionsInnerMixin(0px, @_sapUiTableRowHdrWidth, 1);
+}
+
+.sapUiSizeCozy.sapUiTableRActS:not(.sapUiTableVScr),
+.sapUiSizeCozy .sapUiTableRActS:not(.sapUiTableVScr) {
+	._sapUiTableVScrWithActionsInnerMixin(0px, @_sapUiTableRowHdrWidthCozy, 1);
+}
+
+.sapUiSizeCondensed.sapUiTableRActS:not(.sapUiTableVScr),
+.sapUiSizeCondensed .sapUiTableRActS:not(.sapUiTableVScr) {
+	._sapUiTableVScrWithActionsInnerMixin(0px, @_sapUiTableRowHdrWidthCondensed, 1);
+}
+
+._sapUiTableVScrWithActionsMixin(@_sapUiTableDefaultScrollBarSize);
+
+html[data-sap-ui-browser^="ie"] {
+
+	.sapUiTableVScr {
+		.sapUiTableHSb, .sapUiTableCtrlScr, .sapUiTableColHdrScr, .sapUiTableRowActionScr  {
+			margin-right: @_sapUiTableScrollBarSizeIE;
+		}
+	}
+
+	._sapUiTableVScrWithActionsMixin(@_sapUiTableScrollBarSizeIE);
+
+}
+
+html[data-sap-ui-browser^="ed"] {
+
+	.sapUiTableVScr {
+		.sapUiTableHSb, .sapUiTableCtrlScr, .sapUiTableColHdrScr, .sapUiTableRowActionScr  {
+			margin-right: @_sapUiTableScrollBarSizeEDGE;
+		}
+	}
+
+	._sapUiTableVScrWithActionsMixin(@_sapUiTableScrollBarSizeEDGE);
+
+}
+
+
+/* Hide last border right of column header and cell when no vertical scroll is available */
+.sapUiTable:not(.sapUiTableVScr) {
+	.sapUiTableColHdrScr .sapUiTableCol:last-child,
+	.sapUiTableCtrlScroll .sapUiTableTr > td:last-child {
+		border-right: none;
+	}
+}
+
+
+
+.sapUiTableHSb,
+.sapUiTableHSbBg {
+	display: none;
+	height: @_sapUiTableDefaultScrollBarSize;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.sapUiTableHSb {
+	position: relative;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	border-right: 1px solid transparent; /* Simulates the right border of the table cells in the content area */
+	background-color: @sapUiListBackground;
+}
+
+.sapUiTableHSbBg {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: @_sapUiTableScrollBarBg;
+}
+
+/*.sapUiTableRActS .sapUiTableHSb,
+.sapUiTableRAct .sapUiTableHSb,
+.sapUiTableVScr .sapUiTableHSb {
+	border-right: 1px solid @sapUiListVerticalBorderColor;
+}*/
+
+html[data-sap-ui-browser^="ie"] .sapUiTableHSb,
+html[data-sap-ui-browser^="ie"] .sapUiTableHSbBg {
+	height: @_sapUiTableScrollBarSizeIE;
+}
+
+html[data-sap-ui-browser^="ed"] .sapUiTableHSb,
+html[data-sap-ui-browser^="ed"] .sapUiTableHSbBg {
+	height: @_sapUiTableScrollBarSizeEDGE;
+	-ms-overflow-style: scrollbar;
+}
+
+.sapUiTableHSbContent {
+	height: 1px;
+}
+
+.sapUiTableHScr {
+
+	.sapUiTableHSb, .sapUiTableHSbBg {
+		display: block;
+	}
+
+	.sapUiTableFtr {
+		border-top: 1px solid @sapUiListHeaderBorderColor;
+	}
+
+	.sapUiTableColReorderIndicator, .sapUiTableColRsz {
+		bottom: @_sapUiTableDefaultScrollBarSize;
+	}
+
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiTableHScr {
+	.sapUiTableColReorderIndicator, .sapUiTableColRsz {
+		bottom: @_sapUiTableScrollBarSizeIE;
+	}
+}
+
+html[data-sap-ui-browser^="ed"] .sapUiTableHScr {
+	.sapUiTableColReorderIndicator, .sapUiTableColRsz {
+		bottom: @_sapUiTableScrollBarSizeEDGE;
+	}
+}
+
+html.sap-desktop:not(.sap-tablet) {
+
+	.sapUiTableVSb {
+		&::-webkit-scrollbar-thumb {
+			border-left: 0.125rem solid @sapUiScrollBarTrackColor;
+			border-right: 0.125rem solid @sapUiScrollBarTrackColor;
+		}
+
+		&::-webkit-scrollbar:vertical {
+			width: @_sapUiTableDefaultScrollBarSize;
+		}
+	}
+
+	.sapUiTableHSb {
+		&::-webkit-scrollbar-thumb {
+			border-top: 0.125rem solid @sapUiScrollBarTrackColor;
+			border-bottom: 0.125rem solid @sapUiScrollBarTrackColor;
+		}
+
+		&::-webkit-scrollbar:horizontal {
+			height: @_sapUiTableDefaultScrollBarSize;
+		}
+	}
+
+}
+
+html.sap-tablet:not(.sap-desktop), html.sap-phone {
+
+	.sapUiTableVSb,
+	.sapUiTableHSb {
+
+		&::-webkit-scrollbar {
+			-webkit-appearence: none;
+			width: @_sapUiTableScrollBarSizeMOBILE;
+			height: @_sapUiTableScrollBarSizeMOBILE;
+			background-color: @sapUiScrollBarTrackColor;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: @sapUiScrollBarFaceColor;
+			border-top: 0.125rem solid @sapUiScrollBarBorderColor;
+			border-left: 0.125rem solid @sapUiScrollBarBorderColor;
+			border-right: 0.125rem solid @sapUiScrollBarBorderColor;
+			border-bottom: 0.125rem solid @sapUiScrollBarBorderColor;
+			width: 0.25rem;
+			height: 0.25rem;
+		}
+
+	}
+
+	.sapUiTableVSb, .sapUiTableVSbBg {
+		width: @_sapUiTableScrollBarSizeMOBILE;
+	}
+
+	.sapUiTableHSb, .sapUiTableHSbBg {
+		height: @_sapUiTableScrollBarSizeMOBILE;
+	}
+
+	.sapUiTableVScr {
+		.sapUiTableCtrlScr, .sapUiTableColHdrScr, .sapUiTableHSb {
+			margin-right: @_sapUiTableScrollBarSizeMOBILE;
+		}
+	}
+
+	.sapUiTableHScr {
+		.sapUiTableColReorderIndicator, .sapUiTableColRsz {
+			bottom: @_sapUiTableScrollBarSizeMOBILE;
+		}
+	}
+
+}

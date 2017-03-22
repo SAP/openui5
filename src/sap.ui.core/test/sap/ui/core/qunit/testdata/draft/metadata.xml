@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData"><edmx:Reference
+	Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"/>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="COLLE" sap:schema-version="1" xml:lang="en" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="AvailableToPromiseStatusType" sap:content-version="1" sap:label="Available to Promise Status">
+				<Key><PropertyRef Name="Status"/></Key><Property MaxLength="1" Name="Status" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="ATP Status" sap:text="Description"
+					sap:updatable="false"/><Property MaxLength="60" Name="Description" Type="Edm.String" sap:creatable="false" sap:label="Description" sap:updatable="false"/></EntityType>
+			<EntityType Name="LifecycleStatusType" sap:content-version="1" sap:label="Lifecycle Status">
+				<Key><PropertyRef Name="Status"/></Key><Property MaxLength="1" Name="Status" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Lifecycle Status"
+					sap:text="Description" sap:updatable="false"/><Property MaxLength="60" Name="Description" Type="Edm.String" sap:creatable="false" sap:label="Description" sap:updatable="false"/></EntityType>
+			<EntityType Name="BillingStatusType" sap:content-version="1" sap:label="Billing Status">
+				<Key><PropertyRef Name="Status"/></Key><Property MaxLength="1" Name="Status" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Confirmation Status"
+					sap:text="Description" sap:updatable="false"/><Property MaxLength="60" Name="Description" Type="Edm.String" sap:creatable="false" sap:label="Description" sap:updatable="false"/></EntityType>
+			<EntityType Name="DeliveryStatusType" sap:content-version="1" sap:label="Delivery Status">
+				<Key><PropertyRef Name="Status"/></Key><Property MaxLength="1" Name="Status" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Delivery Status"
+					sap:text="Description" sap:updatable="false"/><Property MaxLength="60" Name="Description" Type="Edm.String" sap:creatable="false" sap:label="Description" sap:updatable="false"/></EntityType>
+			<EntityType Name="DraftAdministrativeDataType" sap:content-version="1" sap:label="Administrative Data for Drafts">
+				<Key><PropertyRef Name="DraftUUID"/></Key><Property MaxLength="1" Name="DraftAccessType" Type="Edm.String" sap:creatable="false" sap:filterable="false" sap:label="Draft Access Type"
+					sap:updatable="false"/><Property Name="DraftUUID" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:filterable="false" sap:label="Entity ID"
+					sap:updatable="false"/><Property MaxLength="30" Name="DraftEntityType" Type="Edm.String" sap:creatable="false" sap:filterable="false" sap:label="Entity Type"
+					sap:updatable="false"/><Property Name="DraftIsKeptByUser" Type="Edm.Boolean" sap:creatable="false" sap:filterable="false" sap:label="Kept by User"
+					sap:updatable="false"/><Property Name="CreationDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false" sap:filterable="false"
+					sap:label="Created at" sap:updatable="false"/><Property Name="EnqueueStartDateTime" Precision="21" Scale="7" Type="Edm.Decimal" sap:creatable="false" sap:filterable="false"
+					sap:label="Enqueue Start" sap:updatable="false"/><Property MaxLength="12" Name="CreatedByUser" Type="Edm.String" sap:creatable="false" sap:filterable="false" sap:label="Created by"
+					sap:updatable="false"/><Property Name="DraftIsCreatedByMe" Type="Edm.Boolean" sap:creatable="false" sap:filterable="false" sap:label="Created by me"
+					sap:updatable="false"/><Property Name="DraftIsLastChangedByMe" Type="Edm.Boolean" sap:creatable="false" sap:filterable="false" sap:label="Last changed by me"
+					sap:updatable="false"/><Property Name="LastChangeDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false" sap:filterable="false"
+					sap:label="Last changed at" sap:updatable="false"/><Property Name="DraftIsProcessedByMe" Type="Edm.Boolean" sap:creatable="false" sap:filterable="false" sap:label="Processed by me"
+					sap:updatable="false"/><Property MaxLength="12" Name="LastChangedByUser" Type="Edm.String" sap:creatable="false" sap:filterable="false" sap:label="Last changed by"
+					sap:updatable="false"/><Property Name="ProcessingStartDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false" sap:filterable="false"
+					sap:label="Processed Since" sap:updatable="false"/><Property MaxLength="12" Name="InProcessByUser" Type="Edm.String" sap:creatable="false" sap:filterable="false" sap:label="Processed By"
+					sap:updatable="false"/></EntityType>
+			<EntityType Name="SalesOrderItemUxType" sap:content-version="1" sap:label="Sales Order Item Ux">
+				<Key><PropertyRef Name="ActiveSalesOrderItemID"/><PropertyRef Name="SalesOrderID"/><PropertyRef Name="SalesOrderItemDraftUUID"/></Key><Property MaxLength="10" Name="ActiveSalesOrderItemID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Item Position"
+					sap:sortable="false" sap:updatable="false"/><Property MaxLength="10" Name="SalesOrderID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Sales Order ID"
+					sap:sortable="false" sap:updatable="false"/><Property Name="SalesOrderItemDraftUUID" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:label="Key" sap:sortable="false"
+					sap:updatable="false"/><Property Name="UxSalesOrderItemIDDraft" Type="Edm.Byte" sap:creatable="false" sap:sortable="false" sap:updatable="false"/><Property Name="UxUpdatableEntity" Type="Edm.Boolean" sap:creatable="false" sap:sortable="false" sap:updatable="false"/></EntityType>
+			<EntityType Name="SalesOrderScheduleLineType" sap:content-version="1" sap:label="Sales Order Schedule Line">
+				<Key><PropertyRef Name="ActiveDeliveryDate"/><PropertyRef Name="SalesOrderID"/><PropertyRef Name="SalesOrderItemID"/><PropertyRef Name="SalesOrderSLDraftUUID"/></Key><Property Name="ActiveDeliveryDate" Nullable="false" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false"
+					sap:label="Delivery Time (Active Document)" sap:updatable="false"/><Property MaxLength="10" Name="SalesOrderID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Sales Order ID"
+					sap:updatable="false"/><Property MaxLength="10" Name="SalesOrderItemID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Item Position"
+					sap:updatable="false"/><Property Name="SalesOrderSLDraftUUID" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)"
+					sap:updatable="false"/><Property Name="DeliveryDate" Precision="7" Type="Edm.DateTimeOffset" sap:label="Delivery Time"/><Property Name="DraftAdministrativeDataUUID" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)" sap:updatable="false"/><Property Name="IsActiveEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Is Active Entity" sap:updatable="false"/><Property Name="HasActiveEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Has Active Entity" sap:updatable="false"/><Property Name="HasDraftEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Has Draft Entity" sap:updatable="false"/><Property Name="Quantity" Precision="13" Scale="3" Type="Edm.Decimal" sap:label="Quantity" sap:unit="QuantityUnitCode"/><Property MaxLength="3" Name="QuantityUnitCode" Type="Edm.String" sap:label="Unit of Measure" sap:semantics="unit-of-measure"/><Property Name="SalesOrderDraftUUID" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)" sap:updatable="false"/><Property Name="SalesOrderItemDraftUUID" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)" sap:updatable="false"/><Property Name="CreationDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false" sap:label="Created At" sap:updatable="false"/><Property MaxLength="12" Name="CreationUserName" Type="Edm.String" sap:creatable="false" sap:label="Created By" sap:updatable="false"/><Property ConcurrencyMode="Fixed" Name="LastChangedDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false"
+					sap:label="Last Changed At" sap:updatable="false"/><Property MaxLength="12" Name="LastChangedUserName" Type="Edm.String" sap:creatable="false" sap:label="Last Changed By"
+					sap:updatable="false"/><NavigationProperty FromRole="FromRole_ScheduleLineToDraftAdminDataType" Name="DraftAdministrativeData"
+					Relationship="COLLE.ScheduleLineToDraftAdminDataType" ToRole="ToRole_ScheduleLineToDraftAdminDataType"/><NavigationProperty FromRole="FromRole_ScheduleLineToItemType" Name="Item" Relationship="COLLE.ScheduleLineToItemType"
+					ToRole="ToRole_ScheduleLineToItemType"/><NavigationProperty FromRole="FromRole_ScheduleLineToSalesOrderType" Name="SalesOrder" Relationship="COLLE.ScheduleLineToSalesOrderType"
+					ToRole="ToRole_ScheduleLineToSalesOrderType"/><NavigationProperty FromRole="FromRole_ScheduleLineToUnitOfMeasureType" Name="UnitOfMeasure"
+					Relationship="COLLE.ScheduleLineToUnitOfMeasureType" ToRole="ToRole_ScheduleLineToUnitOfMeasureType"/><NavigationProperty FromRole="FromRole_ScheduleLineToUxType" Name="Ux" Relationship="COLLE.ScheduleLineToUxType"
+					ToRole="ToRole_ScheduleLineToUxType"/><NavigationProperty FromRole="FromRole_ScheduleLineToSiblingEntityType" Name="SiblingEntity"
+					Relationship="COLLE.ScheduleLineToSiblingEntityType" ToRole="ToRole_ScheduleLineToSiblingEntityType"/></EntityType>
+			<EntityType Name="SalesOrderScheduleLineUxType" sap:content-version="1" sap:label="Sales Order Schedule Line Ux">
+				<Key><PropertyRef Name="ActiveDeliveryDate"/><PropertyRef Name="SalesOrderID"/><PropertyRef Name="SalesOrderItemID"/><PropertyRef Name="SalesOrderSLDraftUUID"/></Key><Property Name="ActiveDeliveryDate" Nullable="false" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false" sap:label="Delivery Time"
+					sap:sortable="false" sap:updatable="false"/><Property MaxLength="10" Name="SalesOrderID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Sales Order ID"
+					sap:sortable="false" sap:updatable="false"/><Property MaxLength="10" Name="SalesOrderItemID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Item Position"
+					sap:sortable="false" sap:updatable="false"/><Property Name="SalesOrderSLDraftUUID" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:label="Key" sap:sortable="false"
+					sap:updatable="false"/><Property Name="UxDeliveryDateDraft" Type="Edm.Byte" sap:creatable="false" sap:sortable="false" sap:updatable="false"/><Property Name="UxUpdatableEntity" Type="Edm.Boolean" sap:creatable="false" sap:sortable="false" sap:updatable="false"/></EntityType>
+			<EntityType Name="BusinessPartnerType" sap:content-version="1" sap:label="Business Partner">
+				<Key><PropertyRef Name="BusinessPartnerID"/></Key><Property MaxLength="10" Name="BusinessPartnerID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Business Partner ID"
+					sap:text="CompanyName" sap:updatable="false"/><Property MaxLength="3" Name="BusinessPartnerRole" Type="Edm.String" sap:creatable="false" sap:label="Bus. Part. Role" sap:updatable="false"/><Property MaxLength="80" Name="CompanyName" Type="Edm.String" sap:creatable="false" sap:label="Company" sap:updatable="false"/><Property MaxLength="5" Name="CurrencyCode" Type="Edm.String" sap:creatable="false" sap:label="Currency Code" sap:semantics="currency-code"
+					sap:updatable="false"/><Property MaxLength="30" Name="FaxNumber" Type="Edm.String" sap:creatable="false" sap:label="Phone No." sap:semantics="tel"
+					sap:updatable="false"/><Property MaxLength="10" Name="LegalForm" Type="Edm.String" sap:creatable="false" sap:label="Legal Form" sap:updatable="false"/><Property MaxLength="255" Name="MailAddress" Type="Edm.String" sap:creatable="false" sap:label="E-Mail" sap:semantics="email"
+					sap:updatable="false"/><Property MaxLength="30" Name="PhoneNumber" Type="Edm.String" sap:creatable="false" sap:label="Phone No." sap:semantics="tel"
+					sap:updatable="false"/></EntityType>
+			<EntityType Name="SalesOrderType" sap:content-version="1" sap:label="Sales Order">
+				<Key><PropertyRef Name="ActiveSalesOrderID"/><PropertyRef Name="SalesOrderDraftUUID"/></Key><Property MaxLength="10" Name="ActiveSalesOrderID" Nullable="false" Type="Edm.String" sap:creatable="false"
+					sap:label="Sales Order ID (Active Document)" sap:updatable="false"/><Property Name="SalesOrderDraftUUID" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)"
+					sap:updatable="false"/><Property MaxLength="80" Name="ApprovalComment" Type="Edm.String" sap:creatable="false" sap:label="Comment" sap:updatable="false"/><Property Name="Approved" Type="Edm.Boolean" sap:creatable="false" sap:label="Approval Status" sap:updatable="false"/><Property MaxLength="1" Name="BillingStatus" Type="Edm.String" sap:label="Confirmation Status" sap:value-list="fixed-values"/><Property MaxLength="10" Name="BusinessPartnerID" Type="Edm.String" sap:field-control="UxBusinessPartnerID" sap:label="Business Partner ID"/><Property Name="CreationDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false" sap:label="Created At" sap:updatable="false"/><Property MaxLength="12" Name="CreationUserName" Type="Edm.String" sap:creatable="false" sap:label="Created By" sap:updatable="false"/><Property MaxLength="5" Name="CurrencyCode" Type="Edm.String" sap:label="Currency" sap:semantics="currency-code"/><Property MaxLength="1" Name="DeliveryStatus" Type="Edm.String" sap:label="Ordering Status" sap:value-list="fixed-values"/><Property Name="DraftAdministrativeDataUUID" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)" sap:updatable="false"/><Property Name="GrossAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Gross Amount" sap:unit="CurrencyCode"/><Property Name="IsActiveEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Is Active Entity" sap:updatable="false"/><Property Name="HasActiveEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Has Active Entity" sap:updatable="false"/><Property Name="HasDraftEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Has Draft Entity" sap:updatable="false"/><Property ConcurrencyMode="Fixed" Name="LastChangedDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false"
+					sap:label="Last Changed At" sap:updatable="false"/><Property MaxLength="12" Name="LastChangedUserName" Type="Edm.String" sap:creatable="false" sap:label="Last Changed By"
+					sap:updatable="false"/><Property MaxLength="1" Name="LifecycleStatus" Type="Edm.String" sap:label="Lifecycle Status" sap:text="LifecycleStatusCode/Description"
+					sap:value-list="fixed-values"/><Property Name="NetAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Net Amount" sap:unit="CurrencyCode"/><Property MaxLength="35" Name="OpportunityID" Type="Edm.String" sap:label="Opportunity ID"/><Property MaxLength="10" Name="SalesOrderID" Type="Edm.String" sap:creatable="false" sap:label="Sales Order ID" sap:updatable="false"/><Property Name="TaxAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Tax Amount" sap:unit="CurrencyCode"/><Property MaxLength="1" Name="UxUpdatableEntity" Type="Edm.String" sap:creatable="false" sap:filterable="false" sap:label="Updateable"
+					sap:sortable="false" sap:updatable="false"/><Property MaxLength="1" Name="UxDeletableEntity" Type="Edm.String" sap:creatable="false" sap:filterable="false" sap:label="Deletable"
+					sap:sortable="false" sap:updatable="false"/><Property Name="UxBusinessPartnerID" Type="Edm.Byte" sap:creatable="false" sap:filterable="false" sap:label="Business Partner Control"
+					sap:sortable="false" sap:updatable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToBillingStatusType" Name="BillingStatusCode"
+					Relationship="COLLE.SalesOrderToBillingStatusType" ToRole="ToRole_SalesOrderToBillingStatusType" sap:filterable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToDeliveryStatusType" Name="DeliveryStatusCode"
+					Relationship="COLLE.SalesOrderToDeliveryStatusType" ToRole="ToRole_SalesOrderToDeliveryStatusType" sap:filterable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToLifecycleStatusType" Name="LifecycleStatusCode"
+					Relationship="COLLE.SalesOrderToLifecycleStatusType" ToRole="ToRole_SalesOrderToLifecycleStatusType" sap:filterable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToDraftAdministrativeDataType" Name="DraftAdministrativeData"
+					Relationship="COLLE.SalesOrderToDraftAdministrativeDataType" ToRole="ToRole_SalesOrderToDraftAdministrativeDataType" sap:filterable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToBusinessPartnerType" Name="BusinessPartner"
+					Relationship="COLLE.SalesOrderToBusinessPartnerType" ToRole="ToRole_SalesOrderToBusinessPartnerType" sap:filterable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToCurrencyType" Name="Currency" Relationship="COLLE.SalesOrderToCurrencyType"
+					ToRole="ToRole_SalesOrderToCurrencyType" sap:filterable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToItemType" Name="Item" Relationship="COLLE.SalesOrderToItemType"
+					ToRole="ToRole_SalesOrderToItemType" sap:filterable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToUxType" Name="Ux" Relationship="COLLE.SalesOrderToUxType"
+					ToRole="ToRole_SalesOrderToUxType" sap:filterable="false"/><NavigationProperty FromRole="FromRole_SalesOrderToSiblingEntityType" Name="SiblingEntity"
+					Relationship="COLLE.SalesOrderToSiblingEntityType" ToRole="ToRole_SalesOrderToSiblingEntityType" sap:filterable="false"/></EntityType>
+			<EntityType Name="SalesOrderUxType" sap:content-version="1" sap:label="Sales Order Ux">
+				<Key><PropertyRef Name="ActiveSalesOrderID"/><PropertyRef Name="SalesOrderDraftUUID"/></Key><Property MaxLength="10" Name="ActiveSalesOrderID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Sales Order ID"
+					sap:sortable="false" sap:updatable="false"/><Property Name="SalesOrderDraftUUID" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:label="Key" sap:sortable="false"
+					sap:updatable="false"/><Property Name="UxBusinessPartnerID" Type="Edm.Byte" sap:creatable="false" sap:sortable="false" sap:updatable="false"/><Property MaxLength="1" Name="UxDeletableEntity" Type="Edm.String" sap:creatable="false" sap:sortable="false" sap:updatable="false"/><Property Name="UxUpdatableEntity" Type="Edm.Boolean" sap:creatable="false" sap:sortable="false" sap:updatable="false"/></EntityType>
+			<EntityType Name="UnitOfMeasureType" sap:content-version="1" sap:label="Unit of Measure">
+				<Key><PropertyRef Name="UnitOfMeasure"/></Key><Property MaxLength="3" Name="UnitOfMeasure" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Int. meas. unit"
+					sap:semantics="unit-of-measure" sap:text="UnitOfMeasureName" sap:updatable="false"/><Property MaxLength="3" Name="UnitOfMeasureCommercialName" Type="Edm.String" sap:creatable="false" sap:label="Commercial"
+					sap:updatable="false"/><Property MaxLength="6" Name="UnitOfMeasureDimension" Type="Edm.String" sap:creatable="false" sap:label="Dimension" sap:updatable="false"/><Property MaxLength="6" Name="UnitOfMeasureTechnicalName" Type="Edm.String" sap:creatable="false" sap:label="Technical"
+					sap:updatable="false"/><Property MaxLength="10" Name="UnitOfMeasureName" Type="Edm.String" sap:creatable="false" sap:label="Meas. unit text" sap:updatable="false"/><Property MaxLength="30" Name="UnitOfMeasureLongName" Type="Edm.String" sap:creatable="false" sap:label="Unit text" sap:updatable="false"/><Property MaxLength="20" Name="UnitOfMeasureDimensionName" Type="Edm.String" sap:creatable="false" sap:label="Dimension text"
+					sap:updatable="false"/></EntityType>
+			<EntityType Name="CurrencyType" sap:content-version="1" sap:label="Currency">
+				<Key><PropertyRef Name="Currency"/></Key><Property MaxLength="5" Name="Currency" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Currency"
+					sap:semantics="currency-code" sap:text="CurrencyName" sap:updatable="false"/><Property MaxLength="3" Name="CurrencyISOCode" Type="Edm.String" sap:creatable="false" sap:label="ISO code" sap:updatable="false"/><Property Name="Decimals" Type="Edm.Byte" sap:creatable="false" sap:label="Decimals" sap:updatable="false"/><Property MaxLength="15" Name="CurrencyShortName" Type="Edm.String" sap:creatable="false" sap:label="Short text" sap:updatable="false"/><Property MaxLength="40" Name="CurrencyName" Type="Edm.String" sap:creatable="false" sap:label="Long Text" sap:updatable="false"/></EntityType>
+			<EntityType Name="ProductType" sap:content-version="1" sap:label="Product">
+				<Key><PropertyRef Name="ProductID"/></Key><Property MaxLength="10" Name="ProductID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Product ID"
+					sap:text="Description" sap:updatable="false"/><Property MaxLength="40" Name="Category" Type="Edm.String" sap:creatable="false" sap:label="Category" sap:updatable="false"/><Property MaxLength="255" Name="Description" Type="Edm.String" sap:creatable="false" sap:label="Description" sap:updatable="false"/><Property MaxLength="5" Name="CurrencyCode" Type="Edm.String" sap:creatable="false" sap:label="Currency Code" sap:semantics="currency-code"
+					sap:updatable="false"/><Property Name="Depth" Precision="13" Scale="3" Type="Edm.Decimal" sap:creatable="false" sap:label="Depth" sap:unit="DimensionUnit"
+					sap:updatable="false"/><Property MaxLength="3" Name="DimensionUnit" Type="Edm.String" sap:creatable="false" sap:label="Dimension Unit"
+					sap:semantics="unit-of-measure" sap:updatable="false"/><Property Name="Height" Precision="13" Scale="3" Type="Edm.Decimal" sap:creatable="false" sap:label="Height" sap:unit="DimensionUnit"
+					sap:updatable="false"/><Property MaxLength="3" Name="MeasureUnit" Type="Edm.String" sap:creatable="false" sap:label="Unit of Measure"
+					sap:semantics="unit-of-measure" sap:updatable="false"/><Property MaxLength="255" Name="PictureURL" Type="Edm.String" sap:creatable="false" sap:label="Image" sap:semantics="url"
+					sap:updatable="false"/><Property Name="Price" Precision="15" Scale="2" Type="Edm.Decimal" sap:creatable="false" sap:label="Price" sap:unit="CurrencyCode"
+					sap:updatable="false"/><Property Name="TaxTarifCode" Type="Edm.Byte" sap:creatable="false" sap:label="Tax Tariff Code" sap:updatable="false"/><Property MaxLength="2" Name="TypeCode" Type="Edm.String" sap:creatable="false" sap:label="Type Code" sap:updatable="false"/><Property Name="WeightMeasure" Precision="13" Scale="3" Type="Edm.Decimal" sap:creatable="false" sap:label="Weight" sap:unit="MeasureUnit"
+					sap:updatable="false"/><Property MaxLength="3" Name="WeightUnit" Type="Edm.String" sap:creatable="false" sap:label="Unit of Measure"
+					sap:semantics="unit-of-measure" sap:updatable="false"/><Property Name="Width" Precision="13" Scale="3" Type="Edm.Decimal" sap:creatable="false" sap:label="Width" sap:unit="DimensionUnit"
+					sap:updatable="false"/></EntityType>
+			<EntityType Name="SalesOrderItemType" sap:content-version="1" sap:label="Sales Order Item">
+				<Key><PropertyRef Name="ActiveSalesOrderItemID"/><PropertyRef Name="SalesOrderID"/><PropertyRef Name="SalesOrderItemDraftUUID"/></Key><Property MaxLength="10" Name="ActiveSalesOrderItemID" Nullable="false" Type="Edm.String" sap:creatable="false"
+					sap:label="Item ID (Actiive Document)" sap:updatable="false"/><Property MaxLength="10" Name="SalesOrderID" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Sales Order ID"
+					sap:updatable="false"/><Property Name="SalesOrderItemDraftUUID" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)"
+					sap:updatable="false"/><Property MaxLength="1" Name="AvailableToPromiseStatus" Type="Edm.String" sap:label="ATP Status" sap:value-list="fixed-values"/><Property MaxLength="5" Name="CurrencyCode" Type="Edm.String" sap:label="Currency" sap:semantics="currency-code"/><Property Name="DeliveryDate" Precision="7" Type="Edm.DateTimeOffset" sap:label="Delivery Time"/><Property Name="DraftAdministrativeDataUUID" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)" sap:updatable="false"/><Property Name="GrossAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Gross Amount" sap:unit="CurrencyCode"/><Property Name="IsActiveEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Is Active Entity" sap:updatable="false"/><Property Name="HasActiveEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Has Active Entity" sap:updatable="false"/><Property Name="HasDraftEntity" Type="Edm.Boolean" sap:creatable="false" sap:label="Has Draft Entity" sap:updatable="false"/><Property Name="NetAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Net Amount" sap:unit="CurrencyCode"/><Property MaxLength="10" Name="OpportunityItemID" Type="Edm.String" sap:label="Opportunity Item ID"/><Property MaxLength="10" Name="ProductID" Type="Edm.String" sap:label="Product ID"/><Property Name="Quantity" Precision="13" Scale="3" Type="Edm.Decimal" sap:label="Quantity" sap:unit="QuantityUnitCode"/><Property MaxLength="3" Name="QuantityUnitCode" Type="Edm.String" sap:label="Unit Code" sap:semantics="unit-of-measure"/><Property Name="SalesOrderDraftUUID" Type="Edm.Guid" sap:creatable="false" sap:label="Draft (Technical ID)" sap:updatable="false"/><Property MaxLength="10" Name="SalesOrderItemID" Type="Edm.String" sap:label="Item ID"/><Property Name="TaxAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Tax Amount" sap:unit="CurrencyCode"/><Property Name="CreationDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false" sap:label="Created At" sap:updatable="false"/><Property MaxLength="12" Name="CreationUserName" Type="Edm.String" sap:creatable="false" sap:label="Created By" sap:updatable="false"/><Property ConcurrencyMode="Fixed" Name="LastChangedDateTime" Precision="7" Type="Edm.DateTimeOffset" sap:creatable="false"
+					sap:label="Last Changed At" sap:updatable="false"/><Property MaxLength="12" Name="LastChangedUserName" Type="Edm.String" sap:creatable="false" sap:label="Last Changed By"
+					sap:updatable="false"/><NavigationProperty FromRole="FromRole_ItemToATPStatusType" Name="ATPStatus" Relationship="COLLE.ItemToATPStatusType"
+					ToRole="ToRole_ItemToATPStatusType"/><NavigationProperty FromRole="FromRole_ItemToDraftAdministrativeDataType" Name="DraftAdministrativeData"
+					Relationship="COLLE.ItemToDraftAdministrativeDataType" ToRole="ToRole_ItemToDraftAdministrativeDataType"/><NavigationProperty FromRole="FromRole_ItemToCurrencyType" Name="Currency" Relationship="COLLE.ItemToCurrencyType"
+					ToRole="ToRole_ItemToCurrencyType"/><NavigationProperty FromRole="FromRole_ItemToProductType" Name="Product" Relationship="COLLE.ItemToProductType"
+					ToRole="ToRole_ItemToProductType"/><NavigationProperty FromRole="FromRole_ItemToSalesOrderType" Name="SalesOrder" Relationship="COLLE.ItemToSalesOrderType"
+					ToRole="ToRole_ItemToSalesOrderType"/><NavigationProperty FromRole="FromRole_ItemToScheduleLineType" Name="ScheduleLine" Relationship="COLLE.ItemToScheduleLineType"
+					ToRole="ToRole_ItemToScheduleLineType"/><NavigationProperty FromRole="FromRole_ItemToUnitOfMeasureType" Name="UnitOfMeasure" Relationship="COLLE.ItemToUnitOfMeasureType"
+					ToRole="ToRole_ItemToUnitOfMeasureType"/><NavigationProperty FromRole="FromRole_ItemToUxType" Name="Ux" Relationship="COLLE.ItemToUxType" ToRole="ToRole_ItemToUxType"/><NavigationProperty FromRole="FromRole_ItemToSiblingEntityType" Name="SiblingEntity" Relationship="COLLE.ItemToSiblingEntityType"
+					ToRole="ToRole_ItemToSiblingEntityType"/></EntityType>
+			<ComplexType Name="ValidationResult"><Property Name="IsValid" Nullable="false" Type="Edm.Boolean" sap:creatable="false" sap:filterable="false" sap:label="TRUE"
+				sap:sortable="false" sap:updatable="false"/></ComplexType>
+			<Association Name="ScheduleLineToDraftAdminDataType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ScheduleLineToDraftAdminDataType" Type="COLLE.SalesOrderScheduleLineType"/><End Multiplicity="0..1" Role="ToRole_ScheduleLineToDraftAdminDataType" Type="COLLE.DraftAdministrativeDataType"/></Association>
+			<Association Name="ScheduleLineToItemType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ScheduleLineToItemType" Type="COLLE.SalesOrderScheduleLineType"/><End Multiplicity="0..1" Role="ToRole_ScheduleLineToItemType" Type="COLLE.SalesOrderItemType"/></Association>
+			<Association Name="ScheduleLineToSalesOrderType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ScheduleLineToSalesOrderType" Type="COLLE.SalesOrderScheduleLineType"/><End Multiplicity="0..1" Role="ToRole_ScheduleLineToSalesOrderType" Type="COLLE.SalesOrderType"/></Association>
+			<Association Name="ScheduleLineToUnitOfMeasureType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ScheduleLineToUnitOfMeasureType" Type="COLLE.SalesOrderScheduleLineType"/><End Multiplicity="0..1" Role="ToRole_ScheduleLineToUnitOfMeasureType" Type="COLLE.UnitOfMeasureType"/></Association>
+			<Association Name="ScheduleLineToUxType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ScheduleLineToUxType" Type="COLLE.SalesOrderScheduleLineType"/><End Multiplicity="0..1" Role="ToRole_ScheduleLineToUxType" Type="COLLE.SalesOrderScheduleLineUxType"/></Association>
+			<Association Name="ScheduleLineToSiblingEntityType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ScheduleLineToSiblingEntityType" Type="COLLE.SalesOrderScheduleLineType"/><End Multiplicity="0..1" Role="ToRole_ScheduleLineToSiblingEntityType" Type="COLLE.SalesOrderScheduleLineType"/></Association>
+			<Association Name="SalesOrderToLifecycleStatusType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToLifecycleStatusType" Type="COLLE.SalesOrderType"/><End Multiplicity="0..1" Role="ToRole_SalesOrderToLifecycleStatusType" Type="COLLE.LifecycleStatusType"/></Association>
+			<Association Name="SalesOrderToDeliveryStatusType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToDeliveryStatusType" Type="COLLE.SalesOrderType"/><End Multiplicity="0..1" Role="ToRole_SalesOrderToDeliveryStatusType" Type="COLLE.DeliveryStatusType"/></Association>
+			<Association Name="SalesOrderToBillingStatusType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToBillingStatusType" Type="COLLE.SalesOrderType"/><End Multiplicity="0..1" Role="ToRole_SalesOrderToBillingStatusType" Type="COLLE.BillingStatusType"/></Association>
+			<Association Name="SalesOrderToDraftAdministrativeDataType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToDraftAdministrativeDataType" Type="COLLE.SalesOrderType"/><End Multiplicity="0..1" Role="ToRole_SalesOrderToDraftAdministrativeDataType" Type="COLLE.DraftAdministrativeDataType"/></Association>
+			<Association Name="SalesOrderToBusinessPartnerType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToBusinessPartnerType" Type="COLLE.SalesOrderType"/><End Multiplicity="0..1" Role="ToRole_SalesOrderToBusinessPartnerType" Type="COLLE.BusinessPartnerType"/></Association>
+			<Association Name="SalesOrderToCurrencyType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToCurrencyType" Type="COLLE.SalesOrderType"/><End Multiplicity="0..1" Role="ToRole_SalesOrderToCurrencyType" Type="COLLE.CurrencyType"/></Association>
+			<Association Name="SalesOrderToItemType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToItemType" Type="COLLE.SalesOrderType"/><End Multiplicity="*" Role="ToRole_SalesOrderToItemType" Type="COLLE.SalesOrderItemType"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_SalesOrderToItemType"><PropertyRef Name="SalesOrderDraftUUID"/><PropertyRef Name="ActiveSalesOrderID"/></Principal>
+					<Dependent Role="ToRole_SalesOrderToItemType"><PropertyRef Name="SalesOrderDraftUUID"/><PropertyRef Name="SalesOrderID"/></Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="SalesOrderToUxType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToUxType" Type="COLLE.SalesOrderType"/><End Multiplicity="0..1" Role="ToRole_SalesOrderToUxType" Type="COLLE.SalesOrderUxType"/></Association>
+			<Association Name="SalesOrderToSiblingEntityType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_SalesOrderToSiblingEntityType" Type="COLLE.SalesOrderType"/><End Multiplicity="0..1" Role="ToRole_SalesOrderToSiblingEntityType" Type="COLLE.SalesOrderType"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_SalesOrderToSiblingEntityType"><PropertyRef Name="SalesOrderID"/></Principal>
+					<Dependent Role="ToRole_SalesOrderToSiblingEntityType"><PropertyRef Name="SalesOrderID"/></Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="ItemToATPStatusType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToATPStatusType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="0..1" Role="ToRole_ItemToATPStatusType" Type="COLLE.AvailableToPromiseStatusType"/></Association>
+			<Association Name="ItemToDraftAdministrativeDataType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToDraftAdministrativeDataType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="0..1" Role="ToRole_ItemToDraftAdministrativeDataType" Type="COLLE.DraftAdministrativeDataType"/></Association>
+			<Association Name="ItemToCurrencyType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToCurrencyType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="0..1" Role="ToRole_ItemToCurrencyType" Type="COLLE.CurrencyType"/></Association>
+			<Association Name="ItemToProductType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToProductType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="0..1" Role="ToRole_ItemToProductType" Type="COLLE.ProductType"/></Association>
+			<Association Name="ItemToSalesOrderType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToSalesOrderType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="0..1" Role="ToRole_ItemToSalesOrderType" Type="COLLE.SalesOrderType"/></Association>
+			<Association Name="ItemToScheduleLineType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToScheduleLineType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="*" Role="ToRole_ItemToScheduleLineType" Type="COLLE.SalesOrderScheduleLineType"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_ItemToScheduleLineType"><PropertyRef Name="SalesOrderItemDraftUUID"/><PropertyRef Name="SalesOrderID"/><PropertyRef Name="ActiveSalesOrderItemID"/></Principal>
+					<Dependent Role="ToRole_ItemToScheduleLineType"><PropertyRef Name="SalesOrderItemDraftUUID"/><PropertyRef Name="SalesOrderID"/><PropertyRef Name="SalesOrderItemID"/></Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="ItemToUnitOfMeasureType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToUnitOfMeasureType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="0..1" Role="ToRole_ItemToUnitOfMeasureType" Type="COLLE.UnitOfMeasureType"/></Association>
+			<Association Name="ItemToUxType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToUxType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="0..1" Role="ToRole_ItemToUxType" Type="COLLE.SalesOrderItemUxType"/></Association>
+			<Association Name="ItemToSiblingEntityType" sap:content-version="1"><End Multiplicity="0..1" Role="FromRole_ItemToSiblingEntityType" Type="COLLE.SalesOrderItemType"/><End Multiplicity="0..1" Role="ToRole_ItemToSiblingEntityType" Type="COLLE.SalesOrderItemType"/></Association>
+			<EntityContainer Name="COLLE_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx"><EntitySet EntityType="COLLE.LifecycleStatusType" Name="LifecycleStatus" sap:content-version="1" sap:creatable="false" sap:deletable="false"
+				sap:searchable="true" sap:updatable="false"/><EntitySet EntityType="COLLE.BillingStatusType" Name="BillingStatus" sap:content-version="1" sap:creatable="false" sap:deletable="false"
+				sap:searchable="true" sap:updatable="false"/><EntitySet EntityType="COLLE.DeliveryStatusType" Name="DeliveryStatus" sap:content-version="1" sap:creatable="false" sap:deletable="false"
+				sap:searchable="true" sap:updatable="false"/><EntitySet EntityType="COLLE.DraftAdministrativeDataType" Name="DraftAdministrativeData" sap:addressable="false" sap:content-version="1"
+				sap:creatable="false" sap:deletable="false" sap:updatable="false"/><EntitySet EntityType="COLLE.SalesOrderItemUxType" Name="SalesOrderItemUx" sap:addressable="false" sap:content-version="1"
+				sap:creatable="false" sap:deletable="false" sap:updatable="false"/><EntitySet EntityType="COLLE.SalesOrderScheduleLineType" Name="SalesOrderScheduleLine" sap:content-version="1" sap:searchable="true"/><EntitySet EntityType="COLLE.SalesOrderScheduleLineUxType" Name="SalesOrderScheduleLineUx" sap:addressable="false" sap:content-version="1"
+				sap:creatable="false" sap:deletable="false" sap:updatable="false"/><EntitySet EntityType="COLLE.BusinessPartnerType" Name="BusinessPartner" sap:content-version="1" sap:creatable="false" sap:deletable="false"
+				sap:searchable="true" sap:updatable="false"/><EntitySet EntityType="COLLE.SalesOrderType" Name="SalesOrder" sap:content-version="1" sap:deletable-path="UxDeletableEntity"
+				sap:searchable="true" sap:updatable-path="UxUpdatableEntity"/><EntitySet EntityType="COLLE.SalesOrderUxType" Name="SalesOrderUx" sap:addressable="false" sap:content-version="1" sap:creatable="false"
+				sap:deletable="false" sap:updatable="false"/><EntitySet EntityType="COLLE.UnitOfMeasureType" Name="UnitOfMeasure" sap:content-version="1" sap:creatable="false" sap:deletable="false"
+				sap:searchable="true" sap:updatable="false"/><EntitySet EntityType="COLLE.CurrencyType" Name="Currency" sap:content-version="1" sap:creatable="false" sap:deletable="false"
+				sap:searchable="true" sap:updatable="false"/><EntitySet EntityType="COLLE.ProductType" Name="Product" sap:content-version="1" sap:creatable="false" sap:deletable="false"
+				sap:searchable="true" sap:updatable="false"/><EntitySet EntityType="COLLE.SalesOrderItemType" Name="SalesOrderItem" sap:content-version="1" sap:searchable="true"/><EntitySet EntityType="COLLE.AvailableToPromiseStatusType" Name="AvailableToPromiseStatus" sap:content-version="1" sap:creatable="false"
+				sap:deletable="false" sap:searchable="true" sap:updatable="false"/>
+				<AssociationSet Association="COLLE.ScheduleLineToDraftAdminDataType" Name="ScheduleLineToDraftAdminData" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderScheduleLine" Role="FromRole_ScheduleLineToDraftAdminDataType"/><End EntitySet="DraftAdministrativeData" Role="ToRole_ScheduleLineToDraftAdminDataType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToCurrencyType" Name="ItemToCurrency" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToCurrencyType"/><End EntitySet="Currency" Role="ToRole_ItemToCurrencyType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ScheduleLineToItemType" Name="ScheduleLineToItem" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderScheduleLine" Role="FromRole_ScheduleLineToItemType"/><End EntitySet="SalesOrderItem" Role="ToRole_ScheduleLineToItemType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToUxType" Name="ItemToUx" sap:content-version="1" sap:creatable="false" sap:deletable="false"
+					sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToUxType"/><End EntitySet="SalesOrderItemUx" Role="ToRole_ItemToUxType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToBillingStatusType" Name="SalesOrderToBillingStatus" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToBillingStatusType"/><End EntitySet="BillingStatus" Role="ToRole_SalesOrderToBillingStatusType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToLifecycleStatusType" Name="SalesOrderToLifecycleStatus" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToLifecycleStatusType"/><End EntitySet="LifecycleStatus" Role="ToRole_SalesOrderToLifecycleStatusType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToDraftAdministrativeDataType" Name="SalesOrderToDraftAdministrativeData"
+					sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToDraftAdministrativeDataType"/><End EntitySet="DraftAdministrativeData" Role="ToRole_SalesOrderToDraftAdministrativeDataType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToUxType" Name="SalesOrderToUx" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToUxType"/><End EntitySet="SalesOrderUx" Role="ToRole_SalesOrderToUxType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToDeliveryStatusType" Name="SalesOrderToDeliveryStatus" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToDeliveryStatusType"/><End EntitySet="DeliveryStatus" Role="ToRole_SalesOrderToDeliveryStatusType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToProductType" Name="ItemToProduct" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToProductType"/><End EntitySet="Product" Role="ToRole_ItemToProductType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToScheduleLineType" Name="ItemToScheduleLine" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToScheduleLineType"/><End EntitySet="SalesOrderScheduleLine" Role="ToRole_ItemToScheduleLineType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToItemType" Name="SalesOrderToItem" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToItemType"/><End EntitySet="SalesOrderItem" Role="ToRole_SalesOrderToItemType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToUnitOfMeasureType" Name="ItemToUnitOfMeasure" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToUnitOfMeasureType"/><End EntitySet="UnitOfMeasure" Role="ToRole_ItemToUnitOfMeasureType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToSalesOrderType" Name="ItemToSalesOrder" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToSalesOrderType"/><End EntitySet="SalesOrder" Role="ToRole_ItemToSalesOrderType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ScheduleLineToUnitOfMeasureType" Name="ScheduleLineToUnitOfMeasure" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderScheduleLine" Role="FromRole_ScheduleLineToUnitOfMeasureType"/><End EntitySet="UnitOfMeasure" Role="ToRole_ScheduleLineToUnitOfMeasureType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToSiblingEntityType" Name="ItemToSiblingEntity" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToSiblingEntityType"/><End EntitySet="SalesOrderItem" Role="ToRole_ItemToSiblingEntityType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToCurrencyType" Name="SalesOrderToCurrency" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToCurrencyType"/><End EntitySet="Currency" Role="ToRole_SalesOrderToCurrencyType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ScheduleLineToUxType" Name="ScheduleLineToUx" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderScheduleLine" Role="FromRole_ScheduleLineToUxType"/><End EntitySet="SalesOrderScheduleLineUx" Role="ToRole_ScheduleLineToUxType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToDraftAdministrativeDataType" Name="ItemToDraftAdministrativeData" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToDraftAdministrativeDataType"/><End EntitySet="DraftAdministrativeData" Role="ToRole_ItemToDraftAdministrativeDataType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToSiblingEntityType" Name="SalesOrderToSiblingEntity" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToSiblingEntityType"/><End EntitySet="SalesOrder" Role="ToRole_SalesOrderToSiblingEntityType"/></AssociationSet>
+				<AssociationSet Association="COLLE.SalesOrderToBusinessPartnerType" Name="SalesOrderToBusinessPartner" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrder" Role="FromRole_SalesOrderToBusinessPartnerType"/><End EntitySet="BusinessPartner" Role="ToRole_SalesOrderToBusinessPartnerType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ItemToATPStatusType" Name="ItemToATPStatus" sap:content-version="1" sap:creatable="false"
+					sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderItem" Role="FromRole_ItemToATPStatusType"/><End EntitySet="AvailableToPromiseStatus" Role="ToRole_ItemToATPStatusType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ScheduleLineToSalesOrderType" Name="ScheduleLineToSalesOrder" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderScheduleLine" Role="FromRole_ScheduleLineToSalesOrderType"/><End EntitySet="SalesOrder" Role="ToRole_ScheduleLineToSalesOrderType"/></AssociationSet>
+				<AssociationSet Association="COLLE.ScheduleLineToSiblingEntityType" Name="ScheduleLineToSiblingEntity" sap:content-version="1"
+					sap:creatable="false" sap:deletable="false" sap:updatable="false"><End EntitySet="SalesOrderScheduleLine" Role="FromRole_ScheduleLineToSiblingEntityType"/><End EntitySet="SalesOrderScheduleLine" Role="ToRole_ScheduleLineToSiblingEntityType"/></AssociationSet>
+				<FunctionImport EntitySet="SalesOrderScheduleLine" Name="ScheduleLinePreparation" ReturnType="COLLE.SalesOrderScheduleLineType"
+					m:HttpMethod="POST" sap:action-for="COLLE.SalesOrderScheduleLineType"><Parameter Mode="In" Name="ActiveDeliveryDate" Precision="0" Type="Edm.DateTimeOffset"/><Parameter MaxLength="10" Mode="In" Name="SalesOrderItemID" Type="Edm.String"/><Parameter MaxLength="10" Mode="In" Name="SalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderSLDraftUUID" Type="Edm.Guid"/><Parameter Mode="In" Name="SideEffectsQualifier" Nullable="true" Type="Edm.String"/></FunctionImport>
+				<FunctionImport Name="ScheduleLineValidation" ReturnType="COLLE.ValidationResult" m:HttpMethod="GET"
+					sap:action-for="COLLE.SalesOrderScheduleLineType"><Parameter Mode="In" Name="ActiveDeliveryDate" Precision="0" Type="Edm.DateTimeOffset"/><Parameter MaxLength="10" Mode="In" Name="SalesOrderItemID" Type="Edm.String"/><Parameter MaxLength="10" Mode="In" Name="SalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderSLDraftUUID" Type="Edm.Guid"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrder" Name="SalesOrderCalculateGrossAmount" ReturnType="COLLE.SalesOrderType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderDraftUUID" Type="Edm.Guid"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrder" Name="SalesOrderActivation" ReturnType="COLLE.SalesOrderType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderDraftUUID" Type="Edm.Guid"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrder" Name="SalesOrderApprove" ReturnType="COLLE.SalesOrderType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderDraftUUID" Type="Edm.Guid"/><Parameter MaxLength="80" Mode="In" Name="ApprovalComment" Type="Edm.String"/><Parameter Mode="In" Name="Approved" Type="Edm.Boolean"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrder" Name="SalesOrderCopy" ReturnType="COLLE.SalesOrderType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderDraftUUID" Type="Edm.Guid"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrder" Name="SalesOrderEdit" ReturnType="COLLE.SalesOrderType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderDraftUUID" Type="Edm.Guid"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrder" Name="SalesOrderPreparation" ReturnType="COLLE.SalesOrderType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderDraftUUID" Type="Edm.Guid"/><Parameter Mode="In" Name="SideEffectsQualifier" Nullable="true" Type="Edm.String"/></FunctionImport>
+				<FunctionImport Name="SalesOrderValidation" ReturnType="COLLE.ValidationResult" m:HttpMethod="GET" sap:action-for="COLLE.SalesOrderType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderDraftUUID" Type="Edm.Guid"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrderItem" Name="ItemCalculateGrossAmount" ReturnType="COLLE.SalesOrderItemType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderItemType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderItemID" Type="Edm.String"/><Parameter MaxLength="10" Mode="In" Name="SalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderItemDraftUUID" Type="Edm.Guid"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrderItem" Name="ItemCopy" ReturnType="COLLE.SalesOrderItemType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderItemType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderItemID" Type="Edm.String"/><Parameter MaxLength="10" Mode="In" Name="SalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderItemDraftUUID" Type="Edm.Guid"/></FunctionImport>
+				<FunctionImport EntitySet="SalesOrderItem" Name="ItemPreparation" ReturnType="COLLE.SalesOrderItemType" m:HttpMethod="POST"
+					sap:action-for="COLLE.SalesOrderItemType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderItemID" Type="Edm.String"/><Parameter MaxLength="10" Mode="In" Name="SalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderItemDraftUUID" Type="Edm.Guid"/><Parameter Mode="In" Name="SideEffectsQualifier" Nullable="true" Type="Edm.String"/></FunctionImport>
+				<FunctionImport Name="ItemValidation" ReturnType="COLLE.ValidationResult" m:HttpMethod="GET" sap:action-for="COLLE.SalesOrderItemType"><Parameter MaxLength="10" Mode="In" Name="ActiveSalesOrderItemID" Type="Edm.String"/><Parameter MaxLength="10" Mode="In" Name="SalesOrderID" Type="Edm.String"/><Parameter Mode="In" Name="SalesOrderItemDraftUUID" Type="Edm.Guid"/></FunctionImport>
+			</EntityContainer>
+			<Annotations Target="COLLE.COLLE_Entities/SalesOrder" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftRoot">
+					<Record><PropertyValue Property="ActivationAction" String="COLLE.COLLE_Entities/SalesOrderActivation"/><PropertyValue Property="EditAction" String="COLLE.COLLE_Entities/SalesOrderEdit"/><PropertyValue Property="ValidationFunction" String="COLLE.COLLE_Entities/SalesOrderValidation"/><PropertyValue Property="PreparationAction" String="COLLE.COLLE_Entities/SalesOrderPreparation"/></Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.COLLE_Entities/SalesOrderItem" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftNode">
+					<Record><PropertyValue Property="ValidationFunction" String="COLLE.COLLE_Entities/ItemValidation"/><PropertyValue Property="PreparationAction" String="COLLE.COLLE_Entities/ItemPreparation"/></Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftActivationVia">
+					<Collection>
+						<String>COLLE.COLLE_Entities/SalesOrder</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.COLLE_Entities/SalesOrderScheduleLine" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftNode">
+					<Record><PropertyValue Property="ValidationFunction" String="COLLE.COLLE_Entities/ScheduleLineValidation"/><PropertyValue Property="PreparationAction" String="COLLE.COLLE_Entities/ScheduleLinePreparation"/></Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftActivationVia">
+					<Collection>
+						<String>COLLE.COLLE_Entities/SalesOrder</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticKey">
+					<Collection>
+						<PropertyPath>ActiveSalesOrderID</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderItemType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticKey">
+					<Collection>
+						<PropertyPath>SalesOrderID</PropertyPath>
+						<PropertyPath>ActiveSalesOrderItemID</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderScheduleLineType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticKey">
+					<Collection>
+						<PropertyPath>SalesOrderID</PropertyPath>
+						<PropertyPath>SalesOrderItemID</PropertyPath>
+						<PropertyPath>ActiveDeliveryDate</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderType/BusinessPartnerID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="BusinessPartner"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="BusinessPartnerID"/><PropertyValue Property="ValueListProperty" String="BusinessPartnerID"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="CompanyName"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderItemType/ProductID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="Product"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="ProductID"/><PropertyValue Property="ValueListProperty" String="ProductID"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut"><PropertyValue Property="LocalDataProperty" PropertyPath="Description"/><PropertyValue Property="ValueListProperty" String="Description"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderType/CurrencyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="Currency"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyCode"/><PropertyValue Property="ValueListProperty" String="Currency"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="CurrencyName"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderType/DeliveryStatus" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="DeliveryStatus"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="DeliveryStatus"/><PropertyValue Property="ValueListProperty" String="Status"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="Description"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderType/BillingStatus" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="BillingStatus"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="BillingStatus"/><PropertyValue Property="ValueListProperty" String="Status"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="Description"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderType/LifecycleStatus" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="LifecycleStatus"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="LifecycleStatus"/><PropertyValue Property="ValueListProperty" String="Status"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="Description"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderItemType/CurrencyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="Currency"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyCode"/><PropertyValue Property="ValueListProperty" String="Currency"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="CurrencyName"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderItemType/QuantityUnitCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="UnitOfMeasure"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="QuantityUnitCode"/><PropertyValue Property="ValueListProperty" String="UnitOfMeasure"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="UnitOfMeasureName"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderItemType/AvailableToPromiseStatus" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="AvailableToPromiseStatus"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="AvailableToPromiseStatus"/><PropertyValue Property="ValueListProperty" String="Status"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="Description"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.SalesOrderScheduleLineType/QuantityUnitCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record><PropertyValue Property="CollectionPath" String="UnitOfMeasure"/><PropertyValue Bool="true" Property="SearchSupported"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut"><PropertyValue Property="LocalDataProperty" PropertyPath="QuantityUnitCode"/><PropertyValue Property="ValueListProperty" String="UnitOfMeasure"/></Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly"><PropertyValue Property="ValueListProperty" String="UnitOfMeasureName"/></Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.COLLE_Entities/SalesOrder" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Qualifier="D_CENTRAL_ADMIN_DATA" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection>
+								<NavigationPropertyPath>Item/ScheduleLine</NavigationPropertyPath>
+								<NavigationPropertyPath>Item</NavigationPropertyPath><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="D_ADMINISTRATIVE_DATA" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection>
+								<NavigationPropertyPath>Item/ScheduleLine</NavigationPropertyPath>
+								<NavigationPropertyPath>Item</NavigationPropertyPath><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="D_DURABLE_LOCK_CLEANUP_SUCC_SAVE" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection>
+								<NavigationPropertyPath>Item/ScheduleLine</NavigationPropertyPath>
+								<NavigationPropertyPath>Item</NavigationPropertyPath><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="D_DURABLE_LOCK_CLEANUP_DELETE" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="D_DURABLE_LOCK_CLEANUP_CLEANUP" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection>
+								<NavigationPropertyPath>Item/ScheduleLine</NavigationPropertyPath>
+								<NavigationPropertyPath>Item</NavigationPropertyPath><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="D_DURABLE_LOCK_CLEANUP_FAIL_SAVE" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection>
+								<NavigationPropertyPath>Item/ScheduleLine</NavigationPropertyPath>
+								<NavigationPropertyPath>Item</NavigationPropertyPath><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_FOREIGN_KEY_CC" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>CurrencyCode</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>CurrencyCode</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_MANDATORY_ATTRIBUTES" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>TaxAmount</PropertyPath>
+								<PropertyPath>NetAmount</PropertyPath>
+								<PropertyPath>GrossAmount</PropertyPath>
+								<PropertyPath>CurrencyCode</PropertyPath>
+								<PropertyPath>BusinessPartnerID</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>TaxAmount</PropertyPath>
+								<PropertyPath>NetAmount</PropertyPath>
+								<PropertyPath>GrossAmount</PropertyPath>
+								<PropertyPath>CurrencyCode</PropertyPath>
+								<PropertyPath>BusinessPartnerID</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_FOREIGN_KEY_BP" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>BusinessPartnerID</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>BusinessPartnerID</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_DURABLE_LOCK_REACQUIRE" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_CHECK_NEW_DRAFT_AUTHORITY" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.COLLE_Entities/SalesOrderItem" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Qualifier="D_ADMINISTRATIVE_DATA" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection>
+								<NavigationPropertyPath>ScheduleLine</NavigationPropertyPath><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="D_SET_SEMANTIC_ID" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_FOREIGN_KEY_PRD" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>ProductID</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>ProductID</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_MANDATORY_ATTRIBUTES" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>DeliveryDate</PropertyPath>
+								<PropertyPath>SalesOrderItemID</PropertyPath>
+								<PropertyPath>QuantityUnitCode</PropertyPath>
+								<PropertyPath>Quantity</PropertyPath>
+								<PropertyPath>ProductID</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>DeliveryDate</PropertyPath>
+								<PropertyPath>SalesOrderItemID</PropertyPath>
+								<PropertyPath>QuantityUnitCode</PropertyPath>
+								<PropertyPath>Quantity</PropertyPath>
+								<PropertyPath>ProductID</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_FOREIGN_KEY_CC" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>CurrencyCode</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>CurrencyCode</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_FOREIGN_KEY_QUC" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>QuantityUnitCode</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>QuantityUnitCode</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_DURABLE_LOCK_REACQUIRE" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="COLLE.COLLE_Entities/SalesOrderScheduleLine" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Qualifier="D_ADMINISTRATIVE_DATA" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="D_SET_SEMANTIC_ID" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceEntities">
+							<Collection><NavigationPropertyPath/></Collection>
+						</PropertyValue><PropertyValue EnumMember="ValueChange" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_FOREIGN_KEY_QUC" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>QuantityUnitCode</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>QuantityUnitCode</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_MANDATORY_ATTRIBUTES" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record>
+						<PropertyValue Property="SourceProperties">
+							<Collection>
+								<PropertyPath>QuantityUnitCode</PropertyPath>
+								<PropertyPath>Quantity</PropertyPath>
+								<PropertyPath>DeliveryDate</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="TargetProperties">
+							<Collection>
+								<PropertyPath>QuantityUnitCode</PropertyPath>
+								<PropertyPath>Quantity</PropertyPath>
+								<PropertyPath>DeliveryDate</PropertyPath>
+							</Collection>
+						</PropertyValue><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+				<Annotation Qualifier="V_DURABLE_LOCK_REACQUIRE" Term="com.sap.vocabularies.Common.v1.SideEffects">
+					<Record><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
+				</Annotation>
+			</Annotations><atom:link href="/sap/opu/odata/sap/S_PROTOTYPE_MDS_SRV/$metadata" rel="self"
+				xmlns:atom="http://www.w3.org/2005/Atom"/><atom:link href="/sap/opu/odata/sap/S_PROTOTYPE_MDS_SRV/$metadata" rel="latest-version"
+				xmlns:atom="http://www.w3.org/2005/Atom"/></Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

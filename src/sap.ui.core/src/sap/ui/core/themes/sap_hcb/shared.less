@@ -1,11 +1,5 @@
 /* Shared CSS for 'sap_hcb' theme */
 
-:focus {
-	outline-width: 3px;
-	outline-style: solid;
-	outline-color: #ffffff;
-}
-
 .sapUiBody {
 	width: 100%;
 	height: 100%;
@@ -13,5 +7,13 @@
 }
 
 .sapUiBLy {
-	background-color: fade(@sapHCStandardBG, 30%);
+	background-color: @sapHCStandardBG;
+	opacity: 0.3;
+}
+
+/**
+ * Class used to hide the line-sliding busy indicator at the top (as used in goldreflection)
+ */
+.sapUiBusy {
+	display: none;
 }

@@ -1,35 +1,34 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.mvc.Controller
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true">
 	</script>
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script>
-		module("getComponent");
+		QUnit.module("getComponent");
 
-		test("Should not overwrite getComponent function", function() {
+		QUnit.test("Should not overwrite getOwnerComponent function", function(assert) {
 			// System under Test
 			sap.ui.controller("getComponentController", {
-				getComponent : function () {
+				getOwnerComponent : function () {
 					return "foo";
 				}
 			});
@@ -40,10 +39,10 @@
 			var oResult = oController.getOwnerComponent();
 
 			// Assert
-			strictEqual(oResult, "foo", "");
+			assert.strictEqual(oResult, "foo", "");
 		});
 
-		test("Should return undefined as component of a controller without view", function() {
+		QUnit.test("Should return undefined as component of a controller without view", function(assert) {
 			// System under Test
 			sap.ui.controller("someController", {});
 			var oController = sap.ui.controller("someController");
@@ -52,10 +51,10 @@
 			var oResult = oController.getOwnerComponent();
 
 			// Assert
-			strictEqual(oResult, undefined);
+			assert.strictEqual(oResult, undefined);
 		});
 
-		test("Should get undefined as component of a controller with a view without component", function() {
+		QUnit.test("Should get undefined as component of a controller with a view without component", function(assert) {
 			//Arrange
 			sap.ui.jsview("myView", {
 				createContent : function() {
@@ -76,17 +75,17 @@
 			var oResult = oController.getOwnerComponent();
 
 			// Assert
-			strictEqual(oResult, undefined);
+			assert.strictEqual(oResult, undefined);
 
 			//Cleanup
 			oView.destroy();
 		});
 
-		test("Should get the component of a controller", function() {
+		QUnit.test("Should get the component of a controller", function(assert) {
 			//Arrange
 			var oComponent = new sap.ui.core.Component("foo");
 
-			var oView = sap.ui.base.ManagedObject.runWithOwner(function() {
+			var oView = oComponent.runAsOwner(function() {
 						sap.ui.jsview("myView", {
 							createContent : function() {
 								return null;
@@ -97,7 +96,7 @@
 						});
 
 						return sap.ui.jsview("bar", "myView");
-			}, oComponent);
+			});
 
 			// System under Test
 			sap.ui.controller("someController", {});
@@ -108,7 +107,7 @@
 			var oResult = oController.getOwnerComponent();
 
 			// Assert
-			strictEqual(oResult, oComponent);
+			assert.strictEqual(oResult, oComponent);
 
 			//Cleanup
 			oView.destroy();

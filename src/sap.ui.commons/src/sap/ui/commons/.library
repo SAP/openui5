@@ -7,7 +7,7 @@
   <version>${version}</version>
 
   <documentation>Common basic controls, mainly intended for desktop scenarios</documentation>
-  
+
   <dependencies>
     <dependency>
       <libraryName>sap.ui.core</libraryName>
@@ -15,8 +15,11 @@
     <dependency>
       <libraryName>sap.ui.layout</libraryName>
     </dependency>
+    <dependency>
+      <libraryName>sap.ui.unified</libraryName>
+    </dependency>
   </dependencies>
-  
+
   <appData>
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.commons" />
     <!-- excludes for the JSCoverage -->
@@ -29,7 +32,13 @@
         resolve="lib" />
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+        <component>
+            <name>CA-UI5-TBL</name>
+            <modules>
+                <module>sap/ui/commons/layout/AbsoluteLayout</module>
+            </modules>
+        </component>
     </ownership>
   </appData>
-  
+
 </library>

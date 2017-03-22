@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Link.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, EnabledPropagator) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 'sap/ui/core/EnabledPropagator'],
+	function(jQuery, library, Control, InvisibleText, EnabledPropagator) {
 	"use strict";
 
 
@@ -43,17 +43,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			text : {type : "string", group : "Data", defaultValue : ''},
 
 			/**
-			 * Whether the link can be triggered by the user.
+			 * Determines whether the link can be triggered by the user.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Options are the standard values for window.open() supported by browsers: _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered. This property is only used for href URLs.
+			 * Options are the standard values for window.open() supported by browsers: _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered. This property is only used when the href property is set.
 			 */
 			target : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * Width of the link. When it is set (CSS-size such as % or px), this is the exact size. When left blank, the text defines the size.
+			 * Width of the link (CSS-size such as % or px). When it is set, this is the exact size. When left blank, the text defines the size.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
-			 * Whether the link text is allowed to wrap when there is not sufficient space.
+			 * Determines whether the link text is allowed to wrap when there is not sufficient space.
 			 */
 			wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -80,13 +80,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * Subtle links look more like standard text than like links. They should only be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other usecase.
+			 * Subtle links look more like standard text than like links. They should only be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other use case.
 			 * @since 1.22
 			 */
 			subtle : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Set this property to true if the link should appear emphasized.
+			 * Emphasized links look visually more important than regular links.
 			 * @since 1.22
 			 */
 			emphasized : {type : "boolean", group : "Behavior", defaultValue : false}
@@ -109,7 +109,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Event is fired when the user triggers the link control.
 			 */
 			press : {allowPreventDefault : true}
-		}
+		},
+		designTime: true
 	}});
 
 
@@ -117,7 +118,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	EnabledPropagator.call(Link.prototype); // inherit "disabled" state from parent controls
 
 	/**
-	 * Also trigger link activation when space is pressed on the focused control
+	 * Required adaptations before rendering.
+	 *
+	 * @private
+	 */
+	Link.prototype.onBeforeRendering = function() {};
+
+	/**
+	 * Triggers link activation when space key is pressed on the focused control.
+	 *
+	 * @param {jQuery.Event} oEvent
 	 */
 	Link.prototype.onsapspace = function(oEvent) {
 		this._handlePress(oEvent); // this calls any JS event handlers
@@ -139,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	/**
-	 * Function is called when Link is triggered.
+	 * Handler for the "press" event of the link.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -148,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getEnabled()) {
 			// mark the event for components that needs to know if the event was handled by the link
 			oEvent.setMarked();
-			
+
 			if (!this.firePress() || !this.getHref()) { // fire event and check return value whether default action should be prevented
 				oEvent.preventDefault();
 			}
@@ -163,7 +173,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		Link.prototype.onclick = Link.prototype._handlePress;
 	}
 
-
+	/**
+	 * Handles the touch event on mobile devices.
+	 *
+	 * @param {jQuery.Event} oEvent
+	 */
 	Link.prototype.ontouchstart = function(oEvent) {
 		if (this.getEnabled()) {
 			// for controls which need to know whether they should handle events bubbling from here
@@ -175,16 +189,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* override standard setters with direct DOM manipulation */
 
 	Link.prototype.setText = function(sText){
+		var $this = this.$();
 		this.setProperty("text", sText, true);
 		sText = this.getProperty("text");
-		this.$().text(sText);
+		if (this.writeText) {
+			this.writeText(sText);
+		} else {
+			$this.text(sText);
+		}
+		if (sText) {
+			$this.attr("tabindex", "0");
+		} else {
+			$this.attr("tabindex", "-1");
+		}
 		return this;
 	};
 
 	Link.prototype.setHref = function(sUri){
 		this.setProperty("href", sUri, true);
-		sUri = this.getProperty("href");
-		this.$().attr("href", sUri);
+		if (this.getEnabled()) {
+			sUri = this.getProperty("href");
+			this.$().attr("href", sUri);
+		}
 		return this;
 	};
 
@@ -194,14 +220,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var $this = this.$();
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkSubtle", bSubtle);
+
 			if (bSubtle) {
-				if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
-					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
-				}
+				Link._addToDescribedBy($this, this._sAriaLinkSubtleId);
 			} else {
-				jQuery.sap.byId(this.getId() + "-linkSubtle").remove();
+				Link._removeFromDescribedBy($this, this._sAriaLinkSubtleId);
 			}
 		}
+
+		if (bSubtle && !Link.prototype._sAriaLinkSubtleId) {
+			Link.prototype._sAriaLinkSubtleId = Link._getARIAInvisibleTextId("LINK_SUBTLE");
+		}
+
 		return this;
 	};
 
@@ -211,14 +241,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var $this = this.$();
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
-			if (bEmphasized) { // strictly spoken this should only be done when accessibility mode is true. But it is true by default, so not sure it is worth checking...
-				if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
-					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
-				}
+
+			if (bEmphasized) {
+				Link._addToDescribedBy($this, this._sAriaLinkEmphasizedId);
 			} else {
-				jQuery.sap.byId(this.getId() + "-linkEmphasized").remove();
+				Link._removeFromDescribedBy($this, this._sAriaLinkEmphasizedId);
 			}
 		}
+
+		if (bEmphasized && !Link.prototype._sAriaLinkEmphasizedId) {
+			Link.prototype._sAriaLinkEmphasizedId = Link._getARIAInvisibleTextId("LINK_EMPHASIZED");
+		}
+
 		return this;
 	};
 
@@ -235,12 +269,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$this.toggleClass("sapMLnkDsbl", !bEnabled);
 			if (bEnabled) {
 				$this.attr("disabled", false);
-				$this.attr("tabindex", "0");
+				if (this.getText()) {
+					$this.attr("tabindex", "0");
+				} else {
+					$this.attr("tabindex", "-1");
+				}
 				$this.removeAttr("aria-disabled");
+				if (this.getHref()) {
+					$this.attr("href", this.getHref());
+				}
 			} else {
 				$this.attr("disabled", true);
 				$this.attr("tabindex", "-1");
 				$this.attr("aria-disabled", true);
+				$this.attr("href", "#");
 			}
 		}
 		return this;
@@ -263,17 +305,79 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
+	/*************************************** Static members ******************************************/
+
 	/**
-	 * Function that translates the resource text.
+	 * Retrieves the resource bundle for the sap.m library
 	 *
-	 * @param {String} sKey the resource to be translated
-	 * @private
-	 * @returns {String} the translated text
+	 * @returns {Object} the resource bundle object
 	 */
-	Link.prototype._getLinkDescription = function(sKey) {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		var sText = oRb.getText(sKey);
-		return sText;
+	Link._getResourceBundle = function () {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	};
+
+	/**
+	 * Creates ARIA sap.ui.core.InvisibleText for the given translation text
+	 *
+	 * @param {String} sResourceBundleKey the resource key in the translation bundle
+	 * @returns {String} the InvisibleText control ID
+	 */
+	Link._getARIAInvisibleTextId = function (sResourceBundleKey) {
+		var oRb = Link._getResourceBundle();
+
+		return new InvisibleText({
+			text: oRb.getText(sResourceBundleKey)
+		}).toStatic().getId();
+	};
+
+	/**
+	 * Adds ARIA InvisibleText ID to aria-secribedby
+	 *
+	 * @param {Object} $oLink control DOM reference
+	 * @param {String} sInvisibleTextId  static Invisible Text ID to be added
+	 */
+	Link._addToDescribedBy = function ($oLink, sInvisibleTextId) {
+		var sAriaDescribedBy = $oLink.attr("aria-describedby");
+
+		if (sAriaDescribedBy) {
+			$oLink.attr("aria-describedby",  sAriaDescribedBy + " " +  sInvisibleTextId); // Add the ID at the end, separated with space
+		} else {
+			$oLink.attr("aria-describedby",  sInvisibleTextId);
+		}
+	};
+
+	/**
+	 * Removes ARIA InvisibleText ID from aria-secribedby or the attribute itself
+	 *
+	 * @param {Object} $oLink control DOM reference
+	 * @param {String} sInvisibleTextId  static Invisible Text ID to be removed
+	 */
+	Link._removeFromDescribedBy = function ($oLink, sInvisibleTextId) {
+		var sAriaDescribedBy = $oLink.attr("aria-describedby");
+
+		if (sAriaDescribedBy && sAriaDescribedBy.indexOf(sInvisibleTextId) !== -1) { // Remove only the static InvisibleText ID for Emphasized link
+			sAriaDescribedBy = sAriaDescribedBy.replace(sInvisibleTextId, '');
+
+			if (sAriaDescribedBy.length > 1) {
+				$oLink.attr("aria-describedby",  sAriaDescribedBy);
+			} else {
+				$oLink.removeAttr("aria-describedby"); //  Remove the aria-describedby attribute, as it`s not needed
+			}
+		}
+	};
+
+	/**
+	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @protected
+	 */
+	Link.prototype.getAccessibilityInfo = function() {
+		return {
+			role: "link",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"),
+			description: this.getText() || this.getHref() || "",
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled()
+		};
 	};
 
 	return Link;

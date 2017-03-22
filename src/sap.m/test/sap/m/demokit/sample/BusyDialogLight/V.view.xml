@@ -8,7 +8,7 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<Button text="Show Light Busy Dialog" 
+			<Button text="Show Light Busy Dialog"
 				press="handlePress"
 				class="sapUiSmallMarginBottom" />
 		</l:content>

@@ -1,6 +1,5 @@
 <mvc:View
 	controllerName="sap.m.sample.ObjectHeaderTitleActive.C"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<ObjectHeader
@@ -8,7 +7,11 @@
 		title="{Name}"
 		titleActive="true"
 		titlePress="handleTitlePress"
-		number="{Price}"
+		number="{
+			parts:[{path:'Price'},{path:'CurrencyCode'}],
+			type: 'sap.ui.model.type.Currency',
+			formatOptions: {showMeasure: false}
+		}"
 		numberUnit="{CurrencyCode}" >
 		<attributes>
 			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />

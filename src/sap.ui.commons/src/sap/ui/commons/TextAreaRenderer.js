@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 	 * @namespace
 	 */
 	var TextAreaRenderer = Renderer.extend(TextFieldRenderer);
-	
+
 	/**
 	 * Use TextField to render TextArea but change tag to TEXTAREA
 	 * @protected
@@ -21,18 +21,18 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 	TextAreaRenderer.getInnerTagName = function(){
 		return ('textarea');
 	}
-	
+
 	/**
 	 * Add attributes, styles and so on to TextField tag
 	 */;
 	TextAreaRenderer.renderInnerAttributes = function(oRenderManager, oTextArea){
-	
+
 		var rm = oRenderManager;
-	
+
 		rm.addClass("sapUiTxtA");
-	
+
 		rm.addStyle('overflow', 'auto');
-	
+
 		/*eslint-disable no-empty */
 		//TODO Rethink if empty block is needed
 		if (oTextArea.getWidth() && oTextArea.getWidth() != '') {
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 			}
 		}
 		/*eslint-enable no-empty */
-	
+
 		if (oTextArea.getHeight() && oTextArea.getHeight() != '') {
 			rm.addStyle('height',oTextArea.getHeight());
 			//if a height is set don't use margin-top and margin-button because this would it make higher than wanted
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 				rm.writeAttribute('rows', oTextArea.getRows());
 			}
 		}
-	
+
 		// Changes of the wrap property require re-rendering for browser reasons.
 		// Therefore, no dynamic function to change wrapping necessary.
 		switch (oTextArea.getWrapping()) {
@@ -70,12 +70,12 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 			break;
 		}
 	}
-	
+
 	/**
 	 * Overwrite renderARIAInfo function of TextField
 	 */;
 	TextAreaRenderer.renderARIAInfo = function(rm, oTextArea) {
-	
+
 		rm.writeAccessibilityState(oTextArea, {
 			role: oTextArea.getAccessibleRole().toLowerCase() || 'textbox',
 			labelledby: oTextArea.getLabeledBy() ? (oTextArea.getLabeledBy() + " " + oTextArea.getAriaDescribedBy().join(" ")) : undefined,
@@ -84,9 +84,9 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 			multiline: true,
 			autocomplete: "none",
 			invalid: oTextArea.getValueState() == sap.ui.core.ValueState.Error});
-	
+
 	};
-	
+
 	/**
 	 * Renders additional HTML for the TextArea to the TextField
 	 *
@@ -96,14 +96,14 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 	TextAreaRenderer.renderInnerContent = function(oRenderManager, oTextArea){
 		// Convenience variable
 		var rm = oRenderManager;
-	
+
 		var sValue = oTextArea.getValue();
 		var sPlaceholder = oTextArea.getPlaceholder();
-	
+
 		if (sValue.length > oTextArea.getMaxLength() && oTextArea.getMaxLength() > 0) {
 			sValue = sValue.substring(0,oTextArea.getMaxLength());
 		}
-	
+
 		if (!sap.ui.Device.support.input.placeholder && sPlaceholder && !sValue) {
 			rm.writeEscaped(sPlaceholder);
 		} else {

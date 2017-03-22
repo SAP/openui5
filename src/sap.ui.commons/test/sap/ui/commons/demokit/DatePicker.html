@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.DatePicker">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>DatePicker - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -32,7 +32,7 @@ oDatePicker1.attachChange(
 oDatePicker1.placeAt("sample1");
 		</script>
 
-		<script id='dataBinding' type="text/javascript">
+		<script id='dataBinding'>
 // create model
 var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData({
@@ -134,7 +134,7 @@ sap.ui.getCore().attachValidationSuccess(
 		The example below shows a typical DatePicker. The input validation is done using the <code>change</code> event.
 		</p>
 		<div code-sample="sample1" script="simpleSample"></div>
-		<br/>
+		<br>
 
 		<p>
 		The example below shows two DatePickers using DataBinding. The input validation is done using the <code>ParseError</code> and
@@ -142,7 +142,7 @@ sap.ui.getCore().attachValidationSuccess(
 		In the second DatePicker the output format is defined using <code>style</code>.
 		</p>
 		<div code-sample="sample2" script="dataBinding"></div>
-		<br/>
+		<br>
 		<p>
 		<h2>API Documentation</h2>
 		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.DatePicker.html" >API documentation</a>

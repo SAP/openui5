@@ -1,0 +1,85 @@
+/* ============================= */
+/* CSS for control sap.m/Select  */
+/* Belize theme                  */
+/* ============================= */
+
+/* IconOnly */
+
+.sapMSlt.sapMSltIconOnly:not(.sapMSltDisabled) {
+	border-color: @sapUiButtonLiteBorderColor;
+	background: @sapUiButtonLiteBackground;
+	border-radius: 0.2rem;
+}
+
+/* IconOnly Hover */
+
+.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
+	border-color: @sapUiButtonLiteHoverBorderColor;
+	background: @sapUiButtonLiteHoverBackground;
+}
+
+/*IconOnly Pressed */
+.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+	background: @sapUiToggleButtonPressedBackground;
+	border: 0.0625rem solid @sapUiToggleButtonPressedBorderColor;
+}
+
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
+	outline-offset: -3px;
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState:focus {
+	outline-offset: -4px;
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed:focus {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
+	  	outline: none;
+
+		&:before {
+			content: "";
+			position: absolute;
+			border: 1px dashed @sapUiContentFocusColor;
+			top: 1px;
+			right: 1px;
+			bottom: 1px;
+			left: 1px;
+			pointer-events: none;
+		}
+
+		&.sapMSltIconOnly.sapMSltPressed:before {
+			border: 1px dashed @sapUiContentContrastFocusColor;
+		}
+	}
+}
+
+.sapMSltHoverable:not(.sapMSltState):hover {
+	border-color: @sapUiFieldHoverBorderColor;
+	background: @sapUiFieldHoverBackground;
+}
+
+/* pressed and hover */
+
+.sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:not(.sapMSltState):hover {
+	background: @sapUiToggleButtonPressedHoverBackground;
+	border-color: @sapUiFieldActiveBorderColor;
+}
+
+/* value state */
+
+.sapMSltState {
+	border-width: 2px;
+}
+
+/* disabled */
+
+.sapMSltDisabled {
+	opacity: 0.5;
+}

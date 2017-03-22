@@ -1,0 +1,33 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageLayout  */
+/* High Contrast Black theme                  */
+/* ========================================== */
+
+.sapUxAPObjectPageNavigation {
+	background-color: @sapUiObjectHeaderBackground;
+}
+
+.sapUxAPObjectChildPage {
+	width: 0.25rem;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 3rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 2rem;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 3.125rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 2.125rem;
+}
+
+/* Overriding the width inherited from BrowserScrollbar.less */
+.sap-desktop .sapUxAPObjectPageWrapper ::-webkit-scrollbar {
+	width: auto;
+}

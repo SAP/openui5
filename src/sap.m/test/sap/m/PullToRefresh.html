@@ -1,15 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>sap.m.PullToRefresh Test</title>
 
-<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
-	
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+
 </script>
 
-<script type="text/javascript">
+<script>
 	var app = new sap.m.App("P2RApp");
 
 /*
@@ -22,41 +23,53 @@ function getLastUpdated() {
 
 function createSelect(oPullDown, iSelectedItem){
 	var sId = oPullDown.getId();
+	var iconSelect = new sap.m.Select({
+		title: "Show Logo",
+		items: [
+			new sap.ui.core.Item(sId + "0", { key: "0", text: "Standard Icon" }),
+			new sap.ui.core.Item(sId + "1", { key: "1", text: "Custom Icon" }),
+			new sap.ui.core.Item(sId + "2", { key: "2", text: "No Icon" })
+		],
+		selectedItem: sId + (iSelectedItem || "0"),
+		change: function(oControlEvent){
+			var sKey = oControlEvent.getParameter("selectedItem").getKey();
+			switch(sKey){
+				case "0": oPullDown.setShowIcon(true).setCustomIcon(null); break;
+				case "1": oPullDown.setShowIcon(true).setCustomIcon("images/SAPUI5Logo.png"); break;
+				case "2": oPullDown.setShowIcon(false); break;
+			}
+			// re-render the parent container after content change
+			oPullDown.getParent().invalidate();
+		}
+	});
+	var visibilitySelect = new sap.m.Select({
+		title: "Visibility",
+		items: [
+			new sap.ui.core.Item(sId + "v0", { key: "0", text: "Visible" }),
+			new sap.ui.core.Item(sId + "v1", { key: "1", text: "Hidden" })
+		],
+		selectedItem: sId +  "v0",
+		change: function(oControlEvent){
+			var sKey = oControlEvent.getParameter("selectedItem").getKey();
+			switch(sKey){
+				case "0": oPullDown.setVisible(true); break;
+				case "1": oPullDown.setVisible(false); break;
+			}
+		}
+	});
+	var iconLabel = new sap.m.Label({
+		text : "Icon:",
+		labelFor: iconSelect
+	});
+	var visibilityLabel = new sap.m.Label({
+		text : "Visibility:",
+		labelFor: visibilitySelect
+	});
 	return [
-		new sap.m.Select({
-			title: "Show Logo",
-			items: [
-				new sap.ui.core.Item(sId + "0", { key: "0", text: "Standard Icon" }),
-				new sap.ui.core.Item(sId + "1", { key: "1", text: "Custom Icon" }),
-				new sap.ui.core.Item(sId + "2", { key: "2", text: "No Icon" })
-			],
-			selectedItem: sId + (iSelectedItem || "0"),
-			change: function(oControlEvent){
-				var sKey = oControlEvent.getParameter("selectedItem").getKey();
-				switch(sKey){
-					case "0": oPullDown.setShowIcon(true).setCustomIcon(null); break;
-					case "1": oPullDown.setShowIcon(true).setCustomIcon("images/SAPUI5Logo.png"); break;
-					case "2": oPullDown.setShowIcon(false); break;
-				}
-				// re-render the parent container after content change
-				oPullDown.getParent().invalidate();
-			}
-		}),
-		new sap.m.Select({
-			title: "Visibility",
-			items: [
-				new sap.ui.core.Item(sId + "v0", { key: "0", text: "Visible" }),
-				new sap.ui.core.Item(sId + "v1", { key: "1", text: "Hidden" })
-			],
-			selectedItem: sId +  "v0",
-			change: function(oControlEvent){
-				var sKey = oControlEvent.getParameter("selectedItem").getKey();
-				switch(sKey){
-					case "0": oPullDown.setVisible(true); break;
-					case "1": oPullDown.setVisible(false); break;
-				}
-			}
-		})
+		iconLabel,
+		iconSelect,
+		visibilityLabel,
+		visibilitySelect
 	];
 }
 
@@ -112,6 +125,7 @@ function createSelect(oPullDown, iSelectedItem){
 	addItems(standardList, 5);
 	var pullToRefreshStd = new sap.m.PullToRefresh({
 		description: getLastUpdated(),
+		tooltip: "Standard Pull to Refresh",
 		refresh: function(){
 			setTimeout(function(){
 				pullToRefreshStd.hide();
@@ -162,7 +176,7 @@ function createSelect(oPullDown, iSelectedItem){
 		}
 	}
 
-/* 
+/*
  * Hide immediately example
  */
 
@@ -202,14 +216,14 @@ function createSelect(oPullDown, iSelectedItem){
 	simplePage.addContent(pullToHide);
 	simplePage.addContent(simpleList);
 
-	/* 
+	/*
 	 * Busy dialog example
 	 */
 
 	var sOldDescription;
 
 	var busyDialog = new sap.m.BusyDialog({
-			text:"Please wait, data is loading..", 
+			text:"Please wait, data is loading..",
 			title: "Loading..",
 			showCancelButton: true,
 			close: function(oEvent){
@@ -222,7 +236,7 @@ function createSelect(oPullDown, iSelectedItem){
 				}
 			}
 		});
-	
+
 	var oTimeout = null;
 
 	var pullToBusy = new sap.m.PullToRefresh({

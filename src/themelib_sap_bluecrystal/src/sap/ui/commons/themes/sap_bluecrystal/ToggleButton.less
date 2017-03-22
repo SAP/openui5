@@ -26,7 +26,7 @@
 
 .sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn:active,
 .sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn.sapUiToggleBtnPressed:active,
-.sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn.sapUiToggleBtnPressed:focus {
+.sapUiBtn.sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn.sapUiToggleBtnPressed:focus {
 	color: @sapUiToggleButtonPressedTextColor;
 	background-color: @sapUiButtonActiveBackground;
 	border-color: @sapUiButtonActiveBorderColor;
@@ -43,11 +43,6 @@ html[data-sap-ui-browser^="ie"] .sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn.sapUiTogg
 
 .sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn.sapUiToggleBtnPressed > span.sapUiBtnIco {
 	color: @sapUiToggleButtonPressedTextColor;
-}
-
-html[data-sap-ui-browser='ie9'] .sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn > .sapUiBtnIcoL,
-html[data-sap-ui-browser='ie9'] .sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn > .sapUiBtnIcoR {
-	margin-top: -1px;
 }
 
 /*.sapUiBtnS.sapUiBtnNorm.sapUiBtnDsbl.sapUiToggleBtn {
@@ -78,9 +73,7 @@ html[data-sap-ui-browser='ie9'] .sapUiBtnS.sapUiBtnNorm.sapUiToggleBtn > .sapUiB
 	margin-top: 0px;
 }
 
-.sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiToggleBtn > .sapUiBtnIco,
-html[data-sap-ui-browser='ie9'] .sapUiBtnS.sapUiBtnLite.sapUiToggleBtn > .sapUiBtnIcoR,
-html[data-sap-ui-browser='ie9'] .sapUiBtnS.sapUiBtnLite.sapUiToggleBtn > .sapUiBtnIcoL {
+.sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiToggleBtn > .sapUiBtnIco {
 	margin-top: -1px;
 }
 
@@ -91,27 +84,11 @@ html[data-sap-ui-browser^="cr"] .sapUiBtnS.sapUiBtnLite.sapUiToggleBtn > .sapUiB
 	margin-top: 1px;
 }
 
-/* prevent IE to move text on pressing button */
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiToggleBtn:active {
-	padding-bottom: 4px;
-	padding-top: 2px;
-	padding-left: 7px;
-	padding-right: 9px;
-}
-
-html[data-sap-ui-browser="ie8"] .sapUiBtnS.sapUiBtnLite.sapUiToggleBtn:active {
-	padding-bottom: 4px;
-	padding-top: 1px;
-	padding-left: 7px;
-	padding-right: 9px;
-}
 
 html[data-sap-ui-browser^="ie"]  .sapUiBtnS.sapUiBtnLite.sapUiToggleBtn:active > .sapUiBtnTxt,
 html[data-sap-ui-browser^="ie"]  .sapUiBtnS.sapUiBtnLite.sapUiToggleBtn:active > .sapUiBtnIcoL,
 html[data-sap-ui-browser^="ie"]  .sapUiBtnS.sapUiBtnLite.sapUiToggleBtn:active > .sapUiBtnIcoR,
-html[data-sap-ui-browser^="ie"]  .sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiToggleBtn:active > .sapUiBtnIco,
-html[data-sap-ui-browser='ie9'] .sapUiBtnS.sapUiBtnIconOnly.sapUiToggleBtn > .sapUiBtnIco,
-html[data-sap-ui-browser='ie8'] .sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiToggleBtn > .sapUiBtnIco {
+html[data-sap-ui-browser^="ie"]  .sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiToggleBtn:active > .sapUiBtnIco {
 	margin-top: -3px;
 }
 

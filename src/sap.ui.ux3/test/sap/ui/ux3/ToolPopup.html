@@ -1,17 +1,154 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>ToolPopup - sap.ui.ux3</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_goldreflection" data-sap-ui-noConflict="true"
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
 
 </script>
 
-<script language="javascript">
+<script>
+	var btn = new sap.ui.commons.Button({
+		text : "Focus Issue",
+		press : function() {
+			if (customerPopup.isOpen()) {
+				customerPopup.close();
+			} else {
+				customerPopup.open(sap.ui.core.Popup.Dock.BeginBottom,
+						sap.ui.core.Popup.Dock.BeginTop);
+			}
+		}
+	}).placeAt('focusPopup');
+
+	var customerPopup = new sap.ui.ux3.ToolPopup("focusPopup", {
+		maxHeight : "200px",
+		content : [
+			new sap.ui.layout.VerticalLayout({
+				content : [
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					}),
+					new sap.ui.commons.ComboBox({
+						items : [
+							new sap.ui.core.ListItem({ text : "a"}),
+							new sap.ui.core.ListItem({ text : "b"})
+						]
+					})
+				]
+			})
+		],
+		opener: btn
+	});
+
 	var b1 = new sap.ui.commons.Button({
 		text : "Open/Close ToolPopup Above",
 		press : function() {
@@ -426,8 +563,6 @@
 </style>
 </head>
 <body class="sapUiBody">
-	<h1>Test Page for sap.ui.ux3.ToolPopup</h1>
-
 	<div class="uiArea" id="uiArea1"></div>
 	<div class="uiArea" id="uiArea2"></div>
 	<div class="uiArea" id="uiArea3"></div>
@@ -440,5 +575,7 @@
 	<div class="uiArea" id="listboxExample"></div>
 
 	<div class="uiArea" id="tabstrip"></div>
+
+	<div class="uiArea" id="focusPopup"></div>
 </body>
 </html>

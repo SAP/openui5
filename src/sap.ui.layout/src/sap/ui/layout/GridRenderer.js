@@ -13,11 +13,11 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var GridRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the render
 	 *            output buffer
@@ -28,15 +28,15 @@ sap.ui.define(['jquery.sap.global'],
 	GridRenderer.render = function(oRm, oControl) {
 		var INDENTPATTERN = /^([X][L](?:[0-9]|1[0-1]))? ?([L](?:[0-9]|1[0-1]))? ?([M](?:[0-9]|1[0-1]))? ?([S](?:[0-9]|1[0-1]))?$/i;
 		var SPANPATTERN =   /^([X][L](?:[1-9]|1[0-2]))? ?([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
-		
+
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUiRespGrid");
-		
-		var  sMedia = sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED).name;
+
+		var  sMedia = oControl._getCurrentMediaContainerRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED).name;
 		oRm.addClass("sapUiRespGridMedia-Std-" + sMedia);
-		
+
 		var fHSpacing = oControl.getHSpacing();
 		// Check for allowed values, if not matching, set to to default 1 rem.
 		if (fHSpacing == 0.5) {
@@ -44,19 +44,19 @@ sap.ui.define(['jquery.sap.global'],
 		} else if ((fHSpacing !== 0) && (fHSpacing !== 1) && (fHSpacing !== 2)) {
 			fHSpacing = 1;
 		}
-		
+
 		oRm.addClass("sapUiRespGridHSpace" + fHSpacing);
-	
+
 		var fVSpacing = oControl.getVSpacing();
 		// Check for allowed values, if not matching, set to to default 1 rem.
 		if (fVSpacing == 0.5) {
 			fVSpacing = "05";
 		} else if ((fVSpacing !== 0) && (fVSpacing !== 1) && (fVSpacing !== 2)) {
 			fVSpacing = 1;
-		} 
-		
+		}
+
 		oRm.addClass("sapUiRespGridVSpace" + fVSpacing);
-	
+
 		var sPosition = oControl.getPosition();
 		if (sPosition) {
 			sPosition = sPosition.toUpperCase();
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.addClass("sapUiRespGridPosRight");
 			}
 		}
-	
+
 		oRm.writeClasses();
 		var sWidth = oControl.getWidth();
 		if (sWidth !== "100%" && sWidth !== "auto" && sWidth !== "inherit") {
@@ -87,40 +87,41 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeAccessibilityState(oControl, mAriaProps);
 
 		oRm.write(">");
-	
+
 		var aItems = oControl.getContent();
-		
+
 		var defaultSpan = oControl.getDefaultSpan();
-		
+
 		// Default Span if nothing is specified at all, not on Grid , not on the
 		// cell.
 		var aInitialSpan = [ "", "XL3", "L3", "M6", "S12"];
-		
+
 		// Default Indent if nothing is specified at all, not on Grid , not on the
 		// cell.
 		var aInitialIndent = [ "", "XL0", "L0", "M0", "S0"];
-	
+
 		// Default Span values defined on the whole Grid, that is used if there is
 		// no individual span defined for the cell.
 		var aDefaultSpan = SPANPATTERN.exec(defaultSpan);
-		
-		// Determinate if default span value for XL was changed. 
+
+		// Determinate if default span value for XL was changed.
 		var bDefaultSpanXLChanged = oControl._getSpanXLChanged();
-		
-		// Determinate if default indent value for Indent was changed. 
+
+		// Determinate if default indent value for Indent was changed.
 		var bDefaultIndentXLChanged = oControl._getIndentXLChanged();
-		
+
 		// Default indent of the whole Grid control
 		var sDefaultIndent = oControl.getDefaultIndent();
-		var aDefaultIndent = INDENTPATTERN.exec(sDefaultIndent); 
+		var aDefaultIndent = INDENTPATTERN.exec(sDefaultIndent);
 
-		
+
 		for ( var i = 0; i < aItems.length; i++) { // loop over all child controls
 			oRm.write("<div");
 			var oLay = oControl._getLayoutDataForControl(aItems[i]);
-			
+			var bCellSpanXLChanged = false;
+
 			if (oLay) {
-	                          
+
 				//************************************************************************
 				//  LINE BREAK
 				//************************************************************************
@@ -133,7 +134,7 @@ sap.ui.define(['jquery.sap.global'],
 						oRm.addClass("sapUiRespGridBreakXL");
 					}
 					if (oLay.getLinebreakL() === true) {
-						if (!bBreakXLChanged){
+						if (!bBreakXLChanged && !oLay._getLinebreakXLChanged()){
 							oRm.addClass("sapUiRespGridBreakXL");
 						}
 						oRm.addClass("sapUiRespGridBreakL");
@@ -145,10 +146,10 @@ sap.ui.define(['jquery.sap.global'],
 						oRm.addClass("sapUiRespGridBreakS");
 					}
 				}
-				
-				
-				
-				
+
+
+
+
 				//************************************************************************
 				//  SPAN
 				//************************************************************************
@@ -162,11 +163,11 @@ sap.ui.define(['jquery.sap.global'],
 				} else {
 					aSpan = SPANPATTERN.exec(sSpan);
 					if (/XL/gi.test(sSpan)) {
-						bDefaultSpanXLChanged = true;
+						bCellSpanXLChanged = true;
 					}
-				}	
-					
-	
+				}
+
+
 				if (aSpan) {
 					for ( var j = 1; j < aSpan.length; j++) {
 						var span = aSpan[j];
@@ -176,21 +177,21 @@ sap.ui.define(['jquery.sap.global'],
 								span = aInitialSpan[j];
 							}
 						}
-						
+
 						if (span.substr(0, 1) === "L") {
 							sSpanL = span.substr(1, 2);
-						} 
-						
+						}
+
 						// Catch the Individual Spans
 						var iSpanXLarge = oLay.getSpanXL();
 						var iSpanLarge = oLay.getSpanL();
 						var iSpanMedium = oLay.getSpanM();
 						var iSpanSmall = oLay.getSpanS();
-	  
+
 						span = span.toUpperCase();
 						if ((span.substr(0, 2) === "XL") && (iSpanXLarge > 0)	&& (iSpanXLarge < 13)) {
 							oRm.addClass("sapUiRespGridSpanXL" + iSpanXLarge);
-							bDefaultSpanXLChanged = true;
+							bCellSpanXLChanged = true;
 						} else if ((span.substr(0, 1) === "L") && (iSpanLarge > 0)	&& (iSpanLarge < 13)) {
 							oRm.addClass("sapUiRespGridSpanL" + iSpanLarge);
 							sSpanL = iSpanLarge;
@@ -199,25 +200,25 @@ sap.ui.define(['jquery.sap.global'],
 						} else if ((span.substr(0, 1) === "S") && (iSpanSmall > 0) && (iSpanSmall < 13)) {
 							oRm.addClass("sapUiRespGridSpanS" + iSpanSmall);
 						} else {
-							if ((span.substr(0, 2) !== "XL") || bDefaultSpanXLChanged ){
+							if ((span.substr(0, 2) !== "XL") || bDefaultSpanXLChanged || bCellSpanXLChanged){
 								oRm.addClass("sapUiRespGridSpan" + span);
 							}
 						}
 					}
-					
-					if (!bDefaultSpanXLChanged) { 
-						// Backwards compatibility - if the XL not defined - it should be as L.	
+
+					if (!bDefaultSpanXLChanged && !bCellSpanXLChanged) {
+						// Backwards compatibility - if the XL not defined - it should be as L.
 						oRm.addClass("sapUiRespGridSpanXL" + sSpanL);
-					}	
+					}
 				}
-	
-				
-				
-				
+
+
+
+
 				//************************************************************************
 				//  INDENT
 				//************************************************************************
-				
+
 				var aIndent;
 				var sIndentL;
 				var sIndent = oLay.getIndent();
@@ -229,20 +230,20 @@ sap.ui.define(['jquery.sap.global'],
 						bDefaultIndentXLChanged = true;
 					}
 				}
-	
+
 				if (!aIndent) {
 					aIndent = aDefaultIndent;
 					if (!aIndent) {
 						aIndent = undefined; // no indent
-					} 
+					}
 				}
-	
+
 				// Catch the Individual Indents
 				var iIndentXLarge = oLay.getIndentXL();
 				var iIndentLarge = oLay.getIndentL();
 				var iIndentMedium = oLay.getIndentM();
 				var iIndentSmall = oLay.getIndentS();
-				
+
 				if (aIndent) {
 					for ( var j = 1; j < aIndent.length; j++) {
 						var indent = aIndent[j];
@@ -258,9 +259,9 @@ sap.ui.define(['jquery.sap.global'],
 							if (indent.substr(0, 1) === "L") {
 								sIndentL = indent.substr(1, 2);
 							}
-							
-							
-	
+
+
+
 							if ((indent.substr(0, 2) === "XL") && (iIndentXLarge > 0) && (iIndentXLarge < 12)) {
 									oRm.addClass("sapUiRespGridIndentXL" + iIndentXLarge);
 									bDefaultIndentXLChanged = true;
@@ -281,26 +282,26 @@ sap.ui.define(['jquery.sap.global'],
 							}
 						}
 					}
-					if (!bDefaultIndentXLChanged) { 
-						// Backwards compatibility - if the XL not defined - it should be as L.	
+					if (!bDefaultIndentXLChanged) {
+						// Backwards compatibility - if the XL not defined - it should be as L.
 						if (sIndentL && sIndentL > 0) {
 							oRm.addClass("sapUiRespGridIndentXL" + sIndentL);
 						}
 					}
-					
+
 				}
-				
-				
-				
-				
+
+
+
+
 				// Visibility
-				var  
+				var
 				l = oLay.getVisibleL(),
 				m = oLay.getVisibleM(),
 				s = oLay.getVisibleS();
-	           
+
 				// TODO: visibility of XL different to L
-				
+
 				if (!l && m && s) {
 					oRm.addClass("sapUiRespGridHiddenL");
 					oRm.addClass("sapUiRespGridHiddenXL");
@@ -316,12 +317,12 @@ sap.ui.define(['jquery.sap.global'],
 				} else if (l && m && !s) {
 					oRm.addClass("sapUiRespGridHiddenS");
 				}
-					
-				// Move - moveBwd shifts a grid element to the left in LTR mode and
+
+				// Move - moveBackwards shifts a grid element to the left in LTR mode and
 				// opposite in RTL mode
-	
+
 				var sMoveB = oLay.getMoveBackwards();
-	
+
 				if (sMoveB && sMoveB.length > 0) {
 					var aMoveB = INDENTPATTERN.exec(sMoveB);
 					if (aMoveB) {
@@ -333,10 +334,10 @@ sap.ui.define(['jquery.sap.global'],
 						}
 					}
 				}
-				// ... while moveFwd shifts it to the right in LTR mode and opposite
+				// ... while moveForward shifts it to the right in LTR mode and opposite
 				// in RTL
 				var sMoveF = oLay.getMoveForward();
-	
+
 				if (sMoveF && sMoveF.length > 0) {
 					var aMoveF = INDENTPATTERN.exec(sMoveF);
 					if (aMoveF) {
@@ -348,14 +349,14 @@ sap.ui.define(['jquery.sap.global'],
 						}
 					}
 				}
-				
+
 				// Internal additional classes
 				if (oLay._sStylesInternal) {
 					oRm.addClass(oLay._sStylesInternal);
 				}
 			}
-	
-			// No layoutData - apply default values. it could be 
+
+			// No layoutData - apply default values. it could be
 			// default value defined on Grid control, or id it is does not exist default parameter value "XL3 L3 M6 S12"
 			// XL default value changes if L is defined.
 			if (!oLay) {
@@ -378,7 +379,7 @@ sap.ui.define(['jquery.sap.global'],
 						oRm.addClass("sapUiRespGridSpan" + span.toUpperCase());
 					}
 				}
-				
+
 				var indent = "";
 				if (aDefaultIndent) {
 					for ( var j = 1; j < aDefaultIndent.length; j++) {
@@ -396,17 +397,17 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				}
 			}
-	
+
 			oRm.writeClasses();
 			oRm.write(">");
-	
+
 			oRm.renderControl(aItems[i]); // render the child control (could even
 											// be a big control tree, but you don't
 											// need to care)
-	
+
 			oRm.write("</div>"); // end of the box around the respective child
 		}
-	
+
 		oRm.write("</div>"); // end of the complete grid  control
 	};
 

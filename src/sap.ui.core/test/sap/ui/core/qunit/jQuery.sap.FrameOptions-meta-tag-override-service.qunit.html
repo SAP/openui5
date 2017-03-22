@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+	Tested classes: jQuery.sap.FrameOptions
+-->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>qUnit Page for jQuery.sap.FrameOptions (configuration via "meta" tag, service-url overridden via UI5 configuration)</title>
+
+<meta name="sap.whitelistService" content="/url/to/service/via/meta/tag">
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-whitelistService="/url/to/service/via/ui5/config">
+</script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css">
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script>
+
+QUnit.test("Configuration should not override 'whitelistService' and 'frameOptions' from <meta> tag", function(assert) {
+	var oConfiguration = sap.ui.getCore().getConfiguration();
+	assert.equal(oConfiguration.getWhitelistService(), "/url/to/service/via/ui5/config", "Whitelist Service should be set from UI5 config.");
+	assert.equal(oConfiguration.getFrameOptions(), "allow", "Frame Options should be set to 'allow' (default value from UI5 config).");
+});
+
+</script>
+</head>
+<body>
+<div id="qunit"></div>
+</body>
+</html>

@@ -8,9 +8,19 @@
 		width="100%">
 		<l:content>
 			<Button
-				text="Show Details"
+				text="Show Details - Text"
 				class="sapUiSmallMarginBottom"
-				press="showInfo"
+				press="showTextInfo"
+				width="250px"/>
+			<Button
+				text="Show Details - FormattedText"
+				class="sapUiSmallMarginBottom"
+				press="showFormattedTextInfo"
+				width="250px"/>
+			<Button
+				text="Show Details - JSON"
+				class="sapUiSmallMarginBottom"
+				press="showJSONInfo"
 				width="250px"/>
 		</l:content>
 	</l:VerticalLayout>

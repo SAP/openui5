@@ -7,14 +7,11 @@
 	display: inline-block;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiRbG{
-	display: inline-block;
-}
-
 .sapUiRbGTab{
-	display: box;
-	display: -moz-box;
 	display: -webkit-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiRbGTab{
@@ -30,9 +27,9 @@ html[data-sap-ui-browser^="ie"] .sapUiRbGTab{
 }
 
 .sapUiRbGTabFlex > .sapUiRbGCol{
-	box-flex: 1;
-	-moz-box-flex: 1;
-	-webkit-box-flex: 1;
+	flex-grow: 1;
+	-webkit-flex-grow: 1;
+	-ms-flex: 1;
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiRbGCol{
@@ -41,9 +38,10 @@ html[data-sap-ui-browser^="ie"] .sapUiRbGCol{
 }
 
 .sapUiRbGDummy{
-	box-flex: 1000;
-	-moz-box-flex: 1000;
+	flex-grow: 1000;
+	-webkit-flex-grow: 1000;
 	-webkit-box-flex: 1000;
+	-ms-flex: 1000;
 	min-width: 1px;
 }
 
@@ -57,6 +55,7 @@ html[data-sap-ui-browser^="ie"] .sapUiRbGDummy{
 	float: left;
 	clear: left;
 	text-overflow: ellipsis;
+	max-width: 100%;
 }
 
 .sapUiRbG.sapUiRbG1Row > .sapUiRb{

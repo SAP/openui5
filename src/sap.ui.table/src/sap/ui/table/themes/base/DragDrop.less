@@ -1,0 +1,204 @@
+/* ====================================== */
+/* CSS for control sap.ui.table/DragDrop  */
+/* Base theme                             */
+/* ====================================== */
+
+@_sapUiTableColumnDnDHighlightColor: @sapUiListHighlightColor;
+@_sapUiTableReorderIndicatorWidth: 2px;
+
+.sapUiTableDragDrop {
+	cursor: move;
+
+	.sapUiTableCCnt, .sapUiTableColRsz {
+		pointer-events: none;
+	}
+
+	.sapUiTableCol {
+		cursor: move;
+
+		* {
+			cursor: move;
+		}
+	}
+}
+
+
+/* Column Reordering */
+
+.sapUiTableCol.sapUiTableColReorderGhost {
+	position: absolute;
+	width: auto;
+	max-width: 200px;
+	cursor: pointer;
+	border: 1px solid @sapUiListBorderColor;
+	background-color: @sapUiListHeaderBackground;
+	box-shadow: @sapUiShadowLevel2;
+}
+
+.sapUiSizeCozy.sapUiTableCol.sapUiTableColReorderGhost .sapUiTableColCell > * {
+	height: 100%;
+	line-height: 3rem;
+}
+
+.sapUiSizeCozy.sapUiTableCol.sapUiTableColReorderGhost {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.sapUiTableColReorderIndicator {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: auto; /*set dynamically*/
+	width: 4 * @_sapUiTableReorderIndicatorWidth;
+	margin-left: (-4) * @_sapUiTableReorderIndicatorWidth + @_sapUiTableReorderIndicatorWidth;
+	z-index: 3;
+	display: none;
+}
+
+html[dir=rtl] .sapUiTableColReorderIndicator {
+	margin-right: (-4) * @_sapUiTableReorderIndicatorWidth + 2 * @_sapUiTableReorderIndicatorWidth;
+}
+
+.sapUiTableColReorderIndicatorActive {
+	display: block;
+}
+
+html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
+	transition-property : left;
+	transition-duration : 100ms;
+}
+
+.sapUiTableColReorderIndicatorInner {
+	position: absolute;
+	top: 4 * @_sapUiTableReorderIndicatorWidth;
+	left: 2 * @_sapUiTableReorderIndicatorWidth;
+	bottom: 0;
+	width: @_sapUiTableReorderIndicatorWidth;
+	background-color: @_sapUiTableColumnDnDHighlightColor;
+}
+
+.sapUiTableColReorderIndicatorArrow {
+	position: absolute;
+	top: 0;
+	left: 1px;
+	width: 0;
+}
+
+.sapUiTableColReorderIndicatorArrow:after,
+.sapUiTableColReorderIndicatorArrow:before {
+	position: absolute;
+	top: 0;
+	content: " ";
+}
+
+.sapUiTableColReorderIndicatorArrow:after {
+	height: 2 * @_sapUiTableReorderIndicatorWidth;
+	width: 2 * @_sapUiTableReorderIndicatorWidth;
+	border-radius: @_sapUiTableReorderIndicatorWidth;
+	top: @_sapUiTableReorderIndicatorWidth;
+	left: @_sapUiTableReorderIndicatorWidth;
+	background-color: @sapUiListHeaderBackground;
+}
+
+.sapUiTableColReorderIndicatorArrow:before {
+	height: 4 * @_sapUiTableReorderIndicatorWidth;
+	width: 4 * @_sapUiTableReorderIndicatorWidth;
+	border-radius: 2 * @_sapUiTableReorderIndicatorWidth;
+	background-color: @_sapUiTableColumnDnDHighlightColor;
+}
+
+
+.sapUiTableColReorderFade {
+	position: relative;
+}
+
+.sapUiTableColReorderFade:after {
+	content: " ";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: -1px;
+	z-index: 3;
+	border-left: 1px solid @_sapUiTableColumnDnDHighlightColor;
+	border-right: 1px solid @_sapUiTableColumnDnDHighlightColor;
+	background-color: fade(@sapUiBaseColor, 80);
+	box-sizing: border-box;
+}
+
+.sapUiTableLastRow .sapUiTableColReorderFade:after {
+	border-bottom: 1px solid @_sapUiTableColumnDnDHighlightColor;
+}
+
+
+/* Column Resizing */
+
+.sapUiTableColRsz {
+	position: absolute;
+	top: 0px;
+	width: 5px;
+	margin-left: -4px;
+	bottom: 0px;
+	cursor: col-resize;
+	z-index: 3;
+	box-sizing: border-box;
+	left: -5px;
+}
+
+.sapUiTableColRsz.sapUiTableColRszActive {
+	z-index: 5; /* Ensure be above Row Action Area */
+}
+
+html[dir=rtl] .sapUiTableColRsz {
+	margin-right: -3px;
+	right: -5px; /* it becomes "left" in RTL mode */
+	left: auto;
+}
+
+html.sap-desktop .sapUiTableColRsz:hover {
+	background-color: @_sapUiTableColumnDnDHighlightColor;
+	opacity: 0.5;
+}
+
+.sapUiTableColRszActive,
+html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
+	background-color: @_sapUiTableColumnDnDHighlightColor;
+	opacity: 1;
+}
+
+
+/* Table Height Resizing */
+
+.sapUiTableHeightResizer {
+	box-sizing: border-box;
+	height: 5px;
+	width: 100%;
+	position: relative;
+	text-align: center;
+}
+
+.sapUiTableHeightResizer::before {
+	font-family: SAP-icons;
+	content: "\e1fb";
+	position: absolute;
+	top: 0px;
+	line-height: 5px;
+}
+
+.sapUiTableHeightResizer:focus {
+	outline: 0;
+}
+
+.sapUiTableHeightResizer:hover {
+	cursor: n-resize;
+	background-color: darken(@sapUiContentForegroundBorderColor, 28.2);
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapUiTableInteractiveResizerGhost {
+	position: absolute;
+	background-color: @_sapUiTableColumnDnDHighlightColor;
+	color: @sapUiContentContrastTextColor;
+	z-index:10000;
+}

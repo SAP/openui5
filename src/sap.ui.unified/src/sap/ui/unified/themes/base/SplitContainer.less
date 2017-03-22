@@ -1,6 +1,10 @@
-/** TODO: Move to global.css in core (pending discussion with Jens P and Michael S)
+/* ============================================== */
+/* CSS for control sap.ui.unified/SplitContainer  */
+/* Base theme                                     */
+/* ============================================== */
+
 /* The animation duration must be in ms so it returns the correct integer value when used with parseInt */
-@sapUiUfdSplitContAnimationDuration: 500ms;
+@_sap_ui_unified_SplitContainer_AnimationDuration: 500ms;
 
 .sapUiUfdSpltCont {
 	overflow: hidden;
@@ -13,18 +17,17 @@
 
 .sapUiUfdSpltContAnim .sapUiUfdSpltContCanvas,
 .sapUiUfdSpltContAnim .sapUiUfdSpltContPane {
-	transition: height @sapUiUfdSplitContAnimationDuration ease 0ms, width @sapUiUfdSplitContAnimationDuration ease 0ms, left @sapUiUfdSplitContAnimationDuration ease 0ms, top @sapUiUfdSplitContAnimationDuration ease 0ms;
-	-webkit-transition: height @sapUiUfdSplitContAnimationDuration ease 0ms, width @sapUiUfdSplitContAnimationDuration ease 0ms, left @sapUiUfdSplitContAnimationDuration ease 0ms, top @sapUiUfdSplitContAnimationDuration ease 0ms;
+	transition: height @_sap_ui_unified_SplitContainer_AnimationDuration ease 0ms, width @_sap_ui_unified_SplitContainer_AnimationDuration ease 0ms, left @_sap_ui_unified_SplitContainer_AnimationDuration ease 0ms, top @_sap_ui_unified_SplitContainer_AnimationDuration ease 0ms;
+	-webkit-transition: height @_sap_ui_unified_SplitContainer_AnimationDuration ease 0ms, width @_sap_ui_unified_SplitContainer_AnimationDuration ease 0ms, left @_sap_ui_unified_SplitContainer_AnimationDuration ease 0ms, top @_sap_ui_unified_SplitContainer_AnimationDuration ease 0ms;
 }
 
 .sapUiUfdSpltContPane {
-	background-color: @sapUiWhiteBG;
+	background-color: @sapUiGroupContentBackground;
     display: block;
     position: absolute;
     top: 0;
     left: 0;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
 }
 
 .sapUiUfdSpltContPane.sapUiUfdSplitContSecondClosed > div {
@@ -56,7 +59,7 @@
 .sapUiUfdSpltContH {}
 
 .sapUiUfdSpltContH .sapUiUfdSpltContPane {
-	border-right: 1px solid @sapUiMediumBorder;
+	border-right: 1px solid @sapUiGroupContentBorderColor;
 	bottom: 0;
 }
 
@@ -64,7 +67,7 @@
 .sapUiUfdSpltContV {}
 
 .sapUiUfdSpltContV .sapUiUfdSpltContPane {
-	border-bottom: 1px solid @sapUiMediumBorder;
+	border-bottom: 1px solid @sapUiGroupContentBorderColor;
 	right: 0;
 }
 

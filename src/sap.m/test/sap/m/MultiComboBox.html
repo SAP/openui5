@@ -2,12 +2,13 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <title>MultiComboBox - sap.m</title>
+<script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.m"
 	data-sap-ui-compatVersion="1.20">
-	
+
 </script>
 <script>
 	jQuery.sap.require("sap.m.MessageToast");
@@ -393,17 +394,17 @@
 				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on "
 						+ this);
 			},
-			selectionChange : function(oEvent) {
-				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oEvent.getParameter("changedItem")
-						+ " with selected=" + oEvent.getParameter("selected") + " on " + this);
+			selectionChange : function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("changedItem")
+						+ " with selected=" + oControlEvent.getParameter("selected") + " on " + this);
 			},
-			selectionFinish : function(oEvent) {
-				jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oEvent.getParameter("selectedItems")
+			selectionFinish : function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oControlEvent.getParameter("selectedItems")
 						+ " on " + this);
 			}
-		});		
+		});
 	}
-	
+
 	var oDialog = new sap.m.Dialog("dialog", {
 		title: "Multi Inputs",
 		contentWidth: "420px",
@@ -424,7 +425,7 @@
 					createComboForDialog(),
 					createComboForDialog()
 				],
-		beginButton: 
+		beginButton:
 			new sap.m.Button({
 				text: "OK",
 				type: sap.m.ButtonType.Accept,
@@ -472,9 +473,9 @@
 	});
 	var oMultiInput1 = new sap.m.MultiInput({
 		placeholder : "add tokens by suggestions",
-		suggest : function(oEvent) {
+		suggest : function(oControlEvent) {
 			var that = this;
-			oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function(sValue, aSuggestions) {
+			oSearchProvider.suggest(oControlEvent.getParameter("suggestValue"), function(sValue, aSuggestions) {
 				if (sValue === that.getValue()) {
 					that.destroySuggestionItems();
 					for ( var i = 0; i < aSuggestions.length; i++) {
@@ -486,8 +487,8 @@
 				}
 			});
 		},
-		valueHelpRequest : function(evt) {
-			sap.m.MessageBox.alert("Value help requested");
+		valueHelpRequest : function(oControlEvent) {
+			sap.m.MessageToast.show("Value help requested");
 		},
 		width : "75%"
 	});
@@ -504,12 +505,12 @@
 			jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on "
 					+ this);
 		},
-		selectionChange : function(oEvent) {
-			jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oEvent.getParameter("changedItem")
-					+ " with selected=" + oEvent.getParameter("selected") + " on " + this);
+		selectionChange : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("changedItem")
+					+ " with selected=" + oControlEvent.getParameter("selected") + " on " + this);
 		},
-		selectionFinish : function(oEvent) {
-			jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oEvent.getParameter("selectedItems")
+		selectionFinish : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oControlEvent.getParameter("selectedItems")
 					+ " on " + this);
 		}
 	});
@@ -529,12 +530,12 @@
 			jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on "
 					+ this);
 		},
-		selectionChange : function(oEvent) {
-			jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oEvent.getParameter("changedItem")
-					+ " with selected=" + oEvent.getParameter("selected") + " on " + this);
+		selectionChange : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("changedItem")
+					+ " with selected=" + oControlEvent.getParameter("selected") + " on " + this);
 		},
-		selectionFinish : function(oEvent) {
-			jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oEvent.getParameter("selectedItems")
+		selectionFinish : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oControlEvent.getParameter("selectedItems")
 					+ " on " + this);
 		}
 	});
@@ -559,12 +560,12 @@
 			jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on "
 					+ this);
 		},
-		selectionChange : function(oEvent) {
-			jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oEvent.getParameter("changedItem")
-					+ " with selected=" + oEvent.getParameter("selected") + " on " + this);
+		selectionChange : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("changedItem")
+					+ " with selected=" + oControlEvent.getParameter("selected") + " on " + this);
 		},
-		selectionFinish : function(oEvent) {
-			jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oEvent.getParameter("selectedItems")
+		selectionFinish : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oControlEvent.getParameter("selectedItems")
 					+ " on " + this);
 		}
 	});
@@ -616,7 +617,7 @@
 		selectedKeys : ["0", "1", "2"],
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
 
@@ -639,7 +640,7 @@
 
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
 	var oMultiComboBoxWarning = new sap.m.MultiComboBox({
@@ -660,7 +661,7 @@
 		},
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
 	var oMultiComboBoxSuccess = new sap.m.MultiComboBox({
@@ -681,14 +682,14 @@
 		},
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
 	var oItem;
 	var oMultiComboBoxDisabledListItemSelectable = new sap.m.MultiComboBox({
 		id : "MultiComboBoxDisabledListItemSelectable",
 		width : "400px",
-		placeholder : "Disabled list item showing selecable feature",
+		placeholder : "Example of disabled list item showing selectable feature",
 		items : [oItem = new sap.ui.core.Item({
 			text : "triggers last item"
 		}), new sap.ui.core.Item({
@@ -706,8 +707,8 @@
 		},
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
-			if (this.getFirstItem() === oControlEvent.getParameter("selectedItem")) {
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
+			if (this.getFirstItem() === oControlEvent.getParameter("changedItem")) {
 				this.setSelectable(this.getLastItem(), oControlEvent.getParameter("selected"));
 			}
 		}
@@ -716,7 +717,7 @@
 	var oMultiComboBoxDisabledListItemDisabled = new sap.m.MultiComboBox({
 		id : "MultiComboBoxDisabledListItemDisabled",
 		width : "400px",
-		placeholder : "Disabled list item showing disabled item",
+		placeholder : "Example of list item showing disabled list item",
 		items : [oItem = new sap.ui.core.Item({
 			text : "triggers last item"
 		}), new sap.ui.core.Item({
@@ -725,7 +726,7 @@
 			text : "disabled item",
 			enabled : false
 		}), new sap.ui.core.Item({
-			text : "last item"
+			text : "last item",
 		})],
 		selectedItems : [oItem],
 		change : function(oControlEvent) {
@@ -734,8 +735,8 @@
 		},
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
-			if (this.getFirstItem() === oControlEvent.getParameter("selectedItem")) {
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
+			if (this.getFirstItem() === oControlEvent.getParameter("changedItem")) {
 				this.getLastItem().setEnabled(oControlEvent.getParameter("selected"));
 			}
 		}
@@ -765,7 +766,7 @@
 		},
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
 	oMultiComboBoxReadOnly.setValue("Eston");
@@ -792,7 +793,7 @@
 		},
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
 	oMultiComboBoxDisabled.setValue("Eston");
@@ -812,7 +813,7 @@
 		},
 		selectionChange : function(oControlEvent) {
 			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-					+ oControlEvent.getParameter("selectedItems") + " on " + this);
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
 	var theCompactMode = new sap.m.CheckBox({
@@ -840,9 +841,9 @@
 					},
 					selectionChange : function(oControlEvent) {
 						jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-								+ oControlEvent.getParameter("selectedItems") + " on " + this);
+								+ oControlEvent.getParameter("changedItem") + " on " + this);
 					}
-				}), 
+				}),
 				new sap.m.ToolbarSpacer(),
 				new sap.m.Button({text: "Open Popup", press: openDialog})
 				]

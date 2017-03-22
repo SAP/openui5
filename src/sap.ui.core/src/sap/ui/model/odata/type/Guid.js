@@ -2,9 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
+		'sap/ui/model/ValidateException'],
+	function(jQuery, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var rAllWhitespaceAndSeparators = /[-\s]/g, // whitespace and "-" separator, globally
@@ -34,7 +35,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 
 		oType.oConstraints = undefined;
 		if (vNullable === false || vNullable === "false") {
-			oType.oConstraints = {nullable: false};
+			oType.oConstraints = {nullable : false};
 		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
 			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 		}
@@ -47,8 +48,8 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Guid</code></a>.
 	 *
-	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
-	 * <code>string</code>.
+	 * In both {@link sap.ui.model.odata.v2.ODataModel} and {@link sap.ui.model.odata.v4.ODataModel}
+	 * this type is represented as a <code>string</code>.
 	 *
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
@@ -67,9 +68,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmGuid = ODataType.extend("sap.ui.model.odata.type.Guid",
-			/** @lends sap.ui.model.odata.type.Guid.prototype */
-			{
+	var EdmGuid = ODataType.extend("sap.ui.model.odata.type.Guid", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);
@@ -83,7 +82,8 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @param {string} sValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
-	 *   the target type; may be "any" or "string".
+	 *   the target type; may be "any", "string", or a type with one of these types as its
+	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
@@ -96,11 +96,14 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 		if (sValue === undefined || sValue === null) {
 			return null;
 		}
-		if (sTargetType === "string" || sTargetType === "any") {
+		switch (this.getPrimitiveType(sTargetType)) {
+		case "any":
+		case "string":
 			return sValue;
+		default:
+			throw new FormatException("Don't know how to format " + this.getName() + " to "
+				+ sTargetType);
 		}
-		throw new FormatException("Don't know how to format " + this.getName() + " to "
-			+ sTargetType);
 	};
 
 	/**
@@ -120,7 +123,8 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @param {string} sValue
 	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>sValue</code>); must be "string".
+	 *   the source type (the expected type of <code>sValue</code>); must be "string", or
+	 *   a type with "string" as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the parsed value
@@ -133,13 +137,13 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 		if (sValue === "" || sValue === null) {
 			return null;
 		}
-		if (sSourceType !== "string") {
+		if (this.getPrimitiveType(sSourceType) !== "string") {
 			throw new ParseException("Don't know how to parse " + this.getName() + " from "
 				+ sSourceType);
 		}
 		// remove all whitespaces and separators
 		sResult = sValue.replace(rAllWhitespaceAndSeparators, '');
-		if (sResult.length != 32) {
+		if (sResult.length !== 32) {
 			// don't try to add separators to invalid value
 			return sValue;
 		}

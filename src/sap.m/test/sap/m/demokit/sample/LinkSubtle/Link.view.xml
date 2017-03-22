@@ -2,7 +2,7 @@
 	controllerName="sap.m.sample.LinkSubtle.Link"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	
+
 	<Table id="idProductsTable"
 		inset="false"
 		items="{
@@ -32,13 +32,13 @@
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Category" />
 			</Column>
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Picture" />
 			</Column>
 		</columns>

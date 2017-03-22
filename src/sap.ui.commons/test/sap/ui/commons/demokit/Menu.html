@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.Menu,sap.ui.commons.MenuItem">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control Menu MenuButton MenuBar MenuItem MenuItemBase Popup" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control Menu MenuButton MenuBar MenuItem MenuItemBase Popup">
 		<title>Menu - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -101,40 +101,40 @@ oLink2.attachPress(function(){
 oLink2.placeAt("sample2");
 </script>
 </head>
-	
+
 <body class="sapUiDemokitBody" role="application">
   <h1 color="Blue" icon="images/ctrls/menu-icon.png">Menu</h1>
 
 	<h2>Introduction</h2>
 	<p>
-	The Menu control represents a popup menu. A popup menu opens in front of the application and 
+	The Menu control represents a popup menu. A popup menu opens in front of the application and
 	allows the user to select one of the shown actions which are implemented in the form of menu items.
 	</p>
-		
+
 	<h2>Example</h2>
 	<div code-sample="sample1" script="MenuScript1"></div>
 	<p>
-	The example shows a two-level menu which can be opened by clicking a link. To position the menu, the <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.Popup.html">sap.ui.core.Popup</a> 
+	The example shows a two-level menu which can be opened by clicking a link. To position the menu, the <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.Popup.html">sap.ui.core.Popup</a>
 	functionality is used. The Menu can either be used stand alone like in this example, or as part of other controls like <a class="sapUiDemokitSrcLink" href="MenuBar.html">MenuBar</a> or <a class="sapUiDemokitSrcLink" href="MenuButton.html">MenuButton</a>.
-	A menu accepts items of type <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MenuItemBase.html">sap.ui.commons.MenuItemBase</a> which is the base type of all menu items. Current 
-	implementation: <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MenuItem.html">sap.ui.commons.MenuItem</a>. 
+	A menu accepts items of type <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MenuItemBase.html">sap.ui.commons.MenuItemBase</a> which is the base type of all menu items. Current
+	implementation: <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MenuItem.html">sap.ui.commons.MenuItem</a>.
 	<br><br>
-	Alternatively to registering an event handler on every menu item, it is also possible to use a single event handler which is attached to the <code>itemSelect</code> event of the root menu; this is shown in the next example. 
+	Alternatively to registering an event handler on every menu item, it is also possible to use a single event handler which is attached to the <code>itemSelect</code> event of the root menu; this is shown in the next example.
 	</p>
 	<div code-sample="sample2" script="MenuScript2"></div>
-	
+
 	<h2>Keyboard Support</h2>
 	<p>
-	It is possible to navigate through the items of a menu using the <code>Arrow up</code> and <code>Arrow down</code> keys step by step; 
+	It is possible to navigate through the items of a menu using the <code>Arrow up</code> and <code>Arrow down</code> keys step by step;
 	using the keys <code>Pos1</code> and <code>End</code>, you can directly jump to the first or the last item.
 	The <code>Arrow left</code> and <code>Arrow right</code> keys are available for opening and closing sub-menus, if they exist.
 	<code>Escape</code> closes the current menu. Using the <code>Space</code> or <code>Enter</code> key, items can be selected.
 	</p>
-	
+
 	<h2>ARIA Support</h2>
 	<p>
 	The Menu control supports ARIA. The necessary ARIA properties are generated automatically according to the structure of the menu.
-	Via the control property <code>ariaDescription</code> it is additionally possible to define a descriptive label for a menu. 
+	Via the control property <code>ariaDescription</code> it is additionally possible to define a descriptive label for a menu.
 	</p>
 	<p>
 	<h2>API Documentation</h2>

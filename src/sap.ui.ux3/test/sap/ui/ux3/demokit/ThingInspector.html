@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.ThingInspector,sap.ui.ux3.ThingGroup,sap.ui.ux3.ThingAction">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
-	  <meta name="keywords" content="Control ThingInspector" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+	  <meta name="keywords" content="Control ThingInspector">
 		<title>ThingInspector - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -192,22 +192,22 @@ oButton.placeAt("sample1");
 		<h1 color="Red" icon="images/ctrls/thinginspector-icon.png">ThingInspector</h1>
 		<h2>Introduction</h2>
 
-		<p>The ThingInspector exposes all aspects of a Thing including a handle on the Things, a compact summary of the attributes, Tags and the generic Thing actions, as well as the different facets of the Thing. 
+		<p>The ThingInspector exposes all aspects of a Thing including a handle on the Things, a compact summary of the attributes, Tags and the generic Thing actions, as well as the different facets of the Thing.
 		A Thing is a representation of one or several entities in the form that is familiar to the user from daily work.</p>
-		
-		<p>The ThingInspector is based on <a class="sapUiDemokitSrcLink" href="OverlayContainer.html">OverlayContainer</a> control that can run within the <a class="sapUiDemokitSrcLink" href="Shell.html">Shell</a> 
-		control if it is available or within the window itself. When running in the Shell, the ThingInspector overlays the workset and the content area of the Shell, the tool palette and the pane bar remains accessible. 
+
+		<p>The ThingInspector is based on <a class="sapUiDemokitSrcLink" href="OverlayContainer.html">OverlayContainer</a> control that can run within the <a class="sapUiDemokitSrcLink" href="Shell.html">Shell</a>
+		control if it is available or within the window itself. When running in the Shell, the ThingInspector overlays the workset and the content area of the Shell, the tool palette and the pane bar remains accessible.
 		If the ThingInspector runs in the window it overlays this whole window and does not have default "close" button.</p>
-		
-		<p>The ThingInspector consists of: a Header area, a Canvas area and a Toolbar. The Header area contains a top panel with type, icon and title of the Thing as well as optional content blocks. 
-		The Canvas area contains the "Facet Navigation Bar" and the "Facet Content area". The "Facet Content area" consists of optional content blocks. 
-		An important part of the ThingInspector is its content, showing the details of the Thing you inspect. To add additional details of a Thing you can add so called <code>ThingGroups</code>. 
-		A <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ThingGroup.html">sap.ui.ux3.ThingGroup</a> is a "group" control, consisting of a title property and a content aggregation. 
+
+		<p>The ThingInspector consists of: a Header area, a Canvas area and a Toolbar. The Header area contains a top panel with type, icon and title of the Thing as well as optional content blocks.
+		The Canvas area contains the "Facet Navigation Bar" and the "Facet Content area". The "Facet Content area" consists of optional content blocks.
+		An important part of the ThingInspector is its content, showing the details of the Thing you inspect. To add additional details of a Thing you can add so called <code>ThingGroups</code>.
+		A <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ThingGroup.html">sap.ui.ux3.ThingGroup</a> is a "group" control, consisting of a title property and a content aggregation.
 		The content can be every SAPUI5 control. The Facets are represented via a <a class="sapUiDemokitSrcLink" href="NavigationBar.html">NavigationBar</a> similar to the one in the Shell.
-		The Toolbar offers a set of the predefined actions (update, follow, favorite and flag). You can also add ThingInspector-specific actions as well. The specific actions (see 
+		The Toolbar offers a set of the predefined actions (update, follow, favorite and flag). You can also add ThingInspector-specific actions as well. The specific actions (see
 		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ThingAction.html">sap.ui.ux3.ThingAction</a>) appear as buttons at the right-hand side of the Toolbar.</p>
 
-		<br/>
+		<br>
 
 		<h2>Example</h2>
 

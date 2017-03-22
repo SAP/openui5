@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new FeedInput.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			placeholder : {type : "string", group : "Appearance", defaultValue : "Post something here"},
 
 			/**
-			 * The text value of the feed input. As long as the user has not entered any text the post butoon is disabled
+			 * The text value of the feed input. As long as the user has not entered any text the post button is disabled
 			 */
 			value : {type : "string", group : "Data", defaultValue : null},
 
@@ -74,19 +74,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * Sets a new tooltip for submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this Element)
+			 * Sets a new tooltip for Submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this element)
 			 * or an instance of sap.ui.core.TooltipBase.
 			 * If a new tooltip is set, any previously set tooltip is deactivated.
 			 * The default value is set language dependent.
 			 * @since 1.28
 			 */
-			buttonTooltip : {type : "string" , altTypes : ["sap.ui.core.TooltipBase"], multiple : false, group : "Data", defaultValue : "Submit"}
+			buttonTooltip : {type : "sap.ui.core.TooltipBase", group : "Accessibility", defaultValue : "Submit"},
+
+			/**
+			 * Text for Picture which will be read by screenreader.
+			 * If a new ariaLabelForPicture is set, any previously set ariaLabelForPicture is deactivated.
+			 * @since 1.30
+			 */
+			ariaLabelForPicture : {type : "string", group : "Accessibility", defaultValue : null}
 		},
 
 		events : {
 
 			/**
-			 * The post event is triggered when the user has entered a value and pressed the post button. After firing this event the value is reset.
+			 * The Post event is triggered when the user has entered a value and pressed the post button. After firing this event, the value is reset.
 			 */
 			post : {
 				parameters : {
@@ -164,11 +171,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	FeedInput.prototype.setButtonTooltip = function (sButtonTooltip) {
-		this.setProperty("buttonTooltip", sButtonTooltip, true);
-		this._getPostButton().setTooltip(sButtonTooltip);
+	FeedInput.prototype.setButtonTooltip = function (vButtonTooltip) {
+		this.setProperty("buttonTooltip", vButtonTooltip, true);
+		this._getPostButton().setTooltip(vButtonTooltip);
 		return this;
 	};
+
 	/////////////////////////////////// Private /////////////////////////////////////////////////////////
 
 	/**
@@ -177,10 +185,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	FeedInput.prototype._getTextArea = function () {
 		if (!this._oTextArea) {
 			this._oTextArea = new sap.m.TextArea(this.getId() + "-textArea", {
-				rows : 1,
+				rows : 3,
 				value : null,
 				maxLength : this.getMaxLength(),
 				placeholder : this.getPlaceholder(),
+				height: "100%",
 				liveChange : jQuery.proxy(function (oEvt) {
 					var sValue = oEvt.getParameter("value");
 					this.setProperty("value", sValue, true); // update myself without re-rendering
@@ -203,11 +212,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				icon : "sap-icon://feeder-arrow",
 				tooltip : this.getButtonTooltip(),
 				press : jQuery.proxy(function (oEvt) {
+					this._oTextArea.focus();
 					this.firePost({
 						value : this.getValue()
 					});
 					this.setValue(null);
-					this._oTextArea.focus();
 				}, this)
 			});
 			this._oButton.setParent(this);
@@ -219,13 +228,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Enable post button depending on the current value
 	 */
 	FeedInput.prototype._enablePostButton = function () {
-		var sValue = this.getProperty("value");
-		var bInputEnabled = this.getProperty("enabled");
-		var bPostButtonEnabled = (bInputEnabled && !!sValue && sValue.trim().length > 0);
+		var bPostButtonEnabled = this._isControlEnabled();
 		var oButton = this._getPostButton();
-		if (oButton.getEnabled() !== bPostButtonEnabled) {
-			oButton.setEnabled(bPostButtonEnabled);
-		}
+		oButton.setEnabled(bPostButtonEnabled);
+	};
+
+	/**
+	 * Verifies if the control is enabled or not
+	 */
+	FeedInput.prototype._isControlEnabled = function() {
+		var sValue = this.getValue();
+		return this.getEnabled() && jQuery.type(sValue) === "string" && sValue.trim().length > 0;
 	};
 
 	/**
@@ -239,7 +252,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sImgId = this.getId() + '-icon',
 			mProperties = {
 				src : sIconSrc,
-				densityAware : this.getIconDensityAware()
+				alt : this.getAriaLabelForPicture(),
+				densityAware : this.getIconDensityAware(),
+				decorative : false,
+				useIconTooltip: false
 			},
 			aCssClasses = ['sapMFeedInImage'];
 
@@ -247,7 +263,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		return this._oImageControl;
 	};
-
 
 	return FeedInput;
 

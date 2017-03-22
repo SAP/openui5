@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.JSView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
-	function(jQuery, library, View) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View', 'sap/ui/base/ManagedObject'],
+	function(jQuery, library, View, ManagedObject) {
 	"use strict";
 
 
@@ -105,8 +105,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 			/*** require view definition if not yet done... ***/
 			if (!mRegistry[mSettings.viewName] && mSettings.async) {
 				oPromise = new Promise(function(resolve) {
-					jQuery.sap.require({modName: mSettings.viewName, type: "view"});
-					resolve();
+					var sModuleName = jQuery.sap.getResourceName(mSettings.viewName, ".view");
+					sap.ui.require([sModuleName], resolve);
 				});
 			} else if (!mRegistry[mSettings.viewName]) {
 				jQuery.sap.require({modName: mSettings.viewName, type: "view"});
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 			}
 			oPreprocessors.settings = this._fnSettingsPreprocessor;
 			// unset any preprocessors (e.g. from an enclosing JSON view)
-			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
+			ManagedObject.runWithPreprocessors(function() {
 				that.applySettings({ content : that.createContent(oController) });
 			}, oPreprocessors);
 		};
@@ -146,7 +146,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		 * prefixing.
 		 *
 		 * @since 1.15.1
-		 * @experimental Since 1.15.1. This feature might be changed in future.
 		 * @return {boolean} true, if the controls IDs should be prefixed automatically
 		 * @protected
 		 */
@@ -171,4 +170,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 
 	return JSView;
 
-}, /* bExport= */ true);
+});

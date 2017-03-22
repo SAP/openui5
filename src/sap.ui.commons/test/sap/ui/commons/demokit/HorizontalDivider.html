@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.HorizontalDivider">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control HorizontalDivider HR Layout" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control HorizontalDivider HR Layout">
 		<title>HorizontalDivider - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<style>
 			.sapUiBtn.CustomMargin{
 				margin-right: 10px;
@@ -61,7 +61,7 @@ oMatrix.createRow(oCell);
 //Create a button row
 var oCell = new sap.ui.commons.layout.MatrixLayoutCell({colSpan: 2});
 var oButton = new sap.ui.commons.Button({text: 'Save'});
-oButton.addStyleClass("CustomMargin"); //Add some additional left margin 
+oButton.addStyleClass("CustomMargin"); //Add some additional left margin
 oCell.addContent(oButton);
 oButton = new sap.ui.commons.Button({text: 'Cancel'});
 oCell.addContent(oButton);
@@ -79,14 +79,14 @@ oMatrix.placeAt("sample2");
 	<h2>Introduction</h2>
 	<p>
 	The HorizontalDivider control is used to visually segment the Web application screen by displaying a horizontal line.
-	It is possible to make settings for the width in CSS notation, for the height (pre-defined top/bottom margin via type <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.HorizontalDividerHeight.html">HorizontalDividerHeight</a>), 
+	It is possible to make settings for the width in CSS notation, for the height (pre-defined top/bottom margin via type <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.HorizontalDividerHeight.html">HorizontalDividerHeight</a>),
 	and for the appearance (type <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.HorizontalDividerType.html">HorizontalDividerType</a>).
 	</p>
 
 	<h2>Examples</h2>
 	<p>
-	The following examples shows how to use the HorizontalDivider. The first area contains a HorizontalDivider with two divider instances containing different settings for the visual display. 
-	The second area contains a form and buttons, and the buttons are visually separated from the form. 
+	The following examples shows how to use the HorizontalDivider. The first area contains a HorizontalDivider with two divider instances containing different settings for the visual display.
+	The second area contains a form and buttons, and the buttons are visually separated from the form.
 	</p>
 	<br><br>
 	<div code-sample="sample1" script="HorizontalDividerScript1"></div>

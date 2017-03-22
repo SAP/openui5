@@ -1,8 +1,7 @@
 <html>
 	<head>
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/CORE</title>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script src="../../../../../../resources/sap-ui-core.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
 		<script>
 
 		/**
@@ -13,32 +12,60 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AppCacheBuster.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CacheManager.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ControlDefinition.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CoreLock.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=none");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=json");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both,testlibs.scenario7.lib2:json,testlibs.scenario8.lib2:json,testlibs.scenario7.lib3:js,testlibs.scenario8.lib3:js");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js,testlibs.scenario7.lib2:json,testlibs.scenario8.lib2:json,testlibs.scenario7.lib3:none,testlibs.scenario8.lib3:none");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=json,testlibs.scenario7.lib2:none,testlibs.scenario8.lib2:none,testlibs.scenario7.lib3:js,testlibs.scenario8.lib3:js");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both,testlibs.scenario7.lib4:none,testlibs.scenario8.lib4:none,testlibs.scenario7.lib5:none,testlibs.scenario8.lib5:none");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CustomStyleClassSupport.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ContextMenuSupport.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Declarative.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DuplicateIds.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DuplicateIds_noError.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Element_sourceInfo.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Element_data.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Element_delegates.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Element_contextualWidth.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ElementMetadata.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Fragment.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/IconPool.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/IconPool-custom-theme.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/IntervalTrigger.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSON.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.global.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.global-config.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile2.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile3.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.ui.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Locale.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/LocaleData.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/LRUPersistentCache.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ManagedObject.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ManagedObject_isPropertyInitial.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ModuleSystem.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Object.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/PlaceAt.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/RenderManager.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/sap.ui.Global.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/SinonJS.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/StashedControlSupport.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ThemeCheck.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ThemeParameters.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/TooltipBase.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/UIArea.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/IslamicDate.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/UniversalDate.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Islamic.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Japanese.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Persian.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/QUnit.qunit.html");
 
 			return suite;
 		}

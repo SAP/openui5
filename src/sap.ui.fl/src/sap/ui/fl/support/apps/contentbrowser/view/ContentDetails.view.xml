@@ -1,0 +1,48 @@
+<core:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.ContentDetails"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page
+		title="{path: 'selectedContent>/', formatter: '.oDataUtils.formatItemTitle'}">
+		<IconTabBar id="contentDetailsIconTabBar">
+			<items>
+				<IconTabFilter
+					icon="sap-icon://attachment"
+					text="{i18n>content}">
+					<f:SimpleForm
+						minWidth="1024"
+						maxContainerCols="1"
+						editable="false"
+						layout="ResponsiveGridLayout"
+						labelSpanL="12"
+						labelSpanM="12"
+						columnsL="1"
+						columnsM="1">
+						<Text class="codeBlock" text="{selectedContent>/data}" />
+					</f:SimpleForm>
+				</IconTabFilter>
+				<IconTabFilter
+					icon="sap-icon://hint"
+					count="{selectedContent>/metadata/length}"
+					text="{i18n>metadata}">
+					<List
+						items="{
+							path: 'selectedContent>/metadata',
+							sorter: {
+								path: 'selectedContent>category',
+								descending: true,
+								group: true
+							},
+							groupHeaderFactory: '.oDataUtils.getGroupHeader'}" >
+						<items>
+							<DisplayListItem
+								label="{selectedContent>name}"
+								value="{selectedContent>value}" />
+						</items>
+					</List>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+	</Page>
+</core:View>

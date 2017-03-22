@@ -1,0 +1,26 @@
+<View
+	xmlns="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	controllerName="sap.ui.core.sample.RoutingMasterDetail.routingApp.controller.Detail2">
+	<Page
+		title="{productName}"
+		showNavButton="true"
+		navButtonPress="onNavBack">
+		<content>
+			<f:SimpleForm title="Product Details">
+				<f:content>
+					<Label text="Prduct ID"/>
+					<Text text="{productId}" />
+					<Label text="Prduct Name"/>
+					<Text text="{productName}" />
+				</f:content>
+			</f:SimpleForm>
+			<layout:VerticalLayout class="sapUiContentPadding">
+				<Text text="Static Routes:" />
+				<Link text="Go to product 1-C" press="onToProduct1C" />
+				<Link text="Go to product 2-D" press="onToProduct2D" />
+			</layout:VerticalLayout>
+		</content>
+	</Page>
+</View>

@@ -2,7 +2,7 @@ sap.ui.define(function() {
 	"use strict";
 
 	var Formatter = {
-	
+
 		categoryIcon : function (sValue) {
 			var sIcon;
 			switch (sValue) {

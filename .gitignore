@@ -1,7 +1,8 @@
-# Ignore .gitignore and target folders
+# Ignore .gitignore, target and tmp folders
 src/*/.gitignore
 src/*/target/
 /target
+/tmp
 
 # Ignore Eclipse project and settings files
 .classpath
@@ -30,3 +31,12 @@ bower_components
 *.sln
 *.suo
 web.config
+/.user.project.json
+/sap-ui-cachebuster-info.json
+
+# Ignore Visual Studio Code project and settings files
+.vscode/
+
+# Ignore yarn files
+yarn.lock
+*yarn

@@ -1,0 +1,92 @@
+/* ===================================== */
+/* CSS for control sap.uxap/BreadCrumbs  */
+/* Base theme                            */
+/* ===================================== */
+
+.sapUxAPBreadCrumbs {
+	margin: 0 0 0.5rem 0;
+	height: 1.25rem;
+
+	.sapMLnk, .sapMText, .sapUxAPTubeIcon, .sapMSlt {
+		vertical-align: middle;
+	}
+
+	& .sapMSlt {
+		border: 0;
+		margin: 0;
+		height: 1.25rem;
+
+		.sapMSltArrow {
+			margin-right: -0.5rem;
+			background-color: transparent;
+			line-height: 1.25rem;
+		}
+		.sapMSltLabel {
+			padding-left: 0;
+			padding-right: 1.5rem;
+			line-height: 1.25rem;
+		}
+	}
+
+	& .sapMSltHoverable:hover:not(.sapMSltPressed) > .sapMSltArrow {
+		background-color: transparent;
+	}
+
+	.sapUxAPBreadCrumbsDots {
+		color: @sapUiLink;
+		font-weight: normal;
+		font-size: 0.875rem;
+		text-decoration: none;
+	}
+
+	div:nth-child(1) {
+		white-space: nowrap;
+		padding-right: 2rem;
+	}
+
+	& > ul {
+		list-style-type: none;
+		display: inline;
+		padding: 0;
+		margin: 0;
+
+		li {
+			display: inherit;
+			padding: 0;
+			margin: 0;
+		}
+	}
+
+	.sapUxAPTubeIcon {
+		margin: 0 0.5rem 0 0.5rem;
+	}
+
+	&.sapUxAPFullWidth {
+		width: 100%;
+	}
+
+	.sapUxAPInvisible {
+		visibility: hidden;
+	}
+	
+	.sapMText:focus {
+		outline: 0.0625rem dotted @sapUiContentFocusColor;
+		outline-offset: 0.2rem;
+	}
+
+	.sapMSlt {
+		background-color: transparent;
+
+		.sapMSltLabel {
+			color: @sapUiContentLabelColor;
+		}
+	}
+
+	.sapMSltPressed > .sapMSltArrow::before {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapUiSizeCompact .sapUxAPBreadCrumbs & .sapMSlt {
+	height: 1.625rem;
+}

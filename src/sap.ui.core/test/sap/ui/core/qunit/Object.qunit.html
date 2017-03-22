@@ -1,31 +1,30 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
-<!-- 
-  JSUNIT: 
+
+<!--
+  JSUNIT:
     Tested control/class: sap.ui.base.Objects.js
     Author: Martin Schaus
  -->
 
 		<title>Test Page for Object Class</title>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-theme="sap_bluecrystal">
+				data-sap-ui-noConflict="true">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
-		
-		/* 
-		 * JSUNIT: 
-	     *     create your test fixture here, e.g. create SAPUI5 control tree and add it to 
-	     *     "uiArea1".  
-		 */ 
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+
+		/*
+		 * JSUNIT:
+	     *     create your test fixture here, e.g. create SAPUI5 control tree and add it to
+	     *     "uiArea1".
+		 */
 
 		if ( typeof Array.indexOf === "undefined" ) {
 			Array.prototype.indexOf = function(m) {
@@ -39,17 +38,17 @@
 
 		function assertArrayEquals(sMessage, a1, a2) {
 			if ( !a1 || !a2 ) {
-				strictEqual(a2, a1, sMessage);
+				assert.strictEqual(a2, a1, sMessage);
 				return;
 			}
-			
+
 			var l1=a1.length,l2=a2.length;
-			strictEqual(l2, l1, sMessage);
+			assert.strictEqual(l2, l1, sMessage);
 			for(var i=0; i<l1; i++) {
-				strictEqual(a2[i], a1[i], sMessage);
+				assert.strictEqual(a2[i], a1[i], sMessage);
 			};
 		};
-			
+
 
 		jQuery.sap.require("sap.ui.base.Object");
 		jQuery.sap.declare("sap.test.NewClass");
@@ -64,7 +63,7 @@
 		sap.test.NewClass.prototype.method1 = function() {
 			return this.value1;
 		};
-		
+
 		sap.test.NewSubClass = function(v1,v2){ sap.test.NewClass.call(this, v1); this.value2 = v2; };
 		sap.test.NewSubClass.prototype = jQuery.sap.newObject(sap.test.NewClass.prototype);
 		sap.ui.base.Object.defineClass("sap.test.NewSubClass", {
@@ -76,65 +75,65 @@
 			return this.value2;
 		};
 
-		module("Base", {
-			setup : function() {
+		QUnit.module("Base", {
+			beforeEach : function() {
 				oObject = new sap.ui.base.Object();
 				oNewClassInstance = new sap.test.NewClass(42);
 				oNewSubClassInstance = new sap.test.NewSubClass();
 			}
 		});
 
-		test("InitialObject", function() {
+		QUnit.test("InitialObject", function(assert) {
 			// assert("fresh object doesn't have interface", typeof oObject.oInterface === "undefined");
-			ok(oObject.getInterface === sap.ui.base.Object.prototype.getInterface, "fresh object doesn't have own getInterface implementation");
+			assert.ok(oObject.getInterface === sap.ui.base.Object.prototype.getInterface, "fresh object doesn't have own getInterface implementation");
 		});
 
-		test("GetInterface", function() {
+		QUnit.test("GetInterface", function(assert) {
 			var oIntf1 = oNewClassInstance.getInterface();
-			ok(oIntf1 !== undefined && oIntf1 !== null, "interface returned");
+			assert.ok(oIntf1 !== undefined && oIntf1 !== null, "interface returned");
 			// assert("object has interface member", oObject.oInterface && typeof oObject.oInterface === "object" );
-			ok(oNewClassInstance.getInterface !== sap.ui.base.Object.prototype.getInterface, "object has own getInterface implementation");
+			assert.ok(oNewClassInstance.getInterface !== sap.ui.base.Object.prototype.getInterface, "object has own getInterface implementation");
 			var oIntf2 = oNewClassInstance.getInterface();
-			ok(oIntf1 === oIntf2, "stable interface");
+			assert.ok(oIntf1 === oIntf2, "stable interface");
 			for(var m in oIntf1) {
 				if ( typeof oIntf1[m] === "function" ) {
-					ok(oNewClassInstance.getMetadata().getAllPublicMethods().indexOf(m) >= 0, "interface has only functions from the list");
-					// TODO the following tests only work for methods that have stable results and that don't require arguments 
+					assert.ok(oNewClassInstance.getMetadata().getAllPublicMethods().indexOf(m) >= 0, "interface has only functions from the list");
+					// TODO the following tests only work for methods that have stable results and that don't require arguments
 					var r1 = oNewClassInstance[m]();
 					var r2 = oIntf1[m]();
-					strictEqual(r2, r1, "same values returned"); 
-				}		
+					assert.strictEqual(r2, r1, "same values returned");
+				}
 			}
 		});
 
-		test("GetMetadata", function() {
-			ok(oNewClassInstance.getMetadata() != false, "metadata available");
-			ok(oNewSubClassInstance.getMetadata() != false, "metadata available");
+		QUnit.test("GetMetadata", function(assert) {
+			assert.ok(oNewClassInstance.getMetadata() != false, "metadata available");
+			assert.ok(oNewSubClassInstance.getMetadata() != false, "metadata available");
 		});
 
-		test("BaseTypeSet", function() {
-			ok(oNewClassInstance.getMetadata().getParent() != false, "basetype set");
-			strictEqual("sap.ui.base.Object", oNewClassInstance.getMetadata().getParent().getName(), "basetype as expected");
-			ok(oNewSubClassInstance.getMetadata().getParent() != false, "basetype set");
-			strictEqual(oNewClassInstance.getMetadata(), oNewSubClassInstance.getMetadata().getParent(), "basetype as expected");
+		QUnit.test("BaseTypeSet", function(assert) {
+			assert.ok(oNewClassInstance.getMetadata().getParent() != false, "basetype set");
+			assert.strictEqual("sap.ui.base.Object", oNewClassInstance.getMetadata().getParent().getName(), "basetype as expected");
+			assert.ok(oNewSubClassInstance.getMetadata().getParent() != false, "basetype set");
+			assert.strictEqual(oNewClassInstance.getMetadata(), oNewSubClassInstance.getMetadata().getParent(), "basetype as expected");
 		});
 
-		test("PublicMethods", function() {
+		QUnit.test("PublicMethods", function(assert) {
 			assertArrayEquals("public methods", oNewClassInstance.getMetadata().getPublicMethods(), ["method1"]);
 			assertArrayEquals("public methods", oNewClassInstance.getMetadata().getAllPublicMethods(), ["method1"]);
 			assertArrayEquals("public methods", oNewSubClassInstance.getMetadata().getPublicMethods(), ["method2"]);
 			assertArrayEquals("public methods", oNewSubClassInstance.getMetadata().getAllPublicMethods(), ["method1", "method2"]);
 		});
 
-		test("Interfaces", function() {
+		QUnit.test("Interfaces", function(assert) {
 			assertArrayEquals("interfaces", oNewClassInstance.getMetadata().getInterfaces(), ["sap.ui.base.Poolable"]);
-			ok(oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
-			ok(!oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.PureImagination"), "isInstanceOf");
+			assert.ok(oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
+			assert.ok(!oNewClassInstance.getMetadata().isInstanceOf("sap.ui.base.PureImagination"), "isInstanceOf");
 			assertArrayEquals("interfaces", oNewSubClassInstance.getMetadata().getInterfaces(), ["sap.ui.base.Cacheable"]);
-			ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Cacheable"), "isInstanceOf");
-			ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
+			assert.ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Cacheable"), "isInstanceOf");
+			assert.ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
 		});
-		
+
   	</script>
  	</head>
 	<body>

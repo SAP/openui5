@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Using Gherkin with QUnit</title>
+
+    <script
+      id="sap-ui-bootstrap" src="../../../../../../../../resources/sap-ui-core.js"
+      data-sap-ui-resourceroots='{"GherkinWithQUnit": "./"}'
+      data-sap-ui-loglevel="INFO"
+    ></script>
+
+    <script>
+      sap.ui.require([
+        "jquery.sap.global",
+        "sap/ui/test/gherkin/qUnitTestHarness",
+        // Code coverage will be calculated for all modules loaded after the harness
+        "GherkinWithQUnit/Steps"
+      ], function($, qUnitTestHarness, Steps) {
+        "use strict";
+
+        qUnitTestHarness.test({
+          featurePath: "GherkinWithQUnit.Requirements1",
+          steps: Steps
+        });
+        qUnitTestHarness.test({
+          featurePath: "GherkinWithQUnit.Requirements2",
+          steps: Steps
+        });
+      });
+    </script>
+
+  </head>
+  <body>
+  	<div id="qunit"></div>
+  	<div id="qunit-fixture"></div>
+  </body>
+</html>
+
+
+

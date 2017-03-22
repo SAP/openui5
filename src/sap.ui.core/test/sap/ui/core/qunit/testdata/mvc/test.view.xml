@@ -7,6 +7,7 @@
 	<phx:Panel id="myPanel">
 		<!-- this comment should be ignored -->
 		<phx:Button id="Button3" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>
+		<phx:Button id="ButtonX" text="Another Hello" press=".sap.doIt"></phx:Button>
 		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>
 		<phx:content>
 			<!-- this comment should be ignored -->

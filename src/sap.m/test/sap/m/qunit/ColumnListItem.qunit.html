@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>ColumnListItem - sap.m</title>
 
@@ -10,22 +10,24 @@
 	type="text/css" media="screen"/>
 
 <!-- UI5 Bootstrap -->
+<script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
 	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.m"></script>
 
 <!-- QUnit libraries -->
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
 
 	jQuery.sap.initMobile();
 	var core = sap.ui.getCore();
 
-	test("ShouldRemoveAPopin", function() {
+	QUnit.test("ShouldRemoveAPopin", function(assert) {
 		// SUT
 		var result,
 			popinId,
@@ -43,82 +45,54 @@
 
 		table.placeAt("qunit-fixture");
 		core.applyChanges();
-		popinId = sut._popinId;
-		hasPopin = sut.hasOwnProperty("_popinId");
+		hasPopin = sut.hasPopin();
 
 		// Act
 		result = sut.removePopin();
 
 		// Assert
-		ok(hasPopin,"did have a popin before deleting it");
-		ok(sut._popinId === "", "popinId Property is cleared");
-		equal(jQuery("#" + popinId).length, 0,"popin got removed from dom");
+		assert.ok(hasPopin, "did have a popin before deleting it");
+		assert.equal(sut.$Popin().length, 0,"popin got removed from dom");
 
 		//Cleanup
 		table.destroy();
 	});
 
-	test("ShouldToggleActiveClass", function() {
+	QUnit.test("ShouldToggleActiveClass", function(assert) {
 		var testCase = function(sFunctionName,hasClass){
 			//Arrange
-			var popinId = "someId",
-				className ="sapMLIBActive",
-				sut,
-				$element = $("<div>").attr("id",popinId);
+			var className ="sapMLIBActive",
+				sut = new sap.m.ColumnListItem({
+					cells: new sap.m.Text
+				}),
+				column = new sap.m.Column({
+					demandPopin : true,
+					// make the column bigger than the screen
+					minScreenWidth : "48000px"
+				}),
+				table = new sap.m.Table({
+					columns : column,
+					items : sut
+				}),
+				popin = sut.getPopin();
 
-			//fake the renderer
-			$("#qunit-fixture").append($element);
-
-			//SUT
-			sut = new sap.m.ColumnListItem();
-			//fake a popin
-			sut._popinId = popinId;
+			table.placeAt("qunit-fixture");
+			core.applyChanges();
 
 			//Act
 			sut[sFunctionName]();
 
 			//Assert
-			equal($element.hasClass(className),hasClass);
+			assert.equal(sut.$Popin().hasClass(className), hasClass);
 
-			$element.remove();
-			sut.destroy();
+			table.destroy();
 		};
 
 		testCase("_activeHandlingInheritor",true);
 		testCase("_inactiveHandlingInheritor",false);
 	});
 
-
-	test("ShouldHandleEvents", function() {
-		//Arrange
-		var sut,oContainerDomRef,
-			$target = $("<div>").attr("id","anotherId"),
-			sEventName = "SomeEvent",
-			oEvent = jQuery.Event(sEventName),
-			$fakeColumnListItem = $("<div>").attr("id","someId"),
-			$fakePopin = $("<div>").addClass("sapMListTblSubRow").append($target);
-
-		//add fakes to dom
-		oContainerDomRef = $("#qunit-fixture").append($fakeColumnListItem).append($fakePopin);
-
-		oEvent.target = $target;
-
-		//SUT
-		sut = new sap.m.ColumnListItem("someId");
-
-		sut["on" + sEventName] = function(){
-			//Assert
-			ok(true, "Event sucessfully invoked");
-		}
-
-		//Act
-		sap.m.ColumnListItem.handleEvents(oEvent, oContainerDomRef);
-
-		//Cleanup
-		sut.destroy();
-	});
-	
-	test("Should not clone headers for popinDisplay:WithoutHeader", function() {
+	QUnit.test("Should not clone headers for popinDisplay:WithoutHeader", function(assert) {
 		// SUT
 		var result,
 			popinId,
@@ -132,10 +106,10 @@
 				header : new sap.m.Text({
 					text : "Header"
 				}),
-				
+
 				// make the size bigger than the screen to force to go to popin
 				minScreenWidth : "48000px",
-				demandPopin : true,
+				demandPopin : true
 			}),
 			table = new sap.m.Table({
 				columns : column,
@@ -146,25 +120,48 @@
 		core.applyChanges();
 
 		// Assert
-		ok(sut.hasPopin(), "Popin is generated");
-		strictEqual(sut._aClonedHeaders.length, 1, "Popin has cloned header");
-		strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 1, "Popin header is found in the dom");
-		strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 1, "Popin separator is found in the dom");
-		strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
-		
+		assert.ok(sut.hasPopin(), "Popin is generated");
+		assert.strictEqual(sut._aClonedHeaders.length, 1, "Popin has cloned header");
+		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 1, "Popin header is found in the dom");
+		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 1, "Popin separator is found in the dom");
+		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
+
 		column.setPopinDisplay("WithoutHeader");
 		core.applyChanges();
-		
-		strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
-		strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 0, "Popin header is not found in the dom");
-		strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 0, "Popin separator is not found in the dom");
-		strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
+
+		assert.strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
+		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 0, "Popin header is not found in the dom");
+		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 0, "Popin separator is not found in the dom");
+		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
 
 		column.destroy();
 		core.applyChanges();
-		
-		strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
-		strictEqual(sut.$Popin().length, 0, "No popin in the dom");
+
+		assert.strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
+		assert.strictEqual(sut.$Popin().length, 0, "No popin in the dom");
+
+		//Cleanup
+		table.destroy();
+	});
+
+	QUnit.test("RenderOulineClassButNotLegacyOutlineClass", function(assert) {
+		this.stub(sap.ui.Device.system, "desktop", true);
+		this.stub(sap.ui.Device, "browser", {"msie": true});
+
+		// SUT
+		var sut = new sap.m.ColumnListItem(),
+			column = new sap.m.Column(),
+			table = new sap.m.Table({
+				columns : column,
+				items : sut
+			});
+
+		table.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		// Assert
+		assert.ok(sut.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		assert.ok(!sut.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
 
 		//Cleanup
 		table.destroy();

@@ -1,0 +1,41 @@
+{
+	"Error case" : "Element form same namespace; redundant Department",
+	"$EntityContainer" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Container",
+	"$Reference" : {
+		"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
+			"$Include" : [ "com.sap.gateway.default.iwbep.tea_busi_product.v0001." ]
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.NewType" : {
+		"$kind" : "EntityType",
+		"$Key" : [ "ID" ],
+		"ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		},
+		"Name" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 40
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.Department" : {
+		"$kind" : "EntityType",
+		"$Key" : [ "Sector", "ID" ],
+		"Sector" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 10
+		},
+		"ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		}
+	}
+}

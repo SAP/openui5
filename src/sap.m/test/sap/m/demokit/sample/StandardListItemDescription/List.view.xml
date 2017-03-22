@@ -2,7 +2,7 @@
 	controllerName="sap.m.sample.StandardListItemDescription.List"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<List 
+	<List
 		id="ShortProductList"
 		headerText="Products"
 		items="{

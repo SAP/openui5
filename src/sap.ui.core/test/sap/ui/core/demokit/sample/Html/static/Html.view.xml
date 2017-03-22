@@ -1,0 +1,27 @@
+<mvc:View
+  xmlns:l="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  controllerName="sap.ui.core.sample.Html.static.Html"
+>
+
+	<Panel
+	  headerText="Static HTML Provided as a String"
+	>
+	  <content>
+	    <FormattedText
+	      htmlText='&lt;p&gt;This is the simple use case for the HTML control: Some - usually decorative - HTML fragment is specified as a string and set to the content property. Without further configuration, the HTML control will convert this string to DOM nodes whenever it has to render.&lt;/p&gt;
+	      &lt;p&gt;This example contains an HTML control. The content of the HTML control is defined by a longer string literal. Whenever the control is rendered, the string content is rendered as inner HTML and thereby converted to DOM nodes.&lt;/p&gt;
+	      &lt;p&gt;After rendering, the DOM nodes can be modified by an action such as add node, remove node, modify attribute, or attach event handler, for example. You can click into the HTML control below to simulate such dynamic changes. But whenever the control is rendered again, the original HTML fragment is also rendered and new DOM nodes replace the existing modified ones. Check it with the Redraw button which invalidates and re-renders the HTML control.&lt;/p&gt;'
+	    />
+
+	    <l:HorizontalLayout id="staticContentLayout">
+	      <l:content>
+					<Button text="Redraw" press="onRedraw" />
+	      </l:content>
+			</l:HorizontalLayout>
+
+	  </content>
+	</Panel>
+</mvc:View>

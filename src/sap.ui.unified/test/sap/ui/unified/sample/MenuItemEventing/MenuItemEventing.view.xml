@@ -8,7 +8,7 @@
 	<l:HorizontalLayout>
 		<l:content>
 			<Button id="openMenu" text="Open Menu" press="handlePressOpenMenu" />
-			
+
 		</l:content>
 	</l:HorizontalLayout>
 </mvc:View>

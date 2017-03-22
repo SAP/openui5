@@ -1,91 +1,106 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for sap.ui.test.matchers.PropertyStrictEquals</title>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>qUnit Page for sap.ui.test.matchers.PropertyStrictEquals</title>
 
-<script
-	src="../../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.ui.commons">
-</script>
+		<script src="../../../shared-config.js"></script>
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
+		</script>
 
 
-<script>
-(function () {
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			sap.ui.require(
+				[
+					"sap/ui/test/matchers/PropertyStrictEquals",
+					"sap/m/Button"
+				],
+				function (PropertyStrictEquals, Button) {
 
-	jQuery.sap.require("sap.ui.test.matchers.PropertyStrictEquals");
+					QUnit.module("PropertyStrictEquals", {
+						beforeEach: function () {
+							this.oButton = new Button("myButton");
+						},
+						afterEach: function () {
+							this.oButton.destroy();
+						}
+					});
 
-	jQuery.sap.require("sap.ui.commons.Button");
-	function strictMatchTestCase (sTextValue, sMatcherValue, bExpected) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button({text : sTextValue});
+					[{
+						textValue: "foo",
+						matcherValue: "foo",
+						expected: true,
+						logMessage: ""
+					},
+					{
+						textValue: "foo",
+						matcherValue: "bar",
+						expected: false,
+						logMessage: "The property 'text' of 'myButton' has the value 'foo' expected 'bar'"
+					},
+					{
+						textValue: "",
+						matcherValue: null,
+						expected: false,
+						logMessage: "The property 'text' of 'myButton' has the value '' expected 'undefined'"
+					}].forEach(function (oTestCase) {
+						QUnit.test("Should strictmatch for " + JSON.stringify(oTestCase), function (assert) {
+							// Arrange
+							this.oButton.setText(oTestCase.textValue);
 
-		// System under Test
-		var oMatcher = new sap.ui.test.matchers.PropertyStrictEquals({
-			name : "text",
-			value : sMatcherValue
-		});
+							// System under Test
+							var oMatcher = new PropertyStrictEquals({
+								name : "text",
+								value : oTestCase.matcherValue
+							});
+							var fnLogSpy = sinon.spy(oMatcher._oLogger, "debug");
 
-		// Act
-		var bResult = oMatcher.isMatching(oButton);
+							// Act
+							var bResult = oMatcher.isMatching(this.oButton);
 
-		// Assert
-		strictEqual(bResult, bExpected, "Did match strictly");
+							// Assert
+							assert.strictEqual(bResult, oTestCase.expected, "Strict match");
+							if (oTestCase.logMessage) {
+								sinon.assert.calledWith(fnLogSpy, oTestCase.logMessage);
+							} else {
+								sinon.assert.notCalled(fnLogSpy);
+							}
+						});
+					});
 
-		// Cleanup
-		oButton.destroy();
-	}
+					QUnit.test("Should complain if control does not have a property", function(assert) {
+						// System under Test
+						var oMatcher = new PropertyStrictEquals({
+							name : "aPropertyThatWillNeverBeAddedToTheButton",
+							value : "anything"
+						});
+						var oErrorSpy = this.spy(oMatcher._oLogger, "error");
 
-	test("Should strictmatch a matching property", function() {
-		strictMatchTestCase.call(this, "foo", "foo", true)
-	});
+						// Act
+						var bResult = oMatcher.isMatching(this.oButton);
 
-	test("Should not strictmatch a not matching property", function() {
-		strictMatchTestCase.call(this, "foo", "bar", false)
-	});
+						// Assert
+						assert.strictEqual(bResult, false, "Did not match");
+						sinon.assert.calledWith(oErrorSpy, "Control 'myButton' does not have a property called 'aPropertyThatWillNeverBeAddedToTheButton'");
+					});
+				}
+			);
+		</script>
+	</head>
 
-	test("Should not strictmatch 2 falsy values", function() {
-		strictMatchTestCase.call(this, "", null, false)
-	});
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
 
-	test("Should complain if control does not have a property", function() {
-		// Arrange
-		var oButton = new sap.ui.commons.Button();
-		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-
-		// System under Test
-		var oMatcher = new sap.ui.test.matchers.PropertyStrictEquals({
-			name : "aPropertyThatWillNeverBeAddedToTheButton",
-			value : "anything"
-		});
-
-		// Act
-		var bResult = oMatcher.isMatching(oButton);
-
-		// Assert
-		strictEqual(bResult, false, "Did not match");
-		strictEqual(oErrorSpy.callCount, 1, "Did complain");
-
-		// Cleanup
-		oButton.destroy();
-	});
-} ());
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.test.matchers.PropertyStrictEquals</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
-
-</body>
 </html>

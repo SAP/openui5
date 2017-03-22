@@ -1,14 +1,13 @@
 <mvc:View
-	controllerName="sap.m.sample.InputSuggestionsOpenSearch.C"
-	xmlns:l="sap.ui.layout"
-	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
+		controllerName="sap.m.sample.InputSuggestionsOpenSearch.C"
+		xmlns:l="sap.ui.layout"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
 	<l:VerticalLayout
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<Label text="Product" />
+			<Label text="Product" labelFor="productInput"/>
 			<Input
 				id="productInput"
 				type="Text"

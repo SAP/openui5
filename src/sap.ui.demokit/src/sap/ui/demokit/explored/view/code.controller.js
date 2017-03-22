@@ -1,9 +1,14 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
-/*global JSZip *///declare unusual global vars for JSLint/SAPUI5 validation
-sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
+/*global JSZip, URI *///declare unusual global vars for JSLint/SAPUI5 validation
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+	'sap/ui/core/Component', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/MessageToast',
+	'../data'],
+	function (jQuery, Device, Component, UIComponent, Controller, JSONModel, MessageToast, data) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.code", {
@@ -11,7 +16,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 		_aMockFiles : ["products.json", "supplier.json", "img.json"],
 
 		onInit : function () {
-			this.router = sap.ui.core.UIComponent.getRouterFor(this);
+			this.router = UIComponent.getRouterFor(this);
 			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
 			this._viewData = sap.ui.getCore().byId("app").getViewData();
 			this._viewData.component.codeCache = {};
@@ -20,60 +25,70 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 		onRouteMatched : function (oEvt) {
 
 			// get params
-			if (oEvt.getParameter("name") !== "code") {
+			if (oEvt.getParameter("name") !== "code" && oEvt.getParameter("name") !== "code_file") {
 				return;
 			}
 
 			this._sId = oEvt.getParameter("arguments").id;
+			var sFileName = decodeURIComponent(oEvt.getParameter("arguments").fileName);
 
 			// retrieve sample object
-			var oSample = sap.ui.demokit.explored.data.samples[this._sId];
+			var oSample = data.samples[this._sId];
 			if (!oSample) {
 				this.router.myNavToWithoutHash("sap.ui.demokit.explored.view.notFound", "XML", false, { path: this._sId });
 				return;
 			}
 
-			// get component
-			var sCompId = 'sampleComp-' + this._sId;
-			var sCompName = this._sId;
-			var oComp = sap.ui.component(sCompId);
-			if (!oComp) {
-				oComp = sap.ui.getCore().createComponent({
-					id : sCompId,
-					name : sCompName
-				});
-			}
+			// cache the data to be reused
+			if (!this._oData || oSample.id !== this._oData.id) {
 
-			// create data object
-			var oMetadata = oComp.getMetadata();
-			var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
-			var oData = {
-				id : oSample.id,
-				title : "Code: " + oSample.name,
-				name : oSample.name,
-				stretch : oConfig.sample ? oConfig.sample.stretch : false,
-				files : [],
-				iframe : oConfig.sample.iframe
-			};
-
-			// retrieve files
-			// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
-			if (oConfig && oConfig.sample && oConfig.sample.files) {
-				var sRef = jQuery.sap.getModulePath(oSample.id);
-				for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
-					var sFile = oConfig.sample.files[i];
-					var sContent = this.fetchSourceFile(sRef, sFile);
-
-					oData.files.push({
-						name : sFile,
-						raw : sContent,
-						code : this._convertCodeToHtml(sContent)
+				// get component and data when sample is changed or nothing exists so far
+				var sCompId = 'sampleComp-' + this._sId;
+				var sCompName = this._sId;
+				var oComp = sap.ui.component(sCompId);
+				if (!oComp) {
+					oComp = sap.ui.getCore().createComponent({
+						id : sCompId,
+						name : sCompName
 					});
 				}
-			}
 
+				// create data object
+				var oMetadata = oComp.getMetadata();
+				var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
+				this._oData = {
+					id : oSample.id,
+					title : "Code: " + oSample.name,
+					name : oSample.name,
+					stretch : oConfig.sample ? oConfig.sample.stretch : false,
+					files : [],
+					iframe : oConfig.sample.iframe,
+					fileName: sFileName,
+					includeInDownload: oConfig.sample.additionalDownloadFiles
+				};
+
+				// retrieve files
+				// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
+				if (oConfig && oConfig.sample && oConfig.sample.files) {
+					var sRef = jQuery.sap.getModulePath(oSample.id);
+					for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
+						var sFile = oConfig.sample.files[i];
+						var sContent = this.fetchSourceFile(sRef, sFile);
+
+						this._oData.files.push({
+							name : sFile,
+							raw : sContent,
+							code : this._convertCodeToHtml(sContent)
+						});
+					}
+				}
+			} else {
+				this._oData.fileName = sFileName;
+			}
 			// set model
-			this.getView().setModel(new sap.ui.model.json.JSONModel(oData));
+			var oJSONModel = new JSONModel(this._oData);
+			this.getView().setModel(oJSONModel);
+			oJSONModel.refresh(true);
 
 			// scroll to top of page
 			var page = this.getView().byId("page");
@@ -110,16 +125,28 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			var oZipFile = new JSZip();
 
 			// zip files
-			var oData = this.getView().getModel().getData();
+			var oData = this.getView().getModel().getData(),
+				iRequiredParentLevels = 0;
 			for (var i = 0 ; i < oData.files.length ; i++) {
 				var oFile = oData.files[i],
-					sRawFileContent = oFile.raw;
+					sRawFileContent = oFile.raw,
+					iFileNestedLevel = oFile.name.split("../").length - 1,
+					sFileNameCloned = oFile.name.slice();
 
-				if (oFile.name === oData.iframe) {
+				if (iFileNestedLevel > iRequiredParentLevels) {
+					iRequiredParentLevels = iFileNestedLevel;
+				}
+
+				if (iFileNestedLevel > 0 ) {
+					sFileNameCloned = oFile.name.slice(oFile.name.lastIndexOf("../") + 3);
+				}
+
+				// change the bootstrap URL to the current server for all HTML files of the sample
+				if (sFileNameCloned && (sFileNameCloned === oData.iframe || sFileNameCloned.split(".").pop() === "html")) {
 					sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
 				}
 
-				oZipFile.file(oFile.name, sRawFileContent);
+				oZipFile.file(sFileNameCloned, sRawFileContent);
 
 				// mock files
 				for (var j = 0; j < this._aMockFiles.length; j++) {
@@ -130,23 +157,33 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 				}
 			}
 
-			var sRef = jQuery.sap.getModulePath(this._sId);
-			oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
+			var sRef = jQuery.sap.getModulePath(this._sId),
+				aExtraFiles = oData.includeInDownload || [],
+				that = this;
 
+			// iframe examples have a separate index file and a component file to describe it
 			if (!oData.iframe) {
-				oZipFile.file("index.html", this.createIndexFile(oData));
+				oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
+				oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this.createIndexFile(oData, iRequiredParentLevels)));
 			}
 
-			var oContent = oZipFile.generate();
+			// add extra download files
+			aExtraFiles.forEach(function(sFileName, index) {
+				oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
+			});
+
+			var oContent = oZipFile.generate({type:"blob"});
 
 			this._openGeneratedFile(oContent);
 		},
 
 		_openGeneratedFile : function (oContent) {
-			location.href = "data:application/zip;base64," + oContent;
+			jQuery.sap.require("sap.ui.core.util.File");
+			var File = sap.ui.require("sap/ui/core/util/File");
+			File.save(oContent, this._sId, "zip", "application/zip");
 		},
 
-		createIndexFile : function(oData) {
+		createIndexFile : function(oData, iRequiredParentLevels) {
 
 			var sHeight,
 				bScrolling;
@@ -155,7 +192,16 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			var sIndexFile = this.fetchSourceFile(sRef, "index.html.tmpl");
 
 			sIndexFile = sIndexFile.replace(/{{TITLE}}/g, oData.name);
+
 			sIndexFile = sIndexFile.replace(/{{SAMPLE_ID}}/g, oData.id);
+
+			var sParentResourcesRoots = "",
+				sODataIdCloned = oData.id.slice();
+			for (var i = 0; i < iRequiredParentLevels; i++) {
+				sODataIdCloned = sODataIdCloned.substring(0, sODataIdCloned.lastIndexOf("."));
+				sParentResourcesRoots += "\"" + sODataIdCloned  + "\" : \"./\", ";
+			}
+			sIndexFile = sIndexFile.replace(/{{PARENT_RESOURCES}}/g, sParentResourcesRoots);
 
 			sHeight = oData.stretch ? 'height : "100%", ' : "";
 			sIndexFile = sIndexFile.replace(/{{HEIGHT}}/g, sHeight);
@@ -182,7 +228,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 		},
 
 		onNavBack : function () {
-			this.router.myNavBack("sample", { id : this._sId }, true);
+			this.router.navTo("sample", { id : this._sId }, true);
 		},
 
 		/**
@@ -207,13 +253,28 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			// Improve indentation for display
 			code = code.replace(/\t/g, "  ");
 
-			return '<pre><code>' + jQuery.sap.encodeHTML(code) + '</code></pre>';
+			return code;
 		},
 
 		_changeIframeBootstrapToCloud : function (sRawIndexFileHtml) {
-			var rReplaceIndex = /src=["|']([^"|^']*sap-ui-core\.js)["|']/;
-			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"');
+			var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/;
+			var oCurrentURI = new URI(window.location.href).search("");
+			var oRelativeBootstrapURI = new URI(jQuery.sap.getResourcePath("", "/sap-ui-core.js"));
+			var sBootstrapURI = oRelativeBootstrapURI.absoluteTo(oCurrentURI).toString();
+
+			// replace the bootstrap path of the sample with the current to the core
+			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="' + sBootstrapURI + '"');
+		},
+
+		handleTabSelectEvent: function(oEvent) {
+			var sFileName = oEvent.getParameter("selectedKey");
+			this.router.navTo("code_file", {
+				id : this._sId,
+				fileName: encodeURIComponent(sFileName)
+			}, false);
 		}
+
+
 	});
 
 }, /* export= */true);

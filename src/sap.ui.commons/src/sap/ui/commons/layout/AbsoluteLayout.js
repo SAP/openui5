@@ -8,15 +8,15 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new layout/AbsoluteLayout.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * 
+	 *
 	 * The Absolute Layout positions its child controls absolutely
 	 * @extends sap.ui.core.Control
 	 *
@@ -25,28 +25,29 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.layout.AbsoluteLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AbsoluteLayout = Control.extend("sap.ui.commons.layout.AbsoluteLayout", /** @lends sap.ui.commons.layout.AbsoluteLayout.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
 			/**
 			 * The overall width of the control. When not set, 100% is automatically set.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
-	
+
 			/**
 			 * The overall height of the control. When not set, 100% is automatically set.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
-	
+
 			/**
 			 * 'Auto', 'Scroll', 'Hidden', and 'None' are the available values for setting the vertical scrolling mode.
 			 */
 			verticalScrolling : {type : "sap.ui.core.Scrolling", group : "Behavior", defaultValue : sap.ui.core.Scrolling.Hidden},
-	
+
 			/**
 			 * 'Auto', 'Scroll', 'Hidden', and 'None' are the available values for setting the vertical scrolling mode.
 			 */
@@ -54,39 +55,39 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		},
 		defaultAggregation : "positions",
 		aggregations : {
-	
+
 			/**
 			 * Positioned child controls within the layout
 			 */
 			positions : {type : "sap.ui.commons.layout.PositionContainer", multiple : true, singularName : "position"}
 		}
 	}});
-	
-	
+
+
 	(function() {
-	
+
 	//**** Overridden API Functions ****
-	
+
 	AbsoluteLayout.prototype.setWidth = function(sWidth) {
 		return setProp(this, "width", sWidth, "LYT_SIZE");
 	};
-	
-	
+
+
 	AbsoluteLayout.prototype.setHeight = function(sHeight) {
 		return setProp(this, "height", sHeight, "LYT_SIZE");
 	};
-	
-	
+
+
 	AbsoluteLayout.prototype.setVerticalScrolling = function(oVerticalScrolling) {
 		return setProp(this, "verticalScrolling", oVerticalScrolling, "LYT_SCROLL");
 	};
-	
-	
+
+
 	AbsoluteLayout.prototype.setHorizontalScrolling = function(oHorizontalScrolling) {
 		return setProp(this, "horizontalScrolling", oHorizontalScrolling, "LYT_SCROLL");
 	};
-	
-	
+
+
 	AbsoluteLayout.prototype.insertPosition = function(oPosition, iIndex) {
 		var bHasDomRef = !!this.getDomRef();
 		this.insertAggregation("positions", oPosition, iIndex, bHasDomRef);
@@ -95,8 +96,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return this;
 	};
-	
-	
+
+
 	AbsoluteLayout.prototype.addPosition = function(oPosition) {
 		var bHasDomRef = !!this.getDomRef();
 		this.addAggregation("positions", oPosition, bHasDomRef);
@@ -105,8 +106,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return this;
 	};
-	
-	
+
+
 	AbsoluteLayout.prototype.removePosition = function(vPosition) {
 		var bHasDomRef = !!this.getDomRef();
 		var oRemovedPosition = this.removeAggregation("positions", vPosition, bHasDomRef);
@@ -116,8 +117,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return oRemovedPosition;
 	};
-	
-	
+
+
 	AbsoluteLayout.prototype.removeAllPositions = function() {
 		cleanup(this.getPositions());
 		var bHasDomRef = !!this.getDomRef();
@@ -127,8 +128,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return aRemovedPositions;
 	};
-	
-	
+
+
 	AbsoluteLayout.prototype.destroyPositions = function() {
 		cleanup(this.getPositions());
 		var bHasDomRef = !!this.getDomRef();
@@ -138,11 +139,11 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return this;
 	};
-	
-	
-	
+
+
+
 	//**** Additional API Functions ****
-	
+
 
 	/**
 	 * Returns an array of the controls contained in the aggregated position containers (might be empty).
@@ -159,8 +160,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return aControls;
 	};
-	
-	
+
+
 
 	/**
 	 * Adds the given control and a corresponding position container into the aggregation named 'positions'. Returns 'this' to allow method chaining.
@@ -179,8 +180,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		this.addPosition(oPosition);
 		return this;
 	};
-	
-	
+
+
 
 	/**
 	 * Inserts the given control and a corresponding position container into the aggregation named 'positions'. Returns 'this' to allow method chaining.
@@ -202,8 +203,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		this.insertPosition(oPosition, iIndex);
 		return this;
 	};
-	
-	
+
+
 
 	/**
 	 * Removes the given control and its corresponding position container from the aggregation named 'positions'.
@@ -228,8 +229,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return null;
 	};
-	
-	
+
+
 
 	/**
 	 * Removes all aggregated position containers. Returns an array of the controls contained in the removed position containers (might be empty).
@@ -243,8 +244,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		this.removeAllPositions();
 		return aControls;
 	};
-	
-	
+
+
 
 	/**
 	 * Checks for the provided sap.ui.core.Control in the aggregated position containers, and returns the index of the container in the positions aggregation
@@ -265,8 +266,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return -1;
 	};
-	
-	
+
+
 
 	/**
 	 * Destroys all aggregated position containers and their child controls. Returns 'this' to allow method chaining.
@@ -279,8 +280,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		this.destroyPositions();
 		return this;
 	};
-	
-	
+
+
 
 	/**
 	 * Allows to set or change the position information of the given child control
@@ -304,11 +305,11 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return false;
 	};
-	
-	
-	
+
+
+
 	//**** Other Functions ****
-	
+
 	/**
 	 * @see sap.ui.commons.layout.PositionContainer#getComputedPosition
 	 *
@@ -323,8 +324,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return {};
 	};
-	
-	
+
+
 	/**
 	 * Called when the control is destroyed.
 	 *
@@ -333,8 +334,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	AbsoluteLayout.prototype.exit = function(){
 		cleanup(this.getPositions());
 	};
-	
-	
+
+
 	/**
 	 * Called by the Renderer before the control is rendered.
 	 * Attention: Do not mix it up with onBeforeRendering!
@@ -346,15 +347,15 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		if (!aPositions || aPositions.length == 0) {
 			return;
 		}
-	
+
 		for (var index = 0; index < aPositions.length; index++) {
 			var oPosition = aPositions[index];
 			oPosition.reinitializeEventHandlers(true);
 			adaptChildControl(oPosition, true);
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called after the control is rendered.
 	 *
@@ -365,13 +366,13 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		if (!aPositions || aPositions.length == 0) {
 			return;
 		}
-	
+
 		for (var index = 0; index < aPositions.length; index++) {
 			aPositions[index].reinitializeEventHandlers();
 		}
 	};
-	
-	
+
+
 	/**
 	 * Cleanup modifications of the given control.
 	 *
@@ -383,8 +384,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 			oControl[SAVED_DELEGATOR] = undefined;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Handles changes on an aggregated position container when it is already in the Dom.
 	 *
@@ -428,14 +429,14 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 				break;
 		}
 	};
-	
-	
-	
+
+
+
 	//**** Private Helper Functions ****
-	
+
 	//Constant which defines the "save location" for the used delegator object
 	var SAVED_DELEGATOR = "__absolutelayout__delegator";
-	
+
 	/**
 	 * Cleanup modifications of all child controls of the given positions.
 	 *
@@ -450,8 +451,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * (Re-)Initialize listening to child rerendering
 	 *
@@ -461,11 +462,11 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		var oChildControl = oPosition.getControl();
 		if (oChildControl) {
 			AbsoluteLayout.cleanUpControl(oChildControl);
-	
+
 			if (!bRegisterOnly) {
 				adaptControlSize(oChildControl);
 			}
-	
+
 			var oDelegate = (function(oControl) {
 				return {
 					onAfterRendering: function(){
@@ -473,13 +474,13 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 					}
 				};
 			}(oChildControl));
-	
+
 			oChildControl[SAVED_DELEGATOR] = oDelegate;
 			oChildControl.addDelegate(oDelegate, true);
 		}
 	};
-	
-	
+
+
 	/**
 	 * Adapt the sizes of controls if necessary.
 	 *
@@ -503,8 +504,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return bAdapted;
 	};
-	
-	
+
+
 	/**
 	 * Sets the value of the given property and triggers Dom change if
 	 * possible.
@@ -519,8 +520,8 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 		}
 		return oThis;
 	};
-	
-	
+
+
 	}());
 
 	return AbsoluteLayout;

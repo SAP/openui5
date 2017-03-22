@@ -1,213 +1,53 @@
-/* ==================================================== */
-/* CSS for control sap.m/ComboBoxBase.control HCB theme */
-/* ==================================================== */
-
-.sapMComboBoxBaseArrow::before,
-.sapMComboBoxBaseBar::before {
-	font-family: "SAP-icons";
-	speak: none;
-	content: "\e1ef";
-}
-
-.sapMComboBoxBaseArrow,
-.sapMComboBoxBaseBar::before {
-	position: absolute;
-	text-align: center;
-	color: @sapHCStandardFG;
-}
+/* =================================== */
+/* CSS for control sap.m/ComboBoxBase  */
+/* High Contrast Black theme           */
+/* =================================== */
 
 /* ------------------------------ */
-/* ComboBox                       */
+/* text field                     */
 /* ------------------------------ */
-
-input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
-	padding-right: 3rem;
-}
 
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseInputInner:not(.sapMInputBaseStateInner) {
-	border-color: @sapHCStandardFG;
+	border-color: @sapUiFieldActiveBorderColor;
 }
 
 /* ------------------------------ */
-/* ComboBox's Arrow               */
+/* arrow                          */
 /* ------------------------------ */
-
-.sapMComboBoxBaseArrow {
-	width: 2.5rem;
-	height: 2.375rem;
-	line-height: 2.375rem;
-	right: 0.0625rem;
-}
 
 /* hover */
-
-.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	background: @sapHCHighlightBG;
-	border-left: 1px solid @sapHCStandardFG;
+html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
+	border-left: 1px solid @sapUiFieldHoverBorderColor;
 }
 
 /* pressed */
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
-.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
-	background: @sapHCHighlightAltBG;
-	border-left: 1px solid @sapHCStandardFG;
-}
-
- /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
-	color: @sapHCStandardFG;
-}
-
-/* Disabled */
-.sapMComboBoxBaseDisabled .sapMComboBoxBaseArrow,
-.sapMComboBoxBaseDisabled .sapMComboBoxBaseBar::before {
-	color: @sapHCReducedFG;
-}
-
-.sapMComboBoxFocused::before {
-	border: 2px dotted @sapHCStandardFG;
-	content: "";
-	position: absolute;
-	top: .3125rem;
-	right: .0625rem;
-	bottom: .3125rem;
-	left: .0625rem;
-	pointer-events: none;
+html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
+	border-left: 1px solid @sapUiFieldActiveBorderColor;
 }
 
 /* ------------------------------ */
-/* ComboBox's List                */
+/* list                           */
 /* ------------------------------ */
 
-.sapMComboBoxBaseItemDisabled {
-	opacity: 0.5;
-	pointer-events: none;
-}
-
-.sapMComboBoxBasePicker .sapMSLITitleOnly {
-	font-size: 0.875rem;
+.sapMComboBoxBaseList.sapUiLocalBusy {
+	min-height: 2rem;
 }
 
 /* ------------------------------ */
-/* ComboBox's Item                */
-/* ------------------------------ */
-
-li.sapMComboBoxBaseItem {
-	height: 2.5rem;
-	border-bottom: .0625rem solid @sapHCReducedAltFG;
-}
-
-.sapMComboBoxBaseItem .sapMCb {
-	height: 2.5rem;
-	line-height: 2.5rem;
-}
-
-.sapMComboBoxBaseItem .sapMCbBg {
-	top: 0;
-	bottom: 0;
-	margin: auto;
-}
-
-li.sapMComboBoxBaseItemVisible {
-	display: block;
-}
-
-li.sapMComboBoxBaseItemNotVisible {
-	display: none;
-}
-
-/* focus */
-
-.sap-desktop li.sapMComboBoxBaseItem:focus {
-	outline: none;
-}
-
-/* ------------------------------ */
-/* ComboBox's Picker              */
+/* picker                         */
 /* ------------------------------ */
 
 div.sapMComboBoxBasePicker {
-	-webkit-box-shadow: 0 .25rem 1.875rem .125rem fade(@sapHCStandardFG, 80%);
-	box-shadow: 0 .25rem 1.875rem .125rem fade(@sapHCStandardFG, 80%);
+	box-shadow: 0 .25rem 1.875rem .125rem fade(@sapUiContentShadowColor, 80%);
 	border: none;
-	min-width: 0; /* override the default min-width of the popover */
 }
 
-/* This is used to make border of the combobox's list not scrollable */
+/* make border of the combobox's list not scrollable */
 .sapMComboBoxBasePicker > div {
 	box-sizing: border-box;
-	border: solid @sapHCStandardFG;
+	border: solid @sapUiGroupContentBorderColor;
 	border-width: 1px 2px 2px;
-}
-
-/* remove the Popover's arrow */
-
-.sapMComboBoxBasePicker .sapMPopoverArr {
-	display: none;
-}
-
-/* ------------------------------ */
-/* ComboBox's Dialog              */
-/* ------------------------------ */
-
-div.sapMComboBoxBasePicker .sapMDialogScrollCont {
-	padding: 0;
-}
-
-/* pressed */
-
-.sapMComboBoxBaseBar::before {
-	top: 0;
-	right: 0;
-	bottom: 0;
-	width: 3.5rem;
-	border-left: 1px solid @sapHCStandardFG;
-	color: @sapHCStandardFG;
-	background: @sapHCHighlightAltBG;
-}
-
-/* Bar inside the ComboBox's Dialog */
-
-.sapMComboBoxBasePicker .sapMComboBoxBaseBar {
-	background: @sapHCHighlightAltBG;
-	border: 0.0625rem solid @sapHCStandardFG;
-}
-
-/* Input inside the ComboBox's Dialog */
-
-.sapMComboBoxBasePicker input {
-	padding-right: 3.5rem;
-	vertical-align: top; /* override the default vertical align of the input control */
-}
-
-/* ===================================================================== */
-/* CSS for control sap.m/ComboBox.control HCB theme compact size         */
-/* ===================================================================== */
-
-.sapUiSizeCompact input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
-	padding-right: 2.5rem;
-}
-
-/* ------------------------------ */
-/* ComboBox Arrow                 */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMComboBoxBaseArrow {
-	width: 2rem;
-	height: 1.5rem;
-	line-height: 1.5rem;
-}
-
-.sapUiSizeCondensed .sapMComboBoxBaseArrow {
-	right: 0;
-}
-
-/* ------------------------------ */
-/* ComboBox Item                  */
-/* ------------------------------ */
-
-.sapUiSizeCompact li.sapMComboBoxBaseItem {
-	height: 2rem;
 }

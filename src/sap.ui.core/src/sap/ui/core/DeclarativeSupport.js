@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 
 	/**
-	 * @class Static class for enabling declarative UI support.  
+	 * @class Static class for enabling declarative UI support.
 	 *
 	 * @author Peter Muessig, Tino Butz
 	 * @version ${version}
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	/**
 	 * Defines the attributes of an element that should be handled differently.
 	 * Set key/value pairs. The key indicates the attribute. The value can be of type <code>Boolean</code> or <code>Function</code>.
-	 * When the value is of type <code>Function</code> it will receive three arguments: 
+	 * When the value is of type <code>Function</code> it will receive three arguments:
 	 * <code>sValue</code> the value of the attribute,
 	 * <code>mSettings</code> the settings of the control
 	 * <code>fnClass</code> the control class
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		"data-sap-ui-default-aggregation" : true,
 		"data-sap-ui-binding" : function(sValue, mSettings) {
 			var oBindingInfo = ManagedObject.bindingParser(sValue);
-			// TODO reject complex bindings, types, formatters; enable 'parameters'? 
+			// TODO reject complex bindings, types, formatters; enable 'parameters'?
 			mSettings.objectBindings = mSettings.objectBindings || {};
 			mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
 		},
@@ -60,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	/**
 	 * Enhances the given DOM element by parsing the Control and Elements info and creating
 	 * the SAPUI5 controls for them.
-	 * 
+	 *
 	 * @param {Element} oElement the DOM element to compile
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use
 	 * @param {boolean} [isRecursive] Whether the call of the function is recursive.
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 	/**
 	 * Enhances the given element by parsing the attributes and child elements.
-	 * 
+	 *
 	 * @param {Element} oElement the element to compile
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use
 	 * @param {boolean} [isRecursive] Whether the call of the function is recursive.
@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 		// in case of the root control is not a UIArea we remove all HTML attributes
 		// for a UIArea we remove only the data HTML attributes and keep the others
-		// also marks the control as parsed (by removing data-sap-ui-type) 
+		// also marks the control as parsed (by removing data-sap-ui-type)
 		var aAttr = [];
 		jQuery.each(oElement.attributes, function(iIndex, oAttr) {
 			var sName = oAttr.name;
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		}
 
 		// add the controls
-		jQuery.each(aControls, function(vKey, oControl) {
+		aControls.forEach(function(oControl) {
 			if (oControl instanceof Control) {
 				if (oView && !isRecursive) {
 					oView.addContent(oControl);
@@ -211,7 +211,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 	/**
 	 * Adds all defined attributes to the settings object of a control.
-	 * 
+	 *
 	 * @param {object} mSettings reference of the settings of the control
 	 * @param {function} fnClass reference to a Class
 	 * @param {Element} oElement reference to a DOM element
@@ -250,11 +250,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 						if (oAssociation.multiple) {
 							// we support "," and " " to split between IDs
 							sValue = sValue.replace(/\s*,\s*|\s+/g, ","); // normalize strings: "id1  ,    id2    id3" to "id1,id2,id3"
-							var aId = sValue.split(","); // split array for all ","
-							jQuery.each(aId, function(iIndex, sId) {
-								aId[iIndex] = oView ? oView.createId(sId) : sId;
+							// split array for all ","
+							mSettings[sName] = sValue.split(",").map(function(sId) {
+								return oView ? oView.createId(sId) : sId;
 							});
-							mSettings[sName] = aId;
 						} else {
 							mSettings[sName] = oView ? oView.createId(sValue) : sValue; // use the value as ID
 						}
@@ -322,7 +321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 	/**
 	 * Adds all defined aggregations to the settings object of a control.
-	 * 
+	 *
 	 * @param {object} mSettings reference of the settings of the control
 	 * @param {function} fnClass reference to a Class
 	 * @param {Element} oElement reference to a DOM element
@@ -339,8 +338,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		var oAggregations = fnClass.getMetadata().getAllAggregations();
 
 		$element.children().each(function() {
-			// check for an aggregation tag of in case of a sepcifiying the
-			// aggregration on the parent control this will be used in case
+			// check for an aggregation tag of in case of a specifying the
+			// aggregation on the parent control this will be used in case
 			// of no meta tag was found
 			var $child = jQuery(this);
 			var sAggregation = $child.attr("data-sap-ui-aggregation");
@@ -447,7 +446,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 			sValue = oType.parseValue(sValue);
 		}
 		// else return original sValue (e.g. for enums)
-		// Note: to avoid double resolution of binding expressions, we have to escape string values once again 
+		// Note: to avoid double resolution of binding expressions, we have to escape string values once again
 		return typeof sValue === "string" ? ManagedObject.bindingParser.escape(sValue) : sValue;
 	};
 

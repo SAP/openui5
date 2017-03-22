@@ -2,7 +2,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 	function(jQuery, UIComponent) {
 	"use strict";
 
-	
+
 	var Component = UIComponent.extend("sap.ui.test.v2.Component", {
 
 		metadata: {
@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 			"publicMethods": [],
 
 			"manifest": "json",
-		
+
 			"custom.entry": {
 				"key1": "value1",
 				"key2": "value2",

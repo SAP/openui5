@@ -2,7 +2,6 @@
 	height="100%"
 	controllerName="sap.m.sample.ObjectHeaderResponsiveIII.Page"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
 	<ObjectHeader
 		id="oh1"
@@ -15,7 +14,11 @@
 		title="{Name}"
 		titleActive="true"
 		titlePress="handleTitlePress"
-		number="{Price}"
+		number="{
+			parts:[{path:'Price'},{path:'CurrencyCode'}],
+			type: 'sap.ui.model.type.Currency',
+			formatOptions: {showMeasure: false}
+		}"
 		numberUnit="{CurrencyCode}"
 		showMarkers="true"
 		markFlagged="true"
@@ -38,13 +41,13 @@
 				text="{WeightMeasure} {WeightUnit}"/>
 			<ObjectAttribute
 				title="Dimension per unit"
-				text="{Width} x {Depth} x {Height} {DimUnit}"/>				
+				text="{Width} x {Depth} x {Height} {DimUnit}"/>
 		</attributes>
 		<statuses>
  			<ObjectStatus
 				title="Approval"
 				text="Pending"
-				state="Warning"/>				
+				state="Warning"/>
 		</statuses>
 		<headerContainer>
 			<IconTabBar

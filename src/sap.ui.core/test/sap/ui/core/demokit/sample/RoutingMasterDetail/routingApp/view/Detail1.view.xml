@@ -1,0 +1,21 @@
+<View
+	xmlns="sap.m"
+	xmlns:layout="sap.ui.layout"
+	controllerName="sap.ui.core.sample.RoutingMasterDetail.routingApp.controller.Detail1">
+	<Page
+		title="{orderName}"
+		navButtonPress="onNavBack"
+		showNavButton="{device>/system/phone}">
+		<content>
+					<List id="products" 
+						items="{products}"
+						headerText="Products">
+					<items>
+						<StandardListItem title="{productName}" 
+							type="Active"
+							press="onSelectionChange"/>
+					</items>
+				</List>
+		</content>
+	</Page>
+</View>

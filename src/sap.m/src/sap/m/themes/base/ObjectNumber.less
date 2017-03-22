@@ -1,14 +1,26 @@
-
-/* ============================================= */
-/* CSS for control sap.m/ObjectNumber.control */
-/* ============================================= */
+/* =================================== */
+/* CSS for control sap.m/ObjectNumber  */
+/* Base theme                          */
+/* =================================== */
 
 .sapMObjectNumber {
-	white-space: nowrap;
+	display: block;
+	white-space: normal;
+	max-width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	word-wrap: normal;
-	color: @sapUiDarkText;
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMObjectNumberText {
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	vertical-align: middle;
+	font-size: @sapMFontMediumSize;
 }
 
 .sapMObjectNumberEmph > .sapMObjectNumberText {
@@ -16,11 +28,60 @@
 }
 
 .sapMObjectNumberUnit {
-	padding-left: .25rem;
-	font-size: .75rem;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	vertical-align: middle;
+	padding-top: 0.125rem;
+	font-size: @sapMFontSmallSize;
 }
 
-.sapMObjectNumberUnit.sapMRTLOpposite {
-	padding-left: 0;
-	padding-right: .25rem;
+// Android fix
+html[data-sap-ui-os^="Android"] {
+	.sapMObjectNumberUnit {
+		padding-top: 0;
+	}
+}
+
+.sapUiForm .sapMObjectNumberUnit,
+.sapUiForm .sapMObjectNumberText {
+	vertical-align: top;
+}
+
+.sapUiForm.sapUiFormEdit .sapMObjectNumber {
+	line-height: 3rem;
+}
+
+.sapUiForm.sapUiFormEdit .sapMObjectNumber .sapMObjectNumberUnit {
+	line-height: 2.875rem;
+}
+
+.sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjectNumber {
+	line-height: 2rem;
+}
+
+.sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjectNumber .sapMObjectNumberUnit {
+	line-height: 1.875rem;
+}
+
+.sapMLIBActive .sapMObjectNumber {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMObjectNumberStatusNone {
+	color: @sapUiNeutralText;
+}
+
+.sapMObjectNumberStatusError {
+	color: @sapUiNegativeText;
+}
+
+.sapMObjectNumberStatusWarning {
+	color: @sapUiCriticalText;
+}
+
+.sapMObjectNumberStatusSuccess {
+	color: @sapUiPositiveText;
 }

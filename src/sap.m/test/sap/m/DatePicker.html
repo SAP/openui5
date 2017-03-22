@@ -1,19 +1,18 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>DatePicker - sap.m</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.DatePicker.gif">
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 
 		var app = new sap.m.App("myApp");
 
@@ -76,6 +75,51 @@
 					}
 				});
 
+		var handleFieldGroupValidation = function (oEvent) {
+			var oDP = oEvent.oSource;
+			var oInput = sap.ui.getCore().byId("I2");
+			oInput.setValue("ValidateFieldGroup - Event: DatePicker " + oDP.getId());
+		};
+
+		var oLegend;
+
+		function toggleSpecialDates(oEvent) {
+			var bPressed = oEvent.getParameter("pressed");
+			var oDP = sap.ui.getCore().byId("DP2");
+			if (!sap.ui.unified.DateTypeRange) {
+				sap.ui.getCore().loadLibrary("sap.ui.unified");
+				jQuery.sap.require("sap.ui.unified.library");
+			}
+			if (!oLegend) {
+				oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+					items: [
+					        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
+					        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
+					        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
+					        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
+					        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
+					        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
+					        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
+					        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
+					        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
+					        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+					        ]
+				});
+				oDP.setLegend(oLegend);
+			}
+			if (bPressed) {
+				for (var i = 0; i < 10; i++) {
+					var oDate = new Date(oDP.getDateValue());
+					oDate.setDate(oDate.getDate() + i);
+					var sType = "Type" + (i < 9 ? "0" + (i + 1) : "10");
+					var oSpecialDate = new sap.ui.unified.DateTypeRange({startDate: oDate, type: sType});
+					oDP.addSpecialDate(oSpecialDate);
+				}
+			}else {
+				oDP.destroySpecialDates();
+			}
+		};
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({
 			dateValue: new Date()
@@ -86,15 +130,18 @@
 			title:"Mobile DatePicker",
 			content : [
 				new sap.m.Label({text: "initial DatePicker", labelFor: "DP1"}),
-				new sap.m.DatePicker("DP1", { change: handleChange }),
+				new sap.m.DatePicker("DP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.Label({text: "DatePicker with given Value and Formatter", labelFor: "DP2"}),
-				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", change: handleChange }),
-				new sap.m.Label({text: "DatePicker with given DateValue and Formatter", labelFor: "DP3"}),
+				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
+				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),
+				new sap.m.Label({text: "DatePicker with given DateValue and Formatter", labelFor: "DP3", width: "100%"}),
 				new sap.m.DatePicker("DP3", { dateValue: new Date("2014", "02", "26"), displayFormat: "short", change: handleChange }),
 				new sap.m.Label({text: "readonly DatePicker with given DateValue and Formatter", labelFor: "DP4"}),
 				new sap.m.DatePicker("DP4", { dateValue: new Date("2014", "02", "26"), displayFormat: "yyyy-MM-dd", editable: false, change: handleChange }),
-				new sap.m.Label({text: "DatePicker using DataBinding", labelFor: "DP5"}),
-				new sap.m.DatePicker("DP5", {
+				new sap.m.Label({text: "disabled DatePicker with given DateValue and Formatter", labelFor: "DP5"}),
+				new sap.m.DatePicker("DP5", { dateValue: new Date("2014", "02", "26"), displayFormat: "yyyy-MM-dd", enabled: false, change: handleChange }),
+				new sap.m.Label({text: "DatePicker using DataBinding", labelFor: "DP6"}),
+				new sap.m.DatePicker("DP6", {
 					value: {
 						path: "/dateValue",
 						type: new sap.ui.model.type.Date({style: "medium", strictParsing: true})}/*,
@@ -104,11 +151,49 @@
 						path: "/dateValue",
 						type: new sap.ui.model.type.Date({style: "long"})},
 					editable: false}),
+				new sap.m.Label({text: "islamic DatePicker with secondary gregorianic", labelFor: "DP7"}),
+				new sap.m.DatePicker("DP7", { displayFormatType: "Islamic", secondaryCalendarType: "Gregorian", change: handleChange }),
+				new sap.m.Label({text: "DatePicker with minDate=2016-01-01 and maxDate=2016-12-31", labelFor: "DP10"}),
+				new sap.m.DatePicker("DP10", { minDate: new Date("2016", "0", "01"), maxDate: new Date("2016", "11", "31"), change: handleChange }),
 				new sap.m.Input("I2", {value: "Content of events DatePicker", editable: false}),
-				new sap.m.Label({text: "Warnig DatePicker:", labelFor: "DP6"}),
-				new sap.m.DatePicker("DP6", { valueState: "Warning", valueStateText: "Warning Message" }),
-				new sap.m.Label({text: "Error DatePicker:", labelFor: "DP7"}),
-				new sap.m.DatePicker("DP7", { valueState: "Error", valueStateText: "Error Message" })
+				new sap.m.Label({text: "Warnig DatePicker:", labelFor: "DP8"}),
+				new sap.m.DatePicker("DP8", { valueState: "Warning", valueStateText: "Warning Message" }),
+				new sap.m.Label({text: "Error DatePicker:", labelFor: "DP9"}),
+				new sap.m.DatePicker("DP9", { valueState: "Error", valueStateText: "Error Message" }),
+				new sap.m.Label({text: "Lazy loading of special dates DatePicker:", labelFor: "DP11"}),
+				new sap.m.DatePicker("DP11", {
+					navigate: function (oEvent) {
+						var oRange = oEvent.getParameter("dateRange"),
+							oStartDate = oRange.getStartDate(),
+							oEndDate = oRange.getEndDate();
+
+						// Generate some random dates within range
+						oStartDate.setDate(oStartDate.getDate() + Math.floor(Math.random() * 15));
+						oEndDate.setDate(oEndDate.getDate() - Math.floor(Math.random() * 15));
+
+						// Clear existing aggregations
+						this.removeAllAggregation("specialDates");
+
+						// Add the first date as a special date with a random type
+						this.addSpecialDate(
+							new sap.ui.unified.DateTypeRange({
+								startDate: oStartDate,
+								type: "Type0" + (Math.floor(Math.random() * 8) + 1)
+							})
+						);
+
+						// Add the second date as a special date with a random type
+						this.addSpecialDate(
+							new sap.ui.unified.DateTypeRange({
+								startDate: oEndDate,
+								type: "Type0" + (Math.floor(Math.random() * 8) + 1)
+							})
+						);
+
+						// Give feedback
+						sap.m.MessageToast.show("Navigate event fired and new special dates marked");
+					}
+				})
 			],
 			footer: createFooter()
 		});

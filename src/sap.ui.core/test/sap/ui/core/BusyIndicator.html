@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>BusyIndicator - sap.ui.core</title>
 
-		<script id="sap-ui-bootstrap" 
-				type="text/javascript"
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_goldreflection">
+				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
 		<script>
@@ -18,7 +18,7 @@
 				alert("This test page requires the library 'sap.ui.commons' which is not available.");
 				throw(e);
 			}
-		
+
 			function hideBusyIndicator() {
 				sap.ui.core.BusyIndicator.hide();
 			}
@@ -58,6 +58,7 @@
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
+	<div id="div" style="height:2000px">
 		<h1>Test Page for sap.ui.core.BusyIndicator</h1>
 
 		Click the button to simulate an action that takes some time:
@@ -77,6 +78,7 @@
 		<br>
 		Click the button to open the BusyIndicator and keep it opened:
 		<div id="uiArea4"></div>
+	</div>
 
 	</body>
 </html>

@@ -2,8 +2,10 @@
 	"use strict";
 
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 	sinon.config.useFakeTimers = false;
@@ -13,13 +15,13 @@
 	var CLASS_ICON = ".sapMMsgStripIcon";
 
 	QUnit.module("API", {
-		setup: function() {
+		beforeEach: function() {
 			this.oMessageStrip = new sap.m.MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oMessageStrip.destroy();
 		}
 	});
@@ -46,17 +48,6 @@
 		assert.strictEqual(this.oMessageStrip.getShowCloseButton(), false, "showCloseButton should be false");
 	});
 
-	QUnit.test("Error/Success/Warning type should render specific icon", function(assert) {
-		// act
-		this.oMessageStrip.setType("Error");
-		this.oMessageStrip.setCustomIcon("sap-icon://undo");
-		this.oMessageStrip.setShowIcon(true);
-		sap.ui.getCore().applyChanges();
-
-		//assert
-		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://message-error", "icon should be inherited from the type");
-	});
-
 	QUnit.test("Setting None type", function(assert) {
 		// act
 		this.oMessageStrip.setType("None");
@@ -66,13 +57,23 @@
 		assert.strictEqual(this.oMessageStrip.getType(), "Information", "should forward to Information");
 	});
 
-	QUnit.test("Information type should render custom icon", function(assert) {
+	QUnit.test("Setting custom icon on Error state", function(assert) {
 		// act
+		this.oMessageStrip.setType("Error");
 		this.oMessageStrip.setCustomIcon("sap-icon://undo");
 		sap.ui.getCore().applyChanges();
 
 		//assert
 		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://undo", "icon should be undo");
+	});
+
+	QUnit.test("Custom icon should not be set by the type icon", function(assert) {
+		// act
+		this.oMessageStrip.setType("Error");
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "", "custom icon should not be defined");
 	});
 
 	QUnit.test("Link control via setLink", function(assert) {
@@ -112,15 +113,15 @@
 
 	});
 
-	QUnit.module("Data bindig", {
-		setup: function() {
+	QUnit.module("Data binding", {
+		beforeEach: function() {
 			this.oMessageStrip = new sap.m.MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.oMessageStrip.destroy();
 		},
 		generateData: function() {
@@ -148,7 +149,7 @@
 
 
 	QUnit.module("Events", {
-		setup: function() {
+		beforeEach: function() {
 			this.oMessageStrip = new sap.m.MessageStrip({
 				text: "Test",
 				showCloseButton: true
@@ -158,7 +159,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			if (this.oMessageStrip) {
 				this.oMessageStrip.destroy();
 			}
@@ -166,7 +167,8 @@
 	});
 
 
-	QUnit.test("Tapping on close button", 1, function(assert) {
+	QUnit.test("Tapping on close button", function(assert) {
+		assert.expect(1);
 		var done = assert.async();
 		this.oMessageStrip.attachClose(function() {
 			assert.ok(true, 'should trigger close event');
@@ -179,7 +181,8 @@
 
 	});
 
-	QUnit.test("Pressing enter on close button", 1, function(assert) {
+	QUnit.test("Pressing enter on close button", function(assert) {
+		assert.expect(1);
 		var done = assert.async();
 
 		this.oMessageStrip.attachClose(function() {
@@ -193,7 +196,8 @@
 		}, 0);
 	});
 
-	QUnit.test("Pressing space on close button", 1, function(assert) {
+	QUnit.test("Pressing space on close button", function(assert) {
+		assert.expect(1);
 		var done = assert.async();
 
 		this.oMessageStrip.attachClose(function() {
@@ -208,7 +212,7 @@
 	});
 
 	QUnit.module("ARIA Support", {
-		setup: function() {
+		beforeEach: function() {
 			this.oMessageStrip = new sap.m.MessageStrip({
 				text: "Test",
 				showCloseButton: true,
@@ -219,7 +223,7 @@
 
 			sap.ui.getCore().applyChanges();
 		},
-		teardown: function() {
+		afterEach: function() {
 			if (this.oMessageStrip) {
 				this.oMessageStrip.destroy();
 			}
@@ -257,10 +261,11 @@
 	});
 
 	QUnit.test("When link is set it should have aria-labelledby attribute", function (assert) {
-		var linkDom = this.oMessageStrip.getLink().getDomRef(),
+		var link = this.oMessageStrip.getLink(),
+			linkDom = link.getDomRef(),
 			labelledBy = linkDom.getAttribute("aria-labelledby");
 
-		assert.strictEqual(labelledBy, this.oMessageStrip.getId(),
+		assert.strictEqual(labelledBy, this.oMessageStrip.getId() + " " + link.getId(),
 			"link aria-labelledby should point to the MessageStrip id");
 	});
 

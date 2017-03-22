@@ -2,51 +2,64 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Form - sap.ui.layout</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
-	<script id="sap-ui-bootstrap" type="text/javascript"
-	        data-sap-ui-theme="sap_bluecrystal"
-	        data-sap-ui-libs="sap.ui.layout, sap.ui.commons"
-	        src="../../../../../resources/sap-ui-core.js"></script>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.ui.layout, sap.m"
+	        src="../../../../../resources/sap-ui-core.js">
+	</script>
 
-	<script type="text/javascript">
+	<script>
 
-		var oButton1 = new sap.ui.commons.Button("B1",{
-			text: "Layout1",
-			press: function(oEvent){
-					var oForm = sap.ui.getCore().byId("F1");
-					oForm.setLayout(sap.ui.getCore().byId("L1"));
+		var oButtonLayout = new sap.m.SegmentedButton("MyLayout", {
+			selectedKey: "L1",
+			items: [ new sap.m.SegmentedButtonItem({key: "L1", text: "FormLayout"}),
+			         new sap.m.SegmentedButtonItem({key: "L2", text: "ResponsiveLayout"}),
+			         new sap.m.SegmentedButtonItem({key: "L3", text: "GridLayout"}),
+			         new sap.m.SegmentedButtonItem({key: "L4", text: "ResponsiveGridLayout"})
+			        ],
+			select: function(oEvent) {
+				var oForm1 = sap.ui.getCore().byId("F1");
+				var oForm2 = sap.ui.getCore().byId("F2");
+				switch (oEvent.getParameter("key")) {
+				case "L1":
+					oForm1.setLayout(sap.ui.getCore().byId("L1"));
+					oForm2.setLayout(sap.ui.getCore().byId("L_A"));
+					oForm3.setLayout(sap.ui.getCore().byId("L_A3"));
+					break;
+
+				case "L2":
+					oForm1.setLayout(sap.ui.getCore().byId("L2"));
+					oForm2.setLayout(sap.ui.getCore().byId("L_B"));
+					oForm3.setLayout(sap.ui.getCore().byId("L_B3"));
+					break;
+
+				case "L3":
+					oForm1.setLayout(sap.ui.getCore().byId("L3"));
+					oForm2.setLayout(sap.ui.getCore().byId("L_C"));
+					oForm3.setLayout(sap.ui.getCore().byId("L_C3"));
+					break;
+
+				case "L4":
+					oForm1.setLayout(sap.ui.getCore().byId("L4"));
+					oForm2.setLayout(sap.ui.getCore().byId("L_D"));
+					oForm3.setLayout(sap.ui.getCore().byId("L_D3"));
+					break;
+
+				default:
+					break;
 				}
-			}).placeAt("button");
-		var oButton2 = new sap.ui.commons.Button("B2",{
-			text: "ResponsiveLayout",
-			press: function(oEvent){
-					var oForm = sap.ui.getCore().byId("F1");
-					oForm.setLayout(sap.ui.getCore().byId("L2"));
-				}
-			}).placeAt("button");
-		var oButton3 = new sap.ui.commons.Button("B3",{
-			text: "Grid layout",
-			press: function(oEvent){
-					var oForm = sap.ui.getCore().byId("F1");
-					oForm.setLayout(sap.ui.getCore().byId("L3"));
-				}
-			}).placeAt("button");
-		var oButton4 = new sap.ui.commons.Button("B4",{
-			text: "Grid",
-			press: function(oEvent){
-					var oForm = sap.ui.getCore().byId("F1");
-					oForm.setLayout(sap.ui.getCore().byId("L4"));
-				}
-			}).placeAt("button");
+			}
+		});
 
 		var oLayout1 = new sap.ui.layout.form.FormLayout("L1");
 		var oLayout2 = new sap.ui.layout.form.ResponsiveLayout("L2");
 		var oLayout3 = new sap.ui.layout.form.GridLayout("L3");
 		var oLayout4 = new sap.ui.layout.form.ResponsiveGridLayout("L4");
 
-		var oForm = new sap.ui.layout.form.Form("F1",{
+		var oForm1 = new sap.ui.layout.form.Form("F1",{
 			title: new sap.ui.core.Title({text: "Form Title", icon: "../../commons/images/ui5_small.png", tooltip: "Title tooltip"}),
 			tooltip: "Form tooltip",
 			editable: true,
@@ -55,34 +68,40 @@
 				new sap.ui.layout.form.FormContainer("C1",{
 					title: "contact data",
 					formElements: [
-						new sap.ui.layout.form.FormElement({
+						new sap.ui.layout.form.FormElement("F1C1E1", {
 							label: "Name",
-							fields: [new sap.ui.commons.TextField()]
+							fields: [new sap.m.Input({value: "Name", required: true})]
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "First name",
-							fields: [new sap.ui.commons.TextField()]
+							fields: [new sap.m.Input()]
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "Date of birth",
-							fields: [new sap.ui.commons.DatePicker()]
+							fields: [new sap.m.DatePicker()]
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "Gender",
-							fields: [new sap.ui.commons.RadioButtonGroup({
-								items: [new sap.ui.core.Item({text: "male"}),
-								        new sap.ui.core.Item({text: "female"})]
-							})]
+							fields: [new sap.m.RadioButton({text: "male", selected: true, groupName: "MyTest"}),
+							         new sap.m.RadioButton({text: "female", selected: false, groupName: "MyTest"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Info",
+							fields: [new sap.m.Text({text:"Test"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "A label with an extremely long text to see if the truncation works and the : is still visible after the ellipsis",
+							fields: [new sap.m.Text({text:"Test"})]
 						})
-					]
+						]
 				}),
 				new sap.ui.layout.form.FormContainer("C2",{
 					title: new sap.ui.core.Title({text: "Address", icon: "../../commons/images/ui5_small.png", tooltip: "Title tooltip"}),
 					formElements: [
 						new sap.ui.layout.form.FormElement({
-							label: new sap.ui.commons.Label({text:"Street"}),
-							fields: [new sap.ui.commons.TextField(),
-							         new sap.ui.commons.TextField({width: "5em",
+							label: new sap.m.Label({text:"Street"}),
+							fields: [new sap.m.Input(),
+							         new sap.m.Input({width: "5em",
 														layoutData: new sap.ui.core.VariantLayoutData({
 															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),
 															                     new sap.ui.layout.GridData({span: "L2 M2 S2"})]})
@@ -90,11 +109,11 @@
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "City",
-							fields: [new sap.ui.commons.TextField()]
+							fields: [new sap.m.Input()]
 						}),
 						new sap.ui.layout.form.FormElement({
-							label: new sap.ui.commons.Label({text: "Post code", icon:"../../commons/images/help.gif"}),
-							fields: [new sap.ui.commons.TextField({
+							label: new sap.m.Label({text: "Post code"}),
+							fields: [new sap.m.Input({
 														layoutData: new sap.ui.core.VariantLayoutData({
 															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "2"}),
 															                     new sap.ui.layout.GridData({span: "L2 M2 S2"})]})
@@ -102,10 +121,10 @@
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "Country",
-							fields: [new sap.ui.commons.DropdownBox({
-								items: [new sap.ui.core.ListItem({text: "Germany"}),
-								        new sap.ui.core.ListItem({text: "USA"}),
-								        new sap.ui.core.ListItem({text: "England"})]
+							fields: [new sap.m.Select({
+								items: [new sap.ui.core.Item({text: "Germany"}),
+								        new sap.ui.core.Item({text: "USA"}),
+								        new sap.ui.core.Item({text: "England"})]
 							})]
 						})
 					],
@@ -118,21 +137,21 @@
 					expandable: true,
 					formElements: [
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.ui.commons.CheckBox({text: 'Kindergarden'}),
-							         new sap.ui.commons.CheckBox({text: 'primary school'})]
+							fields: [new sap.m.CheckBox({text: 'Kindergarden'}),
+							         new sap.m.CheckBox({text: 'primary school'})]
 						}),
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.ui.commons.CheckBox({text: 'high school'})]
+							fields: [new sap.m.CheckBox({text: 'high school'})]
 						}),
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.ui.commons.CheckBox({text: 'college'})]
+							fields: [new sap.m.CheckBox({text: 'college'})]
 						}),
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.ui.commons.CheckBox({text: 'university'})]
+							fields: [new sap.m.CheckBox({text: 'university'})]
 						}),
 						new sap.ui.layout.form.FormElement({
 							visible: false,
-							fields: [new sap.ui.commons.TextField({value: 'you shold not see me'})]
+							fields: [new sap.m.Input({value: 'you shold not see me'})]
 						})
 					],
 					layoutData: new sap.ui.core.VariantLayoutData({
@@ -141,13 +160,48 @@
 				new sap.ui.layout.form.FormContainer("C4",{
 					formElements: [
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.ui.commons.Button({text: 'OK',
+							fields: [new sap.m.ToggleButton({text: 'move container',
+														press: function(oEvent) {
+									        		var bPressed = oEvent.getParameter("pressed");
+									        		var oForm = sap.ui.getCore().byId("F1");
+									        		var oContainer = sap.ui.getCore().byId("C1");
+									        		oForm.removeFormContainer(oContainer);
+									        		if (bPressed) {
+									        			oForm.insertFormContainer(oContainer, 1);
+									        		} else {
+									        			oForm.insertFormContainer(oContainer, 0);
+									        		}
+									        	 },
 														layoutData: new sap.ui.core.VariantLayoutData({
-															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"})]})
+															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "2"})]})
 												}),
-							         new sap.ui.commons.Button({text: 'Cancel',
+							         new sap.m.ToggleButton({text: 'move element',
+													press: function(oEvent) {
+								        		var bPressed = oEvent.getParameter("pressed");
+								        		var oContainer = sap.ui.getCore().byId("C1");
+								        		var oElement = sap.ui.getCore().byId("F1C1E1");
+								        		oContainer.removeFormElement(oElement);
+								        		if (bPressed) {
+								        			oContainer.insertFormElement(oElement, 1);
+								        		} else {
+								        			oContainer.insertFormElement(oElement, 0);
+								        		}
+								        	 },
 														layoutData: new sap.ui.core.VariantLayoutData({
-															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"})]})
+															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "2"})]})
+												}),
+							         new sap.m.ToggleButton({text: 'label conons',
+													press: function(oEvent) {
+								        		var bPressed = oEvent.getParameter("pressed");
+								        		var oForm = sap.ui.getCore().byId("F1");
+								        		if (bPressed) {
+								        			oForm.addStyleClass("sapUiFormLblColon");
+								        		} else {
+								        			oForm.removeStyleClass("sapUiFormLblColon");
+								        		}
+								        	 },
+														layoutData: new sap.ui.core.VariantLayoutData({
+															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "2"})]})
 							         })]
 						})
 					],
@@ -159,26 +213,178 @@
 					title: "invisible",
 					formElements: [
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.ui.commons.TextField({value: 'Hello'})]
+							fields: [new sap.m.Input({value: 'Hello'})]
 						})
 					]
-				})]
+				}),
+				new sap.ui.layout.form.FormContainer("C6",{
+					title: "Background",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "BackgroundDesign",
+							fields: [new sap.m.SegmentedButton("BackCol", {
+								selectedKey: sap.ui.layout.BackgroundDesign.Translucent,
+								items: [ new sap.m.SegmentedButtonItem("Back1", {key: sap.ui.layout.BackgroundDesign.Transparent, text: "Transparent"}),
+								         new sap.m.SegmentedButtonItem("Back2", {key: sap.ui.layout.BackgroundDesign.Solid, text: "Solid"}),
+								         new sap.m.SegmentedButtonItem("Back3", {key: sap.ui.layout.BackgroundDesign.Translucent, text: "Translucent"})
+								        ],
+								select: function(oEvent) {
+									var sBackground = oEvent.getParameter("key");
+									oLayout1.setBackgroundDesign(sBackground);
+									oLayout2.setBackgroundDesign(sBackground);
+									oLayout3.setBackgroundDesign(sBackground);
+									oLayout4.setBackgroundDesign(sBackground);
+								}
+							})]
+						})
+					],
+				layoutData: new sap.ui.core.VariantLayoutData({
+					multipleLayoutData: [new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true})]})
+				})
+				]
 		});
 
-		oForm.placeAt("content");
+		//////////////// Form 2 ////////////////////////////////////////////////////////////////////////////////////////
 
-		(new sap.ui.commons.Button({text: 'Button after the form'})).placeAt("contentAfterForm");
+		var oLayoutA = new sap.ui.layout.form.FormLayout("L_A");
+		var oLayoutB = new sap.ui.layout.form.ResponsiveLayout("L_B");
+		var oLayoutC = new sap.ui.layout.form.GridLayout("L_C");
+		var oLayoutD = new sap.ui.layout.form.ResponsiveGridLayout("L_D");
+
+		var oForm2 = new sap.ui.layout.form.Form("F2",{
+			toolbar: new sap.m.Toolbar("TB1", {
+									content: [new sap.m.Image({src: "../../commons/images/ui5_small.png"}),
+									          new sap.m.Title("F2-Title", {text: "Car", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
+									          new sap.m.ToolbarSpacer(),
+									          new sap.m.Button({text: "Text"}),
+									          new sap.m.Button({icon: "sap-icon://sap-ui5"})
+									          ]
+								}),
+			ariaLabelledBy: "F2-Title",
+			tooltip: "Form tooltip",
+			editable: true,
+			layout: oLayoutA,
+			formContainers: [
+				new sap.ui.layout.form.FormContainer("F2C1",{
+					toolbar: new sap.m.Toolbar("TB2", {
+							content: [new sap.m.Title("F2C1-Title", {text: "technical data", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
+							          new sap.m.ToolbarSpacer(),
+							          new sap.m.Button({text: "Text"}),
+							          new sap.m.Button({icon: "sap-icon://sap-ui5"})
+							          ]
+						}),
+					ariaLabelledBy: "F2C1-Title",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "Manufacturer",
+							fields: [new sap.m.Input()]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Model",
+							fields: [new sap.m.Input()]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "initial registration",
+							fields: [new sap.m.DatePicker()]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Engine",
+							fields: [new sap.m.RadioButton({text: "diesel", selected: true, groupName: "MyEngine"}),
+							         new sap.m.RadioButton({text: "gas", selected: false, groupName: "MyEngine"})]
+							})],
+					layoutData: new sap.ui.core.VariantLayoutData({
+						multipleLayoutData: [new sap.ui.layout.form.GridContainerData({halfGrid: true})]})
+				}),
+				new sap.ui.layout.form.FormContainer("F2C2",{
+					title: "You should not see me !!!",
+					toolbar: new sap.m.Toolbar("TB3", {
+						content: [new sap.m.Title("F2C2-Title", {text: "other data", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
+						          new sap.m.ToolbarSpacer(),
+						          new sap.m.Button({text: "Text"}),
+						          new sap.m.Button({icon: "sap-icon://collapse-group",
+						          	press: function(oEvent) {
+						          		var oContainer = sap.ui.getCore().byId("F2C2");
+						          		if(oContainer.getExpanded()) {
+						          			oContainer.setExpanded(false);
+						          			oEvent.oSource.setIcon("sap-icon://expand-group");
+						          		} else {
+						          			oContainer.setExpanded(true);
+						          			oEvent.oSource.setIcon("sap-icon://collapse-group");
+						          		}
+						          	}})
+						           ]
+					}),
+					ariaLabelledBy: "F2C2-Title",
+					expandable: true,
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "license tag",
+							fields: [new sap.m.Input()]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "driver",
+							fields: [new sap.m.Input()]
+						})
+					],
+					layoutData: new sap.ui.core.VariantLayoutData({
+						multipleLayoutData: [new sap.ui.layout.form.GridContainerData({halfGrid: true})]})
+				})
+			]
+		});
+
+		//////////////// Form 3 ////////////////////////////////////////////////////////////////////////////////////////
+
+		var oLayoutA3 = new sap.ui.layout.form.FormLayout("L_A3");
+		var oLayoutB3 = new sap.ui.layout.form.ResponsiveLayout("L_B3");
+		var oLayoutC3 = new sap.ui.layout.form.GridLayout("L_C3");
+		var oLayoutD3 = new sap.ui.layout.form.ResponsiveGridLayout("L_D3");
+
+		var oForm3 = new sap.ui.layout.form.Form("F3",{
+			title: "only one container",
+			editable: true,
+			layout: oLayoutA3,
+			formContainers: [
+				new sap.ui.layout.form.FormContainer("F3C1",{
+					title: "Title",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "Label",
+							fields: [new sap.m.Input(),
+							         new sap.m.ToggleButton({
+							        	 text: "Title",
+							        	 pressed: true,
+							        	 press: function(oEvent) {
+							        		var bPressed = oEvent.getParameter("pressed");
+							        		var oContainer = sap.ui.getCore().byId("F3C1");
+							        		if (bPressed) {
+							        			oContainer.setTitle("Title");
+							        		} else {
+							        			oContainer.setTitle();
+							        		}
+							        	 }
+							         })]
+							})]
+				})
+			]
+		});
+
+		var oApp = new sap.m.App("myApp", {
+			pages: new sap.m.Page("page1", {
+				title: "Test Page for sap.ui.layout.form.Form",
+				content: [
+				          oForm1,
+				          oForm2,
+				          oForm3
+				         ],
+				footer: new sap.m.Bar({
+									contentMiddle: [oButtonLayout]
+								})
+			})
+		}).placeAt("body");
+
 	</script>
 
 </head>
-<body class="sapUiBody" role="application">
-
-	<h1 id="header">Test Page for <code>sap.ui.layout.form.Form</code></h1>
-
-	<div id="button"></div>
-	<br>
-	<div id="content"></div>
-	<br>
-	<div id="contentAfterForm"></div>
+<body  id="body" class="sapUiBody" role="application">
 </body>
 </html>

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Switch.
-sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, SwitchRenderer, library, Control, EnabledPropagator, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Parameters) {
 		"use strict";
 
 		/**
@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		};
 
 		Switch.prototype._setDomState = function(bState) {
-			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
+			var CSS_CLASS = this.getRenderer().CSS_CLASS,
 				sState = bState ? this._sOn : this._sOff,
 				oDomRef = this.getDomRef();
 
@@ -158,30 +158,35 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				oDomRef.setAttribute("aria-checked", "false");
 			}
 
-			$Switch.addClass(CSS_CLASS + "Trans");
+			this._getInvisibleElement().text(this.getInvisibleElementText(bState));
+
+			if (sap.ui.getCore().getConfiguration().getAnimation()) {
+				$Switch.addClass(CSS_CLASS + "Trans");
+			}
 
 			// remove inline styles
 			oSwitchInnerDomRef.style.cssText = "";
+		};
+
+		Switch.prototype._getInvisibleElement = function(){
+			return this.$("invisible");
 		};
 
 		Switch.prototype.getInvisibleElementId = function() {
 			return this.getId() + "-invisible";
 		};
 
-		Switch.prototype.getInvisibleElementText = function() {
+		Switch.prototype.getInvisibleElementText = function(bState) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			var sText = "";
 
 			switch (this.getType()) {
 				case sap.m.SwitchType.Default:
-
-					if (!this.getCustomTextOn()) {
-						sText = "SWITCH_ON";
-					}
-
+					sText = this.getCustomTextOn() || (bState ? oBundle.getText("SWITCH_ON") : oBundle.getText("SWITCH_OFF"));
 					break;
 
 				case sap.m.SwitchType.AcceptReject:
-					sText = "SWITCH_ARIA_ACCEPT";
+					sText = oBundle.getText("SWITCH_ARIA_ACCEPT");
 					break;
 
 				// no default
@@ -202,23 +207,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		// swap point
 		Switch._SWAPPOINT = Math.abs((Switch._ONPOSITION - Switch._OFFPOSITION) / 2);
 
-		// resource bundle
-		Switch._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * Required adaptations before rendering.
-		 *
-		 * @private
-		 */
 		Switch.prototype.onBeforeRendering = function() {
-			var Swt = Switch;
-
-			this._sOn = this.getCustomTextOn() || Swt._oRb.getText("SWITCH_ON");
-			this._sOff = this.getCustomTextOff() || Swt._oRb.getText("SWITCH_OFF");
+			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._sOn = this.getCustomTextOn() || oRb.getText("SWITCH_ON");
+			this._sOff = this.getCustomTextOff() || oRb.getText("SWITCH_OFF");
 		};
 
 		/* =========================================================== */
@@ -233,7 +229,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 */
 		Switch.prototype.ontouchstart = function(oEvent) {
 			var oTargetTouch = oEvent.targetTouches[0],
-				CSS_CLASS = SwitchRenderer.CSS_CLASS,
+				CSS_CLASS = this.getRenderer().CSS_CLASS,
 				$SwitchInner = this.$("inner");
 
 			// mark the event for components that needs to know if the event was handled by the Switch
@@ -366,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				assert(!fnTouch.find(oEvent.touches, this._iActiveTouchId), "touchend still active");
 
 				// remove active state
-				this.$("switch").removeClass(SwitchRenderer.CSS_CLASS + "Pressed");
+				this.$("switch").removeClass(this.getRenderer().CSS_CLASS + "Pressed");
 
 				// note: update the DOM before the change event is fired for better user experience
 				this._setDomState(this._bDragging ? this._bTempState : !this.getState());
@@ -436,6 +432,24 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			this.setProperty("state", bState, true);
 			this._setDomState(this.getState());
 			return this;
+		};
+
+		Switch.prototype.getAccessibilityInfo = function(bState) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			var sDesc = "";
+
+			if (this.getState()) {
+				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + this.getInvisibleElementText(bState);
+			}
+
+			return {
+				role: "checkbox",
+				type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
+				description: sDesc.trim(),
+				focusable: this.getEnabled(),
+				enabled: this.getEnabled()
+			};
 		};
 
 		return Switch;

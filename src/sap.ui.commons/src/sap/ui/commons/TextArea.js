@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 	/**
 	 * Constructor for a new TextArea.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -20,6 +20,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.TextArea</code> control.
 	 * @alias sap.ui.commons.TextArea
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -60,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 
 			/**
 			 * ID of label control
-			 * @deprecated Since version 1.5.2. 
+			 * @deprecated Since version 1.5.2.
 			 * Please use association AriaLabelledBy instead.
 			 */
 			labeledBy : {type : "string", group : "Identification", defaultValue : null, deprecated: true}
@@ -158,26 +159,18 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 		oEvent.stopPropagation();
 	};
 
-	/**
-	 * Returns an object representing the serialized focus information.
-	 * Overwrites the standard function.
-	 * @return {object} An object representing the serialized focus information.
-	 * @private
-	 */
-	TextArea.prototype.getFocusInfo = function () {
-		return {id:this.getId(), cursorPos:this.getCursorPos()};
-	};
-
-	/**
+	/*
 	 * Applies the focus info.
 	 * Overwrites the standard function.
 	 * @param {object} oFocusInfo Focusinfo object
 	 * @private
 	 */
 	TextArea.prototype.applyFocusInfo = function (oFocusInfo) {
-		this.focus();
-		var oFocusDomRef = this.getFocusDomRef();
-		jQuery(oFocusDomRef).cursorPos(this.getCursorPos());
+
+		TextField.prototype.applyFocusInfo.apply(this, arguments);
+
+		return this;
+
 	};
 
 	/**
@@ -341,6 +334,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 		}
 
 		TextField.prototype.oninput.apply(this, arguments);
+
+		// save cursor position
+		var oDomRef = this.getDomRef();
+		this.setProperty('cursorPos', jQuery(oDomRef).cursorPos(), true); // no re-rendering!
 
 	};
 
