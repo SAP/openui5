@@ -522,7 +522,9 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 			var oPos = ReorderHelper.findColumnForPosition(this, iLocationX);
 
-			if ( !oPos.id ) { //Special handling for dummy column (in case the other columns does not occupy the whole space)
+			if ( !oPos || !oPos.id ) {
+				//Special handling for dummy column (in case the other columns does not occupy the whole space),
+				//row selectors and row actions
 				this._iNewColPos = iOldColPos;
 				return;
 			}
