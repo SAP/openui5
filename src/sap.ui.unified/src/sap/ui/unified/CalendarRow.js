@@ -364,14 +364,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oStartDate = new Date();
 		}
 
-		if (!(oStartDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		CalendarUtils._checkJSDateObject(oStartDate);
 
 		var iYear = oStartDate.getFullYear();
-		if (iYear < 1 || iYear > 9999) {
-			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-		}
+		CalendarUtils._checkYearInValidRange(iYear);
 
 		this.setProperty("startDate", oStartDate);
 
@@ -731,9 +727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 	CalendarRow.prototype.focusNearestAppointment = function(oDate) {
 
-		if (!oDate || !(oDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		CalendarUtils._checkJSDateObject(oDate);
 
 		var aAppointments = _getAppointmentsSorted.call(this);
 		var oNextAppointment;

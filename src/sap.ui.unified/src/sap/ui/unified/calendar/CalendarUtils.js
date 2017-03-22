@@ -300,6 +300,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			return this._createLocalDate(oUniversalDate);
 		};
 
+		/**
+		 * Sets the given values to the Date
+		 * @private
+		 */
+		CalendarUtils._updateUTCDate = function(oDate, iYear, iMonth, iDate, iHours, iMinutes, iSeconds, iMilliseconds) {
+			if (jQuery.isNumeric(iYear)) {
+				oDate.setUTCFullYear(iYear);
+			}
+			if (jQuery.isNumeric(iMonth)) {
+				oDate.setUTCMonth(iMonth);
+			}
+			if (jQuery.isNumeric(iDate)) {
+				oDate.setUTCDate(iDate);
+			}
+			if (jQuery.isNumeric(iHours)) {
+				oDate.setUTCHours(iHours);
+			}
+			if (jQuery.isNumeric(iMinutes)) {
+				oDate.setUTCMinutes(iMinutes);
+			}
+			if (jQuery.isNumeric(iSeconds)) {
+				oDate.setUTCSeconds(iSeconds);
+			}
+			if (jQuery.isNumeric(iMilliseconds)) {
+				oDate.setUTCMilliseconds(iMilliseconds);
+			}
+		};
+
+		/**
+		 * Checks if the given object is JavaScript date object and throws error if its not
+		 * @private
+		 */
+		CalendarUtils._checkJSDateObject = function(oDate) {
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object.");
+			}
+		};
+
+		/**
+		 * Checks if the given year is between of 1 and 9999 and throws year if its not
+		 * @private
+		 */
+		CalendarUtils._checkYearInValidRange = function(iYear) {
+			if (!jQuery.isNumeric(iYear) || (iYear < 1 || iYear > 9999)) {
+				 throw new Error("Year must be in valid range (between year 0001 and year 9999).");
+			}
+		};
+
 		return CalendarUtils;
 
 	}, /* bExport= */ true);

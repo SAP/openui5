@@ -227,18 +227,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	CalendarMonthInterval.prototype.setStartDate = function(oStartDate){
 
-		if (!(oStartDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		CalendarUtils._checkJSDateObject(oStartDate);
 
 		if (jQuery.sap.equal(this.getStartDate(), oStartDate)) {
 			return this;
 		}
 
 		var iYear = oStartDate.getFullYear();
-		if (iYear < 1 || iYear > 9999) {
-			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-		}
+		CalendarUtils._checkYearInValidRange(iYear);
 
 		var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate);
 		this.setProperty("startDate", oStartDate, true);
@@ -502,26 +498,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (!oDate) {
 			// restore default
-			this._oMinDate.getJSDate().setUTCFullYear(1);
-			this._oMinDate.getJSDate().setUTCMonth(0);
-			this._oMinDate.getJSDate().setUTCDate(1);
+			CalendarUtils._updateUTCDate(this._oMinDate.getJSDate(), 1, 0, 1);
 		} else {
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			CalendarUtils._checkJSDateObject(oDate);
 
 			this._oMinDate = CalendarUtils._createUniversalUTCDate(oDate);
 			this._oMinDate.setDate(1); // always start at begin of month
 
 			var iYear = this._oMinDate.getUTCFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
+			CalendarUtils._checkYearInValidRange(iYear);
 
 			if (this._oMaxDate.getTime() < this._oMinDate.getTime()) {
 				jQuery.sap.log.warning("minDate > maxDate -> maxDate set to end of the month", this);
 				this._oMaxDate = CalendarUtils._createUniversalUTCDate(oDate);
-				this._oMaxDate.setUTCMonth(this._oMaxDate.getUTCMonth() + 1, 0);
+				CalendarUtils._updateUTCDate(this._oMaxDate, null, this._oMaxDate.getUTCMonth() + 1, 0);
 				this.setProperty("maxDate", CalendarUtils._createLocalDate(this._oMaxDate), true);
 			}
 
@@ -557,26 +547,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (!oDate) {
 			// restore default
-			this._oMaxDate.getJSDate().setUTCFullYear(9999);
-			this._oMaxDate.getJSDate().setUTCMonth(11);
-			this._oMaxDate.getJSDate().setUTCDate(31);
+			CalendarUtils._updateUTCDate(this._oMaxDate.getJSDate(), 9999, 11, 31);
 		} else {
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			CalendarUtils._checkJSDateObject(oDate);
 
 			this._oMaxDate = CalendarUtils._createUniversalUTCDate(oDate);
 			this._oMaxDate.setUTCMonth(this._oMaxDate.getUTCMonth() + 1, 0); // always end on end of month
 
 			var iYear = this._oMaxDate.getUTCFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
+			CalendarUtils._checkYearInValidRange(iYear);
 
 			if (this._oMinDate.getTime() > this._oMaxDate.getTime()) {
 				jQuery.sap.log.warning("maxDate < minDate -> minDate set to begin of the month", this);
 				this._oMinDate = CalendarUtils._createUniversalUTCDate(oDate);
-				this._oMinDate.setUTCDate(1);
+				CalendarUtils._updateUTCDate(this._oMinDate, null, null, 1);
 				this.setProperty("minDate", CalendarUtils._createLocalDate(this._oMinDate), true);
 			}
 
@@ -1079,16 +1063,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	function _displayDate(oDate, bNoFocus){
 
 		if (oDate && (!this._oFocusedDate || this._oFocusedDate.getTime() != oDate.getTime())) {
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			CalendarUtils._checkJSDateObject(oDate);
 
 			oDate = CalendarUtils._createUniversalUTCDate(oDate);
 
 			var iYear = oDate.getUTCFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
+			CalendarUtils._checkYearInValidRange(iYear);
 
 			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 				throw new Error("Date must not be in valid range (minDate and maxDate); " + this);
