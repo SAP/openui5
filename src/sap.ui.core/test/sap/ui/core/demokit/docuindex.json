@@ -104,6 +104,7 @@
 				"category" : "Testing",
 				"since" : "1.24",
 				"samples" : [
+					"sap.ui.core.sample.OpaGetStarted",
 					"sap.ui.core.sample.OpaMatchers",
 					"sap.ui.core.sample.OpaById",
 					"sap.ui.core.sample.OpaDynamicWait",
@@ -588,6 +589,11 @@
 				"id": "sap.ui.core.sample.OpaAction",
 				"name": "Simulating user interactions on UI5 controls with OPA5",
 				"description": "There are built-in actions for OPA and you are also able to write custom actions if they do not fit the control you are using."
+			},
+			{
+				"id": "sap.ui.core.sample.OpaGetStarted",
+				"name": "Simulating a simple backend request with OPA5",
+				"description": "This example is complementary to the OPA get started section in the developer guide. It shows how to simulate a simple backend server request with OPA5 and Sinon.JS"
 			}
 		]
 	}
