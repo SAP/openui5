@@ -11,16 +11,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 *
 			 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 			 * @param {object} [mSettings] Initial settings for the new control
-			 *
+			 * A wrapper control for a group of radio buttons.
 			 * @class
-			 * This control is used as a wrapper for a group of sap.m.RadioButton controls, which then can be used as a single UI element.
+			 * This control is used as a wrapper for a group of {@link sap.m.RadioButton} controls, which can be used as a single UI element.
 			 * You can select only one of the grouped radio buttons at a time.
-			 * The RadioButtonGroup lets you do things like attach a single event handler on a group of buttons, rather than on each individual button.
-			 * The grouped radio buttons can be arranged within different number of columns.
-			 * Based on the number of specified columns and the number of radio buttons used, different layout types can be achieved - as a 'matrix',
-			 * horizontally or vertically aligned radio buttons.<br/>
-			 * <b>Note:</b> Design guidelines recommend application developers create radio button groups with only one row or only one column.
-
+			 * <h3>Structure</h3>
+			 * <ul>
+			 * <li>The radio buttons are stored in the <code>buttons</code> aggregation.</li>
+			 * <li>By setting the <code>columns</code> property, you can create layouts like a 'matrix', 'vertical' or 'horizontal'.</li>
+			 * <li><b>Note:</b>For proper display on all devices, we recommend creating radio button groups with only one row or only one column.</li>
+			 * </ul>
+			 * <h3>Usage</h3>
+			 * <h4>When to use:</h4>
+			 * <ul>
+			 * <li>You want to attach a single event handler on a group of buttons, rather than on each individual button.</li>
+			 * </ul>
+			 * <h4>When not to use:</h4>
+			 * <ul>
+			 * <li>Do not put two radio button groups right next to each other as it is difficult to determine which buttons belong to which group.</li>
+			 * </ul>
 			 * @extends sap.ui.core.Control
 			 *
 			 * @author SAP SE
