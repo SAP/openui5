@@ -68,6 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		controls: [
 			"sap.ui.core.ComponentContainer",
 			"sap.ui.core.Control",
+			"sap.ui.core.FragmentControl",
 			"sap.ui.core.HTML",
 			"sap.ui.core.Icon",
 			"sap.ui.core.InvisibleText",

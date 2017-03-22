@@ -1,0 +1,20 @@
+<core:FragmentDefinition xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+    xmlns:m="sap.m"
+    xmlns:core="sap.ui.core">
+    <m:HBox>
+        <template:if test="{= ${this>textFirst} === 'x'}">
+            <template:then>
+                <m:Text text="{$this>text}"
+                    width="10rem" />
+                <m:Input value="{$this>value}"
+                    width="10rem" />
+            </template:then>
+            <template:else>
+                <m:Input value="{$this>value}"
+                    width="10rem" />
+                <m:Text text="{$this>text}"
+                    width="10rem" />
+            </template:else>
+        </template:if>
+    </m:HBox>
+</core:FragmentDefinition>
