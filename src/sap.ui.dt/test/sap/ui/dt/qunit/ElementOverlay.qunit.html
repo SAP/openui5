@@ -23,6 +23,21 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<!-- inline styles for animation / transition test -->
+		<style>
+			@keyframes example {
+			    0%   {width: auto;}
+			    100% {width: 0px;}
+			}
+
+			.sapUiDtTestAnimate {
+			    animation-name: example;
+			    animation-duration: 0.5s;
+			    width: 0px;
+			}
+		</style>
+
 		<script>
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
@@ -87,19 +102,18 @@
 
 			QUnit.module("Given that an Overlay is created for a control with an existing designTime metadata", {
 				beforeEach : function(assert) {
-					var that = this;
 					var done = assert.async();
 					this.oPage = new sap.m.Page();
 					this.oPage.placeAt("content");
 					sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oPage).then(function(oDesignTimeMetadata) {
-						that.oOverlay = new sap.ui.dt.ElementOverlay({
+						this.oOverlay = new sap.ui.dt.ElementOverlay({
 							designTimeMetadata : { data : oDesignTimeMetadata},
-							element : that.oPage
+							element : this.oPage
 						});
-						that.oOverlay.placeInOverlayContainer();
+						this.oOverlay.placeInOverlayContainer();
 						sap.ui.getCore().applyChanges();
 						done();
-					});
+					}.bind(this));
 				},
 				afterEach : function() {
 					this.oPage.destroy();
@@ -126,6 +140,25 @@
 
 				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
 				assert.ok(oDesignTimeMetadata instanceof sap.ui.dt.ElementDesignTimeMetadata, "and the design time metadata for the control is set");
+			});
+
+			QUnit.test("when CSS animation takes place in UI", function(assert) {
+				var done = assert.async();
+
+				var fnCheckSize = function() {
+					assert.strictEqual(this.oPage.$().width(), this.oOverlay.$().width());
+					done();
+				}.bind(this);
+
+				if (!sap.ui.Device.browser.phantomJS) {
+					this.oPage.$().on("animationend webkitAnimationEnd oanimationend", fnCheckSize);
+				} else {
+					// phantomjs doesn't support animation end events
+					setTimeout(fnCheckSize, 1000);
+				}
+
+				this.oPage.addStyleClass("sapUiDtTestAnimate");
+				sap.ui.getCore().applyChanges();
 			});
 
 			QUnit.test("when the overlay is rerendered", function(assert) {
