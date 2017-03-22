@@ -195,6 +195,27 @@ sap.ui.define(['jquery.sap.global'],
 			};
 
 			/**
+			 * Check the ancestor hierarchy of an overlay for a given relevant container
+			 * @param  {sap.ui.dt.Overlay} oOverlay overlay object which has to be checked
+			 * @param  {sap.ui.core.Element} oRelevantContainer object
+			 */
+			ElementUtil.hasSameRelevantContainer = function(oOverlay, oRelevantContainer) {
+				var oParentOverlay = oOverlay.getParent();
+				if (!oRelevantContainer || !oParentOverlay.getElementInstance) {
+					return false;
+				}
+
+				while (oParentOverlay && oParentOverlay.getElementInstance() !== oRelevantContainer) {
+					oParentOverlay = oParentOverlay.getParent();
+					if (!oParentOverlay.getElementInstance) {
+						return false;
+					}
+				}
+
+				return !!oParentOverlay;
+			};
+
+			/**
 			 *
 			 */
 			ElementUtil.isElementFiltered = function(oControl, aType) {
