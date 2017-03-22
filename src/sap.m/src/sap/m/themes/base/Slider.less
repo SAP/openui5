@@ -102,6 +102,16 @@
 /* slider progress bar */
 .sapMSliderProgress {
 	background: @sapUiFieldActiveBorderColor;
+
+	&:before{
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 500%;
+		left: 50%;
+		top: 50%;
+		transform: translate(0, -30%);
+	}
 }
 
 /* slider handle */
