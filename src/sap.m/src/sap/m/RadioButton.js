@@ -14,12 +14,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 *
+	 * Enables users to select a single option from a set of options.
 	 * @class
-	 * RadioButton is a control similar to CheckBox, but it allows the user to choose only one of the predefined set of options.
-	 *
-	 * Usually, RadioButton is used in a group with other RadioButtons (with the groupName property or by using sap.m.RadioButtonGroup), thus providing a limited choice for the user.
-	 * An event is triggered when the user makes a change of the selection.
+	 * RadioButton is a control similar to a {@link sap.m.CheckBox checkbox}, but it allows you to choose only one of the predefined set of options.
+	 * Multiple radio buttons have to belong to the same group (have the same value for <code>groupName</code>) in order to be mutually exclusive.
+	 * A wrapper control {@link sap.m.RadioButtonGroup RadioButtonGroup} can be used instead of individual radio buttons.
+	 * <h3>Structure</h3>
+	 * <ul>
+	 * <li>Radio buttons can have a value state like Error or Warning.</li>
+	 * <li>Radio buttons can be arranged vertically by setting the <code>column</code> to a number higher than 1.</li>
+	 * <li>Radio button options need to have a {@link sap.m.Label label}.</li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * <ul>
+	 * <li>You quickly need to choose between at least two alternatives.</li>
+	 * <li>You need to place other controls between the radio button options.</li>
+	 * </ul>
+	 * <h4>When not to use:</h4>
+	 * <ul>
+	 * <li>You want to select multiple values for the same option. Use {@link sap.m.CheckBox checkboxes} instead.</li>
+	 * <li>When the default value is recommended for most users in most situations. Use a {@link sap.m.Select drop-down} instead as is saves space by not showing all the alternatives.</li>
+	 * <li>You want have more than 8 options. Use a {@link sap.m.Select drop-down} instead.</li>
+	 * <li>When the options are mutually exclusive e.g. ON/OFF. Use a {@link sap.m.Switch switch} instead.</li>
+	 * <li>Avoid using horizontally aligned radio buttons as they will be cut off on phones.</li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
