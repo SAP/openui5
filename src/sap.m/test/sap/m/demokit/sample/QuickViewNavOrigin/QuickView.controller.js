@@ -265,7 +265,7 @@ sap.ui.define([
 
 		createPopover: function() {
 			if (!this._oQuickView) {
-				this._oQuickView = sap.ui.xmlfragment("sap.m.sample.QuickView.QuickView", this);
+				this._oQuickView = sap.ui.xmlfragment("sap.m.sample.QuickViewNavOrigin.QuickView", this);
 				this.getView().addDependent(this._oQuickView);
 			}
 		},
