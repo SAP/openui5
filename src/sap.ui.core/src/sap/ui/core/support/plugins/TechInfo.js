@@ -57,23 +57,38 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 						"<div><div class='sapUiSupportTechInfoCntnt'>",
 						"<table border='0' cellpadding='3'>"];
 
-			var sProductName = "SAPUI5 Version";
+			// version information
+			function formatBuildInfo(timestamp, scmRevision) {
+				var info = [];
+				if ( timestamp ) {
+					var match = /^(\d{4})(\d{2})(\d{2})-?(\d{2})(\d{2})$/.exec(timestamp);
+					if ( match ) {
+						timestamp = match[1] + '-' + match[2] + '-' + match[3] + 'T' + match[4] + ":" + match[5];
+					}
+					info.push("built at " + encode(timestamp));
+				}
+				if ( scmRevision ) {
+					info.push("last change " + encode(scmRevision));
+				}
+				return info.length === 0 ? "" : " (" + info.join(", ") + ")";
+			}
+			var sProductName = "SAPUI5";
 			var sVersionInfoEncoded = "not available";
 			try {
 				var oVersionInfo = sap.ui.getVersionInfo();
 				sProductName = oVersionInfo.name;
 				sVersionInfoEncoded =
 					"<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + encode(oVersionInfo.version) + "</a>" +
-					" (built at " + encode(oVersionInfo.buildTimestamp) + ", last change " + encode(oVersionInfo.scmRevision) + ")";
+					formatBuildInfo(oVersionInfo.buildTimestamp, oVersionInfo.scmRevision);
 			} catch (ex) {
 				// ignore
 			}
 			line(html, true, true, sProductName, function(buffer) {
 				buffer.push(sVersionInfoEncoded);
 			});
-			if ( !/OpenUI5/.test(sProductName) ) {
-				line(html, true, true, "Core Version", function(buffer){
-					return oData.version + " (built at " + oData.build + ", last change " + oData.change + ")";
+			if ( !/openui5/i.test(sProductName) ) {
+				line(html, true, true, "OpenUI5 Version", function(buffer){
+					buffer.push( encode(oData.version) + formatBuildInfo(oData.build, oData.change) );
 				});
 			}
 			line(html, true, true, "Loaded jQuery Version", function(buffer){
