@@ -87,8 +87,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/m/Butt
 
 			// Hook on firePress method of the button so we can fire local press event also
 			oButton.firePress = function () {
-				Button.prototype.firePress.call(oButton);
 				this.firePress();
+				Button.prototype.firePress.call(oButton);
 			}.bind(this);
 
 			// We return DOM reference from the button so for example CustomData.setKey method checks
