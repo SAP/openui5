@@ -288,11 +288,21 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				this._compatversion[n] = _getCVers(n);
 			}
 
+			function getMetaTagValue(sName) {
+				var oMetaTag = document.querySelector("META[name='" + sName + "']"),
+				    sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
+				if (sMetaContent) {
+					return sMetaContent;
+				}
+			}
 
 			// 6. apply the settings from the url (only if not blocked by app configuration)
 			if ( !config.ignoreUrlParams ) {
 				var sUrlPrefix = "sap-ui-";
 				var oUriParams = jQuery.sap.getUriParameters();
+
+				// map of SAP parameters (allows general access)
+				config.sapParam = config.sapParam || {};
 
 				// first map SAP parameters, can be overwritten by "sap-ui-*" parameters
 
@@ -312,6 +322,18 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 						jQuery.sap.log.warning("sap-language '" + sValue + "' is not a valid BCP47 language tag and will only be used as SAP logon language");
 					}
 				}
+
+				// set the SAP logon language to the SAP params
+				config.sapParam['sap-language'] = this.getSAPLogonLanguage();
+
+				// read the SAP parameters from URL or META tag
+				['sap-client', 'sap-server', 'sap-system'].forEach(function(sName) {
+					if ( oUriParams.get(sName) ) {
+						config.sapParam[sName] = oUriParams.get(sName);
+					} else {
+						config.sapParam[sName] = getMetaTagValue(sName);
+					}
+				});
 
 				if (oUriParams.mParams['sap-rtl']) {
 					// "" = false, "X", "x" = true
@@ -414,9 +436,9 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 			// Configure whitelistService / frameOptions via <meta> tag if not already defined via UI5 configuration
 			if (!config["whitelistService"]) {
-				var oMetaTag = document.querySelector("META[name='sap.whitelistService']");
-				if (oMetaTag) {
-					config["whitelistService"] = oMetaTag.getAttribute("content");
+				var sMetaTagValue = getMetaTagValue('sap.whitelistService');
+				if (sMetaTagValue) {
+					config["whitelistService"] = sMetaTagValue;
 					// Set default "frameOptions" to "trusted" instead of "allow"
 					if (config["frameOptions"] === "default") {
 						config["frameOptions"] = "trusted";
@@ -671,6 +693,18 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getLocale : function () {
 			return this.language;
+		},
+
+		/**
+		 * Returns a SAP parameter by it's name (e.g. sap-client, sap-system, sap-server).
+		 *
+		 * @experimental
+		 * @since 1.44.11
+		 * @param {string} sName The parameter name
+		 * @return {string} The SAP parameter value
+		 */
+		getSAPParam : function (sName) {
+			return this.sapParam && this.sapParam[sName];
 		},
 
 		/**

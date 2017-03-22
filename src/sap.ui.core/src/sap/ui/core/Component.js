@@ -10,17 +10,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	/*global Promise */
 
 	/**
-	 * Utility function which adds SAP-specific search parameters to an URI instance
+	 * Utility function which adds SAP-specific parameters to an URI instance
 	 *
-	 * @param {object} oUriParams See {@link jQuery.sap.getUriParameters}
 	 * @param {URI} oUri URI.js instance
 	 * @private
 	 */
-	function addSapUriParams(oUriParams, oUri) {
+	function addSapParams(oUri) {
 		['sap-client', 'sap-server'].forEach(function(sName) {
-			var sValue = oUriParams.get(sName);
-			if (sValue && !oUri.hasSearch(sName)) {
-				oUri.addSearch(sName, sValue);
+			if (!oUri.hasSearch(sName)) {
+				var sValue = sap.ui.getCore().getConfiguration().getSAPParam(sName);
+				if (sValue) {
+					oUri.addSearch(sName, sValue);
+				}
 			}
 		});
 	}
@@ -982,6 +983,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		var bMergeParent = mOptions.mergeParent;
 		var mCacheTokens = mOptions.cacheTokens || {};
 		var sLogComponentName = oComponent ? oComponent.toString() : oManifest.getComponentName();
+		var oConfig = sap.ui.getCore().getConfiguration();
 
 		if (!mOptions.models) {
 			// skipping model creation because of missing sap.ui5 models manifest entry
@@ -1020,9 +1022,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			}
 		}
 
-		// read current URI params to mix them into model URI
-		var oUriParams = jQuery.sap.getUriParameters();
-
 		var mModelConfigurations = {};
 
 		// create a model for each ["sap.ui5"]["models"] entry
@@ -1030,6 +1029,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 			var oModelConfig = mConfig.models[sModelName];
 			var bIsDataSourceUri = false;
+			var mMetadataUrlParams = null;
 
 			// normalize dataSource shorthand, e.g.
 			// "myModel": "myDataSource" => "myModel": { dataSource: "myDataSource" }
@@ -1077,25 +1077,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					if (!oModelConfig.uri) {
 						oModelConfig.uri = oDataSource.uri;
 						bIsDataSourceUri = true;
-
-						if (mCacheTokens.dataSources && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
-							var sCacheToken = mCacheTokens.dataSources[oDataSource.uri];
-							if (sCacheToken) {
-
-								// Lazy initialize settings and metadataUrlParams objects
-								oModelConfig.settings = oModelConfig.settings || {};
-								oModelConfig.settings.metadataUrlParams = oModelConfig.settings.metadataUrlParams || {};
-
-								// set sap-context-token (override existing value)
-								oModelConfig.settings.metadataUrlParams["sap-context-token"] = sCacheToken;
-
-								// set sap-language (do not override existing value)
-								if (typeof oModelConfig.settings.metadataUrlParams["sap-language"] === "undefined") {
-									oModelConfig.settings.metadataUrlParams["sap-language"] = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
-								}
-							}
-						}
-
 					}
 
 					if (oDataSource.type === 'OData' && oDataSource.settings && typeof oDataSource.settings.maxAge === "number") {
@@ -1131,17 +1112,61 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 							var oAnnotationUri = new URI(oAnnotation.uri);
 
-							if (mCacheTokens.dataSources && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
-								var sCacheToken = mCacheTokens.dataSources[oAnnotation.uri];
+							if (oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
+
+								/* eslint-disable no-loop-func */
+								["sap-language", "sap-client"].forEach(function(sName) {
+									if (!oAnnotationUri.hasQuery(sName) && oConfig.getSAPParam(sName)) {
+										oAnnotationUri.setQuery(sName, oConfig.getSAPParam(sName));
+									}
+								});
+								/* eslint-enable no-loop-func */
+
+								var sCacheToken = mCacheTokens.dataSources && mCacheTokens.dataSources[oAnnotation.uri];
 								if (sCacheToken) {
 
-									// set sap-context-token (override existing value)
-									oAnnotationUri.setQuery("sap-context-token", sCacheToken);
+									/* eslint-disable no-loop-func */
+									var applyAnnotationCacheToken = function() {
 
-									// set sap-language (do not override existing value)
-									if (!oAnnotationUri.hasQuery("sap-language")) {
-										oAnnotationUri.setQuery("sap-language", sap.ui.getCore().getConfiguration().getSAPLogonLanguage());
-									}
+										// 1. "sap-language" must be part of the annotation URI
+										if (!oAnnotationUri.hasQuery("sap-language")) {
+											jQuery.sap.log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + sCacheToken + "\" for ODataAnnotation \"" + aAnnotations[i] + "\" (" + oAnnotationUri.toString() + "). " +
+												"Missing \"sap-language\" URI parameter",
+												"[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", sLogComponentName);
+											return;
+										}
+
+										// 2. "sap-client" must be set as URI param
+										if (!oAnnotationUri.hasQuery("sap-client")) {
+											jQuery.sap.log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + sCacheToken + "\" for ODataAnnotation \"" + aAnnotations[i] + "\" (" + oAnnotationUri.toString() + "). " +
+												"Missing \"sap-client\" URI parameter",
+												"[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", sLogComponentName);
+											return;
+										}
+
+										// 3. "sap-client" must equal to the value of "sap.ui.getCore().getConfiguration().getSAPParam("sap-client")"
+										if (!oAnnotationUri.hasQuery("sap-client", oConfig.getSAPParam("sap-client"))) {
+											jQuery.sap.log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + sCacheToken + "\" for ODataAnnotation \"" + aAnnotations[i] + "\" (" + oAnnotationUri.toString() + "). " +
+												"URI parameter \"sap-client=" + oAnnotationUri.query(true)["sap-client"] + "\" must be identical with configuration \"sap-client=" + oConfig.getSAPParam("sap-client") + "\"",
+												"[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", sLogComponentName);
+											return;
+										}
+
+										// Overriding the parameter is fine as the given one should be the most up-to-date
+										if (oAnnotationUri.hasQuery("sap-context-token") && !oAnnotationUri.hasQuery("sap-context-token", sCacheToken)) {
+											var existingContextToken = oAnnotationUri.query(true)["sap-context-token"];
+											jQuery.sap.log.warning("Component Manifest: Overriding existing \"sap-context-token=" + existingContextToken + "\" with provided value \"" + sCacheToken + "\" for ODataAnnotation \"" + aAnnotations[i] + "\" (" + oAnnotationUri.toString() + ").",
+												"[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", sLogComponentName);
+										}
+
+										// Finally, set the sap-context-token
+										oAnnotationUri.setQuery("sap-context-token", sCacheToken);
+
+									};
+									/* eslint-enable no-loop-func */
+
+									applyAnnotationCacheToken();
+
 								}
 							}
 
@@ -1189,7 +1214,106 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
-					addSapUriParams(oUriParams, oUri);
+					addSapParams(oUri);
+
+					if (oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
+
+						// Handle sap-language URI parameter
+						// Do not add it if it is already set in the "metadataUrlParams" or is part of the model URI
+						mMetadataUrlParams = oModelConfig.settings && oModelConfig.settings.metadataUrlParams;
+						if ((!mMetadataUrlParams || typeof mMetadataUrlParams['sap-language'] === 'undefined')
+							&& !oUri.hasQuery('sap-language')
+							&& oConfig.getSAPParam('sap-language')
+						) {
+
+							// Lazy initialize settings and metadataUrlParams objects
+							oModelConfig.settings = oModelConfig.settings || {};
+							mMetadataUrlParams = oModelConfig.settings.metadataUrlParams = oModelConfig.settings.metadataUrlParams || {};
+
+							// Add sap-language only to $metadata URL params
+							mMetadataUrlParams['sap-language'] = oConfig.getSAPParam('sap-language');
+						}
+
+						// Handle cacheTokens
+						if (mCacheTokens.dataSources) {
+
+							// Token lookup is based on exact URI defined in dataSource
+							var sCacheToken = mCacheTokens.dataSources[oDataSource.uri];
+							if (sCacheToken) {
+
+								/* eslint-disable no-loop-func */
+								var applyCacheToken = function() {
+
+									// Prerequisite: sap-context-token must not be set in the model URI
+									if (oUri.hasQuery("sap-context-token")) {
+										jQuery.sap.log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + sCacheToken + "\" for model \"" + sModelName + "\" (" + oUri.toString() + "). " +
+											"Model URI already contains parameter \"sap-context-token=" + oUri.query(true)["sap-context-token"] + "\"",
+											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+										return;
+									}
+
+									// 1. "sap-language" must be set in "oModelConfig.settings.metadataUrlParams"
+									// or part of the model URI
+									if ((!mMetadataUrlParams || typeof mMetadataUrlParams["sap-language"] === "undefined")
+										&& !oUri.hasQuery("sap-language")
+									) {
+										jQuery.sap.log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + sCacheToken + "\" for model \"" + sModelName + "\" (" + oUri.toString() + "). " +
+											"Missing \"sap-language\" parameter",
+											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+										return;
+									}
+
+									// 2. "sap-client" must be set as URI param in "oModelConfig.uri"
+									if (!oUri.hasQuery("sap-client")) {
+										jQuery.sap.log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + sCacheToken + "\" for model \"" + sModelName + "\" (" + oUri.toString() + "). " +
+											"Missing \"sap-client\" parameter",
+											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+										return;
+									}
+
+									// 3. "sap-client" must equal to the value of "sap.ui.getCore().getConfiguration().getSAPParam('sap-client')"
+									if (!oUri.hasQuery("sap-client", oConfig.getSAPParam("sap-client"))) {
+										jQuery.sap.log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + sCacheToken + "\" for model \"" + sModelName + "\" (" + oUri.toString() + "). " +
+											"URI parameter \"sap-client=" + oUri.query(true)["sap-client"] + "\" must be identical with configuration \"sap-client=" + oConfig.getSAPParam("sap-client") + "\"",
+											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+										return;
+									}
+
+									// 4. If "mMetadataUrlParams["sap-client"]" is set (which should not be done!), it must also equal to the value of the config
+									if (mMetadataUrlParams && typeof mMetadataUrlParams["sap-client"] !== "undefined") {
+										if (mMetadataUrlParams["sap-client"] !== oConfig.getSAPParam("sap-client")) {
+											jQuery.sap.log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + sCacheToken + "\" for model \"" + sModelName + "\" (" + oUri.toString() + "). " +
+												"Parameter metadataUrlParams[\"sap-client\"] = \"" + mMetadataUrlParams["sap-client"] + "\" must be identical with configuration \"sap-client=" + oConfig.getSAPParam("sap-client") + "\"",
+												"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+											return;
+										}
+									}
+
+									// Overriding the parameter is fine as the given one should be the most up-to-date
+									if (mMetadataUrlParams && mMetadataUrlParams["sap-context-token"] && mMetadataUrlParams["sap-context-token"] !== sCacheToken) {
+										jQuery.sap.log.warning("Component Manifest: Overriding existing \"sap-context-token=" + mMetadataUrlParams["sap-context-token"] + "\" with provided value \"" + sCacheToken + "\" for model \"" + sModelName + "\" (" + oUri.toString() + ").",
+											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+									}
+
+									// Lazy initialize settings and metadataUrlParams objects
+									if (!mMetadataUrlParams) {
+										oModelConfig.settings = oModelConfig.settings || {};
+										mMetadataUrlParams = oModelConfig.settings.metadataUrlParams = oModelConfig.settings.metadataUrlParams || {};
+									}
+
+									// Finally, set the sap-context-token
+									mMetadataUrlParams["sap-context-token"] = sCacheToken;
+
+								};
+								/* eslint-enable no-loop-func */
+
+								applyCacheToken();
+
+							}
+						}
+
+					}
+
 				}
 
 				oModelConfig.uri = oUri.toString();
@@ -1223,7 +1347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			sSystemParameter = oComponentData && oComponentData.startupParameters && oComponentData.startupParameters["sap-system"];
 			// Check the URL as "fallback", the system parameter of the componentData.startup has precedence over a URL parameter
 			if (!sSystemParameter) {
-				sSystemParameter = oUriParams.get("sap-system");
+				sSystemParameter = oConfig.getSAPParam("sap-system");
 			}
 
 			// lazy load the ODataUtils if systemParameter is given

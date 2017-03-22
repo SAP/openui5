@@ -527,6 +527,64 @@
 			});
 		});
 
+		QUnit.module("SAP parameters", {
+			beforeEach: function(assert) {
+				this.oGetParameterStub = sinon.stub();
+			}
+		});
+
+		QUnit.test("Read SAP parameters from URL", function(assert) {
+
+			// setup
+			var oParams = jQuery.sap.getUriParameters('?sap-client=foo&sap-server=bar&sap-system=abc');
+			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+
+			// call method under test
+			var oConfig = new Configuration();
+
+			// verify results
+			assert.equal(oConfig.getSAPParam('sap-client'), 'foo', 'SAP parameter sap-client=foo');
+			assert.equal(oConfig.getSAPParam('sap-server'), 'bar', 'SAP parameter sap-server=bar');
+			assert.equal(oConfig.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-system=abc');
+
+			oGetUriParametersStub.restore();
+			oConfig.destroy();
+
+		});
+
+		QUnit.test("Read SAP parameters from <meta> tag", function(assert) {
+
+			// setup
+			var metaTagClient = document.createElement("meta");
+			metaTagClient.setAttribute("name", "sap-client");
+			metaTagClient.setAttribute("content", "foo");
+			document.head.appendChild(metaTagClient);
+
+			var metaTagServer = document.createElement("meta");
+			metaTagServer.setAttribute("name", "sap-server");
+			metaTagServer.setAttribute("content", "bar");
+			document.head.appendChild(metaTagServer);
+
+			var metaTagSystem = document.createElement("meta");
+			metaTagSystem.setAttribute("name", "sap-system");
+			metaTagSystem.setAttribute("content", "abc");
+			document.head.appendChild(metaTagSystem);
+
+			// call method under test
+			var oConfig = new Configuration();
+
+			// verify results
+			assert.equal(oConfig.getSAPParam('sap-client'), 'foo', 'SAP parameter sap-client=foo');
+			assert.equal(oConfig.getSAPParam('sap-server'), 'bar', 'SAP parameter sap-system=bar');
+			assert.equal(oConfig.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-client=abc');
+
+			oConfig.destroy();
+			document.head.removeChild(metaTagClient);
+			document.head.removeChild(metaTagServer);
+			document.head.removeChild(metaTagSystem);
+
+		});
+
 		QUnit.start();
 
 	});
