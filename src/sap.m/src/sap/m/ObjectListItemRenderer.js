@@ -222,7 +222,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		 * @returns {String} ObjectListItem`s inner nodes IDs
 		 */
 		ObjectListItemRenderer.getAriaLabelledBy = function(oLI) {
-			var aLabelledByIds = [];
+			var aLabelledByIds = [],
+				oFirstStatus = oLI.getFirstStatus(),
+				oSecondStatus = oLI.getSecondStatus();
 
 			if (oLI.getIntro()) {
 				aLabelledByIds.push(oLI.getId() + "-intro");
@@ -238,16 +240,18 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 			if (oLI.getAttributes()) {
 				oLI.getAttributes().forEach(function(attribute) {
-					aLabelledByIds.push(attribute.getId());
+					if (!attribute._isEmpty()) {
+						aLabelledByIds.push(attribute.getId());
+					}
 				});
 			}
 
-			if (oLI.getFirstStatus()) {
-				aLabelledByIds.push(oLI.getFirstStatus().getId());
+			if (oFirstStatus && !oFirstStatus._isEmpty()) {
+				aLabelledByIds.push(oFirstStatus.getId());
 			}
 
-			if (oLI.getSecondStatus()) {
-				aLabelledByIds.push(oLI.getSecondStatus().getId());
+			if (oSecondStatus && !oSecondStatus._isEmpty()) {
+				aLabelledByIds.push(oSecondStatus.getId());
 			}
 
 			if (oLI.getMarkers()) {

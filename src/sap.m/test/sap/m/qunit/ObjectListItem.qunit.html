@@ -182,6 +182,49 @@
 			oAttrsAndStatuseListItem.destroy();
 		});
 
+		//BCP: 1770099014
+		QUnit.test("Empty attributes and statuses are not used as ARIA labels", function(assert) {
+			//arrange
+			var oOLI = new sap.m.ObjectListItem({
+					attributes: [
+						new sap.m.ObjectAttribute({
+							id: "oa1ID",
+							text: "first"
+						}),
+						new sap.m.ObjectAttribute({
+							id: "oa2ID",
+							text: ""
+						}),
+						new sap.m.ObjectAttribute({
+							id: "oa3ID",
+							text: "third"
+						})
+					],
+					firstStatus: new sap.m.ObjectStatus({
+						id: "os1ID",
+						text: ""
+					}),
+					secondStatus: new sap.m.ObjectStatus({
+						id: "os2ID",
+						text: "second status"
+					})
+				}).placeAt('qunit-fixture'),
+				sResultARIA;
+
+			sap.ui.getCore().applyChanges();
+			sResultARIA = oOLI.$().attr('aria-labelledby');
+
+			//assert
+			ok(sResultARIA.indexOf('oa1ID') > -1, 'first attribute used as aria label');
+			ok(sResultARIA.indexOf('oa2ID') === -1, 'second attribute not used as aria label');
+			ok(sResultARIA.indexOf('oa3ID') > -1, 'third attribute used as aria label');
+			ok(sResultARIA.indexOf('os1ID') === -1, 'first status not used as aria label');
+			ok(sResultARIA.indexOf('os2ID') > -1, 'second status used as aria label');
+
+			//clean
+			oOLI.destroy();
+		});
+
 		/*********************************************/
 
         var showTextDir = new sap.m.ObjectListItem({
