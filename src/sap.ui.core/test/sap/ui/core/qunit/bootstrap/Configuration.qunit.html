@@ -35,7 +35,7 @@
 
 	QUnit.config.autostart = false;
 
-	sap.ui.require(['sap/ui/core/Configuration', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/Locale'], 
+	sap.ui.require(['sap/ui/core/Configuration', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/Locale'],
 		function(Configuration, Core, coreLibrary, Locale) {
 
 		var CalendarType = coreLibrary.CalendarType;
@@ -270,10 +270,10 @@
 			oConfig.setLanguage("de-CH");
 			assert.equal(oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
 		});
-		
+
 		QUnit.test("derived from language - special cases", function(assert) {
 			var oConfig = Core.getConfiguration();
-			//  SAP language derived by UI5 - special cases 
+			//  SAP language derived by UI5 - special cases
 			oConfig.setLanguage("zh-CN");
 			assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
 			oConfig.setLanguage("zh-Hans");
@@ -322,7 +322,7 @@
 		});
 
 		[
-		 	/* URL parameter							language			languageTag 		SAP-L	Caption */ 
+		 	/* URL parameter							language			languageTag 		SAP-L	Caption */
 			[ "?sap-language=EN",						"EN",				"en",				"EN",	"sap-language is the valid ISO language EN"],
 			[ "?sap-language=ZH",						"zh-Hans",			"zh-Hans",			"ZH",	"sap-language is the known SAP language ZN"],
 			[ "?sap-language=ZF",						"zh-Hant",			"zh-Hant",			"ZF",	"sap-language is the known SAP language ZF"],
@@ -334,7 +334,7 @@
 			[ "?sap-ui-language=en_GB&sap-language=6N",	"en_GB",			"en-GB",			"6N",	"valid combination of sap-ui-language and sap-language (en_GB, 6N)"],
 
 		].forEach(function( data ) {
-			
+
 			QUnit.test(data[4], function(assert) {
 
 				var oConfig = this.setupConfig("de", data[0]);
@@ -448,10 +448,10 @@
 				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-number-format=' + encodeURIComponent(data.param));
 				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
 				oSpySetLegacyNumberFormat.reset();
-				
+
 				// call method under test
 				var oConfig = new Configuration();
-				
+
 				// verify results
 				assert.equal(oSpySetLegacyNumberFormat.callCount, 1, "setLegacyNumberFormat with value: '" + data.param + "' must be called");
 				assert.equal(oConfig.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
@@ -488,15 +488,15 @@
 				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-date-format=' + encodeURIComponent(data.param));
 				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
 				oSpySetLegacyDateFormat.reset();
-				
+
 				var oConfig = new Configuration();
-			
+
 				assert.equal(oSpySetLegacyDateFormat.callCount, 1, "setLegacyDateFormat must have been called one time");
 				assert.equal(oConfig.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
 
 				oGetUriParametersStub.restore();
 				oConfig.destroy();
-				
+
 			});
 		});
 
@@ -530,13 +530,14 @@
 		QUnit.module("SAP parameters", {
 			beforeEach: function(assert) {
 				this.oGetParameterStub = sinon.stub();
+				window["sap-ui-config"].language = "en";
 			}
 		});
 
 		QUnit.test("Read SAP parameters from URL", function(assert) {
 
 			// setup
-			var oParams = jQuery.sap.getUriParameters('?sap-client=foo&sap-server=bar&sap-system=abc');
+			var oParams = jQuery.sap.getUriParameters('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=en');
 			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
 
 			// call method under test
@@ -546,6 +547,48 @@
 			assert.equal(oConfig.getSAPParam('sap-client'), 'foo', 'SAP parameter sap-client=foo');
 			assert.equal(oConfig.getSAPParam('sap-server'), 'bar', 'SAP parameter sap-server=bar');
 			assert.equal(oConfig.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-system=abc');
+			assert.equal(oConfig.getSAPParam('sap-language'), 'en', 'SAP parameter sap-language=en');
+
+			oGetUriParametersStub.restore();
+			oConfig.destroy();
+
+		});
+
+		QUnit.test("Read SAP parameters from URL (ignoreUrlParams)", function(assert) {
+
+			// setup
+			var oParams = jQuery.sap.getUriParameters('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=de');
+			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+			window["sap-ui-config"].ignoreurlparams = true;
+
+			// call method under test
+			var oConfig = new Configuration();
+
+			// verify results
+			assert.equal(oConfig.getSAPParam('sap-client'), undefined, 'SAP parameter sap-client=foo');
+			assert.equal(oConfig.getSAPParam('sap-server'), undefined, 'SAP parameter sap-server=bar');
+			assert.equal(oConfig.getSAPParam('sap-system'), undefined, 'SAP parameter sap-system=abc');
+			assert.equal(oConfig.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=en');
+
+			oGetUriParametersStub.restore();
+			oConfig.destroy();
+			delete window["sap-ui-config"].ignoreurlparams;
+
+		});
+
+		QUnit.test("Set SAPLogonLanguage and SAP parameter is updated", function(assert) {
+
+			// setup
+			var oParams = jQuery.sap.getUriParameters('?sap-language=EN');
+			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns(oParams);
+
+			// call method under test
+			var oConfig = new Configuration();
+
+			// verify results
+			assert.equal(oConfig.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=EN');
+			oConfig.setLanguage("es");
+			assert.equal(oConfig.getSAPParam('sap-language'), 'ES', 'SAP parameter sap-language=ES');
 
 			oGetUriParametersStub.restore();
 			oConfig.destroy();

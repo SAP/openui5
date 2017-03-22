@@ -301,9 +301,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				var sUrlPrefix = "sap-ui-";
 				var oUriParams = jQuery.sap.getUriParameters();
 
-				// map of SAP parameters (allows general access)
-				config.sapParam = config.sapParam || {};
-
 				// first map SAP parameters, can be overwritten by "sap-ui-*" parameters
 
 				if ( oUriParams.mParams['sap-locale'] ) {
@@ -322,18 +319,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 						jQuery.sap.log.warning("sap-language '" + sValue + "' is not a valid BCP47 language tag and will only be used as SAP logon language");
 					}
 				}
-
-				// set the SAP logon language to the SAP params
-				config.sapParam['sap-language'] = this.getSAPLogonLanguage();
-
-				// read the SAP parameters from URL or META tag
-				['sap-client', 'sap-server', 'sap-system'].forEach(function(sName) {
-					if ( oUriParams.get(sName) ) {
-						config.sapParam[sName] = oUriParams.get(sName);
-					} else {
-						config.sapParam[sName] = getMetaTagValue(sName);
-					}
-				});
 
 				if (oUriParams.mParams['sap-rtl']) {
 					// "" = false, "X", "x" = true
@@ -388,6 +373,21 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					this.oFormatSettings.setLegacyNumberFormat(oUriParams.get('sap-ui-legacy-number-format'));
 				}
 			}
+
+			// map of SAP parameters (allows general access)
+			config.sapparams = config.sapparams || {};
+
+			// set the SAP logon language to the SAP params
+			config.sapparams['sap-language'] = this.getSAPLogonLanguage();
+
+			// read the SAP parameters from URL or META tag
+			['sap-client', 'sap-server', 'sap-system'].forEach(function(sName) {
+				if (!config.ignoreUrlParams && oUriParams.get(sName)) {
+					config.sapparams[sName] = oUriParams.get(sName);
+				} else {
+					config.sapparams[sName] = getMetaTagValue(sName);
+				}
+			});
 
 			// calculate RTL mode
 			this.derivedRTL = Locale._impliesRTL(config.language);
@@ -672,6 +672,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			if ( oLocale.toString() != this.getLanguageTag() || sSAPLogonLanguage !== this.sapLogonLanguage ) {
 				this.language = oLocale;
 				this.sapLogonLanguage = sSAPLogonLanguage || undefined;
+				this.sapparams['sap-language'] = this.getSAPLogonLanguage();
 				mChanges = this._collect();
 				mChanges.language = this.getLanguageTag();
 				this.derivedRTL = Locale._impliesRTL(oLocale);
@@ -704,7 +705,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * @return {string} The SAP parameter value
 		 */
 		getSAPParam : function (sName) {
-			return this.sapParam && this.sapParam[sName];
+			return this.sapparams && this.sapparams[sName];
 		},
 
 		/**
