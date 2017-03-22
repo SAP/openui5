@@ -142,6 +142,67 @@
 		assert.ok(oReturnedSelectionDetails instanceof sap.m.SelectionDetails, "Returned value is SelectionDetails control");
 	});
 
+	QUnit.module("Navigation", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oNavContainer = new sap.m.NavContainer(),
+			this.oPopover = new sap.m.ResponsivePopover({
+				content: this.oNavContainer
+			});
+			this.oSelectionDetails.setAggregation("_popover", this.oPopover, true);
+			this.sTitle = "nevPageTitle";
+			this.oContent = new sap.ui.core.Control();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+			this.oNavContainer.destroy();
+			this.oNavContainer = null;
+			this.oPopover.destroy();
+			this.oPopover = null;
+			this.sTitle = null;
+			this.oContent.destroy();
+			this.oContent = null;
+		}
+	});
+
+	QUnit.test("Method 'navTo' creates page with given content and title", function(assert) {
+		// Arrange
+		sinon.stub(this.oPopover, "isOpen").returns(true);
+		// Act
+		var oReturn = this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		// Assert
+		assert.deepEqual(this.oNavContainer.getPages()[0].getContent()[0], this.oContent, "Content is wrapped in page. The page is set as current page in NavContainer");
+		assert.deepEqual(this.oNavContainer.getPages()[0].getTitle(), this.sTitle, "Page has correct title");
+		assert.deepEqual(oReturn, this.oSelectionDetails, "Page has correct title");
+	});
+
+	QUnit.test("Method 'navTo' results in navigation to the page with correct ID if Popover is open", function(assert) {
+		// Arrange
+		sinon.stub(this.oPopover, "isOpen").returns(true);
+		var oToSpy = sinon.spy(this.oNavContainer, "to"),
+			oAddPageSpy = sinon.spy(this.oNavContainer, "addPage"),
+			sPageId = this.oSelectionDetails.getId() + "-page-for-" + this.oContent.getId();
+		// Act
+		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		// Assert
+		assert.equal(oAddPageSpy.callCount, 1, "called the method addPage that has been overwritten in NavContainer");
+		assert.equal(oToSpy.args[0], sPageId, "Navigation occurs with correct page ID");
+	});
+
+	QUnit.test("Method 'navTo' does not result in navigation if Popover has not been opened", function(assert) {
+		// Arrange
+		sinon.stub(this.oPopover, "isOpen").returns(false);
+		var oSpy = sinon.spy(this.oNavContainer, "to");
+		// Act
+		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		// Assert
+		assert.equal(this.oNavContainer.getPages().length, 0, "No pages has been created");
+		assert.equal(oSpy.callCount, 0, "Navigation did not occur");
+	});
+
 	QUnit.module("Popover interaction", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
