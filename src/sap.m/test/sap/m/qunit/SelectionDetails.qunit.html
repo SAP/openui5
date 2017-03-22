@@ -204,10 +204,11 @@
 	QUnit.module("Navigation", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
-			this.oNavContainer = new sap.m.NavContainer(),
+			this.oNavContainer = new sap.m.NavContainer();
 			this.oPopover = new sap.m.ResponsivePopover({
 				content: this.oNavContainer
 			});
+			sinon.stub(this.oPopover, "isOpen").returns(true);
 			this.oSelectionDetails.setAggregation("_popover", this.oPopover, true);
 			this.sTitle = "nevPageTitle";
 			this.oContent = new sap.ui.core.Control();
@@ -229,7 +230,6 @@
 
 	QUnit.test("Method 'navTo' creates page with given content and title", function(assert) {
 		// Arrange
-		sinon.stub(this.oPopover, "isOpen").returns(true);
 		// Act
 		var oReturn = this.oSelectionDetails.navTo(this.sTitle, this.oContent);
 		// Assert
@@ -240,7 +240,6 @@
 
 	QUnit.test("Method 'navTo' results in navigation to the page with correct ID if Popover is open", function(assert) {
 		// Arrange
-		sinon.stub(this.oPopover, "isOpen").returns(true);
 		var oToSpy = sinon.spy(this.oNavContainer, "to"),
 			oAddPageSpy = sinon.spy(this.oNavContainer, "addPage"),
 			sPageId = this.oSelectionDetails.getId() + "-page-for-" + this.oContent.getId();
@@ -253,13 +252,34 @@
 
 	QUnit.test("Method 'navTo' does not result in navigation if Popover has not been opened", function(assert) {
 		// Arrange
-		sinon.stub(this.oPopover, "isOpen").returns(false);
+		this.oPopover.isOpen.returns(false);
 		var oSpy = sinon.spy(this.oNavContainer, "to");
 		// Act
 		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
 		// Assert
 		assert.equal(this.oNavContainer.getPages().length, 0, "No pages has been created");
 		assert.equal(oSpy.callCount, 0, "Navigation did not occur");
+	});
+
+	QUnit.test("The 'back' method of navContainer is executed in the handler for the 'navButtonPress' event of the Page", function(assert) {
+		// Arrange
+		var oSpy = sinon.spy(this.oNavContainer, "back");
+		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		// Act
+		this.oNavContainer.getCurrentPage().fireNavButtonPress();
+		// Assert
+		assert.equal(oSpy.callCount, 1, "Backward navigation occured");
+	});
+
+	QUnit.test("Successive forward and backward navigation results in the first page opened", function(assert) {
+		// Arrange
+		var oFirstPage = new sap.m.Page();
+		this.oNavContainer.addPage(oFirstPage);
+		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		// Act
+		this.oNavContainer.getCurrentPage().fireNavButtonPress();
+		// Assert
+		assert.deepEqual(oFirstPage, this.oNavContainer.getCurrentPage(), "Forward and backward navigation results in first page opened");
 	});
 
 	QUnit.module("Popover interaction", {
@@ -467,7 +487,6 @@
 		oSelectionDetailsItem.fireEvent("_navigate");
 		//Assert
 		assert.deepEqual(oSpy.getCall(0).args[0].item, oSelectionDetailsItem, "'navigate' event of SelectionDetails was called with correct 'item' parameter");
-		assert.deepEqual(oSpy.getCall(0).args[0].direction, "forward", "'navigate' event of SelectionDetails was called with correct 'direction' parameter");
 	});
 
 	QUnit.module("Control Facade", {
