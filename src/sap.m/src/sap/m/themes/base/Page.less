@@ -3,6 +3,10 @@
 /* Base theme                  */
 /* =========================== */
 
+@_sap_m_Page_AppHeight: 3333px; // Ux decision: never show the header, so make this value large enough even for zoom-out cases
+@_sap_m_Page_HeaderHeight: 68px; // should be 4.25rem
+@_sap_m_Page_MinHeightForHeader: (@_sap_m_Page_AppHeight + @_sap_m_Page_HeaderHeight);
+
 .sapMPage,
 .sapMPage > section {
 	width: 100%;
@@ -258,7 +262,7 @@ html[data-sap-ui-animation='on'] .sapMPageFloatingFooter {
 
 /* sap.m.Shell + Tiles Page specific style */
 
-@media (min-height: @sapMShellMinHeightForHeader) {
+@media (min-height: @_sap_m_Page_MinHeightForHeader) {
 	.sap-desktop .sapMShell .sapMPage.sapMPageHideHeaderWhenShellHeader header.sapMIBar {
 		display: none;
 	}

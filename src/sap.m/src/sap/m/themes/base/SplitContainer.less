@@ -3,6 +3,10 @@
 /* Base theme                            */
 /* ===================================== */
 
+@_sap_m_SplitContainer_AppHeight: 3333px; // Ux decision: never show the header, so make this value large enough even for zoom-out cases
+@_sap_m_SplitContainer_HeaderHeight: 68px; // should be 4.25rem
+@_sap_m_SplitContainer_MinHeightForHeader: (@_sap_m_SplitContainer_AppHeight + @_sap_m_SplitContainer_HeaderHeight);
+
 .sapMSplitContainer {
 	width: 100%;
 	height: 100%;

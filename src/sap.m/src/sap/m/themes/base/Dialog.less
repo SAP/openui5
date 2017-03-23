@@ -3,10 +3,10 @@
 /* Base theme                    */
 /* ============================= */
 
-@sapMDialogMarginHeight: 7%;
-@sapMDialogBarHeight: 3rem;
-@sapMDialogBarCompactHeight: 2.5rem;
-@sapMDialogPadding: 1rem;
+@_sap_m_Dialog_MarginHeight: 7%;
+@_sap_m_Dialog_BarHeight: 3rem;
+@_sap_m_Dialog_BarCompactHeight: 2.5rem;
+@_sap_m_Dialog_Padding: 1rem;
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -72,32 +72,32 @@
 
 	//with header, subheader and footer (3 bars)
 	@{_path}.sapMDialogWithSubHeader:not(.sapMDialog-NoHeader):not(.sapMDialog-NoFooter) {
-		max-height: calc(~"100% - " @_barHeight * 3 ~" - " @sapMDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight * 3 ~" - " @_sap_m_Dialog_MarginHeight);
 	}
 
 	//with header, no subheader and footer (2 bars)
 	@{_path}:not(.sapMDialog-NoHeader):not(.sapMDialog-NoFooter):not(.sapMDialogWithSubHeader) {
-		max-height: calc(~"100% - " @_barHeight * 2 ~" - " @sapMDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight * 2 ~" - " @_sap_m_Dialog_MarginHeight);
 	}
 
 	//with no headers and footer (1 bar)
 	@{_path}.sapMDialog-NoHeader:not(.sapMDialog-NoFooter):not(.sapMDialogWithSubHeader) {
-			max-height: calc(~"100% - " @_barHeight ~" - " @sapMDialogMarginHeight);
+			max-height: calc(~"100% - " @_barHeight ~" - " @_sap_m_Dialog_MarginHeight);
 	}
 
 	//with 2 headers with no footer (2 bars)
 	@{_path}:not(.sapMDialog-NoHeader).sapMDialog-NoFooter.sapMDialogWithSubHeader {
-		max-height: calc(~"100% - " @_barHeight ~" - " @sapMDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight ~" - " @_sap_m_Dialog_MarginHeight);
 	}
 
 	//with 1 sub-header and no footer (1 bar)
 	@{_path}.sapMDialog-NoHeader.sapMDialog-NoFooter.sapMDialogWithSubHeader {
-		max-height: calc(~"100% - " @_barHeight ~" - " @sapMDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight ~" - " @_sap_m_Dialog_MarginHeight);
 	}
 
 	//with header, no sub-header and no footer (1 bar)
 	@{_path}:not(.sapMDialog-NoHeader).sapMDialog-NoFooter:not(.sapMDialogWithSubHeader) {
-		max-height: calc(~"100% - " @_barHeight ~" - " @sapMDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight ~" - " @_sap_m_Dialog_MarginHeight);
 	}
 
 	//with no headers and no footer (0 bars)
@@ -106,8 +106,8 @@
 	}
 }
 
-.setDialogMaxHeight(@sapMDialogBarHeight, ~".sapMDialog");
-.setDialogMaxHeight(@sapMDialogBarCompactHeight, ~".sapUiSizeCompact .sapMDialog");
+.setDialogMaxHeight(@_sap_m_Dialog_BarHeight, ~".sapMDialog");
+.setDialogMaxHeight(@_sap_m_Dialog_BarCompactHeight, ~".sapUiSizeCompact .sapMDialog");
 
 
 // end max height and max width ========================================================================================
@@ -217,11 +217,11 @@ html.sap-desktop .sapMDialog {
 }
 
 .sapUiPopupWithPadding .sapMDialogScrollCont {
-	padding: @sapMDialogPadding;
+	padding: @_sap_m_Dialog_Padding;
 }
 
 .sapUiPopupWithPadding .sapMDialogScrollCont.sapMDialogStretchContent {
-  	height: calc(~"100% - 2 * " @sapMDialogPadding);
+  	height: calc(~"100% - 2 * " @_sap_m_Dialog_Padding);
 }
 
 .sapMDialogScrollCont.sapMDialogStretchContent {
@@ -335,15 +335,15 @@ html.sap-desktop .sapMDialog {
 
 	&.sapMDialog,
 	.sapMDialog {
-		min-height: @sapMDialogBarCompactHeight;
-		padding-bottom: @sapMDialogBarCompactHeight;
-		padding-top: @sapMDialogBarCompactHeight;
+		min-height: @_sap_m_Dialog_BarCompactHeight;
+		padding-bottom: @_sap_m_Dialog_BarCompactHeight;
+		padding-top: @_sap_m_Dialog_BarCompactHeight;
 
 		&.sapMDialogWithSubHeader {
-			padding-top: @sapMDialogBarCompactHeight + @sapMDialogBarCompactHeight;
+			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_BarCompactHeight;
 
 		  	&.sapMDialog-NoHeader {
-				padding-top: @sapMDialogBarCompactHeight;
+				padding-top: @_sap_m_Dialog_BarCompactHeight;
 
 				& > .sapMDialogSubHeader {
 			  		top: 0;
@@ -352,24 +352,24 @@ html.sap-desktop .sapMDialog {
 		}
 
 		& > .sapMDialogTitle {
-			height: @sapMDialogBarCompactHeight;
+			height: @_sap_m_Dialog_BarCompactHeight;
 
 			.sapMBarPH {
-				line-height: @sapMDialogBarCompactHeight;
+				line-height: @_sap_m_Dialog_BarCompactHeight;
 			}
 		}
 
 		& > .sapMDialogSection {
-			min-height: @sapMDialogBarCompactHeight;
+			min-height: @_sap_m_Dialog_BarCompactHeight;
 		}
 
 		& > footer {
-			height: @sapMDialogBarCompactHeight;
+			height: @_sap_m_Dialog_BarCompactHeight;
 		}
 
 		& header.sapMDialogSubHeader {
-			height: @sapMDialogBarCompactHeight;
-			top: @sapMDialogBarCompactHeight;
+			height: @_sap_m_Dialog_BarCompactHeight;
+			top: @_sap_m_Dialog_BarCompactHeight;
 		}
 	}
 
@@ -441,9 +441,9 @@ html.sap-desktop .sapMDialog {
 
 .sapMDialog {
 	box-sizing: content-box;
-	min-height: @sapMDialogBarHeight;
-	padding-bottom: @sapMDialogBarHeight;
-	padding-top: @sapMDialogBarHeight;
+	min-height: @_sap_m_Dialog_BarHeight;
+	padding-bottom: @_sap_m_Dialog_BarHeight;
+	padding-top: @_sap_m_Dialog_BarHeight;
 
 	&.sapMDialog-NoFooter {
 		padding-bottom: 0;
@@ -454,10 +454,10 @@ html.sap-desktop .sapMDialog {
 	}
 
 	&.sapMDialogWithSubHeader {
-		padding-top: @sapMDialogBarHeight + @sapMDialogBarHeight;
+		padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_Dialog_BarHeight;
 
 	  	&.sapMDialog-NoHeader {
-			padding-top: @sapMDialogBarHeight;
+			padding-top: @_sap_m_Dialog_BarHeight;
 
 		  	& > .sapMDialogSubHeader {
 				top: 0;
@@ -466,7 +466,7 @@ html.sap-desktop .sapMDialog {
 	}
 
 	& > .sapMDialogTitle {
-		height: @sapMDialogBarHeight;
+		height: @_sap_m_Dialog_BarHeight;
 		left: 0;
 		position: absolute;
 		right: 0;
@@ -475,12 +475,12 @@ html.sap-desktop .sapMDialog {
 
 	& > .sapMDialogSection {
 		height: 100%;
-		min-height: @sapMDialogBarHeight;
+		min-height: @_sap_m_Dialog_BarHeight;
 	}
 
 	& > footer {
 		bottom: 0;
-		height: @sapMDialogBarHeight;
+		height: @_sap_m_Dialog_BarHeight;
 		left: 0;
 		position: absolute;
 		right: 0;
@@ -492,11 +492,11 @@ html.sap-desktop .sapMDialog {
 
 	& header.sapMDialogSubHeader {
 		cursor: default;
-		height: @sapMDialogBarHeight;
+		height: @_sap_m_Dialog_BarHeight;
 		left: 0;
 		position: absolute;
 		right: 0;
-		top: @sapMDialogBarHeight;
+		top: @_sap_m_Dialog_BarHeight;
 		z-index: 2;
 	}
 }
