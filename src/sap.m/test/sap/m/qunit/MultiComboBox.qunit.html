@@ -4883,6 +4883,13 @@
 			]
 		}), oSelectedButton = oMultiComboBox._getFilterSelectedButton();
 
+		var oFakeEvent = {
+			target: {
+				value: "I"
+			},
+			setMarked: function () { },
+			srcControl: oMultiComboBox
+		};
 		oMultiComboBox.setSelectedItems([oFirstItem]);
 
 		oMultiComboBox.placeAt("MultiComboBox-content");
@@ -4895,6 +4902,14 @@
 		this.clock.tick(100);
 
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 1, "Only one item should be visible");
+		assert.strictEqual(oSelectedButton.getPressed(),true,"the SelectedButton is pressed");
+
+		oMultiComboBox.fireChange({ value: "I" });
+		oMultiComboBox.oninput(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 3, "All three items are visible");
+		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
 
 		oMultiComboBox.destroy();
 	});

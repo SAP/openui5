@@ -780,7 +780,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	};
 
 	MultiComboBox.prototype._getFilterSelectedButton = function () {
-		return this.getPicker().getSubHeader().getContent()[1];
+			return this.getPicker().getSubHeader().getContent()[1];
 	};
 
 	/**
@@ -2330,7 +2330,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		var sValue = oEvent.target.value,
 			aItems, bVisibleItemFound,
 			aItemsToCheck, bResetFilter,
-			sUpdateValue;
+			sUpdateValue, oSelectedButton;
 
 		// "compositionstart" and "compositionend" are native events and don't have srcControl
 		var oInput = bCompositionEvent ? jQuery(oEvent.target).control(0) : oEvent.srcControl;
@@ -2353,9 +2353,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		aItemsToCheck = this.getEnabledItems();
 		bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length;
 
-		if (bResetFilter && (this.isPickerDialog() && this._getFilterSelectedButton().getPressed())){
-			aItemsToCheck = this.getSelectedItems();
-		} else if (bResetFilter) {
+		if (this.isPickerDialog()) {
+			oSelectedButton = this._getFilterSelectedButton();
+			if (oSelectedButton != null && oSelectedButton.getPressed()) {
+				oSelectedButton.setPressed(false);
+			}
+		}
+		if (bResetFilter) {
 			aItemsToCheck = this.getItems();
 		}
 
