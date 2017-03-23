@@ -1621,7 +1621,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			//make sure iMaxContentHeight is NEVER less than 0
 			iMaxContentHeight = Math.max(iMaxContentHeight, 0);
 
-			oCSS["max-width"] = iMaxContentWidth + "px";
+			oCSS["max-width"] = iMaxContentWidth;
 			// When Popover can fit into the current screen size, don't set the height on the content div.
 			// This can fix the flashing scroll bar problem when content size gets bigger after it's opened.
 			// When position: absolute is used on the scroller div, the height has to be kept otherwise content div has 0 height.
@@ -1643,7 +1643,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * @private
 		 */
 		Popover.prototype._getMaxContentWidth = function (oPosParams) {
-			return oPosParams._fDocumentWidth - oPosParams._fMarginLeft - oPosParams._fMarginRight - oPosParams._fPopoverBorderLeft - oPosParams._fPopoverBorderRight;
+			return oPosParams._fDocumentWidth - oPosParams._fMarginLeft - oPosParams._fMarginRight - oPosParams._fPopoverBorderLeft - oPosParams._fPopoverBorderRight  + "px";
 		};
 
 		/**
