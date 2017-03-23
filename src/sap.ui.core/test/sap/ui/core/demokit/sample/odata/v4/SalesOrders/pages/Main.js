@@ -127,7 +127,14 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 		onTheErrorInfo : {
 			actions : {
 				confirm : function () {
-					return handleMessageBox(this, "Error", true, "Confirm 'Error'");
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						matchers : new Properties({icon : "sap-icon://message-error"}),
+						success : function (aControls) {
+							aControls[0].getButtons()[0].$().tap();
+							Opa5.assert.ok(true, "Confirm 'Error'");
+						}
+					});
 				}
 			},
 			assertions : {}
@@ -223,7 +230,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						controlType : "sap.m.Text",
 						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (oControl) {
-							var oCore = Opa5.getWindow().sap.ui.getCore(),
+							var oCore = sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
 									.getItems()[0].getCells()[0].getText();
 							sap.ui.test.Opa.getContext().firstSalesOrderId = sSalesOrderId;
@@ -323,7 +330,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						controlType : "sap.m.Text",
 						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (oControl) {
-							var oCore = Opa5.getWindow().sap.ui.getCore(),
+							var oCore = sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
 									.getItems()[0].getCells()[0].getText();
 							if (!sap.ui.test.Opa.getContext().aOrderIds) {
@@ -520,7 +527,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 								});
 							}
 
-							Opa5.getWindow().jQuery.sap.log.getLogEntries()
+							jQuery.sap.log.getLogEntries()
 								.forEach(function (oLog) {
 									var sComponent = oLog.component || "";
 
@@ -726,7 +733,14 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 		onTheSuccessInfo : {
 			actions : {
 				confirm : function () {
-					return handleMessageBox(this, "Success", true, "Confirm 'Success'");
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						matchers : new Properties({icon : "sap-icon://message-success"}),
+						success : function (aControls) {
+							aControls[0].getButtons()[0].$().tap();
+							Opa5.assert.ok(true, "Confirm 'Success'");
+						}
+					});
 				}
 			},
 			assertions : {}

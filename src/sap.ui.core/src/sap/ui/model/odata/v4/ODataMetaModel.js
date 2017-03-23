@@ -121,6 +121,7 @@ sap.ui.define([
 		 */
 		function includeReferences(mReferencedScope) {
 			var sMessage,
+				oReference,
 				sReferenceUri;
 
 			if (mReferencedScope.$Version !== "4.0") {
@@ -131,12 +132,18 @@ sap.ui.define([
 
 			// Note: for-in tolerates undefined
 			for (sReferenceUri in mReferencedScope.$Reference) {
+				oReference = mReferencedScope.$Reference[sReferenceUri];
+				if ("$IncludeAnnotations" in oReference) {
+					sMessage = "Unsupported IncludeAnnotations";
+					jQuery.sap.log.error(sMessage, sUrl, sODataMetaModel);
+					throw new Error(sMessage);
+				}
 				if (!(sReferenceUri in mScope.$Reference)) { // add new reference
-					mScope.$Reference[sReferenceUri] = mReferencedScope.$Reference[sReferenceUri];
+					mScope.$Reference[sReferenceUri] = oReference;
 				} else { // add potentially new includes
 					// Note: it's OK to create duplicates here
 					Array.prototype.push.apply(mScope.$Reference[sReferenceUri].$Include,
-						mReferencedScope.$Reference[sReferenceUri].$Include);
+						oReference.$Include);
 				}
 			}
 
@@ -151,7 +158,8 @@ sap.ui.define([
 		 *   The $metadata "JSON"
 		 */
 		function includeSchema(mReferencedScope) {
-			var sKey;
+			var oElement,
+				sKey;
 
 			if (!(sNamespace in mReferencedScope)) {
 				fnLog(WARNING, sReferenceUri, " does not contain ", sNamespace);
@@ -162,7 +170,9 @@ sap.ui.define([
 			for (sKey in mReferencedScope) {
 				// $EntityContainer can be ignored; $Reference, $Version is handled above
 				if (sKey[0] !== "$" && namespace(sKey) === sNamespace) {
-					mScope[sKey] = mReferencedScope[sKey];
+					oElement = mReferencedScope[sKey];
+					mScope[sKey] = oElement;
+					mergeAnnotations(oElement, mScope.$Annotations);
 				}
 			}
 		}
@@ -214,6 +224,28 @@ sap.ui.define([
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
+	}
+
+	/**
+	 * Merges the given schema's annotations into the root scope's $Annotations.
+	 *
+	 * @param {object} oSchema
+	 *   a schema; schema children are ignored because they do not contain $Annotations
+	 * @param {object} mAnnotations
+	 *   the root scope's $Annotations
+	 */
+	function mergeAnnotations(oSchema, mAnnotations) {
+		var sTarget;
+
+		for (sTarget in oSchema.$Annotations) {
+			if (sTarget in mAnnotations) {
+				// "PUT" semantics on term level, last annotation file wins
+				jQuery.extend(mAnnotations[sTarget], oSchema.$Annotations[sTarget]);
+			} else {
+				mAnnotations[sTarget] = oSchema.$Annotations[sTarget];
+			}
+		}
+		delete oSchema.$Annotations;
 	}
 
 	/**
@@ -337,6 +369,10 @@ sap.ui.define([
 	 *   Supported since 1.41.0
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The model this meta model is related to
+	 * @param {boolean} [bSupportReferences=true]
+	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
+	 *   supported in order to load schemas on demand from other $metadata documents and include
+	 *   them into the current service ("cross-service references").
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
@@ -355,7 +391,7 @@ sap.ui.define([
 		/*
 		 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
 		 */
-		constructor : function (oRequestor, sUrl, vAnnotationUri, oModel) {
+		constructor : function (oRequestor, sUrl, vAnnotationUri, oModel, bSupportReferences) {
 			MetaModel.call(this);
 			this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
 				? [vAnnotationUri] : vAnnotationUri;
@@ -364,6 +400,7 @@ sap.ui.define([
 			this.oModel = oModel;
 			this.oRequestor = oRequestor;
 			this.mSupportedBindingModes = {"OneTime" : true};
+			this.bSupportReferences = bSupportReferences !== false; // default is true
 			this.sUrl = sUrl;
 		}
 	});
@@ -417,60 +454,56 @@ sap.ui.define([
 	};
 
 	/**
-	 * Merges the given metadata and <code>$Annotations</code> from schemas at the root element.
-	 * The content of the first metadata object is modified and enriched with the content of the
-	 * other metadata objects.
+	 * Merges <code>$Annotations</code> from the given $metadata and additional annotation files
+	 * into the root scope as a new map of all annotations, called <code>$Annotations</code>.
 	 *
-	 * @param {object[]} aMetadata
-	 *   The metadata objects to be merged
-	 * @returns {object}
-	 *   The merged metadata
+	 * @param {object} mScope
+	 *   The $metadata "JSON" of the root service
+	 * @param {object[]} aAnnotationFiles
+	 *   The metadata "JSON" of the additional annotation files
 	 * @throws {Error}
 	 *   If metadata cannot be merged
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype._mergeMetadata = function (aMetadata) {
-		var oResult = aMetadata[0],
+	ODataMetaModel.prototype._mergeAnnotations = function (mScope, aAnnotationFiles) {
+		var sMessage,
+			sReferenceUri,
 			that = this;
 
-		function moveAnnotations(oElement) {
-			if (oElement.$kind === "Schema" && oElement.$Annotations) {
-				Object.keys(oElement.$Annotations).forEach(function (sTerm) {
-					if (!oResult.$Annotations[sTerm]) {
-						oResult.$Annotations[sTerm] = oElement.$Annotations[sTerm];
-					} else {
-						jQuery.extend(oResult.$Annotations[sTerm],
-							oElement.$Annotations[sTerm]);
-					}
-				});
-				delete oElement.$Annotations;
+		if (this.bSupportReferences) {
+			for (sReferenceUri in mScope.$Reference) {
+				if ("$IncludeAnnotations" in mScope.$Reference[sReferenceUri]) {
+					sMessage = "Unsupported IncludeAnnotations";
+					jQuery.sap.log.error(sMessage, this.sUrl, sODataMetaModel);
+					throw new Error(sMessage);
+				}
 			}
 		}
 
-		// shift $annotations from schema to root
-		oResult.$Annotations = oResult.$Annotations || {};
-		Object.keys(oResult).forEach(function (sElement) {
-			moveAnnotations(oResult[sElement]);
+		// merge $Annotations from all schemas at root scope
+		mScope.$Annotations = {};
+		Object.keys(mScope).forEach(function (sElement) {
+			mergeAnnotations(mScope[sElement], mScope.$Annotations);
 		});
 
-		// enrich metadata with annotations
-		aMetadata.slice(1).forEach(function (oAnnotationMetadata, i) {
-			Object.keys(oAnnotationMetadata).forEach(function (sKey) {
-				var oElement = oAnnotationMetadata[sKey];
+		// merge annotation files into root scope
+		aAnnotationFiles.forEach(function (mAnnotationScope, i) {
+			var oElement,
+				sQualifiedName;
 
-				if (oElement.$kind !== undefined
-						|| Array.isArray(oElement) /*Actions or Functions*/) {
-					if (oResult[sKey]) {
-						throw new Error("Overwriting '" + sKey + "' with the value defined in '"
-							+ that.aAnnotationUris[i] + "' is not supported");
+			for (sQualifiedName in mAnnotationScope) {
+				if (sQualifiedName[0] !== "$") {
+					if (sQualifiedName in mScope) {
+						throw new Error("Duplicate name " + sQualifiedName + " in "
+							+ that.aAnnotationUris[i]);
 					}
-					oResult[sKey] = oElement;
-					moveAnnotations(oElement);
+					oElement = mAnnotationScope[sQualifiedName];
+					mScope[sQualifiedName] = oElement;
+					mergeAnnotations(oElement, mScope.$Annotations);
 				}
-			});
+			}
 		});
-		return oResult;
 	};
 
 	// See class documentation
@@ -763,7 +796,11 @@ sap.ui.define([
 				});
 			}
 			this.oMetadataPromise = _SyncPromise.all(aPromises).then(function (aMetadata) {
-				return that._mergeMetadata(aMetadata);
+				var mScope = aMetadata[0];
+
+				that._mergeAnnotations(mScope, aMetadata.slice(1));
+
+				return mScope;
 			});
 		}
 		return this.oMetadataPromise;
@@ -910,7 +947,7 @@ sap.ui.define([
 					return log.apply(this, arguments);
 				}
 
-				if (!(sQualifiedName in mScope)) {
+				if (that.bSupportReferences && !(sQualifiedName in mScope)) {
 					// unknown qualified name: maybe schema is referenced and can be included?
 					sNamespace = namespace(sQualifiedName);
 					vResult = getOrFetchSchema(that, mScope, sNamespace, logWithLocation);
@@ -1287,17 +1324,18 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchValueListType = function (sPropertyPath) {
-		var oContext = this.getMetaContext(sPropertyPath),
+		var oMetaContext = this.getMetaContext(sPropertyPath),
 			that = this;
 
-		return this.fetchObject("", oContext).then(function (oProperty) {
+		// Note: undefined is more efficient than "" here
+		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mAnnotationByTerm, sTerm;
 
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
 			// now we can use getObject() because the property's annotations are definitely loaded
-			mAnnotationByTerm = that.getObject("@", oContext);
+			mAnnotationByTerm = that.getObject("@", oMetaContext);
 			if (mAnnotationByTerm[sValueListWithFixedValues]) {
 				return ValueListType.Fixed;
 			}
@@ -1325,7 +1363,23 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
-		return new BaseContext(this, sPath.replace(rNotMetaContext, ""));
+		return new BaseContext(this, this.getMetaPath(sPath));
+	};
+
+	/**
+	 * Returns the OData metadata model path corresponding to the given OData data model path.
+	 *
+	 * @param {string} sPath
+	 *   An absolute data path within the OData data model, for example
+	 *   "/EMPLOYEES/0/ENTRYDATE"
+	 * @returns {string}
+	 *   The corresponding metadata path within the OData metadata model, for example
+	 *    "/EMPLOYEES/ENTRYDATE"
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getMetaPath = function (sPath) {
+		return sPath.replace(rNotMetaContext, "");
 	};
 
 	/**

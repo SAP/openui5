@@ -57,17 +57,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Requestor", {
 		beforeEach : function () {
-			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
-			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			sap.ui.getVersionInfo({failOnError : false});
-
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oSandbox = sinon.sandbox.create();
+			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+
+			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
+			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
+			this.oSandbox.stub(sap.ui, "getVersionInfo");
 		},
 
 		afterEach : function () {
-			this.oLogMock.verify();
+			this.oSandbox.verifyAndRestore();
 		}
 	});
 
