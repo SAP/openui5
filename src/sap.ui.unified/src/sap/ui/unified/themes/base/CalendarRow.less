@@ -238,3 +238,67 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 	position: absolute;
 	top: 0;
 }
+
+.sapUiCalendarAppContainer {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+
+  & > .sapUiCalendarAppContainerLeft {
+	margin: 0 1rem 0 0;
+	float: left;
+	display: inline-block;
+	padding: 0.5rem 0;
+	line-height: 0.875rem;
+	width: 6rem;
+
+	& > div {
+	  overflow: hidden;
+	  text-overflow: ellipsis;
+	}
+  }
+
+  & > .sapUiCalendarAppContainerRight {
+	margin-right: 1rem;
+	height: 100%;
+
+	& > .sapUiCalendarApp {
+	  position: relative;
+	  margin: 0 1rem 0 0;
+
+	  &:not(.sapUiCalendarAppSel):not(:active) {
+		background-color: transparent;
+	  }
+
+	  & > .sapUiCalendarAppCont {
+		border: none;
+
+		& > .sapUiCalendarAppTitle {
+		  text-overflow: ellipsis;
+		}
+	  }
+	}
+
+	& > .sapUiCalendarRowAppsIntHead {
+	  margin: 0 1rem 0 0;
+	  width: auto;
+	}
+  }
+}
+
+.sapUiCalendarMonthRowAppsS.sapUiCalendarRowAppsInt {
+	border: 0;
+  	background-color: transparent;
+}
+
+.sapMPlanCal .sapUiCalMonthView {
+  width: 100%;
+}
+
+.sapMPlanCal .sapUiCalendarNoApps {
+  height: 2rem;
+  line-height: 2rem;
+  text-align: center;
+  vertical-align: middle;
+  border-top: 0.0625rem solid @sapUiListBorderColor;
+}

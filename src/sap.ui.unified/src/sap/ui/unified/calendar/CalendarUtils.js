@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		 * @public
 		 */
 		CalendarUtils.getFirstDateOfWeek = function (oDate) {
-			var oUniversalDate = new UniversalDate(oDate),
+			var oUniversalDate = new UniversalDate(oDate.getTime()),
 				oFirstDateOfWeek,
 				oWeek;
 
@@ -211,6 +211,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 			return new UniversalDate(Date.UTC(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day,
 				oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds())).getJSDate();
+		};
+
+		/**
+		 * Gets the first day of a given month.
+		 * This function works with date values in UTC to produce timezone agnostic results.
+		 *
+		 * @param {Date} oDate JavaScript date
+		 * @returns {Date} JavaScript date corresponding to the first date of the month
+		 * @public
+		 */
+		CalendarUtils.getFirstDateOfMonth = function(oDate) {
+			var oNewDate = new UniversalDate(oDate.getTime());
+			oNewDate.setUTCDate(1);
+
+			return oNewDate;
 		};
 
 		/**
@@ -238,6 +253,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			}
 
 			return iNumberOfWeeksInYear;
+		};
+
+		/**
+		 * Determines if the given dates' months differ, including same months from different years.
+		 *
+		 * @param {Date} oDate1 JavaScript date
+		 * @param {Date} oDate2 JavaScript date
+		 * @return {boolean} true if the given dates' months differ
+		 * @public
+		 */
+		CalendarUtils.monthsDiffer = function(oDate1, oDate2) {
+			return (oDate1.getMonth() !== oDate2.getMonth() || oDate1.getFullYear() !== oDate2.getFullYear());
+		};
+
+		/**
+		 * Checks in UTC mode if the corresponding date is last in a month.
+		 * @param {UniversalDate} Date
+		 * @returns {boolean} true if the next date is bigger or not regarding the selected one.
+		 * @public
+		 */
+		CalendarUtils.isDateLastInMonth = function(oDate) {
+			var oNextDay = new Date(oDate.getTime() + 24 * 60 * 60 * 1000);
+			return oNextDay.getUTCDate() < oDate.getUTCDate();
+		};
+
+		/**
+		 * Returns the last day in a month
+		 * @param {Date} local date
+		 * @returns {Date } the JS Date corresponding to the last day for the given month
+		 * @private
+		 */
+		CalendarUtils._getLastDayInMonth = function(oDate) {
+			var oUniversalDate = this._createUniversalUTCDate(oDate);
+
+			oUniversalDate.setUTCMonth(oUniversalDate.getUTCMonth() + 1);
+			oUniversalDate.setUTCDate(0);
+
+			return this._createLocalDate(oUniversalDate);
 		};
 
 		return CalendarUtils;

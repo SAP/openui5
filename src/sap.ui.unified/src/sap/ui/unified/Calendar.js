@@ -237,8 +237,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setAggregation("yearPicker",oYearPicker);
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
-		this._oSelectedDay = undefined; //needed for a later usage here after its assignment in the Month.js
-
 	};
 
 	Calendar.prototype.exit = function(){
@@ -1701,7 +1699,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oHeader.setAdditionalTextButton1(sText);
 
 		var aMonths = this._getDisplayedMonths(oDate);
-		if (aMonths.length > 1) {
+		if (aMonths.length > 1 && !this._bShowOneMonth) {
 			if (!sPattern) {
 				sPattern = oLocaleData.getIntervalPattern();
 			}
@@ -1808,7 +1806,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oMonth = aMonths[i];
 
 				if (oMonth.getId() != oEvent.oSource.getId()) {
-					oMonth._updateSelection(this._oSelectedDay);
+					oMonth._updateSelection();
 				}
 			}
 		}
@@ -1874,9 +1872,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oYearPicker = this.getAggregation("yearPicker");
 		var oDate = CalendarUtils._createUniversalUTCDate(oYearPicker.getDate(), this.getPrimaryCalendarType());
 		var iYear = oYearPicker.getYear();
+		var oModifiedFocusedDate;
 
 		if (this._adjustFocusedDateUponYearChange) {//hook (currently used by PlanningCalendar)
-			this._adjustFocusedDateUponYearChange(oFocusedDate, iYear);
+			oModifiedFocusedDate = this._adjustFocusedDateUponYearChange(oFocusedDate, iYear);
+			if (oModifiedFocusedDate) {
+				oFocusedDate = oModifiedFocusedDate;
+			}
 		} else {
 			oDate.setUTCMonth(oFocusedDate.getUTCMonth(), oFocusedDate.getUTCDate()); // to keep day and month stable also for islamic date
 			oFocusedDate = oDate;
