@@ -317,6 +317,33 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
+	P13nChartSelectionPanel.prototype._syncPanel2Model = function() {
+		var oModel = this._getInternalModel();
+		var oData = oModel.getData();
+
+		// Synchronize selectionItems and items
+		this.getSelectionItems().forEach(function(oSelectionItem) {
+			var oModelItem = this._getModelItemByColumnKey(oSelectionItem.getColumnKey());
+			if (!oModelItem || this._isSelectionItemEqualToModelItem(oSelectionItem, oModelItem)) {
+				return;
+			}
+
+			// Take over selectionItem data
+			oModelItem.persistentIndex = oSelectionItem.getIndex();
+			oModelItem.persistentSelected = oSelectionItem.getSelected();
+            oModelItem.role = oSelectionItem.getRole();
+			// 1. Sort the table items only by persistentIndex
+			this._sortModelItemsByPersistentIndex(oData.items);
+			// 2. Re-Index only the tableIndex
+			this._updateModelItemsTableIndex(oData);
+			this._updateCounts(oData);
+		}, this);
+		oModel.refresh();
+	};
+
+	/**
+	 * @private
+	 */
 	P13nChartSelectionPanel.prototype._syncModel2Panel = function() {
 		if (!this._bOnBeforeRenderingFirstTimeExecuted) {
 			// The renderer has not been executed (the dimeasure tab has not been shown in panel). So there is no need to synchronize model to panel.
