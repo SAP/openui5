@@ -44,14 +44,22 @@
 			"license": "Apache 2.0",
 			"type": "Extension"
 		},
-                "XMPPJSONPatchSyncModel": {
-                        "name": "XMPPJSONPatchSyncModel",
-                        "decription": "This OpenUI5 data model uses a node on an XMPP server to synchronize itself to different connected clients.",
-                        "githubLink": "https://github.com/ManuelB/XMPPJSONPatchSyncModel",
-                        "documentationLink": "http://www.incentergy.de/blog/2017/03/19/real-time-syncing-and-offlince-capabilities-using-openui5-jsonpatch-xmpp-and-xxhash/",
-                        "owner": "ManuelB",
-                        "license": "Apache 2.0",
-                        "type": "Model"
-                }
-
+		"karma-openui5": {
+			"name": "karma-openui5",
+			"decription": "A Karma plugin for UI5",
+			"githubLink": "https://github.com/SAP/karma-openui5",
+			"documentationLink": "https://github.com/SAP/karma-openui5",
+			"owner": "matz3",
+			"license": "Apache 2.0",
+			"type": "Tool"
+		},		
+    "XMPPJSONPatchSyncModel": {
+        "name": "XMPPJSONPatchSyncModel",
+        "decription": "This OpenUI5 data model uses a node on an XMPP server to synchronize itself to different connected clients.",
+        "githubLink": "https://github.com/ManuelB/XMPPJSONPatchSyncModel",
+        "documentationLink": "http://www.incentergy.de/blog/2017/03/19/real-time-syncing-and-offlince-capabilities-using-openui5-jsonpatch-xmpp-and-xxhash/",
+        "owner": "ManuelB",
+        "license": "Apache 2.0",
+        "type": "Model"
+    }
 	}
