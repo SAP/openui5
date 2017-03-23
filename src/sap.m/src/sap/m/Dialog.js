@@ -1664,6 +1664,31 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 						action();
 					}, 0);
 				};
+
+				/**
+				 * Retrieves the offset of the mouse-down position relative to the dialog.
+				 * @param {Object}	oEvent	The event object.
+				 * @param {jQuery}	oTarget	The event target (jQuery-wrapped).
+				 * @param {jQuery}	oDialog	The dialog's DOM (jQuery-wrapped).
+				 * @returns {Object} An object with the two offsets (x and y).
+				 */
+				var fnGetOffset = function(oEvent, oTarget, oDialog) {
+					//use e.originalEvent.layerX/Y for Firefox; only use it when the offsetX/Y is undefined
+					//and not falsy (a zero value would cause a small jump because of the layerX/Y usage).
+					var fX = oEvent.offsetX === undefined ? oEvent.originalEvent.layerX : oEvent.offsetX,
+						fY = oEvent.offsetY === undefined ? oEvent.originalEvent.layerY : oEvent.offsetY;
+					if (!oDialog.is(oTarget)) {
+						fX += oTarget.position().left;
+						fY += oTarget.position().top;
+						oTarget.parentsUntil(oDialog).each(function(){
+							var oPos = jQuery(this).position();
+							fX += oPos.left;
+							fY += oPos.top;
+						});
+					}
+					return {x: Math.round(fX), y: Math.round(fY)};
+				};
+
 				var DIALOG_MIN_VISIBLE_SIZE = 30;
 				var windowWidth = window.innerWidth;
 				var windowHeight = window.innerHeight;
@@ -1672,11 +1697,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					y: e.pageY,
 					width: that._$dialog.width(),
 					height: that._$dialog.height(),
-					offset: {
-						//use e.originalEvent.layerX/Y for Firefox
-						x: e.offsetX ? e.offsetX : e.originalEvent.layerX,
-						y: e.offsetY ? e.offsetY : e.originalEvent.layerY
-					},
+					offset: fnGetOffset(e, $target, that._$dialog),
 					position: {
 						x: that._$dialog.offset().left,
 						y: that._$dialog.offset().top
