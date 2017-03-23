@@ -53,13 +53,13 @@
 			"license": "Apache 2.0",
 			"type": "Tool"
 		},		
-    "XMPPJSONPatchSyncModel": {
-        "name": "XMPPJSONPatchSyncModel",
-        "decription": "This OpenUI5 data model uses a node on an XMPP server to synchronize itself to different connected clients.",
-        "githubLink": "https://github.com/ManuelB/XMPPJSONPatchSyncModel",
-        "documentationLink": "http://www.incentergy.de/blog/2017/03/19/real-time-syncing-and-offlince-capabilities-using-openui5-jsonpatch-xmpp-and-xxhash/",
-        "owner": "ManuelB",
-        "license": "Apache 2.0",
-        "type": "Model"
-    }
+		"XMPPJSONPatchSyncModel": {
+			"name": "XMPPJSONPatchSyncModel",
+			"decription": "This OpenUI5 data model uses a node on an XMPP server to synchronize itself to different connected clients.",
+			"githubLink": "https://github.com/ManuelB/XMPPJSONPatchSyncModel",
+			"documentationLink": "http://www.incentergy.de/blog/2017/03/19/real-time-syncing-and-offlince-capabilities-using-openui5-jsonpatch-xmpp-and-xxhash/",
+			"owner": "ManuelB",
+			"license": "Apache 2.0",
+			"type": "Model"
+		}
 	}
