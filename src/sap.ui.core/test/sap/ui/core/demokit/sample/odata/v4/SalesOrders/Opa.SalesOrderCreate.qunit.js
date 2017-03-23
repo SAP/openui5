@@ -33,10 +33,11 @@ sap.ui.require([
 			sModifiedNote = "Modified by OPA",
 			bRealOData = TestUtils.isRealOData();
 
-		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.SalesOrders"
-				+ "&sap-language=en"
-				+ (bRealOData ? "&sap-server=test" : "")
-				+ TestUtils.getRealOData());
+		Given.iStartMyUIComponent({
+			componentConfig : {
+				name : "sap.ui.core.sample.odata.v4.SalesOrders"
+			}
+		});
 
 		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
@@ -225,6 +226,6 @@ sap.ui.require([
 		Then.onTheMainPage.checkLog(bRealOData
 				? [oExpectedLog, oExpectedLog, oExpectedLog, oExpectedLogChangeParameters]
 				: undefined);
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyUIComponent();
 	});
 });

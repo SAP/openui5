@@ -296,44 +296,6 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
-	/*
-	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
-	 * parent context changed.
-	 *
-	 * @throws {Error} If called with parameters
-	 */
-	// @override
-	ODataContextBinding.prototype.checkUpdate = function () {
-		var that = this;
-
-		function updateDependents() {
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.checkUpdate();
-			});
-		}
-
-		if (arguments.length > 0) {
-			throw new Error("Unsupported operation: v4.ODataContextBinding#checkUpdate "
-				+ "must not be called with parameters");
-		}
-
-		this.oCachePromise.then(function (oCache) {
-			if (oCache && that.bRelative && that.oContext.fetchCanonicalPath) {
-				that.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
-					if (oCache.$canonicalPath !== sCanonicalPath) { // entity of context changed
-						that.refreshInternal();
-					} else {
-						updateDependents();
-					}
-				})["catch"](function (oError) {
-					that.oModel.reportError("Failed to update " + that, sClassName, oError);
-				});
-			} else {
-				updateDependents();
-			}
-		});
-	};
-
 	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is to be used by applications for example to switch on a busy indicator. Registered event

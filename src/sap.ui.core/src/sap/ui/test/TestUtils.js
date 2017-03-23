@@ -2,8 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core'],
-	function(jQuery/*, Core*/) {
+sap.ui.define("sap/ui/test/TestUtils", [
+		"jquery.sap.global",
+		"sap/ui/core/Core",
+		"sap/ui/thirdparty/URI"
+], function(jQuery, Core, URI) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.js has been omitted deliberately. Most test files load it via
@@ -444,19 +447,38 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		},
 
 		/**
+		 * Returns the document's base URI, even on IE where the property <code>baseURI</code> is
+		 * not supported.
+		 *
+		 * @returns {string} The base URI
+		 */
+		getBaseUri : function () {
+			var aElements;
+
+			if (document.baseURI) {
+				return document.baseURI;
+			}
+			aElements = document.getElementsByTagName("base");
+			return aElements[0] && aElements[0].href || location.href;
+		},
+
+		/**
 		 * Adjusts the given absolute path so that (in case of "realOData=proxy" or
 		 * "realOData=true") the request is passed through the SimpleProxyServlet.
 		 *
 		 * @param {string} sAbsolutePath
 		 *   some absolute path
 		 * @returns {string}
-		 *   the absolute path transformed in a way that invokes a proxy
+		 *   the absolute path transformed in a way that invokes a proxy, but still absolute
 		 */
 		proxy : function (sAbsolutePath) {
-			return bProxy ?
-					jQuery.sap.getResourcePath("sap/ui").replace("resources/sap/ui", "proxy")
-						+ sAbsolutePath
-				: sAbsolutePath;
+			var sProxyUrl;
+
+			if (!bProxy) {
+				return sAbsolutePath;
+			}
+			sProxyUrl = jQuery.sap.getResourcePath("sap/ui").replace("resources/sap/ui", "proxy");
+			return new URI(sProxyUrl + sAbsolutePath, TestUtils.getBaseUri()).pathname().toString();
 		},
 
 		/**

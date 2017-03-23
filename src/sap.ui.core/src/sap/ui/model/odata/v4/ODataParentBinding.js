@@ -23,8 +23,7 @@ sap.ui.define([
 
 	asODataBinding(ODataParentBinding.prototype);
 
-	// regular expression converting path to metadata path
-	var rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
+	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
 	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
@@ -70,6 +69,46 @@ sap.ui.define([
 		if (bChanged) {
 			this.applyParameters(mBindingParameters, ChangeReason.Change);
 		}
+	};
+
+	/*
+	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
+	 * parent context changed.
+	 *
+	 * @throws {Error} If called with parameters
+	 */
+	// @override
+	ODataParentBinding.prototype.checkUpdate = function () {
+		var that = this;
+
+		function updateDependents() {
+			// Do not fire a change event in ListBinding, there is no change in the list of contexts
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
+		}
+
+		if (arguments.length > 0) {
+			throw new Error("Unsupported operation: " + sClassName + "#checkUpdate must not be"
+				+ " called with parameters");
+		}
+
+		this.oCachePromise.then(function (oCache) {
+			if (oCache && that.bRelative && that.oContext.fetchCanonicalPath) {
+				that.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+					// entity of context changed
+					if (oCache.$canonicalPath !== sCanonicalPath) {
+						that.refreshInternal();
+					} else {
+						updateDependents();
+					}
+				})["catch"](function (oError) {
+					that.oModel.reportError("Failed to update " + that, sClassName, oError);
+				});
+			} else {
+				updateDependents();
+			}
+		});
 	};
 
 	/**
@@ -182,7 +221,9 @@ sap.ui.define([
 		if (Object.keys(this.mParameters).length) {
 			// binding has parameters -> all query options need to be defined at the binding
 			mQueryOptions = this.mQueryOptions;
-			sPath.replace(rNotMetaContext, "") // transform path to metadata path
+			// getMetaPath needs an absolute path, a relative path starting with an index would not
+			// result in a correct meta path -> first add, then remove '/'
+			this.oModel.oMetaModel.getMetaPath("/" + sPath).slice(1)
 				.split("/").some(function (sSegment) {
 					mQueryOptions = mQueryOptions.$expand && mQueryOptions.$expand[sSegment];
 					if (!mQueryOptions || mQueryOptions === true) {

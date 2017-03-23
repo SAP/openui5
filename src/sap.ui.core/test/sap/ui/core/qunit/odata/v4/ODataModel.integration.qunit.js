@@ -119,6 +119,48 @@ sap.ui.require([
 		},
 
 		/**
+		 * Creates a view with a numeric property, "enters" incorrect text to reach an invalid data
+		 * state, calls resetChanges at the given object and checks that the control gets another
+		 * change event.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {function} fnGetResetable The function to determine the object to call
+		 *   resetChanges at. The function gets the view as parameter.
+		 * @returns {Promise} A Promise that is resolved when the change event has been fired
+		 */
+		checkResetInvalidDataState : function (assert, fnGetResetable) {
+			var oModel = createTeaBusiModel({updateGroupId : "update"}),
+				sView = '\
+<form:SimpleForm id="form" binding="{/EMPLOYEES(\'2\')}">\
+	<Text id="age" text="{AGE}" />\
+</form:SimpleForm>',
+				that = this;
+
+			this.expectRequest("EMPLOYEES('2')", {"AGE" : 32})
+				.expectChange("age", "32");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				var oBinding = that.oView.byId("age").getBinding("text"),
+					fnFormatter = oBinding.fnFormatter;
+
+				delete oBinding.fnFormatter;
+				assert.throws(function () {
+					oBinding.setExternalValue("bad");
+				});
+				assert.ok(oBinding.getDataState().isControlDirty());
+
+				oBinding.fnFormatter = fnFormatter;
+
+				that.expectChange("age", "32");
+
+				// code under test
+				fnGetResetable(that.oView).resetChanges();
+
+				return that.waitForChanges();
+			});
+		},
+
+		/**
 		 * Creates the view and attaches it to the model. Checks that the expected requests (see
 		 * {@link #expectRequest} are fired and the controls got the expected changes (see
 		 * {@link #expectChange}).
@@ -1104,6 +1146,39 @@ sap.ui.require([
 			that.oView.byId("form").getObjectBinding().refresh();
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enter an invalid value for worker-age for an ODataPropertyBinding and check that
+	// ODatePropertyBinding.resetChanges() restores the value before.
+	// The Types application does NOT have such a scenario.
+	//*********************************************************************************************
+	QUnit.test("reset invalid data state via property binding", function (assert) {
+		return this.checkResetInvalidDataState(assert, function (oView) {
+			return oView.byId("age").getBinding("text");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enter an invalid value for worker-age for an ODataPropertyBinding and check that
+	// parent ODataContextBinding.resetChanges() restores the value before.
+	// The Types application does have such a scenario (within the V4 view).
+	//*********************************************************************************************
+	QUnit.test("reset invalid data state via context binding", function (assert) {
+		return this.checkResetInvalidDataState(assert, function (oView) {
+			return oView.byId("form").getObjectBinding();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enter an invalid value for worker-age for an ODataPropertyBinding and check that
+	// ODataModel.resetChanges() restores the value before.
+	// The Types application does have such a scenario (within the V4 view).
+	//*********************************************************************************************
+	QUnit.test("reset invalid data state via model", function (assert) {
+		return this.checkResetInvalidDataState(assert, function (oView) {
+			return oView.getModel();
 		});
 	});
 	//TODO $batch?

@@ -78,6 +78,15 @@ sap.ui.define([
 			}
 		},
 
+		onResetContextBinding: function (oEvent) {
+			this.getView().getElementBinding().resetChanges();
+			this.getView().getElementBinding("v4").resetChanges();
+		},
+
+		onResetModel: function (oEvent) {
+			this.getView().getModel().resetChanges();
+		},
+
 		onSave : function () {
 			var that = this,
 				oView = this.getView(),

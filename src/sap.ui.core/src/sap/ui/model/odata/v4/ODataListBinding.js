@@ -293,46 +293,6 @@ sap.ui.define([
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
 	};
 
-	/*
-	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
-	 * parent context changed.
-	 *
-	 * @throws {Error} If called with parameters
-	 */
-	// @override
-	ODataListBinding.prototype.checkUpdate = function () {
-		var that = this;
-
-		function updateDependents() {
-			// Do not fire a change event, there is no change in the list of contexts
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.checkUpdate();
-			});
-		}
-
-		if (arguments.length > 0) {
-			throw new Error("Unsupported operation: v4.ODataListBinding#checkUpdate "
-				+ "must not be called with parameters");
-		}
-
-		this.oCachePromise.then(function (oCache) {
-			if (oCache && that.bRelative && that.oContext.fetchCanonicalPath) {
-				that.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
-					// entity of context changed
-					if (oCache.$canonicalPath !== sCanonicalPath) {
-						that.refreshInternal();
-					} else {
-						updateDependents();
-					}
-				})["catch"](function (oError) {
-					that.oModel.reportError("Failed to update " + that, sClassName, oError);
-				});
-			} else {
-				updateDependents();
-			}
-		});
-	};
-
 	/**
 	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
 	 * contains an entity created via this function, you cannot create another entity. This is only

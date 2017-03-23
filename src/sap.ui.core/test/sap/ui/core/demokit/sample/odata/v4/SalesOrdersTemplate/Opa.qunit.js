@@ -14,14 +14,14 @@ sap.ui.require([
 
 	//*****************************************************************************
 	opaTest("Start sales orders template app and check log", function (Given, When, Then) {
-		Given.iStartMyAppInAFrame(
-			"../../../common/index.html?component=odata.v4.SalesOrdersTemplate"
-			+ "&sap-language=en"
-			+ (TestUtils.isRealOData() ? "&sap-server=test" : "")
-			+ TestUtils.getRealOData());
+		Given.iStartMyUIComponent({
+			componentConfig : {
+				name : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate"
+			}
+		});
 
 		When.onTheMainPage.pressValueHelpOnCurrencyCode();
 		Then.onTheMainPage.checkLog();
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyUIComponent();
 	});
 });

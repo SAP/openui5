@@ -33,7 +33,7 @@ function (Opa5, Press, BindingPath, Interactable, Properties) {
 				checkLog : function () {
 					return this.waitFor({
 						success : function (oControl) {
-							Opa5.getWindow().jQuery.sap.log.getLogEntries()
+							jQuery.sap.log.getLogEntries()
 								.forEach(function (oLog) {
 									var sComponent = oLog.component || "";
 

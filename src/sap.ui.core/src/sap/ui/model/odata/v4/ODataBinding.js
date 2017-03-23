@@ -367,7 +367,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
+	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}. Resets also
+	 * invalid user input.
 	 *
 	 * @throws {Error}
 	 *   If there is a change of this binding which has been sent to the server and for which there
@@ -379,6 +380,7 @@ sap.ui.define([
 	ODataBinding.prototype.resetChanges = function () {
 		this.resetChangesForPath("");
 		this.resetChangesInDependents();
+		this.resetInvalidDataState();
 	};
 
 	/**
@@ -431,7 +433,17 @@ sap.ui.define([
 				oCache.resetChangesForPath("");
 			}
 			oDependent.resetChangesInDependents();
+			oDependent.resetInvalidDataState();
 		});
+	};
+
+	/**
+	 * A method to reset invalid data state, to be called by {@link #resetChanges}.
+	 * Does nothing, because only property bindings have data state.
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.resetInvalidDataState = function () {
 	};
 
 	/**

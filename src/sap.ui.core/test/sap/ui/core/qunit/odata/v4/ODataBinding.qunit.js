@@ -394,6 +394,7 @@ sap.ui.require([
 
 		oBindingMock.expects("resetChangesForPath").withExactArgs("");
 		oBindingMock.expects("resetChangesInDependents").withExactArgs();
+		oBindingMock.expects("resetInvalidDataState").withExactArgs();
 
 		// code under test
 		oBinding.resetChanges();
@@ -491,8 +492,11 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2, oChild3]);
 		this.mock(oCache).expects("resetChangesForPath").withExactArgs("");
 		this.mock(oChild1).expects("resetChangesInDependents").withExactArgs();
+		this.mock(oChild1).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oChild2).expects("resetChangesInDependents").withExactArgs();
+		this.mock(oChild2).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oChild3).expects("resetChangesInDependents").never();
+		this.mock(oChild3).expects("resetInvalidDataState").never();
 
 		// code under test
 		oBinding.resetChangesInDependents();

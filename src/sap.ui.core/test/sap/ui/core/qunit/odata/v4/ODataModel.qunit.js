@@ -161,6 +161,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("supportReferences", function (assert) {
+		createModel("", {supportReferences : false});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("with serviceUrl params", function (assert) {
 		var oModel,
 			mModelOptions = {};
@@ -301,13 +306,6 @@ sap.ui.require([
 			assert.strictEqual(oControl.getText(), "Business Suite", "property value");
 			done();
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getMetaModel", function (assert) {
-		var oMetaModel = createModel().getMetaModel();
-
-		assert.ok(oMetaModel instanceof ODataMetaModel);
 	});
 
 	//*********************************************************************************************
@@ -487,10 +485,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges w/o group ID", function (assert) {
-		var oModel = createModel("", {updateGroupId : "updateGroupId"});
+		var oModel = createModel("", {updateGroupId : "updateGroupId"}),
+			oAgeBinding = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oNameBinding = oModel.bindProperty("/EMPLOYEES('1')/Name"),
+			oEntryDateBinding = oModel.bindProperty("/EMPLOYEES('1')/ENTRYDATE", undefined, {
+				$$updateGroupId : "anotherGroup"
+			});
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs("updateGroupId", true);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
+		this.mock(oAgeBinding).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oNameBinding).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oEntryDateBinding).expects("resetInvalidDataState").never();
 
 		// code under test
 		oModel.resetChanges();
