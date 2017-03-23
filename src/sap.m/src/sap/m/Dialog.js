@@ -1664,7 +1664,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 						action();
 					}, 0);
 				};
-				var DIALOG_MIN_VISIBLE_SIZE = 30;
+
 				var windowWidth = window.innerWidth;
 				var windowHeight = window.innerHeight;
 				var initial = {
@@ -1672,6 +1672,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					y: e.pageY,
 					width: that._$dialog.width(),
 					height: that._$dialog.height(),
+					outerHeight : that._$dialog.outerHeight(),
 					offset: {
 						//use e.originalEvent.layerX/Y for Firefox
 						x: e.offsetX ? e.offsetX : e.originalEvent.layerX,
@@ -1697,26 +1698,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 					//set the new position of the dialog on mouse down when the transform is disabled by the class
 					that._$dialog.css({
-						left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
-						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE),
+						left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - initial.width),
+						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - initial.height),
 						transform: ""
 					});
 				}
 
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
-					$w.on("mousemove.sapMDialog", function (e) {
+					$w.on("mousemove.sapMDialog", function (event) {
 						fnMouseMoveHandler(function () {
 							that._bDisableRepositioning = true;
 
 							that._oManuallySetPosition = {
-								x: e.pageX - initial.offset.x,
-								y: e.pageY - initial.offset.y
+								x: event.pageX - e.pageX + initial.position.x, // deltaX + initial dialog position
+								y: event.pageY - e.pageY + initial.position.y // deltaY + initial dialog position
 							};
 
 							//move the dialog
 							that._$dialog.css({
-								left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
-								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE),
+								left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - initial.width),
+								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - initial.outerHeight),
 								transform: ""
 							});
 						});
