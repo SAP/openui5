@@ -160,9 +160,15 @@
 	});
 
 	QUnit.test("Overflow", function(assert) {
-		assert.ok(!jQuery("#menubar1-ovrflw").is(":visible"), "Overflow hidden if enough space");
-		assert.ok(jQuery("#menubar5-ovrflw").is(":visible"), "Overflow visible if not enough space");
-		assert.equal(oMenuBar5.oOvrFlwMnu.getItems().length, 4, "# Items in overflow menu");
+		var done = assert.async();
+
+		setTimeout(function(){
+			assert.ok(!jQuery("#menubar1-ovrflw").is(":visible"), "Overflow hidden if enough space");
+			assert.ok(jQuery("#menubar5-ovrflw").is(":visible"), "Overflow visible if not enough space");
+			assert.equal(oMenuBar5.oOvrFlwMnu.getItems().length, 4, "# Items in overflow menu");
+
+			done();
+		}, 100);
 	});
 
 	QUnit.module("Interaction - Mouse");
