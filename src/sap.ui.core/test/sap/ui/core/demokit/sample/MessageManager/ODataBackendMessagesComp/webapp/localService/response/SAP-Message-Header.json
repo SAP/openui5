@@ -1,0 +1,26 @@
+{
+	"code":"MYCODE/111",
+	"message":"Data was successfully saved",
+	"severity":"success",
+	"target":"",
+	"details":[
+		{
+			"code":"MYCODE/222",
+			"message":"My success detail",
+			"target":"",
+			"severity":"success"
+		},
+		{
+			"code":"MYCODE/333",
+			"message":"Happy birthday ;-)",
+			"target":"BirthDate",
+			"severity":"info"
+		},
+		{
+			"code":"MYCODE/333",
+			"message":"Think about changing your last name",
+			"target":"LastName",
+			"severity":"warning"
+		}
+	]
+}
