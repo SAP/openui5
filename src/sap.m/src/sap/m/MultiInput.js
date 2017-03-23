@@ -611,11 +611,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library'],
 				this._tokenizer._oScroller.refresh();
 			}
 
-			for (i = 0; i < tokens.length; i++) {
-				var tokenDomRef = tokens[i].getDomRef();
-				if (tokenDomRef && tokenDomRef.offsetWidth > tokenizerWidth) {
-					tokenDomRef.style.width = tokenizerWidth + "px";
-					tokenDomRef.classList.add("sapMTokenTruncate");
+			if (tokenizerWidth >= 0) {
+				for (i = 0; i < tokens.length; i++) {
+					var tokenDomRef = tokens[i].getDomRef();
+					if (tokenDomRef && tokenDomRef.offsetWidth > tokenizerWidth) {
+						tokenDomRef.style.width = tokenizerWidth + "px";
+						tokenDomRef.classList.add("sapMTokenTruncate");
+					}
 				}
 			}
 

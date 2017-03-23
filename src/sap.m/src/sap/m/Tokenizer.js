@@ -176,6 +176,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *          nWidth - the new width in pixels
 	 */
 	Tokenizer.prototype.setPixelWidth = function(nWidth){
+		if (nWidth < 0) {
+			return;
+		}
 
 		this._truncateLastToken(nWidth);
 
