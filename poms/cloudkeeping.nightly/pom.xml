@@ -50,7 +50,6 @@
 		<applicationURL>${application}</applicationURL>
 		<user></user> <!-- SDN User -->
 		<password></password> <!-- SDN Password -->
-		<killProcesses>false</killProcesses> <!-- ensure to kill additional processes before rolling update or not -->
 
 	</properties>
 
@@ -86,7 +85,6 @@
 						<landscape>${landscape}</landscape>
 						<user>${user}</user>
 						<password>${password}</password>
-						<killProcesses>${killProcesses}</killProcesses>
 					</properties>
 					<deployables>
 						<deployable>
