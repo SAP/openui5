@@ -60,7 +60,8 @@
 				width: "400px",
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2011", "0", "10"), endDate: new Date("2011", "0", "13")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "1"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-							   new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+							   new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"}),
+								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "5"), type: sap.ui.unified.CalendarDayType.Type04})],
 				legend: "Legend1",
 				startDateChange: handleStartDateChange
 			}).placeAt("uiArea2");
@@ -93,13 +94,12 @@
 						new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Type 1"}),
 						new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Type 2"}),
 						new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Type 3"}),
-						new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Type 4"}),
 						new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Type 5"}),
 						new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Type 6"}),
 						new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Type 7"}),
 						new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Type 8"}),
 						new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Type 9"}),
-						new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Type 10"}),
+						new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Type 10"})
 						]
 			});
 
@@ -257,18 +257,36 @@
 			});
 
 			QUnit.test("special days", function(assert) {
+				var sDescribingDomTextId;
+
 				assert.ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalItemType01"), "20110101 is special day of Type01");
 				assert.equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Text", "20110101 has special days tooltip");
-				assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011; Type 1", "20110101 aria label");
+				assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011", "20110101 aria label");
+
+				sDescribingDomTextId = oLegend.getItems()[0].getId() + "-Text";
+				assert.ok(jQuery("#Cal2--Month0-20110101").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a legend item with the same type");
+
 				assert.ok(jQuery("#Cal2--Month0-20110102").hasClass("sapUiCalItemType02"), "20110102 is special day of Type02");
 				assert.equal(jQuery("#Cal2--Month0-20110102").attr("title"), "Text", "20110102 has special days tooltip");
-				assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "2. Januar 2011; Type 2", "20110102 aria label");
+				assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "2. Januar 2011", "20110102 aria label");
+
+				sDescribingDomTextId = oLegend.getItems()[1].getId() + "-Text";
+				assert.ok(jQuery("#Cal2--Month0-20110102").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a legend item with the same type");
+
 				assert.ok(jQuery("#Cal2--Month0-20110103").hasClass("sapUiCalItemType02"), "20110103 is special day of Type02");
 				assert.equal(jQuery("#Cal2--Month0-20110103").attr("title"), "Text", "20110103 has special days tooltip");
-				assert.equal(jQuery("#Cal2--Month0-20110103").attr("aria-label"), "3. Januar 2011; Type 2", "20110101 aria label");
+				assert.equal(jQuery("#Cal2--Month0-20110103").attr("aria-label"), "3. Januar 2011", "20110103 aria label");
+
+				assert.ok(jQuery("#Cal2--Month0-20110103").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a legend item with the same type");
+
 				assert.ok(jQuery("#Cal2--Month0-20110104").hasClass("sapUiCalItemType02"), "20110104 is special day of Type02");
 				assert.equal(jQuery("#Cal2--Month0-20110104").attr("title"), "Text", "20110104 has special days tooltip");
-				assert.equal(jQuery("#Cal2--Month0-20110104").attr("aria-label"), "4. Januar 2011; Type 2", "20110101 aria label");
+				assert.equal(jQuery("#Cal2--Month0-20110104").attr("aria-label"), "4. Januar 2011", "20110104 aria label");
+
+				assert.ok(jQuery("#Cal2--Month0-20110104").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a legend item with the same type");
+
+				sDescribingDomTextId = sap.ui.unified.CalendarLegend.typeARIATexts["Type04"].getId();
+				assert.ok(jQuery("#Cal2--Month0-20110105").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a static label");
 			});
 
 			QUnit.test("primaryCalendarType", function(assert) {
