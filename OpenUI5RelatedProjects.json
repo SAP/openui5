@@ -61,5 +61,14 @@
 			"owner": "ManuelB",
 			"license": "Apache 2.0",
 			"type": "Model"
+		},
+		"ui5-model-inspector": {
+			"name": "UI5 Interactive Model Inspector (Custom Control)",
+			"decription": "This custom control allows you to view (and modify) state of your client and server models for debugging and development.",
+			"githubLink": "https://github.com/mitch-b/ui5-model-inspector",
+			"documentationLink": "https://github.com/mitch-b/ui5-model-inspector",
+			"owner": "mitch-b",
+			"license": "MIT",
+			"type": "Control"
 		}
 	}
