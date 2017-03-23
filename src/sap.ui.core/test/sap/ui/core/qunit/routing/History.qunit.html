@@ -50,15 +50,15 @@
 			oHashChanger.replaceHash("bar");
 
 			//Assert
-			strictEqual(sut, sap.ui.core.routing.History.getInstance(), "Should be a singleton");
+			assert.strictEqual(sut, sap.ui.core.routing.History.getInstance(), "Should be a singleton");
 
-			strictEqual(oHashChanged.callCount, 2, "Should be called twice");
+			assert.strictEqual(oHashChanged.callCount, 2, "Should be called twice");
 
-			ok(oHashChanged.firstCall.calledWithExactly("foo", false), "Should register to setHash");
-			ok(oHashChanged.secondCall.calledWithExactly("bar", true), "Should register to replaceHash");
+			assert.ok(oHashChanged.firstCall.calledWithExactly("foo", false), "Should register to setHash");
+			assert.ok(oHashChanged.secondCall.calledWithExactly("bar", true), "Should register to replaceHash");
 
-			strictEqual(sut.aHistory.length, lengthBefore + 1, "should have 1 entry in the history");
-			strictEqual(sut.aHistory[lengthBefore], "bar");
+			assert.strictEqual(sut.aHistory.length, lengthBefore + 1, "should have 1 entry in the history");
+			assert.strictEqual(sut.aHistory[lengthBefore], "bar");
 
 		});
 

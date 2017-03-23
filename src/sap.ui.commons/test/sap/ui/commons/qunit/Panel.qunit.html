@@ -64,50 +64,50 @@
 		}
 
 		QUnit.test("Initial Check", function(assert) {
-  		ok(oCtrl, "Panel should exist after creating");
+  		assert.ok(oCtrl, "Panel should exist after creating");
 
   		oDomRef = jQuery.sap.domById("Panel");
-  		ok(oDomRef, "Panel div should exist");
+  		assert.ok(oDomRef, "Panel div should exist");
   	});
 
 
 		QUnit.test("Scroll Left", function(assert) {
-    	expect(6);
-			equals(oCtrl.getScrollLeft(), sScrollLeft, "scrollLeft should be like it was initially set");
+			assert.expect(6);
+			assert.equal(oCtrl.getScrollLeft(), sScrollLeft, "scrollLeft should be like it was initially set");
 
 			oCtrl.setScrollLeft(111);
-			equals(oCtrl.getScrollLeft(), 111, "scrollLeft should be like it was changed");
+			assert.equal(oCtrl.getScrollLeft(), 111, "scrollLeft should be like it was changed");
 
 			var oDomRef = jQuery.sap.domById(oCtrl.getId() + "-cont");
-			equals(oDomRef.scrollLeft, 111, "the container should be scrolled from the left by the set amount");
+			assert.equal(oDomRef.scrollLeft, 111, "the container should be scrolled from the left by the set amount");
 
 			oDomRef.scrollLeft = 87; // simulate scrollbar move
-			equals(oCtrl.getScrollLeft(), 87, "the container should be scrolled from the left by the set amount");
+			assert.equal(oCtrl.getScrollLeft(), 87, "the container should be scrolled from the left by the set amount");
 
 			oCtrl.setScrollLeft(sScrollLeft);
-			equals(oCtrl.getScrollLeft(), sScrollLeft, "scrollLeft should be like it was changed");
+			assert.equal(oCtrl.getScrollLeft(), sScrollLeft, "scrollLeft should be like it was changed");
 			var oDomRef = jQuery.sap.domById(oCtrl.getId() + "-cont");
-			equals(oDomRef.scrollLeft, sScrollLeft, "the container should be scrolled from the left by the set amount");
+			assert.equal(oDomRef.scrollLeft, sScrollLeft, "the container should be scrolled from the left by the set amount");
 		});
 
 
 		QUnit.test("Scroll Top", function(assert) {
-    	expect(6);
-			equals(oCtrl.getScrollTop(), sScrollTop, "scrollTop should be like it was initially set");
+			assert.expect(6);
+			assert.equal(oCtrl.getScrollTop(), sScrollTop, "scrollTop should be like it was initially set");
 
 			oCtrl.setScrollTop(111);
-			equals(oCtrl.getScrollTop(), 111, "scrollTop should be like it was changed");
+			assert.equal(oCtrl.getScrollTop(), 111, "scrollTop should be like it was changed");
 
 			var oDomRef = jQuery.sap.domById(oCtrl.getId() + "-cont");
-			equals(oDomRef.scrollTop, 111, "the container should be scrolled from the top by the set amount");
+			assert.equal(oDomRef.scrollTop, 111, "the container should be scrolled from the top by the set amount");
 
 			oDomRef.scrollTop = 87; // simulate scrollbar move
-			equals(oCtrl.getScrollTop(), 87, "the container should be scrolled from the top by the set amount");
+			assert.equal(oCtrl.getScrollTop(), 87, "the container should be scrolled from the top by the set amount");
 
 			oCtrl.setScrollTop(sScrollTop);
-			equals(oCtrl.getScrollTop(), sScrollTop, "scrollTop should be like it was changed");
+			assert.equal(oCtrl.getScrollTop(), sScrollTop, "scrollTop should be like it was changed");
 			var oDomRef = jQuery.sap.domById(oCtrl.getId() + "-cont");
-			equals(oDomRef.scrollTop, sScrollTop, "the container should be scrolled from the top by the set amount");
+			assert.equal(oDomRef.scrollTop, sScrollTop, "the container should be scrolled from the top by the set amount");
 
 			oContent.setWidth("100px");
 			oContent.setHeight("200px");
@@ -125,18 +125,18 @@
 		QUnit.test("setDimensions", function(assert) {
 			oCtrl.setDimensions("399px", "123px");
 			sap.ui.getCore().applyChanges();
-			equals(oCtrl.getWidth(), "399px", "programmatic panel width should match the settings");
-			equals(oCtrl.getHeight(), "123px", "programmatic panel height should match the settings");
+			assert.equal(oCtrl.getWidth(), "399px", "programmatic panel width should match the settings");
+			assert.equal(oCtrl.getHeight(), "123px", "programmatic panel height should match the settings");
 
 			var $DomRef = jQuery.sap.byId(oCtrl.getId());
-			equals($DomRef.outerWidth(), 399, "actual panel width should match the settings");
-			equals($DomRef.outerHeight(), 123, "actual panel height should match the settings");
+			assert.equal($DomRef.outerWidth(), 399, "actual panel width should match the settings");
+			assert.equal($DomRef.outerHeight(), 123, "actual panel height should match the settings");
 
 			oCtrl.setDimensions(sWidth, sHeight);
 			sap.ui.getCore().applyChanges();
 			$DomRef = jQuery.sap.byId(oCtrl.getId());
-			equals($DomRef.outerWidth(), 500, "actual panel width should match the settings");
-			equals($DomRef.outerHeight(), 400, "actual panel height should match the settings");
+			assert.equal($DomRef.outerWidth(), 500, "actual panel width should match the settings");
+			assert.equal($DomRef.outerHeight(), 400, "actual panel height should match the settings");
 		});
 
 		QUnit.test("setCollapsed API", function (assert) {
@@ -192,21 +192,21 @@
 		});
 
 		QUnit.test("Enabled DOM", function(assert) {
-			expect(3);
+			assert.expect(3);
 
 			// first check the DOM / CSS classes of the enabled Panel
 			var oDomRef = jQuery.sap.domById(oCtrl.getId());
-			equals(oDomRef.className.indexOf("sapUiPanelDis"), -1, "enabled Panel must not have the 'sapUiPanelDis' class");
+			assert.equal(oDomRef.className.indexOf("sapUiPanelDis"), -1, "enabled Panel must not have the 'sapUiPanelDis' class");
 
 			// disable the Panel
 			oCtrl.setEnabled(false);
 			var oDomRef2 = jQuery.sap.domById(oCtrl.getId());
-			ok(-1 != oDomRef2.className.indexOf("sapUiPanelDis"), "disabled Panel must have the 'sapUiPanelDis' class");
+			assert.ok(-1 != oDomRef2.className.indexOf("sapUiPanelDis"), "disabled Panel must have the 'sapUiPanelDis' class");
 
 			// re-enable the Panel
 			oCtrl.setEnabled(true);
 			var oDomRef3 = jQuery.sap.domById(oCtrl.getId());
-			equals(oDomRef3.className.indexOf("sapUiPanelDis"), -1, "enabled Panel must not have the 'sapUiPanelDis' class");
+			assert.equal(oDomRef3.className.indexOf("sapUiPanelDis"), -1, "enabled Panel must not have the 'sapUiPanelDis' class");
 		});
 
 
@@ -214,8 +214,8 @@
 			oCtrl.setTitle(new sap.ui.core.Title({text:"My Title"}));
 			sap.ui.getCore().applyChanges();
 			var oTitleDomRef = jQuery.sap.domById(oCtrl.getId() + "-title");
-			equals(oTitleDomRef.innerHTML, "My Title", "title text must be 'My Title'");
-			equals(jQuery.sap.byId(oCtrl.getId() + "-ico").length, 0, "icon may not be rendered, when not set");
+			assert.equal(oTitleDomRef.innerHTML, "My Title", "title text must be 'My Title'");
+			assert.equal(jQuery.sap.byId(oCtrl.getId() + "-ico").length, 0, "icon may not be rendered, when not set");
 		});
 
 
@@ -223,32 +223,33 @@
 			oCtrl.setTitle(new sap.ui.commons.Title({text:"My New Title",icon:"rss-14x14.gif"})); /* use commons Title to test backward compatibility after moving Title to core */
 			sap.ui.getCore().applyChanges();
 			var oTitleDomRef = jQuery.sap.domById(oCtrl.getId() + "-title");
-			equals(oTitleDomRef.innerHTML, "My New Title", "title text must be 'My New Title'");
+			assert.equal(oTitleDomRef.innerHTML, "My New Title", "title text must be 'My New Title'");
 			var $ico = jQuery.sap.byId(oCtrl.getId() + "-ico");
-			equals($ico.length, 1, "icon must be rendered, when set");
-			equals($ico.attr("src"), "rss-14x14.gif", "icon URL must be 'rss-14x14.gif'.")
+			assert.equal($ico.length, 1, "icon must be rendered, when set");
+			assert.equal($ico.attr("src"), "rss-14x14.gif", "icon URL must be 'rss-14x14.gif'.")
 		});
 
 
 		QUnit.test("Toolbar", function(assert) {
-			equals(jQuery.sap.byId(oCtrl.getId() + "-tb").length, 0, "toolbar may not be rendered, when not set");
+			assert.equal(jQuery.sap.byId(oCtrl.getId() + "-tb").length, 0, "toolbar may not be rendered, when not set");
 
 			// add Button to Toolbar
 			oCtrl.addButton(new sap.ui.commons.Button({text:"My Button",icon:"rss-14x14.gif"}));
 			sap.ui.getCore().applyChanges();
 
 			var $tb = jQuery.sap.byId(oCtrl.getId() + "-tb");
-			equals($tb.length, 1, "toolbar must be rendered, when a button is added");
-			equals($tb.children().length, 1, "toolbar button must be rendered, when added");
+			assert.equal($tb.length, 1, "toolbar must be rendered, when a button is added");
+			assert.equal($tb.children().length, 1, "toolbar button must be rendered, when added");
 		});
 
-		asyncTest("Toolbar Resizing behavior", function() {
+		QUnit.test("Toolbar Resizing behavior", function(assert) {
+			var done = assert.async();
 			// measure initial toolbar height
 			var $tb = jQuery.sap.byId(oCtrl.getId() + "-tb");
 			var $title = jQuery.sap.byId(oCtrl.getId() + "-title");
 			var titleWidth = $title.outerWidth();
 			var height = $tb.height();
-			ok(height>18 && height<30, "toolbar with one button should have a certain, reasonable height (between 18 and 30 px) - current height is: " + height);
+			assert.ok(height>18 && height<30, "toolbar with one button should have a certain, reasonable height (between 18 and 30 px) - current height is: " + height);
 
 			// add Buttons to Toolbar to cause wrapping
 			oCtrl.addButton(new sap.ui.commons.Button({text:"My second Button with a longer title"}));
@@ -257,8 +258,8 @@
 
 			$tb = jQuery.sap.byId(oCtrl.getId() + "-tb");
 			var newHeight = $tb.height();
-			ok(newHeight>height, "toolbar with three buttons should due to wrapping be taller than with one button only (current height: " + newHeight + ", previous height: " + height +")");
-			ok(newHeight>40 && newHeight<60, "toolbar with three buttons should have a certain, reasonable height (between 40 and 60 px) - current height is: " + newHeight);
+			assert.ok(newHeight>height, "toolbar with three buttons should due to wrapping be taller than with one button only (current height: " + newHeight + ", previous height: " + height +")");
+			assert.ok(newHeight>40 && newHeight<60, "toolbar with three buttons should have a certain, reasonable height (between 40 and 60 px) - current height is: " + newHeight);
 
 			// make the Panel smaller to cause additional wrapping
 			oCtrl.setWidth("380px");
@@ -269,33 +270,34 @@
 				var headerHeight = $hdr.outerHeight();
 				$tb = jQuery.sap.byId(oCtrl.getId() + "-tb");
 				var newHeight2 = $tb.height();
-				ok(newHeight2>newHeight, "toolbar with three buttons when made smaller should due to wrapping be taller than before (current height: " + newHeight2 + ", previous height: " + newHeight +")");
+				assert.ok(newHeight2>newHeight, "toolbar with three buttons when made smaller should due to wrapping be taller than before (current height: " + newHeight2 + ", previous height: " + newHeight +")");
 
-				ok(newHeight2>60 && newHeight2<85, "toolbar with three buttons should have a certain, reasonable height (between 60 and 85 px) - current height is: " + newHeight2);
+				assert.ok(newHeight2>60 && newHeight2<85, "toolbar with three buttons should have a certain, reasonable height (between 60 and 85 px) - current height is: " + newHeight2);
 
 				// ensure the toolbar fits into the Panel Header
-				ok(headerHeight>newHeight2, "toolbar must be smaller or equal in height compared wih the header (toolbar height: " + newHeight2 + ", header height: " + headerHeight +")");
+				assert.ok(headerHeight>newHeight2, "toolbar must be smaller or equal in height compared wih the header (toolbar height: " + newHeight2 + ", header height: " + headerHeight +")");
 
 				// ensure the Panel has the original size
 				$panel = jQuery.sap.byId(oCtrl.getId());
-				equals($panel.outerHeight(), 400, "Panel should despite a taller header still have the original size");
+				assert.equal($panel.outerHeight(), 400, "Panel should despite a taller header still have the original size");
 
-				start();
+				done();
 			}, 500);
 
 		});
 
 
 
-		asyncTest("Content Height Adaptation", function() {
-  		expect(1);
+		QUnit.test("Content Height Adaptation", function(assert) {
+			var done = assert.async();
+	  		assert.expect(1);
  			setTimeout(function() {
  				// ensure the content starts right below the header
  				$hdr = jQuery.sap.byId(oCtrl.getId() + "-hdr");
  				var headerHeight = $hdr.outerHeight();
  				$cont = jQuery.sap.byId(oCtrl.getId() + "-cont");
- 				equals($cont.css("top"), headerHeight + "px", "Panel content should be postioned exactly below the header");
- 				start();
+ 				assert.equal($cont.css("top"), headerHeight + "px", "Panel content should be postioned exactly below the header");
+ 				done();
  			}, 500);
   	});
 
@@ -306,15 +308,15 @@
 			var oContDomRef = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
 			// make sure the initial design is "Fill"
-			ok(oRootDomRef.className.indexOf("sapUiPanelAreaDesignFill") > -1, "Panel must by default have AreaDesign.Fill");
-			equal(oRootDomRef.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must by default not have AreaDesign.Plain");
+			assert.ok(oRootDomRef.className.indexOf("sapUiPanelAreaDesignFill") > -1, "Panel must by default have AreaDesign.Fill");
+			assert.equal(oRootDomRef.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must by default not have AreaDesign.Plain");
 
 			// make sure it is actually filled
 			var sColor = jQuery(oContDomRef).css("backgroundColor");
 			if (sap.ui.Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 9)) {
-				ok(sColor === "#f2f2f2", "Panel must by default be filled with a white color (Actual: "+sColor+")");
+				assert.ok(sColor === "#f2f2f2", "Panel must by default be filled with a white color (Actual: "+sColor+")");
 			} else {
-				equal(sColor, "rgba(255, 255, 255, 0.8)",	"Panel must by default be filled with a white color");
+				assert.equal(sColor, "rgba(255, 255, 255, 0.8)",	"Panel must by default be filled with a white color");
 			}
 
 			// now switch to "Plain" and do the same tests
@@ -323,13 +325,13 @@
 			var oRootDomRef2 = jQuery.sap.domById(oCtrl.getId());
 			var oContDomRef2 = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
-			ok(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignPlain") > -1, "Panel should now have AreaDesign.Plain");
-			equal(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignFill"), -1, "Panel must not anymore have AreaDesign.Fill");
+			assert.ok(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignPlain") > -1, "Panel should now have AreaDesign.Plain");
+			assert.equal(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignFill"), -1, "Panel must not anymore have AreaDesign.Fill");
 			sColor = jQuery(oContDomRef2).css("backgroundColor");
 			if (sap.ui.Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 9)) {
-				ok(sColor === "white" || sColor === "#ffffff", "Panel should now be filled with a white color (Actual: "+sColor+")");
+				assert.ok(sColor === "white" || sColor === "#ffffff", "Panel should now be filled with a white color (Actual: "+sColor+")");
 			} else {
-				equal(sColor, "rgb(255, 255, 255)", "Panel should now be filled with a white color");
+				assert.equal(sColor, "rgb(255, 255, 255)", "Panel should now be filled with a white color");
 			}
 
 		// now switch to "transparent" and do the same tests
@@ -338,14 +340,14 @@
 			var oRootDomRef3 = jQuery.sap.domById(oCtrl.getId());
 			var oContDomRef3 = jQuery.sap.domById(oCtrl.getId() + "-cont");
 
-			ok(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignTransparent") > -1, "Panel should now have AreaDesign.Transparent");
-			equal(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must not anymore have AreaDesign.Plain");
+			assert.ok(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignTransparent") > -1, "Panel should now have AreaDesign.Transparent");
+			assert.equal(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must not anymore have AreaDesign.Plain");
 			if (sap.ui.Device.browser.internet_explorer) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
+				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
 			} else if (sap.ui.Device.browser.firefox) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
+				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
 			} else if (sap.ui.Device.browser.webkit) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "rgba(0, 0, 0, 0)", "Panel should now be filled with a transparent color");
+				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "rgba(0, 0, 0, 0)", "Panel should now be filled with a transparent color");
 			}
 		});
 
@@ -353,61 +355,61 @@
 			var oRootDomRef = jQuery.sap.domById(oCtrl.getId());
 
 			// make sure the initial design is "Box"
-			ok(oRootDomRef.className.indexOf("sapUiPanelBorderDesignBox") > -1, "Panel must by default have BorderDesign.Box");
-			equal(oRootDomRef.className.indexOf("sapUiPanelBorderDesignNone"), -1, "Panel must by default not have BorderDesign.None");
+			assert.ok(oRootDomRef.className.indexOf("sapUiPanelBorderDesignBox") > -1, "Panel must by default have BorderDesign.Box");
+			assert.equal(oRootDomRef.className.indexOf("sapUiPanelBorderDesignNone"), -1, "Panel must by default not have BorderDesign.None");
 
 			// make sure it is actually boxed
-			equal(jQuery(oRootDomRef).css("borderLeftStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef).css("borderRightStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef).css("borderTopStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef).css("borderBottomStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef).css("borderLeftStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef).css("borderRightStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef).css("borderTopStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef).css("borderBottomStyle"), "none", "Panel content must not have a border");
 
 			// now switch to "Plain" and do the same tests
 			oCtrl.setBorderDesign(sap.ui.commons.enums.BorderDesign.None);
 			sap.ui.getCore().applyChanges();
 			var oRootDomRef2 = jQuery.sap.domById(oCtrl.getId());
 
-			ok(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignNone") > -1, "Panel must now have BorderDesign.None");
-			equal(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignBox"), -1, "Panel must not anymore have BorderDesign.Box");
-			equal(jQuery(oRootDomRef2).css("borderLeftStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef2).css("borderRightStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef2).css("borderTopStyle"), "none", "Panel content must not have a border");
-			equal(jQuery(oRootDomRef2).css("borderBottomStyle"), "none", "Panel content must not have a border");
+			assert.ok(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignNone") > -1, "Panel must now have BorderDesign.None");
+			assert.equal(oRootDomRef2.className.indexOf("sapUiPanelBorderDesignBox"), -1, "Panel must not anymore have BorderDesign.Box");
+			assert.equal(jQuery(oRootDomRef2).css("borderLeftStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef2).css("borderRightStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef2).css("borderTopStyle"), "none", "Panel content must not have a border");
+			assert.equal(jQuery(oRootDomRef2).css("borderBottomStyle"), "none", "Panel content must not have a border");
 		});
 
 		/**
 		 * Test the content padding
 		 */
 		 QUnit.test("Content Padding", function(assert) {
-			expect(4);
+			assert.expect(4);
 			var $ContDomRef = jQuery.sap.byId(oCtrl.getId() + "-cont");
 
 			// test initial padding
-			equals($ContDomRef.css("paddingLeft"), "6px", "Panel content must have left padding");
-			equals($ContDomRef.css("paddingBottom"), "6px", "Panel content must have bottom padding");
+			assert.equal($ContDomRef.css("paddingLeft"), "6px", "Panel content must have left padding");
+			assert.equal($ContDomRef.css("paddingBottom"), "6px", "Panel content must have bottom padding");
 
 			oCtrl.setApplyContentPadding(false);
-			equals($ContDomRef.css("paddingLeft"), "0px", "Panel content must not have left padding");
-			equals($ContDomRef.css("paddingBottom"), "0px", "Panel content must not have bottom padding");
+			assert.equal($ContDomRef.css("paddingLeft"), "0px", "Panel content must not have left padding");
+			assert.equal($ContDomRef.css("paddingBottom"), "0px", "Panel content must not have bottom padding");
 
 			// reset, so it looks ok in the end and the ListBox is not mistaken as Panel container which is too small
 			oCtrl.setBorderDesign(sap.ui.commons.enums.BorderDesign.Box);
 		});
 
 		QUnit.test("Clone", function(assert) {
-			ok(!!oCore, "ref to oCore is required");
+			assert.ok(!!oCore, "ref to oCore is required");
 			oCtrl.setTitle(null);
 			var n=sizeof(oCore.mElements);
 			var oClone1 = oCtrl.clone("-0");
-			ok(n < sizeof(oCore.mElements), "Clone 1 created");
+			assert.ok(n < sizeof(oCore.mElements), "Clone 1 created");
 			oClone1.setText("Some Title");
 			oClone1.setTitle(new sap.ui.core.Title({text:"Some other Title"}));
 			oClone1.destroy();
-			equal(sizeof(oCore.mElements), n, "Clone 1 destroyed");
+			assert.equal(sizeof(oCore.mElements), n, "Clone 1 destroyed");
 			var oClone2 = oCtrl.clone("-0");
-			ok(n < sizeof(oCore.mElements), "Clone 2 created");
+			assert.ok(n < sizeof(oCore.mElements), "Clone 2 created");
 			oClone2.destroy();
-			equal(sizeof(oCore.mElements), n, "Clone 2 destroyed");
+			assert.equal(sizeof(oCore.mElements), n, "Clone 2 destroyed");
 		});
 		</script>
 	</head>

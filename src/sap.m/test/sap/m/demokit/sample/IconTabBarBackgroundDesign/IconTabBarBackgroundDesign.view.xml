@@ -2,18 +2,17 @@
 	controllerName="sap.m.sample.IconTabBarBackgroundDesign.IconTabBarBackgroundDesign"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form">
 	<Panel class="sapMShellGlobalOuterBackground">
 		<f:SimpleForm labelSpanL="6"
-					  labelSpanM="6"
-					  editable="true"
-					  layout="ResponsiveGridLayout">
+				labelSpanM="6"
+				editable="true"
+				layout="ResponsiveGridLayout">
 			<f:content>
 				<Label text="Background Design" />
 				<RadioButtonGroup id="RBBackgroundDesign"
-								  columns="3"
-								  select="onBackgroundDesignSelect">
+						columns="3"
+						select="onBackgroundDesignSelect">
 					<buttons>
 						<RadioButton id="RB1-Solid"
 									 text="Solid">
@@ -29,8 +28,8 @@
 
 				<Label text="Header Background Design" />
 				<RadioButtonGroup id="RBHeaderBackgroundDesign"
-								  columns="3"
-								  select="onHeaderBackgroundDesignSelect">
+						columns="3"
+						select="onHeaderBackgroundDesignSelect">
 					<buttons>
 						<RadioButton id="RB2-Solid"
 									 text="Solid">

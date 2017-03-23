@@ -72,33 +72,33 @@
 			QUnit.module("initialization");
 
 			QUnit.test("Date formatter", function(assert) {
-				ok(!oDRS1.getValue(), "DRS1: no value");
-				ok(!oDRS1.getDateValue(), "DRS1: no DateValue");
-				equal(oDRS2.getDateValue().getTime(), dateFrom.getTime(), "DRS2: DateValue set");
-				equal(oDRS2.getSecondDateValue().getTime(), dateTo1.getTime(), "DRS2: SecondDateValue set");
-				equal(oDRS3.getDateValue().getTime(), dateFrom.getTime(), "DRS3: DateValue set");
-				equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
+				assert.ok(!oDRS1.getValue(), "DRS1: no value");
+				assert.ok(!oDRS1.getDateValue(), "DRS1: no DateValue");
+				assert.equal(oDRS2.getDateValue().getTime(), dateFrom.getTime(), "DRS2: DateValue set");
+				assert.equal(oDRS2.getSecondDateValue().getTime(), dateTo1.getTime(), "DRS2: SecondDateValue set");
+				assert.equal(oDRS3.getDateValue().getTime(), dateFrom.getTime(), "DRS3: DateValue set");
+				assert.equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
 			});
 
 			QUnit.test("Calendar and popup", function(assert) {
-				ok(!sap.ui.unified || !sap.ui.unified.Calendar, "sap.ui.unified.Calendar not loaded");
-				ok(!sap.ui.getCore().byId("DRS1-cal"), "DRS1: no calender exists");
-				ok(!oDRS1._oPopup, "DRS1: no popup exists");
+				assert.ok(!sap.ui.unified || !sap.ui.unified.Calendar, "sap.ui.unified.Calendar not loaded");
+				assert.ok(!sap.ui.getCore().byId("DRS1-cal"), "DRS1: no calender exists");
+				assert.ok(!oDRS1._oPopup, "DRS1: no popup exists");
 			});
 
 			QUnit.module("Rendering");
 
 			QUnit.test("Styling", function(assert) {
-				equal(jQuery("#DRS1").css("width"), jQuery("body").css("width"), "Default width is 100%");
-				equal(jQuery("#DRS2").css("width"), "250px", "given width used");
-				ok(jQuery("#DRS1-icon")[0], "Calendar icon rendered");
-				ok(!jQuery("#DRS3-cal")[0], "no calendar rendered");
+				assert.equal(jQuery("#DRS1").css("width"), jQuery("body").css("width"), "Default width is 100%");
+				assert.equal(jQuery("#DRS2").css("width"), "250px", "given width used");
+				assert.ok(jQuery("#DRS1-icon")[0], "Calendar icon rendered");
+				assert.ok(!jQuery("#DRS3-cal")[0], "no calendar rendered");
 			});
 
 			QUnit.test("Date format", function(assert) {
-				ok(!jQuery("#DRS1").children("div.sapMInputDivWrapper").children("input").val(), "DRS1 : empty date");
-				equal(jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val(), "01+04+2014 - 10+04+2014", "DRS2: defined output format used");
-				equal(jQuery("#DRS3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
+				assert.ok(!jQuery("#DRS1").children("div.sapMInputDivWrapper").children("input").val(), "DRS1 : empty date");
+				assert.equal(jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val(), "01+04+2014 - 10+04+2014", "DRS2: defined output format used");
+				assert.equal(jQuery("#DRS3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
 			});
 
 			QUnit.module("interaction");
@@ -116,9 +116,9 @@
 				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val("01+04+2013 - 10+04+2014");
 				qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-				ok(bChange, "DRS2: change event fired by typing invalid date");
-				ok(!bValid, "DRS2: invalid typed date is not valid")
-				ok(jQuery.sap.equal(oDRS2.getDateValue(), dateFrom), "DRS2: dateValue not changed by invalid typing");
+				assert.ok(bChange, "DRS2: change event fired by typing invalid date");
+				assert.ok(!bValid, "DRS2: invalid typed date is not valid")
+				assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), dateFrom), "DRS2: dateValue not changed by invalid typing");
 
 				bChange = false;
 				bValid = true;
@@ -126,10 +126,10 @@
 				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val("02+04+2014 - 11+04+2014");
 				qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-				ok(bChange, "DRS2: change event fired by typing valid date");
-				ok(bValid, "DRS2: valid typed date is valid")
-				ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue changed by valid typing");
-				ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11)), "DRS2: secondDateValue changed by valid typing");
+				assert.ok(bChange, "DRS2: change event fired by typing valid date");
+				assert.ok(bValid, "DRS2: valid typed date is valid")
+				assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue changed by valid typing");
+				assert.ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11)), "DRS2: secondDateValue changed by valid typing");
 
 				bChange = false;
 				bValid = true;
@@ -137,10 +137,10 @@
 				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val("01+04+2014 - 10+04+2015");
 				qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-				ok(bChange, "DRS2: change event fired by typing invalid date");
-				ok(!bValid, "DRS2: invalid typed date is not valid")
-				ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue not changed by invalid typing");
-				ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11)), "DRS2: secondDateValue not changed by invalid typing");
+				assert.ok(bChange, "DRS2: change event fired by typing invalid date");
+				assert.ok(!bValid, "DRS2: invalid typed date is not valid")
+				assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue not changed by invalid typing");
+				assert.ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11)), "DRS2: secondDateValue not changed by invalid typing");
 
 				oDRS2.setMinDate();
 				oDRS2.setMaxDate();
@@ -158,11 +158,11 @@
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DRS2-cal--Month0-20140409").focus();
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
+				assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
 
 				qutils.triggerEvent("click", "DRS2-icon");
 				jQuery("#DRS2-cal").control(0).fireCancel();
-				equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after cancel");
+				assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after cancel");
 
 				// On a touch device
 				sap.ui.Device.support.touch = true;
@@ -171,21 +171,21 @@
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DRS2-cal--Month0-20140409").focus();
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
+				assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
 
 				qutils.triggerEvent("click", "DRS2-icon");
 				jQuery("#DRS2-cal").control(0).fireCancel();
-				notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
+				assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
 
 				sap.ui.Device.support.touch = bOrigTouch;
 			});
 
 			QUnit.test("Control destroy", function(assert) {
-				strictEqual(oDRS1.$().length + oDRS2.$().length + oDRS3.$().length, 3, "Before destroy DateRangeSelection is available");
+				assert.strictEqual(oDRS1.$().length + oDRS2.$().length + oDRS3.$().length, 3, "Before destroy DateRangeSelection is available");
 				oDRS1.destroy();
 				oDRS2.destroy();
 				oDRS3.destroy();
-				strictEqual(oDRS1.$().length + oDRS2.$().length + oDRS3.$().length, 0, "DateRangeSelection is destroyed");
+				assert.strictEqual(oDRS1.$().length + oDRS2.$().length + oDRS3.$().length, 0, "DateRangeSelection is destroyed");
 			});
 
 			QUnit.module("Accessibility");
@@ -197,32 +197,32 @@
 					placeholder: "Placeholder",
 					delimiter: "@"
 				});
-				ok(!!oInput.getAccessibilityInfo, "DateRangeSelection has a getAccessibilityInfo function");
+				assert.ok(!!oInput.getAccessibilityInfo, "DateRangeSelection has a getAccessibilityInfo function");
 				var oInfo = oInput.getAccessibilityInfo();
-				ok(!!oInfo, "getAccessibilityInfo returns a info object");
-				strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
-				strictEqual(oInfo.description, "Value Placeholder Date Tooltip", "Description");
-				strictEqual(oInfo.focusable, true, "Focusable");
-				strictEqual(oInfo.enabled, true, "Enabled");
-				strictEqual(oInfo.editable, true, "Editable");
+				assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+				assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
+				assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
+				assert.strictEqual(oInfo.description, "Value Placeholder Date Tooltip", "Description");
+				assert.strictEqual(oInfo.focusable, true, "Focusable");
+				assert.strictEqual(oInfo.enabled, true, "Enabled");
+				assert.strictEqual(oInfo.editable, true, "Editable");
 				oInput.setValue("");
 				oInput.setEnabled(false);
 				oInfo = oInput.getAccessibilityInfo();
-				strictEqual(oInfo.description, "Placeholder Date Tooltip", "Description");
-				strictEqual(oInfo.focusable, false, "Focusable");
-				strictEqual(oInfo.enabled, false, "Enabled");
-				strictEqual(oInfo.editable, false, "Editable");
+				assert.strictEqual(oInfo.description, "Placeholder Date Tooltip", "Description");
+				assert.strictEqual(oInfo.focusable, false, "Focusable");
+				assert.strictEqual(oInfo.enabled, false, "Enabled");
+				assert.strictEqual(oInfo.editable, false, "Editable");
 				oInput.setEnabled(true);
 				oInput.setEditable(false);
 				oInfo = oInput.getAccessibilityInfo();
-				strictEqual(oInfo.focusable, true, "Focusable");
-				strictEqual(oInfo.enabled, true, "Enabled");
-				strictEqual(oInfo.editable, false, "Editable");
+				assert.strictEqual(oInfo.focusable, true, "Focusable");
+				assert.strictEqual(oInfo.enabled, true, "Enabled");
+				assert.strictEqual(oInfo.editable, false, "Editable");
 				oInput.setDisplayFormat("yyyy-MM-dd");
 				oInput.setValue("2014-03-26@2014-03-27");
 				oInfo = oInput.getAccessibilityInfo();
-				strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27 Placeholder Date Tooltip", "Description");
+				assert.strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27 Placeholder Date Tooltip", "Description");
 				oInput.destroy();
 			});
 		</script>

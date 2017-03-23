@@ -63,7 +63,7 @@ function performTestAfterTableIsUpdated(doTest) {
 	this.oModel.attachMetadataLoaded(function() {
 		attachEventHandler(this.oTable, 1, function(){
 			doTest(this.oTable);
-			start();
+			done();
 		}, this);
 		this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 	}, this);
@@ -175,11 +175,13 @@ QUnit.test("FixedRowCount", function (assert) {
 	assert.equal(this.oTable.getFixedRowCount(), 0, "FixedRowCount cannot be changed");
 });
 
-QUnit.asyncTest("FixedBottomRowCount", function (assert) {
+QUnit.test("FixedBottomRowCount", function (assert) {
+	var done = assert.async();
 	function doTest(oTable) {
 		assert.equal(oTable.getFixedBottomRowCount(), 1, "Default fixedBottomRowCount");
 		oTable.setFixedBottomRowCount(5);
 		assert.equal(oTable.getFixedBottomRowCount(), 1, "FixedBottomRowCount cannot be changed");
+		done();
 	}
 
 	performTestAfterTableIsUpdated.call(this, doTest);
@@ -191,7 +193,9 @@ QUnit.test("EnableGrouping", function (assert) {
 	assert.equal(this.oTable.getEnableGrouping(), false, "EnableGrouping cannot be changed");
 });
 
-QUnit.asyncTest("getTotalSize", 3, function (assert) {
+QUnit.test("getTotalSize", function (assert) {
+	assert.expect(3);
+	var done = assert.async();
 	function doTest(oTable) {
 		var oBinding = oTable.getBinding("rows");
 		oBinding.getTotalSize = function() {
@@ -201,12 +205,15 @@ QUnit.asyncTest("getTotalSize", 3, function (assert) {
 		assert.equal(oTable.getTotalSize(), 5, "Result of Binding");
 		oTable.unbindRows();
 		assert.equal(oTable.getTotalSize(), 0, "No Binding");
+		done();
 	}
 
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
-QUnit.asyncTest("CollapseRecursive", 7, function (assert) {
+QUnit.test("CollapseRecursive", function (assert) {
+	assert.expect(7);
+	var done = assert.async();
 	function doTest(oTable) {
 		var oBinding = oTable.getBinding("rows");
 		var bCollapseRecursive = false;
@@ -223,12 +230,15 @@ QUnit.asyncTest("CollapseRecursive", 7, function (assert) {
 		bCollapseRecursive = false;
 		oTable.setCollapseRecursive(bCollapseRecursive);
 		assert.equal(oTable.getCollapseRecursive(), bCollapseRecursive, "Property");
+		done();
 	}
 
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
-QUnit.asyncTest("_isRowSelectable", 5, function (assert) {
+QUnit.test("_isRowSelectable", function (assert) {
+	assert.expect(5);
+	var done = assert.async();
 	function doTest(oTable) {
 		var oBinding = oTable.getBinding("rows");
 		oBinding.isIndexSelectable = function(iRowIndex) {
@@ -239,12 +249,15 @@ QUnit.asyncTest("_isRowSelectable", 5, function (assert) {
 		assert.equal(oTable._isRowSelectable(4), false, "Result of Binding");
 		oTable.unbindRows();
 		assert.equal(oTable._isRowSelectable(5), false, "No Binding");
+		done();
 	}
 
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
-QUnit.asyncTest("collapseAll", 6, function (assert) {
+QUnit.test("collapseAll", function (assert) {
+	assert.expect(6);
+	var done = assert.async();
 	function doTest(oTable) {
 		oTable.setFirstVisibleRow(2);
 		var oBinding = oTable.getBinding("rows");
@@ -258,6 +271,7 @@ QUnit.asyncTest("collapseAll", 6, function (assert) {
 		oTable.setFirstVisibleRow(2);
 		assert.ok(oTable.collapseAll() === oTable, "No Binding");
 		assert.equal(oTable.getFirstVisibleRow(), 2, "First visible row");
+		done();
 	}
 
 	performTestAfterTableIsUpdated.call(this, doTest);
@@ -285,18 +299,21 @@ QUnit.module("GroupHeaderMenu", {
 	}
 });
 
-QUnit.asyncTest("Menu", function (assert) {
+QUnit.test("Menu", function (assert) {
+	var done = assert.async();
 	function doTest(oTable) {
 		var oEvent = jQuery.Event({type: "contextmenu"});
 		oEvent.target = oTable.getDomRef("rows-row0-col3");
 		oTable._onContextMenu(oEvent);
 		assert.ok(oTable._getGroupHeaderMenu().bOpen, "Menu is open");
+		done();
 	}
 
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
-QUnit.asyncTest("Localization", function (assert) {
+QUnit.test("Localization", function (assert) {
+	var done = assert.async();
 	function doTest(oTable) {
 		assert.ok(!oTable._oGroupHeaderMenu, "Group header menu does not exist");
 		assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
@@ -317,6 +334,7 @@ QUnit.asyncTest("Localization", function (assert) {
 		assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
 		assert.ok(!oTable._oGroupHeaderMoveUpItem, "Group header menu up item does not exist");
 		assert.ok(!oTable._oGroupHeaderMoveDownItem, "Group header menu down item does not exist");
+		done();
 	}
 
 	performTestAfterTableIsUpdated.call(this, doTest);
@@ -332,7 +350,8 @@ QUnit.module("AnalyticalTable with ODataModel v2", {
 	}
 });
 
-QUnit.asyncTest("getAnalyticalInfoOfRow", function (assert) {
+QUnit.test("getAnalyticalInfoOfRow", function (assert) {
+	var done = assert.async();
 	this.oModel.attachMetadataLoaded(function() {
 		this.oTable = createTable.call(this);
 
@@ -378,7 +397,7 @@ QUnit.asyncTest("getAnalyticalInfoOfRow", function (assert) {
 			oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[0]);
 			assert.ok(!oInfo, "Table has no binding");
 
-			start();
+			done();
 		};
 
 		attachEventHandler(this.oTable, 1, fnHandler1, this);
@@ -387,7 +406,8 @@ QUnit.asyncTest("getAnalyticalInfoOfRow", function (assert) {
 	}, this);
 });
 
-QUnit.asyncTest("TreeAutoExpandMode", function (assert) {
+QUnit.test("TreeAutoExpandMode", function (assert) {
+	var done = assert.async();
 	jQuery.sap.require("sap.ui.model.TreeAutoExpandMode");
 	var oExpandMode = sap.ui.model.TreeAutoExpandMode;
 
@@ -398,9 +418,9 @@ QUnit.asyncTest("TreeAutoExpandMode", function (assert) {
 
 	sap.ui.require(["sap/ui/table/TreeAutoExpandMode"], function(oMode) {
 		checkMode(oMode, "Module sap/ui/table/TreeAutoExpandMode");
-		ok(sap.ui.table.TreeAutoExpandMode === oMode, "Namespace sap.ui.table.TreeAutoExpandMode");
-		ok(sap.ui.table.TreeAutoExpandMode === oExpandMode, "sap.ui.table.TreeAutoExpandMode === sap.ui.model.TreeAutoExpandMode");
-		start();
+		assert.ok(sap.ui.table.TreeAutoExpandMode === oMode, "Namespace sap.ui.table.TreeAutoExpandMode");
+		assert.ok(sap.ui.table.TreeAutoExpandMode === oExpandMode, "sap.ui.table.TreeAutoExpandMode === sap.ui.model.TreeAutoExpandMode");
+		done();
 	});
 
 	this.oTable = new sap.ui.table.AnalyticalTable();
@@ -460,7 +480,8 @@ QUnit.test("NumberOfExpandedLevels", function (assert) {
 	assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 4, "Property SumOnTop - Custom");
 });
 
-QUnit.asyncTest("Simple expand/collapse", function (assert) {
+QUnit.test("Simple expand/collapse", function (assert) {
+	var done = assert.async();
 	this.oModel.attachMetadataLoaded(function() {
 		this.oTable = createTable.call(this);
 
@@ -490,7 +511,7 @@ QUnit.asyncTest("Simple expand/collapse", function (assert) {
 
 			this.oTable.collapse(0);
 			assert.equal(this.oTable.isExpanded(0), false, "First row is now collapsed again");
-			start();
+			done();
 		};
 
 		attachEventHandler(this.oTable, 1, fnHandler1, this);
@@ -499,7 +520,8 @@ QUnit.asyncTest("Simple expand/collapse", function (assert) {
 	}, this);
 });
 
-QUnit.asyncTest("ProvideGrandTotals = false: No Sum row available", function (assert) {
+QUnit.test("ProvideGrandTotals = false: No Sum row available", function (assert) {
+	var done = assert.async();
 	this.oModel.attachMetadataLoaded(function() {
 		this.oTable = createTable.call(this);
 
@@ -530,7 +552,7 @@ QUnit.asyncTest("ProvideGrandTotals = false: No Sum row available", function (as
 
 			this.oTable.collapse(0);
 			assert.equal(this.oTable.isExpanded(0), false, "First row is now collapsed again");
-			start();
+			done();
 		};
 
 		attachEventHandler(this.oTable, 1, fnHandler1, this);
@@ -554,7 +576,8 @@ QUnit.module("AnalyticalColumn", {
 	}
 });
 
-QUnit.asyncTest("getTooltip_AsString", function (assert) {
+QUnit.test("getTooltip_AsString", function (assert) {
+	var done = assert.async();
 	this.oModel.attachMetadataLoaded(function() {
 		this.oTable = createTable.call(this);
 
@@ -563,7 +586,7 @@ QUnit.asyncTest("getTooltip_AsString", function (assert) {
 			assert.equal(oColumn.getTooltip_AsString(), "Cost Center", "Default Tooltip");
 			oColumn.setTooltip("Some other tooltip");
 			assert.equal(oColumn.getTooltip_AsString(), "Some other tooltip", "Custom Tooltip");
-			start();
+			done();
 		};
 
 		attachEventHandler(this.oTable, 1, fnHandler, this);

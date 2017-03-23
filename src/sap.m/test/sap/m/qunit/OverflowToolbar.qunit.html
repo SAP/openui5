@@ -115,7 +115,7 @@
 		QUnit.test("Creating a toolbar should add it in DOM", function (assert) {
 			var oOverflowTB = createOverflowToolbar();
 
-			strictEqual(oOverflowTB.$().length, 1, "Overflow Toolbar is in DOM");
+			assert.strictEqual(oOverflowTB.$().length, 1, "Overflow Toolbar is in DOM");
 
 			oOverflowTB.destroy();
 		});
@@ -149,7 +149,7 @@
 
 			// Before the resize, all buttons are visible
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
 
 			// Resize the toolbar
 			oOverflowTB.setWidth('400px');
@@ -157,37 +157,37 @@
 
 			// After the resize there should be less buttons visible on the toolbar
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			// The overflow area should not be visible yet
 			var oPopover = oOverflowTB._getPopover();
-			strictEqual(oPopover.$().is(":visible"), false, "The overflow area is not visible");
+			assert.strictEqual(oPopover.$().is(":visible"), false, "The overflow area is not visible");
 
 			// Click the overflow button
 			oOverflowButton.firePress();
 			this.clock.tick(1000);
 
 			// The overflow area should appear
-			strictEqual(oPopover.$().is(":visible"), true, "The overflow area is visible after clicking the overflow button");
+			assert.strictEqual(oPopover.$().is(":visible"), true, "The overflow area is visible after clicking the overflow button");
 
 			// All buttons should be visible again, because the overflow area is open
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "After opening the overflow area, all buttons are visible once more");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "After opening the overflow area, all buttons are visible once more");
 
 			// Restore the toolbar to the original size
 			oOverflowTB.setWidth('550px');
 			sap.ui.getCore().applyChanges();
 
 			// There should be no overflow button, no overflow area, all buttons visible again
-			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after restoring to full size");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after restoring to full size");
 			this.clock.tick(1000);
-			strictEqual(oPopover.$().is(":visible"), false, "The overflow area is not visible after restoring to full size");
+			assert.strictEqual(oPopover.$().is(":visible"), false, "The overflow area is not visible after restoring to full size");
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
 
 			oOverflowTB.destroy();
 		});
@@ -212,7 +212,7 @@
 
 			// Before the resize, all buttons are visible
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.MyButton");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
 
 			// Resize the toolbar
 			oOverflowTB.setWidth('400px');
@@ -220,11 +220,11 @@
 
 			// After the resize there should be less buttons visible on the toolbar
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.MyButton");
-			strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			oOverflowTB.destroy();
 		});
@@ -245,7 +245,7 @@
 
 			// Before the resize, all buttons are visible
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
 
 			// Change the width of a button
 			aDefaultContent[4].setWidth("500px");
@@ -253,21 +253,21 @@
 
 			// After the width change there should be less buttons visible on the toolbar
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			// Resize the button back
 			aDefaultContent[4].setWidth("100px");
 			sap.ui.getCore().applyChanges();
 
 			// There should be no overflow button, no overflow area, all buttons visible again
-			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
 			this.clock.tick(1000);
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
 
 			oOverflowTB.destroy();
 		});
@@ -288,7 +288,7 @@
 
 			// Before the resize, all buttons are visible
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
 
 			// Insert a new button
 			var oNewButton = new sap.m.Button({text: "0", width: "100px"});
@@ -297,21 +297,21 @@
 
 			// After the insertion there should be less buttons visible on the toolbar
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons < aDefaultContent.length+1, true, "After the insertion, the number of visible buttons should have decreased");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length+1, true, "After the insertion, the number of visible buttons should have decreased");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			// Remove the button
 			oOverflowTB.removeContent(oNewButton);
 			sap.ui.getCore().applyChanges();
 
 			// There should be no overflow button, no overflow area, all buttons visible again
-			strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
 			this.clock.tick(1000);
 			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
 
 			oOverflowTB.destroy();
 		});
@@ -334,9 +334,9 @@
 
 			// Initially there is an overflow button and not all buttons are visible on the toolbar
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons < aDefaultContent.length, true, "Even though there is enough space on the toolbar, not all buttons are visible");
+			assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "Even though there is enough space on the toolbar, not all buttons are visible");
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is always visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is always visible");
 
 			oOverflowTB.destroy();
 		});
@@ -357,14 +357,14 @@
 
 			// Before the resize, the button with special layout is in the toolbar
 			var oSpecialButton = aDefaultContent[4];
-			strictEqual(oSpecialButton.$().is(":visible"), true, "Initially the button with special layout is visible");
+			assert.strictEqual(oSpecialButton.$().is(":visible"), true, "Initially the button with special layout is visible");
 
 			// Resize the toolbar
 			oOverflowTB.setWidth('200px');
 			sap.ui.getCore().applyChanges();
 
 			// After the resize there should be less buttons visible on the toolbar
-			strictEqual(oSpecialButton.$().is(":visible"), true, "After the resize, the special layout button is still visible");
+			assert.strictEqual(oSpecialButton.$().is(":visible"), true, "After the resize, the special layout button is still visible");
 
 			oOverflowTB.destroy();
 		});
@@ -386,7 +386,7 @@
 					}, aDefaultContent);
 
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, 1, "The button never overflows");
+			assert.strictEqual(iVisibleButtons, 1, "The button never overflows");
 
 			oOverflowTB.destroy();
 		});
@@ -408,11 +408,11 @@
 
 			// Even though there is enough space on the toolbar, two of the buttons always oferflows
 			var iOverflowedButtons = oOverflowTB._getPopover().getAssociatedContent().length;
-			strictEqual(iOverflowedButtons, 2, "Two of the buttons always oferflows");
+			assert.strictEqual(iOverflowedButtons, 2, "Two of the buttons always oferflows");
 
 			// There should be three buttons visible in the toolbar
 			var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-			strictEqual(iVisibleButtons, 3, "Only three buttons are visible in the toolbar");
+			assert.strictEqual(iVisibleButtons, 3, "Only three buttons are visible in the toolbar");
 
 			oOverflowTB.destroy();
 		});
@@ -444,7 +444,7 @@
 			this.clock.tick(1000);
 
 			// Check if the button with Priority Disappear is visible in the overflow popover
-			strictEqual(oButtonWithDisappearPriority.$().css("display") === "none", true,
+			assert.strictEqual(oButtonWithDisappearPriority.$().css("display") === "none", true,
 				"The button with Priority Disappear is hidden and the proper css style is applied");
 
 			oOverflowTB.destroy();
@@ -469,14 +469,14 @@
 					}, aDefaultContent);
 
 			// The Button with Low Priority is not visible
-			strictEqual(oButtonUnderTest.$().is(":visible"), false, "The button with Low Priority is not visible");
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false, "The button with Low Priority is not visible");
 
 			// Change the button priority from Low to High
 			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.High}));
 			sap.ui.getCore().applyChanges();
 
 			// Check if the button moved back to the toolbar
-			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
 				"The button with Chaged Priority is visible whithin the toolbar");
 
 			oOverflowTB.destroy();
@@ -501,7 +501,7 @@
 					}, aDefaultContent);
 
 			//Check if the button is visible in the toolbar
-			strictEqual(oButtonUnderTest.$().is(":visible"), false,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
 				"The button with Low Priority is not visible whithin the toolbar");
 
 			// Change the button priority from Low to NeverOverflow
@@ -509,7 +509,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Check if the button is visible in the toolbar
-			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
 				"The button with Chaged Priority is visible whithin the toolbar");
 
 			oOverflowTB.destroy();
@@ -534,7 +534,7 @@
 					}, aDefaultContent);
 
 			// The leftmost Button with High Priority should be visible
-			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
 				"The button with High Priority is  visible");
 
 			// Change the button priority from High to Low
@@ -542,7 +542,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Check if the button moved back to the overflow area
-			strictEqual(oButtonUnderTest.$().is(":visible"), false,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
 				"The button with Chaged Priority is not visible whithin the toolbar");
 
 			// Click the overflow button
@@ -551,7 +551,7 @@
 			this.clock.tick(1000);
 
 			// Check if the button with Changed Priority is visible in the overflow popover
-			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
 				"The button with Chaged Priority is visible whithin the overflow");
 
 			oOverflowTB.destroy();
@@ -576,7 +576,7 @@
 					}, aDefaultContent);
 
 			// The leftmost Button with High Priority should be visible
-			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
 				"The leftmost button with High Priority is visible");
 
 			// Change the button priority from High to AlwaysOverflow
@@ -584,7 +584,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Check if the button is visible in the toolbar
-			strictEqual(oButtonUnderTest.$().is(":visible"), false,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
 				"The button with Chaged Priority is not visible whithin the toolbar");
 
 			// Click the overflow button
@@ -593,7 +593,7 @@
 			this.clock.tick(1000);
 
 			// Check if the button with the Changed Priority is visible in the overflow popover
-			strictEqual(oButtonUnderTest.$().is(":visible"), true, "The button with Chaged Priority is visible whithin the overflow");
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true, "The button with Chaged Priority is visible whithin the overflow");
 
 			oOverflowTB.destroy();
 		});
@@ -621,7 +621,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the button with Priority High is still visible
-			strictEqual(oButtonWithHighPriority.$().is(":visible"), true,
+			assert.strictEqual(oButtonWithHighPriority.$().is(":visible"), true,
 				"The button with Priority High is visible");
 
 			oOverflowTB.destroy();
@@ -650,7 +650,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the button with Priority Low is still visible
-			strictEqual(oButtonWithLowPriority.$().is(":visible"), false, "The button with Priority Low is not visible");
+			assert.strictEqual(oButtonWithLowPriority.$().is(":visible"), false, "The button with Priority Low is not visible");
 
 			// Click the overflow button
 			var oOverflowButton = oOverflowTB._getOverflowButton();
@@ -658,7 +658,7 @@
 			this.clock.tick(1000);
 
 			// Check if the button with  Priority Low is visible
-			strictEqual(oButtonWithLowPriority.$().is(":visible"), true, "The button with Priority Low is visible whithin the overflow");
+			assert.strictEqual(oButtonWithLowPriority.$().is(":visible"), true, "The button with Priority Low is visible whithin the overflow");
 
 			oOverflowTB.destroy();
 		});
@@ -686,10 +686,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the leftmost button is still visible
-			strictEqual(oLeftMostButton.$().is(":visible"), true,
+			assert.strictEqual(oLeftMostButton.$().is(":visible"), true,
 				"The leftmost button is visible in the toolbar");
 
-			strictEqual(oRightMostButton.$().is(":visible"), false,
+			assert.strictEqual(oRightMostButton.$().is(":visible"), false,
 				"The rightmost button is not visible in the toolbar");
 
 			oOverflowTB.destroy();
@@ -729,7 +729,7 @@
 				oButtonLowPriority2.getId(),
 			]
 
-			deepEqual(aPopoverButtonsIDs, aExpectedOrder, "The elements order matches");
+			assert.deepEqual(aPopoverButtonsIDs, aExpectedOrder, "The elements order matches");
 
 			oOverflowTB.destroy();
 		});
@@ -757,10 +757,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the buttons under test are visible in the toolbar
-			strictEqual(oButtonUnderTest1.$().is(":visible"), false,
+			assert.strictEqual(oButtonUnderTest1.$().is(":visible"), false,
 				"The button under test is not visible in the toolbar");
 
-			strictEqual(oButtonUnderTest2.$().is(":visible"), false,
+			assert.strictEqual(oButtonUnderTest2.$().is(":visible"), false,
 				"The button under test is not visible in the toolbar");
 
 			// Change the priority of the button from group 1
@@ -771,10 +771,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the buttons under test are visible in the toolbar
-			strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
 				"The button under test is visible in the toolbar");
 
-			strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest2.$().is(":visible"), true,
 				"The button under test is visible in the toolbar");
 
 			oOverflowTB.destroy();
@@ -803,10 +803,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the buttons under test are visible in the toolbar
-			strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
 				"The button under test is visible in the toolbar");
 
-			strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest2.$().is(":visible"), true,
 				"The button under test is visible in the toolbar");
 
 			// Change the priority of the button from group 1
@@ -821,10 +821,10 @@
 			this.clock.tick(1000);
 
 			// Check if the members of group number 1 are visible in the overflow area
-			strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
 				"The button under test from group number 1 is visible whithin the overflow area");
 
-			strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest2.$().is(":visible"), true,
 				"The button under test from group number 1 is visible whithin the overflow area");
 
 			oOverflowTB.destroy();
@@ -855,10 +855,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the members of group number 1 are visible
-			strictEqual(oGroupedButton1.$().is(":visible"), false,
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), false,
 				"The button 1 from group number 1 is not visible in the toolbar");
 
-			strictEqual(oGroupedButton2.$().is(":visible"), false,
+			assert.strictEqual(oGroupedButton2.$().is(":visible"), false,
 				"The button 2 from group number 1 is not visible in the toolbar");
 
 			// Click the overflow button
@@ -866,10 +866,10 @@
 			this.clock.tick(1000);
 
 			// Check if the members of group number 1 are visible
-			strictEqual(oGroupedButton1.$().is(":visible"), true,
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
 				"The button 1 from group number 1 is visible whithin the overflow");
 
-			strictEqual(oGroupedButton2.$().is(":visible"), true,
+			assert.strictEqual(oGroupedButton2.$().is(":visible"), true,
 				"The button 2 from group number 1 is visible whithin the overflow");
 
 			oOverflowTB.destroy();
@@ -898,10 +898,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the members of group number 1 are visible
-			strictEqual(oGroupedButton1.$().is(":visible"), false,
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), false,
 				"The button 1 from group number 1 is not visible in the toolbar");
 
-			strictEqual(oGroupedButton2.$().is(":visible"), false,
+			assert.strictEqual(oGroupedButton2.$().is(":visible"), false,
 				"The button 2 from group number 1 is not visible in the toolbar");
 
 			// Click the overflow button
@@ -909,10 +909,10 @@
 			this.clock.tick(1000);
 
 			// Check if the members of group number 1 are visible
-			strictEqual(oGroupedButton1.$().is(":visible"), true,
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
 				"The button 1 from group number 1 is visible whithin the overflow");
 
-			strictEqual(oGroupedButton1.$().is(":visible"), true,
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
 				"The button 2 from group number 1 is visible whithin the overflow");
 
 			oOverflowTB.destroy();
@@ -940,7 +940,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the button under test is visible in the toolbar
-			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
 				"The button under test is visible in the toolbar");
 
 			// Change the group of the button
@@ -948,7 +948,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the button under test is visible in the toolbar
-			strictEqual(oButtonUnderTest.$().is(":visible"), false,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
 				"The button under test from group number 1 is not visible in the toolbar");
 
 			// Click the overflow button
@@ -956,7 +956,7 @@
 			this.clock.tick(1000);
 
 			// Check if the new member of group number 1 is visible in the overflow area
-			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
 				"The button under test from group number 1 is visible within the overflow");
 
 			oOverflowTB.destroy();
@@ -984,7 +984,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the button under test is visible in the toolbar
-			strictEqual(oButtonUnderTest.$().is(":visible"), false,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
 				"The button under test is not visible in the toolbar");
 
 			// Change the group of the button
@@ -992,7 +992,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the button under test is visible in the toolbar
-			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+			assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
 				"The button under test is visible in the toolbar");
 
 			oOverflowTB.destroy();
@@ -1020,7 +1020,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Check if the members of group number 1 are visible
-			strictEqual(oGroupedButton1.$().is(":visible"), true,
+			assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
 				"The button 1 from group number 1 is visible in the toolbar although its priority is Low");
 
 			oOverflowTB.destroy();
@@ -1036,7 +1036,7 @@
 			// For each width, create a toolbar - in some cases all controls will be in the toolbar, in others - will overflow
 			widthTypes.forEach(function (sWidth) {
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
-				strictEqual(oOverflowTB.getContent().length, aContent.length, "When the toolbar's width is '" + sWidth + "', getContent() correctly returns all " + aContent.length + " items");
+				assert.strictEqual(oOverflowTB.getContent().length, aContent.length, "When the toolbar's width is '" + sWidth + "', getContent() correctly returns all " + aContent.length + " items");
 			});
 
 			oOverflowTB.destroy();
@@ -1057,7 +1057,7 @@
 					if (typeof oControl.setText === "function") {
 						newText = "Modified " + i;
 						oControl.setText(newText);
-						strictEqual(oOverflowTB.getContent()[i].getText(), newText, "When the toolbar's width is '" + sWidth + "', Setting the text of the " + i + "th control (" + oControl + ") affects the respective content aggregation item");
+						assert.strictEqual(oOverflowTB.getContent()[i].getText(), newText, "When the toolbar's width is '" + sWidth + "', Setting the text of the " + i + "th control (" + oControl + ") affects the respective content aggregation item");
 					}
 				});
 			});
@@ -1087,7 +1087,7 @@
 
 			// For each control, check if it's in the same place as before
 			aInitialOrder.forEach(function (oControl, i) {
-				strictEqual(aFinalOrder[i], aInitialOrder[i], "The item with index: " + i + " has the same index after shrinking and restoring");
+				assert.strictEqual(aFinalOrder[i], aInitialOrder[i], "The item with index: " + i + " has the same index after shrinking and restoring");
 			});
 
 			oOverflowTB.destroy();
@@ -1116,7 +1116,7 @@
 
 			// For each control, check if it's in the same place as before
 			aInitialOrder.forEach(function (oControl, i) {
-				strictEqual(aFinalOrder[i], aInitialOrder[i], "The item with index: " + i + " has the same index after shrinking and restoring");
+				assert.strictEqual(aFinalOrder[i], aInitialOrder[i], "The item with index: " + i + " has the same index after shrinking and restoring");
 			});
 
 			oOverflowTB.destroy();
@@ -1137,7 +1137,7 @@
 				});
 				oOverflowTB.addContent(newButton);
 
-				strictEqual(oOverflowTB.getContent()[oOverflowTB.getContent().length - 1].getId(), newButton.getId(), "For a toolbar with width = " + sWidth + ", the newly created button is really the last element of the aggregation");
+				assert.strictEqual(oOverflowTB.getContent()[oOverflowTB.getContent().length - 1].getId(), newButton.getId(), "For a toolbar with width = " + sWidth + ", the newly created button is really the last element of the aggregation");
 
 				oOverflowTB.destroy();
 				newButton.destroy();
@@ -1162,7 +1162,7 @@
 				aContent.forEach(function (oControl, i) {
 					oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
 					oOverflowTB.insertContent(newButton, i);
-					strictEqual(oOverflowTB.getContent()[i].getId(), newButton.getId(), "For a toolbar with width = " + sWidth + ", the newly created button is really at index " + i + " in the aggregation");
+					assert.strictEqual(oOverflowTB.getContent()[i].getId(), newButton.getId(), "For a toolbar with width = " + sWidth + ", the newly created button is really at index " + i + " in the aggregation");
 
 				});
 
@@ -1191,9 +1191,9 @@
 				sControlToRemoveId = oControlToRemove.getId();
 
 				oOverflowTB.removeContent(oControlToRemove);
-				ok(removeAssociatedContentSpy.calledWith(sControlToRemoveId), "The control is removed from the AssociatedContent");
-				strictEqual(oAssociativePopover.getAssociatedContent().indexOf(sControlToRemoveId), -1, "The control cannot be found in the AssociatedContent");
-				strictEqual(oOverflowTB.getContent().length, aContent.length - 1, "For a toolbar with width = " + sWidth + ", removing the last control works");
+				assert.ok(removeAssociatedContentSpy.calledWith(sControlToRemoveId), "The control is removed from the AssociatedContent");
+				assert.strictEqual(oAssociativePopover.getAssociatedContent().indexOf(sControlToRemoveId), -1, "The control cannot be found in the AssociatedContent");
+				assert.strictEqual(oOverflowTB.getContent().length, aContent.length - 1, "For a toolbar with width = " + sWidth + ", removing the last control works");
 
 				oOverflowTB.destroy();
 			}, this);
@@ -1209,7 +1209,7 @@
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
 				oOverflowTB.removeAllContent();
 
-				strictEqual(oOverflowTB.getContent().length, 0, "For a toolbar with width = " + sWidth + ", removing all controls really empties the aggregation");
+				assert.strictEqual(oOverflowTB.getContent().length, 0, "For a toolbar with width = " + sWidth + ", removing all controls really empties the aggregation");
 
 				oOverflowTB.destroy();
 			});
@@ -1226,11 +1226,11 @@
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
 				oOverflowTB.destroyContent();
 				this.clock.tick(1000);
-				strictEqual(oOverflowTB.getContent().length, 0, "For a toolbar with width = " + sWidth + ", after destroying the aggregation, there are no controls left");
+				assert.strictEqual(oOverflowTB.getContent().length, 0, "For a toolbar with width = " + sWidth + ", after destroying the aggregation, there are no controls left");
 
 				// There shouldn't be an overflow button and it should be visible
 				var oOverflowButton = oOverflowTB._getOverflowButton();
-				strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible");
+				assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible");
 
 				oOverflowTB.destroy();
 			}, this);
@@ -1246,7 +1246,7 @@
 				aContent = getDefaultContent();
 				oOverflowTB = createOverflowToolbar({width: sWidth}, aContent);
 				aContent.forEach(function (oControl, i) {
-					strictEqual(oOverflowTB.indexOfContent(oControl), i, "For a toolbar with width = " + sWidth + ", the control with index " + i + " has the same index in the aggregation");
+					assert.strictEqual(oOverflowTB.indexOfContent(oControl), i, "For a toolbar with width = " + sWidth + ", the control with index " + i + " has the same index in the aggregation");
 				});
 
 				oOverflowTB.destroy();
@@ -1306,12 +1306,12 @@
 				oOverflowTB.setModel(oModel);
 				oOverflowTB.bindAggregation("content", "/buttons", oButtonTemplate);
 				this.clock.tick(1000);
-				strictEqual(oOverflowTB.getContent().length, oData.buttons.length, "When the width is: " + sWidth + ", the toolbar properly displays all buttons from the data source");
+				assert.strictEqual(oOverflowTB.getContent().length, oData.buttons.length, "When the width is: " + sWidth + ", the toolbar properly displays all buttons from the data source");
 
 				// There should be an overflow button and it should be visible
 				var oOverflowButton = oOverflowTB._getOverflowButton();
 				if (sWidth > 0) {
-					strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible when size > 0");
+					assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible when size > 0");
 				}
 
 				oOverflowTB.destroy();
@@ -1331,7 +1331,7 @@
 
 			btn.destroy();
 
-			strictEqual(oOverflowTB.getContent().length, 0, "Button successfully removed from the toolbar");
+			assert.strictEqual(oOverflowTB.getContent().length, 0, "Button successfully removed from the toolbar");
 
 			oOverflowTB.destroy();
 		});
@@ -1355,7 +1355,7 @@
 
 			var iInvalidationCountAfter = spy.callCount;
 
-			strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
 
 			oOverflowTB.destroy();
 		});
@@ -1378,7 +1378,7 @@
 
 			var iInvalidationCountAfter = spy.callCount;
 
-			strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation not triggered (_resetAndInvalidateToolbar not called)");
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation not triggered (_resetAndInvalidateToolbar not called)");
 
 			oOverflowTB.destroy();
 		});
@@ -1394,11 +1394,11 @@
 			aContent[5].setLayoutData(new sap.m.OverflowToolbarLayoutData({stayInOverflow: true}));
 			this.clock.tick(1000);
 
-			strictEqual(spy.callCount, 1, "Layout recalculation triggered");
+			assert.strictEqual(spy.callCount, 1, "Layout recalculation triggered");
 
 			// There should be an overflow button and it should be visible
 			var oOverflowButton = oOverflowTB._getOverflowButton();
-			strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+			assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
 
 			oOverflowTB.destroy();
 		});
@@ -1423,36 +1423,36 @@
 			oOverflowTB.setWidth("251px");
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 0, "When there is just a resize, the cache isn't recalculated");
-			strictEqual(spyResizeHandler.callCount, 1, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 0, "When there is just a resize, the cache isn't recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 1, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			// Resize a button - the cache should be invalidated
 			aDefaultContent[0].setWidth("101px");
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 1, "When a control changes a property that affects size, the cache is recalculated");
-			strictEqual(spyResizeHandler.callCount, 2, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 1, "When a control changes a property that affects size, the cache is recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 2, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			// Add a button - the cache should be invalidated
 			oOverflowTB.addContent(new sap.m.Button({width: "100px"}));
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 2, "When a new control is inserted, the cache is recalculated");
-			strictEqual(spyResizeHandler.callCount, 3, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 2, "When a new control is inserted, the cache is recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 3, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			// Change the width of the toolbar again - the cache should not be invalidated
 			oOverflowTB.setWidth("550px");
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 2, "When there is just a resize (again), the cache isn't recalculated");
-			strictEqual(spyResizeHandler.callCount, 4, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 2, "When there is just a resize (again), the cache isn't recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 4, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			// Change the layout of a button - the cache should be invalidated
 			aDefaultContent[1].setLayoutData(new sap.m.OverflowToolbarLayoutData({stayInOverflow: true}));
 			this.clock.tick(1000);
 
-			strictEqual(spyCache.callCount, 3, "When the layout of a control is changed, the cache is recalculated");
-			strictEqual(spyResizeHandler.callCount, 5, "For every resize/change, _setControlsOverflowAndShrinking is called");
+			assert.strictEqual(spyCache.callCount, 3, "When the layout of a control is changed, the cache is recalculated");
+			assert.strictEqual(spyResizeHandler.callCount, 5, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 			oOverflowTB.destroy();
 		});
@@ -1473,11 +1473,11 @@
 					}, aDefaultContent);
 
 
-			strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
-			strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
-			strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the popover");
-			strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 labels are properly marked as toolbar only");
-			strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
+			assert.strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
+			assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
+			assert.strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the popover");
+			assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 labels are properly marked as toolbar only");
+			assert.strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
 
 			// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
 
@@ -1505,12 +1505,12 @@
 
 			// The toolbar already can fit all items, increase its size by 1px so that no rearranging will be necessary
 			oOverflowTB.setWidth("551px");
-			strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+			assert.strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
 			this.clock.tick(1000);
 
-			strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
-			strictEqual(spyInvalidate.callCount, 1, "It did NOT call invalidate");
-			strictEqual(spyFlexbox.callCount, 0, "It did NOT set flexbox css");
+			assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+			assert.strictEqual(spyInvalidate.callCount, 1, "It did NOT call invalidate");
+			assert.strictEqual(spyFlexbox.callCount, 0, "It did NOT set flexbox css");
 
 			oOverflowTB.destroy();
 		});
@@ -1534,12 +1534,12 @@
 
 			// Decrease the size so that some buttons have to move the the popover
 			oOverflowTB.setWidth("200px");
-			strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+			assert.strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
 			this.clock.tick(1000);
 
-			strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
-			strictEqual(spyInvalidate.callCount, 2, "It called invalidate");
-			strictEqual(spyFlexbox.callCount, 0, "It did NOT set flexbox css");
+			assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+			assert.strictEqual(spyInvalidate.callCount, 2, "It called invalidate");
+			assert.strictEqual(spyFlexbox.callCount, 0, "It did NOT set flexbox css");
 
 			oOverflowTB.destroy();
 		});
@@ -1560,12 +1560,12 @@
 
 			// Decrease the size so that all buttons must overflow and the label must be shrunk
 			oOverflowTB.setWidth("60px");
-			strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+			assert.strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
 			this.clock.tick(1000);
 
-			strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
-			strictEqual(spyInvalidate.callCount, 2, "It called invalidate");
-			strictEqual(spyFlexbox.callCount, 1, "It set flexbox css");
+			assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+			assert.strictEqual(spyInvalidate.callCount, 2, "It called invalidate");
+			assert.strictEqual(spyFlexbox.callCount, 1, "It set flexbox css");
 
 			oOverflowTB.destroy();
 		});
@@ -1594,7 +1594,7 @@
 
 			var iInvalidationCountAfter = spy.callCount;
 
-			strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Changing the value of the sliderLayout does not trigger recalculation (_resetAndInvalidateToolbar not called)");
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Changing the value of the sliderLayout does not trigger recalculation (_resetAndInvalidateToolbar not called)");
 
 			oOverflowTB.destroy();
 		});
@@ -1627,7 +1627,7 @@
 
 			// The overflow area should still be visible
 			var oPopover = oOverflowTB._getPopover();
-			strictEqual(oPopover.$().is(":visible"), true, "Even though the button was clicked, the overflow area is visible");
+			assert.strictEqual(oPopover.$().is(":visible"), true, "Even though the button was clicked, the overflow area is visible");
 
 			oOverflowTB.destroy();
 		});
@@ -1665,7 +1665,7 @@
 			this.clock.tick(1000);
 
 			// listener should be called
-			strictEqual(spy.called, true, "The listener for the private event is notified");
+			assert.strictEqual(spy.called, true, "The listener for the private event is notified");
 
 			oOverflowTB.destroy();
 		});
@@ -1678,7 +1678,7 @@
 			sap.ui.getCore().applyChanges();
 
 			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton);
-			strictEqual(sSize, 200);
+			assert.strictEqual(sSize, 200);
 		});
 
 		QUnit.test("Size of an invisible control reported correctly", function (assert) {
@@ -1687,14 +1687,14 @@
 			sap.ui.getCore().applyChanges();
 
 			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton);
-			strictEqual(sSize, 0);
+			assert.strictEqual(sSize, 0);
 		});
 
 		QUnit.test("Size of a control that was measured before, but now not in the DOM, reported correctly", function (assert) {
 			var oTestButton = new sap.m.Button();
 
 			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton, 333);
-			strictEqual(sSize, 333);
+			assert.strictEqual(sSize, 333);
 		});
 
 

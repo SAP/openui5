@@ -27,7 +27,8 @@ sap.ui.define(['./library'],
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 		 */
 		AlignedFlowLayoutRenderer.render = function (oRm, oControl) {
-			var aContent = oControl.getContent();
+			var aContent = oControl.getContent(),
+				iContentLength = aContent.length;
 
 			oRm.write("<ul");
 			oRm.writeControlData(oControl);
@@ -37,7 +38,10 @@ sap.ui.define(['./library'],
 
 			this.renderItems(oRm, oControl, aContent);
 			this.renderEndItem(oRm, oControl);
-			this.renderInvisibleItems(oRm, oControl, aContent.length);
+
+			if (iContentLength) {
+				this.renderSpacers(oRm, oControl, iContentLength);
+			}
 
 			oRm.write("</ul>");
 		};
@@ -84,14 +88,14 @@ sap.ui.define(['./library'],
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
-		 * @param {sap.ui.core.Control[]} [aContent=oControl.getEndContent()] The content to be rendered inside the last item
+		 * @param {sap.ui.core.Control[]} [aEndContent=oControl.getEndContent()] The content to be rendered inside the last item
 		 */
-		AlignedFlowLayoutRenderer.renderEndItem = function(oRm, oControl, aContent) {
-			aContent = aContent || oControl.getEndContent();
+		AlignedFlowLayoutRenderer.renderEndItem = function(oRm, oControl, aEndContent) {
+			aEndContent = aEndContent || oControl.getEndContent();
 
-			if (aContent.length) {
+			if (aEndContent.length) {
 				oRm.write("<li");
-				oRm.writeAttribute("id", oControl.getId() + "-endContent");
+				oRm.writeAttribute("id", oControl.getId() + "-endItem");
 				oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "End");
 
 				// if the end item is the only child, do not change the initial main size of a flex item
@@ -103,8 +107,8 @@ sap.ui.define(['./library'],
 				oRm.writeStyles();
 				oRm.write(">");
 
-				for (var i = 0; i < aContent.length; i++) {
-					this.renderEndContent(oRm, oControl, aContent[i]);
+				for (var i = 0; i < aEndContent.length; i++) {
+					this.renderEndContent(oRm, oControl, aEndContent[i]);
 				}
 
 				oRm.write("</li>");
@@ -137,11 +141,7 @@ sap.ui.define(['./library'],
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 		 * @param {int} iVisibleItems The number of items that should be visible
 		 */
-		AlignedFlowLayoutRenderer.renderInvisibleItems = function(oRm, oControl, iVisibleItems) {
-
-			if (iVisibleItems === 0) {
-				return;
-			}
+		AlignedFlowLayoutRenderer.renderSpacers = function(oRm, oControl, iVisibleItems) {
 
 			// TODO: what's a reasonable value? Make it configurable?
 			// But this only has an effect when all items fit into the first line and the control gets even wider.
@@ -149,6 +149,7 @@ sap.ui.define(['./library'],
 
 			// We never need more than (windowWidth/minItemWidth). They just need to fill one row.
 			iVisibleItems = Math.max(1, iVisibleItems - 2);
+
 			// TODO: limit the iVisibleItems in case there are very many items. First try:
 			iVisibleItems = Math.min(iVisibleItems, 100); // FIXME: magic number... let's assume there are never more than 100 items in the first row.
 

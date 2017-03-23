@@ -31,7 +31,7 @@
 			logo: "../images/SAPLogo.jpg",
 			logout: function(){
 				window.loggedOut = true;
-				ok(true, "Logging out");
+				assert.ok(true, "Logging out");
 			}
 		});
 
@@ -58,30 +58,30 @@
 		});
 
 		QUnit.test("Shell rendered", function(assert) {
-			ok(jQuery.sap.domById("myShell"), "Shell should be rendered");
-			ok(jQuery.sap.domById("myApp"), "App should be rendered");
-			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+			assert.ok(jQuery.sap.domById("myShell"), "Shell should be rendered");
+			assert.ok(jQuery.sap.domById("myApp"), "App should be rendered");
+			assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
 		});
 
 
 		QUnit.test("Shell should hide the branding bar when another Shell-like control is parent and has one", function(assert) {
-			strictEqual(oShell.$().find(".sapMShellBrandingBar").length, 1, "branding bar should be rendered");
-			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
+			assert.strictEqual(oShell.$().find(".sapMShellBrandingBar").length, 1, "branding bar should be rendered");
+			assert.strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
 
 			jQuery(document.body).addClass("sapMBrandingBar-CTX");
-			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "none", "branding bar should not be visible when a Shell is ancestor");
+			assert.strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "none", "branding bar should not be visible when a Shell is ancestor");
 
 			jQuery(document.body).removeClass("sapMBrandingBar-CTX");
-			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
+			assert.strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
 		});
 
 
 		// Shell features
 		QUnit.test("Shell features", function(assert) {
-			equal(byIdSuffix("-hdrTxt").text(), "Test Shell", "Title should be rendered");
-			equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
-			equal(byIdSuffix("-logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
-			equal(byIdSuffix("-logo").attr("alt"), "Logo", "Logo ALT should be 'Logo''");
+			assert.equal(byIdSuffix("-hdrTxt").text(), "Test Shell", "Title should be rendered");
+			assert.equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
+			assert.equal(byIdSuffix("-logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
+			assert.equal(byIdSuffix("-logo").attr("alt"), "Logo", "Logo ALT should be 'Logo''");
 		});
 
 		QUnit.test("Shell without title", function(assert) {
@@ -92,7 +92,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// act
-			ok(!sap.ui.getCore().byId(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
+			assert.ok(!sap.ui.getCore().byId(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
 
 			// clean up
 			oShellNoTitle.destroy();
@@ -100,10 +100,10 @@
 
 		// logout event
 		QUnit.test("Shell logout event", function(assert) {
-			expect(2); // incl. logout handler
+			assert.expect(2); // incl. logout handler
 			window.loggedOut = false;
 			qutils.triggerTouchEvent("tap", oShell.getId() + "-logout");
-			equal(window.loggedOut, true, "Logout handler should be called");
+			assert.equal(window.loggedOut, true, "Logout handler should be called");
 		});
 
 
@@ -117,14 +117,14 @@
 				var bgDiv = byIdSuffix("-BG"),
 					style = window.getComputedStyle(bgDiv[0]);
 
-				equal(bgDiv.length, 1, "Background image div should be rendered");
+				assert.equal(bgDiv.length, 1, "Background image div should be rendered");
 				if(sBgVariant == "Variant1"){
-					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
+					assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
 				}else{
-					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
+					assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
 				}
 
-				equal(style.backgroundRepeat, "repeat", "Background should be repeated");
+				assert.equal(style.backgroundRepeat, "repeat", "Background should be repeated");
 			});
 
 			// bg image - and make it custom
@@ -139,11 +139,11 @@
 				var bgDiv = byIdSuffix("-BG"),
 					style = window.getComputedStyle(bgDiv[0]);
 
-				equal(bgDiv.length, 1, "Background image div should be rendered");
-				ok(style.backgroundImage.indexOf("test/x.png") > -1, "Custom background image should be applied");
-				equal(style.backgroundRepeat, "no-repeat", "Background should not be repeated");
-				equal(window.getComputedStyle(bgDiv[0].parentNode).backgroundColor, "rgb(0, 255, 0)", "Background should be green");
-				equal(style.opacity, "0.5", "Background opacity should be set");
+				assert.equal(bgDiv.length, 1, "Background image div should be rendered");
+				assert.ok(style.backgroundImage.indexOf("test/x.png") > -1, "Custom background image should be applied");
+				assert.equal(style.backgroundRepeat, "no-repeat", "Background should not be repeated");
+				assert.equal(window.getComputedStyle(bgDiv[0].parentNode).backgroundColor, "rgb(0, 255, 0)", "Background should be green");
+				assert.equal(style.opacity, "0.5", "Background opacity should be set");
 			});
 
 			// bg image - revert to standard again
@@ -158,14 +158,14 @@
 				var bgDiv = byIdSuffix("-BG"),
 					style = window.getComputedStyle(bgDiv[0]);
 
-				equal(bgDiv.length, 1, "Background image div should be rendered");
+				assert.equal(bgDiv.length, 1, "Background image div should be rendered");
 				if(sBgVariant == "Variant1"){
-					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
+					assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
 				}else{
-					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
+					assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
 				}
-				equal(style.backgroundRepeat, "repeat", "Background should be repeated");
-				equal(style.opacity, "1", "Background opacity should be set");
+				assert.equal(style.backgroundRepeat, "repeat", "Background should be repeated");
+				assert.equal(style.opacity, "1", "Background opacity should be set");
 			});
 
 			QUnit.module("custom setters");
@@ -184,12 +184,12 @@
 				$Dom = oShell.$("hdrTxt");
 
 				//assert
-				equal($Dom.html(), sExampleTitle, "dom is modified");
-				equal(oShell.getTitle(), sExampleTitle, "property is changed");
+				assert.equal($Dom.html(), sExampleTitle, "dom is modified");
+				assert.equal(oShell.getTitle(), sExampleTitle, "property is changed");
 
-				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-				equal(oSetPropertySpy.args[0][0], "title", "setProperty called for 'title' property");
-				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+				assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				assert.equal(oSetPropertySpy.args[0][0], "title", "setProperty called for 'title' property");
+				assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
 
 				oShell.setProperty.restore();
 			});
@@ -208,12 +208,12 @@
 				$Dom = oShell.$("hdrRightTxt");
 
 				//assert
-				equal($Dom.text(), sExampleHeaderText, "dom is modified");
-				equal(oShell.getHeaderRightText(), sExampleHeaderText, "property is changed");
+				assert.equal($Dom.text(), sExampleHeaderText, "dom is modified");
+				assert.equal(oShell.getHeaderRightText(), sExampleHeaderText, "property is changed");
 
-				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-				equal(oSetPropertySpy.args[0][0], "headerRightText", "setProperty called for 'headerRightText' property");
-				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+				assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				assert.equal(oSetPropertySpy.args[0][0], "headerRightText", "setProperty called for 'headerRightText' property");
+				assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
 
 				oShell.setProperty.restore();
 			});
@@ -231,19 +231,19 @@
 				$Dom = oShell.$();
 
 				//assert
-				equal($Dom.hasClass("sapMShellAppWidthLimited"), false, "dom is modified");
-				equal(oShell.getAppWidthLimited(), false, "property is changed");
+				assert.equal($Dom.hasClass("sapMShellAppWidthLimited"), false, "dom is modified");
+				assert.equal(oShell.getAppWidthLimited(), false, "property is changed");
 
-				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-				equal(oSetPropertySpy.args[0][0], "appWidthLimited", "setProperty called for 'appWidthLimited' property");
-				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+				assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				assert.equal(oSetPropertySpy.args[0][0], "appWidthLimited", "setProperty called for 'appWidthLimited' property");
+				assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
 
 				oShell.setAppWidthLimited(true);
-				equal($Dom.hasClass("sapMShellAppWidthLimited"), true, "dom is modified");
-				equal(oShell.getAppWidthLimited(), true, "property is changed");
+				assert.equal($Dom.hasClass("sapMShellAppWidthLimited"), true, "dom is modified");
+				assert.equal(oShell.getAppWidthLimited(), true, "property is changed");
 
-				equal(oSetPropertySpy.callCount, 2, "setProperty called second time");
-				equal(oSetPropertySpy.args[1][2], true, "setProperty 2nd time called with suppressRendering === true");
+				assert.equal(oSetPropertySpy.callCount, 2, "setProperty called second time");
+				assert.equal(oSetPropertySpy.args[1][2], true, "setProperty 2nd time called with suppressRendering === true");
 
 				oShell.setProperty.restore();
 			});
@@ -263,22 +263,22 @@
 				$Dom = oShell.$("BG");
 
 				//assert
-				notEqual($Dom.css("opacity"), sExampleInvalidOpacity, "dom is not modified");
-				notEqual(oShell.getBackgroundOpacity(), sExampleInvalidOpacity, "property is not changed");
+				assert.notEqual($Dom.css("opacity"), sExampleInvalidOpacity, "dom is not modified");
+				assert.notEqual(oShell.getBackgroundOpacity(), sExampleInvalidOpacity, "property is not changed");
 
-				equal(oSetPropertySpy.callCount, 0, "setProperty is not called");
+				assert.equal(oSetPropertySpy.callCount, 0, "setProperty is not called");
 
 
 				//act
 				oShell.setBackgroundOpacity(sExampleValidOpacity);
 
 				//assert
-				equal($Dom.css("opacity"), sExampleValidOpacity.toString(), "dom is modified");
-				equal(oShell.getBackgroundOpacity(), sExampleValidOpacity, "property is changed");
+				assert.equal($Dom.css("opacity"), sExampleValidOpacity.toString(), "dom is modified");
+				assert.equal(oShell.getBackgroundOpacity(), sExampleValidOpacity, "property is changed");
 
-				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-				equal(oSetPropertySpy.args[0][0], "backgroundOpacity", "setProperty called for 'backgroundOpacity' property");
-				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+				assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				assert.equal(oSetPropertySpy.args[0][0], "backgroundOpacity", "setProperty called for 'backgroundOpacity' property");
+				assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
 
 				oShell.setProperty.restore();
 			});
@@ -304,14 +304,14 @@
 				oShell.setHomeIcon(oExampleIcons);
 
 				//assert
-				equal(oShell.getHomeIcon(), oExampleIcons, "property is changed");
+				assert.equal(oShell.getHomeIcon(), oExampleIcons, "property is changed");
 
-				equal(oJQuerySapSetIconSpy.callCount, 1, "jQuery.sap.setIcons called once");
-				equal(oJQuerySapSetIconSpy.args[0][0], oExampleIcons, "jQuery.sap.setIcons called with the icons object");
+				assert.equal(oJQuerySapSetIconSpy.callCount, 1, "jQuery.sap.setIcons called once");
+				assert.equal(oJQuerySapSetIconSpy.args[0][0], oExampleIcons, "jQuery.sap.setIcons called with the icons object");
 
-				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-				equal(oSetPropertySpy.args[0][0], "homeIcon", "setProperty called for 'homeIcon' property");
-				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+				assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				assert.equal(oSetPropertySpy.args[0][0], "homeIcon", "setProperty called for 'homeIcon' property");
+				assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
 
 				oShell.setProperty.restore();
 				jQuery.sap.setIcons.restore();

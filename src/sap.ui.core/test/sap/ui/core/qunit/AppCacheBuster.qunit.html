@@ -70,17 +70,17 @@
 
 		sap.ui.core.AppCacheBuster.init();
 
-		notEqual(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is intercepted");
-		notEqual(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is intercepted");
-		notEqual(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is intercepted");
-		notEqual(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is intercepted");
+		assert.notEqual(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is intercepted");
+		assert.notEqual(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is intercepted");
+		assert.notEqual(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is intercepted");
+		assert.notEqual(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is intercepted");
 
 		sap.ui.core.AppCacheBuster.exit();
 
-		equal(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is restored");
-		equal(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is restored");
-		equal(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is restored");
-		equal(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is restored");
+		assert.equal(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is restored");
+		assert.equal(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is restored");
+		assert.equal(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is restored");
+		assert.equal(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is restored");
 
 	});
 
@@ -131,27 +131,27 @@
 	QUnit.test("check basic URL handling", function(assert) {
 
 		// check normal URLs
-		ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView.view.js").indexOf("/~" + sTimestampComp1 + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView.view.js").indexOf("/~" + sTimestampComp2 + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp1 + "~/") == -1, "URL is correctly ignored!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp1 + "~/") == -1, "URL is correctly ignored!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView.view.js").indexOf("/~" + sTimestampComp1 + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView.view.js").indexOf("/~" + sTimestampComp2 + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp1 + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp1 + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
 
 		// check ab-normal URLs
-		ok(sap.ui.core.AppCacheBuster.convertURL("my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 		// check relative URLs
-		ok(sap.ui.core.AppCacheBuster.convertURL("./my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("./my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("./my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("./my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 		// check relative ab-normal URLs
-		ok(sap.ui.core.AppCacheBuster.convertURL("./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 	});
 
@@ -170,13 +170,13 @@
 		var oResult = jQuery.sap.sjax({
 			url: "js/script.js"
 		});
-		ok(oResult.success, "URL is correctly prefixed!");
+		assert.ok(oResult.success, "URL is correctly prefixed!");
 
 		// check normal URLs
 		var oResult = jQuery.sap.sjax({
 			url: "js/script1.js"
 		});
-		ok(oResult.success, "URL is correctly ignored!");
+		assert.ok(oResult.success, "URL is correctly ignored!");
 
 	});
 
@@ -185,7 +185,7 @@
 		// check script prefixing
 		jQuery.sap.includeScript("js/script.js", "myjs");
 		var sSource = jQuery.sap.byId("myjs").attr("src");
-		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});
 
@@ -194,7 +194,7 @@
 		// check script prefixing
 		jQuery.sap.includeStyleSheet("css/style.css", "mycss");
 		var sSource = jQuery.sap.byId("mycss").attr("href");
-		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});
 
@@ -205,7 +205,7 @@
 			src: "img/image.png"
 		});
 		var sSource = oControl.getSrc();
-		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 		oControl.destroy();
 
 	});
@@ -245,20 +245,20 @@
 	QUnit.test("check basic URL handling", function(assert) {
 
 		// check normal URLs
-		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 		// check ab-normal URLs
-		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 		// check relative URLs
-		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 		// check relative ab-normal URLs
-		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 	});
 
@@ -276,13 +276,13 @@
 		var oResult = jQuery.sap.sjax({
 			url: "http://anyserver:4711/anyapp/js/script.js"
 		});
-		ok(oResult.success, "URL is correctly prefixed!");
+		assert.ok(oResult.success, "URL is correctly prefixed!");
 
 		// check normal URLs
 		var oResult = jQuery.sap.sjax({
 			url: "http://anyserver:4711/anyapp/js/script1.js"
 		});
-		ok(oResult.success, "URL is correctly ignored!");
+		assert.ok(oResult.success, "URL is correctly ignored!");
 
 	});
 
@@ -291,7 +291,7 @@
 		// check script prefixing
 		jQuery.sap.includeScript("http://anyserver:4711/anyapp/js/script.js", "myjs");
 		var sSource = jQuery.sap.byId("myjs").attr("src");
-		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});
 
@@ -300,7 +300,7 @@
 		// check script prefixing
 		jQuery.sap.includeStyleSheet("http://anyserver:4711/anyapp/css/style.css", "mycss");
 		var sSource = jQuery.sap.byId("mycss").attr("href");
-		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});
 
@@ -311,7 +311,7 @@
 			src: "http://anyserver:4711/anyapp/img/image.png"
 		});
 		var sSource = oControl.getSrc();
-		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 		oControl.destroy();
 
 	});
@@ -356,7 +356,8 @@
 		}
 	});
 
-	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook", 4, function(assert) {
+	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook", function(assert) {
+		assert.expect(4);
 
 		var that = this;
 		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
@@ -365,20 +366,21 @@
 
 		// check that the hooks are executed properly
 		sap.ui.core.AppCacheBuster.onIndexLoad = function(sUrl) {
-			ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
+			assert.ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
 		};
 		sap.ui.core.AppCacheBuster.onIndexLoaded = function(sUrl, mIndexInfo) {
-			ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
-			ok(JSON.stringify(that.mIndexInfo) === JSON.stringify(mIndexInfo), "IndexInfo is correctly passed!");
+			assert.ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
+			assert.ok(JSON.stringify(that.mIndexInfo) === JSON.stringify(mIndexInfo), "IndexInfo is correctly passed!");
 		};
 		sap.ui.core.AppCacheBuster.register(sBaseUrl);
 
 		// check that the request was triggered
-		ok(this.iRequestCount === 1, "Request triggered!")
+		assert.ok(this.iRequestCount === 1, "Request triggered!")
 
 	});
 
-	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook (override)", 4, function(assert) {
+	QUnit.test("check sap.ui.core.AppCacheBuster.onIndexLoad(ed) hook (override)", function(assert) {
+		assert.expect(4);
 
 		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 		var sBaseUrl = "http://anyserver:4711/anyapp/";
@@ -386,17 +388,17 @@
 
 		// check that override the index load request works
 		sap.ui.core.AppCacheBuster.onIndexLoad = function(sUrl) {
-			ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
+			assert.ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
 			return {"a": "b"};
 		};
 		sap.ui.core.AppCacheBuster.onIndexLoaded = function(sUrl, mIndexInfo) {
-			ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
-			ok(JSON.stringify({"a": "b"}) === JSON.stringify(mIndexInfo), "IndexInfo is correctly passed!");
+			assert.ok(sUrl === sCacheBusterUrl, "URL is correctly passed!");
+			assert.ok(JSON.stringify({"a": "b"}) === JSON.stringify(mIndexInfo), "IndexInfo is correctly passed!");
 		};
 		sap.ui.core.AppCacheBuster.register(sBaseUrl);
 
 		// check that the request was not triggered
-		ok(this.iRequestCount === 0, "Request not triggered!")
+		assert.ok(this.iRequestCount === 0, "Request not triggered!")
 
 	});
 

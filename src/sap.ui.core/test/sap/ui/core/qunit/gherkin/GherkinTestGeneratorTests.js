@@ -14,14 +14,15 @@ sap.ui.require([
 
   QUnit.module("Gherkin Test Generator Tests", {
     beforeEach : function() {
+      QUnit.dump.maxDepth = 15;
       this.parser = simpleGherkinParser;
 
       this.assertAllTestsAreMatchedAndSkipped = function(testScenario) {
         for (var i=0; i<testScenario.testSteps.length; ++i) {
           var testStep = testScenario.testSteps[i];
-          ok(!!testStep.text.match(/^\(SKIPPED\)/), "text: " + testScenario.name + " -- " + testStep.text);
-          ok(testStep.isMatch, "isMatch: " + testScenario.name + " -- " + testStep.text);
-          ok(testStep.skip, "skip: " + testScenario.name + " -- " + testStep.text);
+          assert.ok(!!testStep.text.match(/^\(SKIPPED\)/), "text: " + testScenario.name + " -- " + testStep.text);
+          assert.ok(testStep.isMatch, "isMatch: " + testScenario.name + " -- " + testStep.text);
+          assert.ok(testStep.skip, "skip: " + testScenario.name + " -- " + testStep.text);
         }
       };
     },
@@ -57,6 +58,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario: Buy last coffee",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -69,7 +71,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest, "Smoke test 'generate' method");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Smoke test 'generate' method");
   });
 
 
@@ -84,11 +86,11 @@ sap.ui.require([
       "    Given the user '<<user>>' has been given <(?:number)?> cups of coffee",
       "    Then he should be '<(mood)>'",
       "",
-      "  Examples:",
-      "    | <user>  | (?:number)? | (mood)      |",
-      "    | Michael | 1           | happy       |",
-      "    | Elvis   | 4           | electrified |",
-      "    | John    | 2           | sad         |",
+      "    Examples:",
+      "      | <user>  | (?:number)? | (mood)      |",
+      "      | Michael | 1           | happy       |",
+      "      | Elvis   | 4           | electrified |",
+      "      | John    | 2           | sad         |",
       ""
     ].join("\n");
 
@@ -113,6 +115,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -131,6 +134,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #2",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -149,6 +153,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #3",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -168,7 +173,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Scenario Outline should generate the scenario with concrete values");
   });
 
@@ -216,6 +221,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario: Buy first coffee",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -234,6 +240,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario: Buy second coffee",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -253,7 +260,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest, "Background gets run before every scenario in the feature");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Background gets run before every scenario in the feature");
   });
 
 
@@ -271,9 +278,9 @@ sap.ui.require([
       "    Given the user '<user>' has been given <number> cups of coffee",
       "    Then he should be '<mood>'",
       "",
-      "  Examples:",
-      "    | user    | number | mood  |",
-      "    | Michael | 1      | happy |",
+      "    Examples:",
+      "      | user    | number | mood  |",
+      "      | Michael | 1      | happy |",
       "",
       "  Background:",
       "    Given coffee costs $18 per cup",
@@ -296,21 +303,21 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.name, "(WIP) Feature: Serve quantum coffee", "@wip tag on feature 01");
-    strictEqual(featureTest.skip, true, "@wip tag on feature 02");
-    strictEqual(featureTest.wip, true, "@wip tag on feature 03");
-    strictEqual(featureTest.testScenarios.length, 2, "@wip tag on feature 04");
+    assert.strictEqual(featureTest.name, "(WIP) Feature: Serve quantum coffee", "@wip tag on feature 01");
+    assert.strictEqual(featureTest.skip, true, "@wip tag on feature 02");
+    assert.strictEqual(featureTest.wip, true, "@wip tag on feature 03");
+    assert.strictEqual(featureTest.testScenarios.length, 2, "@wip tag on feature 04");
 
-    strictEqual(featureTest.testScenarios[0].name,
-      "(WIP) Scenario Outline: Coffee changes peoples moods if you are ready #1", "@wip tag on feature 05");
-    strictEqual(featureTest.testScenarios[0].wip, true, "@wip tag on feature 06");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "@wip tag on feature 07");
+    assert.strictEqual(featureTest.testScenarios[0].name,
+      "(WIP) Scenario Outline: Coffee changes peoples moods if you are ready", "@wip tag on feature 05");
+    assert.strictEqual(featureTest.testScenarios[0].wip, true, "@wip tag on feature 06");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "@wip tag on feature 07");
     this.assertAllTestsAreMatchedAndSkipped(featureTest.testScenarios[0]);
 
-    strictEqual(featureTest.testScenarios[1].name, "(WIP) Scenario: Buy expensive coffee once barista is ready",
+    assert.strictEqual(featureTest.testScenarios[1].name, "(WIP) Scenario: Buy expensive coffee once barista is ready",
       "@wip tag on feature 08");
-    strictEqual(featureTest.testScenarios[1].wip, true, "@wip tag on feature 09");
-    strictEqual(featureTest.testScenarios[1].testSteps.length, 2, "@wip tag on feature 10");
+    assert.strictEqual(featureTest.testScenarios[1].wip, true, "@wip tag on feature 09");
+    assert.strictEqual(featureTest.testScenarios[1].testSteps.length, 2, "@wip tag on feature 10");
     this.assertAllTestsAreMatchedAndSkipped(featureTest.testScenarios[1]);
   });
 
@@ -350,26 +357,26 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.skip, false, "@wip tag on scenario 01");
-    strictEqual(featureTest.wip, false, "@wip tag on scenario 02");
-    strictEqual(featureTest.testScenarios.length, 2, "@wip tag on scenario 03");
+    assert.strictEqual(featureTest.skip, false, "@wip tag on scenario 01");
+    assert.strictEqual(featureTest.wip, false, "@wip tag on scenario 02");
+    assert.strictEqual(featureTest.testScenarios.length, 2, "@wip tag on scenario 03");
 
-    strictEqual(featureTest.testScenarios[0].name, "Scenario: Buy expensive coffee when the barista is alive",
+    assert.strictEqual(featureTest.testScenarios[0].name, "Scenario: Buy expensive coffee when the barista is alive",
       "@wip tag on scenario 04");
-    strictEqual(featureTest.testScenarios[0].wip, false, "@wip tag on scenario 05");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 2, "@wip tag on scenario 06");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "that quantum phenomena exist at the macroscopic level",
+    assert.strictEqual(featureTest.testScenarios[0].wip, false, "@wip tag on scenario 05");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 2, "@wip tag on scenario 06");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "that quantum phenomena exist at the macroscopic level",
       "@wip tag on scenario 07");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "alive background isMatch");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "alive background skip");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "I should expect a live barista");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "alive isMatch");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "alive skip");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "alive background isMatch");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "alive background skip");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "I should expect a live barista");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "alive isMatch");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "alive skip");
 
-    strictEqual(featureTest.testScenarios[1].name, "(WIP) Scenario: Buy expensive coffee when the barista is dead",
+    assert.strictEqual(featureTest.testScenarios[1].name, "(WIP) Scenario: Buy expensive coffee when the barista is dead",
       "@wip tag on scenario 08");
-    strictEqual(featureTest.testScenarios[1].wip, true, "@wip tag on scenario 09");
-    strictEqual(featureTest.testScenarios[1].testSteps.length, 2, "@wip tag on scenario 10");
+    assert.strictEqual(featureTest.testScenarios[1].wip, true, "@wip tag on scenario 09");
+    assert.strictEqual(featureTest.testScenarios[1].testSteps.length, 2, "@wip tag on scenario 10");
     this.assertAllTestsAreMatchedAndSkipped(featureTest.testScenarios[1]);
   });
 
@@ -409,39 +416,39 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.testScenarios.length, 1, "Parameters and tables are parsed and passed 01");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Parameters and tables are parsed and passed 02");
+    assert.strictEqual(featureTest.testScenarios.length, 1, "Parameters and tables are parsed and passed 01");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Parameters and tables are parsed and passed 02");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "these awesome Users:",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "these awesome Users:",
       "Parameters and tables are parsed and passed 03");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].parameters.length, 2,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].parameters.length, 2,
       "Parameters and tables are parsed and passed 04");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].parameters[0], "awesome",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].parameters[0], "awesome",
       "Parameters and tables are parsed and passed 05");
-    deepEqual(featureTest.testScenarios[0].testSteps[0].parameters[1], [
+    assert.deepEqual(featureTest.testScenarios[0].testSteps[0].parameters[1], [
       ["Name", "Date of Birth"],
       ["Michael Jackson","August 29, 1958"],
       ["Elvis", "January 8, 1935"],
       ["John Lennon", "October 9, 1940"]
     ], "date of birth table is correct");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "when I give them the coffee price list:",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "when I give them the coffee price list:",
       "Parameters and tables are parsed and passed 06");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].parameters.length, 1,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].parameters.length, 1,
       "Parameters and tables are parsed and passed 07");
-    deepEqual(featureTest.testScenarios[0].testSteps[1].parameters[0], [
+    assert.deepEqual(featureTest.testScenarios[0].testSteps[1].parameters[0], [
       ["Coffee Blend", "Price"],
       ["Dark", "$18"],
       ["Moka", "$23"],
       ["Columbian", "$1400"]
     ], "coffee blend table is correct");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[2].text, "they should be happy",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].text, "they should be happy",
       "Parameters and tables are parsed and passed 08");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].parameters.length, 2,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].parameters.length, 2,
       "Parameters and tables are parsed and passed 09");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[0], "they", "correct person");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[1], "happy", "correct emotion");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[0], "they", "correct person");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].parameters[1], "happy", "correct emotion");
   });
 
 
@@ -477,30 +484,30 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.testScenarios.length, 1, "Test 001");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 5, "Test 002");
+    assert.strictEqual(featureTest.testScenarios.length, 1, "Test 001");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 5, "Test 002");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "kindness to strangers is a virtue", "Test 003");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "Test 004");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "Test 005");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "kindness to strangers is a virtue", "Test 003");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, true, "Test 004");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "Test 005");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "I am a very good person", "Test 006");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 007");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 008");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "I am a very good person", "Test 006");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 007");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 008");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[2].text,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].text,
       "(NOT FOUND) I encounter a person whose feet are very dirty", "Test 009");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 010");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 011");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 010");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 011");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[3].text,
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].text,
       "(SKIPPED) they are classified as a 'Category 3 Unwashed Mass'", "Test 012");
-    strictEqual(featureTest.testScenarios[0].testSteps[3].isMatch, true, "Test 013");
-    strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "skip unwashed mass");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].isMatch, true, "Test 013");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "skip unwashed mass");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[4].text, "(SKIPPED) I should wash their feet", "Test 014");
-    strictEqual(featureTest.testScenarios[0].testSteps[4].isMatch, true, "Test 015");
-    strictEqual(featureTest.testScenarios[0].testSteps[4].skip, true, "skipped feet");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[4].text, "(SKIPPED) I should wash their feet", "Test 014");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[4].isMatch, true, "Test 015");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[4].skip, true, "skipped feet");
   });
 
 
@@ -531,22 +538,22 @@ sap.ui.require([
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
 
-    strictEqual(featureTest.testScenarios.length, 1, "Test 016");
-    strictEqual(featureTest.testScenarios[0].wip, false, "Test 017");
-    strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Test 018");
+    assert.strictEqual(featureTest.testScenarios.length, 1, "Test 016");
+    assert.strictEqual(featureTest.testScenarios[0].wip, false, "Test 017");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "Test 018");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "(NOT FOUND) meanness to strangers is ok", "Test 019");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, false, "Test 020");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].skip, true, "Test 021");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "(NOT FOUND) meanness to strangers is ok", "Test 019");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].isMatch, false, "Test 020");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, true, "Test 021");
 
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "(SKIPPED) I should wash their feet", "Test 022");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 023");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].skip, true, "Test 024");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "(SKIPPED) I should wash their feet", "Test 022");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].isMatch, true, "Test 023");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, true, "Test 024");
 
     // test that further unfound testSteps still say "(NOT FOUND)" instead of "(SKIPPED)"
-    strictEqual(featureTest.testScenarios[0].testSteps[2].text, "(NOT FOUND) I don't feel like it", "Test 025");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 026");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 027");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].text, "(NOT FOUND) I don't feel like it", "Test 025");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].isMatch, false, "Test 026");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 027");
   });
 
 
@@ -555,7 +562,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given a non-WIP feature, calling 'tearDown' MUST execute 'closeApplication'", function(assert) {
 
-    expect(2);
+    assert.expect(2);
 
     var text = [
       "Feature: Serve humanity",
@@ -570,13 +577,13 @@ sap.ui.require([
         this.register(/^I do something \(finally\)$/i, function() {});
       },
       closeApplication: function() {
-        ok(true, "Given a non-WIP feature, calling 'tearDown' MUST execute 'closeApplication'");
+        assert.ok(true, "Given a non-WIP feature, calling 'tearDown' MUST execute 'closeApplication'");
       }
     });
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "Feature: Serve humanity", "Test 028");
+    assert.strictEqual(featureTest.name, "Feature: Serve humanity", "Test 028");
     testGenerator.setUp();
     testGenerator.execute(featureTest.testScenarios[0].testSteps[0]);
     testGenerator.tearDown();
@@ -587,7 +594,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given feature with all @wip scenarios, calling 'tearDown' must NOT execute 'closeApplication'", function(assert) {
 
-    expect(2);
+    assert.expect(2);
 
     var text = [
       "Feature: Serve humanity",
@@ -606,14 +613,14 @@ sap.ui.require([
         this.register(/^I do something \(finally\)$/i, function() {});
       },
       closeApplication: function() {
-        ok(false, "Given feature with all @wip scenarios, calling 'tearDown' must NOT execute 'closeApplication'");
+        assert.ok(false, "Given feature with all @wip scenarios, calling 'tearDown' must NOT execute 'closeApplication'");
       }
     });
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "Feature: Serve humanity", "Test 029");
-    strictEqual(featureTest.testScenarios.length, 2, "Test 030");
+    assert.strictEqual(featureTest.name, "Feature: Serve humanity", "Test 029");
+    assert.strictEqual(featureTest.testScenarios.length, 2, "Test 030");
     for (var i=0; i<featureTest.testScenarios.length; ++i) {
       testGenerator.setUp();
       testGenerator.execute(featureTest.testScenarios[i].testSteps[0]);
@@ -629,7 +636,7 @@ sap.ui.require([
   QUnit.test("Given feature with some skipped scenarios, calling 'tearDown' must execute 'closeApplication' only for " +
        "non-skipped scenarios", function() {
 
-    expect(4);
+    assert.expect(4);
 
     var expectCloseApplication = false;
 
@@ -651,14 +658,14 @@ sap.ui.require([
         this.register(/^I do something \(finally\)$/i, function() {});
       },
       closeApplication: function() {
-        ok(expectCloseApplication, "calling 'tearDown' must execute 'closeApplication' only for non-skipped scenarios");
+        assert.ok(expectCloseApplication, "calling 'tearDown' must execute 'closeApplication' only for non-skipped scenarios");
       }
     });
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "Feature: Serve humanity", "Test 031");
-    strictEqual(featureTest.testScenarios.length, 3, "Test 032");
+    assert.strictEqual(featureTest.name, "Feature: Serve humanity", "Test 031");
+    assert.strictEqual(featureTest.testScenarios.length, 3, "Test 032");
     for (var i=0; i<featureTest.testScenarios.length; ++i) {
       testGenerator.setUp();
       expectCloseApplication = testGenerator.execute(featureTest.testScenarios[i].testSteps[0]);
@@ -673,7 +680,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given @wip feature, calling 'tearDown' must NOT execute 'closeApplication'", function(assert) {
 
-    expect(1);
+    assert.expect(1);
 
     var text = [
       "@wip",
@@ -689,13 +696,13 @@ sap.ui.require([
         this.register(/^I do something \(finally\)$/i, function() {});
       },
       closeApplication: function() {
-        ok(false, "Given @wip feature, calling 'tearDown' must NOT execute 'closeApplication'");
+        assert.ok(false, "Given @wip feature, calling 'tearDown' must NOT execute 'closeApplication'");
       }
     });
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "(WIP) Feature: Serve humanity", "Test 033");
+    assert.strictEqual(featureTest.name, "(WIP) Feature: Serve humanity", "Test 033");
     testGenerator.setUp();
     testGenerator.execute(featureTest.testScenarios[0].testSteps[0]);
     testGenerator.tearDown();
@@ -708,7 +715,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Given feature with no scenarios, calling 'tearDown' must NOT execute 'closeApplication'", function(assert) {
 
-    expect(1);
+    assert.expect(1);
 
     var text = [
       "Feature: Serve humanity"
@@ -718,13 +725,13 @@ sap.ui.require([
 
     var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
       closeApplication: function() {
-        ok(false, "Given feature with no scenarios, calling 'tearDown' must NOT execute 'closeApplication'");
+        assert.ok(false, "Given feature with no scenarios, calling 'tearDown' must NOT execute 'closeApplication'");
       }
     });
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
     var featureTest = testGenerator.generate();
-    strictEqual(featureTest.name, "Feature: Serve humanity", "Test 034");
+    assert.strictEqual(featureTest.name, "Feature: Serve humanity", "Test 034");
     testGenerator.setUp();
     testGenerator.tearDown();
   });
@@ -735,7 +742,7 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("Test steps share a context only within a single scenario", function(assert) {
 
-    expect(4);
+    assert.expect(4);
 
     var text = [
       "Feature: Schrödinger's coffee",
@@ -765,8 +772,8 @@ sap.ui.require([
         });
         this.register(/^I should expect a (live|dead) barista$/i, function(shouldBeDead) {
           shouldBeDead = (shouldBeDead === "dead");
-          ok(shouldBeDead === !!this.poisonReleased, "test that context was cleared between scenarios");
-          ok(shouldBeDead === this.emitted, "test that context was retained while inside one scenario");
+          assert.ok(shouldBeDead === !!this.poisonReleased, "test that context was cleared between scenarios");
+          assert.ok(shouldBeDead === this.emitted, "test that context was retained while inside one scenario");
         });
       }
     });
@@ -806,7 +813,7 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.execute();
     }, function(error) {
       return error.message === "Run 'generate' before calling 'execute'";
@@ -816,7 +823,7 @@ sap.ui.require([
 
     var featureTest = testGenerator.generate();
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.execute();
     }, function(error) {
       return error.message === "Input parameter 'oTestStep' is not a valid TestStep object.";
@@ -824,7 +831,7 @@ sap.ui.require([
       "call 'execute' with undefined test step"
     );
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.execute(100);
     }, function(error) {
       return error.message === "Input parameter 'oTestStep' is not a valid TestStep object.";
@@ -832,7 +839,7 @@ sap.ui.require([
       "call \"execute\" with test step that's not an object"
     );
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.execute({});
     }, function(error) {
       return error.message === "Input parameter 'oTestStep' is not a valid TestStep object.";
@@ -840,7 +847,7 @@ sap.ui.require([
       "call \"execute\" with an object, but it's not a TestStep"
     );
 
-    ok(testGenerator.execute({skip: false, func: function(){}, parameters: []}), "test exceptions");
+    assert.ok(testGenerator.execute({skip: false, func: function(){}, parameters: []}), "test exceptions");
   });
 
 
@@ -885,25 +892,25 @@ sap.ui.require([
     var featureTest = testGenerator.generate();
 
     // if we match the step with a Step Definition, then we expect that it should be used
-    strictEqual(featureTest.testScenarios[0].testSteps[0].text, "I should be served a coffee", "Test 035");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].func, normalStepFunction, "Test 036");
-    strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "Test 037");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].text, "I should be served a coffee", "Test 035");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].func, normalStepFunction, "Test 036");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[0].skip, false, "Test 037");
 
     // If we fail to match, then we expect to use a generated step
-    strictEqual(featureTest.testScenarios[0].testSteps[1].text, "this step does not exist in the steps file", "Test 038");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].func, alternateStepFunction, "Test 039");
-    strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 040");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].text, "this step does not exist in the steps file", "Test 038");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].func, alternateStepFunction, "Test 039");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[1].skip, false, "Test 040");
 
     // If we fail to match and the generated step says it"s not a match, then it should be skipped!
-    strictEqual(featureTest.testScenarios[0].testSteps[2].text, "(NOT FOUND) the generator will not match this one",
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].text, "(NOT FOUND) the generator will not match this one",
       "Test 041");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].func, alternateStepFunction, "Test 042");
-    strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 043");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].func, alternateStepFunction, "Test 042");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[2].skip, true, "Test 043");
 
     // Since the third step was not found, this one should be skipped
-    strictEqual(featureTest.testScenarios[0].testSteps[3].text, "(SKIPPED) I should be served a coffee", "Test 044");
-    strictEqual(featureTest.testScenarios[0].testSteps[3].func, normalStepFunction, "Test 045");
-    strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "Test 046");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].text, "(SKIPPED) I should be served a coffee", "Test 044");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].func, normalStepFunction, "Test 045");
+    assert.strictEqual(featureTest.testScenarios[0].testSteps[3].skip, true, "Test 046");
   });
 
 
@@ -918,7 +925,7 @@ sap.ui.require([
     var badAltGeneratorError = "GherkinTestGenerator constructor: if specified, parameter 'fnAlternateTestStepGenerator' must be a valid Function";
 
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator();
     }, function(error) {
       return error.message === badFeatureError;
@@ -926,7 +933,7 @@ sap.ui.require([
       "first parameter is not specified"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(1000);
     }, function(error) {
       return error.message === badFeatureError;
@@ -934,7 +941,7 @@ sap.ui.require([
       "first parameter is not a String or Object"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator({});
     }, function(error) {
       return error.message === badFeatureError;
@@ -942,7 +949,7 @@ sap.ui.require([
       "first parameter is an object, but not a Feature object"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(this.parser.parse("Feature: Serve coffee"));
     }, function(error) {
       return error.message === badStepDefsError;
@@ -950,7 +957,7 @@ sap.ui.require([
       "second parameter is not specified"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(this.parser.parse("Feature: Serve coffee"), "not a function");
     }, function(error) {
       return error.message === badStepDefsError;
@@ -958,7 +965,7 @@ sap.ui.require([
       "second parameter is not a function"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(this.parser.parse("Feature: Serve coffee"), function(){});
     }, function(error) {
       return error.message === badStepDefsError;
@@ -966,7 +973,7 @@ sap.ui.require([
       "second parameter is a function, but not a StepDefs constructor"
     );
 
-    throws( function(){
+    assert.throws( function(){
       new GherkinTestGenerator(this.parser.parse("Feature: Serve coffee"),
         StepDefinitions, "not a function");
     }, function(error) {
@@ -987,11 +994,11 @@ sap.ui.require([
       "  Scenario Outline: Coffee changes peoples moods",
       "    Then he should be '<MOOD>'",
       "",
-      "  Examples:",
-      "    | MOOD        |",
-      "    | happy       |",
-      "    | electrified |",
-      "    | sad         |",
+      "    Examples:",
+      "      | MOOD        |",
+      "      | happy       |",
+      "      | electrified |",
+      "      | sad         |",
       ""
     ].join("\n");
 
@@ -1013,6 +1020,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1024,6 +1032,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #2",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1035,6 +1044,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #3",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1047,7 +1057,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Scenario Outline should generate the scenario with single-column concrete values");
   });
 
@@ -1064,11 +1074,11 @@ sap.ui.require([
       "  Scenario Outline: Coffee changes peoples moods",
       "    * user <USER> should be <MOOD>",
       "",
-      "  Examples:",
-      "    | USER     | MOOD         |",
-      "    |  Michael |  happy       |",
-      "    |  Elvis   |  electrified |",
-      "    |  John    |  sad         |",
+      "    Examples:",
+      "      | USER     | MOOD         |",
+      "      |  Michael |  happy       |",
+      "      |  Elvis   |  electrified |",
+      "      |  John    |  sad         |",
       ""
     ].join("\n");
 
@@ -1093,6 +1103,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1111,6 +1122,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #2",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1129,6 +1141,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #3",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1148,7 +1161,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Background should run before each execution of the Scenario Outline");
   });
 
@@ -1162,16 +1175,16 @@ sap.ui.require([
       "",
       "  Background:",
       "    Given the user drank coffee",
-      "      And the user drank more coffee",
+      "      And the user drank more coffee", // no step definition for this
       "",
       "  Scenario Outline: Coffee changes peoples moods",
       "    * user <USER> should be <MOOD>",
       "",
-      "  Examples:",
-      "    | USER     | MOOD         |",
-      "    |  Michael |  happy       |",
-      "    |  Elvis   |  electrified |",
-      "    |  John    |  sad         |",
+      "    Examples:",
+      "      | USER     | MOOD         |",
+      "      |  Michael |  happy       |",
+      "      |  Elvis   |  electrified |",
+      "      |  John    |  sad         |",
       ""
     ].join("\n");
 
@@ -1196,6 +1209,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1218,6 +1232,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #2",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1240,6 +1255,7 @@ sap.ui.require([
         }]
       },{
         name: "Scenario Outline: Coffee changes peoples moods #3",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1263,7 +1279,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Given missing Background definition + Scenario Outline then all tests skipped");
   });
 
@@ -1279,9 +1295,9 @@ sap.ui.require([
       "  Scenario Outline: Coffee changes peoples moods",
       "    Given user '<USER>' given <NUMBER> cups of coffee is '<MOOD>'",
       "",
-      "  Examples:",
-      "    | USER      | NUMBER  | MOOD       |",
-      "    |  <NUMBER> |  <MOOD> |  delighted |",
+      "    Examples:",
+      "      | USER      | NUMBER  | MOOD       |",
+      "      |  <NUMBER> |  <MOOD> |  delighted |",
       ""
     ].join("\n");
 
@@ -1303,6 +1319,7 @@ sap.ui.require([
       wip: false,
       testScenarios: [{
         name: "Scenario Outline: Coffee changes peoples moods #1",
+        skip: false,
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1315,7 +1332,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest,
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
       "Given nested variables, Scenario Outline should re-write multiple times");
   });
 
@@ -1344,7 +1361,7 @@ sap.ui.require([
 
     var testGenerator = new GherkinTestGenerator(feature, steps);
 
-    throws( function(){
+    assert.throws( function(){
       testGenerator.generate();
     }, function(error) {
       return error.message === "Ambiguous step definition error: 3 step definitions '/^I should be served a coffee$/i', '/^I should.*/i' and '/^.*/i' match the feature file step 'I should be served a coffee'";
@@ -1352,6 +1369,275 @@ sap.ui.require([
       "ambiguous step definition error"
     );
 
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Scenario Outline with background and no Examples will be skipped", function(assert) {
+    var text = [
+      "Feature: Give cups of coffee to users",
+      "",
+      "  Background:",
+      "    Given the user 'Jonathan' has been given 0 cups of coffee",
+      "",
+      "  Scenario Outline: Coffee changes peoples moods",
+      "    Given the user '<USER>' has been given <NUMBER> cups of coffee",
+      ""
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^the user '(.*?)' has been given (.*?) cups of coffee$/i;
+    var function1 = function(user, number) {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Give cups of coffee to users",
+      skip: true,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Coffee changes peoples moods",
+        skip: true,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the user 'Jonathan' has been given 0 cups of coffee",
+          regex: regex1,
+          parameters: ["Jonathan", "0"],
+          func: function1
+        },{
+          isMatch: true,
+          skip: true,
+          text: "(SKIPPED) the user '<USER>' has been given <NUMBER> cups of coffee",
+          regex: regex1,
+          parameters: ["<USER>", "<NUMBER>"],
+          func: function1
+        }]
+      }]
+    };
+
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
+  });
+
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Scenario Outline with no Examples will be skipped (regardless of if step definitions are found)", function(assert) {
+    var text = [
+      "Feature: Give cups of coffee to users",
+      "",
+      "  Scenario Outline: Coffee changes peoples moods",
+      "    Given the user '<USER>' has been given <NUMBER> cups of coffee", // step definition exists
+      "",
+      "  Scenario Outline: Coffee's mysterious origins",
+      "    Given coffee originated in <ORIGIN>, but was first brewed in <FIRST BREWED>", // no step definition
+      ""
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^the user '(.*?)' has been given (.*?) cups of coffee$/i;
+    var function1 = function(user, number) {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Give cups of coffee to users",
+      skip: true,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Coffee changes peoples moods",
+        skip: true,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: true,
+          text: "(SKIPPED) the user '<USER>' has been given <NUMBER> cups of coffee",
+          regex: regex1,
+          parameters: ["<USER>", "<NUMBER>"],
+          func: function1
+        }]
+      },{
+        name: "Scenario Outline: Coffee's mysterious origins",
+        skip: true,
+        wip: false,
+        testSteps: [{
+          isMatch: false,
+          skip: true,
+          text: "(NOT FOUND) coffee originated in <ORIGIN>, but was first brewed in <FIRST BREWED>"
+        }]
+      }]
+    };
+
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
+      "Scenario Outline with no Examples will be skipped (regardless of if step definitions are found)");
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Scenario Outline with one @wip Example will be skipped", function(assert) {
+    var text = [
+      "Feature: Coffee History Lesson",
+      "",
+      "  Scenario Outline: Coffee's mysterious origins",
+      "    Given coffee originated in <ORIGIN>, but was first brewed in <FIRST BREWED>",
+      "",
+      "    @wip",
+      "    Examples: A",
+      "      | ORIGIN    | FIRST BREWED |",
+      "      |  Ethiopia |  Yemen       |",
+      "",
+      "  Scenario: the mysterious nature of coffee",
+      "   Given coffee 'beans' are actually seeds extracted from dried berries!",
+      "",
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^coffee originated in (.*?), but was first brewed in (.*?)$/i;
+    var function1 = function(origin, firstBrewed) {};
+    var regex2 = /^coffee 'beans' are actually seeds extracted from dried berries!$/i;
+    var function2 = function() {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+        this.register(regex2, function2);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Coffee History Lesson",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Coffee's mysterious origins",
+        skip: true,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: true,
+          text: "(SKIPPED) coffee originated in <ORIGIN>, but was first brewed in <FIRST BREWED>",
+          regex: regex1,
+          parameters: ["<ORIGIN>", "<FIRST BREWED>"],
+          func: function1
+        }]
+      },{
+        name: "Scenario: the mysterious nature of coffee",
+        skip: false,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "coffee 'beans' are actually seeds extracted from dried berries!",
+          regex: regex2,
+          parameters: [],
+          func: function2
+        }]
+      }]
+    };
+
+    deepEqual(actualFeatureTest, expectedFeatureTest, "Scenario Outline with one @wip Example will be skipped");
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Feature whose steps are all not found will not be skipped", function(assert) {
+
+    var text = [
+      "Feature: Coffee History Lesson",
+      "",
+      "  Scenario: the mysterious nature of coffee",
+      "   Given coffee 'beans' are actually seeds extracted from dried berries!",
+      "",
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        // no step definitions being registered
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Coffee History Lesson",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario: the mysterious nature of coffee",
+        skip: false,
+        wip: false,
+        testSteps: [{
+          isMatch: false,
+          skip: true,
+          text: "(NOT FOUND) coffee 'beans' are actually seeds extracted from dried berries!"
+        }]
+      }]
+    };
+
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Feature whose steps are all not found will not be skipped");
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Feature whose steps are all @wip will be skipped", function(assert) {
+
+    var text = [
+      "Feature: Coffee History Lesson",
+      "",
+      "  @wip",
+      "  Scenario: the mysterious nature of coffee",
+      "   Given coffee 'beans' are actually seeds extracted from dried berries!",
+      "",
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Coffee History Lesson",
+      skip: true,
+      wip: false,
+      testScenarios: [{
+        name: "(WIP) Scenario: the mysterious nature of coffee",
+        skip: true,
+        wip: true,
+        testSteps: [{
+          isMatch: false,
+          skip: true,
+          text: "(NOT FOUND) coffee 'beans' are actually seeds extracted from dried berries!"
+        }]
+      }]
+    };
+
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Feature whose steps are all @wip will be skipped");
   });
 
 });

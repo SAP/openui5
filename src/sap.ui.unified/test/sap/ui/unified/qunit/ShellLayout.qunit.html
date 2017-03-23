@@ -59,7 +59,7 @@
 	oShell2.setShowCurtainPane(true);
 
 
-	function testMultiAggregation(sName, oCtrl, sGetter, sMutator){
+	function testMultiAggregation(sName, oCtrl, sGetter, sMutator, assert){
 		oCtrl.getMetadata()._enrichChildInfos();
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
 		var oType = jQuery.sap.getObject(!oAggMetaData || oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
@@ -83,18 +83,18 @@
 			oCtrl[sMutator.replace("add", "remove")].apply(oCtrl, arguments);
 		}
 
-		equal(_get().length, 0, "Initial number of "+sName+" controls");
+		assert.equal(_get().length, 0, "Initial number of "+sName+" controls");
 		_mutator(false, [new oType(sName+"_1")]);
-		equal(_get().length, 1, "Number of "+sName+" controls after add");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after add");
 		_mutator(true, [new oType(sName+"_2"), 0]);
-		equal(_get().length, 2, "Number of "+sName+" controls after insert");
-		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
-		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
+		assert.equal(_get().length, 2, "Number of "+sName+" controls after insert");
+		assert.equal(_get()[0].getId(), sName+"_2", "First "+sName+" control");
+		assert.equal(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
 		_remove(0);
-		equal(_get().length, 1, "Number of "+sName+" controls after remove");
-		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after remove");
+		assert.equal(_get()[0].getId(), sName+"_1", "First "+sName+" control");
 		_removeAll();
-		equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
+		assert.equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
 	};
 
 	</script>
@@ -108,119 +108,123 @@
 		QUnit.module("API");
 
 		QUnit.test("Properties - Default Values", function(assert) {
-			equal(oShell.getShowPane(), false, "Default 'showPane'");
-			equal(oShell.getShowCurtain(), false, "Default 'showCurtain'");
-			equal(oShell.getShowCurtainPane(), false, "Default 'showCurtainPane'");
-			equal(oShell.getHeaderHiding(), false, "Default 'headerHiding'");
-			equal(oShell.getHeaderVisible(), true, "Default 'headerVisible'");
+			assert.equal(oShell.getShowPane(), false, "Default 'showPane'");
+			assert.equal(oShell.getShowCurtain(), false, "Default 'showCurtain'");
+			assert.equal(oShell.getShowCurtainPane(), false, "Default 'showCurtainPane'");
+			assert.equal(oShell.getHeaderHiding(), false, "Default 'headerHiding'");
+			assert.equal(oShell.getHeaderVisible(), true, "Default 'headerVisible'");
 		});
 
 		QUnit.test("Properties - Custom Values", function(assert) {
-			equal(oShell2.getShowPane(), true, "Custom 'showPane'");
-			equal(oShell2.getShowCurtain(), true, "Custom 'showCurtain'");
-			equal(oShell2.getShowCurtainPane(), true, "Custom 'showCurtainPane'");
-			equal(oShell2.getHeaderHiding(), true, "Custom 'headerHiding'");
-			equal(oShell2.getHeaderVisible(), false, "Custom 'headerVisible'");
+			assert.equal(oShell2.getShowPane(), true, "Custom 'showPane'");
+			assert.equal(oShell2.getShowCurtain(), true, "Custom 'showCurtain'");
+			assert.equal(oShell2.getShowCurtainPane(), true, "Custom 'showCurtainPane'");
+			assert.equal(oShell2.getHeaderHiding(), true, "Custom 'headerHiding'");
+			assert.equal(oShell2.getHeaderVisible(), false, "Custom 'headerVisible'");
 		});
 
 		QUnit.test("Aggregation 'content'", function(assert) {
-			testMultiAggregation("content", oShell2);
+			testMultiAggregation("content", oShell2, undefined, undefined, assert);
 		});
 
 		QUnit.test("Aggregation 'paneContent'", function(assert) {
-			testMultiAggregation("paneContent", oShell2);
+			testMultiAggregation("paneContent", oShell2, undefined, undefined, assert);
 		});
 
 		QUnit.test("Aggregation 'curtainContent'", function(assert) {
-			testMultiAggregation("curtainContent", oShell2, "getCurtainContent", "addCurtainContent");
+			testMultiAggregation("curtainContent", oShell2, "getCurtainContent", "addCurtainContent", assert);
 		});
 
 		QUnit.test("Aggregation 'curtainPaneContent'", function(assert) {
-			testMultiAggregation("curtainPaneContent", oShell2, "getCurtainPaneContent", "addCurtainPaneContent");
+			testMultiAggregation("curtainPaneContent", oShell2, "getCurtainPaneContent", "addCurtainPaneContent", assert);
 		});
 
 		QUnit.test("Aggregation 'header'", function(assert) {
-			ok(!oShell2.getHeader(), "Initially no header control");
+			assert.ok(!oShell2.getHeader(), "Initially no header control");
 			oShell2.setHeader(new my.Test());
-			ok(!!oShell2.getHeader(), "Header control available after set");
+			assert.ok(!!oShell2.getHeader(), "Header control available after set");
 			oShell2.setHeader(null);
-			ok(!oShell2.getHeader(), "No header control again");
+			assert.ok(!oShell2.getHeader(), "No header control again");
 		});
 
 
 		QUnit.module("Rendering");
 
 		QUnit.test("Content", function(assert) {
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-hdrcntnt"), jQuery.sap.domById("_header")), "Header rendered correctly");
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-canvas"), jQuery.sap.domById("_curt_ctnt")), "Curtain Content rendered correctly");
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-pane"), jQuery.sap.domById("_curt_pane_ctnt")), "Curtain Pane rendered correctly");
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-pane"), jQuery.sap.domById("_pane_ctnt")), "Pane Content rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-hdrcntnt"), jQuery.sap.domById("_header")), "Header rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-canvas"), jQuery.sap.domById("_curt_ctnt")), "Curtain Content rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-pane"), jQuery.sap.domById("_curt_pane_ctnt")), "Curtain Pane rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-pane"), jQuery.sap.domById("_pane_ctnt")), "Pane Content rendered correctly");
 		});
 
 		QUnit.module("Behavior");
 
-		asyncTest("Open/Close Pane", function() {
+		QUnit.test("Open/Close Pane", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-container-panecntnt").is(":visible");
 			}
 
-			ok(!checkVisibility(), "Pane initially hidden");
+			assert.ok(!checkVisibility(), "Pane initially hidden");
 			oShell.setShowPane(true);
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Pane visible");
+				assert.ok(checkVisibility(), "Pane visible");
 				oShell.setShowPane(false);
 				setTimeout(function(){
-					ok(!checkVisibility(), "Pane hidden again");
-					start();
+					assert.ok(!checkVisibility(), "Pane hidden again");
+					done();
 				}, 600);
 			}, 600);
 		});
 
-		asyncTest("Open Curtain", function() {
+		QUnit.test("Open Curtain", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
 			}
 
-			ok(!checkVisibility(), "Curtain initially hidden");
+			assert.ok(!checkVisibility(), "Curtain initially hidden");
 			oShell.setShowCurtain(true);
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Curtain visible");
-				start();
+				assert.ok(checkVisibility(), "Curtain visible");
+				done();
 			}, 600);
 		});
 
-		asyncTest("Open/Close Curtain Pane", function() {
+		QUnit.test("Open/Close Curtain Pane", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-curt-container-panecntnt").is(":visible");
 			}
 
-			ok(!checkVisibility(), "Curtain Pane initially hidden");
+			assert.ok(!checkVisibility(), "Curtain Pane initially hidden");
 			oShell.setShowCurtainPane(true);
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Curtain Pane visible");
+				assert.ok(checkVisibility(), "Curtain Pane visible");
 				oShell.setShowCurtainPane(false);
 				setTimeout(function(){
-					ok(!checkVisibility(), "Curtain Pane hidden again");
-					start();
+					assert.ok(!checkVisibility(), "Curtain Pane hidden again");
+					done();
 				}, 600);
 			}, 600);
 		});
 
-		asyncTest("Close Curtain", function() {
+		QUnit.test("Close Curtain", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
 			}
 
-			ok(checkVisibility(), "Curtain visible");
+			assert.ok(checkVisibility(), "Curtain visible");
 			oShell.setShowCurtain(false);
 
 			setTimeout(function(){
-				ok(!checkVisibility(), "Curtain hidden again");
-				start();
+				assert.ok(!checkVisibility(), "Curtain hidden again");
+				done();
 			}, 600);
 		});
 
@@ -229,14 +233,15 @@
 				return jQuery.sap.byId("shell-hdr").is(":visible");
 			}
 
-			ok(checkVisibility(), "Header visible");
+			assert.ok(checkVisibility(), "Header visible");
 			oShell.setHeaderVisible(false);
-			ok(!checkVisibility(), "Header not visible");
+			assert.ok(!checkVisibility(), "Header not visible");
 			oShell.setHeaderVisible(true);
-			ok(checkVisibility(), "Header visible");
+			assert.ok(checkVisibility(), "Header visible");
 		});
 
-		QUnit.test("Clear UI", 0, function(assert) {
+		QUnit.test("Clear UI", function(assert) {
+			assert.expect(0);
 			jQuery("#uiArea1").remove();
 		});
 

@@ -110,10 +110,10 @@
 			$MergedLabel = oTable.getItems()[3].getCells()[2].$();
 			$MergedIcon = oTable.getItems()[3].getCells()[0].$();
 
- 			ok($MergedLabel.hasClass("sapMListTblCellDupCnt"), "duplicated label should be merged.");
- 			strictEqual($MergedLabel.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+ 			assert.ok($MergedLabel.hasClass("sapMListTblCellDupCnt"), "duplicated label should be merged.");
+ 			assert.strictEqual($MergedLabel.text(), "Male", "duplicated label is still available in the dom for screen readers.");
 
- 			ok($MergedIcon.hasClass("sapMListTblCellDupCnt"), "duplicated icon should be merged.");
+ 			assert.ok($MergedIcon.hasClass("sapMListTblCellDupCnt"), "duplicated icon should be merged.");
 
 			//clean up
 			sut.destroy();
@@ -138,10 +138,10 @@
 				var $FirstLabelAfterGrowing = oTable.getItems()[5].getCells()[2].$();
 				var $FirstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].$();
 
-				ok($FirstLabelAfterGrowing.hasClass("sapMListTblCellDupCnt"), "label of the first item after growing should be merged.");
-	 			strictEqual($FirstLabelAfterGrowing.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+				assert.ok($FirstLabelAfterGrowing.hasClass("sapMListTblCellDupCnt"), "label of the first item after growing should be merged.");
+	 			assert.strictEqual($FirstLabelAfterGrowing.text(), "Male", "duplicated label is still available in the dom for screen readers.");
 
-				ok($FirstIconAfterGrowing.hasClass("sapMListTblCellDupCnt"), "icon of the first item after growing should be merged.");
+				assert.ok($FirstIconAfterGrowing.hasClass("sapMListTblCellDupCnt"), "icon of the first item after growing should be merged.");
 			});
 
 			//clean up
@@ -165,14 +165,14 @@
 			//get label text of the item after header
 			labelAfterHeader = oTable.getItems()[5].getCells()[2].$().text();
 
-			ok(labelBeforeHeader == labelAfterHeader, "label value after group header should not be merged.");
+			assert.ok(labelBeforeHeader == labelAfterHeader, "label value after group header should not be merged.");
 
 			//test for icon value
 			var iconAfterHeader = "after";
 			//get icon src of the item after header
 			iconAfterHeader = oTable.getItems()[5].getCells()[0].getDomRef();
 
-			ok(iconAfterHeader, "icon src after group header should not be merged");
+			assert.ok(iconAfterHeader, "icon src after group header should not be merged");
 
 			//clean up
 			sut.destroy();
@@ -206,8 +206,8 @@
 			var labelAfterRender = oTable.getItems()[0].getCells()[2].$().text();
 			var iconAfterRender = oTable.getItems()[0].getCells()[0].getSrc();
 
-			ok(labelLastValue == labelAfterRender, "last value of label should be cleared if there is only one row");
-			ok(iconLastValue == iconAfterRender, "last value of icon should be cleared if there is only one row")
+			assert.ok(labelLastValue == labelAfterRender, "last value of label should be cleared if there is only one row");
+			assert.ok(iconLastValue == iconAfterRender, "last value of icon should be cleared if there is only one row")
 
 			//clean up
 			sut.destroy();

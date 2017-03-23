@@ -54,7 +54,7 @@
 
 				QUnit.test("Control is rendered", function (assert) {
 					// Assert
-					ok(this.oM.getDomRef(), "Control is rendered");
+					assert.ok(this.oM.getDomRef(), "Control is rendered");
 				});
 
 				QUnit.test("Corner case for January 0001", function (assert) {
@@ -65,8 +65,8 @@
 						$FirstDay = jQuery(aItems[0]);
 
 					// Assert
-					strictEqual($FirstDay.hasClass("sapUiCalItemDsbl"), true, "The day from year 0000 should be disabled");
-					strictEqual($FirstDay.find(".sapUiCalItemText").text(), "", "The day from year 0000 should not have a visible text");
+					assert.strictEqual($FirstDay.hasClass("sapUiCalItemDsbl"), true, "The day from year 0000 should be disabled");
+					assert.strictEqual($FirstDay.find(".sapUiCalItemText").text(), "", "The day from year 0000 should not have a visible text");
 				});
 
 				QUnit.test("Corner case for December 9999", function (assert) {
@@ -77,8 +77,8 @@
 						$LastDay = jQuery(aItems[aItems.length - 1]);
 
 					// Assert
-					strictEqual($LastDay.data("sap-day"), 99991231, "The last rendered day should be 9999-12-31");
-					strictEqual($LastDay.text(), "31", "The last rendered day should contain the string 31");
+					assert.strictEqual($LastDay.data("sap-day"), 99991231, "The last rendered day should be 9999-12-31");
+					assert.strictEqual($LastDay.text(), "31", "The last rendered day should contain the string 31");
 				});
 
 				QUnit.module("_getVisibleDays", {
@@ -104,11 +104,11 @@
 							sExpectedLastDay = oLastVisibleDate.toUTCString();
 
 						// Assert
-						strictEqual(aDays[0].oDate.toUTCString(), sExpectedFirstDay,
+						assert.strictEqual(aDays[0].oDate.toUTCString(), sExpectedFirstDay,
 							"For " + sTargetMonthName + " the first day should be: " + sExpectedFirstDay);
-						strictEqual(aDays[aDays.length - 1].oDate.toUTCString(), sExpectedLastDay,
+						assert.strictEqual(aDays[aDays.length - 1].oDate.toUTCString(), sExpectedLastDay,
 							"For " + sTargetMonthName + " the last day should be: " + sExpectedLastDay);
-						strictEqual(aDays.length, iVisibleDays, "There should be " + iVisibleDays + " returned.");
+						assert.strictEqual(aDays.length, iVisibleDays, "There should be " + iVisibleDays + " returned.");
 					}
 				});
 

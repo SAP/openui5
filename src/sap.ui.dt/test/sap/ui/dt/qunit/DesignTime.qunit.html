@@ -205,6 +205,7 @@
 				this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("overlay").getElementInstance(), that.oButton1, "overlay for button is destroyed");
 					done();
+					that.oButton1.destroy();
 				});
 			});
 
@@ -360,8 +361,8 @@
 			var beforeEachTest = function(assert) {
 				var done = assert.async();
 
-				this.oButton1 = new sap.m.Button();
-				this.oButton2 = new sap.m.Button();
+				this.oButton1 = new sap.m.Button("button1");
+				this.oButton2 = new sap.m.Button("button2");
 				this.oInnerLayout = new sap.ui.layout.VerticalLayout({
 					content : [
 						this.oButton1,

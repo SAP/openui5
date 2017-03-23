@@ -35,7 +35,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$().length, 1, "Control is in the DOM.");
+			assert.strictEqual(oMarker.$().length, 1, "Control is in the DOM.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -51,7 +51,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$().children().length, 0, "Object Marker inner control is not rendered when type is not set.");
+			assert.strictEqual(oMarker.$().children().length, 0, "Object Marker inner control is not rendered when type is not set.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -69,7 +69,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().find(".sapMLnk").length, "The inner control is rendered as sap.m.Link when a press event is set.");
+			assert.ok(oMarker.$().find(".sapMLnk").length, "The inner control is rendered as sap.m.Link when a press event is set.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -86,7 +86,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().find(".sapMText").length, "The inner control is rendered as sap.m.Text when a press event is not set.");
+			assert.ok(oMarker.$().find(".sapMText").length, "The inner control is rendered as sap.m.Text when a press event is not set.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -105,8 +105,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(!oMarker.$().text().length, "Control text is not visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(!oMarker.$().text().length, "Control text is not visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -123,8 +123,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(!oMarker.$().text().length, "Control text is not visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(!oMarker.$().text().length, "Control text is not visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -141,8 +141,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -159,8 +159,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -177,8 +177,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -195,8 +195,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -213,8 +213,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible by default.");
-			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+			assert.ok(oMarker.$().text().length, "Control text is visible by default.");
+			assert.ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -239,7 +239,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(!oMarker.$().text().length, "Control now does not show the text.");
+			assert.ok(!oMarker.$().text().length, "Control now does not show the text.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -261,8 +261,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible when visibility is set to IconAndText.");
-			ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconAndText.");
+			assert.ok(oMarker.$().text().length, "Control text is visible when visibility is set to IconAndText.");
+			assert.ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconAndText.");
 
 			// Act
 			oMarker.setVisibility(sap.m.ObjectMarkerVisibility.IconOnly);
@@ -270,8 +270,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(!oMarker.$().text().length, "Control text is not visible when visibility is set to IconOnly.");
-			ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconOnly.");
+			assert.ok(!oMarker.$().text().length, "Control text is not visible when visibility is set to IconOnly.");
+			assert.ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconOnly.");
 
 			// Act
 			oMarker.setVisibility(sap.m.ObjectMarkerVisibility.TextOnly);
@@ -279,8 +279,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().text().length, "Control text is visible when visibility is set to TextOnly.");
-			ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible when visibility is set to TextOnly.");
+			assert.ok(oMarker.$().text().length, "Control text is visible when visibility is set to TextOnly.");
+			assert.ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible when visibility is set to TextOnly.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -304,7 +304,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().find(".sapMLnk").length, "The inner control is re-rendered as sap.m.Link when a press event is set.");
+			assert.ok(oMarker.$().find(".sapMLnk").length, "The inner control is re-rendered as sap.m.Link when a press event is set.");
 
 			// Act
 			oMarker.detachPress(fn);
@@ -312,7 +312,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			ok(oMarker.$().find(".sapMText").length, "The inner control is re-rendered as sap.m.Text when a press event is set.");
+			assert.ok(oMarker.$().find(".sapMText").length, "The inner control is re-rendered as sap.m.Text when a press event is set.");
 
 			// Cleanup
 			oMarker.destroy();
@@ -325,7 +325,7 @@
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Draft,
 				press: function(oEvent) {
-					ok(true, "This should be executed when the link is triggered");
+					assert.ok(true, "This should be executed when the link is triggered");
 				}
 			});
 
@@ -334,7 +334,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			expect(1);
+			assert.expect(1);
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oMarker.$("link")); //should fire event
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oMarker.getId()); //should not fire event
 
@@ -363,7 +363,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.getType(), sap.m.ObjectMarkerType.Locked, "Control type is set to 'Locked' via binding");
+			assert.strictEqual(oMarker.getType(), sap.m.ObjectMarkerType.Locked, "Control type is set to 'Locked' via binding");
 
 			// Act
 			var sExpectedText = oRB.getText('OM_FAVORITE');
@@ -372,7 +372,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$("text").text(), sExpectedText, "Control type is displayed as 'Favorite' after re-binding");
+			assert.strictEqual(oMarker.$("text").text(), sExpectedText, "Control type is displayed as 'Favorite' after re-binding");
 
 			// Cleanup
 			oMarker.destroy();
@@ -411,7 +411,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oTable.$().find(".sapMLnk").text(), sExpectedText, "Object Marker type is set to 'Locked' via binding");
+			assert.strictEqual(oTable.$().find(".sapMLnk").text(), sExpectedText, "Object Marker type is set to 'Locked' via binding");
 
 			// Cleanup
 			oTable.destroy();
@@ -424,13 +424,13 @@
 			var oMarker = new sap.m.ObjectMarker();
 
 			// Assert
-			strictEqual(oMarker._getInnerControl(), null, "Requesting inner control without setting type should return null");
+			assert.strictEqual(oMarker._getInnerControl(), null, "Requesting inner control without setting type should return null");
 
 			// Act
 			oMarker.setType(sap.m.ObjectMarkerType.Flagged);
 
 			// Assert
-			ok(oMarker._getInnerControl(), "Inner control should be returned instead of null");
+			assert.ok(oMarker._getInnerControl(), "Inner control should be returned instead of null");
 		});
 
 		QUnit.test("_adjustControl private method", function (assert) {
@@ -438,7 +438,7 @@
 			var oMarker = new sap.m.ObjectMarker();
 
 			// Assert
-			strictEqual(oMarker._adjustControl(), false, "Adjusting inner control without setting type should return false thus" +
+			assert.strictEqual(oMarker._adjustControl(), false, "Adjusting inner control without setting type should return false thus" +
 					"not trying to execute further adjustments to the control because in this setup the control will not" +
 					"render and no inner control will be available that would cause errors from the method trying to access" +
 					"it's properties");
@@ -451,14 +451,14 @@
 			var oMarker = new sap.m.ObjectMarker();
 
 			// Assert
-			strictEqual(oMarker.getAdditionalInfo(), "", "The default additional info value of the API should be an empty string");
+			assert.strictEqual(oMarker.getAdditionalInfo(), "", "The default additional info value of the API should be an empty string");
 
 			// Act
 			oMarker.setAdditionalInfo("by John Doe");
 
 			// Assert
-			strictEqual(oMarker.getProperty("additionalInfo"), "by John Doe", "Previously set additional info should be retrieved");
-			strictEqual(oMarker.getAdditionalInfo(), "by John Doe", "Previously set additional info should be retrieved");
+			assert.strictEqual(oMarker.getProperty("additionalInfo"), "by John Doe", "Previously set additional info should be retrieved");
+			assert.strictEqual(oMarker.getAdditionalInfo(), "by John Doe", "Previously set additional info should be retrieved");
 		});
 
 		QUnit.test("Rendering", function (assert) {
@@ -471,15 +471,15 @@
 			var sExpectedText = oRB.getText('OM_LOCKED');
 
 			// Assert
-			strictEqual(oMarker.$().children().length, 0, "There should be nothing rendered without a type applied");
+			assert.strictEqual(oMarker.$().children().length, 0, "There should be nothing rendered without a type applied");
 
 			// Act
 			oMarker.setType(sap.m.ObjectMarkerType.Locked);
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$().children().length, 1, "There rendered content when type is applied");
-			strictEqual(oMarker.$().text(), sExpectedText + " by John Doe", "The rendered text in the element should " +
+			assert.strictEqual(oMarker.$().children().length, 1, "There rendered content when type is applied");
+			assert.strictEqual(oMarker.$().text(), sExpectedText + " by John Doe", "The rendered text in the element should " +
 					"include the text representation of the status set concatenated with the additional info");
 		});
 
@@ -496,7 +496,7 @@
 
 
 			// Assert
-			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
+			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 		});
 
 		QUnit.test("Rendering when the type is LockedBy but no additionalInfo is provided", function (assert) {
@@ -511,7 +511,7 @@
 
 
 			// Assert
-			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Locked by another user' taken from messagebundle");
+			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Locked by another user' taken from messagebundle");
 		});
 
 		QUnit.test("Rendering when the type is UnsavedBy", function (assert) {
@@ -527,7 +527,7 @@
 
 
 			// Assert
-			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
+			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 		});
 
 		QUnit.test("Rendering when the type is UnsavedBy but no additionalInfo is provided", function (assert) {
@@ -542,7 +542,7 @@
 
 
 			// Assert
-			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Unsaved by another user' taken from messagebundle");
+			assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Unsaved by another user' taken from messagebundle");
 		});
 	</script>
 </head>

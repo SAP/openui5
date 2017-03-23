@@ -413,7 +413,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 								mSettings.objectBindings = mSettings.objectBindings || {};
 								mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
 							}
+						} else if (sName === 'metadataContexts') {
+							var oMetaContextsInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
 
+							if (oMetaContextsInfo) {
+								mSettings.metadataContexts = mSettings.metadataContexts || {};
+								mSettings.metadataContexts[oMetaContextsInfo.model || undefined] = oMetaContextsInfo;
+							}
 						} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
 							if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
 								var sLocalName = localName(attr);

@@ -34,6 +34,15 @@
 		-webkit-filter: blur(0);
 		filter: blur(0);
 	}
+
+	&:not(.sapMDialogResizeHandler) {
+		.sapMDialogScroll {
+			.sapMDialogScrollCont {
+				-ms-overflow-x: hidden;
+				overflow-x: hidden;
+			}
+		}
+	}
 }
 
 //the rtl will change the transform-translate from (-50% -50%) to (50% -50%)

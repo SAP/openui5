@@ -107,7 +107,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getPendingAction(), "NEW");
 		oInstance.setContent({something: "nix"});
-		deepEqual(oInstance.getContent(), {something: "nix"});
+		assert.deepEqual(oInstance.getContent(), {something: "nix"});
 	});
 
 	QUnit.test("Change.getContext", function(assert) {

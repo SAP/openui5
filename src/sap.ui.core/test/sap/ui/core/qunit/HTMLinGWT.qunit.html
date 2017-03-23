@@ -110,100 +110,107 @@
 				afterEach : function () {}
 			});
 
-  			asyncTest("initialized", function() {
+  			QUnit.test("initialized", function(assert) {
+  				var done = assert.async();
   				setTimeout(function() {
-  					start();
-	  				ok(jQuery("#uiArea1").children().length > 0, "Initialized!");
-	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
-	  				ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
-	  				ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
-  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+	  				assert.ok(jQuery("#uiArea1").children().length > 0, "Initialized!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+					assert.ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+					assert.ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+					done();
+				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
   			});
 
-  			asyncTest("rerenderTabStrip", function() {
+  			QUnit.test("rerenderTabStrip", function(assert) {
+  				var done = assert.async();
 
   				oBtn1.click();
 
-  				setTimeout(function() {
-					start();
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
-	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+				setTimeout(function() {
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					done();
+				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
   			});
 
-  			asyncTest("tabSwitch1", function() {
+  			QUnit.test("tabSwitch1", function(assert) {
+  				var done = assert.async();
 
   				oTabStrip.setSelectedIndex(1);
 
   				setTimeout(function() {
-					start();
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn2.id, "TabStrip contains btn2!");
-	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn2.id, "TabStrip contains btn2!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					done();
+				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
   			});
 
-  			asyncTest("tabSwitch2", function() {
+  			QUnit.test("tabSwitch2", function(assert) {
+  				var done = assert.async();
 
   				oTabStrip.setSelectedIndex(2);
 
   				setTimeout(function() {
-					start();
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn3.id, "TabStrip contains btn3!");
-	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn3.id, "TabStrip contains btn3!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					done();
+				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
   			});
 
-  			asyncTest("rerenderTabStripAndPanel", function() {
+  			QUnit.test("rerenderTabStripAndPanel", function(assert) {
+  				var done = assert.async();
 
   				oBtn3.click();
 
   				setTimeout(function() {
-					start();
-	  				equal(jQuery("button", oTabStrip.getDomRef()).length, 1, "TabStrip contains one button");
-	  				equal(jQuery("button", oTabStrip.getDomRef()).get(0).id, oBtn3.id, "TabStrip contains btn3!");
-	  				equal(jQuery("button", oPreserveArea).length, 2, "Hidden Area contains two hidden buttons!");
+	  				assert.equal(jQuery("button", oTabStrip.getDomRef()).length, 1, "TabStrip contains one button");
+	  				assert.equal(jQuery("button", oTabStrip.getDomRef()).get(0).id, oBtn3.id, "TabStrip contains btn3!");
+	  				assert.equal(jQuery("button", oPreserveArea).length, 2, "Hidden Area contains two hidden buttons!");
+					done();
   				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
   			});
 
-  			asyncTest("tabSwitch3", function() {
+  			QUnit.test("tabSwitch3", function(assert) {
+  				var done = assert.async();
 
   				oTabStrip.setSelectedIndex(0);
 
   				setTimeout(function() {
-					start();
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
-	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-	  				ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
-	  				ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
-  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					assert.ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+					assert.ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+					done();
+				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
   			});
 
-  			asyncTest("rerenderTabStripAndHiddenPanel", function() {
+  			QUnit.test("rerenderTabStripAndHiddenPanel", function(assert) {
+  				var done = assert.async();
 
   				oBtn1.click();
   				oBtn2.click();
   				oBtn3.click();
 
   				setTimeout(function() {
-					start();
-	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
-	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
-	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
-	  				ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
-	  				ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
-  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+	  				assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+					assert.ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+					assert.ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+					assert.ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+					assert.ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+					done();
+				}, (sap.ui.Device.browser.safari ? 2500 : 100));
 
 			});
 

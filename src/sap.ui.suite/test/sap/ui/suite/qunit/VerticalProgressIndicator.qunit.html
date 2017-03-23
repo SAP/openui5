@@ -111,91 +111,91 @@
 
 			//Testcase 1: Default values
 			QUnit.test("Default Values [Control 1]: ", function(assert) {
-				expect(4);
+				assert.expect(4);
 				percentage = 0;
 				this.oBar = jQuery.sap.domById(sCtrlId + "1-bar");
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator1.getPercentage(), percentage, "Default Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Default height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Default width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Default top position of inner <DIV>: ");
+				assert.equal(oVPIndicator1.getPercentage(), percentage, "Default Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Default height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Default width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Default top position of inner <DIV>: ");
 			});
 
 
 			//Testcase 2: Percentage set to 30 percent
 			QUnit.test("Percentage set to 30 percent [Control 2]: ", function(assert) {
-				expect(4);
+				assert.expect(4);
 				percentage = 30;
 				this.oBar = jQuery.sap.domById(sCtrlId + "2-bar");
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator2.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator2.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
 			//Testcase 3: Percentage set to 0 percent
 			QUnit.test("Percentage set to 0 percent [Control 3]: ", function(assert) {
-				expect(4);
+				assert.expect(4);
 				percentage = 0;
 				this.oBar = jQuery.sap.domById(sCtrlId + "3-bar");
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator3.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator3.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
 			//Testcase 4: Percentage set to 100 percent
 			QUnit.test("Percentage set to 100 percent [Control 4]: ", function(assert) {
-				expect(4);
+				assert.expect(4);
 				percentage = 100;
 				this.oBar = jQuery.sap.domById(sCtrlId + "4-bar");
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator4.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator4.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
 			//Testcase 5: Percentage set to -30 percent
 			QUnit.test("Percentage set to -30 percent [Control 5]: ", function(assert) {
-				expect(4);
+				assert.expect(4);
 				percentage = -30;
 				this.oBar = jQuery.sap.domById(sCtrlId + "5-bar");
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator5.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator5.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
 			//Testcase 6: Percentage set to 111 percent
 			QUnit.test("Percentage set to 111 percent [Control 6]: ", function(assert) {
-				expect(4);
+				assert.expect(4);
 				percentage = 111;
 				this.oBar = jQuery.sap.domById(sCtrlId + "6-bar");
 				BarHeight = jQuery(this.oBar).css("height");
 				BarTop    = jQuery(this.oBar).css("top");
 				BarWidth  = jQuery(this.oBar).css("width");
-				equals(oVPIndicator6.getPercentage(), percentage, "Current Percentage: ");
-				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
-				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
-				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+				assert.equal(oVPIndicator6.getPercentage(), percentage, "Current Percentage: ");
+				assert.equal(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				assert.equal(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				assert.equal(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
 			});
 
 
@@ -207,22 +207,22 @@
 
 			//Testcase 7: Press Event
 			QUnit.test("Press Event [Control 1]: ", function(assert) {
-				expect(1);
+				assert.expect(1);
 				try {
 					oVPIndicator1.firePress();
 					fail("exception should have been thrown!");
 				} catch (e) {
-					equals(sPressMessage, e, "Press Event triggered");
+					assert.equal(sPressMessage, e, "Press Event triggered");
 				}
 				});
 
 			//Testcase 8: DetachPress Event
 			QUnit.test("Detach Press Eventhandler [Control 1]: ", function(assert) {
-				expect(1);
+				assert.expect(1);
 				oVPIndicator1.detachPress(pressEventHandler);
 				try {
 					oVPIndicator1.firePress();
-					ok(true, "No event and thus no exception should be triggered!");
+					assert.ok(true, "No event and thus no exception should be triggered!");
 				} catch (e) {
 	 				fail("should not occur");
 				}
@@ -239,19 +239,19 @@
 
 			//Testcase 9: Manually set Tooltip
 			QUnit.test("Manual Tooltip [Control 4]: ", function(assert) {
-				expect(1);
-				equals(sTooltip, oVPIndicator4.getTooltip(), "Manual Tooltip");
+				assert.expect(1);
+				assert.equal(sTooltip, oVPIndicator4.getTooltip(), "Manual Tooltip");
 			});
 
 			//Testcase 10: Automatic Tooltip
 			QUnit.test("Automatic Tooltip [Control 2]: ", function(assert) {
-				expect(1);
+				assert.expect(1);
 				if(!this.oThis){
 								this.oThis = jQuery.sap.byId(sCtrlId + "2");
 								}
 				AriaValue = this.oThis.attr('aria-valuenow');
 				Tooltip   = this.oThis.attr('title');
-				equals(AriaValue, Tooltip + "%", "Automatic Tooltip");
+				assert.equal(AriaValue, Tooltip + "%", "Automatic Tooltip");
 			});
 
 
@@ -263,7 +263,7 @@
 
 			//Testcase 11: Default ARIA-Value
 			QUnit.test("Default ARIA-Values [Control 1]: ", function(assert) {
-				expect(3);
+				assert.expect(3);
 				percentage = 0;
 				if(!this.oThis){
 						this.oThis = jQuery.sap.byId(sCtrlId + "1");
@@ -271,35 +271,35 @@
 		      	ValueNow = this.oThis.attr('aria-valuenow');
 		      	ValueMax = this.oThis.attr('aria-valuemax');
 		      	ValueMin = this.oThis.attr('aria-valuemin');
-		      	equals(ValueNow, determineAria(percentage)+"%",   "Default ARIA-value: ");
-		      	equals(ValueMax, "100%",   "Maximum ARIA-value: ");
-		      	equals(ValueMin, "0%",     "Minimum ARIA-value: ");
+		      	assert.equal(ValueNow, determineAria(percentage)+"%",   "Default ARIA-value: ");
+		      	assert.equal(ValueMax, "100%",   "Maximum ARIA-value: ");
+		      	assert.equal(ValueMin, "0%",     "Minimum ARIA-value: ");
 			});
 
 			//Testcase 12: ARIA-Value for Percentage in Range (0-100)
 			QUnit.test("ARIA-Value for Percentage in Range [Controls 2,3,4]: ", function(assert) {
-				expect(3);
+				assert.expect(3);
 				this.oThis2 = jQuery.sap.byId(sCtrlId + "2");
 				this.oThis3 = jQuery.sap.byId(sCtrlId + "3");
 				this.oThis4 = jQuery.sap.byId(sCtrlId + "4");
 		      	ValueNow2   = this.oThis2.attr('aria-valuenow');
 		      	ValueNow3   = this.oThis3.attr('aria-valuenow');
 		      	ValueNow4   = this.oThis4.attr('aria-valuenow');
-		      	equals(ValueNow2, determineAria(30)+"%",   "ARIA-value for 30%: ");
-		      	equals(ValueNow3, determineAria(0)+"%",   "ARIA-value for 0%: ");
-		      	equals(ValueNow4, determineAria(100)+"%",   "ARIA-value for 100%: ");
+		      	assert.equal(ValueNow2, determineAria(30)+"%",   "ARIA-value for 30%: ");
+		      	assert.equal(ValueNow3, determineAria(0)+"%",   "ARIA-value for 0%: ");
+		      	assert.equal(ValueNow4, determineAria(100)+"%",   "ARIA-value for 100%: ");
 			});
 
 
 			//Testcase 13: ARIA-Value for Percentage out of Range (<0 or >100)
 			QUnit.test("ARIA-Value for Percentage out of Range [Controls 5,6]: ", function(assert) {
-				expect(2);
+				assert.expect(2);
 				this.oThis5 = jQuery.sap.byId(sCtrlId + "5");
 				this.oThis6 = jQuery.sap.byId(sCtrlId + "6");
 		      	ValueNow5   = this.oThis5.attr('aria-valuenow');
 		      	ValueNow6   = this.oThis6.attr('aria-valuenow');
-		      	equals(ValueNow5, determineAria(-30)+"%",   "ARIA-value for -30%: ");
-		      	equals(ValueNow6, determineAria(111)+"%",   "ARIA-value for 111%: ");
+		      	assert.equal(ValueNow5, determineAria(-30)+"%",   "ARIA-value for -30%: ");
+		      	assert.equal(ValueNow6, determineAria(111)+"%",   "ARIA-value for 111%: ");
 			});
 
 

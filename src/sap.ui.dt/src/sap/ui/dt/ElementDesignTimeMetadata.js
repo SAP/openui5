@@ -188,5 +188,24 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 		}
 	};
 
+	/**
+	 * Returns property "ignore" of aggregation DT metadata
+	 * @param {Object} oElement Element whose aggregation has to be checked
+	 * @param {String} sAggregationName Name of the Aggregation
+	 * @return {boolean} if ignored
+	 * @public
+	 */
+	ElementDesignTimeMetadata.prototype.isAggregationIgnored = function(oElement, sAggregationName) {
+		var mAggregations = this.getAggregations();
+		var oAggregationMetadata = mAggregations[sAggregationName];
+		var vIgnore = (oAggregationMetadata) ? oAggregationMetadata.ignore : false;
+		if (!vIgnore || (vIgnore && typeof vIgnore === "function" && !vIgnore(oElement))) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+
 	return ElementDesignTimeMetadata;
 }, /* bExport= */ true);

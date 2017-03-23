@@ -204,25 +204,25 @@
 
         QUnit.test('Opening/closing/reopening', function (assert) {
             //Assert
-            strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
+            assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
 
             this.sut.openBy();
             this.clock.tick(1000);
 
             //Assert
-            strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
 
             this.sut.close();
             this.clock.tick(1000);
 
             //Assert
-            strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "close"');
+            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "close"');
 
             this.sut.openBy();
             this.clock.tick(1000);
 
             //Assert
-            strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
         });
 
 
@@ -231,7 +231,7 @@
             this.sut.openBy();
             pressListItemAtIndex.call(this, 0);
             this.clock.tick(1000);
-            strictEqual(fnSetBackButtonTooltipForPageWithParentSpy.called, true, "Back button tooltip must be set.");
+            assert.strictEqual(fnSetBackButtonTooltipForPageWithParentSpy.called, true, "Back button tooltip must be set.");
             fnSetBackButtonTooltipForPageWithParentSpy.restore();
         });
 
@@ -249,7 +249,7 @@
             var oItemFridge = this.sut._getMenu().getItems()[0];
 
             //Assert
-            equals(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
+            assert.equal(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
         });
 
         QUnit.test("visible", function(assert) {
@@ -259,7 +259,7 @@
             var oItemFridge = this.sut._getMenu().getItems()[0];
 
             //Assert
-            equals(oItemFridge.getVisible(), false, "menu item is not visible");
+            assert.equal(oItemFridge.getVisible(), false, "menu item is not visible");
         });
 
         QUnit.test("enabled", function(assert) {
@@ -269,30 +269,30 @@
             var oItemFridge = this.sut._getMenu().getItems()[0];
 
             //Assert
-            equals(oItemFridge.getEnabled(), false, "menu item is not enabled");
+            assert.equal(oItemFridge.getEnabled(), false, "menu item is not enabled");
         });
 
         QUnit.test('Opening/closing/reopening', function (assert) {
             //Assert
-            strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
+            assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
 
             this.sut.openBy();
             this.clock.tick(1000);
 
             //Assert
-            strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
 
             this.sut.close();
             this.clock.tick(1000);
 
             //Assert
-            strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "focus" is changed');
+            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "focus" is changed');
 
             this.sut.openBy();
             this.clock.tick(1000);
 
             //Assert
-            strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
         });
 
         QUnit.test('Item selection event', function (assert) {
@@ -304,15 +304,15 @@
             this.clock.tick(1000);
 
             //Assert
-            strictEqual(this.sut.getItems()[0].getItems().length, 2, 'The item has sub items');
-            strictEqual(fnFireItemSelectedSpy.calledOnce, false, "Item selected event is not fired when item is clicked");
+            assert.strictEqual(this.sut.getItems()[0].getItems().length, 2, 'The item has sub items');
+            assert.strictEqual(fnFireItemSelectedSpy.calledOnce, false, "Item selected event is not fired when item is clicked");
 
             this.sut._getVisualParent().getItems()[1].$().click();
             this.clock.tick(1000);
 
             //Assert
-            strictEqual(this.sut.getItems()[1].getItems().length, 0, 'The item does not have sub items');
-            strictEqual(fnFireItemSelectedSpy.calledOnce, true, "Item selected event is fired when item is clicked.");
+            assert.strictEqual(this.sut.getItems()[1].getItems().length, 0, 'The item does not have sub items');
+            assert.strictEqual(fnFireItemSelectedSpy.calledOnce, true, "Item selected event is fired when item is clicked.");
 
             fnFireItemSelectedSpy.restore();
         });
@@ -376,13 +376,13 @@
             this.sut.addAggregation("items", oItem);
 
             //Assert
-            equals(this.getPages().length, 3, "The menu still has 3 pages.");
+            assert.equal(this.getPages().length, 3, "The menu still has 3 pages.");
 
             sutListItem = this.getListItemAtIndex(2);
 
             //Assert
-            ok(!!sutListItem, "There is a new ui item at the right place");
-            equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+            assert.ok(!!sutListItem, "There is a new ui item at the right place");
+            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
         QUnit.test("MenuItem's addItem adds list item to the correct list", function(assert) {
@@ -393,14 +393,14 @@
             this.sut.getItems()[0].addAggregation("items", oItem);
 
             //Assert
-            equals(this.getPages().length, 3, "The menu still has 3 pages.");
+            assert.equal(this.getPages().length, 3, "The menu still has 3 pages.");
 
             this.pressListItemAtIndex(0); //page title: item 1
             sutListItem = this.getListItemAtIndex(2);
 
             //Assert
-            ok(!!sutListItem, "There is a new ui item at the right place");
-            equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+            assert.ok(!!sutListItem, "There is a new ui item at the right place");
+            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
         QUnit.test("MenuItem with no items: addItem to it adds a new page", function(assert) {
@@ -408,30 +408,30 @@
                 oAddedPage,
                 sutListItem;
 
-            equals(this.getPages().length, 0, "The menu has no pages");
+            assert.equal(this.getPages().length, 0, "The menu has no pages");
 
             this.openMenu();
             oItem = this.newMenuItem();
             this.sut.getItems()[1].addAggregation("items", oItem);
 
             //Assert
-            equals(this.getPages().length, 4, "The menu has a new page");
+            assert.equal(this.getPages().length, 4, "The menu has a new page");
 
             oAddedPage = this.getLastPage();
 
             //Assert
-            equals(oAddedPage.getTitle(), this.sut.getItems()[1].getText(), "Title of the new page is alright");
+            assert.equal(oAddedPage.getTitle(), this.sut.getItems()[1].getText(), "Title of the new page is alright");
 
             this.pressListItemAtIndex(1); //page title: item 2
 
             //Assert
-            equals(this.getCurrentPage().getId(), oAddedPage.getId(), "The press event on the parent item leads to the new page");
+            assert.equal(this.getCurrentPage().getId(), oAddedPage.getId(), "The press event on the parent item leads to the new page");
 
             sutListItem = this.getListItemAtIndex(0);
 
             //Assert
-            ok(!!sutListItem, "There is a new ui item at the right place");
-            equals(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+            assert.ok(!!sutListItem, "There is a new ui item at the right place");
+            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
         });
 
         QUnit.test("Menu with no items: addItem to it adds an item to the empty page", function(assert) {
@@ -453,9 +453,9 @@
             oSutListItem = sut._getNavContainer().getCurrentPage().getContent()[0].getItems()[0];
 
             //Assert
-            equals(aPages.length, 1, "The menu has 1 page");
-            ok(!!oSutListItem, "There is a new ui item at the right place");
-            equals(oSutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+            assert.equal(aPages.length, 1, "The menu has 1 page");
+            assert.ok(!!oSutListItem, "There is a new ui item at the right place");
+            assert.equal(oSutListItem.getTitle(), oItem.getText(), "UI item has the right text");
 
             sut.destroy();
             sut = null;
@@ -501,8 +501,8 @@
             sTitleSelector = "#" + this.sut._getVisualParent().getId() + " .sapUiMnuItmTxt";
 
             //Assert
-            strictEqual(oItem.getText(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
-            strictEqual(jQuery("#"+oItem.getId()).length, 1, 'First item is rendered before model property change.');
+            assert.strictEqual(oItem.getText(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
+            assert.strictEqual(jQuery("#"+oItem.getId()).length, 1, 'First item is rendered before model property change.');
 
             oSecondData = this.getSecondModelData()['items'];
 
@@ -513,9 +513,9 @@
             sSecondItemId = oItem.getId();
 
             //Assert
-            strictEqual(oItem.getText(), oSecondData[0]['text'], 'Correct item is being asserted.');
-            strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
-            strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
+            assert.strictEqual(oItem.getText(), oSecondData[0]['text'], 'Correct item is being asserted.');
+            assert.strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
+            assert.strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
 
             oFirstLevelItem = this.sut._getVisualParent().getItems()[1];
             oSecondLevelItem = oFirstLevelItem.getAggregation('submenu').getItems()[0];
@@ -531,16 +531,16 @@
             sFirstSubItemId = oItem.getId();
 
             //Assert
-            strictEqual(oItem.getText(), oSecondData[1]['items'][0]['text'], 'Correct item is being asserted.');
-            strictEqual(jQuery("#"+sFirstSubItemId).length, 1, 'First sub item is changed in DOM after model property change.');
+            assert.strictEqual(oItem.getText(), oSecondData[1]['items'][0]['text'], 'Correct item is being asserted.');
+            assert.strictEqual(jQuery("#"+sFirstSubItemId).length, 1, 'First sub item is changed in DOM after model property change.');
 
             aItems = this.sut._getVisualParent().getItems()[1].getSubmenu().getItems()[0].getSubmenu().getItems();
             oItem = aItems[0];
             sFirstSubSubItemId = oItem.getId();
 
             //Assert
-            strictEqual(oItem.getText(), oSecondData[1]['items'][0]['items'][0]['text'], 'Correct item is being asserted.');
-            strictEqual(jQuery("#"+sFirstSubSubItemId).length, 1, 'First sub sub item is changed in DOM after model property change.');
+            assert.strictEqual(oItem.getText(), oSecondData[1]['items'][0]['items'][0]['text'], 'Correct item is being asserted.');
+            assert.strictEqual(jQuery("#"+sFirstSubSubItemId).length, 1, 'First sub sub item is changed in DOM after model property change.');
         });
 
 		QUnit.test("filtering", function(assert) {
@@ -564,7 +564,7 @@
 			this.sut.getBinding('items').filter(new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.EQ, 'world'));
 			sap.ui.getCore().applyChanges();
 
-			ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
+			assert.ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
 		});
 
         QUnit.module("[PHONE] Data binding", {
@@ -610,8 +610,8 @@
             sTitleSelector = "#" + this.sut._getVisualParent().getId() + " .sapMSLITitleOnly";
 
             //Assert
-            strictEqual(oItem.getTitle(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
-            strictEqual(jQuery("#"+oItem.getId()).length, 1, 'First item is rendered before model property change.');
+            assert.strictEqual(oItem.getTitle(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
+            assert.strictEqual(jQuery("#"+oItem.getId()).length, 1, 'First item is rendered before model property change.');
 
             oSecondData = this.getSecondModelData()['items'];
 
@@ -622,9 +622,9 @@
             sSecondItemId = oItem.getId();
 
             //Assert
-            strictEqual(oItem.getTitle(), oSecondData[0]['text'], 'Correct item is being asserted.');
-            strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
-            strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
+            assert.strictEqual(oItem.getTitle(), oSecondData[0]['text'], 'Correct item is being asserted.');
+            assert.strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
+            assert.strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
 
             oSecondData.push({
                 text: 'second-item3',
@@ -633,7 +633,7 @@
             this.sut.getModel().setProperty('/items', oSecondData);
 
             //Assert
-            strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully added.');
+            assert.strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully added.');
         });
 
         QUnit.module('MenuItem', {
@@ -668,9 +668,9 @@
             this.sut.exit();
 
             //Assert
-            strictEqual(this.sut._getVisualChild(), null, "no visual child");
-            strictEqual(this.sut._getVisualControl(), null, "no visual control");
-            strictEqual(this.sut._getVisualParent(), null, "no visual parent");
+            assert.strictEqual(this.sut._getVisualChild(), null, "no visual child");
+            assert.strictEqual(this.sut._getVisualControl(), null, "no visual control");
+            assert.strictEqual(this.sut._getVisualParent(), null, "no visual parent");
         });
 
         QUnit.test("_setVisualChild _getVisualChild", function(assert) {
@@ -678,7 +678,7 @@
             this.sut._setVisualChild("a");
 
             //Assert
-            strictEqual(this.sut._getVisualChild(), "a", "right visual child");
+            assert.strictEqual(this.sut._getVisualChild(), "a", "right visual child");
         });
 
         QUnit.test("_setVisualControl _getVisualControl", function(assert) {
@@ -686,7 +686,7 @@
             this.sut._setVisualControl("b");
 
             //Assert
-            strictEqual(this.sut._getVisualControl(), "b", "right visual control");
+            assert.strictEqual(this.sut._getVisualControl(), "b", "right visual control");
         });
 
         QUnit.test("_setVisualParent _getVisualParent", function(assert) {
@@ -694,7 +694,7 @@
             this.sut._setVisualParent("c");
 
             //Assert
-            strictEqual(this.sut._getVisualParent(), "c", "right visual parent");
+            assert.strictEqual(this.sut._getVisualParent(), "c", "right visual parent");
         });
 
         QUnit.test("setProperty", function(assert) {
@@ -706,8 +706,8 @@
             this.sut.setProperty(sPropertyKey, sPropertyValue);
 
             //Assert
-            strictEqual(this.sut.getText(), sPropertyValue, "setProperty sets");
-            ok(oSpyFireEvent.calledWith("propertyChanged"), "propertyChanged fired");
+            assert.strictEqual(this.sut.getText(), sPropertyValue, "setProperty sets");
+            assert.ok(oSpyFireEvent.calledWith("propertyChanged"), "propertyChanged fired");
         });
 
         QUnit.test("addAggregation", function(assert) {
@@ -716,15 +716,15 @@
                 sNewItemId = oNewMenuItem.getId();
 
             //just in this test - verify initial items length
-            strictEqual(this.sut.getItems().length, 2, "initial items");
+            assert.strictEqual(this.sut.getItems().length, 2, "initial items");
 
             //Act
             this.sut.addAggregation("items", oNewMenuItem, true);
 
             //Assert
-            strictEqual(this.sut.getItems().length, 3, "more items");
-            strictEqual(this.sut.getItems()[2].getId(), sNewItemId, "item added");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.strictEqual(this.sut.getItems().length, 3, "more items");
+            assert.strictEqual(this.sut.getItems()[2].getId(), sNewItemId, "item added");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.test("insertAggregation", function(assert) {
@@ -736,9 +736,9 @@
             this.sut.insertAggregation("items", oNewMenuItem, 1, true);
 
             //Assert
-            strictEqual(this.sut.getItems().length, 3, "more items");
-            strictEqual(this.sut.getItems()[1].getId(), sNewItemId, "item inserted");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.strictEqual(this.sut.getItems().length, 3, "more items");
+            assert.strictEqual(this.sut.getItems()[1].getId(), sNewItemId, "item inserted");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.test("removeAggregation", function(assert) {
@@ -749,9 +749,9 @@
             this.sut.removeAggregation("items", 0, true);
 
             //Assert
-            strictEqual(this.sut.getItems().length, 1, "less items");
-            strictEqual(this.sut.getItems()[0].getId(), sSecondItemId, "item removed");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.strictEqual(this.sut.getItems().length, 1, "less items");
+            assert.strictEqual(this.sut.getItems()[0].getId(), sSecondItemId, "item removed");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.test("removeAllAggregation", function(assert) {
@@ -763,9 +763,9 @@
             aResult = this.sut.removeAllAggregation("items", true);
 
             //Assert
-            strictEqual(aResult[0].getId(), aItems[0].getId(), "the items are not destroyed and are returned");
-            strictEqual(this.sut.getItems().length, 0, "no items");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.strictEqual(aResult[0].getId(), aItems[0].getId(), "the items are not destroyed and are returned");
+            assert.strictEqual(this.sut.getItems().length, 0, "no items");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.test("destroyAggregation", function(assert) {
@@ -776,9 +776,9 @@
             this.sut.destroyAggregation("items", true);
 
             //Assert
-            ok(!sap.ui.getCore().byId(oFirstItem.getId()), "the items are destroyed");
-            strictEqual(this.sut.getItems().length, 0, "no items");
-            ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+            assert.ok(!sap.ui.getCore().byId(oFirstItem.getId()), "the items are destroyed");
+            assert.strictEqual(this.sut.getItems().length, 0, "no items");
+            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
         });
 
         QUnit.module('MenuListItem', {
@@ -816,36 +816,36 @@
                 oImage = this.sut._getImage(this.sut.getId() + "-img", sImageStyleClass, this.sut.getIcon(), this.sut.getIconDensityAware());
 
             //Assert
-            ok(oImage, "image exists");
-            ok(this.sut._image, "image is cached");
-            strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
+            assert.ok(oImage, "image exists");
+            assert.ok(this.sut._image, "image is cached");
+            assert.strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
         });
 
         QUnit.test("_getIconArrowRight", function(assert) {
             var oImage = this.sut._getIconArrowRight();
 
             //Assert
-            ok(oImage, "arrow image exists");
-            ok(this.sut._imageRightArrow, "arrow image is cached");
-            strictEqual(oImage.getSrc(), "sap-icon://slim-arrow-right", "image has right font symbol");
-            strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
+            assert.ok(oImage, "arrow image exists");
+            assert.ok(this.sut._imageRightArrow, "arrow image is cached");
+            assert.strictEqual(oImage.getSrc(), "sap-icon://slim-arrow-right", "image has right font symbol");
+            assert.strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
         });
 
         QUnit.test("_hasSubItems", function(assert) {
             //Assert
-            strictEqual(this.sut._hasSubItems(), true, "true when its associated MenuItem has sub-items");
+            assert.strictEqual(this.sut._hasSubItems(), true, "true when its associated MenuItem has sub-items");
 
             //Act
             this.menuItem.destroyItems();
 
             //Assert
-            strictEqual(this.sut._hasSubItems(), false, "false when its associated MenuItem has no sub-items");
+            assert.strictEqual(this.sut._hasSubItems(), false, "false when its associated MenuItem has no sub-items");
 
             //Act
             this.sut.setMenuItem(null);
 
             //Assert
-            strictEqual(this.sut._hasSubItems(), false, "false when it has no associated MenuItem");
+            assert.strictEqual(this.sut._hasSubItems(), false, "false when it has no associated MenuItem");
         });
 
     </script>

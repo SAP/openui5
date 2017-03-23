@@ -98,12 +98,13 @@
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {}
 		});
-		equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
-		equal(oBinding.getModel(), oModel, "TreeBinding model");
-		ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
+		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
+		assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
 	});
 
-	asyncTest("getRootContexts getNodeContexts", function(){
+	QUnit.test("getRootContexts getNodeContexts", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees(2)", null, [], {
 				navigation: {
@@ -119,27 +120,27 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 5, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 5, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
-				equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
+				assert.equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
-				equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
+				assert.equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
-				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				assert.equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
 
 				oContext = aContexts[3];
-				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
-				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				assert.equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
 
 				oContext = aContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
-				equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
+				assert.equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
 				oBinding.detachChange(handler1);
 
@@ -152,23 +153,23 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aContexts.length, 3, "TreeBinding nodeContexts length");
-				equal(oBinding.getChildCount(oContext), 3, "TreeBinding childcount");
+				assert.equal(aContexts.length, 3, "TreeBinding nodeContexts length");
+				assert.equal(oBinding.getChildCount(oContext), 3, "TreeBinding childcount");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Michael", "TreeBinding node content");
-				equal(oModel.getProperty("LastName", oContext), "Suyama", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Michael", "TreeBinding node content");
+				assert.equal(oModel.getProperty("LastName", oContext), "Suyama", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FirstName", oContext), "Robert", "TreeBinding node content");
-				equal(oModel.getProperty("LastName", oContext), "King", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Robert", "TreeBinding node content");
+				assert.equal(oModel.getProperty("LastName", oContext), "King", "TreeBinding node content");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding node content");
-				equal(oModel.getProperty("LastName", oContext), "Dodsworth", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding node content");
+				assert.equal(oModel.getProperty("LastName", oContext), "Dodsworth", "TreeBinding node content");
 
 				oBinding.detachChange(handler2);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -176,7 +177,8 @@
 		});
 	});
 
-	asyncTest("Check if CountMode can be set", function() {
+	QUnit.test("Check if CountMode can be set", function(assert) {
+		var done = assert.async();
 		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
 
 		oModel.attachMetadataLoaded(function() {
@@ -188,13 +190,14 @@
 				displayRootNode: true
 			});
 
-			equal(oBinding.sCountMode, sap.ui.model.odata.CountMode.Inline, "CountMode propagation works. CountMode.Inline was set.");
+			assert.equal(oBinding.sCountMode, sap.ui.model.odata.CountMode.Inline, "CountMode propagation works. CountMode.Inline was set.");
 
-			start();
+			done();
 		});
 	});
 
-	asyncTest("Display root node - CountMode.Request", function(){
+	QUnit.test("Display root node - CountMode.Request", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees(2)", null, [], {
 				navigation: {
@@ -210,10 +213,10 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length is correct (1)");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length is correct (1)");
 
 				var oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Andrew", "Root node is correct (Andrew)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "Root node is correct (Andrew)");
 
 				oBinding.attachChange(handler2);
 				aContexts = oBinding.getNodeContexts(oContext);
@@ -227,19 +230,19 @@
 				var aChildContexts = oBinding.getNodeContexts(oRootContext);
 				var oContext;
 
-				equal(aChildContexts.length, 5, "TreeBinding rootContexts length");
+				assert.equal(aChildContexts.length, 5, "TreeBinding rootContexts length");
 
 				oContext = aChildContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Nancy", "Child-Context[0] is correct (Nancy)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "Child-Context[0] is correct (Nancy)");
 
 				oContext = aChildContexts[2];
-				equal(oModel.getProperty("FirstName", oContext), "Margaret", "Child-Context[2] is correct (Margaret)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Margaret", "Child-Context[2] is correct (Margaret)");
 
 				oContext = aChildContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Laura", "Child-Context[4] is correct (Laura)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "Child-Context[4] is correct (Laura)");
 
 				oBinding.detachChange(handler1);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -247,7 +250,8 @@
 		});
 	});
 
-	asyncTest("Display root node - CountMode.Inline", function () {
+	QUnit.test("Display root node - CountMode.Inline", function (assert) {
+		var done = assert.async();
 		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
 
 		oModel.attachMetadataLoaded(function() {
@@ -265,10 +269,10 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length is correct (1)");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length is correct (1)");
 
 				var oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Andrew", "Root node is correct (Andrew)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "Root node is correct (Andrew)");
 
 				oBinding.attachChange(handler2);
 				aContexts = oBinding.getNodeContexts(oContext);
@@ -282,19 +286,19 @@
 				var aChildContexts = oBinding.getNodeContexts(oRootContext);
 				var oContext;
 
-				equal(aChildContexts.length, 5, "TreeBinding rootContexts length");
+				assert.equal(aChildContexts.length, 5, "TreeBinding rootContexts length");
 
 				oContext = aChildContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Nancy", "Child-Context[0] is correct (Nancy)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "Child-Context[0] is correct (Nancy)");
 
 				oContext = aChildContexts[2];
-				equal(oModel.getProperty("FirstName", oContext), "Margaret", "Child-Context[2] is correct (Margaret)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Margaret", "Child-Context[2] is correct (Margaret)");
 
 				oContext = aChildContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Laura", "Child-Context[4] is correct (Laura)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "Child-Context[4] is correct (Laura)");
 
 				oBinding.detachChange(handler1);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -302,7 +306,8 @@
 		});
 	});
 
-	asyncTest("Bind an aggregation", function(){
+	QUnit.test("Bind an aggregation", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees", null, [], {
 				navigation: {
@@ -319,16 +324,16 @@
 				var aRootContexts = oBinding.getRootContexts();
 				var oContext;
 
-				equal(aRootContexts.length, 9, "TreeBinding rootContexts length = 9");
+				assert.equal(aRootContexts.length, 9, "TreeBinding rootContexts length = 9");
 
 				oContext = aRootContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root contexts[0] is correct (Nancy)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root contexts[0] is correct (Nancy)");
 
 				oContext = aRootContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root contexts[4] is correct (Steven)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root contexts[4] is correct (Steven)");
 
 				oContext = aRootContexts[8];
-				equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding root contexts[8] is correct (Anne)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding root contexts[8] is correct (Anne)");
 
 				//load child contexts of second root node
 				oContext = aRootContexts[1];
@@ -344,19 +349,19 @@
 				var aChildContexts = oBinding.getNodeContexts(oContext);
 				var oContext;
 
-				equal(aChildContexts.length, 5, "TreeBinding rootContexts length");
+				assert.equal(aChildContexts.length, 5, "TreeBinding rootContexts length");
 
 				oContext = aChildContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root contexts[0] is correct (Nancy)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root contexts[0] is correct (Nancy)");
 
 				oContext = aChildContexts[2];
-				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root contexts[2] is correct (Margaret)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root contexts[2] is correct (Margaret)");
 
 				oContext = aChildContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root contexts[4] is correct (Laura)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root contexts[4] is correct (Laura)");
 
 				oBinding.detachChange(handler1);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -364,7 +369,8 @@
 		});
 	});
 
-	asyncTest("Refresh", function(){
+	QUnit.test("Refresh", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees(2)", null, [], {
 				navigation: {
@@ -381,15 +387,15 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 5, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 5, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root contexts[0] is correct (Nancy)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root contexts[0] is correct (Nancy)");
 
 				oContext = aContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root contexts[4] is correct (Laura)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root contexts[4] is correct (Laura)");
 
-				deepEqual(oBinding.oKeys, {
+				assert.deepEqual(oBinding.oKeys, {
 					"/Employees(2)/Employees1": [
 						"Employees(1)",
 						"Employees(3)",
@@ -399,7 +405,7 @@
 					]
 				}, "Keys object has value for root");
 
-				deepEqual(oBinding.oLengths, {
+				assert.deepEqual(oBinding.oLengths, {
 					"/Employees(1)": 1,
 					"/Employees(2)/Employees1": 5,
 					"/Employees(3)": 1,
@@ -408,7 +414,7 @@
 					"/Employees(8)": 1
 				}, "Lengths object has value for root");
 
-				deepEqual(oBinding.oFinalLengths, {
+				assert.deepEqual(oBinding.oFinalLengths, {
 					"/Employees(1)": true,
 					"/Employees(2)/Employees1": true,
 					"/Employees(3)": true,
@@ -419,9 +425,9 @@
 
 				oBinding.attachRefresh(handler2);
 				oBinding.refresh();
-				deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
-				deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
-				deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
+				assert.deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
+				assert.deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
+				assert.deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
 			};
 
 			var handler2 = function(oEvent) {
@@ -431,7 +437,7 @@
 				oBinding.attachChange(handler3);
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 0, "No contexts are avilable, data has been reset");
+				assert.equal(aContexts.length, 0, "No contexts are avilable, data has been reset");
 
 			}
 
@@ -440,15 +446,15 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 5, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 5, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Nancy)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Nancy)");
 
 				oContext = aContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Laura", "After refresh: TreeBinding root contexts[4] is correct (Laura)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "After refresh: TreeBinding root contexts[4] is correct (Laura)");
 
-				deepEqual(oBinding.oKeys, {
+				assert.deepEqual(oBinding.oKeys, {
 					"/Employees(2)/Employees1": [
 						"Employees(1)",
 						"Employees(3)",
@@ -458,7 +464,7 @@
 					]
 				}, "Keys object has value for root");
 
-				deepEqual(oBinding.oLengths, {
+				assert.deepEqual(oBinding.oLengths, {
 					"/Employees(1)": 1,
 					"/Employees(2)/Employees1": 5,
 					"/Employees(3)": 1,
@@ -467,7 +473,7 @@
 					"/Employees(8)": 1
 				}, "Lengths object has value for root");
 
-				deepEqual(oBinding.oFinalLengths, {
+				assert.deepEqual(oBinding.oFinalLengths, {
 					"/Employees(1)": true,
 					"/Employees(2)/Employees1": true,
 					"/Employees(3)": true,
@@ -476,7 +482,7 @@
 					"/Employees(8)": true
 				}, "FinalLengths object has value for root");
 
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -484,7 +490,8 @@
 		});
 	});
 
-	asyncTest("No navigation object specified", function() {
+	QUnit.test("No navigation object specified", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var iErrorCount = 0,
 				sErrorMessage = "";
@@ -495,14 +502,15 @@
 			createTreeBinding("/Employees(2)");
 
 
-			equal(iErrorCount, 1, "TreeBinding one error should have occured");
-			equal(sErrorMessage, "Neither navigation paths parameters, nor (complete/valid) tree hierarchy annotations where provided to the TreeBinding.", "TreeBinding navigation error was thrown");
+			assert.equal(iErrorCount, 1, "TreeBinding one error should have occured");
+			assert.equal(sErrorMessage, "Neither navigation paths parameters, nor (complete/valid) tree hierarchy annotations where provided to the TreeBinding.", "TreeBinding navigation error was thrown");
 			jQuery.sap.log.error.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("Application filtering allowed", function() {
+	QUnit.test("Application filtering allowed", function(assert) {
+		var done = assert.async();
 
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees", null, [new sap.ui.model.Filter("FirstName", "EQ", "Nancy")], {
@@ -514,12 +522,12 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length is 1 after application filtering");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length is 1 after application filtering");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Tom)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Tom)");
 
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -527,7 +535,8 @@
 		});
 	});
 
-	asyncTest("Control filtering prohibited in OperationMode.Server", function() {
+	QUnit.test("Control filtering prohibited in OperationMode.Server", function(assert) {
+		var done = assert.async();
 
 		oModel.attachMetadataLoaded(function() {
 			var iWarningCount = 0,
@@ -543,13 +552,14 @@
 
 			oBinding.filter(new sap.ui.model.Filter("FirstName", "EQ", "Tom"));
 
-			equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
+			assert.equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
 			jQuery.sap.log.warning.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("Paging - CountMode.Request", function() {
+	QUnit.test("Paging - CountMode.Request", function(assert) {
+		var done = assert.async();
 
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees", null, [], {
@@ -567,17 +577,17 @@
 				var aContexts = oBinding.getRootContexts(1, 4);
 				var oContext;
 
-				equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
-				equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+				assert.equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				assert.equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[0] is correct (Andrew)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[0] is correct (Andrew)");
 
 				oContext = aContexts[3];
-				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[3] is correct (Steven)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[3] is correct (Steven)");
 
 				oContext = aContexts[0];
-				equal(oBinding.getChildCount(oContext), undefined, "Child count of /Employees(2) is still unknown");
+				assert.equal(oBinding.getChildCount(oContext), undefined, "Child count of /Employees(2) is still unknown");
 
 				oBinding.attachChange(handler2);
 				aContexts = oBinding.getNodeContexts(oContext, 2, 3);
@@ -589,20 +599,20 @@
 				var aRootContexts = oBinding.getRootContexts(1, 4);
 				var oAndrew = aRootContexts[0];
 
-				equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
+				assert.equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
 
 				var aContexts = oBinding.getNodeContexts(oAndrew, 2, 3);
 				var oContext;
 
-				equal(aContexts.length, 3, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 3, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding child context[0] is correct (Margaret)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding child context[0] is correct (Margaret)");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding child context[2] is correct (Laura)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding child context[2] is correct (Laura)");
 
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -610,7 +620,8 @@
 		});
 	});
 
-	asyncTest("Paging - CountMode.Inline", function() {
+	QUnit.test("Paging - CountMode.Inline", function(assert) {
+		var done = assert.async();
 		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees", null, [], {
@@ -628,17 +639,17 @@
 				var aContexts = oBinding.getRootContexts(1, 4);
 				var oContext;
 
-				equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
-				equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+				assert.equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				assert.equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[0] is correct (Andrew)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[0] is correct (Andrew)");
 
 				oContext = aContexts[3];
-				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[3] is correct (Steven)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[3] is correct (Steven)");
 
 				oContext = aContexts[0];
-				equal(oBinding.getChildCount(oContext), undefined, "Child count of /Employees(2) is still unknown");
+				assert.equal(oBinding.getChildCount(oContext), undefined, "Child count of /Employees(2) is still unknown");
 
 				oBinding.attachChange(handler2);
 				aContexts = oBinding.getNodeContexts(oContext, 2, 3);
@@ -650,20 +661,20 @@
 				var aRootContexts = oBinding.getRootContexts(1, 4);
 				var oAndrew = aRootContexts[0];
 
-				equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
+				assert.equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
 
 				var aContexts = oBinding.getNodeContexts(oAndrew, 2, 3);
 				var oContext;
 
-				equal(aContexts.length, 3, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 3, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding child context[0] is correct (Margaret)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding child context[0] is correct (Margaret)");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding child context[2] is correct (Laura)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding child context[2] is correct (Laura)");
 
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -671,7 +682,8 @@
 		});
 	});
 
-	asyncTest("Sorting: Initial Sorter", function() {
+	QUnit.test("Sorting: Initial Sorter", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees", null, [], {
 					navigation: {
@@ -691,14 +703,14 @@
 				var aContexts = oBinding.getRootContexts(0, 10);
 				var oContext;
 
-				equal(aContexts.length, 9, "Retrieved contexts after sorting length = 9");
-				equal(oBinding.getChildCount(null), 9, "Internal rootContexts length");
+				assert.equal(aContexts.length, 9, "Retrieved contexts after sorting length = 9");
+				assert.equal(oBinding.getChildCount(null), 9, "Internal rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[0] is correct (Steven)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[0] is correct (Steven)");
 
 				oContext = aContexts[8];
-				equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[3] is correct (Andrew)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[3] is correct (Andrew)");
 
 				// retrieve children for Andrew
 				oBinding.attachChange(handler2);
@@ -712,18 +724,18 @@
 				var aRootContexts = oBinding.getRootContexts(0, 10);
 				var oAndrew = aRootContexts[8];
 
-				equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
+				assert.equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
 
 				var aChildContexts = oBinding.getNodeContexts(oAndrew, 0, 5);
 				var oContext;
 
 				oContext = aChildContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Steven", "/Employee(2) child context[0] is correct (Steven)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "/Employee(2) child context[0] is correct (Steven)");
 
 				oContext = aChildContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Janet", "/Employee(2) child context[4] is correct (Janet)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Janet", "/Employee(2) child context[4] is correct (Janet)");
 
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -731,7 +743,8 @@
 		});
 	});
 
-	asyncTest("Sorting: sort() call on binding", function() {
+	QUnit.test("Sorting: sort() call on binding", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/Employees", null, [], {
 				navigation: {
@@ -757,14 +770,14 @@
 				var aContexts = oBinding.getRootContexts(0, 10);
 				var oContext;
 
-				equal(aContexts.length, 9, "Retrieved contexts after sorting length = 9");
-				equal(oBinding.getChildCount(null), 9, "Internal rootContexts length");
+				assert.equal(aContexts.length, 9, "Retrieved contexts after sorting length = 9");
+				assert.equal(oBinding.getChildCount(null), 9, "Internal rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[0] is correct (Steven)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[0] is correct (Steven)");
 
 				oContext = aContexts[8];
-				equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[3] is correct (Andrew)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[3] is correct (Andrew)");
 
 				// retrieve children for Andrew
 				oBinding.attachChange(handler2);
@@ -778,18 +791,18 @@
 				var aRootContexts = oBinding.getRootContexts(0, 10);
 				var oAndrew = aRootContexts[8];
 
-				equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
+				assert.equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
 
 				var aChildContexts = oBinding.getNodeContexts(oAndrew, 0, 5);
 				var oContext;
 
 				oContext = aChildContexts[0];
-				equal(oModel.getProperty("FirstName", oContext), "Steven", "/Employee(2) child context[0] is correct (Steven)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "/Employee(2) child context[0] is correct (Steven)");
 
 				oContext = aChildContexts[4];
-				equal(oModel.getProperty("FirstName", oContext), "Janet", "/Employee(2) child context[4] is correct (Janet)");
+				assert.equal(oModel.getProperty("FirstName", oContext), "Janet", "/Employee(2) child context[4] is correct (Janet)");
 
-				start();
+				done();
 			}
 
 			oBinding.attachRefresh(handler0);
@@ -809,20 +822,22 @@
 		}
 	});
 
-	asyncTest("Properties", function(){
+	QUnit.test("Properties", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
 				navigation: {}
 			});
-			ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
-			equal(oBinding.getPath(), "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "TreeBinding path");
-			equal(oBinding.getModel(), oModel, "TreeBinding model");
-			equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
-			start();
+			assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+			assert.equal(oBinding.getPath(), "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "TreeBinding path");
+			assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
+			assert.equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
+			done();
 		});
 	});
 
-	asyncTest("TreeBinding getRootContexts getNodeContexts", function(){
+	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
 				rootLevel: 2
@@ -833,29 +848,29 @@
 			var handler1 = function(oEvent) {
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
-				equal(aContexts.length, 9, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 9, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
 
 				oContext = aContexts[8];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
 
 				oBinding.detachChange(handler1);
 
-				start();
+				done();
 			};
 
 			oBinding.attachChange(handler1);
@@ -863,7 +878,8 @@
 		});
 	});
 
-	asyncTest("Display root node - CountMode.Request", function(){
+	QUnit.test("Display root node - CountMode.Request", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 				displayRootNode: true,
@@ -876,12 +892,12 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
 
 				oBinding.detachChange(handler1);
 
@@ -894,29 +910,29 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
-				equal(oBinding.getChildCount(oContext), 9, "TreeBinding childcount");
+				assert.equal(aContexts.length, 9, "TreeBinding nodeContexts length");
+				assert.equal(oBinding.getChildCount(oContext), 9, "TreeBinding childcount");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
 
 				oContext = aContexts[8];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
 
 				oBinding.detachChange(handler2);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -924,7 +940,8 @@
 		});
 	});
 
-	asyncTest("Display root node - CountMode.Inline", function(){
+	QUnit.test("Display root node - CountMode.Inline", function(assert){
+		var done = assert.async();
 		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
 
 		oModel.attachMetadataLoaded(function() {
@@ -939,12 +956,12 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
 
 				oBinding.detachChange(handler1);
 
@@ -957,29 +974,29 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
-				equal(oBinding.getChildCount(oContext), 9, "TreeBinding childcount");
+				assert.equal(aContexts.length, 9, "TreeBinding nodeContexts length");
+				assert.equal(oBinding.getChildCount(oContext), 9, "TreeBinding childcount");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
 
 				oContext = aContexts[8];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
 
 				oBinding.detachChange(handler2);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -987,7 +1004,8 @@
 		});
 	});
 
-	asyncTest("Sequential expand over 3 levels", function(){
+	QUnit.test("Sequential expand over 3 levels", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
@@ -1003,13 +1021,13 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length");
 
 				//Level 0
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
 
 				//Level 0.0
 				oBinding.attachChange(handler2);
@@ -1021,13 +1039,13 @@
 
 				var aContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
+				assert.equal(aContexts.length, 9, "TreeBinding nodeContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
 
 				//Level 0.0.0
 				oBinding.attachChange(handler3);
@@ -1039,21 +1057,21 @@
 
 				var aSubContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aSubContexts.length, 7, "TreeBinding nodeContexts length");
+				assert.equal(aSubContexts.length, 7, "TreeBinding nodeContexts length");
 
 				oContext = aSubContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000003", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1010000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000003", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1010000", "TreeBinding node content");
 
 				oContext = aSubContexts[6];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000360", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1070000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000360", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1070000", "TreeBinding node content");
 
-				start();
+				done();
 			};
 
 			oBinding.attachChange(handler1);
@@ -1061,7 +1079,8 @@
 		});
 	});
 
-	asyncTest("Paging - CountMode.Request", function() {
+	QUnit.test("Paging - CountMode.Request", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			var iHandleCounter = 0;
@@ -1073,33 +1092,33 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts(1, 4);
 
-				equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
 				//Wait for fix of Mock Server
-				//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+				//assert.equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
 
 				oContext = aContexts[3];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
 
 				oBinding.detachChange(handler1);
 
@@ -1112,30 +1131,30 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getNodeContexts(oContext, 2, 3);
 
-				equal(aContexts.length, 3, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 3, "TreeBinding rootContexts length");
 				//Wait for fix of Mock Server
-				//equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
+				//assert.equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000413", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2030000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000413", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2030000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000447", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2040000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000447", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2040000", "TreeBinding node content");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000680", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000680", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
 
 				oBinding.detachChange(handler2);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -1143,7 +1162,8 @@
 		});
 	});
 
-	asyncTest("Paging - CountMode.Inline", function() {
+	QUnit.test("Paging - CountMode.Inline", function(assert) {
+		var done = assert.async();
 		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
 
 		oModel.attachMetadataLoaded(function() {
@@ -1157,33 +1177,33 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts(1, 4);
 
-				equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
 				//Wait for fix of Mock Server
-				//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+				//assert.equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
 
 				oContext = aContexts[3];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
 
 				oBinding.detachChange(handler1);
 
@@ -1196,30 +1216,30 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getNodeContexts(oContext, 2, 3);
 
-				equal(aContexts.length, 3, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 3, "TreeBinding rootContexts length");
 				//Wait for fix of Mock Server
-				//equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
+				//assert.equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000413", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2030000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000413", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2030000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000447", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2040000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000447", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2040000", "TreeBinding node content");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000680", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000680", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
 
 				oBinding.detachChange(handler2);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -1227,7 +1247,8 @@
 		});
 	});
 
-	asyncTest("Sorting: Initial Sorter", function() {
+	QUnit.test("Sorting: Initial Sorter", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 2
@@ -1240,11 +1261,11 @@
 				var aRootContexts = oBinding.getRootContexts();
 
 				//check if the root contexts are sorted correctly
-				ok(true, "Sorted descending test:");
-				equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
-				equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
-				equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
-				equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
+				assert.ok(true, "Sorted descending test:");
+				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
+				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
+				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
 
 				//loading the children of a node
 				oBinding.attachChange(handler2);
@@ -1257,12 +1278,12 @@
 				var aRootContexts = oBinding.getRootContexts();
 				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
 
-				ok(true, "Check if sorting is still applied after expanding a node:");
-				equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
-				equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
-				equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
+				assert.ok(true, "Check if sorting is still applied after expanding a node:");
+				assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
+				assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
+				assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
 
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -1272,7 +1293,8 @@
 	});
 
 
-	asyncTest("Sorting: sort() call on binding", function() {
+	QUnit.test("Sorting: sort() call on binding", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 2
@@ -1290,11 +1312,11 @@
 				var aRootContexts = oBinding.getRootContexts();
 
 				//check if the root contexts are sorted correctly
-				ok(true, "Sorted descending test:");
-				equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
-				equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
-				equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
-				equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
+				assert.ok(true, "Sorted descending test:");
+				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
+				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
+				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
 
 				//loading the children of a node
 				oBinding.attachChange(handler2);
@@ -1307,12 +1329,12 @@
 				var aRootContexts = oBinding.getRootContexts();
 				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
 
-				ok(true, "Check if sorting is still applied after expanding a node:");
-				equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
-				equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
-				equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
+				assert.ok(true, "Check if sorting is still applied after expanding a node:");
+				assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
+				assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
+				assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
 
-				start();
+				done();
 			}
 
 			//call sort() and attach refresh handler
@@ -1325,7 +1347,8 @@
 	/**
 	 * Test to see if application filters are added to the initial request
 	 */
-	asyncTest("filter() API - OperationMode.Server - Application Filter - initial", function() {
+	QUnit.test("filter() API - OperationMode.Server - Application Filter - initial", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1339,24 +1362,24 @@
 				oBinding.detachChange(handler1);
 				var oContext;
 
-				equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
+				assert.equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
 
 				// contexts should be now loaded and filtered
 				var aContexts = oBinding.getRootContexts(0, 10);
 
-				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
-				start();
+				done();
 			};
 
 			// should not break, even though no data is there
@@ -1370,7 +1393,8 @@
 	/**
 	 * Test to see if application filters are added to the initial request
 	 */
-	asyncTest("filter() API - OperationMode.Server - Application Filter - afterwards", function() {
+	QUnit.test("filter() API - OperationMode.Server - Application Filter - afterwards", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1387,7 +1411,7 @@
 				oBinding.detachChange(handler1);
 				var oContext;
 
-				equal(oEvent.getParameter("reason"), "change", "Change even should have the reason 'filter', since filter() was called before data was available.");
+				assert.equal(oEvent.getParameter("reason"), "change", "Change even should have the reason 'filter', since filter() was called before data was available.");
 
 				// should not break, even though no data is there
 				oBinding.attachRefresh(handler2);
@@ -1400,7 +1424,7 @@
 			var handler2 = function (oEvent) {
 				oBinding.detachRefresh(handler2);
 
-				equal(oEvent.getParameter("reason"), "filter", "Refresh even should have the reason 'filter'.");
+				assert.equal(oEvent.getParameter("reason"), "filter", "Refresh even should have the reason 'filter'.");
 
 				oBinding.attachChange(handler3);
 				oBinding.getRootContexts(0, 10);
@@ -1412,24 +1436,24 @@
 			var handler3 = function (oEvent) {
 				oBinding.detachChange(handler3);
 
-				equal(oEvent.getParameter("reason"), "change", "Change even should have the reason 'change'.");
+				assert.equal(oEvent.getParameter("reason"), "change", "Change even should have the reason 'change'.");
 
 				// contexts should be now loaded and filtered
 				var aContexts = oBinding.getRootContexts(0, 10);
 
-				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
-				start();
+				done();
 			};
 
 			oBinding.attachChange(handler1);
@@ -1440,7 +1464,8 @@
 	/**
 	 * Test to see if the control filters are prohibited in OperationMode.Server
 	 */
-	asyncTest("filter() API - OperationMode.Server - Control Filter - afterwards", function() {
+	QUnit.test("filter() API - OperationMode.Server - Control Filter - afterwards", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1460,19 +1485,20 @@
 			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
 			oBinding.filter(aFilters, "Control");
 
-			equal(iWarningCount, 1, "Exactly one warning logged.");
-			equal(sMessage, "Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
+			assert.equal(iWarningCount, 1, "Exactly one warning logged.");
+			assert.equal(sMessage, "Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
 					"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.")
 
 			jQuery.sap.log.warning.restore();
-			start();
+			done();
 		});
 	});
 
 	/**
 	 * Test to check if the application filters are appended to the data request if the useServersideApplicationFilters flag is set to "true"
 	 */
-	asyncTest("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=true - initial", function() {
+	QUnit.test("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=true - initial", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1489,28 +1515,28 @@
 			var handler1 = function (oEvent) {
 				var oContext;
 
-				equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
+				assert.equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
 
 				// contexts should be now loaded and filtered.
 				// No valid hierarchy is available, since the MockServer does not respond with inner child nodes, so we only have 2 top level nodes.
 				// Yet the request was correct.
 				var aContexts = oBinding.getRootContexts(0, 10);
 
-				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				oBinding.detachChange(handler1);
 
-				start();
+				done();
 			};
 
 			// should not break, even though no data is there
@@ -1524,7 +1550,8 @@
 	/**
 	 * Test to check if the application filters are appended to the data request if the useServersideApplicationFilters flag is set to "true"
 	 */
-	asyncTest("filter() API - OperationMode.Client - Application & Control Filter - useServersideApplicationFilters=true - initial", function() {
+	QUnit.test("filter() API - OperationMode.Client - Application & Control Filter - useServersideApplicationFilters=true - initial", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1541,23 +1568,23 @@
 			var handler1 = function (oEvent) {
 				var oContext;
 
-				equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
+				assert.equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
 
 				// contexts should be now loaded and filtered.
 				// No valid hierarchy is available, since the MockServer does not respond with inner child nodes, so we only have 2 top level nodes.
 				// Yet the request was correct.
 				var aContexts = oBinding.getRootContexts(0, 10);
 
-				equal(aContexts.length, 1, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 1, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				oBinding.detachChange(handler1);
 
-				start();
+				done();
 			};
 
 			// should not break, even though no data is there
@@ -1574,7 +1601,8 @@
 	 * Test to see if the filters are not appended to the data request (default).
 	 * Filters should now be applied clientside.
 	 */
-	asyncTest("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=true - afterwards", function() {
+	QUnit.test("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=true - afterwards", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1593,12 +1621,12 @@
 				oBinding.detachChange(handler1);
 				var oContext;
 
-				equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
+				assert.equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
 
 				// Tree is NOT filtered
 				// Level: 0
 				var aContexts = oBinding.getRootContexts(0, 10);
-				equal(aContexts.length, 9, "TreeBinding returned rootContexts length 9 -> unfiltered tree");
+				assert.equal(aContexts.length, 9, "TreeBinding returned rootContexts length 9 -> unfiltered tree");
 
 				// now filter on the complete tree, clientside
 				var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
@@ -1614,7 +1642,7 @@
 			 */
 			var handler2 = function (oEvent) {
 				oBinding.detachRefresh(handler2);
-				equal(oEvent.getParameter("reason"), "filter", "Refresh event should have the reason 'filter'.");
+				assert.equal(oEvent.getParameter("reason"), "filter", "Refresh event should have the reason 'filter'.");
 
 				oBinding.attachChange(handler3);
 				oBinding.getRootContexts(0, 10);
@@ -1626,26 +1654,26 @@
 			var handler3 = function (oEvent) {
 				oBinding.detachChange(handler3);
 
-				equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
+				assert.equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
 
 				// contexts should be now loaded and filtered.
 				// No valid hierarchy is available, since the MockServer does not respond with inner child nodes, so we only have 2 top level nodes.
 				// Yet the request was correct.
 				var aContexts = oBinding.getRootContexts(0, 10);
 
-				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
-				start();
+				done();
 			};
 
 			oBinding.attachChange(handler1);
@@ -1657,7 +1685,8 @@
 	 * Test to see if the initial filters are not appended to the data request (default).
 	 * Filters should now be applied clientside.
 	 */
-	asyncTest("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=false (default) - Initial", function() {
+	QUnit.test("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=false (default) - Initial", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1674,32 +1703,32 @@
 			var handler1 = function (oEvent) {
 				var oContext;
 
-				equal(oEvent.getParameter("reason"), "filter", "Change event should have the reason 'filter', since filter() was called before data was available.");
+				assert.equal(oEvent.getParameter("reason"), "filter", "Change event should have the reason 'filter', since filter() was called before data was available.");
 
 				// Tree is correctly filtered, since it's done on the client, and the inner child nodes are collected for the filtered tree
 				// Level: 0
 				var aContexts = oBinding.getRootContexts(0, 10);
-				equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				//Level: 1
 				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
 
-				equal(aContexts.length, 5, "Correct child count on level 1");
-				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
-				equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
+				assert.equal(aContexts.length, 5, "Correct child count on level 1");
+				assert.notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				assert.equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
 
 				//Level: 2
 				aContexts = oBinding.getNodeContexts(aContexts[3], 0, 20);
-				equal(aContexts.length, 1, "Inner node has exactly 1 child");
+				assert.equal(aContexts.length, 1, "Inner node has exactly 1 child");
 
 				oBinding.detachChange(handler1);
 
-				start();
+				done();
 			};
 
 			// should not break, even though no data is there
@@ -1714,7 +1743,8 @@
 	 * Test to see if the initial filters are not appended to the data request (default).
 	 * Filters should now be applied clientside.
 	 */
-	asyncTest("filter() API - OperationMode.Client - Application & Control Filter - useServersideApplicationFilters=false (default) - Initial", function() {
+	QUnit.test("filter() API - OperationMode.Client - Application & Control Filter - useServersideApplicationFilters=false (default) - Initial", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1731,32 +1761,32 @@
 			var handler1 = function (oEvent) {
 				var oContext;
 
-				equal(oEvent.getParameter("reason"), "filter", "Change event should have the reason 'filter', since filter() was called before data was available.");
+				assert.equal(oEvent.getParameter("reason"), "filter", "Change event should have the reason 'filter', since filter() was called before data was available.");
 
 				// Tree is correctly filtered, since it's done on the client, and the inner child nodes are collected for the filtered tree
 				// Level: 0
 				var aContexts = oBinding.getRootContexts(0, 10);
-				equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				//Level: 1
 				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
 
-				equal(aContexts.length, 5, "Correct child count on level 1");
-				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
-				equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
+				assert.equal(aContexts.length, 5, "Correct child count on level 1");
+				assert.notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				assert.equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
 
 				//Level: 2
 				aContexts = oBinding.getNodeContexts(aContexts[3], 0, 20);
-				equal(aContexts.length, 4, "Inner node has exactly 1 child");
+				assert.equal(aContexts.length, 4, "Inner node has exactly 1 child");
 
 				oBinding.detachChange(handler1);
 
-				start();
+				done();
 			};
 
 			// should not break, even though no data is there
@@ -1773,7 +1803,8 @@
 	 * Test to see if the filters are not appended to the data request (default).
 	 * Filters should now be applied clientside.
 	 */
-	asyncTest("filter() API - OperationMode.Client - Control Filter - useServersideApplicationFilters=false (default) - afterwards", function() {
+	QUnit.test("filter() API - OperationMode.Client - Control Filter - useServersideApplicationFilters=false (default) - afterwards", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1792,12 +1823,12 @@
 				oBinding.detachChange(handler1);
 				var oContext;
 
-				equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
+				assert.equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
 
 				// Tree is NOT filtered
 				// Level: 0
 				var aContexts = oBinding.getRootContexts(0, 10);
-				equal(aContexts.length, 9, "TreeBinding returned rootContexts length 9 -> unfiltered tree");
+				assert.equal(aContexts.length, 9, "TreeBinding returned rootContexts length 9 -> unfiltered tree");
 
 				// now filter on the complete tree, clientside
 				oBinding.attachChange(handler2);
@@ -1817,25 +1848,25 @@
 				// Tree is correctly filtered, since it's done on the client, and the inner child nodes are collected for the filtered tree
 				// Level: 0
 				var aContexts = oBinding.getRootContexts(0, 10);
-				equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
-				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
 
 				//Level: 1
 				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
 
-				equal(aContexts.length, 5, "Correct child count on level 1");
-				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
-				equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
+				assert.equal(aContexts.length, 5, "Correct child count on level 1");
+				assert.notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				assert.equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
 
 				//Level: 2
 				aContexts = oBinding.getNodeContexts(aContexts[3], 0, 20);
-				equal(aContexts.length, 1, "Inner node has exactly 1 child");
+				assert.equal(aContexts.length, 1, "Inner node has exactly 1 child");
 
-				start();
+				done();
 			};
 
 			oBinding.attachChange(handler1);
@@ -1843,7 +1874,8 @@
 		});
 	});
 
-	asyncTest("Tried filtering - incomplete Annotations/Navigation Property Definitions", function() {
+	QUnit.test("Tried filtering - incomplete Annotations/Navigation Property Definitions", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			//stub error
 			var iErrorCount = 0;
@@ -1870,16 +1902,17 @@
 			//should log warning
 			oBinding.filter(new sap.ui.model.Filter("ParentNode", "EQ", "000000"));
 
-			equal(iErrorCount, 1, "One error logged, if no navigation path properties are given, and hierarchy annotations are missing/incomplete.");
-			equal(iWarningCount, 2, "One warning (that filtering is not enabled) and One for the incomplete annotations.");
+			assert.equal(iErrorCount, 1, "One error logged, if no navigation path properties are given, and hierarchy annotations are missing/incomplete.");
+			assert.equal(iWarningCount, 2, "One warning (that filtering is not enabled) and One for the incomplete annotations.");
 
 			jQuery.sap.log.warning.restore();
 			jQuery.sap.log.error.restore();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("getDownload URL ", function() {
+	QUnit.test("getDownload URL ", function(assert) {
+		var done = assert.async();
 		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
@@ -1894,16 +1927,17 @@
 			var handler1 = function(oEvent) {
 				oBinding.detachChange(handler1);
 
-				equal(oBinding.getDownloadUrl(), "/metadata/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "check download URL");
-				equal(oBinding.getDownloadUrl("json"), "/metadata/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result?$format=json", "check download URL JSON");
-				start();
+				assert.equal(oBinding.getDownloadUrl(), "/metadata/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "check download URL");
+				assert.equal(oBinding.getDownloadUrl("json"), "/metadata/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result?$format=json", "check download URL JSON");
+				done();
 			};
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts();
 		});
 	});
 
-	asyncTest("OperationMode.Client: initial load + expanding nodes", function(){
+	QUnit.test("OperationMode.Client: initial load + expanding nodes", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
@@ -1920,40 +1954,41 @@
 
 			function fnChangeHandler() {
 				var aContexts = oBinding.getRootContexts();
-				equal(aContexts.length, 1, "rootContexts length is correct = 1");
+				assert.equal(aContexts.length, 1, "rootContexts length is correct = 1");
 
 				//Level 0
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "1st node sits on the correct level = '01'");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st node has correct ID");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "1st node sits on the correct level = '01'");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st node has correct ID");
 
 				//Level 0.0
 				aContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aContexts.length, 9, "nodeContexts length is correct = 9");
+				assert.equal(aContexts.length, 9, "nodeContexts length is correct = 9");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "Node context for root children could be loaded instantly");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "Retrieved node is correct = 000002");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "Node context for root children could be loaded instantly");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "Retrieved node is correct = 000002");
 
 				//Level 0.0.0
 				var aSubContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aSubContexts.length, 7, "nodeContexts length is correct = 7");
+				assert.equal(aSubContexts.length, 7, "nodeContexts length is correct = 7");
 
 				oContext = aSubContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "3rd level expanded node is on the correct level");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000003", "3rd level expanded node is correct");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "3rd level expanded node is on the correct level");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000003", "3rd level expanded node is correct");
 
 				oContext = aSubContexts[6];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "last 3rd level node is also loaded, nothing missing");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "last 3rd level node is also loaded, nothing missing");
 
-				start();
+				done();
 			}
 		});
 	});
 
-	asyncTest("OperationMode.Client: initial load + sorter", function(){
+	QUnit.test("OperationMode.Client: initial load + sorter", function(assert){
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
@@ -1972,27 +2007,28 @@
 				var aRootContexts = oBinding.getRootContexts();
 
 				//check if the root contexts are sorted correctly
-				ok(true, "Sorted descending test:");
-				equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
-				equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
-				equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
-				equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
+				assert.ok(true, "Sorted descending test:");
+				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
+				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
+				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
 
 				//loading the children of a node
 				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
 
-				ok(true, "Check if sorting is still applied after expanding a node:");
-				equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
-				equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
-				equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
+				assert.ok(true, "Check if sorting is still applied after expanding a node:");
+				assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
+				assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
+				assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
 
-				start();
+				done();
 			}
 
 		});
 	});
 
-	asyncTest("OperationMode.Auto: Backend has fewer entries than the threshold.", function () {
+	QUnit.test("OperationMode.Auto: Backend has fewer entries than the threshold.", function (assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
@@ -2010,7 +2046,7 @@
 			// change for the count request
 			function fnChangeHandler(oEvent) {
 				oBinding.detachChange(fnChangeHandler);
-				equal(oBinding.bClientOperation, true, "Binding switched to clientside operations");
+				assert.equal(oBinding.bClientOperation, true, "Binding switched to clientside operations");
 
 				//get the actual data
 				oBinding.attachChange(fnChangeHandler2);
@@ -2023,30 +2059,30 @@
 				var aRootContexts = oBinding.getRootContexts();
 
 				//check if the root contexts are sorted correctly
-				ok(true, "Sorted descending test:");
-				equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
-				equal(aRootContexts[0].getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
-				equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
-				equal(aRootContexts[8].getProperty("HierarchyNode"), "001180", "Last Root Node is 001180");
+				assert.ok(true, "Sorted descending test:");
+				assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
+				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
+				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "001180", "Last Root Node is 001180");
 
 				//loading the children of a node
 				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
 
-				ok(true, "Check if sorting is still applied after expanding a node:");
-				equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
-				equal(aChildContexts[0].getProperty("HierarchyNode"), "001132", "aChildContexts[0] of expanded node is also sorted: 001134");
-				equal(aChildContexts[1].getProperty("HierarchyNode"), "001134", "aChildContexts[1] of expanded node is also sorted: 001132");
+				assert.ok(true, "Check if sorting is still applied after expanding a node:");
+				assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
+				assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001132", "aChildContexts[0] of expanded node is also sorted: 001134");
+				assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001134", "aChildContexts[1] of expanded node is also sorted: 001132");
 
 				//apply clientside sorter -> NO request anymore
-				ok(true, "Sorting on the client");
+				assert.ok(true, "Sorting on the client");
 				oBinding.sort([new sap.ui.model.Sorter("HierarchyNode", true)]);
 				aRootContexts = oBinding.getRootContexts();
-				equal(aRootContexts.length, 9, "Still exactly 9 contexts after sorting - No Request sent");
-				equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
-				equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
-				equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
+				assert.equal(aRootContexts.length, 9, "Still exactly 9 contexts after sorting - No Request sent");
+				assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
+				assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
+				assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
 
-				start();
+				done();
 			}
 
 			//[new sap.ui.model.Sorter("HierarchyNode", true)]
@@ -2066,7 +2102,8 @@
 		}
 	});
 
-	asyncTest("Paging", function() {
+	QUnit.test("Paging", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			var iHandleCounter = 0;
@@ -2078,33 +2115,33 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts(1, 4);
 
-				equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
 				//Wait for fix of Mock Server
-				//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+				//assert.equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
 
 				oContext = aContexts[3];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
 
 				oBinding.detachChange(handler1);
 
@@ -2117,30 +2154,30 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getNodeContexts(oContext, 2, 3);
 
-				equal(aContexts.length, 3, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 3, "TreeBinding rootContexts length");
 				//Wait for fix of Mock Server
-				//equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
+				//assert.equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000413", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2030000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000413", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2030000", "TreeBinding node content");
 
 				oContext = aContexts[1];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000447", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2040000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000447", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2040000", "TreeBinding node content");
 
 				oContext = aContexts[2];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000680", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000680", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
 
 				oBinding.detachChange(handler2);
-				start();
+				done();
 			}
 
 			oBinding.attachChange(handler1);
@@ -2148,7 +2185,8 @@
 		});
 	});
 
-	asyncTest("Data Received Parameters", function() {
+	QUnit.test("Data Received Parameters", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			var iHandleCounter = 0;
@@ -2160,7 +2198,7 @@
 				oBinding.detachDataReceived(handler1);
 
 				var oData = oEvent.getParameter("data");
-				equals(oData.results.length, 4, "Data is set as an event-parameter of dataReceive event (getRootContexts)");
+				assert.equal(oData.results.length, 4, "Data is set as an event-parameter of dataReceive event (getRootContexts)");
 
 				oBinding.attachDataReceived(handler2);
 
@@ -2172,9 +2210,9 @@
 				oBinding.detachDataReceived(handler2);
 
 				var oData = oEvent.getParameter("data");
-				equals(oData.results.length, 3, "Data is set as an event-parameter of dataReceive event (getNodeContexts)");
+				assert.equal(oData.results.length, 3, "Data is set as an event-parameter of dataReceive event (getNodeContexts)");
 
-				start();
+				done();
 			}
 
 			oBinding.attachDataReceived(handler1);
@@ -2193,7 +2231,8 @@
 		}
 	});
 
-	asyncTest("Relative Binding", function() {
+	QUnit.test("Relative Binding", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("Result", null, null, {
 				displayRootNode: true,
@@ -2215,13 +2254,13 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length");
 
 				//Level 0
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
 
 				//Level 0.0
 				oBinding.attachChange(handler2);
@@ -2233,13 +2272,13 @@
 
 				var aContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
+				assert.equal(aContexts.length, 9, "TreeBinding nodeContexts length");
 
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
 
 				//Level 0.0.0
 				oBinding.attachChange(handler3);
@@ -2251,30 +2290,30 @@
 
 				var aSubContexts = oBinding.getNodeContexts(oContext);
 
-				equal(aSubContexts.length, 7, "TreeBinding nodeContexts length");
+				assert.equal(aSubContexts.length, 7, "TreeBinding nodeContexts length");
 
 				oContext = aSubContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000003", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1010000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000003", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1010000", "TreeBinding node content");
 
 				oContext = aSubContexts[6];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000360", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1070000", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000360", "TreeBinding node content");
+				assert.equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "1070000", "TreeBinding node content");
 
-				start();
+				done();
 			};
 
 			// binding is relative?
-			ok(oBinding.isRelative(), "Binding is relative");
+			assert.ok(oBinding.isRelative(), "Binding is relative");
 
 			// initial check without a context set
 			oBinding.attachChange(handler0);
 			var aRootContexts = oBinding.getRootContexts();
-			deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
+			assert.deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
 
 			// set context for the binding to make it absolute
 			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
@@ -2285,7 +2324,8 @@
 		});
 	});
 
-	asyncTest("Relative Binding - setContext(undefined)", function() {
+	QUnit.test("Relative Binding - setContext(undefined)", function(assert) {
+		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("Result", null, null, {
 				displayRootNode: true,
@@ -2309,27 +2349,27 @@
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
 
-				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length");
 
 				// Simple checks
 				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
 
 				// Explicit check if setting the context to undefined breaks the binding
 				oBinding.setContext(undefined);
 
-				start();
+				done();
 			};
 
 			// binding is relative?
-			ok(oBinding.isRelative(), "Binding is relative");
+			assert.ok(oBinding.isRelative(), "Binding is relative");
 
 			// initial check without a context set
 			oBinding.attachChange(handler0);
 			var aRootContexts = oBinding.getRootContexts();
-			deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
+			assert.deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
 
 			// set context for the binding to make it absolute
 			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";

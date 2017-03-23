@@ -63,7 +63,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			strictEqual(oSF.getSuggestionItems().length, aItems.length, "The number of suggestion items is correct");
+			assert.strictEqual(oSF.getSuggestionItems().length, aItems.length, "The number of suggestion items is correct");
 
 			// cleanup
 			//oSF.destroy();
@@ -73,7 +73,7 @@
 
 		// test properties
 		QUnit.test("Properties", function(assert) {
-			equal(oSF.getWidth(), '100%', "Default value of the property Width is 100%s");
+			assert.equal(oSF.getWidth(), '100%', "Default value of the property Width is 100%s");
 
 		});
 
@@ -83,12 +83,12 @@
 			this.clock.tick(1000);
 
 			// assert
-			strictEqual(oSF._oSuggest.isOpen(), true, "The suggestion popup opens");
-			ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
+			assert.strictEqual(oSF._oSuggest.isOpen(), true, "The suggestion popup opens");
+			assert.ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
 
 			var popupId = jQuery(".sapMSuL:visible").parents(".sapMPopup-CTX").attr("id");
 			var popup = sap.ui.getCore().byId(popupId);
-			ok(!!popup, "popup exists");
+			assert.ok(!!popup, "popup exists");
 
 			if (!popup) {
 				return;
@@ -101,13 +101,13 @@
 			this.clock.tick(1000);
 
 			if (sap.ui.Device.system.phone) {
-				ok(popup.isOpen(), "Suggest(false) does not close the popup on phones");
+				assert.ok(popup.isOpen(), "Suggest(false) does not close the popup on phones");
 				popup.close();
 				this.clock.tick(1000);
 			}
 
-			ok(!jQuery(".sapMSuL").parents(".sapMPopup-CTX:visible").length, "The suggestions list is not visible after close");
-			ok(fnPopupSpy && fnPopupSpy.callCount, "Popup close was called");
+			assert.ok(!jQuery(".sapMSuL").parents(".sapMPopup-CTX:visible").length, "The suggestions list is not visible after close");
+			assert.ok(fnPopupSpy && fnPopupSpy.callCount, "Popup close was called");
 		});
 
 		QUnit.module("Aggregations");
@@ -124,13 +124,13 @@
 			var count = oSF.getSuggestionItems().length;
 			oSF.addSuggestionItem(item);
 			this.clock.tick(1000);
-			strictEqual(oSF.getSuggestionItems().length, count + 1, "A new suggestion item has been added");
-			strictEqual(fnUpdateSpy.callCount, 1, "Suggest update() called only once");
+			assert.strictEqual(oSF.getSuggestionItems().length, count + 1, "A new suggestion item has been added");
+			assert.strictEqual(fnUpdateSpy.callCount, 1, "Suggest update() called only once");
 
 			oSF.removeSuggestionItem(item);
 			this.clock.tick(1000);
-			strictEqual(oSF.getSuggestionItems().length, count, "The suggestion item has been deleted");
-			strictEqual(fnUpdateSpy.callCount, 2, "Suggest update() called two times");
+			assert.strictEqual(oSF.getSuggestionItems().length, count, "The suggestion item has been deleted");
+			assert.strictEqual(fnUpdateSpy.callCount, 2, "Suggest update() called two times");
 
 			oSF.suggest(false);
 			this.clock.tick(1000);
@@ -145,23 +145,23 @@
 			this.clock.tick(1000);
 
 			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-			strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected");
-			strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
+			assert.strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected");
+			assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
 
 			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-			strictEqual(oSF._oSuggest.getSelected(), 1, "The second item is selected");
-			strictEqual(oSF.getValue(), oSF.getSuggestionItems()[1].getSuggestionText(), "Suggestion text value is set to the search field");
+			assert.strictEqual(oSF._oSuggest.getSelected(), 1, "The second item is selected");
+			assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[1].getSuggestionText(), "Suggestion text value is set to the search field");
 
 			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-			strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected again");
-			strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
+			assert.strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected again");
+			assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
 		});
 
 		QUnit.test("Enter closes suggestions", function(assert){
 			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
 			sap.ui.test.qunit.triggerKeyup(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
 			this.clock.tick(1000);
-			ok(!oSF._oSuggest.isOpen(), "Picker is closed after ENTER");
+			assert.ok(!oSF._oSuggest.isOpen(), "Picker is closed after ENTER");
 		});
 
 		QUnit.test("Escape closes suggestions", function(assert) {
@@ -177,8 +177,8 @@
 
 			this.clock.tick(1000);
 
-			ok(!oSF._oSuggest.isOpen(), "Picker is closed after ESCAPE");
-			strictEqual(oSF.getValue(), "ABCD", "Escape closes suggestions and keeps the value");
+			assert.ok(!oSF._oSuggest.isOpen(), "Picker is closed after ESCAPE");
+			assert.strictEqual(oSF.getValue(), "ABCD", "Escape closes suggestions and keeps the value");
 		});
 
 		QUnit.test("applyFocusInfo test", function (assert) {
@@ -194,7 +194,7 @@
 			oSF.applyFocusInfo(oFocusInfo);
 
 			// assertion
-			strictEqual($SF.cursorPos(), oFocusInfo.cursorPos, "Cursor position is set to the correct position after apply focus.");
+			assert.strictEqual($SF.cursorPos(), oFocusInfo.cursorPos, "Cursor position is set to the correct position after apply focus.");
 
 		});
 
@@ -208,14 +208,14 @@
 
 			this.clock.tick(1000);
 
-			strictEqual(oSF.getValue(), toValue, "Escape closes suggestions and keeps the value");
-			strictEqual(fnFireSearch.callCount, 1, "Clear method fires fireSearch event");
-			strictEqual(fnSpyFireLiveChange.callCount, 1, "Clear method fires fireLiveChange event");
+			assert.strictEqual(oSF.getValue(), toValue, "Escape closes suggestions and keeps the value");
+			assert.strictEqual(fnFireSearch.callCount, 1, "Clear method fires fireSearch event");
+			assert.strictEqual(fnSpyFireLiveChange.callCount, 1, "Clear method fires fireLiveChange event");
 
 			//call again with the same value - should be ignored
 			oSF.clear({value: toValue});
 
-			strictEqual(fnFireSearch.callCount, 1, "Clear method is not fired again as the value is the same");
+			assert.strictEqual(fnFireSearch.callCount, 1, "Clear method is not fired again as the value is the same");
 
 
 			fnSpyFireLiveChange.restore();
@@ -226,7 +226,7 @@
 			oSF.onBlur();
 			this.clock.tick(1000);
 
-			strictEqual(oSF.$().hasClass( "sapMFocus"), false, "Blur event processing restores the previous background color");
+			assert.strictEqual(oSF.$().hasClass( "sapMFocus"), false, "Blur event processing restores the previous background color");
 		});
 
 		QUnit.test("onInput test - when change or paste in the input", function(assert) {
@@ -242,8 +242,8 @@
 
 
 			// assertion
-			strictEqual(fnSpyFireLiveChange.callCount, 1, "LiveChange event is fired");
-			strictEqual(fnFireSuggest.callCount, 1, "FireSuggest event is fired");
+			assert.strictEqual(fnSpyFireLiveChange.callCount, 1, "LiveChange event is fired");
+			assert.strictEqual(fnFireSuggest.callCount, 1, "FireSuggest event is fired");
 
 			fnSpyFireLiveChange.restore();
 			fnFireSuggest.restore();
@@ -266,8 +266,8 @@
 
 
 			// assertion
-			strictEqual(fnFireSearch.callCount, 1, "FireSearch event is fired");
-			strictEqual(oSF.getValue(), toValue, "Search event sets the control value");
+			assert.strictEqual(fnFireSearch.callCount, 1, "FireSearch event is fired");
+			assert.strictEqual(oSF.getValue(), toValue, "Search event sets the control value");
 
 			fnFireSearch.restore();
 			this.stub(sap.ui.Device, "system", {
@@ -287,13 +287,13 @@
 			this.clock.tick(1000);
 
 			// check highlights
-			strictEqual(jQuery("b")[0] && jQuery("b")[0].innerHTML, oSF.getValue(), "Search value is highlighted in suggestions");
+			assert.strictEqual(jQuery("b")[0] && jQuery("b")[0].innerHTML, oSF.getValue(), "Search value is highlighted in suggestions");
 
 			oSF.setValue("002");
 			oSF._oSuggest.update();
 			this.clock.tick(1000);
 
-			strictEqual(jQuery("b")[0] && jQuery("b")[0].innerHTML, oSF.getValue(), "Changed search value is highlighted in suggestions");
+			assert.strictEqual(jQuery("b")[0] && jQuery("b")[0].innerHTML, oSF.getValue(), "Changed search value is highlighted in suggestions");
 
 			// close
 			oSF.suggest(false);
@@ -304,7 +304,7 @@
 		QUnit.test("cleanup", function(assert){
 			oSF.destroy();
 			this.clock.tick(1000);
-			ok(!oSF.getDomRef(), "The search field is removed");
+			assert.ok(!oSF.getDomRef(), "The search field is removed");
 		});
 
 	</script>

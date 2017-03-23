@@ -46,110 +46,113 @@
 		QUnit.module("API");
 
 		QUnit.test("Default Values", function(assert) {
-			equals(oExact1.getResultText(), "", "Default 'resultText':");
-			equals(oExact2.getSettingsMenu(), null, "Default 'settingsMenu':");
-			equals(oExact2.getTooltip(), null, "Default 'tooltip':");
-			equals(oExact1.getResultArea().getId(), oResultArea.getId(), "Default 'resultArea':");
+			assert.equal(oExact1.getResultText(), "", "Default 'resultText':");
+			assert.equal(oExact2.getSettingsMenu(), null, "Default 'settingsMenu':");
+			assert.equal(oExact2.getTooltip(), null, "Default 'tooltip':");
+			assert.equal(oExact1.getResultArea().getId(), oResultArea.getId(), "Default 'resultArea':");
 		 });
 
 		QUnit.test("Custom Values", function(assert) {
-			equals(oExact2.getResultText(), "Some result text", "Custom 'resultText':");
-			equals(oExact1.getSettingsMenu().getId(), "menu", "Custom 'settingsMenu':");
-			equals(oExact1.getTooltip(), "Some text", "Custom 'tooltip':");
+			assert.equal(oExact2.getResultText(), "Some result text", "Custom 'resultText':");
+			assert.equal(oExact1.getSettingsMenu().getId(), "menu", "Custom 'settingsMenu':");
+			assert.equal(oExact1.getTooltip(), "Some text", "Custom 'tooltip':");
 		});
 
 		QUnit.test("Aggregation 'attributes'", function(assert) {
-			equals(oExact2.getAttributes().length, 0, "Initial number of attributes");
+			assert.equal(oExact2.getAttributes().length, 0, "Initial number of attributes");
 			oExact2.addAttribute(new sap.ui.ux3.ExactAttribute("aggtest1"));
-			equals(oExact2.getAttributes().length, 1, "Number of attributes after add");
+			assert.equal(oExact2.getAttributes().length, 1, "Number of attributes after add");
 			oExact2.insertAttribute(new sap.ui.ux3.ExactAttribute("aggtest2"), 0);
-			equals(oExact2.getAttributes().length, 2, "Number of attributes after insert");
-			equals(oExact2.getAttributes()[0].getId(), "aggtest2", "First Attribute");
-			equals(oExact2.getAttributes()[1].getId(), "aggtest1", "Second Attribute");
+			assert.equal(oExact2.getAttributes().length, 2, "Number of attributes after insert");
+			assert.equal(oExact2.getAttributes()[0].getId(), "aggtest2", "First Attribute");
+			assert.equal(oExact2.getAttributes()[1].getId(), "aggtest1", "Second Attribute");
 			oExact2.removeAttribute(0);
-			equals(oExact2.getAttributes().length, 1, "Number of attributes after remove");
-			equals(oExact2.getAttributes()[0].getId(), "aggtest1", "First Attribute");
+			assert.equal(oExact2.getAttributes().length, 1, "Number of attributes after remove");
+			assert.equal(oExact2.getAttributes()[0].getId(), "aggtest1", "First Attribute");
 			oExact2.removeAllAttributes();
-			equals(oExact2.getAttributes().length, 0, "Number of attributes after removeAll");
+			assert.equal(oExact2.getAttributes().length, 0, "Number of attributes after removeAll");
 		});
 
 
 		QUnit.module("Interaction Flow");
 
 		QUnit.test("Initial State", function(assert) {
-			equals(oSearchTextField.getValue(), "", "Initial text State of Search TextField:");
-			ok(oSearchTextField.getDomRef(), "Initial visibility State of Search TextField:");
-			ok(!oBrowser.getDomRef(), undefined, "Initial visibility State of Browse Area:");
-			ok(!oResultText.getDomRef(), undefined, "Initial visibility State of Result Text:");
-			ok(!oResultArea.getDomRef(), undefined, "Initial visibility State of Result Area:");
+			assert.equal(oSearchTextField.getValue(), "", "Initial text State of Search TextField:");
+			assert.ok(oSearchTextField.getDomRef(), "Initial visibility State of Search TextField:");
+			assert.ok(!oBrowser.getDomRef(), undefined, "Initial visibility State of Browse Area:");
+			assert.ok(!oResultText.getDomRef(), undefined, "Initial visibility State of Result Text:");
+			assert.ok(!oResultArea.getDomRef(), undefined, "Initial visibility State of Result Area:");
 		});
 
-		asyncTest("Trigger Search", function() {
+		QUnit.test("Trigger Search", function(assert) {
+			var done = assert.async();
 			oSearchTextField.setValue("Some search query");
 			var handler = function(oControlEvent){
-				start();
-				equals(oControlEvent.getParameter("query"), "Some search query", "Value of query parameter of search event:");
+				assert.equal(oControlEvent.getParameter("query"), "Some search query", "Value of query parameter of search event:");
 				oExact1.detachSearch(handler);
-
 				//Fill the Exact control with some attributes
 				oExact1.setResultText("Some result text");
+
 				exactTestData.initAttributesForQUnit(oExact1);
+				done();
 			};
 			oExact1.attachSearch(handler);
 			oSearchTextField.getDomRef().focus();
 			qutils.triggerKeyboardEvent(oSearchTextField.getFocusDomRef(), "ENTER");
 		});
 
-		asyncTest("State after Search", function() {
+		QUnit.test("State after Search", function(assert) {
+			var done = assert.async();
 			setTimeout(function(){
-				start();
-				equals(oSearchTextField.getValue(), "Some search query", "Text State of Search TextField:");
-				ok(oSearchTextField.getDomRef(), "Visibility State of Search TextField:");
-				ok(oBrowser.getDomRef(), "Visibility State of Browse Area:");
-				ok(oResultText.getDomRef(), "Visibility State of Result Text:");
-				ok(oResultArea.getDomRef(), "Visibility State of Result Area:");
+				assert.equal(oSearchTextField.getValue(), "Some search query", "Text State of Search TextField:");
+				assert.ok(oSearchTextField.getDomRef(), "Visibility State of Search TextField:");
+				assert.ok(oBrowser.getDomRef(), "Visibility State of Browse Area:");
+				assert.ok(oResultText.getDomRef(), "Visibility State of Result Text:");
+				assert.ok(oResultArea.getDomRef(), "Visibility State of Result Area:");
+				assert.equal(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
 
-				equals(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
 				var aSubLists = oBrowser._rootList.getSubLists();
-				equals(aSubLists.length, 2, "Number of visible 1st level lists:");
-				equals(aSubLists[0].getData(), "att1", "List at position 0:");
-				equals(aSubLists[1].getData(), "att2", "List at position 1:");
+				assert.equal(aSubLists.length, 2, "Number of visible 1st level lists:");
+				assert.equal(aSubLists[0].getData(), "att1", "List at position 0:");
+				assert.equal(aSubLists[1].getData(), "att2", "List at position 1:");
 				for(var i=0; i<aSubLists.length; i++){
 					var aSubSubLists = aSubLists[i].getSubLists();
 					if(i==0){
-						ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
-						equals(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
+						assert.ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
+						assert.equal(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
 					}else{
-						ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
+						assert.ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
 					}
 				}
+				done();
 			}, 1000);
 		});
 
-		asyncTest("Check Refine Search", function() {
+		QUnit.test("Check Refine Search", function(assert) {
+			var done = assert.async();
 			var handler = function(oControlEvent){
-				equals(oControlEvent.getParameter("query"), "Some search query", "Value of query parameter of search refine event:");
-				equals(oControlEvent.getParameter("changedAttribute").getId(), "att3", "Id of selected attribute:");
-				equals(oControlEvent.getParameter("changedAttribute").getSelected(), true, "Selection state of selected attribute:");
-				equals(oControlEvent.getParameter("allSelectedAttributes").length, 4, "Number of selected attributes:");
+				assert.equal(oControlEvent.getParameter("query"), "Some search query", "Value of query parameter of search refine event:");
+				assert.equal(oControlEvent.getParameter("changedAttribute").getId(), "att3", "Id of selected attribute:");
+				assert.equal(oControlEvent.getParameter("changedAttribute").getSelected(), true, "Selection state of selected attribute:");
+				assert.equal(oControlEvent.getParameter("allSelectedAttributes").length, 4, "Number of selected attributes:");
 
 				setTimeout(function(){
-					start();
-					equals(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
+					assert.equal(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
 					var aSubLists = oBrowser._rootList.getSubLists();
-					equals(aSubLists.length, 3, "Number of visible 1st level lists:");
-					equals(aSubLists[0].getData(), "att1", "List at position 0:");
-					equals(aSubLists[1].getData(), "att2", "List at position 1:");
-					equals(aSubLists[2].getData(), "att3", "List at position 2:");
+					assert.equal(aSubLists.length, 3, "Number of visible 1st level lists:");
+					assert.equal(aSubLists[0].getData(), "att1", "List at position 0:");
+					assert.equal(aSubLists[1].getData(), "att2", "List at position 1:");
+					assert.equal(aSubLists[2].getData(), "att3", "List at position 2:");
 					for(var i=0; i<aSubLists.length; i++){
 						var aSubSubLists = aSubLists[i].getSubLists();
 						if(i==0){
-							ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
-							equals(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
+							assert.ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
+							assert.equal(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
 						}else{
-							ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
+							assert.ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
 						}
 					}
+					done();
 				}, 1000);
 
 				oExact1.detachRefineSearch(handler);

@@ -141,7 +141,8 @@ QUnit.test("Moving Resizer", function(assert){
 
 });
 
-QUnit.asyncTest("Automatic Column Resize via Double Click", function(assert){
+QUnit.test("Automatic Column Resize via Double Click", function(assert){
+	var done = assert.async();
 	sap.ui.Device.system.desktop = true;
 
 	function triggerDoubleClick(bExpect, iIndex) {
@@ -185,14 +186,15 @@ QUnit.asyncTest("Automatic Column Resize via Double Click", function(assert){
 				setTimeout(function() {
 					iWidth = oColumn.$().width();
 					assert.ok(Math.abs(iWidth - 270) < 40, "check column width after resize: " + iWidth);
-					start();
+					done();
 				}, 50);
 			}, 50);
 		}, 50);
 	}, 50);
 });
 
-QUnit.asyncTest("Automatic Column Resize via API", function(assert){
+QUnit.test("Automatic Column Resize via API", function(assert){
+	var done = assert.async();
 	var oColumn = this.oColumn;
 	assert.ok(!oColumn.getAutoResizable(), "Column is not yet autoresizable");
 	assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
@@ -220,13 +222,14 @@ QUnit.asyncTest("Automatic Column Resize via API", function(assert){
 			setTimeout(function() {
 				iWidth = oColumn.$().width();
 				assert.ok(Math.abs(iWidth - 270) < 40, "check column width after resize: " + iWidth);
-				start();
+				done();
 			}, 50);
 		}, 50);
 	}, 50);
 });
 
-QUnit.asyncTest("Resize via Drag&Drop", function(assert) {
+QUnit.test("Resize via Drag&Drop", function(assert) {
+	var done = assert.async();
 	var oColumn = this.oColumn;
 	var $Resizer = oTable.$("rsz");
 
@@ -260,11 +263,12 @@ QUnit.asyncTest("Resize via Drag&Drop", function(assert) {
 	setTimeout(function() {
 		var iNewWidth = oColumn.$().width();
 		assert.ok(Math.abs(iNewWidth - iWidth - 90 - 40) < 5, "check column width after resize: " + iNewWidth);
-		start();
+		done();
 	}, 50);
 });
 
-QUnit.asyncTest("Resize via Resize Button", function(assert) {
+QUnit.test("Resize via Resize Button", function(assert) {
+	var done = assert.async();
 	var oColumn = this.oColumn;
 	oColumn.setResizable(true);
 	sap.ui.getCore().applyChanges();
@@ -286,7 +290,7 @@ QUnit.asyncTest("Resize via Resize Button", function(assert) {
 	setTimeout(function() {
 		var iNewWidth = oColumn.$().width();
 		assert.ok(Math.abs(iNewWidth - iWidth - 90 - 40) < 5, "check column width after resize: " + iNewWidth);
-		start();
+		done();
 	}, 50);
 });
 
@@ -294,9 +298,9 @@ QUnit.test("Skip trigger resize when resizing already started", function(assert)
 	oTable._getPointerExtension()._debug();
 	var ColumnResizeHelper = oTable._getPointerExtension()._ColumnResizeHelper;
 	oTable._bIsColumnResizerMoving = true;
-	ok(!oTable.$().hasClass("sapUiTableResizing"), "Before Trigger");
+	assert.ok(!oTable.$().hasClass("sapUiTableResizing"), "Before Trigger");
 	ColumnResizeHelper.initColumnResizing(oTable);
-	ok(!oTable.$().hasClass("sapUiTableResizing"), "After Trigger");
+	assert.ok(!oTable.$().hasClass("sapUiTableResizing"), "After Trigger");
 });
 
 QUnit.module("Menus", {
@@ -472,7 +476,8 @@ QUnit.module("Mousedown", {
 	}
 });
 
-QUnit.asyncTest("Columnheader", function(assert){
+QUnit.test("Columnheader", function(assert){
+	var done = assert.async();
 	var oColumn = oTable._getVisibleColumns()[3];
 	var bColumnReorderingTriggered = false;
 	var oPointerExtension = oTable._getPointerExtension();
@@ -496,7 +501,7 @@ QUnit.asyncTest("Columnheader", function(assert){
 		assert.ok(!oPointerExtension._bShowMenu, "Menu was opened -> _bShowMenu is false");
 		setTimeout(function(){
 			assert.ok(!bColumnReorderingTriggered, "Column Reordering not triggered (enableColumnReordering == false)");
-			start();
+			done();
 		}, 250);
 	}, 250);
 });
@@ -523,13 +528,14 @@ QUnit.module("Click", {
 	}
 });
 
-QUnit.asyncTest("Tree Icon", function(assert) {
+QUnit.test("Tree Icon", function(assert) {
+	var done = assert.async();
 	var oExtension = oTreeTable._getPointerExtension();
 	oExtension._debug();
 
 	var iRowCount = oTreeTable._getRowCount();
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
-	ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+	assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 	oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 	oExtension._ExtensionHelper._handleClickSelection = function() {
 		assert.ok(false, "_doSelect should not be called");
@@ -538,10 +544,10 @@ QUnit.asyncTest("Tree Icon", function(assert) {
 	var fnHandler = function() {
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
-		ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+		assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
-		QUnit.start();
+		done();
 	};
 
 	oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
@@ -550,7 +556,8 @@ QUnit.asyncTest("Tree Icon", function(assert) {
 });
 
 
-QUnit.asyncTest("Group Header", function(assert) {
+QUnit.test("Group Header", function(assert) {
+	var done = assert.async();
 	var oExtension = oTreeTable._getPointerExtension();
 	oExtension._debug();
 
@@ -563,15 +570,15 @@ QUnit.asyncTest("Group Header", function(assert) {
 
 	var iRowCount = oTreeTable._getRowCount();
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
-	ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+	assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 
 	var fnHandler = function() {
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
-		ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+		assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
-		QUnit.start();
+		done();
 	};
 
 	oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
@@ -776,15 +783,16 @@ function computeSettingsForReordering(oTable, iIndex, bIncreaseIndex) {
 	return oSettings;
 }
 
-QUnit.asyncTest("Reordering via Drag&Drop - increase Index", function(assert) {
+QUnit.test("Reordering via Drag&Drop - increase Index", function(assert) {
+	var done = assert.async();
 	var oSettings = computeSettingsForReordering(oTable, 2, true);
 	var oColumn = oSettings.column;
 	var iLeft = oSettings.left + oSettings.breakeven;
 	var iCount = 0;
 
 	oTable.updateAnalyticalInfo = function(bFirst, bSecond) {
-		ok(bFirst, "updateAnalyticalInfo with first parameter true");
-		ok(bSecond, "updateAnalyticalInfo with second parameter true");
+		assert.ok(bFirst, "updateAnalyticalInfo with first parameter true");
+		assert.ok(bSecond, "updateAnalyticalInfo with second parameter true");
 		iCount++;
 	};
 
@@ -809,7 +817,7 @@ QUnit.asyncTest("Reordering via Drag&Drop - increase Index", function(assert) {
 					sap.ui.getCore().applyChanges();
 					assert.equal(oTable.indexOfColumn(oColumn), 3, "Index of column changed");
 					assert.equal(iCount, 2, "updateAnalyticalInfo called");
-					start();
+					done();
 				}, 100);
 			}, 250);
 
@@ -817,7 +825,8 @@ QUnit.asyncTest("Reordering via Drag&Drop - increase Index", function(assert) {
 	}, 250);
 });
 
-QUnit.asyncTest("Reordering via Drag&Drop - decrease Index", function(assert) {
+QUnit.test("Reordering via Drag&Drop - decrease Index", function(assert) {
+	var done = assert.async();
 	var oSettings = computeSettingsForReordering(oTable, 2, false);
 	var oColumn = oSettings.column;
 	var iLeft = oSettings.left - oSettings.breakeven;
@@ -841,7 +850,7 @@ QUnit.asyncTest("Reordering via Drag&Drop - decrease Index", function(assert) {
 				setTimeout(function() {
 					sap.ui.getCore().applyChanges();
 					assert.equal(oTable.indexOfColumn(oColumn), 1, "Index of column changed");
-					start();
+					done();
 				}, 100);
 			}, 250);
 
@@ -849,7 +858,8 @@ QUnit.asyncTest("Reordering via Drag&Drop - decrease Index", function(assert) {
 	}, 250);
 });
 
-QUnit.asyncTest("No Reordering of fixed columns (within fixed)", function(assert) {
+QUnit.test("No Reordering of fixed columns (within fixed)", function(assert) {
+	var done = assert.async();
 	oTable.setFixedColumnCount(4);
 	sap.ui.getCore().applyChanges();
 
@@ -867,12 +877,13 @@ QUnit.asyncTest("No Reordering of fixed columns (within fixed)", function(assert
 		setTimeout(function() {
 			sap.ui.getCore().applyChanges();
 			assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
-			start();
+			done();
 		}, 100);
 	}, 250);
 });
 
-QUnit.asyncTest("No Reordering of fixed columns (fixed to not fixed)", function(assert) {
+QUnit.test("No Reordering of fixed columns (fixed to not fixed)", function(assert) {
+	var done = assert.async();
 	oTable.setFixedColumnCount(3);
 	sap.ui.getCore().applyChanges();
 
@@ -890,12 +901,13 @@ QUnit.asyncTest("No Reordering of fixed columns (fixed to not fixed)", function(
 		setTimeout(function() {
 			sap.ui.getCore().applyChanges();
 			assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
-			start();
+			done();
 		}, 100);
 	}, 250);
 });
 
-QUnit.asyncTest("No Reordering of fixed columns (not fixed to fixed)", function(assert) {
+QUnit.test("No Reordering of fixed columns (not fixed to fixed)", function(assert) {
+	var done = assert.async();
 	oTable.setFixedColumnCount(2);
 	sap.ui.getCore().applyChanges();
 
@@ -913,12 +925,13 @@ QUnit.asyncTest("No Reordering of fixed columns (not fixed to fixed)", function(
 		setTimeout(function() {
 			sap.ui.getCore().applyChanges();
 			assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
-			start();
+			done();
 		}, 100);
 	}, 250);
 });
 
-QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - increase index", function(assert) {
+QUnit.test("TreeTable - No Reordering via Drag&Drop of first column - increase index", function(assert) {
+	var done = assert.async();
 	oTreeTable.setFixedColumnCount(0);
 	sap.ui.getCore().applyChanges();
 
@@ -945,7 +958,7 @@ QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - incre
 				setTimeout(function() {
 					sap.ui.getCore().applyChanges();
 					assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Index of column not changed");
-					start();
+					done();
 				}, 100);
 			}, 250);
 
@@ -953,7 +966,8 @@ QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - incre
 	}, 250);
 });
 
-QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - decrease index", function(assert) {
+QUnit.test("TreeTable - No Reordering via Drag&Drop of first column - decrease index", function(assert) {
+	var done = assert.async();
 	oTreeTable.setFixedColumnCount(0);
 	sap.ui.getCore().applyChanges();
 
@@ -971,7 +985,7 @@ QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - decre
 		setTimeout(function() {
 			sap.ui.getCore().applyChanges();
 			assert.equal(oTreeTable.indexOfColumn(oColumn), 1, "Index of column not changed");
-			start();
+			done();
 		}, 100);
 	}, 250);
 });

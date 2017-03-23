@@ -58,11 +58,11 @@
 	QUnit.module("Parent-Properties");
 
 	QUnit.test("Custom Values", function(assert) {
-		equal(oLayout.getRtl()		 , false, "Custom 'rtl': ");
+		assert.equal(oLayout.getRtl()		 , false, "Custom 'rtl': ");
 	});
 
 	QUnit.test("Default Values", function(assert) {
-		equal(oLayoutInner.getRtl()      , false, "Default 'rtl': ");
+		assert.equal(oLayoutInner.getRtl()      , false, "Default 'rtl': ");
 	});
 
 	QUnit.module("Area-Properties");
@@ -70,97 +70,97 @@
 	QUnit.test("Custom Area Values", function(assert) {
 		var oData;
 		//Top
-		equal(oLayout.getTop().getAreaId(), "top", "Top AUTO 'areaId': ");
+		assert.equal(oLayout.getTop().getAreaId(), "top", "Top AUTO 'areaId': ");
 		oData = oLayout.getAreaData("top");
-		equal(oData.overflowX, "auto", "Top Custom 'overflowX': ");
-		equal(oData.overflowY, "auto", "Top Custom 'overflowY': ");
-		equal(oData.contentAlign, "center", "Top Custom 'contentAlign': ");
-		equal(oData.size, "50px", "Top Custom 'size': ");
-		equal(oData.visible, true, "Top Custom 'visible': ");
+		assert.equal(oData.overflowX, "auto", "Top Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "auto", "Top Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "center", "Top Custom 'contentAlign': ");
+		assert.equal(oData.size, "50px", "Top Custom 'size': ");
+		assert.equal(oData.visible, true, "Top Custom 'visible': ");
 
 		//Begin
-		equal(oLayout.getBegin().getAreaId(), "begin", "Begin AUTO 'areaId': ");
+		assert.equal(oLayout.getBegin().getAreaId(), "begin", "Begin AUTO 'areaId': ");
 		oData = oLayout.getAreaData("begin");
-		equal(oData.overflowX, "hidden", "Begin Custom 'overflowX': ");
-		equal(oData.overflowY, "hidden", "Begin Custom 'overflowY': ");
-		equal(oData.contentAlign, "center", "Begin Custom 'contentAlign': ");
-		equal(oData.size, "30px", "Begin Custom 'size': ");
-		equal(oData.visible, true, "Begin Custom 'visible': ");
+		assert.equal(oData.overflowX, "hidden", "Begin Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "hidden", "Begin Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "center", "Begin Custom 'contentAlign': ");
+		assert.equal(oData.size, "30px", "Begin Custom 'size': ");
+		assert.equal(oData.visible, true, "Begin Custom 'visible': ");
 
 		//Center
-		equal(oLayout.getCenter().getAreaId(), "center", "Center AUTO 'areaId': ");
+		assert.equal(oLayout.getCenter().getAreaId(), "center", "Center AUTO 'areaId': ");
 		oData = oLayout.getAreaData("center");
-		equal(oData.overflowX, "auto", "Center Custom 'overflowX': ");
-		equal(oData.overflowY, "auto", "Center Custom 'overflowY': ");
-		equal(oData.contentAlign, "center", "Center Custom 'contentAlign': ");
-		equal(oData.size, "100px", "Center Custom 'size': ");
-		equal(oData.visible, true, "Center Custom 'visible': ");
+		assert.equal(oData.overflowX, "auto", "Center Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "auto", "Center Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "center", "Center Custom 'contentAlign': ");
+		assert.equal(oData.size, "100px", "Center Custom 'size': ");
+		assert.equal(oData.visible, true, "Center Custom 'visible': ");
 
 		//End
-		equal(oLayout.getEnd().getAreaId(), "end", "End AUTO 'areaId': ");
+		assert.equal(oLayout.getEnd().getAreaId(), "end", "End AUTO 'areaId': ");
 		oData = oLayout.getAreaData("end");
-		equal(oData.overflowX, "scroll", "End Custom 'overflowX': ");
-		equal(oData.overflowY, "scroll", "End Custom 'overflowY': ");
-		equal(oData.contentAlign, "left", "End  Custom 'contentAlign': ");
-		equal(oData.size, "78px", "Center Custom 'size': ");
-		equal(oData.visible, true, "Center Custom 'visible': ");
+		assert.equal(oData.overflowX, "scroll", "End Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "scroll", "End Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "left", "End  Custom 'contentAlign': ");
+		assert.equal(oData.size, "78px", "Center Custom 'size': ");
+		assert.equal(oData.visible, true, "Center Custom 'visible': ");
 
 		//Bottom
-		equal(oLayout.getBottom().getAreaId(), "bottom", "Bottom AUTO 'areaId': ");
+		assert.equal(oLayout.getBottom().getAreaId(), "bottom", "Bottom AUTO 'areaId': ");
 		oData = oLayout.getAreaData("bottom");
-		equal(oData.overflowX, "scroll", "Bottom Custom 'overflowX': ");
-		equal(oData.overflowY, "hidden", "Bottom Custom 'overflowY': ");
-		equal(oData.contentAlign, "right", "Bottom  Custom 'contentAlign': ");
-		equal(oData.size, "66px", "Bottom Custom 'size': ");
-		equal(oData.visible, true, "Bottom Custom 'visible': ");
+		assert.equal(oData.overflowX, "scroll", "Bottom Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "hidden", "Bottom Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "right", "Bottom  Custom 'contentAlign': ");
+		assert.equal(oData.size, "66px", "Bottom Custom 'size': ");
+		assert.equal(oData.visible, true, "Bottom Custom 'visible': ");
 	});
 
 	QUnit.test("Default Area Values", function(assert) {
 		var oData;
 		//Inner Top
-		equal(oLayoutInner.getTop().getAreaId(), "top", "Inner Top AUTO 'areaId': ");
+		assert.equal(oLayoutInner.getTop().getAreaId(), "top", "Inner Top AUTO 'areaId': ");
 		oData = oLayoutInner.getAreaData("top");
-		equal(oData.overflowX, "auto", "Inner Top Custom 'overflowX': ");
-		equal(oData.overflowY, "auto", "Inner Top Custom 'overflowY': ");
-		equal(oData.contentAlign, "left", "Inner Top Custom 'contentAlign': ");
-		equal(oData.size, "100px", "Inner Top Custom 'size': ");
-		equal(oData.visible, true, "InnerTop Custom 'visible': ");
+		assert.equal(oData.overflowX, "auto", "Inner Top Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "auto", "Inner Top Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "left", "Inner Top Custom 'contentAlign': ");
+		assert.equal(oData.size, "100px", "Inner Top Custom 'size': ");
+		assert.equal(oData.visible, true, "InnerTop Custom 'visible': ");
 
 		//Begin
-		equal(oLayoutInner.getBegin().getAreaId(), "begin", "Inner Begin AUTO 'areaId': ");
+		assert.equal(oLayoutInner.getBegin().getAreaId(), "begin", "Inner Begin AUTO 'areaId': ");
 		oData = oLayoutInner.getAreaData("begin");
-		equal(oData.overflowX, "auto", "Inner Begin Custom 'overflowX': ");
-		equal(oData.overflowY, "auto", "Inner Begin Custom 'overflowY': ");
-		equal(oData.contentAlign, "left", "Inner TBegin Custom 'contentAlign': ");
-		equal(oData.size, "100px", "Inner Begin Custom 'size': ");
-		equal(oData.visible, true, "Inner Begin Custom 'visible': ");
+		assert.equal(oData.overflowX, "auto", "Inner Begin Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "auto", "Inner Begin Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "left", "Inner TBegin Custom 'contentAlign': ");
+		assert.equal(oData.size, "100px", "Inner Begin Custom 'size': ");
+		assert.equal(oData.visible, true, "Inner Begin Custom 'visible': ");
 
 		//Center
-		equal(oLayoutInner.getCenter().getAreaId(), "center", "Inner Center AUTO 'areaId': ");
+		assert.equal(oLayoutInner.getCenter().getAreaId(), "center", "Inner Center AUTO 'areaId': ");
 		oData = oLayoutInner.getAreaData("center");
-		equal(oData.overflowX, "auto", "Inner Begin Custom 'overflowX': ");
-		equal(oData.overflowY, "auto", "Inner Begin Custom 'overflowY': ");
-		equal(oData.contentAlign, "left", "Inner TBegin Custom 'contentAlign': ");
-		equal(oData.size, "100px", "Inner Begin Custom 'size': ");
-		equal(oData.visible, true, "Inner Begin Custom 'visible': ");
+		assert.equal(oData.overflowX, "auto", "Inner Begin Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "auto", "Inner Begin Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "left", "Inner TBegin Custom 'contentAlign': ");
+		assert.equal(oData.size, "100px", "Inner Begin Custom 'size': ");
+		assert.equal(oData.visible, true, "Inner Begin Custom 'visible': ");
 
 		//End
-		equal(oLayoutInner.getEnd().getAreaId(), "end", "Inner End AUTO 'areaId': ");
+		assert.equal(oLayoutInner.getEnd().getAreaId(), "end", "Inner End AUTO 'areaId': ");
 		oData = oLayoutInner.getAreaData("end");
-		equal(oData.overflowX, "auto", "Inner End Custom 'overflowX': ");
-		equal(oData.overflowY, "auto", "Inner End Custom 'overflowY': ");
-		equal(oData.contentAlign, "left", "Inner End Custom 'contentAlign': ");
-		equal(oData.size, "100px", "Inner End Custom 'size': ");
-		equal(oData.visible, true, "Inner End Custom 'visible': ");
+		assert.equal(oData.overflowX, "auto", "Inner End Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "auto", "Inner End Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "left", "Inner End Custom 'contentAlign': ");
+		assert.equal(oData.size, "100px", "Inner End Custom 'size': ");
+		assert.equal(oData.visible, true, "Inner End Custom 'visible': ");
 
 		//Bottom
-		equal(oLayoutInner.getBottom().getAreaId(), "bottom", "Inner Bottom AUTO 'areaId': ");
+		assert.equal(oLayoutInner.getBottom().getAreaId(), "bottom", "Inner Bottom AUTO 'areaId': ");
 		oData = oLayoutInner.getAreaData("bottom");
-		equal(oData.overflowX, "auto", "Inner Bottom Custom 'overflowX': ");
-		equal(oData.overflowY, "auto", "Inner Bottom Custom 'overflowY': ");
-		equal(oData.contentAlign, "left", "Inner Bottom Custom 'contentAlign': ");
-		equal(oData.size, "100px", "Inner Bottom Custom 'size': ");
-		equal(oData.visible, true, "Inner Bottom Custom 'visible': ");
+		assert.equal(oData.overflowX, "auto", "Inner Bottom Custom 'overflowX': ");
+		assert.equal(oData.overflowY, "auto", "Inner Bottom Custom 'overflowY': ");
+		assert.equal(oData.contentAlign, "left", "Inner Bottom Custom 'contentAlign': ");
+		assert.equal(oData.size, "100px", "Inner Bottom Custom 'size': ");
+		assert.equal(oData.visible, true, "Inner Bottom Custom 'visible': ");
 	});
 
 	QUnit.module("BorderLayout Helper Methods");
@@ -170,7 +170,7 @@
 		oLink1 = new sap.ui.commons.Link("link1", {text : "Link1 added by addContent"});
 		oLayout.addContent("top", oLink1);
 		sap.ui.getCore().applyChanges();
-		equal(oLayout.getTop().getContent()[1].getId(), "link1", "Top Link1 was added: ");
+		assert.equal(oLayout.getTop().getContent()[1].getId(), "link1", "Top Link1 was added: ");
 
 		//Add more than one Control
 		var oLink2 = new sap.ui.commons.Link("link2", {text : "Link2 added by addContent"});
@@ -178,8 +178,8 @@
 		oLayout.addContent("end", oLink2, oLink3);
 		sap.ui.getCore().applyChanges();
 
-		equal(oLayout.getEnd().getContent()[1].getId(), "link2", "End Link2 was added: ");
-		equal(oLayout.getEnd().getContent()[2].getId(), "link3", "End Link3 was added: ");
+		assert.equal(oLayout.getEnd().getContent()[1].getId(), "link2", "End Link2 was added: ");
+		assert.equal(oLayout.getEnd().getContent()[2].getId(), "link3", "End Link3 was added: ");
 	});
 
 	QUnit.test("Inserting Content", function(assert) {
@@ -188,7 +188,7 @@
 		oLayout.insertContent("bottom", 0, oLink4);
 		sap.ui.getCore().applyChanges();
 
-		equal(oLayout.getBottom().getContent()[0].getId(), "link4", "Bottom Link4 was added to Index 0");
+		assert.equal(oLayout.getBottom().getContent()[0].getId(), "link4", "Bottom Link4 was added to Index 0");
 
 		//Insert more than one Controls
 		var oLink5 = new sap.ui.commons.Link("link5", {text : "Link5 inserted by insertContent to index 1"});
@@ -196,8 +196,8 @@
 		oLayout.insertContent("bottom", 1, oLink5, oLink6);
 		sap.ui.getCore().applyChanges();
 
-		equal(oLayout.getBottom().getContent()[1].getId(), "link5", "Bottom Link5 and Link6 were added to Index 1");
-		equal(oLayout.getBottom().getContent()[2].getId(), "link6", "Bottom Link5 and Link6 were added to Index 1");
+		assert.equal(oLayout.getBottom().getContent()[1].getId(), "link5", "Bottom Link5 and Link6 were added to Index 1");
+		assert.equal(oLayout.getBottom().getContent()[2].getId(), "link6", "Bottom Link5 and Link6 were added to Index 1");
 	});
 
 	QUnit.test("Removing Content", function(assert) {
@@ -205,13 +205,13 @@
 		oLayout.removeContent("end", 1);
 		sap.ui.getCore().applyChanges();
 
-		equal(oLayout.getEnd().getContent()[1].getId(), "link3", "End Link2 was removed from index 1");
+		assert.equal(oLayout.getEnd().getContent()[1].getId(), "link3", "End Link2 was removed from index 1");
 
 		//Remove all Control
 		oLayout.removeAllContent("bottom");
 		sap.ui.getCore().applyChanges();
 
-		equal(oLayout.getBottom().getContent().length, 0, "Bottom All content has been removed");
+		assert.equal(oLayout.getBottom().getContent().length, 0, "Bottom All content has been removed");
 	});
 
 	QUnit.test("Getting Content", function(assert) {
@@ -219,56 +219,56 @@
 		var content;
 		content = oLayout.getContent("top");
 
-		equal(oLayout.getTop().getContent()[0].getId(), "top", "Top Content with index 0");
-		equal(oLayout.getTop().getContent()[1].getId(), "link1", "Top Content with index 1");
+		assert.equal(oLayout.getTop().getContent()[0].getId(), "top", "Top Content with index 0");
+		assert.equal(oLayout.getTop().getContent()[1].getId(), "link1", "Top Content with index 1");
 
-		equal(oLayout.indexOfContent("center", oLayoutInner), 1, "Center Index of Content (inner BorderLayout)");
-		equal(oLayout.indexOfContent("center", sap.ui.getCore().byId("center")), 0, "Center Index of Content (text field)");
+		assert.equal(oLayout.indexOfContent("center", oLayoutInner), 1, "Center Index of Content (inner BorderLayout)");
+		assert.equal(oLayout.indexOfContent("center", sap.ui.getCore().byId("center")), 0, "Center Index of Content (text field)");
 	});
 
 	QUnit.test("Destroying Content", function(assert) {
 		oLayout.destroyContent("begin");
 
-		equal(oLayout.getBegin().getContent().length, 0, "Begin Aggregations were destroyed");
+		assert.equal(oLayout.getBegin().getContent().length, 0, "Begin Aggregations were destroyed");
 	});
 
 	QUnit.test("Getting Area Elements", function(assert) {
 		var oArea = oLayout.getAreaById("top");
-		equal(oArea.getId(), "myLayout1--top", "Area Element Top");
+		assert.equal(oArea.getId(), "myLayout1--top", "Area Element Top");
 
 		oArea = oLayout.getAreaById("begin");
-		equal(oArea.getId(), "myLayout1--begin", "Area Element Begin");
+		assert.equal(oArea.getId(), "myLayout1--begin", "Area Element Begin");
 
 		oArea = oLayout.getAreaById("center");
-		equal(oArea.getId(), "myLayout1--center", "Area Element Center");
+		assert.equal(oArea.getId(), "myLayout1--center", "Area Element Center");
 
 		oArea = oLayout.getAreaById("end");
-		equal(oArea.getId(), "myLayout1--end", "Area Element End");
+		assert.equal(oArea.getId(), "myLayout1--end", "Area Element End");
 
 		oArea = oLayout.getAreaById("bottom");
-		equal(oArea.getId(), "myLayout1--bottom", "Area Element Bottom");
+		assert.equal(oArea.getId(), "myLayout1--bottom", "Area Element Bottom");
 	});
 
 	QUnit.test("Getting Area DOM Elements", function(assert) {
 		var oArea = oLayout.getAreaById("top");
-		equal(oArea.$().size(), 1, "Area Element Top");
-		ok(oArea.$().hasClass("sapUiBorderLayoutTop"), "Area Element Top");
+		assert.equal(oArea.$().size(), 1, "Area Element Top");
+		assert.ok(oArea.$().hasClass("sapUiBorderLayoutTop"), "Area Element Top");
 
 		oArea = oLayout.getAreaById("begin");
-		equal(oArea.$().size(), 1, "Area Element Begin");
-		ok(oArea.$().hasClass("sapUiBorderLayoutBegin"), "Area Element Begin");
+		assert.equal(oArea.$().size(), 1, "Area Element Begin");
+		assert.ok(oArea.$().hasClass("sapUiBorderLayoutBegin"), "Area Element Begin");
 
 		oArea = oLayout.getAreaById("center");
-		equal(oArea.$().size(), 1, "Area Element Center");
-		ok(oArea.$().hasClass("sapUiBorderLayoutCenter"), "Area Element Center");
+		assert.equal(oArea.$().size(), 1, "Area Element Center");
+		assert.ok(oArea.$().hasClass("sapUiBorderLayoutCenter"), "Area Element Center");
 
 		oArea = oLayout.getAreaById("end");
-		equal(oArea.$().size(), 1, "Area Element End");
-		ok(oArea.$().hasClass("sapUiBorderLayoutEnd"), "Area Element End");
+		assert.equal(oArea.$().size(), 1, "Area Element End");
+		assert.ok(oArea.$().hasClass("sapUiBorderLayoutEnd"), "Area Element End");
 
 		oArea = oLayout.getAreaById("bottom");
-		equal(oArea.$().size(), 1, "Area Element Bottom");
-		ok(oArea.$().hasClass("sapUiBorderLayoutBottom"), "Area Element Bottom");
+		assert.equal(oArea.$().size(), 1, "Area Element Bottom");
+		assert.ok(oArea.$().hasClass("sapUiBorderLayoutBottom"), "Area Element Bottom");
 	});
 
 	</script>

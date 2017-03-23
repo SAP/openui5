@@ -27,7 +27,7 @@
 						id="dimensionsColumn"
 						minScreenWidth="Tablet"
 						demandPopin="true"
-						hAlign="Right"
+						hAlign="End"
 						visible="false">
 						<Text text="Dimensions" />
 					</Column>
@@ -40,7 +40,7 @@
 						<Text text="Weight" />
 					</Column>
 					<Column
-						hAlign="Right">
+						hAlign="End">
 						<Text text="Price" />
 					</Column>
 				</columns>

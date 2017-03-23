@@ -144,7 +144,7 @@ QUnit.test("Stored Focus Position", function(assert) {
 	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
 	assert.strictEqual(oInfo.header, 1, "header");
 
-	ok(!oExtension._oLastFocusedCellInfo, "No LastFocusedCellInfo stored");
+	assert.ok(!oExtension._oLastFocusedCellInfo, "No LastFocusedCellInfo stored");
 
 	getCell(1, 2, true, assert);
 
@@ -156,7 +156,7 @@ QUnit.test("Stored Focus Position", function(assert) {
 	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
 	assert.strictEqual(oInfo.header, 1, "header");
 
-	ok(oExtension._oLastFocusedCellInfo === oInfo, "LastFocusedCellInfo stored");
+	assert.ok(oExtension._oLastFocusedCellInfo === oInfo, "LastFocusedCellInfo stored");
 });
 
 
@@ -264,7 +264,8 @@ QUnit.test("Table Type", function(assert) {
 });
 
 
-QUnit.asyncTest("Overly / NoData focus handling", function(assert) {
+QUnit.test("Overly / NoData focus handling", function(assert) {
+	var done = assert.async();
 	function containsOrHasFocus(sIdSuffix) {
 		return jQuery.sap.containsOrEquals(oTable.getDomRef(sIdSuffix), document.activeElement);
 	}
@@ -284,7 +285,7 @@ QUnit.asyncTest("Overly / NoData focus handling", function(assert) {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataIsHidden);
 		var oElem = getColumnHeader(0);
 		assert.ok(oElem.length && oElem.get(0) === document.activeElement, "focus is on first column header after no Data dissappeared");
-		QUnit.start();
+		done();
 	}
 
 	assert.ok(!containsOrHasFocus(), "focus is not on the table before setShowOverlay");

@@ -193,10 +193,10 @@
 			}
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
-			equal(oEvent.type, sEventName, "Event type correct");
-			ok(oEvent.srcControl, "Event attribute 'srcControl' available");
+			assert.equal(oEvent.type, sEventName, "Event type correct");
+			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
 			if(oEvent.srcControl) {
-				equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
+				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
 			if(fHandlerChecks){
 				fHandlerChecks(oEvent, oTestControl);
@@ -210,14 +210,14 @@
 
 		if(!bExpectHandlersNotCalled){
 			if(bStopPropagation){
-				ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
+				assert.ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
 			}else{
-				ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
+				assert.ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
 			}
-			ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
+			assert.ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
 		}else{
-			ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
-			ok(!oTestControl2._bEventHandlerCalled, "Event Handler not called on control 2");
+			assert.ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
+			assert.ok(!oTestControl2._bEventHandlerCalled, "Event Handler not called on control 2");
 		}
 
 		oTestControl1._bEventHandlerCalled = undefined;
@@ -242,7 +242,7 @@
 		var iCount = 0;
 		var fCheck = function(oEvent) {
 			iCount++;
-			ok(oEvent.isPseudoType(oEvent._sExpectedPseudoType), "Event has expected pseudo type "+oEvent._sExpectedPseudoType);
+			assert.ok(oEvent.isPseudoType(oEvent._sExpectedPseudoType), "Event has expected pseudo type "+oEvent._sExpectedPseudoType);
 		};
 
 		jQuery("#outer").bind(sOriginalEventName, fCheck);
@@ -255,7 +255,7 @@
 			jQuery("#inner").trigger(oEvent);
 		}
 
-		equal(iCount, iTriggerCount, "Event handler called "+iTriggerCount+" times");
+		assert.equal(iCount, iTriggerCount, "Event handler called "+iTriggerCount+" times");
 
 		jQuery("#inner").unbind();
 		jQuery("#outer").unbind();
@@ -276,7 +276,6 @@
 		// at least 500 ms should have passed trigger again to simulate dblclick
 		setTimeout(function() {
 			jQuery("#"+sTargetId).trigger("click");
-			start();
 			if(fDoAfter){
 				fDoAfter();
 			}
@@ -298,21 +297,21 @@
 			aBrowserEvents = aBrowserEvents.concat(aMobileBrowserEvents);
 		}
 
-		equal(jQuery.sap.ControlEvents.length, aBrowserEvents.length, "Number of basic browser events correct");
+		assert.equal(jQuery.sap.ControlEvents.length, aBrowserEvents.length, "Number of basic browser events correct");
 		for(var i=0; i<aBrowserEvents.length; i++){
-			ok(jQuery.inArray(aBrowserEvents[i], jQuery.sap.ControlEvents) >= 0, "Event "+aBrowserEvents[i]+" contained in jQuery.sap.ControlEvents");
+			assert.ok(jQuery.inArray(aBrowserEvents[i], jQuery.sap.ControlEvents) >= 0, "Event "+aBrowserEvents[i]+" contained in jQuery.sap.ControlEvents");
 		}
 	});
 
 	QUnit.test("Pseudo Events", function(assert) {
 		function fCheck(sEventName, sOrigEventName){
 			var evt = jQuery.sap.PseudoEvents[sEventName];
-			ok(!!evt, "Event "+sEventName+" contained in jQuery.sap.PseudoEvents");
+			assert.ok(!!evt, "Event "+sEventName+" contained in jQuery.sap.PseudoEvents");
 			if(evt){
-				equal(evt.sName, sEventName, "Event "+sEventName+": name correct");
-				ok(jQuery.inArray(sOrigEventName, evt.aTypes) >= 0, "Event "+sEventName+": base type correct");
+				assert.equal(evt.sName, sEventName, "Event "+sEventName+": name correct");
+				assert.ok(jQuery.inArray(sOrigEventName, evt.aTypes) >= 0, "Event "+sEventName+": base type correct");
 				for(var j=0; j<evt.aTypes.length; j++){
-					ok(jQuery.inArray(evt.aTypes[j], jQuery.sap.ControlEvents) >= 0, "Event "+sEventName+": base type in jQuery.sap.ControlEvents");
+					assert.ok(jQuery.inArray(evt.aTypes[j], jQuery.sap.ControlEvents) >= 0, "Event "+sEventName+": base type in jQuery.sap.ControlEvents");
 				}
 			}
 		};
@@ -354,14 +353,15 @@
 		doTestPseudoEvent("keydown", aPseudoKeyEvents[i].sName, aPseudoKeyEvents[i].iTrigger, aPseudoKeyEvents[i].oParams);
 	}
 
-	asyncTest("sapdelayeddoubleclick Event - Basic", function(){
+	QUnit.test("sapdelayeddoubleclick Event - Basic", function(assert){
+		var done = assert.async();
 		var iCount = 0;
 		var bFirst = true;
 
 		var fCheck = function(oEvent) {
 			iCount++;
 			if(!bFirst){
-				ok(oEvent.isPseudoType("sapdelayeddoubleclick"), "Event has expected pseudo type sapdelayeddoubleclick");
+				assert.ok(oEvent.isPseudoType("sapdelayeddoubleclick"), "Event has expected pseudo type sapdelayeddoubleclick");
 			}
 			oEvent.getPseudoTypes(); //Ensure that pseudo types check functions run
 			bFirst = false;
@@ -370,21 +370,23 @@
 		jQuery("#outer").bind("click", fCheck);
 
 		triggerDelayedDoubleClick("inner", function(){
-			equal(iCount, 2, "Event handler called 2 times");
+			assert.equal(iCount, 2, "Event handler called 2 times");
 			jQuery("#inner").unbind();
 			jQuery("#outer").unbind();
+			done();
 		});
 
 	});
 
-	asyncTest("sapdelayeddoubleclick Event", function(){
+	QUnit.test("sapdelayeddoubleclick Event", function(assert){
+		var done = assert.async();
 		var fCheck = function(oEvent, bTestOuter) {
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
-			equal(oEvent.type, "sapdelayeddoubleclick", "Event type correct");
-			ok(oEvent.srcControl, "Event attribute 'srcControl' available");
+			assert.equal(oEvent.type, "sapdelayeddoubleclick", "Event type correct");
+			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
 			if(oEvent.srcControl) {
-				equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
+				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
 		};
 
@@ -392,27 +394,29 @@
 		oTestControl2["onsapdelayeddoubleclick"] = function(oEvent){fCheck(oEvent, false);};
 
 		triggerDelayedDoubleClick("test2-Inner", function(){
-			ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
-			ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
+			assert.ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
+			assert.ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
 
 			oTestControl1._bEventHandlerCalled = undefined;
 			oTestControl2._bEventHandlerCalled = undefined;
 			oTestControl1["onsapdelayeddoubleclick"] = undefined;
 			oTestControl2["onsapdelayeddoubleclick"] = undefined;
+			done();
 		});
 	});
 
-	asyncTest("sapdelayeddoubleclick Event (bubbling cancelled)", function(){
+	QUnit.test("sapdelayeddoubleclick Event (bubbling cancelled)", function(assert){
+		var done = assert.async();
 		var fCheck = function(oEvent, bTestOuter) {
 			if(!bTestOuter){
 				oEvent.stopPropagation();
 			}
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
 			oTestControl._bEventHandlerCalled = true;
-			equal(oEvent.type, "sapdelayeddoubleclick", "Event type correct");
-			ok(oEvent.srcControl, "Event attribute 'srcControl' available");
+			assert.equal(oEvent.type, "sapdelayeddoubleclick", "Event type correct");
+			assert.ok(oEvent.srcControl, "Event attribute 'srcControl' available");
 			if(oEvent.srcControl) {
-				equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
+				assert.equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
 		};
 
@@ -420,13 +424,14 @@
 		oTestControl2["onsapdelayeddoubleclick"] = function(oEvent){fCheck(oEvent, false);};
 
 		triggerDelayedDoubleClick("test2-Inner", function(){
-			ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
-			ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
+			assert.ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
+			assert.ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
 
 			oTestControl1._bEventHandlerCalled = undefined;
 			oTestControl2._bEventHandlerCalled = undefined;
 			oTestControl1["onsapdelayeddoubleclick"] = undefined;
 			oTestControl2["onsapdelayeddoubleclick"] = undefined;
+			done();
 		});
 	});
 
@@ -467,9 +472,9 @@
 
 			// assertions
 			if (mOptions.mark) {
-				strictEqual(oEvent.isMarked(mOptions.mark), true);
+				assert.strictEqual(oEvent.isMarked(mOptions.mark), true);
 			} else {
-				strictEqual(oEvent.isMarked(), true);
+				assert.strictEqual(oEvent.isMarked(), true);
 			}
 		});
 	};
@@ -508,7 +513,7 @@
 		oEvent.setMarked(sMark);
 
 		// assertion
-		ok(oEvent.isMarked(sMark), "self-contained event is correctly marked");
+		assert.ok(oEvent.isMarked(sMark), "self-contained event is correctly marked");
 	});
 
 	/* ------------------------------ */
@@ -530,7 +535,7 @@
 			}
 
 			// assertions
-			strictEqual(oEvent.isMarked(mOptions.mark), true);
+			assert.strictEqual(oEvent.isMarked(mOptions.mark), true);
 		});
 	};
 
@@ -574,7 +579,7 @@
 			jQuery.extend(oEvent, mOptions);
 
 			// assertions
-			strictEqual(jQuery.sap.isSpecialKey(oEvent), bOuput);
+			assert.strictEqual(jQuery.sap.isSpecialKey(oEvent), bOuput);
 		});
 	};
 

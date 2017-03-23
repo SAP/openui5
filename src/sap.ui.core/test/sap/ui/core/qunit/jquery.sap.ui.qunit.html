@@ -86,8 +86,8 @@
 
 			var oCore = sap.ui.getCore();
 			var oUIArea = oCore.getUIArea("uiArea1");
-			notStrictEqual(oUIArea, null, "UI Area should have been created.");
-			notStrictEqual(oUIArea, undefined, "UI Area should have been created.");
+			assert.notStrictEqual(oUIArea, null, "UI Area should have been created.");
+			assert.notStrictEqual(oUIArea, undefined, "UI Area should have been created.");
 		});
 
 		QUnit.test("MultipleRootOk", function(assert) {
@@ -96,12 +96,12 @@
 			var oCore = sap.ui.getCore();
 
 			var oUIArea = oCore.getUIArea("uiArea2");
-			notStrictEqual(oUIArea, null, "UI Area 2 should have been created.");
-			notStrictEqual(oUIArea, undefined, "UI Area 2 should have been created.");
+			assert.notStrictEqual(oUIArea, null, "UI Area 2 should have been created.");
+			assert.notStrictEqual(oUIArea, undefined, "UI Area 2 should have been created.");
 
 			oUIArea = oCore.getUIArea("uiArea3");
-			notStrictEqual(oUIArea, null, "UI Area 3 should have been created.");
-			notStrictEqual(oUIArea, undefined, "UI Area 3 should have been created.");
+			assert.notStrictEqual(oUIArea, null, "UI Area 3 should have been created.");
+			assert.notStrictEqual(oUIArea, undefined, "UI Area 3 should have been created.");
 		});
 
 		QUnit.test("MultipleRootAndSliceOk", function(assert) {
@@ -112,14 +112,14 @@
 			jQuery(".test1").root();
 
 			var iNo2 = oTestPlugin.getNoOfUIAreas();
-			strictEqual(iNo2, iNo1 + 3, "Exaclty three UIAreas should have been created.");
+			assert.strictEqual(iNo2, iNo1 + 3, "Exaclty three UIAreas should have been created.");
 
 			var oUIArea = oCore.getUIArea("uiArea4");
-			notStrictEqual(oUIArea, null, "UI Area 4 should have been created.");
-			notStrictEqual(oUIArea, undefined, "UI Area 4 should have been created.");
+			assert.notStrictEqual(oUIArea, null, "UI Area 4 should have been created.");
+			assert.notStrictEqual(oUIArea, undefined, "UI Area 4 should have been created.");
 
 			var iNo3 = oTestPlugin.getNoOfUIAreas();
-			strictEqual(iNo3, iNo2, "No additional UIArea should have been created.");
+			assert.strictEqual(iNo3, iNo2, "No additional UIArea should have been created.");
 
 			oCore.unregisterPlugin(oTestPlugin);
 		});
@@ -127,9 +127,9 @@
 		QUnit.test("RootWithControlOk", function(assert) {
 			jQuery("#uiAreaTarget").root(new sap.jsunittest.Test("testControl"));
 			sap.ui.getCore().applyChanges();
-			notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
-			ok(sap.ui.getCore().byId("testControl") !== null, "Control should be available");
-			ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
+			assert.notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
+			assert.ok(sap.ui.getCore().byId("testControl") !== null, "Control should be available");
+			assert.ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
 		});
 
 		QUnit.test("RootReturnsAllRelevantUIAreasOk", function(assert) {
@@ -140,11 +140,11 @@
 			jQuery(".test2").root();
 
 			var iNo2 = oTestPlugin.getNoOfUIAreas();
-			strictEqual(iNo2, iNo1 + 3, "Exactly three UIArea should have been created.");
+			assert.strictEqual(iNo2, iNo1 + 3, "Exactly three UIArea should have been created.");
 
-			strictEqual(jQuery("[id*=uiArea]").root().length + jQuery("[id*=id-]").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector [id*=uiArea]");
+			assert.strictEqual(jQuery("[id*=uiArea]").root().length + jQuery("[id*=id-]").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector [id*=uiArea]");
 
-			strictEqual(jQuery("div").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector div");
+			assert.strictEqual(jQuery("div").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector div");
 
 			oCore.unregisterPlugin(oTestPlugin);
 		});
@@ -156,7 +156,7 @@
 			var oCheckCtrl = sap.ui.getCore().byId("testControl2");
 			var oCtrl = jQuery("#testControl2").control()[0];
 
-			ok(oCheckCtrl === oCtrl, "Created control should be returned");
+			assert.ok(oCheckCtrl === oCtrl, "Created control should be returned");
 		});
 
 		QUnit.test("ControlOnInnerDomRefOk", function(assert) {
@@ -166,7 +166,7 @@
 			var oCheckCtrl = sap.ui.getCore().byId("testControl3");
 			var oCtrl = jQuery("#testControl3 > .inner").control()[0];
 
-			ok(oCheckCtrl === oCtrl, "Created control should be returned when queried for inner node");
+			assert.ok(oCheckCtrl === oCtrl, "Created control should be returned when queried for inner node");
 		});
 
 		QUnit.test("MultipleControlsOk", function(assert) {
@@ -177,7 +177,7 @@
 
 			var aCtrls = jQuery(".myClass").control();
 
-			strictEqual(aCtrls.length, 3, "All requested Controls should be returned");
+			assert.strictEqual(aCtrls.length, 3, "All requested Controls should be returned");
 		});
 
 		QUnit.test("GetUIAreasOk", function(assert) {
@@ -187,23 +187,23 @@
 
 			var aUIAreas = jQuery("div").uiarea();
 
-			strictEqual(aUIAreas.length, iNo, "All UIAreas should be returned");
+			assert.strictEqual(aUIAreas.length, iNo, "All UIAreas should be returned");
 
 			jQuery.each(aUIAreas, function(idx, aUIArea){
 				// as we cannot check directly via instanceof (our interface concept prevents that), do it differently
-				ok(sap.ui.getCore().getUIArea(aUIArea.getId()) === aUIArea, "each UIArea returned by jQuery(???).uiarea() must also be accessible by Core's.getUIArea method");
+				assert.ok(sap.ui.getCore().getUIArea(aUIArea.getId()) === aUIArea, "each UIArea returned by jQuery(???).uiarea() must also be accessible by Core's.getUIArea method");
 			});
 		});
 
 		QUnit.test("GetRootOfControlOk", function(assert) {
 			var oCore = sap.ui.getCore();
 			var aUIAreas = jQuery(".presetup").uiarea();
-			strictEqual(aUIAreas.length, 0, "No UIareas should be returned");
+			assert.strictEqual(aUIAreas.length, 0, "No UIareas should be returned");
 
 			var aUIRoots = jQuery(".presetup").root();
-			strictEqual(aUIRoots.length, 2, "Two 'UI-roots' of the controls should be returned");
-			ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup1"), aUIRoots) >= 0, "pre setup UIArea 1 should be returned");
-			ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup2"), aUIRoots) >= 0, "pre setup UIArea 2 should be returned");
+			assert.strictEqual(aUIRoots.length, 2, "Two 'UI-roots' of the controls should be returned");
+			assert.ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup1"), aUIRoots) >= 0, "pre setup UIArea 1 should be returned");
+			assert.ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup2"), aUIRoots) >= 0, "pre setup UIArea 2 should be returned");
 		});
 		</script>
 	</head>

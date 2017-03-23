@@ -341,28 +341,28 @@
 
 			QUnit.test("getAccessibilityInfo", function (assert) {
 				var oIcon = new sap.ui.core.Icon({alt: "Alt", tooltip: "Tooltip", src: "sap-icon://search"});
-				ok(!!oIcon.getAccessibilityInfo, "Icon has a getAccessibilityInfo function");
+				assert.ok(!!oIcon.getAccessibilityInfo, "Icon has a getAccessibilityInfo function");
 				var oInfo = oIcon.getAccessibilityInfo();
-				ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative icons");
+				assert.ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative icons");
 				oIcon.setDecorative(false);
 				oInfo = oIcon.getAccessibilityInfo();
-				strictEqual(oInfo.role, "img", "AriaRole");
-				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_IMAGE"), "Type");
-				strictEqual(oInfo.description, "Alt", "Description");
-				strictEqual(oInfo.focusable, false, "Focusable");
-				ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
-				ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+				assert.strictEqual(oInfo.role, "img", "AriaRole");
+				assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_IMAGE"), "Type");
+				assert.strictEqual(oInfo.description, "Alt", "Description");
+				assert.strictEqual(oInfo.focusable, false, "Focusable");
+				assert.ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
+				assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 				oIcon.setAlt("");
 				oIcon.attachPress(function(){});
 				oInfo = oIcon.getAccessibilityInfo();
-				strictEqual(oInfo.role, "button", "AriaRole");
-				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_BUTTON"), "Type");
-				strictEqual(oInfo.description, "Tooltip", "Description");
-				strictEqual(oInfo.focusable, true, "Focusable");
+				assert.strictEqual(oInfo.role, "button", "AriaRole");
+				assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+				assert.strictEqual(oInfo.description, "Tooltip", "Description");
+				assert.strictEqual(oInfo.focusable, true, "Focusable");
 				oIcon.setTooltip("");
 				oInfo = oIcon.getAccessibilityInfo();
 				var oIconInfo = sap.ui.core.IconPool.getIconInfo(oIcon.getSrc());
-				strictEqual(oInfo.description, oIconInfo ? oIconInfo.text || oIconInfo.name : "", "Description");
+				assert.strictEqual(oInfo.description, oIconInfo ? oIconInfo.text || oIconInfo.name : "", "Description");
 				oIcon.destroy();
 			});
 

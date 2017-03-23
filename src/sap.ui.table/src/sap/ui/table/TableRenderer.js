@@ -1000,11 +1000,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderTableCellControl = function(rm, oTable, oCell, bIsFirstColumn) {
-		if ( bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable)) {
+		if (bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable)) {
 			var oRow = oCell.getParent();
 			rm.write("<span class='sapUiTableTreeIcon' tabindex='-1' id='" + oRow.getId() + "-treeicon'");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oRow});
-			rm.write(">&nbsp;</span>");
+			rm.write("></span>");
 		}
 		rm.renderControl(oCell);
 	};

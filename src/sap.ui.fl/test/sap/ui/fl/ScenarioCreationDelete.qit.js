@@ -1,4 +1,4 @@
-/*global strictEqual, module, asyncTest, start, sinon, Promise, ok, deepEqual*/
+/*global sinon, Promise*/
 
 jQuery.sap.require("sap.ui.fl.Persistence");
 jQuery.sap.require("sap.ui.fl.Utils");
@@ -101,8 +101,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 				return deletionPersistence.saveAll();
 			}).then(finalSteps)['catch'](function(err) {
-				ok(false, err);
-				start();
+				assert.ok(false, err);
+				done();
 			});
 
 			function finalSteps() {
@@ -111,12 +111,13 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				});
 				Cache.setActive(true);
 				Cache._entries = {};
-				start();
+				done();
 			}
 		}
 	});
 
-	asyncTest('Create a user dependant variant in the user layer and delete it afterwards', function() {
+	QUnit.test('Create a user dependant variant in the user layer and delete it afterwards', function(assert) {
+		var done = assert.async();
 
 		// Create different persistence to avoid caching, before every getChanges a new persistence is required
 		var creationPersistence = createPersistence();
@@ -125,16 +126,16 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var newChangeId = creationPersistence.addChange(oChangeDefinition);
 
 		creationPersistence.saveAll().then(checkSaveAndGetSavedChanges).then(checkSavedChangesAndMarkForDeletion).then(checkDeletion)['catch'](function(err) {
-			ok(false, err);
-			start();
+			assert.ok(false, err);
+			done();
 		});
 
 		/*********************************************************************************************************/
 
 		function checkSaveAndGetSavedChanges(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 1, 'Save result contains one entry');
-			strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 1, 'Save result contains one entry');
+			assert.strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
 			return deletionPersistnce.getChanges();
 		}
 
@@ -147,24 +148,26 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					containsChangeId = true;
 				}
 			});
-			strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
+			assert.strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
 
 			return deletionPersistnce.saveAll();
 		}
 
 		function checkDeletion(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
-			start();
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
+			done();
 		}
 	});
 
-	asyncTest('Create a non-user dependant variant, it should be created in the current layer setting (VENDOR); delete it afterwards', function() {
+	QUnit.test('Create a non-user dependant variant, it should be created in the current layer setting (VENDOR); delete it afterwards', function(assert) {
+		var done = assert.async();
 		var expectedLayer = 'VENDOR';
 		execlayerTestCase.call(this, expectedLayer);
 	});
 
-	asyncTest('Create a non-user dependant variant, it should be created in the current layer setting (CUSTOMER); delete it afterwards', function() {
+	QUnit.test('Create a non-user dependant variant, it should be created in the current layer setting (CUSTOMER); delete it afterwards', function(assert) {
+		var done = assert.async();
 		var expectedLayer = 'CUSTOMER';
 		execlayerTestCase.call(this, expectedLayer);
 	});
@@ -181,16 +184,16 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var newChangeId = creationPersistence.addChange(oChangeDefinition);
 
 		creationPersistence.saveAll().then(checkSavedAndGetSavedChanges).then(checkTheLayerMarkForDeletionAndSave).then(checkDeletion)['catch'](function(err) {
-			ok(false, err);
-			start();
+			assert.ok(false, err);
+			done();
 		});
 
 		/*********************************************************************************************************/
 
 		function checkSavedAndGetSavedChanges(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 1, 'Save result contains one entry');
-			strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 1, 'Save result contains one entry');
+			assert.strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
 			return deletionPersistnce.getChanges();
 		}
 
@@ -205,19 +208,20 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					actualLayer = change.getLayer();
 				}
 			});
-			strictEqual(actualLayer, expectedLayer, 'Layer has been set according to specified Layer');
-			strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
+			assert.strictEqual(actualLayer, expectedLayer, 'Layer has been set according to specified Layer');
+			assert.strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
 			return deletionPersistnce.saveAll();
 		}
 
 		function checkDeletion(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
-			start();
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
+			done();
 		}
 	}
 
-	asyncTest('Create a non-user dependant variant, then update the texts, save it and delete it afterwards', function() {
+	QUnit.test('Create a non-user dependant variant, then update the texts, save it and delete it afterwards', function(assert) {
+		var done = assert.async();
 		var expectedNewVariantName = 'theNewVariantName';
 
 		// Create different persistence to avoid caching, before every getChanges a new persistence is required
@@ -229,16 +233,16 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var newChangeId = creationPersistence.addChange(oChangeDefinition);
 
 		creationPersistence.saveAll().then(checkSaveAndGetSavedChanges).then(updateVariantNameAndSave).then(getSavedChanges).then(checkUpdatedVariantNameAndMarkForDeletionAndSave).then(checkDeletion)['catch'](function(err) {
-			ok(false, err);
-			start();
+			assert.ok(false, err);
+			done();
 		});
 
 		/*********************************************************************************************************/
 
 		function checkSaveAndGetSavedChanges(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 1, 'Save result contains one entry');
-			strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 1, 'Save result contains one entry');
+			assert.strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
 			return updatePersistnce.getChanges();
 		}
 
@@ -265,18 +269,19 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					actualVariantName = change.getText('variantName');
 				}
 			});
-			strictEqual(actualVariantName, expectedNewVariantName, 'Variant name has been updated in backend');
+			assert.strictEqual(actualVariantName, expectedNewVariantName, 'Variant name has been updated in backend');
 			return deletionPersistnce.saveAll();
 		}
 
 		function checkDeletion(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
-			start();
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'Change successfully deleted from backend');
+			done();
 		}
 	});
 
-	asyncTest('With cache: create a change, retrieve changes from backend twice: only once call should happen, the changes schould be the same', function() {
+	QUnit.test('With cache: create a change, retrieve changes from backend twice: only once call should happen, the changes schould be the same', function(assert) {
+		var done = assert.async();
 		Cache.setActive(true);
 
 		// Create different persistence to avoid caching, before every getChanges a new persistence is required
@@ -288,8 +293,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		creationPersistence.addChange(oChangeDefinition);
 
 		creationPersistence.saveAll().then(retrieveChangesFisrtTime).then(retrieveChangesSecondTime).then(checkChangesAndBackendCalls)['catch'](function(err) {
-			ok(false, err);
-			start();
+			assert.ok(false, err);
+			done();
 		});
 
 		/*********************************************************************************************************/
@@ -304,19 +309,20 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		}
 
 		function checkChangesAndBackendCalls(secondChanges) {
-			//deepEqual(firstChangesRetrieved, secondChanges, 'List of changes is the same'); //deepEqual seems to have problems comparing the two maps
+			//assert.deepEqual(firstChangesRetrieved, secondChanges, 'List of changes is the same'); //deepEqual seems to have problems comparing the two maps
 			var aKeysFirst = Object.keys(firstChangesRetrieved);
 			var aKeysSecond = Object.keys(secondChanges);
-			equal(aKeysSecond.length, 1);
-			equal(aKeysFirst.length, aKeysSecond.length);
-			equal(aKeysFirst[0], aKeysSecond[0]);
-			equal(firstChangesRetrieved[aKeysFirst[0]].getDefinition(), secondChanges[aKeysSecond[0]].getDefinition());
+			assert.equal(aKeysSecond.length, 1);
+			assert.equal(aKeysFirst.length, aKeysSecond.length);
+			assert.equal(aKeysFirst[0], aKeysSecond[0]);
+			assert.equal(firstChangesRetrieved[aKeysFirst[0]].getDefinition(), secondChanges[aKeysSecond[0]].getDefinition());
 			sinon.assert.calledOnce(LrepConnector.prototype.loadChanges);
-			start();
+			done();
 		}
 	});
 
-	asyncTest('With cache: create a change, retrieve changes from backend twice: only once call should happen, the changes schould be the same', function() {
+	QUnit.test('With cache: create a change, retrieve changes from backend twice: only once call should happen, the changes schould be the same', function(assert) {
+		var done = assert.async();
 		Cache.setActive(true);
 
 		// Create different persistence to avoid caching, before every getChanges a new persistence is required
@@ -325,8 +331,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var anotherRetrievcalPersistence = createPersistence();
 
 		retrievalPersistence.getChanges().then(createAChange).then(retrieveChangesWithAnotherPersistence).then(checkChangesAndBackendCalls)['catch'](function(err) {
-			ok(false, err);
-			start();
+			assert.ok(false, err);
+			done();
 		});
 
 		/*********************************************************************************************************/
@@ -342,10 +348,10 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 		function checkChangesAndBackendCalls(changes) {
 			var creation = changes[Object.keys(changes)[0]].getDefinition().creation;
-			ok(creation, 'Creation string is filled');
-			strictEqual(isNaN(new Date(creation)), false, 'Creation string is a valid date');
+			assert.ok(creation, 'Creation string is filled');
+			assert.strictEqual(isNaN(new Date(creation)), false, 'Creation string is a valid date');
 			sinon.assert.calledOnce(LrepConnector.prototype.loadChanges);
-			start();
+			done();
 		}
 	});
 

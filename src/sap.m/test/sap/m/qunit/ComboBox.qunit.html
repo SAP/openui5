@@ -3530,7 +3530,7 @@
 			oErrorComboBox.focus();
 			this.clock.tick(500);
 			assert.ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when focusin");
-			equal(oErrorComboBox.getValueStateText(), "Error Message", "error message is correct");
+			assert.equal(oErrorComboBox.getValueStateText(), "Error Message", "error message is correct");
 
 			oErrorComboBox.getFocusDomRef().blur();
 			this.clock.tick(500);
@@ -5060,25 +5060,25 @@
 
 				// there should be no tabindex for the root DOM-ref and the input field
 				// for the arrow there is a tabindex=-1 per default
-				equal($Box.attr("tabindex"), undefined, "No tabindex at root DOM-ref");
-				equal($Input.attr("tabindex"), undefined, "No tabindex for Input field");
-				equal($Arrow.attr("tabindex"), -1, "Tabindex set for Arrow");
+				assert.equal($Box.attr("tabindex"), undefined, "No tabindex at root DOM-ref");
+				assert.equal($Input.attr("tabindex"), undefined, "No tabindex for Input field");
+				assert.equal($Arrow.attr("tabindex"), -1, "Tabindex set for Arrow");
 
 				oComboBox.setBusy(true);
 
 				window._setTimeout(function() {
 					// check whether all element do have a tabindex now
-					equal($Box.attr("tabindex"), -1, "Tabindex set to -1 at root DOM-ref");
-					equal($Input.attr("tabindex"), -1, "Tabindex set to -1 for Input field");
-					equal($Arrow.attr("tabindex"), -1, "Still tabindex set for Arrow");
+					assert.equal($Box.attr("tabindex"), -1, "Tabindex set to -1 at root DOM-ref");
+					assert.equal($Input.attr("tabindex"), -1, "Tabindex set to -1 for Input field");
+					assert.equal($Arrow.attr("tabindex"), -1, "Still tabindex set for Arrow");
 
 					oComboBox.setBusy(false);
 
 					window._setTimeout(function() {
 						// check whether all element have their default tabindex value
-						equal($Box.attr("tabindex"), undefined, "Tabindex removed from root DOM-ref");
-						equal($Input.attr("tabindex"), undefined, "Tabindex removed from Input field");
-						equal($Arrow.attr("tabindex"), -1, "Still Tabindex set for Arrow");
+						assert.equal($Box.attr("tabindex"), undefined, "Tabindex removed from root DOM-ref");
+						assert.equal($Input.attr("tabindex"), undefined, "Tabindex removed from Input field");
+						assert.equal($Arrow.attr("tabindex"), -1, "Still Tabindex set for Arrow");
 
 						done();
 
@@ -10594,8 +10594,8 @@
 			oComboBox._oList.fireItemPress({item: oComboBox.getItems()[1]});
 			oComboBox._oList.fireSelectionChange({selectedItem: oComboBox.getItems()[1]});
 
-			ok(oComboBox.getValue(), "ComboBox value to be filled in");
-			strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
+			assert.ok(oComboBox.getValue(), "ComboBox value to be filled in");
+			assert.strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
 
 			oForm.destroy();
 			oForm = null;

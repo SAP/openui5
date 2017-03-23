@@ -35,7 +35,7 @@
 
 	QUnit.test("_resolveUrl", function(assert) {
 		//Arrange
-		ok(this.oLrepConnector);
+		assert.ok(this.oLrepConnector);
 
 		//Act & Assert
 		assert.equal(this.oLrepConnector._resolveUrl("/content/subfolder"), "/content/subfolder");
@@ -52,7 +52,7 @@
 		sap.ui.fl.LrepConnector.prototype.setRequestUrlPrefix("/newprefix");
 
 		//Arrange
-		ok(this.oLrepConnector);
+		assert.ok(this.oLrepConnector);
 
 		//Act & Assert
 		assert.equal(this.oLrepConnector._resolveUrl("/content/subfolder"), "/newprefix/content/subfolder");

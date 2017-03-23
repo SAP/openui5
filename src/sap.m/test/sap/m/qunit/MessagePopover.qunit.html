@@ -411,7 +411,8 @@
 				"callback should be called with correct argument");
 		});
 
-		QUnit.test("AfterOpen should always load control's overview screen", 2, function (assert) {
+		QUnit.test("AfterOpen should always load control's overview screen", function (assert) {
+			assert.expect(2);
 			var done = assert.async(),
 				that = this,
 				fnAfterOpen = function() {
@@ -660,6 +661,47 @@
 
 			assert.ok(sActualAriaLabelledBy !== null, "should be present");
 			assert.ok(sActualAriaLabelledBy.indexOf(sInvisibleHeadingLabelId) !== -1, "should have a reference to the hidden text with heading messages description");
+		});
+
+		QUnit.test("MessagePopover's behavior in different screens on Desktop", function (assert) {
+			//System under test
+			this.stub(sap.ui.Device, "system", {desktop: true});
+
+			var oMessagePopover = new sap.m.MessagePopover({
+				items: [
+					new sap.m.MessagePopoverItem({
+						type: sap.ui.core.MessageType.Error,
+						title: 'ERROR',
+						description: 'ERROR desc'
+					})
+				]
+			});
+			sap.ui.getCore().applyChanges();
+
+
+			// Act
+			// Open the popover normally
+			oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			// Emulate a small screen size on desktop
+			oMessagePopover._oPopover.setContentHeight("0px");
+			sap.ui.getCore().applyChanges();
+
+			// Close the popover
+			oMessagePopover.close();
+			this.clock.tick(500);
+
+			// Open it again
+			oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+
+			// Assert
+			assert.notStrictEqual(oMessagePopover._oPopover.getContentHeight(), "0px", "Popover's height not to be set to 0");
+
+			// Clean
+			oMessagePopover.destroy();
 		});
 
 		QUnit.module("Public API for async handlers", {
@@ -1013,11 +1055,11 @@
 			this.oMessagepopover2.openBy(this.oButton2);
 			this.clock.tick(500);
 
-			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
+			assert.strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
 
 			this.oMessagepopover2.getModel().setProperty("/0/message", "Two");
 			this.clock.tick(500);
-			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+			assert.strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
 		});
 
 		QUnit.test("Adding item to MessagePopover", function (assert) {

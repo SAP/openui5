@@ -53,8 +53,8 @@
 			<Panel
 				class="sapUiNoContentPadding"
 				headerText="{i18n>ObjectSupplierTabTitle}">
-    			<content>
-    				<form:SimpleForm
+				<content>
+					<form:SimpleForm
 						minWidth="1024"
 						maxContainerCols="2"
 						editable="false"
@@ -76,7 +76,7 @@
 							<Text text="{Supplier/Country}"/>
 						</form:content>
 					</form:SimpleForm>
-    			</content>
+				</content>
 			</Panel>
 			<Panel
 				class="sapUiContentPadding"
@@ -90,8 +90,8 @@
 						items="{
 							path: 'productFeedback>/productComments',
 							sorter: {
-							    path: 'date',
-							    descending: true
+								path: 'date',
+								descending: true
 							}
 						}">
 						<FeedListItem

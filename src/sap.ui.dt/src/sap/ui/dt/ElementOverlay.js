@@ -249,6 +249,22 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		return this;
 	};
 
+	ElementOverlay.prototype._addRelevantContainerElement = function(oDesignTimeMetada) {
+		var oParentOverlay = this.getParent();
+		if (!oParentOverlay ||
+			!oParentOverlay.getAggregation('designTimeMetadata')){
+			return false;
+		}
+		var oElement = this.getElementInstance();
+		var oParentDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
+		var vRelevantContainerElement = oParentDesignTimeMetadata.getRelevantContainerForPropagation(oElement);
+		if (!vRelevantContainerElement) {
+			return false;
+		}
+		oDesignTimeMetada.getData().relevantContainer = vRelevantContainerElement;
+		return true;
+	};
+
 	/**
 	 * @override
 	 */
@@ -263,6 +279,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			});
 		}
 
+		this._addRelevantContainerElement(oDesignTimeMetada);
 		var oReturn = this.setAggregation("designTimeMetadata", oDesignTimeMetada);
 
 		if (this.getElementInstance()) {
@@ -408,11 +425,78 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		}
 	};
 
+	ElementOverlay.prototype._getParentRelevantContainerPropagation = function() {
+		var oParentAggregationOverlay = this.getParent();
+
+		if (oParentAggregationOverlay &&
+			oParentAggregationOverlay.getAggregation("designTimeMetadata")) {
+			return oParentAggregationOverlay.getDesignTimeMetadata().getData()["propagateRelevantContainer"];
+		}
+		return false;
+	};
+
+	ElementOverlay.prototype._propagateRelevantContainerObj = function(oAggregationDtMetadata, oNewRelevantContainerPropagation, aPropagatedRelevantContainersFromParent) {
+		var oAggregationData;
+
+		if (!aPropagatedRelevantContainersFromParent &&
+			!oNewRelevantContainerPropagation) {
+			return false;
+		}
+
+		if (oNewRelevantContainerPropagation) {
+			aPropagatedRelevantContainersFromParent = aPropagatedRelevantContainersFromParent ? aPropagatedRelevantContainersFromParent : [];
+			aPropagatedRelevantContainersFromParent.push(oNewRelevantContainerPropagation);
+		}
+
+		// get designtime metadata data-object from current aggregation
+		oAggregationData = oAggregationDtMetadata.getData();
+
+		// add propagation array to current aggregation designtime-metadata
+		oAggregationData.propagateRelevantContainer = aPropagatedRelevantContainersFromParent;
+
+		// propagate relevant container
+		oAggregationDtMetadata.setData(oAggregationData);
+
+		return true;
+	};
+
+	ElementOverlay.prototype._handlePropagationOfRelevantContainer = function(oAggregationDtMetadata) {
+		var oNewRelevantContainerObj = {
+			propagationFunction : null,
+			propagateRelevantContainerElement : null
+		};
+
+		var oDtMetadataForAggregation = oAggregationDtMetadata.getData();
+		if (!oDtMetadataForAggregation ||
+			!oDtMetadataForAggregation.propagateRelevantContainer) {
+			oNewRelevantContainerObj = null;		// no relevantContainer available for propagation
+		} else if (typeof oDtMetadataForAggregation.propagateRelevantContainer === "function") {
+			oNewRelevantContainerObj.propagationFunction = oDtMetadataForAggregation.propagateRelevantContainer;
+			oNewRelevantContainerObj.propagateRelevantContainerElement = this.getElementInstance();
+		} else if (typeof oDtMetadataForAggregation.propagateRelevantContainer === "boolean" &&
+			oDtMetadataForAggregation.propagateRelevantContainer) {
+			oNewRelevantContainerObj.propagationFunction = function() { return true; };
+			oNewRelevantContainerObj.propagateRelevantContainerElement = this.getElementInstance();
+		} else {
+			throw new Error("wrong type: it should be either a function or a boolean value and it is:",
+				typeof oDtMetadataForAggregation.propagateRelevantContainer);
+		}
+
+		var aPropagatedRelevantContainersFromParent = this._getParentRelevantContainerPropagation();
+		if (aPropagatedRelevantContainersFromParent || oNewRelevantContainerObj) {
+			return this._propagateRelevantContainerObj(oAggregationDtMetadata, oNewRelevantContainerObj, aPropagatedRelevantContainersFromParent);
+		} else {
+			return false;
+		}
+	};
+
 	/**
 	 * @private
 	 */
 	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName, bInHiddenTree) {
 		var oAggregationDesignTimeMetadata = this.getDesignTimeMetadata().createAggregationDesignTimeMetadata(sAggregationName);
+
+		this._handlePropagationOfRelevantContainer(oAggregationDesignTimeMetadata);
 
 		var oAggregationOverlay = new AggregationOverlay({
 			aggregationName : sAggregationName,
@@ -441,22 +525,32 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 		var mAggregationsWithOverlay = {};
 
-		ElementUtil.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
-			var sAggregationName = oAggregation.name;
-			mAggregationsWithOverlay[sAggregationName] = true;
-			this._createAggregationOverlay(sAggregationName, this.isInHiddenTree());
+		var mElementAggregations = oElement.getMetadata().getAllAggregations();
+		var aElementAggregationNames = Object.keys(mElementAggregations);
+
+		var bIgnored;
+		aElementAggregationNames.forEach(function(sAggregationName) {
+			bIgnored = oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName);
+			mAggregationsWithOverlay[sAggregationName] = !bIgnored;
+			// create aggregation overlays which are not ignored in the DT Metadata
+			if (!bIgnored) {
+				this._createAggregationOverlay(sAggregationName, this.isInHiddenTree());
+			}
 		}.bind(this));
 
 		// create aggregation overlays also for a hidden aggregations which are not ignored in the DT Metadata
 		var mAggregationsMetadata = oDesignTimeMetadata.getAggregations();
 		var aAggregationNames = Object.keys(mAggregationsMetadata);
 		aAggregationNames.forEach(function (sAggregationName) {
-			var oAggregationMetadata = mAggregationsMetadata[sAggregationName];
-			if (oAggregationMetadata.ignore === false && !mAggregationsWithOverlay[sAggregationName]) {
-				// this is needed to point out, that a control is both in public and private tree, so that it has a "public" parent, which can be different from a getParent()
-				// flag is needed so that parents could have possibility to handle actions for the children. The better solution yet to come: probably, propagation of metadata from parents to children
-				var bIsInHiddenTree = oAggregationMetadata.inHiddenTree;
-				this._createAggregationOverlay(sAggregationName, bIsInHiddenTree);
+			if (mAggregationsWithOverlay[sAggregationName] === undefined) {
+				bIgnored = oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName);
+				if (!bIgnored) {
+					// this is needed to point out, that a control is both in public and private tree, so that it has a "public" parent, which can be different from a getParent()
+					// flag is needed so that parents could have possibility to handle actions for the children. The better solution yet to come: probably, propagation of metadata from parents to children
+					var oAggregationMetadata = mAggregationsMetadata[sAggregationName];
+					var bIsInHiddenTree = oAggregationMetadata.inHiddenTree;
+					this._createAggregationOverlay(sAggregationName, bIsInHiddenTree);
+				}
 			}
 		}, this);
 
@@ -737,6 +831,22 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		if (oPublicParentAggregationOverlay) {
 			return oPublicParentAggregationOverlay.getParent();
 		}
+	};
+
+	/**
+	 * Returns the relevant container element for this overlay. As default the overlay parent element is returned
+	 * @return {sap.ui.core.Element} Relevant container element
+	 * @public
+	 */
+	ElementOverlay.prototype.getRelevantContainer = function() {
+		var oDesignTimeMeatadata = this.getDesignTimeMetadata();
+		if (oDesignTimeMeatadata &&
+			oDesignTimeMeatadata.getData().relevantContainer) {
+			return oDesignTimeMeatadata.getData().relevantContainer;
+		}
+		// setting the default value to direct parent
+		var oParentOverlay = this.getParentElementOverlay();
+		return oParentOverlay ? oParentOverlay.getElementInstance() : undefined;
 	};
 
 	return ElementOverlay;

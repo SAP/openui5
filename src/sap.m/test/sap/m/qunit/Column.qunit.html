@@ -49,10 +49,10 @@
 			result = sut.setDemandPopin(valueToSet);
 
 			//Assert
-			strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
-			strictEqual(sut,result, "should be chainable");
+			assert.strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
+			assert.strictEqual(sut,result, "should be chainable");
 			if(expectedValidateToBeCalled){
-				equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called")
+				assert.equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called")
 			}
 
 			//Cleanup
@@ -90,7 +90,7 @@
 			result = sut.isPopin();
 
 			//Assert
-			equal(result, expectedResult);
+			assert.equal(result, expectedResult);
 
 			//Cleanup
 			sut.destroy();
@@ -135,7 +135,7 @@
 			result = sut.isHidden();
 
 			//Assert
-			strictEqual(result, expectedResult);
+			assert.strictEqual(result, expectedResult);
 
 			//Cleanup
 			sut.destroy();
@@ -172,19 +172,19 @@
 			sut._validateMinWidth(width);
 
 			//Assert
-			ok(true,"valid minScreenWidth : " + width);
+			assert.ok(true,"valid minScreenWidth : " + width);
 
 			//Cleanup
 			sut.destroy();
 		};
 
 		//invalid testcases
-		throws(function(){ fnTestCase(1)},/expected string for property "minScreenWidth" of /,"raised error because it expects a string");
-		throws(function(){ fnTestCase("random string")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("eightpx")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize")
-		throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		throws(function(){ fnTestCase("5%")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase(1)},/expected string for property "minScreenWidth" of /,"raised error because it expects a string");
+		assert.throws(function(){ fnTestCase("random string")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("eightpx")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize")
+		assert.throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function(){ fnTestCase("5%")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
 
 		//valid ones
 		fnTestCase("8px");
@@ -202,12 +202,12 @@
 
 
 		//Act
-		strictEqual(sut._screen,"phone");
+		assert.strictEqual(sut._screen,"phone");
 		sut._isWidthPredefined("600px");
 
 		//Assert
-		strictEqual(sut._screen,"tablet");
-		strictEqual(sut._minWidth,"600px");
+		assert.strictEqual(sut._screen,"tablet");
+		assert.strictEqual(sut._minWidth,"600px");
 
 		//Cleanup
 		sut.destroy();
@@ -225,8 +225,8 @@
 			sut._addMedia();
 
 			//Assert
-			ok(sut._media);
-			strictEqual(sut._media.matches, matches);
+			assert.ok(sut._media);
+			assert.strictEqual(sut._media.matches, matches);
 
 			//Cleanup
 			sut.destroy();
@@ -243,11 +243,11 @@
 
 		//Act
 		sut._addMedia();
-		ok(sut._media);
+		assert.ok(sut._media);
 		sut._clearMedia();
 
 		//Assert
-		ok(!sut._media);
+		assert.ok(!sut._media);
 
 		//Cleanup
 		sut.destroy();
@@ -264,12 +264,12 @@
 					columns : sut
 				});
 
-		ok(!mediaAttachSpy.called, "Media handler not attached initially");
+		assert.ok(!mediaAttachSpy.called, "Media handler not attached initially");
 
 		parent.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
+		assert.ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
 
 		parent.destroy();
 	});
@@ -285,7 +285,7 @@
 		parent.addColumn(sut);
 		sap.ui.getCore().applyChanges();
 
-		ok(mediaAttachSpy.called, "Media handler called immediately");
+		assert.ok(mediaAttachSpy.called, "Media handler called immediately");
 
 		parent.destroy();
 	});
@@ -311,12 +311,12 @@
 		sut._notifyResize({from: 240}); // this is the default value for minScreenWidth="phone"
 		this.clock.tick(1);
 
-		ok(!tableResizeSpy.called, "Table resize not called, if media is the same");
+		assert.ok(!tableResizeSpy.called, "Table resize not called, if media is the same");
 
 		sut._notifyResize({from: 0});
 		this.clock.tick(1);
 
-		ok(tableResizeSpy.called, "Table resize called, if media is different");
+		assert.ok(tableResizeSpy.called, "Table resize called, if media is different");
 
 		parent.destroy();
 	});
@@ -339,12 +339,12 @@
 		page.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1);
-		ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
 
 		// Set contextual width to a parent (as for tablet or above) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 600});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 0, "After applying contextual width to a parent container, but this width is in the same range, onColumnResize is not called");
+		assert.equal(tableResizeSpy.callCount, 0, "After applying contextual width to a parent container, but this width is in the same range, onColumnResize is not called");
 
 		page.destroy();
 	});
@@ -368,23 +368,23 @@
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1);
 
-		ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
 
 		// Set contextual width to a parent (as for phone) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 100});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		// Now set contextual width that doesn't go beyond a breakpoint
 		page._applyContextualSettings({contextualWidth: 101});
 		this.clock.tick(1);
 		// callCount is still 1
-		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, but this width isn't in a different range, onColumnResize is not called");
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, but this width isn't in a different range, onColumnResize is not called");
 
 		// Now set contextual width that goes beyond a breakpoint (tablet starts at 600)
 		page._applyContextualSettings({contextualWidth: 600});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 2, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+		assert.equal(tableResizeSpy.callCount, 2, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		page.destroy();
 	});
@@ -410,13 +410,13 @@
 		page.addContent(parent);
 		this.clock.tick(1);
 
-		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
 
 		// Now change the contextual width significantly (tablet starts at 600) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 600});
 		this.clock.tick(1);
 
-		equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
+		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		page.destroy();
 	});
@@ -441,12 +441,12 @@
 		// Place the table in a container that already has contextual settings
 		page.addContent(parent);
 		this.clock.tick(1);
-		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
 
 		// Now remove contextual settings - the table will be rerendered as for desktop
 		page._applyContextualSettings({});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 1, "After removing contextual with from a parent container, and this width was in another range compared to the device size range, onColumnResize is called");
+		assert.equal(tableResizeSpy.callCount, 1, "After removing contextual with from a parent container, and this width was in another range compared to the device size range, onColumnResize is called");
 
 		page.destroy();
 	});
@@ -471,12 +471,12 @@
 		// Place the table in a container that already has contextual settings
 		page.addContent(parent);
 		this.clock.tick(1);
-		ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for tablet since contextual width is 1000 already");
+		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for tablet since contextual width is 1000 already");
 
 		// Now remove contextual settings - the table will not be rerendered as it is already showing the column
 		page._applyContextualSettings({});
 		this.clock.tick(1);
-		equal(tableResizeSpy.callCount, 0, "After removing contextual width from a parent container, but this width was in the same range compared to the device width, onColumnResize is not called");
+		assert.equal(tableResizeSpy.callCount, 0, "After removing contextual width from a parent container, but this width was in the same range compared to the device width, onColumnResize is not called");
 
 		page.destroy();
 	});
@@ -505,15 +505,15 @@
 		sut.setDisplayViaMedia($("table")[0]);
 
 		//Assert
-		strictEqual(parent.$().find("td").css("display"), "table-cell");
-		strictEqual(parent.$().find("th").eq(1).css("display"), "table-cell");
+		assert.strictEqual(parent.$().find("td").css("display"), "table-cell");
+		assert.strictEqual(parent.$().find("th").eq(1).css("display"), "table-cell");
 
 		//Act
 		sut.setDisplay($("table")[0], false);
 
 		//Assert
-		strictEqual(parent.$().find("td").eq(1).css("display"), "none");
-		strictEqual(parent.$().find("th").eq(1).css("display"), "none");
+		assert.strictEqual(parent.$().find("td").eq(1).css("display"), "none");
+		assert.strictEqual(parent.$().find("th").eq(1).css("display"), "none");
 
 		//Cleanup
 		parent.destroy();
@@ -534,8 +534,8 @@
 		result = sut.getStyleClass(true);
 
 		//Assert
-		ok(result.indexOf(className) !== -1, "style class was present in: " + result);
-		ok(result.indexOf(media) !== -1, "media class was present in: " + result);
+		assert.ok(result.indexOf(className) !== -1, "style class was present in: " + result);
+		assert.ok(result.indexOf(media) !== -1, "media class was present in: " + result);
 	});
 
 	QUnit.test("ShouldApplyAlign", function(assert) {
@@ -551,7 +551,7 @@
 		sut.applyAlignTo(label, align);
 
 		//Assert
-		strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());
+		assert.strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());
 
 		//Cleanup
 		label.destroy();
@@ -564,8 +564,8 @@
 			var sut = new sap.m.Column({minScreenWidth: width});
 
 			//Assert
-			strictEqual(sut._minWidth, px);
-			strictEqual(sut._screen, screen);
+			assert.strictEqual(sut._minWidth, px);
+			assert.strictEqual(sut._screen, screen);
 
 			//Cleanup
 			sut.destroy();

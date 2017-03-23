@@ -43,44 +43,46 @@
 
 		QUnit.test("Output", function(assert) {
 
-			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
-			ok(jQuery.sap.byId("But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected");
+			assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
+			assert.ok(jQuery.sap.byId("But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected");
 
-			equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card_hover.png", "Button selected: Use iconHovered instead of icon!");
-			equal(jQuery.sap.byId("mySB-radiogroup").children("button").length, 6, "All Buttons rendered");
+			assert.equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card_hover.png", "Button selected: Use iconHovered instead of icon!");
+			assert.equal(jQuery.sap.byId("mySB-radiogroup").children("button").length, 6, "All Buttons rendered");
 		});
 
-		asyncTest("ARIA", function() {
-			equal(jQuery.sap.byId("mySB-radiogroup").attr("role"), "radiogroup", "role = radiogroup");
-			equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "false", "aria-disabled = false");
+		QUnit.test("ARIA", function(assert) {
+			var done = assert.async();
+			assert.equal(jQuery.sap.byId("mySB-radiogroup").attr("role"), "radiogroup", "role = radiogroup");
+			assert.equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "false", "aria-disabled = false");
 			oSegmentedButton.setEnabled(false);
 			setTimeout(function() {
-				equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "true", "aria-disabled = true");
+				assert.equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "true", "aria-disabled = true");
 				oSegmentedButton.setEnabled(true);
-				start();
+				done();
 			},500);
    		});
 
 		QUnit.test("Visibility", function(assert) {
-			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
+			assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 			oSegmentedButton.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery.sap.byId("mySB").get(0), "SegmentedButton not rendered");
+			assert.ok(!jQuery.sap.byId("mySB").get(0), "SegmentedButton not rendered");
 			oSegmentedButton.setVisible(true);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
+			assert.ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 		});
 
-		asyncTest("Icons", function() {
+		QUnit.test("Icons", function(assert) {
+			var done = assert.async();
 			oSegmentedButton.setSelectedButton("But3");
 			setTimeout(function() {
-				equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card.png", "Button deselected: Use icon again");
-				equal(jQuery.sap.byId("But3").children("img").attr('src'), "../images/sb/tiles_hover.png", "Button selected: Use iconHovered instead of icon!");
+				assert.equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card.png", "Button deselected: Use icon again");
+				assert.equal(jQuery.sap.byId("But3").children("img").attr('src'), "../images/sb/tiles_hover.png", "Button selected: Use iconHovered instead of icon!");
 				jQuery.sap.focus(jQuery.sap.domById("But1"));
 				setTimeout(function() {
-					equal(jQuery.sap.byId("But3").children("img").attr('src'), "../images/sb/tiles_hover.png", "Button selected: Use iconHovered instead of icon even it has no focus!");
-					equal(jQuery.sap.byId("But1").children("img").attr('src'), "../images/sb/list.png", "Button hovered: Use icon when focused!");
-					start();
+					assert.equal(jQuery.sap.byId("But3").children("img").attr('src'), "../images/sb/tiles_hover.png", "Button selected: Use iconHovered instead of icon even it has no focus!");
+					assert.equal(jQuery.sap.byId("But1").children("img").attr('src'), "../images/sb/list.png", "Button hovered: Use icon when focused!");
+					done();
 				},500);
 			},500);
 		});
@@ -90,7 +92,7 @@
 
 		QUnit.test("event", function(assert) {
 			qutils.triggerMouseEvent("But5", "click");
-			equal(sSelected, "But5","Button selected with mouse- event fired");
+			assert.equal(sSelected, "But5","Button selected with mouse- event fired");
 		});
 
 	</script>

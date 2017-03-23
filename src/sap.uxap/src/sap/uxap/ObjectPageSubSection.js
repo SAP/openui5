@@ -207,7 +207,7 @@ sap.ui.define([
 			this._oSeeMoreButton = null;
 		}
 
-		this._detachMediaContainerWidthChange(this._titleOnLeftSynchronizeLayouts, this);
+		this._detachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
 
 		this._cleanProxiedAggregations();
 
@@ -227,9 +227,8 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._getUseTitleOnTheLeft()) {
-			this._attachMediaContainerWidthChange(this._titleOnLeftSynchronizeLayouts, this);
-		}
+		this._synchronizeBlockLayouts();
+		this._attachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
 
 		this._$spacer = jQuery.sap.byId(oObjectPageLayout.getId() + "-spacer");
 	};
@@ -239,7 +238,7 @@ sap.ui.define([
 			ObjectPageSectionBase.prototype.onBeforeRendering.call(this);
 		}
 
-		this._detachMediaContainerWidthChange(this._titleOnLeftSynchronizeLayouts, this);
+		this._detachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
 
 		this._setAggregationProxy();
 		this._getGrid().removeAllContent();
@@ -504,12 +503,33 @@ sap.ui.define([
 	 ************************************************************************************/
 
 	ObjectPageSubSection.prototype._onDesktopMediaRange = function (oCurrentMedia) {
-		var oMedia = oCurrentMedia || this._getCurrentMediaContainerRange();
-		return ["LargeDesktop", "Desktop"].indexOf(oMedia.name) > -1;
+		return this._onMediaRange(oCurrentMedia, ["LargeDesktop", "Desktop"]);
 	};
 
-	ObjectPageSubSection.prototype._titleOnLeftSynchronizeLayouts = function (oCurrentMedia) {
-		this.$("header").toggleClass("titleOnLeftLayout", this._onDesktopMediaRange(oCurrentMedia));
+	ObjectPageSubSection.prototype._onTabletMediaRange = function (oCurrentMedia) {
+		return this._onMediaRange(oCurrentMedia, ["Tablet"]);
+	};
+
+	ObjectPageSubSection.prototype._onPhoneMediaRange = function (oCurrentMedia) {
+		return this._onMediaRange(oCurrentMedia, ["Phone"]);
+	};
+
+	ObjectPageSubSection.prototype._onMediaRange = function (oCurrentMedia, aCompareWithMedia) {
+		var oMedia = oCurrentMedia || this._getCurrentMediaContainerRange();
+		return aCompareWithMedia.indexOf(oMedia.name) > -1;
+	};
+
+	ObjectPageSubSection.prototype._synchronizeBlockLayouts = function (oCurrentMedia) {
+		if (this._getUseTitleOnTheLeft()) {
+			this.$("header").toggleClass("titleOnLeftLayout", this._onDesktopMediaRange(oCurrentMedia));
+		}
+		this._toggleBlockLayoutResponsiveStyles(oCurrentMedia);
+	};
+
+	ObjectPageSubSection.prototype._toggleBlockLayoutResponsiveStyles = function (oCurrentMedia) {
+		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerDesktop", this._onDesktopMediaRange(oCurrentMedia));
+		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerTablet", this._onTabletMediaRange(oCurrentMedia));
+		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerPhone", this._onPhoneMediaRange(oCurrentMedia));
 	};
 
 

@@ -27,7 +27,7 @@
 			var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
 			QUnit.test("get" + sProperty + "()", function(assert) {
-				strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
+				assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 			});
 		};
 
@@ -67,19 +67,19 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			strictEqual(oSelectList.getVisible(), true, "By default the Select control is visible");
-			strictEqual(oSelectList.getEnabled(), true, "By default the SelectList control is enabled");
-			strictEqual(oSelectList.getWidth(), "auto", 'By default the "width" of the SelectList control is "auto"');
-			strictEqual(oSelectList.getMaxWidth(), "100%", 'By default the "max-width" of the SelectList control is "100%"');
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "", "By default the selected items id of the SelectList control is the id of the first item");
-			strictEqual(oSelectList.getSelectedKey(), "", "By default the selected key of the SelectList control is the key property of the first item");
-			strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("title"), "first item", "The tooltip is shown");
-			strictEqual(oSelectList.getDomRef().getAttribute("role"), "listbox");
-			strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("role"), "option");
-			strictEqual(oSelectList.getLastItem().getDomRef().getAttribute("role"), "separator");
-			strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("aria-selected"), "false");
-			strictEqual(oSelectList.getDomRef().getAttribute("aria-labelledby"), "hiddenTextId");
+			assert.strictEqual(oSelectList.getVisible(), true, "By default the Select control is visible");
+			assert.strictEqual(oSelectList.getEnabled(), true, "By default the SelectList control is enabled");
+			assert.strictEqual(oSelectList.getWidth(), "auto", 'By default the "width" of the SelectList control is "auto"');
+			assert.strictEqual(oSelectList.getMaxWidth(), "100%", 'By default the "max-width" of the SelectList control is "100%"');
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "", "By default the selected items id of the SelectList control is the id of the first item");
+			assert.strictEqual(oSelectList.getSelectedKey(), "", "By default the selected key of the SelectList control is the key property of the first item");
+			assert.strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("title"), "first item", "The tooltip is shown");
+			assert.strictEqual(oSelectList.getDomRef().getAttribute("role"), "listbox");
+			assert.strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("role"), "option");
+			assert.strictEqual(oSelectList.getLastItem().getDomRef().getAttribute("role"), "separator");
+			assert.strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("aria-selected"), "false");
+			assert.strictEqual(oSelectList.getDomRef().getAttribute("aria-labelledby"), "hiddenTextId");
 
 			// cleanup
 			oSelectList.destroy();
@@ -115,17 +115,17 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-setsize"), "3");
-			strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-setsize"), "3");
-			strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-setsize"), "3");
+			assert.strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-setsize"), "3");
+			assert.strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-setsize"), "3");
+			assert.strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-setsize"), "3");
 
-			strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-posinset"), "1");
-			strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-posinset"), "2");
-			strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-posinset"), "3");
+			assert.strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-posinset"), "1");
+			assert.strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-posinset"), "2");
+			assert.strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-posinset"), "3");
 
-			strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-selected"), "false");
-			strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-selected"), "false");
-			strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-selected"), "true");
+			assert.strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-selected"), "false");
+			assert.strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-selected"), "false");
+			assert.strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-selected"), "true");
 
 			// cleanup
 			oSelectList.destroy();
@@ -336,9 +336,9 @@
 			});
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id1");
-			strictEqual(oSelectList.getSelectedKey(), "0");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id1");
+			assert.strictEqual(oSelectList.getSelectedKey(), "0");
 
 			// cleanup
 			oSelectList.destroy();
@@ -376,9 +376,9 @@
 			});
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id1");
-			strictEqual(oSelectList.getSelectedKey(), "2");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id1");
+			assert.strictEqual(oSelectList.getSelectedKey(), "2");
 
 			// cleanup
 			oSelectList.destroy();
@@ -419,9 +419,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "2");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "2");
 
 			// cleanup
 			oSelectList.destroy();
@@ -457,9 +457,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "1");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "1");
 
 			// cleanup
 			oSelectList.destroy();
@@ -473,9 +473,9 @@
 			});
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -512,9 +512,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -550,9 +550,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -590,9 +590,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -616,9 +616,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -660,9 +660,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "2");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "2");
 
 			// cleanup
 			oSelectList.destroy();
@@ -704,9 +704,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "3");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "3");
 
 			// cleanup
 			oSelectList.destroy();
@@ -743,9 +743,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "1");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "1");
 
 			// cleanup
 			oSelectList.destroy();
@@ -763,9 +763,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -801,9 +801,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -839,9 +839,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -877,9 +877,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -916,9 +916,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "0");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "0");
 
 			// cleanup
 			oSelectList.destroy();
@@ -944,9 +944,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -988,9 +988,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "2");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "2");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1032,9 +1032,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "3");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "3");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1071,9 +1071,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "1");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "1");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1087,9 +1087,9 @@
 			});
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1125,9 +1125,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1163,9 +1163,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1201,9 +1201,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1239,9 +1239,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1273,9 +1273,9 @@
 			});
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1304,7 +1304,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			strictEqual(oSelectList.$().outerWidth() + "px", "400px");
+			assert.strictEqual(oSelectList.$().outerWidth() + "px", "400px");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1333,7 +1333,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), 'If the sap.m.SelectList control is disabled, it should have the CSS class "' + sap.m.SelectListRenderer.CSS_CLASS + "Disabled");
+			assert.ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), 'If the sap.m.SelectList control is disabled, it should have the CSS class "' + sap.m.SelectListRenderer.CSS_CLASS + "Disabled");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1357,8 +1357,8 @@
 			oSelectList.addItem(oItem);
 
 			// assert
-			ok(oSelectList.getFirstItem() === oItem);
-			ok(fnAddItemSpy.returned(oSelectList));
+			assert.ok(oSelectList.getFirstItem() === oItem);
+			assert.ok(fnAddItemSpy.returned(oSelectList));
 
 			// cleanup
 			oSelectList.destroy();
@@ -1380,9 +1380,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getFirstItem().isActive());
-			ok(oSelectList.getFirstItem().$().hasClass(oSelectList.getRenderer().CSS_CLASS + "SeparatorItem"));
-			ok(oSelectList.getFirstItem().$().hasClass(oSelectList.getRenderer().CSS_CLASS + "Row"));
+			assert.ok(oSelectList.getFirstItem().isActive());
+			assert.ok(oSelectList.getFirstItem().$().hasClass(oSelectList.getRenderer().CSS_CLASS + "SeparatorItem"));
+			assert.ok(oSelectList.getFirstItem().$().hasClass(oSelectList.getRenderer().CSS_CLASS + "Row"));
 
 			// cleanup
 			oSelectList.destroy();
@@ -1407,9 +1407,9 @@
 			oSelectList.insertItem(oItem, 0);
 
 			// assert
-			ok(oSelectList.getFirstItem() === oItem);
-			ok(fnInsertAggregation.calledWith("items", oItem, 0), "insertAggregation() method was called with the expected arguments");
-			ok(fnInsertItem.returned(oSelectList), 'oSelectList.insertAggregation() method return the "this" reference');
+			assert.ok(oSelectList.getFirstItem() === oItem);
+			assert.ok(fnInsertAggregation.calledWith("items", oItem, 0), "insertAggregation() method was called with the expected arguments");
+			assert.ok(fnInsertItem.returned(oSelectList), 'oSelectList.insertAggregation() method return the "this" reference');
 
 			// cleanup
 			oSelectList.destroy();
@@ -1432,13 +1432,13 @@
 			oSelectList.setSelectedItem({});
 
 			// assert
-			strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.SelectList.prototype.setProperty() method was not called");
-			strictEqual(fnSetAssociationSpy.callCount, 0, "sap.m.SelectList.prototype.setAssociation() method was not called");
-			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
-			ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.SelectList.prototype.setProperty() method was not called");
+			assert.strictEqual(fnSetAssociationSpy.callCount, 0, "sap.m.SelectList.prototype.setAssociation() method was not called");
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+			assert.ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1479,16 +1479,16 @@
 			oSelectList.setSelectedItem(oExpectedItem);
 
 			// assert
-			strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
-			strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
-			ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
-			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "1");
-			ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
-			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+			assert.strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
+			assert.strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
+			assert.ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
+			assert.ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
+			assert.ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "1");
+			assert.ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1529,15 +1529,15 @@
 			oSelectList.setSelectedItem("item-id");
 
 			// assert
-			strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
-			ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
-			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "1");
-			ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
-			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+			assert.strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
+			assert.ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
+			assert.ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
+			assert.ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "1");
+			assert.ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1575,10 +1575,10 @@
 			oSelectList.setSelectedItem(oExpectedItem);
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "2");
-			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "2");
+			assert.strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1617,10 +1617,10 @@
 			oSelectList.setSelectedItem(null);
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
-			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
+			assert.strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1661,11 +1661,11 @@
 			oSelectList.setSelectedItemId("item-id");
 
 			// assert
-			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
-			ok(fnSetSelectedItemIdSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItemId() method return the "this" reference');
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "1");
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+			assert.ok(fnSetSelectedItemIdSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItemId() method return the "this" reference');
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "1");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1703,10 +1703,10 @@
 			oSelectList.setSelectedItemId("item-id");
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "2");
-			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "2");
+			assert.strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1746,10 +1746,10 @@
 			oSelectList.setSelectedItemId("")
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
-			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
+			assert.strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1767,9 +1767,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1807,10 +1807,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "2");
-			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "2");
+			assert.strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1843,9 +1843,9 @@
 			});
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "1");
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "1");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1888,17 +1888,17 @@
 			oSelectList.setSelectedKey("1");
 
 			// assert
-			strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
-			strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
-			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
-			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-			ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
-			ok(fnSetSelectedKeySpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedKey() method return the "this" reference');
-			ok(oSelectList.getSelectedItem() === oExpectedItem);
-			strictEqual(oSelectList.getSelectedItemId(), "item-id");
-			strictEqual(oSelectList.getSelectedKey(), "1");
-			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
+			assert.strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
+			assert.strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+			assert.ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
+			assert.ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
+			assert.ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
+			assert.ok(fnSetSelectedKeySpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedKey() method return the "this" reference');
+			assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			assert.strictEqual(oSelectList.getSelectedKey(), "1");
+			assert.strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1937,10 +1937,10 @@
 			oSelectList.setSelectedKey("");
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
-			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
+			assert.strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
 
 			// cleanup
 			oSelectList.destroy();
@@ -1965,7 +1965,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getItemNavigation() === null);
+			assert.ok(oSelectList.getItemNavigation() === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -1992,7 +1992,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getItemNavigation() === null);
+			assert.ok(oSelectList.getItemNavigation() === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2014,10 +2014,10 @@
 			oSelectList.removeItem(undefined);
 
 			// assert
-			strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
-			ok(fnRemoveAggregationSpy.calledWith("items", undefined), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
-			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event is not fired");
-			ok(fnRemoveItemSpy.returned(null), "sap.m.SelectList.prototype.removeItem() method returns null");
+			assert.strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
+			assert.ok(fnRemoveAggregationSpy.calledWith("items", undefined), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event is not fired");
+			assert.ok(fnRemoveItemSpy.returned(null), "sap.m.SelectList.prototype.removeItem() method returns null");
 
 			// cleanup
 			oSelectList.destroy();
@@ -2104,10 +2104,10 @@
 			oSelectList.removeItem(8);
 
 			// assert
-			strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
-			ok(fnRemoveAggregationSpy.calledWith("items", 8), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
-			strictEqual(oSelectList.getSelectedKey(), "");
-			ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
+			assert.ok(fnRemoveAggregationSpy.calledWith("items", 8), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2173,9 +2173,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedKey(), "");
-			strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -2204,10 +2204,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			strictEqual(oSelectList.getSelectedKey(), "");
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			ok(oExpectedItem.getDomRef() === null);
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.ok(oExpectedItem.getDomRef() === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2250,11 +2250,11 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.SelectList.prototype.removeAllAggregation() method was called with the expected argument");
-			ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.SelectList.prototype.removeAllItems() method returns an array of the removed items");
-			ok(oSelectList.getSelectedItem() === null);
-			strictEqual(oSelectList.getSelectedItemId(), "");
-			strictEqual(oSelectList.getSelectedKey(), "");
+			assert.ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.SelectList.prototype.removeAllAggregation() method was called with the expected argument");
+			assert.ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.SelectList.prototype.removeAllItems() method returns an array of the removed items");
+			assert.ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(oSelectList.getSelectedItemId(), "");
+			assert.strictEqual(oSelectList.getSelectedKey(), "");
 
 			// cleanup
 			oSelectList.destroy();
@@ -2294,8 +2294,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(fnDestroyItemsSpy.returned(oSelectList), "sap.m.SelectList.prototype.destroyItems() method returns the Select instance");
-			ok(oSelectList.getSelectedItem() === null);
+			assert.ok(fnDestroyItemsSpy.returned(oSelectList), "sap.m.SelectList.prototype.destroyItems() method returns the Select instance");
+			assert.ok(oSelectList.getSelectedItem() === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2320,7 +2320,7 @@
 			oSelectList.destroyItems();
 
 			// assert
-			strictEqual(oSelectList.getDomRef().childElementCount, 1);
+			assert.strictEqual(oSelectList.getDomRef().childElementCount, 1);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2362,7 +2362,7 @@
 			var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
 
 			// assert
-			ok(oFirstEnabledItem === oExpectedItem);
+			assert.ok(oFirstEnabledItem === oExpectedItem);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2403,7 +2403,7 @@
 			var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
 
 			// assert
-			ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
+			assert.ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
 
 			// cleanup
 			oSelectList.destroy();
@@ -2422,7 +2422,7 @@
 			var oFirstEnabledItem = oSelectList.findFirstEnabledItem([]);
 
 			// assert
-			ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
+			assert.ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
 
 			// cleanup
 			oSelectList.destroy();
@@ -2465,7 +2465,7 @@
 			var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
 
 			// assert
-			ok(oLastEnabledItem === oExpectedItem);
+			assert.ok(oLastEnabledItem === oExpectedItem);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2506,7 +2506,7 @@
 			var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
 
 			// assert
-			ok(oLastEnabledItem === null, 'The last enabled item is "null"');
+			assert.ok(oLastEnabledItem === null, 'The last enabled item is "null"');
 
 			// cleanup
 			oSelectList.destroy();
@@ -2525,7 +2525,7 @@
 			var oLastEnabledItem = oSelectList.findLastEnabledItem([]);
 
 			// assert
-			ok(oLastEnabledItem === null, 'The last enabled item is "null"');
+			assert.ok(oLastEnabledItem === null, 'The last enabled item is "null"');
 
 			// cleanup
 			oSelectList.destroy();
@@ -2543,7 +2543,7 @@
 				oSelectList._setSelectedIndex(mOptions.input);
 
 				// assert
-				ok(oSelectList.getSelectedItem() === mOptions.output, sTestName);
+				assert.ok(oSelectList.getSelectedItem() === mOptions.output, sTestName);
 
 				// cleanup
 				oSelectList.destroy();
@@ -2662,8 +2662,8 @@
 				oItem1 = oSelectList.getItemAt(6);
 
 			// assert
-			ok(oItem === oExpectedItem);
-			ok(oItem1 === null);
+			assert.ok(oItem === oExpectedItem);
+			assert.ok(oItem1 === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2704,7 +2704,7 @@
 			var oItem = oSelectList.getFirstItem();
 
 			// assert
-			ok(oItem === oExpectedItem);
+			assert.ok(oItem === oExpectedItem);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2723,7 +2723,7 @@
 			var oExpectedItem = oSelectList.getFirstItem();
 
 			// assert
-			ok(oExpectedItem === null, "There are no items");
+			assert.ok(oExpectedItem === null, "There are no items");
 
 			// cleanup
 			oSelectList.destroy();
@@ -2764,7 +2764,7 @@
 			var oItem = oSelectList.getLastItem();
 
 			// assert
-			ok(oItem === oExpectedItem);
+			assert.ok(oItem === oExpectedItem);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2783,7 +2783,7 @@
 			var oItem = oSelectList.getLastItem();
 
 			// assert
-			ok(oItem === null, "There are no items");
+			assert.ok(oItem === null, "There are no items");
 
 			// cleanup
 			oSelectList.destroy();
@@ -2829,10 +2829,10 @@
 				oItem3 = oSelectList.getItemByKey("3");
 
 			// assert
-			ok(oItem0 === oExpectedItem0);
-			ok(oItem1 === oExpectedItem1);
-			ok(oItem2 === oExpectedItem2);
-			ok(oItem3 === null);
+			assert.ok(oItem0 === oExpectedItem0);
+			assert.ok(oItem1 === oExpectedItem1);
+			assert.ok(oItem2 === oExpectedItem2);
+			assert.ok(oItem3 === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2862,7 +2862,7 @@
 			});
 
 			// assert + act
-			ok(oSelectList.getEnabledItems()[0] === oExpectedItem);
+			assert.ok(oSelectList.getEnabledItems()[0] === oExpectedItem);
 
 			// cleanup
 			oSelectList.destroy();
@@ -2918,7 +2918,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			strictEqual(oSelectList.getSelectedKey(), "CU");
+			assert.strictEqual(oSelectList.getSelectedKey(), "CU");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3000,7 +3000,7 @@
 			oSelectList.getBinding("items").filter(new sap.ui.model.Filter("text", "Contains", "b"));
 
 			// assert
-			ok(oSelectList.isSelectionSynchronized());
+			assert.ok(oSelectList.isSelectionSynchronized());
 
 			// cleanup
 			oSelectList.destroy();
@@ -3040,9 +3040,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			strictEqual(oSelectList.getItems().length, 0);
-			ok(oSelectList.getDomRef() === null);
-			ok(oSelectList._oItemNavigation === null);
+			assert.strictEqual(oSelectList.getItems().length, 0);
+			assert.ok(oSelectList.getDomRef() === null);
+			assert.ok(oSelectList._oItemNavigation === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -3079,8 +3079,8 @@
 			var aDomRefs = oSelectList._queryEnabledItemsDomRefs();
 
 			// assert
-			strictEqual(aDomRefs.length, 1);
-			ok(oEnabledItem === sap.ui.getCore().byId(aDomRefs[0].id));
+			assert.strictEqual(aDomRefs.length, 1);
+			assert.ok(oEnabledItem === sap.ui.getCore().byId(aDomRefs[0].id));
 
 			// cleanup
 			oSelectList.destroy();
@@ -3098,9 +3098,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.$().length, "The list is rendered");
-			strictEqual(oSelectList.$().attr("tabindex"), "0", "The tabindex attribute is rendered with the correct value");
-			ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS), "The list css class is rendered");
+			assert.ok(oSelectList.$().length, "The list is rendered");
+			assert.strictEqual(oSelectList.$().attr("tabindex"), "0", "The tabindex attribute is rendered with the correct value");
+			assert.ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS), "The list css class is rendered");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3118,7 +3118,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), "The disabled css class is rendered");
+			assert.ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), "The disabled css class is rendered");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3142,7 +3142,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item"), "The list item css class is rendered");
+			assert.ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item"), "The list item css class is rendered");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3167,7 +3167,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
+			assert.strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3191,9 +3191,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(!(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item")), "The list item css class is rendered");
-			ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "SeparatorItem"), "The list item separator css class is rendered");
-			strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
+			assert.ok(!(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item")), "The list item css class is rendered");
+			assert.ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "SeparatorItem"), "The list item separator css class is rendered");
+			assert.strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3216,8 +3216,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
-			strictEqual(oSelectList.getVisibleItems().length, 1);
+			assert.ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
+			assert.strictEqual(oSelectList.getVisibleItems().length, 1);
 
 			// cleanup
 			oSelectList.destroy();
@@ -3243,8 +3243,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
-			strictEqual(oSelectList.getVisibleItems().length, 1);
+			assert.ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
+			assert.strictEqual(oSelectList.getVisibleItems().length, 1);
 
 			// cleanup
 			oSelectList.destroy();
@@ -3270,9 +3270,9 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
-			ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemBaseInvisible"));
-			strictEqual(oSelectList.getVisibleItems().length, 0);
+			assert.ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
+			assert.ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemBaseInvisible"));
+			assert.strictEqual(oSelectList.getVisibleItems().length, 0);
 
 			// cleanup
 			oSelectList.destroy();
@@ -3326,7 +3326,7 @@
 			this.clock.tick(101);
 
 			// assert
-			ok(oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should be added");
+			assert.ok(oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should be added");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3376,7 +3376,7 @@
 			});
 
 			// assert
-			ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
+			assert.ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3453,7 +3453,7 @@
 			});
 
 			// assert
-			ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
+			assert.ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3527,7 +3527,7 @@
 			this.clock.tick(101);
 
 			// assert
-			ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
+			assert.ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
 
 			// cleanup
 			oSelectList.destroy();
@@ -3573,9 +3573,9 @@
 			});
 
 			// assert
-			strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-			strictEqual(fnFireItemPressSpy.callCount, 1, 'The "press" event is fired');
-			ok(oSelectList.getSelectedItem() === oItem);
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
+			assert.strictEqual(fnFireItemPressSpy.callCount, 1, 'The "press" event is fired');
+			assert.ok(oSelectList.getSelectedItem() === oItem);
 
 			// cleanup
 			oSelectList.destroy();
@@ -3620,9 +3620,9 @@
 			});
 
 			// assert
-			strictEqual(fnFireSelectionChangeSpy.callCount, 0);
-			strictEqual(fnFireItemPressSpy.callCount, 0);
-			ok(oSelectList.getSelectedItem() === null);
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0);
+			assert.strictEqual(fnFireItemPressSpy.callCount, 0);
+			assert.ok(oSelectList.getSelectedItem() === null);
 
 			// cleanup
 			oSelectList.destroy();
@@ -3657,9 +3657,9 @@
 			}));
 
 			// assert
-			ok(oSelectList.getSelectedItem() === oSelectList.getLastItem());
-			strictEqual(oSelectList.getSelectedKey(), "CU");
-			strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
+			assert.ok(oSelectList.getSelectedItem() === oSelectList.getLastItem());
+			assert.strictEqual(oSelectList.getSelectedKey(), "CU");
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
 
 			// cleanup
 			oSelectList.destroy();

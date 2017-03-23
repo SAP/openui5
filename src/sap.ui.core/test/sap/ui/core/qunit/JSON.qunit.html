@@ -26,16 +26,16 @@
 
 	  		QUnit.module("JSON Native Support basics");
 	  			QUnit.test("JSON object", function(assert) {
-	  				ok( JSON, "JSON object exists");
-	  				ok( JSON.stringify, "JSON.stringify is defined");
-	  				ok( JSON.parse, "JSON.parse is defined");
+	  				assert.ok( JSON, "JSON object exists");
+	  				assert.ok( JSON.stringify, "JSON.stringify is defined");
+	  				assert.ok( JSON.parse, "JSON.parse is defined");
 	  			});
 
 	  		QUnit.module("JSON Stringify/Parse");
 	  			QUnit.test("JSON Stringification", function(assert) {
 						s = JSON.stringify(['e', {pluribus: 'unum'}]);
 						result = '["e",{"pluribus":"unum"}]';
-						equal(s, result, "Simple stringify");
+						assert.equal(s, result, "Simple stringify");
 
 						o = new Object();
 						o.att1 = "att1";
@@ -45,11 +45,11 @@
 
 						s = JSON.stringify(o);
 						result = '{"att1":"att1","att2":"att2","att3":"att3"}';
-						equal(s, result, "Stringify on object")
+						assert.equal(s, result, "Stringify on object")
 
 						s = JSON.stringify(o, /*replacer*/["att1","att3"]);
 						result = '{"att1":"att1","att3":"att3"}';
-						equal(s, result, "Stringify with replacer")
+						assert.equal(s, result, "Stringify with replacer")
 	  			});
 	  			QUnit.test("JSON Parsing", function(assert) {
 						s = '{"att1":"att1","att2":"att2","att3":"att3"}';
@@ -59,7 +59,7 @@
 						result.att3 = "att3";
 
 						o = JSON.parse(s);
-						deepEqual(o, result, "Simple parse");
+						assert.deepEqual(o, result, "Simple parse");
 
 						result = new Object();
 						result.att1 = "att1";
@@ -71,7 +71,7 @@
 							}
 							return value;
 						});
-						deepEqual(o, result, "Parse with reviver");
+						assert.deepEqual(o, result, "Parse with reviver");
 	  			});
 	  			QUnit.test("JSON Stringify/Parse piped", function(assert) {
 						result = new Object();
@@ -85,7 +85,7 @@
 
 						s = JSON.stringify(result);
 						o = JSON.parse(s);
-						deepEqual( o, result, "Piped stringify/parse");
+						assert.deepEqual( o, result, "Piped stringify/parse");
 	  			});
 
   			QUnit.module("JSON toJSON method");
@@ -101,7 +101,7 @@
 						};
 
 						s = JSON.stringify(o);
-						equal(s, '{"att1":"public"}', "Stringify on an object having toJSON()");
+						assert.equal(s, '{"att1":"public"}', "Stringify on an object having toJSON()");
 
   				});
   			QUnit.module("JSON on SAPUI5 Control");
@@ -137,14 +137,14 @@
 
 					s = JSON.stringify(oButton);
 					var oButtonJSONed = JSON.parse(s);
-					equal(oButtonJSONed.sId, oButton.sId, "Retained sId property");
-					equal(oButtonJSONed.mProperties.helpID, oButton.mProperties.helpID, "Retained helpID property");
-					equal(oButtonJSONed.mProperties.icon, oButton.mProperties.icon, "Retained icon property");
-					equal(oButtonJSONed.mProperties.iconFirst, oButton.mProperties.iconFirst, "Retained iconFirst property");
-					equal(oButtonJSONed.mProperties.text, oButton.mProperties.text, "Retained text property");
-					equal(oButtonJSONed.mProperties.width, oButton.mProperties.width, "Retained width property");
-					equal(oButtonJSONed.mProperties.enabled, oButton.mProperties.enabled, "Retained enabled property");
-					equal(oButtonJSONed.mProperties.visible, oButton.mProperties.visible, "Retained visible property");
+					assert.equal(oButtonJSONed.sId, oButton.sId, "Retained sId property");
+					assert.equal(oButtonJSONed.mProperties.helpID, oButton.mProperties.helpID, "Retained helpID property");
+					assert.equal(oButtonJSONed.mProperties.icon, oButton.mProperties.icon, "Retained icon property");
+					assert.equal(oButtonJSONed.mProperties.iconFirst, oButton.mProperties.iconFirst, "Retained iconFirst property");
+					assert.equal(oButtonJSONed.mProperties.text, oButton.mProperties.text, "Retained text property");
+					assert.equal(oButtonJSONed.mProperties.width, oButton.mProperties.width, "Retained width property");
+					assert.equal(oButtonJSONed.mProperties.enabled, oButton.mProperties.enabled, "Retained enabled property");
+					assert.equal(oButtonJSONed.mProperties.visible, oButton.mProperties.visible, "Retained visible property");
 
   				});
 		</script>

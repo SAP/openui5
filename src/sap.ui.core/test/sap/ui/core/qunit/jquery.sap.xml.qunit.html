@@ -44,46 +44,46 @@
 
 		QUnit.test("parse XML string no error", function(assert) {
 			var oXMLDocument = jQuery.sap.parseXML(testdata);
-			ok(oXMLDocument.parseError.errorCode == 0, "check parse Error");
-			equal(oXMLDocument.getElementsByTagName("teamMembers")[0].childNodes.length,7, "check length");
-			equal(oXMLDocument.getElementsByTagName("member").length,7, "check length");
+			assert.ok(oXMLDocument.parseError.errorCode == 0, "check parse Error");
+			assert.equal(oXMLDocument.getElementsByTagName("teamMembers")[0].childNodes.length,7, "check length");
+			assert.equal(oXMLDocument.getElementsByTagName("member").length,7, "check length");
 
-			equal(oXMLDocument.getElementsByTagName("member")[0].getAttribute("firstName"), "Andreas", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[1].getAttribute("firstName"), "Peter", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[2].getAttribute("firstName"), "Gina", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[3].getAttribute("firstName"), "Steave", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[4].getAttribute("firstName"), "Michael", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[5].getAttribute("firstName"), "Marc", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[6].getAttribute("firstName"), "Frank", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[0].getAttribute("firstName"), "Andreas", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[1].getAttribute("firstName"), "Peter", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[2].getAttribute("firstName"), "Gina", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[3].getAttribute("firstName"), "Steave", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[4].getAttribute("firstName"), "Michael", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[5].getAttribute("firstName"), "Marc", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[6].getAttribute("firstName"), "Frank", "name check");
 		});
 
 		QUnit.test("parse XML string parse error", function(assert) {
 			var oXMLDocument = jQuery.sap.parseXML(testdataError);
-			ok(oXMLDocument.parseError.errorCode != 0, "check parse Error");
+			assert.ok(oXMLDocument.parseError.errorCode != 0, "check parse Error");
 			if (oXMLDocument.getElementsByTagName){
-				equal(oXMLDocument.getElementsByTagName("teamMembers").length,0, "check length");
-				equal(oXMLDocument.getElementsByTagName("member").length,0, "check length");
+				assert.equal(oXMLDocument.getElementsByTagName("teamMembers").length,0, "check length");
+				assert.equal(oXMLDocument.getElementsByTagName("member").length,0, "check length");
 			}
 		});
 
 		QUnit.test("serialize XML document", function(assert) {
 			var oXMLDocument = jQuery.sap.parseXML(testdata);
 			var sXMLText = jQuery.sap.serializeXML(oXMLDocument);
-			ok(sXMLText, "check not undefined");
+			assert.ok(sXMLText, "check not undefined");
 
 			// parse again
 			oXMLDocument = jQuery.sap.parseXML(sXMLText);
-			ok(oXMLDocument.parseError.errorCode == 0, "check parse Error");
-			equal(oXMLDocument.getElementsByTagName("teamMembers")[0].childNodes.length,7, "check length");
-			equal(oXMLDocument.getElementsByTagName("member").length,7, "check length");
+			assert.ok(oXMLDocument.parseError.errorCode == 0, "check parse Error");
+			assert.equal(oXMLDocument.getElementsByTagName("teamMembers")[0].childNodes.length,7, "check length");
+			assert.equal(oXMLDocument.getElementsByTagName("member").length,7, "check length");
 
-			equal(oXMLDocument.getElementsByTagName("member")[0].getAttribute("firstName"), "Andreas", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[1].getAttribute("firstName"), "Peter", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[2].getAttribute("firstName"), "Gina", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[3].getAttribute("firstName"), "Steave", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[4].getAttribute("firstName"), "Michael", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[5].getAttribute("firstName"), "Marc", "name check");
-			equal(oXMLDocument.getElementsByTagName("member")[6].getAttribute("firstName"), "Frank", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[0].getAttribute("firstName"), "Andreas", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[1].getAttribute("firstName"), "Peter", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[2].getAttribute("firstName"), "Gina", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[3].getAttribute("firstName"), "Steave", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[4].getAttribute("firstName"), "Michael", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[5].getAttribute("firstName"), "Marc", "name check");
+			assert.equal(oXMLDocument.getElementsByTagName("member")[6].getAttribute("firstName"), "Frank", "name check");
 
 		});
 

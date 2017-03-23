@@ -23,46 +23,46 @@ sap.ui.require([
   QUnit.test("normalization works as expected", function(assert) {
 
     // main test cases (tests multiple spaces between words and padding around string)
-    strictEqual(dtu.normalization.titleCase(" first  name "), "First Name", "titleCase");
-    strictEqual(dtu.normalization.pascalCase(" first name  first "), "FirstNameFirst", "pascalCase");
-    strictEqual(dtu.normalization.camelCase(" First Name  Last "), "firstNameLast", "camelCase");
-    strictEqual(dtu.normalization.hyphenated(" First Name  Third "), "first-name-third", "hyphenated");
-    strictEqual(dtu.normalization.none(" First  Name "), " First  Name ", "none");
+    assert.strictEqual(dtu.normalization.titleCase(" first  name "), "First Name", "titleCase");
+    assert.strictEqual(dtu.normalization.pascalCase(" first name  first "), "FirstNameFirst", "pascalCase");
+    assert.strictEqual(dtu.normalization.camelCase(" First Name  Last "), "firstNameLast", "camelCase");
+    assert.strictEqual(dtu.normalization.hyphenated(" First Name  Third "), "first-name-third", "hyphenated");
+    assert.strictEqual(dtu.normalization.none(" First  Name "), " First  Name ", "none");
 
     // boundary test cases
-    strictEqual(dtu.normalization.titleCase("d"), "D", "titleCase single letter");
-    strictEqual(dtu.normalization.titleCase(""), "", "titleCase empty");
-    strictEqual(dtu.normalization.pascalCase("p"), "P", "pascalCase single letter");
-    strictEqual(dtu.normalization.pascalCase(""), "", "pascalCase empty");
-    strictEqual(dtu.normalization.camelCase("F"), "f", "camelCase single letter");
-    strictEqual(dtu.normalization.camelCase(""), "", "camelCase empty");
-    strictEqual(dtu.normalization.camelCase("F"), "f", "camelCase single letter");
-    strictEqual(dtu.normalization.hyphenated("F"), "f", "hyphenated single letter");
-    strictEqual(dtu.normalization.hyphenated(""), "", "hyphenated empty");
-    strictEqual(dtu.normalization.none("N"), "N", "none single letter upper case");
-    strictEqual(dtu.normalization.none("n"), "n", "none single letter lower case");
-    strictEqual(dtu.normalization.none(""), "", "none empty");
+    assert.strictEqual(dtu.normalization.titleCase("d"), "D", "titleCase single letter");
+    assert.strictEqual(dtu.normalization.titleCase(""), "", "titleCase empty");
+    assert.strictEqual(dtu.normalization.pascalCase("p"), "P", "pascalCase single letter");
+    assert.strictEqual(dtu.normalization.pascalCase(""), "", "pascalCase empty");
+    assert.strictEqual(dtu.normalization.camelCase("F"), "f", "camelCase single letter");
+    assert.strictEqual(dtu.normalization.camelCase(""), "", "camelCase empty");
+    assert.strictEqual(dtu.normalization.camelCase("F"), "f", "camelCase single letter");
+    assert.strictEqual(dtu.normalization.hyphenated("F"), "f", "hyphenated single letter");
+    assert.strictEqual(dtu.normalization.hyphenated(""), "", "hyphenated empty");
+    assert.strictEqual(dtu.normalization.none("N"), "N", "none single letter upper case");
+    assert.strictEqual(dtu.normalization.none("n"), "n", "none single letter lower case");
+    assert.strictEqual(dtu.normalization.none(""), "", "none empty");
 
     // weird characters
-    strictEqual(dtu.normalization.titleCase("pascal's wager"), "Pascals Wager", "Title Case single quote");
-    strictEqual(dtu.normalization.camelCase("Being, like, totally hot"), "beingLikeTotallyHot", "camelCase commas");
-    strictEqual(dtu.normalization.hyphenated("Being, like, totally hot"), "being-like-totally-hot", "hyphenation commas");
-    strictEqual(dtu.normalization.camelCase("11,111 22,222"), "1111122222", "camelCase numbers");
-    strictEqual(dtu.normalization.titleCase("(this is weird)"), "This Is Weird", "Title Case brackets");
-    strictEqual(dtu.normalization.camelCase("exclamation! marks# are not ok?"), "exclamationMarksAreNotOk",  "exclaim");
+    assert.strictEqual(dtu.normalization.titleCase("pascal's wager"), "Pascals Wager", "Title Case single quote");
+    assert.strictEqual(dtu.normalization.camelCase("Being, like, totally hot"), "beingLikeTotallyHot", "camelCase commas");
+    assert.strictEqual(dtu.normalization.hyphenated("Being, like, totally hot"), "being-like-totally-hot", "hyphenation commas");
+    assert.strictEqual(dtu.normalization.camelCase("11,111 22,222"), "1111122222", "camelCase numbers");
+    assert.strictEqual(dtu.normalization.titleCase("(this is weird)"), "This Is Weird", "Title Case brackets");
+    assert.strictEqual(dtu.normalization.camelCase("exclamation! marks# are not ok?"), "exclamationMarksAreNotOk",  "exclaim");
 
     // dashes, underscores treated like spaces
-    strictEqual(dtu.normalization.titleCase("Sold-To Party"), "Sold To Party", "Title Case dashes");
-    strictEqual(dtu.normalization.titleCase("Sold_To Party"), "Sold To Party", "Title Case underscores");
-    strictEqual(dtu.normalization.titleCase("hello____world"), "Hello World", "Title Case multi-underscores");
-    strictEqual(dtu.normalization.camelCase("Sold-To Party"), "soldToParty", "Camel Case dashes");
-    strictEqual(dtu.normalization.camelCase("Sold_To Party"), "soldToParty", "Camel Case underscores");
-    strictEqual(dtu.normalization.pascalCase("Sold-To Party"), "SoldToParty", "Pascal Case dashes");
-    strictEqual(dtu.normalization.pascalCase("Sold_To Party"), "SoldToParty", "Pascal Case underscores");
-    strictEqual(dtu.normalization.hyphenated("Sold-To Party"), "sold-to-party", "Hyphenated dashes");
-    strictEqual(dtu.normalization.hyphenated("Sold_To Party"), "sold-to-party", "Hyphenated underscores");
-    strictEqual(dtu.normalization.camelCase("--Sold--To Party--"), "soldToParty", "Camel Case dashes surround");
-    strictEqual(dtu.normalization.camelCase("__Sold__To Party__"), "soldToParty", "Camel Case underscores surround");
+    assert.strictEqual(dtu.normalization.titleCase("Sold-To Party"), "Sold To Party", "Title Case dashes");
+    assert.strictEqual(dtu.normalization.titleCase("Sold_To Party"), "Sold To Party", "Title Case underscores");
+    assert.strictEqual(dtu.normalization.titleCase("hello____world"), "Hello World", "Title Case multi-underscores");
+    assert.strictEqual(dtu.normalization.camelCase("Sold-To Party"), "soldToParty", "Camel Case dashes");
+    assert.strictEqual(dtu.normalization.camelCase("Sold_To Party"), "soldToParty", "Camel Case underscores");
+    assert.strictEqual(dtu.normalization.pascalCase("Sold-To Party"), "SoldToParty", "Pascal Case dashes");
+    assert.strictEqual(dtu.normalization.pascalCase("Sold_To Party"), "SoldToParty", "Pascal Case underscores");
+    assert.strictEqual(dtu.normalization.hyphenated("Sold-To Party"), "sold-to-party", "Hyphenated dashes");
+    assert.strictEqual(dtu.normalization.hyphenated("Sold_To Party"), "sold-to-party", "Hyphenated underscores");
+    assert.strictEqual(dtu.normalization.camelCase("--Sold--To Party--"), "soldToParty", "Camel Case dashes surround");
+    assert.strictEqual(dtu.normalization.camelCase("__Sold__To Party__"), "soldToParty", "Camel Case underscores surround");
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ sap.ui.require([
       ["Jupiter", "1898", "142,984", "23.1"]
     ];
 
-    deepEqual(dtu.toTable(data),
+    assert.deepEqual(dtu.toTable(data),
       [
         {
           "Planet": "Mercury",
@@ -130,10 +130,10 @@ sap.ui.require([
       }
     ];
 
-    deepEqual(dtu.toTable(data, "camelCase"), expected, "camelCase string");
+    assert.deepEqual(dtu.toTable(data, "camelCase"), expected, "camelCase string");
 
     var normalizationFunction = sap.ui.test.gherkin.dataTableUtils.normalization.camelCase;
-    deepEqual(dtu.toTable(data, normalizationFunction), expected, "camelCase function");
+    assert.deepEqual(dtu.toTable(data, normalizationFunction), expected, "camelCase function");
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ sap.ui.require([
     // The Cucumber Java's reference implementation uses the first column and doesn't throw an Error
     // We are deviating from the reference implementation because it seems like they didn't consider this edge case
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([
         ["Planet", "Planet"],
         ["Mercury", "Jupiter"]
@@ -154,7 +154,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([
         ["PLANET", "planet"],
         ["Mercury", "Jupiter"]
@@ -179,7 +179,7 @@ sap.ui.require([
       ["Gravity", "9.8"]
     ];
 
-    deepEqual(dtu.toObject(data), {
+    assert.deepEqual(dtu.toObject(data), {
       Planet: "Earth",
       Mass: "5.97",
       Diameter: "12,756",
@@ -199,7 +199,7 @@ sap.ui.require([
       ["Telephone Number", "Work", "123-456-0987"]
     ];
 
-    deepEqual(dtu.toObject(data), {
+    assert.deepEqual(dtu.toObject(data), {
       "Namey Name": "Alice",
       "Mystery Mass": "135 lbs",
       "Telephone Number": {
@@ -217,7 +217,7 @@ sap.ui.require([
     // The Cucumber Java's implementation of DataTable.asMap() keeps values from the last row and doesn't throw an Error
     // We are deviating from the reference implementation because it seems like they didn't consider this edge case
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["Name", "135 lbs"],
         ["Name", "Alice"],
@@ -228,7 +228,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Simple Key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["Telephone Number", "555-777-8888"],
         ["Telephone Number", "Home", "333-555-7777"],
@@ -240,7 +240,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Simple key replaced by nested key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["Address", "Street", "Grand Boulevard"],
         ["Address", "5000 Hollywood Ave"],
@@ -251,7 +251,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Nested key replaced by simple key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["Address", "Street", "House", "Grand Boulevard"],
         ["Address", "5000 Hollywood Ave"],
@@ -262,7 +262,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by simple key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["GPS", "Latitude", "Minutes", "30"],
         ["GPS", "Latitude", "50"]
@@ -273,7 +273,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by nested key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["GPS", "Latitude", "50"],
         ["GPS", "Latitude", "Minutes", "30"]
@@ -284,7 +284,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Deeply nested key replaced by nested key 2"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["GPS", "Latitude", "Minutes", "30"],
         ["GPS", "Latitude", "Minutes", "50"]
@@ -295,7 +295,7 @@ sap.ui.require([
       "When we duplicate column headers then toTable throws an Error - Deeply nested key"
     );
 
-    throws( function() {
+    assert.throws( function() {
       dtu.toObject([
         ["HOME ADDRESS", "5000 Boulevard Rene-Levesque"],
         ["home address", "8000 Hollywood Boulevard"]
@@ -329,10 +329,10 @@ sap.ui.require([
       }
     };
 
-    deepEqual(dtu.toObject(data, "hyphenated"), expected, "hyphenated string");
+    assert.deepEqual(dtu.toObject(data, "hyphenated"), expected, "hyphenated string");
 
     var normalizationFunction = sap.ui.test.gherkin.dataTableUtils.normalization.hyphenated;
-    deepEqual(dtu.toObject(data, normalizationFunction), expected, "hyphenated function");
+    assert.deepEqual(dtu.toObject(data, normalizationFunction), expected, "hyphenated function");
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -343,7 +343,7 @@ sap.ui.require([
     var arrayError = "dataTableUtils.toTable: parameter 'aData' must be an Array of Array of Strings";
     var normError = "dataTableUtils.toTable: parameter 'vNorm' must be either a Function or a String with the value 'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'";
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable();
     }, function(error) {
       return error.message === arrayError;
@@ -351,7 +351,7 @@ sap.ui.require([
       "toTable aData is undefined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable(100);
     }, function(error) {
       return error.message === arrayError;
@@ -359,7 +359,7 @@ sap.ui.require([
       "toTable aData is invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([7]);
     }, function(error) {
       return error.message === arrayError;
@@ -367,7 +367,7 @@ sap.ui.require([
       "toTable aData is invalid array of arrays of string"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([[7]]);
     }, function(error) {
       return error.message === arrayError;
@@ -375,7 +375,7 @@ sap.ui.require([
       "toTable aData is invalid array of arrays of string"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([], 100);
     }, function(error) {
       return error.message === normError;
@@ -383,7 +383,7 @@ sap.ui.require([
       "toTable vNorm is invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toTable([], "invalidNormalizationFunction");
     }, function(error) {
       return error.message === normError;
@@ -401,7 +401,7 @@ sap.ui.require([
     var arrayError = "dataTableUtils.toObject: parameter 'aData' must be an Array of Array of Strings";
     var normError = "dataTableUtils.toObject: parameter 'vNorm' must be either a Function or a String with the value 'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'";
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject();
     }, function(error) {
       return error.message === arrayError;
@@ -409,7 +409,7 @@ sap.ui.require([
       "toObject aArray is undefined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject(100);
     }, function(error) {
       return error.message === arrayError;
@@ -417,7 +417,7 @@ sap.ui.require([
       "toObject aArray is invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject([7]);
     }, function(error) {
       return error.message === arrayError;
@@ -425,7 +425,7 @@ sap.ui.require([
       "toObject aArray is invalid normalization string"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject([[7]]);
     }, function(error) {
       return error.message === arrayError;
@@ -433,7 +433,7 @@ sap.ui.require([
       "toObject aArray is invalid normalization string"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject([], 100);
     }, function(error) {
       return error.message === normError;
@@ -441,7 +441,7 @@ sap.ui.require([
       "toObject vNorm is invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.toObject([], "invalidNormalizationFunction");
     }, function(error) {
       return error.message === normError;
@@ -457,7 +457,7 @@ sap.ui.require([
   QUnit.test("Normalization functions: invalid data input", function(assert) {
 
     // titleCase
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.titleCase();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.titleCase: parameter 'sString' must be a valid string";
@@ -465,7 +465,7 @@ sap.ui.require([
       "titleCase sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.titleCase(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.titleCase: parameter 'sString' must be a valid string";
@@ -474,7 +474,7 @@ sap.ui.require([
     );
 
     // pascalCase
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.pascalCase();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.pascalCase: parameter 'sString' must be a valid string";
@@ -482,7 +482,7 @@ sap.ui.require([
       "pascalCase sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.pascalCase(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.pascalCase: parameter 'sString' must be a valid string";
@@ -491,7 +491,7 @@ sap.ui.require([
     );
 
     // camelCase
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.camelCase();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.camelCase: parameter 'sString' must be a valid string";
@@ -499,7 +499,7 @@ sap.ui.require([
       "camelCase sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.camelCase(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.camelCase: parameter 'sString' must be a valid string";
@@ -508,7 +508,7 @@ sap.ui.require([
     );
 
     // hyphenated
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.hyphenated();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.hyphenated: parameter 'sString' must be a valid string";
@@ -516,7 +516,7 @@ sap.ui.require([
       "hyphenated sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.hyphenated(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.hyphenated: parameter 'sString' must be a valid string";
@@ -525,7 +525,7 @@ sap.ui.require([
     );
 
     // none
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.none();
     }, function(error) {
       return error.message === "dataTableUtils.normalization.none: parameter 'sString' must be a valid string";
@@ -533,7 +533,7 @@ sap.ui.require([
       "none sString is not defined"
     );
 
-    throws( function(){
+    assert.throws( function(){
       dtu.normalization.none(100);
     }, function(error) {
       return error.message === "dataTableUtils.normalization.none: parameter 'sString' must be a valid string";

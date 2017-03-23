@@ -39,7 +39,7 @@
 			var oResult = oController.getOwnerComponent();
 
 			// Assert
-			strictEqual(oResult, "foo", "");
+			assert.strictEqual(oResult, "foo", "");
 		});
 
 		QUnit.test("Should return undefined as component of a controller without view", function(assert) {
@@ -51,7 +51,7 @@
 			var oResult = oController.getOwnerComponent();
 
 			// Assert
-			strictEqual(oResult, undefined);
+			assert.strictEqual(oResult, undefined);
 		});
 
 		QUnit.test("Should get undefined as component of a controller with a view without component", function(assert) {
@@ -75,7 +75,7 @@
 			var oResult = oController.getOwnerComponent();
 
 			// Assert
-			strictEqual(oResult, undefined);
+			assert.strictEqual(oResult, undefined);
 
 			//Cleanup
 			oView.destroy();
@@ -107,7 +107,7 @@
 			var oResult = oController.getOwnerComponent();
 
 			// Assert
-			strictEqual(oResult, oComponent);
+			assert.strictEqual(oResult, oComponent);
 
 			//Cleanup
 			oView.destroy();

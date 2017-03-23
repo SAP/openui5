@@ -91,9 +91,7 @@
 	margin-top:			0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
 	margin-bottom:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
 	margin-left:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
-	-webkit-box-flex:	0;		 	/* OLD - iOS 6-, Safari 3.1-6 */
-	-webkit-flex:		none;			/* Chrome */
-	flex:				none;			/* NEW, Firefox 20+ */
+	flex:				none;
 }
 
 /*if no image is provided a standard placeholder is displayed */
@@ -107,7 +105,7 @@
 	font-family:		@sapUiFontFamily;
 	font-weight:		normal;
 	white-space:		nowrap;
-	padding-top:		0.25rem;
+	padding-top:		0.25rem; /* Padding top instead of padding bottom due to in-line placement with Objectmarker */
 	overflow:			hidden;
 	text-overflow:		ellipsis;
 	opacity:			100;
@@ -133,7 +131,7 @@
 }
 
 /*focus for the file name */
-.sapMUCItem .sapMUCTextContainer > .sapMUCFileName.sapMLnk:focus {
+.sapMUCItem .sapMUCTextContainer > .sapMUCFileName.sapMLnk:not(.sapMLnkDsbl):focus {
 	outline:			1px dotted;
 	outline-offset:		0.0625rem;
 }
@@ -273,18 +271,15 @@
 .sapMUCListLastItem > .sapMLIBContent,
 .sapMUCListSingleItem > .sapMLIBContent,
 .sapMUCListItem > .sapMLIBContent {
-	display:		-webkit-box; 		/* OLD - iOS 6-, Safari 3.1-6 */
-	display:		-webkit-flex; 		/* NEW - Chrome */
-	display:		flex; 				/*FF 20+ 	*/
+	display:		flex;
 	overflow:		hidden;				/*necessary for text truncation in FF */
+	padding:		0;
 }
 
 /*Container for a textContainer and a button container */
 @media(min-width: 30rem) {
 	.sapMUCTextButtonContainer {
-		display:		-webkit-box; 		/* OLD - iOS 6-, Safari 3.1-6 */
-		display:		-webkit-flex; 		/* NEW - Chrome */
-		display:		flex; 				/*FF 20+ 	*/
+		display:		flex;
 		width: 			100%;
 		min-width: 		0; /* to avoid FF bug with flex*/
 	}
@@ -303,9 +298,7 @@
 /*text container holding the file name, a container for attributes and a container for statuses */
 @media(min-width: 30rem) {
 	.sapMUCTextContainer {
-		-webkit-box-flex:	10;			/* OLD - iOS 6-, Safari 3.1-6 */
-		-webkit-flex:		10;			/* Chrome */
-		flex:	 			10 10 auto;			/* NEW, Firefox 20+	*/
+		flex:	 			10 10 auto;
 		padding-top: 		0.125rem;
 		padding-bottom: 	0.125rem;
 		display: 			block;
@@ -363,10 +356,7 @@
 		padding-left: 1rem;
 		padding-top: 0rem;
 		align-self: flex-end; /* for buttons alignment at the bottom */
-		-webkit-align-self: flex-end; /* for buttons alignment at the bottom in Safari */
-		-webkit-box-flex:	0;			/* OLD - iOS 6-, Safari 3.1-6 */
-		-webkit-flex:		none;		 	/* Chrome */
-		flex:				none;		 	/* NEW, Firefox 20+	*/
+		flex: none;
 	}
 }
 
@@ -411,8 +401,7 @@
 
 /*compact form */
 .sapUiSizeCompact .sapMUCButtonContainer > .sapMBtn {
-	padding-top: 0rem; /* the padding of the sap.m.Button should be removed */
-	padding-bottom: 0rem; /* the padding of the sap.m.Button should be removed */
+	height: 1.625rem;
 }
 
 .sapMUCSeparator {
@@ -464,6 +453,7 @@
 /*if no link is provided the file name is displayed as an disabled link */
 .sapMLnkDsbl.sapMUCFileName {
 	color: @sapUiListTextColor;
+	text-decoration: none;
 }
 
 /* disabled state */

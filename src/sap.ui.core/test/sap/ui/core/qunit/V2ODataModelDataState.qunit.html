@@ -177,7 +177,7 @@
 	function checkDataState(oDataState1, oDataState2, sComment) {
 		aCompareMethods = oDataState2._compareMethods;
 
-		ok(true, "Starting Test: " + sComment);
+		assert.ok(true, "Starting Test: " + sComment);
 
 		for (var i=0;i<aCompareMethods.length;i++) {
 			if (!jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]())) {
@@ -193,29 +193,30 @@
 					if (oDataState1[aCompareMethods[i]]()) {
 						iLength1 = oDataState1[aCompareMethods[i]]().length;
 					}
-					equal(iLength1 === iLength2,true,"Compared " + aCompareMethods[i] + " : current(" +  iLength1 + "), expected("+ iLength2 +"): "+ sComment);
+					assert.equal(iLength1 === iLength2,true,"Compared " + aCompareMethods[i] + " : current(" +  iLength1 + "), expected("+ iLength2 +"): "+ sComment);
 					if (iLength1 === iLength2) {
 						var aMessages1 = oDataState1.getMessages();
 						var aMessages2 = oDataState2.getMessages();
 						for (var j=0;j<aMessages1.length;j++) {
 							if (aMessages1[j] instanceof sap.ui.core.message.Message && aMessages2[j] instanceof sap.ui.core.message.Message) {
-								equal(aMessages1[j] === aMessages2[j],true,"Compared Message "+ j + " message:'" +aMessages1[j].getMessage() +"': "+ sComment);
+								assert.equal(aMessages1[j] === aMessages2[j],true,"Compared Message "+ j + " message:'" +aMessages1[j].getMessage() +"': "+ sComment);
 							}
 
 						}
 					}
 				} else {
-					//ok(false, "method "+ aCompareMethods[i] + " not implemented");
+					//assert.ok(false, "method "+ aCompareMethods[i] + " not implemented");
 				}
 			} else {
-				equal(jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected("+ oDataState2[aCompareMethods[i]]() +"): "+ sComment);
+				assert.equal(jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected("+ oDataState2[aCompareMethods[i]]() +"): "+ sComment);
 			}
 		}
 
-		ok(true, "Ending Test: " + sComment);
+		assert.ok(true, "Ending Test: " + sComment);
 	};
 
-	asyncTest("test DataState batch deferred",function(){
+	QUnit.test("test DataState batch deferred",function(assert){
+		var done = assert.async();
 		// create dummy testdata
 		var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
 			oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
@@ -268,8 +269,8 @@
 					var pOthersDone;
 					oModel.submitChanges({
 						success: function() {
-							equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
-							equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
+							assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
+							assert.equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
 							pOthersDone.then(function() {
 								testDataState (oNameBinding,
 										function() {
@@ -282,7 +283,7 @@
 											laundering: false
 										},
 										"Setting a string to a string type binding after submit",
-										start
+										done
 									);
 							});
 						}
@@ -319,12 +320,13 @@
 				});
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
 
-	asyncTest("test DataState single deferred",function(){
+	QUnit.test("test DataState single deferred",function(assert){
+		var done = assert.async();
 		var sRequestId;
 		oModel.setUseBatch(false);
 		// create dummy testdata
@@ -413,8 +415,8 @@
 						oModel.attachRequestCompleted(
 							function(oInfo) {
 								if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
-									equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
-									equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
+									assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
+									assert.equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
 									pOthers.then(function() {
 										testDataState (oNameBinding,
 											function() {
@@ -428,7 +430,7 @@
 											},
 											"Setting a string to a string type binding after submit",
 											function() {
-												start();
+												done();
 											}
 										);
 									});
@@ -438,12 +440,13 @@
 					});
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
 
-	asyncTest("test DataState single not deferred",function(){
+	QUnit.test("test DataState single not deferred",function(assert){
+		var done = assert.async();
 		var sRequestId;
 		var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
 			oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
@@ -500,6 +503,7 @@
 							},
 							"Waiting for expected submit change handler."
 						);
+					done();
 				});
 			}
 			oModel.attachRequestSent(fn1);
@@ -508,9 +512,8 @@
 					oInfo = jQuery.extend(true, {}, oInfo);
 					pOthers.then(function() {
 					if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
-						equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-						equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
-						start();
+						assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
+						assert.equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
 					}});
 				}
 			);
@@ -571,7 +574,8 @@
 		});
 	}
 
-	asyncTest("test DataState multiple submits", function() {
+	QUnit.test("test DataState multiple submits", function(assert) {
+		var done = assert.async();
 		var oNameBinding;
 
 		var pSubmit1, pSubmit2, pSubmit3;
@@ -638,7 +642,7 @@
 			laundering: false
 		}]).then(function() {
 			// Exit after all DataStates have been checked
-			start();
+			done();
 		});
 
 
@@ -662,7 +666,8 @@
 	});
 
 
-	asyncTest("Simulated DataState Changes", function() {
+	QUnit.test("Simulated DataState Changes", function(assert) {
+		var done = assert.async();
 
 		oNameBinding = oModel.bindProperty("/test");
 
@@ -711,7 +716,7 @@
 			laundering: false
 		}]).then(function() {
 			// Exit after all DataStates have been checked
-			start();
+			done();
 		});
 
 
@@ -800,16 +805,17 @@
 	});
 
 
-	asyncTest("test DataState submitChanges with expanded nav props",function(){
+	QUnit.test("test DataState submitChanges with expanded nav props",function(assert){
+		var done = assert.async();
 		// create dummy testdata
 		oModel.read("/ProductSet('HT-1000')", {
 			urlParameters: {$expand : "ToSalesOrderLineItems"},
 			success: function() {
-				ok(true, "request success");
+				assert.ok(true, "request success");
 				Promise.resolve().then(fnTest);
 			},
 			error: function() {
-				ok(false, "request failed");
+				assert.ok(false, "request failed");
 			}
 		});
 		var fnTest = function() {
@@ -827,16 +833,16 @@
 				},
 				"Setting a 'blabla2' to a string type binding"
 			);
-			ok(oModel.hasPendingChanges(), "model should have pending changes");
+			assert.ok(oModel.hasPendingChanges(), "model should have pending changes");
 			oModel.submitChanges(
 				{
 					success: function() {
-						ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+						assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 						var oOrigData = oModel.getOriginalProperty("/ProductSet('HT-1000')");
 						var oData = oModel.getProperty("/ProductSet('HT-1000')");
-						equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('HT-1000')/Name"),"blabla2");
-						equal(oData.Name,oModel.getProperty("/ProductSet('HT-1000')/Name"),"blabla2");
-						ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
+						assert.equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('HT-1000')/Name"),"blabla2");
+						assert.equal(oData.Name,oModel.getProperty("/ProductSet('HT-1000')/Name"),"blabla2");
+						assert.ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
 						testDataState (oNameBinding,
 							function() {
 								oModel.setProperty("/ProductSet('HT-1000')/Name","blabla3");
@@ -848,14 +854,15 @@
 								laundering: false
 							},
 							"Setting a 'blabla3' to a string type binding"
-						).then(start);
+						).then(done);
 					}
 				}
 			);
 		};
 	});
 
-	asyncTest("test DataState multiple submits with complext type",function(){
+	QUnit.test("test DataState multiple submits with complext type",function(assert){
+		var done = assert.async();
 		oCityBinding = oModel.bindProperty("/BusinessPartnerSet('0100000015')/Address/City");
 		oModel.addBinding(oCityBinding);
 
@@ -892,7 +899,7 @@
 			laundering: false
 		}]).then(function() {
 			// Exit after all DataStates have been checked
-			start();
+			done();
 		});
 
 
@@ -918,14 +925,15 @@
 
 	});
 
-	asyncTest("test DataState Context Change",function(){
+	QUnit.test("test DataState Context Change",function(assert){
+		var done = assert.async();
 		// create dummy testdata
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				Promise.resolve().then(fnTest);
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 		var fnTest = function() {
@@ -996,19 +1004,20 @@
 								);
 							})
 							.then(function() {
-								start()
+								done();
 							});
 						}
 					});
 				},
 				error : function() {
-					ok(false,"request failed");
+					assert.ok(false,"request failed");
 				}
 			});
 		}
 	});
 
-	asyncTest("test DataState Composite Binding",function(){
+	QUnit.test("test DataState Composite Binding",function(assert){
+		var done = assert.async();
 		// create dummy testdata
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
@@ -1128,16 +1137,17 @@
 					);
 				})
 				.then(function() {
-					start();
+					done();
 				});
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
 
-	asyncTest("test DataState and Messages",function(){
+	QUnit.test("test DataState and Messages",function(assert){
+		var done = assert.async();
 		var oVerticalLayout = new sap.ui.layout.VerticalLayout();
 		var oFloatInput = new sap.m.Input({value:{path:'TaxTarifCode', type:'sap.ui.model.type.Float'}});
 		var oNameInput = new sap.m.Input({value:{path:'Name'}});
@@ -1256,7 +1266,7 @@
 																				oFloatInput.destroy();
 																				oNameInput.destroy();
 																				oCompositeInput.destroy();
-																				start();
+																				done();
 																			},0);
 																		}
 																	);
@@ -1273,12 +1283,13 @@
 					);
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
 
-	asyncTest("test DataState and Messages on Composite Binding",function(){
+	QUnit.test("test DataState and Messages on Composite Binding",function(assert){
+		var done = assert.async();
 		var oVerticalLayout = new sap.ui.layout.VerticalLayout();
 		var oFloatInput = new sap.m.Input({value:{path:'TaxTarifCode', type:'sap.ui.model.type.Float'}});
 		var oNameInput = new sap.m.Input({value:{path:'Name'}});
@@ -1345,7 +1356,7 @@
 										oFloatInput.destroy();
 										oNameInput.destroy();
 										oCompositeInput.destroy();
-										start();
+										done();
 									},0);
 								}
 							);
@@ -1353,13 +1364,14 @@
 					);
 			},
 			error: function() {
-				ok(false,"request failed");
+				assert.ok(false,"request failed");
 			}
 		});
 	});
 
 
-	asyncTest("test DataState and Messages on Composite Binding 2",function(){
+	QUnit.test("test DataState and Messages on Composite Binding 2",function(assert){
+		var done = assert.async();
 		var oInput = new sap.m.Input("compositeInput", {
 			value: {
 				parts: [
@@ -1390,7 +1402,7 @@
 				target: "compositeInput/value"
 			});
 
-			equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
+			assert.equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
 
 
 			testDataState(oBinding, function() {}, {
@@ -1461,12 +1473,13 @@
 			})
 			.then(function() {
 				oInput.destroy();
-				start();
+				done();
 			});
 		});
 	});
 
-	asyncTest("test DataState and Messages on Composite Binding with type",function(){
+	QUnit.test("test DataState and Messages on Composite Binding with type",function(assert){
+		var done = assert.async();
 		var oInput = new sap.m.Input("compositeInput", {
 			value: {
 				parts: [
@@ -1498,7 +1511,7 @@
 				target: "compositeInput/value"
 			});
 
-			equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
+			assert.equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
 
 			testDataState(oBinding, function() {}, {
 					originalValue : ["0.0", "CAD"],
@@ -1542,18 +1555,19 @@
 				);
 			})
 			.then(function() {
-				start();
+				done();
 			});
 		});
 	});
 
 
-	asyncTest("Test Formatter Invocation", function() {
+	QUnit.test("Test Formatter Invocation", function(assert) {
+		var done = assert.async();
 		// Calling formatters too often should not be a problem, but quite some applications use long running formatters
 		// or even formatters with side-effects (e.g. calling setProperty in the Model), which can lead to performance
 		// issues and even endless loops if the formatters are called more often.
 		// Please make sure there is no alternative before changing this test case to allow more formatter invocations.
-		expect(4);
+		assert.expect(4);
 
 		var fnExecuteLater = function(fnFunction) {
 			return new Promise(function(fnResolve) {
@@ -1603,8 +1617,8 @@
 		}
 
 		pSet.then(function() {
-			equals(iCounter1, 2, "PropertyBinding Formatter called twice (undefined and value)");
-			equals(iCounter2, 3, "CompositeBinding Formatter called three times (undefined/undefined, value/undefined and value/value)");
+			assert.equal(iCounter1, 2, "PropertyBinding Formatter called twice (undefined and value)");
+			assert.equal(iCounter2, 3, "CompositeBinding Formatter called three times (undefined/undefined, value/undefined and value/value)");
 
 			oJsonModel.destroy();
 
@@ -1632,10 +1646,10 @@
 				}
 
 				pSet.then(function() {
-					equals(iCounter1, 3, "PropertyBinding Formatter called three times (values: undefined, server and setProperty)");
-					equals(iCounter2, 5, "CompositeBinding Formatter called five times (values: undefined/undefined, undefined/server, server/server, setProperty/server and setProperty/setProperty)");
+					assert.equal(iCounter1, 3, "PropertyBinding Formatter called three times (values: undefined, server and setProperty)");
+					assert.equal(iCounter2, 5, "CompositeBinding Formatter called five times (values: undefined/undefined, undefined/server, server/server, setProperty/server and setProperty/setProperty)");
 					oModel2.destroy();
-					start();
+					done();
 				});
 			});
 		});

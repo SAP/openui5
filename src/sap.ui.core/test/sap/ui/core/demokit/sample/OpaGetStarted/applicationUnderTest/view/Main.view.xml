@@ -1,0 +1,11 @@
+<mvc:View controllerName="appUnderTest.view.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App id="myApp">
+		<Page busyIndicatorDelay="0" id="myPage" title="Loading...">
+			<headerContent>
+				<Button id="loadButton" press="onButtonPress" text="Load title..."/>
+			</headerContent>
+		</Page>
+	</App>
+</mvc:View>

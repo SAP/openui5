@@ -143,7 +143,7 @@
 		});
 
 		QUnit.test("opening, closing and reopening", function (assert) {
-			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
+			assert.strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 
 			//Act
 			this.sut.openBy(this.oOpeningButton);
@@ -151,28 +151,28 @@
 
 			//Assert
 
-			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Act
 			this.sut.close();
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
+			assert.strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 
 			//Act
 			this.sut.toggle(this.oOpeningButton);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Act
 			this.sut.toggle(this.oOpeningButton);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
+			assert.strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 		});
 
 		QUnit.test("popover resizing", function (assert) {
@@ -187,14 +187,14 @@
 			this.clock.tick(1000);
 
 			//Check
-			ok(initialWidth != this.sut._getPopover().getContentWidth(), "Popover width is changed");
+			assert.ok(initialWidth != this.sut._getPopover().getContentWidth(), "Popover width is changed");
 
 			//Act
 			this.sut._getSegmentedButton().getItems()[0].firePress();
 			this.clock.tick(1000);
 
 			//Check
-			ok(initialWidth == this.sut._getPopover().getContentWidth(), "Popover width is back to initial state");
+			assert.ok(initialWidth == this.sut._getPopover().getContentWidth(), "Popover width is back to initial state");
 		});
 
 		QUnit.test("segmented button", function(assert) {
@@ -208,10 +208,10 @@
 			oSegmentedButtonItems = oSegmentedButton.getItems();
 
 			//Assert
-			ok(oSegmentedButton, 'is created');
-			ok(oSegmentedButton.getDomRef(), "is rendered");
-			strictEqual(oSegmentedButtonItems.length, 1, "has only one button");
-			strictEqual(oSegmentedButtonItems[0].getKey(), PAGE_KEYS.Sort, "is the right button");
+			assert.ok(oSegmentedButton, 'is created');
+			assert.ok(oSegmentedButton.getDomRef(), "is rendered");
+			assert.strictEqual(oSegmentedButtonItems.length, 1, "has only one button");
+			assert.strictEqual(oSegmentedButtonItems[0].getKey(), PAGE_KEYS.Sort, "is the right button");
 		});
 
 		QUnit.test("segmented button adding/removing items", function(assert) {
@@ -231,8 +231,8 @@
 			oSegmentedButtonItems = oSegmentedButton.getItems();
 
 			//Assert
-			strictEqual(oSegmentedButtonItems.length, 2, "button is added");
-			strictEqual(oSegmentedButtonItems[1].getKey(), PAGE_KEYS.Filter, "the right button is added");
+			assert.strictEqual(oSegmentedButtonItems.length, 2, "button is added");
+			assert.strictEqual(oSegmentedButtonItems[1].getKey(), PAGE_KEYS.Filter, "the right button is added");
 
 			//Act
 			this.sut.destroyFilterItems();
@@ -241,8 +241,8 @@
 			oSegmentedButtonItems = oSegmentedButton.getItems();
 
 			//Assert
-			strictEqual(oSegmentedButtonItems.length, 1, "button is removed");
-			strictEqual(oSegmentedButtonItems[0].getKey(), PAGE_KEYS.Sort, "the right button is removed");
+			assert.strictEqual(oSegmentedButtonItems.length, 1, "button is removed");
+			assert.strictEqual(oSegmentedButtonItems[0].getKey(), PAGE_KEYS.Sort, "the right button is removed");
 		});
 
 		QUnit.module("Basics two pages", {
@@ -270,24 +270,24 @@
 			oTitle = this.sut._getTitle();
 
 			//Assert
-			ok(oTitle, "is created");
-			strictEqual(oTitle.getId(), this.sut._getMainPage().getHeaderContent()[0].getContentMiddle()[0].getId(), "is inside main page's header");
-			ok(oTitle.getDomRef(), "is rendered");
-			strictEqual(oTitle.getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE_SORT"), "its text is correct");
+			assert.ok(oTitle, "is created");
+			assert.strictEqual(oTitle.getId(), this.sut._getMainPage().getHeaderContent()[0].getContentMiddle()[0].getId(), "is inside main page's header");
+			assert.ok(oTitle.getDomRef(), "is rendered");
+			assert.strictEqual(oTitle.getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE_SORT"), "its text is correct");
 
 			//Act
 			this.sut._showContentFor(PAGE_KEYS.Filter);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(oTitle.getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE_FILTER"), "its text is correct after change of page");
+			assert.strictEqual(oTitle.getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE_FILTER"), "its text is correct after change of page");
 
 			//Act
 			this.openDetailsPageForItemAt(0);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut._getDetailsPage().getHeaderContent()[0].getContentMiddle()[0].getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE_FILTERBY") + this.sut.getFilterItems()[0].getText(), "its text is correct after change of page");
+			assert.strictEqual(this.sut._getDetailsPage().getHeaderContent()[0].getContentMiddle()[0].getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE_FILTERBY") + this.sut.getFilterItems()[0].getText(), "its text is correct after change of page");
 		});
 
 		QUnit.test("no list inside on open", function(assert) {
@@ -303,7 +303,7 @@
 					._getMainPage().getContent().some(fnIsSortList, this);
 
 			//Assert
-			ok(!bContentHasSortListInside, "no sort list inside");
+			assert.ok(!bContentHasSortListInside, "no sort list inside");
 
 			//Act
 			this.sut._showContentFor(PAGE_KEYS.Sort);
@@ -312,8 +312,8 @@
 			bContentHasSortListInside = this.sut._getMainPage().getContent().some(fnIsSortList, this);
 
 			//Assert
-			ok(bContentHasSortListInside, "sort list inside");
-			ok(this.sut._getSortList().getDomRef(), "sort list is rendered");
+			assert.ok(bContentHasSortListInside, "sort list inside");
+			assert.ok(this.sut._getSortList().getDomRef(), "sort list is rendered");
 		});
 
 		QUnit.test("no list inside after close and reopen", function(assert) {
@@ -336,7 +336,7 @@
 					._getMainPage().getContent().some(fnIsSortList, this);
 
 			//Assert
-			ok(!bContentHasSortListInside, "no sort list inside");
+			assert.ok(!bContentHasSortListInside, "no sort list inside");
 		});
 
 		QUnit.test("correct list inside on segmented button change selected button", function(assert) {
@@ -364,9 +364,9 @@
 					._getMainPage().getContent().some(fnIsFilterList, this);
 
 			//Assert
-			ok(!bContentHasSortListInside, "no sort list inside");
-			ok(bContentHasFilterListInside, "filter list inside");
-			ok(this.sut._getFilterList().getDomRef(), "filter list is rendered");
+			assert.ok(!bContentHasSortListInside, "no sort list inside");
+			assert.ok(bContentHasFilterListInside, "filter list inside");
+			assert.ok(this.sut._getFilterList().getDomRef(), "filter list is rendered");
 		});
 
 		QUnit.module("Details page", {
@@ -395,9 +395,9 @@
 				//act
 				oVSP.removeAllFilterDetailItems();
 				//assert
-				ok(true, "Should not throw an error");
+				assert.ok(true, "Should not throw an error");
 			} catch (e) {
-				ok(false, "Should not throw an error. Details:\n " + e.stack);
+				assert.ok(false, "Should not throw an error. Details:\n " + e.stack);
 			}
 			//cleanup
 			oVSP.destroy();
@@ -416,19 +416,19 @@
 			oDetailsPage = this.sut._getDetailsPage();
 
 			//Assert
-			strictEqual(this.sut._getNavContainer().getCurrentPage().getId(),
+			assert.strictEqual(this.sut._getNavContainer().getCurrentPage().getId(),
 					this.sut._getDetailsPageId(), "opened");
-			strictEqual(oDetailsPage.getContent().length, 2, "contains a toolbar and a list");
-			strictEqual(oDetailsPage.getContent()[1].getId(),
+			assert.strictEqual(oDetailsPage.getContent().length, 2, "contains a toolbar and a list");
+			assert.strictEqual(oDetailsPage.getContent()[1].getId(),
 					this.sut._getFilterDetailList().getId(), "contains the filter details list");
 
 			oPageToolbar = oDetailsPage.getContent()[0];
 			oListToolbar = oDetailsPage.getContent()[1].getHeaderToolbar();
 
 			//Assert
-			strictEqual(oPageToolbar.getContent()[0].getId(),
+			assert.strictEqual(oPageToolbar.getContent()[0].getId(),
 					this.sut._getSearchField().getId(), "contains a search field");
-			strictEqual(oListToolbar.getContent()[0].getId(),
+			assert.strictEqual(oListToolbar.getContent()[0].getId(),
 					this.sut._getSelectAllCheckbox().getId(), "contains a select all checkbox");
 		});
 
@@ -455,9 +455,9 @@
 			bContentHasSelectAllCheckInside = this.sut._getDetailsPage().getContent().some(fnIsSelectAllCheckbox, this);
 
 			//Assert
-			ok(!bContentHasSearchFieldInside, "does not contain a search field");
-			ok(!bContentHasSelectAllCheckInside, "does not contain a select all checkbox");
-			strictEqual(this.sut._getFilterDetailList().getMode(), sap.m.ListMode.SingleSelectLeft, "list is in single select mode");
+			assert.ok(!bContentHasSearchFieldInside, "does not contain a search field");
+			assert.ok(!bContentHasSelectAllCheckInside, "does not contain a select all checkbox");
+			assert.strictEqual(this.sut._getFilterDetailList().getMode(), sap.m.ListMode.SingleSelectLeft, "list is in single select mode");
 		});
 
 		QUnit.test("select all checkbox works correctly", function(assert) {
@@ -482,7 +482,7 @@
 			bAllSelected = this.sut._getFilterDetailList().getItems().every(fnIsItemSelected, this);
 
 			//Assert
-			ok(!bAllSelected, "not all list items are selected at first");
+			assert.ok(!bAllSelected, "not all list items are selected at first");
 
 			//Act
 			oSelectAllCheckbox.setSelected(true);
@@ -491,7 +491,7 @@
 			bAllSelected = this.sut._getFilterDetailList().getItems().every(fnIsItemSelected, this);
 
 			//Assert
-			ok(bAllSelected, "after check select all - all list items are selected");
+			assert.ok(bAllSelected, "after check select all - all list items are selected");
 
 			//Act
 			oSelectAllCheckbox.setSelected(false);
@@ -500,7 +500,7 @@
 			bNoItemsSelected = !this.sut._getFilterDetailList().getItems().some(fnIsItemSelected, this);
 
 			//Assert
-			ok(bNoItemsSelected, "after uncheck select all - no items are selected");
+			assert.ok(bNoItemsSelected, "after uncheck select all - no items are selected");
 		});
 
 		QUnit.test("query filter search field works correctly", function(assert) {
@@ -524,14 +524,14 @@
 			aFilteredItems = this.sut._getFilterDetailList().getItems().filter(fnIsItemVisible, this);
 
 			//Assert
-			strictEqual(aFilteredItems.length, 2, "after filter search there are 2 visible items left in the list");
+			assert.strictEqual(aFilteredItems.length, 2, "after filter search there are 2 visible items left in the list");
 
 			//Act
 			oSearchField.fireLiveChange({ newValue: "" }); // Matches all
 			aFilteredItems = this.sut._getFilterDetailList().getItems().filter(fnIsItemVisible, this);
 
 			//Assert
-			strictEqual(aFilteredItems.length, 3, "empty query in filter search shows all items");
+			assert.strictEqual(aFilteredItems.length, 3, "empty query in filter search shows all items");
 		});
 
 		QUnit.test("query filter search field updates the select all checkbox", function  (assert) {
@@ -551,13 +551,13 @@
 			oSelectAllCheckbox = this.sut._getSelectAllCheckbox();
 
 			//Assert
-			ok(!oSelectAllCheckbox.getSelected(), "at first the select all checkbox is not selected");
+			assert.ok(!oSelectAllCheckbox.getSelected(), "at first the select all checkbox is not selected");
 
 			//Act
 			oSearchField.fireLiveChange({ newValue: "Apple" }); //Matches the selected item
 
 			//Assert
-			ok(oSelectAllCheckbox.getSelected(), "after filter search with selected results only, the select all checkbox is also selected");
+			assert.ok(oSelectAllCheckbox.getSelected(), "after filter search with selected results only, the select all checkbox is also selected");
 		});
 
 		QUnit.test("select all checkbox updates only the filtered items", function  (assert) {
@@ -584,7 +584,7 @@
 			aSelectedItems = this.sut._getFilterDetailList().getItems().filter(fnIsItemSelected, this);
 
 			//Assert
-			strictEqual(aSelectedItems.length, 2, "at first the selected items are 2");
+			assert.strictEqual(aSelectedItems.length, 2, "at first the selected items are 2");
 
 			//Act
 			oSearchField.fireLiveChange({ newValue: "Apple" });
@@ -595,7 +595,7 @@
 			aSelectedItems = this.sut._getFilterDetailList().getItems().filter(fnIsItemSelected, this);
 
 			//Assert
-			equal(aSelectedItems.length, 1, "after deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1");
+			assert.equal(aSelectedItems.length, 1, "after deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1");
 		});
 
 		QUnit.test("switching pages keeps the selection", function  (assert) {
@@ -624,7 +624,7 @@
 			aSelectedItems = this.sut._getFilterDetailList().getItems().filter(fnIsItemSelected, this);
 
 			//Assert
-			strictEqual(aSelectedItems.length, 2, "after switching pages selected items stay");
+			assert.strictEqual(aSelectedItems.length, 2, "after switching pages selected items stay");
 
 			//Act
 			this.checkToggleDetailListItemAt(0, false);
@@ -632,7 +632,7 @@
 			aSelectedItems = this.sut._getFilterDetailList().getItems().filter(fnIsItemSelected, this);
 
 			//Assert
-			equal(aSelectedItems.length, 1, "after switching pages selecting and deselecting items works");
+			assert.equal(aSelectedItems.length, 1, "after switching pages selecting and deselecting items works");
 		});
 
 		QUnit.test("close on details page and reopen", function(assert) {
@@ -651,7 +651,7 @@
 			this.clock.tick(1000);
 
 			//Assert
-			ok(!oSpyErrorLogger.called, "no errors");
+			assert.ok(!oSpyErrorLogger.called, "no errors");
 		});
 
 		QUnit.test("ok and cancel buttons", function(assert) {
@@ -667,24 +667,24 @@
 			this.clock.tick(1000);
 
 			//Assert
-			ok(!oPopover.getBeginButton() || !oPopover.getBeginButton().getDomRef(), "ok button does not exist");
-			ok(!oPopover.getEndButton() || !oPopover.getEndButton().getDomRef(), "cancel button does not exist");
+			assert.ok(!oPopover.getBeginButton() || !oPopover.getBeginButton().getDomRef(), "ok button does not exist");
+			assert.ok(!oPopover.getEndButton() || !oPopover.getEndButton().getDomRef(), "cancel button does not exist");
 
 			//Act
 			this.openDetailsPageForItemAt(0);
 			this.clock.tick(1000);
 
 			//Assert
-			ok(oPopover.getBeginButton() && oPopover.getBeginButton().getDomRef(), "ok button exists");
-			ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
+			assert.ok(oPopover.getBeginButton() && oPopover.getBeginButton().getDomRef(), "ok button exists");
+			assert.ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
 
 			//Act
 			this.sut._showContentFor(PAGE_KEYS.Filter);
 			this.clock.tick(1000);
 
 			//Assert
-			ok(!oPopover.getBeginButton() || !oPopover.getBeginButton().getDomRef(), "ok button does not exist");
-			ok(!oPopover.getEndButton() || !oPopover.getEndButton().getDomRef(), "cancel button does not exist");
+			assert.ok(!oPopover.getBeginButton() || !oPopover.getBeginButton().getDomRef(), "ok button does not exist");
+			assert.ok(!oPopover.getEndButton() || !oPopover.getEndButton().getDomRef(), "cancel button does not exist");
 		});
 
 		QUnit.test("_cancel", function(assert) {
@@ -706,8 +706,8 @@
 			this.clock.tick(1000);
 
 			//Assert
-			ok(!this.sut.isOpen(), "popover is closed");
-			ok(aFirstFilterItemSubItems[0].getSelected(), "filter items are restored to previous selection");
+			assert.ok(!this.sut.isOpen(), "popover is closed");
+			assert.ok(aFirstFilterItemSubItems[0].getSelected(), "filter items are restored to previous selection");
 		});
 
 		QUnit.test("_confirmFilterDetail", function(assert) {
@@ -730,12 +730,12 @@
 			this.clock.tick(1000);
 
 			//Assert
-			ok(!this.sut.isOpen(), "popover is closed");
-			ok(oSpyFireFilterSelected.calledOnce, "event filterSelected fired exactly once");
-			ok(oSpyFireFilterSelected.args[0].length, "fired with arguments");
-			ok(oSpyFireFilterSelected.args[0][0].items, "arg contains 'items' key");
-			strictEqual(oSpyFireFilterSelected.args[0][0].items.length, 1, "arg contains the right number of items");
-			strictEqual(oSpyFireFilterSelected.args[0][0].items[0].getId(), aFirstFilterItemSubItems[1].getId(), "arg contains the right items");
+			assert.ok(!this.sut.isOpen(), "popover is closed");
+			assert.ok(oSpyFireFilterSelected.calledOnce, "event filterSelected fired exactly once");
+			assert.ok(oSpyFireFilterSelected.args[0].length, "fired with arguments");
+			assert.ok(oSpyFireFilterSelected.args[0][0].items, "arg contains 'items' key");
+			assert.strictEqual(oSpyFireFilterSelected.args[0][0].items.length, 1, "arg contains the right number of items");
+			assert.strictEqual(oSpyFireFilterSelected.args[0][0].items[0].getId(), aFirstFilterItemSubItems[1].getId(), "arg contains the right items");
 		});
 
 		QUnit.module("Phone", {
@@ -762,11 +762,11 @@
 			this.clock.tick(1000);
 
 			//Assert
-			ok(!this.sut._getPopover().getShowHeader(), "has no header");
+			assert.ok(!this.sut._getPopover().getShowHeader(), "has no header");
 		});
 
 		// TODO: Enable this test when BCP:1670234655 is resolved
-//		test("ok and cancel buttons", function() {
+//		QUnit.test("ok and cancel buttons", function(assert) {
 //			var oPopover;
 //
 //			this.sut.openBy(this.oOpeningButton);
@@ -779,24 +779,24 @@
 //			this.clock.tick(1000);
 //
 //			//Assert
-//			ok(oPopover.getBeginButton() && oPopover.getBeginButton().getDomRef(), "ok button exists");
-//			ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
+//			assert.ok(oPopover.getBeginButton() && oPopover.getBeginButton().getDomRef(), "ok button exists");
+//			assert.ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
 //
 //			//Act
 //			this.openDetailsPageForItemAt(0);
 //			this.clock.tick(1000);
 //
 //			//Assert
-//			ok(oPopover.getBeginButton() && oPopover.getBeginButton().getDomRef(), "ok button exists");
-//			ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
+//			assert.ok(oPopover.getBeginButton() && oPopover.getBeginButton().getDomRef(), "ok button exists");
+//			assert.ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
 //
 //			//Act
 //			this.sut._showContentFor(PAGE_KEYS.Filter);
 //			this.clock.tick(1000);
 //
 //			//Assert
-//			ok(oPopover.getBeginButton() && oPopover.getBeginButton().getDomRef(), "ok button exists");
-//			ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
+//			assert.ok(oPopover.getBeginButton() && oPopover.getBeginButton().getDomRef(), "ok button exists");
+//			assert.ok(oPopover.getEndButton() && oPopover.getEndButton().getDomRef(), "cancel button exists");
 //		});
 
 		QUnit.module("Data binding", {
@@ -934,8 +934,8 @@
 			sTitleSelector = "#" + this.sut._getPopover().getId() + " .sapMSLITitleOnly";
 
 			//Assert
-			strictEqual(oItem.getTitle(), 'Sort text 1 A', 'correct item is being asserted');
-			strictEqual(jQuery("#" + oItem.getId()).length, 1, 'first item is rendered before mode property change');
+			assert.strictEqual(oItem.getTitle(), 'Sort text 1 A', 'correct item is being asserted');
+			assert.strictEqual(jQuery("#" + oItem.getId()).length, 1, 'first item is rendered before mode property change');
 
 			//Act
 			this.sut.getModel().setProperty('/sortData', oSecondData);
@@ -945,8 +945,8 @@
 			oItem = aItems[0];
 
 			//Assert
-			strictEqual(oItem.getTitle(), 'Sort text 1 B', 'correct item is being asserted');
-			ok(oItem.getDomRef(), 'second item is rendered after model property change');
+			assert.strictEqual(oItem.getTitle(), 'Sort text 1 B', 'correct item is being asserted');
+			assert.ok(oItem.getDomRef(), 'second item is rendered after model property change');
 
 			//Act
 			oSecondData.push({
@@ -957,7 +957,7 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut._getSortList().getItems().length, 2, 'item was successfully added');
+			assert.strictEqual(this.sut._getSortList().getItems().length, 2, 'item was successfully added');
 
 			//Act
 			oSecondData.unshift({
@@ -968,7 +968,7 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut._getSortList().getItems().length, 3, 'item was successfully inserted');
+			assert.strictEqual(this.sut._getSortList().getItems().length, 3, 'item was successfully inserted');
 		});
 
 		QUnit.test("change filter items in the model", function(assert) {
@@ -987,8 +987,8 @@
 			sTitleSelector = "#" + this.sut._getPopover().getId() + " .sapMSLITitleOnly";
 
 			//Assert
-			strictEqual(oItem.getTitle(), 'Filter text A', 'correct item is being asserted');
-			strictEqual(jQuery("#" + oItem.getId()).length, 1, 'first item is rendered before mode property change');
+			assert.strictEqual(oItem.getTitle(), 'Filter text A', 'correct item is being asserted');
+			assert.strictEqual(jQuery("#" + oItem.getId()).length, 1, 'first item is rendered before mode property change');
 
 			//Act
 			this.sut.getModel().setProperty('/filterData', oSecondData);
@@ -998,8 +998,8 @@
 			oItem = aItems[0];
 
 			//Assert
-			strictEqual(oItem.getTitle(), 'Filter text B', 'correct item is being asserted');
-			strictEqual(jQuery("#" + oItem.getId()).length, 1, 'second item is rendered after model property change');
+			assert.strictEqual(oItem.getTitle(), 'Filter text B', 'correct item is being asserted');
+			assert.strictEqual(jQuery("#" + oItem.getId()).length, 1, 'second item is rendered after model property change');
 
 			//Act
 			oSecondData.push({
@@ -1010,7 +1010,7 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut._getFilterList().getItems().length, 2, 'item was successfully added');
+			assert.strictEqual(this.sut._getFilterList().getItems().length, 2, 'item was successfully added');
 
 			//Act
 			oSecondData.unshift({
@@ -1021,7 +1021,7 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut._getFilterList().getItems().length, 3, 'item was successfully inserted');
+			assert.strictEqual(this.sut._getFilterList().getItems().length, 3, 'item was successfully inserted');
 		});
 
 		QUnit.test("change filter detail items in the model", function (assert) {
@@ -1038,8 +1038,8 @@
 			oItem = aItems[0];
 
 			//Assert
-			strictEqual(oItem.getTitle(), 'item A', 'correct item is being asserted');
-			strictEqual(jQuery("#" + oItem.getId()).length, 1, 'first item is rendered before mode property change');
+			assert.strictEqual(oItem.getTitle(), 'item A', 'correct item is being asserted');
+			assert.strictEqual(jQuery("#" + oItem.getId()).length, 1, 'first item is rendered before mode property change');
 
 			//Act
 			this.sut.getModel().setProperty('/filterData', oSecondData);
@@ -1050,9 +1050,9 @@
 			oItem = aItems[0];
 
 			//Assert
-			strictEqual(oItem.getTitle(), 'item B', 'correct item is being asserted');
-			strictEqual(jQuery("#" + oItem.getId()).length, 1, 'second item is rendered after model property change');
-			strictEqual(this.sut._getDetailsPage().getHeaderContent()[0].getContentMiddle()[0].getText(),
+			assert.strictEqual(oItem.getTitle(), 'item B', 'correct item is being asserted');
+			assert.strictEqual(jQuery("#" + oItem.getId()).length, 1, 'second item is rendered after model property change');
+			assert.strictEqual(this.sut._getDetailsPage().getHeaderContent()[0].getContentMiddle()[0].getText(),
 					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_FILTERBY") + "Filter text B",
 					'title correctly changed in the header');
 
@@ -1065,7 +1065,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			strictEqual(this.sut._getFilterDetailList().getItems().length, 2, 'item was successfully added');
+			assert.strictEqual(this.sut._getFilterDetailList().getItems().length, 2, 'item was successfully added');
 
 			//Act
 			oSecondData[0].myItems.unshift({
@@ -1076,7 +1076,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			strictEqual(this.sut._getFilterDetailList().getItems().length, 3, 'item was successfully inserted');
+			assert.strictEqual(this.sut._getFilterDetailList().getItems().length, 3, 'item was successfully inserted');
 		});
 
 		QUnit.test("change group items in the model", function (assert) {
@@ -1093,8 +1093,8 @@
 			oItem = aItems[0];
 
 			//Assert
-			strictEqual(oItem.getTitle(), 'Group text A', 'correct item is being asserted');
-			strictEqual(jQuery("#" + oItem.getId()).length, 1, 'first item is rendered before mode property change');
+			assert.strictEqual(oItem.getTitle(), 'Group text A', 'correct item is being asserted');
+			assert.strictEqual(jQuery("#" + oItem.getId()).length, 1, 'first item is rendered before mode property change');
 
 			//Act
 			this.sut.getModel().setProperty('/groupData', oSecondData);
@@ -1104,8 +1104,8 @@
 			oItem = aItems[0];
 
 			//Assert
-			strictEqual(oItem.getTitle(), 'Group text B', 'correct item is being asserted');
-			strictEqual(jQuery("#" + oItem.getId()).length, 1, 'second item is rendered after model property change');
+			assert.strictEqual(oItem.getTitle(), 'Group text B', 'correct item is being asserted');
+			assert.strictEqual(jQuery("#" + oItem.getId()).length, 1, 'second item is rendered after model property change');
 
 			//Act
 			oSecondData.push({
@@ -1116,7 +1116,7 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut._getGroupList().getItems().length, 2, 'item was successfully added');
+			assert.strictEqual(this.sut._getGroupList().getItems().length, 2, 'item was successfully added');
 
 			//Act
 			oSecondData.unshift({
@@ -1127,7 +1127,7 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut._getGroupList().getItems().length, 3, 'item was successfully inserted');
+			assert.strictEqual(this.sut._getGroupList().getItems().length, 3, 'item was successfully inserted');
 		});
 
 		QUnit.module("Accessibility", {
@@ -1181,26 +1181,26 @@
 			}
 		});
 
-		test("Dialog", function (assert) {
+		QUnit.test("Dialog", function (assert) {
 			var done = assert.async();
 
 			jQuery.sap.delayedCall(0, this, function () {
 				var sLabelledBy,
 					domRef = this.sut._getPopover().getDomRef();
 
-				ok(domRef, "Popover is available");
-				strictEqual(domRef.getAttribute("role"), "dialog", "Popover has role='dialog'");
+				assert.ok(domRef, "Popover is available");
+				assert.strictEqual(domRef.getAttribute("role"), "dialog", "Popover has role='dialog'");
 
 				sLabelledBy = domRef.getAttribute("aria-labelledby");
-				ok(sLabelledBy, "Has associated aria-labelledby");
-				ok(jQuery("#" + sLabelledBy).length, "Popover's label element exists");
+				assert.ok(sLabelledBy, "Has associated aria-labelledby");
+				assert.ok(jQuery("#" + sLabelledBy).length, "Popover's label element exists");
 
-				ok(domRef.querySelectorAll("[role=toolbar]").length, "Has div with role=toolbar inside");
+				assert.ok(domRef.querySelectorAll("[role=toolbar]").length, "Has div with role=toolbar inside");
 				done();
 			});
 		});
 
-		test("Toolbar", function (assert) {
+		QUnit.test("Toolbar", function (assert) {
 			var done = assert.async();
 
 			jQuery.sap.delayedCall(0, this, function () {
@@ -1209,13 +1209,13 @@
 					oToolbar = this.sut._getToolbar(),
 					domRef = oToolbar.getDomRef();
 
-				ok(domRef, "Popover is available");
-				strictEqual(domRef.getAttribute("role"), "toolbar", "Toolbar has role='toolbar'");
+				assert.ok(domRef, "Popover is available");
+				assert.strictEqual(domRef.getAttribute("role"), "toolbar", "Toolbar has role='toolbar'");
 
-				ok(oToolbar.getContent()[0] == oSegmentedButton, "There are segmented buttons inside toolbar");
-				strictEqual(aSegmentedButtonItems.length, 3, "There should be 3 items in the segmented button");
+				assert.ok(oToolbar.getContent()[0] == oSegmentedButton, "There are segmented buttons inside toolbar");
+				assert.strictEqual(aSegmentedButtonItems.length, 3, "There should be 3 items in the segmented button");
 				for (i = 0; i < 3; i++) {
-					ok(aSegmentedButtonItems[i].getTooltip(), "Each Segmentedbutton item should have a tooltip");
+					assert.ok(aSegmentedButtonItems[i].getTooltip(), "Each Segmentedbutton item should have a tooltip");
 				}
 
 				done();
@@ -1302,13 +1302,13 @@
 			}
 		});
 
-		test("Single sort data point", function (assert) {
+		QUnit.test("Single sort data point", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Act
 			var fnFireSortSelectedSpy = sinon.spy(this.sut, "fireSortSelected");
@@ -1317,34 +1317,34 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(fnFireSortSelectedSpy.calledOnce, true, "sortSelected event fired");
-			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
+			assert.strictEqual(fnFireSortSelectedSpy.calledOnce, true, "sortSelected event fired");
+			assert.strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 		});
 
-		test("Single filter data point", function (assert) {
+		QUnit.test("Single filter data point", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Act
 			this.sut._getSegmentedButton().getButtons()[1].firePress();
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), true, 'Popup is still open');
-			strictEqual(sap.ui.getCore().byId(this.sut.getId() + '-backbutton'), undefined, 'No back button');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is still open');
+			assert.strictEqual(sap.ui.getCore().byId(this.sut.getId() + '-backbutton'), undefined, 'No back button');
 		});
 
-		test("Single group data point", function (assert) {
+		QUnit.test("Single group data point", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Act
 			var fnFireGroupSelectedSpy = sinon.spy(this.sut, "fireGroupSelected");
@@ -1353,8 +1353,8 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(fnFireGroupSelectedSpy.calledOnce, true, "groupSelected event fired");
-			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
+			assert.strictEqual(fnFireGroupSelectedSpy.calledOnce, true, "groupSelected event fired");
+			assert.strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 		});
 
 
@@ -1424,20 +1424,20 @@
 			}
 		});
 
-		test("Single sort tab", function (assert) {
+		QUnit.test("Single sort tab", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Assert
-			strictEqual(this.sut._getTitle().getText(),
+			assert.strictEqual(this.sut._getTitle().getText(),
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_SORT"));
 		});
 
-		test("Single group tab", function (assert) {
+		QUnit.test("Single group tab", function (assert) {
 			//Act
 			this.sut.removeAllAggregation('sortItems');
 			this.sut.addGroupItem(new sap.m.TabStripItem({
@@ -1448,14 +1448,14 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Assert
-			strictEqual(this.sut._getTitle().getText(),
+			assert.strictEqual(this.sut._getTitle().getText(),
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_SORT"));
 		});
 
-		test("Single filter tab", function (assert) {
+		QUnit.test("Single filter tab", function (assert) {
 			//Act
 			this.sut.removeAllAggregation('groupItems');
 			this.sut.addFilterItem(new sap.m.TabStripItem({
@@ -1466,10 +1466,10 @@
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+			assert.strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Assert
-			strictEqual(this.sut._getTitle().getText(),
+			assert.strictEqual(this.sut._getTitle().getText(),
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE"));
 		});
 
@@ -1566,7 +1566,7 @@
 			}
 		});
 
-		test("No filter by default, setting and removing a filter", function (assert) {
+		QUnit.test("No filter by default, setting and removing a filter", function (assert) {
 			//Act
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
@@ -1580,7 +1580,7 @@
 			var oFilterItems = oFilterList.getItems();
 			var oLastListItem = oFilterItems[oFilterItems.length - 1];
 
-			strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
+			assert.strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
 
 			// Act
 			var oListItem = this.sut._findListItemFromViewSettingsItem(this.sut.getFilterItems()[0]);
@@ -1598,7 +1598,7 @@
 			oLastListItem = oFilterItems[oFilterItems.length - 1];
 
 			// Assert
-			strictEqual(oLastListItem.getTitle(),
+			assert.strictEqual(oLastListItem.getTitle(),
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("REMOVE_FILTER"),
 				'Last item is "Remove Filter"');
 
@@ -1618,7 +1618,7 @@
 			oLastListItem = oFilterItems[oFilterItems.length - 1];
 
 			// Assert
-			strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
+			assert.strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
 
 			// Act
 			var oListItem = this.sut._findListItemFromViewSettingsItem(this.sut.getFilterItems()[0]);
@@ -1636,7 +1636,7 @@
 			oLastListItem = oFilterItems[oFilterItems.length - 1];
 
 			// Assert
-			strictEqual(oLastListItem.getTitle(),
+			assert.strictEqual(oLastListItem.getTitle(),
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("REMOVE_FILTER"),
 				'Last item is "Remove Filter"');
 
@@ -1653,19 +1653,19 @@
 			var oFilterItems = oFilterList.getItems();
 			var oLastListItem = oFilterItems[oFilterItems.length - 1];
 
-			strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
+			assert.strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
 		});
 
 		QUnit.module("Miscellaneous");
 
-		QUnit.test("Setting any property does not prevent internal popover to be destroyed ", function(assert){
+		QUnit.test("Setting any property does not prevent internal popover to be destroyed ", function(assert) {
 			var oVSP = new sap.m.ViewSettingsPopover({tooltip: "Hello"});
 			oVSP.placeAt('qunit-fixture');
 
 			sap.ui.getCore().applyChanges();
 			oVSP.destroy();
 
-			equal(oVSP._popover, null, "After destroy, no internal _popover instance should be available");
+			assert.equal(oVSP._popover, null, "After destroy, no internal _popover instance should be available");
 		});
 
 	</script>

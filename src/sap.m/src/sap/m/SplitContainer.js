@@ -632,14 +632,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		var bIsMasterNav = true,
-			$target = jQuery(oEvent.target);
+			$targetContainer = jQuery(oEvent.target).closest(".sapMSplitContainerDetail, .sapMSplitContainerMaster"); // find the closest master or detail DOM element because SplitContainers may be nested
 
-		// find the closest master or detail DOM element because SplitContainers may be nested
-		while (!$target.hasClass("sapMSplitContainerDetail") && !$target.hasClass("sapMSplitContainerMaster")) {
-			$target = $target.parent();
-		}
-
-		if ($target.hasClass("sapMSplitContainerDetail")) {
+		if ($targetContainer.length > 0 && $targetContainer.hasClass("sapMSplitContainerDetail")) {
 			bIsMasterNav = false;
 		}
 

@@ -74,7 +74,7 @@
 				$fileUploader,
 				sDisabledClassName = "sapUiFupDisabled",
 				fnTestDisabledClass = function(fileUploader, bExpected) {
-					equal(fileUploader.hasClass(sDisabledClassName), bExpected,
+					assert.equal(fileUploader.hasClass(sDisabledClassName), bExpected,
 							"The FUploader should " + (bExpected ? "" : "not") + " have the " + sDisabledClassName + " class.");
 				};
 
@@ -107,18 +107,18 @@
 		});
 
 		//Initial Array Check
-		deepEqual(oFileUploader.getFileType(), ["doc", "docx", "txt", "rtf"], "initial property value 'doc,docx,txt,rtf' should be converted to an array");
+		assert.deepEqual(oFileUploader.getFileType(), ["doc", "docx", "txt", "rtf"], "initial property value 'doc,docx,txt,rtf' should be converted to an array");
 
 		//standard cases
 		oFileUploader.setFileType("bmp");
-		deepEqual(oFileUploader.getFileType(), ["bmp"], "setFileType('bmp') --> getFileType() should return the file types converted to an array");
+		assert.deepEqual(oFileUploader.getFileType(), ["bmp"], "setFileType('bmp') --> getFileType() should return the file types converted to an array");
 
 		oFileUploader.setFileType("bmp,png,jpeg");
-		deepEqual(oFileUploader.getFileType(), ["bmp", "png", "jpeg"], "setFileType('bmp,png,jpeg') --> getFileType() should return the file types converted to an array");
+		assert.deepEqual(oFileUploader.getFileType(), ["bmp", "png", "jpeg"], "setFileType('bmp,png,jpeg') --> getFileType() should return the file types converted to an array");
 
 		//Edge case
 		oFileUploader.setFileType("");
-		deepEqual(oFileUploader.getFileType(), [], "setFileType('') --> getFileType() should return an empty array");
+		assert.deepEqual(oFileUploader.getFileType(), [], "setFileType('') --> getFileType() should return an empty array");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -131,24 +131,24 @@
 			});
 
 		//Initial Array Check
-		deepEqual(oFileUploader.getFileType(), ["doc", "docx", "txt", "rtf"], "initial property value should be converted to an array");
+		assert.deepEqual(oFileUploader.getFileType(), ["doc", "docx", "txt", "rtf"], "initial property value should be converted to an array");
 
 		//Standard cases
 		oFileUploader.setFileType(["bmp"]);
-		deepEqual(oFileUploader.getFileType(), ["bmp"], "setFileType(['bmp']) --> getFileType() should return a specific array");
+		assert.deepEqual(oFileUploader.getFileType(), ["bmp"], "setFileType(['bmp']) --> getFileType() should return a specific array");
 
 		oFileUploader.setFileType(["bmp", "png", "jpeg"]);
-		deepEqual(oFileUploader.getFileType(), ["bmp", "png", "jpeg"], "setFileType(['bmp', 'png', 'jpeg']) --> getFileType() should return a specific array");
+		assert.deepEqual(oFileUploader.getFileType(), ["bmp", "png", "jpeg"], "setFileType(['bmp', 'png', 'jpeg']) --> getFileType() should return a specific array");
 
 		//Edge cases
 		oFileUploader.setFileType([]);
-		deepEqual(oFileUploader.getFileType(), [], "setFileType([]) --> getFileType() should return an empty array");
+		assert.deepEqual(oFileUploader.getFileType(), [], "setFileType([]) --> getFileType() should return an empty array");
 
 		oFileUploader.setFileType(null);
-		equal(oFileUploader.getFileType(), null, "setFileType(null) --> getFileType() should return null");
+		assert.equal(oFileUploader.getFileType(), null, "setFileType(null) --> getFileType() should return null");
 
 		oFileUploader.setFileType();
-		equal(oFileUploader.getFileType(), undefined, "setFileType() --> getFileType() should return undefined");
+		assert.equal(oFileUploader.getFileType(), undefined, "setFileType() --> getFileType() should return undefined");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -161,18 +161,18 @@
 		});
 
 		//Initial Array Check
-		deepEqual(oFileUploader.getMimeType(), ["image/png", "image", "image/jpeg", "application/javascript"], "initial property value 'image/png,image,image/jpeg,application/javascript' should be converted to an array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["image/png", "image", "image/jpeg", "application/javascript"], "initial property value 'image/png,image,image/jpeg,application/javascript' should be converted to an array");
 
 		//standard case
 		oFileUploader.setMimeType("image/jpeg,audio/mpeg3,text");
-		deepEqual(oFileUploader.getMimeType(), ["image/jpeg", "audio/mpeg3", "text"], "setMimeType('image/jpeg,audio/mpeg3,text') --> getMimeType() should return the file types converted to an array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["image/jpeg", "audio/mpeg3", "text"], "setMimeType('image/jpeg,audio/mpeg3,text') --> getMimeType() should return the file types converted to an array");
 
 		//Edge Cases
 		oFileUploader.setMimeType("");
-		deepEqual(oFileUploader.getMimeType(), [], "setMimeType('') --> getMimeType() should return an empty array");
+		assert.deepEqual(oFileUploader.getMimeType(), [], "setMimeType('') --> getMimeType() should return an empty array");
 
 		oFileUploader.setMimeType("application");
-		deepEqual(oFileUploader.getMimeType(), ["application"], "setMimeType('application') --> getMimeType() should return the file types converted to an array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["application"], "setMimeType('application') --> getMimeType() should return the file types converted to an array");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -185,24 +185,24 @@
 			});
 
 		//Initial Array Check
-		deepEqual(oFileUploader.getMimeType(), ["image/png", "image", "image/jpeg", "application/javascript"], "initial property value should be converted to an array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["image/png", "image", "image/jpeg", "application/javascript"], "initial property value should be converted to an array");
 
 		//standard cases
 		oFileUploader.setMimeType(["audio"]);
-		deepEqual(oFileUploader.getMimeType(), ["audio"], "setMimeType(['audio']) --> getMimeType() should return an array with the original content");
+		assert.deepEqual(oFileUploader.getMimeType(), ["audio"], "setMimeType(['audio']) --> getMimeType() should return an array with the original content");
 
 		oFileUploader.setMimeType(["image", "audio/mpeg3", "text/x-java-source"]);
-		deepEqual(oFileUploader.getMimeType(), ["image", "audio/mpeg3", "text/x-java-source"], "setMimeType(['image', 'audio/mpeg3', 'text/x-java-source']) --> getMimeType() should return a specific array");
+		assert.deepEqual(oFileUploader.getMimeType(), ["image", "audio/mpeg3", "text/x-java-source"], "setMimeType(['image', 'audio/mpeg3', 'text/x-java-source']) --> getMimeType() should return a specific array");
 
 		//Edge cases
 		oFileUploader.setMimeType([]);
-		deepEqual(oFileUploader.getMimeType(), [], "setMimeType([]) --> getMimeType() should return an empty array");
+		assert.deepEqual(oFileUploader.getMimeType(), [], "setMimeType([]) --> getMimeType() should return an empty array");
 
 		oFileUploader.setMimeType(null);
-		equal(oFileUploader.getMimeType(), null, "setMimeType(null) --> getMimeType() should return null");
+		assert.equal(oFileUploader.getMimeType(), null, "setMimeType(null) --> getMimeType() should return null");
 
 		oFileUploader.setMimeType();
-		equal(oFileUploader.getMimeType(), undefined, "setMimeType() --> getMimeType() should return undefined");
+		assert.equal(oFileUploader.getMimeType(), undefined, "setMimeType() --> getMimeType() should return undefined");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -231,13 +231,13 @@
 			fnTypeMissmatchHandler = function (oEvent) {
 				//this branch is necessary because, the typeMissmatch Event is fired if either the fileType or mimeType is wrong
 				if (oEvent.getParameter("fileType")) {
-					equal(oEvent.getParameter("fileName"), "FileUploader.qunit.html", "typeMissmatch Event has the correct parameter");
+					assert.equal(oEvent.getParameter("fileName"), "FileUploader.qunit.html", "typeMissmatch Event has the correct parameter");
 				}else if(oEvent.getParameter("mimeType")) {
-					equal(oEvent.getParameter("fileName"), "hallo.png", "typeMissmatch Event has the correct parameter");
+					assert.equal(oEvent.getParameter("fileName"), "hallo.png", "typeMissmatch Event has the correct parameter");
 				}
 			},
 			fnFileAllowedHandler = function (oEvent) {
-				equal(oEvent.getParameter("fileName"), undefined, "fileAllowed should not have any parameters");
+				assert.equal(oEvent.getParameter("fileName"), undefined, "fileAllowed should not have any parameters");
 			},
 			oTypeMissmatchSpy = this.spy(oFileUploader, "fireTypeMissmatch"),
 			oFileAllowedSpy = this.spy(oFileUploader, "fireFileAllowed");
@@ -254,7 +254,7 @@
 		//type mismatch on the *fileType*
 		oFileUploader.setMimeType(["text/html"]);
 		oFileUploader.handlechange(fakeEvent);
-		equal(oTypeMissmatchSpy.callCount, 1, "typeMissmatch (fileType) Event should be called exactly ONCE");
+		assert.equal(oTypeMissmatchSpy.callCount, 1, "typeMissmatch (fileType) Event should be called exactly ONCE");
 
 		//type mismatch on the *mimeType*
 		oFileUploader.setMimeType(["text/html"]);
@@ -264,7 +264,7 @@
 			size: 166311
 		});
 		oFileUploader.handlechange(fakeEvent);
-		equal(oTypeMissmatchSpy.callCount, 2, "typeMissmatch (mimeType) Event should be called TWICE now");
+		assert.equal(oTypeMissmatchSpy.callCount, 2, "typeMissmatch (mimeType) Event should be called TWICE now");
 
 		//file allowed
 		oFileUploader.setFileType(["html"]);
@@ -276,7 +276,7 @@
 		});
 		oFileUploader.handlechange(fakeEvent);
 		if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
-			equal(oFileAllowedSpy.callCount, 1, "fileAllowed Event should be called exactly ONCE");
+			assert.equal(oFileAllowedSpy.callCount, 1, "fileAllowed Event should be called exactly ONCE");
 		};
 
 		//cleanup
@@ -306,7 +306,7 @@
 					}
 				},
 				fnFilenameLengthExceedHandler = function (oEvent) {
-					equal(oEvent.getParameter("fileName"), "AbstractSingletonProxyFactoryBean.java", "filenameLengthExceed Event delivers correct fileName, which is too long");
+					assert.equal(oEvent.getParameter("fileName"), "AbstractSingletonProxyFactoryBean.java", "filenameLengthExceed Event delivers correct fileName, which is too long");
 				},
 				oSpy = this.spy(oFileUploader, "fireFilenameLengthExceed");
 
@@ -317,7 +317,7 @@
 			oFileUploader.attachEvent("filenameLengthExceed", fnFilenameLengthExceedHandler);
 
 			oFileUploader.handlechange(fakeEvent);
-			equal(oSpy.callCount, 1, "filenameLengthExceed Event should be called exactly ONCE");
+			assert.equal(oSpy.callCount, 1, "filenameLengthExceed Event should be called exactly ONCE");
 
 			//cleanup
 			oFileUploader.destroy();
@@ -335,17 +335,17 @@
 		sap.ui.getCore().applyChanges();
 
 		oFileUploader.setValue("Testfilename.txt");
-		equal(oFileUploader.getValue(), "Testfilename.txt", "Check if filename is set correctly");
-		equal(oSpy.callCount, 1, "setValue was called ONCE");
+		assert.equal(oFileUploader.getValue(), "Testfilename.txt", "Check if filename is set correctly");
+		assert.equal(oSpy.callCount, 1, "setValue was called ONCE");
 
 		//clearing the FUP
 		oFileUploader.clear();
-		equal(oFileUploader.getValue(), "", "Value should be empty string: ''");
+		assert.equal(oFileUploader.getValue(), "", "Value should be empty string: ''");
 
 		//check if the text fields are empty as expected
 		domFileInputField = jQuery.sap.domById(oFileUploader.getId() + "-fu");
-		equal(domFileInputField.value, "", "File-Input TextField should be empty now");
-		equal(oSpy.callCount, 2, "setValue should now be called TWICE");
+		assert.equal(domFileInputField.value, "", "File-Input TextField should be empty now");
+		assert.equal(oSpy.callCount, 2, "setValue should now be called TWICE");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -377,7 +377,7 @@
 
 		oFileUploader._sendFilesWithXHR(aFiles);
 
-		ok(oSpy.called, "XHR request is made");
+		assert.ok(oSpy.called, "XHR request is made");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -390,37 +390,37 @@
 		});
 
 		//initial check cases
-		ok(oFileUploader._isFilenameTooLong("15_AppDev_Components_Exercises.pptx"), "Initial check: Filename should be too long");
+		assert.ok(oFileUploader._isFilenameTooLong("15_AppDev_Components_Exercises.pptx"), "Initial check: Filename should be too long");
 
 		//standard case
 		oFileUploader.setMaximumFilenameLength(20);
-		equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should NOT be too long");
+		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should NOT be too long");
 
 		oFileUploader.setMaximumFilenameLength(10);
-		equal(oFileUploader._isFilenameTooLong("FileUploader.js"), true, "Filename should be too long");
+		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), true, "Filename should be too long");
 
 		//edge cases
 		oFileUploader.setMaximumFilenameLength(15);
-		equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should NOT be too long");
+		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should NOT be too long");
 
 		oFileUploader.setMaximumFilenameLength(14);
-		equal(oFileUploader._isFilenameTooLong("FileUploader.js"), true, "Filename should be too long");
+		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), true, "Filename should be too long");
 
 		oFileUploader.setMaximumFilenameLength(-4);
-		equal(oFileUploader._isFilenameTooLong("FileUploader.js"), true, "Filename should be too long");
+		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), true, "Filename should be too long");
 
 		oFileUploader.setMaximumFilenameLength();
-		equal(oFileUploader.getMaximumFilenameLength(), 0, "setMaximumFilenameLength() --> maximumFilenameLength should be 0 (default)");
-		equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should be too long");
+		assert.equal(oFileUploader.getMaximumFilenameLength(), 0, "setMaximumFilenameLength() --> maximumFilenameLength should be 0 (default)");
+		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should be too long");
 
 		oFileUploader.setMaximumFilenameLength(null);
-		equal(oFileUploader.getMaximumFilenameLength(), 0, "setMaximumFilenameLength(null) --> maximumFilenameLength should be 0 (default)");
-		equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should be too long");
+		assert.equal(oFileUploader.getMaximumFilenameLength(), 0, "setMaximumFilenameLength(null) --> maximumFilenameLength should be 0 (default)");
+		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should be too long");
 
 		var undefined;
 		oFileUploader.setMaximumFilenameLength(undefined);
-		equal(oFileUploader.getMaximumFilenameLength(), 0, "setMaximumFilenameLength(undefined) --> maximumFilenameLength should be 0 (default)");
-		equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should be too long");
+		assert.equal(oFileUploader.getMaximumFilenameLength(), 0, "setMaximumFilenameLength(undefined) --> maximumFilenameLength should be 0 (default)");
+		assert.equal(oFileUploader._isFilenameTooLong("FileUploader.js"), false, "Filename should be too long");
 
 		//cleanup
 		oFileUploader.destroy();

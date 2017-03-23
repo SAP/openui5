@@ -140,6 +140,11 @@
 			assert.strictEqual(this.oSpies.error.calledOnce, true, "Wizard should log error when maximum allowed steps are exceeded.");
 		});
 
+		QUnit.test("DestroySteps() empties the steps aggregation", function (assert) {
+			this.oWizard.destroySteps();
+			assert.ok(this.oWizard.getSteps().length === 0, "Aggregation should be empty");
+		});
+
 		QUnit.test("validateStep(step) should validate the given step", function (assert) {
 			var step1 = this.oWizard._getStartingStep();
 			this.oWizard.validateStep(step1);
@@ -405,6 +410,33 @@
 					that.step1.setNextStep(that.step4);
 					that.oWizard.nextStep();
 				}, "Should raise an error.");
+		});
+
+		QUnit.test("Wizard should render the steps in correct order", function (assert) {
+			var s4 = new sap.m.WizardStep({id: "wizStep4"}),
+				s2 = new sap.m.WizardStep({id: "wizStep2", nextStep: s4}),
+				s3 = new sap.m.WizardStep({id: "wizStep3", subsequentSteps: [s2, s4]}),
+				s1 = new sap.m.WizardStep({id: "wizStep1", subsequentSteps: [s2, s3]});
+
+			var oWiz = new sap.m.Wizard({
+				enableBranching: true,
+				steps: [s1, s4, s2, s3]
+			});
+
+			oWiz.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sectionWrapper = oWiz.$().find(".sapMWizardStepContainer")[0],
+				aChildren = Array.prototype.slice.call(sectionWrapper.children),
+				s2DomRefIndex = aChildren.indexOf(s2.getDomRef()),
+				s3DomRefIndex = aChildren.indexOf(s3.getDomRef()),
+				s4DomRefIndex = aChildren.indexOf(s4.getDomRef());
+
+			assert.ok(s3DomRefIndex < s2DomRefIndex, "Step3 should be rendered before Step2");
+			assert.ok(s2DomRefIndex < s4DomRefIndex, "Step2 should be rendered before Step4");
+			assert.ok(s3DomRefIndex < s4DomRefIndex, "Step3 should be rendered before Step4");
+
+			oWiz.destroy();
 		});
 
 		QUnit.test("Wizard should log an error if next step is outside the wizard", function (assert) {

@@ -2,7 +2,6 @@
 	controllerName="sap.ui.demo.orderbrowser.controller.Detail"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:f="sap.ui.layout.form"
 	xmlns:semantic="sap.m.semantic">
 
 	<semantic:DetailPage
@@ -93,19 +92,19 @@
 					<Column
 						minScreenWidth="Tablet"
 						demandPopin="true"
-						hAlign="Right">
+						hAlign="End">
 						<Text text="{i18n>detailLineItemTableUnitPriceColumn}"/>
 					</Column>
 					<Column
 						minScreenWidth="Tablet"
 						demandPopin="true"
-						hAlign="Right">
+						hAlign="End">
 						<Text text="{i18n>detailLineItemTableUnitQuantityColumn}"/>
 					</Column>
 					<Column
 						minScreenWidth="Tablet"
 						demandPopin="true"
-						hAlign="Right">
+						hAlign="End">
 						<Text text="{i18n>detailLineItemTableTotalColumn}"/>
 					</Column>
 				</columns>

@@ -55,8 +55,8 @@
 
 			// Assert
 			var $oImage = oImage.$();
-			ok($oImage.hasClass("sapMImg"), "Image is rendered.");
-			ok(($oImage !== undefined) && ($oImage != null), "oImage should not be null");
+			assert.ok($oImage.hasClass("sapMImg"), "Image is rendered.");
+			assert.ok(($oImage !== undefined) && ($oImage != null), "oImage should not be null");
 
 			// Clean up
 			oImage.destroy();
@@ -74,8 +74,8 @@
 
 			// Assert
 			var $oImage = oImage.$();
-			ok(!$oImage.hasClass("sapMImg"), "sapMImage class is not found.");
-			ok(!jQuery.sap.domById(sControlId) , "oImage is not rendered");
+			assert.ok(!$oImage.hasClass("sapMImg"), "sapMImage class is not found.");
+			assert.ok(!jQuery.sap.domById(sControlId) , "oImage is not rendered");
 
 			// Clean up
 			oImage.destroy();
@@ -96,10 +96,10 @@
 			oCore.applyChanges();
 
 			// read alt attribute from DOM
-			equal(jQuery.sap.byId(sControlId).attr("alt"), "", "alt text of oImage should be an empty string because the image is decorative");
+			assert.equal(jQuery.sap.byId(sControlId).attr("alt"), "", "alt text of oImage should be an empty string because the image is decorative");
 
 			// read title attribute from DOM
-			equal(jQuery.sap.byId(sControlId).attr("title"), sTooltip, "tooltip text should be rendered");
+			assert.equal(jQuery.sap.byId(sControlId).attr("title"), sTooltip, "tooltip text should be rendered");
 
 			// Clean up
 			oImage.destroy();
@@ -115,8 +115,8 @@
 			oImage.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			equal(jQuery.sap.domById(sControlId).getAttribute("alt"), "", "alt attribute of oImage should be an empty string because the image is decorative");
-			equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
+			assert.equal(jQuery.sap.domById(sControlId).getAttribute("alt"), "", "alt attribute of oImage should be an empty string because the image is decorative");
+			assert.equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
 
 			// Clean up
 			oImage.destroy();
@@ -133,14 +133,14 @@
 
 			// Assert
 			var $oImage = oImage.$();
-			equal($oImage.attr("role"), "presentation", "role is set to presentation");
-			equal($oImage.attr("aria-hidden"), "true", "aria-hidden is set to true");
-			ok(!$oImage.attr("alt"), "alt is kept empty");
-			ok(!$oImage.attr("title"), "title isn't set when no tooltip is provided");
+			assert.equal($oImage.attr("role"), "presentation", "role is set to presentation");
+			assert.equal($oImage.attr("aria-hidden"), "true", "aria-hidden is set to true");
+			assert.ok(!$oImage.attr("alt"), "alt is kept empty");
+			assert.ok(!$oImage.attr("title"), "title isn't set when no tooltip is provided");
 
 			oImage.setTooltip(sTooltip);
 			sap.ui.getCore().applyChanges();
-			equal(oImage.$().attr("title"),sTooltip, "title is updated with tooltip after it's set");
+			assert.equal(oImage.$().attr("title"),sTooltip, "title is updated with tooltip after it's set");
 
 			// Clean up
 			oImage.destroy();
@@ -162,10 +162,10 @@
 			oCore.applyChanges();
 
 			// read alt attribute from DOM
-			equal(jQuery.sap.byId(sControlId).attr("alt"), sAlt, "alt text of oImage should be rendered");
+			assert.equal(jQuery.sap.byId(sControlId).attr("alt"), sAlt, "alt text of oImage should be rendered");
 
 			// read title attribute from DOM
-			equal(jQuery.sap.byId(sControlId).attr("title"), sTooltip, "tooltip text should be rendered");
+			assert.equal(jQuery.sap.byId(sControlId).attr("title"), sTooltip, "tooltip text should be rendered");
 
 			// Clean up
 			oImage.destroy();
@@ -182,8 +182,8 @@
 			oCore.applyChanges();
 
 			// Assert
-			equal(jQuery.sap.domById(sControlId).getAttribute("alt"), null, "alt attribute of oImage should NOT be rendered");
-			equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
+			assert.equal(jQuery.sap.domById(sControlId).getAttribute("alt"), null, "alt attribute of oImage should NOT be rendered");
+			assert.equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
 
 			// Clean up
 			oImage.destroy();
@@ -201,14 +201,14 @@
 			oCore.applyChanges();
 
 			// Assert
-			equal(jQuery.sap.byId(sControlId).attr("alt"), sTooltip, "alt text of oImage should have the tooltip when alt is not set, but tooltip is");
+			assert.equal(jQuery.sap.byId(sControlId).attr("alt"), sTooltip, "alt text of oImage should have the tooltip when alt is not set, but tooltip is");
 
 			oImage.setAlt(sAlt);
 			oImage.setTooltip("");
 			sap.ui.getCore().applyChanges();
 
-			equal(jQuery.sap.byId(sControlId).attr("alt"), sAlt, "alt text of oImage should be rendered");
-			equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
+			assert.equal(jQuery.sap.byId(sControlId).attr("alt"), sAlt, "alt text of oImage should be rendered");
+			assert.equal(jQuery.sap.domById(sControlId).getAttribute("title"), null, "title attribute of oImage should NOT be rendered");
 
 			// Clean up
 			oImage.destroy();
@@ -227,11 +227,11 @@
 
 			// Assert
 			var $oImage = oImage.$();
-			equal($oImage.attr("alt"), sAlt, "alt is rendered");
-			equal($oImage.attr("aria-label"), sAlt, "aria-label is rendered");
-			equal($oImage.attr("title"), sTooltip, "title is rendered");
-			ok(!$oImage.attr("role"), "no role is output");
-			ok(!$oImage.attr("aria-hidden"), "no aria-hidden is output");
+			assert.equal($oImage.attr("alt"), sAlt, "alt is rendered");
+			assert.equal($oImage.attr("aria-label"), sAlt, "aria-label is rendered");
+			assert.equal($oImage.attr("title"), sTooltip, "title is rendered");
+			assert.ok(!$oImage.attr("role"), "no role is output");
+			assert.ok(!$oImage.attr("aria-hidden"), "no aria-hidden is output");
 
 			// Clean up
 			oImage.destroy();
@@ -248,13 +248,14 @@
 			oCore.applyChanges();
 
 			// Assert
-			equal(oImage.getMode(), sap.m.ImageMode.Image, "The default mode is set to sap.m.ImageMode.Image");
+			assert.equal(oImage.getMode(), sap.m.ImageMode.Image, "The default mode is set to sap.m.ImageMode.Image");
 
 			// Clean up
 			oImage.destroy();
 		});
 
-		asyncTest("Image with mode sap.m.ImageMode.Background", function() {
+		QUnit.test("Image with mode sap.m.ImageMode.Background", function(assert) {
+			var done = assert.async();
 			var oImage = createImage({
 				mode: sap.m.ImageMode.Background
 			});
@@ -268,14 +269,14 @@
 				var $Image = oImage.$(),
 						sBackgroundImage = $Image.css("background-image");
 
-				equal(sBackgroundImage.indexOf("url("), 0, "The background-image CSS style starts with 'url('");
-				equal(sBackgroundImage.charAt(sBackgroundImage.length-1), ")", "The background-image CSS style ends with ')'");
-				ok(sBackgroundImage.substring(4, sBackgroundImage.length - 1).indexOf("images/SAPLogo.jpg") !== -1, "The background-image CSS style has the right path");
-				equal($Image.css("background-size"), "cover", "backgroundSize property is set by default to 'cover' and output to the dom CSS style");
-				equal($Image.css("background-repeat"), "no-repeat", "backgroundRepeat property is set by default to 'no-repeat' and output to the dom CSS style");
+				assert.equal(sBackgroundImage.indexOf("url("), 0, "The background-image CSS style starts with 'url('");
+				assert.equal(sBackgroundImage.charAt(sBackgroundImage.length-1), ")", "The background-image CSS style ends with ')'");
+				assert.ok(sBackgroundImage.substring(4, sBackgroundImage.length - 1).indexOf("images/SAPLogo.jpg") !== -1, "The background-image CSS style has the right path");
+				assert.equal($Image.css("background-size"), "cover", "backgroundSize property is set by default to 'cover' and output to the dom CSS style");
+				assert.equal($Image.css("background-repeat"), "no-repeat", "backgroundRepeat property is set by default to 'no-repeat' and output to the dom CSS style");
 				oImage.destroy();
-				equal(oImage._oImage, null, "internal image instance is also set to null");
-				start();
+				assert.equal(oImage._oImage, null, "internal image instance is also set to null");
+				done();
 			});
 
 		});
@@ -292,14 +293,15 @@
 
 			// test the initial dimensions
 			var oDomRef = jQuery.sap.domById(sControlId);
-			equal(oDomRef.offsetWidth, parseInt(oImage.getWidth()), "oImage.offsetWidth should equal "+parseInt(oImage.getWidth()));
-			equal(oDomRef.offsetHeight, parseInt(oImage.getHeight()), "oImage.offsetHeight should equal "+parseInt(oImage.getHeight()));
+			assert.equal(oDomRef.offsetWidth, parseInt(oImage.getWidth()), "oImage.offsetWidth should equal "+parseInt(oImage.getWidth()));
+			assert.equal(oDomRef.offsetHeight, parseInt(oImage.getHeight()), "oImage.offsetHeight should equal "+parseInt(oImage.getHeight()));
 
 			// Clean up
 			oImage.destroy();
 		});
 
-		asyncTest("Original Width", function() {
+		QUnit.test("Original Width", function(assert) {
+			var done = assert.async();
 			var oImage = createImage();
 
 			// System under test
@@ -313,16 +315,17 @@
 
 			setTimeout(function() {
 				var oDomRef = window.document.getElementById(sControlId);
-				equals(oDomRef.offsetWidth, 150, "oImage.offsetWidth should equal 150");
-				equals(oDomRef.offsetHeight, 74, "oImage.offsetHeight should equal 74");
+				assert.equal(oDomRef.offsetWidth, 150, "oImage.offsetWidth should equal 150");
+				assert.equal(oDomRef.offsetHeight, 74, "oImage.offsetHeight should equal 74");
 
 				// Clean up
 				oImage.destroy();
-				start();
+				done();
 			}, 100);
 		});
 
-		asyncTest("Dimension Changes", function() {
+		QUnit.test("Dimension Changes", function(assert) {
+			var done = assert.async();
 			var oImage = createImage();
 
 			// System under test
@@ -337,16 +340,17 @@
 			// Assert
 			setTimeout(function() {
 				var oDomRef = jQuery.sap.domById(sControlId);
-				equals(oDomRef.offsetWidth, 292, "oImage.offsetWidth should equal 292");
-				equals(oDomRef.offsetHeight, 292, "oImage.offsetHeight should equal 292");
+				assert.equal(oDomRef.offsetWidth, 292, "oImage.offsetWidth should equal 292");
+				assert.equal(oDomRef.offsetHeight, 292, "oImage.offsetHeight should equal 292");
 
 				// Clean up
 				oImage.destroy();
-				start();
+				done();
 			}, 1000);
 		});
 
-		asyncTest("Aspect Ratio", function() {
+		QUnit.test("Aspect Ratio", function(assert) {
+			var done = assert.async();
 			var oImage = createImage();
 
 			// System under test
@@ -360,12 +364,12 @@
 
 			setTimeout(function() {
 				var oDomRef = window.document.getElementById(sControlId);
-				equals(oDomRef.offsetWidth, 300, "oImage.offsetWidth should equal 300");
-				equals(oDomRef.offsetHeight, 148, "oImage.offsetHeight should equal 148");
+				assert.equal(oDomRef.offsetWidth, 300, "oImage.offsetWidth should equal 300");
+				assert.equal(oDomRef.offsetHeight, 148, "oImage.offsetHeight should equal 148");
 
 				// Clean up
 				oImage.destroy();
-				start();
+				done();
 			}, 100);
 		});
 
@@ -373,7 +377,8 @@
 	QUnit.module("Density Aware");
 
 		if (window.devicePixelRatio > 1) {
-			asyncTest("Density Aware deafult value (true)", function() {
+			QUnit.test("Density Aware deafult value (true)", function(assert) {
+				var done = assert.async();
 				var oImage = createImage({
 					width: "",
 					height: ""
@@ -384,20 +389,21 @@
 				oCore.applyChanges();
 
 				setTimeout(function() {
-					equal(jQuery.sap.byId(sControlId).attr("src"), sSrc2, "oImage is density aware, it loads the density perfect image.");
+					assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc2, "oImage is density aware, it loads the density perfect image.");
 
 					var oDomRef = jQuery.sap.domById(sControlId);
 
-					equal(oDomRef.offsetWidth, 150, "density perfect image also has the default size");
-					equal(oDomRef.offsetHeight, 74, "density perfect image also has the default size");
+					assert.equal(oDomRef.offsetWidth, 150, "density perfect image also has the default size");
+					assert.equal(oDomRef.offsetHeight, 74, "density perfect image also has the default size");
 
 					// Clean up
 					oImage.destroy();
-					start();
+					done();
 				}, 1000);
 			});
 
-			asyncTest("Density Aware set to false", function() {
+			QUnit.test("Density Aware set to false", function(assert) {
+				var done = assert.async();
 				var oImage = createImage({
 					densityAware: false,
 					width: "",
@@ -409,20 +415,21 @@
 				oCore.applyChanges();
 
 				setTimeout(function() {
-					equal(jQuery.sap.byId(sControlId).attr("src"), sSrc, "oImage is NOT density aware, so it loads the default image.");
+					assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc, "oImage is NOT density aware, so it loads the default image.");
 
 					var oDomRef = jQuery.sap.domById(sControlId);
 
-					equal(oDomRef.offsetWidth, 150, "default image has the default size");
-					equal(oDomRef.offsetHeight, 74, "default image has the default size");
+					assert.equal(oDomRef.offsetWidth, 150, "default image has the default size");
+					assert.equal(oDomRef.offsetHeight, 74, "default image has the default size");
 
 					// Clean up
 					oImage.destroy();
-					start();
+					done();
 				}, 1000);
 			});
 
-			asyncTest("Loading default image when high resolution image not available", function() {
+			QUnit.test("Loading default image when high resolution image not available", function(assert) {
+				var done = assert.async();
 				var oImage = createImage({
 					src: sSrc3
 				});
@@ -433,17 +440,18 @@
 
 				setTimeout(function() {
 					var oDomRef = jQuery.sap.domById(sControlId);
-					equal(jQuery.sap.byId(sControlId).attr("src"), sSrc3, "default image should be loaded because the high resolution version isn't available");
-					equal(oDomRef.naturalWidth === 100, true, "default image loaded successfully");
+					assert.equal(jQuery.sap.byId(sControlId).attr("src"), sSrc3, "default image should be loaded because the high resolution version isn't available");
+					assert.equal(oDomRef.naturalWidth === 100, true, "default image loaded successfully");
 
 					// Clean up
 					oImage.destroy();
-					start();
+					done();
 				}, 1000);
 			});
 		}
 
-		asyncTest("Image with density 1.5, source handling after rerendering", function() {
+		QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
+			var done = assert.async();
 			var oSandbox = sinon.sandbox.create();
 			oSandbox.stub(sap.m.Image, "_currentDevicePixelRatio", 1.5);
 
@@ -454,14 +462,14 @@
 			oCore.applyChanges();
 
 			oImage.$().on("load", function() {
-				ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
+				assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
 				oImage.rerender();
 				oImage.$().on("load", function() {
-					ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
+					assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
 					oImage.destroy();
 					// Restore the stubbed property in the callback
 					oSandbox.restore();
-					start();
+					done();
 				});
 			});
 		});
@@ -470,7 +478,8 @@
 	QUnit.module("Src and ActiveSrc properties");
 
 		if (window.devicePixelRatio === 1) {
-			asyncTest("Active Source Changed when pressed", function() {
+			QUnit.test("Active Source Changed when pressed", function(assert) {
+				var done = assert.async();
 				var oImage = createImage({
 					src: sSrcAction,
 					activeSrc: sSrcActionPressed,
@@ -490,31 +499,32 @@
 				});
 
 				setTimeout(function() {
-					equal($oImage.attr("src"), sSrcActionPressed);
+					assert.equal($oImage.attr("src"), sSrcActionPressed);
 
 					oImage.ontouchend({
 						targetTouches: []
 					});
 
 					setTimeout(function() {
-						equal($oImage.attr("src"), sSrcAction);
+						assert.equal($oImage.attr("src"), sSrcAction);
 						// Clean up
 						oImage.destroy();
-						start();
+						done();
 					}, 50);
 				}, 50);
 			});
 		}
 
-		asyncTest("Image with valid src", function() {
+		QUnit.test("Image with valid src", function(assert) {
+			var done = assert.async();
 
 			var oLoadSpy = sinon.spy(function() {
 					var $Image = oImage.$();
-					equal($Image.css("visibility"), "visible", "Image with valid src should be visible");
-					equal(oErrorSpy.callCount, 0, "Error handler isn't called");
+					assert.equal($Image.css("visibility"), "visible", "Image with valid src should be visible");
+					assert.equal(oErrorSpy.callCount, 0, "Error handler isn't called");
 
 					oImage.destroy();
-					start();
+					done();
 				}),
 				oErrorSpy = sinon.spy();
 
@@ -529,20 +539,21 @@
 			oCore.applyChanges();
 		});
 
-		asyncTest("Image with Invalid src and src change", function() {
+		QUnit.test("Image with Invalid src and src change", function(assert) {
+			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {
 					var $oImage = jQuery.sap.byId(sControlId);
-					equal($oImage.css("visibility"), "visible", "Image with valid src should be set back to visible");
-					equal(oErrorSpy.callCount, 1, "error handler isn't called again");
+					assert.equal($oImage.css("visibility"), "visible", "Image with valid src should be set back to visible");
+					assert.equal(oErrorSpy.callCount, 1, "error handler isn't called again");
 
 					oImage.destroy();
-					start();
+					done();
 				}),
 				oErrorSpy = sinon.spy(function() {
-					equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
+					assert.equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
 
 					var $oImage = jQuery.sap.byId(sControlId);
-					equal($oImage.css("visibility"), "visible", "Image with invalid src should be visible to show the alt text");
+					assert.equal($oImage.css("visibility"), "visible", "Image with invalid src should be visible to show the alt text");
 
 					oImage.setSrc(sSrcAction);
 				});
@@ -574,32 +585,32 @@
 			oCore.applyChanges();
 
 			var $Image = oImage.$();
-			equal($Image.attr("tabindex"), "0", "tabindex 0 is output");
-			equal($Image.attr("role"), "button", "role is set to button");
+			assert.equal($Image.attr("tabindex"), "0", "tabindex 0 is output");
+			assert.equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.attachPress(fn2);
-			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
-			equal($Image.attr("role"), "button", "role is set to button");
+			assert.equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			assert.equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.detachPress(fn1);
-			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
-			equal($Image.attr("role"), "button", "role is set to button");
+			assert.equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			assert.equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.detachPress(fn2);
-			strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
-			equal($Image.attr("role"), "presentation", "role is set to presentation");
+			assert.strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
+			assert.equal($Image.attr("role"), "presentation", "role is set to presentation");
 
 			oImage.attachPress(fn2);
-			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
-			equal($Image.attr("role"), "button", "role is set to button");
+			assert.equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			assert.equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.setDecorative(false);
-			equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
-			equal($Image.attr("role"), "button", "role is set to button");
+			assert.equal($Image.attr("tabindex"), "0", "tabindex 0 is still output");
+			assert.equal($Image.attr("role"), "button", "role is set to button");
 
 			oImage.detachPress(fn2);
-			strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
-			ok(!$Image.attr("role"), "role is removed");
+			assert.strictEqual($Image.attr("tabindex"), undefined, "no tabindex is output");
+			assert.ok(!$Image.attr("role"), "role is removed");
 
 			//Clean up
 			oImage.destroy();
@@ -609,37 +620,38 @@
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oImage = new sap.m.Image({alt: "Alt", tooltip: "Tooltip"});
-			ok(!!oImage.getAccessibilityInfo, "Image has a getAccessibilityInfo function");
+			assert.ok(!!oImage.getAccessibilityInfo, "Image has a getAccessibilityInfo function");
 			var oInfo = oImage.getAccessibilityInfo();
-			ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative images");
+			assert.ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative images");
 			oImage.setDecorative(false);
 			oInfo = oImage.getAccessibilityInfo();
-			strictEqual(oInfo.role, "img", "AriaRole");
-			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
-			strictEqual(oInfo.description, "Alt", "Description");
-			strictEqual(oInfo.focusable, false, "Focusable");
-			ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
-			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+			assert.strictEqual(oInfo.role, "img", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
+			assert.strictEqual(oInfo.description, "Alt", "Description");
+			assert.strictEqual(oInfo.focusable, false, "Focusable");
+			assert.ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
+			assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 			oImage.setAlt("");
 			oImage.attachPress(function(){});
 			oInfo = oImage.getAccessibilityInfo();
-			strictEqual(oInfo.role, "button", "AriaRole");
-			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
-			strictEqual(oInfo.description, "Tooltip", "Description");
-			strictEqual(oInfo.focusable, true, "Focusable");
+			assert.strictEqual(oInfo.role, "button", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			assert.strictEqual(oInfo.description, "Tooltip", "Description");
+			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			oImage.destroy();
 		});
 
 	QUnit.module("Bug fixes");
 
-		asyncTest("Image with valid src under densityAware turned off", function() {
+		QUnit.test("Image with valid src under densityAware turned off", function(assert) {
+			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {
 					var $Image = oImage.$();
-					equal($Image.css("visibility"), "visible", "Image with valid src should be visible");
-					equal(oErrorSpy.callCount, 0, "Error handler isn't called");
+					assert.equal($Image.css("visibility"), "visible", "Image with valid src should be visible");
+					assert.equal(oErrorSpy.callCount, 0, "Error handler isn't called");
 
 					oImage.destroy();
-					start();
+					done();
 				}),
 				oErrorSpy = sinon.spy();
 
@@ -654,19 +666,20 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		asyncTest("Image with Invalid src and src change under densityAware turned off", function() {
+		QUnit.test("Image with Invalid src and src change under densityAware turned off", function(assert) {
+			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {
 					var $Image = oImage.$();
-					equal($Image.css("visibility"), "visible", "Image with valid src should be set back to visible");
-					equal(oErrorSpy.callCount, 1, "error handler isn't called again");
+					assert.equal($Image.css("visibility"), "visible", "Image with valid src should be set back to visible");
+					assert.equal(oErrorSpy.callCount, 1, "error handler isn't called again");
 
 					oImage.destroy();
-					start();
+					done();
 				}),
 				oErrorSpy = sinon.spy(function() {
-					equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
+					assert.equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
 					var $Image = oImage.$();
-					equal($Image.css("visibility"), "visible", "Image with invalid src should be visible to show the alt text");
+					assert.equal($Image.css("visibility"), "visible", "Image with invalid src should be visible to show the alt text");
 
 					oImage.setSrc(sSrcAction);
 				});
@@ -684,10 +697,11 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		asyncTest("Image with density 1.5, source handling after rerendering", function() {
+		QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
+			var done = assert.async();
 			var oSandbox = sinon.sandbox.create(),
 				oLoadSpy = sinon.spy(function() {
-					equal(oErrorSpy.callCount, 0, "error event handler shouldn't be called");
+					assert.equal(oErrorSpy.callCount, 0, "error event handler shouldn't be called");
 				}),
 				oErrorSpy = sinon.spy();
 
@@ -701,16 +715,16 @@
 			oImage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			oImage.$().on("load", function() {
-				ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
-				equal(oLoadSpy.callCount, 1, "load event handler is called");
+				assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
+				assert.equal(oLoadSpy.callCount, 1, "load event handler is called");
 				oImage.rerender();
 				oImage.$().on("load", function() {
-					ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
-					equal(oLoadSpy.callCount, 2, "load event handler is called again");
+					assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
+					assert.equal(oLoadSpy.callCount, 2, "load event handler is called again");
 					oImage.destroy();
 					// Restore the stubbed property in the callback
 					oSandbox.restore();
-					start();
+					done();
 				});
 			});
 		});

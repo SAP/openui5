@@ -47,7 +47,7 @@
 	});
 
 	QUnit.test("Unsaved changes mark is not rendered when Locked mark is set", function (assert) {
-		ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 0, "Unsaved changes mark is not rendered when Locked mark is set");
+		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 0, "Unsaved changes mark is not rendered when Locked mark is set");
 	});
 
 	QUnit.test("Unsaved changes mark rendering", function (assert) {

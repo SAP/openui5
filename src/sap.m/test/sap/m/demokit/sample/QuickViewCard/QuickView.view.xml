@@ -1,8 +1,7 @@
 <core:View height="100%"
-		   xmlns:core="sap.ui.core"
-		   xmlns="sap.m"
-		   xmlns:html="http://www.w3.org/1999/xhtml"
-		   controllerName="sap.m.sample.QuickViewCard.QuickView">
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m"
+		controllerName="sap.m.sample.QuickViewCard.QuickView">
 	<Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
 		<content>
 			<Button id="buttonBack"

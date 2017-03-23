@@ -540,9 +540,9 @@
 				failOnError: false,
 				async: true
 			}).then(function(sText){
-				ok(!sText, "Promise.done: Resource cannot be found but no error occured");
+				assert.ok(!sText, "Promise.done: Resource cannot be found but no error occured");
 			}, function(oError){
-				ok(false, "Promise.catch should not be called");
+				assert.ok(false, "Promise.catch should not be called");
 			});
 		});
 
@@ -553,9 +553,9 @@
 				failOnError: true,
 				async: true
 			}).then(function(sText){
-				ok(false, "Promise.done should not be called");
+				assert.ok(false, "Promise.done should not be called");
 			}, function(oError){
-				ok(oError instanceof Error, "Promise.catch: Resource cannot be found and an error occured");
+				assert.ok(oError instanceof Error, "Promise.catch: Resource cannot be found and an error occured");
 			});
 		});
 

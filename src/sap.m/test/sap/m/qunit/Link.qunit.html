@@ -24,7 +24,7 @@
 			target: "_blank",
 			width : "200px",
 			press:function() {
-				ok(true, "This should be executed when the link is triggered");
+				assert.ok(true, "This should be executed when the link is triggered");
 			}
 		}).placeAt("uiArea1");
 
@@ -37,29 +37,29 @@
 		// test property accessor methods
 
 		QUnit.test("Text in HTML", function(assert) {
-			equal(oLink1.$().text(), sText, "oLink1 text should be correct");
+			assert.equal(oLink1.$().text(), sText, "oLink1 text should be correct");
 		});
 
 		QUnit.test("Width", function(assert) {
-			strictEqual(oLink1.getDomRef().offsetWidth, 200, "oLink1 width should be correct");
+			assert.strictEqual(oLink1.getDomRef().offsetWidth, 200, "oLink1 width should be correct");
 		});
 
 		QUnit.test("href", function(assert) {
 			var href = oLink1.getDomRef().href;
-			strictEqual(href.indexOf("x.html"), href.length - "x.html".length, "oLink1 href should be correct");
+			assert.strictEqual(href.indexOf("x.html"), href.length - "x.html".length, "oLink1 href should be correct");
 		});
 
 		QUnit.test("Target", function(assert) {
-			strictEqual(oLink1.getDomRef().target, "_blank", "oLink1 target should be correct");
+			assert.strictEqual(oLink1.getDomRef().target, "_blank", "oLink1 target should be correct");
 		});
 
 		QUnit.test("Press event", function(assert) {
-			expect(1); // verifies the event handler was executed
+			assert.expect(1); // verifies the event handler was executed
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
 
 		QUnit.test("Disabled", function(assert) {
-			expect(0); // verifies the event handler was NOT executed
+			assert.expect(0); // verifies the event handler was NOT executed
 			oLink1.setEnabled(false);
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
@@ -67,29 +67,29 @@
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Link({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			ok(sut.$().hasClass("sapMLnkMaxWidth"), "Link has max width restriction for the trunctation.");
+			assert.ok(sut.$().hasClass("sapMLnkMaxWidth"), "Link has max width restriction for the trunctation.");
 
 			sut.setWidth("100px");
 			sap.ui.getCore().applyChanges();
-			ok(!sut.$().hasClass("sapMLnkMaxWidth"), "Link has width and does not have max width restriction.");
+			assert.ok(!sut.$().hasClass("sapMLnkMaxWidth"), "Link has width and does not have max width restriction.");
 		});
 
 		QUnit.test("Subtle", function(assert) {
 			oLink1.setSubtle(true);
 			sap.ui.getCore().applyChanges();
-			ok(oLink1.$().hasClass('sapMLnkSubtle'), "Link is subtle.");
+			assert.ok(oLink1.$().hasClass('sapMLnkSubtle'), "Link is subtle.");
 		});
 
 		QUnit.test("Emphasized", function(assert) {
 			oLink1.setEmphasized(true);
 			sap.ui.getCore().applyChanges();
-			ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
+			assert.ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
 			oLink1.destroy();
 		});
 
 		QUnit.test("Non-rendered Subtle values", function(assert) {
 			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
-			expect(0);
+			assert.expect(0);
 			var oLinkNRS = new sap.m.Link({subtle: false});
 			oLinkNRS.setSubtle(true);
 			oLinkNRS.setSubtle(false);
@@ -98,7 +98,7 @@
 
 		QUnit.test("Non-rendered Emphasized values", function(assert) {
 			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
-			expect(0);
+			assert.expect(0);
 			var oLinkNRE = new sap.m.Link({emphasized: false});
 			oLinkNRE.setEmphasized(true);
 			oLinkNRE.setEmphasized(false);
@@ -106,34 +106,34 @@
 		});
 
 		QUnit.test("Rendered initial Subtle values", function(assert) {
-			expect(1);
+			assert.expect(1);
 			var oLinkRIS = new sap.m.Link({subtle: true});
 			oLinkRIS.placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
-			ok(oLinkRIS.$().hasClass('sapMLnkSubtle'), "Link should have the 'sapMLnkSubtle' CSS class.");
+			assert.ok(oLinkRIS.$().hasClass('sapMLnkSubtle'), "Link should have the 'sapMLnkSubtle' CSS class.");
 			oLinkRIS.destroy();
 		});
 
 		QUnit.test("Rendered initial Emphasized values", function(assert) {
-			expect(1);
+			assert.expect(1);
 			var oLinkRIE = new sap.m.Link({emphasized: true});
 			oLinkRIE.placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
-			ok(oLinkRIE.$().hasClass('sapMLnkEmphasized'), "Link should have the 'sapMLnkEmphasized' CSS class.");
+			assert.ok(oLinkRIE.$().hasClass('sapMLnkEmphasized'), "Link should have the 'sapMLnkEmphasized' CSS class.");
 			oLinkRIE.destroy();
 		});
 
 		QUnit.test("Link should be shrinkable", function(assert) {
 			var oLink = new sap.m.Link();
-			ok(oLink.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Link control implements IShrinkable interface");
+			assert.ok(oLink.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Link control implements IShrinkable interface");
 			oLink.destroy();
 		});
 
 		QUnit.test("Disabled link should not have the preseted href", function(assert) {
-			equal(oLink2.$().attr("href"), "#", "oLink2 href should be '#'");
+			assert.equal(oLink2.$().attr("href"), "#", "oLink2 href should be '#'");
 			oLink2.setEnabled(true);
 			sap.ui.getCore().applyChanges();
-			equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
+			assert.equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
 			oLink2.destroy();
 		});
 
@@ -151,7 +151,7 @@
 
 			var $oLink = oLink1.$();
 
-			strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
+			assert.strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
 
 			oLink1.destroy();
 		});
@@ -168,7 +168,7 @@
 
 			var $oLink = oLink1.$();
 
-			strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
+			assert.strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
 
 			oLink1.destroy();
 		});
@@ -185,7 +185,7 @@
 
 			var $oLink = oLink1.$();
 
-			strictEqual($oLink.attr("tabIndex"), "0", "Property 'tabIndex' should be '0'");
+			assert.strictEqual($oLink.attr("tabIndex"), "0", "Property 'tabIndex' should be '0'");
 
 			oLink1.destroy();
 		});
@@ -198,7 +198,7 @@
 				target: "_blank",
 				width : "200px",
 				press:function() {
-					ok(true, "This should be executed when the link is triggered");
+					assert.ok(true, "This should be executed when the link is triggered");
 				}
 			}).placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
@@ -206,39 +206,39 @@
 			var $oLink = oLink1.$();
 
 			// ARIA role
-			strictEqual($oLink.attr("role"), "link", "Property 'role' should be 'link'");
+			assert.strictEqual($oLink.attr("role"), "link", "Property 'role' should be 'link'");
 
 			// ARIA disabled
 			oLink1.setEnabled(false);
-			strictEqual($oLink.attr("aria-disabled"), "true", "Property 'aria-disabled' should be 'true'");
+			assert.strictEqual($oLink.attr("aria-disabled"), "true", "Property 'aria-disabled' should be 'true'");
 			oLink1.setEnabled(true);
-			strictEqual($oLink.attr("aria-disabled"), undefined, "Property 'aria-disabled' should not exist");
+			assert.strictEqual($oLink.attr("aria-disabled"), undefined, "Property 'aria-disabled' should not exist");
 
 			// ARIA describedby for Subtle link
 			oLink1.setSubtle(true);
-			strictEqual($oLink.attr("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
-			strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkSubtleId)) !== -1), true,
+			assert.strictEqual($oLink.attr("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
+			assert.strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkSubtleId)) !== -1), true,
 				"Subtle ID: " + oLink1._sAriaLinkSubtleId + " should be included in aria-describedby");
 
 			oLink1.setSubtle(false);
-			strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
+			assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
 
 			// ARIA describedby for Emphasized link
 			oLink1.setEmphasized(true);
-			strictEqual($oLink.attr("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
-			strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkEmphasizedId)) !== -1), true,
+			assert.strictEqual($oLink.attr("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
+			assert.strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkEmphasizedId)) !== -1), true,
 				"Emphasized ID: " + oLink1._sAriaLinkEmphasizedId + " should be included in aria-describedby");
 
 			oLink1.setEmphasized(false);
-			strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
+			assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
 
 			oLink1.addAriaLabelledBy("id1");
 			sap.ui.getCore().applyChanges();
-			strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(), "Property 'aria-labelledby' should contain the link ID");
+			assert.strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(), "Property 'aria-labelledby' should contain the link ID");
 
 			oLink1.removeAriaLabelledBy("id1");
 			sap.ui.getCore().applyChanges();
-			strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
+			assert.strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
 
 			oLink1.destroy();
 		});
@@ -252,7 +252,7 @@
 			oLink.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+			assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
 
 			oLink.destroy();
 		});
@@ -267,8 +267,8 @@
 			oLink.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oLink.$().attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
-			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+			assert.strictEqual(oLink.$().attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
+			assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
 
 			oLink.destroy();
 		});
@@ -283,8 +283,8 @@
 			oLink.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oLink.$().attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
-			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+			assert.strictEqual(oLink.$().attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
+			assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
 
 			oLink.destroy();
 		});
@@ -297,27 +297,27 @@
 			oLink.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oLink.$().attr('dir'), undefined, "The dir attribute should not be rendered");
+			assert.strictEqual(oLink.$().attr('dir'), undefined, "The dir attribute should not be rendered");
 
 			oLink.destroy();
 		});
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oControl = new sap.m.Link({text: "Text", href: "HRef"});
-			ok(!!oControl.getAccessibilityInfo, "Link has a getAccessibilityInfo function");
+			assert.ok(!!oControl.getAccessibilityInfo, "Link has a getAccessibilityInfo function");
 			var oInfo = oControl.getAccessibilityInfo();
-			ok(!!oInfo, "getAccessibilityInfo returns a info object");
-			strictEqual(oInfo.role, "link", "AriaRole");
-			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"), "Type");
-			strictEqual(oInfo.description, "Text", "Description");
-			strictEqual(oInfo.focusable, true, "Focusable");
-			strictEqual(oInfo.enabled, true, "Enabled");
-			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			assert.strictEqual(oInfo.role, "link", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"), "Type");
+			assert.strictEqual(oInfo.description, "Text", "Description");
+			assert.strictEqual(oInfo.focusable, true, "Focusable");
+			assert.strictEqual(oInfo.enabled, true, "Enabled");
+			assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 			oControl.setText("");
 			oControl.setEnabled(false);
 			oInfo = oControl.getAccessibilityInfo();
-			strictEqual(oInfo.description, "HRef", "Description");
-			strictEqual(oInfo.focusable, false, "Focusable");
+			assert.strictEqual(oInfo.description, "HRef", "Description");
+			assert.strictEqual(oInfo.focusable, false, "Focusable");
 			oControl.destroy();
 		});
 

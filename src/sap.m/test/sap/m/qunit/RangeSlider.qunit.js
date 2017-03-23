@@ -499,6 +499,8 @@
 				target: this.oRangeSlider._mHandleTooltip.start.handle,
 				preventDefault: function () {
 				},
+				stopPropagation: function () {
+				},
 				setMarked: function () {
 				}
 			};
@@ -561,7 +563,21 @@
 	});
 
 	QUnit.test("KH: onsaphome", function (assert) {
+		assert.deepEqual(this.oRangeSlider.getRange(), [20, 30], "Initial value is correct");
+
+		//Check start handle home event
+		//Act
 		this.testSAPEvents(assert, "onsaphome");
+
+		// Assert
+		assert.deepEqual(this.oRangeSlider.getRange(), [0, 30], "Start handle home event is correctly triggered");
+
+		//Check end handle home event
+		//Act
+		qutils.triggerKeydown(this.oRangeSlider._mHandleTooltip.end.handle, jQuery.sap.KeyCodes.HOME);
+
+		// Assert
+		assert.deepEqual(this.oRangeSlider.getRange(), [0, 0], "End handle home event is correctly triggered");
 	});
 
 	QUnit.test("KH: Global ALT + Arrow", function (assert) {
@@ -569,6 +585,7 @@
 				target: {type: ""},
 				altKey: true,
 				preventDefault: function () {},
+				stopPropagation: function () {},
 				setMarked: function () {}
 			},
 			oRangeSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION),

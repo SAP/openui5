@@ -24,7 +24,8 @@
 
 			jQuery.sap.require("sap.ui.core.ws.WebSocket");
 
-			QUnit.test("Constructor with url only", 1, function(assert) {
+			QUnit.test("Constructor with url only", function(assert) {
+				assert.expect(1);
 				var theEx;
 
 				try {
@@ -34,14 +35,15 @@
 				}
 
 				if (sap.ui.Device.support.websocket) {
-					ok(theEx === undefined, 'No exception was thrown.');
+					assert.ok(theEx === undefined, 'No exception was thrown.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
 
 			});
 
-			QUnit.test("Constructor with url and single protocol", 1, function(assert) {
+			QUnit.test("Constructor with url and single protocol", function(assert) {
+				assert.expect(1);
 				var theEx;
 
 				try {
@@ -51,14 +53,15 @@
 				}
 
 				if (sap.ui.Device.support.websocket) {
-					ok(theEx === undefined, 'No exception was thrown.');
+					assert.ok(theEx === undefined, 'No exception was thrown.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
 
 			});
 
-			QUnit.test("Constructor with url and multiple protocols", 1, function(assert) {
+			QUnit.test("Constructor with url and multiple protocols", function(assert) {
+				assert.expect(1);
 				var theEx;
 
 				try {
@@ -68,14 +71,15 @@
 				}
 
 				if (sap.ui.Device.support.websocket) {
-					ok(theEx === undefined, 'No exception was thrown.');
+					assert.ok(theEx === undefined, 'No exception was thrown.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'No WebSocket support. Correct exception message.');
 				}
 
 			});
 
-			QUnit.test("No url in constructor", 2, function(assert) {
+			QUnit.test("No url in constructor", function(assert) {
+				assert.expect(2);
 
 				var theEx;
 
@@ -85,17 +89,18 @@
 					theEx = ex;
 				}
 
-				ok(theEx !== undefined, "No Url provided. Exception was raised.");
+				assert.ok(theEx !== undefined, "No Url provided. Exception was raised.");
 
 				if (sap.ui.Device.support.websocket) {
-					equal(theEx.message, 'sUrl must be a string.', 'Correct exception message.');
+					assert.equal(theEx.message, 'sUrl must be a string.', 'Correct exception message.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'Correct exception message.');
 				}
 
 			});
 
-			QUnit.test("Wrong protocol parameter in constructor", 2, function(assert) {
+			QUnit.test("Wrong protocol parameter in constructor", function(assert) {
+				assert.expect(2);
 
 				var theEx;
 
@@ -105,76 +110,79 @@
 					theEx = ex;
 				}
 
-				ok(theEx !== undefined, "Wrong protocol parameter. Exception was raised.");
+				assert.ok(theEx !== undefined, "Wrong protocol parameter. Exception was raised.");
 
 				if (sap.ui.Device.support.websocket) {
-					equal(theEx.message, 'aProtocols must be a string, array of strings or undefined.', 'Correct exception message.');
+					assert.equal(theEx.message, 'aProtocols must be a string, array of strings or undefined.', 'Correct exception message.');
 				} else {
-					equal(theEx.message, 'Browser does not support WebSockets.', 'Correct exception message.');
+					assert.equal(theEx.message, 'Browser does not support WebSockets.', 'Correct exception message.');
 				}
 
 			});
 
-			QUnit.test("Resolve URLs", 4, function(assert) {
+			QUnit.test("Resolve URLs", function(assert) {
+				assert.expect(4);
 
 				var _resolveFullUrl = sap.ui.core.ws.WebSocket.prototype._resolveFullUrl;
 
-				equal(_resolveFullUrl.call(null, "ws://hostname:1234/foo/bar"), "ws://hostname:1234/foo/bar", "resolved full URL (ws://)");
-				equal(_resolveFullUrl.call(null, "wss://hostname:1234/foo/bar"), "wss://hostname:1234/foo/bar", "resolved full URL (wss://)");
+				assert.equal(_resolveFullUrl.call(null, "ws://hostname:1234/foo/bar"), "ws://hostname:1234/foo/bar", "resolved full URL (ws://)");
+				assert.equal(_resolveFullUrl.call(null, "wss://hostname:1234/foo/bar"), "wss://hostname:1234/foo/bar", "resolved full URL (wss://)");
 
 				var oBaseUri = new URI();
 				oBaseUri.search('').protocol(oBaseUri.protocol() === 'https' ? 'wss' : 'ws');
 
-				equal(_resolveFullUrl.call(null, "/foo/bar"), new URI("/foo/bar").absoluteTo(oBaseUri).toString(), "resolved absolute URL");
-				equal(_resolveFullUrl.call(null, "../foo/bar"), new URI("../foo/bar").absoluteTo(oBaseUri).toString(), "resolved relative URL");
+				assert.equal(_resolveFullUrl.call(null, "/foo/bar"), new URI("/foo/bar").absoluteTo(oBaseUri).toString(), "resolved absolute URL");
+				assert.equal(_resolveFullUrl.call(null, "../foo/bar"), new URI("../foo/bar").absoluteTo(oBaseUri).toString(), "resolved relative URL");
 
 			});
 
 			// Excluded tests which require a WebSocket connection (no server running yet)
 			/*
-			asyncTest("readyState", function() {
+			QUnit.test("readyState", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
-					expect(5);
+					assert.expect(5);
 				} else {
 					// skip test if browser doesn't support WebSockets
-					expect(0);
-					start();
+					assert.expect(0);
+					done();
 					return;
 				}
 
 				var ws = new sap.ui.core.ws.WebSocket("ws://localhost:3001");
-				equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CONNECTING, "readyState is CONNECTING");
+				assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.CONNECTING, "readyState is CONNECTING");
 
 				ws.send("foo");
 
 				ws.attachOpen(function() {
-					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.OPEN, "readyState is OPEN");
+					assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.OPEN, "readyState is OPEN");
 				});
 
 				ws.attachMessage(function(oEvent) {
-					equals(oEvent.getParameter("data"), "foo", "Correct message received.");
+					assert.equal(oEvent.getParameter("data"), "foo", "Correct message received.");
 
 					ws.close();
-					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSING, "readyState is CLOSING");
+					assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSING, "readyState is CLOSING");
 				});
 
 				ws.attachClose(function() {
-					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
+					assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
 
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Send queued message", function() {
+			QUnit.test("Send queued message", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
-					expect(1);
+					assert.expect(1);
 				} else {
 					// skip test if browser doesn't support WebSockets
-					expect(0);
-					start();
+					assert.expect(0);
+					done();
 					return;
 				}
 
@@ -184,22 +192,23 @@
 				ws.send("foo");
 
 				ws.attachMessage(function(oEvent) {
-					equals(oEvent.getParameter("data"), "foo", "Correct message received.");
+					assert.equal(oEvent.getParameter("data"), "foo", "Correct message received.");
 
 					ws.close();
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Close event", function() {
+			QUnit.test("Close event", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
-					expect(4);
+					assert.expect(4);
 				} else {
 					// skip test if browser doesn't support WebSockets
-					expect(0);
-					start();
+					assert.expect(0);
+					done();
 					return;
 				}
 
@@ -210,34 +219,35 @@
 
 				ws.attachClose(function(oEvent) {
 
-					equals(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
+					assert.equal(ws.getReadyState(), sap.ui.core.ws.ReadyState.CLOSED, "readyState is CLOSED");
 
 					// check close event parameters
-					equals(oEvent.getParameter("code"), 1000, "Correct error code");
-					equals(oEvent.getParameter("reason"), "closed from server", "Correct error reason");
-					equals(oEvent.getParameter("wasClean"), true, "Correct wasClean flag");
+					assert.equal(oEvent.getParameter("code"), 1000, "Correct error code");
+					assert.equal(oEvent.getParameter("reason"), "closed from server", "Correct error reason");
+					assert.equal(oEvent.getParameter("wasClean"), true, "Correct wasClean flag");
 
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Protocols", function() {
+			QUnit.test("Protocols", function(assert) {
+				var done = assert.async();
 
 				if (sap.ui.Device.support.websocket) {
-					expect(1);
+					assert.expect(1);
 				} else {
 					// skip test if browser doesn't support WebSockets
-					expect(0);
-					start();
+					assert.expect(0);
+					done();
 					return;
 				}
 
 				var ws = new sap.ui.core.ws.WebSocket("ws://localhost:3001", "my-protocol");
 
 				ws.attachOpen(function(oEvent) {
-					equals(ws.getProtocol(), "my-protocol", "protocol is correct");
-					start();
+					assert.equal(ws.getProtocol(), "my-protocol", "protocol is correct");
+					done();
 				});
 
 			});

@@ -37,12 +37,12 @@
 
 
 			function newHandler(oObject){
-				equal(JSON.stringify(oObject), JSON.stringify(currentData), "Handler added by calling addRoute is called. The object is parsed correctly from the hash");
+				assert.equal(JSON.stringify(oObject), JSON.stringify(currentData), "Handler added by calling addRoute is called. The object is parsed correctly from the hash");
 			}
 
 			function newDefaultHanlder(oObject){
-				ok(true, "there are two ok assertion just to test if the new default handler is set correctly");
-				ok(true, "there are two ok assertion just to test if the new default handler is set correctly");
+				assert.ok(true, "there are two ok assertion just to test if the new default handler is set correctly");
+				assert.ok(true, "there are two ok assertion just to test if the new default handler is set correctly");
 			}
 
 			function prepareHistoryState(){
@@ -68,16 +68,16 @@
 				routes: [{
 					path: sHistoryPath,
 					handler: function(oObject){
-						equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
+						assert.equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
 					},
 				},{
 					path: sDifferentPath,
 					handler: function(oObject){
-						equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
+						assert.equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
 					}
 				}],
 				defaultHandler: function(){
-					ok(true, "Counter for seeing if the default handler is called or not");
+					assert.ok(true, "Counter for seeing if the default handler is called or not");
 				}
 			});
 
@@ -86,11 +86,11 @@
 				routes: [{
 					path: sHistoryPath,
 					handler: function(oObject){
-						equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
+						assert.equal(JSON.stringify(oObject), JSON.stringify(currentData), "The object is parsed correctly from the hash");
 					}
 				}],
 				defaultHandler: function(){
-					ok(true, "Counter for seeing if the default handler is called or not");
+					assert.ok(true, "Counter for seeing if the default handler is called or not");
 				}
 			});
 
@@ -100,26 +100,28 @@
 
 			//first
 			QUnit.test("Initial Check", function(assert) {
-				ok((jQuery.sap.history !== undefined) && (jQuery.sap.history != null), "History object should not be null");
+				assert.ok((jQuery.sap.history !== undefined) && (jQuery.sap.history != null), "History object should not be null");
 			});
 
 
  			//first and a half
-			asyncTest("call the back() function to simulate the storing from bookmark, default handler should be called", function(){
-				expect(1);
+			QUnit.test("call the back() function to simulate the storing from bookmark, default handler should be called", function(assert){
+				var done = assert.async();
+				assert.expect(1);
 
 				jQuery.sap.history.back();
 
 				setTimeout(function(){
-					start();
+					done();
 				}, 50);
 			});
 
 			//second
-			asyncTest("Add a skippable history and try to go back to skippable history", function(){
-				expect(4);
+			QUnit.test("Add a skippable history and try to go back to skippable history", function(assert){
+				var done = assert.async();
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
-				ok(rSkipRegex.test(window.location.hash), "Current hash is a skippable hash");
+				assert.ok(rSkipRegex.test(window.location.hash), "Current hash is a skippable hash");
 				setTimeout(function(){
 					jQuery.sap.history.back();
 				}, 50);
@@ -129,15 +131,16 @@
 				}, 100);
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Stay in the current history because there's no non skippable history ahead");
-					start();
+					assert.ok(!rSkipRegex.test(window.location.hash), "Stay in the current history because there's no non skippable history ahead");
+					done();
 				}, 150);
 			});
 
 
 			//third
-			asyncTest("Add two skippable histories and try to go back to the skippable histories", function(){
-				expect(4);
+			QUnit.test("Add two skippable histories and try to go back to the skippable histories", function(assert){
+				var done = assert.async();
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addVirtualHistory();
 
@@ -147,19 +150,20 @@
 
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back directly to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back directly to the first non skippable history");
 					window.history.go(1);
 					setTimeout(function(){
-						ok(!rSkipRegex.test(window.location.hash), "Cannot navigate to the skippable hash when there's no normal history ahead");
-						start();
+						assert.ok(!rSkipRegex.test(window.location.hash), "Cannot navigate to the skippable hash when there's no normal history ahead");
+						done();
 					}, 100);
 				}, 200);
 			});
 
 
 			//fourth
-			asyncTest("Add two skippable histories, one normal history and try to go back and forth", function(){
-				expect(4);
+			QUnit.test("Add two skippable histories, one normal history and try to go back and forth", function(assert){
+				var done = assert.async();
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addHistory(sHistoryPath, data1);
@@ -171,20 +175,21 @@
 
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back directly to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back directly to the first non skippable history");
 					window.history.go(1);
 					currentData = data1;
 
 					setTimeout(function(){
-						ok(!rSkipRegex.test(window.location.hash), "Navigate directly to the first non skippable history");
-						start();
+						assert.ok(!rSkipRegex.test(window.location.hash), "Navigate directly to the first non skippable history");
+						done();
 					}, 100);
 				}, 200);
 			});
 
 			//fifth
-			asyncTest("Add one more skippable history and try to go back and forth", function(){
-				expect(4);
+			QUnit.test("Add one more skippable history and try to go back and forth", function(assert){
+				var done = assert.async();
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 
 				setTimeout(function(){
@@ -194,18 +199,19 @@
 
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
 					window.history.go(1);
 					setTimeout(function(){
-						ok(!rSkipRegex.test(window.location.hash), "Stay in the current history because there's no non skippable history ahead");
-						start();
+						assert.ok(!rSkipRegex.test(window.location.hash), "Stay in the current history because there's no non skippable history ahead");
+						done();
 					}, 100);
 				}, 200);
 			});
 
 			//sixth
-			asyncTest("Add two more skippable history, one more normal history and try to go back and forth", function(){
-				expect(4);
+			QUnit.test("Add two more skippable history, one more normal history and try to go back and forth", function(assert){
+				var done = assert.async();
+				assert.expect(4);
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addVirtualHistory();
 				jQuery.sap.history.addHistory(sHistoryPath, data2);
@@ -217,29 +223,31 @@
 
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
 					window.history.go(1);
 					currentData = data2;
 					setTimeout(function(){
-						ok(!rSkipRegex.test(window.location.hash), "Navigate to the next non skippable history");
-						start();
+						assert.ok(!rSkipRegex.test(window.location.hash), "Navigate to the next non skippable history");
+						done();
 					}, 100);
 				}, 200);
 			});
 
 			//seventh
-			asyncTest("Add one history that duplicates with the previous history, there should be id added to the hash", function(){
+			QUnit.test("Add one history that duplicates with the previous history, there should be id added to the hash", function(assert){
+				var done = assert.async();
 				jQuery.sap.history.addHistory(sHistoryPath, data1);
 
 				setTimeout(function(){
-					ok(/\|id-[0-9]+-[0-9]+/.test(window.location.hash), "There's a id added to the hash");
-					start();
+					assert.ok(/\|id-[0-9]+-[0-9]+/.test(window.location.hash), "There's a id added to the hash");
+					done();
 				}, 100);
 			});
 
 			//eighth
-			asyncTest("Add one history that matches the route added by calling the addRoute method", function(){
-				expect(2);
+			QUnit.test("Add one history that matches the route added by calling the addRoute method", function(assert){
+				var done = assert.async();
+				assert.expect(2);
 				jQuery.sap.history.addHistory(sNewHistoryPath, data3);
 				jQuery.sap.history.addVirtualHistory();
 
@@ -249,26 +257,28 @@
 				}, 100);
 
 				setTimeout(function(){
-					ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
-					start();
+					assert.ok(!rSkipRegex.test(window.location.hash), "Navigate back to the first non skippable history");
+					done();
 				}, 200);
 			});
 
 			//ninth
-			asyncTest("Set another default handler for history handling", function(){
-				expect(2);
+			QUnit.test("Set another default handler for history handling", function(assert){
+				var done = assert.async();
+				assert.expect(2);
 				jQuery.sap.history.setDefaultHandler(newDefaultHanlder);
 
 				window.history.go(-8);
 				setTimeout(function(){
-					start();
+					done();
 				}, 100);
 			});
 
 
 			//tenth
-			asyncTest("back directly to some saved state", function(){
-				expect(2);
+			QUnit.test("back directly to some saved state", function(assert){
+				var done = assert.async();
+				assert.expect(2);
 
 				var sHash = prepareHistoryState();
 				currentData = data1;
@@ -278,14 +288,15 @@
 				}, 300);
 
 				setTimeout(function(){
-					equal((window.location.href.split("#")[1] || ""), sHash, "back to the specific hash state");
-					start();
+					assert.equal((window.location.href.split("#")[1] || ""), sHash, "back to the specific hash state");
+					done();
 				}, 600);
 			});
 
 			//eleventh
-			asyncTest("back through the specific path", function(){
-				expect(2);
+			QUnit.test("back through the specific path", function(assert){
+				var done = assert.async();
+				assert.expect(2);
 
 				prepareHistoryState();
 				currentData = data2;
@@ -295,8 +306,8 @@
 				}, 300);
 
 				setTimeout(function(){
-					ok(window.location.href.split("#")[1].indexOf(window.encodeURIComponent(sHistoryPath)) === 0, "back to the first hash with the prefix");
-					start();
+					assert.ok(window.location.href.split("#")[1].indexOf(window.encodeURIComponent(sHistoryPath)) === 0, "back to the first hash with the prefix");
+					done();
 				}, 600);
 			});
  		}

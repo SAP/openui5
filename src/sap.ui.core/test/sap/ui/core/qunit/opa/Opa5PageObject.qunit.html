@@ -234,40 +234,40 @@ sap.ui.getCore().attachInit(function () {
 		}
 
 		function assertPageObjectIsReturned(oPages){
-			ok(oPages,"Page Object is returned");
-			ok(oPages.onMyFirstPage.actions.iCanDoMagic, "Page Object has access to the actions it describes");
-			ok(oPages.onMyFirstPage.assertions.iCanSeeIt, "Page Object has access to the assertions it describes");
+			assert.ok(oPages,"Page Object is returned");
+			assert.ok(oPages.onMyFirstPage.actions.iCanDoMagic, "Page Object has access to the actions it describes");
+			assert.ok(oPages.onMyFirstPage.assertions.iCanSeeIt, "Page Object has access to the assertions it describes");
 		}
 
 		function assertStandardActionsRegisteredFor(sPageName){
-			ok(Opa.config.actions[sPageName], "Page Object is added to the actions");
-			ok(Opa.config.actions[sPageName].iCanDoMagic, "Page Object actions are added");
-			ok(Opa.config.actions[sPageName].iCanDoOtherThings, "Page Object actions are added");
-			ok(!Opa.config.actions[sPageName].iCanSeeIt, "Page Object assertions are not added to the actions");
+			assert.ok(Opa.config.actions[sPageName], "Page Object is added to the actions");
+			assert.ok(Opa.config.actions[sPageName].iCanDoMagic, "Page Object actions are added");
+			assert.ok(Opa.config.actions[sPageName].iCanDoOtherThings, "Page Object actions are added");
+			assert.ok(!Opa.config.actions[sPageName].iCanSeeIt, "Page Object assertions are not added to the actions");
 
-			deepEqual(Opa.config.arrangements[sPageName], Opa.config.actions[sPageName], "Page Object actions can be uses as Opa arrangements and actions");
+			assert.deepEqual(Opa.config.arrangements[sPageName], Opa.config.actions[sPageName], "Page Object actions can be uses as Opa arrangements and actions");
 		}
 		function assertStandardAssertionsRegisteredFor(sPageName){
-			ok(Opa.config.assertions[sPageName], "Page Object is added to the assertions");
-			ok(Opa.config.assertions[sPageName].iCanSeeIt, "Page Object assertions are added");
-			ok(Opa.config.assertions[sPageName].iCanHearIt, "Page Object assertions are added");
-			ok(!Opa.config.assertions[sPageName].iCanDoMagic, "Page Object actions are not added to the assertions");
+			assert.ok(Opa.config.assertions[sPageName], "Page Object is added to the assertions");
+			assert.ok(Opa.config.assertions[sPageName].iCanSeeIt, "Page Object assertions are added");
+			assert.ok(Opa.config.assertions[sPageName].iCanHearIt, "Page Object assertions are added");
+			assert.ok(!Opa.config.assertions[sPageName].iCanDoMagic, "Page Object actions are not added to the assertions");
 		}
 
 		function assertPageObjectBase(oPages,fnOtherBase){
-			ok(oPages.onMyFirstPage.actions instanceof fnOtherBase, "onMyFirstPage has other base class");
-			ok(oPages.onMySecondPage.assertions instanceof Opa5, "onMySecondPage has default base class");
+			assert.ok(oPages.onMyFirstPage.actions instanceof fnOtherBase, "onMyFirstPage has other base class");
+			assert.ok(oPages.onMySecondPage.assertions instanceof Opa5, "onMySecondPage has default base class");
 		}
 
 		function assertPageObjectNamespaces(oPages){
-			ok(oPages.onMyFirstPage.actions instanceof sap.ui.test.opa.pageObject.onMyFirstPage.actions, "onMyFirstPage has default namespace");
-			ok(oPages.onMySecondPage.assertions instanceof  foo.bar.onMySecondPage.assertions, "onMySecondPage has given namespace");
+			assert.ok(oPages.onMyFirstPage.actions instanceof sap.ui.test.opa.pageObject.onMyFirstPage.actions, "onMyFirstPage has default namespace");
+			assert.ok(oPages.onMySecondPage.assertions instanceof  foo.bar.onMySecondPage.assertions, "onMySecondPage has given namespace");
 		}
 
 		function assertNamespaceClashErrorLogged(bIsCalled){
-			equal(jQuery.sap.log.error.calledOnce,bIsCalled,"Error log is called");
+			assert.equal(jQuery.sap.log.error.calledOnce,bIsCalled,"Error log is called");
 			if(bIsCalled){
-				equal(jQuery.sap.log.error.args[0][0],"Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.","Should log namespace clash error message");
+				assert.equal(jQuery.sap.log.error.args[0][0],"Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.","Should log namespace clash error message");
 			}
 		}
 

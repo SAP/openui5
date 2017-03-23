@@ -25,7 +25,7 @@
 		<script>
 
 		function intEqual(actual, expected, message) {
-			equal(Math.round(actual), expected, message);
+			assert.equal(Math.round(actual), expected, message);
 		}
 
 		function _getMaxScrollLeft(container) {
@@ -100,9 +100,9 @@
 		});
 
 		QUnit.test("ScrollContainer rendered", function(assert) {
-			ok(jQuery.sap.domById("sc1"), "ScrollContainer 1 should be rendered");
-			ok(jQuery.sap.domById("sc2"), "ScrollContainer 2 should be rendered");
-			ok(!jQuery.sap.domById("sc3"), "ScrollContainer 3 should not be rendered");
+			assert.ok(jQuery.sap.domById("sc1"), "ScrollContainer 1 should be rendered");
+			assert.ok(jQuery.sap.domById("sc2"), "ScrollContainer 2 should be rendered");
+			assert.ok(!jQuery.sap.domById("sc3"), "ScrollContainer 3 should not be rendered");
 		});
 
 		// Gets the scroll position of ScrolLContainer with id: sScrollContainerId in sDirection(left/top)
@@ -133,20 +133,21 @@
 		if (sap.ui.Device.browser.mozilla || sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome || (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9)) {
 
 			QUnit.test("Scrolling - immediate", function(assert) {
-				expect(4);
+				assert.expect(4);
 
-				equal(getScrollPos(oSC2.getId(), "left"), 0, "ScrollContainer 2 should be scrolled to position 0");
+				assert.equal(getScrollPos(oSC2.getId(), "left"), 0, "ScrollContainer 2 should be scrolled to position 0");
 				oSC2.scrollTo(100,0,0);
 
-				equal(getScrollPos(oSC2.getId(), "left"), -100, "ScrollContainer 2 should be scrolled to position 100");
+				assert.equal(getScrollPos(oSC2.getId(), "left"), -100, "ScrollContainer 2 should be scrolled to position 100");
 				intEqual(oSC2._oScroller._scrollX, 100, "Internally stored x scrolling position should be 100");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 			});
 
 
 			/*
-			asyncTest("Scrolling - delayed", function() {
-				expect(3);
+			QUnit.test("Scrolling - delayed", function(assert) {
+				var done = assert.async();
+				assert.expect(3);
 
 				oSC2.scrollTo(50, 0, 300);
 
@@ -154,51 +155,53 @@
 				 intEqual(getScrollPos(), -50, "ScrollContainer 2 should be scrolled to position 50");
 				 intEqual(oSC2._oScroller._scrollX, 50, "Internally stored x scrolling position should be 50"); // TODO: this only checks iScroll's internal state; the ScrollContainer may have a different value, but this does not hurt
 				 intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
-					start();
+					done();
 				}, 350);
 			});
 			*/
 
 
 			QUnit.test("Scrolling - wrong direction", function(assert) {
-				expect(3);
+				assert.expect(3);
 
 				oSC2.scrollTo(110,50,0);
 
-				equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
+				assert.equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 
 				intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0"); // no y scrolling possible, so 0 should be the position
 			});
 
 			QUnit.test("Rerendering after scrolling", function(assert) {
-				expect(3);
+				assert.expect(3);
 
 				oSC2.rerender();
 
-				equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
+				assert.equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 				intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
 				intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
 			});
 
 
-			asyncTest("Scroll to end", function() {
-				expect(3);
+			QUnit.test("Scroll to end", function(assert) {
+				var done = assert.async();
+				assert.expect(3);
 
 				oSC2.scrollTo(9999,0,0); // try to scroll way beyond the end of the content
 
 				window.setTimeout(function(){
-					equal(getScrollPos(oSC2.getId(), "left"), -650, "ScrollContainer 2 should be scrolled to position 650");
+					assert.equal(getScrollPos(oSC2.getId(), "left"), -650, "ScrollContainer 2 should be scrolled to position 650");
 					intEqual(oSC2._oScroller._scrollX, 650, "Internally stored x scrolling position should be 650");
 					intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
-					start();
+					done();
 				}, 510); // need to wait because iscroll has a snap-back animation to go to the real end of the content
 			});
 
-			asyncTest("Scrolling after resize", function() {
-				expect(3);
+			QUnit.test("Scrolling after resize", function(assert) {
+				var done = assert.async();
+				assert.expect(3);
 
 				jQuery.sap.byId("sc2-scroll").width("1100px"); // resize the content
 
@@ -206,12 +209,12 @@
 					oSC2.scrollTo(9999,0,0);  // again try to scroll way beyond the end of the content - but this time the content is a bit larger, iscroll should have noticed
 
 					window.setTimeout(function(){
-						equal(getScrollPos(oSC2.getId(), "left"), -750, "ScrollContainer 2 should be scrolled to position 750");
+						assert.equal(getScrollPos(oSC2.getId(), "left"), -750, "ScrollContainer 2 should be scrolled to position 750");
 
 						intEqual(oSC2._oScroller._scrollX, 750, "Internally stored x scrolling position should be 750");
 						intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
 
-						start();
+						done();
 					}, 510); // need to wait because iscroll has a snap-back animation to go to the real end of the content
 				}, 300);
 			});
@@ -318,8 +321,8 @@
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "END", false, false, true);
 
 				//in this case Math.ceil is using instead of Math.round because of issue in Chrome with oDomRef.scrollHeight
-				equal(Math.ceil(oSC4.$().scrollLeft()), _getMaxScrollLeft(oSC4), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
-				equal(Math.ceil(oSC4.$().scrollTop()), _getMaxScrollTop(oSC4), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
+				assert.equal(Math.ceil(oSC4.$().scrollLeft()), _getMaxScrollLeft(oSC4), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
+				assert.equal(Math.ceil(oSC4.$().scrollTop()), _getMaxScrollTop(oSC4), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
 			});
 
 			QUnit.test("Press [CTRL] + [HOME]", function(assert) {
@@ -363,30 +366,30 @@
 				$containerContent = oContainer.$().find(sContentSelector);
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
-				strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
 
 				// Act
 				oContainer.removeStyleClass("sapUiNoContentPadding");
 				oContainer.addStyleClass("sapUiContentPadding");
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
-				strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
+				assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
 
 				// Act
 				oContainer.removeStyleClass("sapUiContentPadding");
 				oContainer.addStyleClass("sapUiResponsiveContentPadding");
 
 				// Assert
-				strictEqual($containerContent.css("padding-left"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-left"));
-				strictEqual($containerContent.css("padding-right"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-right"));
-				strictEqual($containerContent.css("padding-top"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-top"));
-				strictEqual($containerContent.css("padding-bottom"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-bottom"));
+				assert.strictEqual($containerContent.css("padding-left"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-left"));
+				assert.strictEqual($containerContent.css("padding-right"), sResponsiveSizeLeftRight, "The container should have " + sResponsiveSizeLeftRight + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-right"));
+				assert.strictEqual($containerContent.css("padding-top"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-top"));
+				assert.strictEqual($containerContent.css("padding-bottom"), sResponsiveSizeTopBottom, "The container should have " + sResponsiveSizeTopBottom + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size), but has " + $containerContent.css("padding-bottom"));
 
 				// Cleanup
 				oContainer.destroy();

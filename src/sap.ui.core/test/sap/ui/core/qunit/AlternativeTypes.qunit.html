@@ -51,9 +51,9 @@
 			tooltip : "a tooltip text"
 		});
 		var oDolly = oButton.clone("some");
-		ok(oDolly instanceof sap.ui.testlib.TestButton, "clone must return an element");
-		equal(oDolly.getText(), oButton.getText(), "property text must have equal values");
-		equal(oDolly.getTooltip(), oButton.getTooltip(), "property tooltip must have equal values");
+		assert.ok(oDolly instanceof sap.ui.testlib.TestButton, "clone must return an element");
+		assert.equal(oDolly.getText(), oButton.getText(), "property text must have equal values");
+		assert.equal(oDolly.getTooltip(), oButton.getTooltip(), "property tooltip must have equal values");
 	});
 
 	QUnit.test("bind property via settings", function(assert) {
@@ -64,8 +64,8 @@
 		oButton.setModel(oModel);
 		oButton.bindElement("/teamMembers/0");
 		oButton.placeAt("target");
-		equal(oButton.getText(), "Andreas", "binding of text");
-		equal(oButton.getTooltip(), "Klark", "binding of tooltip");
+		assert.equal(oButton.getText(), "Andreas", "binding of text");
+		assert.equal(oButton.getTooltip(), "Klark", "binding of tooltip");
 		oButton.destroy();
 	});
 
@@ -77,8 +77,8 @@
 		oButton.bindProperty("text", "firstName");
 		oButton.bindProperty("tooltip", "lastName");
 		oButton.placeAt("target");
-		equal(oButton.getText(), "Andreas", "binding of text");
-		equal(oButton.getTooltip(), "Klark", "binding of tooltip");
+		assert.equal(oButton.getText(), "Andreas", "binding of text");
+		assert.equal(oButton.getTooltip(), "Klark", "binding of tooltip");
 		oButton.destroy();
 	});
 

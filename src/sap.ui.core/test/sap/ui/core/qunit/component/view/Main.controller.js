@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 
 
 		onInit: function() {
-			ok(true, "onInit is called now");
+			assert.ok(true, "onInit is called now");
 			window.onInitCalled = true;
 			if(this.getView().getViewData()) {
 				window.dataOnInit = this.getView().getViewData().test;
@@ -26,7 +26,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 
 
 		onAfterRendering: function() {
-			ok(true, "onAfterRendering is called now");
+			assert.ok(true, "onAfterRendering is called now");
 			window.onAfterRenderingCalled = true;
 			if(this.getView().getViewData()) {
 				window.dataAfterRendering = this.getView().getViewData().test;
@@ -39,9 +39,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 		},
 
 		doIt: function(oEvent) {
-			ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
+			assert.ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
 			var controller = this;
-			ok(controller instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+			assert.ok(controller instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
 			if(this.getView().getViewData()) {
 				window.dataEventHandler = this.getView().getViewData().test;
 			}

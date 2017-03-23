@@ -200,24 +200,24 @@
 		sap.ui.getCore().applyChanges();
 
 		//check values
-		equal(oPage.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Page " +  sExpectedMarginValue);
-		equal(oObjectHeader.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " ObjectHeader " +  sExpectedMarginValue);
-		equal(oIconTabBar.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " IconTabBar " +  sExpectedMarginValue);
-		equal(oSimpleForm.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Simple Form " +  sExpectedMarginValue);
-		equal(oTable.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Table "  +  sExpectedMarginValue);
-		equal(oPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
-		equal(oRestrictedWidthPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
+		assert.equal(oPage.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Page " +  sExpectedMarginValue);
+		assert.equal(oObjectHeader.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " ObjectHeader " +  sExpectedMarginValue);
+		assert.equal(oIconTabBar.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " IconTabBar " +  sExpectedMarginValue);
+		assert.equal(oSimpleForm.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Simple Form " +  sExpectedMarginValue);
+		assert.equal(oTable.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Table "  +  sExpectedMarginValue);
+		assert.equal(oPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
+		assert.equal(oRestrictedWidthPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
 		if(bHorizontal) {
 			//Check if 'sapUiForceWidthAuto' changes the width property as expected
-			notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+			assert.notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
 			oRestrictedWidthPanel.removeStyleClass('sapUiForceWidthAuto');
-			equal(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+			assert.equal(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
 
 		}
-		equal(oList.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " List " +  sExpectedMarginValue );
-		equal(oScrollCont.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Scroll Container " +  sExpectedMarginValue );
-		equal(oCarousel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Carousel " +  sExpectedMarginValue );
-		equal(oSplitContainer.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Split Containe " +  sExpectedMarginValue );
+		assert.equal(oList.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " List " +  sExpectedMarginValue );
+		assert.equal(oScrollCont.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Scroll Container " +  sExpectedMarginValue );
+		assert.equal(oCarousel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Carousel " +  sExpectedMarginValue );
+		assert.equal(oSplitContainer.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Split Containe " +  sExpectedMarginValue );
 		//Can not check 'auto' because there is no way to  ask for it. Even 'oControl.getDomRef().style.width'
 		//does not deliver the correct result: the inline style is returned even though it is not what
 		//is used for determining the width

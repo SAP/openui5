@@ -170,13 +170,13 @@
 		// Number ON
 
 		var oPersData = oTPD.retrievePersonalizations();
-		strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idName", "0 Name");
-		strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idColor", "1 Color");
-		strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idNumber", "2 Number");
+		assert.strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idName", "0 Name");
+		assert.strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idColor", "1 Color");
+		assert.strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idNumber", "2 Number");
 
-		strictEqual(oPersData.aColumns[0].visible, true, "0 Name ON");
-		strictEqual(oPersData.aColumns[1].visible, true, "1 Color ON");
-		strictEqual(oPersData.aColumns[2].visible, true, "2 Number ON");
+		assert.strictEqual(oPersData.aColumns[0].visible, true, "0 Name ON");
+		assert.strictEqual(oPersData.aColumns[1].visible, true, "1 Color ON");
+		assert.strictEqual(oPersData.aColumns[2].visible, true, "2 Number ON");
 
 		// Close dialog with "Cancel"
 		sap.ui.getCore().byId(oTPD._oDialog.getRightButton()).firePress();
@@ -207,11 +207,11 @@
 		try {
 			sap.ui.getCore().byId(oDialog.getLeftButton()).firePress();
 		} catch (e) {
-			equals(e, sPersoDoneMsg, "'PersonalizationDone' event triggered the correct function");
+			assert.equal(e, sPersoDoneMsg, "'PersonalizationDone' event triggered the correct function");
 			oTPC.detachPersonalizationsDone(fnPersoDone);
 			bPersonalizationDoneTriggered = true;
 		} finally {
-			ok(bPersonalizationDoneTriggered, "'PersonalizationDone' event has been triggered");
+			assert.ok(bPersonalizationDoneTriggered, "'PersonalizationDone' event has been triggered");
 		}
 
 		// Status at this point should be:
@@ -220,13 +220,13 @@
 		// Number OFF
 
 		var oPersData = oTPD.retrievePersonalizations();
-		strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idColor", "0 Color");
-		strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idName", "1 Name");
-		strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idNumber", "2 Number");
+		assert.strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idColor", "0 Color");
+		assert.strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idName", "1 Name");
+		assert.strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idNumber", "2 Number");
 
-		strictEqual(oPersData.aColumns[0].visible, true, "0 Color ON");
-		strictEqual(oPersData.aColumns[1].visible, true, "1 Name ON");
-		strictEqual(oPersData.aColumns[2].visible, false, "2 Number OFF");
+		assert.strictEqual(oPersData.aColumns[0].visible, true, "0 Color ON");
+		assert.strictEqual(oPersData.aColumns[1].visible, true, "1 Name ON");
+		assert.strictEqual(oPersData.aColumns[2].visible, false, "2 Number OFF");
 
 	});
 
@@ -255,13 +255,13 @@
 		// Number OFF
 
 		var oPersData = oTPD.retrievePersonalizations();
-		strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idName", "0 Name");
-		strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idColor", "1 Color");
-		strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idNumber", "2 Number");
+		assert.strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idName", "0 Name");
+		assert.strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idColor", "1 Color");
+		assert.strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idNumber", "2 Number");
 
-		strictEqual(oPersData.aColumns[0].visible, false, "0 Name OFF (before 1st reset)");
-		strictEqual(oPersData.aColumns[1].visible, true, "1 Color ON (before 1st reset)");
-		strictEqual(oPersData.aColumns[2].visible, false, "2 Number OFF (before 1st reset)");
+		assert.strictEqual(oPersData.aColumns[0].visible, false, "0 Name OFF (before 1st reset)");
+		assert.strictEqual(oPersData.aColumns[1].visible, true, "1 Color ON (before 1st reset)");
+		assert.strictEqual(oPersData.aColumns[2].visible, false, "2 Number OFF (before 1st reset)");
 
 		// Hit "Reset" button
 
@@ -276,13 +276,13 @@
 		// Number OFF
 
 		var oPersData = oTPD.retrievePersonalizations();
-		strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idColor", "0 Color");
-		strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idNumber", "1 Number");
-		strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idName", "2 Name");
+		assert.strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idColor", "0 Color");
+		assert.strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idNumber", "1 Number");
+		assert.strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idName", "2 Name");
 
-		strictEqual(oPersData.aColumns[0].visible, true, "0 Color ON (after 1st reset)");
-		strictEqual(oPersData.aColumns[1].visible, true, "1 Number ON (after 1st reset)");
-		strictEqual(oPersData.aColumns[2].visible, true, "2 Name OFF (after 1st reset)");
+		assert.strictEqual(oPersData.aColumns[0].visible, true, "0 Color ON (after 1st reset)");
+		assert.strictEqual(oPersData.aColumns[1].visible, true, "1 Number ON (after 1st reset)");
+		assert.strictEqual(oPersData.aColumns[2].visible, true, "2 Name OFF (after 1st reset)");
 	});
 
 	QUnit.test("More personalizations for real (1 invisible, 1 order change)", function(assert) {
@@ -312,13 +312,13 @@
 		// Name   ON
 
 		var oPersData = oTPD.retrievePersonalizations();
-		strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idColor", "3rd col ID is correct");
-		strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idNumber", "2nd col ID is correct");
-		strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idName", "1st col ID is correct");
+		assert.strictEqual(oPersData.aColumns[2].id, "QUnitTest-idRandomDataTable-idColor", "3rd col ID is correct");
+		assert.strictEqual(oPersData.aColumns[1].id, "QUnitTest-idRandomDataTable-idNumber", "2nd col ID is correct");
+		assert.strictEqual(oPersData.aColumns[0].id, "QUnitTest-idRandomDataTable-idName", "1st col ID is correct");
 
-		strictEqual(oPersData.aColumns[0].visible, false, "0th col visibility is correct");
-		strictEqual(oPersData.aColumns[1].visible, true, "1st col visibility is correct");
-		strictEqual(oPersData.aColumns[2].visible, true, "2nd col visibility is correct");
+		assert.strictEqual(oPersData.aColumns[0].visible, false, "0th col visibility is correct");
+		assert.strictEqual(oPersData.aColumns[1].visible, true, "1st col visibility is correct");
+		assert.strictEqual(oPersData.aColumns[2].visible, true, "2nd col visibility is correct");
 
 	});
 
@@ -331,16 +331,16 @@
  		oColumns.forEach(function(oColumn) {
 			switch (oColumn.getId()){
 				case "idName":
-					ok(oColumn.getVisible(), "Column Name visibility OK!");
-					equal(oColumn.getOrder(), 2, "Column 2 (Name) order is correct");
+					assert.ok(oColumn.getVisible(), "Column Name visibility OK!");
+					assert.equal(oColumn.getOrder(), 2, "Column 2 (Name) order is correct");
 					break;
 				case "idColor":
-					ok(!oColumn.getVisible(), "Column Color visibility OK!");
-					equal(oColumn.getOrder(), 0, "Column 0 (Color) order is correct");
+					assert.ok(!oColumn.getVisible(), "Column Color visibility OK!");
+					assert.equal(oColumn.getOrder(), 0, "Column 0 (Color) order is correct");
 					break;
 				case "idNumber":
-					ok(oColumn.getVisible(), "Column Number visibility OK!");
-					equal(oColumn.getOrder(), 1, "Column 1 (Number) order is correct");
+					assert.ok(oColumn.getVisible(), "Column Number visibility OK!");
+					assert.equal(oColumn.getOrder(), 1, "Column 1 (Number) order is correct");
 					break;
 			};
 		});
@@ -350,12 +350,12 @@
 		var iDelegatesCount = oTable.aDelegates.length;
 		oTPC.destroy();
 
-		ok(!oTPC._mDelegateMap, null, "Delegate map is destroyed");
-		ok(!oTPC._oPersService, null, "Perso service is cleaned up");
-		ok(!oTPC._mTablePersMap, null, "Resource bundle is cleaned up");
-		ok(!oTPC._mInitialTableStateMap, null, "Model bundle is cleaned up");
-		ok(!oTPC.getTablePersoDialog(), null, "Dialog is cleaned up");
-		ok(oTable.aDelegates.length == (iDelegatesCount -1), null, "Table delegate has been removed");
+		assert.ok(!oTPC._mDelegateMap, null, "Delegate map is destroyed");
+		assert.ok(!oTPC._oPersService, null, "Perso service is cleaned up");
+		assert.ok(!oTPC._mTablePersMap, null, "Resource bundle is cleaned up");
+		assert.ok(!oTPC._mInitialTableStateMap, null, "Model bundle is cleaned up");
+		assert.ok(!oTPC.getTablePersoDialog(), null, "Dialog is cleaned up");
+		assert.ok(oTable.aDelegates.length == (iDelegatesCount -1), null, "Table delegate has been removed");
 	});
 </script>
 </head>

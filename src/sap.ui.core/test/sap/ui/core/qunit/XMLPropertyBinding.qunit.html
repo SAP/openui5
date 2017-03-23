@@ -72,28 +72,30 @@
 		setup();
 		createPropertyBindings("/teamMembers/member", "@lastName");
 
-		equal(bindings[0].getValue(), "Klark" , "Property binding value");
-		equal(bindings[1].getValue(), "Miller" , "Property binding value");
-		equal(bindings[2].getValue(), "Rush" , "Property binding value");
-		equal(bindings[3].getValue(), "Ander" , "Property binding value");
-		equal(bindings[4].getValue(), "Spring" , "Property binding value");
-		equal(bindings[5].getValue(), "Green" , "Property binding value");
-		equal(bindings[6].getValue(), "Wallace" , "Property binding value");
+		assert.equal(bindings[0].getValue(), "Klark" , "Property binding value");
+		assert.equal(bindings[1].getValue(), "Miller" , "Property binding value");
+		assert.equal(bindings[2].getValue(), "Rush" , "Property binding value");
+		assert.equal(bindings[3].getValue(), "Ander" , "Property binding value");
+		assert.equal(bindings[4].getValue(), "Spring" , "Property binding value");
+		assert.equal(bindings[5].getValue(), "Green" , "Property binding value");
+		assert.equal(bindings[6].getValue(), "Wallace" , "Property binding value");
 	});
 
-	QUnit.test("PropertyBinding refresh", 3, function(assert) {
+	QUnit.test("PropertyBinding refresh", function(assert) {
+		assert.expect(3);
 		setup();
 		var oBinding = oModel.bindProperty("/name");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
 		oBinding.attachChange(function() {
-			ok("Property Binding fires change event when changed");
+			assert.ok("Property Binding fires change event when changed");
 		});
 		oModel.getData().firstChild.firstChild.firstChild.nodeValue = "Jonas";
 		oBinding.refresh();
-		equal(oBinding.getValue(), "Jonas", "Property Binding returns changed value");
+		assert.equal(oBinding.getValue(), "Jonas", "Property Binding returns changed value");
 	});
 
-	QUnit.test("PropertyBinding async update", 4, function(assert) {
+	QUnit.test("PropertyBinding async update", function(assert) {
+		assert.expect(4);
 		setup();
 		var oBinding1 = oModel.bindProperty("/name"),
 			oBinding2 = oModel.bindProperty("/name");
@@ -101,28 +103,28 @@
 		oBinding2.attachChange(function(){});
 		oBinding1.initialize();
 		oBinding2.initialize();
-		equal(oBinding1.getValue(), "Peter", "Property Binding 1 returns value");
+		assert.equal(oBinding1.getValue(), "Peter", "Property Binding 1 returns value");
 		oBinding1.setValue("Jonas");
-		equal(oBinding1.getValue(), "Jonas", "Property Binding 1 returns updated value");
-		equal(oBinding2.getValue(), "Peter", "Property Binding 2 returns old value");
+		assert.equal(oBinding1.getValue(), "Jonas", "Property Binding 1 returns updated value");
+		assert.equal(oBinding2.getValue(), "Peter", "Property Binding 2 returns old value");
 		oModel.refresh();
-		equal(oBinding2.getValue(), "Jonas", "Property Binding 2 returns updated value after refresh");
+		assert.equal(oBinding2.getValue(), "Jonas", "Property Binding 2 returns updated value after refresh");
 	});
 
 	QUnit.test("PropertyBinding getExternalValue", function(assert) {
 		setup();
 		createPropertyBindings("/values/value", "@value");
 
-		equal(bindings[0].getExternalValue(), "3.55" , "Property binding value");
-		equal(bindings[1].getExternalValue(), "5.3324" , "Property binding value");
-		equal(bindings[2].getExternalValue(), "345.55" , "Property binding value");
-		equal(bindings[3].getExternalValue(), "44" , "Property binding value");
-		equal(bindings[4].getExternalValue(), "23" , "Property binding value");
-		equal(bindings[5].getExternalValue(), "22" , "Property binding value");
-		equal(bindings[6].getExternalValue(), "32" , "Property binding value");
+		assert.equal(bindings[0].getExternalValue(), "3.55" , "Property binding value");
+		assert.equal(bindings[1].getExternalValue(), "5.3324" , "Property binding value");
+		assert.equal(bindings[2].getExternalValue(), "345.55" , "Property binding value");
+		assert.equal(bindings[3].getExternalValue(), "44" , "Property binding value");
+		assert.equal(bindings[4].getExternalValue(), "23" , "Property binding value");
+		assert.equal(bindings[5].getExternalValue(), "22" , "Property binding value");
+		assert.equal(bindings[6].getExternalValue(), "32" , "Property binding value");
 
 		bindings[0].setType(new sap.ui.model.type.Float(),"string");
-		equal(bindings[0].getExternalValue(), "3.55" , "Property binding value");
+		assert.equal(bindings[0].getExternalValue(), "3.55" , "Property binding value");
 	});
 
 	QUnit.test("PropertyBinding setExternalValue", function(assert) {
@@ -133,152 +135,157 @@
 
 		bindings[0].setType(new sap.ui.model.type.Float(),"string");
 		bindings[0].setValue(55.555);
-		equal(bindings[0].getValue(), "55.555" , "Property binding value");
-		equal(bindings[0].getExternalValue(), "55.555" , "Property binding value");
+		assert.equal(bindings[0].getValue(), "55.555" , "Property binding value");
+		assert.equal(bindings[0].getExternalValue(), "55.555" , "Property binding value");
 		bindings[0].setExternalValue("2.13543");
-		equal(bindings[0].getValue(), "2.13543" , "Property binding value");
-		equal(bindings[0].getExternalValue(), "2.13543" , "Property binding value");
+		assert.equal(bindings[0].getValue(), "2.13543" , "Property binding value");
+		assert.equal(bindings[0].getExternalValue(), "2.13543" , "Property binding value");
 
 		bindings[0].detachChange(callBackOnChange);
 
 	});
 
-	asyncTest("PropertyBinding suspend/resume with control value change", function() {
+	QUnit.test("PropertyBinding suspend/resume with control value change", function(assert) {
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
 		});
 		oInput.placeAt("target1");
 		oInput.attachChange(function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 		var oBinding = oInput.getBinding("value");
 		oBinding.attachChange(function() {
-			equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-			equal(oBinding.oValue, "Peter", "Property Binding internal value");
-			equal(oModel.getProperty("/name"), "Peter", "model value");
-			equal(oInput.getValue(), "Peter", "Input field returns value");
+			assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+			assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
+			assert.equal(oModel.getProperty("/name"), "Peter", "model value");
+			assert.equal(oInput.getValue(), "Peter", "Input field returns value");
 			oInput.destroy();
-			start();
+			done();
 		});
-		ok(oBinding !== undefined, "binding check");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.ok(oBinding !== undefined, "binding check");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
 		oBinding.suspend();
 		oInput.setValue("Petre");
-		equal(oInput.getValue(), "Petre", "Input field returns value");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oBinding.oValue, "Peter", "Property Binding internal value");
-		equal(oModel.getProperty("/name"), "Peter", "model value");
+		assert.equal(oInput.getValue(), "Petre", "Input field returns value");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		assert.equal(oModel.getProperty("/name"), "Peter", "model value");
 
 		oBinding.resume();
 	});
 
-	asyncTest("PropertyBinding suspend/resume with model value change", function() {
+	QUnit.test("PropertyBinding suspend/resume with model value change", function(assert) {
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
 		});
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 		var oBinding = oInput.getBinding("value");
 		oBinding.attachChange(function() {
-			equal(oBinding.getValue(), "Petre", "Property Binding returns value");
-			equal(oBinding.oValue, "Petre", "Property Binding internal value");
-			equal(oModel.getProperty("/name"), "Petre", "model value");
-			equal(oInput.getValue(), "Petre", "Input field returns value");
+			assert.equal(oBinding.getValue(), "Petre", "Property Binding returns value");
+			assert.equal(oBinding.oValue, "Petre", "Property Binding internal value");
+			assert.equal(oModel.getProperty("/name"), "Petre", "model value");
+			assert.equal(oInput.getValue(), "Petre", "Input field returns value");
 			oInput.destroy();
-			start();
+			done();
 		});
-		ok(oBinding !== undefined, "binding check");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oInput.getValue(), "Peter", "Input field returns value");
+		assert.ok(oBinding !== undefined, "binding check");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oInput.getValue(), "Peter", "Input field returns value");
 		oBinding.suspend();
 		oModel.setProperty("/name", "Petre");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oBinding.oValue, "Peter", "Property Binding internal value");
-		equal(oModel.getProperty("/name"), "Petre", "model value");
-		equal(oInput.getValue(), "Peter", "Input field returns value");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		assert.equal(oModel.getProperty("/name"), "Petre", "model value");
+		assert.equal(oInput.getValue(), "Peter", "Input field returns value");
 
 		oBinding.resume();
 	});
 
-	asyncTest("PropertyBinding suspend/resume with control and model value change", function() {
+	QUnit.test("PropertyBinding suspend/resume with control and model value change", function(assert) {
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
 		});
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 		var oBinding = oInput.getBinding("value");
 		oBinding.attachChange(function() {
-			equal(oBinding.getValue(), "Petre", "Property Binding returns value");
-			equal(oBinding.oValue, "Petre", "Property Binding internal value");
-			equal(oModel.getProperty("/name"), "Petre", "model value");
-			equal(oInput.getValue(), "Petre", "Input field returns value");
+			assert.equal(oBinding.getValue(), "Petre", "Property Binding returns value");
+			assert.equal(oBinding.oValue, "Petre", "Property Binding internal value");
+			assert.equal(oModel.getProperty("/name"), "Petre", "model value");
+			assert.equal(oInput.getValue(), "Petre", "Input field returns value");
 			oInput.destroy();
-			start();
+			done();
 		});
-		ok(oBinding !== undefined, "binding check");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oInput.getValue(), "Peter", "Input field returns value");
+		assert.ok(oBinding !== undefined, "binding check");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oInput.getValue(), "Peter", "Input field returns value");
 		oBinding.suspend();
 		oInput.setValue("Petrus");
-		equal(oInput.getValue(), "Petrus", "Input field returns value");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		assert.equal(oInput.getValue(), "Petrus", "Input field returns value");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
 		oBinding.setValue("xxx");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oBinding.oValue, "Peter", "Property Binding internal value");
-		equal(oModel.getProperty("/name"), "Peter", "model value");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		assert.equal(oModel.getProperty("/name"), "Peter", "model value");
 		oModel.setProperty("/name", "Petre");
-		equal(oInput.getValue(), "Petrus", "Input field returns value");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oBinding.oValue, "Peter", "Property Binding internal value");
-		equal(oModel.getProperty("/name"), "Petre", "model value");
+		assert.equal(oInput.getValue(), "Petrus", "Input field returns value");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		assert.equal(oModel.getProperty("/name"), "Petre", "model value");
 
 		oBinding.resume();
 	});
 
-	asyncTest("PropertyBinding suspend/resume with model and control value change", function() {
+	QUnit.test("PropertyBinding suspend/resume with model and control value change", function(assert) {
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
 		});
 		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
-			ok(false, "should not land here!");
+			assert.ok(false, "should not land here!");
 		});
 		var oBinding = oInput.getBinding("value");
 		oBinding.attachChange(function() {
-			equal(oBinding.getValue(), "Petre", "Property Binding returns value");
-			equal(oBinding.oValue, "Petre", "Property Binding internal value");
-			equal(oModel.getProperty("/name"), "Petre", "model value");
-			equal(oInput.getValue(), "Petre", "Input field returns value");
+			assert.equal(oBinding.getValue(), "Petre", "Property Binding returns value");
+			assert.equal(oBinding.oValue, "Petre", "Property Binding internal value");
+			assert.equal(oModel.getProperty("/name"), "Petre", "model value");
+			assert.equal(oInput.getValue(), "Petre", "Input field returns value");
 			oInput.destroy();
-			start();
+			done();
 		});
-		ok(oBinding !== undefined, "binding check");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oInput.getValue(), "Peter", "Input field returns value");
+		assert.ok(oBinding !== undefined, "binding check");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oInput.getValue(), "Peter", "Input field returns value");
 		oBinding.suspend();
 		oModel.setProperty("/name", "Petre");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oBinding.oValue, "Peter", "Property Binding internal value");
-		equal(oInput.getValue(), "Peter", "Input field returns value");
-		equal(oModel.getProperty("/name"), "Petre", "model value");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		assert.equal(oInput.getValue(), "Peter", "Input field returns value");
+		assert.equal(oModel.getProperty("/name"), "Petre", "model value");
 		oInput.setValue("Petrus");
-		equal(oInput.getValue(), "Petrus", "Input field returns value");
-		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
-		equal(oBinding.oValue, "Peter", "Property Binding internal value");
-		equal(oModel.getProperty("/name"), "Petre", "model value");
+		assert.equal(oInput.getValue(), "Petrus", "Input field returns value");
+		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		assert.equal(oModel.getProperty("/name"), "Petre", "model value");
 		oBinding.resume();
 	});
 
-	asyncTest("propertyChange event", function(){
+	QUnit.test("propertyChange event", function(assert){
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{/name}"
@@ -289,22 +296,23 @@
 			var oContext = oEvent.getParameter('context');
 			var oValue = oEvent.getParameter('value');
 			var sReason = oEvent.getParameter('reason');
-			equal(sPath, "/name", "path check!");
-			equal(oContext, undefined, "context check!");
-			equal(oValue, "blubb", "property value check!");
-			equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+			assert.equal(sPath, "/name", "path check!");
+			assert.equal(oContext, undefined, "context check!");
+			assert.equal(oValue, "blubb", "property value check!");
+			assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 			oInput.destroy();
-			start();
+			done();
 		});
 		var oBinding = oInput.getBinding("value");
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		// should not trigger event
 		oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 		// should trigger event
 		oInput.setValue("blubb");
 	});
 
-	asyncTest("propertyChange event relative", function(){
+	QUnit.test("propertyChange event relative", function(assert){
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{@firstName}"
@@ -315,23 +323,24 @@
 			var oContext = oEvent.getParameter('context');
 			var oValue = oEvent.getParameter('value');
 			var sReason = oEvent.getParameter('reason');
-			equal(sPath, "@firstName", "path check!");
-			equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
-			equal(oValue, "blubb", "property value check!");
-			equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+			assert.equal(sPath, "@firstName", "path check!");
+			assert.equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
+			assert.equal(oValue, "blubb", "property value check!");
+			assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 			oInput.destroy();
-			start();
+			done();
 		});
 		oInput.bindObject("/teamMembers/member/1");
 		var oBinding = oInput.getBinding("value");
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		// should not trigger event
 		oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 		// should trigger event
 		oInput.setValue("blubb");
 	});
 
-	asyncTest("propertyChange event reset", function(){
+	QUnit.test("propertyChange event reset", function(assert){
+		var done = assert.async();
 		setup();
 		var oInput = new sap.m.Input({
 			value: "{@firstName}"
@@ -345,26 +354,26 @@
 			var oValue = oEvent.getParameter('value');
 			var sReason = oEvent.getParameter('reason');
 			if (iCount === 1) {
-				equal(sPath, "@firstName", "path check!");
-				equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
-				equal(oValue, "blubb", "property value check!");
-				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				assert.equal(sPath, "@firstName", "path check!");
+				assert.equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
+				assert.equal(oValue, "blubb", "property value check!");
+				assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 				oInput.setValue("Andreas");
 
 			} else if (iCount === 2) {
-				equal(sPath, "@firstName", "path check!");
-				equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
-				equal(oValue, "Andreas", "property value check!");
-				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				assert.equal(sPath, "@firstName", "path check!");
+				assert.equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
+				assert.equal(oValue, "Andreas", "property value check!");
+				assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 			}
 		});
 		oInput.bindObject("/teamMembers/member/1");
 		var oBinding = oInput.getBinding("value");
-		ok(oBinding !== undefined, "binding check");
+		assert.ok(oBinding !== undefined, "binding check");
 		// should trigger event
 		oInput.setValue("blubb");
 		oInput.destroy();
-		start();
+		done();
 	});
 
 </script>

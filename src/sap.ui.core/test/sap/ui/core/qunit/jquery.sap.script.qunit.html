@@ -193,7 +193,8 @@
 
 			QUnit.module("jQuery.sap.getUriParameters");
 
-			QUnit.test("empty query string", 0, function(assert) {
+			QUnit.test("empty query string", function(assert) {
+				assert.expect(0);
 				var oParams = jQuery.sap.getUriParameters("/service");
 				// TODO how to check ? assert.ok(jQuery.isEmptyObject(oParams));
 			});
@@ -1279,7 +1280,7 @@
 				assert.strictEqual(oTokenizer.getIndex(), 7, "index after setIndex");
 				assert.strictEqual(oTokenizer.getCh(), "}");
 
-				throws(function() {
+				assert.throws(function() {
 					oTokenizer.setIndex(0);
 				}, /Must not set index 0 before previous index 7/, "setIndex must not go back in text");
 				oTokenizer.setIndex(42);

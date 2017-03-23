@@ -3,19 +3,22 @@
     "type": "Vacation",
     "entitlement": "53 days",
     "availablebalance": "41 days",
-    "pendingitems": "1 pending items"
+    "pendingitems": "1 pending items",
+    "organizationunit": "Development"
 },
 {
 	"employeeid": "JSMITH",
     "type": "Sick Leave",
     "entitlement": "54 days",
     "availablebalance": "n/a",
-    "pendingitems": "0 pending items"
+    "pendingitems": "0 pending items",
+    "organizationunit": null
 },
 {
 	"employeeid": "JSMITH",
     "type": "Unpaid Leave",
     "entitlement": "53 days",
     "availablebalance": "n/a",
-    "pendingitems": "0 pending items"
+    "pendingitems": "0 pending items",
+    "organizationunit": "Development"
 }]

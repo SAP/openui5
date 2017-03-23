@@ -141,7 +141,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				sState = oImageContent._getImageState();
 
 			this._createErrorControls();
-			oNativeImage.src = oImageContent.getImageSrc();
+
+			// Prevents image having 0 width and height when the LightBox rendered
+			// busy state first and then loaded the image in the meantime
+			if (!oNativeImage.src) {
+				oNativeImage.src = oImageContent.getImageSrc();
+			}
 
 			if (this._resizeListenerId) {
 				Device.resize.detachHandler(this._onResize);

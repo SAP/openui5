@@ -21,11 +21,11 @@
 <script>
 
 	var eventHandler = function (oEvent) {
-		ok(true, "press event for attribute was fired");
+		assert.ok(true, "press event for attribute was fired");
 	}
 
 	var eventHandlerForTableRow = function (oEvent) {
-		ok(true, "press event for table was fired");
+		assert.ok(true, "press event for table was fired");
 	}
 
 	var oa1 = new sap.m.ObjectAttribute("oa1", {
@@ -98,9 +98,9 @@
 
 	QUnit.test("AttributesRendered", function(assert) {
 
-		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
-		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
-		notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
+		assert.notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
 	});
 
 	QUnit.test("Screen reader", function(assert) {
@@ -116,7 +116,7 @@
 		oObjectAttribute.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
+		assert.equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
 
 		// Clean up
 		oObjectAttribute.destroy();
@@ -139,10 +139,10 @@
 		sap.ui.getCore().applyChanges()
 
 		// assertions
-		ok(oAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
-		ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
-		ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
-		ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+		assert.ok(oAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		assert.ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		assert.ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		assert.ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
 
 		//Cleanup
 		oObjectHeader.destroy();
@@ -165,15 +165,16 @@
 		sap.ui.getCore().applyChanges()
 
 		// assertions
-		ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span is rendered.");
-		ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span is rendered.");
-		ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span is rendered.");
+		assert.ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span is rendered.");
+		assert.ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span is rendered.");
+		assert.ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span is rendered.");
 
 		//Cleanup
 		oObjectHeader.destroy();
 	});
 
-	asyncTest("Attributes Wrapping in ObjectListItem", function() {
+	QUnit.test("Attributes Wrapping in ObjectListItem", function(assert) {
+		var done = assert.async();
 
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("oOA3", {text:"Responsive ObjectListItem wrapping test"});
@@ -186,16 +187,16 @@
 
 		// assertions
 
-		ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
+		assert.ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
 		if(!sap.ui.Device.browser.internet_explorer) {
-			equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
+			assert.equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
 		}
 
 		//Cleanup
 		oObjectListItem.destroy();
 
 		setTimeout( function() {
-			start();
+			done();
 		}, 500);
 	});
 	/******************************************************************/
@@ -216,7 +217,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(oAttr.$("attr").find(".sapMLnk"), "The active attribute is rendered as sap.m.Link when the aggregation attributeLink is set.");
+		assert.ok(oAttr.$("attr").find(".sapMLnk"), "The active attribute is rendered as sap.m.Link when the aggregation attributeLink is set.");
 
 		//Cleanup
 		oAttr.destroy();
@@ -225,14 +226,14 @@
 
 	QUnit.module("Internal API");
 
-	test ("TestIsEmpty", function() {
+	QUnit.test("TestIsEmpty", function(assert) {
 
-		ok(!oa1._isEmpty(), "Object attribute #1 is not empty");
-		ok(!oa2._isEmpty(), "Object attribute #2 is not empty");
-		ok(!oa3._isEmpty(), "Object attribute #3 is not empty");
-		ok(oa4._isEmpty(), "Object attribute #4 is empty");
-		ok(oa5._isEmpty(), "Object attribute #5 is empty");
-		ok(oa6._isEmpty(), "Object attribute #6 is empty");
+		assert.ok(!oa1._isEmpty(), "Object attribute #1 is not empty");
+		assert.ok(!oa2._isEmpty(), "Object attribute #2 is not empty");
+		assert.ok(!oa3._isEmpty(), "Object attribute #3 is not empty");
+		assert.ok(oa4._isEmpty(), "Object attribute #4 is empty");
+		assert.ok(oa5._isEmpty(), "Object attribute #5 is empty");
+		assert.ok(oa6._isEmpty(), "Object attribute #6 is empty");
 	});
 
 	/******************************************************************/
@@ -240,7 +241,7 @@
 	QUnit.module("Events");
 
 	QUnit.test("TestTap", function(assert) {
-		expect(3);
+		assert.expect(3);
 		qutils.triggerEvent("tap", oa1.$().children()[0]); //should fire event
 		qutils.triggerEvent("tap", oa2.$().children()[0]); //should fire event
 		qutils.triggerEvent("tap", oa3.$().children()[0]); //should fire event
@@ -250,17 +251,18 @@
 	});
 
 	QUnit.test("Test table row is not clickable when ObjectAttribute is active", function(assert) {
-		expect(1);
+		assert.expect(1);
 		qutils.triggerEvent("tap", oa7.$().children()[0]);
 		qutils.triggerEvent("tap", "table-item");
 	});
 
-	asyncTest("Test table row is clickable when ObjectAttribute is not active", function() {
-		expect(3);
+	QUnit.test("Test table row is clickable when ObjectAttribute is not active", function(assert) {
+		var done = assert.async();
+		assert.expect(3);
 		oa7.setActive(false);
 		qutils.triggerEvent("tap", oa7.$().children()[0]);
 		setTimeout( function() {
-			start();
+			done();
 		}, 500);
 	});
 
@@ -282,7 +284,7 @@
 		var oPressSpy = sinon.spy(sap.m.ObjectAttribute.prototype, "firePress");
 		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
 
-		strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
+		assert.strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
 
 		// Clean up
 		sap.m.ObjectAttribute.prototype.firePress.restore();
@@ -305,7 +307,7 @@
 		var oPressSpy = sinon.spy(sap.m.ObjectAttribute.prototype, "firePress");
 		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.SPACE);
 
-		strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
+		assert.strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
 
 		// Clean up
 		sap.m.ObjectAttribute.prototype.firePress.restore();
@@ -325,7 +327,7 @@
         oObjectAttribute.placeAt("qunit-fixture");
         sap.ui.getCore().applyChanges();
 
-        equal(oObjectAttribute.$().find('.sapMText').text(), "a: \u200f1 2\u200f", "Numbers are read backwards.");
+        assert.equal(oObjectAttribute.$().find('.sapMText').text(), "a: \u200f1 2\u200f", "Numbers are read backwards.");
 
         // Clean up
         oObjectAttribute.destroy();
@@ -350,10 +352,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
-		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
-		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
-		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+		assert.ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		assert.ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		assert.ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		assert.ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
 	});
 
 	QUnit.test("Active attribute inside ObjectListItem is rendered in separate spans", function(assert) {
@@ -366,10 +368,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
-		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
-		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
-		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+		assert.ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		assert.ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		assert.ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		assert.ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
 
 		// Clean up
 		oObjectListItem.destroy();
@@ -384,10 +386,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
-		ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
-		ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
-		ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+		assert.ok(this.oActiveAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		assert.ok(this.oActiveAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		assert.ok(this.oActiveAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		assert.ok(this.oActiveAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
 
 		// Clean up
 		oObjectHeaderS.destroy();

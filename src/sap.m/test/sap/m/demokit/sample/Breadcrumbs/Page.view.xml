@@ -1,5 +1,7 @@
 <mvc:View controllerName="sap.m.sample.Breadcrumbs.Page"
-		  xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout">
 	<l:VerticalLayout class="sapUiContentPadding" width="100%">
 		<l:content>
 			<Breadcrumbs currentLocationText="Laptop">

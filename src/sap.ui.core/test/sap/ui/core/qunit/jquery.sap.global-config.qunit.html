@@ -22,9 +22,9 @@
 
 				var oConfig = sap.ui.getCore().getConfiguration();
 
-				equal(oConfig.getTheme(), "sap_bluecrystal", "Theme must be sap_blucrystal");
-				ok(sap.ui.commons !== undefined, "sap.ui.commons must be preloaded");
-				ok(sap.m === undefined, "sap.m must not be preloaded");
+				assert.equal(oConfig.getTheme(), "sap_bluecrystal", "Theme must be sap_blucrystal");
+				assert.ok(sap.ui.commons !== undefined, "sap.ui.commons must be preloaded");
+				assert.ok(sap.m === undefined, "sap.m must not be preloaded");
 
 			});
 

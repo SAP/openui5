@@ -9,7 +9,9 @@ QUnit.module("Remove and reinsert", {
 	}
 });
 
-asyncTest("Move serverIndex node and collapse old parent", function(){
+QUnit.test("Move serverIndex node and collapse old parent", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -31,11 +33,11 @@ asyncTest("Move serverIndex node and collapse old parent", function(){
 		function handler2 (oEvent) {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 626, "The length of binding is correct");
+			assert.equal(oBinding.getLength(), 626, "The length of binding is correct");
 			oBinding.collapse(0, true);
-			equal(oBinding.getLength(), 606, "The length of binding is correct after collapse the old parent");
+			assert.equal(oBinding.getLength(), 606, "The length of binding is correct after collapse the old parent");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -43,7 +45,9 @@ asyncTest("Move serverIndex node and collapse old parent", function(){
 	});
 });
 
-asyncTest("Move manually expanded nodes", function(){
+QUnit.test("Move manually expanded nodes", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -56,7 +60,7 @@ asyncTest("Move manually expanded nodes", function(){
 
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
-			equal(oBinding.getLength(), 626, "The length of binding is correct");
+			assert.equal(oBinding.getLength(), 626, "The length of binding is correct");
 
 			oBinding.attachChange(handler2);
 
@@ -70,12 +74,12 @@ asyncTest("Move manually expanded nodes", function(){
 		function handler2 (oEvent) {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 634, "The length of binding is correct after expand a node");
+			assert.equal(oBinding.getLength(), 634, "The length of binding is correct after expand a node");
 
 			oN1630 = oBinding.findNode(5);
 			var oHandle = oBinding.removeContext(oN1030.context);
 			oBinding.addContexts(oN1630.context, oHandle);
-			equal(oBinding.getLength(), 627, "The length of binding is correct after move a node to a collapsed parent");
+			assert.equal(oBinding.getLength(), 627, "The length of binding is correct after move a node to a collapsed parent");
 
 			oBinding.attachChange(handler3);
 			oBinding.expand(oN1630, true);
@@ -84,7 +88,7 @@ asyncTest("Move manually expanded nodes", function(){
 		function handler3 (oEvent) {
 			oBinding.detachChange(handler3);
 
-			equal(oBinding.getLength(), 637, "The length of binding is correct after expand the parent");
+			assert.equal(oBinding.getLength(), 637, "The length of binding is correct after expand the parent");
 			oN1639 = oN1630.children[1];
 
 			oBinding.attachChange(handler4);
@@ -93,23 +97,23 @@ asyncTest("Move manually expanded nodes", function(){
 
 		function handler4 (oEvent) {
 			oBinding.detachChange(handler4);
-			equal(oBinding.getLength(), 700, "The length of binding is correct after expand a node");
+			assert.equal(oBinding.getLength(), 700, "The length of binding is correct after expand a node");
 
 			oN2000 = oN1004.children[3];
 			var oHandle = oBinding.removeContext(oN2000.context);
 			oBinding.addContexts(oN1639.context, oHandle);
-			equal(oBinding.getLength(), 699, "The length of binding is correct after move a deep node (to collapsed subtree)");
+			assert.equal(oBinding.getLength(), 699, "The length of binding is correct after move a deep node (to collapsed subtree)");
 
 			oBinding.expand(oN1639, true);
-			equal(oBinding.getLength(), 700, "The length of binding is correct after expanding subtree");
+			assert.equal(oBinding.getLength(), 700, "The length of binding is correct after expanding subtree");
 
 			oBinding.collapse(oN1004);
-			equal(oBinding.getLength(), 638, "The length of binding is correct after the old parent is collapsed");
+			assert.equal(oBinding.getLength(), 638, "The length of binding is correct after the old parent is collapsed");
 
 			oBinding.collapse(oN1005);
-			equal(oBinding.getLength(), 619, "The length of binding is correct after the new parent is collapsed");
+			assert.equal(oBinding.getLength(), 619, "The length of binding is correct after the new parent is collapsed");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -117,7 +121,9 @@ asyncTest("Move manually expanded nodes", function(){
 	});
 });
 
-asyncTest("Length calculation - remove/reinsert - Simple 1", function(){
+QUnit.test("Length calculation - remove/reinsert - Simple 1", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -129,25 +135,25 @@ asyncTest("Length calculation - remove/reinsert - Simple 1", function(){
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
 
-			equal(oBinding.getLength(), 626, "Initial length is correct");
+			assert.equal(oBinding.getLength(), 626, "Initial length is correct");
 
 			// remove
 			var oNode = oBinding.findNode(0);
 			var oHandle = oBinding.removeContext(oNode.context);
 
-			equal(oBinding.getLength(), 598, "Length after removal(0) is correct");
+			assert.equal(oBinding.getLength(), 598, "Length after removal(0) is correct");
 
 			// re-insert
 			var oNewParent = oBinding.findNode(0);
 			oBinding.addContexts(oNewParent.context, oHandle);
 
-			equal(oBinding.getLength(), 626, "Length after re-insert(0) is correct");
+			assert.equal(oBinding.getLength(), 626, "Length after re-insert(0) is correct");
 
 			// collapse re-inserted node
 			oBinding.collapse(1);
-			equal(oBinding.getLength(), 599, "Length after collapse(1) is correct");
+			assert.equal(oBinding.getLength(), 599, "Length after collapse(1) is correct");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -155,7 +161,9 @@ asyncTest("Length calculation - remove/reinsert - Simple 1", function(){
 	});
 });
 
-asyncTest("Length calculation - remove/reinsert - Simple 2", function(){
+QUnit.test("Length calculation - remove/reinsert - Simple 2", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -167,29 +175,29 @@ asyncTest("Length calculation - remove/reinsert - Simple 2", function(){
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
 
-			equal(oBinding.getLength(), 626, "Initial length is correct");
+			assert.equal(oBinding.getLength(), 626, "Initial length is correct");
 
 			oBinding.collapse(1);
 
-			equal(oBinding.getLength(), 620, "Length after collapse(1) is correct");
+			assert.equal(oBinding.getLength(), 620, "Length after collapse(1) is correct");
 
 			// remove
 			var oNode = oBinding.findNode(0);
 			var oHandle = oBinding.removeContext(oNode.context);
 
-			equal(oBinding.getLength(), 598, "Length after removal(0) is correct");
+			assert.equal(oBinding.getLength(), 598, "Length after removal(0) is correct");
 
 			// re-insert
 			var oNewParent = oBinding.findNode(0);
 			oBinding.addContexts(oNewParent.context, oHandle);
 
-			equal(oBinding.getLength(), 620, "Length after re-insert(0) is correct");
+			assert.equal(oBinding.getLength(), 620, "Length after re-insert(0) is correct");
 
 			// collapse re-inserted node
 			oBinding.collapse(1);
-			equal(oBinding.getLength(), 599, "Length after collapse(1) is correct");
+			assert.equal(oBinding.getLength(), 599, "Length after collapse(1) is correct");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -197,7 +205,9 @@ asyncTest("Length calculation - remove/reinsert - Simple 2", function(){
 	});
 });
 
-asyncTest("Length calculation - remove/reinsert - Simple 3", function(){
+QUnit.test("Length calculation - remove/reinsert - Simple 3", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -211,7 +221,7 @@ asyncTest("Length calculation - remove/reinsert - Simple 3", function(){
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
 
-			equal(oBinding.getLength(), 626, "Initial length is correct");
+			assert.equal(oBinding.getLength(), 626, "Initial length is correct");
 
 			//collect some nodes, which are alreay loaded
 			oN1001 = oBinding.findNode(0);
@@ -226,17 +236,17 @@ asyncTest("Length calculation - remove/reinsert - Simple 3", function(){
 		function handler2 (oEvent) {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 689, "Length after expand(3) is correct");
+			assert.equal(oBinding.getLength(), 689, "Length after expand(3) is correct");
 
 			var oHandle = oBinding.removeContext(oN1001.context);
 
-			equal(oBinding.getLength(), 598, "Length after remove(0) is correct");
+			assert.equal(oBinding.getLength(), 598, "Length after remove(0) is correct");
 
 			oBinding.addContexts(oN1029.context, oHandle);
 
-			equal(oBinding.getLength(), 689, "Length after remove(0) is correct");
+			assert.equal(oBinding.getLength(), 689, "Length after remove(0) is correct");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -244,7 +254,9 @@ asyncTest("Length calculation - remove/reinsert - Simple 3", function(){
 	});
 });
 
-asyncTest("Length calculation - remove deep node @ original position AND add in server-indexed parent node", function(){
+QUnit.test("Length calculation - remove deep node @ original position AND add in server-indexed parent node", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -258,7 +270,7 @@ asyncTest("Length calculation - remove deep node @ original position AND add in 
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
 
-			equal(oBinding.getLength(), 626, "Initial length is correct");
+			assert.equal(oBinding.getLength(), 626, "Initial length is correct");
 
 			//collect some nodes, which are alreay loaded
 			oN1001 = oBinding.findNode(0);
@@ -272,7 +284,7 @@ asyncTest("Length calculation - remove deep node @ original position AND add in 
 		function handler2 (oEvent) {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 634, "Length after expand(1005) is correct");
+			assert.equal(oBinding.getLength(), 634, "Length after expand(1005) is correct");
 
 			oBinding.attachChange(handler3);
 
@@ -285,15 +297,15 @@ asyncTest("Length calculation - remove deep node @ original position AND add in 
 		function handler3 (oEvent) {
 			oBinding.detachChange(handler3);
 
-			equal(oBinding.getLength(), 637, "Length after expand(1630) is correct");
+			assert.equal(oBinding.getLength(), 637, "Length after expand(1630) is correct");
 
 			oBinding.collapse(oN1630, true);
 
-			equal(oBinding.getLength(), 634, "Length after collapse(1630) is correct");
+			assert.equal(oBinding.getLength(), 634, "Length after collapse(1630) is correct");
 
 			var oHandle = oBinding.removeContext(oN1630.context);
 
-			equal(oBinding.getLength(), 633, "Length after remove(1630) is correct");
+			assert.equal(oBinding.getLength(), 633, "Length after remove(1630) is correct");
 
 			// re-insert
 			oBinding.attachChange(handler4);
@@ -302,17 +314,17 @@ asyncTest("Length calculation - remove deep node @ original position AND add in 
 
 		function handler4 (oEvent) {
 			oBinding.detachChange(handler4);
-			equal(oBinding.getLength(), 634, "Length after add(1001, [1630]) is correct");
+			assert.equal(oBinding.getLength(), 634, "Length after add(1001, [1630]) is correct");
 
 			// collapse old parent
 			oBinding.collapse(oN1005);
-			equal(oBinding.getLength(), 627, "Length after collapse(1005) is correct");
+			assert.equal(oBinding.getLength(), 627, "Length after collapse(1005) is correct");
 
 			// expand the re-inserted node again
 			oBinding.expand(oN1630, true);
-			equal(oBinding.getLength(), 630, "Length after expand(1630) is correct");
+			assert.equal(oBinding.getLength(), 630, "Length after expand(1630) is correct");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -320,7 +332,9 @@ asyncTest("Length calculation - remove deep node @ original position AND add in 
 	});
 });
 
-asyncTest("Length calculation - remove initially collapsed node, re-insert @ server-indexed parent - magnitude propagation", function(){
+QUnit.test("Length calculation - remove initially collapsed node, re-insert @ server-indexed parent - magnitude propagation", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -343,11 +357,11 @@ asyncTest("Length calculation - remove initially collapsed node, re-insert @ ser
 
 			// remove(1004)
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
-			equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
+			assert.equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
 
 			// re-insert 1004 @ 1029
 			oBinding.addContexts(oN1029.context, oN1004Subtree);
-			equal(oBinding.getLength(), 626, "Length after re-insert(1004) is correct");
+			assert.equal(oBinding.getLength(), 626, "Length after re-insert(1004) is correct");
 
 			oBinding.attachChange(handler2);
 			oBinding.expand(oN1004, true);
@@ -357,24 +371,24 @@ asyncTest("Length calculation - remove initially collapsed node, re-insert @ ser
 		function handler2 (oEvent) {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 689, "Length after expand of moved node 1004 is correct");
+			assert.equal(oBinding.getLength(), 689, "Length after expand of moved node 1004 is correct");
 
 			oBinding.collapse(oN1004, true);
 
-			equal(oBinding.getLength(), 626, "Length after collapse of moved node 1004 is correct");
+			assert.equal(oBinding.getLength(), 626, "Length after collapse of moved node 1004 is correct");
 
 			oBinding.collapse(oN1029, true);
 
-			equal(oBinding.getLength(), 604, "Length after collapse(1029) is correct");
+			assert.equal(oBinding.getLength(), 604, "Length after collapse(1029) is correct");
 
-			equal(oN1029.magnitude, 21, "Magnitude for initially collapsed node was not changed!");
+			assert.equal(oN1029.magnitude, 21, "Magnitude for initially collapsed node was not changed!");
 
 			// check if the collapse of 1
 			oNextAfter1029 = oBinding.findNode(28);
 
-			equal(oNextAfter1029.key, oN1051.key, "Follow-Up node after 1029 is correct (key = 1051 expected)");
+			assert.equal(oNextAfter1029.key, oN1051.key, "Follow-Up node after 1029 is correct (key = 1051 expected)");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -382,7 +396,9 @@ asyncTest("Length calculation - remove initially collapsed node, re-insert @ ser
 	});
 });
 
-asyncTest("Length calculation - cut/paste complex operations", function(){
+QUnit.test("Length calculation - cut/paste complex operations", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -406,40 +422,40 @@ asyncTest("Length calculation - cut/paste complex operations", function(){
 
 			// remove(1001)
 			oN1001Subtree = oBinding.removeContext(oN1001.context);
-			equal(oBinding.getLength(), 598, "Length after remove(1001) is correct");
+			assert.equal(oBinding.getLength(), 598, "Length after remove(1001) is correct");
 
 			// re-insert 1001 @ 1030
 			oBinding.addContexts(oN1030.context, oN1001Subtree);
-			equal(oBinding.getLength(), 626, "Length after re-insert(1001) @ 1030 is correct");
+			assert.equal(oBinding.getLength(), 626, "Length after re-insert(1001) @ 1030 is correct");
 
 			// collapse 1001
 			oBinding.collapse(oN1001, true);
-			equal(oBinding.getLength(), 599, "Length after collapse(1001) is correct");
+			assert.equal(oBinding.getLength(), 599, "Length after collapse(1001) is correct");
 
 			// expand 1001
 			oBinding.expand(oN1001, true);
-			equal(oBinding.getLength(), 626, "Length after re-expand(1001) is correct");
+			assert.equal(oBinding.getLength(), 626, "Length after re-expand(1001) is correct");
 
 			// remove 1004
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
-			equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
+			assert.equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
 
 			// re-insert 1004 @ 1029 (index 0)
 			oN1004Subtree = oBinding.addContexts(oN1029.context, oN1004Subtree);
-			equal(oBinding.getLength(), 626, "Length after re-insert(1001) @ 1029 is correct");
+			assert.equal(oBinding.getLength(), 626, "Length after re-insert(1001) @ 1029 is correct");
 
 			// collapse (1002) --> 1004 should not be counted when collapsing 1002, since it is re-inserted in a different sub-tree
 			oBinding.collapse(oN1002, true);
-			equal(oBinding.getLength(), 621, "Length after collapse(1002) is correct = 626 - 6 + 1");
+			assert.equal(oBinding.getLength(), 621, "Length after collapse(1002) is correct = 626 - 6 + 1");
 
 			// expand (1002)
 			oBinding.expand(oN1002, true);
-			equal(oBinding.getLength(), 626, "Length after expand(1002) is correct = 626 again");
+			assert.equal(oBinding.getLength(), 626, "Length after expand(1002) is correct = 626 again");
 
 			// collapse (1001) --> 1004 should not be counted when collapsing 1001, since it is re-inserted in a different sub-tree
 			// so the length should be 600 instead of 599 (see first assertion of this test)
 			oBinding.collapse(oN1001, true);
-			equal(oBinding.getLength(), 600, "Length after collapse(1001) is correct = 600");
+			assert.equal(oBinding.getLength(), 600, "Length after collapse(1001) is correct = 600");
 
 			// expand(1004) --> load children
 			oBinding.attachChange(handler2);
@@ -449,20 +465,20 @@ asyncTest("Length calculation - cut/paste complex operations", function(){
 		function handler2 (oEvent) {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 663, "Length after expand(1004) & loading children is correct");
+			assert.equal(oBinding.getLength(), 663, "Length after expand(1004) & loading children is correct");
 
 			// collapse (1004) again
 			oBinding.collapse(oN1004, true);
-			equal(oBinding.getLength(), 600, "Length after collapse(1004) is correct (600 again)");
+			assert.equal(oBinding.getLength(), 600, "Length after collapse(1004) is correct (600 again)");
 
 			// collapse (1029) again
 			// new length = 626 - mag(1001) - mag(1029) - 1*
 			// *1 = 1001 is removed
 			// mag(1001) = 27; mag(1029) = 21;
 			oBinding.collapse(oN1029, true);
-			equal(oBinding.getLength(), 577, "Length after collapse(1029) is correct (577)");
+			assert.equal(oBinding.getLength(), 577, "Length after collapse(1029) is correct (577)");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -470,7 +486,9 @@ asyncTest("Length calculation - cut/paste complex operations", function(){
 	});
 });
 
-asyncTest("Length calculation - expand & remove initially collapsed node - no re-insert", function(){
+QUnit.test("Length calculation - expand & remove initially collapsed node - no re-insert", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -495,21 +513,21 @@ asyncTest("Length calculation - expand & remove initially collapsed node - no re
 		function handler2 () {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 689, "Length after expand(1004) is correct.");
+			assert.equal(oBinding.getLength(), 689, "Length after expand(1004) is correct.");
 
 			// collapse
 			oBinding.collapse(oN1004, true);
-			equal(oBinding.getLength(), 626, "Length after collapse(1004) is correct.");
+			assert.equal(oBinding.getLength(), 626, "Length after collapse(1004) is correct.");
 
 			// re-expand
 			oBinding.expand(oN1004, true);
-			equal(oBinding.getLength(), 689, "Length after expand(1004) is correct.");
+			assert.equal(oBinding.getLength(), 689, "Length after expand(1004) is correct.");
 
 			// remove context
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
-			equal(oBinding.getLength(), 625);
+			assert.equal(oBinding.getLength(), 625);
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -517,7 +535,9 @@ asyncTest("Length calculation - expand & remove initially collapsed node - no re
 	});
 });
 
-asyncTest("Length calculation - remove collapsed node - remove old parent - insert in initially collapsed node", function(){
+QUnit.test("Length calculation - remove collapsed node - remove old parent - insert in initially collapsed node", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -540,15 +560,15 @@ asyncTest("Length calculation - remove collapsed node - remove old parent - inse
 
 			// remove 1004
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
-			equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
+			assert.equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
 
 			// remove 1001
 			oN1001Subtree = oBinding.removeContext(oN1001.context);
-			equal(oBinding.getLength(), 598, "Length after remove(1001) is correct");
+			assert.equal(oBinding.getLength(), 598, "Length after remove(1001) is correct");
 
 			// add 1004 in 1031
 			oBinding.addContexts(oN1031.context, oN1004Subtree);
-			equal(oBinding.getLength(), 598, "Length after add(1031, 1004) did not change, 1031 is still collapsed");
+			assert.equal(oBinding.getLength(), 598, "Length after add(1031, 1004) did not change, 1031 is still collapsed");
 
 			// expand
 			oBinding.attachChange(handler2);
@@ -558,7 +578,7 @@ asyncTest("Length calculation - remove collapsed node - remove old parent - inse
 		function handler2 () {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 599, "Length after expand(1031) is correct -> 598 + 1 for node 1004");
+			assert.equal(oBinding.getLength(), 599, "Length after expand(1031) is correct -> 598 + 1 for node 1004");
 
 			// expand
 			oBinding.attachChange(handler3);
@@ -568,25 +588,25 @@ asyncTest("Length calculation - remove collapsed node - remove old parent - inse
 		function handler3 () {
 			oBinding.detachChange(handler3);
 
-			equal(oBinding.getLength(), 662, "Length after expand(1004) is correct");
+			assert.equal(oBinding.getLength(), 662, "Length after expand(1004) is correct");
 
 			// collapse (1004)
 			oBinding.collapse(oN1004, true);
-			equal(oBinding.getLength(), 599, "Length after collapse(1004) is correct.");
+			assert.equal(oBinding.getLength(), 599, "Length after collapse(1004) is correct.");
 
 			// add 1001 in 1004
 			oBinding.addContexts(oN1004.context, oN1001Subtree);
-			equal(oBinding.getLength(), 599, "Length after add(1004, 1001) did not change -> 1004 is still collapsed");
+			assert.equal(oBinding.getLength(), 599, "Length after add(1004, 1001) did not change -> 1004 is still collapsed");
 
 			// expand 1004
 			oBinding.expand(oN1004, true);
-			equal(oBinding.getLength(), 689, "Length after expand(1004) is correct -> 1001 is fully contained inside");
+			assert.equal(oBinding.getLength(), 689, "Length after expand(1004) is correct -> 1001 is fully contained inside");
 
 			// collapse 1002
 			oBinding.collapse(oN1002, true);
-			equal(oBinding.getLength(), 684, "Length after collapse(1002) -> 1002 is the old parent of 1004 -> 1002 is now a child of 1004");
+			assert.equal(oBinding.getLength(), 684, "Length after collapse(1002) -> 1002 is the old parent of 1004 -> 1002 is now a child of 1004");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -594,7 +614,9 @@ asyncTest("Length calculation - remove collapsed node - remove old parent - inse
 	});
 });
 
-asyncTest("Length calculation - remove node A - insert in initially collapsed node B - remove node C - insert in first node A - remove node B", function(){
+QUnit.test("Length calculation - remove node A - insert in initially collapsed node B - remove node C - insert in first node A - remove node B", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -617,11 +639,11 @@ asyncTest("Length calculation - remove node A - insert in initially collapsed no
 
 			// remove 1004
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
-			equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
+			assert.equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
 
 			// add 1004 in 1031
 			oBinding.addContexts(oN1005.context, oN1004Subtree);
-			equal(oBinding.getLength(), 625, "Length after add(1005, 1004) did not change, 1005 is still collapsed");
+			assert.equal(oBinding.getLength(), 625, "Length after add(1005, 1004) did not change, 1005 is still collapsed");
 
 			// expand 1005
 			oBinding.attachChange(handler2);
@@ -631,25 +653,25 @@ asyncTest("Length calculation - remove node A - insert in initially collapsed no
 		function handler2 () {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 634, "Length after expand(1005) is correct -> 625 + 9 (8 children + node 1004)");
+			assert.equal(oBinding.getLength(), 634, "Length after expand(1005) is correct -> 625 + 9 (8 children + node 1004)");
 
 			oN1630 = oBinding.findNode(5);
 
 			// remove 1630
 			oN1630Subtree = oBinding.removeContext(oN1630.context);
-			equal(oBinding.getLength(), 633, "Length after remove(1630) is correct, -1 than before the remove");
+			assert.equal(oBinding.getLength(), 633, "Length after remove(1630) is correct, -1 than before the remove");
 
 			// collapse 1005
 			oBinding.collapse(oN1005, true);
-			equal(oBinding.getLength(), 625, "Length after collapse(1005) is correct -> subtree modifications are not counted");
+			assert.equal(oBinding.getLength(), 625, "Length after collapse(1005) is correct -> subtree modifications are not counted");
 
 			//expand 1005
 			oBinding.expand(oN1005, true);
-			equal(oBinding.getLength(), 633, "Length after expand(1005) is correct");
+			assert.equal(oBinding.getLength(), 633, "Length after expand(1005) is correct");
 
 			// add 1630 in 1004
 			oBinding.addContexts(oN1004.context, oN1630Subtree);
-			equal(oBinding.getLength(), 633, "Length after add(1004, 1630) did not change -> 1004 still collapsed");
+			assert.equal(oBinding.getLength(), 633, "Length after add(1004, 1630) did not change -> 1004 still collapsed");
 
 			// expand
 			oBinding.attachChange(handler3);
@@ -659,15 +681,15 @@ asyncTest("Length calculation - remove node A - insert in initially collapsed no
 		function handler3 () {
 			oBinding.detachChange(handler3);
 
-			equal(oBinding.getLength(), 697, "Length after expand(1004) is correct -> start(633) + children_1004(63) + node_1630(1) = 697");
+			assert.equal(oBinding.getLength(), 697, "Length after expand(1004) is correct -> start(633) + children_1004(63) + node_1630(1) = 697");
 
 			// collapse 1004
 			oBinding.collapse(oN1004, true);
-			equal(oBinding.getLength(), 633, "Length after collapse(1004) is 633 again");
+			assert.equal(oBinding.getLength(), 633, "Length after collapse(1004) is 633 again");
 
 			// expand 1004 again
 			oBinding.expand(oN1004, true);
-			equal(oBinding.getLength(), 697, "Length after re-expand(1004) is correct");
+			assert.equal(oBinding.getLength(), 697, "Length after re-expand(1004) is correct");
 
 			// expand 1630 (inside 1004)
 			oBinding.attachChange(handler4);
@@ -678,33 +700,33 @@ asyncTest("Length calculation - remove node A - insert in initially collapsed no
 		function handler4 () {
 			oBinding.detachChange(handler4);
 
-			equal(oBinding.getLength(), 700, "Length after expand(1630) is correct -> 697 + 3");
+			assert.equal(oBinding.getLength(), 700, "Length after expand(1630) is correct -> 697 + 3");
 
 			// collapse 1004
 			oBinding.collapse(oN1004, true);
-			equal(oBinding.getLength(), 633, "Length after collapse (1004) is correct -> 700 - children_nod1630(3 - node_1630(1) - children_1004(63)");
+			assert.equal(oBinding.getLength(), 633, "Length after collapse (1004) is correct -> 700 - children_nod1630(3 - node_1630(1) - children_1004(63)");
 
 			// expand 1004 again
 			oBinding.expand(oN1004, true);
-			equal(oBinding.getLength(), 700, "Length after re-expand(1004) is correct");
+			assert.equal(oBinding.getLength(), 700, "Length after re-expand(1004) is correct");
 
 			// re-remove 1004 again
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
-			equal(oBinding.getLength(), 632, "Length after re-remove (1004) is correct -> 633 - 1");
+			assert.equal(oBinding.getLength(), 632, "Length after re-remove (1004) is correct -> 633 - 1");
 
 			// collapse 1001
 			oBinding.collapse(oN1001, true);
-			equal(oBinding.getLength(), 599, "Length is correct after collapse (1001) -> all previous subtree modifications are ignored");
+			assert.equal(oBinding.getLength(), 599, "Length is correct after collapse (1001) -> all previous subtree modifications are ignored");
 
 			// re-expand 1001
 			oBinding.expand(oN1001, true);
-			equal(oBinding.getLength(), 632, "Length after re-expand(1001) is correct");
+			assert.equal(oBinding.getLength(), 632, "Length after re-expand(1001) is correct");
 
 			// re-insert 1004 in 1001
 			oBinding.addContexts(oN1001.context, oN1004Subtree);
-			equal(oBinding.getLength(), 700, "Length after re-insert 1004 in 1001 is correct -> 632 + 68 = 700 again");
+			assert.equal(oBinding.getLength(), 700, "Length after re-insert 1004 in 1001 is correct -> 632 + 68 = 700 again");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -712,7 +734,9 @@ asyncTest("Length calculation - remove node A - insert in initially collapsed no
 	});
 });
 
-asyncTest("Length calculation - Move Node from upper Subtree to a lower Subtree (index-wise) - remove old parent of moved node", function(){
+QUnit.test("Length calculation - Move Node from upper Subtree to a lower Subtree (index-wise) - remove old parent of moved node", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -734,11 +758,11 @@ asyncTest("Length calculation - Move Node from upper Subtree to a lower Subtree 
 
 			// remove 1004
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
-			equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
+			assert.equal(oBinding.getLength(), 625, "Length after remove(1004) is correct");
 
 			// add 1004 in 1001
 			oBinding.addContexts(oN1001.context, oN1004Subtree);
-			equal(oBinding.getLength(), 626, "Length after add(1001, 1004) is correct --> initial length 626 again");
+			assert.equal(oBinding.getLength(), 626, "Length after add(1001, 1004) is correct --> initial length 626 again");
 
 			// expand 1004
 			oBinding.attachChange(handler2);
@@ -748,27 +772,27 @@ asyncTest("Length calculation - Move Node from upper Subtree to a lower Subtree 
 		function handler2 () {
 			oBinding.detachChange(handler2);
 
-			equal(oBinding.getLength(), 689, "Length after expand(1004) is correct");
+			assert.equal(oBinding.getLength(), 689, "Length after expand(1004) is correct");
 
 			// re-remove 1004
 			oN1004Subtree = oBinding.removeContext(oN1004.context);
-			equal(oBinding.getLength(), 625, "Length after re-remove is correct");
+			assert.equal(oBinding.getLength(), 625, "Length after re-remove is correct");
 
 			// re-add 1004 in 1012
 			oBinding.addContexts(oN1012.context, oN1004Subtree);
-			equal(oBinding.getLength(), 689, "Length after re-add of 1004 in 1012 is correct");
+			assert.equal(oBinding.getLength(), 689, "Length after re-add of 1004 in 1012 is correct");
 
 			// remove 1002
 			// why 683?
 			// previous value 689, - mag(1002) - 1002; mag(1002) = 6, initially 7 but -1 for
 			oN1004Subtree = oBinding.removeContext(oN1002.context);
-			equal(oBinding.getLength(), 683, "Length after remove 1002 is correct -> 689 - 6");
+			assert.equal(oBinding.getLength(), 683, "Length after remove 1002 is correct -> 689 - 6");
 
 			// collapse 1001
 			oBinding.collapse(oN1001, true);
-			equal(oBinding.getLength(), 599, "Length after collapse 1001 is correct, 1001 is the outer parent of 1002 and 1004");
+			assert.equal(oBinding.getLength(), 599, "Length after collapse 1001 is correct, 1001 is the outer parent of 1002 and 1004");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -797,7 +821,9 @@ function createContext(iNodeId) {
 	return oContext;
 }
 
-asyncTest("Create new node and added to a node which already has children", function() {
+QUnit.test("Create new node and added to a node which already has children", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -810,16 +836,16 @@ asyncTest("Create new node and added to a node which already has children", func
 
 		function handler1() {
 			oBinding.detachChange(handler1);
-			equal(oBinding.getLength(), 626, "There are 626 items in total");
+			assert.equal(oBinding.getLength(), 626, "There are 626 items in total");
 
 			oN1001 = oBinding.findNode(0);
 			var oContext = createContext(3000);
 			oBinding.addContexts(oN1001.context, [oContext]);
-			equal(oN1001.addedSubtrees.length, 1, "Node 1001 has an added node");
-			strictEqual(oN1001.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
-			equal(oBinding.getLength(), 627, "The length is increased by 1 after added a new node");
+			assert.equal(oN1001.addedSubtrees.length, 1, "Node 1001 has an added node");
+			assert.strictEqual(oN1001.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
+			assert.equal(oBinding.getLength(), 627, "The length is increased by 1 after added a new node");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -827,7 +853,9 @@ asyncTest("Create new node and added to a node which already has children", func
 	});
 });
 
-asyncTest("Create new node and added to a leaf node", function() {
+QUnit.test("Create new node and added to a leaf node", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -841,24 +869,24 @@ asyncTest("Create new node and added to a leaf node", function() {
 
 		function handler1() {
 			oBinding.detachChange(handler1);
-			equal(oBinding.getLength(), 626, "There are 626 items in total");
+			assert.equal(oBinding.getLength(), 626, "There are 626 items in total");
 
 			oN1017 = oBinding.findNode(16);
-			equal(oModel.getProperty("DRILLDOWN_STATE", oN1017.context), "leaf", "Node 1017 is a leaf node");
+			assert.equal(oModel.getProperty("DRILLDOWN_STATE", oN1017.context), "leaf", "Node 1017 is a leaf node");
 
 			var oContext = createContext(3000);
 			oBinding.addContexts(oN1017.context, [oContext]);
-			equal(oN1017.addedSubtrees.length, 1, "Node 1001 has an added node");
-			strictEqual(oN1017.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
-			equal(oBinding.getLength(), 626, "The length is not yet increased by 1 after added a new node");
-			equal(oBinding.hasChildren(oN1017.context), true, "Node 1017 is not a leaf node anymore but collapsed");
-			ok(!oN1017.nodeState.isLeaf, "Node 1017 isn't a leaf anymore");
-			ok(oN1017.nodeState.collapsed, "Node 1017 is collapsed");
+			assert.equal(oN1017.addedSubtrees.length, 1, "Node 1001 has an added node");
+			assert.strictEqual(oN1017.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
+			assert.equal(oBinding.getLength(), 626, "The length is not yet increased by 1 after added a new node");
+			assert.equal(oBinding.hasChildren(oN1017.context), true, "Node 1017 is not a leaf node anymore but collapsed");
+			assert.ok(!oN1017.nodeState.isLeaf, "Node 1017 isn't a leaf anymore");
+			assert.ok(oN1017.nodeState.collapsed, "Node 1017 is collapsed");
 
 			oBinding.expand(oN1017);
-			equal(oBinding.getLength(), 627, "The length is increased by 1 after the parent of added new node is expanded");
+			assert.equal(oBinding.getLength(), 627, "The length is increased by 1 after the parent of added new node is expanded");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -866,7 +894,9 @@ asyncTest("Create new node and added to a leaf node", function() {
 	});
 });
 
-asyncTest("Create a new node under a parent and move to another parent", function() {
+QUnit.test("Create a new node under a parent and move to another parent", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -879,7 +909,7 @@ asyncTest("Create a new node under a parent and move to another parent", functio
 
 		function handler1() {
 			oBinding.detachChange(handler1);
-			equal(oBinding.getLength(), 626, "There are 626 items in total");
+			assert.equal(oBinding.getLength(), 626, "There are 626 items in total");
 
 			oN1002 = oBinding.findNode(1);
 			oN1003 = oBinding.findNode(2);
@@ -887,24 +917,24 @@ asyncTest("Create a new node under a parent and move to another parent", functio
 
 			var oContext = createContext(3000);
 			oBinding.addContexts(oN1004.context, [oContext]);
-			equal(oBinding.getLength(), 626, "The length is not yet increased because the parent is still collapsed");
+			assert.equal(oBinding.getLength(), 626, "The length is not yet increased because the parent is still collapsed");
 
 			oBinding.expand(oN1004);
-			equal(oBinding.getLength(), 627, "The length is increased by 1 after the parent of added new node is expanded");
+			assert.equal(oBinding.getLength(), 627, "The length is increased by 1 after the parent of added new node is expanded");
 
 			var oHandle = oBinding.removeContext(oContext);
-			equal(oBinding.getLength(), 626, "The length is 626 after the newly added node is removed");
+			assert.equal(oBinding.getLength(), 626, "The length is 626 after the newly added node is removed");
 
 			oBinding.addContexts(oN1003.context, oHandle);
-			equal(oBinding.getLength(), 626, "The length is not yet increased because the parent is still collapsed");
+			assert.equal(oBinding.getLength(), 626, "The length is not yet increased because the parent is still collapsed");
 
 			oBinding.expand(oN1003);
-			equal(oBinding.getLength(), 627, "The length is increased by 1 after the parent of added new node is expanded");
+			assert.equal(oBinding.getLength(), 627, "The length is increased by 1 after the parent of added new node is expanded");
 
 			oBinding.collapse(oN1002);
-			equal(oBinding.getLength(), 620, "The length is correct after collapse the parent");
+			assert.equal(oBinding.getLength(), 620, "The length is correct after collapse the parent");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -912,7 +942,9 @@ asyncTest("Create a new node under a parent and move to another parent", functio
 	});
 });
 
-asyncTest("Create a new node, add to a parent, move some node to the new node, and finally collapse the top parent", function() {
+QUnit.test("Create a new node, add to a parent, move some node to the new node, and finally collapse the top parent", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -925,7 +957,7 @@ asyncTest("Create a new node, add to a parent, move some node to the new node, a
 
 		function handler1() {
 			oBinding.detachChange(handler1);
-			equal(oBinding.getLength(), 626, "There are 626 items in total");
+			assert.equal(oBinding.getLength(), 626, "There are 626 items in total");
 
 			oN1001 = oBinding.findNode(0);
 			oN1002 = oBinding.findNode(1);
@@ -939,12 +971,12 @@ asyncTest("Create a new node, add to a parent, move some node to the new node, a
 
 			var oNode = oBinding._findNodeByContext(oContext);
 			oBinding.expand(oNode.node);
-			equal(oBinding.getLength(), 627, "There are now 627 items in total");
+			assert.equal(oBinding.getLength(), 627, "There are now 627 items in total");
 
 			oBinding.collapse(oN1001);
-			equal(oBinding.getLength(), 599, "There are now 599 items after collapse the top parent");
+			assert.equal(oBinding.getLength(), 599, "There are now 599 items after collapse the top parent");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -952,7 +984,9 @@ asyncTest("Create a new node, add to a parent, move some node to the new node, a
 	});
 });
 
-asyncTest("Nested newly created nodes", function() {
+QUnit.test("Nested newly created nodes", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -965,7 +999,7 @@ asyncTest("Nested newly created nodes", function() {
 
 		function handler1() {
 			oBinding.detachChange(handler1);
-			equal(oBinding.getLength(), 626, "There are 626 items in total");
+			assert.equal(oBinding.getLength(), 626, "There are 626 items in total");
 
 			oN1001 = oBinding.findNode(0);
 
@@ -973,14 +1007,14 @@ asyncTest("Nested newly created nodes", function() {
 				oContext2 = createContext(3001);
 			oBinding.addContexts(oN1001.context, [oContext1]);
 			oBinding.addContexts(oContext1, [oContext2]);
-			equal(oBinding.getLength(), 627, "There are now 627 items before expanding the second new node");
+			assert.equal(oBinding.getLength(), 627, "There are now 627 items before expanding the second new node");
 
 
 			var oNode = oBinding._findNodeByContext(oContext1);
 			oBinding.expand(oNode.node);
-			equal(oBinding.getLength(), 628, "There are now 628 items in total");
+			assert.equal(oBinding.getLength(), 628, "There are now 628 items in total");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);
@@ -988,7 +1022,9 @@ asyncTest("Nested newly created nodes", function() {
 	});
 });
 
-asyncTest("Remove & Selection Index Calculation", function() {
+QUnit.test("Remove & Selection Index Calculation", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -1007,20 +1043,20 @@ asyncTest("Remove & Selection Index Calculation", function() {
 
 			oBinding.setSelectedIndex(3);
 
-			equal(oBinding.getSelectedIndex(), 3, "Lead selection index is correct");
+			assert.equal(oBinding.getSelectedIndex(), 3, "Lead selection index is correct");
 
 			var oN1004Subtree = oBinding.removeContext(oN1004.context);
 
-			equal(oBinding.getSelectedIndex(), -1, "Lead selection after remove of lead context is correct");
+			assert.equal(oBinding.getSelectedIndex(), -1, "Lead selection after remove of lead context is correct");
 
 			//oN1004Subtree
 			oBinding.addContexts(oN1002.context, oN1004Subtree);
 
 			oBinding.setSelectedIndex(2);
 
-			equal(oBinding.getSelectedIndex(), 2, "Selecting re-inserted node works");
+			assert.equal(oBinding.getSelectedIndex(), 2, "Selecting re-inserted node works");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);

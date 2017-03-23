@@ -33,8 +33,14 @@
 	border-radius: 0;
 }
 
+.sapUxAPAnchorBarPopover .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnHoverable:hover,
+.sapUxAPAnchorBarPopover .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable,
 .sapUxAPObjectPageNavigation > .sapMTB.sapMTB-Transparent-CTX > .anchorBarArrow .sapMBtn:hover > .sapMBtnHoverable {
 	background: @sapUiButtonHoverBackground;
+}
+
+.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:hover > .sapMBtnActive:hover {
+	background-color: @sapUiListActiveBackground;
 }
 
 .sapMTB-Transparent-CTX .sapUxAPAnchorBarButton .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive),

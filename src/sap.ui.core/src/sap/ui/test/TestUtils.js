@@ -393,7 +393,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 		 *         var oType = new sap.ui.model.odata.type.Decimal({},
 		 *                        {constraints: {precision: 10, scale: 3});
 		 *
-		 *         throws(function () {
+		 *         assert.throws(function () {
 		 *             oType.parseValue("-123.4567", "string");
 		 *         }, /EnterNumber 10 3/);
 		 *     });

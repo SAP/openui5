@@ -3,8 +3,6 @@
 		controllerName="sap.m.sample.WizardBranching.C"
 		xmlns:layout="sap.ui.layout"
 		xmlns:form="sap.ui.layout.form"
-		xmlns:core="sap.ui.core"
-		xmlns:u="sap.ui.unified"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<NavContainer id="wizardNavContainer">
@@ -30,10 +28,10 @@
 								</attributes>
 							</ObjectHeader>
 							<List mode="Delete"
-								  items="{/ProductCollection}"
-								  enableBusyIndicator="true"
-								  delete="handleDelete"
-								  headerText="Items">
+									items="{/ProductCollection}"
+									enableBusyIndicator="true"
+									delete="handleDelete"
+									headerText="Items">
 								<StandardListItem
 										title="{Name}"
 										type="Active"
@@ -51,7 +49,7 @@
 								complete="goToPaymentStep"
 								icon="sap-icon://money-bills">
 							<Text class="sapUiSmallMarginBottom"
-								  text="We accept all major credit cards. No extra cost will be charged when paying with a credit card. Bank transfer and Cash on delivery are only possible for inland deliveries. A service charge of 2.99 EUR will be charged for these types of deliveries. Be aware, that for Bank transfers, the shipping will start on the day after the payment is received."/>
+									text="We accept all major credit cards. No extra cost will be charged when paying with a credit card. Bank transfer and Cash on delivery are only possible for inland deliveries. A service charge of 2.99 EUR will be charged for these types of deliveries. Be aware, that for Bank transfers, the shipping will start on the day after the payment is received."/>
 							<HBox
 									alignItems="Center"
 									justifyContent="Center"
@@ -121,7 +119,7 @@
 							<form:SimpleForm
 									editable="true">
 								<Label text="First Name" required="true" />
-								<Input value="{/CashOnDelivery/FirstName}" liveChange="checkCashOnDeliveryStep" valueLiveUpdate="true"  />
+								<Input value="{/CashOnDelivery/FirstName}" liveChange="checkCashOnDeliveryStep" valueLiveUpdate="true" />
 								<Label text="Last Name" />
 								<Input value="{/CashOnDelivery/LastName}" />
 								<Label text="Phone Number" />
@@ -148,7 +146,7 @@
 								<Input value="{/BillingAddress/Address}" liveChange="checkBillingStep" valueLiveUpdate="true" />
 								<Label text="City" required="true" />
 								<Input value="{/BillingAddress/City}" liveChange="checkBillingStep" valueLiveUpdate="true" />
-								<Label text="Zip Code" required="true"  />
+								<Label text="Zip Code" required="true" />
 								<Input value="{/BillingAddress/ZipCode}" liveChange="checkBillingStep" valueLiveUpdate="true" />
 								<Label text="Country" required="true" />
 								<Input value="{/BillingAddress/Country}" liveChange="checkBillingStep" valueLiveUpdate="true" />
@@ -180,7 +178,7 @@
 								title="Delivery type"
 								icon="sap-icon://insurance-car">
 							<Text class="sapUiSmallMarginBottom"
-								  text="Standard delivery will be delivered within 5 workdays. Be aware, that around high-season sales, standard delivery may take up to one additional day. Express delivery is delivered within 36 hours. A service fee of 5.49 EUR is charged for Express delivery on a workday. For a holiday delivery, the service fee is 8,00 EUR. Express delivery is only available for inland deliveries. All service fees vary for deliveries  abroad."/>
+									text="Standard delivery will be delivered within 5 workdays. Be aware, that around high-season sales, standard delivery may take up to one additional day. Express delivery is delivered within 36 hours. A service fee of 5.49 EUR is charged for Express delivery on a workday. For a holiday delivery, the service fee is 8,00 EUR. Express delivery is only available for inland deliveries. All service fees vary for deliveries  abroad."/>
 							<HBox
 									alignItems="Center"
 									justifyContent="Center"

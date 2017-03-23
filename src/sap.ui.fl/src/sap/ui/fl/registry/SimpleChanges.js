@@ -8,7 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Object containing standard changes like labelChange. Structure is like this: <code> { "labelChange":{"changeType":"labelChange", "changeHandler":sap.ui.fl.changeHandler.LabelChange}} </code>
+	 * Containes standard changes like <code>hideControl</code>
+	 * (structure: <code> { "hideControl":{"changeType":"hideControl", "changeHandler":sap.ui.fl.changeHandler.HideControl}} </code>);
+	 * change types have a default change handler implementation, so that control developers don't have to implement one.
 	 * @constructor
 	 * @alias sap.ui.fl.registry.SimpleChanges
 	 *

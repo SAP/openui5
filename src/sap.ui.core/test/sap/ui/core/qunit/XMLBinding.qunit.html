@@ -67,9 +67,9 @@
 		setup();
 		createPropertyBindings("/teamMembers/member", "@firstName");
 
-		equal(bindings.length, 7, "amount of bindings");
+		assert.equal(bindings.length, 7, "amount of bindings");
 		jQuery(bindings).each(function (i, binding){
-			equal(binding.getPath(), "/teamMembers/member/" + i + "/@firstName", "Binding path");
+			assert.equal(binding.getPath(), "/teamMembers/member/" + i + "/@firstName", "Binding path");
 		});
 
 	});
@@ -80,7 +80,7 @@
 
 		jQuery(bindings).each(function (i, binding){
 			// check model of each binding...should be the same
-			equal(binding.getModel(), oModel, "Binding model");
+			assert.equal(binding.getModel(), oModel, "Binding model");
 		});
 
 	});
@@ -91,9 +91,9 @@
 
 		jQuery(bindings).each(function (i, binding){
 			// check model of each binding...should be the same
-			equal(binding.getContext(), "context", "Binding context");
+			assert.equal(binding.getContext(), "context", "Binding context");
 			binding.setContext("newContext");
-			equal(binding.getContext(), "newContext", "Binding context");
+			assert.equal(binding.getContext(), "newContext", "Binding context");
 		});
 	});
 
@@ -102,15 +102,15 @@
 		var oNewContext = oModel.getContext("/teamMembers/member/0");
 
 		var oBinding = oModel.bindProperty("@lastName");
-		ok(!oBinding.isResolved(), "Binding should not be resolved yet!");
+		assert.ok(!oBinding.isResolved(), "Binding should not be resolved yet!");
 		oBinding.setContext(oNewContext);
-		ok(oBinding.isResolved(), "Binding should be resolved!");
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
 
 		oBinding = oModel.bindProperty("/@lastName");
-		ok(oBinding.isResolved(), "Binding should be resolved!");
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
 
 		oBinding = oModel.bindProperty("@lastName", oNewContext);
-		ok(oBinding.isResolved(), "Binding should be resolved!");
+		assert.ok(oBinding.isResolved(), "Binding should be resolved!");
 	});
 
 	QUnit.test("Binding changeEvent", function(assert) {
@@ -122,24 +122,24 @@
 			binding.attachChange(callBackOnChange);
 
 			// model stores the binding first when attach change was called
-			equal(oModel.aBindings.length, 1, "model bindings")
+			assert.equal(oModel.aBindings.length, 1, "model bindings")
 
 			// fire change event
 			binding._fireChange();
-			ok(attach, "call back method was attached");
-			ok(!detach, "call back method was not detached");
+			assert.ok(attach, "call back method was attached");
+			assert.ok(!detach, "call back method was not detached");
 
 			binding.detachChange(callBackOnChange);
 			attach = false;
 			detach = true;
 			//refire change event
 			binding._fireChange();
-			ok(!attach, "call back method was not attached");
-			ok(detach, "call back method was detached");
+			assert.ok(!attach, "call back method was not attached");
+			assert.ok(detach, "call back method was detached");
 			attach = false;
 			detach = true;
 
-			equal(oModel.aBindings.length, 0, "model bindings")
+			assert.equal(oModel.aBindings.length, 0, "model bindings")
 		});
 	});
 

@@ -60,7 +60,7 @@
 				QUnit.test("createControlByURI", function(assert) {
 					var oAssertStub = this.stub(jQuery.sap, "assert", function(bCondition) {
 						if (!bCondition) {
-							ok(false, "Condition check shouldn't fail");
+							assert.ok(false, "Condition check shouldn't fail");
 						}
 					});
 

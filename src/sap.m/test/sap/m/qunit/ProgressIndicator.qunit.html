@@ -66,9 +66,9 @@
 	//basic rendering
 	QUnit.test("basic rendering", function(assert) {
 		var oDomRefPI = jQuery.sap.domById("pi1");
-		equal(oDomRefPI.style.width, "50%", "control width should be the same");
+		assert.equal(oDomRefPI.style.width, "50%", "control width should be the same");
 		var oDomRefPIRemainingBar = jQuery.sap.domById("pi1" + "-remainingBar");
-		ok(oDomRefPIRemainingBar, "the remaining bar  is rendered");
+		assert.ok(oDomRefPIRemainingBar, "the remaining bar  is rendered");
 	});
 
 	QUnit.test("tooltip", function(assert) {
@@ -82,25 +82,25 @@
 		oProgressIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(oProgressIndicator.$().attr("title"), sTooltipText, "Tooltip is in the DOM");
+		assert.strictEqual(oProgressIndicator.$().attr("title"), sTooltipText, "Tooltip is in the DOM");
 
 		sTooltipText = undefined;
 		oProgressIndicator.destroy();
 	});
 
 	QUnit.test("percentValue greater half", function(assert) {
-		equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
-		equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
+		assert.equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
+		assert.equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
 	});
 
 	QUnit.test("showValue", function(assert) {
-		equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
-		equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
+		assert.equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
+		assert.equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
 
 		var sDomRefPIText2Left = jQuery.sap.domById("pi2-textLeft").firstChild;
 		var sDomRefPIText2Right = jQuery.sap.domById("pi2-textRight").firstChild;
-		equal(sDomRefPIText2Left, null, "textValue should not be shown");
-		equal(sDomRefPIText2Right, null, "textValue should not be shown");
+		assert.equal(sDomRefPIText2Left, null, "textValue should not be shown");
+		assert.equal(sDomRefPIText2Right, null, "textValue should not be shown");
 	});
 
 	//test of overwritten method setPercentValue()
@@ -113,12 +113,12 @@
 		sap.ui.getCore().applyChanges();
 
 		oProgIndicator.setPercentValue(0);
-		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), true, "sapMPIValueMin class added");
-		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), false, "sapMPIValueMax not added");
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), true, "sapMPIValueMin class added");
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), false, "sapMPIValueMax not added");
 
 		oProgIndicator.setPercentValue(100);
-		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), false, "sapMPIValueMin removed");
-		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), true, "sapMPIValueMax added");
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), false, "sapMPIValueMin removed");
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), true, "sapMPIValueMax added");
 
 		oProgIndicator.destroy();
 	});
@@ -127,14 +127,14 @@
 		var iPercentTest = 120;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		equal(iPercentAfter, 0, "the value should be set to the default one");
+		assert.equal(iPercentAfter, 0, "the value should be set to the default one");
 	});
 
 	QUnit.test("setPercentValue wrong input (int out of range, too small)", function(assert) {
 		var iPercentTest = -20;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		equal(iPercentAfter, 0, "the value should be set to the default one");
+		assert.equal(iPercentAfter, 0, "the value should be set to the default one");
 	});
 
 
@@ -157,7 +157,7 @@
 		],
 		fnTestForClassesToValuesMapping = function (fPercentValueToSet, sExpectedClass){
 			oProgressIndicator.setPercentValue(fPercentValueToSet);
-			ok($progressIndicator.hasClass(sExpectedClass),
+			assert.ok($progressIndicator.hasClass(sExpectedClass),
 					"the progress indicator has the correct class: " + sExpectedClass + " for " + fPercentValueToSet + "%");
 		};
 
@@ -180,8 +180,8 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
-		strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
+		assert.strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
+		assert.strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
 
 		oProgIndicator.destroy();
 	});
@@ -194,10 +194,10 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemin"), 10), 0, "aria-valuemin should equal 0");
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemax"), 10), 100, "aria-valuemax should equal 100");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemin"), 10), 0, "aria-valuemin should equal 0");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemax"), 10), 100, "aria-valuemax should equal 100");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
 
 		oProgIndicator.destroy();
 	});
@@ -210,16 +210,16 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 50, "aria-valuenow should equal 50");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
 
 		oProgIndicator.setPercentValue(15);
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 15, "aria-valuenow should equal 15");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "15%", "aria-valuetext should be 15%");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 15, "aria-valuenow should equal 15");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "15%", "aria-valuetext should be 15%");
 
 		oProgIndicator.setPercentValue(95);
-		strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 95, "aria-valuenow should equal 95");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "95%", "aria-valuetext should be 95%");
+		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow"), 10), 95, "aria-valuenow should equal 95");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "95%", "aria-valuetext should be 95%");
 
 		oProgIndicator.destroy();
 	});
@@ -233,10 +233,10 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50/100", "aria-valuetext should be '50/100'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50/100", "aria-valuetext should be '50/100'");
 
 		oProgIndicator.setDisplayValue("65/100");
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "65/100", "aria-valuetext should be '65/100'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "65/100", "aria-valuetext should be '65/100'");
 
 		oProgIndicator.destroy();
 	});
@@ -251,17 +251,17 @@
 		sap.ui.getCore().applyChanges();
 
 		var stateText = oProgIndicator._getStateText();
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(sap.ui.core.ValueState.Error);
 		sap.ui.getCore().applyChanges();
 		stateText = oProgIndicator._getStateText();
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(sap.ui.core.ValueState.Warning);
 		sap.ui.getCore().applyChanges();
 		stateText = oProgIndicator._getStateText();
-		strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
+		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.destroy();
 	});
@@ -269,45 +269,45 @@
 	QUnit.test("explicitly setting textDirection to RTL should override the global setting", function(assert) {
 		var $TestSubject = jQuery.sap.byId("pi3").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
-		equal(sDirAttribute, 'rtl', "the attribute 'dir' should have it's value set to rtl");
+		assert.equal(sDirAttribute, 'rtl', "the attribute 'dir' should have it's value set to rtl");
 	});
 
 	QUnit.test("explicitly setting textDirection to LTR should override the global setting", function(assert) {
 		var $TestSubject = jQuery.sap.byId("pi4").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
-		equal(sDirAttribute, 'ltr', "the attribute 'dir' should have it's value set to ltr");
+		assert.equal(sDirAttribute, 'ltr', "the attribute 'dir' should have it's value set to ltr");
 	});
 
 	QUnit.test("not setting textDirection should not change the global text direction", function(assert) {
 		var $TestSubject = jQuery.sap.byId("pi1").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
-		equal(sDirAttribute, undefined, "the attribute 'dir' should not exist");
+		assert.equal(sDirAttribute, undefined, "the attribute 'dir' should not exist");
 	});
 
 	QUnit.test("explicitly setting textDirection to RTL should result in 'dir' attribute added", function(assert) {
 		var $TestSubject = jQuery.sap.byId("pi3").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
 		var bDirAttributeExists = sDirAttribute !== null && sDirAttribute !== undefined;
-		equal(bDirAttributeExists, true, "the attribute 'dir' should exist");
+		assert.equal(bDirAttributeExists, true, "the attribute 'dir' should exist");
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new sap.m.ProgressIndicator({percentValue: 50});
-		ok(!!oControl.getAccessibilityInfo, "ProgressIndicator has a getAccessibilityInfo function");
+		assert.ok(!!oControl.getAccessibilityInfo, "ProgressIndicator has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		strictEqual(oInfo.role, "progressbar", "AriaRole");
-		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
-		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
-		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.strictEqual(oInfo.role, "progressbar", "AriaRole");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
+		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oControl.setPercentValue(10);
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
-		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
-		strictEqual(oInfo.focusable, false, "Focusable");
-		strictEqual(oInfo.enabled, false, "Enabled");
+		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		oControl.destroy();
 	});
 </script>

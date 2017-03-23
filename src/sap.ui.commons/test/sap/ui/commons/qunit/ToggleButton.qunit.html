@@ -24,9 +24,9 @@
 	  Example:
       QUnit.module("Module A");
         QUnit.test("1. a basic test example", function(assert) {
-        ok( true, "this test is fine" );
+        assert.ok( true, "this test is fine" );
         var value = "hello1";
-        equals( value, "hello1", "We expect value to be hello" );
+        assert.equal( value, "hello1", "We expect value to be hello" );
       });
 	  */
 		var sToggleButtonId = "testToggleButton";
@@ -36,26 +36,27 @@
 		oToggleButton2.placeAt("uiArea2");
 
 		QUnit.test("TestGetPressedStateOK", function(assert){
-			equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
-			equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
+			assert.equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
+			assert.equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
 		});
 		QUnit.test("TestPressedToUnpressedOK", function(assert){
 			qutils.triggerEvent("click", sToggleButtonId + "_1");
-			equal(oToggleButton1.getPressed(), false, "getPressedState");
+			assert.equal(oToggleButton1.getPressed(), false, "getPressedState");
 		});
 
 		QUnit.test("TestUnpressedToPressedOK", function(assert){
 			qutils.triggerEvent("click", sToggleButtonId + "_2");
-			equal(oToggleButton2.getPressed(), true, "getPressedState");
+			assert.equal(oToggleButton2.getPressed(), true, "getPressedState");
 		});
 
-		asyncTest("ARIA", function(){
+		QUnit.test("ARIA", function(assert){
+			var done = assert.async();
 			setTimeout(function() {
-				start();
 				var oTB1 = jQuery.sap.domById(sToggleButtonId + "_1");
-				equal(jQuery(oTB1).attr("aria-pressed"),"false","ARIA-PRESSED: for testToggleButton_1");
+				assert.equal(jQuery(oTB1).attr("aria-pressed"),"false","ARIA-PRESSED: for testToggleButton_1");
 				var oTB2 = jQuery.sap.domById(sToggleButtonId + "_2");
-				equal(jQuery(oTB2).attr("aria-pressed"),"true","ARIA-PRESSED: for testToggleButton_2");
+				assert.equal(jQuery(oTB2).attr("aria-pressed"),"true","ARIA-PRESSED: for testToggleButton_2");
+				done();
 			},0);
 		});
 	  </script>

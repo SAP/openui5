@@ -74,6 +74,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		this._bIsAdapted = true;
 
 		this._bReadOnly = true;
+
+		this._aPendingRequests = [];
+		this._aPendingChildrenRequests = [];
 	};
 
 	/**
@@ -103,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		// shortcut for initial load
 		if (this._aNodes.length == 0 && !this.isLengthFinal()) {
-			this._loadData(iStartIndex, iLength + iThreshold);
+			this._loadData(iStartIndex, iLength, iThreshold);
 		}
 
 		// cut out the requested section from the tree
@@ -151,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		//if something is missing on the server indexed nodes -> request it
 		if (iSkip != undefined && iTop) {
-			this._loadData(iSkip, iTop + iThreshold);
+			this._loadData(iSkip, iTop, iThreshold);
 		}
 
 		//check if we are missing some manually expanded nodes
@@ -440,15 +443,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Loads the data based on a level filter.
 	 */
-	ODataTreeBindingFlat.prototype._loadData = function (iSkip, iTop) {
+	ODataTreeBindingFlat.prototype._loadData = function (iSkip, iTop, iThreshold) {
 
-		var sRequestKey = "level <= " + this.getNumberOfExpandedLevels() + "-" + iSkip + "-" + iTop;
+		var oRequest = {
+			iSkip: iSkip,
+			iTop: iTop + (iThreshold || 0), // Top also contains threshold if applicable
+			iThreshold: iThreshold
+			// oRequestHandle: <will be set later>
+		};
 
-		// if we already queued up a request for the respective page/parent --> do nothing
-		// the handles will be aborted on filter/sort calls
-		if (this.mRequestHandles[sRequestKey]) {
-			return;
+		// Order pending requests by index
+		this._aPendingRequests.sort(function(a, b) {
+			return a.iSkip - b.iSkip;
+		});
+
+		// Check pending requests:
+		// - adjust new request if pending requests already cover parts of it (delta determination)
+		// - ignore(/abort) new request if pending requests already cover it in full
+		// - cancel pending requests if the new request covers them in full plus additional data.
+		// handles will be aborted on filter/sort calls
+		for (var i = 0; i < this._aPendingRequests.length; i++) {
+			if (TreeBindingUtils._determineRequestDelta(oRequest, this._aPendingRequests[i]) === false) {
+				return; // ignore this request
+			}
 		}
+
+		// Convenience
+		iSkip = oRequest.iSkip;
+		iTop = oRequest.iTop;
 
 		function _handleSuccess (oData) {
 			var oEntry, sKey, iIndex, i,
@@ -459,7 +481,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 					}
 				};
 
-			delete this.mRequestHandles[sRequestKey];
+			// Remove request from array
+			var idx = this._aPendingRequests.indexOf(oRequest);
+			this._aPendingRequests.splice(idx, 1);
 
 			// $inlinecount is in oData.__count, the $count is just oData
 			if (!this._bLengthFinal) {
@@ -526,7 +550,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		}
 
 		function _handleError (oError) {
-			delete this.mRequestHandles[sRequestKey];
+			// Remove request from array
+			var idx = this._aPendingRequests.indexOf(oRequest);
+			this._aPendingRequests.splice(idx, 1);
 
 			var bAborted = oError.statusCode == 0;
 			if (!bAborted) {
@@ -561,7 +587,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		// TODO: Add additional filters to the read call, as soon as back-end implementations support it
 		// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
-		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
+		oRequest.oRequestHandle = this.oModel.read(this.getPath(), {
 			context: this.oContext,
 			urlParameters: aUrlParameters,
 			filters: [new Filter({
@@ -573,6 +599,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			error: _handleError.bind(this),
 			groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
 		});
+
+		this._aPendingRequests.push(oRequest);
 	};
 
 	ODataTreeBindingFlat.prototype._propagateMagnitudeChange = function(oParent, iDelta) {
@@ -591,20 +619,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 */
 	ODataTreeBindingFlat.prototype._loadChildren = function (oParentNode, iSkip, iTop) {
 
-		var sRequestKey = "" + oParentNode.key + "-" + iSkip + "-" + iTop;
+		var oRequest = {
+			sParent: oParentNode.key,
+			iSkip: iSkip,
+			iTop: iTop
+			// oRequestHandle: <will be set later>
+		};
 
-		// if we already queued up a request for the respective page do nothing
-		// the handles will be aborted on filter/sort calls
-		if (this.mRequestHandles[sRequestKey]) {
-			return;
+		// Order pending requests by index
+		this._aPendingChildrenRequests.sort(function(a, b) {
+			return a.iSkip - b.iSkip;
+		});
+
+		// Check pending requests:
+		// - adjust new request and remove parts that are already covered by pending requests
+		// - ignore (abort) a new request if it is already covered by pending requests
+		// - cancel pending requests if it is covered by the new request and additional data is added
+		// handles will be aborted on filter/sort calls
+		for (var i = 0; i < this._aPendingChildrenRequests.length; i++) {
+			var oPendingRequest = this._aPendingChildrenRequests[i];
+			if (oPendingRequest.sParent === oRequest.sParent) { // Parent key must match
+				if (TreeBindingUtils._determineRequestDelta(oRequest, oPendingRequest) === false) {
+					return; // ignore this request
+				}
+			}
 		}
+
+		// Convenience
+		iSkip = oRequest.iSkip;
+		iTop = oRequest.iTop;
 
 		/**
 		 * Success: Importing the data to the binding's data structures
 		 */
 		function _handleSuccess (oData) {
 
-			delete this.mRequestHandles[sRequestKey];
+			// Remove request from array
+			var idx = this._aPendingChildrenRequests.indexOf(oRequest);
+			this._aPendingChildrenRequests.splice(idx, 1);
 
 			// $inlinecount is in oData.__count
 			// $count is just the 'oData' argument
@@ -677,7 +729,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		 * Error: clear the respective parent node and fire the necessary events.
 		 */
 		function _handleError (oError) {
-			delete this.mRequestHandles[sRequestKey];
+			// Remove request from array
+			var idx = this._aPendingChildrenRequests.indexOf(oRequest);
+			this._aPendingChildrenRequests.splice(idx, 1);
+
 			var bAborted = oError.statusCode == 0;
 			if (!bAborted) {
 				// reset data and trigger update
@@ -713,7 +768,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		// TODO: Add additional filters to the read call, as soon as back-end implementations support it
 		// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
-		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
+		oRequest.oRequestHandle = this.oModel.read(this.getPath(), {
 			context: this.oContext,
 			urlParameters: aUrlParameters,
 			filters: [new Filter({
@@ -726,6 +781,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
 		});
 
+		this._aPendingChildrenRequests.push(oRequest);
 	};
 
 	/**

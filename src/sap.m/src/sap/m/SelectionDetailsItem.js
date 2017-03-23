@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetailsItem.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library", "sap/m/Button", "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer"],
-	function(jQuery, Element, ListItemBase, library, Button, OverflowToolbar, ToolbarSpacer) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library", "sap/m/Button", "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer", 'sap/ui/base/Interface'],
+	function(jQuery, Element, ListItemBase, library, Button, OverflowToolbar, ToolbarSpacer, Interface) {
 	"use strict";
 
 	/**
@@ -14,14 +14,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 
 	SelectionDetailsListItem.prototype.onBeforeRendering = function() {
 		var sType;
-		if (this._getData().getEnableNav()) {
+		if (this._getParentElement().getEnableNav()) {
 			sType = library.ListType.Navigation;
 		} else {
 			sType = library.ListType.Inactive;
 		}
 		this.setProperty("type", sType, true);
 	};
-
 
 	/**
 	 * Constructor for a new SelectionDetailsItem.
@@ -86,18 +85,40 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	};
 
 	/**
+	 * Returns the public facade of the SelectionDetailsItem for non inner framework usages.
+	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
+	 * @protected
+	 */
+	SelectionDetailsItem.prototype._aFacadeMethods = ["setEnableNav"];
+	SelectionDetailsItem.prototype.getFacade = function() {
+		var oFacade = new Interface(this, SelectionDetailsItem.prototype._aFacadeMethods);
+		this.getFacade = jQuery.sap.getter(oFacade);
+		return oFacade;
+	};
+
+	/**
 	 * Builds or changes a SelectionDetailsListItem and returns it.
-	 * @returns {sap.m.SelectionDetailsListItem} The item that has been created or changed
+	 * @returns {sap.m.SelectionDetailsListItem} The item that has been created or changed.
 	 * @private
 	 */
 	SelectionDetailsItem.prototype._getListItem = function() {
 		if (!this._oListItem) {
-			this._oListItem = new SelectionDetailsListItem();
-			this._oListItem._getData = jQuery.sap.getter(this);
+			this._oListItem = new SelectionDetailsListItem({
+				press: [this._onSelectionDetailsListItemPress, this]
+			});
+			this._oListItem._getParentElement = jQuery.sap.getter(this);
 			this._addOverflowToolbar();
 		}
 
 		return this._oListItem;
+	};
+
+	/**
+	 * Handles the press on the SelectionDetailsListItem by triggering the navigate event.
+	 * @private
+	 */
+	SelectionDetailsItem.prototype._onSelectionDetailsListItemPress = function() {
+		this.fireEvent("_navigate");
 	};
 
 	/**
@@ -125,11 +146,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 			oButton = new Button(this.getId() + "-action-" + i, {
 				text: aListItemActions[i].getText(),
 				type : library.ButtonType.Transparent,
-				enabled: aListItemActions[i].getEnabled()
+				enabled: aListItemActions[i].getEnabled(),
+				press: [aListItemActions[i], this._onActionPress, this]
 			});
 			this._oToolbar.addAggregation("content", oButton, true);
 		}
 		this.setAggregation("_overflowToolbar", this._oToolbar, true);
+	};
+
+	/**
+	 * Handles the press on the action button by triggering a private press event on the instance of SelectionDetailsItem.
+	 * @param {sap.ui.base.Event} oEvent of action press
+	 * @param {sap.ui.core.Item} oAction The item that was used in the creation of the action button.
+	 * @private
+	 */
+	SelectionDetailsItem.prototype._onActionPress = function(oEvent, oAction) {
+		this.fireEvent("_actionPress", {
+			action: oAction,
+			items: [this],
+			level: library.SelectionDetailsActionLevel.Item
+		});
 	};
 
 	return SelectionDetailsItem;

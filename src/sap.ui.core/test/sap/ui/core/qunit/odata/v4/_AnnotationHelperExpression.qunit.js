@@ -702,21 +702,19 @@ sap.ui.require([
 		{i : {result : "constant", category : "string", value : "foo"}, o : "foo"}
 	].forEach(function (oFixture) {
 		[false, true].forEach(function (bWrap) {
-			QUnit.test("formatOperand: " + JSON.stringify(oFixture) + ", bWrap = " + bWrap,
-				function (assert) {
-					if (bWrap) {
-						this.mock(Expression).expects("wrapExpression")
-							.withExactArgs(sinon.match.same(oFixture.i))
-							.returns(oFixture.i);
-					}
-					this.mock(Basics).expects("resultToString")
-						.withExactArgs(sinon.match.same(oFixture.i), true)
-						.returns(oFixture.o);
-
-					assert.strictEqual(Expression.formatOperand({}, 42, oFixture.i, bWrap),
-						oFixture.o);
+			QUnit.test("formatOperand: " + JSON.stringify(oFixture) + ", bWrap = " + bWrap, function (assert) {
+				if (bWrap) {
+					this.mock(Expression).expects("wrapExpression")
+						.withExactArgs(sinon.match.same(oFixture.i))
+						.returns(oFixture.i);
 				}
-			);
+				this.mock(Basics).expects("resultToString")
+					.withExactArgs(sinon.match.same(oFixture.i), true)
+					.returns(oFixture.o);
+
+				assert.strictEqual(Expression.formatOperand({}, 42, oFixture.i, bWrap),
+					oFixture.o);
+			});
 		});
 	});
 

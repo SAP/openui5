@@ -79,7 +79,7 @@
 	});
 
 	QUnit.test("Button doubled size?", function(assert) {
-		expect(1);
+		assert.expect(1);
 		var $btn1 = jQuery.sap.byId("button1-cont0_0");
 		var $btn2 = jQuery.sap.byId("button2-cont0_1");
 		var rangeTolerance = 10;
@@ -92,11 +92,11 @@
 		 */
 		var bTest = (w1 + rangeTolerance > w2) && (w1 - rangeTolerance < w2);
 
-		ok(bTest, "Button2 is twice of Button2");
+		assert.ok(bTest, "Button2 is twice of Button2");
 	});
 
 	QUnit.test("Line break works & LayoutData event catched by Layout", function(assert) {
-		expect(3);
+		assert.expect(3);
 		oBtn2.getLayoutData().setLinebreak(true);
 		sap.ui.getCore().applyChanges();
 
@@ -105,15 +105,15 @@
 
 		var bTest = oBtn1DomRef !== null && oBtn2DomRef !== null;
 
-		ok(bTest, "Line break for button");
-		ok(bTest, "LayoutDataChanged event catched by Layout");
+		assert.ok(bTest, "Line break for button");
+		assert.ok(bTest, "LayoutDataChanged event catched by Layout");
 
 		var oRow1DomRef = jQuery.sap.domById("rflLayout-row0");
 		var oRow2DomRef = jQuery.sap.domById("rflLayout-row1");
 
 		bTest = oRow1DomRef !== null && oRow2DomRef !== null;
 
-		ok(bTest, "Buttons put in separate rows with correct IDs");
+		assert.ok(bTest, "Buttons put in separate rows with correct IDs");
 	});
 
 	QUnit.module("Resize", {
@@ -126,8 +126,9 @@
 			sap.ui.getCore().applyChanges();
 		}
 	});
-	asyncTest("Shrink", function() {
-		expect(2);
+	QUnit.test("Shrink", function(assert) {
+		var done = assert.async();
+		assert.expect(2);
 
 		var $layout = jQuery.sap.byId("uiArea1");
 		// this sets the layout to a size where the size falls below the min-width of a button
@@ -140,7 +141,7 @@
 			var $btn2 = jQuery.sap.byId("button2-cont0_1");
 
 			var bTest = ($btn1.length > 0) && ($btn2.length > 0);
-			ok(bTest, "Buttons are logically in one single line");
+			assert.ok(bTest, "Buttons are logically in one single line");
 
 			if (bTest) {
 				var oBtn1Rect = $btn1.rect();
@@ -148,15 +149,16 @@
 
 				bTest = oBtn1Rect.top !== oBtn2Rect.top;
 			}
-			ok(bTest, "Layout wrapped second button");
+			assert.ok(bTest, "Layout wrapped second button");
 
-			start();
+			done();
 
 		}, 100);
 	});
 
-	asyncTest("Enlarge", function() {
-		expect(1);
+	QUnit.test("Enlarge", function(assert) {
+		var done = assert.async();
+		assert.expect(1);
 
 		// have to wait more than 300ms until the layout recognized the minimization
 		setTimeout(function() {
@@ -171,8 +173,8 @@
 				bTest = !!(p1.top === p2.top);
 			}
 
-			ok(bTest, "Layout wrapped back to one line");
-			start();
+			assert.ok(bTest, "Layout wrapped back to one line");
+			done();
 
 		}, 100);
 	});
@@ -186,11 +188,11 @@
 		var oReal = oRFL._getElementRect(jQuery("#myDiv"));
 
 		//check
-		equal(oReal.height, "30.3", "Height check");
-		equal(oReal.width, "25.1", "Width check");
+		assert.equal(oReal.height, "30.3", "Height check");
+		assert.equal(oReal.width, "25.1", "Width check");
 
 		//act and check
-		ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");
+		assert.ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");
 	});
 
 	QUnit.test("The private render manager is lazy initialized", function(assert) {
@@ -199,7 +201,7 @@
 		//act
 		sap.ui.layout.ResponsiveFlowLayout.prototype.init.call(oResponsiveFlowLayout);
 		//check
-		ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created in ResponsiveFlowLayout.prototype.init method, as focus handler is not available yet (no dom yet)");
+		assert.ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created in ResponsiveFlowLayout.prototype.init method, as focus handler is not available yet (no dom yet)");
 
 		//prepare
 		oResponsiveFlowLayout = new sap.ui.layout.ResponsiveFlowLayout();
@@ -207,7 +209,7 @@
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		//check
-		ok(oResponsiveFlowLayout.oRm, "RenderManager should be created during rendering");
+		assert.ok(oResponsiveFlowLayout.oRm, "RenderManager should be created during rendering");
 		//cleanup
 		oResponsiveFlowLayout.destroy();
 	});
@@ -221,7 +223,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//check
-		ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created since the control is not visible");
+		assert.ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created since the control is not visible");
 
 		// set the RenderManager to null and check on exit if the value will be changed
 		// if it stays the same the destroy function of the RenderManager is not called
@@ -231,8 +233,8 @@
 		oResponsiveFlowLayout.destroy();
 
 		// Assert
-		strictEqual(oExitSpy.callCount, 1, "exit is called");
-		strictEqual(oResponsiveFlowLayout.oRm, null, "RenderManager is null since the destroy is not called on it");
+		assert.strictEqual(oExitSpy.callCount, 1, "exit is called");
+		assert.strictEqual(oResponsiveFlowLayout.oRm, null, "RenderManager is null since the destroy is not called on it");
 	});
 
 	QUnit.test("Render manager is destroyed on exit of the control", function(assert) {
@@ -244,14 +246,14 @@
 		var oDestroySpy = sinon.spy(oResponsiveFlowLayout.oRm, "destroy");
 
 		//check
-		ok(oResponsiveFlowLayout.oRm, "RenderManager exists");
+		assert.ok(oResponsiveFlowLayout.oRm, "RenderManager exists");
 
 		//cleanup
 		oResponsiveFlowLayout.destroy();
 
 		// Assert
-		strictEqual(oDestroySpy.callCount, 1, "destroy is called on the RenderManager");
-		strictEqual(oResponsiveFlowLayout.oRm, undefined, "RenderManager is undefined after destroy");
+		assert.strictEqual(oDestroySpy.callCount, 1, "destroy is called on the RenderManager");
+		assert.strictEqual(oResponsiveFlowLayout.oRm, undefined, "RenderManager is undefined after destroy");
 	});
 </script>
 

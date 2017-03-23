@@ -41,6 +41,7 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
 		<script>
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
@@ -58,7 +59,9 @@
 
 			QUnit.module("Given that a MutationObserver is created", {
 				beforeEach : function() {
-					this.oLabel = new sap.m.Label();
+					this.oLabel = new sap.m.Label({
+						text : "text"
+					});
 					this.oMutationObserver = new sap.ui.dt.MutationObserver();
 					this.oLabel.placeAt("content");
 					sap.ui.getCore().applyChanges();

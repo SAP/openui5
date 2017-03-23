@@ -24,9 +24,9 @@
 	  Example:
       QUnit.module("Module A");
         QUnit.test("1. a basic test example", function(assert) {
-        ok( true, "this test is fine" );
+        assert.ok( true, "this test is fine" );
         var value = "hello1";
-        equal( value, "hello1", "We expect value to be hello" );
+        assert.equal( value, "hello1", "We expect value to be hello" );
       });
 	  */
 		</script>

@@ -9,7 +9,9 @@ QUnit.module("ODataTreeBinding - AutoExpand", {
 	}
 });
 
-asyncTest("Selection", function(){
+QUnit.test("Selection", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -23,48 +25,48 @@ asyncTest("Selection", function(){
 
 			// contexts should be now loaded
 			oBinding.setSelectedIndex(1);
-			equal(oBinding.getSelectedIndex(), 1, "Selected index should be 1");
+			assert.equal(oBinding.getSelectedIndex(), 1, "Selected index should be 1");
 
-			ok(bSelectionChanged, "selectionChanged event fired");
-			ok(!bSelectAll, "selectionChanged event don't sets selectAll");
+			assert.ok(bSelectionChanged, "selectionChanged event fired");
+			assert.ok(!bSelectAll, "selectionChanged event don't sets selectAll");
 			bSelectionChanged= false;
 			bSelectAll = false;
 
 			oBinding.setSelectionInterval(2, 4);
-			equal(oBinding.getSelectedIndex(), 4, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [2,3,4], "Selected indices are [2,3,4]");
+			assert.equal(oBinding.getSelectedIndex(), 4, "Selected index should be the biggest index in the selection interval");
+			assert.deepEqual(oBinding.getSelectedIndices(), [2,3,4], "Selected indices are [2,3,4]");
 
 			oBinding.addSelectionInterval(5, 0);
-			equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [0,1,2,3,4,5], "Selected indices are [0,1,2,3,4,5]");
+			assert.equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
+			assert.deepEqual(oBinding.getSelectedIndices(), [0,1,2,3,4,5], "Selected indices are [0,1,2,3,4,5]");
 
 			oBinding.removeSelectionInterval(1,1);
-			equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [0,2,3,4,5], "Selected indices are [0,2,3,4,5]");
+			assert.equal(oBinding.getSelectedIndex(), 5, "Selected index should be the biggest index in the selection interval");
+			assert.deepEqual(oBinding.getSelectedIndices(), [0,2,3,4,5], "Selected indices are [0,2,3,4,5]");
 
 			// 1. select a parent and two of its children
 			// 2. collapse parent and expand it again
 			// 3. check whether the two children are deselected
 			oBinding.setSelectionInterval(1, 3);
-			equal(oBinding.getSelectedIndex(), 3, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [1,2,3], "Selected indices are [1,2,3]");
+			assert.equal(oBinding.getSelectedIndex(), 3, "Selected index should be the biggest index in the selection interval");
+			assert.deepEqual(oBinding.getSelectedIndices(), [1,2,3], "Selected indices are [1,2,3]");
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
 			oBinding.expand(1);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
-			deepEqual(oBinding.getSelectedIndices(), [1], "Only the parent should be selected");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
+			assert.deepEqual(oBinding.getSelectedIndices(), [1], "Only the parent should be selected");
 
 			// 1. select a parent's children on different level
 			// 2. collapse parent and expand it again
 			// 3. check whether the children are deselected
 			oBinding.setSelectionInterval(2,3);
 			oBinding.addSelectionInterval(8,9);
-			equal(oBinding.getSelectedIndex(), 9, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [2,3,8,9], "Selected indices are [2,3,8,9]");
+			assert.equal(oBinding.getSelectedIndex(), 9, "Selected index should be the biggest index in the selection interval");
+			assert.deepEqual(oBinding.getSelectedIndices(), [2,3,8,9], "Selected indices are [2,3,8,9]");
 			oBinding.collapse(0);
 			oBinding.expand(0);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
-			deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
+			assert.deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
 
 			// 1. manually expand a node
 			// 2. select manually loaded nodes and nodes on other level
@@ -78,12 +80,12 @@ asyncTest("Selection", function(){
 			oBinding.detachChange(handler2);
 			oBinding.setSelectedIndex(2);
 			oBinding.addSelectionInterval(4, 6);
-			equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [2,4,5,6], "Selected indices are [2,4,6]");
+			assert.equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
+			assert.deepEqual(oBinding.getSelectedIndices(), [2,4,5,6], "Selected indices are [2,4,6]");
 			oBinding.collapse(1);
 			oBinding.expand(1);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
-			deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index should be cleared");
+			assert.deepEqual(oBinding.getSelectedIndices(), [], "No node is selected");
 
 			// 1. select a node which is after the node that will be expanded in the next step
 			// 2. expand a node before the selected node
@@ -99,13 +101,13 @@ asyncTest("Selection", function(){
 			oBinding.detachChange(handler3);
 
 			oBinding.addSelectionInterval(4, 6);
-			equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
-			deepEqual(oBinding.getSelectedIndices(), [4,5,6,67], "Selected indices are [4,5,6,67]");
+			assert.equal(oBinding.getSelectedIndex(), 6, "Selected index should be the biggest index in the selection interval");
+			assert.deepEqual(oBinding.getSelectedIndices(), [4,5,6,67], "Selected indices are [4,5,6,67]");
 			oBinding.collapse(3);
-			equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
-			deepEqual(oBinding.getSelectedIndices(), [4], "Selected indices are [4]");
+			assert.equal(oBinding.getSelectedIndex(), -1, "The lead selection index is cleared");
+			assert.deepEqual(oBinding.getSelectedIndices(), [4], "Selected indices are [4]");
 
-			start();
+			done();
 		}
 
 		var bSelectionChanged = false;
@@ -121,7 +123,9 @@ asyncTest("Selection", function(){
 	});
 });
 
-asyncTest("Select All", function() {
+QUnit.test("Select All", function(assert) {
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -133,11 +137,11 @@ asyncTest("Select All", function() {
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
 			oBinding.selectAll();
-			equal(oBinding.getSelectedIndex(), 9, "The last selected node sets the selected index");
-			equal(oBinding.getSelectedIndices().length, 10, "All loaded nodes are now selected");
+			assert.equal(oBinding.getSelectedIndex(), 9, "The last selected node sets the selected index");
+			assert.equal(oBinding.getSelectedIndices().length, 10, "All loaded nodes are now selected");
 
-			ok(bSelectionChanged, "selectionChanged event fired");
-			ok(bSelectAll, "selectionChanged event sets selectAll");
+			assert.ok(bSelectionChanged, "selectionChanged event fired");
+			assert.ok(bSelectAll, "selectionChanged event sets selectAll");
 			bSelectionChanged= false;
 			bSelectAll = false;
 
@@ -145,22 +149,22 @@ asyncTest("Select All", function() {
 			// 2. Its children aren't selected anymore
 			oBinding.collapse(1);
 			oBinding.expand(1);
-			ok(!oBinding.isIndexSelected(2), "Child isn't selected anymore");
-			ok(!oBinding.isIndexSelected(7), "Child isn't selected anymore");
+			assert.ok(!oBinding.isIndexSelected(2), "Child isn't selected anymore");
+			assert.ok(!oBinding.isIndexSelected(7), "Child isn't selected anymore");
 
 			// 1. Select all nodes
 			// 2. Manually expand a node
 			// 3. Newly loaded nodes are not selected
 			oBinding.selectAll();
-			ok(oBinding.isIndexSelected(3), "The node that is going to be expanded is selected");
+			assert.ok(oBinding.isIndexSelected(3), "The node that is going to be expanded is selected");
 			oBinding.attachChange(handler2);
 			oBinding.expand(3, true);
 		}
 
 		function handler2 (oEvent) {
 			oBinding.detachChange(handler2);
-			ok(!oBinding.isIndexSelected(4), "The newly loaded node isn't selected");
-			ok(!oBinding.isIndexSelected(66), "The newly loaded node isn't selected");
+			assert.ok(!oBinding.isIndexSelected(4), "The newly loaded node isn't selected");
+			assert.ok(!oBinding.isIndexSelected(66), "The newly loaded node isn't selected");
 
 			oBinding.getContexts(100, 10);
 			oBinding.attachChange(handler3);
@@ -168,9 +172,9 @@ asyncTest("Select All", function() {
 
 		function handler3 (oEvent) {
 			oBinding.detachChange(handler3);
-			ok(oBinding.isIndexSelected(100), "The newly paged node should still be selected");
-			ok(oBinding.isIndexSelected(109), "The newly paged node should still be selected");
-			start();
+			assert.ok(oBinding.isIndexSelected(100), "The newly paged node should still be selected");
+			assert.ok(oBinding.isIndexSelected(109), "The newly paged node should still be selected");
+			done();
 		}
 
 		var bSelectionChanged = false;
@@ -189,7 +193,8 @@ asyncTest("Select All", function() {
 /*
 	Select all: Read only
 */
-asyncTest("getSelectedNodesCount with recursive collapse - read only", function(){
+QUnit.test("getSelectedNodesCount with recursive collapse - read only", function(assert){
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -202,19 +207,19 @@ asyncTest("getSelectedNodesCount with recursive collapse - read only", function(
 			oBinding.detachChange(handler1);
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
 
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
 
 			oBinding.expand(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
 			oBinding.removeSelectionInterval(1, 1);
-			equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+			assert.equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -222,7 +227,9 @@ asyncTest("getSelectedNodesCount with recursive collapse - read only", function(
 	});
 });
 
-asyncTest("getSelectedNodesCount without recursive collapse - read only", function(){
+QUnit.test("getSelectedNodesCount without recursive collapse - read only", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -236,19 +243,19 @@ asyncTest("getSelectedNodesCount without recursive collapse - read only", functi
 
 			oBinding.setCollapseRecursive(false);
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
 
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
 
 			oBinding.expand(1);
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after expanding of first first-level node again");
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after expanding of first first-level node again");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
 			oBinding.removeSelectionInterval(1, 1);
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -256,7 +263,9 @@ asyncTest("getSelectedNodesCount without recursive collapse - read only", functi
 	});
 });
 
-asyncTest("getSelectedNodesCount with expand - read only", function(){
+QUnit.test("getSelectedNodesCount with expand - read only", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -269,8 +278,8 @@ asyncTest("getSelectedNodesCount with expand - read only", function(){
 			oBinding.detachChange(handler1);
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
 			oBinding.attachChange(handler2);
 			oBinding.expand(3, true);
@@ -279,10 +288,10 @@ asyncTest("getSelectedNodesCount with expand - read only", function(){
 
 		var handler2 = function() {
 			oBinding.detachChange(handler2);
-			equal(oBinding.getSelectedNodesCount(), 626, "After expand, no additional nodes get selected");
-			equal(oBinding.getLength(), 689, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "After expand, no additional nodes get selected");
+			assert.equal(oBinding.getLength(), 689, "Correct binding length");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -290,7 +299,9 @@ asyncTest("getSelectedNodesCount with expand - read only", function(){
 	});
 });
 
-asyncTest("getSelectedNodesCount with expand to level", function(){
+QUnit.test("getSelectedNodesCount with expand to level", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -303,8 +314,8 @@ asyncTest("getSelectedNodesCount with expand to level", function(){
 			oBinding.detachChange(handler1);
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 104, "Correct selected nodes count after selectAll call");
-			equal(oBinding.getLength(), 104, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 104, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 104, "Correct binding length");
 
 			oBinding.attachChange(handler2);
 			oBinding.setNumberOfExpandedLevels(2);
@@ -318,12 +329,12 @@ asyncTest("getSelectedNodesCount with expand to level", function(){
 		};
 		var handler3 = function() {
 			oBinding.detachChange(handler2);
-			equal(oBinding.getSelectedNodesCount(), 0, "After expand, nothing is selected (apparently)");	// TODO currently Flat binding looses all selections
+			assert.equal(oBinding.getSelectedNodesCount(), 0, "After expand, nothing is selected (apparently)");	// TODO currently Flat binding looses all selections
 																											// when changing number of expanded levels
 																											// ODataTreeBinding is capable of this
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -331,7 +342,9 @@ asyncTest("getSelectedNodesCount with expand to level", function(){
 	});
 });
 
-asyncTest("getSelectedNodesCount with paging - read only", function(){
+QUnit.test("getSelectedNodesCount with paging - read only", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -344,10 +357,10 @@ asyncTest("getSelectedNodesCount with paging - read only", function(){
 			oBinding.detachChange(handler1);
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
-			equal(oBinding.getLength(), 626, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 626, "Correct binding length");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -358,7 +371,8 @@ asyncTest("getSelectedNodesCount with paging - read only", function(){
 /*
 	Select all: Write
 */
-asyncTest("getSelectedNodesCount with recursive collapse - write", function(){
+QUnit.test("getSelectedNodesCount with recursive collapse - write", function(assert){
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -372,19 +386,19 @@ asyncTest("getSelectedNodesCount with recursive collapse - write", function(){
 			oBinding.removeContext(oBinding.getContextByIndex(2)); // force write-mode
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
 
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
 
 			oBinding.expand(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
-			equal(oBinding.getLength(), 625, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
+			assert.equal(oBinding.getLength(), 625, "Correct binding length");
 
 			oBinding.removeSelectionInterval(1, 1);
-			equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+			assert.equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -392,7 +406,9 @@ asyncTest("getSelectedNodesCount with recursive collapse - write", function(){
 	});
 });
 
-asyncTest("getSelectedNodesCount without recursive collapse - write", function(){
+QUnit.test("getSelectedNodesCount without recursive collapse - write", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -407,19 +423,19 @@ asyncTest("getSelectedNodesCount without recursive collapse - write", function()
 
 			oBinding.setCollapseRecursive(false);
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
 
 			oBinding.collapse(1);
-			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+			assert.equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
 
 			oBinding.expand(1);
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after expanding of first first-level node again");
-			equal(oBinding.getLength(), 625, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after expanding of first first-level node again");
+			assert.equal(oBinding.getLength(), 625, "Correct binding length");
 
 			oBinding.removeSelectionInterval(1, 1);
-			equal(oBinding.getSelectedNodesCount(), 624, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+			assert.equal(oBinding.getSelectedNodesCount(), 624, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -427,7 +443,9 @@ asyncTest("getSelectedNodesCount without recursive collapse - write", function()
 	});
 });
 
-asyncTest("getSelectedNodesCount with paging - write", function(){
+QUnit.test("getSelectedNodesCount with paging - write", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -441,10 +459,10 @@ asyncTest("getSelectedNodesCount with paging - write", function(){
 			oBinding.removeContext(oBinding.getContextByIndex(130)); // force write-mode
 
 			oBinding.selectAll();
-			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
-			equal(oBinding.getLength(), 625, "Correct binding length");
+			assert.equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 625, "Correct binding length");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -452,7 +470,9 @@ asyncTest("getSelectedNodesCount with paging - write", function(){
 	});
 });
 
-asyncTest("getSelectedIndices with initially collapsed (expanded) node and deep node (selected)", function(){
+QUnit.test("getSelectedIndices with initially collapsed (expanded) node and deep node (selected)", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -477,7 +497,7 @@ asyncTest("getSelectedIndices with initially collapsed (expanded) node and deep 
 
 			oBinding.setSelectedIndex(8);
 
-			deepEqual(oBinding.getSelectedIndices(), [8], "Selected indices are correct after expand of initially collapsed node.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [8], "Selected indices are correct after expand of initially collapsed node.");
 
 			oBinding.expand(5);
 
@@ -487,9 +507,9 @@ asyncTest("getSelectedIndices with initially collapsed (expanded) node and deep 
 		var handler3 = function () {
 			oBinding.detachChange(handler3);
 
-			deepEqual(oBinding.getSelectedIndices(), [11], "Selected indices are correct after expand of deep node.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [11], "Selected indices are correct after expand of deep node.");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);
@@ -497,7 +517,9 @@ asyncTest("getSelectedIndices with initially collapsed (expanded) node and deep 
 	});
 });
 
-asyncTest("getSelectedIndices with deep node (expanded) node and deep node (selected)", function(){
+QUnit.test("getSelectedIndices with deep node (expanded) node and deep node (selected)", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -532,7 +554,7 @@ asyncTest("getSelectedIndices with deep node (expanded) node and deep node (sele
 			// 1642
 			oBinding.setSelectedIndex(9);
 
-			deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct initially.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct initially.");
 
 			// 1630
 			oBinding.expand(5);
@@ -543,13 +565,13 @@ asyncTest("getSelectedIndices with deep node (expanded) node and deep node (sele
 		var handler4 = function () {
 			oBinding.detachChange(handler4);
 
-			deepEqual(oBinding.getSelectedIndices(), [12], "Selected indices of deep node is correct after expanding a previous deep node.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [12], "Selected indices of deep node is correct after expanding a previous deep node.");
 
 			// 1630
 			oBinding.collapse(5);
-			deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct after collapse a previous expanded deep node.");
+			assert.deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct after collapse a previous expanded deep node.");
 
-			start();
+			done();
 		};
 
 		oBinding.attachChange(handler1);

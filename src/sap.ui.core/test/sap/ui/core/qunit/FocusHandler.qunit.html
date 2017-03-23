@@ -54,33 +54,33 @@
 		QUnit.module("Basic");
 
 		QUnit.test("Check FocusHandler initialized", function(assert) {
-			ok(oFocusHandler, "FocusHandler initialized");
+			assert.ok(oFocusHandler, "FocusHandler initialized");
 		});
 
 		QUnit.test("Check FocusHandler initial state", function(assert) {
-			equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
-			equal(oFocusHandler.oLast, null, "Initial Value 'Last':");
+			assert.equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
+			assert.equal(oFocusHandler.oLast, null, "Initial Value 'Last':");
 		});
 
 		QUnit.test("Check FocusHandler.getCurrentFocusedControlId", function(assert) {
-			equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current not available:");
+			assert.equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current not available:");
 			oControls["oControl1"].focus();
-			equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current available:");
+			assert.equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current available:");
 			jQuery("#customInput").get(0).focus(); //Reset for next test
 		});
 
 		QUnit.module("Focus Tracking");
 
 		QUnit.test("Check Focus Tracking", function(assert) {
-			equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
+			assert.equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
 			oControls["oControl1"].focus();
-			equal(oFocusHandler.oCurrent, "oControl1", "Value 'Current' after control focus:");
+			assert.equal(oFocusHandler.oCurrent, "oControl1", "Value 'Current' after control focus:");
 			oControls["oControl2"].focus();
-			equal(oFocusHandler.oCurrent, "oControl2", "Value 'Current' after control focus:");
+			assert.equal(oFocusHandler.oCurrent, "oControl2", "Value 'Current' after control focus:");
 			jQuery("#customInput").get(0).focus();
-			equal(oFocusHandler.oCurrent, null, "Value 'Current' after outer focus:");
+			assert.equal(oFocusHandler.oCurrent, null, "Value 'Current' after outer focus:");
 			oControls["oControl3"].focus();
-			equal(oFocusHandler.oCurrent, "oControl3", "Value 'Current' after control focus:");
+			assert.equal(oFocusHandler.oCurrent, "oControl3", "Value 'Current' after control focus:");
 		});
 
 		QUnit.test("Check sapfocusleave Event - Focus to Control", function(assert) {
@@ -88,15 +88,15 @@
 			var bHandlerCalled = false;
 			oControls["oControl1"].onsapfocusleave = function(oEvent){
 				bHandlerCalled = true;
-				equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
-				equal(oEvent.relatedControlId, "oControl2", "Related Control ID of sapfocusleave Event");
+				assert.equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
+				assert.equal(oEvent.relatedControlId, "oControl2", "Related Control ID of sapfocusleave Event");
 				var oFocusInfo = oEvent.relatedControlFocusInfo;
-				ok(oFocusInfo, "Focus Info available");
+				assert.ok(oFocusInfo, "Focus Info available");
 				if(oFocusInfo)
-					equal(oFocusInfo.id, "oControl2", "Related Control FocusInfo ID of sapfocusleave Event");
+					assert.equal(oFocusInfo.id, "oControl2", "Related Control FocusInfo ID of sapfocusleave Event");
 			};
 			oControls["oControl2"].focus();
-			ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+			assert.ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 		});
 
 		QUnit.test("Check sapfocusleave Event - Focus to outer HTML", function(assert) {
@@ -104,22 +104,23 @@
 			var bHandlerCalled = false;
 			oControls["oControl1"].onsapfocusleave = function(oEvent){
 				bHandlerCalled = true;
-				equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
-				equal(oEvent.relatedControlId, null, "Related Control ID of sapfocusleave Event");
-				ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
+				assert.equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
+				assert.equal(oEvent.relatedControlId, null, "Related Control ID of sapfocusleave Event");
+				assert.ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
 			};
 			jQuery("#customInput").get(0).focus();
-			ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+			assert.ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 		});
 
-		asyncTest("Check sapfocusleave Event - Focus lost", function() {
+		QUnit.test("Check sapfocusleave Event - Focus lost", function(assert) {
+			var done = assert.async();
 			oControls["oControl1"].focus();
 			var bHandlerCalled = false;
 			oControls["oControl1"].onsapfocusleave = function(oEvent){
 				bHandlerCalled = true;
-				equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
-				equal(oEvent.relatedControlId, null, "Related Control ID of sapfocusleave Event");
-				ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
+				assert.equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
+				assert.equal(oEvent.relatedControlId, null, "Related Control ID of sapfocusleave Event");
+				assert.ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
 			};
 			//Change the focus handler temporarily
 			var onfocusEvent_ORIG = oFocusHandler.onfocusEvent;
@@ -129,12 +130,13 @@
 
 			var checker = {};
 			checker.check = function(){
-				start();
-				ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+				assert.ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 
 				//Revert the temporary changes
 				oFocusHandler.onfocusEvent = onfocusEvent_ORIG;
 				jQuery("#customInput").get(0).focus();
+
+				done();
 			}
 
 			jQuery.sap.delayedCall(100, checker, "check");
@@ -152,7 +154,7 @@
 			bOk = bOk && oFocusHandler.oCurrent == "oControl3";
 			jQuery("#customInput").get(0).focus();
 			bOk = bOk && oFocusHandler.oCurrent == null;
-			ok(bOk, "Changes successfully reverted");
+			assert.ok(bOk, "Changes successfully reverted");
 		});
 
 	</script>

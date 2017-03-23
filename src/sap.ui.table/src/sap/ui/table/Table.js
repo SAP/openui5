@@ -743,6 +743,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._detachExtensions();
 
 		// cleanup
+		if (this._dataReceivedHandlerId) {
+			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			delete this._dataReceivedHandlerId;
+		}
 		this._cleanUpTimers();
 		this._detachEvents();
 
@@ -3356,13 +3360,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Checks whether the passed oEvent is a touch event.
+	 * Checks whether the event is a touch event.
+	 *
+	 * @param {UIEvent} oEvent The event to check
+	 * @return {boolean} Returns <code>true</code>, if <code>oEvent</code> is a touch event
 	 * @private
-	 * @param {jQuery.Event} oEvent The event to check
-	 * @return {boolean} false
 	 */
-	Table.prototype._isTouchMode = function(oEvent) {
-		return !!oEvent.originalEvent["touches"];
+	Table.prototype._isTouchEvent = function(oEvent) {
+		return oEvent != null &&
+			   oEvent.touches != null || (oEvent.originalEvent != null && oEvent.originalEvent.touches != null);
 	};
 
 	Table.prototype._getRowClone = function(iIndex) {
@@ -3834,7 +3840,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				this.setBusy(true);
 			}
 			this._bPendingRequest = true;
-			jQuery.sap.clearDelayedCall(this._mTimeouts.dataReceivedHandlerId);
+			if (this._dataReceivedHandlerId) {
+				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+				delete this._dataReceivedHandlerId;
+			}
 		}
 	};
 
@@ -3845,19 +3854,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			this._bPendingRequest = false;
-			jQuery.sap.clearDelayedCall(this._mTimeouts.dataReceivedHandlerId);
+			if (this._dataReceivedHandlerId) {
+				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+				delete this._dataReceivedHandlerId;
+			}
 
 			// The table will be set to busy when a request is sent, and set to not busy when a response is received.
 			// When scrolling down fast it can happen that there are multiple requests in the request queue of the binding, which will be processed
 			// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
 			// processed. With this timer we avoid the flickering, as the table will only be set to not busy after all requests have been processed.
 			// The same applied for updating the NoData area.
-			this._mTimeouts.dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
+			this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);
 				}
 				this._updateNoData();
-				delete this._mTimeouts.dataReceivedHandlerId;
+				delete this._dataReceivedHandlerId;
 			});
 		}
 	};
@@ -3961,6 +3973,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 		return null;
+	};
+
+	/**
+	 * Returns the control inside the cell with the given row index (in the <code>rows</code> aggregation)
+	 * and column index (in the <code>columns</code> aggregation or in the list of visible columns only, depending on
+	 * parameter <code>bVisibleColumnIndex</code>).
+	 *
+	 * @param {int} iRowIndex Index of row in the table's <code>rows</code> aggregation
+	 * @param {int} iColumnIndex Index of column in the list of visible columns or in the <code>columns</code> aggregation, as indicated with <code>bVisibleColumnIndex</code>
+	 * @param {boolean} bVisibleColumnIndex If set to <code>true</code>, the given column index is interpreted as index in the list of visible columns, otherwise as index in the <code>columns</code> aggregation
+	 * @return {sap.ui.core.Control} Control inside the cell with the given row and column index or <code>null</code> if no such control exists
+	 * @protected
+	 */
+	Table.prototype.getCellControl = function(iRowIndex, iColumnIndex, bVisibleColumnIndex) {
+		var oInfo = TableUtils.getRowColCell(this, iRowIndex, iColumnIndex, !bVisibleColumnIndex);
+		return oInfo.cell;
 	};
 
 	return Table;

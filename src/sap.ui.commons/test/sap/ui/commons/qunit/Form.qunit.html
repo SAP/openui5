@@ -150,7 +150,7 @@
 		QUnit.test("Form", function(assert) {
 			var oForm = sap.ui.getCore().byId("F1");
 
-			equal(oForm.getLayout().getId(), "Layout1", "getLayout() returns layout.")
+			assert.equal(oForm.getLayout().getId(), "Layout1", "getLayout() returns layout.")
 		});
 
 		QUnit.test("Container", function(assert) {
@@ -159,77 +159,78 @@
 			var oContainer4 = sap.ui.getCore().byId("C4");
 
 			//title must return text if text entered, control if control enterd
-			equal(oContainer1.getTitle(), "Container1", "getTitle(): Title as text entered must return text");
-			ok(oContainer2.getTitle() instanceof sap.ui.commons.Title, "getTitle(): Title as control entered must return control");
+			assert.equal(oContainer1.getTitle(), "Container1", "getTitle(): Title as text entered must return text");
+			assert.ok(oContainer2.getTitle() instanceof sap.ui.commons.Title, "getTitle(): Title as control entered must return control");
 		});
 
 		QUnit.test("Element", function(assert) {
 			var oElement = sap.ui.getCore().byId("C1E1");
 			//label must return text if text entered, control if control enterd
-			equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
-			ok(!(oElement.getAggregation("label") instanceof sap.ui.commons.Label), "Label as text entered must not be an control in aggregation");
-			ok(oElement.getLabelControl() instanceof sap.ui.commons.Label, "Label as text endeted must be an control in getLabelControl");
+			assert.equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
+			assert.ok(!(oElement.getAggregation("label") instanceof sap.ui.commons.Label), "Label as text entered must not be an control in aggregation");
+			assert.ok(oElement.getLabelControl() instanceof sap.ui.commons.Label, "Label as text endeted must be an control in getLabelControl");
 			oElement = sap.ui.getCore().byId("C1E2");
-			ok(oElement.getLabel() instanceof sap.ui.commons.Label, "getLabel(): Label as control entered must return control");
-			equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
+			assert.ok(oElement.getLabel() instanceof sap.ui.commons.Label, "getLabel(): Label as control entered must return control");
+			assert.equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
 		});
 
 		QUnit.module("Rendering");
 
 		QUnit.test("Form", function(assert) {
-			ok(jQuery.sap.domById("F1"), "Form is rendered");
-			ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
-			equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
-			ok(jQuery.sap.domById("F1T"), "Form title is rendered");
-			ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
-			ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
-			ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
-			equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
-			equal(jQuery("#F2T").width(), jQuery("#F2").children().first().innerWidth(), "Form2 title rendered as large as the Layout");
-			ok(jQuery("#F2T").hasClass("sapUiFormTitleEmph"), "Form2 title rendered emphasized");
-			ok(jQuery("#F2T").is("h1"), "Form2 title is rendered as H1 as set on control");
-			ok(!jQuery.sap.domById("F3"), "invisible Form is not rendered");
+			assert.ok(jQuery.sap.domById("F1"), "Form is rendered");
+			assert.ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
+			assert.equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
+			assert.ok(jQuery.sap.domById("F1T"), "Form title is rendered");
+			assert.ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
+			assert.ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
+			assert.ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
+			assert.equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
+			assert.equal(jQuery("#F2T").width(), jQuery("#F2").children().first().innerWidth(), "Form2 title rendered as large as the Layout");
+			assert.ok(jQuery("#F2T").hasClass("sapUiFormTitleEmph"), "Form2 title rendered emphasized");
+			assert.ok(jQuery("#F2T").is("h1"), "Form2 title is rendered as H1 as set on control");
+			assert.ok(!jQuery.sap.domById("F3"), "invisible Form is not rendered");
 		});
 
 		QUnit.test("Container", function(assert) {
-			ok(jQuery.sap.domById("C1"), "Container is rendered");
-			ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
-			ok(jQuery('h4:contains("Container1")').get(0), "Title (as text) is renderd");
-			ok(jQuery.sap.domById("C2T"), "Title (as Control) is rendered");
-			ok(jQuery("#C2T").is("h4"), "Container title is rendered as H4 as default");
-			ok(jQuery("#C3T").is("h3"), "Container title is rendered as H3 as set there");
-			ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
-			ok(jQuery.sap.domById("C3-content"), "Container3 contetnt area is rendered");
-			ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible");
-			ok(!jQuery.sap.domById("C5"), "invisible Container is not rendered");
+			assert.ok(jQuery.sap.domById("C1"), "Container is rendered");
+			assert.ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
+			assert.ok(jQuery('h4:contains("Container1")').get(0), "Title (as text) is renderd");
+			assert.ok(jQuery.sap.domById("C2T"), "Title (as Control) is rendered");
+			assert.ok(jQuery("#C2T").is("h4"), "Container title is rendered as H4 as default");
+			assert.ok(jQuery("#C3T").is("h3"), "Container title is rendered as H3 as set there");
+			assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+			assert.ok(jQuery.sap.domById("C3-content"), "Container3 contetnt area is rendered");
+			assert.ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible");
+			assert.ok(!jQuery.sap.domById("C5"), "invisible Container is not rendered");
 		});
 
 		QUnit.test("Element", function(assert) {
-			ok(jQuery.sap.domById("C1E1"), "Element is rendered");
-			ok(!jQuery.sap.domById("C4E2"), "invisible Element is not rendered");
+			assert.ok(jQuery.sap.domById("C1E1"), "Element is rendered");
+			assert.ok(!jQuery.sap.domById("C4E2"), "invisible Element is not rendered");
 		});
 
 		QUnit.test("FormControls", function(assert) {
-			ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
-			ok(jQuery('label:contains("Label1")').hasClass("sapUiLblReq"), "Label1 is renderd as required");
-			equal(jQuery('label:contains("Label1")').attr("for"), "TF1", "Label1 (as text) is renderd for TextField1");
-			ok(jQuery("#L4").hasClass("sapUiLblReq"), "Label4 is renderd as required");
-			ok(jQuery.sap.domById("TF1"), "TextField is rendered");
-			equal(jQuery("#TF1").attr("aria-labelledby"), jQuery('label:contains("Label1")').attr("id"), "TextField aria-labelledby points to label")
-			equal(jQuery("#TF3").attr("aria-labelledby"), "L4", "TextField3 aria-labelledby points to label")
-			equal(jQuery("#TF4").attr("aria-labelledby"), "L4", "TextField4 aria-labelledby points to label")
-			ok(jQuery.sap.domById("L1"), "Label (as control) is rendered");
-			equal(jQuery("#L1").attr("for"), "DP1-input", "Label1 is renderd for DatePicker");
-			ok(jQuery.sap.domById("DP1"), "DatePicker is rendered");
-			equal(jQuery("#DP1-input").attr("aria-labelledby"), "L1 dummy", "DatePicker aria-labelledby changed (contains reference to label)");
-			ok(jQuery.sap.domById("RBG1"), "RadioButtonGroup is rendered");
-			ok(!jQuery.sap.domById("C4E2T1"), "Content of invisible Element is not rendered");
-			ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");
+			assert.ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
+			assert.ok(jQuery('label:contains("Label1")').hasClass("sapUiLblReq"), "Label1 is renderd as required");
+			assert.equal(jQuery('label:contains("Label1")').attr("for"), "TF1", "Label1 (as text) is renderd for TextField1");
+			assert.ok(jQuery("#L4").hasClass("sapUiLblReq"), "Label4 is renderd as required");
+			assert.ok(jQuery.sap.domById("TF1"), "TextField is rendered");
+			assert.equal(jQuery("#TF1").attr("aria-labelledby"), jQuery('label:contains("Label1")').attr("id"), "TextField aria-labelledby points to label")
+			assert.equal(jQuery("#TF3").attr("aria-labelledby"), "L4", "TextField3 aria-labelledby points to label")
+			assert.equal(jQuery("#TF4").attr("aria-labelledby"), "L4", "TextField4 aria-labelledby points to label")
+			assert.ok(jQuery.sap.domById("L1"), "Label (as control) is rendered");
+			assert.equal(jQuery("#L1").attr("for"), "DP1-input", "Label1 is renderd for DatePicker");
+			assert.ok(jQuery.sap.domById("DP1"), "DatePicker is rendered");
+			assert.equal(jQuery("#DP1-input").attr("aria-labelledby"), "L1 dummy", "DatePicker aria-labelledby changed (contains reference to label)");
+			assert.ok(jQuery.sap.domById("RBG1"), "RadioButtonGroup is rendered");
+			assert.ok(!jQuery.sap.domById("C4E2T1"), "Content of invisible Element is not rendered");
+			assert.ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");
 		});
 
 		QUnit.module("Interaction");
 
-//		QUnit.test("Form", 0, function(assert) {
+//		QUnit.test("Form", function(assert) {
+//			assert.expect(0);
 //
 //		});
 
@@ -237,11 +238,12 @@
 			//expander function
 			var oContainer = sap.ui.getCore().byId("C3");
 			qutils.triggerMouseEvent("C3--Exp", "click");
-			ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after click on expander");
-			equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
+			assert.ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after click on expander");
+			assert.equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
 		});
 
-//		QUnit.test("Element", 0, function(assert) {
+//		QUnit.test("Element", function(assert) {
+//			assert.expect(0);
 //
 //		});
 

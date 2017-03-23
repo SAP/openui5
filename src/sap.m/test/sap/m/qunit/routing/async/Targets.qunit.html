@@ -88,10 +88,10 @@
 						//Act
 						return this.oTargets.display("myTarget", oEventData).then(function() {
 							//Assert
-							strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
+							assert.strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
 							sinon.assert.calledWithExactly(oToSpy, this.oToPage.getId(), this.oTargetConfiguration.transition, oEventData, this.oTargetConfiguration.transitionParameters);
 
-							strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
+							assert.strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
 							sinon.assert.calledWithExactly(oNavigateSpy, {
 								navigationIdentifier: "myTarget",
 								viewLevel: 5

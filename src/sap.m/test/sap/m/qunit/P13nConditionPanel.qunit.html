@@ -65,7 +65,7 @@
 	};
 
 
-	test("Default Values", function(qUnit){
+	QUnit.test("Default Values", function(assert) {
 
 		var nItems= 0;
 
@@ -77,15 +77,15 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
-		qUnit.strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
-		qUnit.strictEqual(oP13nConditionPanel.getOperations().length, nItems, "length of getOperations should be '" + nItems + "'");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		assert.strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
+		assert.strictEqual(oP13nConditionPanel.getOperations().length, nItems, "length of getOperations should be '" + nItems + "'");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("get/SetConditions test", function(qUnit){
+	QUnit.test("get/SetConditions test", function(assert) {
 
 		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.Ascending, "keyField": "Date", "value1": "", "value2": ""};
 		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.Ascending, "keyField": "CompanyCode", "value1": "", "value2": ""};
@@ -105,42 +105,42 @@
 
 		// assertions
 		var nItems= 2;
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
 
 
 		oP13nConditionPanel.addCondition(oCondition2);
 
 		// assertions
 		nItems= 3;
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
 
 
 		oP13nConditionPanel.removeCondition(oCondition1);
 
 		// assertions
 		nItems= 2;
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
 
 
 		oP13nConditionPanel.insertCondition(oCondition1);
 
 		// assertions
 		nItems= 3;
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
 
 
 		oP13nConditionPanel.removeAllConditions();
 
 		// assertions
 		nItems= 0;
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
 
-	test("get/SetKeyFields test", function(qUnit){
+	QUnit.test("get/SetKeyFields test", function(assert) {
 
  		var oKeyField1= {key: "", text: "(none)"};
  		var oKeyField2= {key: "CompanyCode", text: "Code"};
@@ -164,28 +164,28 @@
 
 		// assertions
 		var nItems= 5;
-		qUnit.strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
 
 
 		oP13nConditionPanel.addKeyField(oKeyField6);
 
 		// assertions
 		nItems= 6;
-		qUnit.strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
 
 
  		oP13nConditionPanel.removeAllKeyFields();
 
 		// assertions
 		nItems= 0;
-		qUnit.strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
 
-	test("get/SetOperations test", function(qUnit){
+	QUnit.test("get/SetOperations test", function(assert) {
 
 		var aOperations= [ sap.m.P13nConditionOperation.BT,
 			               sap.m.P13nConditionOperation.EQ,
@@ -210,27 +210,27 @@
 
 		// assertions
 		var nItems= 8;
-		qUnit.strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
 
 
 		oP13nConditionPanel.addOperation(sap.m.P13nConditionOperation.GE);
 
 		// assertions
 		nItems= 9;
-		qUnit.strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
 
 
  		oP13nConditionPanel.removeAllOperations();
 
 		// assertions
 		nItems= 0;
-		qUnit.strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("trigger add and remove test", function(qUnit){
+	QUnit.test("trigger add and remove test", function(assert) {
 
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
@@ -247,20 +247,20 @@
 		oP13nConditionPanel._handleRemoveCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
 
 		var nItems= 2;
-		qUnit.strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
+		assert.strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
 
 		// assertions
 		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
 
 		nItems= 3;
-		qUnit.strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
+		assert.strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
 
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("change KeyField, Operation and Value test", function(qUnit){
+	QUnit.test("change KeyField, Operation and Value test", function(assert) {
 
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
@@ -279,7 +279,7 @@
 		oP13nConditionPanel._handleSelectionChangeOnKeyField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);
 
 		var sKeyField= "CompanyName";
-		qUnit.strictEqual(oP13nConditionPanel.getConditions()[1].keyField, sKeyField, "KeyFields of first condition must be '" + sKeyField + "'.");
+		assert.strictEqual(oP13nConditionPanel.getConditions()[1].keyField, sKeyField, "KeyFields of first condition must be '" + sKeyField + "'.");
 
 
 
@@ -287,21 +287,21 @@
 		oP13nConditionPanel._handleChangeOnOperationField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);
 
 		var sOperation= "Contains";
-		qUnit.strictEqual(oP13nConditionPanel.getConditions()[1].operation, sOperation, "Operation of first condition must be '" + sOperation + "'.");
+		assert.strictEqual(oP13nConditionPanel.getConditions()[1].operation, sOperation, "Operation of first condition must be '" + sOperation + "'.");
 
 
 		oConditionGrid.value1.setValue("foo");
 		oP13nConditionPanel._changeField(oConditionGrid);
 
 		var sValue1 = "foo";
-		qUnit.strictEqual(oP13nConditionPanel.getConditions()[1].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
+		assert.strictEqual(oP13nConditionPanel.getConditions()[1].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
 
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("test ContainerMode", function(qUnit){
+	QUnit.test("test ContainerMode", function(assert) {
 
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
@@ -318,14 +318,14 @@
 		// assertions
 		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
 
-		qUnit.strictEqual(oP13nConditionPanel.getContainerQuery(), true, "ContainerQuery must be true!");
+		assert.strictEqual(oP13nConditionPanel.getContainerQuery(), true, "ContainerQuery must be true!");
 
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("test AlwaysShowAddIcon", function(qUnit){
+	QUnit.test("test AlwaysShowAddIcon", function(assert) {
 
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
@@ -340,13 +340,13 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		qUnit.strictEqual(oP13nConditionPanel.getAlwaysShowAddIcon(), true, "AlwaysShowAddIcon must be true!");
+		assert.strictEqual(oP13nConditionPanel.getAlwaysShowAddIcon(), true, "AlwaysShowAddIcon must be true!");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("test layoutMode", function(qUnit){
+	QUnit.test("test layoutMode", function(assert){
 
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
@@ -361,13 +361,13 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		qUnit.strictEqual(oP13nConditionPanel.getLayoutMode(), "Desktop", "LayoutMode must be Desktop!");
+		assert.strictEqual(oP13nConditionPanel.getLayoutMode(), "Desktop", "LayoutMode must be Desktop!");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("new GroupCondition showIfGrouped must be true", function(qUnit){
+	QUnit.test("new GroupCondition showIfGrouped must be true", function(assert) {
 		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", showIfGrouped: true};
 		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", showIfGrouped: false};
 		aConditions= [oCondition1, oCondition2];
@@ -387,21 +387,21 @@
 
 		// assertions
 		var nItems= 2;
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
 
 		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[1]);
 		oP13nConditionPanel._oConditionsGrid.getContent()[2].keyField.setSelectedKey("group3");
 
 		nItems= 3;
-		qUnit.strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after an Add.");
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
-		qUnit.ok(oP13nConditionPanel.getConditions()[2].showIfGrouped, "showIfGrouped value should return true");
+		assert.strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after an Add.");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		assert.ok(oP13nConditionPanel.getConditions()[2].showIfGrouped, "showIfGrouped value should return true");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	/* test("testing Paste in value fields", function(qUnit){
+	/* QUnit.test("testing Paste in value fields", function(assert) {
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
  			maxConditions: -1
@@ -417,13 +417,13 @@
 		oConditionGrid.value1.onpaste( {});
 
 		// assertions
-		//strictEqual(oP13nConditionPanel.getLayoutMode(), "Desktop", "LayoutMode must be Desktop!");
+		//assert.strictEqual(oP13nConditionPanel.getLayoutMode(), "Desktop", "LayoutMode must be Desktop!");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	}); */
 
-	test("testing maxLength of KeyField", function(qUnit){
+	QUnit.test("testing maxLength of KeyField", function(assert) {
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
  			maxConditions: -1
@@ -439,13 +439,13 @@
 		//oConditionGrid.value1.onpaste();
 
 		// assertions
-		qUnit.strictEqual(oConditionGrid.value1.getMaxLength(), 20, "maxLength must be 20!");
+		assert.strictEqual(oConditionGrid.value1.getMaxLength(), 20, "maxLength must be 20!");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("validate conditions", function(qUnit){
+	QUnit.test("validate conditions", function(assert){
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
  			maxConditions: -1
@@ -464,22 +464,22 @@
 		oP13nConditionPanel.validateConditions();
 
 		// assertions
-		qUnit.strictEqual(oConditionGrid.value1.getValueState(), sap.ui.core.ValueState.Warning, "ValueState must be Warning!");
+		assert.strictEqual(oConditionGrid.value1.getValueState(), sap.ui.core.ValueState.Warning, "ValueState must be Warning!");
 
 		oP13nConditionPanel.removeValidationErrors();
-		qUnit.strictEqual(oConditionGrid.value1.getValueState(), sap.ui.core.ValueState.None, "ValueState must be None!");
+		assert.strictEqual(oConditionGrid.value1.getValueState(), sap.ui.core.ValueState.None, "ValueState must be None!");
 
 		oP13nConditionPanel.validateConditions();
 		oP13nConditionPanel.removeInvalidConditions();
 		var nItems = 2;
-		qUnit.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
 
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("testing condition paginator", function(qUnit){
+	QUnit.test("testing condition paginator", function(assert) {
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
  			maxConditions: -1
@@ -492,7 +492,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		qUnit.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, false, "Paginator buttons are not shown!");
+		assert.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, false, "Paginator buttons are not shown!");
 
  		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.BT, "keyField": "Date", "value1": "1", "value2": "10"};
  		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "a", "value2": ""};
@@ -512,13 +512,13 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		qUnit.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, true, "Paginator buttons are shown!");
+		assert.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, true, "Paginator buttons are shown!");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("testing keyField types", function(qUnit){
+	QUnit.test("testing keyField types", function(assert) {
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
  			maxConditions: -1
@@ -543,27 +543,27 @@
 
 		// assertions
 		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
-		qUnit.strictEqual(oConditionGrid.value1.getValue(), "foo", "value1 of condition 0  must be foo!");
+		assert.strictEqual(oConditionGrid.value1.getValue(), "foo", "value1 of condition 0  must be foo!");
 
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
 		var d= new Date(0);
-		qUnit.strictEqual(oConditionGrid.value1.getDateValue().toDateString(), d.toDateString(),  "value1 of condition 1 must be date!");
+		assert.strictEqual(oConditionGrid.value1.getDateValue().toDateString(), d.toDateString(),  "value1 of condition 1 must be date!");
 
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[2];
-		qUnit.strictEqual(oConditionGrid.value1.getDateValue().toTimeString(), d.toTimeString(),  "value1 of condition 2 must be time!");
+		assert.strictEqual(oConditionGrid.value1.getDateValue().toTimeString(), d.toTimeString(),  "value1 of condition 2 must be time!");
 
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[3];
-		qUnit.strictEqual(oConditionGrid.value1.getSelectedIndex(), 2, "value1 of condition 3 must be select control with selected index 2!");
+		assert.strictEqual(oConditionGrid.value1.getSelectedIndex(), 2, "value1 of condition 3 must be select control with selected index 2!");
 
 		var oFormatter = sap.ui.core.format.NumberFormat.getFloatInstance();
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[4];
-		qUnit.equal(oFormatter.parse(oConditionGrid.value1.getValue()), 1.5, "value1 of condition 4 must be number 1.5");
+		assert.equal(oFormatter.parse(oConditionGrid.value1.getValue()), 1.5, "value1 of condition 4 must be number 1.5");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
 
-	test("testing suggest callback", function(qUnit){
+	QUnit.test("testing suggest callback", function(assert) {
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
  			maxConditions: -1
@@ -586,7 +586,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		qUnit.strictEqual(spy.called, true, "suggest callback called!");
+		assert.strictEqual(spy.called, true, "suggest callback called!");
 
 		// cleanup
 		oP13nConditionPanel.destroy();

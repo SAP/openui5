@@ -85,7 +85,8 @@
 		afterEach: destroyController
 	});
 
-	QUnit.test("autoSave", 5, function(assert) {
+	QUnit.test("autoSave", function(assert) {
+		assert.expect(5);
 		var getPersDataCalls = 0,
 			setPersDataCalls = 0;
 		createController({
@@ -103,37 +104,38 @@
 					return oDeferred.promise();
 				},
 				delPersData: function() {
-					ok(false, "delPersData should not get called.");
+					assert.ok(false, "delPersData should not get called.");
 				}
 			}
 		});
 
-		equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
-		equal(setPersDataCalls, 0, "setPersData of service should be called 0 times.");
-		equal(oController.getAutoSave(), true, "autoSave is true by default.");
+		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
+		assert.equal(setPersDataCalls, 0, "setPersData of service should be called 0 times.");
+		assert.equal(oController.getAutoSave(), true, "autoSave is true by default.");
 
 		oController.setAutoSave(false);
 		oController.setAutoSave(true);
 
-		equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
-		equal(setPersDataCalls, 1, "setPersData of service should be called 1 time.");
+		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
+		assert.equal(setPersDataCalls, 1, "setPersData of service should be called 1 time.");
 
 	});
 
-	QUnit.test("persoService unsupported value", 3, function(assert) {
+	QUnit.test("persoService unsupported value", function(assert) {
+		assert.expect(3);
 		createController();
 
 		try {
 			oController.setPersoService(123);
 		} catch(ex) {
-			equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
+			assert.equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
 				"\"getPersData\", \"setPersData\" and \"delPersData\".", "setPersoService with string should throw an error");
 		}
 
 		try {
 			oController.setPersoService("abc");
 		} catch(ex) {
-			equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
+			assert.equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
 				"\"getPersData\", \"setPersData\" and \"delPersData\".", "setPersoService with string should throw an error");
 		}
 
@@ -142,13 +144,14 @@
 				setPersData: function() {}
 			});
 		} catch(ex) {
-			equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
+			assert.equal(ex.message, "Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
 				"\"getPersData\", \"setPersData\" and \"delPersData\".", "setPersoService: object should contain all required methods");
 		}
 
 	});
 
-	QUnit.test("persoService / table", 1, function(assert) {
+	QUnit.test("persoService / table", function(assert) {
+		assert.expect(1);
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -159,10 +162,10 @@
 					return oDeferred.promise();
 				},
 				setPersData: function() {
-					ok(false, "setPersData should not get called.");
+					assert.ok(false, "setPersData should not get called.");
 				},
 				delPersData: function() {
-					ok(false, "delPersData should not get called.");
+					assert.ok(false, "delPersData should not get called.");
 				}
 			}
 		});
@@ -178,14 +181,15 @@
 		oController.setTable(null);
 		oController.setPersoService(null);
 
-		equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
+		assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 	});
 
 	QUnit.module("Personalization interations", {
 		afterEach: destroyController
 	});
 
-	asyncTest("Column visibility (autoSave)", 16, function() {
+	QUnit.test("Column visibility (autoSave)", 16, function(assert) {
+		var done = assert.async();
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -196,7 +200,7 @@
 					return oDeferred.promise();
 				},
 				setPersData: function(oBundle) {
-					deepEqual(oBundle, {
+					assert.deepEqual(oBundle, {
 						_persoSchemaVersion: "1.0",
 						aColumns: [
 							{ id: "table-Name", order: 0,  visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
@@ -216,7 +220,7 @@
 			}
 		});
 
-		equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
+		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
 		var oNumberColumn = sap.ui.getCore().byId("Number"),
 			oColorColumn = sap.ui.getCore().byId("Color"),
@@ -224,9 +228,9 @@
 			oNameMenu = oNameColumn.getMenu(),
 			sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
 
-		equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-		equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-		equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
+		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+		assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
 		// set "Number" column to invisible
 		oNameMenu.open();
@@ -236,35 +240,36 @@
 		// delay execution to wait for visibility change
 		setTimeout(function() {
 
-			equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
 			// refreshing the data should lead to the same visiblility states
 			oController.refresh();
 
-			equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
+			assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 
-			equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
 			// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
 			oController.getPersoService().delPersData();
 			oController.refresh();
 
-			equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
+			assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
 
-			equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
+			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+			assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
-			start();
+			done();
 		}, 0);
 
 	});
 
-	asyncTest("Column visibility (no autoSave)", 19, function() {
+	QUnit.test("Column visibility (no autoSave)", 19, function(assert) {
+		var done = assert.async();
 		var getPersDataCalls = 0;
 		createController({
 			autoSave: false,
@@ -276,7 +281,7 @@
 					return oDeferred.promise();
 				},
 				setPersData: function(oBundle) {
-					deepEqual(oBundle, {
+					assert.deepEqual(oBundle, {
 						_persoSchemaVersion: "1.0",
 						aColumns: [
 							{ id: "table-Name", order: 0,  visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
@@ -296,7 +301,7 @@
 			}
 		});
 
-		equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
+		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
 		var oNumberColumn = sap.ui.getCore().byId("Number"),
 			oColorColumn = sap.ui.getCore().byId("Color"),
@@ -304,9 +309,9 @@
 			oNameMenu = oNameColumn.getMenu(),
 			sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
 
-		equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-		equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-		equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
+		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+		assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
 		// set "Number" column to invisible
 		oNameMenu.open();
@@ -316,43 +321,44 @@
 		// delay execution to wait for visibility change
 		setTimeout(function() {
 
-			equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
 			// refreshing the data should bring back the old state as nothing has been saved
 			oController.refresh();
 
-			equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
+			assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 
-			equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
+			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
 
 			// modifications via API should also work when manually triggering save
 			oColorColumn.setVisible(true);
 			oController.savePersonalizations();
 
-			equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			equal(oColorColumn.getVisible(), true, "Color column should be invisible.");
-			equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
+			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+			assert.equal(oColorColumn.getVisible(), true, "Color column should be invisible.");
+			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
 
 			// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
 			oController.getPersoService().delPersData();
 			oController.refresh();
 
-			equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
+			assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
 
-			equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
+			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
 
-			start();
+			done();
 		}, 0);
 
 	});
 
-	QUnit.test("Manual table changes via API", 11, function(assert) {
+	QUnit.test("Manual table changes via API", function(assert) {
+		assert.expect(11);
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -363,7 +369,7 @@
 					return oDeferred.promise();
 				},
 				setPersData: function(oBundle) {
-					deepEqual(oBundle, {
+					assert.deepEqual(oBundle, {
 						_persoSchemaVersion: "1.0",
 						aColumns: [
 							{ id: "table-Number", order: 0, visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
@@ -384,15 +390,15 @@
 			}
 		});
 
-		equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
+		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
 		var oNumberColumn = sap.ui.getCore().byId("Number"),
 			oColorColumn = sap.ui.getCore().byId("Color"),
 			oNameColumn = sap.ui.getCore().byId("Name");
 
-		equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-		equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-		equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
+		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+		assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
 		oTable.removeColumn(oNumberColumn);
 		oTable.insertColumn(oNumberColumn, 0);
@@ -408,15 +414,15 @@
 		// manual save is needed (even with autoSave turned on)
 		oController.savePersonalizations();
 
-		equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
-		equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
-		equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
+		assert.equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
+		assert.equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
+		assert.equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
 
 		oController.refresh();
 
-		equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
-		equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
-		equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
+		assert.equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
+		assert.equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
+		assert.equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
 
 	});
 
@@ -424,7 +430,8 @@
 		afterEach: destroyController
 	});
 
-	QUnit.test("CustomDataKey", 11, function(assert) {
+	QUnit.test("CustomDataKey", function(assert) {
+		assert.expect(11);
 
 		var getPersDataCalls = 0;
 		createController({
@@ -436,7 +443,7 @@
 					return oDeferred.promise();
 				},
 				setPersData: function(oBundle) {
-					deepEqual(oBundle, {
+					assert.deepEqual(oBundle, {
 						_persoSchemaVersion: "1.0",
 						aColumns: [
 							{ id: "P13N_table-P13N_Number", order: 0, visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
@@ -465,15 +472,15 @@
 			aColumns[i].data("persoKey", "P13N_" + aColumns[i].getId())
 		}
 
-		equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
+		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
 		var oNumberColumn = sap.ui.getCore().byId("Number"),
 			oColorColumn = sap.ui.getCore().byId("Color"),
 			oNameColumn = sap.ui.getCore().byId("Name");
 
-		equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-		equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-		equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
+		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+		assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
 		oTable.removeColumn(oNumberColumn);
 		oTable.insertColumn(oNumberColumn, 0);
@@ -489,15 +496,15 @@
 		// manual save is needed (even with autoSave turned on)
 		oController.savePersonalizations();
 
-		equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
-		equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
-		equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
+		assert.equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
+		assert.equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
+		assert.equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
 
 		oController.refresh();
 
-		equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
-		equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
-		equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
+		assert.equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
+		assert.equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
+		assert.equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
 
 	});
 

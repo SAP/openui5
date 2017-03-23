@@ -148,7 +148,7 @@ sap.ui.define([
 			this._bHasLoadedChangesFromBackEnd = true;
 
 			if (!oWrappedChangeFileContent.dummy) {
-				Settings._storeInstance(this._sComponentName, oWrappedChangeFileContent);
+				Settings._storeInstance(oWrappedChangeFileContent);
 			}
 
 			if (!oWrappedChangeFileContent.changes || !oWrappedChangeFileContent.changes.changes) {

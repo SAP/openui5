@@ -190,76 +190,76 @@
 
 	// test property accessor methods
 	QUnit.test("TextOk", function(assert) {
-		equals(b1.getText(), sText, "Text - button1 is correct using 'equals()'!");
+		assert.equal(b1.getText(), sText, "Text - button1 is correct using 'equals()'!");
 	});
 
 	QUnit.test("TypeOk", function(assert) {
-		equals(b1.getType(), sButtonTypeDefault, "Button Type: Default - button1 is correct using 'equals()'!");
-		equals(b2.getType(), sButtonTypeBack, "Button Type: Back - button2 is correct using 'equals()'!");
-		equals(b4.getType(), sButtonTypeAccept, "Button Type: Accept - button4 is correct using 'equals()'!");
-		equals(b5.getType(), sButtonTypeReject, "Button Type: Reject - button5 is correct using 'equals()'!");
-		equals(b6.getType(), sButtonTypeTransparent, "Button Type: Transparent - button6 is correct using 'equals()'!");
-		equals(b10.getType(), sButtonTypeUp, "Button Type: Up - button10 is correct using 'equals()'!");
-		equals(b11.getType(), sButtonTypeUnstyled, "Button Type: Uunstyle - button11 is correct using 'equals()'!");
+		assert.equal(b1.getType(), sButtonTypeDefault, "Button Type: Default - button1 is correct using 'equals()'!");
+		assert.equal(b2.getType(), sButtonTypeBack, "Button Type: Back - button2 is correct using 'equals()'!");
+		assert.equal(b4.getType(), sButtonTypeAccept, "Button Type: Accept - button4 is correct using 'equals()'!");
+		assert.equal(b5.getType(), sButtonTypeReject, "Button Type: Reject - button5 is correct using 'equals()'!");
+		assert.equal(b6.getType(), sButtonTypeTransparent, "Button Type: Transparent - button6 is correct using 'equals()'!");
+		assert.equal(b10.getType(), sButtonTypeUp, "Button Type: Up - button10 is correct using 'equals()'!");
+		assert.equal(b11.getType(), sButtonTypeUnstyled, "Button Type: Uunstyle - button11 is correct using 'equals()'!");
 	});
 
 	QUnit.test("ButtonEnabledOk", function(assert) {
-		equals(b1.getEnabled(), bEnabled, "Button is enabled - button1 is correct using 'equals()'!");
-		equals(b2.getEnabled(), bEnabled, "Button is enabled - button2 is correct using 'equals()'!");
-		equals(b4.getEnabled(), bEnabled, "Button is enabled - button4 is correct using 'equals()'!");
-		equals(b5.getEnabled(), bEnabled, "Button is enabled - button5 is correct using 'equals()'!");
-		equals(b6.getEnabled(), bEnabled, "Button is enabled - button6 is correct using 'equals()'!");
-		equals(b7.getEnabled(), bEnabled, "Button is enabled - button7 is correct using 'equals()'!");
-		equals(b8.getEnabled(), bDisabled, "Button is disabled - button8 is correct using 'equals()'!");
-		equals(b9.getEnabled(), bEnabled, "Button is enabled - button9 is correct using 'equals()'!");
-		equals(b10.getEnabled(), bEnabled, "Button is enabled - button10 is correct using 'equals()'!");
+		assert.equal(b1.getEnabled(), bEnabled, "Button is enabled - button1 is correct using 'equals()'!");
+		assert.equal(b2.getEnabled(), bEnabled, "Button is enabled - button2 is correct using 'equals()'!");
+		assert.equal(b4.getEnabled(), bEnabled, "Button is enabled - button4 is correct using 'equals()'!");
+		assert.equal(b5.getEnabled(), bEnabled, "Button is enabled - button5 is correct using 'equals()'!");
+		assert.equal(b6.getEnabled(), bEnabled, "Button is enabled - button6 is correct using 'equals()'!");
+		assert.equal(b7.getEnabled(), bEnabled, "Button is enabled - button7 is correct using 'equals()'!");
+		assert.equal(b8.getEnabled(), bDisabled, "Button is disabled - button8 is correct using 'equals()'!");
+		assert.equal(b9.getEnabled(), bEnabled, "Button is enabled - button9 is correct using 'equals()'!");
+		assert.equal(b10.getEnabled(), bEnabled, "Button is enabled - button10 is correct using 'equals()'!");
 	});
 
 	QUnit.test("ButtonWidthOk", function(assert) {
-		equals(b7.getWidth(), sWidth, "Button width - button7 is correct using 'equals()'!");
+		assert.equal(b7.getWidth(), sWidth, "Button width - button7 is correct using 'equals()'!");
 	});
 
 	QUnit.test("IconOk", function(assert) {
-		equals(b9.getIcon(), sIcon, "Icon for button9 is correct using 'equals()'!");
+		assert.equal(b9.getIcon(), sIcon, "Icon for button9 is correct using 'equals()'!");
 	});
 
 	QUnit.test("TextDirectionRtlOk", function(assert) {
 		var $btnText = jQuery(b13.getDomRef()).find('.sapMBtnContent');
-		equals($btnText.attr("dir"), "rtl", "Control text has 'dir' property set to right-to-left");
+		assert.equal($btnText.attr("dir"), "rtl", "Control text has 'dir' property set to right-to-left");
 	});
 
 	QUnit.test("TextDirectionLtrOk", function(assert) {
 		var $btnText = jQuery(b14.getDomRef()).find('.sapMBtnContent');
-		equals($btnText.attr("dir"), "ltr", "Control text has 'dir' property set to left-to-right");
+		assert.equal($btnText.attr("dir"), "ltr", "Control text has 'dir' property set to left-to-right");
 	});
 
 	QUnit.test("PressOk", function(assert) {
 		try {
 			b1.firePress();
-			ok(false,"Exception should have been thrown!");
+			assert.ok(false,"Exception should have been thrown!");
 		} catch (e) {
-			ok(e == sPressMessage + " - Exception","Button1 - Exception was thrown correctly!");
-			equals(e,sPressMessage + " - Exception","Button1 - Exception was thrown correctly!")
+			assert.ok(e == sPressMessage + " - Exception","Button1 - Exception was thrown correctly!");
+			assert.equal(e,sPressMessage + " - Exception","Button1 - Exception was thrown correctly!")
 		}
 		b2.firePress();
-		ok(msg == sPressMessage, "Button2 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button2 - Event was fired correctly!!");
+		assert.ok(msg == sPressMessage, "Button2 - Event was fired correctly!");
+		assert.equal(msg, sPressMessage, "Button2 - Event was fired correctly!!");
 		b4.firePress();
-		ok(msg == sPressMessage, "Button4 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button4 - Event was fired correctly!!");
+		assert.ok(msg == sPressMessage, "Button4 - Event was fired correctly!");
+		assert.equal(msg, sPressMessage, "Button4 - Event was fired correctly!!");
 		b5.firePress();
-		ok(msg == sPressMessage, "Button5 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button5 - Event was fired correctly!!");
+		assert.ok(msg == sPressMessage, "Button5 - Event was fired correctly!");
+		assert.equal(msg, sPressMessage, "Button5 - Event was fired correctly!!");
 		b6.firePress();
-		ok(msg == sPressMessage, "Button6 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button6 - Event was fired correctly!!");
+		assert.ok(msg == sPressMessage, "Button6 - Event was fired correctly!");
+		assert.equal(msg, sPressMessage, "Button6 - Event was fired correctly!!");
 		b7.firePress();
-		ok(msg == sPressMessage, "Button7 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button7 - Event was fired correctly!!");
+		assert.ok(msg == sPressMessage, "Button7 - Event was fired correctly!");
+		assert.equal(msg, sPressMessage, "Button7 - Event was fired correctly!!");
 	});
 
 	QUnit.test("Visibility", function(assert) {
-		ok(!jQuery.sap.domById("b12"), "Button12 should not be rendered");
+		assert.ok(!jQuery.sap.domById("b12"), "Button12 should not be rendered");
 	});
 
 	function hoverableTestCase (oTestDescription) {
@@ -276,8 +276,8 @@
 		var bHoverable = oButton._isHoverable();
 
 		// Assert
-		strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determined wether is should be hoverable");
-		strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determined wether is should be hoverable");
+		assert.strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determined wether is should be hoverable");
+		assert.strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determined wether is should be hoverable");
 	}
 
 	QUnit.test("Should be hoverable if the button is enabled and in desktop", function(assert) {
@@ -334,10 +334,10 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oResult, oButton, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not re-render");
-		ok(!/.*<script>.*/.test(oButton.$("content").html()), "Did not contain a unescaped script tag");
-		strictEqual(oButton.getText(), sTextToSet, "Did set the non encoded string as value");
+		assert.strictEqual(oResult, oButton, "Should be able to chain");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not re-render");
+		assert.ok(!/.*<script>.*/.test(oButton.$("content").html()), "Did not contain a unescaped script tag");
+		assert.strictEqual(oButton.getText(), sTextToSet, "Did set the non encoded string as value");
 
 		// Cleanup
 		oButton.destroy();
@@ -358,7 +358,7 @@
 		oButton.ontap({ setMarked:  jQuery.noop });
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 0, "Tap event not fired");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Tap event not fired");
 
 		// Cleanup
 		oButton.destroy();
@@ -380,7 +380,7 @@
 		this.clock.tick(1000);
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "The button is focused on touch start");
+		assert.strictEqual(oRenderSpy.callCount, 1, "The button is focused on touch start");
 
 		// Cleanup
 		oButton.destroy();
@@ -403,7 +403,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 0, "No conversation error");
+		assert.strictEqual(oRenderSpy.callCount, 0, "No conversation error");
 
 		// Cleanup
 		oButton.destroy();
@@ -426,7 +426,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 
 		// Cleanup
 		oButton.destroy();
@@ -439,13 +439,13 @@
 		var oButton = new sap.m.Button({text: "MyText",
 			icon: "sap-icon://search"});
 
-		strictEqual(oButton._getTooltip(), undefined, "Should not return tooltip");
+		assert.strictEqual(oButton._getTooltip(), undefined, "Should not return tooltip");
 
 		// Act
 		oButton.setTooltip("MyTooltip");
 
 		// Assert
-		strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the tooltip");
+		assert.strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the tooltip");
 
 		// Cleanup
 		oButton.destroy();
@@ -458,13 +458,13 @@
 		var oButton = new sap.m.Button({tooltip: "MyTooltip",
 			icon: "sap-icon://search"});
 
-		strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the primary tooltip");
+		assert.strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the primary tooltip");
 
 		// Act
 		oButton.setTooltip(null);
 
 		// Assert
-		strictEqual(oButton._getTooltip(), "Search", "Should return the derived tooltip");
+		assert.strictEqual(oButton._getTooltip(), "Search", "Should return the derived tooltip");
 
 		// Cleanup
 		oButton.destroy();
@@ -473,26 +473,26 @@
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oButton = new sap.m.Button({tooltip: "Tooltip"});
-		ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
+		assert.ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
 		var oInfo = oButton.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		strictEqual(oInfo.role, "button", "AriaRole");
-		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
-		strictEqual(oInfo.description, "Tooltip", "Description");
-		strictEqual(oInfo.focusable, true, "Focusable");
-		strictEqual(oInfo.enabled, true, "Enabled");
-		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.strictEqual(oInfo.role, "button", "AriaRole");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.description, "Tooltip", "Description");
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oButton.setText("Text");
 		oButton.setEnabled(false);
 		oInfo = oButton.getAccessibilityInfo();
-		strictEqual(oInfo.description, "Text", "Description");
-		strictEqual(oInfo.focusable, false, "Focusable");
-		strictEqual(oInfo.enabled, false, "Enabled");
+		assert.strictEqual(oInfo.description, "Text", "Description");
+		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		oButton.setText(null);
 		oButton.setTooltip(null);
 		oButton.setIcon("sap-icon://search");
 		oInfo = oButton.getAccessibilityInfo();
-		strictEqual(oInfo.description, "Search", "Description");
+		assert.strictEqual(oInfo.description, "Search", "Description");
 		oButton.destroy();
 	});
 
@@ -509,7 +509,7 @@
 		oButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		equal(oButton.$().attr("aria-labelledby"), "L1 B1", "Label id and Button id are written inside aria-labelledby attribute");
+		assert.equal(oButton.$().attr("aria-labelledby"), "L1 B1", "Label id and Button id are written inside aria-labelledby attribute");
 
 		oLabel.destroy();
 		oButton.destroy();
@@ -531,23 +531,23 @@
 		oButton._activeButton();
 
 		//assert
-		ok(oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as active');
-		equals(oButton._image.getSrc(), sActiveIconURI);
+		assert.ok(oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as active');
+		assert.equal(oButton._image.getSrc(), sActiveIconURI);
 
 		//act
 		oButton._inactiveButton();
 
 		//assert
-		ok(!oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as inactive');
-		equals(oButton._image.getSrc(), sIconURI);
+		assert.ok(!oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as inactive');
+		assert.equal(oButton._image.getSrc(), sIconURI);
 
 		//clean
 		oButton.destroy();
 	});
 
 	QUnit.test("tabindex", function(assert) {
-		equal(b1.$().attr("tabindex"), undefined, "By default the button(root) should have no tabindex");
-		equal(b1.$("inner").attr("tabindex"), undefined, "By default the button(inner) should have no tabindex");
+		assert.equal(b1.$().attr("tabindex"), undefined, "By default the button(root) should have no tabindex");
+		assert.equal(b1.$("inner").attr("tabindex"), undefined, "By default the button(inner) should have no tabindex");
 
 		//Act
 		b1._bExcludeFromTabChain = true;
@@ -556,8 +556,8 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		equal(b1.$().attr("tabindex"), "-1", "Button(root) should have negative tabindex when requested via _bExcludeFromTabChain");
-		equal(b1.$("inner").attr("tabindex"), "-1", "Button(inner) should have negative tabindex when requested via _bExcludeFromTabChain");
+		assert.equal(b1.$().attr("tabindex"), "-1", "Button(root) should have negative tabindex when requested via _bExcludeFromTabChain");
+		assert.equal(b1.$("inner").attr("tabindex"), "-1", "Button(inner) should have negative tabindex when requested via _bExcludeFromTabChain");
 	});
 
 

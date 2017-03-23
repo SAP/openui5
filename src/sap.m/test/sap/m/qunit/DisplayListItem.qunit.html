@@ -26,8 +26,8 @@
 			oDLI.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(oDLI.$().length, 1, "DisplayListItem is in DOM");
-			ok(oDLI.$().hasClass("sapMDLI"), "DisplayListItem has correct class name");
+			assert.strictEqual(oDLI.$().length, 1, "DisplayListItem is in DOM");
+			assert.ok(oDLI.$().hasClass("sapMDLI"), "DisplayListItem has correct class name");
 
 			oDLI.destroy();
 		});
@@ -44,7 +44,7 @@
 			sDisplayListItem.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
+			assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
 
 			sDisplayListItem.destroy();
 		});
@@ -59,7 +59,7 @@
 			sDisplayListItem.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
+			assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
 
 			sDisplayListItem.destroy();
 		});
@@ -73,7 +73,7 @@
 			sDisplayListItem.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), undefined, "The dir attribute should not be rendered");
+			assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), undefined, "The dir attribute should not be rendered");
 
 			sDisplayListItem.destroy();
 		});

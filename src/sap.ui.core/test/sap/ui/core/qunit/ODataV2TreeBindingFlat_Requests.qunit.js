@@ -71,7 +71,9 @@ var fnCountRequestType = function (aRequests, sMethod) {
 	return iTypeCount;
 };
 
-asyncTest("Request Creation - CREATE & UPDATE", function(){
+QUnit.test("Request Creation - CREATE & UPDATE", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -131,40 +133,40 @@ asyncTest("Request Creation - CREATE & UPDATE", function(){
 			});*/
 
 			fnSpyRequestsInDatajs(function (aRequests) {
-				equals(aRequests.length, 6, "Number of Change Requests is correct.");
-				equals(fnCountRequestType(aRequests, "POST"), 4, "Exactly 4 POST requests for CREATEs");
-				equals(fnCountRequestType(aRequests, "PUT"), 2, "Exactly 2 PUT requests for UPDATEs");
+				assert.equal(aRequests.length, 6, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "POST"), 4, "Exactly 4 POST requests for CREATEs");
+				assert.equal(fnCountRequestType(aRequests, "PUT"), 2, "Exactly 2 PUT requests for UPDATEs");
 
 				// check content
-				equals(aRequests[0].method, "POST", "1st CREATE");
-				equals(aRequests[1].method, "POST", "2nd CREATE");
-				equals(aRequests[2].method, "POST", "3rd CREATE");
-				equals(aRequests[3].method, "POST", "4th CREATE");
-				equals(aRequests[4].method, "PUT", "1st UPDATE");
-				equals(aRequests[5].method, "PUT", "2nd UPDATE");
+				assert.equal(aRequests[0].method, "POST", "1st CREATE");
+				assert.equal(aRequests[1].method, "POST", "2nd CREATE");
+				assert.equal(aRequests[2].method, "POST", "3rd CREATE");
+				assert.equal(aRequests[3].method, "POST", "4th CREATE");
+				assert.equal(aRequests[4].method, "PUT", "1st UPDATE");
+				assert.equal(aRequests[5].method, "PUT", "2nd UPDATE");
 
 				// check the correct ordering of created nodes
 				// check the validity of the annotated HIERARCHY_NODE properties in the request
-				equals(aRequests[0].data["HIERARCHY_NODE"], aNewNodeIds[0], "1st CREATED key is correct");
-				equals(aRequests[1].data["HIERARCHY_NODE"], aNewNodeIds[1], "2nd CREATED key is correct");
-				equals(aRequests[2].data["HIERARCHY_NODE"], aNewNodeIds[2], "3rd CREATED key is correct");
-				equals(aRequests[3].data["HIERARCHY_NODE"], aNewNodeIds[3], "4th CREATED key is correct");
+				assert.equal(aRequests[0].data["HIERARCHY_NODE"], aNewNodeIds[0], "1st CREATED key is correct");
+				assert.equal(aRequests[1].data["HIERARCHY_NODE"], aNewNodeIds[1], "2nd CREATED key is correct");
+				assert.equal(aRequests[2].data["HIERARCHY_NODE"], aNewNodeIds[2], "3rd CREATED key is correct");
+				assert.equal(aRequests[3].data["HIERARCHY_NODE"], aNewNodeIds[3], "4th CREATED key is correct");
 
 				// check the parents of the created nodes
-				equals(aRequests[0].data["PARENT_NODE"], "1002", "1st CREATED parent is correct"); // child of 1031
-				equals(aRequests[1].data["PARENT_NODE"], aNewNodeIds[0], "2nd CREATED parent is correct"); // child of 1st new created node
-				equals(aRequests[2].data["PARENT_NODE"], aNewNodeIds[0], "3rd CREATED parent is correct"); // also a child of 1st new created node
-				equals(aRequests[3].data["PARENT_NODE"], "1031", "4th CREATED parent is correct"); //child of 1031
+				assert.equal(aRequests[0].data["PARENT_NODE"], "1002", "1st CREATED parent is correct"); // child of 1031
+				assert.equal(aRequests[1].data["PARENT_NODE"], aNewNodeIds[0], "2nd CREATED parent is correct"); // child of 1st new created node
+				assert.equal(aRequests[2].data["PARENT_NODE"], aNewNodeIds[0], "3rd CREATED parent is correct"); // also a child of 1st new created node
+				assert.equal(aRequests[3].data["PARENT_NODE"], "1031", "4th CREATED parent is correct"); //child of 1031
 
 				// check if the correct nodes have been updated in the correct order
-				equals(aRequests[4].requestUri, "orgHierarchy('1031')", "1st UPDATE is on correct node");
-				equals(aRequests[5].requestUri, "orgHierarchy('1029')", "2nd UPDATE is on correct node");
+				assert.equal(aRequests[4].requestUri, "orgHierarchy('1031')", "1st UPDATE is on correct node");
+				assert.equal(aRequests[5].requestUri, "orgHierarchy('1029')", "2nd UPDATE is on correct node");
 
 				// check if the parent nodes are correctly updated to the newly created nodes
-				equals(aRequests[4].data["PARENT_NODE"], aNewNodeIds[2], "1st UPDATED node parent is correct"); //child of 3rd newly created node
-				equals(aRequests[5].data["PARENT_NODE"], aNewNodeIds[3], "1st UPDATED node parent is correct"); //child of 4th newly created node
+				assert.equal(aRequests[4].data["PARENT_NODE"], aNewNodeIds[2], "1st UPDATED node parent is correct"); //child of 3rd newly created node
+				assert.equal(aRequests[5].data["PARENT_NODE"], aNewNodeIds[3], "1st UPDATED node parent is correct"); //child of 4th newly created node
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -175,7 +177,9 @@ asyncTest("Request Creation - CREATE & UPDATE", function(){
 	});
 });
 
-asyncTest("Request Creation - CREATE & UPDATE & DELETE", function(){
+QUnit.test("Request Creation - CREATE & UPDATE & DELETE", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -228,14 +232,14 @@ asyncTest("Request Creation - CREATE & UPDATE & DELETE", function(){
 
 			// Check Requests
 			fnSpyRequestsInDatajs(function (aRequests) {
-				equals(aRequests.length, 2, "Number of Change Requests is correct.");
-				equals(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 2 DELETE requests.");
+				assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 2 DELETE requests.");
 
 				// Note: the order of the delete requests is important. This should always be ensured in tests!
-				equals(aRequests[0].requestUri, "orgHierarchy('1002')", "First deleted node is 1002.");
-				equals(aRequests[1].requestUri, "orgHierarchy('1029')", "Second deleted node is 1029.");
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1002')", "First deleted node is 1002.");
+				assert.equal(aRequests[1].requestUri, "orgHierarchy('1029')", "Second deleted node is 1029.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -246,7 +250,9 @@ asyncTest("Request Creation - CREATE & UPDATE & DELETE", function(){
 	});
 });
 
-asyncTest("Request Creation - DELETE - 1", function(){
+QUnit.test("Request Creation - DELETE - 1", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -278,13 +284,13 @@ asyncTest("Request Creation - DELETE - 1", function(){
 
 			// Check Requests
 			fnSpyRequestsInDatajs(function (aRequests) {
-				equals(aRequests.length, 1, "Number of Change Requests is correct.");
-				equals(fnCountRequestType(aRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
+				assert.equal(aRequests.length, 1, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
 
 				// Note: the order of the delete requests is important. This should always be ensured in tests!
-				equals(aRequests[0].requestUri, "orgHierarchy('1001')", "First deleted node is 1001.");
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1001')", "First deleted node is 1001.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -295,7 +301,9 @@ asyncTest("Request Creation - DELETE - 1", function(){
 	});
 });
 
-asyncTest("Request Creation - DELETE - 2", function(){
+QUnit.test("Request Creation - DELETE - 2", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -336,13 +344,13 @@ asyncTest("Request Creation - DELETE - 2", function(){
 
 			// Check Requests
 			fnSpyRequestsInDatajs(function (aRequests) {
-				equals(aRequests.length, 1, "Number of Change Requests is correct.");
-				equals(fnCountRequestType(aRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
+				assert.equal(aRequests.length, 1, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
 
 				// Note: the order of the delete requests is important. This should always be ensured in tests!
-				equals(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -353,7 +361,9 @@ asyncTest("Request Creation - DELETE - 2", function(){
 	});
 });
 
-asyncTest("Request Creation - DELETE - 3 - deep to initially collapsed", function(){
+QUnit.test("Request Creation - DELETE - 3 - deep to initially collapsed", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -390,14 +400,14 @@ asyncTest("Request Creation - DELETE - 3 - deep to initially collapsed", functio
 
 			// Check Requests
 			fnSpyRequestsInDatajs(function (aRequests) {
-				equals(aRequests.length, 2, "Number of Change Requests is correct.");
-				equals(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
+				assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
 
 				// Note: the order of the delete requests is important. This should always be ensured in tests!
-				equals(aRequests[0].requestUri, "orgHierarchy('1633')", "First deleted node is 1633.");
-				equals(aRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1633')", "First deleted node is 1633.");
+				assert.equal(aRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -409,7 +419,10 @@ asyncTest("Request Creation - DELETE - 3 - deep to initially collapsed", functio
 });
 
 
-asyncTest("Request Creation - DELETE - 3 - in to deep", function(){
+QUnit.test("Request Creation - DELETE - 3 - in to deep", function(assert){
+
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -456,14 +469,14 @@ asyncTest("Request Creation - DELETE - 3 - in to deep", function(){
 
 			// Check Requests
 			fnSpyRequestsInDatajs(function (aRequests) {
-				equals(aRequests.length, 2, "Number of Change Requests is correct.");
-				equals(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
+				assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
 
 				// Note: the order of the delete requests is important. This should always be ensured in tests!
-				equals(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
-				equals(aRequests[1].requestUri, "orgHierarchy('1642')", "First deleted node is 1642.");
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+				assert.equal(aRequests[1].requestUri, "orgHierarchy('1642')", "First deleted node is 1642.");
 
-				start();
+				done();
 			}, {suppressRequest: true});
 
 			oBinding.submitChanges();
@@ -474,7 +487,9 @@ asyncTest("Request Creation - DELETE - 3 - in to deep", function(){
 	});
 });
 
-asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
+QUnit.test("Request Creation - Refresh after Success - Event-Timing", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -522,16 +537,16 @@ asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
 
 			// check if requests were sent
 			fnSpyRequestsInDatajs(function (aChangeRequests, aOtherRequests) {
-				equals(aChangeRequests.length, 2, "Number of Change Requests is correct.");
-				equals(fnCountRequestType(aChangeRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
-				equals(fnCountRequestType(aChangeRequests, "POST"), 1, "Exactly 1 CREATE/POST requests.");
+				assert.equal(aChangeRequests.length, 2, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aChangeRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
+				assert.equal(fnCountRequestType(aChangeRequests, "POST"), 1, "Exactly 1 CREATE/POST requests.");
 
 				// Note: the create requests are performed before the DELETEs
-				equals(aChangeRequests[0].requestUri, "orgHierarchy", "Newly created node is POSTed against the collection.");
-				equals(aChangeRequests[0].data.PARENT_NODE, "1005", "Newly created node has correct parent node value.");
+				assert.equal(aChangeRequests[0].requestUri, "orgHierarchy", "Newly created node is POSTed against the collection.");
+				assert.equal(aChangeRequests[0].data.PARENT_NODE, "1005", "Newly created node has correct parent node value.");
 
 				// Note: the order of the delete requests is important. This should always be ensured in tests!
-				equals(aChangeRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+				assert.equal(aChangeRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
 			}, {suppressRequest: false});
 
 			var bSuccessBeforeRefresh = false;
@@ -542,16 +557,16 @@ asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
 			//    1. when the refresh is forced by the model
 			//    2. when the batch returns with successfully performed changes (refresh triggered by the binding)
 			oBinding.attachRefresh(function () {
-				ok(bSuccessBeforeRefresh, "Refresh fired after successful submitChanges.");
-				start();
+				assert.ok(bSuccessBeforeRefresh, "Refresh fired after successful submitChanges.");
+				done();
 			});
 
 			// check the application's success handler call
 			oBinding.submitChanges({
 				success: function (oBatchResponse) {
-					ok("Application success handler called for submitted change-request");
-					equals(oBatchResponse.__batchResponses[0].__changeResponses[0].statusCode, "201", "Status-Code 201: Successful CREATE/POST request.");
-					equals(oBatchResponse.__batchResponses[0].__changeResponses[1].statusCode, "204", "Status-Code 204: Successful DELETE request.");
+					assert.ok("Application success handler called for submitted change-request");
+					assert.equal(oBatchResponse.__batchResponses[0].__changeResponses[0].statusCode, "201", "Status-Code 201: Successful CREATE/POST request.");
+					assert.equal(oBatchResponse.__batchResponses[0].__changeResponses[1].statusCode, "204", "Status-Code 204: Successful DELETE request.");
 
 					bSuccessBeforeRefresh = true;
 				}
@@ -563,7 +578,9 @@ asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
 	});
 });
 
-asyncTest("Request Creation - No Refresh after Error - Event-Timing", function(){
+QUnit.test("Request Creation - No Refresh after Error - Event-Timing", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -623,11 +640,11 @@ asyncTest("Request Creation - No Refresh after Error - Event-Timing", function()
 			// check the application's success handler call
 			oBinding.submitChanges({
 				success: function (oBatchResponse) {
-					ok("Application success handler called for submitted change-request");
-					equals(oBatchResponse.__batchResponses[0].response.statusCode, "404", "Error returned by the MockServer");
+					assert.ok("Application success handler called for submitted change-request");
+					assert.equal(oBatchResponse.__batchResponses[0].response.statusCode, "404", "Error returned by the MockServer");
 
-					ok(bNoRefresh, "No Refresh was fired after a broken change-request");
-					start();
+					assert.ok(bNoRefresh, "No Refresh was fired after a broken change-request");
+					done();
 				}
 			});
 		}
@@ -637,7 +654,9 @@ asyncTest("Request Creation - No Refresh after Error - Event-Timing", function()
 	});
 });
 
-asyncTest("addContexts() & removeContext() API - Array Arguments and Requests", function(){
+QUnit.test("addContexts() & removeContext() API - Array Arguments and Requests", function(assert){
+
+	var done = assert.async();
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
@@ -669,12 +688,12 @@ asyncTest("addContexts() & removeContext() API - Array Arguments and Requests", 
 
 			oBinding.expand(7);
 
-			equals(oBinding.getContextByIndex(8), oCtxA, "1st added context is correct.");
-			equals(oBinding.getContextByIndex(9), oN1004.context, "2nd added context is correct.");
-			equals(oBinding.getContextByIndex(10), oCtxB, "3rd added context is correct.");
-			equals(oBinding.getContextByIndex(11), oN1009.context, "4th added context is correct.");
+			assert.equal(oBinding.getContextByIndex(8), oCtxA, "1st added context is correct.");
+			assert.equal(oBinding.getContextByIndex(9), oN1004.context, "2nd added context is correct.");
+			assert.equal(oBinding.getContextByIndex(10), oCtxB, "3rd added context is correct.");
+			assert.equal(oBinding.getContextByIndex(11), oN1009.context, "4th added context is correct.");
 
-			start();
+			done();
 		}
 
 		oBinding.attachChange(handler1);

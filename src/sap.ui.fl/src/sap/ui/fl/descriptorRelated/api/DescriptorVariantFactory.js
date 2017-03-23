@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
-	"sap/ui/fl/descriptorRelated/api/Settings"
+	"sap/ui/fl/registry/Settings"
 ], function(DescriptorInlineChangeFactory, LrepUtils, LrepConnector, Utils, Settings) {
 	"use strict";
 
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.isAppVariantRoot=true]
 	 * @param {object} mFileContent file content of the existing descriptor variant to be provided if descriptor variant shall be created from an existing
 	 * @param {boolean} [bDeletion=false] deletion indicator to be provided if descriptor variant shall be deleted
-	 * @param {sap.ui.fl.descriptorRelated.api.Settings} oSettings settings
+	 * @param {sap.ui.fl.registry.Settings} oSettings settings
 	 *
 	 * @constructor
 	 * @alias sap.ui.fl.descriptorRelated.api.DescriptorVariant
@@ -264,8 +264,8 @@ sap.ui.define([
 		if (mParameters.isAppVariantRoot){
 			Utils.checkParameterAndType(mParameters, "isAppVariantRoot", "boolean");
 		}
-
-		return Settings.getInstance().then(function(oSettings) {
+		//TODO: add a correct application component name
+		return Settings.getInstance("dummy").then(function(oSettings) {
 			return Promise.resolve( new DescriptorVariant(mParameters,null,false,oSettings) );
 		});
 	};
@@ -288,7 +288,8 @@ sap.ui.define([
 		var _mResult;
 		return DescriptorVariantFactory._getDescriptorVariant(sId).then(function(mResult){
 			_mResult = mResult;
-			return Settings.getInstance();
+			//TODO: add a correct application component name
+			return Settings.getInstance("dummy");
 		}).then( function(oSettings){
 			var mDescriptorVariantJSON = _mResult.response;
 			if (!jQuery.isPlainObject(mDescriptorVariantJSON)) {
@@ -319,7 +320,8 @@ sap.ui.define([
 		var _mResult;
 		return DescriptorVariantFactory._getDescriptorVariant(sId).then(function(mResult){
 			_mResult = mResult;
-			return Settings.getInstance();
+			//TODO: add a correct application component name
+			return Settings.getInstance("dummy");
 		}).then( function(oSettings){
 			var mDescriptorVariantJSON = JSON.parse(_mResult.response);
 			return Promise.resolve(new DescriptorVariant(mParameter,mDescriptorVariantJSON,true,oSettings));

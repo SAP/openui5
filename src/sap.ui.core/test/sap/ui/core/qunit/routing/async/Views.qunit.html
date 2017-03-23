@@ -58,7 +58,8 @@
 					}
 				});
 
-				QUnit.asyncTest("Should create a view", function (assert) {
+				QUnit.test("Should create a view", function (assert) {
+					var done = assert.async();
 					var fnStub = this.stub(sap.ui, "view", function () {
 							return this.oView;
 						}.bind(this));
@@ -71,12 +72,13 @@
 						assert.strictEqual(oView, this.oView, "the view was created");
 						assert.strictEqual(fnStub.callCount, 1, "the stub was invoked");
 						fnStub.restore();
-						QUnit.start();
+						done();
 					}.bind(this));
 				});
 
 
-				QUnit.asyncTest("Should set a view to the cache", function (assert) {
+				QUnit.test("Should set a view to the cache", function (assert) {
+					var done = assert.async();
 					var that = this,
 							oReturnValue,
 							fnStub = this.stub(sap.ui, "view", function () {
@@ -93,7 +95,7 @@
 						assert.strictEqual(oReturnValue, this.oViews, "able to chain this function");
 						assert.strictEqual(fnStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
 						fnStub.restore();
-						QUnit.start();
+						done();
 					}.bind(this));
 				});
 
@@ -216,7 +218,8 @@
 					}
 				});
 
-				QUnit.asyncTest("Should log an error if the options are missing", function (assert) {
+				QUnit.test("Should log an error if the options are missing", function (assert) {
+					var done = assert.async();
 					// Arrange
 					var fnStub = this.stub(sap.ui, "view", this.fnView);
 					var fnErrorSpy = this.spy(jQuery.sap.log, "error");
@@ -232,7 +235,8 @@
 					}.bind(this));
 				});
 
-				QUnit.asyncTest("Should log an error if the viewName is missing", function (assert) {
+				QUnit.test("Should log an error if the viewName is missing", function (assert) {
+					var done = assert.async();
 					// Arrange
 					var fnStub = this.stub(sap.ui, "view", this.fnView);
 					var fnErrorSpy = this.spy(jQuery.sap.log, "error");
@@ -244,7 +248,7 @@
 						sinon.assert.calledWith(fnErrorSpy, sinon.match(/name for the view has to be defined/), sinon.match(this.oViews));
 						fnErrorSpy.restore();
 						fnStub.restore();
-						QUnit.start();
+						done();
 					}.bind(this));
 				});
 
@@ -262,9 +266,9 @@
 					// Arrange
 					var oParameters = { foo : "bar" },
 							fnEventSpy = this.spy(function(oEvent, oActualData) {
-								strictEqual(oActualData, oData, "the data is correct");
-								strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
-								strictEqual(this, oListener, "the this pointer is correct");
+								assert.strictEqual(oActualData, oData, "the data is correct");
+								assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+								assert.strictEqual(this, oListener, "the this pointer is correct");
 							}),
 							oListener = {},
 							oData = { some : "data" },

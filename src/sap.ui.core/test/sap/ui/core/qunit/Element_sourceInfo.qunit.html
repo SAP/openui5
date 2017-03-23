@@ -21,7 +21,7 @@
 
 	QUnit.test("only elements created from XML view should have _sapui_declarativeSourceInfo", function(assert) {
 		var element = new sap.ui.core.Element();
-		notOk(element._sapui_declarativeSourceInfo);
+		assert.notOk(element._sapui_declarativeSourceInfo);
 	});
 
 	QUnit.test("Cloning elements with declarativeSourceInfo", function(assert) {
@@ -30,8 +30,8 @@
 			xmlNode: {}
 		};
 		var clone = element.clone();
-		notStrictEqual(clone._sapui_declarativeSourceInfo, element._sapui_declarativeSourceInfo);
-		deepEqual(clone._sapui_declarativeSourceInfo.xmlNode, element._sapui_declarativeSourceInfo.xmlNode);
+		assert.notStrictEqual(clone._sapui_declarativeSourceInfo, element._sapui_declarativeSourceInfo);
+		assert.deepEqual(clone._sapui_declarativeSourceInfo.xmlNode, element._sapui_declarativeSourceInfo.xmlNode);
 	});
 
 

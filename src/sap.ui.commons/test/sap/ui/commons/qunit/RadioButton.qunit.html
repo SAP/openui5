@@ -124,8 +124,8 @@
 
 				sap.ui.getCore().applyChanges();
 
-				ok(rb1, "rb1 should not be null");
-				ok(rb2, "rb2 should not be null");
+				assert.ok(rb1, "rb1 should not be null");
+				assert.ok(rb2, "rb2 should not be null");
 			},
 			afterEach : function() {
 				rb1 = null;
@@ -136,33 +136,33 @@
 		// test control properties
 
 		QUnit.test("TextOk", function(assert) {
-			strictEqual(rb1.getText(), sText, "rb1.getText() returns wrong result");
-			strictEqual(rb2.getText(), sText, "rb2.getText() returns wrong result");
+			assert.strictEqual(rb1.getText(), sText, "rb1.getText() returns wrong result");
+			assert.strictEqual(rb2.getText(), sText, "rb2.getText() returns wrong result");
 		});
 
 		QUnit.test("WidthOk", function(assert) {
-			strictEqual(rb1.getWidth(), sWidth, "rb1.getWidth() returns wrong result");
-			strictEqual(rb2.getWidth(), sWidth, "rb2.getWidth() returns wrong result");
+			assert.strictEqual(rb1.getWidth(), sWidth, "rb1.getWidth() returns wrong result");
+			assert.strictEqual(rb2.getWidth(), sWidth, "rb2.getWidth() returns wrong result");
 		});
 
 		QUnit.test("EnabledOk", function(assert) {
-			strictEqual(rb1.getEnabled(), bEnabled, "rb1.getEnabled() returns wrong result");
-			strictEqual(rb2.getEnabled(), bEnabled, "rb2.getEnabled() returns wrong result");
+			assert.strictEqual(rb1.getEnabled(), bEnabled, "rb1.getEnabled() returns wrong result");
+			assert.strictEqual(rb2.getEnabled(), bEnabled, "rb2.getEnabled() returns wrong result");
 		});
 
 		QUnit.test("VisibleOk", function(assert) {
-			strictEqual(rb1.getVisible(), bVisible, "rb1.getVisible() returns wrong result");
-			strictEqual(rb2.getVisible(), bVisible, "rb2.getVisible() returns wrong result");
+			assert.strictEqual(rb1.getVisible(), bVisible, "rb1.getVisible() returns wrong result");
+			assert.strictEqual(rb2.getVisible(), bVisible, "rb2.getVisible() returns wrong result");
 		});
 
 		QUnit.test("TooltipOk", function(assert) {
-			strictEqual(rb1.getTooltip(), sTooltip, "rb1.getTooltip() returns wrong result");
-			strictEqual(rb2.getTooltip(), sTooltip, "rb2.getTooltip() returns wrong result");
+			assert.strictEqual(rb1.getTooltip(), sTooltip, "rb1.getTooltip() returns wrong result");
+			assert.strictEqual(rb2.getTooltip(), sTooltip, "rb2.getTooltip() returns wrong result");
 		});
 
 		QUnit.test("SelectedOk", function(assert) {
-			strictEqual(rb1.getSelected(), bSelected, "rb1.getSelected() returns wrong result");
-			strictEqual(rb2.getSelected(), bSelected, "rb2.getSelected() returns wrong result");
+			assert.strictEqual(rb1.getSelected(), bSelected, "rb1.getSelected() returns wrong result");
+			assert.strictEqual(rb2.getSelected(), bSelected, "rb2.getSelected() returns wrong result");
 		});
 
 
@@ -175,14 +175,14 @@
 				rb1.fireSelect();
 				fail("exception should have been thrown when rb1.fireSelect() was called!");
 			} catch (e) {
-				strictEqual(e, sMessage, "rb1.firePress()");
+				assert.strictEqual(e, sMessage, "rb1.firePress()");
 			}
 
 			try {
 				rb2.fireSelect();
 				fail("exception should have been thrown when rb2.fireSelect() was called!");
 			} catch (e) {
-				strictEqual(e, sMessage, "rb2.firePress()");
+				assert.strictEqual(e, sMessage, "rb2.firePress()");
 			}
 		});
 
@@ -190,7 +190,7 @@
 			rb1.detachSelect(foo);
 			try {
 				rb1.fireSelect();
-				ok(true, "No event and thus no exception should be triggered!");
+				assert.ok(true, "No event and thus no exception should be triggered!");
 			} catch (e) {
  				fail("should not occur");
 			}
@@ -212,68 +212,68 @@
 
 		QUnit.test("MetadataOk", function(assert) {
 			var oMetadata = rb1.getMetadata();
-			ok(oMetadata, "rb1.getMetadata() should not be null");
-			ok(oMetadata.getParent(), "rb1.getMetadata().getParent() should not be null");
-			ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
-			strictEqual(oMetadata.getProperties()["text"]["type"], "string");
-			ok(isEmpty(oMetadata.getAggregations()));
+			assert.ok(oMetadata, "rb1.getMetadata() should not be null");
+			assert.ok(oMetadata.getParent(), "rb1.getMetadata().getParent() should not be null");
+			assert.ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
+			assert.strictEqual(oMetadata.getProperties()["text"]["type"], "string");
+			assert.ok(isEmpty(oMetadata.getAggregations()));
 			var oAssociations = oMetadata.getAssociations();
-			strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
-			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
-			strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
-			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
+			assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
+			assert.ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
+			assert.strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
+			assert.ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
 		QUnit.test("OffsetWidthOk", function(assert) {
 			//test the pixel perfect width of the control
 			var oDomRef = window.document.getElementById("rb1");
-			strictEqual(oDomRef.offsetWidth, parseInt(rb1.getWidth()), "rb1.offsetWidth should equal parseInt(rb1.getWidth())");
+			assert.strictEqual(oDomRef.offsetWidth, parseInt(rb1.getWidth()), "rb1.offsetWidth should equal parseInt(rb1.getWidth())");
 			rb2.setWidth("1000px");
 			sap.ui.getCore().applyChanges();
 			oDomRef = window.document.getElementById("rb2");
-			strictEqual(oDomRef.offsetWidth, 1000, "rb2.offsetWidth should equal 1000");
+			assert.strictEqual(oDomRef.offsetWidth, 1000, "rb2.offsetWidth should equal 1000");
     });
 
 		// toggle back and forth
 		QUnit.test("SelectOk", function(assert) {
-			strictEqual(rb1.getSelected(), bSelected, "rb1.getSelected() returns wrong result");
+			assert.strictEqual(rb1.getSelected(), bSelected, "rb1.getSelected() returns wrong result");
 
 			// select the first button - it should be selected
 			rb1.setSelected(true);
-			strictEqual(rb1.getSelected(), true, "rb1.getSelected() returns wrong result after selecting");
-			strictEqual(rb2.getSelected(), false, "rb2.getSelected() returns wrong result after rb1 has been selected");
+			assert.strictEqual(rb1.getSelected(), true, "rb1.getSelected() returns wrong result after selecting");
+			assert.strictEqual(rb2.getSelected(), false, "rb2.getSelected() returns wrong result after rb1 has been selected");
 
 			// select the second button - it should be selected and the first one de-selected
 			rb2.setSelected(true);
-			strictEqual(rb1.getSelected(), false, "rb1.getSelected() returns wrong result after rb2 has been selected");
-			strictEqual(rb2.getSelected(), true, "rb2.getSelected() returns wrong result after selecting");
+			assert.strictEqual(rb1.getSelected(), false, "rb1.getSelected() returns wrong result after rb2 has been selected");
+			assert.strictEqual(rb2.getSelected(), true, "rb2.getSelected() returns wrong result after selecting");
 		});
 
 		QUnit.test("CssClassesOk", function(assert) {
 			var sClasses = window.document.getElementById("rb1").className;
-			notStrictEqual(sClasses, null, "sClasses is null");
-			ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
-			ok(sClasses.indexOf("sapUiRbStd") == -1, "rb1 className is containing 'sapUiRbStd'");
-			ok(sClasses.indexOf("sapUiRbDis") > -1, "rb1 className is missing 'sapUiRbDis'");
-			ok(sClasses.indexOf("sapUiRbRo") == -1, "rb1 className is containing 'sapUiRbRo'");
+			assert.notStrictEqual(sClasses, null, "sClasses is null");
+			assert.ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
+			assert.ok(sClasses.indexOf("sapUiRbStd") == -1, "rb1 className is containing 'sapUiRbStd'");
+			assert.ok(sClasses.indexOf("sapUiRbDis") > -1, "rb1 className is missing 'sapUiRbDis'");
+			assert.ok(sClasses.indexOf("sapUiRbRo") == -1, "rb1 className is containing 'sapUiRbRo'");
 
 			rb1.setEnabled(true);
 			sap.ui.getCore().applyChanges();
 			sClasses = window.document.getElementById("rb1").className; // after re-rendering it is a NEW HTML element!!
 
-			ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
-			ok(sClasses.indexOf("sapUiRbStd") > -1, "rb1 className is missing 'sapUiRbStd'");
-			ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
-			ok(sClasses.indexOf("sapUiRbRo") == -1, "rb1 className is containing 'sapUiRbRo'");
+			assert.ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
+			assert.ok(sClasses.indexOf("sapUiRbStd") > -1, "rb1 className is missing 'sapUiRbStd'");
+			assert.ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
+			assert.ok(sClasses.indexOf("sapUiRbRo") == -1, "rb1 className is containing 'sapUiRbRo'");
 
 			rb1.setEditable(false);
 			sap.ui.getCore().applyChanges();
 			sClasses = window.document.getElementById("rb1").className; // after re-rendering it is a NEW HTML element!!
 
-			ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
-			ok(sClasses.indexOf("sapUiRbStd") == -1, "rb1 className is containing 'sapUiRbStd'");
-			ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
-			ok(sClasses.indexOf("sapUiRbRo") > -1, "rb1 className is missing 'sapUiRbRo'");
+			assert.ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
+			assert.ok(sClasses.indexOf("sapUiRbStd") == -1, "rb1 className is containing 'sapUiRbStd'");
+			assert.ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");
+			assert.ok(sClasses.indexOf("sapUiRbRo") > -1, "rb1 className is missing 'sapUiRbRo'");
 		});
 
 			QUnit.module("GroupName");
@@ -287,7 +287,7 @@
 
 				this.oRadioButton.destroy();
 
-				strictEqual(this.oRadioButton._groupNames['sapUiRbDefaultGroup'].length, 0, "RadioButton was removed from _groupNames");
+				assert.strictEqual(this.oRadioButton._groupNames['sapUiRbDefaultGroup'].length, 0, "RadioButton was removed from _groupNames");
 			});
 		</script>
 	</head>

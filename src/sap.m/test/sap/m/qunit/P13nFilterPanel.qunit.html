@@ -113,11 +113,11 @@
 
 			// assertions
 			var nItems = "-1";
-			strictEqual(oP13nFilterPanel.getMaxIncludes(), nItems, "getMaxIncludes should be '" + nItems + "'");
+			assert.strictEqual(oP13nFilterPanel.getMaxIncludes(), nItems, "getMaxIncludes should be '" + nItems + "'");
 			nItems = "2";
-			strictEqual(oP13nFilterPanel.getMaxExcludes(), nItems, "getMaxExcludes should be '" + nItems + "'");
+			assert.strictEqual(oP13nFilterPanel.getMaxExcludes(), nItems, "getMaxExcludes should be '" + nItems + "'");
 
-			strictEqual(oP13nFilterPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
+			assert.strictEqual(oP13nFilterPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
 
 			// cleanup
 			oP13nFilterPanel.destroy();
@@ -136,7 +136,7 @@
 
 			// assertions
 			var nItems = 3;
-			strictEqual(oP13nFilterPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nFilterPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
 
 			// cleanup
 			oP13nFilterPanel.destroy();
@@ -155,7 +155,7 @@
 
 			// assertions
 			var nItems = 3;
-			strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 			// cleanup
 			oP13nFilterPanel.destroy();
@@ -180,9 +180,9 @@
 
 			// assertions
 			var nItems = 8;
-			strictEqual(oP13nFilterPanel.getIncludeOperations().length, nItems, "length of getIncludeOperations should be '" + nItems + "'");
+			assert.strictEqual(oP13nFilterPanel.getIncludeOperations().length, nItems, "length of getIncludeOperations should be '" + nItems + "'");
 			nItems = 3;
-			strictEqual(oP13nFilterPanel.getExcludeOperations().length, nItems, "length of getExcludeOperations should be '" + nItems + "'");
+			assert.strictEqual(oP13nFilterPanel.getExcludeOperations().length, nItems, "length of getExcludeOperations should be '" + nItems + "'");
 
 			// cleanup
 			oP13nFilterPanel.destroy();
@@ -208,8 +208,8 @@
 				var oModel = oP13nFilterPanel.getModel();
 				var oData = oModel.getData();
 				var oFilterItemData = params.filterItemData;
-				ok(oFilterItemData instanceof sap.m.P13nFilterItem, "oFilterItemData should be of type P13nFilterItem");
-				strictEqual(oFilterItemData.getValue1(), "foo", "new Value1 value should be 'foo'");
+				assert.ok(oFilterItemData instanceof sap.m.P13nFilterItem, "oFilterItemData should be of type P13nFilterItem");
+				assert.strictEqual(oFilterItemData.getValue1(), "foo", "new Value1 value should be 'foo'");
 			});
 
 			var addSpy = sinon.spy(function(oEvent) {
@@ -217,7 +217,7 @@
 				var oModel = oP13nFilterPanel.getModel();
 				var oData = oModel.getData();
 				var oFilterItemData = params.filterItemData;
-				strictEqual(oFilterItemData.getValue1(), "new", "added condition Value1 value should be 'new'");
+				assert.strictEqual(oFilterItemData.getValue1(), "new", "added condition Value1 value should be 'new'");
 				if (params.index) {
 					oData.filterItems.splice(params.index, 0, oFilterItemData);
 				} else {
@@ -246,12 +246,12 @@
 			var sValue1 = "foo";
 			oConditionGrid.value1.setValue(sValue1);
 			oConditionPanel._changeField(oConditionGrid);
-			strictEqual(oP13nFilterPanel.getFilterItems()[1].getValue1(), sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
+			assert.strictEqual(oP13nFilterPanel.getFilterItems()[1].getValue1(), sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
 
 			// Remove item
 			var nItems = 2;
 			oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-			strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 			// Add item
 			nItems = 3;
@@ -259,12 +259,12 @@
 			oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 			oConditionGrid.value1.setValue("new");
 			oConditionPanel._changeField(oConditionGrid);
-			strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
+			assert.strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 			// check that all event handlers are called
-			ok(removeSpy.called, "removeFilterItem was called");
-			ok(updateSpy.called, "updateFilterItem was called");
-			ok(addSpy.called, "addFilterItem was called");
+			assert.ok(removeSpy.called, "removeFilterItem was called");
+			assert.ok(updateSpy.called, "updateFilterItem was called");
+			assert.ok(addSpy.called, "addFilterItem was called");
 
 			// cleanup
 			oP13nFilterPanel.destroy();
@@ -298,8 +298,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
-			strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");
+			assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
+			assert.strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");
 
 			// cleanup
 			oP13nFilterPanel.destroy();
@@ -354,8 +354,8 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
-			strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");
+			assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
+			assert.strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");
 
 			// cleanup
 			oP13nFilterPanel.destroy();
@@ -410,8 +410,8 @@
 			}));
 			sap.ui.getCore().applyChanges();
 			// assertions
-			strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
-			strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");
+			assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
+			assert.strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");
 
 			// cleanup
 			oP13nFilterPanel.destroy();

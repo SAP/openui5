@@ -29,7 +29,7 @@
 				id="pullToRefresh"
 				visible="{device>/support/touch}"
 				refresh="onRefresh" />
-			<!-- For client side filtering add this to the items attribute:  parameters: {operationMode: 'Client'}}" -->
+			<!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
 			<List
 				id="list"
 				items="{

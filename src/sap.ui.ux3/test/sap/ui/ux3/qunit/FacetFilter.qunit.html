@@ -88,32 +88,32 @@
 		QUnit.module("Public API");
 
 		QUnit.test("Title", function(assert) {
-			equals(oFFL1.getTitle(), "Car Brand", "Title is correct:");
-			equals(oFFL2.getTitle(), "Car Model", "Title is correct:");
-			equals(oFFL3.getTitle(), "Type", "Title is correct:");
+			assert.equal(oFFL1.getTitle(), "Car Brand", "Title is correct:");
+			assert.equal(oFFL2.getTitle(), "Car Model", "Title is correct:");
+			assert.equal(oFFL3.getTitle(), "Type", "Title is correct:");
 		});
 
 		QUnit.test("Multiselect", function(assert) {
-			equals(oFFL1.getMultiSelect(), true, "Multiselection");
-			equals(oFFL2.getMultiSelect(), false, "Single selection");
-			equals(oFFL3.getMultiSelect(), true, "Multiselection");
+			assert.equal(oFFL1.getMultiSelect(), true, "Multiselection");
+			assert.equal(oFFL2.getMultiSelect(), false, "Single selection");
+			assert.equal(oFFL3.getMultiSelect(), true, "Multiselection");
 		});
 
 		QUnit.module("Visual appearence");
 
 		QUnit.test("Visiblity", function(assert) {
-			ok(oFacetFilter.getDomRef(), "Control is visible");
+			assert.ok(oFacetFilter.getDomRef(), "Control is visible");
 		});
 
 		QUnit.test("Visible Items", function(assert) {
-			equals(oFFL1._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
-			equals(oFFL2._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
-			equals(oFFL3._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+			assert.equal(oFFL1._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+			assert.equal(oFFL2._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+			assert.equal(oFFL3._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
 		});
 
 
 		QUnit.test("Lists", function(assert) {
-			equals(oFacetFilter.getLists().length, 3, "There are 3 lists");
+			assert.equal(oFacetFilter.getLists().length, 3, "There are 3 lists");
 		});
 
 

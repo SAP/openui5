@@ -19,11 +19,11 @@ sap.ui.require([
 
   QUnit.test("Smoke test to register a step", function(assert) {
     this.stepDefs.register(/^some regex$/i, function() {});
-    ok(this.stepDefs._aDefinitions.length === 1, "Smoke test to register a step");
+    assert.ok(this.stepDefs._aDefinitions.length === 1, "Smoke test to register a step");
   });
 
   QUnit.test("Given no registered steps, cannot match", function(assert) {
-    deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
+    assert.deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
       isMatch: false,
       text: "(NOT FOUND) hello world"
     }, "Given no registered steps, cannot match");
@@ -43,7 +43,7 @@ sap.ui.require([
     var function3 = function() {};
     this.stepDefs.register(regex3, function3);
 
-    deepEqual(this.stepDefs._generateTestStep({text: "gas giant"}), {
+    assert.deepEqual(this.stepDefs._generateTestStep({text: "gas giant"}), {
       isMatch: false,
       text: "(NOT FOUND) gas giant"
     }, "Given three registered steps, when we try a bad step name, then cannot match");
@@ -55,7 +55,7 @@ sap.ui.require([
     var function1 = function() {};
     this.stepDefs.register(regex1, function1);
 
-    deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
+    assert.deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
       isMatch: true,
       text: "hello world",
       regex: regex1,
@@ -74,7 +74,7 @@ sap.ui.require([
     var function2 = function() {};
     this.stepDefs.register(regex2, function2);
 
-    deepEqual(this.stepDefs._generateTestStep({text: "goodbye cruel world"}), {
+    assert.deepEqual(this.stepDefs._generateTestStep({text: "goodbye cruel world"}), {
       isMatch: true,
       text: "goodbye cruel world",
       regex: regex1,
@@ -88,7 +88,7 @@ sap.ui.require([
     var regex = /^hello world$/i;
     this.stepDefs.register(regex, function() {});
 
-    throws( function() {
+    assert.throws( function() {
         this.stepDefs.register(regex, function() {});
       }, function(error) {
         return error.message === "StepDefinitions.register: Duplicate step definition '/^hello world$/i'";
@@ -102,7 +102,7 @@ sap.ui.require([
     this.stepDefs.register(/^hello world$/i, function() {});
     this.stepDefs.register(/.*/, function() {});
 
-    throws( function() {
+    assert.throws( function() {
         this.stepDefs._generateTestStep({text: "Hello World", keyword: "Given" });
       }, function(error) {
         return error.message === "Ambiguous step definition error: 2 step definitions '/^hello world$/i' and '/.*/' match the feature file step 'Hello World'";
@@ -117,7 +117,7 @@ sap.ui.require([
     var function1 = function() {};
     this.stepDefs.register(regex1, function1);
 
-    deepEqual(this.stepDefs._generateTestStep({text: "thing # 12 is better than theng # 6 and thang # 8"}), {
+    assert.deepEqual(this.stepDefs._generateTestStep({text: "thing # 12 is better than theng # 6 and thang # 8"}), {
       isMatch: true,
       text: "thing # 12 is better than theng # 6 and thang # 8",
       regex: regex1,
@@ -134,7 +134,7 @@ sap.ui.require([
 
     var data = [["Hello", "World"], ["Goodbye", "Cruel", "World"]];
 
-    deepEqual(this.stepDefs._generateTestStep({
+    assert.deepEqual(this.stepDefs._generateTestStep({
       text: "Yet another regex",
       data: data
     }), {
@@ -154,7 +154,7 @@ sap.ui.require([
 
     var data = [["Hello", "World"], ["Goodbye", "Cruel", "World"]];
 
-    deepEqual(this.stepDefs._generateTestStep({
+    assert.deepEqual(this.stepDefs._generateTestStep({
       text: "Regex # 42",
       data: data
     }), {
@@ -171,7 +171,7 @@ sap.ui.require([
     var missingRegexError = "StepDefinitions.register: parameter 'rRegex' must be a valid RegExp object";
     var missingFunctionError = "StepDefinitions.register: parameter 'fnFunc' must be a valid Function";
 
-    throws( function(){
+    assert.throws( function(){
       this.stepDefs.register();
     }, function(error) {
       return (error.message === missingRegexError) || (error.message === missingFunctionError);
@@ -179,7 +179,7 @@ sap.ui.require([
       "called with no parameters"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.stepDefs.register(/hello world/i);
     }, function(error) {
       return error.message === missingFunctionError;
@@ -187,7 +187,7 @@ sap.ui.require([
       "called with no second parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.stepDefs.register(null, function(){});
     }, function(error) {
       return error.message === missingRegexError;
@@ -195,7 +195,7 @@ sap.ui.require([
       "called with no first parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.stepDefs.register("not a regex", "not a function");
     }, function(error) {
       return (error.message === missingRegexError) || (error.message === missingFunctionError);
@@ -203,7 +203,7 @@ sap.ui.require([
       "both parameters are of invalid types"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.stepDefs.register("not a regex", function(){});
     }, function(error) {
       return error.message === missingRegexError;
@@ -211,7 +211,7 @@ sap.ui.require([
       "first parameter is of invalid type"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.stepDefs.register(/regex/g, "not a function");
     }, function(error) {
       return error.message === missingFunctionError;

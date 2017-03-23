@@ -32,17 +32,18 @@
 
 	QUnit.module("sap.ui.core.mvc.View");
 
-	QUnit.test("ID handling", 5, function (assert) {
+	QUnit.test("ID handling", function (assert) {
+		assert.expect(5);
 
 		var oView = new sap.ui.core.mvc.View("dummy", {});
 		var sPrefixedId = oView.createId("anyid");
 		var sLocalId = oView.getLocalId(sPrefixedId);
 		var sOtherId = oView.getLocalId("anyview--anyid");
-		equal(sPrefixedId, "dummy--anyid");
-		equal(sLocalId, "anyid");
-		equal(sOtherId, null);
-		ok(oView.isPrefixedId(sPrefixedId));
-		notOk(oView.isPrefixedId(sLocalId));
+		assert.equal(sPrefixedId, "dummy--anyid");
+		assert.equal(sLocalId, "anyid");
+		assert.equal(sOtherId, null);
+		assert.ok(oView.isPrefixedId(sPrefixedId));
+		assert.notOk(oView.isPrefixedId(sLocalId));
 		oView.destroy();
 	});
 
@@ -62,16 +63,18 @@
 		}
 	});
 
-	QUnit.test("runPreprocessor w/o config", 3, function (assert) {
+	QUnit.test("runPreprocessor w/o config", function (assert) {
+		assert.expect(3);
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
-		deepEqual(oView.mPreprocessors, {"foo":[]}, "no preprocessors stored at view");
+		assert.deepEqual(oView.mPreprocessors, {"foo":[]}, "no preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
-		equal(oView.runPreprocessor("xml", oSource, true), oSource);
+		assert.equal(oView.runPreprocessor("xml", oSource, true), oSource);
 	});
 
-	QUnit.test("runPreprocessor w/ config", 2, function (assert) {
+	QUnit.test("runPreprocessor w/ config", function (assert) {
+		assert.expect(2);
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -95,11 +98,12 @@
 			process: sap.ui.core.util.XMLPreprocessor.process
 		};
 
-		strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
+		assert.strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
 		expectProcess.verify();
 	});
 
-	QUnit.test("runPreprocessor w/ config and settings", 5, function (assert) {
+	QUnit.test("runPreprocessor w/ config and settings", function (assert) {
+		assert.expect(5);
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -123,14 +127,15 @@
 
 		oPreprocessors.foo._settings.foo = "bar";
 		sinon.assert.calledOnce(oSpy);
-		strictEqual(oSpy.args[0][2].foo, oPreprocessors.foo._settings.foo, "Configured object instance gets passed to the preprocessor");
-		ok(oSpy.args[0][2].foo === "bar", "Property got set correctly");
-		strictEqual(oSpy.args[0][2].foofoo, oPreprocessors.foo.foofoo, "Relevant settings have been passed to the pp");
-		ok(Object.keys(oSpy.args[0][2]).length == 3, "Only relevant settings have been passed to the pp");
+		assert.strictEqual(oSpy.args[0][2].foo, oPreprocessors.foo._settings.foo, "Configured object instance gets passed to the preprocessor");
+		assert.ok(oSpy.args[0][2].foo === "bar", "Property got set correctly");
+		assert.strictEqual(oSpy.args[0][2].foofoo, oPreprocessors.foo.foofoo, "Relevant settings have been passed to the pp");
+		assert.ok(Object.keys(oSpy.args[0][2]).length == 3, "Only relevant settings have been passed to the pp");
 	});
 
 
-	QUnit.test("runPreprocessor w/ default preprocessor for xml view", 2, function (assert) {
+	QUnit.test("runPreprocessor w/ default preprocessor for xml view", function (assert) {
+		assert.expect(2);
 		var oConfig = {},
 			sViewContent = [
 			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
@@ -146,10 +151,11 @@
 			viewContent: sViewContent
 		});
 		sinon.assert.calledOnce(expectProcess);
-		strictEqual(oView._xContent, expectProcess.returnValues[0]);
+		assert.strictEqual(oView._xContent, expectProcess.returnValues[0]);
 	});
 
-	QUnit.test("runPreprocessor w/ invalid preprocessor", 2, function (assert) {
+	QUnit.test("runPreprocessor w/ invalid preprocessor", function (assert) {
+		assert.expect(2);
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -162,14 +168,15 @@
 
 		try {
 			oView.runPreprocessor("xml", oSource, true);
-			ok(false);
+			assert.ok(false);
 		} catch (ex) {
-			ok(true, ex); // TypeError: string is not a function
+			assert.ok(true, ex); // TypeError: string is not a function
 		}
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	QUnit.test("runPreprocessor w/ valid preprocessor", 1, function (assert) {
+	QUnit.test("runPreprocessor w/ valid preprocessor", function (assert) {
+		assert.expect(1);
 		var oSource = {},
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
@@ -188,13 +195,14 @@
 
 		try {
 			oView.runPreprocessor("xml", oSource, true);
-			ok(bCalled, "Preprocessor executed correctly");
+			assert.ok(bCalled, "Preprocessor executed correctly");
 		} catch (ex) {
-			ok(false, ex); // TypeError: string is not a function
+			assert.ok(false, ex); // TypeError: string is not a function
 		}
 	});
 
-	QUnit.test("runPreprocessor w/o known preprocessor", 2, function (assert) {
+	QUnit.test("runPreprocessor w/o known preprocessor", function (assert) {
+		assert.expect(2);
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -203,12 +211,13 @@
 			});
 
 		oView.runPreprocessor("foo", oSource);
-		ok(true); // do nothing
+		assert.ok(true); // do nothing
 
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	QUnit.test("runPreprocessor w/o syncSupport preprocessor", 3, function (assert) {
+	QUnit.test("runPreprocessor w/o syncSupport preprocessor", function (assert) {
+		assert.expect(3);
 		var oSource = {},
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
@@ -225,10 +234,10 @@
 
 		try {
 			oView.runPreprocessor("xml", oSource, true);
-			ok(!bCalled, "Preprocessor was ignored in sync view");
+			assert.ok(!bCalled, "Preprocessor was ignored in sync view");
 			sinon.assert.calledWith(logSpy, "Async \"xml\"-preprocessor was skipped in sync view execution for undefinedView", oView.getId());
 		} catch (ex) {
-			ok(false, ex); // TypeError: string is not a function
+			assert.ok(false, ex); // TypeError: string is not a function
 		}
 		sinon.assert.notCalled(expectProcess);
 	});
@@ -249,20 +258,24 @@
 		}
 	});
 
-	asyncTest("runPreprocessor w/o config", 3, function () {
+	QUnit.test("runPreprocessor w/o config", function (assert) {
+		assert.expect(3);
+		var done = assert.async();
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
-		deepEqual(oView.mPreprocessors, {"foo":[]}, "empty preprocessors stored at view");
+		assert.deepEqual(oView.mPreprocessors, {"foo":[]}, "empty preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
 
 		oView.runPreprocessor("xml", oSource).then(function(vSource) {
-			equal(vSource, oSource);
-			start();
+			assert.equal(vSource, oSource);
+			done();
 		});
 	});
 
-	asyncTest("runPreprocessor w/ config", 3, function () {
+	QUnit.test("runPreprocessor w/ config", function (assert) {
+		assert.expect(3);
+		var done = assert.async();
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -299,17 +312,19 @@
 		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo._settings);
 
 
-		strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
+		assert.strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
 
 		oView.runPreprocessor("foo", oSource).then(function(oProcessedSource) {
-			strictEqual(oProcessedSource, oResult, "Results equal");
+			assert.strictEqual(oProcessedSource, oResult, "Results equal");
 			expectProcess.verify();
-			start();
+			done();
 		});
 
 	});
 
-	asyncTest("runPreprocessor w/ config and settings", 4, function () {
+	QUnit.test("runPreprocessor w/ config and settings", function (assert) {
+		assert.expect(4);
+		var done = assert.async();
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -330,14 +345,16 @@
 		oView.runPreprocessor("foo", {}).then(function() {
 			oPreprocessors.foo.settings.foo = "bar";
 			sinon.assert.calledOnce(oSpy);
-			strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
-			ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
-			ok(Object.keys(oSpy.args[0][2]).length == 2, "Nothing has been added to the pp config");
-			start();
+			assert.strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
+			assert.ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
+			assert.ok(Object.keys(oSpy.args[0][2]).length == 2, "Nothing has been added to the pp config");
+			done();
 		});
 	});
 
-	asyncTest("runPreprocessor w/ default preprocessor for xml view", 3, function () {
+	QUnit.test("runPreprocessor w/ default preprocessor for xml view", function (assert) {
+		assert.expect(3);
+		var done = assert.async();
 		var sViewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>';
 
 		// returns the processed vSource
@@ -353,13 +370,15 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledOnce(expectProcess);
-			strictEqual(oView._xContent, expectProcess.returnValues[0]);
+			assert.strictEqual(oView._xContent, expectProcess.returnValues[0]);
 			expectProcess.verify();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("runPreprocessor w/ invalid preprocessor", 2, function () {
+	QUnit.test("runPreprocessor w/ invalid preprocessor", function (assert) {
+		assert.expect(2);
+		var done = assert.async();
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -371,16 +390,18 @@
 			});
 
 		oView.runPreprocessor("xml", oSource).then(function() {
-			ok(false);
-			start();
+			assert.ok(false);
+			done();
 		}, function(ex) {
-			ok(true, ex); // TypeError: string is not a function
+			assert.ok(true, ex); // TypeError: string is not a function
 			sinon.assert.notCalled(expectProcess);
-			start();
+			done();
 		});
 	});
 
-	asyncTest("runPreprocessor w/ valid preprocessor", 1, function () {
+	QUnit.test("runPreprocessor w/ valid preprocessor", function (assert) {
+		assert.expect(1);
+		var done = assert.async();
 		var oSource = {}, bCalled = false;
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -397,16 +418,18 @@
 			});
 		oView.loaded().then(function() {
 			oView.runPreprocessor("xml", oSource).then(function() {
-				ok(bCalled, "preprocessor was called");
-				start();
+				assert.ok(bCalled, "preprocessor was called");
+				done();
 			},function(ex) {
-				ok(false, ex); // TypeError: string is not a function
-				start();
+				assert.ok(false, ex); // TypeError: string is not a function
+				done();
 			});
 		});
 	});
 
-	asyncTest("runPreprocessor w/o known preprocessor", 2, function () {
+	QUnit.test("runPreprocessor w/o known preprocessor", function (assert) {
+		assert.expect(2);
+		var done = assert.async();
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -415,9 +438,9 @@
 			});
 
 		oView.runPreprocessor("foo", oSource).then(function() {
-			ok(true); // do nothing
+			assert.ok(true); // do nothing
 			sinon.assert.notCalled(expectProcess);
-			start();
+			done();
 		});
 	});
 
@@ -429,7 +452,7 @@
 			].join(''),
 			this.oPreprocessor = function(vSource, sCaller, mSettings) {
 				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				ok(true, "Preprocessor executed");
+				assert.ok(true, "Preprocessor executed");
 				return new Promise(function(resolve) {
 					resolve(vSource);
 				});
@@ -447,10 +470,11 @@
 		}
 	});
 
-	QUnit.test("register global preprocessor", 2, function (assert) {
+	QUnit.test("register global preprocessor", function (assert) {
+		assert.expect(2);
 
 		// templating preprocessor set by default
-		deepEqual(
+		assert.deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors,
 			{
 				"XML": {
@@ -467,14 +491,16 @@
 
 		sap.ui.core.mvc.View.registerPreprocessor("controls", this.oPreprocessor, "test", true, this.mSettings);
 		// now a preprocessor is set
-		deepEqual(
+		assert.deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors["test"]["controls"],
 			[{_onDemand: false, preprocessor: this.oPreprocessor, _syncSupport: true, _settings: this.mSettings}],
 			"preprocessor stored at view"
 		);
 	});
 
-	asyncTest("call method via init", 2, function () {
+	QUnit.test("call method via init", function (assert) {
+		assert.expect(2);
+		var done = assert.async();
 
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
@@ -487,11 +513,13 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			start();
+			done();
 		});
 	});
 
-	asyncTest("call method independent", 4, function () {
+	QUnit.test("call method independent", function (assert) {
+		assert.expect(4);
+		var done = assert.async();
 
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
@@ -501,19 +529,20 @@
 			async : true
 		});
 
-		var that = this;
 		oView.attachAfterInit(function() {
 			// call independent
 			oView.runPreprocessor("controls").then(function(vSource) {
-				ok(true, "Method called");
+				assert.ok(true, "Method called");
 				sinon.assert.calledThrice(spy);
+				done();
 			});
-			start();
 		});
 
 	});
 
-	asyncTest("run async preprocessors", 2, function () {
+	QUnit.test("run async preprocessors", function (assert) {
+		assert.expect(2);
+		var done = assert.async();
 
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
@@ -525,16 +554,18 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			start();
+			done();
 		});
 
 	});
 
-	asyncTest("run together with local preprocessor", 5, function () {
+	QUnit.test("run together with local preprocessor", function (assert) {
+		assert.expect(5);
+		var done = assert.async();
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			// async test part
 			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-			ok(true, "Local preprocessor executed");
+			assert.ok(true, "Local preprocessor executed");
 			return new Promise(function(resolve) {
 				resolve(vSource);
 			});
@@ -559,15 +590,17 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
-			ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
-			start();
+			assert.ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
+			assert.ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
+			done();
 		});
 	});
 
-	asyncTest("global preprocessor and local preprocessor on one hook", 5, function () {
+	QUnit.test("global preprocessor and local preprocessor on one hook", function (assert) {
+		assert.expect(5);
+		var done = assert.async();
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
-			ok(true, "Local preprocessor executed");
+			assert.ok(true, "Local preprocessor executed");
 			return new Promise(function(resolve) {
 				resolve(vSource);
 			});
@@ -592,13 +625,15 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
-			ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
-			start();
+			assert.ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
+			assert.ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
+			done();
 		});
 	});
 
-	asyncTest("on demand preprocessor provided", 5, function () {
+	QUnit.test("on demand preprocessor provided", function (assert) {
+		assert.expect(5);
+		var done = assert.async();
 		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, this.mSettings);
 
 		var mDefaultSettings = {
@@ -619,13 +654,15 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
-			ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
-			start();
+			assert.ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
+			assert.ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
+			done();
 		});
 	});
 
-	asyncTest("on demand preprocessor not provided", 4, function () {
+	QUnit.test("on demand preprocessor not provided", function (assert) {
+		assert.expect(4);
+		var done = assert.async();
 		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, true, this.mSettings);
 
 		var mDefaultSettings = {
@@ -641,11 +678,11 @@
 		});
 
 		oView.attachAfterInit(function() {
-			ok(!logSpy.calledWithExactly("Running preprocessor for \"xml\" via given function", oView), "No log statement");
+			assert.ok(!logSpy.calledWithExactly("Running preprocessor for \"xml\" via given function", oView), "No log statement");
 			sinon.assert.calledTwice(spy);
-			ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
-			ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
-			start();
+			assert.ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
+			assert.ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
+			done();
 		});
 	});
 
@@ -669,7 +706,9 @@
 		assert.ok(sap.ui.core.qunit.mvc.TestPreprocessor.getCacheKey, "getCacheKey method");
 	});
 
-	asyncTest("sap.ui.core.mvc.Preprocessor extending module", 2, function() {
+	QUnit.test("sap.ui.core.mvc.Preprocessor extending module", function(assert) {
+		assert.expect(2);
+		var done = assert.async();
 		jQuery.sap.registerModulePath("sap.ui.core.qunit.mvc", "./testdata/mvc");
 
 		mSettings = {
@@ -688,21 +727,23 @@
 		// twice, default + the registered one
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			start();
+			done();
 		});
 	});
 
 	QUnit.module("sap.ui.core.mvc.View#loaded");
 
-	asyncTest("Retrieve promise for view generally", 2, function() {
+	QUnit.test("Retrieve promise for view generally", function(assert) {
+		assert.expect(2);
+		var done = assert.async();
 		var oView = new sap.ui.core.mvc.View({});
 			oPromise = oView.loaded();
 
-		ok(oPromise instanceof Promise, "Promise returned");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 		oPromise.then(function(oViewLoaded) {
-			deepEqual(oView, oViewLoaded, "Views equal deeply");
-			start();
+			assert.deepEqual(oView, oViewLoaded, "Views equal deeply");
+			done();
 		});
 	});
 

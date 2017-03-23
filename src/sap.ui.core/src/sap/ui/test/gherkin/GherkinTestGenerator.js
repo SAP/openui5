@@ -27,8 +27,11 @@ sap.ui.define([
    * If a TestStep indicates that it should be skipped (e.g. because the generator failed to match the test step to a
    * step definition) then the test runner should not run that step but should still display it. Any unmatched TestSteps
    * will have their "text" attribute prefixed with "(NOT FOUND)", and then any subsequent steps will be prefixed with
-   * "(SKIPPED)". Any scenario or feature annotated with the tag "@wip" will be skipped and have the prefix "(WIP)"
-   * added to its text. For a non-wip scenario/feature, any step that is not found should fail the build.
+   * "(SKIPPED)".
+   *
+   * Any feature, scenario, scenario outline or example annotated with the tag "@wip" will be skipped and (except for
+   * Examples) will have the prefix "(WIP)" added to its text. For a non-wip scenario/feature, any step that is not found
+   * should fail the build.
    *
    * The GherkinTestGenerator supports the whole Gherkin feature set except the following:
    *    1. Tags other than "@wip" are ignored
@@ -38,9 +41,11 @@ sap.ui.define([
    * <pre>
    * {                                            // {FeatureTest} an executable object for testing a Gherkin feature
    *    name: "Feature: Serve expensive coffee",  // {string} the feature name from the Gherkin file
+   *    skip: false,                              // {boolean} true if the feature should not be executed
    *    wip: false,                               // {boolean} true if the feature is a work in progress
    *    testScenarios: [{                         // {[ScenarioTest]} test scenarios to be run in this FeatureTest
    *      name: "Scenario: Buy first coffee",     // {string} the scenario name from the Gherkin file
+   *      skip: false,                            // {boolean} true if the scenario should not be executed
    *      wip: false,                             // {boolean} true if the scenario is a work in progress
    *      testSteps: [{                           // {[TestStep]} test steps that are part of this ScenarioTest
    *        isMatch: true,                        // {boolean} true if the Gherkin scenario matched a step definition
@@ -58,6 +63,7 @@ sap.ui.define([
    *        func: function(){}
    *    }]},{
    *      name: "Scenario: Buy second coffee",
+   *      skip: false,
    *      wip: false,
    *      testSteps: [{
    *        isMatch: true,
@@ -241,94 +247,94 @@ sap.ui.define([
       }, this);
 
       var bFeatureIsWip = ($.inArray("@wip", this._oFeature.tags) !== -1);
-      var bAllScenariosAreSkipped = aTestScenarios.every(function(oTestScenario) {
-        return oTestScenario.testSteps.every(function(oTest) {
-          return oTest.skip;
-        });
-      });
-      var bSkipFeature = bFeatureIsWip || bAllScenariosAreSkipped;
+      var bAllScenariosAreSkipped = aTestScenarios.every(function(oTestScenario) {return oTestScenario.skip;});
 
       return {
         name: ((bFeatureIsWip) ? "(WIP) " : "") + "Feature: " + this._oFeature.name,
-        skip: bSkipFeature,
+        skip: bFeatureIsWip || bAllScenariosAreSkipped,
         wip: bFeatureIsWip,
         testScenarios: aTestScenarios
       };
     },
 
     /**
-     * Expands a scenario outline into 1 or more concrete scenarios. Each concrete scenario will have "#1", "#2", etc.
-     * appended to its text to differentiate it.
+     * Expands a scenario outline into 1 or more concrete scenarios (one concrete scenario for each line in the examples).
+     *
+     * Each concrete scenario will have ": <Examples name> #1", ": <Examples name> #2", etc. appended to its text to
+     * differentiate it.
      *
      * @param {Scenario} oScenario - a Gherkin scenario that may or may not be a scenario outline
      * @returns {Scenario[]} - an array of 1 or more scenarios. If the input was a scenario outline, then the output
      *                         is an array of 1 or more concrete scenarios that implement that outline. One concrete
-     *                         scenario is generated per example specified in the feature file. If the input was a
+     *                         scenario is generated per example line specified in the feature file. If the input was a
      *                         regular scenario, then the return value is an array with 1 element: the inputed
      *                         scenario.
      * @private
      */
     _expandScenarioOutline: function(oScenario) {
 
-      // if this is not a scenario outline
-      if (!oScenario.examples) {
+      // if this is not a scenario outline OR it's a scenario outline with no Examples
+      if (!this._isScenarioOutlineWithExamples(oScenario)) {
         // then don't change anything
         return [oScenario];
       }
 
-      // else this is a scenario outline
-      var aExamples = this._convertScenarioExamplesToListOfObjects(oScenario.examples[0].data);
+      // else this is a scenario outline with at least one set of Examples
+      var aConcreteScenarios = [];
 
-      // create a concrete scenario from each example in the scenario outline
-      var aConcreteScenarios = aExamples.map(function(oExample, i) {
+      // for each set of Examples in the Scenario Outline
+      oScenario.examples.forEach(function(oExample, i) {
 
-        var oScenarioCopy = $.extend(true, {}, oScenario);
-        oScenarioCopy.name += " #" + (i + 1);
+        var aConvertedExamples = this._convertScenarioExamplesToListOfObjects(oExample.data);
 
-        // for each variable specified for this concrete example
-        $.each(oExample, function(sVariableName, sVariableValue) {
+        // create a concrete scenario from each example in the Examples
+        aConcreteScenarios = aConcreteScenarios.concat(aConvertedExamples.map(function(oConvertedExample, i) {
 
-          // for each test step in the scenario
-          oScenarioCopy.steps.forEach(function(oStep) {
-            // in the scenario text, replace all occurences of the variable with the concrete value
-            var sEscapedVariableName = $.sap.escapeRegExp(sVariableName);
-            oStep.text = oStep.text.replace(new RegExp("<" + sEscapedVariableName + ">", "g"), sVariableValue);
+          var oScenarioCopy = $.extend(true, {}, oScenario);
+          oScenarioCopy.name += (oExample.name) ? ": " + oExample.name : "";
+          oScenarioCopy.name += " #" + (i + 1);
+
+          // for each variable specified for this concrete example
+          $.each(oConvertedExample, function(sVariableName, sVariableValue) {
+
+            // for each test step in the scenario
+            oScenarioCopy.steps.forEach(function(oStep) {
+              // in the scenario text, replace all occurences of the variable with the concrete value
+              var sEscapedVariableName = $.sap.escapeRegExp(sVariableName);
+              oStep.text = oStep.text.replace(new RegExp("<" + sEscapedVariableName + ">", "g"), sVariableValue);
+            });
           });
-        });
 
-        return oScenarioCopy;
+          return oScenarioCopy;
+        }, this));
+
       }, this);
 
       return aConcreteScenarios;
     },
 
     /**
-     * Prepares an executable test scenario based on a Gherkin document's scenario. Handles skipping "@wip" scenarios
-     * and skipping unmatched tests.
+     * Prepares an executable test scenario based on a Gherkin document's scenario.
      *
      * @param {Scenario} oScenario - the Gherkin scenario for which to generate tests
-     * @param {Scenario} oBackground - the Gherkin background scenario that must be run before each regular scenario
+     * @param {Scenario} [oBackground] - the Gherkin background scenario that must be run before each regular scenario
      * @returns {TestScenario} - the test scenario to be executed during testing
      * @see sap.ui.test.gherkin.simpleGherkinParser#parse
      * @private
      */
     _generateTestScenario: function(oScenario, oBackground) {
       var bWip = $.inArray("@wip", oScenario.tags) !== -1;
-      var bIsScenarioOutline = !!oScenario.examples;
-      var sScenarioPrependText = (bIsScenarioOutline) ? "Scenario Outline: " : "Scenario: ";
+      var sScenarioPrependText = this._isScenarioOutline(oScenario) ? "Scenario Outline: " : "Scenario: ";
       var sScenarioName = (bWip ? "(WIP) " : "") + sScenarioPrependText + oScenario.name;
-      var aTestSteps = [];
-      var bSkip = false;
-
-      if (oBackground) {
-        aTestSteps = this._generateTestSteps(bWip, oBackground, false);
-        bSkip = aTestSteps.some(function(oTestStep) {return !oTestStep.isMatch;});
-      }
+      var aTestSteps = (oBackground) ? this._generateTestSteps(bWip, oBackground, false) : [];
+      var bNoActiveExamples = this._isScenarioOutline(oScenario) && !this._isScenarioOutlineWithExamples(oScenario);
+      var bSkip = bNoActiveExamples || aTestSteps.some(function(o) {return !o.isMatch;});
 
       aTestSteps = aTestSteps.concat(this._generateTestSteps(bWip, oScenario, bSkip));
 
       return {
         name: sScenarioName,
+        skip: bWip || bNoActiveExamples || aTestSteps.every(function(o) {return o.skip && o.isMatch;}),
         wip: bWip,
         testSteps: aTestSteps
       };
@@ -392,6 +398,27 @@ sap.ui.define([
       // if aExamples is a simple list then convert from simple list to list-of-lists before executing toTable
       aExamples = aExamples.map(function(i){return $.type(i) === "string" ? [i] : i;});
       return dataTableUtils.toTable(aExamples);
+    },
+
+
+    /**
+     * @param {Scenario} oScenario - a Gherkin scenario (as created by the parser)
+     * @returns true if the given scenario is a scenario outline
+     * @private
+     */
+    _isScenarioOutline: function(oScenario) {
+      return !!oScenario.examples;
+    },
+
+    /**
+     * @param {Scenario} oScenario - a Gherkin scenario (as created by the parser)
+     * @returns true if the given scenario is a scenario outline AND it has active (non-WIP) Examples
+     * @private
+     */
+    _isScenarioOutlineWithExamples: function(oScenario) {
+      return !!oScenario.examples && (oScenario.examples.length !== 0) && oScenario.examples.some(function(example) {
+        return ($.inArray("@wip", example.tags) === -1);
+      });
     }
 
   });

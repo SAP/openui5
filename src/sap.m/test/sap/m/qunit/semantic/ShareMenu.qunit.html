@@ -43,8 +43,8 @@
 			// Act
 
 			// Assert
-			strictEqual(oMenu.getBaseButton() != null, true, "ShareMenu has a base button");
-			strictEqual(oMenu.getContent().length, 0, "ShareMenu is empty");
+			assert.strictEqual(oMenu.getBaseButton() != null, true, "ShareMenu has a base button");
+			assert.strictEqual(oMenu.getContent().length, 0, "ShareMenu is empty");
 
 			// Cleanup
 			oMenu.destroy();
@@ -70,94 +70,94 @@
 			var oResult = oMenu.addContent(oCustomButton1);
 
 			// Assert
-			strictEqual(oResult, oMenu, "add function returns menu reference");
-			strictEqual(oMenu.getContent().length, 1, "ShareMenu has one item");
-			strictEqual(oMenu.getContent()[0], oCustomButton1, "ShareMenu has added item");
-			strictEqual(oMenu.indexOfContent(oCustomButton1), 0, "index of item1 is 0");
-			strictEqual(oMenu.getBaseButton() != null, true, "ShareMenu has a base button");
-			strictEqual(oMenu.getBaseButton(), oCustomButton1, "ShareMenu has the added button as a base button");
+			assert.strictEqual(oResult, oMenu, "add function returns menu reference");
+			assert.strictEqual(oMenu.getContent().length, 1, "ShareMenu has one item");
+			assert.strictEqual(oMenu.getContent()[0], oCustomButton1, "ShareMenu has added item");
+			assert.strictEqual(oMenu.indexOfContent(oCustomButton1), 0, "index of item1 is 0");
+			assert.strictEqual(oMenu.getBaseButton() != null, true, "ShareMenu has a base button");
+			assert.strictEqual(oMenu.getBaseButton(), oCustomButton1, "ShareMenu has the added button as a base button");
 
 			// Act  (add item)
 			oResult = oMenu.addContent(oCustomButton2);
 
 			// Assert
-			strictEqual(oResult, oMenu, "add function returns menu reference");
-			strictEqual(oMenu.getContent().length, 2, "ShareMenu has two items");
-			strictEqual(oMenu.getContent()[0], oCustomButton1, "ShareMenu has added item1");
-			strictEqual(oMenu.getContent()[1], oCustomButton2, "ShareMenu has added item2");
-			strictEqual(oMenu.indexOfContent(oCustomButton1), 0, "index of item1 is 0");
-			strictEqual(oMenu.indexOfContent(oCustomButton2), 1, "index of item1 is 1");
-			strictEqual(oMenu.getBaseButton() != null, true, "ShareMen has a base button");
-			strictEqual(oMenu.getBaseButton().getVisible(), true, "ShareMenu base button is visible");
-			strictEqual(oMenu.getBaseButton() != oCustomButton2, true, "ShareMenu base button is not item1");
-			strictEqual(oMenu.getBaseButton() != oCustomButton1, true, "ShareMenu base button is not item2");
+			assert.strictEqual(oResult, oMenu, "add function returns menu reference");
+			assert.strictEqual(oMenu.getContent().length, 2, "ShareMenu has two items");
+			assert.strictEqual(oMenu.getContent()[0], oCustomButton1, "ShareMenu has added item1");
+			assert.strictEqual(oMenu.getContent()[1], oCustomButton2, "ShareMenu has added item2");
+			assert.strictEqual(oMenu.indexOfContent(oCustomButton1), 0, "index of item1 is 0");
+			assert.strictEqual(oMenu.indexOfContent(oCustomButton2), 1, "index of item1 is 1");
+			assert.strictEqual(oMenu.getBaseButton() != null, true, "ShareMen has a base button");
+			assert.strictEqual(oMenu.getBaseButton().getVisible(), true, "ShareMenu base button is visible");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton2, true, "ShareMenu base button is not item1");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton1, true, "ShareMenu base button is not item2");
 
 			// Act  (remove item)
 			oResult = oMenu.removeContent(oCustomButton1);
 
 			// Assert
-			strictEqual(oResult, oCustomButton1, "remove function returns reference to removed item");
-			strictEqual(oMenu.getContent().length, 1, "ShareMenu has one item");
-			strictEqual(oMenu.getContent()[0], oCustomButton2, "ShareMenu has item2");
-			strictEqual(oMenu.indexOfContent(oCustomButton2), 0, "index of item2 is 0");
-			strictEqual(oMenu.getBaseButton() != null, true, "ShareMenu has a base button");
-			strictEqual(oMenu.getBaseButton(), oCustomButton2, "ShareMenu has item2 as a base button");
+			assert.strictEqual(oResult, oCustomButton1, "remove function returns reference to removed item");
+			assert.strictEqual(oMenu.getContent().length, 1, "ShareMenu has one item");
+			assert.strictEqual(oMenu.getContent()[0], oCustomButton2, "ShareMenu has item2");
+			assert.strictEqual(oMenu.indexOfContent(oCustomButton2), 0, "index of item2 is 0");
+			assert.strictEqual(oMenu.getBaseButton() != null, true, "ShareMenu has a base button");
+			assert.strictEqual(oMenu.getBaseButton(), oCustomButton2, "ShareMenu has item2 as a base button");
 
 			// Act  (insert item)
 			oResult = oMenu.insertContent(oCustomButton3, 0);
 
 			// Assert
-			strictEqual(oResult, oMenu, "insert function returns menu reference");
-			strictEqual(oMenu.getContent().length, 2, "ShareMenu has two items");
-			strictEqual(oMenu.getContent()[0], oCustomButton3, "ShareMenu has added item3");
-			strictEqual(oMenu.getContent()[1], oCustomButton2, "ShareMenu has added item2");
-			strictEqual(oMenu.indexOfContent(oCustomButton3), 0, "index of item3 is 0");
-			strictEqual(oMenu.indexOfContent(oCustomButton2), 1, "index of item2 is 1");
-			strictEqual(oMenu.getBaseButton() != null, true, "ShareMen has a base button");
-			strictEqual(oMenu.getBaseButton().getVisible(), true, "ShareMenu base button is visible");
-			strictEqual(oMenu.getBaseButton() != oCustomButton2, true, "ShareMenu base button is not item2");
-			strictEqual(oMenu.getBaseButton() != oCustomButton3, true, "ShareMenu base button is not item3");
+			assert.strictEqual(oResult, oMenu, "insert function returns menu reference");
+			assert.strictEqual(oMenu.getContent().length, 2, "ShareMenu has two items");
+			assert.strictEqual(oMenu.getContent()[0], oCustomButton3, "ShareMenu has added item3");
+			assert.strictEqual(oMenu.getContent()[1], oCustomButton2, "ShareMenu has added item2");
+			assert.strictEqual(oMenu.indexOfContent(oCustomButton3), 0, "index of item3 is 0");
+			assert.strictEqual(oMenu.indexOfContent(oCustomButton2), 1, "index of item2 is 1");
+			assert.strictEqual(oMenu.getBaseButton() != null, true, "ShareMen has a base button");
+			assert.strictEqual(oMenu.getBaseButton().getVisible(), true, "ShareMenu base button is visible");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton2, true, "ShareMenu base button is not item2");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton3, true, "ShareMenu base button is not item3");
 
 			// Act  (insert item)
 			oResult = oMenu.insertContent(oCustomButton1, 1);
 
 			// Assert
-			strictEqual(oResult, oMenu, "insert function returns menu reference");
-			strictEqual(oMenu.getContent().length, 3, "ShareMenu has two items");
-			strictEqual(oMenu.getContent()[0], oCustomButton3, "ShareMenu has added item3");
-			strictEqual(oMenu.getContent()[1], oCustomButton1, "ShareMenu has added item1");
-			strictEqual(oMenu.getContent()[2], oCustomButton2, "ShareMenu has added item2");
-			strictEqual(oMenu.getBaseButton() != null, true, "ShareMen has a base button");
-			strictEqual(oMenu.getBaseButton().getVisible(), true, "ShareMenu base button is visible");
-			strictEqual(oMenu.getBaseButton() != oCustomButton1, true, "ShareMenu base button is not item1");
-			strictEqual(oMenu.getBaseButton() != oCustomButton2, true, "ShareMenu base button is not item2");
-			strictEqual(oMenu.getBaseButton() != oCustomButton3, true, "ShareMenu base button is not item3");
+			assert.strictEqual(oResult, oMenu, "insert function returns menu reference");
+			assert.strictEqual(oMenu.getContent().length, 3, "ShareMenu has two items");
+			assert.strictEqual(oMenu.getContent()[0], oCustomButton3, "ShareMenu has added item3");
+			assert.strictEqual(oMenu.getContent()[1], oCustomButton1, "ShareMenu has added item1");
+			assert.strictEqual(oMenu.getContent()[2], oCustomButton2, "ShareMenu has added item2");
+			assert.strictEqual(oMenu.getBaseButton() != null, true, "ShareMen has a base button");
+			assert.strictEqual(oMenu.getBaseButton().getVisible(), true, "ShareMenu base button is visible");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton1, true, "ShareMenu base button is not item1");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton2, true, "ShareMenu base button is not item2");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton3, true, "ShareMenu base button is not item3");
 
 			// Act  (remove all)
 			oResult = oMenu.removeAllContent();
 
 			// Assert
-			strictEqual(oResult.length, 3, "removeAll function returns removed items");
-			strictEqual(oMenu.getContent().length, 0, "ShareMenu has no items");
-			strictEqual(oResult[0], oCustomButton3, "ShareMenu has removed item3");
-			strictEqual(oResult[1], oCustomButton1, "ShareMenu has removed item1");
-			strictEqual(oResult[2], oCustomButton2, "ShareMenu has removed item2");
-			strictEqual(oMenu.getBaseButton() != null, true, "ShareMen has a base button");
-			strictEqual(oMenu.getBaseButton().getVisible(), false, "ShareMenu base button is not visible");
-			strictEqual(oMenu.getBaseButton() != oCustomButton1, true, "ShareMenu base button is not item1");
-			strictEqual(oMenu.getBaseButton() != oCustomButton2, true, "ShareMenu base button is not item2");
-			strictEqual(oMenu.getBaseButton() != oCustomButton3, true, "ShareMenu base button is not item3");
+			assert.strictEqual(oResult.length, 3, "removeAll function returns removed items");
+			assert.strictEqual(oMenu.getContent().length, 0, "ShareMenu has no items");
+			assert.strictEqual(oResult[0], oCustomButton3, "ShareMenu has removed item3");
+			assert.strictEqual(oResult[1], oCustomButton1, "ShareMenu has removed item1");
+			assert.strictEqual(oResult[2], oCustomButton2, "ShareMenu has removed item2");
+			assert.strictEqual(oMenu.getBaseButton() != null, true, "ShareMen has a base button");
+			assert.strictEqual(oMenu.getBaseButton().getVisible(), false, "ShareMenu base button is not visible");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton1, true, "ShareMenu base button is not item1");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton2, true, "ShareMenu base button is not item2");
+			assert.strictEqual(oMenu.getBaseButton() != oCustomButton3, true, "ShareMenu base button is not item3");
 
 			// Act  (insert item)
 			oResult = oMenu.insertContent(oCustomButton1, 0);
 
 			// Assert
-			strictEqual(oResult, oMenu, "insert function returns menu reference");
-			strictEqual(oMenu.getContent().length, 1, "ShareMenu has one item");
-			strictEqual(oMenu.getContent()[0], oCustomButton1, "ShareMenu has added item");
-			strictEqual(oMenu.indexOfContent(oCustomButton1), 0, "index of item1 is 0");
-			strictEqual(oMenu.getBaseButton() != null, true, "ShareMenu has a base button");
-			strictEqual(oMenu.getBaseButton(), oCustomButton1, "ShareMenu has the added button as a base button");
+			assert.strictEqual(oResult, oMenu, "insert function returns menu reference");
+			assert.strictEqual(oMenu.getContent().length, 1, "ShareMenu has one item");
+			assert.strictEqual(oMenu.getContent()[0], oCustomButton1, "ShareMenu has added item");
+			assert.strictEqual(oMenu.indexOfContent(oCustomButton1), 0, "index of item1 is 0");
+			assert.strictEqual(oMenu.getBaseButton() != null, true, "ShareMenu has a base button");
+			assert.strictEqual(oMenu.getBaseButton(), oCustomButton1, "ShareMenu has the added button as a base button");
 
 			// Cleanup
 			oMenu.destroy();

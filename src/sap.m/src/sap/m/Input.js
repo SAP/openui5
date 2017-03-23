@@ -239,7 +239,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					/**
 					 * The new value of the input.
 					 */
-					value : {type : "string"}
+					value : {type : "string"},
+
+					/**
+					 * Indicate that ESC key triggered the event.
+					 * @since 1.48
+					 */
+					escPressed : {type : "boolean"},
+
+					/**
+					 * The value of the input before pressing ESC key.
+					 * @since 1.48
+					 */
+					previousValue : {type : "string"}
 				}
 			},
 
@@ -488,7 +500,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (this._oList && this._oSuggestionPopup) {
 			if (this.getMaxSuggestionWidth()) {
-				this._oSuggestionPopup.setContentWidth(this.getMaxSuggestionWidth());
+				this._oSuggestionPopup.$('cont').css('max-width', this.getMaxSuggestionWidth());
+				this._oSuggestionPopup._maxWidth = this.getMaxSuggestionWidth();
 			} else {
 				this._oSuggestionPopup.setContentWidth((this.$().outerWidth()) + "px");
 			}
@@ -1730,6 +1743,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					oInput._triggerSuggest(sValue);
 					refreshListItems(oInput);
 				}));
+
+			if (oInput._oSuggestionPopup instanceof Popover) {
+				oInput._oSuggestionPopup._getMaxContentWidth = function(oPosParams) {
+					return oInput.getMaxSuggestionWidth() || (oPosParams._fDocumentWidth - oPosParams._fMarginLeft - oPosParams._fMarginRight - oPosParams._fPopoverBorderLeft - oPosParams._fPopoverBorderRight + "px");
+				};
+			}
 
 			oInput._oSuggestionPopup.addStyleClass("sapMInputSuggestionPopup");
 			oInput._oSuggestionPopup.addAriaLabelledBy(Input._sAriaPopupLabelId);

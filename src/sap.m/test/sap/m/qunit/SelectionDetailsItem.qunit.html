@@ -90,6 +90,18 @@
 		assert.equal(oListItem.destroy.callCount, 1, "ListItem has been destroyed with element.");
 	});
 
+	QUnit.test("Press handler for ListItem results in event called on SelectionDetailsItem", function(assert) {
+		//Arrange
+		var oListItem = this.oItem._getListItem();
+		sinon.spy(this.oItem, "fireEvent");
+
+		//Act
+		oListItem.firePress();
+
+		//Assert
+		assert.deepEqual(this.oItem.fireEvent.getCalls()[0].args[0], "_navigate", "press event of ListItem results in navigate event on SelectionDetailsItem.");
+	});
+
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oItem = new sap.m.SelectionDetailsItem({
@@ -160,6 +172,73 @@
 		assert.ok(this.oItem.getAggregation("_overflowToolbar").getContent().length, 3, "Toolbar spacer and two buttons have been created");
 		assert.equal($ListItem.find(".sapMSDItemActions").length, 1, "The action buttons toolbar has been rendered");
 	});
+
+	QUnit.module("Item interaction", {
+		beforeEach : function() {
+			this.oItem = new sap.m.SelectionDetailsItem({
+				actions: [new sap.ui.core.Item("itemAction", {
+					text: "Action 1"
+				})]
+			});
+			this.oSelectionDetailsListItem = this.oItem._getListItem();
+			this.oSelectionDetailsListItem.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetailsListItem.destroy();
+			this.oSelectionDetailsListItem = null;
+		}
+	});
+
+	QUnit.test("Press on the Action results in _ActionPress event", function(assert) {
+		// Arrange
+		var sActionTypeExpected = "_actionPress",
+			oActionExpected = this.oItem.getAggregation("actions")[0],
+			oButton = sap.ui.getCore().byId(this.oItem.getId() + "-action-0"),
+			oSpy = sinon.spy(sap.m.SelectionDetailsItem.prototype, "fireEvent");
+		// Act
+		oButton.firePress();
+		//Assert
+		assert.deepEqual(oSpy.getCall(0).args[0], sActionTypeExpected, "The _actionPress event of SelectionDetailsItem has been triggered");
+		assert.deepEqual(oSpy.getCall(0).args[1].action, oActionExpected, "The _actionPress event contains correct 'action' parameter");
+		assert.deepEqual(oSpy.getCall(0).args[1].items[0], this.oItem, "The _actionPress event contains correct 'items' parameter");
+		assert.deepEqual(oSpy.getCall(0).args[1].level, sap.m.SelectionDetailsActionLevel.Item, "The _actionPress event contains correct 'level' parameter");
+	});
+
+	QUnit.module("Item facade", {
+		beforeEach : function() {
+			this.oItem = new sap.m.SelectionDetailsItem();
+		},
+		afterEach : function() {
+			this.oItem.destroy();
+			this.oItem = null;
+		}
+	});
+
+	QUnit.test("Facade is not returning the original instance", function(assert) {
+		// Act
+		var oFacade = this.oItem.getFacade();
+		//Assert
+		assert.notDeepEqual(this.oItem, oFacade, "Proxy object is returned.");
+	});
+
+	QUnit.test("Facade proxy object is buffered on instance level", function(assert) {
+		// Act
+		var oFacadeFirstCall = this.oItem.getFacade();
+		var oFacadeSecondCall = this.oItem.getFacade();
+		//Assert
+		assert.equal(oFacadeFirstCall, oFacadeSecondCall, "Same proxy object is returned");
+	});
+
+	QUnit.test("Facade includes setEnableNav method", function(assert) {
+		// Arrange
+		var oFacade = this.oItem.getFacade();
+		// Act
+		oFacade.setEnableNav(true);
+		//Assert
+		assert.ok(this.oItem.getEnableNav(), "enableNav is set to true");
+	});
+
 </script>
 </head>
 

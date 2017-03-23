@@ -51,25 +51,25 @@
 						id="supplierNameColumn"
 						demandPopin="false"
 						minScreenWidth="Tablet">
-        				<Text text="{i18n>TableSupplierColumnTitle}"/>
-    				</Column>
-    				<Column
+						<Text text="{i18n>TableSupplierColumnTitle}"/>
+					</Column>
+					<Column
 						id="unitPriceColumn"
-						hAlign="Right"
+						hAlign="End"
 						demandPopin="true"
 						minScreenWidth="Tablet">
-        				<Text text="{i18n>TablePriceColumnTitle}"/>
-    				</Column>
-    				<Column id="unitsOnOrderColumn"
-            			demandPopin="true"
-            			minScreenWidth="Tablet"
-            			hAlign="Right">
-        				<Text text="{i18n>TableUnitsOrderedColumnTitle}"/>
+						<Text text="{i18n>TablePriceColumnTitle}"/>
+					</Column>
+					<Column id="unitsOnOrderColumn"
+						demandPopin="true"
+						minScreenWidth="Tablet"
+						hAlign="End">
+						<Text text="{i18n>TableUnitsOrderedColumnTitle}"/>
 					</Column>
 					<Column id="unitsInStockColumn"
-            			hAlign="Right">
-        				<Text text="{i18n>TableUnitsInStockColumnTitle}"/>
-    				</Column>
+						hAlign="End">
+						<Text text="{i18n>TableUnitsInStockColumnTitle}"/>
+					</Column>
 				</columns>
 				<items>
 					<ColumnListItem

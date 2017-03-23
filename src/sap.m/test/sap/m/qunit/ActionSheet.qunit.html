@@ -54,19 +54,19 @@
 					jQuery.sap.log.info("sap.m.ActionSheet: cancelButton is pressed");
 				},
 				beforeOpen: function(){
-					ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
+					QUnit.ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
 				},
 				afterOpen: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
-					start();
+					QUnit.equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+					QUnit.start();
 				},
 				beforeClose: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible before it's closed");
+					QUnit.equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible before it's closed");
 				},
 				afterClose: function(){
-					ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
-					ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
-					start();
+					QUnit.ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
+					QUnit.ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
+					QUnit.start();
 				}
 			});
 
@@ -93,136 +93,145 @@
 			QUnit.module("Initial Check");
 
 			QUnit.test("Initialization", function(assert) {
-				ok(!jQuery.sap.domById("actionsheet"), "ActionSheet is not rendered before it's ever opened.");
+				assert.ok(!jQuery.sap.domById("actionsheet"), "ActionSheet is not rendered before it's ever opened.");
 			});
 
 			QUnit.module("Open and Close - with Title and Cancel Button");
 
-			asyncTest("Open ActionSheet - - with Title and Cancel Button", function(){
+			QUnit.test("Open ActionSheet - - with Title and Cancel Button", function(assert){
+				var done = assert.async();
 				oButton.firePress();
-				ok(oActionSheet.isOpen(), "ActionSheet is already open");
+				assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 				setTimeout(function(){
 					var $actionSheet = jQuery.sap.byId("actionsheet"),
 						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 						$header = $parentControl.children("header.sapMBar"),
 						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
-					expect(8);
-					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
-					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
-					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
+					assert.expect(8);
+					assert.ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
+					assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
+					assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
 					if(!sap.ui.Device.system.phone){
-						ok(!($header[0]), "Title is always ignored when doesn't run on phone");
+						assert.ok(!($header[0]), "Title is always ignored when doesn't run on phone");
 					}else{
-						ok($header[0], "Title is rendered");
+						assert.ok($header[0], "Title is rendered");
 					}
 					if(!sap.ui.Device.system.phone){
-						ok(!($cancelButton[0]), "Cancel button is never rendered when doesn't run on phone");
+						assert.ok(!($cancelButton[0]), "Cancel button is never rendered when doesn't run on phone");
 					}else{
-						ok($cancelButton[0], "Cancel button is rendered");
+						assert.ok($cancelButton[0], "Cancel button is rendered");
 					}
 
 				}, 50);
 			});
 
-			asyncTest("Close ActionSheet", function(){
-				expect(3);
+			QUnit.test("Close ActionSheet", function(assert){
+				var done = assert.async();
+				assert.expect(3);
 				oActionSheet.close();
 			});
 
 			QUnit.module("Open and Close - with Title but no Cancel Button");
 
-			asyncTest("Open ActionSheet - - with Title  but no Cancel Button", function(){
+			QUnit.test("Open ActionSheet - - with Title  but no Cancel Button", function(assert){
+				var done = assert.async();
 				oActionSheet.setShowCancelButton(false);
 				oButton.firePress();
-				ok(oActionSheet.isOpen(), "ActionSheet is already open");
+				assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 				setTimeout(function(){
 					var $actionSheet = jQuery.sap.byId("actionsheet"),
 						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 						$header = $parentControl.children("header.sapMBar"),
 						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
-					expect(8);
-					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
-					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
-					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
+					assert.expect(8);
+					assert.ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
+					assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
+					assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
 					if(!sap.ui.Device.system.phone){
-						ok(!($header[0]), "Title is always ignored in iPad");
+						assert.ok(!($header[0]), "Title is always ignored in iPad");
 					}else{
-						ok($header[0], "Title is rendered");
+						assert.ok($header[0], "Title is rendered");
 					}
-					ok(!($cancelButton[0]), "showCancelButton is set to false, there is no cancel button");
+					assert.ok(!($cancelButton[0]), "showCancelButton is set to false, there is no cancel button");
 				}, 50);
 			});
 
-			asyncTest("Close ActionSheet", function(){
-				expect(3);
+			QUnit.test("Close ActionSheet", function(assert){
+				var done = assert.async();
+				assert.expect(3);
 
 				oActionSheet.close();
 			});
 
 			QUnit.module("Open and Close - no Title but with Cancel Button");
 
-			asyncTest("Open ActionSheet - - no Title but with Cancel Button", function(){
+			QUnit.test("Open ActionSheet - - no Title but with Cancel Button", function(assert){
+				var done = assert.async();
 				oActionSheet.setShowCancelButton(true);
 				oActionSheet.setTitle(null);
 				oButton.firePress();
-				ok(oActionSheet.isOpen(), "ActionSheet is already open");
+				assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 				setTimeout(function(){
 					var $actionSheet = jQuery.sap.byId("actionsheet"),
 						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 						$header = $parentControl.children("div.sapMBar"),
 						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
-					expect(8);
-					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
-					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
-					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
+					assert.expect(8);
+					assert.ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
+					assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
+					assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
-					ok(!($header[0]), "There is no title because title property is set to null");
+					assert.ok(!($header[0]), "There is no title because title property is set to null");
 
 					if(!sap.ui.Device.system.phone){
-						ok(!($cancelButton[0]), "Cancel button is never rendered in iPad");
+						assert.ok(!($cancelButton[0]), "Cancel button is never rendered in iPad");
 					}else{
-						ok($cancelButton[0], "Cancel button is rendered");
+						assert.ok($cancelButton[0], "Cancel button is rendered");
 					}
 				}, 50);
 			});
 
-			asyncTest("Close ActionSheet", function(){
-				expect(3);
+			QUnit.test("Close ActionSheet", function(assert){
+				var done = assert.async();
+				assert.expect(3);
 				oActionSheet.close();
 			});
 
 			QUnit.module("Open and Close - no Title and no Cancel Button");
 
-			asyncTest("Open ActionSheet - - no Title and no Cancel Button", function(){
+			QUnit.test("Open ActionSheet - - no Title and no Cancel Button", function(assert){
+				var done = assert.async();
 				oActionSheet.setShowCancelButton(false);
 				oActionSheet.setTitle(null);
 				oButton.firePress();
-				ok(oActionSheet.isOpen(), "ActionSheet is already open");
+				assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 				setTimeout(function(){
 					var $actionSheet = jQuery.sap.byId("actionsheet"),
 						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 						$header = $parentControl.children("div.sapMBar"),
 						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
-					expect(8);
-					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
-					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
-					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
+					assert.expect(8);
+					assert.ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
+					assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
+					assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
-					ok(!($header[0]), "There is no title because title property is set to null");
-					ok(!($cancelButton[0]), "showCancelButton is set to false, there is no cancel button");
+					assert.ok(!($header[0]), "There is no title because title property is set to null");
+					assert.ok(!($cancelButton[0]), "showCancelButton is set to false, there is no cancel button");
 				}, 50);
 			});
 
-			asyncTest("Close ActionSheet", function(){
-				expect(3);
+			QUnit.test("Close ActionSheet", function(assert){
+				var done = assert.async();
+				assert.expect(3);
 				oActionSheet.close();
 			});
 
 			QUnit.module("Additional Test");
 
-			asyncTest("Open an ActionSheet which is already aggregated in dependents aggregation", function(){
+			QUnit.test("Open an ActionSheet which is already aggregated in dependents aggregation", function(assert){
+				var done = assert.async();
 				var oAC = new sap.m.ActionSheet({
 					cancelButtonText: "Cancel",
 					title: "Title",
@@ -241,19 +250,20 @@
 				var oSpyOfViewInvalidate = sinon.spy(page, "invalidate");
 
 				oAC.attachAfterOpen(function(){
-					equal(oSpyOfViewInvalidate.callCount, 0, "Former parent shouldn't be invalidated");
+					assert.equal(oSpyOfViewInvalidate.callCount, 0, "Former parent shouldn't be invalidated");
 
 					oAC.destroy();
-					start();
+					done();
 				});
 
 				oAC.openBy(oButton);
 
-				equal(oAC._parent.getParent(), page, "Popup of ActionSheet should be aggregated by the former parent of ActionSheet");
+				assert.equal(oAC._parent.getParent(), page, "Popup of ActionSheet should be aggregated by the former parent of ActionSheet");
 
 			});
 
-			asyncTest("If first button is invinsible, focus goes to the second one", function () {
+			QUnit.test("If first button is invinsible, focus goes to the second one", function (assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -277,9 +287,9 @@
 				oButton.firePress();
 
 				setTimeout(function(){
-					ok(jQuery.sap.byId('asButton2').is(":focus"), 'The 2nd button should be focused');
+					assert.ok(jQuery.sap.byId('asButton2').is(":focus"), 'The 2nd button should be focused');
 
-					start();
+					done();
 					oActionSheet.close();
 					oButton.destroy();
 					oActionSheet.destroy();
@@ -288,8 +298,9 @@
 
 			QUnit.module("keyboard handling");
 
-			asyncTest('PageUp keyboard handling', function(){
-				expect(2);
+			QUnit.test('PageUp keyboard handling', function(assert){
+				var done = assert.async();
+				assert.expect(2);
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -345,13 +356,13 @@
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
 
-					ok(jQuery.sap.byId('oButton2').is(":focus"), 'The 2nd button should be focused');
+					assert.ok(jQuery.sap.byId('oButton2').is(":focus"), 'The 2nd button should be focused');
 
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
 
-					ok(jQuery.sap.byId('oButton1').is(":focus"), 'The first button should be focused');
-					start();
+					assert.ok(jQuery.sap.byId('oButton1').is(":focus"), 'The first button should be focused');
+					done();
 					oActionSheet.close();
 
 					oButton.destroy();
@@ -360,11 +371,12 @@
 
 			});
 
-			asyncTest('PageDown keyboard handling mobile phone', function(){
+			QUnit.test('PageDown keyboard handling mobile phone', function(assert){
+				var done = assert.async();
 				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
 						// this test is not supported by IE9
-						expect(0);
-						start();
+						assert.expect(0);
+						done();
 						return;
 				}
 
@@ -375,7 +387,7 @@
 				};
 
 				this.stub(sap.ui.Device, "system", oSystem);
-				expect(2);
+				assert.expect(2);
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -428,12 +440,12 @@
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 
-					ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
+					assert.ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
 
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-					ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
-					start();
+					assert.ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
+					done();
 					oActionSheet.close();
 
 					oButton.destroy();
@@ -441,14 +453,15 @@
 				}, 500)
 			});
 
-			asyncTest('PageDown keyboard handling desktop', function(){
+			QUnit.test('PageDown keyboard handling desktop', function(assert){
+				var done = assert.async();
 				var oSystem = {
 						desktop: true,
 						phone: false
 				};
 
 				this.stub(sap.ui.Device, "system", oSystem);
-				expect(2);
+				assert.expect(2);
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -501,14 +514,14 @@
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 
-					ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
+					assert.ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
 
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 
-					ok(jQuery.sap.byId('oButton7').is(":focus"), 'The 7th button should be focused');
+					assert.ok(jQuery.sap.byId('oButton7').is(":focus"), 'The 7th button should be focused');
 
-					start();
+					done();
 					oActionSheet.close();
 
 					oButton.destroy();
@@ -600,7 +613,8 @@
 				}, 500)
 			});
 
-			asyncTest('Button should have ariaLabelledBy that points to itself and hidden text', function() {
+			QUnit.test('Button should have ariaLabelledBy that points to itself and hidden text', function(assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -627,9 +641,9 @@
 					var oButton1 = sap.ui.getCore().byId('asButton1'),
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
-					strictEqual(aInvisibleTexts[0] instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
-					strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
-					strictEqual(aInvisibleTexts[1].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 2]), "Text should be the index of the button");
+					assert.strictEqual(aInvisibleTexts[0] instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
+					assert.strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
+					assert.strictEqual(aInvisibleTexts[1].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 2]), "Text should be the index of the button");
 
 					oActionSheet.close();
 					oActionSheet._getAllButtons()[1].setVisible(false);
@@ -638,8 +652,8 @@
 					setTimeout(function(){
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
-						strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Text should be the index of the button");
-						start();
+						assert.strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Text should be the index of the button");
+						done();
 						oActionSheet.close();
 						oButton.destroy();
 						oActionSheet.destroy();
@@ -647,7 +661,8 @@
 
 				}, 500);
 			});
-			asyncTest('Removing a button and adding it again should not add wrong labels', function() {
+			QUnit.test('Removing a button and adding it again should not add wrong labels', function(assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -681,10 +696,10 @@
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 						aButtonLabels = button1.getAriaLabelledBy();
 
-						strictEqual(aInvisibleTexts.length, 1, "Invisible text should be one");
-						strictEqual(aButtonLabels.length, 1, "Button should be labelled by 1 id");
-						ok(aButtonLabels.indexOf(aInvisibleTexts[0].getId()) > -1, "The button should be lablled by a text from the invisibleTexts");
-						start();
+						assert.strictEqual(aInvisibleTexts.length, 1, "Invisible text should be one");
+						assert.strictEqual(aButtonLabels.length, 1, "Button should be labelled by 1 id");
+						assert.ok(aButtonLabels.indexOf(aInvisibleTexts[0].getId()) > -1, "The button should be lablled by a text from the invisibleTexts");
+						done();
 						oActionSheet.close();
 						oButton.destroy();
 						oActionSheet.destroy();
@@ -693,7 +708,8 @@
 				}, 500);
 			});
 
-			asyncTest('Invisible buttons should not be counted', function() {
+			QUnit.test('Invisible buttons should not be counted', function(assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
 					press : function() {
@@ -721,9 +737,9 @@
 						sInvisibleText = sap.ui.getCore().byId('asButton1').getAriaLabelledBy()[0],
 						oInvisibleTextObj = sap.ui.getCore().byId(sInvisibleText);
 
-					strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
+					assert.strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
 
-					start();
+					done();
 					oActionSheet.close();
 					oButton.destroy();
 					oActionSheet.destroy();
@@ -763,14 +779,14 @@
  						"The buttons of the original action sheet should still have defined mock handlers AFTER we clone it");
  				});
 
- 				deepEqual(aPreCloneHandlers, aPostCloneHandlers,
+ 				assert.deepEqual(aPreCloneHandlers, aPostCloneHandlers,
  					'The handlers before the clone should be the same as the press handlers after the clone');
 				oClonedActionSheet.getButtons().forEach(function(oButton, i) {
- 					strictEqual(oButton.getParent(),oClonedActionSheet,
+ 					assert.strictEqual(oButton.getParent(),oClonedActionSheet,
  						"Cloned actionsheet buttons parent should be the clone instance");
  				});
- 				notStrictEqual(oClonedActionSheet.sId, oActionSheet.sId, 'The sId should be unique for each clone');
- 				deepEqual(oClonedActionSheet.mProperties, oActionSheet.mProperties,
+ 				assert.notStrictEqual(oClonedActionSheet.sId, oActionSheet.sId, 'The sId should be unique for each clone');
+ 				assert.deepEqual(oClonedActionSheet.mProperties, oActionSheet.mProperties,
  					'The properties of the clone should be the same as the properties of the ActionSheet');
 
  			});
@@ -784,11 +800,11 @@
 
 				oActionSheet.addButton(oButton)
 				oActionSheet.removeButton(oButton);
-				strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
+				assert.strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
 
 				oActionSheet.addButton(oButton)
 				oActionSheet.removeAllButtons();
-				strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
+				assert.strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
 			});
 
 			QUnit.done(function() {

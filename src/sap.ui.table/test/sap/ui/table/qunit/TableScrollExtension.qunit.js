@@ -201,7 +201,8 @@ QUnit.module("Horizontal scrolling", {
 	}
 });
 
-QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
+QUnit.test("Imitating scrollbar scrolling", function(assert) {
+	var done = assert.async();
 	var iAssertionDelay = 50;
 
 	// Scroll right to 200
@@ -231,7 +232,7 @@ QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
 						assert.strictEqual(this.oHSb.scrollLeft, 20, "Horizontal scrollbar scroll position is 20");
 						assert.strictEqual(this.oHeaderScroll.scrollLeft, 20, "Header scroll position is 20");
 						assert.strictEqual(this.oContentScroll.scrollLeft, 20, "Content scroll position is 20");
-						QUnit.start();
+						done();
 					}.bind(this), iAssertionDelay);
 				}
 
@@ -240,7 +241,8 @@ QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
 	}
 });
 
-QUnit.asyncTest("Imitating Arrow Left/Right and Home/End key navigation", function(assert) {
+QUnit.test("Imitating Arrow Left/Right and Home/End key navigation", function(assert) {
+	var done = assert.async();
 	var that = this;
 	var iNumberOfCols = oTable.getColumns().length;
 	var iAssertionDelay = 50;
@@ -392,12 +394,13 @@ QUnit.asyncTest("Imitating Arrow Left/Right and Home/End key navigation", functi
 
 		window.setTimeout(function() {
 			that.assertSynchronization(assert, 0);
-			QUnit.start();
+			done();
 		}, iAssertionDelay);
 	})
 });
 
-QUnit.asyncTest("Imitating mouse wheel", function(assert) {
+QUnit.test("Imitating mouse wheel", function(assert) {
+	var done = assert.async();
 	var that = this;
 	var iAssertionDelay = 100;
 	var oTarget;
@@ -492,11 +495,12 @@ QUnit.asyncTest("Imitating mouse wheel", function(assert) {
 	}).then(function() {
 		return scrollWithMouseWheel(oTarget, -50, iCurrentScrollPosition - 50, true);
 	}).then(function() {
-		QUnit.start();
+		done();
 	});
 });
 
-QUnit.asyncTest("Imitating touch", function(assert) {
+QUnit.test("Imitating touch", function(assert) {
+	var done = assert.async();
 	var that = this;
 	var iTouchPosition;
 	var iCurrentScrollPosition = this.oHSb.scrollLeft;
@@ -590,7 +594,7 @@ QUnit.asyncTest("Imitating touch", function(assert) {
 		return touchMove(oTarget, -50, iCurrentScrollPosition - 50);
 	}).then(function() {
 		delete document.ontouchstart;
-		QUnit.start();
+		done();
 	});
 });
 
@@ -801,6 +805,7 @@ QUnit.module("Vertical scrolling", {
 		destroyTables();
 	},
 	doTest: function(assert, oSetting) {
+		var done = assert.async();
 		oSetting = jQuery.extend({}, this.oDefaultSetting, oSetting);
 		oTable.setVisibleRowCount(oSetting.visibleRowCount);
 		oTable.setRowHeight(oSetting.rowHeight);
@@ -843,40 +848,41 @@ QUnit.module("Vertical scrolling", {
 				} else {
 					assert.strictEqual(oTable.getFirstVisibleRow(), iExpectedFirstVisibleRow, "Check FirstVisibleRow");
 				}
-				QUnit.start();
+				done();
 			}, iDelay);
 		}, iDelay);
 	}
 });
 
-QUnit.asyncTest("To Middle - small data - no variable row heights", function(assert) {
+QUnit.test("To Middle - small data - no variable row heights", function(assert) {
+
 	this.doTest(assert, {scrollTop: 750, expectedFirstVisibleRow: 15});
 });
 
-QUnit.asyncTest("To End - small data - no variable row heights", function(assert) {
+QUnit.test("To End - small data - no variable row heights", function(assert) {
 	this.doTest(assert, {scrollTop: 1000, expectedFirstVisibleRow: 20});
 });
 
-QUnit.asyncTest("To Middle - big data - no variable row heights", function(assert) {
+QUnit.test("To Middle - big data - no variable row heights", function(assert) {
 	this.doTest(assert, {length: 20000000, tolerance: 5200, scrollTop: oTable._iMaxScrollbarHeight / 2, expectedFirstVisibleRow: 10000000});
 });
 
-QUnit.asyncTest("To End - big data - no variable row heights", function(assert) {
+QUnit.test("To End - big data - no variable row heights", function(assert) {
 	this.doTest(assert, {length: 20000000, scrollTop: oTable._iMaxScrollbarHeight, expectedFirstVisibleRow: 20000000 - 10});
 });
 
-QUnit.asyncTest("To Middle - small data - variable row heights", function(assert) {
+QUnit.test("To Middle - small data - variable row heights", function(assert) {
 	this.doTest(assert, {scrollTop: 750, expectedFirstVisibleRow: 15});
 });
 
-QUnit.asyncTest("To End - small data - variable row heights", function(assert) {
+QUnit.test("To End - small data - variable row heights", function(assert) {
 	this.doTest(assert, {scrollTop: 1000, expectedFirstVisibleRow: 20});
 });
 
-QUnit.asyncTest("To Middle - big data - variable row heights", function(assert) {
+QUnit.test("To Middle - big data - variable row heights", function(assert) {
 	this.doTest(assert, {length: 20000000, tolerance: 5200, scrollTop: oTable._iMaxScrollbarHeight / 2, expectedFirstVisibleRow: 10000000});
 });
 
-QUnit.asyncTest("To End - big data - variable row heights", function(assert) {
+QUnit.test("To End - big data - variable row heights", function(assert) {
 	this.doTest(assert, {length: 20000000, scrollTop: oTable._iMaxScrollbarHeight, expectedFirstVisibleRow: 20000000 - 10});
 });

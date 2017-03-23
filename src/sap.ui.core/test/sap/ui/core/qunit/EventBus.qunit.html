@@ -26,22 +26,22 @@
 			if(oEventProvider){
 				var aRegisteredListeners = sap.ui.base.EventProvider.getEventList(oEventProvider)[sEventId];
 				if(aRegisteredListeners && jQuery.isArray(aRegisteredListeners)){
-					equal(aRegisteredListeners.length, iExpected, iExpected+" listener(s) subscribed for event "+sEventId);
+					assert.equal(aRegisteredListeners.length, iExpected, iExpected+" listener(s) subscribed for event "+sEventId);
 				}else{
-					ok(!oEventProvider.hasListeners(sEventId) && iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
+					assert.ok(!oEventProvider.hasListeners(sEventId) && iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
 				}
 			}else{
-				ok(iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
+				assert.ok(iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
 			}
 		};
 
 		function checkHandler(bWithListener, sChannelId, sEventId, oData, oThis, sExpectedChannel, sExpectedEventId, sExpectedData, oListener){
-			equal(sChannelId, sExpectedChannel, "Expected Channel");
-			equal(sEventId, sExpectedEventId, "Expected Event");
-			ok(oThis === (bWithListener ? oListener : oBus), "'this' is set as expected - "+(bWithListener ? "Listener" : "EventBus"));
-			ok(!!oData, "Data object provided");
+			assert.equal(sChannelId, sExpectedChannel, "Expected Channel");
+			assert.equal(sEventId, sExpectedEventId, "Expected Event");
+			assert.ok(oThis === (bWithListener ? oListener : oBus), "'this' is set as expected - "+(bWithListener ? "Listener" : "EventBus"));
+			assert.ok(!!oData, "Data object provided");
 			if(sExpectedData){
-				equal(oData.data, sExpectedData, "Expected Data");
+				assert.equal(oData.data, sExpectedData, "Expected Data");
 			}
 		};
 	</script>
@@ -54,12 +54,13 @@
 		QUnit.module("Basics");
 
 		QUnit.test("EventBus initialized", function(assert) {
-			ok(!!oBus, "Event Bus initialized");
+			assert.ok(!!oBus, "Event Bus initialized");
 		});
 
 		QUnit.module("(Un-)subscribe");
 
-		QUnit.test("Default channel", 5, function(assert) {
+		QUnit.test("Default channel", function(assert) {
+			assert.expect(5);
 			var sEventId = "Test1";
 			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
 			var fHandler1 = function(){};
@@ -75,7 +76,8 @@
 			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
 		});
 
-		QUnit.test("Custom channel", 6, function(assert) {
+		QUnit.test("Custom channel", function(assert) {
+			assert.expect(6);
 			var sEventId = "Test2";
 			var sChannelId = "TestChannel2";
 			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 0);
@@ -90,12 +92,13 @@
 			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 1);
 			oBus.unsubscribe(sChannelId, sEventId, fHandler2, oObj2);
 			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 0);
-			ok(!oBus._mChannels[sChannelId], "Unused Channel is cleaned up.");
+			assert.ok(!oBus._mChannels[sChannelId], "Unused Channel is cleaned up.");
 		});
 
 		QUnit.module("SubscribeOnce");
 
-		QUnit.test("Default channel", 12, function(assert){
+		QUnit.test("Default channel", function(assert){
+			assert.expect(12);
 			var sEventId = "Test3";
 			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
 
@@ -119,7 +122,8 @@
 			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
 		});
 
-		QUnit.test("Custom channel", 12, function(assert){
+		QUnit.test("Custom channel", function(assert){
+			assert.expect(12);
 			var sEventId = "Test4";
 			var sChannelId = "TestChannel4";
 
@@ -203,35 +207,43 @@
 			}
 		});
 
-		QUnit.test("Default Channel, with Listener, with Data", 5, function(assert) {
+		QUnit.test("Default Channel, with Listener, with Data", function(assert) {
+			assert.expect(5);
 			oBus.publish("Test11", {data: "data11"});
 		});
 
-		QUnit.test("Default Channel, no Listener, with Data", 5, function(assert) {
+		QUnit.test("Default Channel, no Listener, with Data", function(assert) {
+			assert.expect(5);
 			oBus.publish("Test12", {data: "data12"});
 		});
 
-		QUnit.test("Default Channel, with Listener, no Data", 4, function(assert) {
+		QUnit.test("Default Channel, with Listener, no Data", function(assert) {
+			assert.expect(4);
 			oBus.publish("Test13");
 		});
 
-		QUnit.test("Default Channel, no Listener, no Data", 4, function(assert) {
+		QUnit.test("Default Channel, no Listener, no Data", function(assert) {
+			assert.expect(4);
 			oBus.publish("Test14");
 		});
 
-		QUnit.test("Custom Channel, with Listener, with Data", 5, function(assert) {
+		QUnit.test("Custom Channel, with Listener, with Data", function(assert) {
+			assert.expect(5);
 			oBus.publish("CustomChannel", "Test21", {data: "data21"});
 		});
 
-		QUnit.test("Custom Channel, no Listener, with Data", 5, function(assert) {
+		QUnit.test("Custom Channel, no Listener, with Data", function(assert) {
+			assert.expect(5);
 			oBus.publish("CustomChannel", "Test22", {data: "data22"});
 		});
 
-		QUnit.test("Custom Channel, with Listener, no Data", 4, function(assert) {
+		QUnit.test("Custom Channel, with Listener, no Data", function(assert) {
+			assert.expect(4);
 			oBus.publish("CustomChannel", "Test23");
 		});
 
-		QUnit.test("Custom Channel, no Listener, no Data", 4, function(assert) {
+		QUnit.test("Custom Channel, no Listener, no Data", function(assert) {
+			assert.expect(4);
 			oBus.publish("CustomChannel", "Test24");
 		});
 	</script>

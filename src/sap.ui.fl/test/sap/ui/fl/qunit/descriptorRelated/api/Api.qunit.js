@@ -3,7 +3,7 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.api.DescriptorInlineChangeFactor
 jQuery.sap.require("sap.ui.fl.descriptorRelated.api.DescriptorVariantFactory");
 jQuery.sap.require("sap.ui.fl.descriptorRelated.api.DescriptorChangeFactory");
 jQuery.sap.require('sap.ui.fl.LrepConnector');
-jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
+jQuery.sap.require('sap.ui.fl.registry.Settings');
 
 (function(DescriptorInlineChangeFactory, DescriptorVariantFactory, DescriptorChangeFactory, LrepConnector, Settings) {
 	'use strict';
@@ -913,6 +913,27 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		}.bind(this));
 	});
 
+	QUnit.test("create_ui_setIcon", function(assert) {
+		return DescriptorInlineChangeFactory.create_ui_setIcon({
+			"icon" : "sap-icon://add-contact"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_ui_setIcon failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui_setIcon({
+				"iconId" : "a.string"
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui_setIcon({
+				"icon" : { }
+			})
+		}.bind(this));
+	});
+
 	QUnit.module("DescriptorVariant", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
@@ -1545,4 +1566,4 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		sap.ui.fl.descriptorRelated.api.DescriptorVariantFactory,
 		sap.ui.fl.descriptorRelated.api.DescriptorChangeFactory,
 		sap.ui.fl.LrepConnector,
-		sap.ui.fl.descriptorRelated.api.Settings));
+		sap.ui.fl.registry.Settings));

@@ -310,7 +310,7 @@
 
 	function defineGenericTests() {
 
-		test("Metadata API", function(assert) {
+		QUnit.test("Metadata API", function(assert) {
 
 			assert.equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 			assert.equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
@@ -338,20 +338,20 @@
 
 		QUnit.test("ResourceRoots", function(assert) {
 			if (this.iExpectedMetadataVersion === 1) {
-				ok(true, "Metadata version 1 does not support 'resourceRoots'. Skipping tests...");
+				assert.ok(true, "Metadata version 1 does not support 'resourceRoots'. Skipping tests...");
 			} else {
-				ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
+				assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
 					.equals(new URI(jQuery.sap.getModulePath("x.y.z"))),
 					"ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-				ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+				assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
 					.equals(new URI(jQuery.sap.getModulePath("foo.bar"))),
 					"ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
 
 				// (server-)absolute resource roots are not allowed and therefore won't be registered!
-				ok(!new URI("http://absolute/uri")
+				assert.ok(!new URI("http://absolute/uri")
 					.equals(new URI(jQuery.sap.getModulePath("absolute"))),
 					"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-				ok(!new URI("/server/absolute/uri")
+				assert.ok(!new URI("/server/absolute/uri")
 					.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
 					"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 			}
@@ -359,11 +359,11 @@
 
 		QUnit.test("Manifest Validation", function(assert) {
 
-			deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
-			deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
-			strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
-			strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
-			strictEqual(this.oMetadata.getManifestEntry("baz.buz"), null, "Not existing manifest entry should return null");
+			assert.deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+			assert.deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+			assert.strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
+			assert.strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
+			assert.strictEqual(this.oMetadata.getManifestEntry("baz.buz"), null, "Not existing manifest entry should return null");
 
 		});
 
@@ -517,8 +517,8 @@
 
 	QUnit.test("Metadata Validation", function(assert) {
 
-		equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
-		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		assert.equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -537,8 +537,8 @@
 
 	QUnit.test("Manifest Validation", function(assert) {
 
-		equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
-		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		assert.equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -557,8 +557,8 @@
 
 	QUnit.test("Metadata Validation", function(assert) {
 
-		equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
-		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		assert.equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -577,8 +577,8 @@
 
 	QUnit.test("Manifest Validation", function(assert) {
 
-		equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
-		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
+		assert.equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
 
@@ -596,7 +596,7 @@
 		}
 	});
 
-	test("Metadata API", function(assert) {
+	QUnit.test("Metadata API", function(assert) {
 
 		assert.equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 		assert.equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
@@ -622,26 +622,26 @@
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
+		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
 			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
 			.equals(new URI(jQuery.sap.getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
-		ok(!new URI("http://absolute/uri")
+		assert.ok(!new URI("http://absolute/uri")
 			.equals(new URI(jQuery.sap.getModulePath("absolute"))),
 			"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-		ok(!new URI("/server/absolute/uri")
+		assert.ok(!new URI("/server/absolute/uri")
 			.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
 			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 	});
 
 	QUnit.test("Manifest Validation", function(assert) {
 
-		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
-		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
-		strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
-		strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
+		assert.deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+		assert.deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+		assert.strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
+		assert.strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
 
 	});
 
@@ -681,7 +681,7 @@
 		}
 	});
 
-	test("Metadata API", function(assert) {
+	QUnit.test("Metadata API", function(assert){
 
 		assert.equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 		assert.equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
@@ -709,26 +709,26 @@
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
+		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
 			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-		ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
 			.equals(new URI(jQuery.sap.getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
-		ok(!new URI("http://absolute/uri")
+		assert.ok(!new URI("http://absolute/uri")
 			.equals(new URI(jQuery.sap.getModulePath("absolute"))),
 			"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-		ok(!new URI("/server/absolute/uri")
+		assert.ok(!new URI("/server/absolute/uri")
 			.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
 			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
 	});
 
 	QUnit.test("Manifest Validation", function(assert) {
 
-		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
-		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
-		strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
-		strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
+		assert.deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+		assert.deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+		assert.strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
+		assert.strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
 
 	});
 
@@ -743,7 +743,7 @@
 		}
 	});
 
-	test("relative", function(assert) {
+	QUnit.test("relative", function(assert){
 		this.assertResolvedUri("local/uri",                           "path/to/base/",          "path/to/base/local/uri");
 		this.assertResolvedUri("./local/uri",                         "path/to/base/",          "path/to/base/local/uri");
 		this.assertResolvedUri("../relative/1/uri",                   "path/to/base/",          "path/to/relative/1/uri");
@@ -763,7 +763,7 @@
 		this.assertResolvedUri("../../../../../../relative/6/uri",    "../../../path/to/base/", "../../../../../../relative/6/uri");
 	});
 
-	test("absolute", function(assert) {
+	QUnit.test("absolute", function(assert){
 		this.assertResolvedUri("http://absolute:1234/uri", "path/to/base/",          "http://absolute:1234/uri");
 		this.assertResolvedUri("//absolute:1234/uri",      "path/to/base/",          "//absolute:1234/uri");
 		this.assertResolvedUri("/server-absolute/uri",     "path/to/base/",          "/server-absolute/uri");
@@ -803,7 +803,7 @@
 		}
 	});
 
-	test("MinVersion gt Version", function(assert) {
+	QUnit.test("MinVersion gt Version", function(assert){
 		this.oVersionInfo.version = "1.20.0";
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
@@ -818,9 +818,9 @@
 			// in case of debug mode is on the warning should be reported
 			// when it is turned off => no warning!
 			if (sap.ui.getCore().getConfiguration().getDebug()) {
-				ok(bFound, "Warning has been reported!");
+				assert.ok(bFound, "Warning has been reported!");
 			} else {
-				ok(!bFound, "Warning has not been reported!");
+				assert.ok(!bFound, "Warning has not been reported!");
 			}
 			moduleTeardown.call(that);
 			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
@@ -828,7 +828,7 @@
 		}, 200);
 	});
 
-	test("MinVersion eq Version", function(assert) {
+	QUnit.test("MinVersion eq Version", function(assert){
 		this.oVersionInfo.version = "1.22.5";
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
@@ -840,14 +840,14 @@
 					bFound = true;
 				}
 			}
-			ok(!bFound, "Warning has not been reported!");
+			assert.ok(!bFound, "Warning has not been reported!");
 			moduleTeardown.call(that);
 			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
 			oDone();
 		}, 200);
 	});
 
-	test("MinVersion lt Version", function(assert) {
+	QUnit.test("MinVersion lt Version", function(assert){
 		this.oVersionInfo.version = "1.31.0";
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
@@ -859,7 +859,7 @@
 					bFound = true;
 				}
 			}
-			ok(!bFound, "Warning has not been reported!");
+			assert.ok(!bFound, "Warning has not been reported!");
 			moduleTeardown.call(that);
 			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
 			oDone();

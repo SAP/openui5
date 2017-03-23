@@ -65,9 +65,11 @@ function(jQuery, ElementUtil, OverlayRegistry) {
 
 		var mElementInfo = this.getInfo(oElement);
 		var oAggregationOverlay = mElementInfo.overlay.getAggregationOverlay(sAggregationName);
-		var oDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
+		if (oAggregationOverlay) {
+			var oDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
+		}
 
-		if (!oDesignTimeMetadata.isIgnored()) {
+		if (oDesignTimeMetadata && !oDesignTimeMetadata.isIgnored()) {
 			mAggregationTest.ignored = false;
 			mAggregationTest.domRefDeclared = !!oDesignTimeMetadata.getDomRef();
 			var oAggregationDomRef = oAggregationOverlay.getAssociatedDomRef();

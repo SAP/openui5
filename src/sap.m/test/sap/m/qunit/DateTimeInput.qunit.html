@@ -99,44 +99,44 @@
 		var oDateValue1 = oFormatter.parse(sDateValue1);
 		dti0.setValue(sDateValue1);
 		oCore.applyChanges();
-		strictEqual(dti0.getValue(), sDateValue1, "value after setValue: " + sDateValue1);
-		strictEqual(+dti0.getDateValue(), +oDateValue1, "dateValue after setValue : " + oDateValue1 + " " + dti0.getDateValue());
+		assert.strictEqual(dti0.getValue(), sDateValue1, "value after setValue: " + sDateValue1);
+		assert.strictEqual(+dti0.getDateValue(), +oDateValue1, "dateValue after setValue : " + oDateValue1 + " " + dti0.getDateValue());
 
 		var oDateValue2 = oFormatter.parse(sDateValue2);
 		dti0.setDateValue(oDateValue2);
 		oCore.applyChanges();
-		strictEqual(dti0.getValue(), sDateValue2, "value after setDateValue: " + sDateValue2);
-		strictEqual(+dti0.getDateValue(), +oDateValue2, "dateValue after setDateValue : " + oDateValue2);
+		assert.strictEqual(dti0.getValue(), sDateValue2, "value after setDateValue: " + sDateValue2);
+		assert.strictEqual(+dti0.getDateValue(), +oDateValue2, "dateValue after setDateValue : " + oDateValue2);
 
 		var oDateValue3 = oFormatter.parse(sDateValue3);
 		oModel.setData({
 			dateVal : oDateValue3
 		});
 		oCore.applyChanges();
-		strictEqual(dti3.getValue(), sDateValue3, "value after oModel.setData: " + sDateValue3);
-		strictEqual(+dti3.getDateValue(), +oDateValue3, "dateValue after oModel.setData : " + oDateValue3);
+		assert.strictEqual(dti3.getValue(), sDateValue3, "value after oModel.setData: " + sDateValue3);
+		assert.strictEqual(+dti3.getDateValue(), +oDateValue3, "dateValue after oModel.setData : " + oDateValue3);
 	});
 
 	QUnit.test("used picker", function(assert) {
-		equal(dti0.getAggregation("_picker").getMetadata().getName(), "sap.m.DatePicker", "DatePicker control used inside");
-		equal(dti1.getAggregation("_picker").getMetadata().getName(), "sap.m.TimePicker", "TimePicker control used inside");
-		equal(dti2.getAggregation("_picker").getMetadata().getName(), "sap.m.DateTimePicker", "DateTimePicker control used inside");
+		assert.equal(dti0.getAggregation("_picker").getMetadata().getName(), "sap.m.DatePicker", "DatePicker control used inside");
+		assert.equal(dti1.getAggregation("_picker").getMetadata().getName(), "sap.m.TimePicker", "TimePicker control used inside");
+		assert.equal(dti2.getAggregation("_picker").getMetadata().getName(), "sap.m.DateTimePicker", "DateTimePicker control used inside");
 	});
 
 	QUnit.test("picker properties", function(assert) {
 		var oDatePicker = dti0.getAggregation("_picker");
-		equal(dti0.getValue(), oDatePicker.getValue(), "DatePicker value");
-		equal(dti0.getDateValue().getTime(), oDatePicker.getDateValue().getTime(), "DatePicker Datealue");
-		equal(dti0.getValueFormat(), oDatePicker.getValueFormat(), "DatePicker valueFormat");
-		equal(dti0.getDisplayFormat(), oDatePicker.getDisplayFormat(), "DatePicker displayFormat");
-		equal(dti0.getPlaceholder(), oDatePicker.getPlaceholder(), "DatePicker value");
-		equal(dti0.getWidth(), "100px", "DateTimeInput width");
-		equal(oDatePicker.getWidth(), "100%", "DatePicker width");
-		ok(jQuery.sap.equal(dti0.getAriaLabelledBy(), oDatePicker.getAriaLabelledBy()), "DatePicker getAriaLabelledBy");
+		assert.equal(dti0.getValue(), oDatePicker.getValue(), "DatePicker value");
+		assert.equal(dti0.getDateValue().getTime(), oDatePicker.getDateValue().getTime(), "DatePicker Datealue");
+		assert.equal(dti0.getValueFormat(), oDatePicker.getValueFormat(), "DatePicker valueFormat");
+		assert.equal(dti0.getDisplayFormat(), oDatePicker.getDisplayFormat(), "DatePicker displayFormat");
+		assert.equal(dti0.getPlaceholder(), oDatePicker.getPlaceholder(), "DatePicker value");
+		assert.equal(dti0.getWidth(), "100px", "DateTimeInput width");
+		assert.equal(oDatePicker.getWidth(), "100%", "DatePicker width");
+		assert.ok(jQuery.sap.equal(dti0.getAriaLabelledBy(), oDatePicker.getAriaLabelledBy()), "DatePicker getAriaLabelledBy");
 
 		oDatePicker = dti4.getAggregation("_picker");
-		equal(dti4.getValueState(), oDatePicker.getValueState(), "DatePicker valueState");
-		equal(dti4.getValueStateText(), oDatePicker.getValueStateText(), "DatePicker valueStateText");
+		assert.equal(dti4.getValueState(), oDatePicker.getValueState(), "DatePicker valueState");
+		assert.equal(dti4.getValueStateText(), oDatePicker.getValueStateText(), "DatePicker valueStateText");
 	});
 
 
@@ -146,8 +146,8 @@
 		dti2.setValue(sInvalidValue);
 		oCore.applyChanges();
 
-		strictEqual(dti2.getValue(), ":)", "value after invalid value set : " + dti2.getValue());
-		strictEqual(dti2.getDateValue(), null, "dateValue after invalid value set : " + dti2.getDateValue());
+		assert.strictEqual(dti2.getValue(), ":)", "value after invalid value set : " + dti2.getValue());
+		assert.strictEqual(dti2.getDateValue(), null, "dateValue after invalid value set : " + dti2.getDateValue());
 	});
 
 	QUnit.module("Interaction");
@@ -164,11 +164,11 @@
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		debugger;
 		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-		equal(sId, dti0.getId(), "Change event fired");
-		equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");
-		ok(!bValid, "Value is not valid");
-		equal(dti0.getValue(), "33 May, 2012", "Value has entered value if invalid");
-		equal(dti0.getDateValue().getTime(), oDateValue2.getTime(), "DateValue not changed set");
+		assert.equal(sId, dti0.getId(), "Change event fired");
+		assert.equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");
+		assert.ok(!bValid, "Value is not valid");
+		assert.equal(dti0.getValue(), "33 May, 2012", "Value has entered value if invalid");
+		assert.equal(dti0.getDateValue().getTime(), oDateValue2.getTime(), "DateValue not changed set");
 
 		bChange = false;
 		sValue = "";
@@ -178,37 +178,37 @@
 		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").val("30 May, 2012");
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
-		equal(sId, dti0.getId(), "Change event fired");
-		equal(sValue, "2012-05-30", "Value in internal format priovided");
-		ok(bValid, "Value is valid");
-		equal(dti0.getValue(), "2012-05-30", "Value in internal format set");
-		equal(dti0.getDateValue().getTime(), new Date("2012", "04", "30").getTime(), "DateValue set");
+		assert.equal(sId, dti0.getId(), "Change event fired");
+		assert.equal(sValue, "2012-05-30", "Value in internal format priovided");
+		assert.ok(bValid, "Value is valid");
+		assert.equal(dti0.getValue(), "2012-05-30", "Value in internal format set");
+		assert.equal(dti0.getDateValue().getTime(), new Date("2012", "04", "30").getTime(), "DateValue set");
 
 	});
 
 	QUnit.test("Destroy", function(assert) {
-		strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
+		assert.strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
 		dti1.destroy();
-		strictEqual(dti1.$().length, 0, "DateTimeInput is destroyed");
+		assert.strictEqual(dti1.$().length, 0, "DateTimeInput is destroyed");
 	});
 
 	QUnit.test("value state and value state message", function(assert) {
 		var oPicker = dti4.getAggregation("_picker");
 		dti4.focus();
-		ok(oPicker._oValueStateMessage._oPopup.isOpen(), "error message is open");
+		assert.ok(oPicker._oValueStateMessage._oPopup.isOpen(), "error message is open");
 		this.clock.tick(500);
 
 		document.activeElement.blur();
-		ok(!oPicker._oValueStateMessage._oPopup.isOpen(), "error message is closed");
+		assert.ok(!oPicker._oValueStateMessage._oPopup.isOpen(), "error message is closed");
 	});
 
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oInput = new sap.m.DateTimeInput();
-		ok(!!oInput.getAccessibilityInfo, "DateTimeInput has a getAccessibilityInfo function");
+		assert.ok(!!oInput.getAccessibilityInfo, "DateTimeInput has a getAccessibilityInfo function");
 		var oInfo = oInput.getAccessibilityInfo();
-		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		//Rest is tested in unit tests of inner controls
 		oInput.destroy();
 	});

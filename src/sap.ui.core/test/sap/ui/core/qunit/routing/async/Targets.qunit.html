@@ -57,8 +57,8 @@
 					var oTarget = this.oTargets.getTarget("myTarget");
 
 					// Assert
-					strictEqual(oTarget._oOptions.viewName, "myView", "Did retrieve the correct Target");
-					strictEqual(oTarget._oViews, this.oViews, "Did pass the views instance");
+					assert.strictEqual(oTarget._oOptions.viewName, "myView", "Did retrieve the correct Target");
+					assert.strictEqual(oTarget._oViews, this.oViews, "Did pass the views instance");
 				});
 
 				QUnit.test("Should return undefined if a target does not exist", function (assert) {
@@ -66,7 +66,7 @@
 					var oTarget = this.oTargets.getTarget("foo");
 
 					// Assert
-					strictEqual(oTarget, undefined, "Did not find such a target");
+					assert.strictEqual(oTarget, undefined, "Did not find such a target");
 				});
 
 				QUnit.test("Should be able to get a child target", function (assert) {
@@ -74,8 +74,8 @@
 					var oChild = this.oTargets.getTarget("myChild");
 
 					// Assert
-					strictEqual(oChild._oOptions.viewName, "myChildView", "Did retrieve the correct Target");
-					strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
+					assert.strictEqual(oChild._oOptions.viewName, "myChildView", "Did retrieve the correct Target");
+					assert.strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
 				});
 
 				QUnit.test("Should be able to get multiple targets", function (assert) {
@@ -86,9 +86,9 @@
 					var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
 
 					// Assert
-					strictEqual(aTargets.length, 2, "Should return two targets");
-					strictEqual(aTargets[0], this.oTargets.getTarget("myTarget"), "The first target should be myTarget");
-					strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
+					assert.strictEqual(aTargets.length, 2, "Should return two targets");
+					assert.strictEqual(aTargets[0], this.oTargets.getTarget("myTarget"), "The first target should be myTarget");
+					assert.strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
 					// check if error for non-existing target "foo" is thrown
 					sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
 				});
@@ -100,9 +100,9 @@
 					});
 
 					var oTarget = this.oTargets.getTarget("newTarget");
-					ok(oTarget, "new target object is created");
-					strictEqual(oTarget._oOptions.name, "newTarget", "target name should be correct");
-					strictEqual(oTarget._oParent, this.oTargets.getTarget("myParent"), "correct parent should be set");
+					assert.ok(oTarget, "new target object is created");
+					assert.strictEqual(oTarget._oOptions.name, "newTarget", "target name should be correct");
+					assert.strictEqual(oTarget._oParent, this.oTargets.getTarget("myParent"), "correct parent should be set");
 				});
 
 				QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
@@ -116,7 +116,7 @@
 					var oParent = this.oTargets.getTarget("myParent");
 
 					// Assert
-					strictEqual(oParent._oOptions.viewName, "myParentView", "options stay the same");
+					assert.strictEqual(oParent._oOptions.viewName, "myParentView", "options stay the same");
 					// Check whether the error message is thrown
 					sinon.assert.calledWith(oStub, sinon.match(/myParent/), sinon.match(this.oTargets));
 				});
@@ -220,9 +220,9 @@
 					// Act
 					return this.oTargets.display("firstTarget").then(function(oViewInfo) {
 						// Assert
-						strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
-						strictEqual(fnSecondDisplayStub.callCount, 0, "Did not invoke display on the second target");
-						strictEqual(oViewInfo[0].name, sName, "Did resolve with the correct view info");
+						assert.strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+						assert.strictEqual(fnSecondDisplayStub.callCount, 0, "Did not invoke display on the second target");
+						assert.strictEqual(oViewInfo[0].name, sName, "Did resolve with the correct view info");
 					});
 
 				});
@@ -255,13 +255,13 @@
 					// Act
 					return this.oTargets.display(["firstTarget", "secondTarget"]).then(function(aViewInfos) {
 						// Assert
-						strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
-						strictEqual(fnSecondDisplayStub.callCount, 1, "Did invoke display on the second target");
-						ok(jQuery.isArray(aViewInfos), "Did resolve with an array of the view infos");
-						strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
-						strictEqual(aViewInfos[0].name, "firstTarget", "Did resolve with first target as first");
-						strictEqual(aViewInfos[1].name, "secondTarget", "Did resolve with second target as second");
-						strictEqual(oParentInfo, undefined, "No info should be passed among sibling targets being displayed");
+						assert.strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+						assert.strictEqual(fnSecondDisplayStub.callCount, 1, "Did invoke display on the second target");
+						assert.ok(jQuery.isArray(aViewInfos), "Did resolve with an array of the view infos");
+						assert.strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
+						assert.strictEqual(aViewInfos[0].name, "firstTarget", "Did resolve with first target as first");
+						assert.strictEqual(aViewInfos[1].name, "secondTarget", "Did resolve with second target as second");
+						assert.strictEqual(oParentInfo, undefined, "No info should be passed among sibling targets being displayed");
 					});
 
 				});
@@ -272,8 +272,8 @@
 
 					// Act
 					return this.oTargets.display("foo").then(function(aViewInfos) {
-						strictEqual(aViewInfos[0].name, "foo", "Matching target info is returned");
-						strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Matching error message is returned");
+						assert.strictEqual(aViewInfos[0].name, "foo", "Matching target info is returned");
+						assert.strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Matching error message is returned");
 						// Assert
 						sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
 					}.bind(this));
@@ -290,12 +290,12 @@
 					// Act
 					return this.oTargets.display(["foo", "firstTarget"]).then(function(aViewInfos) {
 						// Assert
-						strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+						assert.strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
 						sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
-						ok(jQuery.isArray(aViewInfos), "Did resolve with an array of the view infos");
-						strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
-						strictEqual(aViewInfos[1].name, "firstTarget", "Did resolve with first target");
-						strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Did resolve with the error message of the erroneous target");
+						assert.ok(jQuery.isArray(aViewInfos), "Did resolve with an array of the view infos");
+						assert.strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
+						assert.strictEqual(aViewInfos[1].name, "firstTarget", "Did resolve with first target");
+						assert.strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Did resolve with the error message of the erroneous target");
 					}.bind(this));
 				});
 
@@ -357,9 +357,9 @@
 					// Arrange
 					var oParameters = { foo : "bar" },
 						fnEventSpy = this.spy(function(oEvent, oActualData) {
-							strictEqual(oActualData, oData, "the data is correct");
-							strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
-							strictEqual(this, oListener, "the this pointer is correct");
+							assert.strictEqual(oActualData, oData, "the data is correct");
+							assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+							assert.strictEqual(this, oListener, "the this pointer is correct");
 						}),
 						oListener = {},
 						oData = { some : "data" },
@@ -373,10 +373,10 @@
 					this.oTargets.fireDisplay();
 
 					// Assert
-					strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
-					strictEqual(oAttachReturnValue, this.oTargets, "did return this for chaining for attach");
-					strictEqual(oDetachReturnValue, this.oTargets, "did return this for chaining for detach");
-					strictEqual(oFireReturnValue, this.oTargets, "did return this for chaining for fire");
+					assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+					assert.strictEqual(oAttachReturnValue, this.oTargets, "did return this for chaining for attach");
+					assert.strictEqual(oDetachReturnValue, this.oTargets, "did return this for chaining for detach");
+					assert.strictEqual(oFireReturnValue, this.oTargets, "did return this for chaining for fire");
 				});
 
 				// our qunit is so old
@@ -390,10 +390,10 @@
 								if(typeof object1[sPropertyName] === "object") {
 									allPropertiesStrictEqual(object1[sPropertyName],  object2[sPropertyName]);
 								} else {
-									strictEqual(object1[sPropertyName], object2[sPropertyName], "the property " + sPropertyName + " is equal");
+									assert.strictEqual(object1[sPropertyName], object2[sPropertyName], "the property " + sPropertyName + " is equal");
 								}
 							} else {
-								ok(false, JSON.stringify(object1) + " has a property " + sPropertyName + " the second object does not have " + JSON.stringify(object2));
+								assert.ok(false, JSON.stringify(object1) + " has a property " + sPropertyName + " the second object does not have " + JSON.stringify(object2));
 							}
 
 
@@ -440,8 +440,8 @@
 							oParameters = oEvent.getParameters();
 							aTargetNames.push(oParameters.name);
 							allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig));
-							strictEqual(oParameters.view, that.oView, "view got passed to the event");
-							strictEqual(oParameters.control, that.oShell, "control got passed to the event");
+							assert.strictEqual(oParameters.view, that.oView, "view got passed to the event");
+							assert.strictEqual(oParameters.control, that.oShell, "control got passed to the event");
 							assert.strictEqual(oParameters.data, oData, "data was passed");
 						});
 
@@ -456,10 +456,10 @@
 
 					return oDisplayed.then(function(aViews) {
 						// Assert
-						strictEqual(fnEventSpy.callCount, 3, "the event got fired");
-						strictEqual(aTargetNames.shift(), "myTarget", "the parent got fired first");
-						strictEqual(aTargetNames.shift(), "myChild", "the child got fired after the parent");
-						strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
+						assert.strictEqual(fnEventSpy.callCount, 3, "the event got fired");
+						assert.strictEqual(aTargetNames.shift(), "myTarget", "the parent got fired first");
+						assert.strictEqual(aTargetNames.shift(), "myChild", "the child got fired after the parent");
+						assert.strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
 					}.bind(this));
 				});
 
@@ -791,13 +791,13 @@
 					oTargets.destroy();
 
 					// Assert
-					ok(oTargets.bIsDestroyed, "Did flag the targets as destroyed");
-					ok(oFirstTarget.bIsDestroyed, "Did destroy the first target");
-					ok(oSecondTarget.bIsDestroyed, "Did destroy the second target");
-					strictEqual(oTargets._oViews, null, "Did free the views reference");
-					strictEqual(oTargets._mTargets, null, "Did free the targets map reference");
-					strictEqual(oTargets._oConfig, null, "Did free the config reference");
-					ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
+					assert.ok(oTargets.bIsDestroyed, "Did flag the targets as destroyed");
+					assert.ok(oFirstTarget.bIsDestroyed, "Did destroy the first target");
+					assert.ok(oSecondTarget.bIsDestroyed, "Did destroy the second target");
+					assert.strictEqual(oTargets._oViews, null, "Did free the views reference");
+					assert.strictEqual(oTargets._mTargets, null, "Did free the targets map reference");
+					assert.strictEqual(oTargets._oConfig, null, "Did free the config reference");
+					assert.ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
 
 					// Cleanup
 					oViews.destroy();

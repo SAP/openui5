@@ -37,27 +37,27 @@
 		text.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		equal(iWidth, jQuery.sap.byId("content").width(), "Width of container not influenced by hidden text.");
-		equal(iHeight, jQuery.sap.byId("content").height(), "Height of container not influenced by hidden text.");
-		ok(text.$().parent().attr("id") == "content", "Invisible Text was rendered.");
+		assert.equal(iWidth, jQuery.sap.byId("content").width(), "Width of container not influenced by hidden text.");
+		assert.equal(iHeight, jQuery.sap.byId("content").height(), "Height of container not influenced by hidden text.");
+		assert.ok(text.$().parent().attr("id") == "content", "Invisible Text was rendered.");
 	});
 
 	QUnit.test("Render to static area", function(assert) {
 		var text = new sap.ui.core.InvisibleText({text: "Hello"});
 		text.toStatic();
 		sap.ui.getCore().applyChanges();
-		ok(text.$().parent().attr("id") == "sap-ui-static", "Invisible Text was rendered to static area");
+		assert.ok(text.$().parent().attr("id") == "sap-ui-static", "Invisible Text was rendered to static area");
 	});
 
 	QUnit.test("Rendering", function(assert) {
 		var text = new sap.ui.core.InvisibleText({text: "Hello"});
 		text.toStatic();
 		sap.ui.getCore().applyChanges();
-		equal(text.$().text(), "Hello", "Text rendered correctly");
+		assert.equal(text.$().text(), "Hello", "Text rendered correctly");
 		text.setText("Hello2");
-		equal(text.$().text(), "Hello2", "Text rendered correctly");
-		equal(text.$().attr("aria-hidden"), "true", "aria-hidden=true is set");
-		ok(text.$().hasClass("sapUiInvisibleText"), "Class sapUiInvisibleText is set");
+		assert.equal(text.$().text(), "Hello2", "Text rendered correctly");
+		assert.equal(text.$().attr("aria-hidden"), "true", "aria-hidden=true is set");
+		assert.ok(text.$().hasClass("sapUiInvisibleText"), "Class sapUiInvisibleText is set");
 	});
 </script>
 

@@ -36,11 +36,11 @@
 				this.clock.tick(500);
 
 				var oSupport = sap.ui.getCore().byId("__dialog0");
-				ok(oSupport, "Support dialog should be created");
-				equal(oSupport.isOpen(), true, "Support dialog should be open now");
-				equal(oSupport.getType(), sap.m.DialogType.Standard , "Support dialog should have type Standard");
-				equal(oSupport.getButtons().length, 1, "1 Close button is added to Support dialog");
-				equal(oSupport.getTitle(), sSupportTitle, "Title is OK");
+				assert.ok(oSupport, "Support dialog should be created");
+				assert.equal(oSupport.isOpen(), true, "Support dialog should be open now");
+				assert.equal(oSupport.getType(), sap.m.DialogType.Standard , "Support dialog should have type Standard");
+				assert.equal(oSupport.getButtons().length, 1, "1 Close button is added to Support dialog");
+				assert.equal(oSupport.getTitle(), sSupportTitle, "Title is OK");
 
 				oSupport.destroy();
 			});
@@ -53,13 +53,13 @@
 				var oSupport = sap.m.Support.on();
 				this.clock.tick(500);
 
-				ok(oSupport, "Support dialog event should be registered already");
-				equal(oSupport.isEventRegistered(), true, "Support dialog event should be registered already");
+				assert.ok(oSupport, "Support dialog event should be registered already");
+				assert.equal(oSupport.isEventRegistered(), true, "Support dialog event should be registered already");
 
 				oSupport = sap.m.Support.off();
 
-				ok(oSupport, "Support dialog event should be unregistered now");
-				equal(oSupport.isEventRegistered(), false, "Support dialog event should be unregistered already");
+				assert.ok(oSupport, "Support dialog event should be unregistered now");
+				assert.equal(oSupport.isEventRegistered(), false, "Support dialog event should be unregistered already");
 
 				delete document[sEventName];
 			});

@@ -33,12 +33,12 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
-			equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
+			assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
+			assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
 
 			$ontxt = jQuery("#on1").find(".sapMObjectNumberText");
 			var sFontWeight = $ontxt.css("font-weight");
-			equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
+			assert.equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
 
 			//Cleanup
 			sut.destroy();
@@ -58,7 +58,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
+			assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
 
 			//Cleanup
 			sut.destroy();
@@ -85,7 +85,7 @@
 			// check if the jQuery version is lower than 1.10 then use "normal" will be set as font-weigt
 			// from jQuery 1.10 jQuery converts the font-weight of "normal" into 400
 			expected = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.10") > 0 ? "400" : expected;
-			equal($ontxt.css("font-weight"), expected, "font weight of non-emphasized ObjectNumber should be " + expected);
+			assert.equal($ontxt.css("font-weight"), expected, "font weight of non-emphasized ObjectNumber should be " + expected);
 
 			//Cleanup
 			sut.destroy();
@@ -108,7 +108,7 @@
 			//Assert
 			//Check value
 			$ontxt = jQuery("#on3");
-			ok($ontxt.hasClass("sapMObjectNumberStatusNone"), "Object Number should be assigned css class 'sapMObjectNumberStatusNone'" );
+			assert.ok($ontxt.hasClass("sapMObjectNumberStatusNone"), "Object Number should be assigned css class 'sapMObjectNumberStatusNone'" );
 
 			var aValueStates = [
 				sap.ui.core.ValueState.Error,
@@ -121,11 +121,11 @@
 				sap.ui.getCore().applyChanges();
 				var sStatusClass = "sapMObjectNumberStatus" + aValueStates[i];
 				$ontxt = jQuery("#on3");
-				ok($ontxt.hasClass(sStatusClass), "Object Number should be assigned css class '" + sStatusClass + "'" );
+				assert.ok($ontxt.hasClass(sStatusClass), "Object Number should be assigned css class '" + sStatusClass + "'" );
 				if(i > 0) {
 					//Make sure that the old class got removed
 					var sFormerStatusClass = "sapMObjectNumberStatus" + aValueStates[i-1];
-					ok(!$ontxt.hasClass(sFormerStatusClass), "Object Number should not be assigned css class '" + sFormerStatusClass + "' any more." );
+					assert.ok(!$ontxt.hasClass(sFormerStatusClass), "Object Number should not be assigned css class '" + sFormerStatusClass + "' any more." );
 				}
 			};
 
@@ -176,25 +176,25 @@
 			var $onnum = jQuery("#on4").find(".sapMObjectNumberText");
 			var $onunit = jQuery("#on4").find(".sapMObjectNumberUnit");
 
-			ok($onnum.offset().left === 0, "object number is left aligned");
-			ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
+			assert.ok($onnum.offset().left === 0, "object number is left aligned");
+			assert.ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
 
 			$onnum = jQuery("#on5").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on5").find(".sapMObjectNumberUnit");
 
-			ok($onnum.offset().left > 0, "object number is right aligned");
-			ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
+			assert.ok($onnum.offset().left > 0, "object number is right aligned");
+			assert.ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
 
 			$onnum = jQuery("#on6").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on6").find(".sapMObjectNumberUnit");
 
-			ok($onunit.offset().left > 0, "object number is right aligned");
-			ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
+			assert.ok($onunit.offset().left > 0, "object number is right aligned");
+			assert.ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
 			$onnum = jQuery("#on7").find(".sapMObjectNumberText");
 			$onunit = jQuery("#on7").find(".sapMObjectNumberUnit");
 
-			ok($onunit.offset().left === 0, "object number is left aligned");
-			ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
+			assert.ok($onunit.offset().left === 0, "object number is left aligned");
+			assert.ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
 
 			//Cleanup
 			on4.destroy();
@@ -233,7 +233,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oObjectNumber.$("state").length, 0, "No label for the default state.");
+			assert.strictEqual(oObjectNumber.$("state").length, 0, "No label for the default state.");
 
 			// Clean up
 			oObjectNumber.destroy();
@@ -253,10 +253,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
-			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS"),
 						"The text for value state \"Success\" is taken from the message bundle."
 			);
@@ -279,10 +279,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
-			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING"),
 						"The text for value state \"Warning\" is taken from the message bundle."
 			);
@@ -304,10 +304,10 @@
 
 			// Assert
 			var $valueState = oObjectNumber.$("state");
-			strictEqual($valueState.length, 1, "There is a label for the value state.");
-			ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-			strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
-			strictEqual($valueState.html(),
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
 						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 						"The text for value state \"Error\" is taken from the message bundle."
 			);
@@ -329,9 +329,9 @@
 
 			// Assert
 			if (oObjectNumber.getState() !== sap.ui.core.ValueState.None) {
-				equal(oObjectNumber.$().attr("aria-labelledby"), oObjectNumber.getId() + "-state", "aria-labelledby is set correctly.");
+				assert.equal(oObjectNumber.$().attr("aria-labelledby"), oObjectNumber.getId() + "-state", "aria-labelledby is set correctly.");
 			} else {
-				equal(oObjectNumber.$().attr("aria-labelledby"), undefined, "aria-labelledby is set correctly.");
+				assert.equal(oObjectNumber.$().attr("aria-labelledby"), undefined, "aria-labelledby is set correctly.");
 			}
 
 			// Clean up

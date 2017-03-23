@@ -56,9 +56,9 @@
 
 				var $Month = oCal1.getAggregation("month")[0].$();
 
-				equal($Month.find(".sapUiCalWH").length, 7, "Islamic week has 7 days");
-				equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth-1], "Islamic Month is correct");
-				equal(oCal1.$("-Head-B2").text(), iExpectedYear + " AH", "Islamic Year is correct");
+				assert.equal($Month.find(".sapUiCalWH").length, 7, "Islamic week has 7 days");
+				assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth-1], "Islamic Month is correct");
+				assert.equal(oCal1.$("-Head-B2").text(), iExpectedYear + " AH", "Islamic Year is correct");
 
 				var aDays = $Month.find(".sapUiCalItem"),
 					$Day,
@@ -67,37 +67,37 @@
 					iExpectedDaysInMonth = 35 - iExpectedDaysOfOtherMonthBefore - iExpectedDaysOfOtherMonthAfter,
 					oDate = new UniversalDate(UniversalDate.UTC(iExpectedYear, iExpectedMonth - 1, 1));
 
-				equal(aDays.length, 35, "Calendar shows 35 days");
+				assert.equal(aDays.length, 35, "Calendar shows 35 days");
 
 				for (var i=0; i<35; i++) {
 					$Day = jQuery(aDays[i]);
 					sDate = $Day.attr("data-sap-day");
 
 					if (i < iExpectedDaysOfOtherMonthBefore || i >= aDays.length - iExpectedDaysOfOtherMonthAfter) {
-						ok($Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is not in current month.");
+						assert.ok($Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is not in current month.");
 					} else {
 						iCount++;
-						ok(!$Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is in current month.");
-						equal(sDate, oFormat.format(oDate.getJSDate(), true), "Item " + i + " (" + sDate + ") has correct date (data-sap-day).");
-						equal($Day.text(), "" + iCount, "Item " + i + " (" + sDate + ") has correct date (text).");
+						assert.ok(!$Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is in current month.");
+						assert.equal(sDate, oFormat.format(oDate.getJSDate(), true), "Item " + i + " (" + sDate + ") has correct date (data-sap-day).");
+						assert.equal($Day.text(), "" + iCount, "Item " + i + " (" + sDate + ") has correct date (text).");
 						oDate.setUTCDate(oDate.getUTCDate() + 1);
 					}
 
 					if (sSelectedDate == sDate) {
-						ok($Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is selected.");
-						equal($Day.text(), "" + iExpectedDay, "Item " + i + " (" + sDate + ") has selected date (text).");
+						assert.ok($Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is selected.");
+						assert.equal($Day.text(), "" + iExpectedDay, "Item " + i + " (" + sDate + ") has selected date (text).");
 					} else {
-						ok(!$Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is not selected.");
+						assert.ok(!$Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is not selected.");
 					}
 				}
 
-				equal(iCount, iExpectedDaysInMonth, "Number of days in the month correct.");
+				assert.equal(iCount, iExpectedDaysInMonth, "Number of days in the month correct.");
 			}
 
 			function checkMonthNavigation(sSelectedDate, iExpectedMonth, bForwardNavigation) {
 
 				function checkNav(iExpMonth) {
-					equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpMonth-1], "Islamic Month is correct before navigation: " + aMonthNames[iExpMonth-1]);
+					assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpMonth-1], "Islamic Month is correct before navigation: " + aMonthNames[iExpMonth-1]);
 
 					oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).click();
 
@@ -108,7 +108,7 @@
 						iNextMonthIdx = 0;
 					}
 
-					equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iNextMonthIdx], "Islamic Month is correct after navigation: " + aMonthNames[iNextMonthIdx]);
+					assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iNextMonthIdx], "Islamic Month is correct after navigation: " + aMonthNames[iNextMonthIdx]);
 
 					return iNextMonthIdx + 1;
 				}
@@ -128,18 +128,18 @@
 					$Month,
 					sExpectedName;
 
-				equal(aMonths.length, 12, "Number of months is correct.");
+				assert.equal(aMonths.length, 12, "Number of months is correct.");
 
 				for (var i=0; i<12; i++) {
 					sExpectedName = aMonthNames[i];
 					$Month = jQuery(aMonths[i]);
 
-					equal($Month.text(), "" + sExpectedName, "Month name (" + sExpectedName + ") is correct.");
+					assert.equal($Month.text(), "" + sExpectedName, "Month name (" + sExpectedName + ") is correct.");
 
 					if (iExpectedMonth == i+1) {
-						ok($Month.hasClass("sapUiCalItemSel"), "Month " + sExpectedName + " is selected.");
+						assert.ok($Month.hasClass("sapUiCalItemSel"), "Month " + sExpectedName + " is selected.");
 					} else {
-						ok(!$Month.hasClass("sapUiCalItemSel"), "Month " + sExpectedName + " is not selected.");
+						assert.ok(!$Month.hasClass("sapUiCalItemSel"), "Month " + sExpectedName + " is not selected.");
 					}
 				}
 			}

@@ -33,40 +33,41 @@
 
 		// event handler
 		function uiUpdatedHandler() {
-			ok(true, "(UIUpdated event is fired)");
+			assert.ok(true, "(UIUpdated event is fired)");
 		}
 
 
 		QUnit.test("UI dirty state - initial", function(assert) {
-			equal(sap.ui.getCore().getUIDirty(), false, "UI should not be dirty initially");
+			assert.equal(sap.ui.getCore().getUIDirty(), false, "UI should not be dirty initially");
 		});
 
 		// attach event handlers
 		QUnit.test("Attaching event handlers", function(assert) {
-			expect(0);
+			assert.expect(0);
 			sap.ui.getCore().attachEvent("UIUpdated", uiUpdatedHandler);
 		});
 
 
 		var btn;
 		QUnit.test("Control creation", function(assert) {
-			expect(3); // including event handler
+			assert.expect(3); // including event handler
 			btn = new sap.ui.testlib.TestButton("myButton").placeAt("uiArea1");
-			equal(sap.ui.getCore().getUIDirty(), true, "UI should be dirty after creating the button");
+			assert.equal(sap.ui.getCore().getUIDirty(), true, "UI should be dirty after creating the button");
 
 			sap.ui.getCore().applyChanges();
-			equal(sap.ui.getCore().getUIDirty(), false, "UI should be not dirty after applyChanges");
+			assert.equal(sap.ui.getCore().getUIDirty(), false, "UI should be not dirty after applyChanges");
 		});
 
 
-		asyncTest("UI dirty on control modification", function() {
-			expect(4);
+		QUnit.test("UI dirty on control modification", function(assert) {
+			var done = assert.async();
+			assert.expect(4);
 			btn.setText("new text");
-			equal(sap.ui.getCore().getUIDirty(), true, "UI should be dirty after setting the button text");
+			assert.equal(sap.ui.getCore().getUIDirty(), true, "UI should be dirty after setting the button text");
 			window.setTimeout(function(){
-				equal(jQuery.sap.byId("myButton")[0].innerHTML, "new text", "button should have new text after setting the button text and some timeout");
-				equal(sap.ui.getCore().getUIDirty(), false, "UI should be not dirty after setting the button text and some timeout");
-				start();
+				assert.equal(jQuery.sap.byId("myButton")[0].innerHTML, "new text", "button should have new text after setting the button text and some timeout");
+				assert.equal(sap.ui.getCore().getUIDirty(), false, "UI should be not dirty after setting the button text and some timeout");
+				done();
 			}, 500);
 		});
 

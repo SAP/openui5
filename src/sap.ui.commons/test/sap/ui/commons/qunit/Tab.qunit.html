@@ -87,10 +87,10 @@
 		QUnit.module("Basic", {
 	  	beforeEach: function() {
 			  ts1 = sap.ui.getCore().getControl("TabStrip");
-			  ok(ts1);
+			  assert.ok(ts1);
 
 			  var tabs = ts1.getTabs();
-			  strictEqual(1, tabs.length);
+			  assert.strictEqual(1, tabs.length);
 
 			  t1 = tabs[0];
 		  },
@@ -109,10 +109,10 @@
 	   */
 	  QUnit.test("VerticalScrollingOk", function(assert) {
 	     t1.setVerticalScrolling(sap.ui.core.Scrolling.None);
-	     strictEqual(t1.getVerticalScrolling(), sap.ui.core.Scrolling.None);
+	     assert.strictEqual(t1.getVerticalScrolling(), sap.ui.core.Scrolling.None);
 
 	     t1.setVerticalScrolling(oVerticalScrolling1);
-	     strictEqual(t1.getVerticalScrolling(), oVerticalScrolling1);
+	     assert.strictEqual(t1.getVerticalScrolling(), oVerticalScrolling1);
 	  });
 
 	  /**
@@ -120,31 +120,31 @@
 	   */
 	  QUnit.test("HorizontalScrollingOk", function(assert) {
 	    t1.setHorizontalScrolling(sap.ui.core.Scrolling.None);
-	    strictEqual(t1.getHorizontalScrolling(), sap.ui.core.Scrolling.None);
+	    assert.strictEqual(t1.getHorizontalScrolling(), sap.ui.core.Scrolling.None);
 
 	    t1.setHorizontalScrolling(oHorizontalScrolling1);
-	    strictEqual(t1.getHorizontalScrolling(), oHorizontalScrolling1);
+	    assert.strictEqual(t1.getHorizontalScrolling(), oHorizontalScrolling1);
 	  });
 
 	  /**
 	   * Tests accessor method for property enabled of control .
 	   */
 	  QUnit.test("EnabledOk", function(assert) {
-	    strictEqual(t1.getEnabled(), bEnabled1);
+	    assert.strictEqual(t1.getEnabled(), bEnabled1);
 	  });
 
 	  /**
 	   * Tests accessor method for property visible of control .
 	   */
 	  QUnit.test("VisibleOk", function(assert) {
-	    strictEqual(t1.getVisible(), bVisible1);
+	    assert.strictEqual(t1.getVisible(), bVisible1);
 	  });
 
 	  /**
 	   * Tests accessor method for property scrollLeft of control .
 	   */
 	  QUnit.test("ScrollLeftOk", function(assert) {
-	    strictEqual(t1.getScrollLeft(), iScrollLeft1);
+	    assert.strictEqual(t1.getScrollLeft(), iScrollLeft1);
 	  });
 
 	  /**
@@ -161,14 +161,14 @@
 	   * Tests accessor method for property closable of control .
 	   */
 	  QUnit.test("ClosableOk", function(assert) {
-	    strictEqual(t1.getClosable(), bClosable1);
+	    assert.strictEqual(t1.getClosable(), bClosable1);
 	  });
 
 	  /**
 	   * Tests accessor method for property selected of control .
 	   */
 	  QUnit.test("SelectedOk", function(assert) {
-	    strictEqual(t1.getSelected(), bSelected1);
+	    assert.strictEqual(t1.getSelected(), bSelected1);
 	  });
 
 
@@ -178,12 +178,12 @@
 
 	  QUnit.test("TitleOk", function(assert) {
 	    var oTitle = t1.getTitle();
-			strictEqual(oTitle.getText(), oText1);
+			assert.strictEqual(oTitle.getText(), oText1);
 			t1.setTitle(null);
-			strictEqual(t1.getTitle(), null);
+			assert.strictEqual(t1.getTitle(), null);
 
 			t1.setTitle(oTitle);
-			strictEqual(oTitle.getText(), oText1);
+			assert.strictEqual(oTitle.getText(), oText1);
 	  });
 
 	  QUnit.test("ControlsOk", function(assert) {
@@ -191,12 +191,12 @@
 					l2 = new sap.ui.commons.Label("l2", "Goo");
 			t1.addContent(l1);
 			t1.addContent(l2);
-			strictEqual(t1.getContent().length, 3);
+			assert.strictEqual(t1.getContent().length, 3);
 
 			t1.removeContent(t1.indexOfContent(l1));
 			t1.removeContent(t1.indexOfContent(l2));
 
-			strictEqual(t1.getContent().length, 1);
+			assert.strictEqual(t1.getContent().length, 1);
 	  });
 
 	  QUnit.test("CreateTab", function(assert) {
@@ -211,7 +211,7 @@
 	  	});
 	  	//oTab.setTitle(oTitle2);
 	  	ts1.addTab(oTab);
-	  	strictEqual(oTab.getTitle(), null);
+	  	assert.strictEqual(oTab.getTitle(), null);
 
 	  	ts1.removeTab(ts1.indexOfTab(oTab));
 	  });

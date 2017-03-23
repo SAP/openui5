@@ -35,6 +35,12 @@
 				}), new sap.ui.core.Item("item_action_2", {
 					key: "2",
 					text: "item action 2"
+				}), new sap.ui.core.Item("item_action_3", {
+					key: "3",
+					text: "item action 3"
+				}), new sap.ui.core.Item("item_action_4", {
+					key: "4",
+					text: "item action 4"
 				})],
 			enableNav: true
 		}),
@@ -44,17 +50,6 @@
 				factory: fnCreateLine
 			},
 			enableNav: false
-		})
-	];
-
-	var aActions = [
-		new sap.ui.core.Item("first_action",{
-			key: "1",
-			text: "action 1"
-		}),
-		new sap.ui.core.Item("second_action", {
-			key: "2",
-			text: "action 2"
 		})
 	];
 
@@ -100,6 +95,22 @@
 			{
 				key: "2",
 				text: "action 2"
+			},
+			{
+				key: "3",
+				text: "action 3"
+			},
+			{
+				key: "4",
+				text: "action 4"
+			},
+			{
+				key: "5",
+				text: "action 5"
+			},
+			{
+				key: "6",
+				text: "action 6"
 			}
 		],
 		actionGroups: [
@@ -138,7 +149,11 @@
 			template: oActionGroupTemplate
 		},
 		actionPress: function(oEvent) {
-			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n items are " + oEvent.getParameter("items"));
+			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("items").length + " items"
+					+ "\n level is: " + oEvent.getParameter("level"));
+		},
+		navigate: function(oEvent) {
+			sap.m.MessageToast.show("Event 'navigate' triggered originating from " + oEvent.getParameter("item").getId() + " item");
 		},
 		beforeOpen: function () {
 			sap.m.MessageToast.show("Event 'beforeOpen' triggered");

@@ -30,7 +30,7 @@
 				iScrollTop=0;
 
 		function selectEventHandler() {
-			ok(true, "This text means the select event handler has been executed."); // this test tests by just being counted in the respective test
+			assert.ok(true, "This text means the select event handler has been executed."); // this test tests by just being counted in the respective test
 		}
 
 		var oCtrl = new sap.ui.commons.ListBox("ListBox1", {
@@ -61,14 +61,14 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 		QUnit.test("Initial Check", function(assert) {
-  		ok(oCtrl, "ListBox should exist after creating");
+  		assert.ok(oCtrl, "ListBox should exist after creating");
 
   		oDomRef = jQuery.sap.domById("ListBox1");
-  		ok(oDomRef, "ListBox root element should exist");
+  		assert.ok(oDomRef, "ListBox root element should exist");
   	});
 
 
@@ -76,11 +76,11 @@
 		 * Test width
 		 */
 		QUnit.test("Width", function(assert) {
-			equal(oCtrl.getWidth(), sWidth, "ListBox width property should have the value that was set");
+			assert.equal(oCtrl.getWidth(), sWidth, "ListBox width property should have the value that was set");
 
 			// check width in DOM
 			var oDomRef = jQuery.sap.domById("ListBox1");
-			equal(oDomRef.offsetWidth, parseInt(sWidth), "actual ListBox width should match the applied setting");
+			assert.equal(oDomRef.offsetWidth, parseInt(sWidth), "actual ListBox width should match the applied setting");
 		});
 
 
@@ -95,8 +95,8 @@
 			var expectedSetting = (sap.ui.Device.browser.internet_explorer
 					&& (!document.documentMode || document.documentMode < 9)) ? "398px" : "400px"; // the visual result is 400px in both cases
 			var $DomRef = jQuery.sap.byId("ListBox1");
-			equal($DomRef.css("min-width"), expectedSetting, "min-width should be set in CSS");
-			equal($DomRef[0].offsetWidth, 400, "actual ListBox width should be determined by the min-width");
+			assert.equal($DomRef.css("min-width"), expectedSetting, "min-width should be set in CSS");
+			assert.equal($DomRef[0].offsetWidth, 400, "actual ListBox width should be determined by the min-width");
 			oCtrl.setMinWidth(null);
 		});
 
@@ -112,8 +112,8 @@
 			var expectedSetting = (sap.ui.Device.browser.internet_explorer
 					&& (!document.documentMode || document.documentMode < 9)) ? "48px" : "50px"; // the visual result is 50px in both cases
 			var $DomRef = jQuery.sap.byId("ListBox1");
-			equal($DomRef.css("max-width"), expectedSetting, "max-width should be set in CSS");
-			equal($DomRef[0].offsetWidth, 50, "actual ListBox width should be determined by the max-width");
+			assert.equal($DomRef.css("max-width"), expectedSetting, "max-width should be set in CSS");
+			assert.equal($DomRef[0].offsetWidth, 50, "actual ListBox width should be determined by the max-width");
 			oCtrl.setMaxWidth(null);
 		});
 
@@ -122,15 +122,15 @@
 		 * Tests accessor method for property allowMultiSelect of control ListBox.
 		 */
 		 QUnit.test("Multi Selection", function(assert) {
-			equal(oCtrl.getAllowMultiSelect(), bAllowMultiSelect);
+			assert.equal(oCtrl.getAllowMultiSelect(), bAllowMultiSelect);
 
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
-			equal(2, oCtrl.getSelectedIndices().length, "number of selected indices with multi-select must be correct");
+			assert.equal(2, oCtrl.getSelectedIndices().length, "number of selected indices with multi-select must be correct");
 
 			oCtrl.setAllowMultiSelect(false);
-			equal(oCtrl.getSelectedIndices().length, 1, "number of selected indices after removing multi-select must be correct");
-			equal(oCtrl.getSelectedIndices()[0], 0, "selected index after removing multi-select is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 1, "number of selected indices after removing multi-select must be correct");
+			assert.equal(oCtrl.getSelectedIndices()[0], 0, "selected index after removing multi-select is wrong");
 			oCtrl.setAllowMultiSelect(true);
 		});
 
@@ -139,7 +139,7 @@
 		  * Test height
 		  */
 	  QUnit.test("Height", function(assert) {
-			equal(oCtrl.getHeight(), sHeight, "ListBox height property must reflect settings");
+			assert.equal(oCtrl.getHeight(), sHeight, "ListBox height property must reflect settings");
 
 			// check height in DOM
 			var oDomRef = jQuery.sap.domById("ListBox1");
@@ -147,7 +147,7 @@
 			if (false && sap.ui.Device.browser.safari) {
 				// We have a problem here... Not doing the test while the problem is being solved
 			} else {
-				equal(oDomRef.offsetHeight, parseInt(sHeight), "actual ListBox height must reflect settings");
+				assert.equal(oDomRef.offsetHeight, parseInt(sHeight), "actual ListBox height must reflect settings");
 			}
 		});
 
@@ -155,39 +155,39 @@
 	  /**
 		 * Test tooltip
 		 */
-		test ("Tooltip", function() {
-			equal(oCtrl.getTooltip(), sTooltip, "ListBox tooltip property must reflect settings");
+		QUnit.test("Tooltip", function(assert) {
+			assert.equal(oCtrl.getTooltip(), sTooltip, "ListBox tooltip property must reflect settings");
 
 			// check tooltip in DOM
 			var oDomRef = jQuery.sap.domById("ListBox1");
-			equal(oDomRef.getAttribute("title"), sTooltip, "actual Tooltip must reflect settings");
+			assert.equal(oDomRef.getAttribute("title"), sTooltip, "actual Tooltip must reflect settings");
 		});
 
 
 		/**
 		 * Test DisplaySecondaryValues + DisplayIcons
 		 */
-		test ("DisplaySecondaryValues and DisplayIcons", function() {
+		QUnit.test("DisplaySecondaryValues and DisplayIcons", function(assert) {
 			var oDomRef = jQuery.sap.domById("item0");
-			equal(oDomRef.childNodes.length, 1, "ListItem should only have one child node by default");
+			assert.equal(oDomRef.childNodes.length, 1, "ListItem should only have one child node by default");
 
 			oCtrl.setDisplaySecondaryValues(true);
 			sap.ui.getCore().applyChanges();
 			oDomRef = jQuery.sap.domById("item0");
-			equal(oDomRef.childNodes.length, 2, "ListItem should have two child nodes if secondary values are displayed");
+			assert.equal(oDomRef.childNodes.length, 2, "ListItem should have two child nodes if secondary values are displayed");
 
 			oCtrl.setDisplayIcons(true);
 			sap.ui.getCore().applyChanges();
 			oDomRef = jQuery.sap.domById("item0");
-			equal(oDomRef.childNodes.length, 3, "ListItem should have three child nodes if also icons are displayed");
+			assert.equal(oDomRef.childNodes.length, 3, "ListItem should have three child nodes if also icons are displayed");
 			var imgSpan = oDomRef.childNodes[0];
-			equal(imgSpan.firstChild.tagName.toUpperCase(), "IMG", "there should actually be an image in the first column");
+			assert.equal(imgSpan.firstChild.tagName.toUpperCase(), "IMG", "there should actually be an image in the first column");
 		});
 
 		/**
 		 * Test text alignment
 		 */
-		test ("Text Alignment", function() {
+		QUnit.test("Text Alignment", function(assert) {
 			oCtrl.setDisplaySecondaryValues(true);
 			oCtrl.setDisplayIcons(true);
 			sap.ui.getCore().applyChanges();
@@ -197,9 +197,9 @@
 			var secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
 
 			// default alignments
-			equal(iconSpan.css("text-align"), "center", "icon should be center-aligned by default");
-			equal(valueSpan.css("text-align"), "left", "text should be left-aligned by default");
-			equal(secondaryValueSpan.css("text-align"), "left", "text should be left-aligned by default");
+			assert.equal(iconSpan.css("text-align"), "center", "icon should be center-aligned by default");
+			assert.equal(valueSpan.css("text-align"), "left", "text should be left-aligned by default");
+			assert.equal(secondaryValueSpan.css("text-align"), "left", "text should be left-aligned by default");
 
 			// change alignment to end
 			oCtrl.setValueTextAlign(sap.ui.core.TextAlign.End);
@@ -211,8 +211,8 @@
 			secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
 
 			// end alignments
-			equal(valueSpan.css("text-align"), "right", "text should be right-aligned");
-			equal(secondaryValueSpan.css("text-align"), "right", "text should be right-aligned");
+			assert.equal(valueSpan.css("text-align"), "right", "text should be right-aligned");
+			assert.equal(secondaryValueSpan.css("text-align"), "right", "text should be right-aligned");
 
 			// change alignment to right
 			oCtrl.setValueTextAlign(sap.ui.core.TextAlign.Right);
@@ -224,8 +224,8 @@
 			secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
 
 			// right alignments
-			equal(valueSpan.css("text-align"), "right", "text should be right-aligned");
-			equal(secondaryValueSpan.css("text-align"), "right", "text should be right-aligned");
+			assert.equal(valueSpan.css("text-align"), "right", "text should be right-aligned");
+			assert.equal(secondaryValueSpan.css("text-align"), "right", "text should be right-aligned");
 		});
 
 
@@ -233,9 +233,9 @@
 		 * Tests accessor method for property scrollTop of control ListBox.
 		 */
 		QUnit.test("ScrollTop", function(assert) {
-			equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct initially");
+			assert.equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct initially");
 			var oDomRef = jQuery.sap.domById("ListBox1");
-			equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct initially");
+			assert.equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct initially");
 
 			// add more items to allow scrolling
 			for (var i = 0; i < 30; i++) {
@@ -245,21 +245,21 @@
 			}
 			sap.ui.getCore().applyChanges();
 			oDomRef = jQuery.sap.domById("ListBox1");
-			equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct after adding items");
-			equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct after adding items");
+			assert.equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct after adding items");
+			assert.equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct after adding items");
 
 			// now scroll - no re-rendering should be required
 			oCtrl.setScrollTop(33);
 			oDomRef = jQuery.sap.domById("ListBox1");
-			equal(oCtrl.getScrollTop(), 33, "getScrollTop() must be correct after changing scrollTop");
-			equal(oDomRef.scrollTop, 33, "oDomRef.scrollTop must be correct after changing scrollTop");
+			assert.equal(oCtrl.getScrollTop(), 33, "getScrollTop() must be correct after changing scrollTop");
+			assert.equal(oDomRef.scrollTop, 33, "oDomRef.scrollTop must be correct after changing scrollTop");
 
 			// make sure the scroll position remains after re-rendering
 			oCtrl.invalidate();
 			sap.ui.getCore().applyChanges();
 			oDomRef = jQuery.sap.domById("ListBox1");
-			equal(oCtrl.getScrollTop(), 33, "getScrollTop() must be correct after re-rendering");
-			equal(oDomRef.scrollTop, 33, "oDomRef.scrollTop must be correct after re-rendering");
+			assert.equal(oCtrl.getScrollTop(), 33, "getScrollTop() must be correct after re-rendering");
+			assert.equal(oDomRef.scrollTop, 33, "oDomRef.scrollTop must be correct after re-rendering");
 		});
 
 
@@ -274,14 +274,14 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 		/**
 		 * Tests method getSelectedIndex of control ListBox.
 	 	 */
 		QUnit.test("GetSelectedIndex", function(assert) {
-			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() is wrong");
 		});
 
 		/**
@@ -289,16 +289,16 @@
 		 */
 		QUnit.test("SetSelectedIndex", function(assert) {
 			oCtrl.setSelectedIndex(2); // invalid indices may not change the selection
-			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
 			oCtrl.setSelectedIndex(-2);
-			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
 			oCtrl.setSelectedIndex(999);
-			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
 
 			oCtrl.setSelectedIndex(1);
-			equal(oCtrl.getSelectedIndex(), 1, "oCtrl.getSelectedIndex() after .setSelectedIndex(1) is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), 1, "oCtrl.getSelectedIndex() after .setSelectedIndex(1) is wrong");
 			oCtrl.setSelectedIndex(0);
-			equal(oCtrl.getSelectedIndex(), 0, "oCtrl.getSelectedIndex() after .setSelectedIndex(0) is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), 0, "oCtrl.getSelectedIndex() after .setSelectedIndex(0) is wrong");
 			oCtrl.setSelectedIndex(-1); // reset for next tests
 		});
 
@@ -308,13 +308,13 @@
 		QUnit.test("AddSelectedIndex", function(assert) {
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(-3);
-			equal(oCtrl.getSelectedIndex(), 1, "selected index after adding first index is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), 1, "selected index after adding first index is wrong");
 			oCtrl.addSelectedIndex(0);
-			equal(oCtrl.getSelectedIndex(), 0, "selected index after adding second index is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), 0, "selected index after adding second index is wrong");
 
-			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
-			equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding second index is wrong");
-			equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding second index is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
+			assert.equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding second index is wrong");
+			assert.equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding second index is wrong");
 		});
 
 		/**
@@ -326,9 +326,9 @@
 			oCtrl.addSelectedIndex(-3);
 			oCtrl.addSelectedIndex(99);
 			oCtrl.removeSelectedIndex(0);
-			equal(oCtrl.getSelectedIndex(), 1, "selected index after adding two and removing the first index is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), 1, "selected index after adding two and removing the first index is wrong");
 			oCtrl.removeSelectedIndex(1);
-			equal(oCtrl.getSelectedIndex(), -1, "selected index after adding two and removing both is wrong");
+			assert.equal(oCtrl.getSelectedIndex(), -1, "selected index after adding two and removing both is wrong");
 		});
 
 		/**
@@ -338,9 +338,9 @@
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 			oCtrl.addSelectedIndex(99);
-			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
-			equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding second index is wrong");
-			equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding second index is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
+			assert.equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding second index is wrong");
+			assert.equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding second index is wrong");
 		});
 
 		/**
@@ -349,12 +349,12 @@
 		QUnit.test("SetSelectedIndices", function(assert) {
 			var aIndices = [-3,0,1,99];
 			oCtrl.setSelectedIndices(aIndices);
-			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
-			equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after setting two valid indices is wrong");
-			equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after setting two valid indices is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
+			assert.equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after setting two valid indices is wrong");
+			assert.equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after setting two valid indices is wrong");
 
 			oCtrl.setSelectedIndices([]);
-			equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after setting an empty selection is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after setting an empty selection is wrong");
 		});
 
 		/**
@@ -363,9 +363,9 @@
 		QUnit.test("AddSelectedIndices", function(assert) {
 			var aIndices = [-3,0,1,99];
 			oCtrl.addSelectedIndices(aIndices);
-			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding two valid indices is wrong");
-			equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding two valid indices is wrong");
-			equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding two valid indices is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding two valid indices is wrong");
+			assert.equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding two valid indices is wrong");
+			assert.equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding two valid indices is wrong");
 		});
 
 		/**
@@ -373,8 +373,8 @@
 		 */
 		QUnit.test("IsIndexSelected", function(assert) {
 			oCtrl.setSelectedIndex(1);
-			equal(oCtrl.isIndexSelected(1), true, "oCtrl.isIndexSelected(1) after .setSelectedIndex(1) is wrong");
-			equal(oCtrl.isIndexSelected(0), false, "oCtrl.isIndexSelected(0) after .setSelectedIndex(1) is wrong");
+			assert.equal(oCtrl.isIndexSelected(1), true, "oCtrl.isIndexSelected(1) after .setSelectedIndex(1) is wrong");
+			assert.equal(oCtrl.isIndexSelected(0), false, "oCtrl.isIndexSelected(0) after .setSelectedIndex(1) is wrong");
 		});
 
 
@@ -386,30 +386,30 @@
 				oCtrl.addItem(oItem1);
 				oCtrl.addItem(oItem2);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 		QUnit.test("SetSelectedKeys + GetSelectedKeys", function(assert) {
 			var aKeys = [undefined,"key0","key2"];
 			oCtrl.setSelectedKeys(aKeys);
-			equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
-			equal(oCtrl.getSelectedKeys()[0], "key0", "selected key after setting selected keys should be 'key0'");
+			assert.equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
+			assert.equal(oCtrl.getSelectedKeys()[0], "key0", "selected key after setting selected keys should be 'key0'");
 
 			oCtrl.setSelectedKeys(["key0","key1"]);
-			equal(oCtrl.getSelectedKeys().length, 2, "number of selected keys should be 2");
-			equal(oCtrl.getSelectedKeys()[0], "key0", "first selected key after setting selected keys should be 'key0'");
-			equal(oCtrl.getSelectedKeys()[1], "key1", "second selected key after setting selected keys should be 'key1'");
+			assert.equal(oCtrl.getSelectedKeys().length, 2, "number of selected keys should be 2");
+			assert.equal(oCtrl.getSelectedKeys()[0], "key0", "first selected key after setting selected keys should be 'key0'");
+			assert.equal(oCtrl.getSelectedKeys()[1], "key1", "second selected key after setting selected keys should be 'key1'");
 
 			oCtrl.setSelectedKeys(["key1"]);
-			equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
-			equal(oCtrl.getSelectedKeys()[0], "key1", "selected key after setting selected keys should be 'key1'");
+			assert.equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
+			assert.equal(oCtrl.getSelectedKeys()[0], "key1", "selected key after setting selected keys should be 'key1'");
 
 			oCtrl.setSelectedKeys([""]);
-			equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
-			equal(oCtrl.getSelectedKeys()[0], "", "selected key after setting selected keys should be '' (empty string)");
+			assert.equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
+			assert.equal(oCtrl.getSelectedKeys()[0], "", "selected key after setting selected keys should be '' (empty string)");
 
 			oCtrl.setSelectedKeys([]);
-			equal(oCtrl.getSelectedKeys().length, 0, "number of selected keys should be 0");
+			assert.equal(oCtrl.getSelectedKeys().length, 0, "number of selected keys should be 0");
 		});
 
 
@@ -420,36 +420,36 @@
 				oCtrl.addItem(oItem0);
 				oCtrl.addItem(oItem1);
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 		QUnit.test("GetSelectedItem", function(assert) {
 			var item = oCtrl.getSelectedItem();
-			ok(item == null, "oCtrl.getSelectedItem() with no selection is wrong");
+			assert.ok(item == null, "oCtrl.getSelectedItem() with no selection is wrong");
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 			item = oCtrl.getSelectedItem();
-			ok(item == oItem0, "oCtrl.getSelectedItem() is wrong");
+			assert.ok(item == oItem0, "oCtrl.getSelectedItem() is wrong");
 		});
 
 		/**
 		 * Tests method getSelectedItems of control ListBox.
 		 */
 		QUnit.test("GetSelectedItems", function(assert) {
-			equal(oCtrl.getSelectedItems().length, 0, "oCtrl.getSelectedItems() with no selection is wrong");
+			assert.equal(oCtrl.getSelectedItems().length, 0, "oCtrl.getSelectedItems() with no selection is wrong");
 			oCtrl.addSelectedIndex(1);
 			oCtrl.addSelectedIndex(0);
 
-			equal(oCtrl.getSelectedItems().length, 2, "number of selected items returned by oCtrl.getSelectedItems is wrong");
-			ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
-			ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
+			assert.equal(oCtrl.getSelectedItems().length, 2, "number of selected items returned by oCtrl.getSelectedItems is wrong");
+			assert.ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
+			assert.ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
 		});
 
 
 		QUnit.test("GetItems", function(assert) {
-			equal(oCtrl.getItems().length, 2, "oCtrl.getItems() with no selection is wrong");
-			ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
-			ok(oCtrl.getItems()[1] == oItem1, "second returned item is wrong");
+			assert.equal(oCtrl.getItems().length, 2, "oCtrl.getItems() with no selection is wrong");
+			assert.ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
+			assert.ok(oCtrl.getItems()[1] == oItem1, "second returned item is wrong");
 		});
 
 		QUnit.test("AddItem", function(assert) {
@@ -461,15 +461,15 @@
 			oCtrl.addItem(oItem2);
 
 			// test the items
-			equal(oCtrl.getItems().length, 3, "oCtrl.getItems() after adding a third item is wrong");
-			ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
-			ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
-			ok(oCtrl.getItems()[2] == oItem2, "third returned item is wrong");
+			assert.equal(oCtrl.getItems().length, 3, "oCtrl.getItems() after adding a third item is wrong");
+			assert.ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
+			assert.ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
+			assert.ok(oCtrl.getItems()[2] == oItem2, "third returned item is wrong");
 
 			// test the adoption of the selection
-			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding third item is wrong");
-			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
-			ok(oCtrl.getSelectedIndices()[1] == 1, "second selected index after third item is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding third item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[1] == 1, "second selected index after third item is wrong");
 		});
 
 		QUnit.test("InsertItem", function(assert) {
@@ -481,15 +481,15 @@
 			oCtrl.insertItem(oItem2, 1);
 
 			// test the items
-			equal(oCtrl.getItems().length, 3, "oCtrl.getItems() after adding a third item is wrong");
-			ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
-			ok(oCtrl.getItems()[1] == oItem2, "second returned item is wrong");
-			ok(oCtrl.getItems()[2] == oItem1, "third returned item is wrong");
+			assert.equal(oCtrl.getItems().length, 3, "oCtrl.getItems() after adding a third item is wrong");
+			assert.ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
+			assert.ok(oCtrl.getItems()[1] == oItem2, "second returned item is wrong");
+			assert.ok(oCtrl.getItems()[2] == oItem1, "third returned item is wrong");
 
 			// test the adoption of the selection
-			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding third item is wrong");
-			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
-			ok(oCtrl.getSelectedIndices()[1] == 2, "second selected index after third item is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding third item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[1] == 2, "second selected index after third item is wrong");
 		});
 
 		QUnit.test("RemoveItem", function(assert) {
@@ -499,12 +499,12 @@
 			oCtrl.removeItem(0);
 
 			// test the items
-			equal(oCtrl.getItems().length, 1, "oCtrl.getItems() after removing an item is wrong");
-			ok(oCtrl.getItems()[0] == oItem1, "first returned item is wrong");
+			assert.equal(oCtrl.getItems().length, 1, "oCtrl.getItems() after removing an item is wrong");
+			assert.ok(oCtrl.getItems()[0] == oItem1, "first returned item is wrong");
 
 			// test the adoption of the selection
-			equal(oCtrl.getSelectedIndices().length, 1, "number of selected indices after removing an item is wrong");
-			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after removing an item is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 1, "number of selected indices after removing an item is wrong");
+			assert.ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after removing an item is wrong");
 		});
 
 		QUnit.test("RemoveAllItems", function(assert) {
@@ -514,10 +514,10 @@
 			oCtrl.removeAllItems();
 
 			// test the items
-			equal(oCtrl.getItems().length, 0, "oCtrl.getItems() after removing all items is wrong");
+			assert.equal(oCtrl.getItems().length, 0, "oCtrl.getItems() after removing all items is wrong");
 
 			// test the adoption of the selection
-			equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after removing all items is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after removing all items is wrong");
 		});
 
 		QUnit.test("DestroyItems", function(assert) {
@@ -527,10 +527,10 @@
 			oCtrl.destroyItems();
 
 			// test the items
-			equal(oCtrl.getItems().length, 0, "oCtrl.getItems() after destroying all items is wrong");
+			assert.equal(oCtrl.getItems().length, 0, "oCtrl.getItems() after destroying all items is wrong");
 
 			// test the adoption of the selection
-			equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after destroying all items is wrong");
+			assert.equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after destroying all items is wrong");
 		});
 
 
@@ -546,7 +546,7 @@
 				}
 				oCtrl.setHeight("100px");
 				sap.ui.getCore().applyChanges();
-			} //, teardown: function(){}
+			}
 		});
 
 
@@ -560,7 +560,7 @@
 	   * Tests event handling for event select of control ListBox.
 	   */
 		QUnit.test("Select Event", function(assert) {
-			expect(1); // needs to include the test in selectEventHandler !!
+			assert.expect(1); // needs to include the test in selectEventHandler !!
 			oCtrl.fireSelect();
 		});
 

@@ -51,18 +51,18 @@
 				var $MessageToast = jQuery(".sapMMessageToast").eq(0);
 
 				// assert
-				ok($MessageToast.length, "The message toast HTML DIV element exist");
-				strictEqual($MessageToast[0].style.width, "15em", "Default MessageToast width is 15em");
-				strictEqual($MessageToast.css("visibility"), "visible", "After calling the sap.m.MessageToast.show(): the MessageToast is visible");
-				strictEqual($MessageToast.css("position"), "absolute", "Position absolute");
-				strictEqual($MessageToast.attr("aria-label"), " ", "The aria-labelledby is set");
-				strictEqual($MessageToast.text(), "message toast", "The message toast displays the correct text");
-				strictEqual(getBoxSizing($MessageToast), "border-box", "Is using old box model");
-				strictEqual(typeof $MessageToast.css("box-shadow"), "string", "Is using box shadow");
-				strictEqual($MessageToast.css("text-align"), "center", "The text is centered");
-				strictEqual($MessageToast.css("text-overflow"), "ellipsis", "ellipsis");
-				strictEqual($MessageToast.attr("role"), "alert", "The role is set");
-				strictEqual($MessageToast.css("white-space"), "pre-line", "The message has the correct white-space style for supporting line break");
+				assert.ok($MessageToast.length, "The message toast HTML DIV element exist");
+				assert.strictEqual($MessageToast[0].style.width, "15em", "Default MessageToast width is 15em");
+				assert.strictEqual($MessageToast.css("visibility"), "visible", "After calling the sap.m.MessageToast.show(): the MessageToast is visible");
+				assert.strictEqual($MessageToast.css("position"), "absolute", "Position absolute");
+				assert.strictEqual($MessageToast.attr("aria-label"), " ", "The aria-labelledby is set");
+				assert.strictEqual($MessageToast.text(), "message toast", "The message toast displays the correct text");
+				assert.strictEqual(getBoxSizing($MessageToast), "border-box", "Is using old box model");
+				assert.strictEqual(typeof $MessageToast.css("box-shadow"), "string", "Is using box shadow");
+				assert.strictEqual($MessageToast.css("text-align"), "center", "The text is centered");
+				assert.strictEqual($MessageToast.css("text-overflow"), "ellipsis", "ellipsis");
+				assert.strictEqual($MessageToast.attr("role"), "alert", "The role is set");
+				assert.strictEqual($MessageToast.css("white-space"), "pre-line", "The message has the correct white-space style for supporting line break");
 			});
 
 			/* =========================================================== */
@@ -85,7 +85,7 @@
 					sap.m.MessageToast._isFiniteInteger(vValue);
 
 					// assert
-					ok(fnErrorSpy.calledOnce, '"duration" needs to be a finite positive nonzero integer, jQuery.sap.log.error() method must be called exactly once');
+					assert.ok(fnErrorSpy.calledOnce, '"duration" needs to be a finite positive nonzero integer, jQuery.sap.log.error() method must be called exactly once');
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -114,7 +114,7 @@
 				sap.m.MessageToast._validateWidth("16");
 
 				// assert
-				ok(fnErrorSpy.calledOnce, '"width" should be type of "sap.ui.core/CSSSize"');
+				assert.ok(fnErrorSpy.calledOnce, '"width" should be type of "sap.ui.core/CSSSize"');
 
 				// cleanup
 				fnErrorSpy.restore();
@@ -134,7 +134,7 @@
 					sap.m.MessageToast._validateDockPosition(vValue);
 
 					// assert
-					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"' + vValue + '"' + ' should be type of "sap.ui.core.Popup.Dock"');
+					assert.strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"' + vValue + '"' + ' should be type of "sap.ui.core.Popup.Dock"');
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -172,7 +172,7 @@
 					sap.m.MessageToast._validateOf(vValue);
 
 					// assert
-					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window');
+					assert.strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window');
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -201,7 +201,7 @@
 				sap.m.MessageToast._validateOffset(50);
 
 				// assert
-				ok(fnErrorSpy.calledOnce, '"offset" should be type of "string"');
+				assert.ok(fnErrorSpy.calledOnce, '"offset" should be type of "string"');
 
 				// cleanup
 				fnErrorSpy.restore();
@@ -221,7 +221,7 @@
 					sap.m.MessageToast._validateCollision(vValue);
 
 					// assert
-					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"collision" needs to be a single value “fit”, “flip” or “none”, or a pair for horizontal and vertical e.g. "fit flip”, "fit none"');
+					assert.strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"collision" needs to be a single value “fit”, “flip” or “none”, or a pair for horizontal and vertical e.g. "fit flip”, "fit none"');
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -257,7 +257,7 @@
 					sap.m.MessageToast._validateOnClose(vValue);
 
 					// assert
-					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"onClose"' + ' should be a function or null');
+					assert.strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"onClose"' + ' should be a function or null');
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -282,7 +282,7 @@
 					sap.m.MessageToast._validateAutoClose(vValue);
 
 					// assert
-					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"autoClose"' + ' should be a boolean');
+					assert.strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"autoClose"' + ' should be a boolean');
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -307,7 +307,7 @@
 					sap.m.MessageToast._validateAnimationTimingFunction(vValue);
 
 					// assert
-					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"animationTimingFunction"' + ' should be a string, expected values: ' + ["ease", "linear", "ease-in", "ease-out", "ease-in-out"].toString());
+					assert.strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"animationTimingFunction"' + ' should be a string, expected values: ' + ["ease", "linear", "ease-in", "ease-out", "ease-in-out"].toString());
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -352,7 +352,7 @@
 					});
 
 					// assert
-					strictEqual(fnAddPopoverInstanceSpy.callCount, bCloseOnBrowserNavigation ? 1 : 0);
+					assert.strictEqual(fnAddPopoverInstanceSpy.callCount, bCloseOnBrowserNavigation ? 1 : 0);
 
 					// cleanup
 					fnAddPopoverInstanceSpy.restore();
@@ -375,11 +375,12 @@
 						return oResizeEventListener.namespace === "sapMMessageToast";
 					});
 
-					strictEqual(bBoundedListeners, b, "Listener to the " + '"' + sEventType + '" event deregistered');
+					assert.strictEqual(bBoundedListeners, b, "Listener to the " + '"' + sEventType + '" event deregistered');
 				});
 			};
 
-			QUnit.asyncTest("Mousedown on SVG element should not throw exception", function (assert) {
+			QUnit.test("Mousedown on SVG element should not throw exception", function (assert) {
+				var done = assert.async();
 				var oSvgCircle = new sap.ui.core.HTML({
 					content: '<svg id="svg-circle" height="100" width="100">' +
 								'<circle cx="50" cy="50" r="40" fill="red"></circle>' +
@@ -392,7 +393,7 @@
 				sap.m.MessageToast.show("test", {
 					onClose: function () {
 						assert.ok(true, "Message toast closed with no error thrown");
-						QUnit.start();
+						done();
 					}
 				});
 
@@ -403,7 +404,8 @@
 				oSvgCircle.destroy();
 			});
 
-			asyncTest("Callback", function() {
+			QUnit.test("Callback", function(assert) {
+				var done = assert.async();
 				setTimeout(function() {
 
 					// arrange
@@ -419,13 +421,13 @@
 					setTimeout(function() {
 
 						// assert
-						ok(fnCloseSpy.calledOn(sap.m.MessageToast), 'onClose callback was called with the correct context');
+						assert.ok(fnCloseSpy.calledOn(sap.m.MessageToast), 'onClose callback was called with the correct context');
 						hasEventListeners(window, "resize", false);
 						hasEventListeners(document, "mousedown", false);
 						hasEventListeners(document, "touchstart", false);
 
 						// start the test
-						start();
+						done();
 					}, 7000);
 				}, 0);
 			});

@@ -51,7 +51,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 				aggregations: {
 
 					/**
-					 * TODO.
+					 * Defines the content contained within this control.
 					 * TODO: mention constraints, e.g. size/complexity of items, and whether content can be added that tries to adapt to the parent height.
 					 */
 					content: {
@@ -60,23 +60,18 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					},
 
 					/**
-					 * TODO.
+					 * Defines the end content contained within this control.
 					 */
 					endContent: {
 						type: "sap.ui.core.Control",
-						multiple: true // TODO: multiple?
+						multiple: true
 					}
 				}
 			}
 		});
 
 		AlignedFlowLayout.prototype.init = function() {
-
-			// indicates whether the items currently all fit in one line
-			this._bItemsFitInFirstLine = false;
-			this._iEndContentWidth = -1;
-			this._oLastVisibleElement = null;
-			this._bEnoughSpaceForEndContent = undefined;
+			this._iEndItemWidth = -1;
 
 			// registration ID used for deregistering the resize handler
 			this._sResizeListenerId = ResizeHandler.register(this, this._onResize.bind(this));
@@ -90,102 +85,157 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		};
 
 		AlignedFlowLayout.prototype._onRenderingOrThemeChanged = function() {
-			var oDomRef = this.getDomRef(),
-				oEndContentDomRef = this.getDomRef("endContent");
-
-			if (oEndContentDomRef && this.getContent().length) {
-				this._iEndContentWidth = oEndContentDomRef.offsetWidth;
-				oDomRef.lastElementChild.style.width = this._iEndContentWidth + "px";
-			}
-
-			this._oLastVisibleElement = oEndContentDomRef || this.getLastContentDomRef();
 			this._onResize();
+			this._updateLastSpacerWidth();
 		};
 
 		AlignedFlowLayout.prototype.onAfterRendering = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 
+		AlignedFlowLayout.prototype._updateLastSpacerWidth = function() {
+			if (this.getContent().length) {
+				var oDomRef = this.getDomRef(),
+					oEndItemDomRef = this.getDomRef("endItem");
+
+				if (oDomRef && oEndItemDomRef) {
+					oDomRef.lastElementChild.style.width = this._iEndItemWidth + "px";
+				}
+			}
+		};
+
+		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
+		// control changes
 		AlignedFlowLayout.prototype._onResize = function(oEvent) {
 
-			// called by resize handler, but only the height changed, so there is nothing to do; this is required to avoid a resizing loop
+			// called by resize handler, but only the height changed, so there is nothing to do;
+			// this is required to avoid a resizing loop
 			if ((oEvent && (oEvent.size.width === oEvent.oldSize.width)) || (this.getContent().length === 0)) {
 				return;
 			}
 
-			this._checkRowCount();
-			var oEndContentDomRef = this.getDomRef("endContent");
+			var oDomRef = this.getDomRef();
 
-			// only needed if there is any endContent;  TODO: de-/register ResizeHandler after rendering depending on whether we have endContent
-			if (!oEndContentDomRef) {
+			if (!oDomRef) {
 				return;
 			}
 
-			var oDomRef = this.getDomRef(),
-				oLastContentDomRef = this.getLastContentDomRef(),
-				iRightBorderOfLastItem = oLastContentDomRef.offsetLeft + oLastContentDomRef.offsetWidth,
-				bEnoughSpaceForEndContent = (oDomRef.offsetWidth - iRightBorderOfLastItem >= this._iEndContentWidth);
+			var CSS_CLASS_ONE_LINE = this.getRenderer().CSS_CLASS + "OneLine",
+				oEndItemDomRef = this.getDomRef("endItem"),
+				bEnoughSpaceForEndItem = true;
 
-			if (bEnoughSpaceForEndContent !== this._bEnoughSpaceForEndContent) { // only when it changes
+			if (oEndItemDomRef) {
+				var mLastSpacerStyle = oDomRef.lastElementChild.style;
+				mLastSpacerStyle.height = "";
+				mLastSpacerStyle.display = "";
+				oDomRef.classList.remove(CSS_CLASS_ONE_LINE);
 
-				var oLastElementChildStyle = oDomRef.lastElementChild.style;
+				var oLastItemDomRef = this.getLastItemDomRef(),
+					iEndItemHeight = oEndItemDomRef.offsetHeight,
+					iEndItemWidth = oEndItemDomRef.offsetWidth,
+					iLastItemOffsetLeft = oLastItemDomRef.offsetLeft,
+					iAvailableWidthForEndItem;
 
-				if (bEnoughSpaceForEndContent) { // if endContent fits into the line
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					iAvailableWidthForEndItem = iLastItemOffsetLeft;
+				} else {
+					var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth;
+					iAvailableWidthForEndItem = oDomRef.offsetWidth - iRightBorderOfLastItem;
+				}
 
-					if (this._bItemsFitInFirstLine) {
-						oLastElementChildStyle.display = "block";
+				this._iEndItemWidth = iEndItemWidth; // cache the width of the end item
+				bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= iEndItemWidth;
+
+				// if the end item fits into the line
+				if (bEnoughSpaceForEndItem) {
+
+					if (this.checkItemsWrapping(oDomRef)) {
+
+						// if the end item overlap the items on the first line
+						if (oEndItemDomRef.offsetTop < oLastItemDomRef.offsetTop) {
+							mLastSpacerStyle.height = iEndItemHeight + "px";
+							mLastSpacerStyle.display = "block";
+						} else {
+							mLastSpacerStyle.height = "0";
+							mLastSpacerStyle.display = "";
+						}
+
 					} else {
-						oLastElementChildStyle.height = "0";
-						oLastElementChildStyle.display = "";
+
+						// if the height of the end item is higher than the other items on the first line,
+						// the end item goes up and overflow its container
+						if (oEndItemDomRef.offsetTop < oLastItemDomRef.offsetTop) {
+
+							// increase the height of the last spacer item to make the end item go down
+							mLastSpacerStyle.height = iEndItemHeight + "px";
+						}
+
+						mLastSpacerStyle.display = "block";
 					}
 
-				} else { // not enough space - increase the height of the last item to make the endContent go down
-					oLastElementChildStyle.height = oEndContentDomRef.offsetHeight + "px";
-					oLastElementChildStyle.display = "block";
+				} else { // not enough space, increase the height of the last spacer item to make the endContent go down
+					mLastSpacerStyle.height = iEndItemHeight + "px";
+					mLastSpacerStyle.display = "block";
 				}
 			}
+
+			// if the items fits into a single line, sets a CSS class to turns off the display of the spacer elements
+			oDomRef.classList.toggle(CSS_CLASS_ONE_LINE, (!this.checkItemsWrapping(oDomRef) && bEnoughSpaceForEndItem));
 		};
 
 		/*
-		 * Checks whether the visible content fits is currently in one line and sets a CSS class in this case,
-		 * which is needed for the invisible spacer elements.
-		 * Notice, it needs to be called after rendering, theme change, and whenever the width of this control changes.
+		 * Checks whether the visible content fits into a single line or it wraps onto multiple lines.
 		 */
-		AlignedFlowLayout.prototype._checkRowCount = function() {
+		AlignedFlowLayout.prototype.checkItemsWrapping = function(oDomRef) {
+			oDomRef = oDomRef || this.getDomRef();
 
-			// behavior with all elements in the first row is different than when there is wrapping;
-			// we have to detect and differentiate
-			if (this._oLastVisibleElement) {
-
-				var oDomRef = this.getDomRef();
-
-				// flex elements fill the row height, so the first child height is the row height; the last element is absolutely positioned, so use height+top
-				var bOneLineNow = (this._oLastVisibleElement.offsetTop + this._oLastVisibleElement.offsetHeight <= oDomRef.firstElementChild.offsetHeight);
-
-				// state has changed, so update the flag and the CSS class
-				if (bOneLineNow !== this._bItemsFitInFirstLine) {
-					this.$().toggleClass("sapUiAFLayoutOneLine", bOneLineNow);
-					this._bItemsFitInFirstLine = bOneLineNow;
-				}
+			if (!oDomRef) {
+				return false;
 			}
+
+			var oFirstItemDomRef = oDomRef.firstElementChild,
+				oLastItemDomRef = this.getLastItemDomRef();
+
+			if (!oFirstItemDomRef || !oLastItemDomRef) {
+				return false;
+			}
+
+			var iFirstItemOffsetTop = oFirstItemDomRef.offsetTop,
+				iLastItemOffsetTop = oLastItemDomRef.offsetTop,
+				iFirstItemOffsetHeight = oFirstItemDomRef.offsetHeight;
+
+			// detect wrapping (excluding the end item)
+			if (iLastItemOffsetTop >= (iFirstItemOffsetTop + iFirstItemOffsetHeight)) {
+				return true;
+			}
+
+			oLastItemDomRef = this.getDomRef("endItem");
+
+			// detect wrapping (including the end item)
+			return !!oLastItemDomRef && (iLastItemOffsetTop >= (iFirstItemOffsetTop + iFirstItemOffsetHeight));
 		};
 
 		/*
-		 * Returns the DomRef of the last content control - if this control and its DomRef exist.
+		 * Gets the parent element's DOM reference of the last content control - if this control and its DOM exist.
 		 */
-		AlignedFlowLayout.prototype.getLastContentDomRef = function() {
+		AlignedFlowLayout.prototype.getLastItemDomRef = function() {
 			var aContent = this.getContent(),
 				iContentLength = aContent.length;
 
 			if (iContentLength) {
 
-				var oContent = aContent[aContent.length - 1];
+				var oContent = aContent[iContentLength - 1],
+					oContentDomRef = oContent.getDomRef();
 
-				if (oContent) {
-					return oContent.getDomRef();
+				if (oContentDomRef) {
+					return oContentDomRef.parentElement;
 				}
 			}
 
 			return null;
+		};
+
+		AlignedFlowLayout.prototype.getLastVisibleDomRef = function() {
+			return this.getDomRef("endItem") || this.getLastItemDomRef();
 		};
 
 		return AlignedFlowLayout;

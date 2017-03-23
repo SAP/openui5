@@ -592,8 +592,8 @@
 			var fnOpened2 = function() {
 				this.oDialog.oPopup.detachOpened(fnOpened2);
 
-				ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
-				equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
+				assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+				assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 				this.oDialog.oPopup.attachClosed(done);
 
@@ -603,7 +603,7 @@
 			var fnClosed1 = function() {
 				this.oDialog.oPopup.detachClosed(fnClosed1);
 
-				equals(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
+				assert.equal(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
 
 				this.oDialog.open();
 				this.oDialog.oPopup.attachOpened(fnOpened2);
@@ -613,15 +613,15 @@
 			var fnOpened1 = function() {
 				this.oDialog.oPopup.detachOpened(fnOpened1);
 
-				ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
-				equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
+				assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+				assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 				this.oDialog.oPopup.attachClosed(fnClosed1);
 				this.oDialog.close();
 			}.bind(this);
 
 
-			equals(document.querySelector("#htmlControl"), null, "HTML control not rendered");
+			assert.equal(document.querySelector("#htmlControl"), null, "HTML control not rendered");
 
 			this.oDialog.oPopup.attachOpened(fnOpened1);
 			this.oDialog.open();

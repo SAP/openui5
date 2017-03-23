@@ -77,8 +77,8 @@
 			});
 
 			// assertions
-			strictEqual(oActionSelect.getButtons().length, 2, 'The buttons are added to the association named "buttons"');
-			strictEqual(aPopupButtons.length, 2, 'The buttons are added to the association named "content" in the ActionSelect popup');
+			assert.strictEqual(oActionSelect.getButtons().length, 2, 'The buttons are added to the association named "buttons"');
+			assert.strictEqual(aPopupButtons.length, 2, 'The buttons are added to the association named "content" in the ActionSelect popup');
 
 			// cleanup
 			oActionSelect.destroy();
@@ -109,8 +109,8 @@
 				});
 
 				// assertions
-				strictEqual(oActionSelect.getButtons().length, mOptions.removeButtons.length, 'The button with id or index "' + mOptions.removeButtons + '" was/were removed from the association named "buttons"');
-				strictEqual(aPopupButtons.length, mOptions.removeButtons.length, 'The button with id or index "' + mOptions.removeButtons + '" was/were removed from the aggregation named "content" in the ActionSelect popup');
+				assert.strictEqual(oActionSelect.getButtons().length, mOptions.removeButtons.length, 'The button with id or index "' + mOptions.removeButtons + '" was/were removed from the association named "buttons"');
+				assert.strictEqual(aPopupButtons.length, mOptions.removeButtons.length, 'The button with id or index "' + mOptions.removeButtons + '" was/were removed from the aggregation named "content" in the ActionSelect popup');
 
 				// cleanup
 				oActionSelect.destroy();
@@ -209,8 +209,8 @@
 				});
 
 				// assertions
-				strictEqual(oActionSelect.getButtons().length, 0, 'All buttons were removed from the association named "buttons"');
-				strictEqual(aPopupButtons.length, 0, ' All buttons were removed from the aggregation named "content" in the ActionSelect popup');
+				assert.strictEqual(oActionSelect.getButtons().length, 0, 'All buttons were removed from the association named "buttons"');
+				assert.strictEqual(aPopupButtons.length, 0, ' All buttons were removed from the aggregation named "content" in the ActionSelect popup');
 
 				// cleanup
 				oActionSelect.destroy();
@@ -284,7 +284,7 @@
 			qutils.triggerKeyboardEvent(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB);
 
 			// assert
-			ok(jQuery.sap.byId('firstEnabledButton').is(":focus"), 'The first enabled button should be focused');
+			assert.ok(jQuery.sap.byId('firstEnabledButton').is(":focus"), 'The first enabled button should be focused');
 
 			// cleanup
 			oActionSelect.destroy();
@@ -340,7 +340,7 @@
 			qutils.triggerKeyboardEvent(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB, true, false, false);
 
 			// assert
-			ok(jQuery.sap.byId('lastEnabledButton').is(":focus"), 'The last enabled button should be focused');
+			assert.ok(jQuery.sap.byId('lastEnabledButton').is(":focus"), 'The last enabled button should be focused');
 
 			// cleanup
 			oActionSelect.destroy();

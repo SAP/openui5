@@ -1,4 +1,4 @@
-/*global strictEqual, module, asyncTest, stop, start, sinon, Promise, ok*/
+/*global sinon, Promise*/
 
 jQuery.sap.require("sap.ui.fl.Persistence");
 jQuery.sap.require("sap.ui.fl.Utils");
@@ -100,8 +100,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 				return deletionPersistence.saveAll();
 			}).then(finalSteps)['catch'](function(err) {
-				ok(false, err);
-				start();
+				assert.ok(false, err);
+				done();
 			});
 
 			function finalSteps() {
@@ -109,13 +109,14 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					stub.restore();
 				});
 				Cache.setActive(true);
-				start();
+				done();
 			}
 
 		}
 	});
 
-	asyncTest('Create two variants, set one default', function() {
+	QUnit.test('Create two variants, set one default', function(assert) {
+		var done = assert.async();
 
 		// Create different persistence to avoid caching, before every getChanges a new persistence is required
 		var creationPersistence = createPersistence();
@@ -129,16 +130,16 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var secondChangeId = creationPersistence.addChange(oSecondChangeDefinition);
 
 		creationPersistence.saveAll().then(checkCreationAndSetDefaultVariantId).then(saveDefaultVariantChange).then(checkSaveAndGetDefaultVariantId).then(checkDefaultVariantId)['catch'](function(err) {
-			ok(false, err);
-			start();
+			assert.ok(false, err);
+			done();
 		});
 
 		/*********************************************************************************************************/
 
 		function checkCreationAndSetDefaultVariantId(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 2, 'Save result contains two entries');
-			strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 2, 'Save result contains two entries');
+			assert.strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
 			return setDefaultVariantPersistence.setDefaultVariantId(secondChangeId);
 		}
 
@@ -147,19 +148,20 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		}
 
 		function checkSaveAndGetDefaultVariantId(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'One change saved');
-			strictEqual(results[0].response.changeType, 'defaultVariant', 'Default variant change successfully saved');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'One change saved');
+			assert.strictEqual(results[0].response.changeType, 'defaultVariant', 'Default variant change successfully saved');
 			return verificationPersistence.getDefaultVariantId();
 		}
 
 		function checkDefaultVariantId(defaultVariantId) {
-			strictEqual(defaultVariantId, secondChangeId, 'DefaultVariantId successfully set');
-			start();
+			assert.strictEqual(defaultVariantId, secondChangeId, 'DefaultVariantId successfully set');
+			done();
 		}
 	});
 
-	asyncTest('Create two variants, create two default variant changes. The newest should be used and the older one deleted automatically', function() {
+	QUnit.test('Create two variants, create two default variant changes. The newest should be used and the older one deleted automatically', function(assert) {
+		var done = assert.async();
 
 		// Create different persistence to avoid caching, before every getChanges a new persistence is required
 		var creationPersistence = createPersistence();
@@ -175,16 +177,16 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var secondChangeId = creationPersistence.addChange(oSecondChangeDefinition);
 
 		creationPersistence.saveAll().then(checkCreationAndSetDefaultVariantId).then(saveDefaultVariantChange).then(checkSaveThenCreateAndSaveSecondDefaultVariantChange).then(checkSaveAndGetChanges).then(checkDefaultVariantChangesAndSave).then(checkDeletionAndGetChangesAgain).then(checkNumberOfDefaultVariantChanges)['catch'](function(err) {
-			ok(false, err);
-			start();
+			assert.ok(false, err);
+			done();
 		});
 
 		/*********************************************************************************************************/
 
 		function checkCreationAndSetDefaultVariantId(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 2, 'Save result contains two entries');
-			strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 2, 'Save result contains two entries');
+			assert.strictEqual(results[0].status, 'success', 'Change successfully saved in backend');
 			return setDefaultVariantPersistence.setDefaultVariantId(secondChangeId);
 		}
 
@@ -193,9 +195,9 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		}
 
 		function checkSaveThenCreateAndSaveSecondDefaultVariantChange(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'One change saved');
-			strictEqual(results[0].response.changeType, 'defaultVariant', 'Default variant change successfully saved');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'One change saved');
+			assert.strictEqual(results[0].response.changeType, 'defaultVariant', 'Default variant change successfully saved');
 
 			// use sync version without getting the changes to trick the API in creating a second default variant change
 			setDefaultVariantPersistence2.setDefaultVariantIdSync(firstChangeId);
@@ -203,32 +205,32 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		}
 
 		function checkSaveAndGetChanges(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length > 0, true, 'One change saved');
-			strictEqual(results[0].response.changeType, 'defaultVariant', 'Second default variant change successfully saved');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length > 0, true, 'One change saved');
+			assert.strictEqual(results[0].response.changeType, 'defaultVariant', 'Second default variant change successfully saved');
 			return verificationPersistence.getChanges();
 		}
 
 		function checkDefaultVariantChangesAndSave(changes) {
 			var defaultVarChanges = defaultVariant.getDefaultVariantChanges(changes);
-			strictEqual(defaultVarChanges.length, 2, 'Two default variant changes found');
+			assert.strictEqual(defaultVarChanges.length, 2, 'Two default variant changes found');
 			var newestChangeId = verificationPersistence.getDefaultVariantIdSync();
-			strictEqual(newestChangeId, firstChangeId, 'The default variant change added last is the current default');
+			assert.strictEqual(newestChangeId, firstChangeId, 'The default variant change added last is the current default');
 
 			// getDefaultVariantIdSync has marked the older change for deletion, setDefaultVariantId(Sync) would have done the same
 			return verificationPersistence.saveAll();
 		}
 
 		function checkDeletionAndGetChangesAgain(results) {
-			strictEqual($.isArray(results), true, 'Save result is array');
-			strictEqual(results.length, 1, 'One change deleted');
+			assert.strictEqual($.isArray(results), true, 'Save result is array');
+			assert.strictEqual(results.length, 1, 'One change deleted');
 			return verificationPersistence2.getChanges();
 		}
 
 		function checkNumberOfDefaultVariantChanges(changes) {
 			var defaultVarChanges = defaultVariant.getDefaultVariantChanges(changes);
-			strictEqual(defaultVarChanges.length, 1, 'One default variant changes found');
-			start();
+			assert.strictEqual(defaultVarChanges.length, 1, 'One default variant changes found');
+			done();
 		}
 	});
 

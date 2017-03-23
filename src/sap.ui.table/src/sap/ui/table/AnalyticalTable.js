@@ -369,16 +369,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return oBindingInfo;
 	};
 
-	/**
-	 * @param {Boolean} bSuppressRefresh Suppress Refresh
-	 * @returns {sap.ui.table.AnalyticalTable} this
-	 * @private
- 	 */
-	AnalyticalTable.prototype._setSuppressRefresh = function (bSuppressRefresh) {
-		this._bSupressRefresh = bSuppressRefresh;
-		return this;
-	};
-
 	AnalyticalTable.prototype._attachBindingListener = function() {
 		var oBinding = this.getBinding("rows");
 
@@ -577,23 +567,19 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 						iLastGroupedIndex = -1,
 						iUngroudpedIndex = -1,
 						oColumn;
+
+					that.suspendUpdateAnalyticalInfo();
+
 					for (var i = 0; i < aColumns.length; i++) {
 						oColumn = aColumns[i];
 						if (oColumn.getGrouped()) {
 							iFoundGroups++;
 							if (iFoundGroups == that._iGroupedLevel) {
-								oColumn._bSkipUpdateAI = true;
-
-								// relaying the ungrouping to the AnalyticalBinding,
-								// the numberOfExpandedLevels must be reset through the AnalyticalTreeBindingAdapter.
-								var oBinding = that.getBinding("rows");
-								oBinding.setNumberOfExpandedLevels(0);
 								// setGrouped(false) leads to an invalidation of the Column -> rerender
 								// and this will result in new requests from the AnalyticalBinding,
 								//because the initial grouping is lost (can not be restored!)
 								oColumn.setGrouped(false);
 
-								oColumn._bSkipUpdateAI = false;
 								iUngroudpedIndex = i;
 								that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: GroupEventType.ungroup});
 							} else {
@@ -601,6 +587,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 							}
 						}
 					}
+
 					if (iLastGroupedIndex > -1 && iUngroudpedIndex > -1 && iUngroudpedIndex < iLastGroupedIndex) {
 						var oUngroupedColumn = aColumns[iUngroudpedIndex];
 						var iHeaderSpan = oUngroupedColumn.getHeaderSpan();
@@ -616,7 +603,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 							that.insertColumn(oColumn, iLastGroupedIndex);
 						});
 					}
-					that._updateColumns();
+
+					that.resumeUpdateAnalyticalInfo();
+
+					// Grouping is not executed directly. The table will be configured accordingly and then be rendered to reflect the changes
+					// of the columns. We need to trigger a context update manually to also update the rows.
 					that._getRowContexts();
 				}
 			}));
@@ -624,20 +615,19 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				text: this._oResBundle.getText("TBL_UNGROUP_ALL"),
 				select: function() {
 					var aColumns = that.getColumns();
+
+					that.suspendUpdateAnalyticalInfo();
+
 					for (var i = 0; i < aColumns.length; i++) {
-						aColumns[i]._bSkipUpdateAI = true;
-
-						// same as with single "ungrouping" (see above)
-						var oBinding = that.getBinding("rows");
-						oBinding.setNumberOfExpandedLevels(0);
-
 						aColumns[i].setGrouped(false);
-						aColumns[i]._bSkipUpdateAI = false;
 					}
-					that._bSupressRefresh = true;
-					that._updateColumns();
+
+					that.resumeUpdateAnalyticalInfo();
+
+					// Grouping is not executed directly. The table will be configured accordingly and then be rendered to reflect the changes
+					// of the columns. We need to trigger a context update manually to also update the rows.
 					that._getRowContexts();
-					that._bSupressRefresh = false;
+
 					that.fireGroup({column: undefined, groupedColumns: [], type: GroupEventType.ungroupAll});
 				}
 			}));
@@ -830,7 +820,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this._bSuspendUpdateAnalyticalInfo = false;
 		// the binding needs to fire a change event to force the table to request new contexts
 		// only if the callee explicitly don't request a change event, it can be omitted.
-		this._updateColumns(bSuppressRefresh, (bForceChange === false ? false : true));
+		this._updateColumns(bSuppressRefresh, bForceChange);
 	};
 
 	AnalyticalTable.prototype.addColumn = function(vColumn, bSuppressInvalidate) {
@@ -899,14 +889,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype._updateColumns = function(bSupressRefresh, bForceChange) {
+	AnalyticalTable.prototype._updateColumns = function(bSuppressRefresh, bForceChange) {
 		if (!this._bSuspendUpdateAnalyticalInfo) {
 			this._updateTableColumnDetails();
-			this.updateAnalyticalInfo(bSupressRefresh, bForceChange);
+			this.updateAnalyticalInfo(bSuppressRefresh, bForceChange);
 		}
 	};
 
-	AnalyticalTable.prototype.updateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
+	AnalyticalTable.prototype.updateAnalyticalInfo = function(bSuppressRefresh, bForceChange) {
 		if (this._bSuspendUpdateAnalyticalInfo) {
 			return;
 		}
@@ -914,9 +904,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			var aColumnInfo = this._getColumnInformation();
-			oBinding.updateAnalyticalInfo(aColumnInfo, bForceChange);
+			var iNumberOfExpandedLevels = oBinding.getNumberOfExpandedLevels() || 0;
 
-			this._updateTotalRow(bSupressRefresh);
+			// The binding does not support the number of expanded levels to be bigger than the number of grouped columns.
+			if (iNumberOfExpandedLevels > this._aGroupedColumns.length) {
+				oBinding.setNumberOfExpandedLevels(0);
+			}
+
+			oBinding.updateAnalyticalInfo(aColumnInfo, bForceChange);
+			this._updateTotalRow(bSuppressRefresh);
 		}
 	};
 
@@ -1075,9 +1071,17 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this._updateColumns();
 	};
 
-	AnalyticalTable.prototype._addGroupedColumn = function(sColumn) {
-		if (jQuery.inArray(sColumn, this._aGroupedColumns) < 0) {
-			this._aGroupedColumns.push(sColumn);
+	AnalyticalTable.prototype._addGroupedColumn = function(sColumnId) {
+		if (this._aGroupedColumns.indexOf(sColumnId) === -1) {
+			this._aGroupedColumns.push(sColumnId);
+		}
+	};
+
+	AnalyticalTable.prototype._removeGroupedColumn = function(sColumnId) {
+		var iIndex = this._aGroupedColumns.indexOf(sColumnId);
+
+		if (iIndex >= 0) {
+			this._aGroupedColumns.splice(iIndex, 1);
 		}
 	};
 

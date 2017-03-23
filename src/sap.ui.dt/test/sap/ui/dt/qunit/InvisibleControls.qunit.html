@@ -94,76 +94,18 @@
 
 
 			QUnit.test("when the SplitContainer is rendered", function(assert) {
-				strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), undefined, "no overlays for controls in hidden page are created");
-				ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2), "overlays for controls in visible page are created");
+				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), undefined, "no overlays for controls in hidden page are created");
+				assert.ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2), "overlays for controls in visible page are created");
 			});
 
 			QUnit.test("when the visibility of hidden page is changed", function(assert) {
 				this.oPage1.setVisible(true);
 				sap.ui.getCore().applyChanges();
 
-				ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), "overlays for controls in this page are created");
+				assert.ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), "overlays for controls in this page are created");
 
 				this.oPage1.setVisible(false);
 				sap.ui.getCore().applyChanges();
-			});
-
-			QUnit.module("Given that a DesignTime is created for an element in an ignored aggregation", {
-				beforeEach: function(assert) {
-					this.oCustomData = new sap.ui.core.CustomData();
-					this.oButton = new sap.m.Button({
-						text : "button",
-						// customData aggregation is ignored in ElementDesignTimeMetadata.js
-						customData : [
-							this.oCustomData
-						]
-					});
-
-					this.oButton.placeAt("content");
-					sap.ui.getCore().applyChanges();
-
-					var done = assert.async();
-
-					this.oDesignTime = new sap.ui.dt.DesignTime({
-						rootElements: [
-							this.oButton
-						]
-					});
-
-					this.oDesignTime.attachEventOnce("synced", function() {
-						sap.ui.getCore().applyChanges();
-						done();
-					});
-				},
-				afterEach: function() {
-					this.oDesignTime.destroy();
-					this.oButton.destroy();
-				}
-			});
-
-			QUnit.test("when DesignTime is rendered", function(assert) {
-				var oCustomDataOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oCustomData);
-				strictEqual(oCustomDataOverlay, undefined, "then no overlay for the control in the ignored aggregation is created");
-			});
-
-			QUnit.test("when the aggregation overlay for the ignored aggregation is manually switched to 'visible: true'", function(assert) {
-				var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
-				var oAggregationOverlay = oButtonOverlay.getAggregationOverlay("customData");
-				oAggregationOverlay.setVisible(true);
-
-				var oCustomDataOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oCustomData);
-				ok(oCustomDataOverlay, "then overlay for the control in this aggregation is created");
-			});
-
-			QUnit.test("when the element is added to an invisible aggregation", function(assert) {
-				var oCustomData = new sap.ui.core.CustomData();
-
-				this.oButton.addCustomData(oCustomData);
-
-				sap.ui.getCore().applyChanges();
-
-				var oCustomDataOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oCustomData);
-				strictEqual(oCustomDataOverlay, undefined, "then no overlay is created for it");
 			});
 
 		</script>

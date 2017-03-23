@@ -679,27 +679,27 @@ sap.ui
 						return fnGetFilteredData(true, 0, 1, function(sPath, sValue, sComplexType, sPropName) {
 							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
-									return (oMockData[sComplexType][sPropName].indexOf(sValue) !== -1);
+									return (typeof oMockData[sComplexType][sPropName] === "string" && oMockData[sComplexType][sPropName].indexOf(sValue) !== -1);
 								}
-								return (oMockData[sPath].indexOf(sValue) !== -1);
+								return (typeof oMockData[sPath] === "string" && oMockData[sPath].indexOf(sValue) !== -1);
 							});
 						});
 					case "startswith":
 						return fnGetFilteredData(true, 1, 0, function(sPath, sValue, sComplexType, sPropName) {
 							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
-									return (oMockData[sComplexType][sPropName].indexOf(sValue) === 0);
+									return (typeof oMockData[sComplexType][sPropName] === "string" && oMockData[sComplexType][sPropName].indexOf(sValue) === 0);
 								}
-								return (oMockData[sPath].indexOf(sValue) === 0);
+								return (typeof oMockData[sPath] === "string" && oMockData[sPath].indexOf(sValue) === 0);
 							});
 						});
 					case "endswith":
 						return fnGetFilteredData(true, 1, 0, function(sPath, sValue, sComplexType, sPropName) {
 							return aDataSet.filter(function(oMockData) {
 								if (sComplexType && sPropName) {
-									return (oMockData[sComplexType][sPropName].indexOf(sValue) === (oMockData[sComplexType][sPropName].length - sValue.length));
+									return (typeof oMockData[sComplexType][sPropName] === "string" && oMockData[sComplexType][sPropName].indexOf(sValue) === (oMockData[sComplexType][sPropName].length - sValue.length));
 								}
-								return (oMockData[sPath].indexOf(sValue) === (oMockData[sPath].length - sValue.length));
+								return (typeof oMockData[sPath] === "string" && oMockData[sPath].indexOf(sValue) === (oMockData[sPath].length - sValue.length));
 							});
 						});
 					case "eq":

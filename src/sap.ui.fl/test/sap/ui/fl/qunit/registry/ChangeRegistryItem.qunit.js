@@ -21,8 +21,8 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 		var instance = new ChangeRegistryItem(mParam);
 
 		//Assert
-		deepEqual(instance.getChangeTypeMetadata(), oMetadataObject);
-		equal(instance.getControlType(), "sap.ui.fl.DummyControl");
+		assert.deepEqual(instance.getChangeTypeMetadata(), oMetadataObject);
+		assert.equal(instance.getControlType(), "sap.ui.fl.DummyControl");
 
 	});
 
@@ -34,7 +34,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 		var instance = new ChangeRegistryItem({});
 
 		//Assert
-		ok(errorLogSpy.calledTwice);
+		assert.ok(errorLogSpy.calledTwice);
 
 	});
 
@@ -54,10 +54,10 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 		var instance = new ChangeRegistryItem(mParam);
 
 		//Assert
-		deepEqual(instance.getChangeTypeMetadata(), mParam.changeTypeMetadata);
-		equal(instance.getControlType(), mParam.controlType);
-		deepEqual(instance.getPermittedRoles(), mParam.permittedRoles);
-		deepEqual(instance.getDragTargets(), mParam.dragTargets);
+		assert.deepEqual(instance.getChangeTypeMetadata(), mParam.changeTypeMetadata);
+		assert.equal(instance.getControlType(), mParam.controlType);
+		assert.deepEqual(instance.getPermittedRoles(), mParam.permittedRoles);
+		assert.deepEqual(instance.getDragTargets(), mParam.dragTargets);
 	});
 
 }(sap.ui.fl.registry.ChangeRegistryItem));

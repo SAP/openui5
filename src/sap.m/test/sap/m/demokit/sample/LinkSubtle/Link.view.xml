@@ -32,13 +32,13 @@
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Category" />
 			</Column>
 			<Column
 				minScreenWidth="Tablet"
 				demandPopin="true"
-				hAlign="Right">
+				hAlign="End">
 				<Text text="Picture" />
 			</Column>
 		</columns>

@@ -78,7 +78,6 @@ sap.ui.define(function () {
 		oRm.write("<div");
 		oRm.addClass("ui-helper-clearfix");
 		oRm.addClass("sapUxAPBlockContainer");
-		oRm.addClass("sapUiResponsiveMargin");
 		oRm.writeClasses();
 		if (oControl._isHidden){
 			oRm.addStyle("display", "none");

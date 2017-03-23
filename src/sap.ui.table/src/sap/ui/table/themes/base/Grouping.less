@@ -12,24 +12,23 @@
 @_sapUiTableGroupIconFontSize: @sapMFontMediumSize;
 
 .sapUiTableTreeIcon {
-	display: none;
-	width: 25px;
-	padding: 0;
-	flex-shrink: 0;
-	margin-right: 6px;
+	flex: none;
+	text-align: center;
+	width: @_sapUiTableRowHdrWidth;
+	align-self: center;
 }
 
 .sapUiSizeCondensed {
-	
+
 	.sapUiTableCell > .sapUiTableTreeIcon {
 		padding: 0;
 		margin-right: 1px;
 	}
-	
+
 	.sapUiTableCell > .sapUiTableTreeIcon::before {
 		line-height: 1.5rem;
 	}
-	
+
 }
 
 .sapUiTableTreeIcon:focus {
@@ -55,14 +54,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 		outline-offset: -1px;
 	}
 }
-
-.sapUiTableTreeMode .sapUiTableTreeIcon,
-.sapUiTableTreeMode .sapUiTableTreeIcon::before {
-	display: inline-block;
-}
-
-
-
 
 .sapUiTableGroupIcon {
 	display: none;
@@ -100,12 +91,13 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 .sapUiTableTreeIcon::before {
 	font-family: "SAP-icons";
 	font-size: 12px;
-	font-weight: normal;
-	display: none;
+	color: @sapUiContentIconColor;
+}
+
+.sapUiTableGroupIcon::before {
 	width: @_sapUiTableRowHdrWidth;
 	text-align: center;
 	vertical-align: middle;
-	color: @sapUiContentIconColor;
 }
 
 .sapUiTableGroupIcon.sapUiTableGroupIconOpen::before,
@@ -125,8 +117,6 @@ html[dir=rtl] {
 	}
 }
 
-.sapUiTableTreeIcon.sapUiTableTreeIconLeaf {}
-
 // Fading effect for overlapping
 .sapUiTableGroupIcon:after {
 	display: none;
@@ -138,9 +128,6 @@ html[dir=rtl] {
 	right: 0;
 	box-shadow: inset 40px 0px 20px -20px @_sapUiTableGroupHeaderBackground;
 }
-
-
-
 
 .sapUiTableRowHdr.sapUiTableGroupHeader {
 	border-right: none;
@@ -250,7 +237,6 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 	height: auto;
 }
 
-
 .sapUiTableRowHdr.sapUiTableGroupHeader:focus:not(*:root),
 .sapUiTableGroupMode .sapUiTableRowHdr:focus:not(*:root) {
 	outline: 0px;
@@ -272,7 +258,6 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 	border-bottom-color: @sapUiListTableFixedBorder;
 }
 
-
 .sapUiTableGroupMenuButton {
 	display: none;
 }
@@ -280,7 +265,7 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 .sapUiTableGroupMode.sapUiAnalyticalTable .sapUiTableRowHdr.sapUiTableGroupHeader .sapUiTableGroupMenuButton {
 	position: absolute;
 	min-width: 2.5rem;
-  	text-align: center;
+	text-align: center;
 	z-index: 2;
 	right: 0;
 	top: 50%;

@@ -23,7 +23,7 @@
 	<!-- Control initialization -->
 	<script>
 
-	function testMultiAggregation(sName, oCtrl){
+	function testMultiAggregation(sName, oCtrl, assert){
 		oCtrl.getMetadata()._enrichChildInfos();
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
 		var oType = jQuery.sap.getObject(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
@@ -46,18 +46,18 @@
 			oCtrl[sMutator].apply(oCtrl);
 		}
 
-		equal(_get().length, 0, "Initial number of "+sName+" controls");
+		assert.equal(_get().length, 0, "Initial number of "+sName+" controls");
 		_mutator(false, [new oType(sName+"_1")]);
-		equal(_get().length, 1, "Number of "+sName+" controls after add");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after add");
 		_mutator(true, [new oType(sName+"_2"), 0]);
-		equal(_get().length, 2, "Number of "+sName+" controls after insert");
-		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
-		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
+		assert.equal(_get().length, 2, "Number of "+sName+" controls after insert");
+		assert.equal(_get()[0].getId(), sName+"_2", "First "+sName+" control");
+		assert.equal(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
 		oCtrl[oAggMetaData._sRemoveMutator](0);
-		equal(_get().length, 1, "Number of "+sName+" controls after remove");
-		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after remove");
+		assert.equal(_get()[0].getId(), sName+"_1", "First "+sName+" control");
 		_removeAll();
-		equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
+		assert.equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
 	};
 
 	function checkVisibility(){
@@ -70,9 +70,9 @@
 		function finalize() {
 			clearTimeout(testTimer);
 			oShellOverlay1.detachClosed(onClosed);
-			ok(!checkVisibility(), "Overlay initially hidden");
-			ok(!!eventFired, "Closed event was fired");
-			start();
+			assert.ok(!checkVisibility(), "Overlay initially hidden");
+			assert.ok(!!eventFired, "Closed event was fired");
+		QUnit.start();
 		}
 
 		function onClosed(){
@@ -81,7 +81,7 @@
 		}
 
 		oShellOverlay1.attachClosed(onClosed);
-		ok(checkVisibility(), "Overlay visible");
+		assert.ok(checkVisibility(), "Overlay visible");
 		if(bViaAPI){
 			oShellOverlay1.close();
 		}else{
@@ -123,51 +123,56 @@
 		QUnit.module("API");
 
 		QUnit.test("Aggregation 'content'", function(assert) {
-			testMultiAggregation("content", oShellOverlay0);
+			testMultiAggregation("content", oShellOverlay0, assert);
 		});
 
 		QUnit.test("Aggregation 'search'", function(assert) {
-			ok(!oShellOverlay0.getSearch(), "Initially no search control");
+			assert.ok(!oShellOverlay0.getSearch(), "Initially no search control");
 			oShellOverlay0.setSearch(new my.Test());
-			ok(!!oShellOverlay0.getSearch(), "Search control available after set");
+			assert.ok(!!oShellOverlay0.getSearch(), "Search control available after set");
 			oShellOverlay0.setSearch(null);
-			ok(!oShellOverlay0.getSearch(), "No search control again");
+			assert.ok(!oShellOverlay0.getSearch(), "No search control again");
 		});
 
 
 		QUnit.module("Behavior");
 
-		asyncTest("Open Overlay", function() {
-			ok(!checkVisibility(), "Overlay initially hidden");
+		QUnit.test("Open Overlay", function(assert) {
+			var done = assert.async();
+			assert.ok(!checkVisibility(), "Overlay initially hidden");
 			oShellOverlay1.open();
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Overlay visible");
-				start();
+				assert.ok(checkVisibility(), "Overlay visible");
+				done();
 			}, 600);
 		});
 
-		asyncTest("Close Overlay (via function call)", function() {
+		QUnit.test("Close Overlay (via function call)", function(assert) {
+			var done = assert.async();
 			testCloseOverlay(true);
 		});
 
-		asyncTest("Rendering", function() {
-			ok(!checkVisibility(), "Overlay initially hidden");
+		QUnit.test("Rendering", function(assert) {
+			var done = assert.async();
+			assert.ok(!checkVisibility(), "Overlay initially hidden");
 			oShellOverlay1.open();
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Overlay visible");
-				ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-hdr-center"), jQuery.sap.domById("search1")), "Search rendered correctly");
-				ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-cntnt"), jQuery.sap.domById("content")), "Content rendered correctly");
-				start();
+				assert.ok(checkVisibility(), "Overlay visible");
+				assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-hdr-center"), jQuery.sap.domById("search1")), "Search rendered correctly");
+				assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-cntnt"), jQuery.sap.domById("content")), "Content rendered correctly");
+				done();
 			}, 600);
 		});
 
-		asyncTest("Close Overlay (via click)", function() {
+		QUnit.test("Close Overlay (via click)", function(assert) {
+			var done = assert.async();
 			testCloseOverlay(false);
 		});
 
-		QUnit.test("Clear UI", 0, function(assert) {
+		QUnit.test("Clear UI", function(assert) {
+			assert.expect(0);
 			jQuery("#uiArea1").remove();
 		});
 

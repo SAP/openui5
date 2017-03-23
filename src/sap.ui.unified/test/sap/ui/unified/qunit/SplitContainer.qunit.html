@@ -43,7 +43,7 @@
 		secondaryContentSize: "200px"
 	});
 
-	function testMultiAggregation(sName, oCtrl){
+	function testMultiAggregation(sName, oCtrl, assert){
 		oCtrl.getMetadata()._enrichChildInfos();
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
 		var oType = jQuery.sap.getObject(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
@@ -66,18 +66,18 @@
 			oCtrl[sMutator].apply(oCtrl);
 		}
 
-		equal(_get().length, 0, "Initial number of "+sName+" controls");
+		assert.equal(_get().length, 0, "Initial number of "+sName+" controls");
 		_mutator(false, [new oType(sName+"_1")]);
-		equal(_get().length, 1, "Number of "+sName+" controls after add");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after add");
 		_mutator(true, [new oType(sName+"_2"), 0]);
-		equal(_get().length, 2, "Number of "+sName+" controls after insert");
-		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
-		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
+		assert.equal(_get().length, 2, "Number of "+sName+" controls after insert");
+		assert.equal(_get()[0].getId(), sName+"_2", "First "+sName+" control");
+		assert.equal(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
 		oCtrl[oAggMetaData._sRemoveMutator](0);
-		equal(_get().length, 1, "Number of "+sName+" controls after remove");
-		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
+		assert.equal(_get().length, 1, "Number of "+sName+" controls after remove");
+		assert.equal(_get()[0].getId(), sName+"_1", "First "+sName+" control");
 		_removeAll();
-		equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
+		assert.equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
 	};
 
 	</script>
@@ -91,56 +91,58 @@
 		QUnit.module("API");
 
 		QUnit.test("Properties - Default Values", function(assert) {
-			equal(oSC.getShowSecondaryContent(), false, "Default 'showSecondaryContent'");
-			equal(oSC.getSecondaryContentSize(), "250px", "Default 'secondaryContentWidth'");
+			assert.equal(oSC.getShowSecondaryContent(), false, "Default 'showSecondaryContent'");
+			assert.equal(oSC.getSecondaryContentSize(), "250px", "Default 'secondaryContentWidth'");
 		});
 
 		QUnit.test("Properties - Custom Values", function(assert) {
-			equal(oSC2.getShowSecondaryContent(), true, "Custom 'showSecondaryContent'");
-			equal(oSC2.getSecondaryContentSize(), "200px", "Custom 'secondaryContentWidth'");
+			assert.equal(oSC2.getShowSecondaryContent(), true, "Custom 'showSecondaryContent'");
+			assert.equal(oSC2.getSecondaryContentSize(), "200px", "Custom 'secondaryContentWidth'");
 		});
 
 		QUnit.test("Aggregation 'content'", function(assert) {
-			testMultiAggregation("content", oSC2);
+			testMultiAggregation("content", oSC2, assert);
 		});
 
 		QUnit.test("Aggregation 'secondaryContent'", function(assert) {
-			testMultiAggregation("secondaryContent", oSC2);
+			testMultiAggregation("secondaryContent", oSC2, assert);
 		});
 
 
 		QUnit.module("Rendering");
 
 		QUnit.test("Content", function(assert) {
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
-			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-pane"), jQuery.sap.domById("_sec_ctnt")), "Secondary Content rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
+			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-pane"), jQuery.sap.domById("_sec_ctnt")), "Secondary Content rendered correctly");
 		});
 
-		asyncTest("Secondary Content Width", function() {
+		QUnit.test("Secondary Content Width", function(assert) {
+			var done = assert.async();
 			oSC.setSecondaryContentSize("200px");
 			setTimeout(function(){
-				equal(jQuery.sap.byId("sc-pane").outerWidth(), 200, "Secondary Content Width after change");
-				start();
+				assert.equal(jQuery.sap.byId("sc-pane").outerWidth(), 200, "Secondary Content Width after change");
+				done();
 			}, 600);
 		});
 
 
 		QUnit.module("Behavior");
 
-		asyncTest("Open/Close Secondary Content", function() {
+		QUnit.test("Open/Close Secondary Content", function(assert) {
+			var done = assert.async();
 			function checkVisibility(){
 				return jQuery.sap.byId("sc-panecntnt").is(":visible");
 			}
 
-			ok(!checkVisibility(), "Secondary Content initially hidden");
+			assert.ok(!checkVisibility(), "Secondary Content initially hidden");
 			oSC.setShowSecondaryContent(true);
 
 			setTimeout(function(){
-				ok(checkVisibility(), "Secondary Content visible");
+				assert.ok(checkVisibility(), "Secondary Content visible");
 				oSC.setShowSecondaryContent(false);
 				setTimeout(function(){
-					ok(!checkVisibility(), "Secondary Content hidden again");
-					start();
+					assert.ok(!checkVisibility(), "Secondary Content hidden again");
+					done();
 				}, 600);
 			}, 600);
 		});

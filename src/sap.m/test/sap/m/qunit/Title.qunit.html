@@ -42,30 +42,30 @@
 		});
 
 		QUnit.test("API Properties", function(assert){
-			ok(!this.title1.getText(), "Default property 'text'");
-			strictEqual(this.title2.getText(), "Hello", "Custom property 'text'");
+			assert.ok(!this.title1.getText(), "Default property 'text'");
+			assert.strictEqual(this.title2.getText(), "Hello", "Custom property 'text'");
 
-			ok(!this.title1.getTooltip(), "Default property 'tooltip'");
-			strictEqual(this.title2.getTooltip(), "Tooltip", "Custom property 'tooltip'");
+			assert.ok(!this.title1.getTooltip(), "Default property 'tooltip'");
+			assert.strictEqual(this.title2.getTooltip(), "Tooltip", "Custom property 'tooltip'");
 
-			ok(!this.title1.getWidth(), "Default property 'width'");
-			strictEqual(this.title2.getWidth(), "50%", "Custom property 'width'");
+			assert.ok(!this.title1.getWidth(), "Default property 'width'");
+			assert.strictEqual(this.title2.getWidth(), "50%", "Custom property 'width'");
 
-			strictEqual(this.title1.getLevel(), sap.ui.core.TitleLevel.Auto,"Default property 'level'");
-			strictEqual(this.title2.getLevel(), sap.ui.core.TitleLevel.H1, "Custom property 'level'");
+			assert.strictEqual(this.title1.getLevel(), sap.ui.core.TitleLevel.Auto,"Default property 'level'");
+			assert.strictEqual(this.title2.getLevel(), sap.ui.core.TitleLevel.H1, "Custom property 'level'");
 
-			strictEqual(this.title1.getTitleStyle(), sap.ui.core.TitleLevel.Auto,"Default property 'titleStyle'");
-			strictEqual(this.title2.getTitleStyle(), sap.ui.core.TitleLevel.H2, "Custom property 'titleStyle'");
+			assert.strictEqual(this.title1.getTitleStyle(), sap.ui.core.TitleLevel.Auto,"Default property 'titleStyle'");
+			assert.strictEqual(this.title2.getTitleStyle(), sap.ui.core.TitleLevel.H2, "Custom property 'titleStyle'");
 
-			strictEqual(this.title1.getTextAlign(), sap.ui.core.TextAlign.Initial, "Default property 'textAlign'");
-			strictEqual(this.title2.getTextAlign(), sap.ui.core.TextAlign.Begin, "Custom property 'textAlign'");
+			assert.strictEqual(this.title1.getTextAlign(), sap.ui.core.TextAlign.Initial, "Default property 'textAlign'");
+			assert.strictEqual(this.title2.getTextAlign(), sap.ui.core.TextAlign.Begin, "Custom property 'textAlign'");
 
-			ok(this.title1.getVisible(), "Default property 'visible'");
-			ok(!this.title2.getVisible(), "Custom property 'visible'");
+			assert.ok(this.title1.getVisible(), "Default property 'visible'");
+			assert.ok(!this.title2.getVisible(), "Custom property 'visible'");
 		});
 
 		QUnit.test("Title should be shrinkable", function(assert){
-			ok(this.title1.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Title control implements IShrinkable interface");
+			assert.ok(this.title1.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Title control implements IShrinkable interface");
 		});
 
 
@@ -86,33 +86,33 @@
 
 
 		QUnit.test("When width is not set max-width should apply to control", function(assert){
-			ok(this.title.$().hasClass("sapMTitleMaxWidth"), "Title has max width restriction for the trunctation.");
+			assert.ok(this.title.$().hasClass("sapMTitleMaxWidth"), "Title has max width restriction for the trunctation.");
 			this.title.setWidth("100%");
 			sap.ui.getCore().applyChanges();
-			ok(!this.title.$().hasClass("sapMTitleMaxWidth"), "Title has width and does not have max width restriction.");
+			assert.ok(!this.title.$().hasClass("sapMTitleMaxWidth"), "Title has width and does not have max width restriction.");
 		});
 
-		QUnit.test("Should render a text", function(assert){
-			strictEqual(this.title.$().text(), "Hello", "Text got rendered");
+		QUnit.test("Should render a text", function(assert) {
+			assert.strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 		});
 
-		QUnit.test("Should render a tooltip", function(assert){
-			strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
+		QUnit.test("Should render a tooltip", function(assert) {
+			assert.strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 		});
 
 		QUnit.test("Should be selectable", function(assert){
-			ok(this.title.$().hasClass("sapUiSelectable"), "Title has class sapUiSelectable.");
+			assert.ok(this.title.$().hasClass("sapUiSelectable"), "Title has class sapUiSelectable.");
 		});
 
 		QUnit.test("Should not be wrapable", function(assert){
-			ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
+			assert.ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
 		});
 
 		QUnit.test("TitleStyle correct", function(assert){
 			for (var level in sap.ui.core.TitleLevel) {
 				this.title.setTitleStyle(level);
 				sap.ui.getCore().applyChanges();
-				ok(this.title.$().hasClass("sapMTitleStyle" + level), "Title has correct class for style level " + level);
+				assert.ok(this.title.$().hasClass("sapMTitleStyle" + level), "Title has correct class for style level " + level);
 			}
 		});
 
@@ -121,9 +121,9 @@
 				this.title.setTextAlign(align);
 				sap.ui.getCore().applyChanges();
 				if (align == sap.ui.core.TextAlign.Initial) {
-					ok(!this.title.$().hasClass("sapMTitleAlignInitial"), "No class for alignment " + align);
+					assert.ok(!this.title.$().hasClass("sapMTitleAlignInitial"), "No class for alignment " + align);
 				} else {
-					ok(this.title.$().hasClass("sapMTitleAlign" + align), "Title has correct class for alignment " + align);
+					assert.ok(this.title.$().hasClass("sapMTitleAlign" + align), "Title has correct class for alignment " + align);
 				}
 			}
 		});
@@ -137,13 +137,13 @@
 
 				if (level === sap.ui.core.TitleLevel.Auto) {
 					sExpectedTag = "DIV";
-					strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
+					assert.strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
 				} else {
 					sExpectedTag = level.toUpperCase();
-					ok(!this.title.$().attr("role"), "No role attribute set for level " + level);
+					assert.ok(!this.title.$().attr("role"), "No role attribute set for level " + level);
 				}
 
-				strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
+				assert.strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
 			}
 		});
 
@@ -171,26 +171,26 @@
 			}
 		});
 
-		QUnit.test("Should render a text", function(assert){
-			strictEqual(this.title.$().text(), "Hello2", "Text got rendered");
+		QUnit.test("Should render a text", function(assert) {
+			assert.strictEqual(this.title.$().text(), "Hello2", "Text got rendered");
 			this.coreTitle.setText("Hello3");
 			sap.ui.getCore().applyChanges();
-			strictEqual(this.title.$().text(), "Hello3", "Text got rendered");
+			assert.strictEqual(this.title.$().text(), "Hello3", "Text got rendered");
 			this.coreTitle.destroy();
 			this.coreTitle = null;
 			sap.ui.getCore().applyChanges();
-			strictEqual(this.title.$().text(), "Hello", "Text got rendered");
+			assert.strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 		});
 
-		QUnit.test("Should render a tooltip", function(assert){
-			strictEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip got rendered");
+		QUnit.test("Should render a tooltip", function(assert) {
+			assert.strictEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip got rendered");
 			this.coreTitle.setTooltip("Tooltip3");
 			sap.ui.getCore().applyChanges();
-			strictEqual(this.title.$().attr("title"), "Tooltip3", "Tooltip got rendered");
+			assert.strictEqual(this.title.$().attr("title"), "Tooltip3", "Tooltip got rendered");
 			this.coreTitle.destroy();
 			this.coreTitle = null;
 			sap.ui.getCore().applyChanges();
-			strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
+			assert.strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 		});
 
 		QUnit.test("Semantic level correct", function(assert){
@@ -202,33 +202,33 @@
 
 				if (level === sap.ui.core.TitleLevel.Auto) {
 					sExpectedTag = "DIV";
-					strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
+					assert.strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
 				} else {
 					sExpectedTag = level.toUpperCase();
-					ok(!this.title.$().attr("role"), "No role attribute set for level " + level);
+					assert.ok(!this.title.$().attr("role"), "No role attribute set for level " + level);
 				}
 
-				strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
+				assert.strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
 			}
 		});
 
 		QUnit.module("Accessibility");
 		QUnit.test("getAccessibilityInfo", function(assert){
 			var oTitle = new sap.m.Title({text: "Text"});
-			ok(!!oTitle.getAccessibilityInfo, "Title has a getAccessibilityInfo function");
+			assert.ok(!!oTitle.getAccessibilityInfo, "Title has a getAccessibilityInfo function");
 			var oInfo = oTitle.getAccessibilityInfo();
-			ok(!!oInfo, "getAccessibilityInfo returns a info object");
-			strictEqual(oInfo.role, "heading", "AriaRole");
-			strictEqual(oInfo.type, undefined, "Type");
-			strictEqual(oInfo.description, "Text", "Description");
-			strictEqual(oInfo.focusable, false, "Focusable");
-			strictEqual(oInfo.enabled, undefined, "Enabled");
-			strictEqual(oInfo.editable, undefined, "Editable");
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			assert.strictEqual(oInfo.role, "heading", "AriaRole");
+			assert.strictEqual(oInfo.type, undefined, "Type");
+			assert.strictEqual(oInfo.description, "Text", "Description");
+			assert.strictEqual(oInfo.focusable, false, "Focusable");
+			assert.strictEqual(oInfo.enabled, undefined, "Enabled");
+			assert.strictEqual(oInfo.editable, undefined, "Editable");
 			oTitle.setTitle(new sap.ui.core.Title({
 				text: "Text2"
 			}))
 			oInfo = oTitle.getAccessibilityInfo();
-			strictEqual(oInfo.description, "Text2", "Description");
+			assert.strictEqual(oInfo.description, "Text2", "Description");
 			oTitle.destroy();
 		});
 		</script>

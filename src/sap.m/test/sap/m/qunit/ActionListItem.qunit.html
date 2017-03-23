@@ -63,8 +63,8 @@
 
 			this.clock.tick(50);
 
-			strictEqual(oSpy.callCount, 1, "Event 'press' should be fired");
-			ok(!oList.getItems()[0].getSelected(), "never selected");
+			assert.strictEqual(oSpy.callCount, 1, "Event 'press' should be fired");
+			assert.ok(!oList.getItems()[0].getSelected(), "never selected");
 			oList.destroy();// Clean up
 		});
 	}
@@ -86,7 +86,7 @@
 
 		this.clock.tick(50);
 
-		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
 		oList.destroy();// Clean up
 	});
 
@@ -103,7 +103,7 @@
 
 		this.clock.tick(50);
 
-		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
 		oList.destroy();// Clean up
 	});
 
@@ -120,7 +120,7 @@
 
 		this.clock.tick(50);
 
-		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
 		oList.destroy();// Clean up
 	});
 

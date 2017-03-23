@@ -30,7 +30,8 @@
 			jQuery.sap.require("sap.m.GrowingEnablement");
 
 			QUnit.module("trigger");
-			asyncTest("Should update the trigger state correctly", function() {
+			QUnit.test("Should update the trigger state correctly", function(assert) {
+				var done = assert.async();
 				//Arrange
 				var data = { items: [ {},{}] };
 
@@ -63,61 +64,61 @@
 
 				// Act
 				setTimeout(function() {
-					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
+					assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
 
 					// act + assert loading is started case
 					oGrowingDelegate._updateTrigger(true);
 
-					ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
-					ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
-					ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
-					strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
-					strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
-					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					assert.ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+					assert.ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+					assert.ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+					assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+					assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert loading is finished case for growingScrollToLoad=false
 					oGrowingDelegate._updateTrigger(false);
-					ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
-					ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-					strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
-					strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
-					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+					assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+					assert.strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
+					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
+					assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert growingScrollToLoad=true
 					oList.setGrowingScrollToLoad(true);
 					sap.ui.getCore().applyChanges();
-					ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
+					assert.ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
 
 					// act + assert loading is started case for growingScrollToLoad=true
 					oGrowingDelegate._updateTrigger(true);
-					ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
-					ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
-					ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
-					strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
-					strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
-					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					assert.ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+					assert.ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+					assert.ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+					assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+					assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+					assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
 					// act + assert loading is finished case for growingScrollToLoad=true
 					oGrowingDelegate._updateTrigger(false);
-					ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
-					ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-					ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
-					ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
-					ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
+					assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+					assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+					assert.ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
+					assert.ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
+					assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
 
 					// act + assert growingScrollToLoad=true
 					oList.setGrowingScrollToLoad(false);
 					sap.ui.getCore().applyChanges();
 
 					setTimeout(function() {
-						ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
+						assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
 						oGrowingDelegate.requestNewPage();
 
 						setTimeout(function() {
-							ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
+							assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
 							oPage.destroy();
 							oModel.destroy();
-							start();
+							done();
 						}, 0);
 
 					}, 0);
@@ -156,7 +157,7 @@
 				sap.ui.getCore().applyChanges();
 
 				//Act + Assert
-				ok(sut._getHasScrollbars(), "The list has scrollbars");
+				assert.ok(sut._getHasScrollbars(), "The list has scrollbars");
 
 				page.destroy();
 				oModel.destroy();
@@ -177,13 +178,14 @@
 				sap.ui.getCore().applyChanges();
 
 				//Act + Assert
-				ok(!sut._getHasScrollbars(), "The list has no scrollbars");
+				assert.ok(!sut._getHasScrollbars(), "The list has no scrollbars");
 
 				sut.destroy();
 				oList.destroy();
 			});
 
-			asyncTest("List without model", function() {
+			QUnit.test("List without model", function(assert) {
+				var done = assert.async();
 				//Arrange
 				var oList = new sap.m.List({
 					growing : true,
@@ -198,11 +200,11 @@
 				sap.ui.getCore().applyChanges();
 
 				//Act + Assert
-				ok(!!oList.getDomRef(), "DomRef OK");
+				assert.ok(!!oList.getDomRef(), "DomRef OK");
 
 				window.setTimeout(function() {
 					oList.destroy();
-					start();
+					done();
 				}, 0);
 			});
 
@@ -253,7 +255,8 @@
 				]);
 			}
 
-			asyncTest("Should group and ungroup a List", function () {
+			QUnit.test("Should group and ungroup a List", function (assert) {
+				var done = assert.async();
 				//Arrange
 				var iInitialItemCount,
 					oMockServer = startMockServer(),
@@ -288,8 +291,8 @@
 
 				//Assert + Cleanup
 				jQuery.when(oAfterUnGroupingDeferred).then(function () {
-					strictEqual(iInitialItemCount, oList.getItems().length, "The list did contain the same number of items");
-					start();
+					assert.strictEqual(iInitialItemCount, oList.getItems().length, "The list did contain the same number of items");
+					done();
 
 					oList.destroy();
 					oMockServer.stop();
@@ -299,7 +302,8 @@
 				setODataModelAndBindItems(oList);
 			});
 
-			asyncTest("Should grow by the treshold", function () {
+			QUnit.test("Should grow by the treshold", function (assert) {
+				var done = assert.async();
 				//Arrange
 				var oMockServer = startMockServer(),
 					iInitialThreshold = 2,
@@ -321,7 +325,7 @@
 
 				//Act part 2 - set growing treshold to half of the total items and load a second page
 				jQuery.when(oInitialLoadDeferred).then(function () {
-					strictEqual(iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as the initial treshold");
+					assert.strictEqual(iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as the initial treshold");
 					iTotalNumberOfItems = oList.getBinding("items").getLength();
 
 					oList.setGrowingThreshold(Math.floor(iTotalNumberOfItems / 2));
@@ -333,7 +337,7 @@
 				//Act part 3 - load another page - now we should have all items
 				jQuery.when(oSecondPageDeferred).then(function () {
 					//Assert
-					strictEqual(oList.getGrowingThreshold() + iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as twice the treshold");
+					assert.strictEqual(oList.getGrowingThreshold() + iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as twice the treshold");
 
 					oList._oGrowingDelegate.requestNewPage();
 
@@ -342,12 +346,12 @@
 
 				//Assert - check if all items where loaded
 				jQuery.when(oAllPagesDeferred).then(function () {
-					strictEqual(iTotalNumberOfItems, oList.getItems().length, "The list did contain the max number of items");
+					assert.strictEqual(iTotalNumberOfItems, oList.getItems().length, "The list did contain the max number of items");
 
 					//Cleanup
 					oList.destroy();
 					oMockServer.stop();
-					start();
+					done();
 				});
 
 				//Act

@@ -129,25 +129,27 @@
 		<script>
 			QUnit.module("Pagination");
 			QUnit.test("Initial item count", function(assert) {
-				equal(sap.ui.getCore().byId(oDataSet.getSelectedView()).getInitialItemCount(), 10, "Initial item count");
-				equal(oDataSet.getItems().length, 27, "Item count after inital reload (fill scrollarea)");
+				assert.equal(sap.ui.getCore().byId(oDataSet.getSelectedView()).getInitialItemCount(), 10, "Initial item count");
+				assert.equal(oDataSet.getItems().length, 27, "Item count after inital reload (fill scrollarea)");
 			});
 
-			asyncTest("Scrolling", function() {
+			QUnit.test("Scrolling", function(assert) {
+				var done = assert.async();
 				var $scrollArea = jQuery(".sapUiUx3DSSVSA");
 				$scrollArea.scrollTop($scrollArea.height());
 				setTimeout(function() {
-					equal(oDataSet.getItems().length, 32, "Item count after scrolling to the very bottom");
-					start();
+					assert.equal(oDataSet.getItems().length, 32, "Item count after scrolling to the very bottom");
+					done();
 				}, 1000);
 			});
 
-			asyncTest("Scrolling 2", function() {
+			QUnit.test("Scrolling 2", function(assert) {
+				var done = assert.async();
 				var $scrollArea = jQuery(".sapUiUx3DSSVSA");
 				$scrollArea.scrollTop($scrollArea.height()+$scrollArea.scrollTop());
 				setTimeout(function() {
-					equal(oDataSet.getItems().length, 37, "Item count after scrolling to the very bottom");
-					start();
+					assert.equal(oDataSet.getItems().length, 37, "Item count after scrolling to the very bottom");
+					done();
 				}, 1000);
 			});
 		</script>

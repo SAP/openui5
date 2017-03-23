@@ -55,31 +55,31 @@
 		var oDom;
 
 		QUnit.test("Default Values", function(assert) {
-			equals(t1.getTextDirection(), "Inherit", "text direction");
-			equals(t1.getVisible(), true, "visible");
-			equals(t1.getWrapping(), true, "wrapping");
-			equals(t1.getTextAlign(), sap.ui.core.TextAlign.Begin, "text align");
-			equals(t1.getWidth(), "", "width");
+			assert.equal(t1.getTextDirection(), "Inherit", "text direction");
+			assert.equal(t1.getVisible(), true, "visible");
+			assert.equal(t1.getWrapping(), true, "wrapping");
+			assert.equal(t1.getTextAlign(), sap.ui.core.TextAlign.Begin, "text align");
+			assert.equal(t1.getWidth(), "", "width");
 		});
 
 		QUnit.module("Appearance");
 
 		QUnit.test("Visibility", function(assert) {
 			// test if visible
-			ok(jQuery("#Text1").get(0), "Text 1 Visible");
+			assert.ok(jQuery("#Text1").get(0), "Text 1 Visible");
 			// test if invisible
-			equals(jQuery("#Text3").get(0), undefined, "Text 3 Invisible");
+			assert.equal(jQuery("#Text3").get(0), undefined, "Text 3 Invisible");
 		});
 
 		QUnit.test("Text Output", function(assert) {
 			// test if result is in HTML
 			oDom = jQuery.sap.domById('Text1');
-			equals(oDom.innerHTML,"This is a simple Text.", "Displayed Text");
+			assert.equal(oDom.innerHTML,"This is a simple Text.", "Displayed Text");
 			// test if text is escaped
 			t1.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).text(),"~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>", "Escaping HTML-Text");
+			assert.equal(jQuery(oDom).text(),"~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>", "Escaping HTML-Text");
 		});
 
 		/*test("Wrapping", function() {
@@ -88,76 +88,77 @@
 			var iLineHeight1 = oDom.clientHeight;
 			oDom = jQuery.sap.domById('Text2');
 			var iLineHeight2 = oDom.clientHeight;
-			equals(iLineHeight2, iLineHeight1 * 5, "Wrapping on => 5 Lines (lineheight: " + iLineHeight1 +")");
+			assert.equal(iLineHeight2, iLineHeight1 * 5, "Wrapping on => 5 Lines (lineheight: " + iLineHeight1 +")");
 			// test line height with wrapping off
 			t2.setWrapping(false);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text2');
 			iLineHeight2 = oDom.clientHeight;
-			equals(iLineHeight2, iLineHeight1 * 3, "Wrapping off => 3 Lines (lineheight: " + iLineHeight1 +")");
+			assert.equal(iLineHeight2, iLineHeight1 * 3, "Wrapping off => 3 Lines (lineheight: " + iLineHeight1 +")");
 		});*/
 
 		QUnit.test("Width", function(assert) {
 			oDom = jQuery.sap.domById('Text2');
-			equals(oDom.style.width, "155px", "Defined width");
+			assert.equal(oDom.style.width, "155px", "Defined width");
 		});
 
 		QUnit.test("Text Align & RTL", function(assert) {
 			// default
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"left","Default (Begin) Text Align");
+			assert.equal(jQuery(oDom).css("text-align"),"left","Default (Begin) Text Align");
 			// right
 			t1.setTextAlign(sap.ui.core.TextAlign.Right);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"right","Text Align Right");
+			assert.equal(jQuery(oDom).css("text-align"),"right","Text Align Right");
 			// end
 			t1.setTextAlign(sap.ui.core.TextAlign.End);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"right","Text Align End");
+			assert.equal(jQuery(oDom).css("text-align"),"right","Text Align End");
 			// RTL end
 			t1.setTextDirection(sap.ui.core.TextDirection.RTL);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"left","Text Align End in RTL");
-			equals(jQuery(oDom).attr("dir"),"rtl","Attribute 'dir' for Text Direction is set to RTL");
+			assert.equal(jQuery(oDom).css("text-align"),"left","Text Align End in RTL");
+			assert.equal(jQuery(oDom).attr("dir"),"rtl","Attribute 'dir' for Text Direction is set to RTL");
 
 			// RTL left
 			t1.setTextAlign(sap.ui.core.TextAlign.Left);
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(jQuery(oDom).css("text-align"),"left","Text Align Left in RTL");
+			assert.equal(jQuery(oDom).css("text-align"),"left","Text Align Left in RTL");
 			// reset
 			t1.setTextDirection(sap.ui.core.TextDirection.Inherit);
 			t1.setTextAlign(sap.ui.core.TextAlign.Begin);
 		});
 
 		QUnit.test("Null Text", function(assert) {
-			expect(2);
+			assert.expect(2);
 			t1.setText(null);
 			try {
 				oCore.applyChanges();
 				oDom = jQuery.sap.domById('Text1');
-				equals(oDom.innerHTML,"", "Null Text");
+				assert.equal(oDom.innerHTML,"", "Null Text");
 			} catch (e) {
 				// do nothing but let "expect" raise an error
 			}
 			t1.setText("Hello World!");
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			equals(oDom.innerHTML,"Hello World!", "Text entered again");
+			assert.equal(oDom.innerHTML,"Hello World!", "Text entered again");
 		});
 
 		QUnit.test("wrapping & no-wrapping", function(assert) {
-			strictEqual(t1.$().css("white-space"), "pre-line", "Text has correct white-spece style for wrapping");
-			strictEqual(t4.$().hasClass("sapMTextNoWrap"), true, "Text has correct class for non-wrapping");
-			strictEqual(t4.$().css("white-space"), "nowrap", "Text has correct white-spece style for non-wrapping");
-			strictEqual(t4.$().css("word-wrap"), "normal", "Text has correct word-wrap style for non-wrapping");
+			assert.strictEqual(t1.$().css("white-space"), "pre-line", "Text has correct white-spece style for wrapping");
+			assert.strictEqual(t4.$().hasClass("sapMTextNoWrap"), true, "Text has correct class for non-wrapping");
+			assert.strictEqual(t4.$().css("white-space"), "nowrap", "Text has correct white-spece style for non-wrapping");
+			assert.strictEqual(t4.$().css("word-wrap"), "normal", "Text has correct word-wrap style for non-wrapping");
 		});
 
-		asyncTest("non-native max lines", function() {
+		QUnit.test("non-native max lines", function(assert) {
+			var done = assert.async();
 
 			t5.addEventDelegate({
 				onAfterRendering : function() {
@@ -168,32 +169,32 @@
 			t5.rerender();
 			oCore.applyChanges();
 
-			strictEqual(t5.$("inner").hasClass("sapMTextMaxLine"), true, "Text has correct class for synthetic MaxLine");
+			assert.strictEqual(t5.$("inner").hasClass("sapMTextMaxLine"), true, "Text has correct class for synthetic MaxLine");
 
 			setTimeout(function() {
 				// need to wait ellipsis is correctly calculated
-				ok(t5.$("inner").css("max-height") && t5.$("inner").css("max-height") != "none", "Text has max-height");
-				ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis(" + t5.ellipsis + ")");
+				assert.ok(t5.$("inner").css("max-height") && t5.$("inner").css("max-height") != "none", "Text has max-height");
+				assert.ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis(" + t5.ellipsis + ")");
 
 				t5.setWidth(Math.pow(10, 5) + "px");
 				oCore.applyChanges();
-				strictEqual(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis), -1, "Text does not include ellipsis.");
+				assert.strictEqual(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis), -1, "Text does not include ellipsis.");
 
 				t5.$("inner").width("400px");	// change dom width
 
 				setTimeout(function() {
 					t5.clampText();
-					ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis (" + t5.ellipsis + ") after dom changed");
+					assert.ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis (" + t5.ellipsis + ") after dom changed");
 
 					t5.setMaxLines(1);	// should use native textoverflow ellipsis
 					oCore.applyChanges();
 
-					strictEqual(t5.$().hasClass("sapMTextMaxLine"), false, "For 1 MaxLine we do not have sapMTextMaxLine class");
-					strictEqual(t5.$().hasClass("sapMTextNoWrap"), true, "For 1 MaxLine we have sapMTextNoWrap class");
-					strictEqual(t5.$().css("white-space"), "nowrap", "Text has correct style for 1 MaxLine");
+					assert.strictEqual(t5.$().hasClass("sapMTextMaxLine"), false, "For 1 MaxLine we do not have sapMTextMaxLine class");
+					assert.strictEqual(t5.$().hasClass("sapMTextNoWrap"), true, "For 1 MaxLine we have sapMTextNoWrap class");
+					assert.strictEqual(t5.$().css("white-space"), "nowrap", "Text has correct style for 1 MaxLine");
 
-					strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Everything must be clean we do not have resize handler anymore");
-					start();
+					assert.strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Everything must be clean we do not have resize handler anymore");
+					done();
 				}, 400);
 
 			}, 200);
@@ -202,52 +203,52 @@
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Text({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			ok(sut.$().hasClass("sapMTextMaxWidth"), "Text has max width restriction for the trunctation.");
+			assert.ok(sut.$().hasClass("sapMTextMaxWidth"), "Text has max width restriction for the trunctation.");
 
 			sut.setWidth("10rem");
 			sap.ui.getCore().applyChanges();
-			ok(!sut.$().hasClass("sapMTextMaxWidth"), "Text has width and does not have max width restriction.");
+			assert.ok(!sut.$().hasClass("sapMTextMaxWidth"), "Text has width and does not have max width restriction.");
 			sut.destroy();
 		});
 
 		QUnit.test("getTextDomRef should respect maxlines", function(assert) {
 			var sut = new sap.m.Text({text : "line1\nline2\nline3", maxLines: 2}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			ok(sut.getDomRef("inner") === sut.getTextDomRef(), "TextDomRef is the inner wrapper.");
+			assert.ok(sut.getDomRef("inner") === sut.getTextDomRef(), "TextDomRef is the inner wrapper.");
 
 			sut.setMaxLines(1);
 			sap.ui.getCore().applyChanges();
-			ok(sut.getDomRef() === sut.getTextDomRef(), "TextDomRef is the controls dom ref.");
+			assert.ok(sut.getDomRef() === sut.getTextDomRef(), "TextDomRef is the controls dom ref.");
 			sut.destroy();
 		});
 
 		QUnit.test("text should be shrinkable", function(assert) {
 			var oText = new sap.m.Text;
-			ok(oText.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Text control implements IShrinkable interface");
+			assert.ok(oText.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Text control implements IShrinkable interface");
 			oText.destroy();
 		});
 
 		QUnit.test("wrapping and break word with initially empty text", function(assert) {
-			strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
+			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 			t6.setText("LongTextWithNoSpaces");
-			strictEqual(t6.$().hasClass("sapMTextBreakWord"), true, "Text has a class for break word");
+			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), true, "Text has a class for break word");
 			t6.setText("LongTextWith Spaces");
-			strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
+			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
 		QUnit.module("Accessibility");
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oControl = new sap.m.Text({text: "Text"});
-			ok(!!oControl.getAccessibilityInfo, "Text has a getAccessibilityInfo function");
+			assert.ok(!!oControl.getAccessibilityInfo, "Text has a getAccessibilityInfo function");
 			var oInfo = oControl.getAccessibilityInfo();
-			ok(!!oInfo, "getAccessibilityInfo returns a info object");
-			strictEqual(oInfo.role, undefined, "AriaRole");
-			strictEqual(oInfo.type, undefined, "Type");
-			strictEqual(oInfo.description, "Text", "Description");
-			strictEqual(oInfo.focusable, undefined, "Focusable");
-			strictEqual(oInfo.enabled, undefined, "Enabled");
-			strictEqual(oInfo.editable, undefined, "Editable");
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			assert.strictEqual(oInfo.role, undefined, "AriaRole");
+			assert.strictEqual(oInfo.type, undefined, "Type");
+			assert.strictEqual(oInfo.description, "Text", "Description");
+			assert.strictEqual(oInfo.focusable, undefined, "Focusable");
+			assert.strictEqual(oInfo.enabled, undefined, "Enabled");
+			assert.strictEqual(oInfo.editable, undefined, "Editable");
 			oControl.destroy();
 		});
 

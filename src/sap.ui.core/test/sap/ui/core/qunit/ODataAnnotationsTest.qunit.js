@@ -1,6 +1,3 @@
-/* global module start test asyncTest expect ok equal deepEqual */
-
-
 /**
  * Test-Function to be used in place of deepEquals which only tests for the existence of the given
  * values, not the absence of others.
@@ -14,31 +11,31 @@ function deepContains(oValue, oExpected, sMessage) {
 	for (var sKey in oExpected) {
 
 		if (!(sKey in oValue)) {
-			ok(false, "Expected property " + sMessage + "/" + sKey + + " does not exist");
+			assert.ok(false, "Expected property " + sMessage + "/" + sKey + + " does not exist");
 			continue;
 		}
 
 		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
-			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+			assert.equal(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
 		} else {
-			ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
+			assert.ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
 		}
 
 
 		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches (" + oExpected[sKey].length + ")");
+			assert.equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches (" + oExpected[sKey].length + ")");
 		}
 
 		if (oExpected[sKey] !== null && oExpected[sKey] !== undefined && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
 			// Go deeper
 			if (oValue[sKey] === null) {
-				ok(false, "Property " + sMessage + "/" + sKey + " is null");
+				assert.ok(false, "Property " + sMessage + "/" + sKey + " is null");
 			} else {
 				deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
 			}
 		} else {
 			// Compare directly
-			equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match (" + oExpected[sKey] + ")");
+			assert.equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match (" + oExpected[sKey] + ")");
 		}
 	}
 }
@@ -57,7 +54,7 @@ function fnCreateModel(iModelVersion, sServiceUrl, aAnnotationUrls, mMetadataUrl
 			metadataUrlParams: mMetadataUrlParams
 		});
 	} else {
-		ok(false, "Unknown ODataModel version requested for test: " + iModelVersion);
+		assert.ok(false, "Unknown ODataModel version requested for test: " + iModelVersion);
 	}
 	return oModel;
 }
@@ -389,17 +386,17 @@ function runODataAnnotationTests() {
 			if (bServiceValid) {
 				if (sAnnotationsValid === "all" || sAnnotationsValid === "some") {
 					// This should have worked.
-					ok(oMetadata, "Metadata is available.");
-					ok(Object.keys(oAnnotations).length > 0, "Annotations are available.");
+					assert.ok(oMetadata, "Metadata is available.");
+					assert.ok(Object.keys(oAnnotations).length > 0, "Annotations are available.");
 				} else {
 					// Service Metadata should be there, annotations should not be loaded
-					ok(oMetadata, "Metadata is available.");
-					ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Annotations are not available.");
+					assert.ok(oMetadata, "Metadata is available.");
+					assert.ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Annotations are not available.");
 				}
 			} else {
 				// Service is invalid, so both should not be there
-				ok(!oMetadata, "Metadata is not available.");
-				ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Metadata is not available.");
+				assert.ok(!oMetadata, "Metadata is not available.");
+				assert.ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Metadata is not available.");
 			}
 		};
 	};
@@ -438,7 +435,8 @@ function runODataAnnotationTests() {
 	QUnit.module("Asynchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
-		return function() {
+		return function(assert) {
+			var done = assert.async();
 			if (!bSharedMetadata){
 				cleanOdataCache();
 			}
@@ -452,37 +450,37 @@ function runODataAnnotationTests() {
 				switch (sWhat) {
 
 					case "Metadata":
-						ok(bMetadataLoaded, "Metadata loaded successfully");
+						assert.ok(bMetadataLoaded, "Metadata loaded successfully");
 						jQuery.sap.log.debug("check for metadata");
 					break;
 
 					case "Annotations":
-						ok(bAnnotationsLoaded, "Annotations loaded successfully");
+						assert.ok(bAnnotationsLoaded, "Annotations loaded successfully");
 					break;
 
 					case "Both":
-						ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
+						assert.ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
 						jQuery.sap.log.debug("check for both");
-						start();
+						done();
 					break;
 
 					case "MetadataFailed":
 						// Nothing should be loaded
-						ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
+						assert.ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
-						start();
+						done();
 					break;
 
 					case "AnnotationsFailed":
 						// Metadata should be loaded, but no annotations
 						if (sAnnotationsValid === "none") {
-						ok(bMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
+						assert.ok(bMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
 						} else {
-							ok(bMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
+							assert.ok(bMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
 						}
 						jQuery.sap.log.debug("check for no annotations");
 						oModel.destroy();
-						start();
+						done();
 					break;
 
 					default:
@@ -522,7 +520,7 @@ function runODataAnnotationTests() {
 						fnOnLoaded("Both");
 					}).fail(function(e){
 						jQuery.sap.log.debug("metadata promise failed");
-						ok(false, 'Metadata promise rejected');
+						assert.ok(false, 'Metadata promise rejected');
 					});
 			} else if (bServiceValid && (sAnnotationsValid === "none" || sAnnotationsValid === "metadata")){
 				jQuery.when(metadataDfd).done(function(e){
@@ -573,7 +571,7 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			asyncTest(
+			QUnit.test(
 				"Asynchronous loading - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
@@ -583,7 +581,8 @@ function runODataAnnotationTests() {
 	QUnit.module("V2: Asynchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
-		return function() {
+		return function(assert) {
+			var done = assert.async();
 			if (!bSharedMetadata){
 				sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 			}
@@ -597,37 +596,37 @@ function runODataAnnotationTests() {
 				switch (sWhat) {
 
 					case "Metadata":
-						ok(bMetadataLoaded, "Metadata loaded successfully");
+						assert.ok(bMetadataLoaded, "Metadata loaded successfully");
 						jQuery.sap.log.debug("check for metadata");
 					break;
 
 					case "Annotations":
-						ok(bAnnotationsLoaded, "Annotations loaded successfully");
+						assert.ok(bAnnotationsLoaded, "Annotations loaded successfully");
 					break;
 
 					case "Both":
-						ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
+						assert.ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
 						jQuery.sap.log.debug("check for both");
-						start();
+						done();
 					break;
 
 					case "MetadataFailed":
 						// Nothing should be loaded
-						ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
+						assert.ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
-						start();
+						done();
 					break;
 
 					case "AnnotationsFailed":
 						// Metadata should be loaded, but no annotations
 						if (sAnnotationsValid === "none") {
-						ok(bMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
+						assert.ok(bMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
 						} else {
-							ok(bMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
+							assert.ok(bMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
 						}
 						jQuery.sap.log.debug("check for no annotations");
 						oModel.destroy();
-						start();
+						done();
 					break;
 
 					default:
@@ -667,7 +666,7 @@ function runODataAnnotationTests() {
 						fnOnLoaded("Both");
 					}).fail(function(e){
 						jQuery.sap.log.debug("metadata promise failed");
-						ok(false, 'Metadata promise rejected');
+						assert.ok(false, 'Metadata promise rejected');
 					});
 			} else if (bServiceValid && (sAnnotationsValid === "none" || sAnnotationsValid === "metadata")){
 				jQuery.when(metadataDfd).done(function(e){
@@ -718,7 +717,7 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			asyncTest(
+			QUnit.test(
 				"Asynchronous loading - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
@@ -729,7 +728,8 @@ function runODataAnnotationTests() {
 	QUnit.module("Asynchronous loading (joined events)");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
-		return function() {
+		return function(assert) {
+			var done = assert.async();
 			if (!bSharedMetadata){
 				cleanOdataCache();
 			}
@@ -744,37 +744,37 @@ function runODataAnnotationTests() {
 				switch (sWhat) {
 
 					case "InternalMetadata":
-						// ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
+						// assert.ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
 					break;
 
 					case "Metadata":
-						ok(bMetadataLoaded, "Metadata loaded successfully");
-						ok(bAnnotationsLoaded, "Metadata loaded after annotations");
+						assert.ok(bMetadataLoaded, "Metadata loaded successfully");
+						assert.ok(bAnnotationsLoaded, "Metadata loaded after annotations");
 					break;
 
 					case "Both":
-						ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
+						assert.ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
 						jQuery.sap.log.debug("check for both");
-						start();
+						done();
 					break;
 
 					case "MetadataFailed":
 						// Nothing should be loaded
-						ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
+						assert.ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
-						start();
+						done();
 					break;
 
 					case "AnnotationsFailed":
 						if (sAnnotationsValid === "none") {
-							ok(bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
+							assert.ok(bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
 						} else {
-							ok(bInternalMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
+							assert.ok(bInternalMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
 						}
 						// Metadata should be loaded, but no annotations
 						jQuery.sap.log.debug("check for no annotations");
 						oModel.destroy();
-						start();
+						done();
 					break;
 
 					default:
@@ -825,7 +825,7 @@ function runODataAnnotationTests() {
 					fnOnLoaded("Both");
 				}).fail(function(e){
 				jQuery.sap.log.debug("metadata promise failed");
-				ok(false, 'Metadata promise rejected');
+				assert.ok(false, 'Metadata promise rejected');
 			});
 		} else if (bServiceValid && sAnnotationsValid === "none"){
 				//internal metadata needs to be sucessful prior to the failed annotations
@@ -871,7 +871,7 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			asyncTest(
+			QUnit.test(
 				"Asynchronous loading (joined events) - " + sTestType,
 				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
 			);
@@ -882,7 +882,8 @@ function runODataAnnotationTests() {
 	QUnit.module("V2: Asynchronous loading (joined events)");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
-		return function() {
+		return function(assert) {
+			var done = assert.async();
 			if (!bSharedMetadata){
 				sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 			}
@@ -897,37 +898,37 @@ function runODataAnnotationTests() {
 				switch (sWhat) {
 
 					case "InternalMetadata":
-					//	ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
+					//	assert.ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
 					break;
 
 					case "Metadata":
-						ok(bMetadataLoaded, "Metadata loaded successfully");
-						ok(bAnnotationsLoaded, "Metadata loaded after annotations");
+						assert.ok(bMetadataLoaded, "Metadata loaded successfully");
+						assert.ok(bAnnotationsLoaded, "Metadata loaded after annotations");
 					break;
 
 					case "Both":
-						ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
+						assert.ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
 						jQuery.sap.log.debug("check for both");
-						start();
+						done();
 					break;
 
 					case "MetadataFailed":
 						// Nothing should be loaded
-						ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
+						assert.ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
-						start();
+						done();
 					break;
 
 					case "AnnotationsFailed":
 						if (sAnnotationsValid === "none") {
-						ok(bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
+						assert.ok(bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
 						} else {
-							ok(bInternalMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
+							assert.ok(bInternalMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
 						}
 						// Metadata should be loaded, but no annotations
 						jQuery.sap.log.debug("check for no annotations");
 						oModel.destroy();
-						start();
+						done();
 					break;
 
 					default:
@@ -978,7 +979,7 @@ function runODataAnnotationTests() {
 					fnOnLoaded("Both");
 				}).fail(function(e){
 				jQuery.sap.log.debug("metadata promise failed");
-				ok(false, 'Metadata promise rejected');
+				assert.ok(false, 'Metadata promise rejected');
 			});
 		} else if (bServiceValid && sAnnotationsValid === "metadata") {
 			oModel.metadataLoaded().then(fnOnLoaded.bind(this, "Both"))
@@ -1027,10 +1028,9 @@ function runODataAnnotationTests() {
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		//  ==> PhantomJS doesn't fail when loading malformed XML!
 		if (!sap.ui.Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			asyncTest(
+			QUnit.test(
 				"Asynchronous loading (joined events) - " + sTestType,
-				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
-			);
+				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
 		}
 	}
 
@@ -1038,7 +1038,7 @@ function runODataAnnotationTests() {
 	QUnit.module("V1 only: Synchronous loading and MetaModel");
 
 	var fnTestSynchronousLoading = function(mTest) {
-		expect(5);
+		assert.expect(5);
 		var oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
 			annotationURI : mTest.annotations,
 			skipMetadataAnnotationParsing: false,
@@ -1051,12 +1051,12 @@ function runODataAnnotationTests() {
 		var oAnnotations = oModel.getServiceAnnotations();
 		var oMetaModel = oModel.getMetaModel();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
-		ok(!!oMetaModel, "MetaModel is available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetaModel, "MetaModel is available.");
 
-		ok(oMetaModel.getProperty("/"), "Metamodel can be used");
-		ok(oMetaModel.getODataEntityContainer(), "Metamodel can be used");
+		assert.ok(oMetaModel.getProperty("/"), "Metamodel can be used");
+		assert.ok(oMetaModel.getODataEntityContainer(), "Metamodel can be used");
 
 		oModel.destroy();
 	};
@@ -1102,8 +1102,9 @@ function runODataAnnotationTests() {
 
 	QUnit.module("Multiple Annotation Sources Merged");
 
-	asyncTest("Asynchronous loading", function() {
-		expect(12);
+	QUnit.test("Asynchronous loading", function(assert) {
+		var done = assert.async();
+		assert.expect(12);
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
 		// Don't use metadata/annotation cache
@@ -1123,9 +1124,9 @@ function runODataAnnotationTests() {
 
 		oAnnotations = oModel1.getServiceAnnotations();
 
-		ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-		ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-		ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+		assert.ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+		assert.ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+		assert.ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 
 		// Don't use metadata/annotation cache
 		cleanOdataCache();
@@ -1144,9 +1145,9 @@ function runODataAnnotationTests() {
 
 		oAnnotations = oModel2.getServiceAnnotations();
 
-		ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-		ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-		ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+		assert.ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+		assert.ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+		assert.ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 
 		// Don't use metadata/annotation cache
 		cleanOdataCache();
@@ -1164,9 +1165,9 @@ function runODataAnnotationTests() {
 		);
 		oModel3.attachAnnotationsLoaded(function() {
 			var oAnnotations = oModel3.getServiceAnnotations();
-			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-			ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+			assert.ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+			assert.ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+			assert.ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 			startTest4();
 		});
 
@@ -1187,23 +1188,24 @@ function runODataAnnotationTests() {
 			);
 			oModel4.attachAnnotationsLoaded(function() {
 				var oAnnotations = oModel4.getServiceAnnotations();
-				ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-				ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-				ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+				assert.ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+				assert.ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+				assert.ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 
 				oModel1.destroy();
 				oModel2.destroy();
 				oModel3.destroy();
 				oModel4.destroy();
-				start();
+				done();
 			});
 		}
 	});
 
 	QUnit.module("V2: Multiple Annotation Sources Merged");
 
-	asyncTest("Asynchronous loading", function() {
-		expect(6);
+	QUnit.test("Asynchronous loading", function(assert) {
+		var done = assert.async();
+		assert.expect(6);
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
 		var oModel3 = new sap.ui.model.odata.v2.ODataModel(
@@ -1220,11 +1222,11 @@ function runODataAnnotationTests() {
 		);
 		oModel3.attachAnnotationsLoaded(function() {
 			var oAnnotations = oModel3.getServiceAnnotations();
-			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+			assert.ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+			assert.ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 			var sMerged = oAnnotations.UnitTest["Test.Merged"][0].Value.Path;
-			ok(sMerged === "Metadata" || sMerged === "Annotations", "Merged annotations filled");
-			asyncStart();
+			assert.ok(sMerged === "Metadata" || sMerged === "Annotations", "Merged annotations filled");
+			asyncStart(done);
 		});
 
 		var oModel4 = new sap.ui.model.odata.v2.ODataModel(
@@ -1241,15 +1243,15 @@ function runODataAnnotationTests() {
 		);
 		oModel4.attachAnnotationsLoaded(function() {
 			var oAnnotations = oModel4.getServiceAnnotations();
-			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+			assert.ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+			assert.ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 			var sMerged = oAnnotations.UnitTest["Test.Merged"][0].Value.Path;
-			ok(sMerged === "Metadata" || sMerged === "Annotations", "Merged annotations filled");
-			asyncStart();
+			assert.ok(sMerged === "Metadata" || sMerged === "Annotations", "Merged annotations filled");
+			asyncStart(done);
 		});
 
 
-		function asyncStart() {
+		function asyncStart(done) {
 			if (asyncStart.num === undefined) {
 				asyncStart.num = 0;
 			}
@@ -1258,7 +1260,7 @@ function runODataAnnotationTests() {
 				oModel3.destroy();
 				oModel4.destroy();
 
-				start();
+				done();
 			}
 		}
 
@@ -1268,7 +1270,7 @@ function runODataAnnotationTests() {
 
 
 	QUnit.test("Apply Function", function(assert) {
-		expect(12);
+		assert.expect(12);
 
 		var mTest = mAdditionalTestsServices["Apply Function"];
 		var sServiceURI = mTest.service;
@@ -1283,21 +1285,21 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["Test.2014-12-08"],
 			"Test Annotations are available"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["Test.2014-12-08"]
 				["com.sap.vocabularies.UI.v1.Identification"],
 			"Namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["Test.2014-12-08"]
 				["com.sap.vocabularies.UI.v1.Identification"]
@@ -1308,18 +1310,18 @@ function runODataAnnotationTests() {
 
 		var mNamespace = oAnnotations["Test.2014-12-08"]["com.sap.vocabularies.UI.v1.Identification"][0];
 
-		ok(
+		assert.ok(
 			!!mNamespace
 				["com.sap.vocabularies.UI.v1.Importance"],
 			"Sub-namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!mNamespace
 				["com.sap.vocabularies.UI.v1.Importance"]
 				["EnumMember"],
 			"EnumMember exists"
 		);
-		equal(
+		assert.equal(
 			mNamespace
 				["com.sap.vocabularies.UI.v1.Importance"]
 				["EnumMember"],
@@ -1327,14 +1329,14 @@ function runODataAnnotationTests() {
 			"EnumMember has correct value"
 		);
 
-		ok(!!mNamespace["RecordType"], "RecordType exists");
-		equal(
+		assert.ok(!!mNamespace["RecordType"], "RecordType exists");
+		assert.equal(
 			mNamespace["RecordType"],
 			"com.sap.vocabularies.UI.v1.DataField",
 			"RecordType has correct value"
 		);
 
-		ok(!!mNamespace["Value"], "Value exists");
+		assert.ok(!!mNamespace["Value"], "Value exists");
 
 		var mCorrectValue = {
 			"Apply": {
@@ -1355,13 +1357,14 @@ function runODataAnnotationTests() {
 			}
 		};
 
-		deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
+		assert.deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
 
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Apply Function", function() {
-		expect(12);
+	QUnit.test("V2: Apply Function", function(assert) {
+		var done = assert.async();
+		assert.expect(12);
 
 		var mTest = mAdditionalTestsServices["Apply Function"];
 		var sServiceURI = mTest.service;
@@ -1378,21 +1381,21 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["Test.2014-12-08"],
 				"Test Annotations are available"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["Test.2014-12-08"]
 					["com.sap.vocabularies.UI.v1.Identification"],
 				"Namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["Test.2014-12-08"]
 					["com.sap.vocabularies.UI.v1.Identification"]
@@ -1403,18 +1406,18 @@ function runODataAnnotationTests() {
 
 			var mNamespace = oAnnotations["Test.2014-12-08"]["com.sap.vocabularies.UI.v1.Identification"][0];
 
-			ok(
+			assert.ok(
 				!!mNamespace
 					["com.sap.vocabularies.UI.v1.Importance"],
 				"Sub-namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!mNamespace
 					["com.sap.vocabularies.UI.v1.Importance"]
 					["EnumMember"],
 				"EnumMember exists"
 			);
-			equal(
+			assert.equal(
 				mNamespace
 					["com.sap.vocabularies.UI.v1.Importance"]
 					["EnumMember"],
@@ -1422,14 +1425,14 @@ function runODataAnnotationTests() {
 				"EnumMember has correct value"
 			);
 
-			ok(!!mNamespace["RecordType"], "RecordType exists");
-			equal(
+			assert.ok(!!mNamespace["RecordType"], "RecordType exists");
+			assert.equal(
 				mNamespace["RecordType"],
 				"com.sap.vocabularies.UI.v1.DataField",
 				"RecordType has correct value"
 			);
 
-			ok(!!mNamespace["Value"], "Value exists");
+			assert.ok(!!mNamespace["Value"], "Value exists");
 
 			var mCorrectValue = {
 				"Apply": {
@@ -1450,16 +1453,16 @@ function runODataAnnotationTests() {
 				}
 			};
 
-			deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
+			assert.deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 	QUnit.test("Multiple Property Annotations", function(assert) {
-		expect(11);
+		assert.expect(11);
 
 		var mTest = mAdditionalTestsServices["Multiple Property Annotations"];
 		var sServiceURI = mTest.service;
@@ -1474,22 +1477,22 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"],
 			"Target namespace inside PropertyAnnotations exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"]["Price/Amount"],
 			"Target values exist"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1498,7 +1501,7 @@ function runODataAnnotationTests() {
 			"Target value 1 exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1507,7 +1510,7 @@ function runODataAnnotationTests() {
 			"Target value 2 exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1517,7 +1520,7 @@ function runODataAnnotationTests() {
 			"Target value 1 property exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1527,7 +1530,7 @@ function runODataAnnotationTests() {
 			"Target value 2 property exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1538,7 +1541,7 @@ function runODataAnnotationTests() {
 			"Target value 1 property exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["MultiplePropertyAnnotations.Product"]
@@ -1553,8 +1556,9 @@ function runODataAnnotationTests() {
 	});
 
 
-	asyncTest("V2: Multiple Property Annotations", function() {
-		expect(11);
+	QUnit.test("V2: Multiple Property Annotations", function(assert) {
+		var done = assert.async();
+		assert.expect(11);
 
 		var mTest = mAdditionalTestsServices["Multiple Property Annotations"];
 		var sServiceURI = mTest.service;
@@ -1570,22 +1574,22 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"]["Price/Amount"],
 				"Target values exist"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1594,7 +1598,7 @@ function runODataAnnotationTests() {
 				"Target value 1 exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1603,7 +1607,7 @@ function runODataAnnotationTests() {
 				"Target value 2 exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1613,7 +1617,7 @@ function runODataAnnotationTests() {
 				"Target value 1 property exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1623,7 +1627,7 @@ function runODataAnnotationTests() {
 				"Target value 2 property exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1634,7 +1638,7 @@ function runODataAnnotationTests() {
 				"Target value 1 property exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["MultiplePropertyAnnotations.Product"]
@@ -1646,13 +1650,13 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 	QUnit.test("Qualifiers in Property Annotations", function(assert) {
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Property Annotation Qualifiers"];
 		var sServiceURI = mTest.service;
@@ -1667,23 +1671,23 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"],
 			"Target namespace inside PropertyAnnotations exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"]["Price/Amount"],
 			"Target value exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["PropertyAnnotationQualifiers.Product"]
@@ -1692,7 +1696,7 @@ function runODataAnnotationTests() {
 			"Target value with Qualifier exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["PropertyAnnotationQualifiers.Product"]
@@ -1702,7 +1706,7 @@ function runODataAnnotationTests() {
 			"Target value with Qualifier value exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["PropertyAnnotationQualifiers.Product"]
@@ -1717,8 +1721,9 @@ function runODataAnnotationTests() {
 
 	});
 
-	asyncTest("V2: Qualifiers in Property Annotations", function() {
-		expect(8);
+	QUnit.test("V2: Qualifiers in Property Annotations", function(assert) {
+		var done = assert.async();
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Property Annotation Qualifiers"];
 		var sServiceURI = mTest.service;
@@ -1735,23 +1740,23 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"]["Price/Amount"],
 				"Target value exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["PropertyAnnotationQualifiers.Product"]
@@ -1760,7 +1765,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["PropertyAnnotationQualifiers.Product"]
@@ -1770,7 +1775,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier value exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["PropertyAnnotationQualifiers.Product"]
@@ -1781,13 +1786,13 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier value has correct content"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 	QUnit.test("Other Property Values", function(assert) {
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -1802,23 +1807,23 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValues.Product"],
 			"Target namespace inside PropertyAnnotations exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]["OtherPropertyValues.Product"]["Price/Amount"],
 			"Target value exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValues.Product"]
@@ -1827,7 +1832,7 @@ function runODataAnnotationTests() {
 			"Target value with Qualifier exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValues.Product"]
@@ -1837,7 +1842,7 @@ function runODataAnnotationTests() {
 			"Target value with Qualifier value exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValues.Product"]
@@ -1849,8 +1854,9 @@ function runODataAnnotationTests() {
 		);
 	});
 
-	asyncTest("V2: Other Property Values", function() {
-		expect(8);
+	QUnit.test("V2: Other Property Values", function(assert) {
+		var done = assert.async();
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -1866,23 +1872,23 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValues.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]["OtherPropertyValues.Product"]["Price/Amount"],
 				"Target value exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValues.Product"]
@@ -1891,7 +1897,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValues.Product"]
@@ -1901,7 +1907,7 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier value exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValues.Product"]
@@ -1912,13 +1918,13 @@ function runODataAnnotationTests() {
 				"Target value with Qualifier value has correct content"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 	QUnit.test("Aliases in Namespaces", function(assert) {
-		expect(8);
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Aliases in Namespaces"];
 		var sServiceURI = mTest.service;
@@ -1934,23 +1940,23 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"],
 			"Target namespace inside PropertyAnnotations exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"]["GrossAmount"],
 			"Target value exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["NamespaceAliases.PurchaseOrder"]
@@ -1959,7 +1965,7 @@ function runODataAnnotationTests() {
 			"Target value with correct alias replacement (none!) exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["NamespaceAliases.PurchaseOrder"]
@@ -1969,7 +1975,7 @@ function runODataAnnotationTests() {
 			"Target value with String value exists"
 		);
 
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["NamespaceAliases.PurchaseOrder"]
@@ -1982,8 +1988,9 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Aliases in Namespaces", function() {
-		expect(8);
+	QUnit.test("V2: Aliases in Namespaces", function(assert) {
+		var done = assert.async();
+		assert.expect(8);
 
 		var mTest = mAdditionalTestsServices["Aliases in Namespaces"];
 		var sServiceURI = mTest.service;
@@ -2000,23 +2007,23 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"]["GrossAmount"],
 				"Target value exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["NamespaceAliases.PurchaseOrder"]
@@ -2025,7 +2032,7 @@ function runODataAnnotationTests() {
 				"Target value with correct alias replacement (none!) exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["NamespaceAliases.PurchaseOrder"]
@@ -2035,7 +2042,7 @@ function runODataAnnotationTests() {
 				"Target value with String value exists"
 			);
 
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["NamespaceAliases.PurchaseOrder"]
@@ -2046,12 +2053,12 @@ function runODataAnnotationTests() {
 				"Target value String value has correct content"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 	QUnit.test("Namespaces in Other Property Values", function(assert) {
-		expect(22);
+		assert.expect(22);
 
 		var mTest = mAdditionalTestsServices["Namespaces in Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -2066,19 +2073,19 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
 
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 			"Target value exists"
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2086,7 +2093,7 @@ function runODataAnnotationTests() {
 				["com.sap.vocabularies.UI.v1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2095,7 +2102,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2107,7 +2114,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2115,7 +2122,7 @@ function runODataAnnotationTests() {
 				["com.sap.vocabularies.Communication.v1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2124,7 +2131,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2136,7 +2143,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2144,7 +2151,7 @@ function runODataAnnotationTests() {
 				["Org.OData.Measures.V1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2153,7 +2160,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2165,7 +2172,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2173,7 +2180,7 @@ function runODataAnnotationTests() {
 				["Org.OData.Measures.V1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2182,7 +2189,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2194,7 +2201,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2202,7 +2209,7 @@ function runODataAnnotationTests() {
 				["com.sap.vocabularies.Common.v1.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2211,7 +2218,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2223,7 +2230,7 @@ function runODataAnnotationTests() {
 		);
 
 
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2231,7 +2238,7 @@ function runODataAnnotationTests() {
 				["FTGEN_HB_TE.Name"],
 			"Target value's namespace has been correctly replaced"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2240,7 +2247,7 @@ function runODataAnnotationTests() {
 				["EnumMember"],
 			"Target value's child exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations
 				["propertyAnnotations"]
 				["OtherPropertyValueAliases.Test"]
@@ -2253,8 +2260,9 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Namespaces in Other Property Values", function() {
-		expect(22);
+	QUnit.test("V2: Namespaces in Other Property Values", function(assert) {
+		var done = assert.async();
+		assert.expect(22);
 
 		var mTest = mAdditionalTestsServices["Namespaces in Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -2270,19 +2278,19 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
 
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 				"Target value exists"
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2290,7 +2298,7 @@ function runODataAnnotationTests() {
 					["com.sap.vocabularies.UI.v1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2299,7 +2307,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2311,7 +2319,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2319,7 +2327,7 @@ function runODataAnnotationTests() {
 					["com.sap.vocabularies.Communication.v1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2328,7 +2336,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2340,7 +2348,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2348,7 +2356,7 @@ function runODataAnnotationTests() {
 					["Org.OData.Measures.V1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2357,7 +2365,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2369,7 +2377,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2377,7 +2385,7 @@ function runODataAnnotationTests() {
 					["Org.OData.Measures.V1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2386,7 +2394,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2398,7 +2406,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2406,7 +2414,7 @@ function runODataAnnotationTests() {
 					["com.sap.vocabularies.Common.v1.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2415,7 +2423,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2427,7 +2435,7 @@ function runODataAnnotationTests() {
 			);
 
 
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2435,7 +2443,7 @@ function runODataAnnotationTests() {
 					["FTGEN_HB_TE.Name"],
 				"Target value's namespace has been correctly replaced"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2444,7 +2452,7 @@ function runODataAnnotationTests() {
 					["EnumMember"],
 				"Target value's child exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations
 					["propertyAnnotations"]
 					["OtherPropertyValueAliases.Test"]
@@ -2455,12 +2463,12 @@ function runODataAnnotationTests() {
 				"Target value's namespace has been correctly replaced"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 	QUnit.test("Text Properties", function(assert) {
-		expect(14);
+		assert.expect(14);
 
 		var mTest = mAdditionalTestsServices["Text Properties"];
 		var sServiceURI = mTest.service;
@@ -2475,59 +2483,59 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
 
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"],
 			"PropertyAnnotation definition exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 			"PropertyAnnotation definition value exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"],
 			"Name1 with replaced alias exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"],
 			"Name2 with replaced alias exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"],
 			"Name3 with replaced alias exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 			"Name1 with replaced alias exists and has EnumMember child node"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
 			"Name2 with replaced alias exists and has String child node"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 			"Name3 with replaced alias exists and has Invalid child node"
 		);
 
-		equals(
+		assert.equal(
 			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 			"com.sap.vocabularies.UI.v1.Value",
 			"Name1 with replaced alias exists and has EnumMember child node that contains alias replaced tet with trimmed white-spaces"
 		);
-		equals(
+		assert.equal(
 			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
 			"   test test   ",
 			"Name2 with replaced alias exists and has String child node that contains the exact text inclunding white-spaces"
 		);
-		deepEqual(
+		assert.deepEqual(
 			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 			{},
 			"Name3 with replaced alias exists and has Invalid child node that only contains an empy object"
@@ -2535,8 +2543,9 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Text Properties", function() {
-		expect(14);
+	QUnit.test("V2: Text Properties", function(assert) {
+		var done = assert.async();
+		assert.expect(14);
 
 		var mTest = mAdditionalTestsServices["Text Properties"];
 		var sServiceURI = mTest.service;
@@ -2552,70 +2561,70 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
 
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"],
 				"PropertyAnnotation definition exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 				"PropertyAnnotation definition value exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"],
 				"Name1 with replaced alias exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"],
 				"Name2 with replaced alias exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"],
 				"Name3 with replaced alias exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 				"Name1 with replaced alias exists and has EnumMember child node"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
 				"Name2 with replaced alias exists and has String child node"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 				"Name3 with replaced alias exists and has Invalid child node"
 			);
 
-			equals(
+			assert.equal(
 				oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 				"com.sap.vocabularies.UI.v1.Value",
 				"Name1 with replaced alias exists and has EnumMember child node that contains alias replaced tet with trimmed white-spaces"
 			);
-			equals(
+			assert.equal(
 				oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
 				"   test test   ",
 				"Name2 with replaced alias exists and has String child node that contains the exact text inclunding white-spaces"
 			);
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 				{},
 				"Name3 with replaced alias exists and has Invalid child node that only contains an empy object"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 	QUnit.test("Entity Containers", function(assert) {
-		expect(30);
+		assert.expect(30);
 
 		var mTest = mAdditionalTestsServices["Entity Containers"];
 		var sServiceURI = mTest.service;
@@ -2630,36 +2639,36 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
 
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
 
-		ok(!!oAnnotations["EntityContainer"], "Entity container entry exists");
+		assert.ok(!!oAnnotations["EntityContainer"], "Entity container entry exists");
 
-		ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
+		assert.ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"],
 			"Entity in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"],
 			"Sub Entity in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
 			["ActivationAction"],
 			"Sub Entity value in container exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2667,7 +2676,7 @@ function runODataAnnotationTests() {
 			["String"],
 			"Sub Entity value in container exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2677,14 +2686,14 @@ function runODataAnnotationTests() {
 			"Sub Entity value in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
 			["EditAction"],
 			"Sub Entity value in container exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2692,7 +2701,7 @@ function runODataAnnotationTests() {
 			["String"],
 			"Sub Entity value in container exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2702,14 +2711,14 @@ function runODataAnnotationTests() {
 			"Sub Entity value in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
 			["ValidationFunction"],
 			"Sub Entity value in container exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2717,7 +2726,7 @@ function runODataAnnotationTests() {
 			["String"],
 			"Sub Entity value in container exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2727,14 +2736,14 @@ function runODataAnnotationTests() {
 			"Sub Entity value in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
 			["PreparationAction"],
 			"Sub Entity value in container exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2742,7 +2751,7 @@ function runODataAnnotationTests() {
 			["String"],
 			"Sub Entity value in container exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
 			["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2752,29 +2761,29 @@ function runODataAnnotationTests() {
 			"Sub Entity value in container exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"],
 			"Entity in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"],
 			"Entity in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0],
 			"Entity entries in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0]
 			["PropertyPath"],
 			"Property exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0]
@@ -2783,36 +2792,36 @@ function runODataAnnotationTests() {
 			"Entity in namespace exists"
 		);
 
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"],
 			"Entity in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"],
 			"Entity in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0],
 			"Entity entries in namespace exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0]
 			["PropertyPath"],
 			"Property exists"
 		);
-		ok(
+		assert.ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[1]
 			["PropertyPath"],
 			"Property exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[0]
@@ -2820,7 +2829,7 @@ function runODataAnnotationTests() {
 			"SalesOrderID",
 			"Entity in namespace exists"
 		);
-		equal(
+		assert.equal(
 			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 			["com.sap.vocabularies.Common.v1.SemanticKey"]
 			[1]
@@ -2831,8 +2840,9 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Entity Containers", function() {
-		expect(30);
+	QUnit.test("V2: Entity Containers", function(assert) {
+		var done = assert.async();
+		assert.expect(30);
 
 		var mTest = mAdditionalTestsServices["Entity Containers"];
 		var sServiceURI = mTest.service;
@@ -2848,36 +2858,36 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
 
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 
-			ok(!!oAnnotations["EntityContainer"], "Entity container entry exists");
+			assert.ok(!!oAnnotations["EntityContainer"], "Entity container entry exists");
 
-			ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
+			assert.ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"],
 				"Entity in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"],
 				"Sub Entity in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
 				["ActivationAction"],
 				"Sub Entity value in container exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2885,7 +2895,7 @@ function runODataAnnotationTests() {
 				["String"],
 				"Sub Entity value in container exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2895,14 +2905,14 @@ function runODataAnnotationTests() {
 				"Sub Entity value in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
 				["EditAction"],
 				"Sub Entity value in container exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2910,7 +2920,7 @@ function runODataAnnotationTests() {
 				["String"],
 				"Sub Entity value in container exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2920,14 +2930,14 @@ function runODataAnnotationTests() {
 				"Sub Entity value in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
 				["ValidationFunction"],
 				"Sub Entity value in container exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2935,7 +2945,7 @@ function runODataAnnotationTests() {
 				["String"],
 				"Sub Entity value in container exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2945,14 +2955,14 @@ function runODataAnnotationTests() {
 				"Sub Entity value in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
 				["PreparationAction"],
 				"Sub Entity value in container exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2960,7 +2970,7 @@ function runODataAnnotationTests() {
 				["String"],
 				"Sub Entity value in container exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 				["SalesOrder"]
 				["com.sap.vocabularies.Common.v1.DraftRoot"]
@@ -2970,29 +2980,29 @@ function runODataAnnotationTests() {
 				"Sub Entity value in container exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"],
 				"Entity in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"],
 				"Entity in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0],
 				"Entity entries in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0]
 				["PropertyPath"],
 				"Property exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0]
@@ -3001,36 +3011,36 @@ function runODataAnnotationTests() {
 				"Entity in namespace exists"
 			);
 
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"],
 				"Entity in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"],
 				"Entity in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0],
 				"Entity entries in namespace exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0]
 				["PropertyPath"],
 				"Property exists"
 			);
-			ok(
+			assert.ok(
 				!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[1]
 				["PropertyPath"],
 				"Property exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[0]
@@ -3038,7 +3048,7 @@ function runODataAnnotationTests() {
 				"SalesOrderID",
 				"Entity in namespace exists"
 			);
-			equal(
+			assert.equal(
 				oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
 				["com.sap.vocabularies.Common.v1.SemanticKey"]
 				[1]
@@ -3047,12 +3057,12 @@ function runODataAnnotationTests() {
 				"Entity in namespace exists"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 	QUnit.test("Simple Values", function(assert) {
-		expect(3);
+		assert.expect(3);
 
 		var mTest = mAdditionalTestsServices["Simple Values"];
 		var sServiceURI = mTest.service;
@@ -3067,11 +3077,11 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
 
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		deepEqual(
+		assert.deepEqual(
 			oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name1"],
 			oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name2"],
 			"Simple value attributes have the meaning as child elements"
@@ -3080,8 +3090,9 @@ function runODataAnnotationTests() {
 
 	});
 
-	asyncTest("V2: Simple Values", function() {
-		expect(3);
+	QUnit.test("V2: Simple Values", function(assert) {
+		var done = assert.async();
+		assert.expect(3);
 
 		var mTest = mAdditionalTestsServices["Simple Values"];
 		var sServiceURI = mTest.service;
@@ -3097,23 +3108,23 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
 
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name1"],
 				oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name2"],
 				"Simple value attributes have the meaning as child elements"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 	QUnit.test("Collection with Namespace", function(assert) {
-		expect(6);
+		assert.expect(6);
 
 		var mTest = mAdditionalTestsServices["Collection with Namespace"];
 		var sServiceURI = mTest.service;
@@ -3128,16 +3139,16 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
 
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
 
-		ok(!!oAnnotations["propertyAnnotations"], "propertyAnnotations exists");
-		ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"], "propertyAnnotations Entry exists");
-		ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"], "propertyAnnotations Entry Value exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"], "propertyAnnotations exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"], "propertyAnnotations Entry exists");
+		assert.ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"], "propertyAnnotations Entry Value exists");
 
-		deepEqual(
+		assert.deepEqual(
 			oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"]["UI.TestNS"],
 			oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"]["UI.TestNoNS"],
 			"Collection with and without namespace have the same values"
@@ -3145,8 +3156,9 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Collection with Namespace", function() {
-		expect(6);
+	QUnit.test("V2: Collection with Namespace", function(assert) {
+		var done = assert.async();
+		assert.expect(6);
 
 		var mTest = mAdditionalTestsServices["Collection with Namespace"];
 		var sServiceURI = mTest.service;
@@ -3162,27 +3174,27 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
 
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 
-			ok(!!oAnnotations["propertyAnnotations"], "propertyAnnotations exists");
-			ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"], "propertyAnnotations Entry exists");
-			ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"], "propertyAnnotations Entry Value exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"], "propertyAnnotations exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"], "propertyAnnotations Entry exists");
+			assert.ok(!!oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"], "propertyAnnotations Entry Value exists");
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"]["UI.TestNS"],
 				oAnnotations["propertyAnnotations"]["CollectionWithNamespace.Test"]["Value"]["UI.TestNoNS"],
 				"Collection with and without namespace have the same values"
 			);
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 	QUnit.test("UrlRef", function(assert) {
-		expect(78);
+		assert.expect(78);
 
 		var mTest = mAdditionalTestsServices["UrlRef"];
 		var sServiceURI = mTest.service;
@@ -3197,11 +3209,11 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
 
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["UrlTest"], "Main entry exists");
+		assert.ok(!!oAnnotations["UrlTest"], "Main entry exists");
 
 		deepContains(
 			oAnnotations["UrlTest"],
@@ -3270,15 +3282,16 @@ function runODataAnnotationTests() {
 			"Correct values for UrlTest"
 		);
 
-		equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "city", "Name is correctly set for labeled element");
-		ok(!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Name"], "Name is not set for labeled element Value");
+		assert.equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "city", "Name is correctly set for labeled element");
+		assert.ok(!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Name"], "Name is not set for labeled element Value");
 
 		oModel.destroy();
 	});
 
 
-	asyncTest("V2: UrlRef", function() {
-		expect(78);
+	QUnit.test("V2: UrlRef", function(assert) {
+		var done = assert.async();
+		assert.expect(78);
 
 		var mTest = mAdditionalTestsServices["UrlRef"];
 		var sServiceURI = mTest.service;
@@ -3294,11 +3307,11 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
 
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(!!oAnnotations["UrlTest"], "Main entry exists");
+			assert.ok(!!oAnnotations["UrlTest"], "Main entry exists");
 
 			deepContains(
 				oAnnotations["UrlTest"],
@@ -3367,17 +3380,18 @@ function runODataAnnotationTests() {
 				"Correct values for UrlTest"
 			);
 
-			equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "city", "Name is correctly set for labeled element");
-			ok(!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Name"], "Name is not set for labeled element Value");
+			assert.equal(oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Name"], "city", "Name is correctly set for labeled element");
+			assert.ok(!oAnnotations["UrlTest"]["com.sap.vocabularies.UI.v1.Identification"][2]["Url"]["UrlRef"]["Apply"]["Parameters"][2]["Value"]["Name"], "Name is not set for labeled element Value");
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
-	asyncTest("V2 only: Delayed Loading", function() {
-		expect(22);
+	QUnit.test("V2 only: Delayed Loading", function(assert) {
+		var done = assert.async();
+		assert.expect(22);
 
 		var mTest = mAdditionalTestsServices["Delayed Loading"];
 		var sServiceURI = mTest.service;
@@ -3402,54 +3416,55 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(Object.keys(oAnnotations).length > 0, "Annotations are available...");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(Object.keys(oAnnotations).length > 0, "Annotations are available...");
 
-			ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"], "Annoation Namespace exists and Alias has been replaced");
-			ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"], "FromFirst namespace exists");
-			ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "FromFirst annotation exists");
+			assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"], "Annoation Namespace exists and Alias has been replaced");
+			assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"], "FromFirst namespace exists");
+			assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "FromFirst annotation exists");
 
-			ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"], "FromFirst namespace exists");
-			ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "FromFirst annotation exists");
+			assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"], "FromFirst namespace exists");
+			assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "FromFirst annotation exists");
 
-			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "First", "FromAll annotation filled from first source");
-			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+			assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "First", "FromAll annotation filled from first source");
+			assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
 
 			oModel.addAnnotationUrl(mTest.annotations[1]).then(function(mResults) {
-				ok(mResults.annotations === oAnnotations, "Second Annotations loaded...");
+				assert.ok(mResults.annotations === oAnnotations, "Second Annotations loaded...");
 
-				ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"], "FromSecond namespace exists");
-				ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "FromSecond annotation exists");
+				assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"], "FromSecond namespace exists");
+				assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "FromSecond annotation exists");
 
-				equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "Second", "FromAll annotation filled from second source");
-				equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
-				equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
+				assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "Second", "FromAll annotation filled from second source");
+				assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+				assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
 
 				oModel.addAnnotationUrl(mTest.annotations[2]).then(function(mResults) {
-					ok(mResults.annotations === oAnnotations, "Third Annotations loaded...");
+					assert.ok(mResults.annotations === oAnnotations, "Third Annotations loaded...");
 
-					ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"], "FromThird namespace exists");
-					ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "FromThird annotation exists");
+					assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"], "FromThird namespace exists");
+					assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "FromThird annotation exists");
 
-					equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "Third", "FromAll annotation filled from second source");
-					equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
-					equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
-					equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
+					assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "Third", "FromAll annotation filled from second source");
+					assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+					assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
+					assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
 
 					oModel.destroy();
-					start();
+					done();
 
 				}).catch(function(mResults) {
-					ok(false, "Third Annotations could not be loaded...")
+					assert.ok(false, "Third Annotations could not be loaded...")
 				})
 			}).catch(function(mResults) {
-				ok(false, "Second Annotations could not be loaded...")
+				assert.ok(false, "Second Annotations could not be loaded...")
 			})
 		});
 	});
 
-	asyncTest("V2 only: Delayed Parsing", function() {
-		expect(26);
+	QUnit.test("V2 only: Delayed Parsing", function(assert) {
+		var done = assert.async();
+		assert.expect(26);
 
 		var mTest = mAdditionalTestsServices["Delayed Loading"];
 		var sServiceURI = mTest.service;
@@ -3467,13 +3482,13 @@ function runODataAnnotationTests() {
 
 
 		var sFirstAnnotations  = jQuery.sap.syncGet(mTest.annotations[0]).data;
-		ok(sFirstAnnotations.indexOf("<?xml") === 0, "First annotation file data loaded");
+		assert.ok(sFirstAnnotations.indexOf("<?xml") === 0, "First annotation file data loaded");
 
 		var sSecondAnnotations = jQuery.sap.syncGet(mTest.annotations[1]).data;
-		ok(sSecondAnnotations.indexOf("<?xml") === 0, "Second annotation file data loaded");
+		assert.ok(sSecondAnnotations.indexOf("<?xml") === 0, "Second annotation file data loaded");
 
 		var sThirdAnnotations  = jQuery.sap.syncGet(mTest.annotations[2]).data;
-		ok(sThirdAnnotations.indexOf("<?xml") === 0, "Third annotation file data loaded");
+		assert.ok(sThirdAnnotations.indexOf("<?xml") === 0, "Third annotation file data loaded");
 
 
 		// TODO: Change internal access from oModel.oMetadata to offial API when available...
@@ -3481,75 +3496,75 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Annotations are not available...");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Annotations are not available...");
 
 			oModel.addAnnotationXML(sFirstAnnotations).then(function(mResults) {
-				ok(!!mResults.annotations, "First Annotations loaded...");
+				assert.ok(!!mResults.annotations, "First Annotations loaded...");
 				oAnnotations = oModel.getServiceAnnotations();
 
-				ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"], "Annoation Namespace exists and Alias has been replaced");
-				ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"], "FromFirst namespace exists");
-				ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "FromFirst annotation exists");
+				assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"], "Annoation Namespace exists and Alias has been replaced");
+				assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"], "FromFirst namespace exists");
+				assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "FromFirst annotation exists");
 
-				ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"], "FromFirst namespace exists");
-				ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "FromFirst annotation exists");
+				assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"], "FromFirst namespace exists");
+				assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "FromFirst annotation exists");
 
-				equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "First", "FromAll annotation filled from first source");
-				equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+				assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "First", "FromAll annotation filled from first source");
+				assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
 
 				oModel.addAnnotationXML(sSecondAnnotations).then(function(mResults) {
-					ok(!!mResults.annotations, "Second Annotations loaded...");
+					assert.ok(!!mResults.annotations, "Second Annotations loaded...");
 					oAnnotations = oModel.getServiceAnnotations();
 
-					ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"], "FromSecond namespace exists");
-					ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "FromSecond annotation exists");
+					assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"], "FromSecond namespace exists");
+					assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "FromSecond annotation exists");
 
-					equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "Second", "FromAll annotation filled from second source");
-					equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
-					equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
+					assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "Second", "FromAll annotation filled from second source");
+					assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+					assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
 
 					oModel.addAnnotationXML(sThirdAnnotations).then(function(mResults) {
-						ok(!!mResults.annotations, "Third Annotations loaded...");
+						assert.ok(!!mResults.annotations, "Third Annotations loaded...");
 						oAnnotations = oModel.getServiceAnnotations();
 
-						ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"], "FromThird namespace exists");
-						ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "FromThird annotation exists");
+						assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"], "FromThird namespace exists");
+						assert.ok(!!oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "FromThird annotation exists");
 
-						equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "Third", "FromAll annotation filled from second source");
-						equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
-						equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
-						equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
+						assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromAll"]["String"], "Third", "FromAll annotation filled from second source");
+						assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+						assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
+						assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
 
 						oModel.destroy();
-						start();
+						done();
 
 					}).catch(function(mResults) {
-						ok(false, "Third Annotations could not be parsed...")
+						assert.ok(false, "Third Annotations could not be parsed...")
 						oModel.destroy();
-						start();
+						done();
 					})
 				}).catch(function(mResults) {
-					ok(false, "Second Annotations could not be parsed...")
+					assert.ok(false, "Second Annotations could not be parsed...")
 					oModel.destroy();
-					start();
+					done();
 				})
 			}).catch(function(mResults) {
-				ok(false, "First Annotations could not be parsed...")
+				assert.ok(false, "First Annotations could not be parsed...")
 				oModel.destroy();
-				start();
+				done();
 			});
 		}).catch(function() {
-			ok(false, "Metadata could not be loaded...")
+			assert.ok(false, "Metadata could not be loaded...")
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 
 	QUnit.test("Alias Replacement", function(assert) {
-		expect(11);
+		assert.expect(11);
 
 		var mTest = mAdditionalTestsServices["Alias Replacement"];
 		var sServiceURI = mTest.service;
@@ -3564,31 +3579,31 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
 
-		ok(!!oAnnotations, "Annotations are available.");
-
-
-
-		ok(!!oAnnotations["Test.AliasReplacement"], "Namespace is available.");
-		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"], "Annotation is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
 
-		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"], "First Entry is available.");
-		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0], "First Entry array is available.");
-		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "First Entry value is available.");
-		equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "@internal.ui5.test.Value", "First Entry value is correct.");
 
-		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"], "Second Entry is available.");
-		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "Second Entry value is available.");
-		equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "@internal.ui5.test.Value", "Second Entry value is correct.");
+		assert.ok(!!oAnnotations["Test.AliasReplacement"], "Namespace is available.");
+		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"], "Annotation is available.");
+
+
+		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"], "First Entry is available.");
+		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0], "First Entry array is available.");
+		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "First Entry value is available.");
+		assert.equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "@internal.ui5.test.Value", "First Entry value is correct.");
+
+		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"], "Second Entry is available.");
+		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "Second Entry value is available.");
+		assert.equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "@internal.ui5.test.Value", "Second Entry value is correct.");
 		oModel.destroy();
 	});
 
 
 
 	QUnit.test("DynamicExpressions", function(assert) {
-		expect(15);
+		assert.expect(15);
 
 		var mTest = mAdditionalTestsServices["DynamicExpressions"];
 		var sServiceURI = mTest.service;
@@ -3603,11 +3618,11 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["DynamicExpressions"], "Annotation target is available");
-		ok(!!oAnnotations["DynamicExpressions"]["org.example.person.Gender"], "Annotation term is available");
+		assert.ok(!!oAnnotations["DynamicExpressions"], "Annotation target is available");
+		assert.ok(!!oAnnotations["DynamicExpressions"]["org.example.person.Gender"], "Annotation term is available");
 
 		var mValue = oAnnotations["DynamicExpressions"]["org.example.person.Gender"];
 		var mExpected = {
@@ -3622,7 +3637,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("DynamicExpressions 2", function(assert) {
-		expect(56);
+		assert.expect(56);
 
 		var mTest = mAdditionalTestsServices["DynamicExpressions2"];
 		var sServiceURI = mTest.service;
@@ -3637,12 +3652,12 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["DynamicExpressions2"], "Annotation target is available");
-		ok(!!oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
-		ok(!!oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"]["Value"], "Annotation value is available");
+		assert.ok(!!oAnnotations["DynamicExpressions2"], "Annotation target is available");
+		assert.ok(!!oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
+		assert.ok(!!oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"]["Value"], "Annotation value is available");
 
 		var mValue = oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"]["Value"];
 		var mExpected = {
@@ -3689,7 +3704,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("CollectionsWithSimpleValues", function(assert) {
-		expect(13);
+		assert.expect(13);
 
 		var mTest = mAdditionalTestsServices["CollectionsWithSimpleValues"];
 		var sServiceURI = mTest.service;
@@ -3704,11 +3719,11 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
-		ok(!!oAnnotations["CollectionsWithSimpleValues"], "Annotation target is available");
-		ok(!!oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
+		assert.ok(!!oAnnotations["CollectionsWithSimpleValues"], "Annotation target is available");
+		assert.ok(!!oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
 
 		var mValue = oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"];
 		var mExpected = [
@@ -3721,7 +3736,7 @@ function runODataAnnotationTests() {
 	});
 
 	QUnit.test("Multiple Simple Values", function(assert) {
-		expect(9);
+		assert.expect(9);
 
 		var mTest = mAdditionalTestsServices["Simple Values 2"];
 		var sServiceURI = mTest.service;
@@ -3736,8 +3751,8 @@ function runODataAnnotationTests() {
 		var oMetadata = oModel.getServiceMetadata();
 		var oAnnotations = oModel.getServiceAnnotations();
 
-		ok(!!oMetadata, "Metadata is available.");
-		ok(!!oAnnotations, "Annotations are available.");
+		assert.ok(!!oMetadata, "Metadata is available.");
+		assert.ok(!!oAnnotations, "Annotations are available.");
 
 		deepContains(
 			oAnnotations["SimpleValues"],
@@ -3754,8 +3769,9 @@ function runODataAnnotationTests() {
 	});
 
 
-	asyncTest("If in Apply", function() {
-		expect(57);
+	QUnit.test("If in Apply", function(assert) {
+		var done = assert.async();
+		assert.expect(57);
 		var mTest = mAdditionalTestsServices["If in Apply"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -3769,8 +3785,8 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 			deepContains(
 				oAnnotations["IfInApply"],
@@ -3818,14 +3834,15 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 
-	asyncTest("Other Elements in LabeledElement", function() {
-		expect(97);
+	QUnit.test("Other Elements in LabeledElement", function(assert) {
+		var done = assert.async();
+		assert.expect(97);
 		var mTest = mAdditionalTestsServices["Other Elements in LabeledElement"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -3839,8 +3856,8 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 			deepContains(
 				oAnnotations["LabeledElement"],
@@ -3924,12 +3941,13 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("V2 only: Annotated Metadata - Automated Parsing", function() {
-		expect(26);
+	QUnit.test("V2 only: Annotated Metadata - Automated Parsing", function(assert) {
+		var done = assert.async();
+		assert.expect(26);
 
 		var mTestsDone = {
 			"annotations": false,
@@ -3953,7 +3971,7 @@ function runODataAnnotationTests() {
 				oModel2.destroy();
 				oModel3.destroy();
 				oModel4.destroy();
-				window.setTimeout(start, 500);
+				window.setTimeout(done, 500);
 			}
 		}
 
@@ -3961,14 +3979,14 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(oAnnotations["UnitTest"], "Annotation namespace available");
-			ok(oAnnotations["UnitTest"]["Test.From" + sSource],									"Annotation from correct source - " + sSource + " (2/5)");
-			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0],								 "Annotation from correct source - " + sSource + " (3/5)");
-			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"],						"Annotation from correct source - " + sSource + " (4/5)");
-			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"]["Path"] === sSource, "Annotation from correct source - " + sSource + " (5/5)");
+			assert.ok(oAnnotations["UnitTest"], "Annotation namespace available");
+			assert.ok(oAnnotations["UnitTest"]["Test.From" + sSource],									"Annotation from correct source - " + sSource + " (2/5)");
+			assert.ok(oAnnotations["UnitTest"]["Test.From" + sSource][0],								 "Annotation from correct source - " + sSource + " (3/5)");
+			assert.ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"],						"Annotation from correct source - " + sSource + " (4/5)");
+			assert.ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"]["Path"] === sSource, "Annotation from correct source - " + sSource + " (5/5)");
 
 			fnAsyncStart(sTestType);
 		};
@@ -3978,9 +3996,9 @@ function runODataAnnotationTests() {
 			var sLabelString  = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/com.sap.vocabularies.Common.v1.Label/String")
 			var sSource = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/annotationSource/String")
 
-			equals(sContainerName, "NorthwindEntities", "EntityContainer \"NorthwindEntities\" available");
-			equals(sLabelString, bV4AnnotationsAvailable ? "LabelString" : undefined, "LabelString for \"CategoryID\" is correct");
-			equals(sSource, sV4AnnotationSource, "Correct annotation source");
+			assert.equal(sContainerName, "NorthwindEntities", "EntityContainer \"NorthwindEntities\" available");
+			assert.equal(sLabelString, bV4AnnotationsAvailable ? "LabelString" : undefined, "LabelString for \"CategoryID\" is correct");
+			assert.equal(sSource, sV4AnnotationSource, "Correct annotation source");
 		};
 
 
@@ -4021,7 +4039,7 @@ function runODataAnnotationTests() {
 		oModel2.attachAnnotationsLoaded(fnTestAnnotations.bind(window, "annotations", oModel2, "Annotations"));
 		// No Test for oModel3, since no annotations are loaded
 		oModel3.attachAnnotationsLoaded(function() {
-			ok(false, "Annotation should not be loaded for this model");
+			assert.ok(false, "Annotation should not be loaded for this model");
 		});
 
 		// TODO: Currently the loaded event is fired twice in this case, so it first has the data from Metadata and only
@@ -4039,12 +4057,13 @@ function runODataAnnotationTests() {
 
 			fnAsyncStart("metamodel");
 		}, function() {
-			ok(false, "ODataMetaModel loading failed");
+			assert.ok(false, "ODataMetaModel loading failed");
 		});
 	});
 
-	asyncTest("Apply in If", function() {
-		expect(71);
+	QUnit.test("Apply in If", function(assert) {
+		var done = assert.async();
+		assert.expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
@@ -4057,8 +4076,8 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 			deepContains(
 				oAnnotations["ApplyInIf"],
@@ -4120,12 +4139,13 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
-	asyncTest("V2: Apply in If", function() {
-		expect(71);
+	QUnit.test("V2: Apply in If", function(assert) {
+		var done = assert.async();
+		assert.expect(71);
 
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
@@ -4139,8 +4159,8 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 			deepContains(
 				oAnnotations["ApplyInIf"],
@@ -4202,14 +4222,15 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	});
 
 
 
-	asyncTest("V2: Joined Loading with automated $metadata parsing", function() {
-		expect(16);
+	QUnit.test("V2: Joined Loading with automated $metadata parsing", function(assert) {
+		var done = assert.async();
+		assert.expect(16);
 
 		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
 
@@ -4231,26 +4252,26 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			equals(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path, "Annotations", "Annotation from correct source (Annotations)");
-			equals(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path, "Metadata", "Annotation from correct source (Metadata)");
-			equals(oAnnotations.UnitTest["Test.Merged"][0].Value.Path, "Annotations", "Merged annotations filled");
+			assert.equal(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path, "Annotations", "Annotation from correct source (Annotations)");
+			assert.equal(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path, "Metadata", "Annotation from correct source (Metadata)");
+			assert.equal(oAnnotations.UnitTest["Test.Merged"][0].Value.Path, "Annotations", "Merged annotations filled");
 
 
-			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
-			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
-			equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
+			assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromFirst"]["String"], "First", "FromFirst annotation filled from first source");
+			assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromSecond"]["String"], "Second", "FromFirst annotation filled from Second source");
+			assert.equal(oAnnotations["internal.ui5.test.MultipleAnnotations"]["internal.ui5.test.FromThird"]["String"], "Third", "FromFirst annotation filled from Second source");
 
 			++iCount;
 			if (iCount == 2) {
 				// Make sure no additional events are fired afterwards
 				oModel.destroy();
 				oModel2.destroy();
-				setTimeout(start, 500);
+				setTimeout(done, 500);
 			} else if(iCount > 2) {
-				ok(false, "Too many events have been fired");
+				assert.ok(false, "Too many events have been fired");
 			}
 		}
 
@@ -4260,7 +4281,8 @@ function runODataAnnotationTests() {
 
 
 	var fnTestAnnotationInRecord = function(iModelVersion) {
-		expect(54);
+		var done = assert.async();
+		assert.expect(54);
 
 		var mTest = mAdditionalTestsServices["Default Annotated Service"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4269,12 +4291,12 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 
-			ok(!!oAnnotations["Test.AnnotationInRecord"], "Outer Annotations container exists");
-			ok(!!oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case1"], "Outer Annotation exists");
+			assert.ok(!!oAnnotations["Test.AnnotationInRecord"], "Outer Annotations container exists");
+			assert.ok(!!oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case1"], "Outer Annotation exists");
 
 			var mTestCase1 = oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case1"];
 
@@ -4330,18 +4352,19 @@ function runODataAnnotationTests() {
 			}, "Case 3 has correct values");
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	}
 
-	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
-	asyncTest("V2: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
+	QUnit.test("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
+	QUnit.test("V2: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
 
 
 
 
 	var fnTestEmptyCollection = function(iModelVersion) {
-		expect(15);
+		var done = assert.async();
+		assert.expect(15);
 
 		var mTest = mAdditionalTestsServices["Empty collection"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4350,8 +4373,8 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 			deepContains(
 				oAnnotations["ui5.test.Annotation"],
@@ -4367,16 +4390,17 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("V1: Empty collection", fnTestEmptyCollection.bind(this, 1));
-	asyncTest("V2: Empty collection", fnTestEmptyCollection.bind(this, 2));
+	QUnit.test("V1: Empty collection", fnTestEmptyCollection.bind(this, 1));
+	QUnit.test("V2: Empty collection", fnTestEmptyCollection.bind(this, 2));
 
 
 	var fnTestEmptyCollection = function(iModelVersion) {
-		expect(10);
+		var done = assert.async();
+		assert.expect(10);
 
 		var mTest = mAdditionalTestsServices["Multiple Enums"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4385,8 +4409,8 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
 			deepContains(
 				oAnnotations["ui5.test.Annotation"],
@@ -4406,17 +4430,18 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("V1: Multiple Enums", fnTestEmptyCollection.bind(this, 1));
-	asyncTest("V2: Multiple Enums", fnTestEmptyCollection.bind(this, 2));
+	QUnit.test("V1: Multiple Enums", fnTestEmptyCollection.bind(this, 1));
+	QUnit.test("V2: Multiple Enums", fnTestEmptyCollection.bind(this, 2));
 
 
 
 	var fnTestCachedValueLists = function(iModelVersion) {
-		expect(40);
+		var done = assert.async();
+		assert.expect(40);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4428,10 +4453,10 @@ function runODataAnnotationTests() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			ok(!!oMetadata, "Metadata is available.");
-			ok(!!oAnnotations, "Annotations are available.");
+			assert.ok(!!oMetadata, "Metadata is available.");
+			assert.ok(!!oAnnotations, "Annotations are available.");
 
-			ok(true, "Annotations (Metadata) for Model 1 loaded.");
+			assert.ok(true, "Annotations (Metadata) for Model 1 loaded.");
 
 			deepContains(
 				oAnnotations["ui5.test.Annotation"],
@@ -4446,7 +4471,7 @@ function runODataAnnotationTests() {
 			oModel.addAnnotationUrl(mTest.service + "$metadata?sap-value-list=1").then(function(oParams) {
 				var oAnnotations = oModel.getServiceAnnotations();
 
-				ok(true, "Annotations (Value List 1) for Model 1 loaded.");
+				assert.ok(true, "Annotations (Value List 1) for Model 1 loaded.");
 
 				deepContains(
 					oAnnotations["ui5.test.Annotation"],
@@ -4464,7 +4489,7 @@ function runODataAnnotationTests() {
 				oModel.addAnnotationUrl(mTest.service + "$metadata?sap-value-list=2").then(function(oParams) {
 					var oAnnotations = oModel.getServiceAnnotations();
 
-					ok(true, "Annotations (Value List 2) for Model 1 loaded.");
+					assert.ok(true, "Annotations (Value List 2) for Model 1 loaded.");
 
 					deepContains(
 						oAnnotations["ui5.test.Annotation"],
@@ -4485,7 +4510,7 @@ function runODataAnnotationTests() {
 					oModel.addAnnotationUrl(mTest.service + "$metadata?sap-value-list=3").then(function(oParams) {
 						var oAnnotations = oModel.getServiceAnnotations();
 
-						ok(true, "Annotations (Value List 3) for Model 1 loaded.");
+						assert.ok(true, "Annotations (Value List 3) for Model 1 loaded.");
 
 						deepContains(
 							oAnnotations["ui5.test.Annotation"],
@@ -4506,8 +4531,8 @@ function runODataAnnotationTests() {
 							"Test Annotation available: ui5.test.Annotation"
 						);
 
-						// equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
-						// ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+						// assert.equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+						// assert.ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 
 						oModel.destroy();
 						fnCachedModelTest();
@@ -4521,7 +4546,7 @@ function runODataAnnotationTests() {
 
 			oModel2.attachAnnotationsLoaded(function() {
 				// All annotations should be there from cache
-				ok(true, "(Cached) Annotations for Model 2 loaded.");
+				assert.ok(true, "(Cached) Annotations for Model 2 loaded.");
 
 				var oAnnotations = oModel2.getServiceAnnotations();
 
@@ -4536,19 +4561,20 @@ function runODataAnnotationTests() {
 				);
 
 				oModel2.destroy();
-				start();
+				done();
 			});
 
 		};
 
 	};
 
-	asyncTest("V1: Cached Value Lists", fnTestCachedValueLists.bind(this, 1));
-	asyncTest("V2: Cached Value Lists", fnTestCachedValueLists.bind(this, 2));
+	QUnit.test("V1: Cached Value Lists", fnTestCachedValueLists.bind(this, 1));
+	QUnit.test("V2: Cached Value Lists", fnTestCachedValueLists.bind(this, 2));
 
 
 	var fnTestCachedMetadataValueLists = function(iModelVersion) {
-		expect(14);
+		var done = assert.async();
+		assert.expect(14);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
 		var sServiceUrl1 = mTest.service + "?sap-value-list=1";
@@ -4557,7 +4583,7 @@ function runODataAnnotationTests() {
 		var oModel = fnCreateModel(iModelVersion, sServiceUrl1, mTest.annotations);
 		oModel.attachAnnotationsLoaded(function() {
 			// Model3 should now have the value-lists "1"
-			ok(true, "Annotations for Model loaded.");
+			assert.ok(true, "Annotations for Model loaded.");
 
 			var oAnnotations = oModel.getServiceAnnotations();
 
@@ -4579,7 +4605,7 @@ function runODataAnnotationTests() {
 
 			oModel2.attachAnnotationsLoaded(function() {
 				// Model4 should now have the value lists "2"
-				ok(true, "Annotations for Model 2 loaded.");
+				assert.ok(true, "Annotations for Model 2 loaded.");
 
 				var oAnnotations = oModel2.getServiceAnnotations();
 
@@ -4598,18 +4624,19 @@ function runODataAnnotationTests() {
 
 				oModel.destroy();
 				oModel2.destroy();
-				start();
+				done();
 
 			});
 
 		});
 	};
 
-	asyncTest("V1: Cached Value Lists with Service-URL-Parameters", fnTestCachedMetadataValueLists.bind(this, 1));
-	asyncTest("V2: Cached Value Lists with Service-URL-Parameters", fnTestCachedMetadataValueLists.bind(this, 2));
+	QUnit.test("V1: Cached Value Lists with Service-URL-Parameters", fnTestCachedMetadataValueLists.bind(this, 1));
+	QUnit.test("V2: Cached Value Lists with Service-URL-Parameters", fnTestCachedMetadataValueLists.bind(this, 2));
 
 	var fnTestCachedMetadataValueListsAdditionParameters = function(iModelVersion) {
-		expect(14);
+		var done = assert.async();
+		assert.expect(14);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
 		var mMetadataUrlParams1 = {
@@ -4626,7 +4653,7 @@ function runODataAnnotationTests() {
 			oModel.attachAnnotationsLoaded(fnResolve);
 		}).then(function() {
 			// Model3 should now have the value-lists "1"
-			ok(true, "Annotations for Model loaded.");
+			assert.ok(true, "Annotations for Model loaded.");
 
 			var oAnnotations = oModel.getServiceAnnotations();
 
@@ -4648,7 +4675,7 @@ function runODataAnnotationTests() {
 
 			oModel2.attachAnnotationsLoaded(function() {
 				// Model4 should now have the value lists "2"
-				ok(true, "Annotations for Model 2 loaded.");
+				assert.ok(true, "Annotations for Model 2 loaded.");
 
 				var oAnnotations = oModel2.getServiceAnnotations();
 
@@ -4667,20 +4694,21 @@ function runODataAnnotationTests() {
 
 				oModel.destroy();
 				oModel2.destroy();
-				start();
+				done();
 
 			});
 
 		});
 	};
 
-	asyncTest("V1: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 1));
-	asyncTest("V2: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 2));
+	QUnit.test("V1: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 1));
+	QUnit.test("V2: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 2));
 
 
 
 	var fnTestOverwritingOnTermLevel = function(iModelVersion) {
-		expect(3);
+		var done = assert.async();
+		assert.expect(3);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
@@ -4691,7 +4719,7 @@ function runODataAnnotationTests() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
 			// Not using deepContains, because we want to make sure that "ui5.test.OverwriteMe" has been replaced
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["ui5.test.Annotation"],
 				{
 					"ui5.test.SimpleAnnotation": {
@@ -4716,7 +4744,7 @@ function runODataAnnotationTests() {
 				"Correctly overwritten annotations: ui5.test.Annotation"
 			);
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations.propertyAnnotations.Test.NorthwindEntities,
 				{
 					"ui5.test.OverwriteMe": {
@@ -4738,7 +4766,7 @@ function runODataAnnotationTests() {
 				"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
 			);
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X,
 				{
 					"ui5.test.OverwriteMe": {
@@ -4761,18 +4789,19 @@ function runODataAnnotationTests() {
 			);
 
 			oModel.destroy();
-			start();
+			done();
 		});
 
 	}
 
-	asyncTest("V1: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 1));
-	asyncTest("V2: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 2));
+	QUnit.test("V1: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 1));
+	QUnit.test("V2: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 2));
 
 
 
 	var fnTestOverwritingOnTermLevel2 = function(iModelVersion) {
-		expect(6);
+		var done = assert.async();
+		assert.expect(6);
 
 		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service);
@@ -4781,7 +4810,7 @@ function runODataAnnotationTests() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
 			// Not using deepContains, because we want to make sure that "ui5.test.OverwriteMe" has been replaced
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations["ui5.test.Annotation"],
 				{
 					"ui5.test.SimpleAnnotation": {
@@ -4804,7 +4833,7 @@ function runODataAnnotationTests() {
 				"Correctly loaded annotations: ui5.test.Annotation"
 			);
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations.propertyAnnotations.Test.NorthwindEntities,
 				{
 					"ui5.test.OverwriteMe": {
@@ -4824,7 +4853,7 @@ function runODataAnnotationTests() {
 				"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
 			);
 
-			deepEqual(
+			assert.deepEqual(
 				oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X,
 				{
 					"ui5.test.OverwriteMe": {
@@ -4847,7 +4876,7 @@ function runODataAnnotationTests() {
 			oModel.addAnnotationUrl(mTest.annotations[1]).then(function() {
 				var oAnnotations = oModel.getServiceAnnotations();
 
-				deepEqual(
+				assert.deepEqual(
 					oAnnotations["ui5.test.Annotation"],
 					{
 						"ui5.test.SimpleAnnotation": {
@@ -4872,7 +4901,7 @@ function runODataAnnotationTests() {
 					"Correctly overwritten annotations: ui5.test.Annotation"
 				);
 
-				deepEqual(
+				assert.deepEqual(
 					oAnnotations.propertyAnnotations.Test.NorthwindEntities,
 					{
 						"ui5.test.OverwriteMe": {
@@ -4894,7 +4923,7 @@ function runODataAnnotationTests() {
 					"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
 				);
 
-				deepEqual(
+				assert.deepEqual(
 					oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X,
 					{
 						"ui5.test.OverwriteMe": {
@@ -4917,16 +4946,17 @@ function runODataAnnotationTests() {
 				);
 
 				oModel.destroy();
-				start();
+				done();
 			});
 		});
 	};
 
-	asyncTest("V1: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 1));
-	asyncTest("V2: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 2));
+	QUnit.test("V1: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 1));
+	QUnit.test("V2: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 2));
 
 	var fnTestAceptHeader = function(iModelVersion) {
-		expect(12);
+		var done = assert.async();
+		assert.expect(12);
 		var oModel = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
 		var oModel2 = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
 		var oModel3 = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
@@ -4934,8 +4964,8 @@ function runODataAnnotationTests() {
 		sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		oModel.addAnnotationUrl("fakeService://replay-headers").then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en-US", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en-US", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header set correctly");
 
 			oModel.setHeaders({
 				"X-Unfug": "Rosinenbroetchen"
@@ -4944,8 +4974,8 @@ function runODataAnnotationTests() {
 			return oModel.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Rosinenbroetchen", "Custom header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Rosinenbroetchen", "Custom header set correctly");
 
 			oModel.setHeaders({
 				"X-Unfug": "Quarkstrudel"
@@ -4954,8 +4984,8 @@ function runODataAnnotationTests() {
 			return oModel.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Quarkstrudel", "Custom header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Quarkstrudel", "Custom header set correctly");
 
 			// Annotations cannot be removed, just replaced by subsequent Annotation documents, so we need a new model to test the header replay...
 			oModel2.setHeaders({
@@ -4966,8 +4996,8 @@ function runODataAnnotationTests() {
 			return oModel2.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel2.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "fr", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "fr", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
 
 			oModel2.setHeaders({
 				"X-Unfug": "Mohnschnecke"
@@ -4976,8 +5006,8 @@ function runODataAnnotationTests() {
 			return oModel2.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel2.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Mohnschnecke", "Custom header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Mohnschnecke", "Custom header set correctly");
 
 			// Annotations cannot be removed, just replaced by subsequent Annotation documents, so we need a new model to test the header replay...
 			oModel3.setHeaders({
@@ -4988,8 +5018,8 @@ function runODataAnnotationTests() {
 			return oModel3.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel3.getServiceAnnotations();
-			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en", "Accept-Language header set correctly");
-			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en", "Accept-Language header set correctly");
+			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
 
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 
@@ -4998,16 +5028,16 @@ function runODataAnnotationTests() {
 			oModel3.destroy();
 
 			sap.ui.getCore().applyChanges();
-			start();
+			done();
 		});
 	};
 
-	asyncTest("V1: Send Accept-Language Header", fnTestAceptHeader.bind(this, 1));
-	asyncTest("V2: Send Accept-Language Header", fnTestAceptHeader.bind(this, 2));
+	QUnit.test("V1: Send Accept-Language Header", fnTestAceptHeader.bind(this, 1));
+	QUnit.test("V2: Send Accept-Language Header", fnTestAceptHeader.bind(this, 2));
 
 
 	var fnTestEdmTypeForNavigationProperties = function(iModelVersion) {
-
+		var done = assert.async();
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["EDMType for NavigationProperties"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service);
@@ -5015,7 +5045,7 @@ function runODataAnnotationTests() {
 		oModel.attachMetadataLoaded(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			equals(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
+			assert.equal(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
 
 			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
 				var oAnnotations = oModel.getServiceAnnotations();
@@ -5101,17 +5131,18 @@ function runODataAnnotationTests() {
 				}, "Product EDM types are correctly set");
 
 				oModel.destroy();
-				start();
+				done();
 			});
 		});
 	};
 
-	asyncTest("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
-	asyncTest("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
+	QUnit.test("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
+	QUnit.test("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
 
 
 	var fnTestNestedAnnotations = function(iModelVersion) {
-		expect(150);
+		var done = assert.async();
+		assert.expect(150);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Nested Annotations"];
@@ -5120,7 +5151,7 @@ function runODataAnnotationTests() {
 		oModel.attachMetadataLoaded(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			equals(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
+			assert.equal(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
 
 			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
 				var oAnnotations = oModel.getServiceAnnotations();
@@ -5264,11 +5295,11 @@ function runODataAnnotationTests() {
 
 
 
-				start();
+				done();
 			});
 		});
 	};
 
-	asyncTest("V1: Nested Annotations", fnTestNestedAnnotations.bind(this, 1));
-	asyncTest("V2: Nested Annotations", fnTestNestedAnnotations.bind(this, 2));
+	QUnit.test("V1: Nested Annotations", fnTestNestedAnnotations.bind(this, 1));
+	QUnit.test("V2: Nested Annotations", fnTestNestedAnnotations.bind(this, 2));
 }

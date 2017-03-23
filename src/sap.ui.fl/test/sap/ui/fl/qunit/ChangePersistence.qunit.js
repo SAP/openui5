@@ -361,7 +361,6 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 	});
 
 	QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings", function(assert) {
-		var sComponentName = this.sComponentName;
 		var oFileContent = {};
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
 		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
@@ -369,8 +368,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		return this.oChangePersistence.getChangesForComponent().then(function() {
 			assert.ok(oSettingsStoreInstanceStub.calledOnce, "the _storeInstance function of the fl.Settings was called.");
 			var aPassedArguments = oSettingsStoreInstanceStub.getCall(0).args;
-			assert.equal(aPassedArguments[0], sComponentName, "the component name was passed to the function");
-			assert.equal(aPassedArguments[1], oFileContent, "the file content was passed to the function");
+			assert.equal(aPassedArguments[0], oFileContent, "the file content was passed to the function");
 		});
 	});
 
@@ -774,7 +772,8 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		}.bind(this));
 	});
 
-	QUnit.test("Shall save the dirty changes in a bulk", 4, function (assert) {
+	QUnit.test("Shall save the dirty changes in a bulk", function (assert) {
+		assert.expect(4);
 		// REVISE There might be more elegant implementation
 		var oChangeContent1, oChangeContent2, lrepConnectorMock;
 

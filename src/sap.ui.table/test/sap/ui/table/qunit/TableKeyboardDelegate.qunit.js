@@ -3268,7 +3268,8 @@ QUnit.module("TableKeyboardDelegate2 - Navigation > NoData", {
 	}
 });
 
-QUnit.asyncTest("Tab - Default Test Table", function(assert) {
+QUnit.test("Tab - Default Test Table", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 
@@ -3280,14 +3281,15 @@ QUnit.asyncTest("Tab - Default Test Table", function(assert) {
 		simulateTabEvent(oElem, false);
 		checkFocus(jQuery.sap.domById("Focus2"), assert);
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 	oTable.setModel(new sap.ui.model.json.JSONModel());
 });
 
-QUnit.asyncTest("Tab - Without Column Header", function(assert) {
+QUnit.test("Tab - Without Column Header", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 
@@ -3297,7 +3299,7 @@ QUnit.asyncTest("Tab - Without Column Header", function(assert) {
 		simulateTabEvent(oElem, false);
 		checkFocus(jQuery.sap.domById("Focus2"), assert);
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.setColumnHeaderVisible(false);
@@ -3306,7 +3308,8 @@ QUnit.asyncTest("Tab - Without Column Header", function(assert) {
 	oTable.setModel(new sap.ui.model.json.JSONModel());
 });
 
-QUnit.asyncTest("Tab - With Extension and Footer", function(assert) {
+QUnit.test("Tab - With Extension and Footer", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 
@@ -3322,7 +3325,7 @@ QUnit.asyncTest("Tab - With Extension and Footer", function(assert) {
 		simulateTabEvent(oElem, false);
 		checkFocus(jQuery.sap.domById("Focus2"), assert);
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
@@ -3332,7 +3335,8 @@ QUnit.asyncTest("Tab - With Extension and Footer", function(assert) {
 	oTable.setModel(new sap.ui.model.json.JSONModel());
 });
 
-QUnit.asyncTest("Shift+Tab", function(assert) {
+QUnit.test("Shift+Tab", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 
@@ -3344,14 +3348,15 @@ QUnit.asyncTest("Shift+Tab", function(assert) {
 		simulateTabEvent(oElem, true);
 		checkFocus(jQuery.sap.domById("Focus1"), assert);
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 	oTable.setModel(new sap.ui.model.json.JSONModel());
 });
 
-QUnit.asyncTest("Shift+Tab - With Extension and Footer", function(assert) {
+QUnit.test("Shift+Tab - With Extension and Footer", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 
@@ -3367,7 +3372,7 @@ QUnit.asyncTest("Shift+Tab - With Extension and Footer", function(assert) {
 		simulateTabEvent(oElem, true);
 		checkFocus(jQuery.sap.domById("Focus1"), assert);
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
@@ -3377,7 +3382,8 @@ QUnit.asyncTest("Shift+Tab - With Extension and Footer", function(assert) {
 	oTable.setModel(new sap.ui.model.json.JSONModel());
 });
 
-QUnit.asyncTest("No Vertical Navigation (Header <-> Content)", function(assert) {
+QUnit.test("No Vertical Navigation (Header <-> Content)", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 
@@ -3395,7 +3401,7 @@ QUnit.asyncTest("No Vertical Navigation (Header <-> Content)", function(assert) 
 		qutils.triggerKeydown(oElem, Key.END, false, false, true);
 		checkFocus(getColumnHeader(0), assert);
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
@@ -3411,7 +3417,8 @@ QUnit.module("TableKeyboardDelegate2 - Navigation > NoData & Overlay", {
 	}
 });
 
-QUnit.asyncTest("No Navigation", function(assert) {
+QUnit.test("No Navigation", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 		var sId = "noDataCnt";
@@ -3449,14 +3456,15 @@ QUnit.asyncTest("No Navigation", function(assert) {
 			oTable.setShowOverlay(true);
 		}
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 	oTable.setModel(new sap.ui.model.json.JSONModel());
 });
 
-QUnit.asyncTest("Tab", function(assert) {
+QUnit.test("Tab", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 
@@ -3466,7 +3474,7 @@ QUnit.asyncTest("Tab", function(assert) {
 		simulateTabEvent(oElem, false);
 		checkFocus(jQuery.sap.domById("Focus2"), assert);
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.setShowOverlay(true);
@@ -3474,7 +3482,8 @@ QUnit.asyncTest("Tab", function(assert) {
 	oTable.setModel(new sap.ui.model.json.JSONModel());
 });
 
-QUnit.asyncTest("Shift+Tab", function(assert) {
+QUnit.test("Shift+Tab", function(assert) {
+	var done = assert.async();
 	function doAfterNoDataDisplayed() {
 		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
 
@@ -3484,7 +3493,7 @@ QUnit.asyncTest("Shift+Tab", function(assert) {
 		simulateTabEvent(oElem, true);
 		checkFocus(jQuery.sap.domById("Focus1"), assert);
 
-		QUnit.start();
+		done();
 	}
 
 	oTable.setShowOverlay(true);

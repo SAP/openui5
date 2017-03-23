@@ -151,7 +151,8 @@
 
 			QUnit.module("negative tests");
 
-			QUnit.test("type with query params and/or hash", 3, function(assert) {
+			QUnit.test("type with query params and/or hash", function(assert) {
+				assert.expect(3);
 				try {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.properties?version=2"});
 					assert.ok(true, "no exception must occur");

@@ -40,7 +40,7 @@ sap.ui.require([
       "# This is a comment with no leading spaces that should be stripped"
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Serve coffee",
       scenarios: [
@@ -79,7 +79,7 @@ sap.ui.require([
       "    Then I should be served a coffee"
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Serve coffee",
       background: {
@@ -119,7 +119,7 @@ sap.ui.require([
       "    Then they should be happy"
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give coffee to users",
       scenarios: [
@@ -165,7 +165,7 @@ sap.ui.require([
       "  Scenario: No coffee for you"
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: ["@wip", "@integration", "@caffeinated"],
       name: "Serve coffee",
       scenarios: [
@@ -199,15 +199,15 @@ sap.ui.require([
       "    When I give him <number> cups of coffee",
       "    Then he should be <mood>",
       "",
-      "  Examples:",
-      "    | user    | number | mood         |",
-      "    | Michael | 1      | happy        |",
-      "    | Elvis   | 4      | electrified  |",
-      "    | John    | 2      | happy        |",
+      "    Examples:",
+      "      | user    | number | mood         |",
+      "      | Michael | 1      | happy        |",
+      "      | Elvis   | 4      | electrified  |",
+      "      | John    | 2      | happy        |",
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [
@@ -236,12 +236,42 @@ sap.ui.require([
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Should parse scenario outline with no examples", function() {
+
+    var text = [
+      "Feature: Give cups of coffee to users",
+      "",
+      "  Scenario Outline: Coffee changes people moods",
+      "    Given the user <user>",
+      "    When I give him <number> cups of coffee",
+      "    Then he should be <mood>",
+      ""
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Give cups of coffee to users",
+      scenarios: [{
+        tags: [],
+        name: "Coffee changes people moods",
+        steps: [
+          { text: "the user <user>", keyword: "Given" },
+          { text: "I give him <number> cups of coffee", keyword: "When" },
+          { text: "he should be <mood>", keyword: "Then" }
+        ],
+        examples: []
+      }]
+    });
+
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("invalid parameters as function input", function(assert) {
 
     var badStringError = "simpleGherkinParser.parse: parameter 'sText' must be a valid string";
     var badFilenameError = "simpleGherkinParser.parseFile: parameter 'sPath' must be a valid string";
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parse();
     }, function(error) {
       return error.message === badStringError;
@@ -249,7 +279,7 @@ sap.ui.require([
       "'parse' called with no parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parse(/this is not a string/i);
     }, function(error) {
       return error.message === badStringError;
@@ -257,7 +287,7 @@ sap.ui.require([
       "'parse' called with invalid parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parseFile();
     }, function(error) {
       return error.message === badFilenameError;
@@ -265,7 +295,7 @@ sap.ui.require([
       "'parseFile' called with no parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parseFile(/this is not a string/i);
     }, function(error) {
       return error.message === badFilenameError;
@@ -273,7 +303,7 @@ sap.ui.require([
       "'parseFile' called with invalid parameter"
     );
 
-    throws( function(){
+    assert.throws( function(){
       this.parser.parseFile("this file does not exist");
     }, function(error) {
       return !!error.message.match(/^simpleGherkinParser\.parseFile\: error loading URL\: /);
@@ -301,7 +331,7 @@ sap.ui.require([
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [{
@@ -334,7 +364,7 @@ sap.ui.require([
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [{
@@ -364,7 +394,7 @@ sap.ui.require([
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [{
@@ -389,15 +419,15 @@ sap.ui.require([
       "  Scenario Outline: Coffee changes people moods",
       "    Then he should be <MOOD>",
       "",
-      "  Examples:",
-      "    | MOOD         |",
-      "    | happy        |",
-      "    | electrified  |",
-      "    | happy        |",
+      "    Examples:",
+      "      | MOOD         |",
+      "      | happy        |",
+      "      | electrified  |",
+      "      | happy        |",
       ""
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Give cups of coffee to users",
       scenarios: [{
@@ -431,13 +461,13 @@ sap.ui.require([
       "  Scenario Outline: No coffee for you",
       "    Given I have deposited <MONEY>",
       "",
-      "  @examples",
-      "  Examples:",
-      "    | MONEY |",
-      "    | $2    |",
+      "    @examples",
+      "    Examples:",
+      "      | MONEY |",
+      "      | $2    |",
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: ["@feature"],
       name: "Serve coffee",
       scenarios: [{
@@ -470,17 +500,17 @@ sap.ui.require([
       "  Scenario Outline: save money now to have more money for coffee later",
       "    Given I have deposited <MONEY>",
       "",
-      "  @wip",
-      "  Examples: lesser savings",
-      "    | MONEY |",
-      "    | $2    |",
+      "    @wip",
+      "    Examples: lesser savings",
+      "      | MONEY |",
+      "      | $2    |",
       "",
-      "  Examples: greater savings",
-      "    | MONEY |",
-      "    | $4    |",
+      "    Examples: greater savings",
+      "      | MONEY |",
+      "      | $4    |",
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Serve coffee later",
       scenarios: [{
@@ -515,16 +545,18 @@ sap.ui.require([
       "    Given I have deposited <MONEY>",
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Serve coffee later",
       scenarios: [{
+        examples: [],
         tags: [],
         name: "don't save money now to have no money for coffee later",
         steps: [
           { text: "I wasted <MONEY> on lottery tickets", keyword: "Given" }
         ]
       },{
+        examples: [],
         tags: [],
         name: "save money now to have more money for coffee later",
         steps: [
@@ -545,7 +577,7 @@ sap.ui.require([
       "    Given the vacuum of outer space is nearly 0 degrees Kelvin",
     ].join("\n");
 
-    deepEqual(this.parser.parse(text), {
+    assert.deepEqual(this.parser.parse(text), {
       tags: [],
       name: "Outer Space",
       scenarios: [{

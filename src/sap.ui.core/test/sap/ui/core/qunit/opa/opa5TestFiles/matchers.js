@@ -120,7 +120,7 @@ sap.ui.define([
 		var oOpa5 = new Opa5(),
 			fnMatcherStub = this.stub().returns("foo"),
 			fnActionSpy = this.spy(),
-			start = assert.async();
+			done = assert.async();
 
 		// give some common defaults to see if they interfere and the plugin thinks we are looking for a control
 		Opa5.extendConfig({
@@ -137,7 +137,7 @@ sap.ui.define([
 			// Assert
 			sinon.assert.calledOnce(fnMatcherStub);
 			sinon.assert.calledWith(fnActionSpy, "foo");
-			start();
+			done();
 		});
 		this.clock.tick(1000);
 	});
@@ -169,12 +169,12 @@ sap.ui.define([
 		oOpa5.emptyQueue();
 
 		this.clock.tick(iExecutionDelay);
-		strictEqual(oMatchSpy.callCount, 1, "called the matcher for the first time");
+		assert.strictEqual(oMatchSpy.callCount, 1, "called the matcher for the first time");
 		this.clock.tick(200);
-		strictEqual(oMatchSpy.callCount, 2, "called the matcher for the second time");
+		assert.strictEqual(oMatchSpy.callCount, 2, "called the matcher for the second time");
 
 		// Assert
-		strictEqual(oCheckSpy.callCount, 0, "did not call the check");
+		assert.strictEqual(oCheckSpy.callCount, 0, "did not call the check");
 
 		// Cleanup
 		this.clock.tick(1000);
@@ -215,15 +215,15 @@ sap.ui.define([
 
 		this.clock.tick(iExecutionDelay);
 		// Assert
-		strictEqual(oTextMatcherSpy.callCount, 0, "did not call the oTextMatcher yet");
-		strictEqual(oEnabledMatcherSpy.callCount, 1, "called the oEnabledMatcher");
+		assert.strictEqual(oTextMatcherSpy.callCount, 0, "did not call the oTextMatcher yet");
+		assert.strictEqual(oEnabledMatcherSpy.callCount, 1, "called the oEnabledMatcher");
 
 		oButton.setEnabled(false);
 		this.clock.tick(200);
-		strictEqual(oTextMatcherSpy.callCount, 1, "did call the oTextMatcher");
-		strictEqual(oEnabledMatcherSpy.callCount, 2, "did call the oEnabledMatcher again");
+		assert.strictEqual(oTextMatcherSpy.callCount, 1, "did call the oTextMatcher");
+		assert.strictEqual(oEnabledMatcherSpy.callCount, 2, "did call the oEnabledMatcher again");
 
-		strictEqual(oSuccessSpy.callCount, 1, "did call the success");
+		assert.strictEqual(oSuccessSpy.callCount, 1, "did call the success");
 
 		// Cleanup
 		oButton.destroy();
@@ -260,11 +260,11 @@ sap.ui.define([
 		// Assert
 		this.clock.tick(200);
 
-		strictEqual(oSuccessSpy.callCount, 1, "did call the success");
+		assert.strictEqual(oSuccessSpy.callCount, 1, "did call the success");
 		var aControls = oSuccessSpy.args[0][0];
 
-		strictEqual(aControls.length, 1, "did pass only one button");
-		strictEqual(aControls[0].sId, "myButton2", "did pass the correct button");
+		assert.strictEqual(aControls.length, 1, "did pass only one button");
+		assert.strictEqual(aControls[0].sId, "myButton2", "did pass the correct button");
 
 		// Cleanup
 		oButton.destroy();
@@ -300,10 +300,10 @@ sap.ui.define([
 		// Assert
 		this.clock.tick(200);
 
-		strictEqual(oSuccessSpy.callCount, 1, "did call the success");
+		assert.strictEqual(oSuccessSpy.callCount, 1, "did call the success");
 		var oControl = oSuccessSpy.args[0][0];
 
-		strictEqual(oControl.sId, "myButton", "did pass the correct button");
+		assert.strictEqual(oControl.sId, "myButton", "did pass the correct button");
 
 		// Cleanup
 		oButton.destroy();
@@ -346,12 +346,12 @@ sap.ui.define([
 		this.clock.tick(iExecutionDelay);
 		this.clock.tick(iExecutionDelay);
 
-		strictEqual(fnMatcher.callCount, 2, "called the matcher twice");
+		assert.strictEqual(fnMatcher.callCount, 2, "called the matcher twice");
 
 		// Assert
-		ok(fnCheckSpy1.calledBefore(fnCheckSpy2), "Checks executed in correct order");
-		strictEqual(fnCheckSpy1.callCount, 1, "called first check");
-		strictEqual(fnCheckSpy2.callCount, 1, "called last check");
+		assert.ok(fnCheckSpy1.calledBefore(fnCheckSpy2), "Checks executed in correct order");
+		assert.strictEqual(fnCheckSpy1.callCount, 1, "called first check");
+		assert.strictEqual(fnCheckSpy2.callCount, 1, "called last check");
 
 		// Cleanup
 		this.clock.tick(1000);

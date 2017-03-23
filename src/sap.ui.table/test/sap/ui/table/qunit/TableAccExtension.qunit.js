@@ -247,7 +247,8 @@ function testAriaDescriptionsForFocusedDataCell($Cell, iRow, iCol, assert, mPara
 	);
 }
 
-QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
+QUnit.test("aria-labelledby with Focus", function(assert) {
+	var done = assert.async();
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
 		$Cell = getCell(0, i, true, assert);
@@ -260,7 +261,7 @@ QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		testAriaLabelsForNonFocusedDataCell($Cell, 1, aFields.length - 1, assert);
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -278,7 +279,8 @@ QUnit.test("aria-labelledby without Focus", function(assert) {
 	setFocusOutsideOfTable();
 });
 
-QUnit.asyncTest("ACCInfo", function(assert) {
+QUnit.test("ACCInfo", function(assert) {
+	var done = assert.async();
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
 		$Cell = getCell(0, i, true, assert);
@@ -287,11 +289,12 @@ QUnit.asyncTest("ACCInfo", function(assert) {
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		testAriaLabelsForNonFocusedDataCell($Cell, 0, aFields.length - 1, assert);
-		QUnit.start();
+		done();
 	}, 100);
 });
 
-QUnit.asyncTest("aria-describedby with Focus", function(assert) {
+QUnit.test("aria-describedby with Focus", function(assert) {
+	var done = assert.async();
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
 		$Cell = getCell(0, i, true, assert);
@@ -304,7 +307,7 @@ QUnit.asyncTest("aria-describedby with Focus", function(assert) {
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + (aFields.length - 1) + "]");
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -322,7 +325,8 @@ QUnit.test("aria-describedby without Focus", function(assert) {
 	setFocusOutsideOfTable();
 });
 
-QUnit.asyncTest("Grouping Row", function(assert) {
+QUnit.test("Grouping Row", function(assert) {
+	var done = assert.async();
 	initRowActions(oTable, 1, 1);
 
 	var oRefs = fakeGroupRow(1);
@@ -351,11 +355,12 @@ QUnit.asyncTest("Grouping Row", function(assert) {
 	setTimeout(function() {
 		testAriaLabelsForNonFocusedDataCell(getCell(1, aFields.length - 1, false, assert), 1, aFields.length - 1, assert);
 		oTable.rerender();
-		QUnit.start();
+		done();
 	}, 100);
 });
 
-QUnit.asyncTest("Sum Row", function(assert) {
+QUnit.test("Sum Row", function(assert) {
+	var done = assert.async();
 	initRowActions(oTable, 1, 1);
 
 	var oRefs = fakeSumRow(1);
@@ -381,7 +386,7 @@ QUnit.asyncTest("Sum Row", function(assert) {
 	setTimeout(function() {
 		testAriaLabelsForNonFocusedDataCell(getCell(1, aFields.length - 1, false, assert), 1, aFields.length - 1, assert);
 		oTable.rerender();
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -464,7 +469,8 @@ function testAriaLabelsForColumnHeader($Cell, iCol, assert, mParams) {
 	}
 }
 
-QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
+QUnit.test("aria-labelledby with Focus", function(assert) {
+	var done = assert.async();
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
 		$Cell = getColumnHeader(i, true, assert);
@@ -473,7 +479,7 @@ QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		testAriaLabelsForColumnHeader($Cell, aFields.length - 1, assert);
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -487,7 +493,8 @@ QUnit.test("aria-labelledby without Focus", function(assert) {
 	setFocusOutsideOfTable();
 });
 
-QUnit.asyncTest("aria-describedby with Focus", function(assert) {
+QUnit.test("aria-describedby with Focus", function(assert) {
+	var done = assert.async();
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
 		$Cell = getColumnHeader(i, true, assert);
@@ -495,7 +502,7 @@ QUnit.asyncTest("aria-describedby with Focus", function(assert) {
 	}
 	setFocusOutsideOfTable();
 	setTimeout(function() {
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -579,7 +586,8 @@ function testAriaLabelsForRowHeader($Cell, iRow, assert, mParams) {
 	}
 }
 
-QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
+QUnit.test("aria-labelledby with Focus", function(assert) {
+	var done = assert.async();
 	var $Cell;
 	for (var i = 0; i < 2; i++) {
 		$Cell = getRowHeader(i, true, assert);
@@ -588,7 +596,7 @@ QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		testAriaLabelsForRowHeader($Cell, 2, assert);
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -602,7 +610,8 @@ QUnit.test("aria-labelledby without Focus", function(assert) {
 	setFocusOutsideOfTable();
 });
 
-QUnit.asyncTest("aria-describedby with Focus", function(assert) {
+QUnit.test("aria-describedby with Focus", function(assert) {
+	var done = assert.async();
 	var $Cell;
 	for (var i = 0; i < 2; i++) {
 		$Cell = getRowHeader(i, true, assert);
@@ -610,7 +619,7 @@ QUnit.asyncTest("aria-describedby with Focus", function(assert) {
 	}
 	setFocusOutsideOfTable();
 	setTimeout(function() {
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -624,7 +633,8 @@ QUnit.test("aria-describedby without Focus", function(assert) {
 	setFocusOutsideOfTable();
 });
 
-QUnit.asyncTest("Grouping Row", function(assert) {
+QUnit.test("Grouping Row", function(assert) {
+	var done = assert.async();
 	var oRefs = fakeGroupRow(1);
 
 	assert.strictEqual(oRefs.hdr.attr("aria-expanded"), "true", "aria-expanded set on group row header");
@@ -642,11 +652,12 @@ QUnit.asyncTest("Grouping Row", function(assert) {
 	setTimeout(function() {
 		testAriaLabelsForRowHeader($Cell, 1, assert);
 		oTable.rerender();
-		QUnit.start();
+		done();
 	}, 100);
 });
 
-QUnit.asyncTest("Sum Row", function(assert) {
+QUnit.test("Sum Row", function(assert) {
+	var done = assert.async();
 	var oRefs = fakeSumRow(1);
 
 	assert.strictEqual(oRefs.hdr.attr("aria-level"), "2", "aria-level set on sum row header");
@@ -662,7 +673,7 @@ QUnit.asyncTest("Sum Row", function(assert) {
 	setTimeout(function() {
 		testAriaLabelsForRowHeader($Cell, 1, assert);
 		oTable.rerender();
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -742,7 +753,8 @@ function testAriaLabelsForRowAction($Cell, iRow, assert, mParams) {
 	}
 }
 
-QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
+QUnit.test("aria-labelledby with Focus", function(assert) {
+	var done = assert.async();
 	var $Cell;
 	for (var i = 0; i < 2; i++) {
 		$Cell = getRowAction(i, true, assert);
@@ -751,11 +763,12 @@ QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		testAriaLabelsForRowAction($Cell, 2, assert);
-		QUnit.start();
+		done();
 	}, 100);
 });
 
-QUnit.asyncTest("aria-labelledby with Focus (Group Row)", function(assert) {
+QUnit.test("aria-labelledby with Focus (Group Row)", function(assert) {
+	var done = assert.async();
 	fakeGroupRow(1);
 	var $Cell;
 	for (var i = 0; i < 2; i++) {
@@ -765,11 +778,12 @@ QUnit.asyncTest("aria-labelledby with Focus (Group Row)", function(assert) {
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		testAriaLabelsForRowAction($Cell, 2, assert);
-		QUnit.start();
+		done();
 	}, 100);
 });
 
-QUnit.asyncTest("aria-labelledby with Focus (Sum Row)", function(assert) {
+QUnit.test("aria-labelledby with Focus (Sum Row)", function(assert) {
+	var done = assert.async();
 	fakeSumRow(1);
 	var $Cell;
 	for (var i = 0; i < 2; i++) {
@@ -779,7 +793,7 @@ QUnit.asyncTest("aria-labelledby with Focus (Sum Row)", function(assert) {
 	setFocusOutsideOfTable();
 	setTimeout(function() {
 		testAriaLabelsForRowAction($Cell, 2, assert);
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -814,7 +828,8 @@ QUnit.module("SelectAll", {
 	}
 });
 
-QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
+QUnit.test("aria-labelledby with Focus", function(assert) {
+	var done = assert.async();
 	var sId = oTable.getId();
 	var $Cell = getSelectAll(true, assert);
 	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
@@ -825,11 +840,12 @@ QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 		sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling , "aria-labelledby of select all");
 	setFocusOutsideOfTable();
 	setTimeout(function() {
-		QUnit.start();
+		done();
 	}, 100);
 });
 
-QUnit.asyncTest("aria-labelledby with Focus (Single Selection)", function(assert) {
+QUnit.test("aria-labelledby with Focus (Single Selection)", function(assert) {
+	var done = assert.async();
 	oTable.setSelectionMode("Single");
 	sap.ui.getCore().applyChanges();
 	var sId = oTable.getId();
@@ -842,7 +858,7 @@ QUnit.asyncTest("aria-labelledby with Focus (Single Selection)", function(assert
 		sId + "-ariacolrowheaderlabel " + sId + "-ariaselectall" , "aria-labelledby of select all");
 	setFocusOutsideOfTable();
 	setTimeout(function() {
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -864,12 +880,13 @@ QUnit.test("aria-labelledby without Focus (Single Selection)", function(assert) 
 	setFocusOutsideOfTable();
 });
 
-QUnit.asyncTest("aria-describedby with Focus", function(assert) {
+QUnit.test("aria-describedby with Focus", function(assert) {
+	var done = assert.async();
 	var $Cell = getSelectAll(true, assert);
 	assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "" , "aria-describedby of select all");
 	setFocusOutsideOfTable();
 	setTimeout(function() {
-		QUnit.start();
+		done();
 	}, 100);
 });
 
@@ -1017,7 +1034,8 @@ QUnit.test("ARIA for Overlay", function(assert) {
 	});
 });
 
-QUnit.asyncTest("ARIA for NoData", function(assert) {
+QUnit.test("ARIA for NoData", function(assert) {
+	var done = assert.async();
 	var $NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
 	//2xTable + Row Selector = 3
 	assert.strictEqual($NoDataCoveredElements.length, 3 , "Number of potentionally covered elements");
@@ -1041,7 +1059,7 @@ QUnit.asyncTest("ARIA for NoData", function(assert) {
 		$NoDataCoveredElements.each(function(){
 			assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 		});
-		QUnit.start();
+		done();
 	}
 
 	oTable.attachEvent("_rowsUpdated", onNewModelApplied);
@@ -1067,7 +1085,8 @@ QUnit.test("HiddenTexts", function(assert) {
 	});
 });
 
-QUnit.asyncTest("Scrolling", function(assert) {
+QUnit.test("Scrolling", function(assert) {
+	var done = assert.async();
 	var $Cell = getCell(2, 0, true, assert);
 	testAriaLabelsForFocusedDataCell($Cell, 2, 0, assert, {firstTime: true});
 
@@ -1095,7 +1114,7 @@ QUnit.asyncTest("Scrolling", function(assert) {
 		oTable.setFirstVisibleRow(0);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell($Cell, 2, 0, assert);
-			QUnit.start();
+			done();
 		}, 100);
 	}, iDelay + 50);
 });

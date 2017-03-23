@@ -2440,7 +2440,7 @@ QUnit.test("addItem()", function(assert) {
 	assert.ok(oSelect.getList().getFirstItem() === oItem);
 	assert.ok(fnAddItemSpy.returned(oSelect));
 	assert.ok(oItem.hasListeners("_change"));
-	// ok(oItem.data(sap.m.SelectRenderer.CSS_CLASS + "ItemVisible"), "The item is marked as visible");	TODO
+	// assert.ok(oItem.data(sap.m.SelectRenderer.CSS_CLASS + "ItemVisible"), "The item is marked as visible");	TODO
 
 	// cleanup
 	oSelect.destroy();
@@ -2488,7 +2488,7 @@ QUnit.test("insertItem()", function(assert) {
 	assert.ok(fnInsertAggregation.calledWith("items", oItem, 0), "insertAggregation() method was called with the expected arguments");
 	assert.ok(fnInsertItem.returned(oSelect), 'oSelect.insertAggregation() returns this to allow method chaining');
 	assert.ok(oItem.hasListeners("_change"));
-	// ok(oItem.data(sap.m.SelectRenderer.CSS_CLASS + "ItemVisible"), "The item is marked as visible");	TODO
+	// assert.ok(oItem.data(sap.m.SelectRenderer.CSS_CLASS + "ItemVisible"), "The item is marked as visible");	TODO
 
 	// cleanup
 	oSelect.destroy();

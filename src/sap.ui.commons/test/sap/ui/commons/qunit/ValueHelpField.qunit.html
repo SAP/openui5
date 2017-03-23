@@ -63,26 +63,26 @@
 		QUnit.test("Output", function(assert) {
 			// default ValueHelpField
 
-			equal(jQuery.sap.domById("VHF3").offsetWidth, 200, "width of the field");
+			assert.equal(jQuery.sap.domById("VHF3").offsetWidth, 200, "width of the field");
 
 			// other images
-			ok(jQuery.sap.byId("VHF4").children("img").get(0), "With URL: Icon image rendered");
-			equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed");
+			assert.ok(jQuery.sap.byId("VHF4").children("img").get(0), "With URL: Icon image rendered");
+			assert.equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 
 		});
 
 		QUnit.test("ARIA", function(assert) {
 			var oVHF = jQuery.sap.byId("VHF1");
 			var oVHFInput = jQuery("#VHF1 > input");
-			equal(oVHF.attr("aria-owns"), "VHF1-input VHF1-icon", "aria-owns");
-			equal(oVHFInput.attr("aria-describedby"), "D1 D2", "aria-describesby");
-			equal(oVHFInput.attr("aria-labelledby"), "L1", "aria-labelledby");
-			equal(oVHFInput.attr("aria-multiline"), "false", "aria-multiline");
-			equal(oVHFInput.attr("aria-autocomplete"), "none", "aria-autocomplete");
-			ok(!oVHFInput.attr("aria-invalid"), "aria-invalid");
+			assert.equal(oVHF.attr("aria-owns"), "VHF1-input VHF1-icon", "aria-owns");
+			assert.equal(oVHFInput.attr("aria-describedby"), "D1 D2", "aria-describesby");
+			assert.equal(oVHFInput.attr("aria-labelledby"), "L1", "aria-labelledby");
+			assert.equal(oVHFInput.attr("aria-multiline"), "false", "aria-multiline");
+			assert.equal(oVHFInput.attr("aria-autocomplete"), "none", "aria-autocomplete");
+			assert.ok(!oVHFInput.attr("aria-invalid"), "aria-invalid");
 			var oVHF = jQuery.sap.byId("VHF4");
 			var oVHFInput = jQuery("#VHF4 > input");
-			equal(oVHFInput.attr("aria-invalid"), "true", "aria-invalid");
+			assert.equal(oVHFInput.attr("aria-invalid"), "true", "aria-invalid");
     });
 
 		QUnit.test("hover", function(assert) {
@@ -90,21 +90,21 @@
 
 			//own image - but no own hover image -> no change
 			qutils.triggerMouseEvent("VHF4-icon", "mouseover");
-			equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed");
+			assert.equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 			qutils.triggerMouseEvent("VHF4-icon", "mouseout");
 
 			//own image + own hover image
 			qutils.triggerMouseEvent("VHF5-icon", "mouseover");
-			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/close.gif", "URL image displayed");
+			assert.equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/close.gif", "URL image displayed");
 			qutils.triggerMouseEvent("VHF5-icon", "mouseout");
-			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/help.gif", "URL image displayed");
+			assert.equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 
 		});
 
 		QUnit.test("Change Image", function(assert) {
 			oVHF1.setIconURL("../images/ui5.png");
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), "../images/ui5.png", "URL image displayed");
+			assert.equal(jQuery.sap.byId("VHF1").children("img").attr('src'), "../images/ui5.png", "URL image displayed");
 
 			// go back to default
 			oVHF1.setIconURL("");
@@ -113,19 +113,19 @@
 			// disabled - regular image given - no disabled image -> regular image should be displayed (with opacity)
 			oVHF3.setIconURL("../images/save.png");
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class set");
+			assert.ok(jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class set");
 			// disabled image
 			oVHF3.setIconDisabledURL("../images/new.png");
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class not set");
+			assert.ok(!jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class not set");
 
 			// hover image change
 			oVHF5.setIconHoverURL("../images/personalize.gif");
 			sap.ui.getCore().applyChanges();
 			qutils.triggerMouseEvent("VHF5-icon", "mouseover");
-			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/personalize.gif", "URL image displayed");
+			assert.equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/personalize.gif", "URL image displayed");
 			qutils.triggerMouseEvent("VHF5-icon", "mouseout");
-			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/help.gif", "URL image displayed");
+			assert.equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 
 		});
 
@@ -133,29 +133,29 @@
 
 		QUnit.test("event", function(assert) {
 			qutils.triggerMouseEvent("VHF1-icon", "click");
-			equal(sEvent, "ValueHelpRequest","Click - event fired");
+			assert.equal(sEvent, "ValueHelpRequest","Click - event fired");
 			sEvent = "";
 
 			qutils.triggerKeyboardEvent("VHF1", jQuery.sap.KeyCodes.F4, false, false, false);
-			equal(sEvent, "ValueHelpRequest","F4 - event fired");
+			assert.equal(sEvent, "ValueHelpRequest","F4 - event fired");
 			sEvent = "";
 
 			// readonly
 			qutils.triggerMouseEvent("VHF2-icon", "click");
-			equal(sEvent, "","Click - no event fired");
+			assert.equal(sEvent, "","Click - no event fired");
 			sEvent = "";
 
 			qutils.triggerKeyboardEvent("VHF2", jQuery.sap.KeyCodes.F4, false, false, false);
-			equal(sEvent, "","F4 - event fired");
+			assert.equal(sEvent, "","F4 - event fired");
 			sEvent = "";
 
 			// disabled
 			qutils.triggerMouseEvent("VHF3-icon", "click");
-			equal(sEvent, "","Click - no event fired");
+			assert.equal(sEvent, "","Click - no event fired");
 			sEvent = "";
 
 			qutils.triggerKeyboardEvent("VHF3", jQuery.sap.KeyCodes.F4, false, false, false);
-			equal(sEvent, "","F4 - event fired");
+			assert.equal(sEvent, "","F4 - event fired");
 			sEvent = "";
 
 		});

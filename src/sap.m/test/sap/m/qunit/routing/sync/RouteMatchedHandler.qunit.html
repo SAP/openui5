@@ -68,8 +68,8 @@
 					oRouter.fireRouteMatched({config: {}, name: "myRoute"});
 					oRouter.fireRoutePatternMatched({config: {}});
 
-					strictEqual(oRouteMatchedSpy.callCount, 1, "did fire the event");
-					strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did fire the pattern matched event");
+					assert.strictEqual(oRouteMatchedSpy.callCount, 1, "did fire the event");
+					assert.strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did fire the pattern matched event");
 
 					//Act
 					oRouteMatchedHandler.destroy();
@@ -79,10 +79,10 @@
 					oRouter.fireRoutePatternMatched({config: {}});
 
 					//Assert
-					strictEqual(oRouteMatchedSpy.callCount, 1, "did not fire the event again");
-					strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did not fire the pattern matched event again");
+					assert.strictEqual(oRouteMatchedSpy.callCount, 1, "did not fire the event again");
+					assert.strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did not fire the pattern matched event again");
 
-					strictEqual(oRouteMatchedHandler.getCloseDialogs(), false, "close dialogs was set to false");
+					assert.strictEqual(oRouteMatchedHandler.getCloseDialogs(), false, "close dialogs was set to false");
 				});
 
 				QUnit.module("Transition Directions");
@@ -111,11 +111,11 @@
 					oRouter.fireRoutePatternMatched(oEvent);
 
 					//Assert
-					strictEqual(oNavigateStub.callCount, 1, "did call navigate");
+					assert.strictEqual(oNavigateStub.callCount, 1, "did call navigate");
 					var oDirectionInfo = oNavigateStub.firstCall.args[0];
 
-					strictEqual(oEvent.config.viewLevel, oDirectionInfo.viewLevel, "did have the correct viewlevel");
-					ok(oDirectionInfo.askHistory, "did ask the history");
+					assert.strictEqual(oEvent.config.viewLevel, oDirectionInfo.viewLevel, "did have the correct viewlevel");
+					assert.ok(oDirectionInfo.askHistory, "did ask the history");
 
 					oRouter.destroy();
 				});
@@ -287,8 +287,8 @@
 					this.oRouter.fireRoutePatternMatched(this.oEvent);
 
 					//Assert
-					strictEqual(oCloseAllPopoversSpy.callCount, iExpectedCallCount, "did close the popups");
-					strictEqual(oCloseAllDialogsSpy.callCount, iExpectedCallCount, "did close the dialogs");
+					assert.strictEqual(oCloseAllPopoversSpy.callCount, iExpectedCallCount, "did close the popups");
+					assert.strictEqual(oCloseAllDialogsSpy.callCount, iExpectedCallCount, "did close the dialogs");
 				}
 
 				QUnit.test("Should close all dialogs", function (assert) {
@@ -299,7 +299,7 @@
 					closeDialogsTestCase.call(this, false);
 				});
 
-				test("Should get/set close all dialogs", function (assert) {
+				QUnit.test("Should get/set close all dialogs", function (assert) {
 					// System under test
 					var oRouteMatchedHandler = new RouteMatchedHandler(new Router());
 
@@ -366,8 +366,8 @@
 					this.clock.tick(0);
 
 					//Assert
-					strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-					strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
+					assert.strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+					assert.strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
 
 					oMasterView.destroy();
 					oDetailView.destroy();
@@ -375,7 +375,7 @@
 					oRouteMatchedHandler.destroy();
 				});
 
-				test("Should work with routes without targets mixed with routes with targets", function (assert) {
+				QUnit.test("Should work with routes without targets mixed with routes with targets", function (assert) {
 					//Arrange
 					var oMasterView = createViewAndController("Master"),
 							oDetailView = createViewAndController("Detail"),

@@ -947,15 +947,16 @@
 	QUnit.module("Initial Check");
 
 	QUnit.test("Overview rendered", function(assert) {
-		ok(jQuery.sap.domById("sapMList001-listUl"), "Overview should be rendered");
-		ok(jQuery.sap.domById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList001-listUl"), "Overview should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 1 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 1 to detail page", function(assert) {
+		var done = assert.async();
 		app.to("standardListThumb", "show");
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[0].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -964,16 +965,17 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			done();
 		},50);
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 2 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 2 to detail page", function(assert) {
+		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[1].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -982,16 +984,17 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			done();
 		},50);
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 3 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 3 to detail page", function(assert) {
+		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[2].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -1000,16 +1003,17 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			done();
 		},50);
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 4 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 4 to detail page", function(assert) {
+		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[3].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -1018,16 +1022,17 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			done();
 		},50);
 	});
 
-	asyncTest("standardListThumb rendered - navigate from listitem no 5 to detail page", function() {
+	QUnit.test("standardListThumb rendered - navigate from listitem no 5 to detail page", function(assert) {
+		var done = assert.async();
 		app.back();
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[4].getId();
 		var oListItem = sap.ui.getCore().byId(listItemId);
@@ -1036,8 +1041,8 @@
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			sap.ui.getCore().applyChanges();
-			ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
-			start();
+			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			done();
 		},50);
 	});
 
@@ -1050,79 +1055,80 @@
 		jQuery.sap.require("sap.ui.core.theming.Parameters");
 		var _bShowUnreadBubble = (sap.ui.core.theming.Parameters.get("sapUiLIUnreadAsBubble") == "true");
 		if (_bShowUnreadBubble) {
-			ok(jQuery.sap.domById(listItemId + "-unread"), "standardListThumb unread indicator should be rendered");
+			assert.ok(jQuery.sap.domById(listItemId + "-unread"), "standardListThumb unread indicator should be rendered");
 		}
-		ok(jQuery.sap.domById(listItemId + "-counter"), "standardListThumb counter should be rendered");
-		ok(jQuery.sap.domById(listItemId + "-info"), "standardListThumb info should be rendered");
-		ok(jQuery.sap.domById("actionListItem"), "actionListItem should be rendered");
+		assert.ok(jQuery.sap.domById(listItemId + "-counter"), "standardListThumb counter should be rendered");
+		assert.ok(jQuery.sap.domById(listItemId + "-info"), "standardListThumb info should be rendered");
+		assert.ok(jQuery.sap.domById("actionListItem"), "actionListItem should be rendered");
 	});
 
 	QUnit.test("standardListIcon rendered", function(assert) {
 		app.to("standardListIcon", "show");
 		sap.ui.getCore().applyChanges();
-		ok(jQuery.sap.domById("sapMList003-listUl"), "standardListIcon should be rendered");
-		ok(jQuery.sap.domById("sapMList003-listUl").childNodes[0], "standardListIcon ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList003-listUl"), "standardListIcon should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList003-listUl").childNodes[0], "standardListIcon ListItem should be rendered");
 		app.to("standardListTitle", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("standardListTitle rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList004-listUl"), "standardListTitle should be rendered");
-		ok(jQuery.sap.domById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList004-listUl"), "standardListTitle should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
 		app.to("standardListNoImage", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("standardListNoImage rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList005-listUl"), "standardListNoImage should be rendered");
-		ok(jQuery.sap.domById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList005-listUl"), "standardListNoImage should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
 		app.to("displayList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("displayList rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList006-listUl"), "displayList should be rendered");
-		ok(jQuery.sap.domById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList006-listUl"), "displayList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
 		app.to("inputList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("inputList rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList007-listUl"), "inputList should be rendered");
-		ok(jQuery.sap.domById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList007-listUl"), "inputList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
 		app.to("customList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("customList rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList008-listUl"), "customList should be rendered");
-		ok(jQuery.sap.domById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList008-listUl"), "customList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
 		app.to("invisibleList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("invisibleList rendered", function(assert) {
 		app.back();
-		ok(!jQuery.sap.domById("sapMList010-listUl"), "invisibleList should not be rendered");
+		assert.ok(!jQuery.sap.domById("sapMList010-listUl"), "invisibleList should not be rendered");
 		app.to("noDataList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("noDataList rendered", function(assert) {
 		app.back();
-		ok(jQuery.sap.domById("sapMList011-listUl"), "noDataList should be rendered");
-		ok(jQuery.sap.domById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList011-listUl"), "noDataList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
 		app.to("selectionList", "show");
 		sap.ui.getCore().applyChanges();
 	});
 
 	if (jQuery.support.touch) {
-		asyncTest("swipe action", function() {
+		QUnit.test("swipe action", function(assert) {
+			var done = assert.async();
 			app.back();
 			app.to("swipeContentPage", "show");
 			sap.ui.getCore().applyChanges();
@@ -1137,68 +1143,69 @@
 
 			setTimeout(function() {
 				var oContainer = jQuery.sap.domById(swipeContentList.getId() + "-swp");
-				ok(oContainer instanceof HTMLElement, "Swipe Content is rendered");
+				assert.ok(oContainer instanceof HTMLElement, "Swipe Content is rendered");
 				swipeContentList.swipeOut(function(li, swpcnt){
 					var oContainer = jQuery.sap.domById(swipeContentList.getId() + "-swp");
-					equals(oContainer, null, "Swipe Content is removed");
+					assert.equal(oContainer, null, "Swipe Content is removed");
 					swipeContentList.setSwipeContent(swpcnt.setText("Disapprove").setType("Reject"));
-					start();
+					done();
 				});
 			}, 1000);
 		});
 	}
 
 	QUnit.test("selectionList rendered", function(assert) {
-		ok(jQuery.sap.domById("sapMList009"), "selectionList should be rendered");
-		ok(jQuery.sap.domById("sapMList009").childNodes[0], "selectionList ListItem should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList009"), "selectionList should be rendered");
+		assert.ok(jQuery.sap.domById("sapMList009").childNodes[0], "selectionList ListItem should be rendered");
 	});
 
 	QUnit.test("selectionList singleSelection Item 1", function(assert) {
 		setSelectionItem1();
-		equals(checkSingleSelectionItem1(), true, "SingleSelection: Item 1 should be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), true, "SingleSelection: Item 1 should be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList singleSelection Item 2", function(assert) {
 		setSelectionItem2();
-		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), true, "SingleSelection: Item 2 should be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), true, "SingleSelection: Item 2 should be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList singleSelection Item 3", function(assert) {
 		setSelectionItem3();
-		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), true, "SingleSelection: Item 3 should be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), true, "SingleSelection: Item 3 should be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList singleSelection Item 4", function(assert) {
 		setSelectionItem4();
-		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), true, "SingleSelection: Item 4 should be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), true, "SingleSelection: Item 4 should be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList singleSelection Item 5", function(assert) {
 		setSelectionItem5();
-		equals(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), true, "SingleSelection: Item 5 should be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelection: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelection: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelection: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelection: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), true, "SingleSelection: Item 5 should be selected");
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 1", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 1", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1208,17 +1215,18 @@
 		qutils.triggerEvent("tap", radioButtonId1);
 
 		setTimeout(function() {
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 
-			start();
+			done();
 		}, 0);
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 2", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 2", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1228,16 +1236,17 @@
 		qutils.triggerEvent("tap", radioButtonId2);
 
 		setTimeout(function() {
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), true, "SingleSelection: Item 2 should be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			start();
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), true, "SingleSelection: Item 2 should be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			done();
 		}, 0);
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 3", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 3", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1247,16 +1256,17 @@
 		qutils.triggerEvent("tap", radioButtonId3);
 
 		setTimeout(function() {
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			start();
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			done();
 		}, 0);
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 4", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 4", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1266,16 +1276,17 @@
 		qutils.triggerEvent("tap", radioButtonId4);
 
 		setTimeout(function() {
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			start();
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			done();
 		}, 0);
 	});
 
-	asyncTest("selectionList singleSelection item check by tap event on Item 5", function() {
+	QUnit.test("selectionList singleSelection item check by tap event on Item 5", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1285,68 +1296,69 @@
 		qutils.triggerEvent("tap", radioButtonId5);
 
 		setTimeout(function() {
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
-			start();
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
+			done();
 		}, 0);
 	});
 
 	QUnit.test("selectionList switch to SingleSelectionLeft", function(assert) {
 		switchModeSingleLeft();
-		equals(oListSelection.getMode(), sap.m.ListMode.SingleSelectLeft, "Switch to SingleSelectionLeft: Ok");
+		assert.equal(oListSelection.getMode(), sap.m.ListMode.SingleSelectLeft, "Switch to SingleSelectionLeft: Ok");
 		sap.ui.getCore().applyChanges();
 
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 1", function(assert) {
 		setSelectionItem1();
-		equals(checkSingleSelectionItem1(), true, "SingleSelectionLeft: Item 1 should be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), true, "SingleSelectionLeft: Item 1 should be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 2", function(assert) {
 		setSelectionItem2();
-		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), true, "SingleSelectionLeft: Item 2 should be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), true, "SingleSelectionLeft: Item 2 should be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 3", function(assert) {
 		setSelectionItem3();
-		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), true, "SingleSelectionLeft: Item 3 should be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), true, "SingleSelectionLeft: Item 3 should be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 4", function(assert) {
 		setSelectionItem4();
-		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), true, "SingleSelectionLeft: Item 4 should be selected");
-		equals(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), true, "SingleSelectionLeft: Item 4 should be selected");
+		assert.equal(checkSingleSelectionItem5(), false, "SingleSelectionLeft: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 5", function(assert) {
 		setSelectionItem5();
-		equals(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
-		equals(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
-		equals(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
-		equals(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
-		equals(checkSingleSelectionItem5(), true, "SingleSelectionLeft: Item 5 should be selected");
+		assert.equal(checkSingleSelectionItem1(), false, "SingleSelectionLeft: Item 1 should not be selected");
+		assert.equal(checkSingleSelectionItem2(), false, "SingleSelectionLeft: Item 2 should not be selected");
+		assert.equal(checkSingleSelectionItem3(), false, "SingleSelectionLeft: Item 3 should not be selected");
+		assert.equal(checkSingleSelectionItem4(), false, "SingleSelectionLeft: Item 4 should not be selected");
+		assert.equal(checkSingleSelectionItem5(), true, "SingleSelectionLeft: Item 5 should be selected");
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 1", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 1", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1356,17 +1368,18 @@
 		qutils.triggerEvent("tap", radioButtonId1);
 
 		setTimeout(function() {
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelectionLeft: Item 1 should be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelectionLeft: Item 1 should be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 
-			start();
+			done();
 		}, 0)
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 2", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 2", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1376,16 +1389,17 @@
 		qutils.triggerEvent("tap", radioButtonId2);
 		setTimeout(function() {
 
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), true, "SingleSelectionLeft: Item 2 should be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			start();
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), true, "SingleSelectionLeft: Item 2 should be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			done();
 		}, 0)
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 3", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 3", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1395,16 +1409,17 @@
 		qutils.triggerEvent("tap", radioButtonId3);
 		setTimeout(function() {
 
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			start();
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			done();
 		}, 0)
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 4", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 4", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1414,16 +1429,17 @@
 		qutils.triggerEvent("tap", radioButtonId4);
 		setTimeout(function() {
 
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			start();
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			done();
 		}, 0)
 	});
 
-	asyncTest("selectionList SingleSelectionLeft item check by tap event on Item 5", function() {
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 5", function(assert) {
+		var done = assert.async();
 		var aItems = oListSelection.getItems();
 		var radioButtonId1 = aItems[0].getModeControl().getId();
 		var radioButtonId2 = aItems[1].getModeControl().getId();
@@ -1433,18 +1449,18 @@
 		qutils.triggerEvent("tap", radioButtonId5);
 		setTimeout(function() {
 
-			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
-		start();
+			assert.equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			assert.equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
+		done();
 		}, 0)
 	});
 
 	QUnit.test("selectionList switch to multiSelection", function(assert) {
 		switchModeMulti();
-		equals(oListSelection.getMode(), sap.m.ListMode.MultiSelect, "Switch to MultiSelection: Ok");
+		assert.equal(oListSelection.getMode(), sap.m.ListMode.MultiSelect, "Switch to MultiSelection: Ok");
 		sap.ui.getCore().applyChanges();
 
 	});
@@ -1454,30 +1470,30 @@
 		setSelectionItem1();
 		setSelectionItem3();
 		setSelectionItem5();
-		equals(checkMultiSelectionItem1(), true, "MultiSelection: Item 1 should be selected");
-		equals(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
-		equals(checkMultiSelectionItem3(), true, "MultiSelection: Item 3 should be selected");
-		equals(checkMultiSelectionItem4(), false, "MultiSelection: Item 4 should not be selected");
-		equals(checkMultiSelectionItem5(), true, "MultiSelection: Item 5 should be selected");
+		assert.equal(checkMultiSelectionItem1(), true, "MultiSelection: Item 1 should be selected");
+		assert.equal(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
+		assert.equal(checkMultiSelectionItem3(), true, "MultiSelection: Item 3 should be selected");
+		assert.equal(checkMultiSelectionItem4(), false, "MultiSelection: Item 4 should not be selected");
+		assert.equal(checkMultiSelectionItem5(), true, "MultiSelection: Item 5 should be selected");
 	});
 
 	QUnit.test("selectionList multiSelection: remove all selections", function(assert) {
 		removeSelection();
-		equals(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
-		equals(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
-		equals(checkMultiSelectionItem3(), false, "MultiSelection: Item 3 should not be selected");
-		equals(checkMultiSelectionItem4(), false, "MultiSelection: Item 4 should not be selected");
-		equals(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should not be selected");
+		assert.equal(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
+		assert.equal(checkMultiSelectionItem2(), false, "MultiSelection: Item 2 should not be selected");
+		assert.equal(checkMultiSelectionItem3(), false, "MultiSelection: Item 3 should not be selected");
+		assert.equal(checkMultiSelectionItem4(), false, "MultiSelection: Item 4 should not be selected");
+		assert.equal(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should not be selected");
 	});
 
 	QUnit.test("selectionList multiSelection item check (2,4)", function(assert) {
 		setSelectionItem2();
 		setSelectionItem4();
-		equals(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
-		equals(checkMultiSelectionItem2(), true, "MultiSelection: Item 2 should be selected");
-		equals(checkMultiSelectionItem3(), false, "MultiSelection: Item 3 should not be selected");
-		equals(checkMultiSelectionItem4(), true, "MultiSelection: Item 4 should be selected");
-		equals(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should be selected");
+		assert.equal(checkMultiSelectionItem1(), false, "MultiSelection: Item 1 should not be selected");
+		assert.equal(checkMultiSelectionItem2(), true, "MultiSelection: Item 2 should be selected");
+		assert.equal(checkMultiSelectionItem3(), false, "MultiSelection: Item 3 should not be selected");
+		assert.equal(checkMultiSelectionItem4(), true, "MultiSelection: Item 4 should be selected");
+		assert.equal(checkMultiSelectionItem5(), false, "MultiSelection: Item 5 should be selected");
 	});
 
 	QUnit.test("selectionList multiSelection item check by tap event (1,3,5)", function(assert) {
@@ -1496,17 +1512,17 @@
 		oCheckbox1.ontap(new jQuery.Event());
 		oCheckbox3.ontap(new jQuery.Event());
 		oCheckbox5.ontap(new jQuery.Event());
-		equal(sap.ui.getCore().byId(checkBoxId1).getSelected(), true, "MultiSelection: Item 1 should be checked");
-		equal(sap.ui.getCore().byId(checkBoxId2).getSelected(), true, "MultiSelection: Item 2 should be checked");
-		equal(sap.ui.getCore().byId(checkBoxId3).getSelected(), true, "MultiSelection: Item 3 should be checked");
-		equal(sap.ui.getCore().byId(checkBoxId4).getSelected(), true, "MultiSelection: Item 4 should be checked");
-		equal(sap.ui.getCore().byId(checkBoxId5).getSelected(), true, "MultiSelection: Item 5 should be checked");
+		assert.equal(sap.ui.getCore().byId(checkBoxId1).getSelected(), true, "MultiSelection: Item 1 should be checked");
+		assert.equal(sap.ui.getCore().byId(checkBoxId2).getSelected(), true, "MultiSelection: Item 2 should be checked");
+		assert.equal(sap.ui.getCore().byId(checkBoxId3).getSelected(), true, "MultiSelection: Item 3 should be checked");
+		assert.equal(sap.ui.getCore().byId(checkBoxId4).getSelected(), true, "MultiSelection: Item 4 should be checked");
+		assert.equal(sap.ui.getCore().byId(checkBoxId5).getSelected(), true, "MultiSelection: Item 5 should be checked");
 	});
 
 
 	QUnit.test("selectionList switch to delete", function(assert) {
 		switchModeDelete();
-		equals(oListSelection.getMode(), sap.m.ListMode.Delete, "Switch to Delete: Ok");
+		assert.equal(oListSelection.getMode(), sap.m.ListMode.Delete, "Switch to Delete: Ok");
 	});
 
 
@@ -1565,12 +1581,12 @@
 		});
 		oStdLI.ontouchstart(oTouchStart);
 
-		strictEqual(oIcon.getSrc(), sIcon, "Icon has correct path before active handling.");
+		assert.strictEqual(oIcon.getSrc(), sIcon, "Icon has correct path before active handling.");
 
 		// wait active feedback
 		this.clock.tick(300);
 
-		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon has correct path during active handling");
+		assert.strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon has correct path during active handling");
 		var oTouchEnd = createEvent("touchend", oStdLI.getDomRef(), {
 			srcControl : oStdLI,
 			targetTouches : [{
@@ -1580,7 +1596,7 @@
 		});
 		oStdLI.ontouchend(oTouchEnd);
 
-		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
+		assert.strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
 	});
 
 	QUnit.module("StandartListItem RTL attributes");
@@ -1597,7 +1613,7 @@
 
 		oStdLI.setTitleTextDirection(sap.ui.core.TextDirection.RTL);
 		// Assert
-		equals(oStdLI.getTitleTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		assert.equal(oStdLI.getTitleTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
 
 		// Clean up
 		oList.destroy();
@@ -1616,7 +1632,7 @@
 
 		oStdLI.setInfoTextDirection(sap.ui.core.TextDirection.RTL);
 		// Assert
-		equals(oStdLI.getInfoTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		assert.equal(oStdLI.getInfoTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
 
 		// Clean up
 		oList.destroy();
@@ -1637,7 +1653,7 @@
 
 		var oTitle = oStdLI.$().find(".sapMSLITitleDiv").children(0);
 		// Assert
-		equals(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
+		assert.equal(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
 
 		// Clean up
 		oList.destroy();
@@ -1659,7 +1675,7 @@
 
 		var oInfo = oStdLI.$().find(".sapMSLIInfo");
 		// Assert
-		equals(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
+		assert.equal(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
 
 		// Clean up
 		oList.destroy();
@@ -1682,8 +1698,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
-		ok(sut1.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is added");
+		assert.ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		assert.ok(sut1.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is added");
 
 		// Act
 		oMsieStub.restore();
@@ -1692,8 +1708,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
-		ok(!sut2.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
+		assert.ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		assert.ok(!sut2.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
 
 		//Cleanup
 		list.destroy();

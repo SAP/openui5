@@ -24,7 +24,7 @@
 		var testObject = { id: "testObject" };
 
 		var testFunction = function() {
-			ok(true, "this test only checks whether the function is executed");
+			assert.ok(true, "this test only checks whether the function is executed");
 			counter++;
 			lastThisId = this.id ? this.id : this.getId(); // the simple ID for the delegate and testObject, but the real element ID when the Element is the this context
 		}
@@ -42,48 +42,48 @@
 		QUnit.test("Adding Delegates", function(assert) {
 			element = new sap.ui.core.Element();
 
-			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
-			equal(element.aDelegates.length, 0, "Element should have no after delegates");
+			assert.equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			assert.equal(element.aDelegates.length, 0, "Element should have no after delegates");
 
 			element.addDelegate(del1);
 
-			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
-			equal(element.aDelegates.length, 1, "Element should have one after delegate");
+			assert.equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			assert.equal(element.aDelegates.length, 1, "Element should have one after delegate");
 
 			element.addDelegate(del2, true);
 
-			equal(element.aBeforeDelegates.length, 1, "Element should have one before delegate");
-			equal(element.aDelegates.length, 1, "Element should have one after delegate");
+			assert.equal(element.aBeforeDelegates.length, 1, "Element should have one before delegate");
+			assert.equal(element.aDelegates.length, 1, "Element should have one after delegate");
 		});
 
 		QUnit.test("Triggering Delegates", function(assert) {
-			expect(4);
+			assert.expect(4);
 			counter = 0;
 
 			var oEvent = jQuery.Event("SomeEvent");
 			element._handleEvent(oEvent);
 
-			equal(counter, 2, "event handler method should be called twice");
-			equal(lastThisId, "del1"); // del2 should be called earlier, the this context should be the delegate itself
+			assert.equal(counter, 2, "event handler method should be called twice");
+			assert.equal(lastThisId, "del1"); // del2 should be called earlier, the this context should be the delegate itself
 		});
 
 		QUnit.test("Removing Delegates", function(assert) {
 			element.removeDelegate(del1);
 
-			equal(element.aBeforeDelegates.length, 1, "Element should have one before delegate");
-			equal(element.aDelegates.length, 0, "Element should have no after delegate");
+			assert.equal(element.aBeforeDelegates.length, 1, "Element should have one before delegate");
+			assert.equal(element.aDelegates.length, 0, "Element should have no after delegate");
 
 			counter = 0;
 
 			var oEvent = jQuery.Event("SomeEvent");
 			element._handleEvent(oEvent);
 
-			equal(counter, 1, "event handler method should be called once");
+			assert.equal(counter, 1, "event handler method should be called once");
 
 			element.removeDelegate(del2);
 
-			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegate");
-			equal(element.aDelegates.length, 0, "Element should have no after delegate");
+			assert.equal(element.aBeforeDelegates.length, 0, "Element should have no before delegate");
+			assert.equal(element.aDelegates.length, 0, "Element should have no after delegate");
 		});
 
 		QUnit.test("Other 'this' context", function(assert) {
@@ -93,7 +93,7 @@
 			var oEvent = jQuery.Event("SomeEvent");
 			element._handleEvent(oEvent);
 
-			equal(lastThisId, "testObject", "the test object should have been the this context");
+			assert.equal(lastThisId, "testObject", "the test object should have been the this context");
 		});
 
 		QUnit.test("Cloning", function(assert) {
@@ -106,11 +106,11 @@
 			var oEvent = jQuery.Event("SomeEvent");
 			clone._handleEvent(oEvent);
 
-			equal(counter, 1, "only one handler should be cloned and executed");
-			equal(lastThisId, "del2", "the second delegate is the one which should be executed");
+			assert.equal(counter, 1, "only one handler should be cloned and executed");
+			assert.equal(lastThisId, "del2", "the second delegate is the one which should be executed");
 
-			equal(clone.aBeforeDelegates.length, 0, "Clone should have no before delegates");
-			equal(clone.aDelegates.length, 1, "Clone should have one after delegate");
+			assert.equal(clone.aBeforeDelegates.length, 0, "Clone should have no before delegates");
+			assert.equal(clone.aDelegates.length, 1, "Clone should have one after delegate");
 		});
 
 		QUnit.test("Cloned 'this' context", function(assert) {
@@ -125,8 +125,8 @@
 			var oEvent = jQuery.Event("SomeEvent");
 			element._handleEvent(oEvent);
 
-			equal(counter, 1, "one handler should be cloned and executed");
-			equal(lastThisId, originalId, "the original element should be the this context");
+			assert.equal(counter, 1, "one handler should be cloned and executed");
+			assert.equal(lastThisId, originalId, "the original element should be the this context");
 
 			var clone = element.clone();
 			var cloneId = clone.getId();
@@ -136,8 +136,8 @@
 			oEvent = jQuery.Event("SomeEvent");
 			clone._handleEvent(oEvent);
 
-			equal(counter, 1, "one handler should be cloned and executed");
-			equal(lastThisId, cloneId, "the clone should be the this context");
+			assert.equal(counter, 1, "one handler should be cloned and executed");
+			assert.equal(lastThisId, cloneId, "the clone should be the this context");
 		});
 
 		QUnit.test("addEventDelegate method", function(assert) {
@@ -146,8 +146,8 @@
 
 			element.addEventDelegate(del1, testObject);
 
-			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
-			equal(element.aDelegates.length, 1, "Element should have one after delegate");
+			assert.equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			assert.equal(element.aDelegates.length, 1, "Element should have one after delegate");
 
 			lastThisId = undefined;
 			counter = 0;
@@ -155,8 +155,8 @@
 			var oEvent = jQuery.Event("SomeEvent");
 			element._handleEvent(oEvent);
 
-			equal(counter, 1, "the handler should be executed");
-			equal(lastThisId, "testObject", "the this context should be set correctly");
+			assert.equal(counter, 1, "the handler should be executed");
+			assert.equal(lastThisId, "testObject", "the this context should be set correctly");
 
 			var clone = element.clone();
 			lastThisId = undefined;
@@ -165,25 +165,25 @@
 			oEvent = jQuery.Event("SomeEvent");
 			clone._handleEvent(oEvent);
 
-			equal(counter, 1, "the handler should be cloned and executed");
-			equal(lastThisId, "testObject", "the this context should be set correctly");
+			assert.equal(counter, 1, "the handler should be cloned and executed");
+			assert.equal(lastThisId, "testObject", "the this context should be set correctly");
 
-			equal(clone.aBeforeDelegates.length, 0, "Clone should have no before delegates");
-			equal(clone.aDelegates.length, 1, "Clone should have one after delegate");
+			assert.equal(clone.aBeforeDelegates.length, 0, "Clone should have no before delegates");
+			assert.equal(clone.aDelegates.length, 1, "Clone should have one after delegate");
 		});
 
 		QUnit.test("removeEventDelegate method", function(assert) {
 			element.removeEventDelegate(del1);
 
-			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
-			equal(element.aDelegates.length, 0, "Element should have no after delegate");
+			assert.equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			assert.equal(element.aDelegates.length, 0, "Element should have no after delegate");
 
 			counter = 0;
 
 			var oEvent = jQuery.Event("SomeEvent");
 			element._handleEvent(oEvent);
 
-			equal(counter, 0, "the handler should not be executed");
+			assert.equal(counter, 0, "the handler should not be executed");
 		});
 
 		QUnit.test("removeDelegate from within delegate", function(assert) {
@@ -194,26 +194,26 @@
 
 			var oDelegate1 = {
 		        onAfterRendering:function() {
-		            ok(true, "Invoke onAfterRendering on delegate #1");
+		            assert.ok(true, "Invoke onAfterRendering on delegate #1");
 					element.removeEventDelegate(oDelegate1);
 		        }
 		    };
 
 			var oDelegate2 = {
 		        onAfterRendering:function() {
-		            ok(true, "Invoke onAfterRendering on delegate #2");
+		            assert.ok(true, "Invoke onAfterRendering on delegate #2");
 					element.removeEventDelegate(oDelegate2);
 
-					equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
-					equal(element.aDelegates.length, 0, "Element should have no after delegates");
+					assert.equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+					assert.equal(element.aDelegates.length, 0, "Element should have no after delegates");
 		        }
 		    };
 
 		    element.addEventDelegate(oDelegate1);
 			element.addEventDelegate(oDelegate2);
 
-			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
-			equal(element.aDelegates.length, 2, "Element should have two after delegates");
+			assert.equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			assert.equal(element.aDelegates.length, 2, "Element should have two after delegates");
 
 			var oEvent = jQuery.Event("AfterRendering");
 			element._handleEvent(oEvent);

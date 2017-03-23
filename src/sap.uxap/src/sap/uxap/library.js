@@ -50,17 +50,47 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 		extensions: {
 			flChangeHandlers: {
 				"sap.uxap.ObjectPageLayout": {
-					"moveControls": "default"
+					"moveControls": {
+						"changeHandler": "default",
+						"layers": {
+							"USER": true
+						}
+					}
 				},
 				"sap.uxap.ObjectPageSection": {
-					"hideControl": "default",
-					"unhideControl": "default",
-					"stashControl": "default",
-					"unstashControl": "default"
+					"hideControl": {
+						"changeHandler": "default",
+						"layers": {
+							"USER": true
+						}
+					},
+					"unhideControl": {
+						"changeHandler": "default",
+						"layers": {
+							"USER": true
+						}
+					},
+					"stashControl": {
+						"changeHandler": "default",
+						"layers": {
+							"USER": true
+						}
+					},
+					"unstashControl": {
+						"changeHandler": "default",
+						"layers": {
+							"USER": true
+						}
+					}
 				},
-	             "sap.ui.core._StashedControl" : {
-                     "unstashControl": "default"
-	            }
+				"sap.ui.core._StashedControl" : {
+					"unstashControl": {
+						"changeHandler": "default",
+						"layers": {
+							"USER": true
+						}
+					}
+				}
 			}
 		}
 	});

@@ -91,16 +91,16 @@
 			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
 				var oSimpleFormOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSimpleForm);
 				var oHiddenFormAggregationOverlay = oSimpleFormOverlay.getAggregationOverlay("form");
-				ok(oHiddenFormAggregationOverlay, "aggregation overlay for not ignored hidden aggregation is created");
+				assert.ok(oHiddenFormAggregationOverlay, "aggregation overlay for not ignored hidden aggregation is created");
 
 				var bChildrenAreInHiddenTree = true;
 				oHiddenFormAggregationOverlay.getChildren().forEach(function(oElementOverlay) {
 					bChildrenAreInHiddenTree = bChildrenAreInHiddenTree && oElementOverlay.isInHiddenTree();
 				});
-				strictEqual(bChildrenAreInHiddenTree, true, "all children of hidden aggregation are flaggen as inHiddenTree");
+				assert.strictEqual(bChildrenAreInHiddenTree, true, "all children of hidden aggregation are flaggen as inHiddenTree");
 
 				var oLabelOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLabel);
-				strictEqual(oLabelOverlay.isInHiddenTree(), false, "Public controls from content aggregation are not flagged as inHiddenTree");
+				assert.strictEqual(oLabelOverlay.isInHiddenTree(), false, "Public controls from content aggregation are not flagged as inHiddenTree");
 			});
 
 			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {

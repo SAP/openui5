@@ -12,8 +12,8 @@
 
 		<!-- QUnit libraries -->
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
@@ -278,7 +278,6 @@
 				assert.ok(!!oFeedList.getItems()[0]._oImageControl.$(), "Image rendered");
 				assert.ok(oFeedList.getItems()[0]._oImageControl.getSrc() === oFeedList.getItems()[0].getIcon(), "Image rendered (icon <> initial)");
 				assert.ok(oFeedList.getItems()[0]._oImageControl.$().hasClass("sapMImg"), "property icon set: image should have class sapMImg ");
-				assert.ok(oFeedList.getItems()[0]._oLinkControl.getText() === "Jeremy Dash:", "Sender name rendered" );
 				assert.ok(oFeedList.getItems()[0]._oLinkControl.getEnabled(), "Sender link enabled (senderActive = true)" );
 				assert.ok(!!oFeedList.getItems()[0]._oLinkControl.$(), "Name Link rendered");
 				assert.ok($('#__item1-oFeedItemList-0 .sapMFeedListItemFooter').length === 1, "Footer displayed");
@@ -322,7 +321,7 @@
 			});
 
 			QUnit.test("No Sender", function(assert) {
-				ok(!oFeedList.getItems()[6]._oLinkControl, "No sender name rendered");
+				assert.ok(!oFeedList.getItems()[6]._oLinkControl, "No sender name rendered");
 			});
 
 			QUnit.test("Sender link disabled", function(assert) {
@@ -330,7 +329,6 @@
 			});
 
 			QUnit.test("expand/collapse function", function(assert) {
-				assert.ok(oFeedList.getItems()[8].$("realtext").hasClass("sapMFeedListItemTextString"), "Text should have class sapMFeedListItemTextString");
 				assert.ok(oFeedList.getItems()[8].$("realtext").text() === oFeedList.getItems()[8]._sShortText, "the collapsed text displayed ");
 				assert.ok(oFeedList.getItems()[8].$("threeDots").hasClass("sapMFeedListItemTextString"), "three dots should have class sapMFeedListItemTextString");
 				assert.ok(oFeedList.getItems()[8]._oLinkExpandCollapse.$(), "expand/collapse Link rendered");
@@ -344,6 +342,48 @@
 				assert.ok(oFeedList.getItems()[0].getMaxCharacters() === 5000, "maxCharacters should be changeable");
 				assert.ok(!oFeedList.getItems()[0]._oLinkExpandCollapse, "expand/collapse Link should not be rendered");
 				assert.ok(oFeedList.getItems()[10]._sShortText.length === 20, "the length of collapsed text without spaces equals to the property maxCharacters ");
+			});
+
+			QUnit.module("Behavior depending on device: only phone", {
+				beforeEach : function() {
+					this.bOriginalIsPhone = sap.ui.Device.system.phone;
+					sap.ui.Device.system.phone = true;
+					appFeedList.invalidate();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					sap.ui.Device.system.phone = this.bOriginalIsPhone;
+				}
+			});
+
+			QUnit.test("Correct class is added to realtext element", function(assert) {
+				assert.ok(oFeedList.getItems()[8].$("realtext").hasClass("sapMFeedListItemText"), "Text should have the necessary class for phone");
+			});
+
+			QUnit.test("Sender name rendering", function(assert) {
+				var sLinkControlText = feedData.chunks[0].sender;
+				assert.equal(oFeedList.getItems()[0]._oLinkControl.getText(), sLinkControlText, "Sender name rendered for phone");
+			});
+
+			QUnit.module("Behavior depending on device: all except phone", {
+				beforeEach : function() {
+					this.bOriginalIsPhone = sap.ui.Device.system.phone;
+					sap.ui.Device.system.phone = false;
+					appFeedList.invalidate();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					sap.ui.Device.system.phone = this.bOriginalIsPhone;
+				}
+			});
+
+			QUnit.test("Correct class is added to realtext element", function(assert) {
+				assert.ok(oFeedList.getItems()[8].$("realtext").hasClass("sapMFeedListItemTextString"), "Text should have the necessary class for tablet and desktop");
+			});
+
+			QUnit.test("Sender name rendering", function(assert) {
+				var sLinkControlText = feedData.chunks[0].sender + sap.m.FeedListItem._oRb.getText("COLON");
+				assert.equal(oFeedList.getItems()[0]._oLinkControl.getText(), sLinkControlText, "Sender name rendered with colon for tablet and desktop");
 			});
 
 			QUnit.module("Check property combination", {

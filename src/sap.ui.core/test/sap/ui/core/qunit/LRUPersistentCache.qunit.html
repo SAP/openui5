@@ -53,7 +53,7 @@
 		if (!bSupportedEnv) {
 			QUnit.start();
 			QUnit.test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
-				ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
+				assert.ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
 			});
 		} else {
 			sap.ui.require(["sap/ui/core/cache/LRUPersistentCache"], function (classCacheManager) {
@@ -87,10 +87,10 @@
 							return oCache.get("key12");
 						}).then(function (result) {
 							oCache.stringify = JSON.stringify;
-							deepEqual(result, parent, "Gotten value with a circular reference must be the same as the one that is previously set");
+							assert.deepEqual(result, parent, "Gotten value with a circular reference must be the same as the one that is previously set");
 						}).catch(function (e) {
 							oCache.stringify = JSON.stringify;
-							ok(false, "Test didn't go well: " + e)
+							assert.ok(false, "Test didn't go well: " + e)
 						});
 			});
 
@@ -252,7 +252,7 @@
 					return reInitCacheManager(oCache);
 				}).then(function () {
 					jQuery.sap.log.debug("Cache Manager reinitialized!");
-					deepEqual(JSON.stringify(oCache._metadata), JSON.stringify(oCache._metadata), "After reload, the metadata is consistent");
+					assert.deepEqual(JSON.stringify(oCache._metadata), JSON.stringify(oCache._metadata), "After reload, the metadata is consistent");
 				});
 			});
 
@@ -279,11 +279,11 @@
 				}).then(function () {
 					return oCache.has("key1_1.36.1");
 				}).then(function (bHas) {
-					ok(bHas, "CacheManager must has() entry for key 'key1_1.36.1'");
+					assert.ok(bHas, "CacheManager must has() entry for key 'key1_1.36.1'");
 				}).then(function () {
 					return oCache.has("key2_1.36.1");
 				}).then(function (bHas) {
-					ok(bHas, "CacheManager must has() entry for key 'key2_1.36.1'");
+					assert.ok(bHas, "CacheManager must has() entry for key 'key2_1.36.1'");
 				});
 			});
 
@@ -303,11 +303,11 @@
 				}).then(function () {
 					return oCache.has("key1_1.36.1");
 				}).then(function (bHas) {
-					ok(!bHas, "CacheManager must not has() entry for key 'key1_1.36.1'");
+					assert.ok(!bHas, "CacheManager must not has() entry for key 'key1_1.36.1'");
 				}).then(function () {
 					return oCache.has("key2_1.36.1");
 				}).then(function (bHas) {
-					ok(!bHas, "CacheManager must not has() entry for key 'key2_1.36.2'");
+					assert.ok(!bHas, "CacheManager must not has() entry for key 'key2_1.36.2'");
 					return oCache.set("key1_1.36.2", "value");
 				}).then(function () {
 					return verifyCacheEntries({"key1_1.36.2": "value"}, null);
@@ -340,7 +340,7 @@
 					//act
 					oCache.get("key1").then(function (value) {
 						//check
-						equal(value, "smallValue", "Get item (ro) still sees the item, because [get] started before [del]");
+						assert.equal(value, "smallValue", "Get item (ro) still sees the item, because [get] started before [del]");
 						done();
 					});
 					//act
@@ -355,7 +355,7 @@
 					oCache.del("key1");
 					oCache.get("key2").then(function (value) {
 						//check
-						strictEqual(typeof value, "undefined", "Get (ro) waits running [del]");
+						assert.strictEqual(typeof value, "undefined", "Get (ro) waits running [del]");
 						done();
 					});
 				});
@@ -366,7 +366,7 @@
 				//act
 				oCache.get("key1").then(function (value) {
 					//check
-					strictEqual(typeof value, "undefined", "Get item (ro) still does not see any item, because [get] started before [set]");
+					assert.strictEqual(typeof value, "undefined", "Get item (ro) still does not see any item, because [get] started before [set]");
 				});
 				//act
 				oCache.set("key1", this.o1MB).then(function () {
@@ -382,7 +382,7 @@
 					//act
 					oCache.get("key1").then(function (value) {
 						//check
-						strictEqual(value, "smallValue", "Get item (ro) sees the old value (before update transaction completes) as it started before [update]");
+						assert.strictEqual(value, "smallValue", "Get item (ro) sees the old value (before update transaction completes) as it started before [update]");
 					});
 					//act
 					oCache.set("key1", "smallValueUpdated").then(function () {
@@ -399,7 +399,7 @@
 				oCache.set("key1", that.o1MB);
 				oCache.get("key1").then(function (value) {
 					//check
-					deepEqual(value, that.o1MB, "Get (ro) waits running [set]");
+					assert.deepEqual(value, that.o1MB, "Get (ro) waits running [set]");
 					done();
 				});
 			});
@@ -413,7 +413,7 @@
 					oCache.set("key1", "smallValueUpdated");
 					oCache.get("key1").then(function (value) {
 						//check
-						strictEqual(value, "smallValueUpdated", "Get (ro) waits running [update]");
+						assert.strictEqual(value, "smallValueUpdated", "Get (ro) waits running [update]");
 						done();
 					});
 				});
@@ -439,8 +439,8 @@
 				},
 				//Asserts given data structure
 				assertMetadataStructureLength: function (byKeyLength, byIndexLength) {
-					equal(Object.keys(oCache._metadata.__byKey__).length, byKeyLength, "LRU map structure __byKey__ should be correct.");
-					equal(Object.keys(oCache._metadata.__byIndex__).length, byIndexLength, "LRU map structure __byIndex__ should be correct.");
+					assert.equal(Object.keys(oCache._metadata.__byKey__).length, byKeyLength, "LRU map structure __byKey__ should be correct.");
+					assert.equal(Object.keys(oCache._metadata.__byIndex__).length, byIndexLength, "LRU map structure __byIndex__ should be correct.");
 				},
 				mockPut: function (expectedKey, oErrorEvent, callStart, callEnd) {
 					callStart = callStart || 1;
@@ -547,24 +547,24 @@
 						var iPosition = parseInt(Object.keys(oItem)[0], 10);
 						var oKey = oItem[iPosition];
 						if (oKey) {
-							equal(oCache._metadata.__byKey__[oKey], iPosition, "LRU map structure __byKey__ should contain the entry with key '" + oKey + "'");
+							assert.equal(oCache._metadata.__byKey__[oKey], iPosition, "LRU map structure __byKey__ should contain the entry with key '" + oKey + "'");
 						}
-						equal(oCache._metadata.__byIndex__[iPosition], oKey, "LRU map structure __byIndex__ should contain key " + oKey + " at position " + iPosition);
+						assert.equal(oCache._metadata.__byIndex__[iPosition], oKey, "LRU map structure __byIndex__ should contain key " + oKey + " at position " + iPosition);
 					});
 
 					aNonExistingIndexes.forEach(function (iIndex) {
-						ok(!oCache._metadata.__byIndex__.hasOwnProperty(iIndex), "LRU map structure __byIndex__ should not contain key [" + iIndex + "]");
+						assert.ok(!oCache._metadata.__byIndex__.hasOwnProperty(iIndex), "LRU map structure __byIndex__ should not contain key [" + iIndex + "]");
 					});
 				},
 
 				assertCounters: function (lruCount, mruCount) {
-					equal(oCache._lru, lruCount, "Cache Manager lru value should equal to the next item to delete");
-					equal(oCache._mru, mruCount, "Cache Manager mru value should equal to the next free index");
+					assert.equal(oCache._lru, lruCount, "Cache Manager lru value should equal to the next item to delete");
+					assert.equal(oCache._mru, mruCount, "Cache Manager mru value should equal to the next free index");
 				},
 
 				assertItemCount: function (expectedCount, message) {
 					return oCache._getCount().then(function (count) {
-						equal(count, expectedCount, message);
+						assert.equal(count, expectedCount, message);
 					});
 				}
 			});
@@ -599,13 +599,13 @@
 					mru = oCache._mru;
 
 					return oCache.set("password2", "mysecret").then(function () {
-						ok(!true, "Set of password2 should have failed. See the test mock!!!");
+						assert.ok(!true, "Set of password2 should have failed. See the test mock!!!");
 					}, function () {
 						return self.assertItemCount(1, "After failing to add item the item count doesn't change");
 					})
 				}).then(function () {
 					self.assertCounters(lru, mru);
-					deepEqual(metadata, oCache._metadata, "After failing to add item the metadata record should be not be changed.");
+					assert.deepEqual(metadata, oCache._metadata, "After failing to add item the metadata record should be not be changed.");
 				}).then(function () {
 					return verifyCacheEntries({"password1": "mysecret"}, "password2", oCache);
 				});
@@ -622,13 +622,13 @@
 					mru = oCache._mru;
 
 					return oCache.del("password2").then(function () {
-						ok(!true, "Delete of password2 should have failed. See the test mock!!!");
+						assert.ok(!true, "Delete of password2 should have failed. See the test mock!!!");
 					}, function () {
 						return self.assertItemCount(2, "After failing to delete item the item count doesn't change");
 					})
 				}).then(function () {
 					self.assertCounters(lru, mru);
-					deepEqual(metadata, oCache._metadata, "After failing to delete item the metadata record should be not be changed.");
+					assert.deepEqual(metadata, oCache._metadata, "After failing to delete item the metadata record should be not be changed.");
 				}).then(function () {
 					return verifyCacheEntries({"password1": "mysecret", "password2": "mysecret"}, null, oCache);
 				});
@@ -645,7 +645,7 @@
 					return oCache.get("password2");
 				}).then(function () {
 					self.assertCounters(lru, mru);
-					deepEqual(metadata, oCache._metadata, "After getting the most used item the metadata should not be changed.");
+					assert.deepEqual(metadata, oCache._metadata, "After getting the most used item the metadata should not be changed.");
 				})
 			});
 
@@ -672,7 +672,7 @@
 						}).then(function () {
 							return oCache.set("d", "D");
 						}).then(function () {
-							ok(true, "Adding new element, that force space cleanup, should be successful");
+							assert.ok(true, "Adding new element, that force space cleanup, should be successful");
 							/* Usually the gives the chance of CM to update its
 							 / indexes(and item count) as this is happening asynchronously so the get does not involves any sets in the indexed db
 							 */
@@ -737,7 +737,7 @@
 						.then(function (cm) {
 							console.log("Cache Manager reinitialized!");
 							oCache = cm;
-							deepEqual(JSON.stringify(cm._metadata), JSON.stringify(that.originalMetadata), "After reload, the lru map is consistent");
+							assert.deepEqual(JSON.stringify(cm._metadata), JSON.stringify(that.originalMetadata), "After reload, the lru map is consistent");
 							that.metadata = null;
 						});
 			});
@@ -778,14 +778,14 @@
 				//Create promise for each item that must be inside the cache
 				var existingPromises = Object.keys(oExpectedEntries).map(function (key) {
 					return oCache.get(key).then(function (existingValue) {
-						deepEqual(existingValue, oExpectedEntries[key], "Values for key [" + key + "] should match.");
+						assert.deepEqual(existingValue, oExpectedEntries[key], "Values for key [" + key + "] should match.");
 						return true;
 					});
 				});
 				aNonExistingKeys = aNonExistingKeys || [];
 				var nonExistingPromises = aNonExistingKeys.map(function (key) {
 					return oCache.has(key).then(function (found) {
-						equal(false, found, "The key " + key + " should not exist.");
+						assert.equal(false, found, "The key " + key + " should not exist.");
 						if (found) {
 							throw new Error("unexpected key found: ", key);
 						}

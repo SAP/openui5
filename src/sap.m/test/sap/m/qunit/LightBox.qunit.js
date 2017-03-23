@@ -137,7 +137,7 @@
 
     QUnit.test('Opening a lightbox with image source', function(assert) {
         // arrange
-        expect(2);
+        assert.expect(2);
         var done = assert.async;
         var oImageContent = this.LightBox.getImageContent()[0],
             sImageSource = '../images/demo/nature/elephant.jpg',

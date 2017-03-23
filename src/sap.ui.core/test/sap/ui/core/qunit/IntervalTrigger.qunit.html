@@ -117,17 +117,18 @@
 <script>
 	QUnit.module("Basics");
 	QUnit.test("All listeners registered", function(assert) {
-		expect(1);
+		assert.expect(1);
 
 		var id = "sapUiIntervalTrigger-event";
 		var aList = oTrigger._oEventBus._defaultChannel.mEventRegistry[id];
 		var bTest = aList.length === iListeners ? true : false;
 
-		ok(bTest, "All " + iListeners + " listeners successfully registered within EventProvider");
+		assert.ok(bTest, "All " + iListeners + " listeners successfully registered within EventProvider");
 	});
 
-	asyncTest("Test triggering", function() {
-		expect(2);
+	QUnit.test("Test triggering", function(assert) {
+		var done = assert.async();
+		assert.expect(2);
 		var oldColorIsGreen = aListeners[0]._bGreenBG;
 		var newColorIsGreen = false;
 		var stillIsGreen = false;
@@ -139,24 +140,24 @@
 			newColorIsGreen = aListeners[0]._bGreenBG;
 
 			bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
-			ok(bTest, "Triggering occured");
+			assert.ok(bTest, "Triggering occured");
 
 			// stop triggering
 			oTrigger.setInterval(0);
 
 			setTimeout(function() {
-				start();
 				stillIsGreen = aListeners[0]._bGreenBG;
-
 				bTest = newColorIsGreen === stillIsGreen ? true : false;
 
-				ok(bTest, "Triggering stopped but listeners still registered");
+				assert.ok(bTest, "Triggering stopped but listeners still registered");
+
+				done();
 			}, 500);
 		}, 250);
 	});
 
 	QUnit.test("Remove listeners", function(assert) {
-		expect(1);
+		assert.expect(1);
 		oTrigger.removeListener(aListeners[0].trigger, aListeners[0]);
 		oTrigger.removeListener(aListeners[1].trigger, aListeners[1]);
 
@@ -164,11 +165,12 @@
 		var aList = oTrigger._oEventBus._defaultChannel.mEventRegistry[id];
 		var bTest = aList.length === (iListeners - 2) ? true : false;
 
-		ok(bTest, "2 listeners successfully removed from EventProvider");
+		assert.ok(bTest, "2 listeners successfully removed from EventProvider");
 	});
 
-	asyncTest("Removed listeners don't trigger", function() {
-		expect(2);
+	QUnit.test("Removed listeners don't trigger", function(assert) {
+		var done = assert.async();
+		assert.expect(2);
 		var oldColorIsGreen = aListeners[0]._bGreenBG;
 		var newColorIsGreen = false;
 
@@ -183,24 +185,25 @@
 			newColorIsGreen = aListeners[0]._bGreenBG;
 
 			bTest = oldColorIsGreen === newColorIsGreen ? true : false;
-			ok(bTest, "Triggering didn't occure for removed listener");
+			assert.ok(bTest, "Triggering didn't occure for removed listener");
 
 			// stop triggering
 			oTrigger.setInterval(0);
 
 			setTimeout(function() {
-				start();
 				otherNewColorIsGreen = aListeners[iOtherIndex]._bGreenBG;
-
 				bTest = otherOldColorIsGreen !== otherNewColorIsGreen ? true : false;
 
-				ok(bTest, "Triggering occured for other listeners");
+				assert.ok(bTest, "Triggering occured for other listeners");
+
+				done();
 			}, 500);
 		}, 250);
 	});
 
-	asyncTest("Test if trigger stops when all listeners removed", function() {
-		expect(2);
+	QUnit.test("Test if trigger stops when all listeners removed", function(assert) {
+		var done = assert.async();
+		assert.expect(2);
 		var oldColorIsGreen = aListeners[3]._bGreenBG;
 		var newColorIsGreen = false;
 
@@ -211,7 +214,7 @@
 			newColorIsGreen = aListeners[3]._bGreenBG;
 
 			bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
-			ok(bTest, "Trigger is running");
+			assert.ok(bTest, "Trigger is running");
 
 			// remove all listeners
 			for ( var i = 0; i < iListeners; i++) {
@@ -219,12 +222,12 @@
 			}
 
 			setTimeout(function() {
-				start();
 				newColorIsGreen = aListeners[3]._bGreenBG;
-
 				bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
-				ok(bTest, "Trigger stopped due to no listeners available");
 
+				assert.ok(bTest, "Trigger stopped due to no listeners available");
+
+				done();
 			}, 250);
 		}, 250);
 	});

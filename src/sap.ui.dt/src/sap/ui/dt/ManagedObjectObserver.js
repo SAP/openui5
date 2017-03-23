@@ -110,6 +110,7 @@ sap.ui.define([
 	ManagedObjectObserver.prototype.observe = function(oTarget) {
 		var that = this;  // eslint-disable-line consistent-this
 
+		// _change event is triggered on property change of UI5 managed object
 		oTarget.attachEvent("_change", this._fnFireModified, this);
 
 		// Wrapper for the destroy method to recognize changes

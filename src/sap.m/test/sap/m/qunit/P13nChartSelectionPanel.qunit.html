@@ -53,14 +53,14 @@
 		});
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CHARTPANEL_TITLE"));
-		strictEqual(oChartSelectionPanel.getTitleLarge(), "");
-		strictEqual(oChartSelectionPanel.getType(), sap.m.P13nPanelType.dimeasure);
-		strictEqual(oChartSelectionPanel.getChartTypeKey(), "");
-		deepEqual(oChartSelectionPanel.getAvailableChartTypes(), []);
-		deepEqual(oChartSelectionPanel.getItems(), []);
-		deepEqual(oChartSelectionPanel.getSelectionItems(), []);
-		deepEqual(oChartSelectionPanel._getInternalModel().getData().items, []);
+		assert.strictEqual(oChartSelectionPanel.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CHARTPANEL_TITLE"));
+		assert.strictEqual(oChartSelectionPanel.getTitleLarge(), "");
+		assert.strictEqual(oChartSelectionPanel.getType(), sap.m.P13nPanelType.dimeasure);
+		assert.strictEqual(oChartSelectionPanel.getChartTypeKey(), "");
+		assert.deepEqual(oChartSelectionPanel.getAvailableChartTypes(), []);
+		assert.deepEqual(oChartSelectionPanel.getItems(), []);
+		assert.deepEqual(oChartSelectionPanel.getSelectionItems(), []);
+		assert.deepEqual(oChartSelectionPanel._getInternalModel().getData().items, []);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -93,18 +93,18 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getItems().length, 3);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.strictEqual(oChartSelectionPanel.getItems().length, 3);
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -134,18 +134,18 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getItems().length, 3);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.strictEqual(oChartSelectionPanel.getItems().length, 3);
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -178,18 +178,18 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getItems().length, 3);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.strictEqual(oChartSelectionPanel.getItems().length, 3);
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -222,17 +222,17 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(oItem, oItemB);
-		strictEqual(oChartSelectionPanel.getItems().length, 2);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.deepEqual(oItem, oItemB);
+		assert.strictEqual(oChartSelectionPanel.getItems().length, 2);
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, C=off
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -265,17 +265,17 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oItem, null);
-		strictEqual(oChartSelectionPanel.getItems().length, 2);
-		deepEqual(oChartSelectionPanel.getItems(), [
+		assert.strictEqual(oItem, null);
+		assert.strictEqual(oChartSelectionPanel.getItems().length, 2);
+		assert.deepEqual(oChartSelectionPanel.getItems(), [
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, C=off
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -308,12 +308,12 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(aItems, [
+		assert.deepEqual(aItems, [
 			oItemC, oItemB, oItemA
 		]);
-		strictEqual(oChartSelectionPanel.getItems().length, 0);
+		assert.strictEqual(oChartSelectionPanel.getItems().length, 0);
 		// The table items order has been changed to: []
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items.length, 0);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items.length, 0);
 		// The table selection is: []
 
 		// cleanup
@@ -347,9 +347,9 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getItems().length, 0);
+		assert.strictEqual(oChartSelectionPanel.getItems().length, 0);
 		// The table items order has been changed to: []
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items.length, 0);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items.length, 0);
 		// The table selection is: []
 
 		// cleanup
@@ -389,16 +389,16 @@
 
 		// assertions
 		// The table items order has been changed to: C, A, B
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemA.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemA.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemB.getColumnKey());
 		// The table selection is: C=on, A=off, B=off
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 		// Index of ChartSelectionItem has not been changed
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 1);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -437,16 +437,16 @@
 
 		// assertions
 		// The table items order has been changed to: C, A, B
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemA.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemA.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemB.getColumnKey());
 		// The table selection is: C=on, A=off, B=off
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 		// Index of ChartSelectionItem has not been changed
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 1);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -488,15 +488,15 @@
 
 		// assertions
 		// The table items order has been changed to: A, B, C
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemC.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemA.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
-		strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		assert.strictEqual(oChartSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 		// Index of ChartSelectionItem has not been changed
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 0);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 0);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -533,10 +533,10 @@
 		var oPayload = oChartSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0], oChartSelectionItemA);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), false);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), -1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0], oChartSelectionItemA);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), false);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), -1);
 		// cleanup
 		oChartSelectionPanel.destroy();
 	});
@@ -565,9 +565,9 @@
 		var oPayload = oChartSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), true);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 0);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 0);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -597,7 +597,7 @@
 		var oPayload = oChartSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 0);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 0);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -627,9 +627,9 @@
 		var oPayload = oChartSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), true);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 1);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -666,10 +666,10 @@
 		var oPayload = oChartSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0], oChartSelectionItemA);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), true);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0], oChartSelectionItemA);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), 1);
 
 		// cleanup
 		oChartSelectionPanel.destroy();
@@ -706,10 +706,10 @@
 		var oPayload = oChartSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0], oChartSelectionItemA);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), false);
-		strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), -1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems().length, 1);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0], oChartSelectionItemA);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getSelected(), false);
+		assert.strictEqual(oChartSelectionPanel.getSelectionItems()[0].getIndex(), -1);
 
 		// cleanup
 		oChartSelectionPanel.destroy();

@@ -1,10 +1,9 @@
 <core:View height="100%"
-		   xmlns:core="sap.ui.core"
-		   xmlns="sap.m"
-		   xmlns:l="sap.ui.layout"
-		   xmlns:html="http://www.w3.org/1999/xhtml"
-		   controllerName="sap.m.sample.QuickViewCardScrollBar.QuickView">
-	<Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		controllerName="sap.m.sample.QuickViewCardScrollBar.QuickView">
+	<Page id="quickViewCardExamplePage" showHeader="false" class="sapUiContentPadding" showNavButton="false">
 		<content>
 			<Button id="buttonBack"
 					enabled="false"
@@ -17,9 +16,9 @@
 					vSpacing="0"
 					defaultSpan="L6 M6 S10">
 				<Label text="Show Vertical Scroll Bar:"
-					   class="sapUiSmallMarginTop">
+						class="sapUiSmallMarginTop">
 					<layoutData>
-						<l:GridData span="L3 M3 S3"/>
+						<l:GridData span="L3 M6 S8"/>
 					</layoutData>
 				</Label>
 				<Switch id="showHideScrollSwitch"
@@ -27,14 +26,14 @@
 						class="sapUiSmallMarginBottom"
 						change="onScrollSwitchChange">
 					<layoutData>
-						<l:GridData span="L9 M9 S9"/>
+						<l:GridData span="L9 M6 S4"/>
 					</layoutData>
 				</Switch>
 
 				<Label text="Show Header:"
-					   class="sapUiSmallMarginTop">
+						class="sapUiSmallMarginTop">
 					<layoutData>
-						<l:GridData span="L3 M3 S3"/>
+						<l:GridData span="L3 M6 S8"/>
 					</layoutData>
 				</Label>
 				<Switch id="showHideHeaderSwitch"
@@ -42,7 +41,7 @@
 						class="sapUiSmallMarginBottom"
 						change="onHeaderSwitchChange">
 					<layoutData>
-						<l:GridData span="L9 M9 S9"/>
+						<l:GridData span="L9 M6 S4"/>
 					</layoutData>
 				</Switch>
 			</l:Grid>
