@@ -457,6 +457,7 @@ sap.ui.require([
 		oTeamLineItem = mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		oWorkerData = mScope["tea_busi.Worker"],
 		mXServiceScope = {
+			"$Version" : "4.0",
 			"$Annotations" : {}, // simulate ODataMetaModel#_mergeAnnotations
 			"$EntityContainer" : "tea_busi.v0001.DefaultContainer",
 			"$Reference" : {
@@ -620,31 +621,9 @@ sap.ui.require([
 
 		afterEach : function (assert) {
 			this.oLogMock.verify();
+			this.oMetaModelMock.verify();
 
 			assert.deepEqual(aAllScopes, this.mOriginalScopes, "metadata unchanged");
-		},
-
-		beforeEach : function () {
-			var oMetadataRequestor = {
-					read : function () { throw new Error(); }
-				},
-				sUrl = "/a/b/c/d/e/$metadata";
-
-			this.oLogMock = sinon.mock(jQuery.sap.log);
-			this.oLogMock.expects("warning").never();
-			this.oLogMock.expects("error").never();
-
-			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
-		},
-
-		/*
-		 * Expect the given debug message with the given path, but only if debug level is on.
-		 */
-		expectDebug : function (bDebug, sMessage, sPath) {
-			this.oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.DEBUG, sODataMetaModel).returns(bDebug);
-			this.oLogMock.expects("debug").exactly(bDebug ? 1 : 0)
-				.withExactArgs(sMessage, sPath, sODataMetaModel);
 		},
 
 		/*
@@ -664,6 +643,43 @@ sap.ui.require([
 						return true;
 				}
 			});
+		},
+
+		beforeEach : function () {
+			var oMetadataRequestor = {
+					read : function () { throw new Error(); }
+				},
+				sUrl = "/a/b/c/d/e/$metadata";
+
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+
+			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
+			this.oMetaModelMock = sinon.mock(this.oMetaModel);
+		},
+
+		/*
+		 * Expect the given debug message with the given path, but only if debug level is on.
+		 */
+		expectDebug : function (bDebug, sMessage, sPath) {
+			this.oLogMock.expects("isLoggable")
+				.withExactArgs(jQuery.sap.log.Level.DEBUG, sODataMetaModel).returns(bDebug);
+			this.oLogMock.expects("debug").exactly(bDebug ? 1 : 0)
+				.withExactArgs(sMessage, sPath, sODataMetaModel);
+		},
+
+		/*
+		 * Expects "fetchEntityContainer" to be called at least once on the current meta model,
+		 * returning a clone of the given scope.
+		 *
+		 * @param {object} mScope
+		 */
+		expectFetchEntityContainer : function (mScope) {
+			mScope = clone(mScope);
+			this.oMetaModel.validate("n/a", mScope); // fill mSchema2ReferenceUri!
+			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+				.returns(_SyncPromise.resolve(mScope));
 		}
 	});
 
@@ -672,9 +688,7 @@ sap.ui.require([
 		var sAnnotationUri = "my/annotation.xml",
 			aAnnotationUris = [ sAnnotationUri, "uri2.xml"],
 			oModel = {},
-			oMetadataRequestor = {
-				read : function () { throw new Error(); }
-			},
+			oMetadataRequestor = this.oMetaModel.oRequestor,
 			sUrl = "/~/$metadata",
 			oMetaModel;
 
@@ -711,93 +725,101 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var oMetaModel = new ODataMetaModel();
-
 		assert.throws(function () { //TODO implement
-			oMetaModel.bindTree();
+			this.oMetaModel.bindTree();
 		}, new Error("Unsupported operation: v4.ODataMetaModel#bindTree"));
 
 		assert.throws(function () {
-			oMetaModel.getOriginalProperty();
+			this.oMetaModel.getOriginalProperty();
 		}, new Error("Unsupported operation: v4.ODataMetaModel#getOriginalProperty"));
 
 		assert.throws(function () { //TODO implement
-			oMetaModel.isList();
+			this.oMetaModel.isList();
 		}, new Error("Unsupported operation: v4.ODataMetaModel#isList"));
 
 		assert.throws(function () {
-			oMetaModel.refresh();
+			this.oMetaModel.refresh();
 		}, new Error("Unsupported operation: v4.ODataMetaModel#refresh"));
 
 		assert.throws(function () {
-			oMetaModel.setLegacySyntax(); // argument does not matter!
+			this.oMetaModel.setLegacySyntax(); // argument does not matter!
 		}, new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax"));
 
 		assert.throws(function () {
-			oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
+			this.oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
 		});
 	});
 
 	//*********************************************************************************************
 	[{
-		vAnnotationURI: undefined,
+		aAnnotationURI: undefined,
 		aAdditionalRequest : []
 	}, {
-		vAnnotationURI: "/my/annotation.xml",
+		aAnnotationURI: ["/my/annotation.xml"],
 		aAdditionalRequest : ["/my/annotation.xml"]
 	}, {
-		vAnnotationURI: ["/my/annotation.xml"],
-		aAdditionalRequest : ["/my/annotation.xml"]
-	}, {
-		vAnnotationURI: ["/my/annotation.xml", "/another/annotation.xml"],
+		aAnnotationURI: ["/my/annotation.xml", "/another/annotation.xml"],
 		aAdditionalRequest : ["/my/annotation.xml", "/another/annotation.xml"]
 	}].forEach(function (oFixture) {
-		var title = "fetchEntityContainer - " + JSON.stringify(oFixture.vAnnotationURI);
+		var title = "fetchEntityContainer - " + JSON.stringify(oFixture.aAnnotationURI);
 		QUnit.test(title, function (assert) {
-			var oMetadataRequestor = {
-					read : function () {}
-				},
-				oMetadataRequestorMock = this.mock(oMetadataRequestor),
-				sUrl = "/~/$metadata",
-				oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, oFixture.vAnnotationURI),
+			var oRequestorMock = this.mock(this.oMetaModel.oRequestor),
 				aReadResults = [],
 				mRootScope = {},
-				oSyncPromise;
+				oSyncPromise,
+				that = this;
 
-			oMetadataRequestorMock.expects("read").withExactArgs(sUrl)
+			this.oMetaModel.aAnnotationUris = oFixture.aAnnotationURI;
+			oRequestorMock.expects("read").withExactArgs(this.oMetaModel.sUrl)
 				.returns(Promise.resolve(mRootScope));
 			oFixture.aAdditionalRequest.forEach(function (sAnnotationUrl) {
 				var oAnnotationResult = {};
 
 				aReadResults.push(oAnnotationResult);
-				oMetadataRequestorMock.expects("read").withExactArgs(sAnnotationUrl, true)
+				oRequestorMock.expects("read").withExactArgs(sAnnotationUrl, true)
 					.returns(Promise.resolve(oAnnotationResult));
 			});
-			this.mock(oMetaModel).expects("_mergeAnnotations")
+			this.oMetaModelMock.expects("_mergeAnnotations")
 				.withExactArgs(mRootScope, aReadResults);
 
 			// code under test
-			oSyncPromise = oMetaModel.fetchEntityContainer();
+			oSyncPromise = this.oMetaModel.fetchEntityContainer();
 
 			// pending
 			assert.strictEqual(oSyncPromise.isPending(), true);
 			// already caching
-			assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
+			assert.strictEqual(this.oMetaModel.fetchEntityContainer(), oSyncPromise);
 
 			return oSyncPromise.then(function (mRootScope0) {
 				assert.strictEqual(mRootScope0, mRootScope);
 				// still caching
-				assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
+				assert.strictEqual(that.oMetaModel.fetchEntityContainer(), oSyncPromise);
 			});
 		});
 	});
 	//TODO later support "$Extends" : "<13.1.2 EntityContainer Extends>"
 
 	//*********************************************************************************************
+	QUnit.test("fetchEntityContainer: _mergeAnnotations fails", function (assert) {
+		var oError = new Error();
+
+		this.mock(this.oMetaModel.oRequestor).expects("read")
+			.withExactArgs(this.oMetaModel.sUrl)
+			.returns(Promise.resolve({}));
+		this.oMetaModelMock.expects("_mergeAnnotations").throws(oError);
+
+		return this.oMetaModel.fetchEntityContainer().then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getMetaContext", function (assert) {
 		var oMetaContext;
 
-		this.mock(this.oMetaModel).expects("getMetaPath")
+		this.oMetaModelMock.expects("getMetaPath")
 			.withExactArgs("/Foo/-1/bar")
 			.returns("/Foo/bar");
 
@@ -1019,7 +1041,7 @@ sap.ui.require([
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 
 			// code under test
@@ -1070,7 +1092,7 @@ sap.ui.require([
 		QUnit.test("fetchObject: " + sPath + " --> undefined", function (assert) {
 			var oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 
 			// code under test
@@ -1101,7 +1123,7 @@ sap.ui.require([
 		QUnit.test("fetchObject returns {} (anonymous empty object): " + sPath, function (assert) {
 			var oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 
 			// code under test
@@ -1116,7 +1138,7 @@ sap.ui.require([
 	QUnit.test("fetchObject without $Annotations", function (assert) {
 		var oSyncPromise;
 
-		this.mock(this.oMetaModel).expects("fetchEntityContainer")
+		this.oMetaModelMock.expects("fetchEntityContainer")
 			.returns(_SyncPromise.resolve(mMostlyEmptyScope));
 
 		// code under test
@@ -1191,7 +1213,7 @@ sap.ui.require([
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
 				var oSyncPromise;
 
-				this.mock(this.oMetaModel).expects("fetchEntityContainer")
+				this.oMetaModelMock.expects("fetchEntityContainer")
 					.returns(_SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel).returns(bWarn);
@@ -1221,7 +1243,7 @@ sap.ui.require([
 			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
 				var oSyncPromise;
 
-				this.mock(this.oMetaModel).expects("fetchEntityContainer")
+				this.oMetaModelMock.expects("fetchEntityContainer")
 					.returns(_SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.DEBUG, sODataMetaModel).returns(bDebug);
@@ -1249,7 +1271,7 @@ sap.ui.require([
 				oResult = {},
 				oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1) // see oInput
+			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1) // see oInput
 				.returns(_SyncPromise.resolve(mScope));
 			oInput = this.oMetaModel.getObject(sPath);
 			fnIsMultiple
@@ -1297,7 +1319,7 @@ sap.ui.require([
 					},
 					oSyncPromise;
 
-				this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1) // see oInput
+				this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1) // see oInput
 					.returns(_SyncPromise.resolve(mScope));
 				oInput = this.oMetaModel.getObject(sPathPrefix);
 				fnComputedAnnotation = this.mock(oScope).expects("computedAnnotation");
@@ -1328,7 +1350,7 @@ sap.ui.require([
 				sPath = "/@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple",
 				oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			this.mock(AnnotationHelper).expects("isMultiple")
 				.throws(oError);
@@ -1371,8 +1393,7 @@ sap.ui.require([
 				}));
 			}
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
-				.returns(_SyncPromise.resolve(clone(mXServiceScope)));
+			this.expectFetchEntityContainer(mXServiceScope);
 			oRequestorMock.expects("read")
 				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
 				.returns(Promise.resolve(mClonedProductScope));
@@ -1468,8 +1489,7 @@ sap.ui.require([
 			var sPath = "/not.found",
 				oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
-				.returns(_SyncPromise.resolve(clone(mMostlyEmptyScope)));
+			this.expectFetchEntityContainer(mMostlyEmptyScope);
 			this.oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel).returns(bWarn);
 			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
@@ -1493,8 +1513,7 @@ sap.ui.require([
 				sQualifiedName = sSchemaName + "Child",
 				sPath = "/" + sQualifiedName;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
-				.returns(_SyncPromise.resolve(clone(mXServiceScope)));
+			this.expectFetchEntityContainer(mXServiceScope);
 			this.mock(this.oMetaModel.oRequestor).expects("read")
 				.withExactArgs("/empty/$metadata")
 				.returns(Promise.resolve(mMostlyEmptyScope));
@@ -1517,7 +1536,19 @@ sap.ui.require([
 		var sTitle = "fetchObject: cross-service reference, respect $Include; bWarn = " + bWarn;
 
 		QUnit.test(sTitle, function (assert) {
-			var mReferencedScope = {
+			var mScope0 = {
+					"$Version" : "4.0",
+					"$Reference" : {
+						"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
+							"$Include" : [
+								"not.found.",
+								"tea_busi_product.v0001.",
+								"tea_busi_supplier.v0001."
+							]
+						}
+					}
+				},
+				mReferencedScope = {
 					"$Version" : "4.0",
 					"must.not.be.included." : {
 						"$kind" : "Schema"
@@ -1532,18 +1563,7 @@ sap.ui.require([
 				oRequestorMock = this.mock(this.oMetaModel.oRequestor),
 				that = this;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
-				.returns(_SyncPromise.resolve({
-					"$Reference" : {
-						"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
-							"$Include" : [
-								"not.found.",
-								"tea_busi_product.v0001.",
-								"tea_busi_supplier.v0001."
-							]
-						}
-					}
-				}));
+			this.expectFetchEntityContainer(mScope0);
 			oRequestorMock.expects("read")
 				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
 				.returns(Promise.resolve(mReferencedScope));
@@ -1586,22 +1606,22 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchObject: cross-service reference - unsupported $Version", function (assert) {
-		var sMessage = "Unsupported OData version: 4.01",
+	QUnit.test("fetchObject: cross-service reference - validation failure", function (assert) {
+		var oError = new Error(),
+			mReferencedScope = {},
 			sUrl = "/a/default/iwbep/tea_busi_product/0001/$metadata";
 
-		this.mock(this.oMetaModel).expects("fetchEntityContainer")
-			.returns(_SyncPromise.resolve(clone(mXServiceScope)));
+		this.expectFetchEntityContainer(mXServiceScope);
 		this.mock(this.oMetaModel.oRequestor).expects("read").withExactArgs(sUrl)
-			.returns(Promise.resolve({
-				"$Version" : "4.01"
-			}));
-		this.oLogMock.expects("error").withExactArgs(sMessage, sUrl, sODataMetaModel);
+			.returns(Promise.resolve(mReferencedScope));
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs(sUrl, mReferencedScope)
+			.throws(oError);
 
 		return this.oMetaModel.fetchObject("/tea_busi_product.v0001.Product").then(function () {
 				assert.ok(false);
-			}, function (oError) {
-				assert.strictEqual(oError.message, sMessage);
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
 			});
 	});
 
@@ -1610,6 +1630,7 @@ sap.ui.require([
 		var oRequestorMock = this.mock(this.oMetaModel.oRequestor),
 			// root service includes both A and B, A also includes B
 			mScope0 = {
+				"$Version" : "4.0",
 				"$Reference" : {
 					"/A/$metadata" : {
 						"$Include" : [
@@ -1624,6 +1645,7 @@ sap.ui.require([
 				}
 			},
 			mScopeA = {
+				"$Version" : "4.0",
 				"$Reference" : {
 					"/B/$metadata" : {
 						"$Include" : [
@@ -1632,7 +1654,6 @@ sap.ui.require([
 						]
 					}
 				},
-				"$Version" : "4.0",
 				"A." : {
 					"$kind" : "Schema"
 				}
@@ -1648,8 +1669,7 @@ sap.ui.require([
 			},
 			that = this;
 
-		this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
-			.returns(_SyncPromise.resolve(mScope0));
+		this.expectFetchEntityContainer(mScope0);
 		oRequestorMock.expects("read").withExactArgs("/A/$metadata")
 			.returns(Promise.resolve(mScopeA));
 		oRequestorMock.expects("read").withExactArgs("/B/$metadata")
@@ -1687,16 +1707,17 @@ sap.ui.require([
 					supportReferences : bSupportReferences,
 					synchronizationMode : "None"
 				}),
-				oMetaModel = oModel.getMetaModel(),
 				sPath = "/tea_busi_product.v0001.Product",
 				sUrl = "/a/default/iwbep/tea_busi_product/0001/$metadata";
 
+			this.oMetaModel = oModel.getMetaModel();
+			this.oMetaModelMock = this.mock(this.oMetaModel);
 			bSupportReferences = bSupportReferences !== false; // default is true!
-			assert.strictEqual(oMetaModel.bSupportReferences, bSupportReferences);
+			assert.strictEqual(this.oMetaModel.bSupportReferences, bSupportReferences);
 
-			this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
-				.returns(_SyncPromise.resolve(clone(mXServiceScope)));
-			this.mock(oMetaModel.oRequestor).expects("read").exactly(bSupportReferences ? 1 : 0)
+			this.expectFetchEntityContainer(mXServiceScope);
+			this.mock(this.oMetaModel.oRequestor).expects("read")
+				.exactly(bSupportReferences ? 1 : 0)
 				.withExactArgs(sUrl)
 				.returns(Promise.resolve(mClonedProductScope));
 			this.allowWarnings(assert, true);
@@ -1704,123 +1725,11 @@ sap.ui.require([
 				.withExactArgs("Unknown qualified name " + sPath.slice(1), sPath, sODataMetaModel);
 
 			// code under test
-			return oMetaModel.fetchObject(sPath).then(function (vResult) {
+			return this.oMetaModel.fetchObject(sPath).then(function (vResult) {
 				assert.strictEqual(vResult, bSupportReferences
 					? mClonedProductScope["tea_busi_product.v0001.Product"]
 					: undefined);
 			});
-		});
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bSupportReferences) {
-		var sTitle = "fetchEntityContainer: forbid edmx:IncludeAnnotations - supportReferences: "
-				+ bSupportReferences;
-
-		QUnit.test(sTitle, function (assert) {
-			var mScope = {
-					"$Reference" : {
-						"/A/$metadata" : {
-							"$Include" : [
-								"A."
-							]
-						},
-						"/B/$metadata" : {
-							"$IncludeAnnotations" : [{
-								"$TermNamespace" : "com.sap.vocabularies.Common.v1"
-							}]
-						}
-					}
-				},
-				sMessage = "Unsupported IncludeAnnotations";
-
-			this.oMetaModel.bSupportReferences = bSupportReferences;
-			this.mock(this.oMetaModel.oRequestor).expects("read")
-				.withExactArgs("/a/b/c/d/e/$metadata")
-				.returns(Promise.resolve(mScope));
-			if (bSupportReferences) {
-				this.oLogMock.expects("error")
-					.withExactArgs(sMessage, "/a/b/c/d/e/$metadata", sODataMetaModel);
-			}
-
-			return this.oMetaModel.fetchEntityContainer()
-				.then(function (vResult) {
-					if (bSupportReferences) {
-						assert.ok(false, "unexpected success");
-					} else {
-						assert.strictEqual(vResult, mScope);
-					}
-				}, function (oError) {
-					if (bSupportReferences) {
-						assert.strictEqual(oError.message, sMessage);
-					} else {
-						assert.ok(false, "unexpected error");
-					}
-				});
-		});
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bSupportReferences) {
-		var sTitle = "fetchObject: cross-service reference, forbid edmx:IncludeAnnotations"
-				+ " - supportReferences: " + bSupportReferences;
-
-		QUnit.test(sTitle, function (assert) {
-			var mScope0 = {
-					"$Reference" : {
-						"/A/$metadata" : {
-							"$Include" : [
-								"A."
-							]
-						}
-					}
-				},
-				mScopeA = {
-					"$Version" : "4.0",
-					"$Reference" : {
-						"/B/$metadata" : {
-							"$Include" : [
-								"B."
-							]
-						},
-						"/C/$metadata" : {
-							"$IncludeAnnotations" : [{
-								"$TermNamespace" : "com.sap.vocabularies.Common.v1"
-							}]
-						}
-					}
-				},
-				sMessage = "Unsupported IncludeAnnotations";
-
-			this.oMetaModel.bSupportReferences = bSupportReferences;
-			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
-				.returns(_SyncPromise.resolve(mScope0));
-			if (bSupportReferences) {
-				this.mock(this.oMetaModel.oRequestor).expects("read")
-					.withExactArgs("/A/$metadata")
-					.returns(Promise.resolve(mScopeA));
-				this.oLogMock.expects("error")
-					.withExactArgs(sMessage, "/A/$metadata", sODataMetaModel);
-			} else {
-				this.allowWarnings(assert, true);
-				this.oLogMock.expects("warning")
-					.withExactArgs("Unknown qualified name A.", "/A.", sODataMetaModel);
-			}
-
-			return this.oMetaModel.fetchObject("/A.")
-				.then(function (vResult) {
-					if (bSupportReferences) {
-						assert.ok(false, "unexpected success");
-					} else {
-						assert.strictEqual(vResult, undefined);
-					}
-				}, function (oError) {
-					if (bSupportReferences) {
-						assert.strictEqual(oError.message, sMessage);
-					} else {
-						assert.ok(false, "unexpected error");
-					}
-				});
 		});
 	});
 
@@ -1904,34 +1813,33 @@ sap.ui.require([
 				var fnFetchModuleSpy = this.spy(this.oMetaModel, "fetchModule"),
 					sPath = "/EMPLOYEES/0/ENTRYDATE",
 					oMetaContext = this.oMetaModel.getMetaContext(sPath),
-					oMetaModelMock = this.mock(this.oMetaModel),
 					that = this;
 
-				oMetaModelMock.expects("fetchObject").twice()
+				this.oMetaModelMock.expects("fetchObject").twice()
 					.withExactArgs(undefined, oMetaContext)
 					.returns(_SyncPromise.resolve(oProperty));
 				if (oProperty.$Type === "Edm.String") { // simulate annotation for strings
-					oMetaModelMock.expects("fetchObject")
+					this.oMetaModelMock.expects("fetchObject")
 						.withExactArgs("@com.sap.vocabularies.Common.v1.IsDigitSequence",
 							oMetaContext)
 						.returns(
 							_SyncPromise.resolve(oConstraints && oConstraints.isDigitSequence));
 				} else if (oProperty.$Type === "Edm.Decimal") { // simulate annotation for decimals
-					oMetaModelMock.expects("fetchObject")
+					this.oMetaModelMock.expects("fetchObject")
 						.withExactArgs("@Org.OData.Validation.V1.Minimum", oMetaContext)
 						.returns(
 							_SyncPromise.resolve(oConstraints && oConstraints.minimum));
-					oMetaModelMock.expects("fetchObject")
+					this.oMetaModelMock.expects("fetchObject")
 						.withExactArgs(
 							"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive",
 							oMetaContext)
 						.returns(
 							_SyncPromise.resolve(oConstraints && oConstraints.minimumExlusive));
-					oMetaModelMock.expects("fetchObject")
+					this.oMetaModelMock.expects("fetchObject")
 						.withExactArgs("@Org.OData.Validation.V1.Maximum", oMetaContext)
 						.returns(
 							_SyncPromise.resolve(oConstraints && oConstraints.maximum));
-					oMetaModelMock.expects("fetchObject")
+					this.oMetaModelMock.expects("fetchObject")
 						.withExactArgs(
 							"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive",
 							oMetaContext)
@@ -1971,11 +1879,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: collection", function (assert) {
-		var oMetaModelMock = this.mock(this.oMetaModel),
-			sPath = "/EMPLOYEES/0/foo",
+		var sPath = "/EMPLOYEES/0/foo",
 			that = this;
 
-		oMetaModelMock.expects("fetchObject").thrice()
+		this.oMetaModelMock.expects("fetchObject").thrice()
 			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
 			.returns(_SyncPromise.resolve({
 				$isCollection : true,
@@ -1985,7 +1892,7 @@ sap.ui.require([
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported collection type, using sap.ui.model.odata.type.Raw",
 			sPath, sODataMetaModel);
-		oMetaModelMock.expects("fetchModule") // must only be called once
+		this.oMetaModelMock.expects("fetchModule") // must only be called once
 			.withExactArgs("sap.ui.model.odata.type.Raw")
 			.returns(_SyncPromise.resolve(Promise.resolve(Raw)));
 
@@ -2004,11 +1911,10 @@ sap.ui.require([
 	//TODO make Edm.Duration work with OData V4
 	["acme.Type", "Edm.Duration", "Edm.GeographyPoint"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
-			var oMetaModelMock = this.mock(this.oMetaModel),
-				sPath = "/EMPLOYEES/0/foo",
+			var sPath = "/EMPLOYEES/0/foo",
 				that = this;
 
-			oMetaModelMock.expects("fetchObject").twice()
+			this.oMetaModelMock.expects("fetchObject").twice()
 				.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
 				.returns(_SyncPromise.resolve({
 					$Nullable : false, // must not be turned into a constraint for Raw!
@@ -2017,7 +1923,7 @@ sap.ui.require([
 			this.oLogMock.expects("warning").withExactArgs(
 				"Unsupported type '" + sQualifiedName + "', using sap.ui.model.odata.type.Raw",
 				sPath, sODataMetaModel);
-			oMetaModelMock.expects("fetchModule")
+			this.oMetaModelMock.expects("fetchModule")
 				.withExactArgs("sap.ui.model.odata.type.Raw")
 				.returns(_SyncPromise.resolve(Raw));
 
@@ -2159,7 +2065,7 @@ sap.ui.require([
 				oHelperMock = this.mock(_Helper),
 				oPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			oFixture.requests.forEach(function (oRequest) {
 				if (oRequest.path) {
@@ -2226,7 +2132,7 @@ sap.ui.require([
 
 			this.oLogMock.expects("error").withExactArgs(oFixture.message, oFixture.dataPath,
 				sODataMetaModel);
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			if ("instance" in oFixture) {
 				this.mock(oContext)
@@ -2257,7 +2163,7 @@ sap.ui.require([
 			sPath = "foo",
 			oValue = {};
 
-		this.mock(this.oMetaModel).expects("fetchObject")
+		this.oMetaModelMock.expects("fetchObject")
 			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
 			.returns(_SyncPromise.resolve(oValue));
 
@@ -2289,7 +2195,7 @@ sap.ui.require([
 			oValue = {};
 
 		// Called twice: the first time in the initialization, the second time as code under test
-		this.mock(this.oMetaModel).expects("fetchObject").twice()
+		this.oMetaModelMock.expects("fetchObject").twice()
 			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
 			.returns(_SyncPromise.resolve(oValue));
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
@@ -2304,7 +2210,6 @@ sap.ui.require([
 		var that = this,
 			oBinding,
 			oContext = {},
-			oMetaModelMock = this.mock(this.oMetaModel),
 			mParameters = {},
 			sPath = "foo",
 			oValue = {},
@@ -2314,11 +2219,11 @@ sap.ui.require([
 			});
 
 		// respond synchronously during the initialization
-		oMetaModelMock.expects("fetchObject").returns(_SyncPromise.resolve(oValue));
+		this.oMetaModelMock.expects("fetchObject").returns(_SyncPromise.resolve(oValue));
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
 
 		this.mock(oBinding).expects("_fireChange").never();
-		oMetaModelMock.expects("fetchObject")
+		this.oMetaModelMock.expects("fetchObject")
 			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
 			.returns(oPromise);
 
@@ -2337,7 +2242,7 @@ sap.ui.require([
 			oValue1 = {},
 			oValue2 = {};
 
-		this.mock(this.oMetaModel).expects("fetchObject")
+		this.oMetaModelMock.expects("fetchObject")
 			.withExactArgs(sPath, sinon.match.same(oContext), undefined)
 			.returns(_SyncPromise.resolve(oValue1));
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext);
@@ -2449,7 +2354,7 @@ sap.ui.require([
 			aSorters = [];
 
 		// avoid request to backend during initialization
-		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
+		this.oMetaModelMock.expects("fetchObject").returns(_SyncPromise.resolve());
 
 		// code under test
 		oBinding = this.oMetaModel.bindList(sPath, oContext, aSorters, aFilters);
@@ -2471,7 +2376,7 @@ sap.ui.require([
 			sPath = "path";
 
 		// avoid request to backend during initialization
-		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
+		this.oMetaModelMock.expects("fetchObject").returns(_SyncPromise.resolve());
 
 		oBinding = this.oMetaModel.bindList(sPath, oContext);
 		oBindingMock = this.mock(oBinding);
@@ -2497,7 +2402,7 @@ sap.ui.require([
 			sPath = "path";
 
 		// avoid request to backend during initialization
-		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
+		this.oMetaModelMock.expects("fetchObject").returns(_SyncPromise.resolve());
 
 		oBinding = this.oMetaModel.bindList(sPath, oContext);
 		oBindingMock = this.mock(oBinding);
@@ -2527,7 +2432,7 @@ sap.ui.require([
 			});
 
 		// avoid request to backend during initialization
-		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
+		this.oMetaModelMock.expects("fetchObject").returns(_SyncPromise.resolve());
 
 		oBinding = this.oMetaModel.bindList(sPath, oContext);
 		oBindingMock = this.mock(oBinding);
@@ -2546,14 +2451,13 @@ sap.ui.require([
 	QUnit.test("ODataMetaListBinding#checkUpdate", function (assert) {
 		var oBinding,
 			oBindingMock,
-			oMetaModel = this.oMetaModel, // instead of "that = this"
-			oContext = oMetaModel.getContext("/"),
+			oContext = this.oMetaModel.getContext("/"),
 			sPath = "";
 
 		// avoid request to backend during initialization
-		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
+		this.oMetaModelMock.expects("fetchObject").returns(_SyncPromise.resolve());
 
-		oBinding = oMetaModel.bindList(sPath, oContext);
+		oBinding = this.oMetaModel.bindList(sPath, oContext);
 		oBindingMock = this.mock(oBinding);
 
 		this.stub(oBinding, "update", function () {
@@ -2579,7 +2483,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("ODataMetaListBinding#getContexts, getCurrentContexts", function (assert) {
 		var oBinding,
-			oMetaModel = this.oMetaModel,
+			oMetaModel = this.oMetaModel, // instead of "that = this"
 			oContext = oMetaModel.getMetaContext("/EMPLOYEES"),
 			sPath = "";
 
@@ -2592,7 +2496,7 @@ sap.ui.require([
 			assert.deepEqual(oBinding.getCurrentContexts(), aContexts);
 		}
 
-		this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(_SyncPromise.resolve(mScope));
 		oBinding = oMetaModel.bindList(sPath, oContext);
 
@@ -2715,7 +2619,7 @@ sap.ui.require([
 
 		QUnit.test("ODataMetaListBinding#fetchContexts (sync): " + sPath, function (assert) {
 			var oBinding,
-				oMetaModel = this.oMetaModel,
+				oMetaModel = this.oMetaModel, // instead of "that = this"
 				oContext = oFixture.contextPath && oMetaModel.getContext(oFixture.contextPath);
 
 			if (oFixture.warning) {
@@ -2727,10 +2631,11 @@ sap.ui.require([
 				this.oLogMock.expects("warning").twice()
 					.withExactArgs(oFixture.warning[0], oFixture.warning[1], sODataMetaModel);
 			}
-			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(0)
+			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
 				.returns(_SyncPromise.resolve(mScope));
 			oBinding = this.oMetaModel.bindList(oFixture.metaPath, oContext);
 
+			// code under test
 			assert.deepEqual(oBinding.fetchContexts().getResult().map(function (oContext) {
 				assert.strictEqual(oContext.getModel(), oMetaModel);
 				return oContext.getPath();
@@ -2738,7 +2643,7 @@ sap.ui.require([
 		});
 	});
 
-
+	//*********************************************************************************************
 	QUnit.test("ODataMetaListBinding#fetchContexts (async)", function (assert) {
 		var oBinding,
 			oMetaModel = this.oMetaModel,
@@ -2746,7 +2651,7 @@ sap.ui.require([
 
 		// Note that fetchObject is called twice in this test: once from bindList via the
 		// constructor, once from fetchContexts
-		this.mock(this.oMetaModel).expects("fetchObject").twice()
+		this.oMetaModelMock.expects("fetchObject").twice()
 			.withExactArgs(sPath + "/")
 			.returns(_SyncPromise.resolve(Promise.resolve({bar: "", baz: ""})));
 		oBinding = this.oMetaModel.bindList(sPath);
@@ -2763,41 +2668,261 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
-		var oMetaModel = new ODataMetaModel();
-
 		assert.throws(function () {
-			oMetaModel.attachParseError();
+			this.oMetaModel.attachParseError();
 		}, new Error("Unsupported event 'parseError': v4.ODataMetaModel#attachEvent"));
 
 		assert.throws(function () {
-			oMetaModel.attachRequestCompleted();
+			this.oMetaModel.attachRequestCompleted();
 		}, new Error("Unsupported event 'requestCompleted': v4.ODataMetaModel#attachEvent"));
 
 		assert.throws(function () {
-			oMetaModel.attachRequestFailed();
+			this.oMetaModel.attachRequestFailed();
 		}, new Error("Unsupported event 'requestFailed': v4.ODataMetaModel#attachEvent"));
 
 		assert.throws(function () {
-			oMetaModel.attachRequestSent();
+			this.oMetaModel.attachRequestSent();
 		}, new Error("Unsupported event 'requestSent': v4.ODataMetaModel#attachEvent"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_mergeAnnotations: without annotation files", function (assert) {
-		var sNamespace = "com.sap.gateway.default.iwbep.tea_busi.v0001.",
-			sBaseUrl = "/" + window.location.pathname.split("/")[1]
-				+ "/test-resources/sap/ui/core/qunit/odata/v4/data/",
-			oMetadata = jQuery.sap.sjax({url : sBaseUrl + "metadata.json", dataType : 'json'}).data,
-			oMetadataCopy = clone(oMetadata);
+	QUnit.test("validate: mSchema2ReferenceUri", function (assert) {
+		var mScope = {
+				"$Version" : "4.0",
+				"$Reference" : {
+					"/A/$metadata" : {
+						"$Include" : [
+							"A.", "A.A."
+						]
+					},
+					"/B/$metadata" : {
+						"$Include" : [
+							"B.", "B.B."
+						]
+					}
+				}
+			},
+			sUrl = "/~/$metadata";
+
+		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {});
+
+		// simulate a previous reference to a schema with the _same_ reference URI --> allowed!
+		this.oMetaModel.mSchema2ReferenceUri["A."] = "/A/$metadata";
 
 		// code under test
-		this.oMetaModel._mergeAnnotations(oMetadataCopy, []);
+		assert.strictEqual(this.oMetaModel.validate(sUrl, mScope), mScope);
 
-		assert.deepEqual(oMetadataCopy.$Annotations,
-			jQuery.extend({}, oMetadata[sNamespace].$Annotations),
+		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {
+			"A." : "/A/$metadata",
+			"A.A." : "/A/$metadata",
+			"B." : "/B/$metadata",
+			"B.B." : "/B/$metadata"
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		message : "Unsupported OData version: 4.01",
+		scope : {"$Version" : "4.01"}
+	}, {
+		message : "Unsupported IncludeAnnotations",
+		scope : {
+			"$Version" : "4.0",
+			"$Reference" : {
+				"/A/$metadata" : {
+					"$Include" : [
+						"A."
+					]
+				},
+				"/B/$metadata" : {
+					"$IncludeAnnotations" : [{
+						"$TermNamespace" : "com.sap.vocabularies.Common.v1"
+					}]
+				}
+			}
+		}
+	}, {
+		message : "A schema cannot span more than one document: tea_busi."
+			+ " - is both included and defined",
+		scope : {
+			"$Version" : "4.0",
+			"$Reference" : {
+				"/B/$metadata" : {
+					"$Include" : [
+						"foo.", "tea_busi."
+					]
+				}
+			},
+			"tea_busi." : {
+				"$kind" : "Schema"
+			}
+		}
+	}, {
+		message : "A schema cannot span more than one document: tea_busi."
+			+ " - expected reference URI /A/$metadata but instead saw /B/$metadata",
+		scope : {
+			"$Version" : "4.0",
+			"$Reference" : {
+				"/A/$metadata" : {
+					"$Include" : [
+						"foo.", "tea_busi."
+					]
+				},
+				"/B/$metadata" : {
+					"$Include" : [
+						"bar.", "tea_busi."
+					]
+				}
+			}
+		}
+	}, {
+		message : "A schema cannot span more than one document: forbidden."
+			+ " - expected reference URI /$metadata but instead saw /B/$metadata",
+		scope : {
+			"$Version" : "4.0",
+			"$Reference" : {
+				"/A/$metadata" : {
+					"$Include" : [
+						"foo.", "bar."
+					]
+				},
+				"/B/$metadata" : {
+					"$Include" : [
+						"baz.", "forbidden."
+					]
+				}
+			}
+		}
+	}].forEach(function (oFixture) {
+		[false, true].forEach(function (bSupportReferences) {
+			var sMessage = oFixture.message,
+				sTitle = "validate: " + sMessage + ", supportReferences: " + bSupportReferences;
+
+			QUnit.test(sTitle, function (assert) {
+				var sUrl = "/~/$metadata",
+					that = this;
+
+				function codeUnderTest() {
+					var oResult = that.oMetaModel.validate(sUrl, oFixture.scope);
+
+					assert.strictEqual(oResult, oFixture.scope);
+				}
+
+				this.oMetaModel.bSupportReferences = bSupportReferences;
+				// simulate a schema that has been loaded or referenced before
+				this.oMetaModel.mSchema2ReferenceUri = {
+					"forbidden." : "/$metadata"
+				};
+				if (bSupportReferences) {
+					this.oLogMock.expects("error")
+						.withExactArgs(sMessage, sUrl, sODataMetaModel);
+				}
+
+				if (bSupportReferences) {
+					assert.throws(codeUnderTest, new Error(sUrl + ": " + sMessage));
+				} else {
+					codeUnderTest();
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeAnnotations: without annotation files", function (assert) {
+		// Note: target elements have been omitted for brevity
+		var mExpectedAnnotations = {
+				"same.target" : {
+					"@Common.Description" : "",
+					"@Common.Label" : {
+						"new" : true // Note: no aggregation of properties here!
+					},
+					"@Common.Text" : ""
+				},
+				"another.target" : {
+					"@Common.Label" : ""
+				}
+			},
+			mScope = {
+				"A." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"same.target" : {
+							"@Common.Label" : {
+								"old" : true
+							},
+							"@Common.Text" : ""
+						}
+					}
+				},
+				"B." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"same.target" : {
+							"@Common.Description" : "",
+							"@Common.Label" : {
+								"new" : true
+							}
+						},
+						"another.target" : {
+							"@Common.Label" : ""
+						}
+					}
+				},
+				"B.B" : {}
+			};
+
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs(this.oMetaModel.sUrl, mScope);
+		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {});
+
+		// code under test
+		this.oMetaModel._mergeAnnotations(mScope, []);
+
+		assert.deepEqual(mScope.$Annotations, mExpectedAnnotations,
 			"$Annotations have been shifted and merged from schemas to root");
-		assert.strictEqual(oMetadataCopy[sNamespace].$Annotations,
-			undefined, "$Annotations removed from schema");
+		assert.notOk("$Annotations" in mScope["A."], "$Annotations removed from schema");
+		assert.notOk("$Annotations" in mScope["B."], "$Annotations removed from schema");
+		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {
+			"A." : this.oMetaModel.sUrl,
+			"B." : this.oMetaModel.sUrl
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeAnnotations: validation failure for $metadata", function (assert) {
+		var oError = new Error(),
+			mScope = {};
+
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs(this.oMetaModel.sUrl, mScope)
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			this.oMetaModel._mergeAnnotations(mScope, []);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeAnnotations: validation failure in annotation file", function (assert) {
+		var oError = new Error(),
+			mScope = {},
+			mAnnotationScope1 = {},
+			mAnnotationScope2 = {};
+
+		this.oMetaModel.aAnnotationUris = ["n/a", "/my/annotation.xml"];
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs(this.oMetaModel.sUrl, mScope);
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("n/a", mAnnotationScope1);
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("/my/annotation.xml", mAnnotationScope2)
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			this.oMetaModel._mergeAnnotations(mScope, [mAnnotationScope1, mAnnotationScope2]);
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -2818,13 +2943,17 @@ sap.ui.require([
 				url : sBaseUrl + "legacy_annotations.json",
 				dataType : 'json'
 			}).data,
-			oAnnotationCopy = clone(oAnnotation),
-			oMetadataCopy = clone(oMetadata);
+			oAnnotationCopy = clone(oAnnotation);
 
 		// the examples are unrealistic and only need to work in 'legacy mode'
 		this.oMetaModel.bSupportReferences = false;
+		this.oMetaModel.aAnnotationUris = ["n/a"];
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs(this.oMetaModel.sUrl, oMetadata);
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("n/a", oAnnotation);
 
-		oExpectedResult.$Annotations = jQuery.extend({}, oMetadata[sNamespace].$Annotations);
+		oExpectedResult.$Annotations = oMetadata[sNamespace].$Annotations;
 		delete oExpectedResult[sNamespace].$Annotations;
 		// all entries with $kind are merged
 		oExpectedResult["my.schema.2.FuGetEmployeeMaxAge"] =
@@ -2850,9 +2979,9 @@ sap.ui.require([
 		delete oExpectedResult["another.schema.2."].$Annotations;
 
 		// code under test
-		this.oMetaModel._mergeAnnotations(oMetadataCopy, [oAnnotation]);
+		this.oMetaModel._mergeAnnotations(oMetadata, [oAnnotation]);
 
-		assert.deepEqual(oMetadataCopy, oExpectedResult, "merged metadata as expected");
+		assert.deepEqual(oMetadata, oExpectedResult, "merged metadata as expected");
 	});
 
 	//*********************************************************************************************
@@ -2983,6 +3112,15 @@ sap.ui.require([
 				}
 			};
 
+		this.oMetaModel.aAnnotationUris = ["/URI/1", "/URI/2"];
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs(this.oMetaModel.sUrl, mScope0);
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("/URI/1", mAnnotationScope1);
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("/URI/2", mAnnotationScope2);
+		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {});
+
 		// code under test
 		this.oMetaModel._mergeAnnotations(mScope0, [mAnnotationScope1, mAnnotationScope2]);
 
@@ -2990,6 +3128,11 @@ sap.ui.require([
 		assert.strictEqual(mScope0["tea_busi."].$Annotations, undefined);
 		assert.strictEqual(mAnnotationScope1["foo."].$Annotations, undefined);
 		assert.strictEqual(mAnnotationScope2["bar."].$Annotations, undefined);
+		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {
+			"bar." : "/URI/2",
+			"foo." : "/URI/1",
+			"tea_busi." : this.oMetaModel.sUrl
+		});
 	});
 
 	//*********************************************************************************************
@@ -3007,6 +3150,7 @@ sap.ui.require([
 					"$kind" : "EntityType"
 				}
 			},
+			sMessage = "A schema cannot span more than one document: tea_busi.ExistingType",
 			oMetadata = {
 				"tea_busi.ExistingType" : {
 					"$kind" : "EntityType"
@@ -3014,15 +3158,50 @@ sap.ui.require([
 			};
 
 		this.oMetaModel.aAnnotationUris = ["n/a", "/my/annotation.xml"];
-		// legacy behavior - a schema cannot span more than one document
+		// legacy behavior: $Version is not checked, tea_busi.NewType2 is allowed
 		this.oMetaModel.bSupportReferences = false;
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs(this.oMetaModel.sUrl, oMetadata);
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("n/a", oAnnotation1);
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("/my/annotation.xml", oAnnotation2);
+		this.oLogMock.expects("error")
+			.withExactArgs(sMessage, "/my/annotation.xml", sODataMetaModel);
 
 		assert.throws(function () {
 			// code under test
 			this.oMetaModel._mergeAnnotations(oMetadata, [oAnnotation1, oAnnotation2]);
-		}, new Error("Duplicate name tea_busi.ExistingType in /my/annotation.xml"));
+		}, new Error("/my/annotation.xml: " + sMessage));
 	});
-	//TODO - check that a schema cannot span more than one document
+
+	//*********************************************************************************************
+	QUnit.test("_mergeAnnotations - a schema cannot span more than one document",
+		function (assert) {
+			var oAnnotation = {
+					"$Version" : "4.0",
+					"tea_busi." : {
+						"$kind" : "Schema"
+					}
+				},
+				sMessage = "A schema cannot span more than one document: tea_busi.",
+				oMetadata = {
+					"$Version" : "4.0",
+					"tea_busi." : {
+						"$kind" : "Schema"
+					}
+				};
+
+			this.oMetaModel.aAnnotationUris = ["n/a", "/my/annotation.xml"];
+			this.oLogMock.expects("error")
+				.withExactArgs(sMessage, "/my/annotation.xml", sODataMetaModel);
+
+			assert.throws(function () {
+				// code under test
+				this.oMetaModel._mergeAnnotations(oMetadata, [{"$Version" : "4.0"}, oAnnotation]);
+			}, new Error("/my/annotation.xml: " + sMessage));
+		}
+	);
 
 	//*********************************************************************************************
 	QUnit.test("getOrCreateValueListModel", function(assert) {
@@ -3090,17 +3269,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchValueListType: unknown property", function (assert) {
 		var oContext = {},
-			oMetaModel = new ODataMetaModel(),
-			oMetaModelMock = this.mock(oMetaModel),
 			sPath = "/Products('HT-1000')/Foo";
 
-		oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
-		oMetaModelMock.expects("fetchObject")
+		this.oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
+		this.oMetaModelMock.expects("fetchObject")
 			.withExactArgs(undefined, sinon.match.same(oContext))
 			.returns(Promise.resolve());
 
 		// code under test
-		return oMetaModel.fetchValueListType(sPath).then(function () {
+		return this.oMetaModel.fetchValueListType(sPath).then(function () {
 			assert.ok(false);
 		}, function (oError) {
 			assert.ok(oError.message, "No metadata for " + sPath);
@@ -3139,21 +3316,19 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchValueListType: " + oFixture.sValueListType, function (assert) {
 			var oContext = {},
-				oMetaModel = new ODataMetaModel(),
-				oMetaModelMock = this.mock(oMetaModel),
 				sPropertyPath = "/ProductList('HT-1000')/Status";
 
-			oMetaModelMock.expects("getMetaContext")
+			this.oMetaModelMock.expects("getMetaContext")
 				.withExactArgs(sPropertyPath).returns(oContext);
-			oMetaModelMock.expects("fetchObject")
+			this.oMetaModelMock.expects("fetchObject")
 				.withExactArgs(undefined, sinon.match.same(oContext))
 				.returns(_SyncPromise.resolve({}));
-			oMetaModelMock.expects("getObject")
+			this.oMetaModelMock.expects("getObject")
 				.withExactArgs("@", sinon.match.same(oContext))
 				.returns(oFixture.mAnnotations);
 
 			// code under test
-			oMetaModel.fetchValueListType(sPropertyPath).then(function (sValueListType) {
+			this.oMetaModel.fetchValueListType(sPropertyPath).then(function (sValueListType) {
 				assert.strictEqual(sValueListType, oFixture.sValueListType);
 			});
 		});

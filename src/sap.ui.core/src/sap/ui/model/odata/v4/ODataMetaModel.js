@@ -88,6 +88,20 @@ sap.ui.define([
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
+	 * Logs an error with the given message and details and throws it.
+	 *
+	 * @param {string} sMessage
+	 *   Error message
+	 * @param {string} sDetails
+	 *   Error details
+	 * @throws {Error}
+	 */
+	function logAndThrowError(sMessage, sDetails) {
+		jQuery.sap.log.error(sMessage, sDetails, sODataMetaModel);
+		throw new Error(sDetails + ": " + sMessage);
+	}
+
+	/**
 	 * Returns the schema with the given namespace, or a promise which is resolved as soon as the
 	 * schema has been included, or <code>undefined</code> in case the schema is neither present nor
 	 * referenced.
@@ -96,63 +110,21 @@ sap.ui.define([
 	 *   The OData metadata model
 	 * @param {object} mScope
 	 *   The $metadata "JSON" of the root service
-	 * @param {string} sNamespace
+	 * @param {string} sSchema
 	 *   A namespace, for example "foo.bar.", of a schema.
 	 * @param {function} fnLog
 	 *   The log function
-	 * @returns {object|SyncPromise}
+	 * @returns {object|SyncPromise|undefined}
 	 *   The schema, or a promise which is resolved without details or rejected with an error, or
 	 *   <code>undefined</code>.
 	 */
-	function getOrFetchSchema(oMetaModel, mScope, sNamespace, fnLog) {
+	function getOrFetchSchema(oMetaModel, mScope, sSchema, fnLog) {
 		var oPromise,
-			oReference,
 			sReferenceUri,
 			sUrl;
 
 		/**
-		 * Include references from the given referenced scope.
-		 *
-		 * @param {object} mReferencedScope
-		 *   The $metadata "JSON"
-		 * @returns {object}
-		 *   <code>mReferencedScope</code> to allow chaining
-		 * @throws {Error}
-		 *   If the given $metadata "JSON" is unsupported
-		 */
-		function includeReferences(mReferencedScope) {
-			var sMessage,
-				oReference,
-				sReferenceUri;
-
-			if (mReferencedScope.$Version !== "4.0") {
-				sMessage = "Unsupported OData version: " + mReferencedScope.$Version;
-				jQuery.sap.log.error(sMessage, sUrl, sODataMetaModel);
-				throw new Error(sMessage);
-			}
-
-			// Note: for-in tolerates undefined
-			for (sReferenceUri in mReferencedScope.$Reference) {
-				oReference = mReferencedScope.$Reference[sReferenceUri];
-				if ("$IncludeAnnotations" in oReference) {
-					sMessage = "Unsupported IncludeAnnotations";
-					jQuery.sap.log.error(sMessage, sUrl, sODataMetaModel);
-					throw new Error(sMessage);
-				}
-				if (!(sReferenceUri in mScope.$Reference)) { // add new reference
-					mScope.$Reference[sReferenceUri] = oReference;
-				} else { // add potentially new includes
-					// Note: it's OK to create duplicates here
-					Array.prototype.push.apply(mScope.$Reference[sReferenceUri].$Include,
-						oReference.$Include);
-				}
-			}
-
-			return mReferencedScope;
-		}
-
-		/**
-		 * Include the schema (and all of its children) with namespace <code>sNamespace</code> from
+		 * Include the schema (and all of its children) with namespace <code>sSchema</code> from
 		 * the given referenced scope.
 		 *
 		 * @param {object} mReferencedScope
@@ -162,15 +134,15 @@ sap.ui.define([
 			var oElement,
 				sKey;
 
-			if (!(sNamespace in mReferencedScope)) {
-				fnLog(WARNING, sReferenceUri, " does not contain ", sNamespace);
+			if (!(sSchema in mReferencedScope)) {
+				fnLog(WARNING, sReferenceUri, " does not contain ", sSchema);
 				return;
 			}
 
-			fnLog(DEBUG, "Including ", sNamespace, " from ", sReferenceUri);
+			fnLog(DEBUG, "Including ", sSchema, " from ", sReferenceUri);
 			for (sKey in mReferencedScope) {
 				// $EntityContainer can be ignored; $Reference, $Version is handled above
-				if (sKey[0] !== "$" && namespace(sKey) === sNamespace) {
+				if (sKey[0] !== "$" && schema(sKey) === sSchema) {
 					oElement = mReferencedScope[sKey];
 					mScope[sKey] = oElement;
 					mergeAnnotations(oElement, mScope.$Annotations);
@@ -178,32 +150,29 @@ sap.ui.define([
 			}
 		}
 
-		if (sNamespace in mScope) {
-			return mScope[sNamespace];
+		if (sSchema in mScope) {
+			return mScope[sSchema];
 		}
 
-		// Note: for-in tolerates undefined
-		for (sReferenceUri in mScope.$Reference) {
-			oReference = mScope.$Reference[sReferenceUri];
-			if (oReference.$Include.indexOf(sNamespace) >= 0) {
-				fnLog(DEBUG, "Namespace ", sNamespace, " found in $Include of ", sReferenceUri);
-				oPromise = oReference["$ui5.read"];
-				if (!oPromise) {
-					// interpret reference URI relative to metadata URL
-					sUrl = new URI(sReferenceUri).absoluteTo(oMetaModel.sUrl).toString();
-					fnLog(DEBUG, "Reading ", sReferenceUri, " from ", sUrl);
-					oPromise = oReference["$ui5.read"]
-						= _SyncPromise.resolve(oMetaModel.oRequestor.read(sUrl))
-							.then(includeReferences);
-				}
-				oPromise = oPromise.then(includeSchema);
-				// BEWARE: oPromise may already be resolved, then includeSchema() is done now
-				if (sNamespace in mScope) {
-					return mScope[sNamespace];
-				}
-				mScope[sNamespace] = oPromise;
-				return oPromise;
+		sReferenceUri = oMetaModel.mSchema2ReferenceUri[sSchema];
+		if (sReferenceUri) {
+			fnLog(DEBUG, "Namespace ", sSchema, " found in $Include of ", sReferenceUri);
+			oPromise = oMetaModel.mReferenceUri2Promise[sReferenceUri];
+			if (!oPromise) {
+				// interpret reference URI relative to metadata URL
+				sUrl = new URI(sReferenceUri).absoluteTo(oMetaModel.sUrl).toString();
+				fnLog(DEBUG, "Reading ", sReferenceUri, " from ", sUrl);
+				oPromise = oMetaModel.mReferenceUri2Promise[sReferenceUri]
+					= _SyncPromise.resolve(oMetaModel.oRequestor.read(sUrl))
+						.then(oMetaModel.validate.bind(oMetaModel, sUrl));
 			}
+			oPromise = oPromise.then(includeSchema);
+			// BEWARE: oPromise may already be resolved, then includeSchema() is done now
+			if (sSchema in mScope) {
+				return mScope[sSchema];
+			}
+			mScope[sSchema] = oPromise;
+			return oPromise;
 		}
 	}
 
@@ -250,14 +219,14 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the namespace of the given qualified name, including the trailing dot.
+	 * Returns the namespace of the given qualified name's schema, including the trailing dot.
 	 *
 	 * @param {string} sQualifiedName
 	 *   A qualified name
 	 * @returns {string}
-	 *   The namespace
+	 *   The schema's namespace
 	 */
-	function namespace(sQualifiedName) {
+	function schema(sQualifiedName) {
 		return sQualifiedName.slice(0, sQualifiedName.lastIndexOf(".") + 1);
 	}
 
@@ -525,7 +494,9 @@ sap.ui.define([
 			this.sDefaultBindingMode = BindingMode.OneTime;
 			this.oMetadataPromise = null;
 			this.oModel = oModel;
+			this.mReferenceUri2Promise = {};
 			this.oRequestor = oRequestor;
+			this.mSchema2ReferenceUri = {};
 			this.mSupportedBindingModes = {"OneTime" : true, "OneWay" : true};
 			this.bSupportReferences = bSupportReferences !== false; // default is true
 			this.sUrl = sUrl;
@@ -546,24 +517,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype._mergeAnnotations = function (mScope, aAnnotationFiles) {
-		var sMessage,
-			sReferenceUri,
-			that = this;
+		var that = this;
 
-		if (this.bSupportReferences) {
-			for (sReferenceUri in mScope.$Reference) {
-				if ("$IncludeAnnotations" in mScope.$Reference[sReferenceUri]) {
-					sMessage = "Unsupported IncludeAnnotations";
-					jQuery.sap.log.error(sMessage, this.sUrl, sODataMetaModel);
-					throw new Error(sMessage);
-				}
-			}
-		}
+		this.validate(this.sUrl, mScope);
 
 		// merge $Annotations from all schemas at root scope
 		mScope.$Annotations = {};
 		Object.keys(mScope).forEach(function (sElement) {
-			mergeAnnotations(mScope[sElement], mScope.$Annotations);
+			if (mScope[sElement].$kind === "Schema") {
+				that.mSchema2ReferenceUri[sElement] = that.sUrl;
+				mergeAnnotations(mScope[sElement], mScope.$Annotations);
+			}
 		});
 
 		// merge annotation files into root scope
@@ -571,15 +535,19 @@ sap.ui.define([
 			var oElement,
 				sQualifiedName;
 
+			that.validate(that.aAnnotationUris[i], mAnnotationScope);
 			for (sQualifiedName in mAnnotationScope) {
 				if (sQualifiedName[0] !== "$") {
 					if (sQualifiedName in mScope) {
-						throw new Error("Duplicate name " + sQualifiedName + " in "
-							+ that.aAnnotationUris[i]);
+						logAndThrowError("A schema cannot span more than one document: "
+							+ sQualifiedName, that.aAnnotationUris[i]);
 					}
 					oElement = mAnnotationScope[sQualifiedName];
 					mScope[sQualifiedName] = oElement;
-					mergeAnnotations(oElement, mScope.$Annotations);
+					if (oElement.$kind === "Schema") {
+						that.mSchema2ReferenceUri[sQualifiedName] = that.aAnnotationUris[i];
+						mergeAnnotations(oElement, mScope.$Annotations);
+					}
 				}
 			}
 		});
@@ -708,8 +676,7 @@ sap.ui.define([
 				if (sErrorPath && sErrorPath !== sPath) {
 					sMessage = sMessage + " at " + sErrorPath;
 				}
-				jQuery.sap.log.error(sMessage, sPath, sODataMetaModel);
-				throw new Error(sPath + ": " + sMessage);
+				logAndThrowError(sMessage, sPath);
 			}
 
 			/*
@@ -1039,7 +1006,7 @@ sap.ui.define([
 			 *   Whether to continue after scope lookup
 			 */
 			function scopeLookup(sQualifiedName, sPropertyName) {
-				var sNamespace;
+				var sSchema;
 
 				/*
 				 * Sets <code>vLocation</code> and delegates to {@link log}.
@@ -1052,8 +1019,8 @@ sap.ui.define([
 
 				if (that.bSupportReferences && !(sQualifiedName in mScope)) {
 					// unknown qualified name: maybe schema is referenced and can be included?
-					sNamespace = namespace(sQualifiedName);
-					vResult = getOrFetchSchema(that, mScope, sNamespace, logWithLocation);
+					sSchema = schema(sQualifiedName);
+					vResult = getOrFetchSchema(that, mScope, sSchema, logWithLocation);
 				}
 
 				if (sQualifiedName in mScope) {
@@ -1066,7 +1033,7 @@ sap.ui.define([
 
 				if (isThenable(vResult) && vResult.isPending()) {
 					// load on demand still pending
-					return logWithLocation(DEBUG, "Waiting for ", sNamespace);
+					return logWithLocation(DEBUG, "Waiting for ", sSchema);
 				}
 
 				return logWithLocation(WARNING, "Unknown qualified name ", sQualifiedName);
@@ -2066,11 +2033,66 @@ sap.ui.define([
 	 * the service.
 	 *
 	 * @return {string} A string description of this model
+	 *
 	 * @public
 	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.toString = function () {
 		return sODataMetaModel + ": " + this.sUrl;
+	};
+
+	/**
+	 * Validates the given scope. Checks the OData version, searches for forbidden
+	 * $IncludeAnnotations and conflicting $Include. Uses and fills
+	 * <code>this.mSchema2ReferenceUri</code>.
+	 *
+	 * @param {string} sUrl
+	 *   The $metadata URL
+	 * @param {object} mScope
+	 *   The $metadata "JSON"
+	 * @returns {object}
+	 *   <code>mScope</code> to allow "chaining"
+	 * @throws {Error}
+	 *   If validation fails
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.validate = function (sUrl, mScope) {
+		var i,
+			sSchema,
+			oReference,
+			sReferenceUri;
+
+		if (!this.bSupportReferences) {
+			return mScope;
+		}
+
+		if (mScope.$Version !== "4.0") {
+			logAndThrowError("Unsupported OData version: " + mScope.$Version, sUrl);
+		}
+		for (sReferenceUri in mScope.$Reference) {
+			oReference = mScope.$Reference[sReferenceUri];
+			if ("$IncludeAnnotations" in oReference) {
+				logAndThrowError("Unsupported IncludeAnnotations", sUrl);
+			}
+			for (i in oReference.$Include) {
+				sSchema = oReference.$Include[i];
+				if (sSchema in mScope) {
+					logAndThrowError("A schema cannot span more than one document: " + sSchema
+						+ " - is both included and defined",
+						sUrl);
+				} else if (sSchema in this.mSchema2ReferenceUri
+					&& this.mSchema2ReferenceUri[sSchema] !== sReferenceUri) {
+					logAndThrowError("A schema cannot span more than one document: " + sSchema
+						+ " - expected reference URI " + this.mSchema2ReferenceUri[sSchema]
+						+ " but instead saw " + sReferenceUri,
+						sUrl);
+				}
+				this.mSchema2ReferenceUri[sSchema] = sReferenceUri;
+			}
+		}
+
+		return mScope;
 	};
 
 	return ODataMetaModel;
