@@ -6043,6 +6043,10 @@ QUnit.test("rendering", function(assert) {
 
 		if (oSelect._isShadowListRequired() && oSelect.getItems().length) {
 			assert.ok(oSelect.$().children("." + oSelect.getList().getRenderer().CSS_CLASS).length, "The shadow list element exists");
+			var oShadowListDomRef = oSelect.getDomRef().querySelector("." + oSelect.getList().getRenderer().CSS_CLASS);
+
+			// BCP: 1770084557 avoid duplicated IDs in the DOM when the select control is rendered inside a dialog
+			assert.strictEqual(oShadowListDomRef.firstElementChild.id, "", "it should not render the IDs of the items in the shadow list");
 		}
 
 		if (oSelect.getType() === sap.m.SelectType.Default) {
