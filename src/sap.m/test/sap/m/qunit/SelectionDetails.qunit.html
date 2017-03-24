@@ -279,7 +279,7 @@
 		// Act
 		this.oNavContainer.getCurrentPage().fireNavButtonPress();
 		// Assert
-		assert.deepEqual(oFirstPage, this.oNavContainer.getCurrentPage(), "Forward and backward navigation results in first page opened");
+		assert.deepEqual(this.oNavContainer.getCurrentPage(), oFirstPage, "Forward and backward navigation results in first page opened");
 	});
 
 	QUnit.module("Popover interaction", {
