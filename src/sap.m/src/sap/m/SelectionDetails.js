@@ -436,7 +436,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		aItems = this.getItems();
 		for (i = 0; i < aItems.length; i++) {
 			if (!aItems[i].hasListeners("_navigate")) {
-			aItems[i].attachEvent("_navigate", this._onNavigate, this);
+				aItems[i].attachEvent("_navigate", this._onNavigate, this);
 			}
 			if (!aItems[i].hasListeners("_actionPress")) {
 				aItems[i].attachEvent("_actionPress", this._onActionPress, this);
