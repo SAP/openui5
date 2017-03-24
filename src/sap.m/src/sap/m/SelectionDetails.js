@@ -56,44 +56,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		},
 		events : {
 			/**
-			 * Event is fired before the popover is open.
+			 * Event is triggered before the popover is open.
 			 */
 			beforeOpen : {},
 
 			/**
-			 * Event is fired before the popover is closed.
+			 * Event is triggered before the popover is closed.
 			 */
 			beforeClose : {},
 
 			/**
-			 * Event is fired when the custom action is pressed on the {@link sap.m.SelectionDetailsItem item} belonging to the items aggregation.
+			 * Event is triggered after a list item of {@link sap.m.SelectionDetailsItem} is pressed.
 			 */
 			navigate : {
 				parameters : {
 					/**
 					 * The item on which the action has been pressed
 					 */
-					item : {type : "sap.m.SelectionDetailsItem"},
-
-					/**
-					 * The direction of navigation. Can be either 'forward' or 'backward'. Backward means that the navigation occurred as a result of activating the back button on the current page
-					 */
-					direction : {type : "string"},
-
-					/**
-					 * The custom content from which the navigation occurs. Null if navigating from first page
-					 */
-					contentFrom : {type : "sap.ui.core.Control"},
-
-					/**
-					 * The custom content to which the navigation occurs. Null if navigating to first page
-					 */
-					contentTo : {type : "sap.ui.core.Control"}
+					item : {type : "sap.m.SelectionDetailsItem"}
 				}
 			},
 
 			/**
-			 * Event is fired when the custom action is pressed.
+			 * Event is triggered when a custom action is pressed.
 			 */
 			actionPress : {
 				parameters : {
@@ -117,10 +102,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		}
 	}});
 
-	SelectionDetails._Direction = {
-		Forward: "forward",
-		Backward: "backward"
-	};
 	/* =========================================================== */
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
@@ -192,6 +173,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		sPageId = this.getId() + "-page-for-" + content.getId();
 		oPage = new fnPageClass(sPageId, {
 			title: title,
+			showNavButton: true,
+			navButtonPress: function() {
+				oNavContainer.back();
+			},
 			content: [content]
 		});
 		// The logic in the overwritten addPage method of navContainer has to be executed.
@@ -450,7 +435,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 		aItems = this.getItems();
 		for (i = 0; i < aItems.length; i++) {
+			if (!aItems[i].hasListeners("_navigate")) {
 			aItems[i].attachEvent("_navigate", this._onNavigate, this);
+			}
 			if (!aItems[i].hasListeners("_actionPress")) {
 				aItems[i].attachEvent("_actionPress", this._onActionPress, this);
 			}
@@ -549,13 +536,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	/**
 	 * Handles the navigate on the SelectionDetailsItem by triggering the navigate event on the instance of SelectionDetails.
-	 * @param {sap.ui.base.Event} oEvent Event object of the navigation event that has been fired by the SelectionDetailsItem
+	 * @param {sap.ui.base.Event} oEvent Event object of the navigation event that has been triggered by the SelectionDetailsItem
 	 * @private
 	 */
 	SelectionDetails.prototype._onNavigate = function(oEvent) {
 		this.fireNavigate({
-			item: oEvent.getSource(),
-			direction: SelectionDetails._Direction.Forward
+			item: oEvent.getSource()
 		});
 	};
 

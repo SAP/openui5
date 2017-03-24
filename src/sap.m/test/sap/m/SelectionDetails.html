@@ -32,16 +32,44 @@
 				new sap.ui.core.Item("item_action_1", {
 					key: "1",
 					text: "item action 1"
-				}), new sap.ui.core.Item("item_action_2", {
+				}),
+				new sap.ui.core.Item("item_action_2", {
 					key: "2",
 					text: "item action 2"
-				}), new sap.ui.core.Item("item_action_3", {
+				}),
+				new sap.ui.core.Item("item_action_3", {
 					key: "3",
 					text: "item action 3"
-				}), new sap.ui.core.Item("item_action_4", {
+				}),
+				new sap.ui.core.Item("item_action_4", {
 					key: "4",
 					text: "item action 4"
 				})],
+			enableNav: true
+		}),
+		new sap.m.SelectionDetailsItem({
+			lines: {
+				path: "/lines/0",
+				factory: fnCreateLine
+			},
+			actions: [
+				new sap.ui.core.Item("item_action_21", {
+					key: "21",
+					text: "item action 21"
+				}),
+				new sap.ui.core.Item("item_action_22", {
+					key: "22",
+					text: "item action 22"
+				}),
+				new sap.ui.core.Item("item_action_23", {
+					key: "23",
+					text: "item action 23"
+				}),
+				new sap.ui.core.Item("item_action_24", {
+					key: "24",
+					text: "item action 24"
+				})
+			],
 			enableNav: true
 		}),
 		new sap.m.SelectionDetailsItem({
@@ -154,6 +182,20 @@
 		},
 		navigate: function(oEvent) {
 			sap.m.MessageToast.show("Event 'navigate' triggered originating from " + oEvent.getParameter("item").getId() + " item");
+			var oSelectionDetails = oEvent.getParameter("item").getParent();
+			var sId = oEvent.getParameter("item").getId();
+			oSelectionDetails.navTo(sId + " first level of navigation",
+				new sap.m.Button({
+					text: "go further",
+					press: function() {
+						oSelectionDetails.navTo(sId + " second level of navigation",
+							new sap.m.Label({
+								text: "some text"
+							})
+						);
+					}
+				})
+			);
 		},
 		beforeOpen: function () {
 			sap.m.MessageToast.show("Event 'beforeOpen' triggered");
