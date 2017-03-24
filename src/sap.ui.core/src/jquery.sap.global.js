@@ -4721,44 +4721,59 @@
 
 			if ( !oModule.loaded ) {
 
-				oModule.loaded = new Promise(function(resolve,reject) {
+				var oScript;
+				var fnCreateLoadScriptPromise = function(bRetryOnFailure){
+					return new Promise(function(resolve, reject) {
 
-					function onload(e) {
-						jQuery.sap.log.info("Javascript resource loaded: " + sResource);
-						// TODO either find a cross-browser solution to detect and assign execution errors or document behavior
-						//var error = e.target.dataset.sapUiModuleError;
-						//if ( error ) {
-						//	oModule.state = FAILED;
-						//	oModule.error = JSON.parse(error);
-						//	jQuery.sap.log.error("failed to load Javascript resource: " + sResource + ":" + error);
-						//	reject(oModule.error);
-						//}
-						oScript.removeEventListener('load', onload);
-						oScript.removeEventListener('error', onerror);
-						oModule.state = READY;
-						// TODO oModule.data = ?
-						resolve();
+						function onload(e) {
+							jQuery.sap.log.info("Javascript resource loaded: " + sResource);
+							// TODO either find a cross-browser solution to detect and assign execution errors or document behavior
+							//var error = e.target.dataset.sapUiModuleError;
+							//if ( error ) {
+							//	oModule.state = FAILED;
+							//	oModule.error = JSON.parse(error);
+							//	jQuery.sap.log.error("failed to load Javascript resource: " + sResource + ":" + error);
+							//	reject(oModule.error);
+							//}
+							oScript.removeEventListener('load', onload);
+							oScript.removeEventListener('error', onerror);
+							oModule.state = READY;
+							// TODO oModule.data = ?
+							resolve();
+						}
+
+						function onerror(e) {
+							oScript.removeEventListener('load', onload);
+							oScript.removeEventListener('error', onerror);
+							if (bRetryOnFailure) {
+								jQuery.sap.log.warning("retry loading Javascript resource: " + sResource);
+							} else {
+								jQuery.sap.log.error("failed to load Javascript resource: " + sResource);
+								oModule.state = FAILED;
+							}
+
+							// TODO oModule.error = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
+							reject();
+						}
+
+						var sUrl = oModule.url = getResourcePath(sResource);
+						oModule.state = LOADING;
+
+						oScript = window.document.createElement('SCRIPT');
+						oScript.src = sUrl;
+						oScript.setAttribute("data-sap-ui-module", sResource); // IE9/10 don't support dataset :-(
+						// oScript.setAttribute("data-sap-ui-module-error", '');
+						oScript.addEventListener('load', onload);
+						oScript.addEventListener('error', onerror);
+						appendHead(oScript);
+					});
+				};
+				oModule.loaded = fnCreateLoadScriptPromise(/* bRetryOnFailure= */ true).catch(function(e){
+					if (oScript && oScript.parentNode) {
+						oScript.parentNode.removeChild(oScript);
 					}
-
-					function onerror(e) {
-						jQuery.sap.log.error("failed to load Javascript resource: " + sResource);
-						oScript.removeEventListener('load', onload);
-						oScript.removeEventListener('error', onerror);
-						oModule.state = FAILED;
-						// TODO oModule.error = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
-						reject();
-					}
-
-					var sUrl = oModule.url = getResourcePath(sResource);
-					oModule.state = LOADING;
-
-					var oScript = window.document.createElement('SCRIPT');
-					oScript.src = sUrl;
-					oScript.setAttribute("data-sap-ui-module", sResource); // IE9/10 don't support dataset :-(
-					// oScript.setAttribute("data-sap-ui-module-error", '');
-					oScript.addEventListener('load', onload);
-					oScript.addEventListener('error', onerror);
-					appendHead(oScript);
+					//try to load the resource again if it fails the first time
+					return fnCreateLoadScriptPromise(/* bRetryOnFailure= */ false);
 				});
 
 			}
@@ -4776,7 +4791,7 @@
 
 			//remove final information in mUrlPrefixes
 			var mFlatUrlPrefixes = {};
-				jQuery.each(mUrlPrefixes, function(sKey,oUrlPrefix) {
+			jQuery.each(mUrlPrefixes, function(sKey,oUrlPrefix) {
 				mFlatUrlPrefixes[sKey] = oUrlPrefix.url;
 			});
 
