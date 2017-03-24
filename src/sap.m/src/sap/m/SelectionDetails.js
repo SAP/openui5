@@ -41,6 +41,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			/**
 			 * Contains actions that are rendered as a dedicated {@link sap.m.ActionListItem item}.
 			 * In case an action group is pressed, a navigation should be triggered via <code>navTo</code> method.
+			 * A maximum of 5 actionGroups is displayed inside the popover, though more can be added to the aggregation.
 			 */
 			"actionGroups" : {type : "sap.ui.core.Item", multiple : true},
 
@@ -101,6 +102,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			}
 		}
 	}});
+
+	/**
+	 * The maximum number of actionGroups that are shown in the actionGroup list.
+	 * @type {int}
+	 * @private
+	 */
+	SelectionDetails._MAX_ACTIONGROUPS = 5;
 
 	/* =========================================================== */
 	/* Lifecycle methods                                           */
@@ -436,7 +444,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		aItems = this.getItems();
 		for (i = 0; i < aItems.length; i++) {
 			if (!aItems[i].hasListeners("_navigate")) {
-			aItems[i].attachEvent("_navigate", this._onNavigate, this);
+				aItems[i].attachEvent("_navigate", this._onNavigate, this);
 			}
 			if (!aItems[i].hasListeners("_actionPress")) {
 				aItems[i].attachEvent("_actionPress", this._onActionPress, this);
@@ -463,14 +471,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	/**
 	 * Adds ActionListItems to list which will be used for actionGroups on list level.
+	 * This method adds up to _MAX_ACTIONGROUPS ActionListItems to the internal list.
 	 * @param {function} ActionListItem The constructor of sap.m.ActionListItem
 	 * @private
 	 */
 	SelectionDetails.prototype._addActionGroupListItems = function(ActionListItem) {
 		this._oActionGroupList.destroyAggregation("items", true);
 
-		var aActionGroupItems = this.getActionGroups(), oActionListItem, i;
-		for (i = 0; i < aActionGroupItems.length; i++) {
+		var aActionGroupItems = this.getActionGroups(),
+			oActionListItem,
+			i,
+			iDisplayedGroupActions = Math.min(SelectionDetails._MAX_ACTIONGROUPS, aActionGroupItems.length);
+
+		for (i = 0; i < iDisplayedGroupActions; i++) {
 			oActionListItem = new ActionListItem(this.getId() + "-actionGroup-" + i, {
 				text: aActionGroupItems[i].getText(),
 				type: library.ListType.Navigation,

@@ -201,6 +201,30 @@
 		assert.equal(this.oSelectionDetails._oActionGroupList.getShowNoData(), false, "ActionGroup List doesn't show noData text and is therefore not visible without actionGroups");
 	});
 
+	QUnit.test("Value of member _MAX_ACTIONGROUPS is correct", function(assert) {
+		assert.equal(sap.m.SelectionDetails._MAX_ACTIONGROUPS, 5, "The static member value is correct.");
+	});
+
+	QUnit.test("Maximum number of displayed actionGroups is correct", function(assert) {
+		//Arrange
+		var oItem = new sap.ui.core.Item();
+		sinon.stub(this.oSelectionDetails, "getActionGroups").returns([
+			oItem, oItem.clone(), oItem.clone(), oItem.clone(), oItem.clone(), oItem.clone()
+		]);
+
+		this.oSelectionDetails._oActionGroupList = {
+			destroyAggregation: function() {},
+			addAggregation: function() {}
+		};
+		var oAddAggregationSpy = sinon.spy(this.oSelectionDetails._oActionGroupList, "addAggregation");
+
+		//Act
+		this.oSelectionDetails._addActionGroupListItems(sap.m.ActionListItem);
+
+		//Assert
+		assert.equal(oAddAggregationSpy.callCount, 5, "The correct number of items has been added to the list.");
+	});
+
 	QUnit.module("Navigation", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
