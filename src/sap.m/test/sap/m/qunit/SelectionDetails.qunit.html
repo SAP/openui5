@@ -489,6 +489,21 @@
 		assert.deepEqual(oSpy.getCall(0).args[0].item, oSelectionDetailsItem, "'navigate' event of SelectionDetails was called with correct 'item' parameter");
 	});
 
+	QUnit.test("'_onNavigate' event handler attached once per navigate button", function(assert) {
+		// Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+		var oSpy = sinon.spy(this.oSelectionDetails, "_onNavigate");
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
+
+		// Act
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
+		oSelectionDetailsItem.fireEvent("_navigate");
+
+		//Assert
+		assert.ok(oSpy.calledOnce, "Event handler called once");
+	});
+
 	QUnit.module("Control Facade", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
