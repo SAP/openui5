@@ -85,6 +85,15 @@
 	});
 
 	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails");
+
+	var oResetActionsButton = new sap.m.Button({
+		text: "Reset Actions",
+		press: function (oEvt) {
+			oSelectionDetails.destroyActions();
+			oSelectionDetails.destroyActionGroups();
+		}
+	});
+
 	oSelectionDetails.registerSelectionDetailsItemFactory(["MyFirstData", "MySecondData"],
 		function (aDisplayData, aData, oData) {
 			var aLines = [];
@@ -121,7 +130,6 @@
 		sap.m.MessageToast.show("Event 'afterUpdate' triggered");
 	});
 
-	//Not yet implemented
 	oSelectionDetails.attachSelectionHandler("_selectionDetails", oChangeButton);
 
 	var oApp = new sap.m.App({
