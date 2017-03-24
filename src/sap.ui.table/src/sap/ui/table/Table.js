@@ -3367,8 +3367,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._isTouchEvent = function(oEvent) {
-		return oEvent != null &&
-			   oEvent.touches != null || (oEvent.originalEvent != null && oEvent.originalEvent.touches != null);
+		return oEvent != null && oEvent.originalEvent != null && oEvent.originalEvent.touches != null;
 	};
 
 	Table.prototype._getRowClone = function(iIndex) {
