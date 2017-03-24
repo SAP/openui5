@@ -296,23 +296,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Image.prototype.onAfterRendering = function() {
 		var $DomNode = this.$(),
-			oDomRef = $DomNode[0],
-			sMode = this.getMode();
+			sMode = this.getMode(),
+			oDomImageRef;
 
 		if (sMode === sap.m.ImageMode.Image) {
 			// bind the load and error event handler
 			$DomNode.on("load", jQuery.proxy(this.onload, this));
 			$DomNode.on("error", jQuery.proxy(this.onerror, this));
 
-			// if image has already been loaded and the load or error event handler hasn't been called, trigger it manually.
-			if (oDomRef && oDomRef.complete && !this._defaultEventTriggered) {
-				// need to use the naturalWidth property instead of jDomNode.width(),
-				// the later one returns positive value even in case of broken image
-				if (oDomRef.naturalWidth > 0) {
-					this.onload({/* empty event object*/});
-				} else {
-					this.onerror({/* empty event object*/});
-				}
+			oDomImageRef = $DomNode[0];
+		}
+
+		if (sMode === sap.m.ImageMode.Background) {
+			oDomImageRef = this._oImage;
+		}
+
+		// if image has already been loaded and the load or error event handler hasn't been called, trigger it manually.
+		if (oDomImageRef && oDomImageRef.complete && !this._defaultEventTriggered) {
+			// need to use the naturalWidth property instead of jDomNode.width(),
+			// the later one returns positive value even in case of broken image
+			if (oDomImageRef.naturalWidth > 0) {
+				this.onload({/* empty event object*/});
+			} else {
+				this.onerror({/* empty event object*/});
 			}
 		}
 	};
@@ -495,11 +501,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		this._oImage.src = sSrc;
-
-		// if the source image is already loaded, manually trigger the load event
-		if (this._oImage.complete) {
-			$InternalImage.trigger(this._oImage.naturalWidth > 0 ? "load" : "error");	//  image loaded successfully or with error
-		}
 	};
 
 	/**
