@@ -57,7 +57,7 @@ sap.ui.require([
 	 */
 	function createSalesOrdersModel(mModelParameters) {
 		return createModel(
-			"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/",
 			mModelParameters);
 	}
 
@@ -68,8 +68,8 @@ sap.ui.require([
 			TestUtils.setupODataV4Server(this.oSandbox, {
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "metadata.xml"},
-				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/$metadata"
-					: {source : "metadata_GW_SAMPLE_BASIC.xml"}
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/$metadata"
+					: {source : "metadata_zui5_epm_sample.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
