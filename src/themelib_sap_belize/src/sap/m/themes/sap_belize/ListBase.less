@@ -133,12 +133,19 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	text-align: center;
 }
 
+/* Growing feature */
 .sapMGrowingList > .sapMCLI.sapMLIB:not(.sapMLIBActive) {
-	background: darken(@sapUiListBackground, 3);
-	border-color: darken(@sapUiListBorderColor, 3);
+	background: @sapUiButtonActionSelectBackground;
+	border-color: @sapUiButtonActionSelectBorderColor;
 }
+
 .sapMGrowingList > .sapMCLI.sapMLIBHoverable:hover {
-	background: @sapUiListHoverBackground;
+	background: @sapUiButtonLiteActionSelectHoverBackground;
+}
+
+.sapMGrowingListDescription,
+.sapMGrowingListTriggerText > .sapMSLITitle {
+	text-shadow: @sapUiShadowText;
 }
 
 /* Compact size */
