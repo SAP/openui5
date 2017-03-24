@@ -367,7 +367,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			oMainContainer.addAggregation("items", oActionGroupList, true);
 
 			oPage.addAggregation("content", oMainContainer, true);
-			oNavContainer.addAggregation("pages", oPage, true);
+			// NavContainer adds necessary styles in its overwritten addPage function.
+			// It does not result in rerendering since it checks for an existing DOM reference before doing so.
+			// This reference does not yet exist while adding our very first page.
+			oNavContainer.addPage(oPage);
 			oPopover.addAggregation("content", oNavContainer, true);
 
 			this.setAggregation("_popover", oPopover, true);
