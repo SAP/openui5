@@ -28,32 +28,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		library : "sap.m",
 		defaultAggregation : "items",
 		aggregations : {
-				/**
-				 * Contains {@link sap.m.SelectionDetailsItem items} that are displayed on the first page.
-				 */
-				"items" : {type : "sap.m.SelectionDetailsItem", multiple : true,  bindable : "bindable"},
+			/**
+			 * Contains {@link sap.m.SelectionDetailsItem items} that are displayed on the first page.
+			 */
+			"items" : {type : "sap.m.SelectionDetailsItem", multiple : true,  bindable : "bindable"},
 
-				/**
-				 * Contains custom actions shown in the responsive toolbar below items on the first page.
-				 */
-				"actions" : {type : "sap.ui.core.Item", multiple : true},
+			/**
+			 * Contains custom actions shown in the responsive toolbar below items on the first page.
+			 */
+			"actions" : {type : "sap.ui.core.Item", multiple : true},
 
-				/**
-				 * Contains actions that are rendered as a dedicated {@link sap.m.ActionListItem item}.
-				 * In case an action group is pressed, a navigation should be triggered via <code>navTo</code> method.
-				 */
-				"actionGroups" : {type : "sap.ui.core.Item", multiple : true},
+			/**
+			 * Contains actions that are rendered as a dedicated {@link sap.m.ActionListItem item}.
+			 * In case an action group is pressed, a navigation should be triggered via <code>navTo</code> method.
+			 */
+			"actionGroups" : {type : "sap.ui.core.Item", multiple : true},
 
-				/**
-				 * Hidden aggregation that contains the popover.
-				 */
-				"_popover": {type : "sap.m.ResponsivePopover", multiple : false, visibility : "hidden"},
+			/**
+			 * Hidden aggregation that contains the popover.
+			 */
+			"_popover": {type : "sap.m.ResponsivePopover", multiple : false, visibility : "hidden"},
 
-				/**
-				 * Hidden aggregation that contains the button.
-				 *
-				 */
-				"_button": {type : "sap.m.Button", multiple : false, visibility : "hidden"}
+			/**
+			 * Hidden aggregation that contains the button.
+			 */
+			"_button": {type : "sap.m.Button", multiple : false, visibility : "hidden"}
 		},
 		events : {
 			/**
@@ -137,17 +136,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	SelectionDetails.prototype.onBeforeRendering = function () {
 		this._updateButton();
-	};
-
-	SelectionDetails.prototype.exit = function() {
-		if (this._oList) {
-			this._oList.destroy();
-			this._oList = null;
-		}
-		if (this._oToolbar) {
-			this._oToolbar.destroy();
-			this._oToolbar = null;
-		}
 	};
 
 	/* =========================================================== */
@@ -240,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			count = this.getItems().length;
 		}
 		if (count > 0) {
-			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT_WITH_NUMBER", [count]);
+			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT_WITH_NUMBER", [ count ]);
 			oButton.setProperty("text", sText, true);
 			oButton.setProperty("enabled", true, true);
 		} else {
@@ -255,8 +243,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @private
 	 */
 	SelectionDetails.prototype._onToolbarButtonPress = function() {
-		sap.ui.require(['sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page',
-		'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/ActionListItem'], this._handlePressLazy.bind(this));
+		sap.ui.require([
+			'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/ActionListItem',
+			'sap/m/VBox', 'sap/m/FlexItemData', 'sap/m/ScrollContainer'
+		], this._handlePressLazy.bind(this));
 	};
 
 	/**
@@ -269,16 +259,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {function} Button The constructor of sap.m.OverflowToolbarButton
 	 * @param {function} List The constructor of sap.m.List
 	 * @param {function} ActionListItem The constructor of sap.m.ActionListItem
+	 * @param {function} VBox The constructor of sap.m.VBox
+	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
+	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
 	 * @private
 	 */
-	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, ToolbarSpacer, Button, List, ActionListItem) {
-		var oPopover = this._getPopover(ResponsivePopover, NavContainer, Page),
-			oPage = oPopover.getContent()[0].getPages()[0];
+	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, ToolbarSpacer, Button, List, ActionListItem, VBox, FlexItemData, ScrollContainer) {
+		var oPopover = this._getPopover(NavContainer, ResponsivePopover, Page, List, VBox, FlexItemData, ScrollContainer);
+
 		if (this._oItemFactory) {
 			this._callFactory();
 		}
-		this._addList(List, ActionListItem, oPage);
-		this._addListActions(OverflowToolbar, ToolbarSpacer, Button, oPage);
+
+		this._addMainListItems();
+		this._addActionGroupListItems(ActionListItem);
+		this._addListActions(OverflowToolbar, ToolbarSpacer, Button);
+
+		oPopover.invalidate(); //trigger a rendering of the updated lists and toolbars
 		oPopover.openBy(this.getAggregation("_button"));
 	};
 
@@ -286,14 +283,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * Calls the registered factory function for each entry in <code>this._oSelectionData</code>.
 	 * Before the factory is called, the 'beforeUpdate' event is triggered.
 	 * After the factory is called for all entries in <code>this._oSelectionData</code>, the 'afterUpdate' event is triggered.
+	 * @private
 	 */
-	SelectionDetails.prototype._callFactory = function () {
+	SelectionDetails.prototype._callFactory = function() {
 		var fnFactory = this._oItemFactory.factory,
 			oData = this._oItemFactory.data,
 			aSelection = this._oSelectionData,
 			oResult;
+
 		this.fireEvent("beforeUpdate", {
-			items : this.getItems()
+			items: this.getItems()
 		});
 		this.destroyAggregation("items", true);
 		for (var i = 0; i < aSelection.length; i++) {
@@ -301,61 +300,222 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			this.addAggregation("items", oResult, true);
 		}
 		this.fireEvent("afterUpdate", {
-			items : this.getItems()
+			items: this.getItems()
 		});
 	};
 
 	/**
-	 * Returns the internal popover. In case it is not created yet, it is created with the minimal layout structure.
-	 * @param {function} ResponsivePopover The constructor of sap.m.ResponsivePopover
-	 * @param {function} NavContainer The constructor of sap.m.NavContainer
+	 * Creates and returns the internal initial Page. If the Page does not yet exist, it is created.
 	 * @param {function} Page The constructor of sap.m.Page
-	 * @returns {sap.m.ResponsivePopover} Returns the internal popover.
+	 * @returns {sap.m.Page} The newly created or existing Page
 	 * @private
 	 */
-	SelectionDetails.prototype._getPopover = function (ResponsivePopover, NavContainer, Page) {
-		var oPopover = this.getAggregation("_popover"),
-				oNavContainer;
-		if (!oPopover) {
-			oNavContainer = new NavContainer(this.getId() + "-nav-container", {
-				pages : new Page(this.getId() + "-page", {
-					showHeader: false
-				})
+	SelectionDetails.prototype._getInitialPage = function(Page) {
+		if (!this._oInitialPage) {
+			this._oInitialPage = new Page(this.getId() + "-page", {
+				showHeader: false,
+				enableScrolling: false
 			});
+		}
+
+		return this._oInitialPage;
+	};
+
+	/**
+	 * Creates and returns the internal NavContainer.
+	 * @param {function} NavContainer The constructor of sap.m.NavContainer
+	 * @returns {sap.m.NavContainer} The newly created NavContainer
+	 * @private
+	 */
+	SelectionDetails.prototype._createNavContainer = function(NavContainer) {
+		return new NavContainer(this.getId() + "-nav-container");
+	};
+
+	/**
+	 * Returns the internal popover. In case it is not created yet, it is created with the minimal layout structure.
+	 * @param {function} NavContainer The constructor of sap.m.NavContainer
+	 * @param {function} ResponsivePopover The constructor of sap.m.ResponsivePopover
+	 * @param {function} Page The constructor of sap.m.Page
+	 * @param {function} List The constructor of sap.m.List
+	 * @param {function} VBox The constructor of sap.m.VBox
+	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
+	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
+	 * @returns {sap.m.ResponsivePopover} The newly created or existing popover.
+	 * @private
+	 */
+	SelectionDetails.prototype._getPopover = function(NavContainer, ResponsivePopover, Page, List, VBox, FlexItemData, ScrollContainer) {
+		var oPopover = this.getAggregation("_popover"),
+			oNavContainer,
+			oPage,
+			oMainContainer,
+			oMainListContainer,
+			oActionGroupList;
+
+		if (!oPopover) {
 			oPopover = new ResponsivePopover({
 				id: this.getId() + "-popover",
 				placement: library.PlacementType.Bottom,
 				showHeader: false,
 				contentWidth: "25rem",
-				contentHeight: "20rem",
-				content: oNavContainer,
-				beforeOpen: [this._delegatePopoverEvent, this],
-				beforeClose: [this._delegatePopoverEvent, this]
-			});
+				contentHeight: "31.25rem",
+				beforeOpen: [ this._delegatePopoverEvent, this ],
+				beforeClose: [ this._delegatePopoverEvent, this ]
+			}).addStyleClass("sapMSD");
+
+			//build popover contents
+			oPage = this._getInitialPage(Page);
+			oActionGroupList = this._getActionGroupList(List);
+
+			oNavContainer = this._createNavContainer(NavContainer);
+			oMainContainer = this._createMainContainer(VBox);
+			oMainListContainer = this._createMainListContainer(ScrollContainer, List, VBox, FlexItemData);
+
+			oMainContainer.addAggregation("items", oMainListContainer, true);
+			oMainContainer.addAggregation("items", oActionGroupList, true);
+
+			oPage.addAggregation("content", oMainContainer, true);
+			oNavContainer.addAggregation("pages", oPage, true);
+			oPopover.addAggregation("content", oNavContainer, true);
+
 			this.setAggregation("_popover", oPopover, true);
 		}
+
 		return oPopover;
 	};
 
 	/**
-	 * Creates the new overflow toolbar that will contain the buttons for actions on list level.
+	 * Add the List that contains SelectionDetailsListItems based on the items aggregation.
+	 * @param {function} VBox The constructor of sap.m.VBox
+	 * @returns {sap.m.VBox} The newly created or existing main container VBox
+	 * @private
+	 */
+	SelectionDetails.prototype._createMainContainer = function(VBox) {
+		return new VBox(this.getId() + "-mainContainer", {
+			fitContainer: true
+		});
+	};
+
+	/**
+	 * Creates a new layout of VBox and ScrollContainer to make the internal content scrollable and to make the ScrollContainer responsive.
+	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
+	 * @param {function} List The constructor of sap.m.List
+	 * @param {function} VBox The constructor of sap.m.VBox
+	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
+	 * @returns {sap.m.VBox} The newly created VBox with a ScrollContainer as its content
+	 * @private
+	 */
+	SelectionDetails.prototype._createMainListContainer = function(ScrollContainer, List, VBox, FlexItemData) {
+		var oMainList = this._getMainList(List);
+
+		var oScrollContainer = new ScrollContainer(this.getId() + "-scrollContainer", {
+			horizontal: false,
+			vertical: true,
+			height: "100%",
+			width: "100%",
+			content: oMainList,
+			layoutData: new FlexItemData({
+				growFactor: 1,
+				shrinkFactor: 1
+			})
+		});
+
+		return new VBox(this.getId() + "-listContainer", {
+			height: "100%",
+			width: "100%",
+			items: oScrollContainer
+		});
+	};
+
+	/**
+	 * Creates a new list and returns the reference for the SelectionDetailsListItems.
+	 * @param {function} List Constructor function for sap.m.List
+	 * @returns {sap.m.List} The newly created or existing main list for SelectionDetailsItems
+	 * @private
+	 */
+	SelectionDetails.prototype._getMainList = function(List) {
+		if (!this._oMainList) {
+			this._oMainList = new List(this.getId() + "-list");
+		}
+		return this._oMainList;
+	};
+
+	/**
+	 * Add the SelectionDetailsItems' list items to the main list.
+	 * @private
+	 */
+	SelectionDetails.prototype._addMainListItems = function() {
+		var i, aItems, oListItem;
+
+		this._oMainList.removeAllAggregation("items", true);
+
+		aItems = this.getItems();
+		for (i = 0; i < aItems.length; i++) {
+			aItems[i].attachEvent("_navigate", this._onNavigate, this);
+			if (!aItems[i].hasListeners("_actionPress")) {
+				aItems[i].attachEvent("_actionPress", this._onActionPress, this);
+			}
+			oListItem = aItems[i]._getListItem();
+			this._oMainList.addAggregation("items", oListItem, true);
+		}
+	};
+
+	/**
+	 * Creates the List for actionGroups if necessary.
+	 * @param {function} List The constructor of sap.m.List
+	 * @returns {sap.m.List} The newly created or existing list for actionGroups
+	 * @private
+	 */
+	SelectionDetails.prototype._getActionGroupList = function(List) {
+		if (!this._oActionGroupList) {
+			this._oActionGroupList = new List(this.getId() + "-actionGroupList", {
+				showNoData: false
+			});
+		}
+		return this._oActionGroupList;
+	};
+
+	/**
+	 * Adds ActionListItems to list which will be used for actionGroups on list level.
+	 * @param {function} ActionListItem The constructor of sap.m.ActionListItem
+	 * @private
+	 */
+	SelectionDetails.prototype._addActionGroupListItems = function(ActionListItem) {
+		this._oActionGroupList.destroyAggregation("items", true);
+
+		var aActionGroupItems = this.getActionGroups(), oActionListItem, i;
+		for (i = 0; i < aActionGroupItems.length; i++) {
+			oActionListItem = new ActionListItem(this.getId() + "-actionGroup-" + i, {
+				text: aActionGroupItems[i].getText(),
+				type: library.ListType.Navigation,
+				press: [{
+					action: aActionGroupItems[i],
+					level: library.SelectionDetailsActionLevel.Group
+				}, this._onActionPress, this]
+			});
+			this._oActionGroupList.addAggregation("items", oActionListItem, true);
+		}
+	};
+
+	/**
+	 * Creates the new overflow toolbar that contains the buttons for actions on list level.
 	 * @param {function} OverflowToolbar The constructor of sap.m.OverflowToolbar
 	 * @param {function} ToolbarSpacer The constructor of sap.m.ToolbarSpacer
 	 * @param {function} Button The constructor of sap.m.OverflowToolbarButton
-	 * @param {sap.m.Page} oPage The page the new actions are to be added to
 	 * @private
 	 */
-	SelectionDetails.prototype._addListActions = function(OverflowToolbar, ToolbarSpacer, Button, oPage) {
-		var oButton, i, aActions, oAction;
+	SelectionDetails.prototype._addListActions = function(OverflowToolbar, ToolbarSpacer, Button) {
+		var oButton, i, aActions, oAction, oToolbar;
+
+		this._oInitialPage.destroyAggregation("footer", true);
+
 		if (!this.getActions().length) {
-			oPage.removeAggregation("content", this._oToolbar, true);
 			return;
 		}
-		if (!this._oToolbar) {
-			this._oToolbar = new OverflowToolbar(this.getId() + "-action-toolbar");
-		}
-		this._oToolbar.destroyAggregation("content", true);
-		this._oToolbar.addAggregation("content", new ToolbarSpacer(), true);
+
+		oToolbar = new OverflowToolbar(this.getId() + "-action-toolbar").addStyleClass("sapContrast sapContrastPlus");
+		this._oInitialPage.setAggregation("footer", oToolbar, true);
+
+		oToolbar.addAggregation("content", new ToolbarSpacer(), true);
 		aActions = this.getActions();
 		for (i = 0; i < aActions.length; i++) {
 			oAction = aActions[i];
@@ -368,79 +528,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 					level: library.SelectionDetailsActionLevel.List
 				}, this._onActionPress, this]
 			});
-			this._oToolbar.addAggregation("content", oButton, true);
-		}
-		oPage.addAggregation("content", this._oToolbar, true);
-	};
-
-	/**
-	 * Add the List that contains SelectionDetailsListItems based on the items aggregation.
-	 * @param {function} List Constructor function for sap.m.List
-	 * @param {function} ActionListItem Constructor function for sap.m.ActionListItem
-	 * @param {sap.m.Page} oPage First page inside the NavContainer
-	 * @private
-	 */
-	SelectionDetails.prototype._addList = function(List, ActionListItem, oPage) {
-		var i, aItems, oListItem;
-		this._cleanList(this._oList, ActionListItem);
-		// In case no items and no group actions are present the list is removed
-		if (!this.getItems().length && !this.getActionGroups().length) {
-			oPage.removeAggregation("content", this._oList, true);
-			return;
-		}
-		if (!this._oList) {
-			this._oList = new List(this.getId() + "-list");
-		}
-
-		aItems = this.getItems();
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].attachEvent("_navigate", this._onNavigate, this);
-			if (!aItems[i].hasListeners("_actionPress")) {
-				aItems[i].attachEvent("_actionPress", this._onActionPress, this);
-			}
-			oListItem = aItems[i]._getListItem();
-			this._oList.addAggregation("items", oListItem, true);
-		}
-		this._addActionListItems(ActionListItem, this._oList);
-		oPage.insertAggregation("content", this._oList, 0, true);
-	};
-
-	/**
-	 * Destroys all ActionListItems inside the list.
-	 * @param {sap.m.List} oList Internal list instance
-	 * @param {function} ActionListItem Constructor function for sap.m.ActionListItem
-	 * @private
-	 */
-	SelectionDetails.prototype._cleanList = function (oList, ActionListItem) {
-		if (!oList) {
-			return;
-		}
-		var aContent = oList.removeAllAggregation("items", true);
-		for (var i = aContent.length - 1; i >= 0; i--) {
-			if (aContent[i] instanceof ActionListItem) {
-				aContent[i].destroy();
-			}
-		}
-	};
-
-	/**
-	 * Adds ActionListItems to list which will be used for actionGroups on list level.
-	 * @param {function} ActionListItem The constructor of sap.m.ActionListItem
-	 * @param {sap.m.List} oList The target list
-	 * @private
-	 */
-	SelectionDetails.prototype._addActionListItems = function(ActionListItem, oList) {
-		var aActionGroupItems = this.getActionGroups(), oActionListItem, i;
-		for (i = 0; i < aActionGroupItems.length; i++) {
-			oActionListItem = new ActionListItem(this.getId() + "-actiongroup-" + i, {
-				text: aActionGroupItems[i].getText(),
-				type: library.ListType.Navigation,
-				press: [{
-					action: aActionGroupItems[i],
-					level: library.SelectionDetailsActionLevel.Group
-				}, this._onActionPress, this]
-			});
-			oList.addAggregation("items", oActionListItem, true);
+			oToolbar.addAggregation("content", oButton, true);
 		}
 	};
 
@@ -532,7 +620,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	};
 
 	/**
-	 * Attaches an event handler to the given listener to react on user selection interaction.
+	 * Attaches an event handler to the given listener to react to user selection interaction.
 	 * @protected
 	 * @param {string} eventId The identifier of the event to listen for
 	 * @param {object} listener The object which triggers the event to register on

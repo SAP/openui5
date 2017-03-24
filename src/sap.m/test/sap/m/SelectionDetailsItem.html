@@ -99,7 +99,7 @@
 	var fnNavigateBack = function() {
 		oNavContainer.back();
 	};
-	var fn_actionPress = function(oEvent) {
+	var fnActionPress = function(oEvent) {
 		sap.m.MessageToast.show(oEvent.getParameter("action").getText() + "\n is pressed on " + oEvent.getParameter("items")[0].getId());
 	};
 
@@ -109,7 +109,7 @@
 		oListItem = aItems[i].setModel(oModel)._getListItem();
 
 		oListItem.attachPress(fnNavigateToDetails);
-		oListItem._getParentElement().attachEvent("_actionPress", fn_actionPress, this);
+		oListItem._getParentElement().attachEvent("_actionPress", fnActionPress, this);
 
 		oList.addItem(oListItem);
 	}
