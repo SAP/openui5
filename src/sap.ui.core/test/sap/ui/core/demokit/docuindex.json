@@ -115,7 +115,9 @@
 					"sap.ui.core.sample.gherkin.GherkinWithOPA5",
 					"sap.ui.core.sample.gherkin.GherkinWithPageObjects",
 					"sap.ui.core.sample.gherkin.GherkinWithUIComponent",
-					"sap.ui.comp.sample.smartfilterbartest"
+					"sap.ui.comp.sample.smartfilterbartest",
+					"sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
+					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters"
 				]
 			},
 			{
@@ -584,6 +586,16 @@
 				"id": "sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame",
 				"name": "Starting an app in an iFrame",
 				"description": "Use this function if you would like to run your app isolated from the other tests and your app starts with a html file."
+			},
+			{
+				"id": "sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
+				"name": "Starting a UIComponent with URL parameters",
+				"description": "Passing URL parameters from configurations when using UIComponent"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
+				"name": "Starting an app in an iFrame with passing URL parameters to the iFrame",
+				"description": "Passing URL parameters to an app in an iFrame from configuration"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaAction",
