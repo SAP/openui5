@@ -1276,6 +1276,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	Tokenizer.prototype.ontouchstart = function(oEvent) {
+
+		// needed when the control is inside active controls
+		oEvent.setMarked();
+
         // Workaround for chrome bug
         // BCP: 1680011538
 		if (Device.browser.chrome && window.getSelection()) {
