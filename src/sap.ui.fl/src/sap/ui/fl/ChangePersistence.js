@@ -175,14 +175,17 @@ sap.ui.define([
 
 	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange) {
 		if (!this._mChanges.mDependencies[oDependentChange.getKey()]) {
-			this._mChanges.mDependencies[oDependentChange.getKey()] = [];
+			this._mChanges.mDependencies[oDependentChange.getKey()] = {
+				changeObject: oDependentChange,
+				dependencies: []
+			};
 		}
-		this._mChanges.mDependencies[oDependentChange.getKey()].push(oChange);
+		this._mChanges.mDependencies[oDependentChange.getKey()].dependencies.push(oChange.getKey());
 
 		if (!this._mChanges.mDependentChangesOnMe[oChange.getKey()]) {
 			this._mChanges.mDependentChangesOnMe[oChange.getKey()] = [];
 		}
-		this._mChanges.mDependentChangesOnMe[oChange.getKey()].push(oDependentChange);
+		this._mChanges.mDependentChangesOnMe[oChange.getKey()].push(oDependentChange.getKey());
 	};
 
 	/**
@@ -199,6 +202,7 @@ sap.ui.define([
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
 
 		var that = this;
+		var oAppComponent = Utils.getAppComponentForControl(oComponent);
 
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap);
 
@@ -214,7 +218,7 @@ sap.ui.define([
 				that._addChangeIntoMap(oComponent, oChange);
 
 				//create dependencies map
-				var aDependentIdList = oChange.getDependentIdList(mPropertyBag.appComponent);
+				var aDependentIdList = oChange.getDependentIdList(oAppComponent);
 				var oPreviousChange;
 				var aPreviousDependentIdList;
 				var iDependentIndex;
@@ -222,7 +226,7 @@ sap.ui.define([
 
 				for (var i = iIndex - 1; i >= 0; i--) {//loop over the changes
 					oPreviousChange = aCopy[i];
-					aPreviousDependentIdList = aCopy[i].getDependentIdList(mPropertyBag.appComponent);
+					aPreviousDependentIdList = aCopy[i].getDependentIdList(oAppComponent);
 					bFound = false;
 					for (var j = 0; j < aDependentIdList.length && !bFound; j++) {
 						iDependentIndex = aPreviousDependentIdList.indexOf(aDependentIdList[j]);

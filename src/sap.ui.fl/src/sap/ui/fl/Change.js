@@ -574,7 +574,9 @@ sap.ui.define([
 					if (oDependentSelector.idIsLocal) {
 						sId = oAppComponent.createId(oDependentSelector.id);
 					}
-					aDependentIds.push(sId);
+					if (aDependentIds.indexOf(sId) === -1) {
+						aDependentIds.push(sId);
+					}
 				});
 
 				this._aDependentIdList = aDependentIds;

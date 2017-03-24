@@ -657,7 +657,7 @@ sap.ui.define([
 			for (var i = 0; i < Object.keys(mDependencies).length; i++) {
 				var sDependencyKey = Object.keys(mDependencies)[i];
 				var oDependency = mDependencies[sDependencyKey];
-				if (oDependency.dependencies.length === 0 && oDependency[FlexController.PENDING]) {
+				if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0) {
 					oDependency[FlexController.PENDING]();
 					aDependenciesToBeDeleted.push(sDependencyKey);
 					aAppliedChanges.push(oDependency.changeObject.getKey());
