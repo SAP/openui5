@@ -1415,29 +1415,28 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 
 		oDeleteButton = sap.ui.getCore().byId(sItemId + "-" + sButton);
-		if (!oDeleteButton) {
-			oDeleteButton = new sap.m.Button({
-				id : sItemId + "-" + sButton,
-				icon : "sap-icon://sys-cancel",
-				type : sap.m.ButtonType.Standard,
-				enabled : bEnabled,
-				tooltip : this._oRb.getText("UPLOADCOLLECTION_TERMINATEBUTTON_TEXT"),
-				visible : oItem.getVisibleDelete()
-			}).addStyleClass("sapMUCDeleteBtn");
-			if (sButton === "deleteButton") {
-				oDeleteButton.setTooltip(this._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"));
-				oDeleteButton.attachPress(function(oEvent) {
-					this._handleDelete(oEvent, that);
-				}.bind(that));
-			} else if (sButton === "terminateButton") {
-				oDeleteButton.attachPress(function(oEvent) {
-					this._handleTerminate.bind(this)(oEvent, oItem);
-				}.bind(that));
-			}
-		} else { // delete button exists already
-				oDeleteButton.setEnabled(bEnabled);
-				oDeleteButton.setVisible(oItem.getVisibleDelete());
+		if (oDeleteButton) {
+			oDeleteButton.destroy();
 		}
+		oDeleteButton = new sap.m.Button({
+			id : sItemId + "-" + sButton,
+			icon : "sap-icon://sys-cancel",
+			type : sap.m.ButtonType.Standard,
+			enabled : bEnabled,
+			tooltip : this._oRb.getText("UPLOADCOLLECTION_TERMINATEBUTTON_TEXT"),
+			visible : oItem.getVisibleDelete()
+		}).addStyleClass("sapMUCDeleteBtn");
+		if (sButton === "deleteButton") {
+			oDeleteButton.setTooltip(this._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"));
+			oDeleteButton.attachPress(function(oEvent) {
+				this._handleDelete(oEvent, that);
+			}.bind(that));
+		} else if (sButton === "terminateButton") {
+			oDeleteButton.attachPress(function(oEvent) {
+				this._handleTerminate.bind(this)(oEvent, oItem);
+			}.bind(that));
+		}
+
 		return oDeleteButton;
 	};
 
