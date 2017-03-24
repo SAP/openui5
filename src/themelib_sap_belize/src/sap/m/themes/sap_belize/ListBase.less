@@ -3,22 +3,17 @@
 /* Belize theme                    */
 /* =============================== */
 
-@_sap_m_ListBase_GrowingListItemBackground: darken(@sapUiListBackground, 3);
-@_sap_m_ListBase_GrowingListItemBorderColor: darken(@sapUiListBorderColor, 3);
-@_sap_m_ListBase_GrowingListItemHoverBackground: @sapUiListHoverBackground;
-@_sap_m_ListBase_GrowingListItemTitleTextShadow: none;
-
 /* Growing feature */
 .sapMGrowingList > .sapMCLI.sapMLIB:not(.sapMLIBActive) {
-	background: @_sap_m_ListBase_GrowingListItemBackground;
-	border-color: @_sap_m_ListBase_GrowingListItemBorderColor;
+	background: @sapUiButtonActionSelectBackground;
+	border-color: @sapUiButtonActionSelectBorderColor;
 }
 
 .sapMGrowingList > .sapMCLI.sapMLIBHoverable:hover {
-	background: @_sap_m_ListBase_GrowingListItemHoverBackground;
+	background: @sapUiButtonLiteActionSelectHoverBackground;
 }
 
 .sapMGrowingListDescription,
 .sapMGrowingListTriggerText > .sapMSLITitle {
-	text-shadow: @_sap_m_ListBase_GrowingListItemTitleTextShadow;
+	text-shadow: @sapUiShadowText;
 }
