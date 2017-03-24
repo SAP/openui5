@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/test/Opa5"
-], function(Opa5) {
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function(Opa5, PropertyStrictEquals) {
 	"use strict";
 
 	function getFrameUrl(sHash, sUrlParameters) {
@@ -43,6 +44,10 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: sControlType,
 				viewName: sViewName,
+				matchers: new PropertyStrictEquals({
+					name: "unit",
+					value: "EUR"
+				}),
 				success: function(aNumberControls) {
 					Opa5.assert.ok(aNumberControls.every(function(oNumberControl) {
 							return rTwoDecimalPlaces.test(oNumberControl.getNumber());
