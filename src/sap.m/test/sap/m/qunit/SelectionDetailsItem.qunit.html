@@ -173,6 +173,32 @@
 		assert.equal($ListItem.find(".sapMSDItemActions").length, 1, "The action buttons toolbar has been rendered");
 	});
 
+	QUnit.test("Internal SelectionDetailsListItem has correct type property for enabled navigation", function(assert) {
+		//Arrange
+		this.oItem.setEnableNav(true);
+		var oSetPropertySpy = sinon.spy(this.oListItem, "setProperty");
+		this.oListItem.invalidate();
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(oSetPropertySpy.withArgs("type", sap.m.ListType.Navigation, true).callCount, 1, "ListItem's type property has been correctly updated.");
+	});
+
+	QUnit.test("Internal SelectionDetailsListItem has correct type property for disabled navigation", function(assert) {
+		//Arrange
+		this.oItem.setEnableNav(false);
+		var oSetPropertySpy = sinon.spy(this.oListItem, "setProperty");
+		this.oListItem.invalidate();
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(oSetPropertySpy.withArgs("type", sap.m.ListType.Inactive, true).callCount, 1, "ListItem's type property has been correctly updated.");
+	});
+
 	QUnit.module("Item interaction", {
 		beforeEach : function() {
 			this.oItem = new sap.m.SelectionDetailsItem({
