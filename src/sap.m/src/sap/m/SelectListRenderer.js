@@ -24,9 +24,15 @@ sap.ui.define(['jquery.sap.global'],
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSelectList An object representation of the control that should be rendered.
+		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.render = function(oRm, oList) {
+			this.writeOpenListTag(oRm, oList);
+			this.renderItems(oRm, oList);
+			this.writeCloseListTag(oRm, oList);
+		};
+
+		SelectListRenderer.writeOpenListTag = function(oRm, oList) {
 			var CSS_CLASS = SelectListRenderer.CSS_CLASS;
 
 			oRm.write("<ul");
@@ -47,7 +53,9 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeClasses();
 			this.writeAccessibilityState(oRm, oList);
 			oRm.write(">");
-			this.renderItems(oRm, oList);
+		};
+
+		SelectListRenderer.writeCloseListTag = function(oRm, oList) {
 			oRm.write("</ul>");
 		};
 
@@ -65,7 +73,8 @@ sap.ui.define(['jquery.sap.global'],
 				this.renderItem(oRm, oList, aItems[i], {
 					selected: oSelectedItem === aItems[i],
 					setsize: iSize,
-					posinset: i + 1
+					posinset: i + 1,
+					elementData: true
 				});
 			}
 		};
@@ -91,7 +100,10 @@ sap.ui.define(['jquery.sap.global'],
 				bShowSecondaryValues = oList.getShowSecondaryValues();
 
 			oRm.write("<li");
-			oRm.writeElementData(oItem);
+
+			if (mStates.elementData) {
+				oRm.writeElementData(oItem);
+			}
 
 			if (oItem instanceof sap.ui.core.SeparatorItem) {
 				oRm.addClass(CSS_CLASS + "SeparatorItem");
