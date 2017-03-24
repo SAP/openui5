@@ -120,6 +120,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	 * @return {object} returns the relevant container
 	 * @public
 	 */
+	//TODO: Remove this method as soon as DTMetadata propagation is finalized
 	ElementDesignTimeMetadata.prototype.getRelevantContainer = function(oElement) {
 		var fnGetRelevantContainer = this.getData().getRelevantContainer;
 		if (!fnGetRelevantContainer || typeof fnGetRelevantContainer !== "function") {

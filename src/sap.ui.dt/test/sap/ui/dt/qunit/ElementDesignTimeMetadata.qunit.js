@@ -105,6 +105,7 @@ QUnit.test("when asked for getRelevantContainer with function in ElementDesignTi
 	oElementDesignTimeMetadata.destroy();
 });
 
+//TODO: Remove when DTMetadata propagation is finalized
 QUnit.test("when getAggregationAction is called", function(assert) {
 	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action1"), [
 		{changeType : "firstChangeType", aggregation : "testAggregation"},
@@ -114,7 +115,7 @@ QUnit.test("when getAggregationAction is called", function(assert) {
 	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
 });
 
-
+//TODO: Remove when DTMetadata propagation is finalized
 QUnit.test("when getAggregationAction is called", function(assert) {
 	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action1"), [
 		{changeType : "firstChangeType", aggregation : "testAggregation"},
