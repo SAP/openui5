@@ -214,7 +214,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	/**
 	 * Returns the public facade of the SelectionDetails control for non inner framework usages.
-	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
+	 * @returns {sap.ui.base.Interface} The reduced facade for outer framework usages.
 	 * @protected
 	 */
 	SelectionDetails.prototype._aFacadeMethods = ["isOpen"];
@@ -395,6 +395,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		aItems = this.getItems();
 		for (i = 0; i < aItems.length; i++) {
 			aItems[i].attachEvent("_navigate", this._onNavigate, this);
+			if (!aItems[i].hasListeners("_actionPress")) {
+				aItems[i].attachEvent("_actionPress", this._onActionPress, this);
+			}
 			oListItem = aItems[i]._getListItem();
 			this._oList.addAggregation("items", oListItem, true);
 		}
@@ -448,10 +451,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @private
 	 */
 	SelectionDetails.prototype._onActionPress = function(oEvent, oData) {
+
 		this.fireActionPress({
-			action: oData.action,
+			action: oData && oData.action || oEvent.getParameter("action"),
 			items: this.getItems(),
-			level: oData.level
+			level: oData && oData.level || oEvent.getParameter("level")
 		});
 	};
 
