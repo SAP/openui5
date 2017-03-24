@@ -412,8 +412,24 @@
 		//Assert
 		assert.ok(oSpyDestroy.calledOnce, "Destroy on oFileName object was called once");
 		assert.equal(oFileName.mEventRegistry.press.length, 1, "One press handler attached in case the function is called more times");
-		//Restore
-		oSpyDestroy.restore();
+	});
+
+	QUnit.test("Function _createDeleteButton", function(assert) {
+		//Arrange
+		var oItem = new sap.m.UploadCollectionItem({
+			fileName : "anyFileName",
+			enableDelete : true
+		});
+		oItem._requestIdName = 0;
+		this.oUploadCollection.insertItem(oItem);
+		sap.ui.getCore().applyChanges();
+		var oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
+		var oSpyDestroy = sinon.spy(oDeleteButton, "destroy");
+		//Act
+		oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
+		//Assert
+		assert.ok(oSpyDestroy.calledOnce, "Destroy on oDeleteButton object was called once");
+		assert.equal(oDeleteButton.mEventRegistry.press.length, 1, "One press handler attached in case the function is called several times");
 	});
 
 	QUnit.test("Set number of attachments title (default text)", function(assert) {
