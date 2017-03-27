@@ -111,8 +111,7 @@ sap.ui.define([
 		}
 
 		var oAppDescr = Utils.getAppDescriptor(oAppComponent);
-		var sComponentName = this.getComponentName();
-		oChangeSpecificData.reference = sComponentName; //in this case the component name can also be the value of sap-app-id
+		oChangeSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
 
 		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 
@@ -127,6 +126,9 @@ sap.ui.define([
 		if (oAppDescr && oAppDescr["sap.app"] && oAppDescr["sap.app"]["applicationVersion"]) {
 			oValidAppVersions.creation = oAppDescr["sap.app"]["applicationVersion"]["version"];
 			oValidAppVersions.from = oAppDescr["sap.app"]["applicationVersion"]["version"];
+			if (oChangeSpecificData.developerMode) {
+				oValidAppVersions.to = oAppDescr["sap.app"]["applicationVersion"]["version"];
+			}
 		}
 
 		oChangeSpecificData.validAppVersions = oValidAppVersions;
@@ -253,9 +255,12 @@ sap.ui.define([
 		mPropertyBag.viewId = mPropertyBag.modifier.getId(mPropertyBag.view);
 		mPropertyBag.siteId = Utils.getSiteId(mPropertyBag.appComponent);
 
-		return this._oChangePersistence.getChangesForView(mPropertyBag.viewId, mPropertyBag).then(
-			this._resolveGetChangesForView.bind(this, mPropertyBag),
+		var oGetFlexSettingsPromise = FlexSettings.getInstance(this.getComponentName(), mPropertyBag);
+		return oGetFlexSettingsPromise.then(
+			this._oChangePersistence.getChangesForView.bind(this._oChangePersistence, mPropertyBag.viewId, mPropertyBag),
 			this._handlePromiseChainError.bind(this, mPropertyBag.view)
+		).then(
+			this._resolveGetChangesForView.bind(this, mPropertyBag)
 		);
 	};
 
@@ -506,7 +511,7 @@ sap.ui.define([
 	FlexController.prototype._getChangeRegistry = function () {
 		var oInstance = ChangeRegistry.getInstance();
 		// make sure to use the most current flex settings that have been retrieved during processView
-		oInstance.initSettings();
+		oInstance.initSettings(this.getComponentName());
 		return oInstance;
 	};
 

@@ -223,7 +223,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			},
 			validAppVersions: {
 				creation: "1.0.0",
-				from: "1.0.0"
+				from: "1.0.0",
+				to: "1.0.0"
 			}
 		};
 
@@ -239,7 +240,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
 		assert.deepEqual(oCreatedFile.selector, {"persistenceKey": "control1"});
 		assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
-		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0"});
+		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
 	});
 
 	QUnit.test("_isReadOnlyDueToOriginalLanguage shall compare the original language with the current language", function(assert) {
