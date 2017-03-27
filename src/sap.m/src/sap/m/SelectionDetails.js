@@ -198,7 +198,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @returns {sap.ui.base.Interface} The reduced facade for outer framework usages.
 	 * @protected
 	 */
-	SelectionDetails.prototype._aFacadeMethods = ["isOpen"];
+	SelectionDetails.prototype._aFacadeMethods = [
+		"addCustomData", "getCustomData", "indexOfCustomData", "insertCustomData",
+		"removeCustomData", "removeAllCustomData", "destroyCustomData",
+		"data",
+		"addEventDelegate", "removeEventDelegate",
+		"close", "isOpen", "isEnabled",
+		"attachBeforeOpen", "detachBeforeOpen",
+		"attachBeforeClose", "detachBeforeClose",
+		"attachNavigate", "detachNavigate",
+		"attachActionPress", "detachActionPress",
+		"addAction", "removeAction",
+		"addGroupAction", "removeGroupAction",
+		"navTo"
+	];
 	SelectionDetails.prototype.getFacade = function() {
 		var oFacade = new Interface(this, SelectionDetails.prototype._aFacadeMethods);
 		this.getFacade = jQuery.sap.getter(oFacade);
