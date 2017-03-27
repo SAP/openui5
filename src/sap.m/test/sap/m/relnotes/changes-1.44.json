@@ -1836,5 +1836,118 @@
         "references": []
       }
     ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "fc12c15ab574552665ef357663bdabf045959487",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: One Month view",
+        "references": []
+      },
+      {
+        "id": "5062ff83033f821f326f074746357a8c56f5ea18",
+        "type": "FIX",
+        "text": " sap.m.ActionListItem: Double focus issue is fixed.",
+        "references": []
+      },
+      {
+        "id": "129dc8f0d31e6a1770903e1c2d75821a32702121",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Reset button tooltip corrected",
+        "references": []
+      },
+      {
+        "id": "13b0e073ef7b654c554c07526069f999f0903bbb",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: QUnit test improved",
+        "references": []
+      },
+      {
+        "id": "43406f1a01542814f8c01a65a234cc6400b39752",
+        "type": "FIX",
+        "text": " sap.m.Input: maxSuggestionWidth property is now working correctly",
+        "references": []
+      },
+      {
+        "id": "fe1cc135d6ed25d5fc068e6d64b5f45cc20c5da2",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Popover\u0027s height is now adjusted properly on container resize",
+        "references": []
+      },
+      {
+        "id": "4f7f8e7b8661a4a05a89a52df6f6b27a2af5fcc4",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Overstyling of text field does not affect combobox",
+        "references": []
+      },
+      {
+        "id": "d87eabfb5f2cb2b8d6d4c8ccf1e9ab3287d69470",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: SelectedKeys should be updated after a formatter is applied to the model",
+        "references": []
+      },
+      {
+        "id": "c76189165115d329adc5f8945a5462467e417754",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Suggestions are now correctly open on paste",
+        "references": []
+      },
+      {
+        "id": "f739f6b8a9745f39a18d6318ced584ea10a13cd6",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: When MultiInput.enabled\u003dfalse, tokens can\u0027t be removed any more",
+        "references": []
+      },
+      {
+        "id": "5ee2e8eb5452525834c37b74e883b0f7878e85ab",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Empty object attributes are not used as aria labels",
+        "references": []
+      },
+      {
+        "id": "da21e05dd6642fbfdc67bb6ccd58cd3910cfdb26",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Text occupies only the needed space",
+        "references": []
+      },
+      {
+        "id": "c8ff02c2727057950c013ae9ebb2a0538845915d",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: the css alignment is fixed in compact mode",
+        "references": []
+      },
+      {
+        "id": "bbe90d45c2b733420ffba2f25570ff057fc7faed",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Corrected value binding",
+        "references": []
+      },
+      {
+        "id": "93833c21c88329b3d692ad9a84caff827d163516",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selection works",
+        "references": []
+      },
+      {
+        "id": "8bea90d21f1c2e5187a174d5d575d13fcfda9dbc",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Navigation through the tokens is now correct",
+        "references": []
+      },
+      {
+        "id": "946a33da95b8e9c79ec0918364fc0a8f35c10f7f",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Delete button issue fixed",
+        "references": []
+      },
+      {
+        "id": "ec8886fbfcc43733317c0cabf52806aff0febf25",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: selectionChange event call corrected",
+        "references": []
+      }
+    ]
   }
 }

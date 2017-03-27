@@ -110,5 +110,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "f99dedc303bce26985c6896315fba308096fd570",
+        "type": "FIX",
+        "text": " sap.ui.commons.Slider: Setting of limit values work correctly",
+        "references": []
+      }
+    ]
   }
 }

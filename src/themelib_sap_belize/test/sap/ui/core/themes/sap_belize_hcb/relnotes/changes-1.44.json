@@ -465,5 +465,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "fc12c15ab574552665ef357663bdabf045959487",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: One Month view",
+        "references": []
+      },
+      {
+        "id": "ac957989efaddf51830be280ed0799e208f48fc6",
+        "type": "FIX",
+        "text": " ListBase: Growing button color in Belize Plus fixed",
+        "references": []
+      }
+    ]
   }
 }
