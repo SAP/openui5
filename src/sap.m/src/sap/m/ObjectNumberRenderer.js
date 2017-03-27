@@ -83,12 +83,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	ObjectNumberRenderer.renderUnit = function(oRm, oON) {
 		var sUnit = oON.getUnit() || oON.getNumberUnit();
 
-		oRm.write("<span");
-		oRm.addClass("sapMObjectNumberUnit");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeEscaped(sUnit);
-		oRm.write("</span>");
+		if (sUnit !== "") {
+			oRm.write("<span");
+			oRm.addClass("sapMObjectNumberUnit");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(sUnit);
+			oRm.write("</span>");
+		}
 	};
 
 	ObjectNumberRenderer.renderHiddenARIAElement = function(oRm, oON) {
