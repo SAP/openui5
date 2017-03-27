@@ -158,10 +158,14 @@
 		qutils.triggerKeyboardEvent("menubar2_item1_menuitem", "ESCAPE"); //Close the menu
 	});
 
-	test("Overflow", function() {
-		ok(!jQuery("#menubar1-ovrflw").is(":visible"), "Overflow hidden if enough space");
-		ok(jQuery("#menubar5-ovrflw").is(":visible"), "Overflow visible if not enough space");
-		equals(oMenuBar5.oOvrFlwMnu.getItems().length, 4, "# Items in overflow menu");
+	asyncTest("Overflow", function() {
+		setTimeout(function(){
+			assert.ok(!jQuery("#menubar1-ovrflw").is(":visible"), "Overflow hidden if enough space");
+			assert.ok(jQuery("#menubar5-ovrflw").is(":visible"), "Overflow visible if not enough space");
+			assert.equal(oMenuBar5.oOvrFlwMnu.getItems().length, 4, "# Items in overflow menu");
+
+			start();
+		}, 100);
 	});
 
 	module("Interaction - Mouse");
