@@ -7,9 +7,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, TableMenuUtils, Device, library) {
 	"use strict";
 
-	// shortcuts
-	var SelectionBehavior = library.SelectionBehavior,
-		SelectionMode = library.SelectionMode;
+	// Shortcuts
+	var SelectionBehavior = library.SelectionBehavior;
+	var SelectionMode = library.SelectionMode;
+
+	/**
+	 * The border width of a row in pixels.
+	 *
+	 * @type {int}
+	 * @constant
+	 */
+	var ROW_BORDER_WIDTH = 1;
 
 	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
@@ -36,11 +44,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
 		},
 
-		CONTENT_DENSITY_ROW_HEIGHTS : {
-			sapUiSizeCondensed : 24,
-			sapUiSizeCompact : 32,
-			sapUiSizeCozy : 48,
-			undefined : 32
+		/**
+		 * The default row heights in pixels for the different content densities.
+		 *
+		 * @type {DefaultRowHeight}
+		 * @typedef {Object} DefaultRowHeight
+		 * @property {int} sapUiSizeCondensed - The default height of a row in pixels in condensed content density.
+		 * @property {int} sapUiSizeCompact - The default height of a row in pixels in compact content density.
+		 * @property {int} sapUiSizeCozy - The default height of a row in pixels in cozy content density.
+		 * @property {int} undefined - The default height of a row in pixels in case no content density information is available.
+		 */
+		DEFAULT_ROW_HEIGHT: {
+			sapUiSizeCondensed : 24 + ROW_BORDER_WIDTH,
+			sapUiSizeCompact : 32 + ROW_BORDER_WIDTH,
+			sapUiSizeCozy : 48 + ROW_BORDER_WIDTH,
+			undefined : 32 + ROW_BORDER_WIDTH
 		},
 
 		/**
