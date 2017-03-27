@@ -318,6 +318,28 @@
 		}
 	});
 
+	QUnit.test("The _onToolbarButtonPress function is being called upon the press on the SelectionDetails toolbar button", function(assert) {
+		// Arrange
+		var oStub = sinon.stub(this.oSelectionDetails._onToolbarButtonPress, "call");
+		// Act
+		this.oSelectionDetails.getAggregation("_button").firePress();
+		//Assert
+		assert.equal(oStub.callCount, 1, "The function _onToolbarButtonPress has been called");
+	});
+
+	QUnit.test("Correct dependencies are loaded after the press on the toolbar button", function(assert) {
+		// Arrange
+		var oStub = sinon.stub(sap.ui, "require");
+		var aDependencies = ["sap/m/NavContainer", "sap/m/ResponsivePopover", "sap/m/Page", "sap/m/OverflowToolbar",
+			"sap/m/ToolbarSpacer", "sap/m/Button", "sap/m/List", "sap/m/ActionListItem", "sap/m/VBox", "sap/m/FlexItemData", "sap/m/ScrollContainer"]
+		// Act
+		this.oSelectionDetails._onToolbarButtonPress();
+		// Assert
+		assert.deepEqual(oStub.getCall(0).args[0], aDependencies, "Correct list of dependencies has been used as an argument for the sap.ui.require function");
+		// Restore
+		oStub.restore();
+	});
+
 	QUnit.test("Popover aggregation is filled when the Click handler is executed", function(assert) {
 		// Arrange
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
