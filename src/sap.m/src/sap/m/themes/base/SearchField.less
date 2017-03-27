@@ -17,6 +17,18 @@
 	padding: 0.25rem 0;
 }
 
+html.sap-desktop .sapMFocus > .sapMSFF::before {
+	border: 1px dotted @sapUiContentFocusColor;
+	position: absolute;
+	content: " ";
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	left: 1px;
+	z-index: 2;
+	pointer-events: none;
+}
+
 .sapMSFI[type="search"] {
 	font-size: 0.88em;
 	-webkit-appearance:none;
@@ -270,4 +282,11 @@ input.sapMSFI[type="search"]:focus {
 
 html[dir=rtl] .sapMSF {
 	transform: translateZ(0);
+}
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMFocus > .sapMSFF::before  {
+		border: 1px dashed @sapUiContentFocusColor;
+
+	}
 }
