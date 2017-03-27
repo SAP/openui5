@@ -824,9 +824,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 	};
 
-
 	/**
-	 * Determines the row heights of the fixed and scroll area.
+	 * Determines the row heights. For every row in the table the maximum height of all <code>tr</code> elements in the fixed and
+	 * scrollable column areas is returned.
+	 *
+	 * @param {boolean} bHeader If set to <code>true</code>, only the heights of the rows in the column header will be returned
+	 * @return {int[]} The row heights
 	 * @private
 	 */
 	Table.prototype._collectRowHeights = function(bHeader) {
@@ -840,31 +843,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		var iDefaultRowHeight = this._getDefaultRowHeight();
-		var cssClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
+		var sRowCSSClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
+		var aRowsInFixedColumnsArea = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + sRowCSSClass);
+		var aRowsInScrollableColumnsArea = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + sRowCSSClass);
+		var iRowCount = this.getRows().length;
+		var aRowHeights = [];
+		var bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
 
-		// Collect row heights for all tables, including column headers
-		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + cssClass);
-		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + cssClass);
-		var aRowItemHeights = [];
+		for (var i = 0; i < iRowCount; i++) {
+			var nFixedColumnsAreaRowHeight = aRowsInFixedColumnsArea[i] == null ? 0 : aRowsInFixedColumnsArea[i].getBoundingClientRect().height;
+			var nScrollableColumnsAreaRowHeight = aRowsInScrollableColumnsArea[i] == null ? 0 : aRowsInScrollableColumnsArea[i].getBoundingClientRect().height;
+			var nRowHeight = Math.max(nFixedColumnsAreaRowHeight, nScrollableColumnsAreaRowHeight);
 
-		function collectHeights(row, index) {
-			var currentValue = aRowItemHeights[index] || 0;
-			var rowHeight = row.getBoundingClientRect().height;
-			var diff = iDefaultRowHeight - rowHeight;
-			if (Device.browser.chrome && diff < 1 && diff > 0 && window.devicePixelRatio != 1) {
-				// In Chrome with zoom!=100% the height of the table rows behaves differently than divs (row selector)
-				// see https://bugs.chromium.org/p/chromium/issues/detail?id=661991
-				// -> Allow that rowheight is minimal smaller than the default row height
-				aRowItemHeights[index] = Math.max(currentValue, rowHeight);
-			} else {
-				aRowItemHeights[index] = Math.max(currentValue, rowHeight, iDefaultRowHeight);
+			if (bIsZoomedInChrome) {
+				var nHeightDeviation = iDefaultRowHeight - nRowHeight;
+
+				// In Chrome with zoom != 100% the height of table rows can slightly differ from the height of divs (row selectors).
+				// See https://bugs.chromium.org/p/chromium/issues/detail?id=661991
+
+				// Allow the row height to be slightly smaller than the default row height.
+				if (nHeightDeviation > 0 && nHeightDeviation < 1) {
+					aRowHeights.push(Math.max(nRowHeight, iDefaultRowHeight - 1));
+					continue;
+				}
 			}
+
+			aRowHeights.push(Math.max(nRowHeight, iDefaultRowHeight));
 		}
 
-		[].forEach.call(aFixedRowItems, collectHeights);
-		[].forEach.call(aScrollRowItems, collectHeights);
-
-		return aRowItemHeights;
+		return aRowHeights;
 	};
 
 	/**
@@ -2425,14 +2432,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (TableUtils.isVariableRowHeightEnabled(this) && this._getRowCount() < this.getVisibleRowCount()) {
 			return 0;
 		} else {
-			// If there are 2 scrollable rows of 50 pixels height, the scrollbar should have a scroll range of 100 pixels. In zoomed in Chrome,
+			// If there are 2 scrollable rows of 50 pixels height, the scrollbar should have a scroll range of 100 pixels. If zoomed in Chrome,
 			// the heights of elements can be slightly lower (below 1 pixel) than their original value, so the scroll range could be only 99.2 pixels.
-			// In this case the scrolling logic would not determine, that the rows should be scrolled to the end.
+			// In this case the scrolling logic would not determine that the rows should be scrolled to the end.
 			// Therefore we need to check if the scroll position is at its maximum by reading the DOM.
 			if (Device.browser.chrome && window.devicePixelRatio != 1) {
 				var oVSb = this._getScrollExtension().getVerticalScrollbar();
-				if (oVSb != null && oVSb.scrollTop >= oVSb.scrollHeight - oVSb.clientHeight) {
-					return this._getMaxRowIndex();
+
+				if (oVSb != null) {
+					var nDeviationFromMaximumScrollPosition = this._getVirtualScrollRange() - oVSb.scrollTop;
+
+					// When there is less than 1 pixel left until the calculated value for the maximum scroll position is reached, we can
+					// consider the table to be scrolled to the end.
+					if (nDeviationFromMaximumScrollPosition < 1) {
+						return this._getMaxRowIndex();
+					}
 				}
 			}
 
@@ -3548,9 +3562,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._getDefaultRowHeight = function() {
-		var sContentDensity = TableUtils.getContentDensity(this);
-		// +1 for the border
-		return this.getRowHeight() || TableUtils.CONTENT_DENSITY_ROW_HEIGHTS[sContentDensity] + 1;
+		var iRowHeight = this.getRowHeight();
+
+		if (iRowHeight > 0) {
+			return iRowHeight;
+		} else {
+			var sContentDensity = TableUtils.getContentDensity(this);
+			return TableUtils.DEFAULT_ROW_HEIGHT[sContentDensity];
+		}
 	};
 
 	/**
