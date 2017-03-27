@@ -72,7 +72,11 @@
 	var oChangeButton = new sap.m.Button({
 		text: "Trigger Change",
 		press: function (oEvt) {
-			this.fireEvent("_selectionDetails", _selectionDetailsEventData);
+			var oSelectionData = jQuery.extend(true, {}, _selectionDetailsEventData);
+			for (var i = 0; i < Math.random() * 10; i++) {
+				oSelectionData.data.push(jQuery.extend(true, {}, _selectionDetailsEventData.data[Math.ceil(Math.random())]));
+			}
+			this.fireEvent("_selectionDetails", oSelectionData);
 		}
 	});
 
