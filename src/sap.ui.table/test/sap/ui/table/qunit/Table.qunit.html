@@ -1492,6 +1492,26 @@
 		oTable.$("selall").click();
 	});
 
+	QUnit.test("_getDefaultRowHeight", function(assert) {
+		oTable.setRowHeight(99);
+		assert.strictEqual(oTable._getDefaultRowHeight(), 99, "The default row height is the value of the rowHeight property (99)");
+
+		oTable.setRowHeight(0);
+		oTable.getDomRef().classList.add("sapUiSizeCozy");
+		assert.strictEqual(oTable._getDefaultRowHeight(), 49, "The default row height is correct in cozy size (49)");
+
+		oTable.getDomRef().classList.remove("sapUiSizeCozy");
+		oTable.getDomRef().classList.add("sapUiSizeCompact");
+		assert.strictEqual(oTable._getDefaultRowHeight(), 33, "The default row height is correct in compact size (33)");
+
+		oTable.getDomRef().classList.remove("sapUiSizeCompact");
+		oTable.getDomRef().classList.add("sapUiSizeCondensed");
+		assert.strictEqual(oTable._getDefaultRowHeight(), 25, "The default row height is correct in condensed size (25)");
+
+		oTable.getDomRef().classList.remove("sapUiSizeCondensed");
+		assert.strictEqual(oTable._getDefaultRowHeight(), 28, "The default row height is correct in default size (28)");
+	});
+
 	</script>
 </head>
 <body class="sapUiBody">

@@ -13,6 +13,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		SelectionMode = library.SelectionMode;
 
 	/**
+	 * The border width of a row in pixels.
+	 *
+	 * @type {int}
+	 * @constant
+	 */
+	var ROW_BORDER_WIDTH = 1;
+
+	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
 	 *
 	 * @author SAP SE
@@ -34,10 +42,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		CONTENT_DENSITY_ROW_HEIGHTS : {
-			sapUiSizeCondensed : 24,
-			sapUiSizeCompact : 32,
-			sapUiSizeCozy : 48,
-			undefined : 27
+			sapUiSizeCondensed : 24 + ROW_BORDER_WIDTH,
+			sapUiSizeCompact : 32 + ROW_BORDER_WIDTH,
+			sapUiSizeCozy : 48 + ROW_BORDER_WIDTH,
+			undefined : 27 + ROW_BORDER_WIDTH
 		},
 
 		/**
