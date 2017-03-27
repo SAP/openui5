@@ -23,8 +23,14 @@ sap.ui.define([
 		// - mChanges: map of changes (selector id)
 		// - mDependencies: map of changes (change key) that need to be applied before any change. Used to check if a change can be applied. Format:
 		//		mDependencies: {
-		//			"fileNameChange2USERnamespace": [oChange1],
-		//			"fileNameChange3USERnamespace": [oChange2]
+		//			"fileNameChange2USERnamespace": {
+		//				"changeObject": oChange2,
+		//				"dependencies": ["fileNameChange1USERnamespace"]
+		//			},
+		//			"fileNameChange3USERnamespace": {
+		//				"changeObject": oChange3,
+		//				"dependencies": ["fileNameChange2USERnamespace"]
+		//			}
 		//		}
 		// - mDependentChangesOnMe: map of changes (change key) that cannot be applied before the change. Used to remove dependencies faster. Format:
 		//		mDependentChangesOnMe: {
