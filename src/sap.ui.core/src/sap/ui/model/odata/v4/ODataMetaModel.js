@@ -807,6 +807,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests a module for the given <code>sModuleName<code>.
+	 *
+	 * @param {string} sModuleName
+	 *   The name of the module to fetch (e.g. sap.ui.model.odata.type.Int16)
+	 * @returns {SyncPromise}
+	 *   A promise which is resolved with the requested module as soon as it is available
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.fetchModule = function (sModuleName) {
+		var vModule;
+
+		sModuleName = sModuleName.replace(/\./g, "/");
+		vModule = sap.ui.require(sModuleName);
+
+		if (vModule) {
+			return _SyncPromise.resolve(vModule);
+		}
+		return _SyncPromise.resolve(new Promise(function (resolve, reject) {
+			sap.ui.require([sModuleName], resolve);
+		}));
+	};
+
+	/**
 	 * @param {string} sPath
 	 *   A relative or absolute path within the metadata model, for example "/EMPLOYEES/ENTRYDATE"
 	 * @param {sap.ui.model.Context} [oContext]
@@ -1230,10 +1254,12 @@ sap.ui.define([
 				}
 			}
 
-			oType = new (jQuery.sap.getObject(sTypeName, 0))(undefined, mConstraints);
-			oProperty["$ui5.type"] = oType;
-
-			return oType;
+			oProperty["$ui5.type"] = that.fetchModule(sTypeName).then(function (Type) {
+				oType = new Type(undefined, mConstraints);
+				oProperty["$ui5.type"] = oType;
+				return oType;
+			});
+			return oProperty["$ui5.type"];
 		});
 	};
 

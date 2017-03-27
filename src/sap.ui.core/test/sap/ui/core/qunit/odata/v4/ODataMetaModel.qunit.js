@@ -11,6 +11,7 @@ sap.ui.require([
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
+	"sap/ui/model/odata/type/Raw",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
@@ -22,7 +23,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
 ], function (jQuery, BindingMode, BaseContext, ContextBinding, FilterProcessor, JSONListBinding,
-		MetaModel, OperationMode, Int64, AnnotationHelper, Context, _Helper, _SyncPromise,
+		MetaModel, OperationMode, Int64, Raw, AnnotationHelper, Context, _Helper, _SyncPromise,
 		ODataMetaModel, ODataModel, ValueListType, PropertyBinding, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
@@ -1895,10 +1896,13 @@ sap.ui.require([
 			}
 
 			QUnit.test("fetchUI5Type: " + JSON.stringify(oProperty), function (assert) {
-				var sPath = "/EMPLOYEES/0/ENTRYDATE",
+				// Note: just spy on fetchModule() to make sure that the real types are used
+				// which check correctness of constraints
+				var fnFetchModuleSpy = this.spy(this.oMetaModel, "fetchModule"),
+					sPath = "/EMPLOYEES/0/ENTRYDATE",
 					oMetaContext = this.oMetaModel.getMetaContext(sPath),
 					oMetaModelMock = this.mock(this.oMetaModel),
-					oType;
+					that = this;
 
 				oMetaModelMock.expects("fetchObject").twice()
 					.withExactArgs(undefined, oMetaContext)
@@ -1932,12 +1936,19 @@ sap.ui.require([
 							_SyncPromise.resolve(oConstraints && oConstraints.maximumExclusive));
 				}
 
-				oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+				// code under test
+				return this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
+					var sExpectedTypeName = "sap.ui.model.odata.type."
+						+ oProperty.$Type.slice(4)/*cut off "Edm."*/;
 
-				assert.strictEqual(oType.getName(),
-					"sap.ui.model.odata.type." + oProperty.$Type.slice(4)/*cut off "Edm."*/);
-				assert.deepEqual(oType.oConstraints, oConstraints);
-				assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
+					assert.strictEqual(fnFetchModuleSpy.callCount, 1);
+					assert.ok(fnFetchModuleSpy.calledOn(that.oMetaModel));
+					assert.ok(fnFetchModuleSpy.calledWithExactly(sExpectedTypeName),
+						fnFetchModuleSpy.printf("%C"));
+					assert.strictEqual(oType.getName(), sExpectedTypeName);
+					assert.deepEqual(oType.oConstraints, oConstraints);
+					assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "cached");
+				});
 			});
 		});
 	});
@@ -1957,10 +1968,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: collection", function (assert) {
-		var sPath = "/EMPLOYEES/0/foo",
-			oType;
+		var oMetaModelMock = this.mock(this.oMetaModel),
+			sPath = "/EMPLOYEES/0/foo",
+			that = this;
 
-		this.mock(this.oMetaModel).expects("fetchObject").twice()
+		oMetaModelMock.expects("fetchObject").thrice()
 			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
 			.returns(_SyncPromise.resolve({
 				$isCollection : true,
@@ -1970,21 +1982,30 @@ sap.ui.require([
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported collection type, using sap.ui.model.odata.type.Raw",
 			sPath, sODataMetaModel);
+		oMetaModelMock.expects("fetchModule") // must only be called once
+			.withExactArgs("sap.ui.model.odata.type.Raw")
+			.returns(_SyncPromise.resolve(Promise.resolve(Raw)));
 
-		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
-
-		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
-		assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
+		return Promise.all([
+			this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
+				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+				assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "cached");
+			}),
+			this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
+				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+			})
+		]);
 	});
 
 	//*********************************************************************************************
 	//TODO make Edm.Duration work with OData V4
 	["acme.Type", "Edm.Duration", "Edm.GeographyPoint"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
-			var sPath = "/EMPLOYEES/0/foo",
-				oType;
+			var oMetaModelMock = this.mock(this.oMetaModel),
+				sPath = "/EMPLOYEES/0/foo",
+				that = this;
 
-			this.mock(this.oMetaModel).expects("fetchObject").twice()
+			oMetaModelMock.expects("fetchObject").twice()
 				.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
 				.returns(_SyncPromise.resolve({
 					$Nullable : false, // must not be turned into a constraint for Raw!
@@ -1993,11 +2014,14 @@ sap.ui.require([
 			this.oLogMock.expects("warning").withExactArgs(
 				"Unsupported type '" + sQualifiedName + "', using sap.ui.model.odata.type.Raw",
 				sPath, sODataMetaModel);
+			oMetaModelMock.expects("fetchModule")
+				.withExactArgs("sap.ui.model.odata.type.Raw")
+				.returns(_SyncPromise.resolve(Raw));
 
-			oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
-
-			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
-			assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
+			return this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
+				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+				assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "cached");
+			});
 		});
 	});
 
@@ -3349,6 +3373,39 @@ sap.ui.require([
 				"Annotations 'com.sap.vocabularies.Common.v1.ValueListMapping' with identical "
 				+ "qualifier 'foo' for property " + sPropertyPath + " in "
 				+ oModel.sServiceUrl + "$metadata and " + sMappingUrl);
+		});
+	});
+
+	// *********************************************************************************************
+	QUnit.test("fetchModule: synchronously", function(assert) {
+		var vModule = {};
+
+		this.mock(sap.ui).expects("require")
+			.withExactArgs("sap/ui/model/odata/type/Int")
+			.returns(vModule);  // requested module already loaded
+
+		// code under test
+		assert.strictEqual(this.oMetaModel.fetchModule("sap.ui.model.odata.type.Int").getResult(),
+			vModule);
+	});
+
+	// *********************************************************************************************
+	QUnit.test("fetchModule, asynchronous", function(assert) {
+		var vModule = {},
+			sModuleName = "sap/ui/model/odata/type/Int64",
+			oSapUiMock = this.mock(sap.ui);
+
+		oSapUiMock.expects("require")
+			.withExactArgs(sModuleName)
+			.returns(undefined); // requested module not yet loaded
+		oSapUiMock.expects("require")
+			.withExactArgs([sModuleName], sinon.match.func)
+			.callsArgWithAsync(1, vModule);
+
+		// code under test
+		return this.oMetaModel.fetchModule("sap.ui.model.odata.type.Int64")
+			.then(function (oResult) {
+				assert.strictEqual(oResult, vModule);
 		});
 	});
 
