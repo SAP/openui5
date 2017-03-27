@@ -519,9 +519,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		childPath : "Property",
+		childQueryOptions : {},
 		expected : {$select : ["Property"]}
 	}, {
 		childPath : "NavigationProperty/Property",
+		childQueryOptions : {},
 		expected : {
 			$expand : {
 				"NavigationProperty" : {
@@ -531,6 +533,7 @@ sap.ui.require([
 		}
 	}, {
 		childPath : "Property/NavigationProperty",
+		childQueryOptions : {},
 		expected : {
 			$expand : {
 				"Property/NavigationProperty" : {}
@@ -538,23 +541,28 @@ sap.ui.require([
 		}
 	}, {
 		childPath : "Property_1/Property_2",
+		childQueryOptions : {},
 		expected : {$select : ["Property_1/Property_2"]}
 	}, {
 		childPath : "NavigationProperty_1/NavigationProperty_2",
+		childQueryOptions : {$foo : "bar"}, // will be taken as is
 		expected : {
 			$expand : {
 				"NavigationProperty_1" : {
 					$expand : {
-						"NavigationProperty_2" : {}
+						"NavigationProperty_2" : {
+							$foo : "bar"
+						}
 					}
 				}
 			}
 		}
 	}, {
 		childPath : "",
+		childLocalQueryOptions : {},
 		expected : {}
 	}].forEach(function (oFixture) {
-		QUnit.test("createChildQueryOptions, " + oFixture.childPath, function (assert) {
+		QUnit.test("wrapChildQueryOptions, " + oFixture.childPath, function (assert) {
 			var oMetaModel = {
 					getObject : function () {}
 				},
@@ -564,7 +572,7 @@ sap.ui.require([
 				oBinding = new ODataParentBinding({
 					oModel : {oMetaModel : oMetaModel}
 				}),
-				mChildQueryOptions,
+				mWrappedQueryOptions,
 				oMetaModelMock = this.mock(oMetaModel);
 
 			aMetaPathSegments.forEach(function (sSegment, j, aMetaPathSegments) {
@@ -576,14 +584,15 @@ sap.ui.require([
 			});
 
 			// code under test
-			mChildQueryOptions = oBinding.createChildQueryOptions("/EMPLOYEES", oFixture.childPath);
+			mWrappedQueryOptions = oBinding.wrapChildQueryOptions("/EMPLOYEES", oFixture.childPath,
+				oFixture.childQueryOptions);
 
-			assert.deepEqual(mChildQueryOptions, oFixture.expected);
+			assert.deepEqual(mWrappedQueryOptions, oFixture.expected);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createChildQueryOptions, child path with bound function", function (assert) {
+	QUnit.test("wrapChildQueryOptions, child path with bound function", function (assert) {
 		var oMetaModel = {
 				getObject : function () {}
 			},
@@ -597,8 +606,33 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(
-			oBinding.createChildQueryOptions("/EMPLOYEES", "name.space.boundFunction/Property"),
+			oBinding.wrapChildQueryOptions("/EMPLOYEES", "name.space.boundFunction/Property"),
 			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("wrapChildQueryOptions, structural property w/ query options", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oModel : {oMetaModel : oMetaModel}
+			}),
+			mChildLocalQueryOptions = {$filter : "AGE gt 42"};
+
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("/EMPLOYEES/Property")
+			.returns({$kind : "Property"});
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to enhance query options for auto-$expand/$select as the child "
+				+ "binding has query options, but its path 'Property' points to a "
+				+ "structural property",
+			JSON.stringify(mChildLocalQueryOptions),
+			"sap.ui.model.odata.v4.ODataParentBinding");
+
+		// code under test
+		assert.strictEqual(oBinding.wrapChildQueryOptions("/EMPLOYEES", "Property",
+			mChildLocalQueryOptions), undefined);
 	});
 
 	//*********************************************************************************************
@@ -651,76 +685,107 @@ sap.ui.require([
 			$select : ["ID"]
 		}
 	}, {
-		aggregatedQueryOptions : {
-			$expand : {
-				EMPLOYEE_2_TEAM : { $select : ["Team_Id"] }
-			}
-		},
-		childQueryOptions : {
-			$expand : {
-				EMPLOYEE_2_TEAM : { $select : ["*"] }
-			}
-		},
-		expectedQueryOptions : {
-			$expand : {
-				EMPLOYEE_2_TEAM : { $select : ["Team_Id", "*"] }
-			}
-		}
+		aggregatedQueryOptions : {$select : ["Team_Id"]},
+		childQueryOptions : {$select : ["*"] },
+		expectedQueryOptions : {$select : ["Team_Id", "*"] }
 	}, {
-		aggregatedQueryOptions : {
-			$expand : {
-				EMPLOYEE_2_TEAM : { $select : ["*"] }
-			}
-		},
-		childQueryOptions : {
-			$expand : {
-				EMPLOYEE_2_TEAM : { $select : ["Team_Id"] }
-			}
-		},
-		expectedQueryOptions : {
-			$expand : {
-				EMPLOYEE_2_TEAM : { $select : ["*", "Team_Id"] }
-			}
-		}
+		aggregatedQueryOptions : {$select : ["*"]},
+		childQueryOptions : {$select : ["Team_Id"]},
+		expectedQueryOptions : {$select : ["*", "Team_Id"] }
+	}, {
+		aggregatedQueryOptions : {},
+		childQueryOptions : {$count : true},
+		expectedQueryOptions : {$count : true}
+	}, {
+		aggregatedQueryOptions : {$count : true},
+		childQueryOptions : {},
+		expectedQueryOptions : {$count : true}
+	}, {
+		aggregatedQueryOptions : {$count : false},
+		childQueryOptions : {$count : true},
+		expectedQueryOptions : {$count : true}
 	}].forEach(function (oFixture, i) {
-		QUnit.test("mergeChildQueryOptions: " + i, function (assert) {
+		QUnit.test("aggregateQueryOptions returns true: " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : oFixture.aggregatedQueryOptions
-				});
+				}),
+				bMergeSuccess;
 
 			// code under test
-			oBinding.mergeChildQueryOptions(oFixture.childQueryOptions);
+			bMergeSuccess = oBinding.aggregateQueryOptions(oFixture.childQueryOptions);
 
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.expectedQueryOptions);
+			assert.strictEqual(bMergeSuccess, true);
+		});
+	});
+
+	[{ // conflict: parent has $orderby, but child has different $orderby value
+		aggregatedQueryOptions : {$orderby : "Category"},
+		childQueryOptions : {$orderby : "Category desc"}
+	}, { // aggregated query options remain unchanged on conflict ($select is not added)
+		aggregatedQueryOptions : {$orderby : "Category" },
+		childQueryOptions : {
+			$orderby : "Category desc",
+			$select : ["Name"]
+		}
+	}, { // conflict: parent has $orderby, but child does not
+		aggregatedQueryOptions : {$orderby : "Category"},
+		childQueryOptions : {$select : ["Name"]}
+	}, { // conflict: parent has no $orderby, but child has $orderby
+		aggregatedQueryOptions : {},
+		childQueryOptions : {$orderby : "Category", $select : ["Name"]}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("aggregateQueryOptions returns false: " + i, function (assert) {
+			var oBinding = new ODataParentBinding({
+					mAggregatedQueryOptions : oFixture.aggregatedQueryOptions
+				}),
+				mOriginalQueryOptions = jQuery.extend(true, {}, oFixture.aggregatedQueryOptions),
+				bMergeSuccess;
+
+			// code under test
+			bMergeSuccess = oBinding.aggregateQueryOptions(oFixture.childQueryOptions);
+
+			assert.deepEqual(oBinding.mAggregatedQueryOptions, mOriginalQueryOptions);
+			assert.strictEqual(bMergeSuccess, false);
 		});
 	});
 
 	//*********************************************************************************************
 	[{
 		aggregatedQueryOptions : undefined,
+		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		$kind : "Property"
 	}, {
 		aggregatedQueryOptions : {},
+		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		$kind : "Property"
 	}, {
 		aggregatedQueryOptions : undefined,
+		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		$kind : "NavigationProperty"
 	}, {
 		aggregatedQueryOptions : {},
+		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		$kind : "NavigationProperty"
 	}, {
 		aggregatedQueryOptions : {},
+		canMergeQueryOptions : true,
 		hasChildQueryOptions : false, // child path has segments which are no properties
 		$kind : "Property"
 	}, {
 		aggregatedQueryOptions : {},
+		canMergeQueryOptions : true,
 		hasChildQueryOptions : false, // child path has segments which are no properties
-		isUnresolved : true, // unresolved binding: fulfilled cache promise resolving with undefined
 		$kind : "Property"
+	}, {
+		aggregatedQueryOptions : {},
+		canMergeQueryOptions : false,
+		hasChildQueryOptions : true,
+		$kind : "NavigationProperty"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchIfChildCanUseCache, multiple calls aggregate query options, no cache yet: "
 				+ JSON.stringify(oFixture),
@@ -737,12 +802,13 @@ sap.ui.require([
 							? undefined : Promise.resolve()),
 						aChildCanUseCachePromises : [],
 						oContext : {},
-						createChildQueryOptions : function () {},
+						wrapChildQueryOptions : function () {},
 						doFetchQueryOptions : function () {},
-						mergeChildQueryOptions : function () {},
+						aggregateQueryOptions : function () {},
 						oModel : {oMetaModel : oMetaModel}
 					}),
 					oBindingMock = this.mock(oBinding),
+					mChildLocalQueryOptions = {},
 					mChildQueryOptions = oFixture.hasChildQueryOptions ? {} : undefined,
 					oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')"),
 					mLocalQueryOptions = {},
@@ -765,18 +831,22 @@ sap.ui.require([
 				oMetaModelMock.expects("fetchObject")
 					.withExactArgs("/EMPLOYEES/childMetaPath")
 					.returns(_SyncPromise.resolve({$kind : oFixture.$kind}));
-				oBindingMock.expects("createChildQueryOptions")
-					.withExactArgs("/EMPLOYEES", "childMetaPath")
+				oBindingMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/EMPLOYEES", "childMetaPath",
+						sinon.match.same(mChildLocalQueryOptions))
 					.returns(mChildQueryOptions);
-				oBindingMock.expects("mergeChildQueryOptions")
+				oBindingMock.expects("aggregateQueryOptions")
 					.exactly(oFixture.hasChildQueryOptions ? 1 : 0)
-					.withExactArgs(sinon.match.same(mChildQueryOptions));
+					.withExactArgs(sinon.match.same(mChildQueryOptions))
+					.returns(oFixture.canMergeQueryOptions);
 
 				// code under test
-				oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath");
+				oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
+					_SyncPromise.resolve(mChildLocalQueryOptions));
 
 				return oPromise.then(function (bUseCache) {
-					assert.strictEqual(bUseCache, oFixture.hasChildQueryOptions);
+					assert.strictEqual(bUseCache,
+							oFixture.hasChildQueryOptions && oFixture.canMergeQueryOptions);
 					assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 					assert.strictEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
 				});
@@ -1335,7 +1405,7 @@ sap.ui.require([
 	[{
 		title: "no query options",
 		key : ["key1", "key2"],
-		result: undefined, // TODO change when system properties of dependents are aggregated
+		result: undefined // TODO change when system properties of dependents are aggregated
 //		result : {
 //			$select : ["key1", "key2"]
 //		}
@@ -1343,7 +1413,7 @@ sap.ui.require([
 		title: "no $select",
 		key : ["key1", "key2"],
 		queryOptions : {foo: "bar"},
-		result: undefined, // TODO change when system properties of dependents are aggregated
+		result: undefined // TODO change when system properties of dependents are aggregated
 //		result : {
 //			foo : "bar",
 //			$select : ["key1", "key2"]
@@ -1399,8 +1469,7 @@ sap.ui.require([
 					mQueryOptions : oFixture.queryOptions
 				}),
 				oContext = {},
-				mOriginalQueryOptions = oFixture.queryOptions
-					&& JSON.parse(JSON.stringify(oFixture.queryOptions)),
+
 				oType = oFixture.key ? {$Key : oFixture.key} : {};
 
 			this.mock(oBinding.oModel).expects("resolve")
