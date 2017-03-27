@@ -555,12 +555,37 @@
 		assert.equal(oFacadeFirstCall, oFacadeSecondCall, "Same proxy object is returned");
 	});
 
-	QUnit.test("Facade includes isOpen method", function(assert) {
+	QUnit.test("Facade methods exist", function(assert) {
 		// Act
-		var oFacade = this.oSelectionDetails.getFacade();
+		var aFacadeMethods = this.oSelectionDetails._aFacadeMethods;
 
 		//Assert
-		assert.notOk(oFacade.isOpen(), "isOpen returns false");
+		assert.ok(aFacadeMethods.indexOf("addCustomData") > -1, "Facade contains method 'addCustomData'");
+		assert.ok(aFacadeMethods.indexOf("getCustomData") > -1, "Facade contains method 'getCustomData'");
+		assert.ok(aFacadeMethods.indexOf("indexOfCustomData") > -1, "Facade contains method 'indexOfCustomData'");
+		assert.ok(aFacadeMethods.indexOf("insertCustomData") > -1, "Facade contains method 'insertCustomData'");
+		assert.ok(aFacadeMethods.indexOf("removeCustomData") > -1, "Facade contains method 'removeCustomData'");
+		assert.ok(aFacadeMethods.indexOf("removeAllCustomData") > -1, "Facade contains method 'removeAllCustomData'");
+		assert.ok(aFacadeMethods.indexOf("destroyCustomData") > -1, "Facade contains method 'destroyCustomData'");
+		assert.ok(aFacadeMethods.indexOf("data") > -1, "Facade contains method 'data'");
+		assert.ok(aFacadeMethods.indexOf("addEventDelegate") > -1, "Facade contains method 'addEventDelegate'");
+		assert.ok(aFacadeMethods.indexOf("removeEventDelegate") > -1, "Facade contains method 'removeEventDelegate'");
+		assert.ok(aFacadeMethods.indexOf("close") > -1, "Facade contains method 'close'");
+		assert.ok(aFacadeMethods.indexOf("isOpen") > -1, "Facade contains method 'isOpen'");
+		assert.ok(aFacadeMethods.indexOf("isEnabled") > -1, "Facade contains method 'isEnabled'");
+		assert.ok(aFacadeMethods.indexOf("attachBeforeOpen") > -1, "Facade contains method 'attachBeforeOpen'");
+		assert.ok(aFacadeMethods.indexOf("detachBeforeOpen") > -1, "Facade contains method 'detachBeforeOpen'");
+		assert.ok(aFacadeMethods.indexOf("attachBeforeClose") > -1, "Facade contains method 'attachBeforeClose'");
+		assert.ok(aFacadeMethods.indexOf("detachBeforeClose") > -1, "Facade contains method 'detachBeforeClose'");
+		assert.ok(aFacadeMethods.indexOf("attachNavigate") > -1, "Facade contains method 'attachNavigate'");
+		assert.ok(aFacadeMethods.indexOf("detachNavigate") > -1, "Facade contains method 'detachNavigate'");
+		assert.ok(aFacadeMethods.indexOf("attachActionPress") > -1, "Facade contains method 'attachActionPress'");
+		assert.ok(aFacadeMethods.indexOf("detachActionPress") > -1, "Facade contains method 'detachActionPress'");
+		assert.ok(aFacadeMethods.indexOf("addAction") > -1, "Facade contains method 'addAction'");
+		assert.ok(aFacadeMethods.indexOf("removeAction") > -1, "Facade contains method 'removeAction'");
+		assert.ok(aFacadeMethods.indexOf("addGroupAction") > -1, "Facade contains method 'addGroupAction'");
+		assert.ok(aFacadeMethods.indexOf("removeGroupAction") > -1, "Facade contains method 'removeGroupAction'");
+		assert.ok(aFacadeMethods.indexOf("navTo") > -1, "Facade contains method 'navTo'");
 	});
 
 	QUnit.module("Factory Function", {
