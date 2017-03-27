@@ -85,7 +85,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
 	 * @protected
 	 */
-	SelectionDetailsItem.prototype._aFacadeMethods = ["setEnableNav"];
+	SelectionDetailsItem.prototype._aFacadeMethods = [
+		"addCustomData", "getCustomData", "indexOfCustomData", "insertCustomData",
+		"removeCustomData", "removeAllCustomData", "destroyCustomData",
+		"data",
+		"addEventDelegate", "removeEventDelegate",
+		"setEnableNav", "getEnableNav",
+		"addAction", "removeAction"
+	];
 	SelectionDetailsItem.prototype.getFacade = function() {
 		var oFacade = new Interface(this, SelectionDetailsItem.prototype._aFacadeMethods);
 		this.getFacade = jQuery.sap.getter(oFacade);
