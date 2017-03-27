@@ -160,14 +160,21 @@ sap.ui.define([
 	};
 
 	/*
-	* Cleans the references to all objects in use.
-	*
-	* @returns {sap.f.semantic.SemanticShareMenu}
-	*/
+	 * Destroys all the actions - custom and semantic
+	 * and cleans all the references in use.
+	 *
+	 * @returns {sap.f.semantic.SemanticShareMenu}
+	 */
 	SemanticShareMenu.prototype.destroy = function() {
+		this._aShareMenuActions.forEach(function(oControl) {
+			oControl.destroy();
+		});
+
+		this.destroyCustomActions();
+
+		this._oShareMenuBtn = null;
 		this._aShareMenuActions = null;
 		this._aCustomShareActions = null;
-		this._oShareMenuBtn = null;
 
 		return SemanticContainer.prototype.destroy.call(this);
 	};

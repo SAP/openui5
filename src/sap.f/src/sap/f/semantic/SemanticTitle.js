@@ -79,16 +79,32 @@ sap.ui.define([
 	};
 
 	/*
-	* Cleans the references to all objects in use.
+	* Destroys all the actions - custom and semantic
+	* and cleans all the references in use.
 	*
 	* @returns {sap.f.semantic.SemanticFooter}
 	*/
 	SemanticTitle.prototype.destroy = function() {
-		this._aSemanticTextActions = [];
-		this._aSemanticSimpleIconActions = [];
-		this._aSemanticNavIconActions = [];
-		this._aCustomTextActions = [];
-		this._aCustomIconActions = [];
+		this._aSemanticTextActions.forEach(function(oControl) {
+			oControl.destroy();
+		});
+
+		this._aSemanticSimpleIconActions.forEach(function(oControl) {
+			oControl.destroy();
+		});
+
+		this._aSemanticNavIconActions.forEach(function(oControl) {
+			oControl.destroy();
+		});
+
+		this.destroyCustomTextActions();
+		this.destroyCustomIconActions();
+
+		this._aSemanticSimpleIconActions = null;
+		this._aSemanticTextActions = null;
+		this._aCustomTextActions = null;
+		this._aCustomIconActions = null;
+		this._aSemanticNavIconActions = null;
 		this._oSeparator = null;
 
 		return SemanticContainer.prototype.destroy.call(this);
