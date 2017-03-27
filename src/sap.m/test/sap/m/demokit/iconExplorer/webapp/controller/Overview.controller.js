@@ -46,9 +46,6 @@ sap.ui.define([
 			this.setModel(oTagModel, "tags");
 
 			this.getRouter().getRoute("overview").attachPatternMatched(this._updateUI, this);
-
-			// you don't want to know
-			this._finetuneUI();
 		},
 
 		/**
@@ -295,73 +292,6 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
-		 * Corrects several control issues for improved display in the icon explorer.
-		 * Caution: some of the following hacks are not recommended for standard app development
-		 * @private
-		 */
-		_finetuneUI : function () {
-			var fnMakeTransparent = function (sId) {
-				this.byId(sId).addEventDelegate({
-					onAfterRendering: function () {
-						try {
-							var $control = this.byId(sId).$();
-							var sBackgroundColor = $control.css("background-color");
-							var sAlphaColor = "rgba(" + sBackgroundColor.match(/rgb\((.+)\)/)[1] + ", 0.80)";
-
-							$control.css("background-color", sAlphaColor);
-						} catch (oException) {
-							// do nothing
-						}
-					}.bind(this)
-				});
-			}.bind(this);
-
-			/* make preview controls semi-transparent to look better on accent cells */
-			fnMakeTransparent("previewIconTabBar--header");
-			fnMakeTransparent("previewToolbar");
-			fnMakeTransparent("previewListItem");
-			fnMakeTransparent("previewGenericTile");
-
-			/* resize preview icon based on splitter size */
-			// hack: splitter does not have a resize event that we need to resize the content
-			var fnUpdatePreviewSize = function () {
-				var iWidth = this.byId("previewCell").$().width();
-				if (iWidth) {
-					this.byId("previewIcon").setSize((iWidth / 2) + "px");
-				}
-			}.bind(this);
-
-			// if the icon is getting rerendered we also set the size again
-			this.byId("previewIcon").addEventDelegate({
-				onAfterRendering: function () {
-					fnUpdatePreviewSize();
-				}
-			});
-
-			var fnDelayedResize = sap.ui.layout.Splitter.prototype._delayedResize;
-			if (fnDelayedResize) {
-				// caution: overriding prototype methods is dangerous
-				sap.ui.layout.Splitter.prototype._delayedResize = function () {
-					fnDelayedResize.apply(this, arguments);
-					// update icon size after splitter change is applied
-					setTimeout(function () {
-						fnUpdatePreviewSize();
-					}, 0);
-				};
-			}
-
-			// hack: token does not mark the event so the table cell gets highlighted
-			var fnOnTokenTouchstart = sap.m.Token.prototype.ontouchstart;
-			if (fnOnTokenTouchstart) {
-				// caution: overriding prototype methods is dangerous
-				sap.m.Token.prototype.ontouchstart = function () {
-					arguments[0].setMarked();
-					fnOnTokenTouchstart.apply(this, arguments);
-				};
-			}
-		},
-
-		/**
 		 * Shows the selected item on the object page
 		 * On phones a additional history entry is created
 		 * @param {string} sIcon the icon name to be previewed
@@ -373,8 +303,7 @@ sap.ui.define([
 				this.byId("preview").bindElement({
 					path: this.getModel().getIconPath(sIcon)
 				});
-
-				this.byId("previewCopyIcon").setHtmlText("<span>" + this.getModel().getUnicodeHTML(sIcon) + "</span>" + sIcon);
+				this.byId("previewCopyIcon").setHtmlText("<span>" + this.getModel().getUnicodeHTML(sIcon) + "</span>" +  sIcon);
 
 				// update the group information with a timeout as this task takes some time to calculate
 				setTimeout(function () {
