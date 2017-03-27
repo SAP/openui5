@@ -21,7 +21,7 @@
 <script>
 	var aDependencies = [
 		"sap/m/NavContainer", "sap/m/ResponsivePopover", "sap/m/Page", "sap/m/OverflowToolbar",
-		"sap/m/ToolbarSpacer", "sap/m/Button", "sap/m/List", "sap/m/ActionListItem", "sap/m/VBox",
+		"sap/m/ToolbarSpacer", "sap/m/Button", "sap/m/List", "sap/m/StandardListItem", "sap/m/VBox",
 		"sap/m/FlexItemData", "sap/m/ScrollContainer"
 	];
 	var aHandlePressLazyArgs;
@@ -219,7 +219,7 @@
 		var oAddAggregationSpy = sinon.spy(this.oSelectionDetails._oActionGroupList, "addAggregation");
 
 		//Act
-		this.oSelectionDetails._addActionGroupListItems(sap.m.ActionListItem);
+		this.oSelectionDetails._addActionGroupListItems(sap.m.StandardListItem);
 
 		//Assert
 		assert.equal(oAddAggregationSpy.callCount, 5, "The correct number of items has been added to the list.");
@@ -428,7 +428,22 @@
 		assert.equal(oSpy.getCall(0).args[0].level, "List", "The action level is on list level")
 	});
 
-	QUnit.test("ActionListItem is created for actionGroups aggregation", function(assert) {
+	QUnit.test("First action group has special class", function(assert) {
+		// Arrange
+		var oActionGroup = new sap.ui.core.Item();
+		this.oSelectionDetails.addActionGroup(oActionGroup);
+		this.oSelectionDetails.addActionGroup(oActionGroup.clone());
+
+		// Act
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
+
+		// Assert
+		var sId = this.oSelectionDetails.getId() + "-actionGroup-";
+		assert.ok(jQuery.sap.byId(sId + "0").is(".sapMSDFirstActionGroup"), "The first item has the correct style class.");
+		assert.notOk(jQuery.sap.byId(sId + "1").is(".sapMSDFirstActionGroup"), "The second item doesn't have an additional style class.");
+	});
+
+	QUnit.test("StandardListItem is created for actionGroups aggregation", function(assert) {
 		// Arrange
 		var oActionGroup = new sap.ui.core.Item();
 		this.oSelectionDetails.addActionGroup(oActionGroup);
@@ -437,10 +452,10 @@
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
 		// Assert
-		assert.ok(sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actionGroup-0"), "ActionListItem has been created");
+		assert.equal(sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actionGroup-0").getMetadata().getName(), "sap.m.StandardListItem", "The created item has the correct class.");
 	});
 
-	QUnit.test("Press on the ActionListItem triggers action press event", function(assert) {
+	QUnit.test("Press on the StandardListItem triggers action press event", function(assert) {
 		// Arrange
 		var oActionGroup = new sap.ui.core.Item();
 		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
@@ -448,11 +463,11 @@
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oActionListItem = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actionGroup-0");
+		var oStandardListItem = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actionGroup-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 
 		// Act
-		oActionListItem.firePress();
+		oStandardListItem.firePress();
 
 		// Assert
 		assert.deepEqual(oSpy.getCall(0).args[0].action, oActionGroup, "The actionPress event of SelectionDetails has been triggered");

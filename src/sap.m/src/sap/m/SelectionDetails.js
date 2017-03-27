@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			"actions" : {type : "sap.ui.core.Item", multiple : true},
 
 			/**
-			 * Contains actions that are rendered as a dedicated {@link sap.m.ActionListItem item}.
+			 * Contains actions that are rendered as a dedicated {@link sap.m.StandardListItem item}.
 			 * In case an action group is pressed, a navigation should be triggered via <code>navTo</code> method.
 			 * A maximum of 5 actionGroups is displayed inside the popover, though more can be added to the aggregation.
 			 */
@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype._onToolbarButtonPress = function() {
 		sap.ui.require([
-			'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/ActionListItem',
+			'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',
 			'sap/m/VBox', 'sap/m/FlexItemData', 'sap/m/ScrollContainer'
 		], this._handlePressLazy.bind(this));
 	};
@@ -251,13 +251,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {function} ToolbarSpacer The constructor of sap.m.ToolbarSpacer
 	 * @param {function} Button The constructor of sap.m.OverflowToolbarButton
 	 * @param {function} List The constructor of sap.m.List
-	 * @param {function} ActionListItem The constructor of sap.m.ActionListItem
+	 * @param {function} StandardListItem The constructor of sap.m.StandardListItem
 	 * @param {function} VBox The constructor of sap.m.VBox
 	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
 	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
 	 * @private
 	 */
-	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, ToolbarSpacer, Button, List, ActionListItem, VBox, FlexItemData, ScrollContainer) {
+	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem, VBox, FlexItemData, ScrollContainer) {
 		var oPopover = this._getPopover(NavContainer, ResponsivePopover, Page, List, VBox, FlexItemData, ScrollContainer);
 
 		if (this._oItemFactory) {
@@ -265,7 +265,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		}
 
 		this._addMainListItems();
-		this._addActionGroupListItems(ActionListItem);
+		this._addActionGroupListItems(StandardListItem);
 		this._addListActions(OverflowToolbar, ToolbarSpacer, Button);
 
 		oPopover.invalidate(); //trigger a rendering of the updated lists and toolbars
@@ -473,29 +473,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	};
 
 	/**
-	 * Adds ActionListItems to list which will be used for actionGroups on list level.
-	 * This method adds up to _MAX_ACTIONGROUPS ActionListItems to the internal list.
-	 * @param {function} ActionListItem The constructor of sap.m.ActionListItem
+	 * Adds StandardListItems to list which will be used for actionGroups on list level.
+	 * This method adds up to _MAX_ACTIONGROUPS StandardListItems to the internal list.
+	 * @param {function} StandardListItem The constructor of sap.m.StandardListItem
 	 * @private
 	 */
-	SelectionDetails.prototype._addActionGroupListItems = function(ActionListItem) {
+	SelectionDetails.prototype._addActionGroupListItems = function(StandardListItem) {
 		this._oActionGroupList.destroyAggregation("items", true);
 
 		var aActionGroupItems = this.getActionGroups(),
-			oActionListItem,
+			oStandardListItem,
 			i,
 			iDisplayedGroupActions = Math.min(SelectionDetails._MAX_ACTIONGROUPS, aActionGroupItems.length);
 
 		for (i = 0; i < iDisplayedGroupActions; i++) {
-			oActionListItem = new ActionListItem(this.getId() + "-actionGroup-" + i, {
-				text: aActionGroupItems[i].getText(),
+			oStandardListItem = new StandardListItem(this.getId() + "-actionGroup-" + i, {
+				title: aActionGroupItems[i].getText(),
 				type: library.ListType.Navigation,
 				press: [{
 					action: aActionGroupItems[i],
 					level: library.SelectionDetailsActionLevel.Group
 				}, this._onActionPress, this]
 			});
-			this._oActionGroupList.addAggregation("items", oActionListItem, true);
+			if (i === 0) {
+				oStandardListItem.addStyleClass("sapMSDFirstActionGroup");
+			}
+			this._oActionGroupList.addAggregation("items", oStandardListItem, true);
 		}
 	};
 

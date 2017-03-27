@@ -5,16 +5,16 @@
 
 .sapMSDItem {
 	flex-wrap: wrap;
-	padding: 0rem;
+	padding: 0px;
 }
 
 .sapMSDItem > .sapMLIBContent {
-	padding: 0.5rem 0rem;
+	padding: 0.5rem 0px;
 	box-sizing: border-box;
 	max-width: ~"calc(100% - 3rem)";
 }
 
-.sapMSDItemActions {
+.sapMSDItem .sapMSDItemActions {
 	width: 100%;
 
 	.sapMTB {
@@ -37,13 +37,13 @@
 	display: flex;
 }
 
-.sapMSDItemLineMarkerContainer {
+.sapMSDItem .sapMSDItemLineMarkerContainer {
 	flex: 0 0 3rem;
 	box-sizing: border-box;
 }
 
-.sapMSDItemLineLabel,
-.sapMSDItemLineValue {
+.sapMSDItem .sapMSDItemLineLabel,
+.sapMSDItem .sapMSDItemLineValue {
 	flex: 1 1;
 
 	padding: 0.25rem;
@@ -51,18 +51,18 @@
 	font-size: @sapUiChartPopoverDataItemFontSize;
 }
 
-.sapMSDItemLineLabel {
+.sapMSDItem .sapMSDItemLineLabel {
 	margin-right: 1rem;
 	color: @sapUiContentLabelColor;
 }
 
-.sapMSDItemLineValue {
+.sapMSDItem .sapMSDItemLineValue {
 	color: @sapUiListTextColor;
 
 	&.sapMSDItemLineBold {
 		font-weight: bold;
 	}
 }
-.sapMSDItemLineUnit {
+.sapMSDItem .sapMSDItemLineUnit {
 	font-weight: normal;
 }
