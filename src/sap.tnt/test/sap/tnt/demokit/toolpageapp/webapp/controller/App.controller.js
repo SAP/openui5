@@ -20,16 +20,7 @@ sap.ui.define([
 		return BaseController.extend("sap.ui.demo.toolpageapp.controller.App", {
 
 			onInit: function() {
-				//this._setToggleButtonTooltip(!sap.ui.Device.system.desktop);
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
-				this.getOwnerComponent().getRouter().attachRouteMatched(this.onRouteMatched, this);
-			},
-
-			onRouteMatched: function () {
-				// Initiate The Notification Counter
-				var oModel = this.getView().getModel("alerts");
-				var iNotificationCounter =  oModel.getProperty("/alerts/notifications").length;
-				oModel.setProperty("/alerts/notificationCounter", iNotificationCounter);
 			},
 
 			/**
