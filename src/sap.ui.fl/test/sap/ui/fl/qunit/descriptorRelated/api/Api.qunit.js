@@ -1123,6 +1123,16 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER');
 		});
 	});
+	
+	QUnit.test("createNew - layer - set to CUSTOMER_BASE", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference",
+			"layer": "CUSTOMER_BASE"
+		}).then(function(oDescriptorVariant) {
+			assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER_BASE');
+		});
+	});
 
 	QUnit.test("createNew - layer - set to VENDOR", function(assert) {
 		return DescriptorVariantFactory.createNew({
@@ -1352,14 +1362,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
-	QUnit.test("createNew - with layer CUSTOMER", function(assert) {
+	QUnit.test("createNew - with layer CUSTOMER_BASE", function(assert) {
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
 			new DescriptorChangeFactory().createNew(
 					"a.reference",
 					oDescriptorInlineChange,
-					'CUSTOMER'
+					'CUSTOMER_BASE'
 					).then(function(oDescriptorChange) {
-						assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER' );
+						assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE' );
 					});
 		});
 	});
@@ -1552,6 +1562,16 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	});
 
 	QUnit.test("create new - CUSTOMER layer", function(assert) {
+		var _oDescriptorChange;
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+		}).then(function(oDescriptorChange) {
+			_oDescriptorChange = oDescriptorChange;
+			assert.equal(_oDescriptorChange._getChangeToSubmit( ).getRequest(),'ATO_NOTIFICATION');
+		});
+	});
+	
+	QUnit.test("create new - CUSTOMER_BASE layer", function(assert) {
 		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
 			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)

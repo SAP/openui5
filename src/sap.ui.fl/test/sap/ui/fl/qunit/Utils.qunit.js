@@ -998,6 +998,12 @@ jQuery.sap.require("sap.m.Button");
 
 		assert.equal(Utils.getFlexReference(oManifest), sAppId + ".Component");
 	});
+	
+	QUnit.test("isCustomerDependentLayer", function(assert) {
+		assert.ok(Utils.isCustomerDependentLayer("CUSTOMER"), "'CUSTOMER' layer is detected as customer dependent");
+		assert.ok(Utils.isCustomerDependentLayer("CUSTOMER_BASE"), "'CUSTOMER_BASE' layer is detected as customer dependent");
+		assert.strictEqual(Utils.isCustomerDependentLayer("VENDOR"), false, "'VENDOR' layer is detected as not customer dependent layer");
+	});
 
 	QUnit.test("getAppVersionFromManifest returns the application version from manifest", function (assert) {
 
