@@ -256,13 +256,25 @@
 		assert.equal(oFacadeFirstCall, oFacadeSecondCall, "Same proxy object is returned");
 	});
 
-	QUnit.test("Facade includes setEnableNav method", function(assert) {
-		// Arrange
-		var oFacade = this.oItem.getFacade();
+	QUnit.test("Facade methods exist", function(assert) {
 		// Act
-		oFacade.setEnableNav(true);
+		var aFacadeMethods = this.oItem._aFacadeMethods;
+
 		//Assert
-		assert.ok(this.oItem.getEnableNav(), "enableNav is set to true");
+		assert.ok(aFacadeMethods.indexOf("addCustomData") > -1, "Facade contains method 'addCustomData'");
+		assert.ok(aFacadeMethods.indexOf("getCustomData") > -1, "Facade contains method 'getCustomData'");
+		assert.ok(aFacadeMethods.indexOf("indexOfCustomData") > -1, "Facade contains method 'indexOfCustomData'");
+		assert.ok(aFacadeMethods.indexOf("insertCustomData") > -1, "Facade contains method 'insertCustomData'");
+		assert.ok(aFacadeMethods.indexOf("removeCustomData") > -1, "Facade contains method 'removeCustomData'");
+		assert.ok(aFacadeMethods.indexOf("removeAllCustomData") > -1, "Facade contains method 'removeAllCustomData'");
+		assert.ok(aFacadeMethods.indexOf("destroyCustomData") > -1, "Facade contains method 'destroyCustomData'");
+		assert.ok(aFacadeMethods.indexOf("data") > -1, "Facade contains method 'data'");
+		assert.ok(aFacadeMethods.indexOf("addEventDelegate") > -1, "Facade contains method 'addEventDelegate'");
+		assert.ok(aFacadeMethods.indexOf("removeEventDelegate") > -1, "Facade contains method 'removeEventDelegate'");
+		assert.ok(aFacadeMethods.indexOf("setEnableNav") > -1, "Facade contains method 'setEnableNav'");
+		assert.ok(aFacadeMethods.indexOf("getEnableNav") > -1, "Facade contains method 'getEnableNav'");
+		assert.ok(aFacadeMethods.indexOf("addAction") > -1, "Facade contains method 'addAction'");
+		assert.ok(aFacadeMethods.indexOf("removeAction") > -1, "Facade contains method 'removeAction'");
 	});
 
 </script>
