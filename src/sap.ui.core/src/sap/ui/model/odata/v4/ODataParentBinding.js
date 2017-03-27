@@ -26,16 +26,24 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
-	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
-	 * according to the given map of parameters: Parameters with an <code>undefined</code> value are
-	 * removed, the other parameters are set, and missing parameters remain unchanged.
+	 * Changes this binding's parameters and refreshes the binding.
+	 *
+	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
+	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
+	 * {@link #changeParameters}.
+	 *
+	 * The parameters are changed according to the given map of parameters: Parameters with an
+	 * <code>undefined</code> value are removed, the other parameters are set, and missing
+	 * parameters remain unchanged.
 	 *
 	 * @param {object} mParameters
 	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 * @throws {Error}
-	 *   If <code>mParameters</code> is missing, contains binding-specific or unsupported
-	 *   parameters, or contains unsupported values.
+	 *   If there are pending changes or if <code>mParameters</code> is missing,
+	 *   contains binding-specific or unsupported parameters, or contains unsupported values.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -47,6 +55,9 @@ sap.ui.define([
 
 		if (!mParameters) {
 			throw new Error("Missing map of binding parameters");
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot change parameters due to pending changes");
 		}
 
 		for (sKey in mParameters) {

@@ -191,6 +191,11 @@ sap.ui.require([
 			When.onTheMainPage.sortByGrossAmount();
 			When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(1);
 			Then.onTheMainPage.checkSalesOrderItemInRow(0);
+			// Sort via changeParameters
+			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID ascending
+			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
+			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID descending
+			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
 			// Change SalesOrderDetails $select via API
 			When.onTheMainPage.unselectSODetailsNoteWithChangeParameters();
 			Then.onTheMainPage.checkSalesOrderDetailsNote();
@@ -224,8 +229,8 @@ sap.ui.require([
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
 		Then.onTheMainPage.checkLog(bRealOData
-				? [oExpectedLog, oExpectedLog, oExpectedLog, oExpectedLogChangeParameters]
-				: undefined);
+			? [oExpectedLog, oExpectedLog, oExpectedLog, oExpectedLogChangeParameters]
+			: undefined);
 		Then.iTeardownMyUIComponent();
 	});
 });

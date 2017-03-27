@@ -146,8 +146,10 @@
 				</Toolbar>
 			</headerToolbar>
 			<columns>
-				<Column width="8em">
-					<Text text="Sales Order ID"/>
+				<Column hAlign="Right" width="9em">
+					<Button enabled="{ui>/bRealOData}" id ="sortBySalesOrderID"
+						icon="{ui>/sSortSalesOrderIDIcon}" iconFirst="false"
+						press="onSortBySalesOrderID" text="Sales Order ID" />
 				</Column>
 				<Column width="8em">
 					<Text text="Buyer Name"/>
