@@ -64,6 +64,29 @@
 			sut.destroy();
 		});
 
+		QUnit.test("Should not render unit element when Unit is empty", function(assert) {
+
+			// System under test
+			var oObjectNumber = new sap.m.ObjectNumber("onUnit", {
+				number: 256
+			});
+
+			oObjectNumber.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(jQuery("#onUnit").find(".sapMObjectNumberUnit").length, 0, "No unit span is rendered when the Unit is null.");
+
+			oObjectNumber.setUnit("");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(jQuery("#onUnit").find(".sapMObjectNumberUnit").length, 0, "No unit span is rendered when the Unit is empty string.");
+
+			// Clean up
+			oObjectNumber.destroy();
+		});
+
 		QUnit.test("Non-emphasized ObjectNumber", function(assert) {
 			//SUT
 
