@@ -148,6 +148,18 @@
 			oOverlay2.destroy();
 		});
 
+		QUnit.test("avoid data mutation", function(assert) {
+			var oOverlay1 = new sap.ui.dt.ElementOverlay();
+			var oOverlay2 = new sap.ui.dt.ElementOverlay();
+			this.oSelection.add(oOverlay1);
+			var aSelections1 = this.oSelection.getSelection();
+			this.oSelection.add(oOverlay2);
+			var aSelections2 = this.oSelection.getSelection();
+			assert.ok(aSelections1 !== aSelections2, "then returned arrays are unique");
+			oOverlay1.destroy();
+			oOverlay2.destroy();
+		});
+
 		</script>
 	</head>
 	<body>
