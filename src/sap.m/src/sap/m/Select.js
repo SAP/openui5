@@ -2197,7 +2197,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			this.setValue("");
 
 			if (this._isShadowListRequired()) {
-				this.$().children(".sapMSelectListItemBase").remove();
+				this.$().find(".sapMSelectListItemBase").remove();
 			}
 
 			for (var i = 0; i < aItems.length; i++) {
@@ -2223,7 +2223,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			this.setValue("");
 
 			if (this._isShadowListRequired()) {
-				this.$().children(".sapMSelectListItemBase").remove();
+				this.$().find(".sapMSelectListItemBase").remove();
 			}
 
 			return this;
