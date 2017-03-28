@@ -241,12 +241,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// Lazy initialization
 			if (this.getProperty("titleActive")) {
 				oTitleControl = new sap.m.Link({
+					id : this.getId() + "-link",
 					text: this.getProperty("title"),
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
 					ariaLabelledBy: this._oAriaCustomRole
 				});
 			} else {
 				oTitleControl = new sap.m.Text({
+					id : this.getId() + "-txt",
 					text: this.getProperty("title")
 				});
 			}
@@ -258,6 +260,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (bIsTitleActive && oTitleControl instanceof sap.m.Text) {
 				this.destroyAggregation("_titleControl", true);
 				oTitleControl = new sap.m.Link({
+					id : this.getId() + "-link",
 					text: this.getProperty("title"),
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
 					ariaLabelledBy: this._oAriaCustomRole
@@ -266,6 +269,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else if (!bIsTitleActive && oTitleControl instanceof sap.m.Link) {
 				this.destroyAggregation("_titleControl", true);
 				oTitleControl = new sap.m.Text({
+					id : this.getId() + "-txt",
 					text: this.getProperty("title")
 				});
 				this.setAggregation("_titleControl", oTitleControl);

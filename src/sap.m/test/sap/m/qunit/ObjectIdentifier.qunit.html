@@ -394,6 +394,7 @@
 
 		//Assert
 		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+		assert.ok(oObjectIdentifier.$(oObjectIdentifier.getId() + '-txt'), "The text control can be found by id");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -429,6 +430,7 @@
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			id: "oId",
 			title: 'Test title',
 			titleActive: true
 		});
@@ -438,6 +440,7 @@
 		// assertions
 		assert.equal(oObjectIdentifier.getTitleActive(), true, "The ObjectIdentifier's title should be active");
 		assert.equal(oObjectIdentifier.$('title').children(0).hasClass("sapMLnk"), true, "A Link control should be rendered inside the title");
+		assert.ok(oObjectIdentifier.$(oObjectIdentifier.getId() + '-link'), "A Link control can be found by id");
 
 		// cleanup
 		oObjectIdentifier.destroy();
