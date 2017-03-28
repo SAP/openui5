@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.tnt.NavigationList
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Popover', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, Popover, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Popover', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText'],
+	function(jQuery, library, Control, Popover, ItemNavigation, InvisibleText) {
 		"use strict";
 
 		/**
@@ -88,22 +88,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			this._itemNavigation.setPageSize(10);
 
 			this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
-		};
 
-		/**
-		 * Sets a listbox accessibility role to the control.
-		 * @private
-		 */
-		NavigationList.prototype.setHasListBoxRole = function (hasListBoxRole) {
-			this._hasListBoxRole = hasListBoxRole;
-		};
-
-		/**
-		 * Gets if the control has listbox accessibility role.
-		 * @private
-		 */
-		NavigationList.prototype.getHasListBoxRole = function () {
-			return this._hasListBoxRole;
+			if (sap.ui.getCore().getConfiguration().getAccessibility() && !NavigationList._sAriaPopupLabelId) {
+				NavigationList._sAriaPopupLabelId = new InvisibleText({
+					text: '' // add empty string in order to prevent the redundant speech output
+				}).toStatic().getId();
+			}
 		};
 
 		/**
@@ -238,7 +228,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 				afterClose: function () {
 					that._popover = null;
 				},
-				content: list
+				content: list,
+				ariaLabelledBy: [NavigationList._sAriaPopupLabelId]
 			}).addStyleClass('sapContrast sapContrastPlus');
 
 			popover._adaptPositionParams = this._adaptPopoverPositionParams;
