@@ -28,7 +28,8 @@
 			</OverflowToolbar>
 			<UploadCollection
 				id="UploadCollection"
-				items="{path : '/items', templateShareable : 'true'}">
+				items="{path : '/items', templateShareable : 'true'}"
+				uploadEnabled="false">
 				<toolbar>
 					<OverflowToolbar id="myId">
 						<Title id="attachmentTitle"/>
