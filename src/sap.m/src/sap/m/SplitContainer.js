@@ -621,7 +621,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		var bIsMasterNav = true;
+		var bIsMasterNav = true,
+			metaData = oEvent.srcControl.getMetadata();
 
 		if (jQuery(oEvent.target).closest(".sapMSplitContainerDetail").length > 0) {
 			bIsMasterNav = false;
@@ -635,7 +636,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				// press isn't occurring in master area
 				&& !bIsMasterNav
 				// press isn't triggered by the showMasterButton
-				&& !jQuery.sap.containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)) {
+				&& !jQuery.sap.containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
+				&& (!metaData.getEvent("tap") || !metaData.getEvent("press"))) {
 			this.hideMaster();
 		}
 	};
