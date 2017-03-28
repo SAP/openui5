@@ -54,6 +54,17 @@
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getMetadata().getName(), "sap.m.Button", "Private button created");
 	});
 
+	QUnit.test("References to '_oItemFactory' and '_oChangeHandler' deleted during destroy", function(assert) {
+		//Arrange
+		this.oSelectionDetails.registerSelectionDetailsItemFactory(function(){});
+		this.oSelectionDetails.attachSelectionHandler("_selectionDetails", new sap.ui.core.Control());
+		//Act
+		this.oSelectionDetails.destroy();
+		//Assert
+		assert.notOk(this.oSelectionDetails._oItemFactory, "Factory reference deleted");
+		assert.notOk(this.oSelectionDetails._oChangeHandler, "Change handler reference deleted");
+	});
+
 	QUnit.module("Basic Rendering", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
@@ -330,8 +341,6 @@
 	QUnit.test("Correct dependencies are loaded after the press on the toolbar button", function(assert) {
 		// Arrange
 		var oStub = sinon.stub(sap.ui, "require");
-		var aDependencies = ["sap/m/NavContainer", "sap/m/ResponsivePopover", "sap/m/Page", "sap/m/OverflowToolbar",
-			"sap/m/ToolbarSpacer", "sap/m/Button", "sap/m/List", "sap/m/StandardListItem", "sap/m/VBox", "sap/m/FlexItemData", "sap/m/ScrollContainer"]
 		// Act
 		this.oSelectionDetails._onToolbarButtonPress();
 		// Assert
@@ -755,12 +764,24 @@
 		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
 	});
 
-	QUnit.test("Wrong paramter ends in nothing", function(assert) {
+	QUnit.test("A call with wrong paramter does not have any effect", function(assert) {
 		//Act
 		var oResult = this.oSelectionDetails.attachSelectionHandler({}, "");
 
 		//Assert
 		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
+	});
+
+	QUnit.test("Attaching selectionChange handler a second time does not have any effect", function(assert) {
+		//Arrange
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+		var oSpy = sinon.spy(this.oDummyControl, "attachEvent");
+
+		//Act
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+
+		//Assert
+		assert.equal(oSpy.callCount, 0, "Second call does not result in second event attaching");
 	});
 
 	QUnit.test("Save parameters to enable detach mechanism", function(assert) {

@@ -128,6 +128,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		this._updateButton();
 	};
 
+	SelectionDetails.prototype.exit = function () {
+		this._oItemFactory = null;
+		this._oChangeHandler = null;
+	};
+
 	/* =========================================================== */
 	/* API methods                                                 */
 	/* =========================================================== */
@@ -646,7 +651,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @returns {sap.m.SelectionDetails} this to allow method chaining
 	 */
 	SelectionDetails.prototype.attachSelectionHandler = function(eventId, listener) {
-		if (jQuery.type(eventId) !== "String" && (jQuery.type(listener) !== "object" || jQuery.type(listener.attachEvent) !== "function")) {
+		if (this._oChangeHandler || jQuery.type(eventId) !== "String" && (jQuery.type(listener) !== "object" || jQuery.type(listener.attachEvent) !== "function")) {
 			return this;
 		} else {
 			this._oChangeHandler = {
@@ -660,6 +665,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	/**
 	 * Detaches the event which was attached by <code>attachSelectionHandler</code>.
+	 * @protected
 	 * @returns {sap.m.SelectionDetails} this to allow method chaining
 	 */
 	SelectionDetails.prototype.detachSelectionHandler = function () {
