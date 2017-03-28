@@ -10,6 +10,11 @@ sap.ui.define([
 
 		onInit: function () {
 
+		},
+
+		onHomePress: function () {
+			var iconTabHeader = this.getView().byId('iconTabHeader');
+			iconTabHeader.setSelectedKey('invalidKey');
 		}
 	});
 
