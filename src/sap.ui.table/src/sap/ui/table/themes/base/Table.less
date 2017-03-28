@@ -9,6 +9,8 @@
 
 @sapUiTableToolbarDesign: ~"Transparent"; /* should be one of the sap.m.ToolbarDesign enumeration */
 
+@_sapUiTableRowBorderWidth: 1px;
+
 @_sapUiTableFocusOutlineWidth: 1px;
 @_sapUiTableFocusOutlineOffset: -1px;
 
@@ -19,9 +21,9 @@
 @_sapUiTableRowHdrWidthCozy: 3rem;
 @_sapUiTableRowHdrWidthCondensed: 2rem;
 
-@_sapUiTableRowHeight: 2rem;
-@_sapUiTableRowHeightCozy: 3rem;
-@_sapUiTableRowHeightCondensed: 1.5rem;
+@_sapUiTableRowHeight: calc(~"2rem + "@_sapUiTableRowBorderWidth);
+@_sapUiTableRowHeightCozy: calc(~"3rem + "@_sapUiTableRowBorderWidth);
+@_sapUiTableRowHeightCondensed: calc(~"1.5rem + "@_sapUiTableRowBorderWidth);
 
 
 
@@ -966,8 +968,8 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 }
 
 .sapUiTableTr > td {
-	border-right: 1px solid @sapUiListVerticalBorderColor;
-	border-bottom: 1px solid @sapUiListBorderColor;
+	border-right: @_sapUiTableRowBorderWidth solid @sapUiListVerticalBorderColor;
+	border-bottom: @_sapUiTableRowBorderWidth solid @sapUiListBorderColor;
 	padding: 0;
 	vertical-align: middle;
 	box-sizing: border-box;
