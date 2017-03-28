@@ -1705,7 +1705,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				}
 
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
-					$w.on("mousemove.sapMDialog", function (event) {
+					$w.on("mousemove", function (event) {
 						fnMouseMoveHandler(function () {
 							that._bDisableRepositioning = true;
 
@@ -1736,7 +1736,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					var handleOffsetX = $target.width() - e.offsetX;
 					var handleOffsetY = $target.height() - e.offsetY;
 
-					$w.on("mousemove.sapMDialog", function (event) {
+					$w.on("mousemove", function (event) {
 						fnMouseMoveHandler(function () {
 							that._bDisableRepositioning = true;
 
@@ -1769,13 +1769,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					return;
 				}
 
-				$w.on("mouseup.sapMDialog", function () {
+				$w.on("mouseup", function () {
 					var $dialog = that.$(),
 						$dialogContent = that.$('cont'),
 						dialogHeight,
 						dialogBordersHeight;
 
-					$w.off("mouseup.sapMDialog, mousemove.sapMDialog");
+					$w.off("mouseup mousemove");
 
 					if (bResize) {
 						that._$dialog.removeClass('sapMDialogResizing');
