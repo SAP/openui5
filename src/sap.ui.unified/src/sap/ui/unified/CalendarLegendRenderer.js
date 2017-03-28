@@ -41,36 +41,10 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		// rendering special day and colors
-		if (aCustomItems && aCustomItems.length > 0) {
-			var oFreeTypes = jQuery.extend({}, sap.ui.unified.CalendarDayType);
-			delete oFreeTypes[sap.ui.unified.CalendarDayType.None];
-			var sType;
-			var iTypes = Object.keys(oFreeTypes).length;
-
-			// Remove types that are used
-			for (i = 0; i < aCustomItems.length; ++i) {
-				sType = aCustomItems[i].getType();
-				if (oFreeTypes[sType]) {
-					delete oFreeTypes[sType];
-				}
-			}
-
-			var aFreeTypes = Object.keys(oFreeTypes);
-
-			for (i = 0; i < aCustomItems.length; ++i) {
-				sType = aCustomItems[i].getType();
-				if (!sType || sType === sap.ui.unified.CalendarDayType.None) {
-					if (aFreeTypes[0]) {
-						sType = aFreeTypes.shift();
-					} else {
-						++iTypes;
-						sType = "Type" + iTypes; // event type is not defined, maybe application styled it
-					}
-				}
-
-				this.renderLegendItem(oRm, "sapUiCalLegDayType" + sType.slice(4), aCustomItems[i]);
-			}
+		for (i = 0; i < aCustomItems.length; i++) {
+			this.renderLegendItem(oRm, "sapUiCalLegDayType" + oLeg._getItemType(aCustomItems[i]).slice(4), aCustomItems[i]);
 		}
+
 		oRm.write("</div>");
 	};
 
@@ -115,6 +89,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("></div></div>"); // close color, background
 		// write description
 		oRm.write("<div");
+		oRm.writeAttribute("id", oItem.getId() + "-Text");
 		oRm.addClass("sapUiUnifiedLegendDescription");
 		oRm.writeClasses();
 		oRm.write(">");
