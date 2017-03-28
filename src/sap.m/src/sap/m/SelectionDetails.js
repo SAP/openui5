@@ -22,6 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @constructor
 	 * @private
 	 * @experimental Since 1.48.0 The control is currently under development. The API could be changed at any point in time. Please take this into account when using it.
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 * @alias sap.m.SelectionDetails
 	 */
 	var SelectionDetails = Control.extend("sap.m.SelectionDetails", /** @lends sap.m.SelectionDetails.prototype */ { metadata : {
