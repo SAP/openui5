@@ -623,7 +623,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 			var fnSuccess = function(sData, sStatusText, oXHR) {
 				mSource.xml = oXHR.responseText;
-				mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
+
+				if (oXHR.getResponseHeader("Last-Modified")) {
+					mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
+				}
+
 				fnResolve(mSource);
 			};
 
