@@ -910,6 +910,21 @@ sap.ui.define([
 	* @private
 	*/
 	SemanticPage.prototype._cleanMemory = function() {
+		if (this._oShareMenu) {
+			this._oShareMenu.destroy();
+			this._oShareMenu = null;
+		}
+
+		if (this._oActionSheet) {
+			this._oActionSheet.destroy();
+			this._oActionSheet = null;
+		}
+
+		if (this._oSemanticTitle) {
+			this._oSemanticTitle.destroy();
+			this._oSemanticTitle = null;
+		}
+
 		if (this._oDynamicPageTitle) {
 			this._oDynamicPageTitle.destroy();
 			this._oDynamicPageTitle = null;
@@ -920,6 +935,11 @@ sap.ui.define([
 			this._oDynamicPageHeader = null;
 		}
 
+		if (this._oSemanticFooter) {
+			this._oSemanticFooter.destroy();
+			this._oSemanticFooter = null;
+		}
+
 		if (this._oDynamicPageFooter) {
 			this._oDynamicPageFooter.destroy();
 			this._oDynamicPageFooter = null;
@@ -928,26 +948,6 @@ sap.ui.define([
 		if (this._oOverflowToolbar) {
 			this._oOverflowToolbar.destroy();
 			this._oOverflowToolbar = null;
-		}
-
-		if (this._oActionSheet) {
-			this._oActionSheet.destroy();
-			this._oActionSheet = null;
-		}
-
-		if (this._oShareMenu) {
-			this._oShareMenu.destroy();
-			this._oShareMenu = null;
-		}
-
-		if (this._oSemanticTitle) {
-			this._oSemanticTitle.destroy();
-			this._oSemanticTitle = null;
-		}
-
-		if (this._oSemanticFooter) {
-			this._oSemanticFooter.destroy();
-			this._oSemanticFooter = null;
 		}
 	};
 
