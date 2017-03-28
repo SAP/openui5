@@ -40,11 +40,12 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 				properties: {
 
 					/**
-					 * TODO.
+					 * Sets the minimum width of items.
+					 * It prevents items from becoming smaller than the value specified.
 					 */
 					minItemWidth: {
-						type: "sap.ui.core.CSSSize",
-						defaultValue: "240px" // =15rem, but easier to get pixel size TODO: verify  TODO: percentages do not make sense!  TODO: Reasonable default?
+						type: "sap.ui.core.AbsoluteCSSSize",
+						defaultValue: "240px" // =15rem, but easier to get pixel size TODO: Reasonable default?
 					}
 				},
 				defaultAggregation: "content",
