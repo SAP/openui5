@@ -30,10 +30,13 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<div");
 		oRm.writeControlData(oOA);
 		oRm.addClass("sapMObjectAttributeDiv");
-		// add tabindex and "active" class only on a simulated link
+		// add tabindex, "active" class and ARIA only on a simulated link
 		if (oOA._isSimulatedLink()) {
 			oRm.addClass("sapMObjectAttributeActive");
 			oRm.writeAttribute("tabindex", "0");
+			oRm.writeAccessibilityState(oOA, {
+				role: "link"
+			});
 		}
 		oRm.writeClasses();
 
@@ -41,12 +44,6 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		// write ARIA only on a simulated link
-		if (oOA.getActive() && !oOA.getAggregation("customContent")) {
-			oRm.writeAccessibilityState(oOA, {
-				role: "link"
-			});
-		}
 		oRm.write(">");
 
 		// If the attribute is active only the "text" should be clickable, so render title, colon and text in different spans

@@ -222,7 +222,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	ObjectAttribute.prototype._isSimulatedLink = function () {
-		return this.getActive() && !this.getAggregation('customContent');
+		return (this.getActive() && this.getText() !== "") && !this.getAggregation('customContent');
 	};
 
 	return ObjectAttribute;

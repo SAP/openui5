@@ -394,6 +394,16 @@
 		// Clean up
 		oObjectHeaderS.destroy();
 	});
+
+	QUnit.test("Standalone active attribute with no text set", function(assert) {
+		this.oActiveAttr.setText("");
+		this.oActiveAttr.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.ok(!this.oActiveAttr.$().hasClass("sapMObjectAttributeActive"), "sapMObjectAttributeActive class is not presented.");
+		assert.ok(!this.oActiveAttr.$().is('[role]'), "Active ObjectAttribute with no text does not have link role.");
+	});
 </script>
 </head>
 
