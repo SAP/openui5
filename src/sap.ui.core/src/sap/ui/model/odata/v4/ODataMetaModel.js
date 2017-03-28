@@ -312,6 +312,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaListBinding = ClientListBinding.extend("sap.ui.model.odata.v4.ODataMetaListBinding", {
+		constructor : function () {
+			ClientListBinding.apply(this, arguments);
+		},
+
 		// @deprecated
 		// @override
 		// @see sap.ui.model.ListBinding#_fireFilter
@@ -326,41 +330,6 @@ sap.ui.define([
 			// do not fire an event as this function is deprecated
 		},
 
-		/**
-		 * Returns the contexts that result from iterating over the binding's path/context.
-		 * @returns {sap.ui.model.Context[]} The contexts
-		 *
-		 * @private
-		 */
-		_getContexts : function () {
-			var bIterateAnnotations,
-				sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-				oResult,
-				that = this;
-
-			if (!sResolvedPath) {
-				return [];
-			}
-			bIterateAnnotations = sResolvedPath.slice(-1) === "@";
-			if (!bIterateAnnotations && sResolvedPath !== "/") {
-				sResolvedPath += "/";
-			}
-			oResult = this.oModel.getObject(sResolvedPath);
-			if (!oResult) {
-				return [];
-			}
-			if (bIterateAnnotations) {
-				// strip off the trailing "@"
-				sResolvedPath = sResolvedPath.slice(0, -1);
-			}
-			return Object.keys(oResult).filter(function (sKey) {
-				// always filter technical properties; filter annotations iff. not iterating them
-				return sKey[0] !== "$" &&  bIterateAnnotations !== (sKey[0] !== "@");
-			}).map(function (sKey) {
-				return new BaseContext(that.oModel, sResolvedPath + sKey);
-			});
-		},
-
 		// @override
 		// @see sap.ui.model.Binding#checkUpdate
 		checkUpdate : function (bForceUpdate) {
@@ -373,8 +342,39 @@ sap.ui.define([
 			}
 		},
 
-		constructor : function () {
-			ClientListBinding.apply(this, arguments);
+		/**
+		 * Returns the contexts that result from iterating over the binding's path/context.
+		 * @returns {_SyncPromise} A promise that is resolved with an array of contexts
+		 *
+		 * @private
+		 */
+		fetchContexts : function () {
+			var bIterateAnnotations,
+				sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+				that = this;
+
+			if (!sResolvedPath) {
+				return _SyncPromise.resolve([]);
+			}
+			bIterateAnnotations = sResolvedPath.slice(-1) === "@";
+			if (!bIterateAnnotations && sResolvedPath !== "/") {
+				sResolvedPath += "/";
+			}
+			return this.oModel.fetchObject(sResolvedPath).then(function (oResult) {
+				if (!oResult) {
+					return [];
+				}
+				if (bIterateAnnotations) {
+					// strip off the trailing "@"
+					sResolvedPath = sResolvedPath.slice(0, -1);
+				}
+				return Object.keys(oResult).filter(function (sKey) {
+					// always filter technical properties; filter annotations iff. not iterating them
+					return sKey[0] !== "$" &&  bIterateAnnotations !== (sKey[0] !== "@");
+				}).map(function (sKey) {
+					return new BaseContext(that.oModel, sResolvedPath + sKey);
+				});
+			});
 		},
 
 		// @override
@@ -403,15 +403,37 @@ sap.ui.define([
 		},
 
 		/**
-		 * Update list and indices array.
+		 * Updates the list and indices array from the given contexts.
+		 * @param {sap.ui.model.Context[]} aContexts The contexts
 		 * @private
 		 */
-		update : function () {
-			this.oList = this._getContexts();
+		setContexts : function (aContexts) {
+			this.oList = aContexts;
 			this.updateIndices();
 			this.applyFilter();
 			this.applySort();
 			this.iLength = this._getLength();
+		},
+
+		/**
+		 * Updates the list and indices array. Fires a change event if the data was retrieved
+		 * asynchronously.
+		 * @private
+		 */
+		update : function () {
+			var aContexts = [],
+				oPromise = this.fetchContexts(),
+				that = this;
+
+			if (oPromise.isFulfilled()) {
+				aContexts = oPromise.getResult();
+			} else {
+				oPromise.then(function (aContexts) {
+					that.setContexts(aContexts);
+					that._fireChange({reason: ChangeReason.Change});
+				});
+			}
+			this.setContexts(aContexts);
 		}
 	});
 
@@ -427,6 +449,24 @@ sap.ui.define([
 				ClientPropertyBinding.apply(this, arguments);
 			},
 			// @override
+			// @see sap.ui.model.ClientPropertyBinding#_getValue
+			_getValue : function () {
+				var oPromise,
+				that = this;
+
+				oPromise = this.oModel.fetchObject(this.sPath, this.oContext, this.mParameters);
+				if (oPromise.isFulfilled()) {
+					return oPromise.getResult();
+				}
+				// This is the async case
+				oPromise.then(function () {
+					// Now the value is available, fetch it again (now synchronously) and notify
+					// listeners
+					that.checkUpdate();
+				});
+				return undefined;
+			},
+			// @override
 			// @see sap.ui.model.Binding#checkUpdate
 			checkUpdate : function (bForceUpdate) {
 				var vValue = this._getValue();
@@ -435,11 +475,6 @@ sap.ui.define([
 					this.oValue = vValue;
 					this._fireChange({reason : ChangeReason.Change});
 				}
-			},
-			// @override
-			// @see sap.ui.model.ClientPropertyBinding#_getValue
-			_getValue : function () {
-				return this.oModel.getProperty(this.sPath, this.oContext, this.mParameters);
 			},
 			// @override
 			// @see sap.ui.model.PropertyBinding#setValue
