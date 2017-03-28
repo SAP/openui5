@@ -348,7 +348,9 @@ sap.ui.define([
 	 * Loads the changes for the given component class name.
 	 *
 	 * @see sap.ui.core.Component
-	 * @param {string} sComponentClassName - Component class name
+	 * @param {object} oComponent - Contains component data needed for reading changes
+	 * @param {string} oComponent.name - Name of component
+	 * @param {string} [oComponent.appVersion] - Current running version of application
 	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
 	 * @param {string} [mPropertyBag.siteId] - <code>sideId<code> that belongs to actual component
@@ -358,10 +360,11 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle) and <code>componentClassName<code>
 	 * @public
 	 */
-	Connector.prototype.loadChanges = function(sComponentClassName, mPropertyBag) {
+	Connector.prototype.loadChanges = function(oComponent, mPropertyBag) {
 		var sUri, oPromise;
 		var mOptions = {};
 		var that = this;
+		var sComponentClassName = oComponent.name;
 
 		if (!sComponentClassName) {
 			return Promise.reject(new Error("Component name not specified"));
@@ -370,7 +373,6 @@ sap.ui.define([
 		sUri = "/sap/bc/lrep/flex/data/";
 
 		var sUpToLayer = "";
-		var sAppVersion = "";
 
 		// fill header attribute: appDescriptor.id
 		if (mPropertyBag) {
@@ -408,11 +410,6 @@ sap.ui.define([
 			if (mPropertyBag.layer) {
 				sUpToLayer = mPropertyBag.layer;
 			}
-
-			// specifies application version
-			if (mPropertyBag.appVersion) {
-				sAppVersion = mPropertyBag.appVersion;
-			}
 		}
 
 		if (sComponentClassName) {
@@ -424,8 +421,8 @@ sap.ui.define([
 		if (sUpToLayer) {
 			sUri += "&upToLayerType=" + sUpToLayer;
 		}
-		if (sAppVersion) {
-			sUri += "&appVersion=" + sAppVersion;
+		if (oComponent.appVersion) {
+			sUri += "&appVersion=" + oComponent.appVersion;
 		}
 
 		// Replace first & with ?

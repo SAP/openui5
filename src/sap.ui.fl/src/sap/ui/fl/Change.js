@@ -263,7 +263,7 @@ sap.ui.define([
 			return true; // without a reference the right to edit or delete a change cannot be determined
 		}
 
-		var oSettings = Settings.getInstanceOrUndef(sReference);
+		var oSettings = Settings.getInstanceOrUndef();
 		if (!oSettings) {
 			return true; // without settings the right to edit or delete a change cannot be determined
 		}

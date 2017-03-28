@@ -264,7 +264,7 @@ sap.ui.define([
 		if (mParameters.isAppVariantRoot){
 			Utils.checkParameterAndType(mParameters, "isAppVariantRoot", "boolean");
 		}
-		//TODO: add a correct application component name
+        //TODO: add a correct application component name and app version
 		return Settings.getInstance("dummy").then(function(oSettings) {
 			return Promise.resolve( new DescriptorVariant(mParameters,null,false,oSettings) );
 		});
@@ -288,7 +288,7 @@ sap.ui.define([
 		var _mResult;
 		return DescriptorVariantFactory._getDescriptorVariant(sId).then(function(mResult){
 			_mResult = mResult;
-			//TODO: add a correct application component name
+            //TODO: add a correct application component name and app version
 			return Settings.getInstance("dummy");
 		}).then( function(oSettings){
 			var mDescriptorVariantJSON = _mResult.response;
@@ -320,7 +320,7 @@ sap.ui.define([
 		var _mResult;
 		return DescriptorVariantFactory._getDescriptorVariant(sId).then(function(mResult){
 			_mResult = mResult;
-			//TODO: add a correct application component name
+            //TODO: add a correct application component name and app version
 			return Settings.getInstance("dummy");
 		}).then( function(oSettings){
 			var mDescriptorVariantJSON = JSON.parse(_mResult.response);

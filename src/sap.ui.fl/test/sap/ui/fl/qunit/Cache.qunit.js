@@ -1,8 +1,9 @@
 /*globals QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.Cache");
 jQuery.sap.require("sap.ui.fl.LrepConnector");
+jQuery.sap.require("sap.ui.fl.Utils");
 
-(function(QUnit, sinon, Cache, LrepConnector) {
+(function(QUnit, sinon, Cache, LrepConnector, Utils) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 
@@ -36,12 +37,11 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 	QUnit.test('getSwitches shall return the list of switched-on business functions', function(assert) {
 		var that = this;
-		var oChangesFromFirstCall;
 		var sComponentName = "test";
 
 		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesResponse);
 
-		return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName).then(function(changes) {
+		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
 			var mSwitches = Cache.getSwitches();
 			var mSwitchesExp = {"bFunction1": true, "bFunction2": true};
 			assert.deepEqual(mSwitchesExp, mSwitches);
@@ -55,9 +55,9 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesResponse);
 
-		return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName).then(function(firstChanges) {
+		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
 			oChangesFromFirstCall = firstChanges;
-			return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName);
+			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
 		}).then(function(secondChanges) {
 			assert.strictEqual(oChangesFromFirstCall, secondChanges);
 			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
@@ -73,9 +73,9 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 		Cache.setActive(false);
 
-		return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName).then(function(firstChanges) {
+		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
 			oChangesFromFirstCall = firstChanges;
-			return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName);
+			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
 		}).then(function(secondChanges) {
 			assert.notStrictEqual(oChangesFromFirstCall, secondChanges);
 			sinon.assert.calledTwice(that.oLrepConnector.loadChanges);
@@ -89,9 +89,9 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesErrorResponse);
 
-		return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName).then(null, function(firstError) {
+		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(null, function(firstError) {
 			oErrorFromFirstCall = firstError;
-			return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName);
+			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
 		}).then(null, function(secondError) {
 			assert.notStrictEqual(oErrorFromFirstCall, secondError);
 			sinon.assert.calledTwice(that.oLrepConnector.loadChanges);
@@ -106,7 +106,7 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 		assert.strictEqual(Cache.isActive(), true);
 	});
 
-	QUnit.test('addFile', function(assert) {
+	QUnit.test('addChange', function(assert) {
 		var that = this;
 		var sComponentName = "test";
 		var oEntry = {
@@ -121,11 +121,11 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
-		return Cache.getChangesFillingCache(this.oLrepConnector, sComponentName).then(function(firstChanges) {
+		return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
 			oChangesFromFirstCall = firstChanges;
-			Cache.addChange(sComponentName, oAddedEntry);
+			Cache.addChange({name: sComponentName}, oAddedEntry);
 		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName);
+			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
 		}).then(function(changes) {
 			assert.strictEqual(oChangesFromFirstCall, changes);
 			assert.strictEqual(changes.changes.changes.length, 2);
@@ -134,7 +134,38 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 	});
 
-	QUnit.test('updateFile', function(assert) {
+	QUnit.test('addChange with a specific application version', function(assert) {
+		var that = this;
+		var oComponent = {
+			name : "testComponent",
+			appVersion : "1.2.3"
+		};
+		var oEntry = {
+			changes: {
+				changes: [
+					{something: "1"}
+				]
+			}
+		};
+		var oAddedEntry = {something: "2"};
+		var oChangesFromFirstCall;
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function(firstChanges) {
+			oChangesFromFirstCall = firstChanges;
+			Cache.addChange(oComponent, oAddedEntry);
+		}).then(function() {
+			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
+		}).then(function(changes) {
+			assert.strictEqual(oChangesFromFirstCall, changes);
+			assert.strictEqual(changes.changes.changes.length, 2);
+			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+		});
+
+	});
+
+	QUnit.test('updateChange', function(assert) {
 		var that = this;
 		var sComponentName = "test";
 		var oEntry = {
@@ -148,10 +179,38 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
-		return Cache.getChangesFillingCache(this.oLrepConnector, sComponentName).then(function() {
-			Cache.updateChange(sComponentName, oAddedEntry);
+		return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
+			Cache.updateChange({name: sComponentName}, oAddedEntry);
 		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName);
+			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
+		}).then(function(changes) {
+			assert.strictEqual(changes.changes.changes.length, 1);
+			assert.strictEqual(changes.changes.changes[0].something, "2");
+			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+		});
+	});
+
+	QUnit.test('updateChange with a specific application version', function(assert) {
+		var that = this;
+		var oComponent = {
+			name : "testComponent",
+			appVersion : "1.2.3"
+		};
+		var oEntry = {
+			changes: {
+				changes: [
+					{something: "1", fileName: "A"}
+				]
+			}
+		};
+		var oAddedEntry = {something: "2", fileName: "A"};
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
+			Cache.updateChange(oComponent, oAddedEntry);
+		}).then(function() {
+			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
 		}).then(function(changes) {
 			assert.strictEqual(changes.changes.changes.length, 1);
 			assert.strictEqual(changes.changes.changes[0].something, "2");
@@ -174,15 +233,43 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 
 		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
-		return Cache.getChangesFillingCache(this.oLrepConnector, sComponentName).then(function() {
-			Cache.deleteChange(sComponentName, oAddedEntry);
+		return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
+			Cache.deleteChange({name: sComponentName}, oAddedEntry);
 		}).then(function() {
-			return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName);
+			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
 		}).then(function(changes) {
 			assert.strictEqual(changes.changes.changes.length, 0);
 			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
 		});
 
+	});
+
+	QUnit.test('deleteChange with a specific version', function(assert) {
+		var that = this;
+		var oComponent = {
+			name : "testComponent",
+			appVersion : "1.2.3"
+		};
+		var oEntry = {
+			changes: {
+				changes: [
+					{something: "1", fileName: "A"}
+				]
+			}
+		};
+
+		var oAddedEntry = {something: "1", fileName: "A"};
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
+			Cache.deleteChange(oComponent, oAddedEntry);
+		}).then(function() {
+			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
+		}).then(function(changes) {
+			assert.strictEqual(changes.changes.changes.length, 0);
+			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+		});
 	});
 
 	QUnit.test("getChangesFillingCache returns an empty list of changes without sending an request " +
@@ -192,7 +279,7 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 			cacheKey: "<NO CHANGES>"
 		};
 
-		return Cache.getChangesFillingCache(this.oLrepConnector, sComponentName, mPropertyBag).then(function(oResult) {
+		return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}, mPropertyBag).then(function(oResult) {
 			assert.ok(Array.isArray(oResult.changes.changes), "an array of changes was returned");
 			assert.ok(Array.isArray(oResult.changes.contexts), "an array of contexts was returned");
 			assert.equal(oResult.changes.changes.length, 0, "but no change is present");
@@ -201,4 +288,121 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 		});
 	});
 
-}(QUnit, sinon, sap.ui.fl.Cache, sap.ui.fl.LrepConnector));
+	QUnit.module("sap.ui.fl.Cache when cache of other application versions already exist", {
+		beforeEach: function() {
+			Cache._entries = {
+				"testComponent" : {
+					"DEFAULT_APP_VERSION" : {
+						file : "defaultContent"
+					},
+					"oldVersion" : {
+						file : "oldContent"
+					}
+				}
+			};
+			Cache._switches = {};
+			Cache.setActive(true);
+			this.oLrepConnector = LrepConnector.createConnector();
+		}
+	});
+
+	QUnit.test('addChange with a new application version', function(assert) {
+		var that = this;
+		var sTestComponentName = "testComponent";
+		var oComponent = {
+			name : sTestComponentName,
+			appVersion : "newVersion"
+		};
+		var oEntry = {
+			changes: {
+				changes: [
+					{something: "1"}
+				]
+			}
+		};
+		var oDefaultEntry = Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION];
+		var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
+		var oAddedEntry = {something: "2"};
+		var oChangesFromFirstCall;
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function(firstChanges) {
+			oChangesFromFirstCall = firstChanges;
+			Cache.addChange(oComponent, oAddedEntry);
+		}).then(function() {
+			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
+		}).then(function(changes) {
+			assert.strictEqual(oChangesFromFirstCall, changes);
+			assert.strictEqual(changes.changes.changes.length, 2);
+			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			assert.strictEqual(Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION], oDefaultEntry, "cache of default version was not changed");
+			assert.strictEqual(Cache._entries[sTestComponentName]["oldVersion"], oOldEntry, "cache of old version was not changed");
+		});
+	});
+
+	QUnit.test('updateChange with a specific application version', function(assert) {
+		var that = this;
+		var sTestComponentName = "testComponent";
+		var oComponent = {
+			name : sTestComponentName,
+			appVersion : "newVersion"
+		};
+		var oEntry = {
+			changes: {
+				changes: [
+					{something: "1", fileName: "A"}
+				]
+			}
+		};
+		var oDefaultEntry = Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION];
+		var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
+		var oAddedEntry = {something: "2", fileName: "A"};
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
+			Cache.updateChange(oComponent, oAddedEntry);
+		}).then(function() {
+			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
+		}).then(function(changes) {
+			assert.strictEqual(changes.changes.changes.length, 1);
+			assert.strictEqual(changes.changes.changes[0].something, "2");
+			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			assert.strictEqual(Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION], oDefaultEntry, "cache of default version was not changed");
+			assert.strictEqual(Cache._entries[sTestComponentName]["oldVersion"], oOldEntry, "cache of old version was not changed");
+		});
+	});
+
+	QUnit.test('deleteChange with a specific version', function(assert) {
+		var that = this;
+		var sTestComponentName = "testComponent";
+		var oComponent = {
+			name : sTestComponentName,
+			appVersion : "newVersion"
+		};
+		var oEntry = {
+			changes: {
+				changes: [
+					{something: "1", fileName: "A"}
+				]
+			}
+		};
+		var oDefaultEntry = Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION];
+		var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
+		var oAddedEntry = {something: "1", fileName: "A"};
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
+			Cache.deleteChange(oComponent, oAddedEntry);
+		}).then(function() {
+			return Cache.getChangesFillingCache(that.oLrepConnector, oComponent);
+		}).then(function(changes) {
+			assert.strictEqual(changes.changes.changes.length, 0);
+			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			assert.strictEqual(Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION], oDefaultEntry, "cache of default version was not changed");
+			assert.strictEqual(Cache._entries[sTestComponentName]["oldVersion"], oOldEntry, "cache of old version was not changed");
+		});
+	});
+}(QUnit, sinon, sap.ui.fl.Cache, sap.ui.fl.LrepConnector, sap.ui.fl.Utils));

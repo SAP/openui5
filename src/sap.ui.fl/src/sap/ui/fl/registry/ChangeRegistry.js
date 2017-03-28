@@ -379,8 +379,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the Flex Settings.
-	 *
+	 * Retrieves settings for SAPUI5 flexibility.
 	 *
 	 * @private
 	 */

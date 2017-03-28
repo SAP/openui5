@@ -14,11 +14,12 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version 1.37.0-SNAPSHOT
 	 * @experimental Since 1.25.0
-	 * @param {string} sComponentName - the name of the component this instance is responsible for
-	 * @param {sap.ui.fl.LrepConnector} [oLrepConnector] the LREP connector
+	 * @param {object} oComponent - Component data to initiate <code>ChangePersistence<code> instance
+	 * @param {string} oComponent.name - Name of the component this instance is responsible for
+	 * @param {string} oComponent.appVersion - Version of application
 	 */
-	var ChangePersistence = function(sComponentName, oLrepConnector) {
-		this._sComponentName = sComponentName;
+	var ChangePersistence = function(oComponent) {
+		this._oComponent = oComponent;
 		//_mChanges contains:
 		// - mChanges: map of changes (selector id)
 		// - mDependencies: map of changes (change key) that need to be applied before any change. Used to check if a change can be applied. Format:
@@ -37,12 +38,12 @@ sap.ui.define([
 			mDependentChangesOnMe: {}
 		};
 
-		if (!this._sComponentName) {
+		if (!this._oComponent || !this._oComponent.name) {
 			Utils.log.error("The Control does not belong to a SAPUI5 component. Personalization and changes for this control might not work as expected.");
 			throw new Error("Missing component name.");
 		}
 
-		this._oConnector = oLrepConnector || this._createLrepConnector();
+		this._oConnector = this._createLrepConnector();
 		this._aDirtyChanges = [];
 	};
 
@@ -56,7 +57,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getComponentName = function() {
-		return this._sComponentName;
+		return this._oComponent.name;
 	};
 
 	/**
@@ -71,7 +72,7 @@ sap.ui.define([
 
 
 	ChangePersistence.prototype.getCacheKey = function() {
-		return Cache.getChangesFillingCache(this._oConnector, this._sComponentName, undefined).then(function(oWrappedChangeFileContent) {
+		return Cache.getChangesFillingCache(this._oConnector, this._oComponent).then(function(oWrappedChangeFileContent) {
 			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
 				return oWrappedChangeFileContent.etag;
 			}
@@ -144,7 +145,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
-		return Cache.getChangesFillingCache(this._oConnector, this._sComponentName, mPropertyBag).then(function(oWrappedChangeFileContent) {
+		return Cache.getChangesFillingCache(this._oConnector, this._oComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
 			this._bHasLoadedChangesFromBackEnd = true;
 
 			if (!oWrappedChangeFileContent.dummy) {
@@ -308,7 +309,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sViewId - the id of the view, changes should be retrieved for
 	 * @param {map} mPropertyBag - contains additional data that are needed for reading of changes
-	 * @param {object} mPropertyBag.appDescriotor - manifest that belongs to actual component
+	 * @param {object} mPropertyBag.appDescriptor - Manifest that belongs to actual component
 	 * @param {string} mPropertyBag.siteId - id of the site that belongs to actual component
 	 * @returns {Promise} resolving with an array of changes
 	 * @public
@@ -410,11 +411,11 @@ sap.ui.define([
 
 		return function() {
 			if (oDirtyChange.getPendingAction() === "NEW") {
-				Cache.addChange(that._sComponentName, oDirtyChange.getDefinition());
+				Cache.addChange(that._oComponent, oDirtyChange.getDefinition());
 			}
 
 			if (oDirtyChange.getPendingAction() === "DELETE") {
-				Cache.deleteChange(that._sComponentName, oDirtyChange.getDefinition());
+				Cache.deleteChange(that._oComponent, oDirtyChange.getDefinition());
 			}
 
 			var iIndex = aDirtyChanges.indexOf(oDirtyChange);

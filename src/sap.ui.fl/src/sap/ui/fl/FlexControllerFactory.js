@@ -23,16 +23,22 @@ sap.ui.define([
 	 * Creates or returns an instance of the FlexController
 	 *
 	 * @public
-	 * @param {String} sComponentName The name of the component
+	 * @param {String} sComponentName - Name of the component
+	 * @param {String} sAppVersion - Current version of the application
 	 * @returns {sap.ui.fl.FlexController} instance
 	 *
 	 */
-	FlexControllerFactory.create = function(sComponentName) {
-		var oFlexController = FlexControllerFactory._instanceCache[sComponentName];
+	FlexControllerFactory.create = function(sComponentName, sAppVersion) {
+		var sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
+
+		if (!FlexControllerFactory._instanceCache[sComponentName]) {
+			FlexControllerFactory._instanceCache[sComponentName] = {};
+		}
+		var oFlexController = FlexControllerFactory._instanceCache[sComponentName][sAppVersion];
 
 		if (!oFlexController){
-			oFlexController = new FlexController(sComponentName);
-			FlexControllerFactory._instanceCache[sComponentName] = oFlexController;
+			oFlexController = new FlexController(sComponentName, sAppVersion);
+			FlexControllerFactory._instanceCache[sComponentName][sAppVersion] = oFlexController;
 		}
 
 		return oFlexController;
@@ -49,7 +55,8 @@ sap.ui.define([
 	 */
 	FlexControllerFactory.createForControl = function(oControl) {
 		var sComponentName = Utils.getComponentClassName(oControl);
-		return FlexControllerFactory.create(sComponentName);
+		var sAppVersion = Utils.getAppVersionFromManifest(Utils.getAppComponentForControl(oControl).getManifest());
+		return FlexControllerFactory.create(sComponentName, sAppVersion);
 	};
 
 	return FlexControllerFactory;
