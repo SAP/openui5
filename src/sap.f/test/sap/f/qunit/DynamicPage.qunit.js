@@ -37,6 +37,13 @@
 					content: this.getContent(100)
 				});
 			},
+			getDynamicPageWithEmptyHeader: function () {
+				return new DynamicPage({
+					title: this.getDynamicPageTitle(),
+					header: this.getDynamicPageHeader([]),
+					content: this.getContent(100)
+				});
+			},
 			getDynamicPageNoHeader: function () {
 				return new DynamicPage({
 					title: this.getDynamicPageTitle(),
@@ -81,10 +88,10 @@
 					]
 				});
 			},
-			getDynamicPageHeader: function () {
+			getDynamicPageHeader: function (aContent) {
 				return new DynamicPageHeader({
 					pinnable: true,
-					content: this.getContent(5)
+					content: aContent || this.getContent(5)
 				});
 			},
 			getFooter: function () {
@@ -420,12 +427,23 @@
 	});
 
 	QUnit.test("DynamicPage Page, Title and Header rendered", function (assert) {
-		assert.ok(oUtil.exists(this.oDynamicPage), "The DynamicPage has rendered successfully");
-		assert.ok(oUtil.exists(this.oDynamicPage.getTitle()), "The DynamicPage Title has rendered successfully");
-		assert.ok(oUtil.exists(this.oDynamicPage.getHeader()), "The DynamicPage Header has rendered successfully");
-		assert.ok(oUtil.exists(this.oDynamicPage.getFooter()), "The DynamicPage Footer has rendered successfully");
-		assert.ok(oUtil.exists(this.oDynamicPage.getHeader().getAggregation("_pinButton").$()),
+		var oDynamicPage = this.oDynamicPage,
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oDynamicPageHeader = oDynamicPage.getHeader(),
+			oDynamicPageFooter = oDynamicPage.getFooter(),
+			$oDynamicPageHeader = oDynamicPageHeader.$();
+
+		assert.ok(oUtil.exists(oDynamicPage), "The DynamicPage has rendered successfully");
+		assert.ok(oUtil.exists(oDynamicPageTitle), "The DynamicPage Title has rendered successfully");
+		assert.ok(oUtil.exists(oDynamicPageHeader), "The DynamicPage Header has rendered successfully");
+		assert.ok(oUtil.exists(oDynamicPageFooter), "The DynamicPage Footer has rendered successfully");
+		assert.ok(oUtil.exists(oDynamicPageHeader.getAggregation("_pinButton").$()),
 			"The DynamicPage Header Pin Button has rendered successfully");
+
+		assert.ok($oDynamicPageHeader.hasClass("sapFDynamicPageHeaderWithContent"),
+			"The DynamicPage Header is not empty - sapFDynamicPageHeaderWithContent is added");
+		assert.ok(!oDynamicPage.$titleArea.hasClass("sapFDynamicPageTitleOnly"),
+			"The DynamicPage Header is not empty - sapFDynamicPageTitleOnly is not added");
 	});
 
 	QUnit.test("DynamicPage ScrollBar rendered", function (assert) {
@@ -486,9 +504,31 @@
 	});
 
 	QUnit.test("DynamicPage Header not rendered", function (assert) {
-		assert.ok(!oUtil.exists(this.oDynamicPageNoHeader.getHeader()), "The DynamicPage Header has not successfully");
+		assert.ok(!oUtil.exists(this.oDynamicPageNoHeader.getHeader()), "The DynamicPage Header does not exist");
 	});
 
+	QUnit.module("DynamicPage - Rendering - Empty Header", {
+		beforeEach: function () {
+			this.oDynamicPageWithEmptyHeader = oFactory.getDynamicPageWithEmptyHeader();
+			oUtil.renderObject(this.oDynamicPageWithEmptyHeader);
+		},
+		afterEach: function () {
+			this.oDynamicPageWithEmptyHeader.destroy();
+			this.oDynamicPageWithEmptyHeader = null;
+		}
+	});
+
+	QUnit.test("DynamicPage Header style classes", function (assert) {
+		var oDynamicPage = this.oDynamicPageWithEmptyHeader,
+			$oDynamicPageHeader = oDynamicPage.$();
+
+		assert.ok(!$oDynamicPageHeader.hasClass("sapFDynamicPageHeaderWithContent"),
+			"The DynamicPage Header is empty - sapFDynamicPageHeaderWithContent not added");
+		assert.ok(!$oDynamicPageHeader.hasClass("sapFDynamicPageHeaderPinnable"),
+			"The DynamicPage Header is pinnable, but it`s empty - sapFDynamicPageHeaderPinnable not added");
+		assert.ok(oDynamicPage.$titleArea.hasClass("sapFDynamicPageTitleOnly"),
+			"The DynamicPage Header is empty and has Title only - sapFDynamicPageTitleOnly is added");
+	});
 
 	QUnit.module("DynamicPage - Rendering - No Title and No Header", {
 		beforeEach: function () {
