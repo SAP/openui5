@@ -1249,7 +1249,8 @@
 		  "since" : "1.30",
 		  "samples" : [
 			"sap.m.sample.Wizard",
-			"sap.m.sample.WizardBranching"
+			"sap.m.sample.WizardBranching",
+			"sap.m.sample.WizardCurrentStep"
 		  ]
 		},
 		{
@@ -2613,6 +2614,11 @@
 		  "id": "sap.m.sample.WizardBranching",
 		  "name": "Wizard branching use case",
 		  "description": "The Wizard could be used in branching mode, where the choice of next step depends on the decision made for the current one."
+		},
+		{
+		  "id": "sap.m.sample.WizardCurrentStep",
+		  "name": "Wizard edit mode",
+		  "description": "Demonstrates the usage of the setCurrentStep association, which controlls the current step of the wizard. This association could be used to simulate 'edit mode' for the wizard by showing all steps in the wizard, without need from the user click next button on each of them."
 		},
 		{
 		  "id": "sap.m.sample.SplitApp",
