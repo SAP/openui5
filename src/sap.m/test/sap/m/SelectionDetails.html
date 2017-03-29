@@ -212,6 +212,11 @@
 		})
 	});
 	oApp.placeAt("content");
+
+	//set the contrast class for belize plus
+	if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize_plus") {
+		oApp.addStyleClass("sapContrastPlus");
+	}
 </script>
 </head>
 
