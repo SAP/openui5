@@ -17,6 +17,205 @@ sap.ui.define([], function() {
 		}
 	};
 
+	var oFormPropagatedMetadata = {
+		aggregations : {
+			formContainers : {
+				//maybe inherited from Form
+				childNames : {
+					singular : "GROUP_CONTROL_NAME",
+					plural : "GROUP_CONTROL_NAME_PLURAL"
+				},
+				getIndex : function(oForm, oFormContainer) {
+					var iIndex = 0;
+					var aFormContainers = oForm.getFormContainers();
+
+					if (oFormContainer) {
+						iIndex = aFormContainers.indexOf(oFormContainer) + 1;
+					} else {
+						var oTitle = aFormContainers[aFormContainers.length - 1].getTitle();
+						// if there is no Title in the FormContainer, the SimpleForm is empty and
+						// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
+						if (oTitle !== null ) {
+							iIndex = aFormContainers.length;
+						}
+					}
+
+					return iIndex;
+				},
+				beforeMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+					if (oSimpleForm){
+						oSimpleForm._bChangedByMe = true;
+					}
+				},
+				afterMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+					if (oSimpleForm){
+						oSimpleForm._bChangedByMe = false;
+					}
+				},
+				actions : {
+					move : {
+						changeType : "moveSimpleFormGroup",
+						changeOnRelevantContainer : true //SimpleForm is relevant container as it propagates metadata
+					},
+					createContainer : {
+						changeType : "addSimpleFormGroup",
+						isEnabled : function (oSimpleForm) {
+							var oForm = oSimpleForm.getAggregation("form");
+							var aFormContainers = oForm.getFormContainers();
+
+							for (var i = 0; i < aFormContainers.length; i++) {
+								if (aFormContainers[i].getToolbar && aFormContainers[i].getToolbar()) {
+									return false;
+								}
+							}
+							return true;
+						},
+						getCreatedContainerId : function(sNewControlID) {
+							var oTitle = sap.ui.getCore().byId(sNewControlID);
+							var sParentElementId = oTitle.getParent().getId();
+
+							return sParentElementId;
+						}
+					}
+				}
+			}
+		}
+	};
+
+	var oFormContainerPropagatedMetadata = {
+		aggregations: {
+			formElements : {
+				childNames : {
+					singular : "FIELD_CONTROL_NAME",
+					plural : "FIELD_CONTROL_NAME_PLURAL"
+				},
+				beforeMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+					if (oSimpleForm){
+						oSimpleForm._bChangedByMe = true;
+					}
+				},
+				afterMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+					if (oSimpleForm){
+						oSimpleForm._bChangedByMe = false;
+					}
+				},
+				actions : {
+					move : {
+						changeType : "moveSimpleFormField",
+						changeOnRelevantContainer : true //SimpleForm is relevant container as it propagates metadata
+					}
+				}
+			}
+		},
+		actions: {
+			rename : function(oRenamedElement) {
+				return {
+					changeType : "renameTitle",
+					isEnabled : !(oRenamedElement.getToolbar() || !oRenamedElement.getTitle()),
+					domRef : function (oControl){
+						if (oControl.getTitle && oControl.getTitle()) {
+							return oControl.getTitle().getDomRef();
+						}
+					}
+				};
+			},
+			remove : function(oRemovedElement) {
+				return {
+					changeType : "removeSimpleFormGroup",
+					isEnabled : !(!oRemovedElement.getToolbar() && !fnHasContent.call(this, oRemovedElement)),
+					getConfirmationText : function(oRemovedElement){
+						var bContent = false;
+						if (oRemovedElement.getMetadata().getName() === "sap.ui.layout.form.FormContainer"
+								&& oRemovedElement.getToolbar && oRemovedElement.getToolbar()) {
+							var aToolbarContent = oRemovedElement.getToolbar().getContent();
+							if (aToolbarContent.length > 1) {
+									bContent = true;
+							} else if ((aToolbarContent.length === 1) &&
+												(!aToolbarContent[0].getMetadata().isInstanceOf("sap.ui.core.Label") &&
+												!aToolbarContent[0] instanceof sap.ui.core.Title && !aToolbarContent[0] instanceof sap.m.Title)) {
+									bContent = true;
+							}
+						}
+						if (bContent) {
+							var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+							return oTextResources.getText("MSG_REMOVING_TOOLBAR");
+						}
+					},
+					getState : function(oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+						var aContent = oSimpleForm.getContent();
+						return {
+							content : aContent.map(function(oElement) {
+								return {
+									element : oElement,
+									visible : oElement.getVisible ? oElement.getVisible() : undefined,
+									index : aContent.indexOf(oElement)
+								};
+							})
+						};
+					},
+					restoreState : function(oSimpleForm, oState) { //TODO has to be relevant container/selector, TODO extract as function
+						oSimpleForm.removeAllContent();
+						oState.content.forEach(function(oElementState) {
+							oSimpleForm.insertContent(oElementState.element, oElementState.index);
+							if (oElementState.element.setVisible){
+								oElementState.element.setVisible(oElementState.visible);
+							}
+						});
+					}
+				};
+			}
+		}
+	};
+
+	var oFormElementPropagatedMetadata = {
+		actions: {
+			rename : {
+				changeType : "renameLabel",
+				domRef : function (oControl){
+					return oControl.getLabel().getDomRef();
+				}
+			},
+			remove : {
+				changeType : "hideSimpleFormField",
+				getState : function(oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+					var aContent = oSimpleForm.getContent();
+					return {
+						content : aContent.map(function(oElement) {
+							return {
+								element : oElement,
+								visible : oElement.getVisible ? oElement.getVisible() : undefined,
+								index : aContent.indexOf(oElement)
+							};
+						})
+					};
+				},
+				restoreState : function(oSimpleForm, oState) { //TODO has to be relevant container/selector, TODO extract as function
+					oSimpleForm.removeAllContent();
+					oState.content.forEach(function(oElementState) {
+						oSimpleForm.insertContent(oElementState.element, oElementState.index);
+						if (oElementState.element.setVisible){
+							oElementState.element.setVisible(oElementState.visible);
+						}
+					});
+				}
+			},
+			reveal : {
+				changeType : "unhideSimpleFormField",
+				getInvisibleElements : function(oSimpleForm) { //TODO is this the right place for this function?
+					var aElements = [];
+					var aContent = oSimpleForm.getContent();
+					aContent.forEach(function(oField) {
+						if (oField instanceof sap.m.Label && !oField.getDomRef()) {
+							//return FormElements
+							aElements.push(oField.getParent());
+						}
+					});
+					return aElements;
+				}
+			}
+		}
+	};
+
 	return {
 		name : function (oElement){
 			var sType = oElement.getMetadata().getName();
@@ -37,6 +236,20 @@ sap.ui.define([], function() {
 				ignore : true
 			},
 			form : {
+				ignore : false,
+				propagateMetadata : function(oElement){
+					//TODO clarify merge & override with real Design Time Metadata from internal controls works (e.g. domRef + actions override)
+					//no hidden tree anymore
+					var sType = oElement.getMetadata().getName();
+					if (sType === "sap.ui.layout.form.Form") {
+						return oFormPropagatedMetadata;
+					} else if (sType === "sap.ui.layout.form.FormContainer") {
+						return oFormContainerPropagatedMetadata;
+					} else if ( sType === "sap.ui.layout.form.FormElement") {
+						return oFormElementPropagatedMetadata;
+					}
+				},
+				propagateRelevantContainer : true,
 				inHiddenTree : true,
 				getIndex : function(oSimpleForm, oFormContainer) {
 					var iIndex = 0;
@@ -55,7 +268,6 @@ sap.ui.define([], function() {
 
 					return iIndex;
 				},
-				ignore : false,
 				childNames : function (oElement){
 					var sType = oElement.getMetadata().getName();
 					if (sType === "sap.ui.layout.form.SimpleForm") {
