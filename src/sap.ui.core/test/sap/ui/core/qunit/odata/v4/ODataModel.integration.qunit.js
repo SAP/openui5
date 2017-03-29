@@ -61,6 +61,42 @@ sap.ui.require([
 			mModelParameters);
 	}
 
+	/**
+	 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
+	 *
+	 * @param {object} oTest The QUnit test object
+	 * @param {object} assert The QUnit assert object
+	 * @returns {Promise} A Promise that is resolved when the view is created and ready to create
+	 *   a relative entity
+	 */
+	function prepareTestForCreateOnRelativeBinding(oTest, assert) {
+		var oModel = createTeaBusiModel({updateGroupId : "update"}),
+			sView = '\
+<form:SimpleForm id="form" binding="{path : \'/TEAMS(42)\',\
+	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
+<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="id" text="{ID}" />\
+				<Text id="text" text="{Name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+</form:SimpleForm>';
+
+		oTest.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				"TEAM_2_EMPLOYEES" : [
+					{"ID" : "2", "Name" : "Frederic Fall"}
+				]
+			})
+			.expectChange("id", ["2"])
+			.expectChange("text", ["Frederic Fall"]);
+
+		return oTest.createView(assert, sView, oModel);
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
 		beforeEach : function () {
@@ -193,7 +229,8 @@ sap.ui.require([
 					oResponse;
 
 				if (!oExpectedRequest) {
-					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
+					assert.ok(false, sMethod + " " + sUrl + " for group " + sGroupId
+						+ " (unexpected)");
 				} else {
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
@@ -327,7 +364,9 @@ sap.ui.require([
 				};
 			}
 			// ensure that these properties are defined (required for deepEqual)
-			vRequest.headers = vRequest.headers || undefined;
+			if (!("headers" in vRequest)) { // to allow null for vRequest.headers
+				vRequest.headers = undefined;
+			}
 			vRequest.payload = vRequest.payload || undefined;
 			vRequest.response = oResponse;
 			this.aRequests.push(vRequest);
@@ -1417,8 +1456,110 @@ sap.ui.require([
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
+
+	//*********************************************************************************************
+	// Scenario: create an entity on a relative binding without an own cache and check that
+	// hasPendingChanges is working
+	// None of our applications has such a scenario.
+	QUnit.test("Create on a relative binding; check hasPendingChanges()", function (assert) {
+		var fnResolve,
+			oTeam2EmployeesBinding,
+			oTeamBinding,
+			that = this;
+
+		return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
+			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
+			oTeamBinding = that.oView.byId("form").getObjectBinding();
+			that.expectRequest({
+					headers : null,
+					method : "POST",
+					url : "TEAMS(42)/TEAM_2_EMPLOYEES",
+					payload : {
+						"@$ui5.transient": "update",
+						"@odata.etag": undefined,
+						"ID" : null,
+						"Name" : "John Doe"
+					}
+				}, new Promise(function (resolve, reject) {
+					fnResolve = resolve;
+				}))
+				// insert new employee at first row
+				.expectChange("id", "", 0)
+				.expectChange("text", "John Doe", 0)
+				.expectChange("id", "2", 1)
+				.expectChange("text", "Frederic Fall", 1);
+			oTeam2EmployeesBinding.create({"ID" : null, "Name" : "John Doe"});
+
+			// code under test
+			assert.ok(oTeam2EmployeesBinding.hasPendingChanges(), "pending changes; new entity");
+			assert.ok(oTeamBinding.hasPendingChanges(), "pending changes; new entity");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", "7", 0);
+			fnResolve({"ID" : "7", "Name" : "John Doe"});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test
+			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
+			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: create an entity on a relative binding without an own cache and reset changes or
+	// delete the newly created entity again
+	// None of our applications has such a scenario.
+	[true, false].forEach(function (bUseReset) {
+		QUnit.test("Create on a relative binding; " + (bUseReset ? "resetChanges()" : "delete"),
+				function (assert) {
+			var oNewContext,
+				oTeam2EmployeesBinding,
+				oTeamBinding,
+				that = this;
+
+			return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
+				oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
+				oTeamBinding = that.oView.byId("form").getObjectBinding();
+
+				// restore requestor to test proper cancel handling without simulating the requestor
+				that.oModel.oRequestor.request.restore();
+				that.expectChange("id", "", 0)
+					.expectChange("text", "John Doe", 0)
+					.expectChange("id", "2", 1)
+					.expectChange("text", "Frederic Fall", 1);
+
+				oNewContext = oTeam2EmployeesBinding.create({"ID" : null, "Name" : "John Doe"});
+				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(), "binding has pending changes");
+				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectChange("id", "2", 0)
+					.expectChange("text", "Frederic Fall", 0)
+					// TODO why do we get events twice?
+					.expectChange("id", "2", 0)
+					.expectChange("text", "Frederic Fall", 0);
+
+				// code under test
+				if (bUseReset) {
+					oTeam2EmployeesBinding.resetChanges();
+				} else {
+					oNewContext.delete("$direct");
+				}
+
+				assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no pending changes");
+				assert.notOk(oTeamBinding.hasPendingChanges(), "parent has no pending changes");
+				return that.waitForChanges(assert);
+			}).then(function () {
+				return oNewContext.created().then(function () {
+					assert.notOk("unexpected success");
+				}, function (oError) {
+					assert.strictEqual(oError.canceled, true, "Create canceled");
+				});
+			});
+		});
+	});
 	//TODO $batch?
 	//TODO test bound action
-	//TODO test create
 	//TODO test delete
 });
