@@ -3,6 +3,9 @@
 /* Base theme                   */
 /* ============================ */
 
+@_sap_m_Token_TokenPadding: 0.5rem;
+@_sap_m_Token_TokenSize: @sapMFontLargeSize + (2 * @_sap_m_Token_TokenPadding);
+
 .sapMToken {
 	display: inline-block;
 	overflow: hidden;
@@ -61,7 +64,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	pointer-events: none;
 
 	line-height: 1.5rem;
-	max-width: calc(~"100% - 1.875rem");
+	max-width: calc(~"100% - " @_sap_m_Token_TokenSize);
 	box-sizing: border-box;
 }
 
