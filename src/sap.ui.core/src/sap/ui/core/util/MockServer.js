@@ -763,7 +763,7 @@ sap.ui
 
 			/**
 			 * Processes the search operation:
-			 * Technically a filter is applied with "startswith" filter on the given property (given as
+			 * Technically a filter is applied with "substringof" filter on the given property (given as
 			 * search-focus URL parameter).
 			 *
 			 * @param {object} aDataSet
@@ -784,7 +784,7 @@ sap.ui
 						sFilterString = sFilterString + "startswith(" + this._mEntitySets[sEntitySetName].keys[i] + ",'" + sODataQueryValue + "')";
 					}
 				} else {
-					sFilterString = "startswith(" + sODataSearchFocusValue + ",'" + sODataQueryValue + "')";
+					sFilterString = "substringof('" + sODataQueryValue + "'," + sODataSearchFocusValue + ")";
 				}
 
 				return this._recursiveOdataQueryFilter(aDataSet, sFilterString);
