@@ -12,6 +12,7 @@
         </Button>
         <IconTabHeader id="iconTabHeader"
                        selectedKey="invalidKey"
+                       select="onSelectTab"
                        showOverflowSelectList="true"
                        backgroundDesign="Transparent"
                        mode="Inline">
@@ -62,4 +63,7 @@
         </MenuButton>
 
     </tnt:ToolHeader>
+    <Panel>
+        <Label id="labelId" text="Home Screen"></Label>
+    </Panel>
 </mvc:View>
