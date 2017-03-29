@@ -10,22 +10,22 @@
 							</Toolbar>
 						</headerToolbar>
 						<columns>
-							<Column width="6em">
+							<Column>
 								<Text text="Layer" />
 							</Column>
-							<Column width="6em">
+							<Column>
 								<Text text="Type" />
 							</Column>
 							<Column>
 								<Text text="Target" />
 							</Column>
-							<Column width="6em">
+							<Column>
 								<Text text="Creator" />
 							</Column>
-							<Column width="6em">
+							<Column>
 								<Text text="Created At" />
 							</Column>
-							<Column width="4em" hAlign="Center">
+							<Column hAlign="Center">
 								<Text text="Active" />
 							</Column>
 						</columns>
@@ -58,13 +58,13 @@
 							</Toolbar>
 						</headerToolbar>
 						<columns>
-							<Column width="6em">
+							<Column>
 								<Text text="Layer" />
 							</Column>
 							<Column>
 								<Text text="Title" />
 							</Column>
-							<Column width="4em">
+							<Column>
 								<Text text="Active" />
 							</Column>
 						</columns>
