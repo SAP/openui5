@@ -1518,7 +1518,7 @@
 				_fPopoverBorderRight: 10
 			});
 
-			equal(iMaxContentWidth, "460px", "Popover maxContentWidth should be equal to the documentWidth minus left and right margins and borders");
+			equal(iMaxContentWidth, 460, "Popover maxContentWidth should be equal to the documentWidth minus left and right margins and borders");
 
 			oPopover.destroy();
 		});
@@ -1550,7 +1550,7 @@
 					stubPopoverMaxContentHeight = sinon.stub(oPopover, "_getMaxContentHeight").returns(400),
 					stubjQueryHeight = sinon.stub(jQuery.fn, "height").returns(300),
 					oExpectedDimensions = {
-						"max-width": 500,
+						"max-width": "500px",
 						"max-height": "400px",
 						"height": ""
 					};
@@ -1575,7 +1575,7 @@
 					stubPopoverMaxContentHeight = sinon.stub(oPopover, "_getMaxContentHeight").returns(400),
 					stubjQueryHeight = sinon.stub(jQuery.fn, "height").returns(300),
 					oExpectedDimensions = {
-						"max-width": 400,
+						"max-width": "400px",
 						"height": "300px"
 					};
 
