@@ -326,8 +326,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				ariaLabelledBy: this.getPickerInvisibleTextId() || undefined
 			});
 
-			oPicker.setInitialFocus(this.isPlatformTablet() ? oPicker : this);
-
+			oPicker.setInitialFocus(this);
 			oPicker.open = function() {
 				return this.openBy(that);
 			};
