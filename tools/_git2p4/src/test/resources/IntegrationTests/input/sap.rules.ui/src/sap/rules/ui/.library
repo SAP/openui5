@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd">
+
+	<name>sap.rules.ui</name>
+	<vendor>SAP SE</vendor>
+	<copyright>SAP UI development toolkit for HTML5 (SAPUI5)
+
+		(c) Copyright 2009-2016 SAP SE. All rights reserved
+	</copyright>
+	<version>${version}</version>
+
+	<documentation>UI5 library: sap.rules.ui</documentation>
+
+	<dependencies>
+		<dependency>
+			<libraryName>sap.ui.core</libraryName>
+		</dependency>
+		<dependency>
+			<libraryName>sap.m</libraryName>
+		</dependency>
+	</dependencies>
+
+	<appData>
+		<!-- excludes for the JSDoc -->
+		<jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc">
+			<exclude name="sap.rules.ui.js."/>
+		</jsdoc>
+		<documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
+        indexUrl="../../../../test-resources/sap/rules/ui/demokit/docuindex.json"
+        resolve="lib" />
+		<!-- excludes for the JSCoverage -->
+		<jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage">
+			<exclude name="sap.rules.ui.js."/>
+		</jscoverage>
+		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/rules/ui/relnotes/changes-{major}.{minor}.json"
+        resolve="lib"
+		libfolder="src/sap/rules/ui" />
+	</appData>
+
+</library>

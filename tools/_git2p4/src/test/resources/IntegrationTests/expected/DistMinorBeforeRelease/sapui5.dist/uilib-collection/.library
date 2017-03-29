@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+  <name>sap.ui.test</name>
+  <vendor>sap.com</vendor>
+  <copyright>(c) Copyright 2009-2010 SAP AG. All rights reserved</copyright>
+  <version>1.46.0</version>
+  <documentation>SAP UI library: sap.ui.commons (by SAP, Author)</documentation>
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+  </dependencies>
+</library>

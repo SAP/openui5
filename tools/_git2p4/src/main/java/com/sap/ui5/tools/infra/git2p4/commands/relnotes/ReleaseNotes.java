@@ -163,7 +163,7 @@ public class ReleaseNotes {
       currentRepository = repo;
       context.git.setRepository(repo.getRepository());
       isNewNote = false;
-      if (!context.branch.equals("master")) { 
+      if (!context.branch.equals("master")) {
         processCommand = new GatherPreviousNotesCommand();
         gatherFromPreviousCodelines(repo.getRepository());
       }

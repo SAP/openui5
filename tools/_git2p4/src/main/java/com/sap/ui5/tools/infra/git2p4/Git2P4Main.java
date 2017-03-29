@@ -6,8 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,6 +48,7 @@ import com.sap.ui5.tools.maven.MvnClient;
 import com.sap.ui5.tools.maven.MyReleaseButton;
 import com.sap.ui5.tools.maven.XMLUtils;
 import com.sap.ui5.tools.maven.MyReleaseButton.ReleaseOperation;
+import com.sap.ui5.tools.maven.ContributorsVersions;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingFilter;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingTypes;
 
@@ -59,34 +58,36 @@ public class Git2P4Main {
   private static final String RELEASE_NOTES = "release-notes"; 
   private static final String TOOLS_VERSION_HELPER_CORE_VERSION = "tools/_git2p4/sapui5-core-version";
   private static final String VERSION_CHANGE_ONLY = "VERSION CHANGE ONLY";
-  static final GitClient git = new GitClient();
-  static final P4Client p4 = new P4Client();
-  static final Git2P4 git2p4 = new Git2P4(git, p4);
-  static String p4depotPath = null;
-  static String p4change = null;
-  static String resumeAfter = null;
-  static boolean applyContributorsVersions = false; 
+  GitClient git = new GitClient();
+  final P4Client p4 = new P4Client();
+  final Git2P4 git2p4 = new Git2P4(git, p4);
+  MvnClient mvn = new MvnClient();
+  String p4depotPath = null;
+  String p4change = null;
+  String resumeAfter = null;
+  boolean applyContributorsVersions = false; 
   private static boolean skipContributorsVersions = false;
-  static String sp = File.separator;  
+  static String sp = File.separator;
+  ContributorsVersions contributorsVersions = new ContributorsVersions();
   static final SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
-    @Override
-    public int compare(GitClient.Commit a, GitClient.Commit b) {
-      int r = a.getCommitDate().compareTo(b.getCommitDate());
-      if ( r != 0 )
-        return r;
-      return a.getId().compareTo(b.getId());
-    }
-  });
+  @Override
+  public int compare(GitClient.Commit a, GitClient.Commit b) {
+    int r = a.getCommitDate().compareTo(b.getCommitDate());
+    if ( r != 0 )
+      return r;
+    return a.getId().compareTo(b.getId());
+  }
+});
   
-
   /**
    * This new context object is intended to contain all parameters in future
    * (or maybe Git2P4Main implements an interface with similar methods)
    * 
    * For now it only contains what is absolutely necessary for the ReleaseNotes command.
    */
+  
   public static class Context {
-    public final GitClient git = Git2P4Main.git;
+    public GitClient git;
     public final SortedSet<GitClient.Commit> allCommits = Git2P4Main.allCommits;
     public boolean fixOrFeatureOnly = false;
     public boolean includeCommitDetails = false;
@@ -102,7 +103,7 @@ public class Git2P4Main {
     public int lowestMinor = 28; //28 is the lowest minor at the time this is done
     public static File objJson = null;
     public String findVersion(String branch) throws IOException {
-      return Git2P4Main.findVersion(branch);
+      return findVersion(branch);
     }       
       
     public Set<String> getCommits(String...paths) throws IOException {
@@ -119,18 +120,19 @@ public class Git2P4Main {
   static Context context = new Context();
   private static ProcessingFilter filter = new ProcessingFilter();    
   
-  static void updateRepository(Mapping repo) throws IOException {
+
+   void updateRepository(Mapping repo) throws IOException {
     git.setRepository(repo.gitRepository);
-    if ( !git.getRepository().isDirectory() || !(new File(git.getRepository(), ".git").isDirectory()) && repo.giturl != null ) {
-      git.getRepository().mkdirs();
-      git.clone(repo.giturl);
-    }
-    if ( !context.noFetch ) {
+    if (!context.noFetch) {
+      if (!git.getRepository().isDirectory() || !(new File(git.getRepository(), ".git").isDirectory()) && repo.giturl != null) {
+        git.getRepository().mkdirs();
+        git.clone(repo.giturl);
+      }
       git.fetch();
     }
   }
 
-  static void collect(Mapping repo, Boolean useLastCommit, String branch) throws IOException {
+   void collect(Mapping repo, Boolean useLastCommit, String branch) throws IOException {
     git.setRepository(repo.gitRepository);
     if ( !git.getRepository().isDirectory() || !(new File(git.getRepository(), ".git").isDirectory()) && repo.giturl != null ) {
       git.getRepository().mkdirs();
@@ -165,10 +167,10 @@ public class Git2P4Main {
     }
   }
 
-  static final Pattern POM_VERSION = Pattern.compile("\\s*<version>([0-9]+(?:\\.[0-9]+(?:\\.[0-9]+)?)?(?:-SNAPSHOT)?)</version>\\s*");
+   final Pattern POM_VERSION = Pattern.compile("\\s*<version>([0-9]+(?:\\.[0-9]+(?:\\.[0-9]+)?)?(?:-SNAPSHOT)?)</version>\\s*");
 
   //Takes the "version" from receivedFile and compares it with the current trigered branch version...
-  static void checkObjectIdsJsonVersion(String branchVer, File objIdsVersion) throws JsonIOException, JsonSyntaxException, FileNotFoundException{
+   void checkObjectIdsJsonVersion(String branchVer, File objIdsVersion) throws JsonIOException, JsonSyntaxException, FileNotFoundException{
 	  
   JsonObject jsonObject = new JsonObject();     
   JsonParser parser = new JsonParser();
@@ -182,7 +184,7 @@ public class Git2P4Main {
   	}
   }
   
-  static String findVersion(String branch) throws IOException {
+   String findVersion(String branch) throws IOException {
 
     String version = null;
 
@@ -208,7 +210,7 @@ public class Git2P4Main {
     return version;
   }
 
-  static void modifyVersions(ReleaseOperation op, String branch, String fromVersion, String toVersion) throws IOException {
+   void modifyVersions(ReleaseOperation op, String branch, String fromVersion, String toVersion) throws IOException {
    boolean guess = false;
     
     // first ensure branch and op
@@ -261,13 +263,9 @@ public class Git2P4Main {
     	checkObjectIdsJsonVersion(fromVersion, context.objJson);
     }
     
+    
     if(op.equals(ReleaseOperation.MilestoneDevelopment)){
-       Runtime p = Runtime.getRuntime();
-	   String jsLocation = extractSnapshotVersionJs().getParent();
-	   MyReleaseButton.getFileOSLocation(jsLocation);
-
-	   //Execution of the getSnapshotVersion.js (which searches and takes data from NEXUS for contributors Snapshot versions)
-	   p.exec("cmd.exe /c cd "+jsLocation+" & start cmd.exe /c" + "node getSnapshotVersion.js " + toVersion);	   
+     contributorsVersions.extractContributorsVersions(toVersion);
     }
     
     if ( guess && git2p4.interactive ) {
@@ -348,17 +346,7 @@ public class Git2P4Main {
     exitcode = suspiciousRepositories.size();
   }
 
-private static File extractSnapshotVersionJs() throws IOException {
-	File file = new File("getSnapshotVersion.js");
-    if (!file.exists()) {
-         InputStream link = (Git2P4Main.class.getClassLoader().getResourceAsStream("getSnapshotVersion.js"));
-         Files.copy(link, file.getAbsoluteFile().toPath());
-    }
-    return file.getAbsoluteFile();
-}
-
-
-  private static Properties retrieveLatestVersions(String fromVersion, String toVersion, ReleaseOperation op) throws IOException, FileNotFoundException {
+  private Properties retrieveLatestVersions(String fromVersion, String toVersion, ReleaseOperation op) throws IOException, FileNotFoundException {
     //Filter operations to apply to
     if (skipContributorsVersions || !applyContributorsVersions) {
       return null;
@@ -393,12 +381,11 @@ private static File extractSnapshotVersionJs() throws IOException {
     return contributorsVersions;
   }
   
-  private static Version getLatestCoreVersion(String versionRange, boolean snapshot) throws IOException {
-	MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_CORE_VERSION).getAbsoluteFile(), "versions:resolve-ranges", "-U", "-Dsapui5.core.version=" + versionRange, snapshot ? "-DallowSnapshots=true" : "");
-	
-    Matcher m = Pattern.compile("so unable to set version to (.*)").matcher(MvnClient.getLatestOutput());
+  private Version getLatestCoreVersion(String versionRange, boolean snapshot) throws IOException {
+    mvn.execute(new File(".", TOOLS_VERSION_HELPER_CORE_VERSION).getAbsoluteFile(), "versions:resolve-ranges", "-U", "-Dsapui5.core.version=" + versionRange, snapshot ? "-DallowSnapshots=true" : "");
+    Matcher m = Pattern.compile("so unable to set version to (.*)").matcher(mvn.getLatestOutput());
 
-       if (m.find()){
+    if (m.find()) {
       Version coreVersion = new Version(m.group(1));
       Log.println("Detected sapui5 core version: " + coreVersion);
       if (snapshot && !coreVersion.isSnapshot()) {
@@ -411,7 +398,7 @@ private static File extractSnapshotVersionJs() throws IOException {
     return null;
   }
 
-  static void createVersionTags(String branch, String fromVersion) throws IOException {
+   void createVersionTags(String branch, String fromVersion) throws IOException {
     
     if ( branch == null ) {
       throw new IllegalArgumentException("for tag command, a branch must be specified");
@@ -777,10 +764,11 @@ static void createMappings(File repositoryRoot, String p4depotPrefix, String bra
     }
   }
 
-  public static void main0(String[] args) throws IOException {
+  public void main0(String[] args) throws IOException {
     final String objectIdChange = "objectId-change";
     final String patchVersionIncrement = "patchVersionIncrement";
 	  String sp = File.separator;
+    context.git = git;
     String template = null;
     String command = "transfer";
     boolean autoResume = true;
@@ -792,7 +780,7 @@ static void createMappings(File repositoryRoot, String p4depotPrefix, String bra
     ReleaseOperation op = null;
     boolean useLastCommit = true;
     String fileAddress = null;
-    File receivedFile = new File("");
+    File receivedFile = null;
     String[] argsForTrace = new String[args.length];
     System.arraycopy(args, 0, argsForTrace, 0, args.length);
 
@@ -803,7 +791,7 @@ static void createMappings(File repositoryRoot, String p4depotPrefix, String bra
       } else if ( "-v".equals(args[i]) || "--verbose".equals(args[i]) ) {
         p4.verbose = true;
         git.verbose = true;
-        MvnClient.verbose = true;
+        mvn.verbose = true;
       } else if ( "-l".equals(args[i]) || "--log-file".equals(args[i]) ) {
         Log.setLogFile(new File(args[++i]), false);
       } else if ( "-lt".equals(args[i]) || "--log-file-template".equals(args[i]) ) {
@@ -957,13 +945,13 @@ static void createMappings(File repositoryRoot, String p4depotPrefix, String bra
     }
    
     if(objectIdChange.equals(command)){
-    	String path = receivedFile.getAbsolutePath()  + sp +"tools" + sp +"_git2p4" + sp +"resources" + sp + "ObjectIds.json";
-      	receivedFile = new File(path);
-      	receivedFile.createNewFile();      	
-      	readAndCopyFromURL(receivedFile, fileAddress);
-      	context.objJson = receivedFile;
-      	
-  	  MyReleaseButton.setFile(receivedFile);
+      receivedFile = File.createTempFile("ObjectIds", ".json");
+      System.out.println(receivedFile.getAbsolutePath());
+    
+    	readAndCopyFromURL(receivedFile, fileAddress);
+    	context.objJson = receivedFile;
+    	
+	  MyReleaseButton.setFile(receivedFile);
     }
     
     MyReleaseButton.setRelOperation(op);
@@ -1112,11 +1100,11 @@ static void createMappings(File repositoryRoot, String p4depotPrefix, String bra
     	      }
     	    }
     }  
-
   
   private static int exitcode = 0;
   public static void main(String[] args) throws IOException {
-    main0(args);
+    Git2P4Main git2P4Main = new Git2P4Main();
+    git2P4Main.main0(args);
    // System.exit(exitcode);
   }
 }

@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.5</version>
+		<relativePath></relativePath>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.ui5</groupId>
+	<artifactId>reactor</artifactId>
+	<version>1.44.3</version>
+	<packaging>pom</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>SAPUI5 Core</name>
+	<description>SAPUI5 Reactor POM</description>
+	<url>http://vesapui5.dhcp.wdf.sap.corp:1080/</url>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Modules Settings
+	***************************************************************************-->
+
+	<modules>
+
+		<module>src</module>
+
+	</modules>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- SAPUI5 Core & Runtime version -->
+		<sap.ui5.core.version>1.44.3</sap.ui5.core.version>
+
+		<!-- default build mode (one of dev|productive) -->
+		<build.mode>dev</build.mode>
+
+		<!-- Version of jsdoc-maven-plugin (defined as property because it is used in plugin configuration, see module :merged-jsdoc) -->
+		<jsdoc-maven-plugin.version>1.1.20</jsdoc-maven-plugin.version>
+		<!-- Version of maven-jsdoc-plugin. DEPRECATED, use the new jsdoc-maven-plugin instead. -->
+		<maven-jsdoc-plugin.version>1.0.9</maven-jsdoc-plugin.version>
+		<!-- Version of jsdoc library as used by the jsdoc-maven-plugin -->
+		<jsdoc.lib.version>3.3.3</jsdoc.lib.version>
+		<!-- Subversion of the jsdoc template to be used - usually matches major.minor of the current release -->
+		<jsdoc.template.subversion></jsdoc.template.subversion>
+
+		<!-- Java Servlet API version -->
+		<servlet-api.version>2.5</servlet-api.version>
+
+		<!-- By default we skip the JAR signing -->
+		<sap.ui5.jarsigner.skip>true</sap.ui5.jarsigner.skip>
+
+		<!-- Translation information for LDI translation plugin (B7W: 222222, B0Y: 027001 [V1], B0Y: 033000 [V2], B0Y: 073002 -->
+		<sap.ui5.translationArea>073002</sap.ui5.translationArea>
+		<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
+		<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
+		<sap.ui5.translationLanguages></sap.ui5.translationLanguages><!-- empty value means: download full language set associated with translation graph (desired),
+																		  this is only overridden by the i18n.build jobs to download 1Q,2Q which are not in the transl. graph -->
+
+		<!-- Default version of the ESLint used by library projects -->
+		<sap.ui5.eslint.version>0.13.0</sap.ui5.eslint.version>
+		<!-- Default version of the ESLint used by UI5 Core projects -->
+		<sap.ui5.core.eslint.version>1.6.0</sap.ui5.core.eslint.version>
+
+		<!-- SONAR configuration (filter for the relevant projects only - the parent modules need also to be listed here) -->
+		<sonar.includedModules>reactor,src-reactor,metamodel,generator,theming,shared-utils,resource,utils,core,layout,commons,table,mobile,ux3,unified,comp,fl,dt,rta,uilib-sample,sapui5,demokit,snippix,test-reactor,cactus-unit-tests,qunit-tests</sonar.includedModules>
+
+	</properties>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+
+		<!-- artifactId-version is required for JAR signing -->
+		<finalName>${project.artifactId}-${project.version}</finalName>
+
+		<pluginManagement>
+
+			<plugins>
+				<!-- temporary we override the maven-jar-plugin to avoid IDE issues -->
+				<!-- issue: https://github.com/sonatype/m2eclipse-extras/issues/10 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.3.2</version>
+				</plugin>
+				<!-- temporary we override the maven-site-plugin to avoid issues with drop creation -->
+				<!-- issue: http://jira.codehaus.org/browse/MSITE-459, http://jira.codehaus.org/browse/WAGON-60 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>maven-jsapicheck-plugin</artifactId>
+					<version>1.0.3</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>jsdoc-maven-plugin</artifactId>
+					<version>${jsdoc-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>maven-jsdoc-plugin</artifactId>
+					<version>${maven-jsdoc-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>maven-jslint-plugin</artifactId>
+					<version>1.1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>jslint-maven-plugin</artifactId>
+					<version>1.1.3</version>
+				</plugin>
+				<plugin>
+					<!-- this is an old, deprecated version of the lightening plugin and only kept for backward compatibility -->
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>maven-lightening-plugin</artifactId>
+					<version>1.0.3</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>lightening-maven-plugin</artifactId>
+					<version>1.0.24</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>maven-perfmon-plugin</artifactId>
+					<version>1.0.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>maven-url-plugin</artifactId>
+					<version>1.0.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>maven-wget-plugin</artifactId>
+					<version>1.0.0</version>
+				</plugin>
+				<!-- WebIDE Metadata production tool -->
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>mtproduction-maven-plugin</artifactId>
+					<version>1.17.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ldi</groupId>
+					<artifactId>translation-plugin</artifactId>
+					<configuration>
+						<!-- if this property has no value, all languages of the translation graph will be downloaded (old behavior) -->
+						<languages>${sap.ui5.translationLanguages}</languages>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.prd.codesign</groupId>
+					<artifactId>com.sap.prd.codesign.maven-jarsigner-plugin</artifactId>
+					<version>1.0</version>
+					<configuration>
+						<skip>${sap.ui5.jarsigner.skip}</skip>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.eslint</groupId>
+					<artifactId>eslint-maven-plugin</artifactId>
+					<version>0.1.13</version>
+				</plugin>
+			</plugins>
+
+		</pluginManagement>
+
+	</build>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Dependency Management Settings
+	***************************************************************************-->
+
+	<dependencyManagement>
+
+		<dependencies>
+
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>${servlet-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr</artifactId>
+				<version>3.0.1</version>
+			</dependency>
+
+		</dependencies>
+
+	</dependencyManagement>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Organization Settings
+	***************************************************************************-->
+
+	<organization>
+
+		<name>SAP</name>
+		<url>http://www.sap.com</url>
+
+	</organization>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Developers Settings
+	***************************************************************************-->
+
+	<developers>
+		<developer>
+			<name>SAPUI5</name>
+			<organization>SAP SE</organization>
+			<organizationUrl>http://www.sap.com</organizationUrl>
+		</developer>
+	</developers>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Mailing List Settings
+	***************************************************************************-->
+
+	<mailingLists>
+		<mailingList>
+			<name>SAPUI5 Mailing List (public)</name>
+			<post>sapui5@listserv.sap.corp</post>
+		</mailingList>
+		<mailingList>
+			<name>SAPUI5 Distribution List (team internal)</name>
+			<post>DL_TIP-CORE-UI-UI5@exchange.sap.corp</post>
+		</mailingList>
+	</mailingLists>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Issue Management Settings
+	***************************************************************************-->
+
+	<issueManagement>
+		<system>trac</system>
+		<url>http://vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5/report</url>
+	</issueManagement>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Continous Integration Management Settings
+	***************************************************************************-->
+
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://veui5infra.dhcp.wdf.sap.corp:1080/jenkins</url>
+	</ciManagement>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Source Control Management Settings
+	***************************************************************************-->
+
+	<scm>
+		<connection>scm:git:ssh//git.wdf.sap.corp:29418/sapui5/sapui5.runtime.git</connection>
+		<developerConnection>scm:git:ssh//git.wdf.sap.corp:29418/sapui5/sapui5.runtime.git</developerConnection>
+		<url>https://git.wdf.sap.corp:50000/git/?p=sapui5/sapui5.runtime.git</url>
+	</scm>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Licenses Settings
+	***************************************************************************-->
+
+	<!--
+	<licenses>
+		<license>
+			<name>SAP Licence</name>
+			<url>http://www.sap.com</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license - WE HAVE TO RETHINK!</comments>
+		</license>
+	</licenses>
+	-->
+
+
+	<!--**************************************************************************
+	* POM SECTION: Profiles Settings
+	***************************************************************************-->
+
+	<profiles>
+
+		<!-- In the release build we do JAR signing! -->
+		<profile>
+			<id>release.build</id>
+			<activation>
+				<property>
+					<name>ldi.releaseBuild</name>
+				</property>
+			</activation>
+			<properties>
+				<sap.ui5.jarsigner.skip>false</sap.ui5.jarsigner.skip>
+			</properties>
+		</profile>
+
+		<!-- Include 'test' reactor only in a test build -->
+		<profile>
+			<id>test.build</id>
+			<modules>
+				<module>test</module>
+			</modules>
+		</profile>
+
+		<!-- Verify the I18N properties files! -->
+		<profile>
+			<id>verify.i18n.build</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>com.sap.ldi</groupId>
+							<artifactId>translation-plugin</artifactId>
+							<executions>
+								<execution>
+									<id>verify-upload</id>
+									<phase>prepare-package</phase> <!-- do not produce errors for m2e -->
+									<goals>
+										<goal>verify-upload</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+
+		<!-- include OpenUI5 into the reactor build for voter jobs (openui5 should be synced next to sapui5.runtime) -->
+		<profile>
+			<id>openui5.build</id>
+			<modules>
+				<module>../openui5</module>
+			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.gmaven</groupId>
+						<artifactId>gmaven-plugin</artifactId>
+						<version>1.4</version>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<id>groovy-magic</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<source><![CDATA[
+										def root = project.basedir.getParentFile()
+										def content = new File(root, 'openui5/pom.xml').getText("UTF-8")
+										def pom = new XmlParser().parseText(content)
+										def oui5Version = pom.version.text()
+										def sui5Version = project.version
+
+										log.info("Found OpenUI5 version: " + oui5Version)
+										log.info("Found SAPUI5 version:  " + sui5Version)
+
+										if (!sui5Version.equals(oui5Version)) {
+											fail("The OpenUI5 version " + oui5Version + " doesn't match the SAPUI5 version " + sui5Version + "!");
+										}
+									]]></source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+
+</project>

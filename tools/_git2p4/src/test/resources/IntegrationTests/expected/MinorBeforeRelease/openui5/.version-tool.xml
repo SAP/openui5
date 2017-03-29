@@ -1,0 +1,18 @@
+{
+  "lastPerVersion": {
+    "rel-1.44": {
+      "changes": {
+        "default": {
+          "pom.xml": "2"
+        }
+      }
+    },
+    "master": {
+      "changes": {
+        "default": {
+          "pom.xml": "2"
+        }
+      }
+    }
+  }
+}

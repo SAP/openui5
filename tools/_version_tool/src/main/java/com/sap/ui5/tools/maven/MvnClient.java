@@ -10,10 +10,10 @@ import java.util.Scanner;
 
 public class MvnClient {
   
-  public static boolean verbose = false;
-  private static String latestOutput = "";
+  public boolean verbose = false;
+  private String latestOutput = "";
 
-  public static boolean execute(File pomPath, String... cmds) throws IOException {
+  public boolean execute(File pomPath, String... cmds) throws IOException {
     ProcessBuilder pb = new ProcessBuilder();
     pb.directory(pomPath);
     List<String> args = pb.command();
@@ -60,7 +60,7 @@ public class MvnClient {
     }).start();
   }
 
-  public static String getLatestOutput() {
+  public String getLatestOutput() {
     return latestOutput;
   }
   

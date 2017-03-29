@@ -1,0 +1,6 @@
+# UI
+# ignore parser generated files
+**/ui/parser/businessLanguage/lib/IDPLexer.js
+**/ui/parser/businessLanguage/lib/IDPParser.js
+**/ui/parser/businessLanguage/lib/antlr3_all_min.js
+**/ui/parser/infrastructure/locale/lib/moment_JS_min.js

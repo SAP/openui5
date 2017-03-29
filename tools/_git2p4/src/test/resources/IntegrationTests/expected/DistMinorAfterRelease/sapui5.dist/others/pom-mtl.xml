@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Model Version Settings
+  ***************************************************************************-->
+
+  <modelVersion>4.0.0</modelVersion>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Parent POM Settings
+  ***************************************************************************-->
+
+  <parent>
+    <groupId>com.sap.ui.phoenix</groupId>
+    <artifactId>phoenix</artifactId>
+    <version>1.47.0-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Settings
+  ***************************************************************************-->
+
+  <groupId>com.sap.ui.phoenix</groupId>
+  <artifactId>phoenix-housekeeping</artifactId>
+  <packaging>pom</packaging>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Project Settings
+  ***************************************************************************-->
+
+  <name>${project.artifactId}</name>
+  <description>Phoenix - Housekeeping for Phoenix for MTL sandbox</description>
+  
+
+  <!--**************************************************************************
+  * POM SECTION: Properties Settings
+  ***************************************************************************-->
+
+	<properties>
+	
+		<!-- The version of this project is also the version of the Phoenix dependencies -->
+		<phoenix.version>${project.version}</phoenix.version>
+		
+		<!-- Sandbox Tomcat configuration => TODO: move to settings.xml -->
+		<tomcat.sandbox.url>http://ymqd00410702a.dhcp.ymq.sap.corp:8080</tomcat.sandbox.url>
+		<tomcat.sandbox.usr>deployadmin</tomcat.sandbox.usr>
+		<tomcat.sandbox.pwd>phoenix123</tomcat.sandbox.pwd>
+		
+	</properties>
+	
+	
+	<!--**************************************************************************
+  * POM SECTION: Build Settings
+  ***************************************************************************-->
+
+	<build>
+	
+		<plugins>
+		
+			<!-- enable the Tomcat plugin during clean phase! Housekeeping! ;) -->
+			<plugin>
+				<groupId>com.sap.ui.phoenix.tools</groupId>
+				<artifactId>maven-tomcat-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+						<phase>clean</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<remoteTomcatManagerUrl>${tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+					<remoteTomcatUsername>${tomcat.sandbox.usr}</remoteTomcatUsername>
+					<remoteTomcatPassword>${tomcat.sandbox.pwd}</remoteTomcatPassword>
+					<skipDeploy>false</skipDeploy>
+					<skipUndeploy>false</skipUndeploy>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+
+	<!--**************************************************************************
+  * POM SECTION: Dependencies Settings
+  ***************************************************************************-->
+
+	<!--
+	  - Please make sure you add all artifacts to deploy here inside the
+		- dependencies section.
+		-->
+	
+	<dependencies>
+	
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>getting-started-sample</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>uilib-sample</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<!--
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>demokit</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>demo-trac-access</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>classic-sample</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>restlet-sample</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>travel</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>pac-man</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>fried-chicken-demo</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix.test</groupId>
+			<artifactId>cometd-sample</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix.test</groupId>
+			<artifactId>streamwork-sample</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>phoenix-cdn</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		
+		<!--
+		<dependency>
+			<groupId>com.sap.ui.phoenix.tools</groupId>
+			<artifactId>performance-webm</artifactId>
+			<version>1.0.0</version>
+			<type>war</type>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>com.sap.ui.phoenix.tools</groupId>
+			<artifactId>jsunit-testrunner</artifactId>
+			<version>1.0.0</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>jsunit-tests</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<!--
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>cactus-unit-tests</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui.phoenix</groupId>
+			<artifactId>selenium-tests</artifactId>
+			<version>${phoenix.version}</version>
+			<type>war</type>
+		</dependency-->
+
+	</dependencies>
+
+</project>

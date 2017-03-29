@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.5</version>
+		<!-- <relativePath></relativePath> -->
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.rules</groupId>
+	<artifactId>reactor</artifactId>
+	<version>1.44.3-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>SAPUI5 Rules</name>
+	<description>SAPUI5 Rules - Reactor POM</description>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Modules Settings
+	***************************************************************************-->
+
+	<modules>
+		<module>../</module>
+	</modules>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Profiles Settings
+	***************************************************************************-->
+
+	<profiles>
+
+		<!-- Include testsuite only in a test build (for SNAPSHOTS only) -->
+		<profile>
+			<id>test.build</id>
+			<modules>
+				<module>../testsuite</module>
+			</modules>
+		</profile>
+
+	</profiles>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Source Control Management Settings
+	***************************************************************************-->
+
+	<!--
+	<scm>
+		<connection>scm:git:ssh://git.wdf.sap.corp:29418/sapui5/sapui5.vizkit.git</connection>
+		<developerConnection>scm:git:ssh://git.wdf.sap.corp:29418/sapui5/sapui5.vizkit.git</developerConnection>
+		<url>https://git.wdf.sap.corp:50000/git/?p=sapui5/sapui5.vizkit.git</url>
+	</scm>
+	-->
+
+
+</project>

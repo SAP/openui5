@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/com.sap.ui.phoenix.phx-runtime-feature_1.44.19.qualifier.jar" id="com.sap.ui.phoenix.phx-runtime-feature" version="1.44.19.qualifier">
+      <category name="Phoenix Runtime Feature"/>
+   </feature>
+   <feature url="features/com.sap.ui.phoenix.phx-uilib-feature_1.44.19.qualifier.jar" id="com.sap.ui.phoenix.phx-uilib-feature" version="1.44.19.qualifier">
+      <category name="Phoenix UI Libraries Feature"/>
+   </feature>
+   <category-def name="Phoenix Runtime Feature" label="Phoenix Runtime Feature"/>
+   <category-def name="Phoenix UI Libraries Feature" label="Phoenix UI Libraries Feature"/>
+</site>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.sap.ui5</groupId>
+        <artifactId>maven-uilib-pom</artifactId>
+        <relativePath/>
+        <version>1.28.0</version>
+    </parent>
+
+    <groupId>com.sap.uxap</groupId>
+    <artifactId>uxap-uilib</artifactId>
+    <version>1.28.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>SAP UxAP :: Library</name>
+    <description>SAP UxAP :: Library</description>
+
+    <properties>
+        <!-- name of the UI library -->
+        <sap.ui5.library.name>sap.uxap</sap.ui5.library.name>
+        <!-- SAPUI5 version -->
+        <sap.ui5.version>${project.parent.version}</sap.ui5.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <!-- non release version: M.m.0.${maven.build.timestamp} -->
+        <sap.uxap.osgi.version>1.47.0.${maven.build.timestamp}</sap.uxap.osgi.version>
+
+        <!-- JSLint reporting path -->
+        <sonar.javascript.jslint.reportPath>target/jslint/jslint.xml</sonar.javascript.jslint.reportPath>
+
+        <ldi.fortify-version>0.6.0</ldi.fortify-version>
+
+        <!-- Signing must be disabled on the nightly builds => jenkins must launch the build with -DnightlyBuild=true -->
+        <nightlyBuild>false</nightlyBuild>
+
+        <!-- Default parameter values for translation upload/download. If you rename these variables, rename them in the dl_i18n.bat file too! -->
+        <i18nUser>FIOINFRA</i18nUser>
+        <i18nPwd>${env.TRANS_PASS}</i18nPwd>
+
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sap.ui5</groupId>
+            <artifactId>core</artifactId>
+            <version>${sap.ui5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sap.ui5</groupId>
+            <artifactId>mobile</artifactId>
+            <version>${sap.ui5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sap.ui5</groupId>
+            <artifactId>themelib_sap_bluecrystal</artifactId>
+            <version>${sap.ui5.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.sap.ca</groupId>
+                <artifactId>analysis-plugin</artifactId>
+                <version>1.17.0</version>
+                <executions>
+                    <execution>
+                        <id>analyse</id>
+                        <goals>
+                            <goal>analysis</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Bundle-Version>${sap.uxap.osgi.version}</Bundle-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.sap.ui5.tools.maven</groupId>
+                <artifactId>maven-jsapicheck-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.sap.ldi</groupId>
+                    <artifactId>fortify-plugin</artifactId>
+                    <version>${ldi.fortify-version}</version>
+                    <configuration>
+                        <additionalParameters>-verbose -exclude ${basedir}/pom.xml -exclude
+                            ${project.build.directory}/**/*
+                        </additionalParameters>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>uxap-translation</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>uxap-translation</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.sap.ldi</groupId>
+                        <artifactId>translation-plugin</artifactId>
+                        <configuration>
+                            <translationArea>073001</translationArea>
+                            <translationDomain>BC</translationDomain>
+                            <translationDeveloper>i053068</translationDeveloper>
+                            <translationCollection>ObjectPage</translationCollection>
+                            <jcoClientMsHost>ldcib0y.wdf.sap.corp</jcoClientMsHost>
+                            <jcoClientMsServ>64389</jcoClientMsServ>
+                            <jcoClientR3Name>B0Y</jcoClientR3Name>
+                            <jcoClientUser>${i18nUser}</jcoClientUser>
+                            <jcoClientPassword>${i18nPwd}</jcoClientPassword>
+                            <skipUpdateDeveloperEnglish>true</skipUpdateDeveloperEnglish>
+                            <useDefaultTranslationResourceDirs>false</useDefaultTranslationResourceDirs>
+                            <languages>${sap.ui5.translationLanguages}</languages>
+                            <translationResources>
+                                <translationResource>src/main/uilib</translationResource>
+                            </translationResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>process-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>optimized.build</id>
+            <activation>
+                <property>
+                    <name>ldi.releaseBuild</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.sap.prd.codesign</groupId>
+                        <artifactId>com.sap.prd.codesign.maven-jarsigner-plugin</artifactId>
+                        <configuration>
+                            <skip>${nightlyBuild}</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

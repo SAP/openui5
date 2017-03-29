@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.sap.ui.phoenix.phx-runtime-feature"
+      label="Phoenix OSGi distribution - Runtime Feature"
+      version="1.45.0.qualifier"
+      provider-name="SAP AG">
+
+   <description>
+      This feature provides the runtime components of Phoenix
+   </description>
+
+   <copyright>
+      SAP AG
+   </copyright>
+
+   <license>
+      TBD
+   </license>
+
+   <plugin
+         id="com.sap.ui.phoenix.resource"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.sap.ui.phoenix.utils"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

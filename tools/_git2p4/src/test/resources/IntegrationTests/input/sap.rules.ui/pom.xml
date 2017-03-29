@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+            <!--**************************************************************************
+            * POM SECTION: Maven Model Version Settings
+            *************************************************************************** -->
+    <modelVersion>4.0.0</modelVersion>
+
+   <!--**************************************************************************
+            * POM SECTION: Parent POM Settings
+            *************************************************************************** -->
+    <parent>
+        <groupId>com.sap.ui5</groupId>
+        <artifactId>library-parent</artifactId>
+        <version>1.44.0</version>
+        <relativePath>../../ui5/library-parent/pom.xml</relativePath>
+
+    </parent>
+
+
+            <!--**************************************************************************
+            * POM SECTION: Maven Settings
+            *************************************************************************** -->
+    <groupId>com.sap.rules</groupId>
+    <artifactId>sap.rules.ui</artifactId>
+    <version>1.44.3-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+            <!--**************************************************************************
+            * POM SECTION: Project Settings
+            *************************************************************************** -->
+    <name>${project.artifactId}</name>
+    <description>UI5 library: sap.rules.ui</description>
+
+
+            <!--**************************************************************************
+            * POM SECTION: Properties Settings
+            *************************************************************************** -->
+    <properties>
+
+        <!-- name of the UI5 library -->
+        <sap.ui5.library.name>sap.rules.ui</sap.ui5.library.name>
+
+    </properties>
+
+
+            <!--**************************************************************************
+            * POM SECTION: DependencyManagement Settings
+            ***************************************************************************-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.sap.ui5</groupId>
+                <artifactId>uilib-collection</artifactId>
+                <version>${sap.ui5.core.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+            <!--**************************************************************************
+            * POM SECTION: Dependency Settings
+            *************************************************************************** -->
+    <dependencies>
+
+        <dependency>
+            <groupId>com.sap.ui5</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sap.ui5</groupId>
+            <artifactId>mobile</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sap.ui5</groupId>
+            <artifactId>themelib_sap_bluecrystal</artifactId>
+        </dependency>
+
+        <dependency>
+			<groupId>com.sap.ui5</groupId>
+			<artifactId>table</artifactId>
+		</dependency>
+
+    </dependencies>
+
+
+            <!--**************************************************************************
+            * POM SECTION: Build Settings
+            *************************************************************************** -->
+    <build>
+
+        <plugins>
+
+            <!-- mark as translation relevant -->
+            <plugin>
+                <groupId>com.sap.ldi</groupId>
+                <artifactId>translation-plugin</artifactId>
+                <configuration>
+                    <translationArea>${sap.ui5.translationArea}</translationArea>
+                    <translationDomain>${sap.ui5.translationDomain}</translationDomain>
+                    <translationDeveloper>i055448</translationDeveloper>
+                    <!--translationCollection>${sap.ui5.translationCollection}</translationCollection-->
+                    <translationCollection>Rules_UI</translationCollection>
+                    <translationResources>
+                        <translationResource>src/sap/rules/ui/i18n</translationResource>
+                    </translationResources>
+                </configuration>
+            </plugin>
+
+            <!-- sign request for the artifact -->
+                            <!--
+                            <plugin>
+                                <groupId>com.sap.prd.codesign</groupId>
+                                <artifactId>com.sap.prd.codesign.maven-jarsigner-plugin</artifactId>
+                            </plugin>
+                            -->
+        </plugins>
+
+    </build>
+
+
+            <!--**************************************************************************
+            * POM SECTION: Profile Settings
+            *************************************************************************** -->
+    <profiles>
+
+        <!-- enable ESLint validation when profile is active -->
+        <profile>
+            <id>eslint.build</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.sap.eslint</groupId>
+                        <artifactId>eslint-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <failOnError>true</failOnError>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
+
+    <distributionManagement>
+        <!-- LeanDI: Nexus Milestones Repository -->
+        <repository>
+            <id>leandi.nexus.milestone.repo</id>
+            <name>LeanDI Nexus Milestones Repository</name>
+            <url>dav:http://nexus.wdf.sap.corp:8081/nexus/content/repositories/deploy.milestones</url>
+        </repository>
+
+        <!-- LeanDI: Nexus Snapshots Repository -->
+        <snapshotRepository>
+            <id>leandi.nexus.snapshot.repo</id>
+            <name>LeanDI Nexus Snapshots Repository</name>
+            <url>dav:http://nexus.wdf.sap.corp:8081/nexus/content/repositories/deploy.snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

@@ -1,0 +1,26 @@
+{
+  "lastPerVersion": {
+    "rel-1.44": {
+      "changes": {
+        "default": {
+          "simple/pom.xml": "2",
+          "osgi-tycho/deploy.properties": "1",
+          "others/pom-mtl.xml": "1",
+          "osgi-tycho/feature.xml": "1",
+          "others/some-other-bundle.xml": "2",
+          "archetype/archetype-metadata.xml": "1",
+          "osgi-tycho/site.xml": "2",
+          "uilib-collection/pom.xml": "17",
+          "osgi-tycho/consumer.target": "1",
+          "others/bundle.xml": "2",
+          "uilib-collection/.library": "1",
+          "osgi-felix/pom.xml": "3",
+          "pom.xml": "2",
+          "osgi-tycho/pom.xml": "3",
+          "osgi-felix-phx/pom.xml": "3",
+          "uxap/pom.xml": "1"
+        }
+      }
+    }
+  }
+}
