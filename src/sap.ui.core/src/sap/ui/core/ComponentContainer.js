@@ -43,6 +43,11 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			url : {type : "sap.ui.core.URI", defaultValue : null},
 
 			/**
+			 * Flag whether the component should be created sync (default) or async.
+			 */
+			async : {type : "boolean", defaultValue : false},
+
+			/**
 			 * Enable/disable validation handling by MessageManager for this component.
 			 * The resulting Messages will be propagated to the controls.
 			 * This property can only be applied initially.
@@ -82,7 +87,14 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			 * this property is set to true the ID of the Component will be prefixed
 			 * with the ID of the ComponentContainer followed by a single dash.
 			 */
-			autoPrefixId : {type : "boolean", defaultValue: false}
+			autoPrefixId : {type : "boolean", defaultValue: false},
+
+			/**
+			 * The component usage. If the ComponentContainer is used inside a
+			 * Component, this Component can define a usage which will be used for creating
+			 * the Component.
+			 */
+			usage : {type : "string", defaultValue : null}
 
 		},
 		associations : {
@@ -166,6 +178,25 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 
 
 	/*
+	 * Helper to create the settings object for the Component Factory or the
+	 * createComponent function.
+	 */
+	function createComponentConfig(oComponentContainer) {
+		var sName = oComponentContainer.getName();
+		var sUsage = oComponentContainer.getUsage();
+		var mConfig = {
+			name: sName ? sName : undefined,
+			usage: sUsage ? sUsage : undefined,
+			async: oComponentContainer.getAsync(),
+			url: oComponentContainer.getUrl(),
+			handleValidation: oComponentContainer.getHandleValidation(),
+			settings: oComponentContainer.getSettings()
+		};
+		return mConfig;
+	}
+
+
+	/*
 	 * delegate the onBeforeRendering to the component instance
 	 */
 	ComponentContainer.prototype.onBeforeRendering = function() {
@@ -175,28 +206,27 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 		// ==> not in applySettings to make sure that components are lazy instantiated,
 		//     e.g. in case of invisible containers the component will not be created
 		//     immediately in the constructor.
-		var oComponent = this.getComponentInstance();
-		if (!oComponent) {
-			// create the component / link to the container (if a name is given)
-			var sName = this.getName();
-			if (sName) {
-				// helper to create and set a new component instance
-				var fnCreateAndSetComponent = function createAndSetComponent() {
-					oComponent = sap.ui.component({
-						name: sName,
-						url: this.getUrl(),
-						handleValidation: this.getHandleValidation(),
-						settings: this.getSettings()
-					});
-					this.setComponent(oComponent, true);
-				}.bind(this);
-				// delegate the owner component if available
-				var oOwnerComponent = Component.getOwnerComponentFor(this);
-				if (oOwnerComponent) {
-					oOwnerComponent.runAsOwner(fnCreateAndSetComponent);
-				} else {
-					fnCreateAndSetComponent();
-				}
+		var oComponent = this.getComponentInstance(),
+			sUsage = this.getUsage(),
+			sName = this.getName();
+		if (!oComponent && (sUsage || sName)) {
+			// determine the owner component
+			var oOwnerComponent = Component.getOwnerComponentFor(this),
+				mConfig = createComponentConfig(this);
+			// create the component instance
+			if (!oOwnerComponent) {
+				oComponent = sap.ui.component(mConfig);
+			} else {
+				oComponent = oOwnerComponent._createComponent(mConfig);
+			}
+			// check whether it is needed to delay to set the component or not
+			if (oComponent instanceof Promise) {
+				oComponent.then(function(oComponent) {
+					// set the component and invalidate to ensure a re-rendering!
+					this.setComponent(oComponent);
+				}.bind(this));
+			} else {
+				this.setComponent(oComponent, true);
 			}
 		}
 

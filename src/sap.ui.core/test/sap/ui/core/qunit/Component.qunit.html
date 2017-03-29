@@ -663,9 +663,164 @@
 			async: true
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
+			delete sap.ui.core.Component._fnOnInstanceCreated;
 		}, function(oError) {
 			assert.equal(oError.message, "Error from _fnOnInstanceCreated", "Promise should reject with error from hook");
+			delete sap.ui.core.Component._fnOnInstanceCreated;
 		});
+	});
+
+
+	QUnit.module("Component Usage");
+
+	sap.ui.define("my/used/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.used.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.used"
+					},
+					"sap.ui5" : {
+					}
+				}
+			},
+			constructor: function(mSettings) {
+				UIComponent.apply(this, arguments);
+				this._mSettings = mSettings;
+			}
+		});
+	});
+
+	sap.ui.define("my/usage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.usage.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.usage"
+					},
+					"sap.ui5" : {
+						"dependencies": {
+							"components": {
+								"my.used": {}
+							}
+						},
+						"componentUsages": {
+							"myUsage": {
+								"name": "my.used"
+							}
+						}
+					}
+				}
+			}
+		});
+	});
+
+	QUnit.test("Async creation of component usage", function(assert) {
+
+		var oComponent = sap.ui.component({
+			name : "my.usage"
+		});
+		var oSpy = sinon.spy(oComponent, "_createComponent");
+
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup() {
+				oSpy.restore();
+				oComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		sap.ui.require([
+			"sap/ui/core/Component",
+			"my/used/Component"
+		], function(Component, UsedComponent) {
+
+			var mConfig = {
+				usage: "myUsage",
+				settings: {
+					"key1": "value1"
+				},
+				componentData: {
+					"key2": "value2"
+				},
+				async: true,
+				asyncHints: {},
+				anything: "else"
+			};
+			var mSettings = jQuery.extend(true, {}, mConfig.settings, { componentData: mConfig.componentData });
+			oComponent.createComponent(mConfig).then(function(oComponentUsage) {
+				assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+				assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
+				assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+				assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
+				assert.equal("myUsage", oSpy.args[0][0].usage, "Nested component created with config 'usage: \"myUsage\"'");
+				assert.equal(true, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
+				assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
+				assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
+				assert.deepEqual(mConfig.componentData, oSpy.args[0][0].componentData, "ComponentUsage must receive the correct componentData");
+				assert.equal(undefined, oSpy.args[0][0].asyncHints, "ComponentUsage must not receive \"asyncHints\"");
+				assert.equal(undefined, oSpy.args[0][0].anything, "ComponentUsage must not receive \"anything\"");
+				done();
+			}).catch(function(oError) {
+				assert.ok(false, "createComponent must not be failing!");
+				done();
+			});
+
+		});
+
+	});
+
+	QUnit.test("Sync creation of component usage", function(assert) {
+
+		var oComponent = sap.ui.component({
+			name : "my.usage"
+		});
+		var oSpy = sinon.spy(oComponent, "_createComponent");
+
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup() {
+				oSpy.restore();
+				oComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		sap.ui.require([
+			"sap/ui/core/Component",
+			"my/used/Component"
+		], function(Component, UsedComponent) {
+
+			var mConfig = {
+				usage: "myUsage",
+				settings: {
+					"key1": "value1"
+				},
+				componentData: {
+					"key2": "value2"
+				},
+				async: false,
+				asyncHints: {},
+				anything: "else"
+			};
+			var mSettings = jQuery.extend(true, {}, mConfig.settings, { componentData: mConfig.componentData });
+			var oComponentUsage = oComponent.createComponent(mConfig);
+			assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
+			assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+			assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
+			assert.equal("myUsage", oSpy.args[0][0].usage, "Nested component created with config 'usage: \"myUsage\"'");
+			assert.equal(false, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
+			assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
+			assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
+			assert.deepEqual(mConfig.componentData, oSpy.args[0][0].componentData, "ComponentUsage must receive the correct componentData");
+			assert.equal(undefined, oSpy.args[0][0].asyncHints, "ComponentUsage must not receive \"asyncHints\"");
+			assert.equal(undefined, oSpy.args[0][0].anything, "ComponentUsage must not receive \"anything\"");
+			done();
+
+		});
+
 	});
 
 	</script>
