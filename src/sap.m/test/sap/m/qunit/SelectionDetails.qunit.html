@@ -634,6 +634,28 @@
 		assert.ok(aFacadeMethods.indexOf("navTo") > -1, "Facade contains method 'navTo'");
 	});
 
+	QUnit.test("Custom facade method implementation for getItems", function(assert) {
+		//Arrange
+		this.oSelectionDetails.addItem(new sap.m.SelectionDetailsItem());
+		this.oSelectionDetails.addItem(new sap.m.SelectionDetailsItem());
+
+		var oGetItemFacadesSpy = sinon.spy(sap.m.SelectionDetails.prototype, "_getItemFacades");
+		var oGetItemFacadeSpy = sinon.spy(sap.m.SelectionDetailsItem.prototype, "getFacade");
+		var oFacade = this.oSelectionDetails.getFacade();
+
+		//Act
+		var aItems = oFacade.getItems();
+
+		//Assert
+		assert.equal(oGetItemFacadesSpy.callCount, 1, "The correct method has been called.");
+		assert.equal(aItems.length, 2, "The correct number of item facades has been returned.");
+		assert.equal(oGetItemFacadeSpy.callCount, 2, "The correct number of item facades has been built.");
+
+		//Cleanuo
+		oGetItemFacadesSpy.restore();
+		oGetItemFacadeSpy.restore();
+	});
+
 	QUnit.module("Factory Function", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();

@@ -199,11 +199,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		return this;
 	};
 
-	/**
-	 * Returns the public facade of the SelectionDetails control for non inner framework usages.
-	 * @returns {sap.ui.base.Interface} The reduced facade for outer framework usages.
-	 * @protected
-	 */
 	SelectionDetails.prototype._aFacadeMethods = [
 		"addCustomData", "getCustomData", "indexOfCustomData", "insertCustomData",
 		"removeCustomData", "removeAllCustomData", "destroyCustomData",
@@ -218,10 +213,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		"addGroupAction", "removeGroupAction",
 		"navTo"
 	];
+
+	/**
+	 * Returns the public facade of the SelectionDetails control for non inner framework usages.
+	 * @returns {sap.ui.base.Interface} The reduced facade for outer framework usages.
+	 * @protected
+	 */
 	SelectionDetails.prototype.getFacade = function() {
 		var oFacade = new Interface(this, SelectionDetails.prototype._aFacadeMethods);
+
+		oFacade.getItems = this._getItemFacades.bind(this);
+
 		this.getFacade = jQuery.sap.getter(oFacade);
 		return oFacade;
+	};
+
+	/**
+	 * Builds a mapping of items to their respective facades via calling getFacade() on each item.
+	 * @returns {sap.ui.base.Interface} An array containing the interfaces to the items with all their relevant public methods
+	 * @private
+	 */
+	SelectionDetails.prototype._getItemFacades = function() {
+		var aItems = this.getItems();
+		var aItemFacades = [];
+
+		for (var i = 0; i < aItems.length; i++) {
+			aItemFacades.push(aItems[i].getFacade());
+		}
+
+		return aItemFacades;
 	};
 
 	/* =========================================================== */
