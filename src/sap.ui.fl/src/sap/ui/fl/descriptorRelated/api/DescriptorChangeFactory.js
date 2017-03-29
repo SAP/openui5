@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
-	"sap/ui/fl/registry/Settings"
-], function(ChangePersistenceFactory, ChangePersistence, Change, Utils, Settings) {
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils"
+], function(ChangePersistenceFactory, ChangePersistence, Change, Utils, Settings, FlexUtils) {
 	"use strict";
 
 	/**
@@ -127,7 +128,7 @@ sap.ui.define([
 
 		if ( this._sTransportRequest ) {
 			oChange.setRequest( this._sTransportRequest );
-		}  else if ( this._oSettings.isAtoEnabled() && this._mChangeFile.layer == 'CUSTOMER' ) {
+		}  else if ( this._oSettings.isAtoEnabled() && FlexUtils.isCustomerDependentLayer(this._mChangeFile.layer) ) {
 			oChange.setRequest( 'ATO_NOTIFICATION' );
 		}
 		return oChange;
@@ -178,8 +179,8 @@ sap.ui.define([
 			//default to 'CUSTOMER'
 			mPropertyBag.layer = 'CUSTOMER';
 		} else {
-			if (sLayer != 'VENDOR' && sLayer != 'CUSTOMER') {
-				throw new Error("Parameter \"sLayer\" needs to be 'VENDOR', 'CUSTOMER'");
+			if (sLayer != 'VENDOR' && !FlexUtils.isCustomerDependentLayer(sLayer)) {
+				throw new Error("Parameter \"sLayer\" needs to be 'VENDOR' or customer dependent");
 			}
 			mPropertyBag.layer = sLayer;
 		}

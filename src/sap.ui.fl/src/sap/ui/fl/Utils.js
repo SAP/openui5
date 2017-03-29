@@ -900,6 +900,16 @@ sap.ui.define([
 				this.log.warning("No Manifest received.");
 			}
 			return sVersion;
+		},
+
+		/**
+		 * Returns whether provided layer is a customer dependent layer
+		 *
+		 * @returns {boolean} true if provided layer is customer dependent layer else false
+		 * @public
+		 */
+		isCustomerDependentLayer : function(sLayerName) {
+			return (["CUSTOMER", "CUSTOMER_BASE"].indexOf(sLayerName) > -1);
 		}
 	};
 	return Utils;
