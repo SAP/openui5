@@ -421,7 +421,7 @@ sap.ui.define([
 		if (sUpToLayer) {
 			sUri += "&upToLayerType=" + sUpToLayer;
 		}
-		if (oComponent.appVersion) {
+		if (oComponent.appVersion && (oComponent.appVersion !== FlexUtils.DEFAULT_APP_VERSION)) {
 			sUri += "&appVersion=" + oComponent.appVersion;
 		}
 

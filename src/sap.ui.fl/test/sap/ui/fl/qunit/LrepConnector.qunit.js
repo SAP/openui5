@@ -487,6 +487,27 @@
 		});
 	});
 
+	QUnit.test("loadChanges ignores appVersion parameter to the request URL in case of default app version", function(assert) {
+		var sComponentClassName = "smartFilterBar.Component";
+		var sAppVersion = sap.ui.fl.Utils.DEFAULT_APP_VERSION;
+
+		var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName;
+
+		var oFakeResponse = {
+			response: {}
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+
+		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).then(function() {
+			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
+
+			var oCall = oSendStub.getCall(0);
+			var aCallArguments = oCall.args;
+			assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was not included");
+		});
+	});
+
 	QUnit.test("_loadChangesBasedOnOldRoute", function(assert) {
 		//Arrange
 		sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("MyComponentClassName");
