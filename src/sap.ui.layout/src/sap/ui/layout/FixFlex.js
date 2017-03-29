@@ -12,17 +12,32 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		/**
 		 * Constructor for a new FixFlex.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The FixFlex control builds the container for a layout with a fixed and a flexible part. The flexible container adapts its size to the fix container. The fix container can hold any number of controls, while the flexible container can hold only one.
-		 *
-		 * In order for the FixFlex to stretch properly, the parent element, in which the control is placed, needs to have a specified height or needs to have an absolute position.
-		 *
-		 * Warning: Avoid nesting FixFlex in other flexbox based layout controls (FixFlex, FlexBox, Hbox, Vbox). Otherwise contents may be not accessible or multiple scrollbars can appear.
-		 *
-		 * Note: If the child control of the flex or the fix container has width/height bigger than the container itself, the child control will be cropped in the view. If minFlexSize is set, then a scrollbar is shown in the flexible part, depending on the vertical property.
+		 * A layout container with a fixed and a flexible part.
+		 * <h3>Overview</h3>
+		 * The FixFlex control builds the container for a layout with a fixed and a flexible part. The flexible container adapts its size to the fix container.
+		 * <h4>Guidelines:</h4>
+		 * <ul>
+		 * <li>The fix container can hold any number of controls, while the flexible container can hold only one</li>
+		 * <li>In order for the FixFlex to stretch properly, the parent element, in which the control is placed, needs to have a specified height or needs to have an absolute position.</li>
+		 * <li>Avoid nesting FixFlex in other flexbox-based layout controls ({@link sap.ui.layout.FixFlex FixFlex}, {@link sap.m.FlexBox FlexBox}, Hbox, Vbox). Otherwise, contents may be not accessible or multiple scrollbars can appear.</li>
+		 * </ul>
+		 * <h3>Structure</h3>
+		 * The behavior of the FixFlex is controlled by the following properties:
+		 * <ul>
+		 * <li><code>fixContentSize</code> - The width/height of the fix part of the control</li>
+		 * <li><code>fixFirst</code> - The ordering of the fix and flex part</li>
+		 * <li><code>minFlexSize</code> - Scrolling inside the flex part, if its contents are large</li>
+		 * <li><code>vertical</code> - Alignment of the FixFlex control</li>
+		 * </ul>
+		 * <h3>Responsive Behavior</h3>
+		 * <ul>
+		 * <li>If the child control of the flex or the fix container has width/height bigger than the container itself, the child control will be cropped in the view.</li>
+		 * <li>If minFlexSize is set, then a scrollbar is shown in the flexible part, depending on the <code>vertical</code> property.</li>
+		 * </ul>
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
