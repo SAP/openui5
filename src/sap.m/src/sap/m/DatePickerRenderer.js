@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.m.DatePicker} oDP An object representation of the control that should be rendered.
 	 */
 	DatePickerRenderer.writeInnerAttributes = function(oRm, oDP) {
-
+		oRm.writeAttribute("type", "text");
 		if (oDP._bMobile) {
 			// prevent keyboard in mobile devices
 			oRm.writeAttribute("readonly", "readonly");
@@ -103,10 +103,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 
-		mAccessibilityState["multiline"] = false;
 		mAccessibilityState["autocomplete"] = "none";
 		mAccessibilityState["haspopup"] = true;
-		mAccessibilityState["owns"] = oDP.getId() + "-cal";
+		mAccessibilityState["expanded"] = false;
 
 		if (oDP._bMobile && oDP.getEnabled() && oDP.getEditable()) {
 			// if on mobile device readonly property is set, but should not be announced
