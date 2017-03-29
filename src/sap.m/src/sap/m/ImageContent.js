@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	/**
 	 * Constructor for a new sap.m.ImageContent control.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class This control can be displayed as image content in a tile.
 	 * @extends sap.ui.core.Control
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	 *
 	 * @public
 	 * @alias sap.m.ImageContent
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ImageContent = Control.extend("sap.m.ImageContent", /** @lends sap.m.ImageContent.prototype */ {
 		metadata : {
@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 			},
 			events : {
 				/**
-				 * The event is fired when the user chooses the image content.
+				 * The event is triggered when the image content is pressed.
 				 */
 				"press" : {}
 			}
@@ -99,10 +99,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	/**
 	 * Handler for user tap (click on desktop, tap on touch devices) event
 	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	ImageContent.prototype.ontap = function(oEvent) {
-		if (sap.ui.Device.browser.internet_explorer) {
+		if (sap.ui.Device.browser.msie) {
 			this.$().focus();
 		}
 		this.firePress();
@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	/**
 	 * Handler for keydown event
 	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	ImageContent.prototype.onkeydown = function(oEvent) {
 		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
