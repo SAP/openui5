@@ -497,7 +497,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					haspopup: !oOH.getTitleHref()
 				});
 			} else {
-				oRM.write("<span"); // Start Title Text container
+				oRM.write("<div"); // Start Title Text container
 			}
 
 			oRM.writeAttribute("id", oOH.getId() + "-title");
@@ -518,7 +518,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			if (oOH.getTitleActive()) {
 				oRM.write("</a>"); // End Title Text container
 			} else {
-				oRM.write("</span>"); // End Title Text container
+				oRM.write("</div>"); // End Title Text container
 			}
 		}
 
@@ -1258,11 +1258,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			nCutLen = 80;
 		}
 
-		oRM.write("<span"); // Start TitleArrow container
+		oRM.write("<div"); // Start TitleArrow container
 		oRM.writeAttribute("id", oOH.getId() + "-title-arrow");
 		oRM.write(">");
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
-		oRM.write("</span>");
+		oRM.write("</div>");
 
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oOH.getIntro()) {
