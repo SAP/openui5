@@ -170,8 +170,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 				this._oLabel = null;
 			}
 
-			this._oDialog.destroy();
-			this._oDialog = null;
+			if (this._oDialog) {
+				this._oDialog.destroy();
+				this._oDialog = null;
+			}
 		};
 
 		/**
