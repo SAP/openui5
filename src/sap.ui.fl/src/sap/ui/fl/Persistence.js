@@ -621,7 +621,7 @@ sap.ui.define([
 					aPromises.push(that._oConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
 						oChange.setResponse(result.response);
 						if (Cache.isActive()) {
-							Cache.addChange({ name: this._sComponentName, appVersion: that._sAppVersion}, result.response);
+							Cache.addChange({ name: that._sComponentName, appVersion: that._sAppVersion}, result.response);
 						}
 						return result;
 					}));
@@ -630,7 +630,7 @@ sap.ui.define([
 					aPromises.push(that._oConnector.update(oChange.getDefinition(), oChange.getId(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
 						oChange.setResponse(result.response);
 						if (Cache.isActive()) {
-							Cache.updateChange({ name: this._sComponentName, appVersion: that._sAppVersion}, result.response);
+							Cache.updateChange({ name: that._sComponentName, appVersion: that._sAppVersion}, result.response);
 						}
 						return result;
 					}));
@@ -649,7 +649,7 @@ sap.ui.define([
 						};
 						oChange.fireEvent(Change.events.markForDeletion, mParameter);
 						if (Cache.isActive()) {
-							Cache.deleteChange({ name: this._sComponentName, appVersion: that._sAppVersion}, oChange.getDefinition());
+							Cache.deleteChange({ name: that._sComponentName, appVersion: that._sAppVersion}, oChange.getDefinition());
 						}
 						return result;
 					}));
