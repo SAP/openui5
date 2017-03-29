@@ -42,10 +42,21 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					/**
 					 * Sets the minimum width of items.
 					 * It prevents items from becoming smaller than the value specified.
+					 * <b>Note:</b> if the <code>minItemWidth</code> is greater than <code>maxItemWidth</code>, the
+					 * <code>maxItemWidth</code> wins.
 					 */
 					minItemWidth: {
 						type: "sap.ui.core.AbsoluteCSSSize",
-						defaultValue: "240px" // =15rem, but easier to get pixel size TODO: Reasonable default?
+						defaultValue: "15rem" // TODO: Reasonable default?
+					},
+
+					/**
+					 * Sets the maximum width of items.
+					 * It prevents items from becoming larger than the value specified.
+					 */
+					maxItemWidth: {
+						type: "sap.ui.core.AbsoluteCSSSize",
+						defaultValue: "30rem"
 					}
 				},
 				defaultAggregation: "content",
@@ -53,7 +64,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 					/**
 					 * Defines the content contained within this control.
-					 * TODO: mention constraints, e.g. size/complexity of items, and whether content can be added that tries to adapt to the parent height.
+					 * Flow layouts are typically used to arrange input controls such as text input fields, labels, buttons, images, etc.
 					 */
 					content: {
 						type: "sap.ui.core.Control",

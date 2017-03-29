@@ -74,7 +74,7 @@ sap.ui.define(['./library'],
 			oRm.write("<li");
 			oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "Item");
 			oRm.addStyle("flex-basis", oControl.getMinItemWidth());
-			oRm.addStyle("max-width", "calc(2*" + oControl.getMinItemWidth() + ")"); // FIXME: max-width needs to be discussed, maybe optional (affects behavior when items do not even fill first row)
+			oRm.addStyle("max-width", oControl.getMaxItemWidth());
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
@@ -142,10 +142,9 @@ sap.ui.define(['./library'],
 		 * @param {int} iVisibleItems The number of items that should be visible
 		 */
 		AlignedFlowLayoutRenderer.renderSpacers = function(oRm, oControl, iVisibleItems) {
-
-			// TODO: what's a reasonable value? Make it configurable?
-			// But this only has an effect when all items fit into the first line and the control gets even wider.
-			var sMaxWidth = "calc(2*" + oControl.getMinItemWidth() + ")";
+			var sMinItemWidth = oControl.getMinItemWidth(),
+				sMaxItemWidth = oControl.getMaxItemWidth(),
+				CSS_CLASS = AlignedFlowLayoutRenderer.CSS_CLASS;
 
 			// We never need more than (windowWidth/minItemWidth). They just need to fill one row.
 			iVisibleItems = Math.max(1, iVisibleItems - 2);
@@ -160,10 +159,10 @@ sap.ui.define(['./library'],
 					oRm.writeAttribute("id", oControl.getId() + "-last");
 				}
 
-				oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "Item");
-				oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "Spacer");
-				oRm.addStyle("flex-basis", oControl.getMinItemWidth());
-				oRm.addStyle("max-width", sMaxWidth);
+				oRm.addClass(CSS_CLASS + "Item");
+				oRm.addClass(CSS_CLASS + "Spacer");
+				oRm.addStyle("flex-basis", sMinItemWidth);
+				oRm.addStyle("max-width", sMaxItemWidth);
 				oRm.writeClasses();
 				oRm.writeStyles();
 				oRm.write("></li>");
