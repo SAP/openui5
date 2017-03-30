@@ -12,7 +12,7 @@ sap.ui.define([
 
 		},
 
-		onCollapseExapandPress: function (event) {
+		onCollapseExpandPress: function (event) {
 			var navigationList = this.getView().byId('navigationList');
 			var expanded = !navigationList.getExpanded();
 
