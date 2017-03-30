@@ -904,6 +904,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 	};
 
+	SegmentedButton.prototype.clone = function () {
+		var sSelectedButtonId = this.getSelectedButton(),
+			aButtons = this.removeAllAggregation("buttons"),
+			oClone = Control.prototype.clone.apply(this, arguments),
+			iSelectedButtonIndex = aButtons.map(function(b) {
+				return b.getId();
+			}).indexOf(sSelectedButtonId),
+			i;
+
+		if (iSelectedButtonIndex > -1) {
+			oClone.setSelectedButton(oClone.getButtons()[iSelectedButtonIndex]);
+		}
+
+		for (i = 0; i < aButtons.length; i++) {
+			this.addAggregation("buttons", aButtons[i]);
+		}
+
+		return oClone;
+	};
+
 	return SegmentedButton;
 
 }, /* bExport= */ true);

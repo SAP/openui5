@@ -61,6 +61,26 @@
 		oSegmentedButton.destroy();
 	});
 
+	QUnit.test("clone", function(assert) {
+		//arrange
+		var oSB = new sap.m.SegmentedButton({
+				items: [
+					new sap.m.SegmentedButtonItem({ text: 'a' }),
+					new sap.m.SegmentedButtonItem({ text: 'b' })
+				]
+			}),
+			oSBClone;
+
+		oSB.setSelectedButton(oSB.getButtons()[1]);
+
+		//act
+		oSBClone = oSB.clone();
+
+		//assert
+		assert.equal(oSBClone.getButtons().length, oSB.getButtons().length, "cloning has the same number of buttons");
+		assert.equal(oSBClone.getSelectedButton(), oSBClone.getButtons()[1].getId(), "cloning has the same button selected");
+	});
+
 	/* =========================================================== */
 	/* Render module                                               */
 	/* =========================================================== */
