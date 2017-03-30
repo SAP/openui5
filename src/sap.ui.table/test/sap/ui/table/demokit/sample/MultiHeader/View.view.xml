@@ -33,7 +33,7 @@
 						</multiLabels>
 
 						<template>
-							<m:Text text="{street}"/>
+							<m:Text text="{street}" wrapping="false" />
 						</template>
 					</Column>
 
