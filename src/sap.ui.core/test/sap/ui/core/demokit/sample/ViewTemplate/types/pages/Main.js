@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/Opa5"
 ],
-function (EnterText, Press, Opa5) {
+function (Helper, EnterText, Press, Opa5) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
 
@@ -131,9 +132,7 @@ function (EnterText, Press, Opa5) {
 								.forEach(function (oLog) {
 									var sComponent = oLog.component || "";
 
-									if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
-											|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
-											&& oLog.level <= jQuery.sap.log.Level.WARNING) {
+									if (Helper.isRelevantLog(oLog)) {
 										if (isExpected(oLog)) {
 											Opa5.assert.ok(true,
 												"Expected Warning or error found: " + sComponent

@@ -156,22 +156,22 @@ sap.ui.define([
 					"SalesOrderList('')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_new.json"
 					},
-					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-%2Azui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001-ET-SALESORDER~CURRENCY_CODE%27/$metadata" : {
+					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-zui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001.ET-SALESORDER.CURRENCY_CODE%27/$metadata" : {
 						source : "VH_CurrencyCode.xml"
 					},
-					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-%2Azui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001-ET-SALESORDER~CURRENCY_CODE%27/H_TCURC_SH_SET?$skip=0&$top=20" : {
+					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-zui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001.ET-SALESORDER.CURRENCY_CODE%27/H_TCURC_SH_SET?$skip=0&$top=20" : {
 						source : "VH_CurrencyCode.json"
 					},
-					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-%2Azui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001-ET-PRODUCT~CATEGORY%27/$metadata" : {
+					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-zui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.CATEGORY%27/$metadata" : {
 						source : "VH_ProductCategory.xml"
 					},
-					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-%2Azui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001-ET-PRODUCT~CATEGORY%27/H_EPM_PD_CATS_SH_SET?$skip=0&$top=20" : {
+					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-zui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.CATEGORY%27/H_EPM_PD_CATS_SH_SET?$skip=0&$top=20" : {
 						source : "VH_ProductCategory.json"
 					},
-					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-%2Azui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001-ET-PRODUCT~TYPE_CODE%27/$metadata" : {
+					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.TYPE_CODE%27/$metadata" : {
 						source : "VH_ProductTypeCode.xml"
 					},
-					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-%2Azui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001-ET-PRODUCT~TYPE_CODE%27/D_PR_TYPE_FV_SET?$skip=0&$top=100" : {
+					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.TYPE_CODE%27/D_PR_TYPE_FV_SET?$skip=0&$top=100" : {
 						source : "VH_ProductTypeCode.json"
 					}
 }, "sap/ui/core/sample/odata/v4/SalesOrders/data",

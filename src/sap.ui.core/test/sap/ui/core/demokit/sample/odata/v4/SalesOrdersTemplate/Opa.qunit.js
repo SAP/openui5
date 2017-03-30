@@ -21,6 +21,7 @@ sap.ui.require([
 		});
 
 		When.onTheMainPage.pressValueHelpOnCurrencyCode();
+		When.onTheMainPage.pressValueHelpOnRole();
 		Then.onTheMainPage.checkLog();
 		Then.iTeardownMyUIComponent();
 	});
