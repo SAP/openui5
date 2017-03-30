@@ -89,6 +89,7 @@ sap.ui.require([
 
 			// act
 			this.oAlignedFlowLayout = new AlignedFlowLayout();
+			this.oContentDomRef = document.getElementById(CONTENT_ID);
 
 			// arrange
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
@@ -196,7 +197,7 @@ sap.ui.require([
 			this.oAlignedFlowLayout.addEndContent(oTextArea);
 
 			// arrange
-			document.getElementById(CONTENT_ID).style.width = "1280px";
+			this.oContentDomRef.style.width = "1280px";
 			this.oAlignedFlowLayout.addStyleClass("sapUiLargeMargin"); // add margin to detect overflow
 			this.oAlignedFlowLayout.setMinItemWidth("200px");
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
@@ -207,6 +208,51 @@ sap.ui.require([
 			assert.strictEqual(oItemDomRef.offsetTop, 0, "the end item should not overflow its container");
 		});
 	}
+
+	QUnit.test("it should set the maximum width of items", function(assert) {
+
+		// system under test
+		var oInput1 = new Input();
+		var oInput2 = new Input();
+
+		// arrange
+		this.oContentDomRef.style.width = "1000px";
+		this.oAlignedFlowLayout.addContent(oInput1);
+		this.oAlignedFlowLayout.addContent(oInput2);
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		var iExpectedWidth = 500;
+
+		// act
+		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+	});
+
+	QUnit.test("the maximum width win over the minimum width", function(assert) {
+
+		// system under test
+		var oInput1 = new Input();
+		var oInput2 = new Input();
+
+		// arrange
+		this.oContentDomRef.style.width = "1000px";
+		this.oAlignedFlowLayout.addContent(oInput1);
+		this.oAlignedFlowLayout.addContent(oInput2);
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		var iExpectedWidth = 500;
+
+		// act
+		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
+		this.oAlignedFlowLayout.setMinItemWidth((iExpectedWidth + 10) + "px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+	});
 
 	QUnit.test("getLastItemDomRef should return the last item DOM reference", function(assert) {
 
