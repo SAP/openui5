@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			this._oStyledPage = null;
 			this._oTitleInfo = null;
 			this._oSubTitleInfo = null;
-			this._oBackButton = null;
+			this._oBackButtonInfo = null;
 			this._oAdaptOptions = oAdaptOptions;
 		}
 	});
@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			bCollapseHeader = this._oAdaptOptions.bCollapseHeader;
 
 		if (bStylePage) {
-			this._adaptStyle("sapF2Adapted");
+			this._toggleStyle("sapF2Adapted", true, true /* suppress invalidate */);
 		}
 
 		this._adaptTitle();
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		return {
 			oTitleInfo: this._oTitleInfo,
 			oSubTitleInfo: this._oSubTitleInfo,
-			oBackButton: this._oBackButton,
+			oBackButtonInfo: this._oBackButtonInfo,
 			oStyledPage: this._oStyledPage
 		};
 	};
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		var bSuccess = !!this._oTitleInfo || !!this._oSubTitleInfo;
 
 		if (this._oTitleInfo) {
-			this._oTitleInfo.oControl.addStyleClass("sapF2AdaptedTitle");
+			this._oTitleInfo.oControl.toggleStyleClass("sapF2AdaptedTitle", true);
 		}
 
 		return bSuccess;
@@ -93,22 +93,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return false;
 		}
 
-		var bBackButtonHidden = false;
+		var bHideBackButton, bBackButtonHidden = false;
 
-		this._oBackButton = this._detectBackButton();
+		this._oBackButtonInfo = this._detectBackButton();
 
-		if (this._oBackButton) {
-			this._oBackButton.addStyleClass("sapF2AdaptedNavigation");
+		if (this._oBackButtonInfo) {
+			bHideBackButton = (this._oBackButtonInfo.visible === true);
+			this._oBackButtonInfo.oControl.toggleStyleClass("sapF2AdaptedNavigation", bHideBackButton);
 			bBackButtonHidden = true;
 		}
 		return bBackButtonHidden;
 	};
 
-	HeaderAdapter.prototype._adaptStyle = function(sClass) {
+	HeaderAdapter.prototype._toggleStyle = function(sStyleClass, bAdd, bSuppressInvalidate) {
 		var oPage = this._oHeader.getParent();
-		if (oPage) {
-			oPage.addStyleClass(sClass, true);
-			this._oStyledPage = oPage;
+		if (!oPage) {
+			return;
+		}
+		this._oStyledPage = oPage;
+
+		if (bAdd === true) {
+			oPage.addStyleClass(sStyleClass, bSuppressInvalidate);
+		} else if (bAdd === false) {
+			oPage.removeStyleClass(sStyleClass, bSuppressInvalidate);
+		} else if (bAdd === undefined) {
+			oPage.hasStyleClass(sStyleClass) ? oPage.removeStyleClass(sStyleClass, bSuppressInvalidate) : oPage.addStyleClass(sStyleClass, bSuppressInvalidate);
 		}
 	};
 
@@ -155,12 +164,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 
 	HeaderAdapter.prototype._detectBackButton = function() {
+		var aBeginContent, oBackButton;
 
 		if (HeaderAdapter._isAdaptableHeader(this._oHeader)) {
-			var aBeginContent = this._oHeader.getContentLeft();
-			if (aBeginContent.length > 0 && isInstanceOf(aBeginContent[0], "sap/m/Button") && (aBeginContent[0].getVisible() === true) &&
+			aBeginContent = this._oHeader.getContentLeft();
+			if (aBeginContent.length > 0 && isInstanceOf(aBeginContent[0], "sap/m/Button") &&
 				(aBeginContent[0].getType() === "Back" || aBeginContent[0].getType() === "Up" || aBeginContent[0].getIcon() === "sap-icon://nav-back")) {
-				return aBeginContent[0];
+				oBackButton = aBeginContent[0];
+				return {
+					id: oBackButton.getId(),
+					visible: oBackButton.getVisible(),
+					oControl: oBackButton,
+					sChangeEventId: "_change"
+				};
 			}
 		}
 	};
@@ -168,17 +184,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	HeaderAdapter.prototype._collapseHeader = function() {
 
 		var bTitleHidden = this._oTitleInfo,
-			bBackButtonHidden = this._oBackButton;
+			bBackButtonHidden = this._oBackButtonInfo,
+			aBeginContent,
+			aMiddleContent,
+			aEndContent,
+			bBeginContentHidden,
+			bMiddleContentHidden,
+			bEndContentHidden,
+			bAllContentHidden;
 
 		if (HeaderAdapter._isAdaptableHeader(this._oHeader)) {
-			var aBeginContent = this._oHeader.getContentLeft();
-			var aMiddleContent = this._oHeader.getContentMiddle();
-			var aEndContent = this._oHeader.getContentRight();
-			if ((aBeginContent.length === 0 || (aBeginContent.length === 1 && bBackButtonHidden)) &&
-				(aMiddleContent.length === 0 || (aMiddleContent.length === 1 && bTitleHidden)) &&
-				(aEndContent.length === 0)) {
-				this._adaptStyle("sapF2CollapsedHeader");
-			}
+			aBeginContent = this._oHeader.getContentLeft();
+			aMiddleContent = this._oHeader.getContentMiddle();
+			aEndContent = this._oHeader.getContentRight();
+
+			bBeginContentHidden = (aBeginContent.length === 1) && (isHiddenFromAPI(aBeginContent[0]) || bBackButtonHidden);
+			bMiddleContentHidden = (aMiddleContent.length === 1) && (isHiddenFromAPI(aMiddleContent[0]) || bTitleHidden);
+			bEndContentHidden = (aEndContent.length === 1) && isHiddenFromAPI(aEndContent[0]);
+
+			bAllContentHidden = (aBeginContent.length === 0 || bBeginContentHidden) &&
+				(aMiddleContent.length === 0 || bMiddleContentHidden) &&
+				((aEndContent.length === 0) || bEndContentHidden);
+
+			this._toggleStyle("sapF2CollapsedHeader", bAllContentHidden, true);
 		}
 	};
 
@@ -471,10 +499,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 
 	Fiori20Adapter._getCachedAdaptationResult = function(sViewId) {
+
+		var oBackButton = (oAdaptationResult.aViewBackButtons[sViewId] && oAdaptationResult.aViewBackButtons[sViewId].visible) //skip currently invisible buttons as the app has currently excluded them from the app logic
+			? oAdaptationResult.aViewBackButtons[sViewId].oControl
+			: undefined;
 		return {
 			oTitleInfo: oAdaptationResult.aViewTitles[sViewId],
 			oSubTitleInfo: oAdaptationResult.aViewSubTitles[sViewId],
-			oBackButton: oAdaptationResult.aViewBackButtons[sViewId]
+			oBackButton: oBackButton
 		};
 	};
 
@@ -554,24 +586,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		/* cache the identified title */
 		if (oAdaptedContent.oTitleInfo) {
 			oAdaptationResult.aViewTitles[sTopViewId] = oAdaptedContent.oTitleInfo;
-			this._registerChangeListener(oAdaptationResult.aViewTitles, sTopViewId, oAdaptOptions);
+			this._registerTextChangeListener(oAdaptationResult.aViewTitles, sTopViewId, oAdaptOptions);
 		}
 
 		/* cache the identified subTitle */
 		if (oAdaptedContent.oSubTitleInfo) {
 			oAdaptationResult.aViewSubTitles[sTopViewId] = oAdaptedContent.oSubTitleInfo;
-			this._registerChangeListener(oAdaptationResult.aViewSubTitles, sTopViewId, oAdaptOptions);
+			this._registerTextChangeListener(oAdaptationResult.aViewSubTitles, sTopViewId, oAdaptOptions);
 		}
 
 		/* cache the identified backButton */
-		if (oAdaptedContent.oBackButton) {
-			oAdaptationResult.aViewBackButtons[sTopViewId] = oAdaptedContent.oBackButton;
+		if (oAdaptedContent.oBackButtonInfo) {
+			oAdaptationResult.aViewBackButtons[sTopViewId] = oAdaptedContent.oBackButtonInfo;
+			this._registerVisibilityChangeListener(oAdaptationResult.aViewBackButtons, sTopViewId, oAdaptOptions);
 		}
 
 		return oAdaptedContent;
 	};
 
-	Fiori20Adapter._registerChangeListener = function(aTitleInfoCache, sViewId, oAdaptOptions) {
+	Fiori20Adapter._registerTextChangeListener = function(aTitleInfoCache, sViewId, oAdaptOptions) {
 
 		var oTitleInfo = aTitleInfoCache[sViewId]; //get the cached titleInfo for the given view
 
@@ -585,6 +618,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 			oTitleInfo.oControl.attachEvent(oTitleInfo.sChangeEventId, fnChangeListener);
 			oAdaptationResult.aChangeListeners[oTitleInfo.id] = fnChangeListener;
+		}
+	};
+
+	Fiori20Adapter._registerVisibilityChangeListener = function(aControlInfoCache, sViewId, oAdaptOptions) {
+
+		var oControlInfo = aControlInfoCache[sViewId]; //get the cached control info for the given view
+
+		if (oControlInfo && oControlInfo.oControl && oControlInfo.sChangeEventId && !oAdaptationResult.aChangeListeners[oControlInfo.id]) {
+
+			var fnChangeListener = function (oEvent) {
+				var oControlInfo = aControlInfoCache[sViewId];
+				oControlInfo.visible = oEvent.getParameter("newValue"); //actualize the value
+
+				var oParentControl = oControlInfo.oControl.getParent();
+				if (HeaderAdapter._isAdaptableHeader(oParentControl)) { // the parent is still an adaptable header
+					new HeaderAdapter(oParentControl, oAdaptOptions).adapt(); // re-adapt as visibility of inner content changed
+					this._fireViewChange(sViewId, oAdaptOptions);
+				}
+			}.bind(this);
+
+			oControlInfo.oControl.attachEvent(oControlInfo.sChangeEventId, fnChangeListener);
+			oAdaptationResult.aChangeListeners[oControlInfo.id] = fnChangeListener;
 		}
 	};
 
@@ -640,6 +695,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 	function isNonDependentObject(oObject) {
 		return oObject && (oObject.sParentAggregationName !== "dependents");
+	}
+
+	function isHiddenFromAPI(oObject) {
+		return oObject && (typeof oObject.getVisible === "function") && (oObject.getVisible() === false);
 	}
 
 	return Fiori20Adapter;
