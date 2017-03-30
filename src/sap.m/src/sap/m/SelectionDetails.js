@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetails.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface'],
-	function(jQuery, library, Control, Button, Interface) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface', "sap/ui/Device"],
+	function(jQuery, library, Control, Button, Interface, Device) {
 	"use strict";
 
 	/**
@@ -171,32 +171,101 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/**
 	 * Wraps the given content in {@link sap.m.Page page}, adds it to existing {@link sap.m.NavContainer NavContainer} and navigates to this newly created page.
 	 * Has no effect if the SelectionDetails is closed.
+	 * Lazily processes dependencies for the navigation event.
+	 *
 	 * @param {string} title The title property of the {@link sap.m.Page page} control to which the navigation should occur.
 	 * @param {sap.ui.core.Control} content The content of the control to which the navigation should occur.
 	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
 	 * @public
 	 */
 	SelectionDetails.prototype.navTo = function(title, content) {
-		var oPopover, oNavContainer, oPage, sPageId, fnPageClass;
-		if (!this.isOpen()) {
-			return;
+		if (this.isOpen()) {
+			sap.ui.require([
+				"sap/m/Page", "sap/m/Toolbar", "sap/m/ToolbarSpacer", "sap/m/Title"
+			], this._handleNavLazy.bind(this, title, content));
 		}
-		oPopover = this.getAggregation("_popover");
-		oNavContainer = oPopover.getContent()[0];
-		fnPageClass = sap.ui.require('sap/m/Page');
-		sPageId = this.getId() + "-page-for-" + content.getId();
-		oPage = new fnPageClass(sPageId, {
-			title: title,
-			showNavButton: true,
-			navButtonPress: function() {
-				oNavContainer.back();
-			},
-			content: [content]
-		});
-		// The logic in the overwritten addPage method of navContainer has to be executed.
-		oNavContainer.addPage(oPage);
-		oNavContainer.to(sPageId);
+
 		return this;
+	};
+
+	/**
+	 * Handles the wrapping of the content and the toolbar creation for the new page.
+	 *
+	 * @param {string} pageTitle The title property of the {@link sap.m.Page page} control to which the navigation should occur.
+	 * @param {sap.ui.core.Control} content The content of the control to which the navigation should occur.
+	 * @param {function} Page The constructor for sap.m.Page.
+	 * @param {function} Toolbar The constructor for sap.m.Toolbar.
+	 * @param {function} ToolbarSpacer The constructor for sap.m.ToolbarSpacer.
+	 * @param {function} Title The constructor for sap.m.Title.
+	 * @param {function} Button The constructor for sap.m.Button.
+	 * @private
+	 */
+	SelectionDetails.prototype._handleNavLazy = function(pageTitle, content, Page, Toolbar, ToolbarSpacer, Title, Button) {
+		var sPageId = this.getId() + "-page-for-" + content.getId();
+
+		var oPage = new Page(sPageId, {
+			customHeader: this._getPageToolbar(Toolbar, ToolbarSpacer, Title, true, pageTitle),
+			content: [ content ]
+		});
+
+		// The logic in the overwritten addPage method of navContainer has to be executed.
+		this._oNavContainer.addPage(oPage);
+		this._oNavContainer.to(sPageId);
+	};
+
+	/**
+	 * Updates the popover's customHeader aggregation and builds a new toolbar.
+	 * A back button and the title are added to the newly created toolbar.
+	 * Only on mobile devices a close button is added as well.
+	 * @param {function} Toolbar The constructor for sap.m.Toolbar.
+	 * @param {function} ToolbarSpacer The constructor for sap.m.ToolbarSpacer.
+	 * @param {function} Title The constructor for sap.m.Title.
+	 * @param {boolean} [showBackButton] If set to true, a back button with enabled navigation is added to the toolbar.
+	 * @param {string} [pageTitle] The title property of the {@link sap.m.Page page} control to which the navigation is going to occur.
+	 * @returns {sap.m.Toolbar} The new toolbar with an optional back button, an optional title and a close button that is only shown if used on a mobile device.
+	 * @private
+	 */
+	SelectionDetails.prototype._getPageToolbar = function(Toolbar, ToolbarSpacer, Title, showBackButton, pageTitle) {
+		var oToolbar = new Toolbar({
+			design: library.ToolbarDesign.Transparent
+		}).addStyleClass("sapMSDPageHeader");
+
+		if (showBackButton) {
+			var oBackButton = new Button({
+				type: library.ButtonType.Transparent,
+				icon: "sap-icon://nav-back",
+				press: this._oNavContainer.back.bind(this._oNavContainer)
+			});
+			oToolbar.addAggregation("content", oBackButton, true);
+		}
+
+		var oToolbarSpacer = new ToolbarSpacer();
+		var oTitle = new Title({
+			text: pageTitle,
+			titleStyle: sap.ui.core.TitleLevel.H5
+		});
+
+		oToolbar.addAggregation("content", oToolbarSpacer, true);
+		oToolbar.addAggregation("content", oTitle, true);
+		oToolbar.addAggregation("content", oToolbarSpacer.clone(), true);
+
+		if (Device.system.phone) {
+			oToolbar.addAggregation("content", this._getCloseButton(), true);
+		}
+
+		return oToolbar;
+	};
+
+	/**
+	 * Builds a new button that serves as a close button that can be put in page toolbars.
+	 * @returns {sap.m.Button} The newly created close button with an icon and a press handler attached
+	 * @private
+	 */
+	SelectionDetails.prototype._getCloseButton = function() {
+		return new Button({
+			icon: "sap-icon://decline",
+			press: this.close.bind(this)
+		});
 	};
 
 	SelectionDetails.prototype._aFacadeMethods = [
@@ -276,8 +345,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype._onToolbarButtonPress = function() {
 		sap.ui.require([
-			'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',
-			'sap/m/VBox', 'sap/m/FlexItemData', 'sap/m/ScrollContainer'
+			'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', "sap/m/Toolbar", 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',
+			'sap/m/VBox', 'sap/m/FlexItemData', 'sap/m/ScrollContainer', "sap/m/Title"
 		], this._handlePressLazy.bind(this));
 	};
 
@@ -286,6 +355,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {function} NavContainer The constructor of sap.m.NavContainer
 	 * @param {function} ResponsivePopover The constructor of sap.m.ResponsivePopover
 	 * @param {function} Page The constructor of sap.m.Page
+	 * @param {function} Toolbar The constructor of sap.m.Toolbar
 	 * @param {function} OverflowToolbar The constructor of sap.m.OverflowToolbar
 	 * @param {function} ToolbarSpacer The constructor of sap.m.ToolbarSpacer
 	 * @param {function} Button The constructor of sap.m.OverflowToolbarButton
@@ -294,10 +364,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {function} VBox The constructor of sap.m.VBox
 	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
 	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
+	 * @param {function} Title The constructor of sap.m.Title
 	 * @private
 	 */
-	SelectionDetails.prototype._handlePressLazy = function(NavContainer, ResponsivePopover, Page, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem, VBox, FlexItemData, ScrollContainer) {
-		var oPopover = this._getPopover(NavContainer, ResponsivePopover, Page, List, VBox, FlexItemData, ScrollContainer);
+	SelectionDetails.prototype._handlePressLazy =
+		function(NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem, VBox, FlexItemData, ScrollContainer, Title) {
+
+		var oPopover = this._getPopover(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, VBox, FlexItemData, ScrollContainer, Title);
 
 		if (this._oItemFactory) {
 			this._callFactory();
@@ -306,6 +379,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		this._addMainListItems();
 		this._addActionGroupListItems(StandardListItem);
 		this._addListActions(OverflowToolbar, ToolbarSpacer, Button);
+
+		this._oNavContainer.setProperty("defaultTransitionName", "show", true);
+		this._oNavContainer.to(this._oInitialPage);
+		this._oNavContainer.setProperty("defaultTransitionName", "slide", true);
 
 		oPopover.invalidate(); //trigger a rendering of the updated lists and toolbars
 		oPopover.openBy(this.getAggregation("_button"));
@@ -339,15 +416,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	/**
 	 * Creates and returns the internal initial Page. If the Page does not yet exist, it is created.
 	 * @param {function} Page The constructor of sap.m.Page
+	 * @param {function} Toolbar The constructor of sap.m.Toolbar
+	 * @param {function} ToolbarSpacer The constructor of sap.m.ToolbarSpacer
+	 * @param {function} Title The constructor of sap.m.Title
 	 * @returns {sap.m.Page} The newly created or existing Page
 	 * @private
 	 */
-	SelectionDetails.prototype._getInitialPage = function(Page) {
+	SelectionDetails.prototype._getInitialPage = function(Page, Toolbar, ToolbarSpacer, Title) {
 		if (!this._oInitialPage) {
 			this._oInitialPage = new Page(this.getId() + "-page", {
 				showHeader: false,
 				enableScrolling: false
 			});
+
+			if (Device.system.phone) {
+				this._oInitialPage.setProperty("showHeader", true, true);
+				this._oInitialPage.setAggregation("customHeader", this._getPageToolbar(Toolbar, ToolbarSpacer, Title));
+			}
 		}
 
 		return this._oInitialPage;
@@ -359,23 +444,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @returns {sap.m.NavContainer} The newly created NavContainer
 	 * @private
 	 */
-	SelectionDetails.prototype._createNavContainer = function(NavContainer) {
-		return new NavContainer(this.getId() + "-nav-container");
+	SelectionDetails.prototype._getNavContainer = function(NavContainer) {
+		return this._oNavContainer || (this._oNavContainer = new NavContainer(this.getId() + "-nav-container"));
 	};
 
 	/**
 	 * Returns the internal popover. In case it is not created yet, it is created with the minimal layout structure.
 	 * @param {function} NavContainer The constructor of sap.m.NavContainer
 	 * @param {function} ResponsivePopover The constructor of sap.m.ResponsivePopover
+	 * @param {function} Toolbar The constructor of sap.m.Toolbar
+	 * @param {function} ToolbarSpacer The constructor of sap.m.ToolbarSpacer
 	 * @param {function} Page The constructor of sap.m.Page
 	 * @param {function} List The constructor of sap.m.List
 	 * @param {function} VBox The constructor of sap.m.VBox
 	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
 	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
+	 * @param {function} Title The constructor of sap.m.Title
 	 * @returns {sap.m.ResponsivePopover} The newly created or existing popover.
 	 * @private
 	 */
-	SelectionDetails.prototype._getPopover = function(NavContainer, ResponsivePopover, Page, List, VBox, FlexItemData, ScrollContainer) {
+	SelectionDetails.prototype._getPopover = function(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, VBox, FlexItemData, ScrollContainer, Title) {
 		var oPopover = this.getAggregation("_popover"),
 			oNavContainer,
 			oPage,
@@ -395,10 +483,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			}).addStyleClass("sapMSD");
 
 			//build popover contents
-			oPage = this._getInitialPage(Page);
+			oPage = this._getInitialPage(Page, Toolbar, ToolbarSpacer, Title);
 			oActionGroupList = this._getActionGroupList(List);
 
-			oNavContainer = this._createNavContainer(NavContainer);
+			oNavContainer = this._getNavContainer(NavContainer);
 			oMainContainer = this._createMainContainer(VBox);
 			oMainListContainer = this._createMainListContainer(ScrollContainer, List, VBox, FlexItemData);
 
