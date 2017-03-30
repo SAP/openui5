@@ -15,6 +15,11 @@ Related UI5 Projects
     display: flex;
     justify-content: center;
 }
+.Header-container {
+    display: -webkit-flex;
+    display: flex;
+    margin-left: 17%;
+}
 
 .paragraph {
     width: 66%;
