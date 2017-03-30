@@ -19,23 +19,9 @@ sap.ui.define([
    *
    * The standard implementation of Gherkin is in Ruby. This is a JavaScript implementation for English only.
    *
-   * This class generates a FeatureTest object. The FeatureTest object is composed of a series of ScenarioTests, each of
+   * This class generates a FeatureTest object. The FeatureTest object is composed of a series of TestScenarios, each of
    * which is composed of a series of TestSteps. Each TestStep is created by matching a Gherkin test step with a step
-   * definition. We expect the test runner to execute each ScenarioTest within its own execution context, and within
-   * each scenario to execute each TestStep one after the other.
-   *
-   * If a TestStep indicates that it should be skipped (e.g. because the generator failed to match the test step to a
-   * step definition) then the test runner should not run that step but should still display it. Any unmatched TestSteps
-   * will have their "text" attribute prefixed with "(NOT FOUND)", and then any subsequent steps will be prefixed with
-   * "(SKIPPED)".
-   *
-   * Any feature, scenario, scenario outline or example annotated with the tag "@wip" will be skipped and (except for
-   * Examples) will have the prefix "(WIP)" added to its text. For a non-wip scenario/feature, any step that is not found
-   * should fail the build.
-   *
-   * The GherkinTestGenerator supports the whole Gherkin feature set except the following:
-   *    1. Tags other than "@wip" are ignored
-   *    2. Hooks are not supported
+   * definition.
    *
    * A FeatureTest object looks like this:
    * <pre>
@@ -43,11 +29,11 @@ sap.ui.define([
    *    name: "Feature: Serve expensive coffee",  // {string} the feature name from the Gherkin file
    *    skip: false,                              // {boolean} true if the feature should not be executed
    *    wip: false,                               // {boolean} true if the feature is a work in progress
-   *    testScenarios: [{                         // {[ScenarioTest]} test scenarios to be run in this FeatureTest
+   *    testScenarios: [{                         // {[TestScenario]} test scenarios to be run in this FeatureTest
    *      name: "Scenario: Buy first coffee",     // {string} the scenario name from the Gherkin file
    *      skip: false,                            // {boolean} true if the scenario should not be executed
    *      wip: false,                             // {boolean} true if the scenario is a work in progress
-   *      testSteps: [{                           // {[TestStep]} test steps that are part of this ScenarioTest
+   *      testSteps: [{                           // {[TestStep]} test steps that are part of this TestScenario
    *        isMatch: true,                        // {boolean} true if the Gherkin scenario matched a step definition
    *        skip: false,                          // {boolean} true if the test step should not be executed
    *        text: "coffee costs $18 per cup",     // {string} the test step's text as defined in the Gherkin file
