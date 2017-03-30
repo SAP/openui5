@@ -188,8 +188,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				]
 			}).addStyleClass('sapTntNavLIPopup');
 
-			navList.setHasListBoxRole(true);
-
 			if (selectedItem == this) {
 				popupSelectedItem = newGroup;
 				navList.isGroupSelected = true;
@@ -278,7 +276,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			this.setProperty('expanded', true, true);
-			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', true);
+			this.$().attr('aria-expanded', true);
 
 			var expandIconControl = this._getExpandIconControl();
 			expandIconControl.setSrc(NavigationListItem.collapseIcon);
@@ -304,7 +302,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			this.setProperty('expanded', false, true);
-			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', false);
+			this.$().attr('aria-expanded', false);
 
 			var expandIconControl = this._getExpandIconControl();
 			expandIconControl.setSrc(NavigationListItem.expandIcon);
@@ -402,17 +400,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			if (control.getExpanded()) {
-				// ARIA
-				if (control.getHasListBoxRole()) {
-					rm.writeAttribute("role", 'option');
-				} else {
-					rm.writeAttribute("role", 'treeitem');
-					if (this.getItems().length > 0) {
-						rm.writeAttribute("aria-expanded", this.getExpanded());
-					}
-					rm.writeAttribute("aria-level", 1);
-				}
-
 				var text = this.getText();
 
 				var sTooltip = this.getTooltip_AsString() || text;
@@ -455,6 +442,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			rm.write('<li');
 			rm.writeElementData(this);
+			rm.writeAttribute("aria-expanded", this.getExpanded());
+			rm.writeAttribute("aria-level", 1);
 
 			if (this.getEnabled() && !isListExpanded) {
 				rm.write(' tabindex="-1"');
@@ -476,8 +465,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				rm.writeAttribute("role", 'button');
 				rm.writeAttribute("aria-haspopup", true);
 			} else {
-				rm.write(' role="presentation" ');
+				rm.writeAttribute("role", "treeitem");
 			}
+
+			rm.writeAttribute("tabindex", "0");
 
 			rm.write(">");
 
@@ -487,6 +478,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 				rm.write("<ul");
 
+				rm.writeAttribute("role", "group");
 				rm.addClass("sapTntNavLIGroupItems");
 
 				if (!expanded) {
@@ -536,12 +528,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			// ARIA
-			if (control.getHasListBoxRole()) {
-				rm.writeAttribute("role", 'option');
-			} else {
-				rm.writeAttribute("role", 'treeitem');
-				rm.writeAttribute("aria-level", 2);
-			}
+			rm.writeAttribute("role", 'treeitem');
+			rm.writeAttribute("aria-level", 2);
 
 			rm.writeClasses();
 
@@ -687,11 +675,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			var $this = this.$();
 
-			if (this.getParent().getExpanded()) {
-				domRefs.push($this.find('.sapTntNavLIGroup')[0]);
-			} else {
-				domRefs.push($this[0]);
-			}
+			domRefs.push($this[0]);
 
 			if (this.getExpanded()) {
 				var subItems = $this.find('.sapTntNavLIGroupItem');
