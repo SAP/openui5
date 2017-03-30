@@ -1,0 +1,6 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<HBox id="vbox">
+		<Button text="{$this>/buttonText}"></Button>
+		<Text text="{$this>/infoText}"></Text>
+	</HBox>
+</core:FragmentDefinition>

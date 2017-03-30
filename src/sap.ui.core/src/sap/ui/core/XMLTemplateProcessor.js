@@ -510,7 +510,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 					// inspect only element nodes
 					if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
 
-						if (childNode.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.mdc.fragmentcontrol/1") {
+						if (childNode.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.fragmentcontrol/1") {
 							mSettings[localName(childNode)] = childNode.querySelector("*");
 							return;
 						}
