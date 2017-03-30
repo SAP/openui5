@@ -613,6 +613,7 @@ sap.ui.define([
 					this._oOverflowActionSheet.addButton(oActionSheetButton);
 					fnGenerateSetterProxy("text", oAction, oActionSheetButton);
 					fnGenerateSetterProxy("icon", oAction, oActionSheetButton);
+					fnGenerateSetterProxy("enabled", oAction, oActionSheetButton);
 				}
 			}, this);
 		}
