@@ -549,6 +549,8 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 			if (!oChildElementOverlay) {
 				var bIsInHiddenTree = OverlayRegistry.getOverlay(oParent).getAggregationOverlay(sAggregationName).isInHiddenTree();
 				this._createElementOverlay(oChild, bIsInHiddenTree);
+			} else {
+				oChildElementOverlay.setDesignTimeMetadata(oChildElementOverlay._oOriginalDesignTimeMetadata);
 			}
 		}
 	};
