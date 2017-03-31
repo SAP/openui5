@@ -166,12 +166,6 @@ sap.ui.define([
 	 * @returns {sap.f.semantic.SemanticShareMenu}
 	 */
 	SemanticShareMenu.prototype.destroy = function() {
-		this._aShareMenuActions.forEach(function(oControl) {
-			oControl.destroy();
-		});
-
-		this.destroyCustomActions();
-
 		this._oShareMenuBtn = null;
 		this._aShareMenuActions = null;
 		this._aCustomShareActions = null;
