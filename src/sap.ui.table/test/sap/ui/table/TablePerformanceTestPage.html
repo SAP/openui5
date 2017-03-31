@@ -339,7 +339,7 @@
 					if (i === iColumns - 1) {
 						iColumnWidth = undefined;
 					}
-					oControl = new sap.m.Text({text: "{c" + i + "}"});
+					oControl = new sap.m.Text({text: "{c" + i + "}", wrapping: false});
 					oColumn = new sap.ui.table.Column({
 						label: new sap.m.Label({text: "m.Text"}),
 						template: oControl,
