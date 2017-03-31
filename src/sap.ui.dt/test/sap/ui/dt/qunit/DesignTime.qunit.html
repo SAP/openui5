@@ -197,16 +197,15 @@
 			});
 
 			QUnit.test("... and the control is removed from root element", function(assert) {
-				var that = this;
 				var done = assert.async();
 
 				this.oInnerLayout.removeContent(this.oButton1);
 
 				this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
-					assert.strictEqual(oEvent.getParameter("overlay").getElementInstance(), that.oButton1, "overlay for button is destroyed");
+					assert.strictEqual(oEvent.getParameter("overlay").getElementInstance(), this.oButton1, "overlay for button is destroyed");
 					done();
-					that.oButton1.destroy();
-				});
+					this.oButton1.destroy();
+				}.bind(this));
 			});
 
 			QUnit.module("Given that an DesignTime is created for a root control", {
@@ -235,6 +234,17 @@
 				}, this);
 
 				this.oButton1.destroy();
+			});
+
+			QUnit.test("when the element inside of the DesignTime is moved to 'dependents' aggregation", function(assert) {
+				var done = assert.async();
+
+				this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
+						assert.strictEqual(oEvent.getParameter("overlay").getElementInstance(), this.oButton1, "overlay for button is destroyed");
+						done();
+				}, this);
+
+				this.oInnerLayout.addDependent(this.oButton1);
 			});
 
 			QUnit.test("when the overlay is selected inside of the DesignTime", function(assert) {
@@ -297,22 +307,22 @@
 
 			QUnit.test("when the DesignTime is initialized", function(assert) {
 				assert.ok(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), "overlay for layout1 exists");
-				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 not exists");
+				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 doesn't exist");
 				assert.ok(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), "overlay for layout3 exists");
 			});
 
 			QUnit.test("when the DesignTime is initialized and one root element is removed", function(assert) {
 				this.oDesignTime.removeRootElement(this.oLayout3);
 				assert.ok(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), "overlay for layout1 exists");
-				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 doesn't exists");
-				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), false, "overlay for layout3 doesn't exists");
+				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 doesn't exist");
+				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), false, "overlay for layout3 doesn't exist");
 			});
 
 			QUnit.test("when the DesignTime is initialized and all root elements are removed", function(assert) {
 				this.oDesignTime.removeAllRootElement();
-				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), false, "overlay for layout1 doesn't exists");
-				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 doesn't exists");
-				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), false, "overlay for layout3 doesn't exists");
+				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), false, "overlay for layout1 doesn't exist");
+				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 doesn't exist");
+				assert.strictEqual(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), false, "overlay for layout3 doesn't exist");
 			});
 
 			QUnit.test("when the DesignTime is initialized and one root element is added", function(assert) {
