@@ -4472,7 +4472,7 @@ sap.ui.define([
 				delete that.mChangedEntities[sKey];
 			});
 		}
-		this.checkUpdate();
+		this.checkUpdate(true);
 	};
 
 	/**
