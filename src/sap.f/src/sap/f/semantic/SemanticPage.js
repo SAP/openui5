@@ -330,6 +330,7 @@ sap.ui.define([
 	* LIFECYCLE METHODS
 	*/
 	SemanticPage.prototype.init = function () {
+		this._bSPBeingDestroyed = false;
 		this._initDynamicPage();
 		this._attachShareMenuButtonChange();
 		this._fnActionSubstituteParentFunction = function () {
@@ -338,6 +339,7 @@ sap.ui.define([
 	};
 
 	SemanticPage.prototype.exit = function () {
+		this._bSPBeingDestroyed = true;
 		this._cleanMemory();
 	};
 
@@ -444,7 +446,7 @@ sap.ui.define([
 			if (oObject) {
 				sPlacement = SemanticConfiguration.getPlacement(sType);
 				this._onRemoveAggregation(oObject, sType);
-				this._getSemanticContainer(sPlacement).removeContent(oObject, sPlacement);
+				!this._bSPBeingDestroyed && this._getSemanticContainer(sPlacement).removeContent(oObject, sPlacement);
 			}
 		}
 

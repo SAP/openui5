@@ -85,21 +85,6 @@ sap.ui.define([
 	* @returns {sap.f.semantic.SemanticFooter}
 	*/
 	SemanticTitle.prototype.destroy = function() {
-		this._aSemanticTextActions.forEach(function(oControl) {
-			oControl.destroy();
-		});
-
-		this._aSemanticSimpleIconActions.forEach(function(oControl) {
-			oControl.destroy();
-		});
-
-		this._aSemanticNavIconActions.forEach(function(oControl) {
-			oControl.destroy();
-		});
-
-		this.destroyCustomTextActions();
-		this.destroyCustomIconActions();
-
 		this._aSemanticSimpleIconActions = null;
 		this._aSemanticTextActions = null;
 		this._aCustomTextActions = null;
