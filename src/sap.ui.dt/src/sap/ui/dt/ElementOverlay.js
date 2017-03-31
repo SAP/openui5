@@ -468,7 +468,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			oNewPropagationInfo.relevantContainerFunction = function() { return true; };
 			oNewPropagationInfo.relevantContainerElement = this.getElementInstance();
 		} else {
-			throw new Error("wrong type: it should be either a function or a boolean value and it is:",
+			throw new Error("wrong type: it should be either a function or a boolean value and it is:" +
 				typeof oElementDtMetadataForAggregation.propagateRelevantContainer);
 		}
 		return true;
