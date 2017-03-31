@@ -206,7 +206,7 @@ sap.ui.define([
 				this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			}
 
-			if (!this.oServiceData.oMetadata) {
+			if (!this.oServiceData.oMetadata || this.oServiceData.oMetadata.bFailed) {
 				//create Metadata object
 				this.oMetadata = new ODataMetadata(sMetadataUrl,{
 					async: true,
@@ -247,8 +247,6 @@ sap.ui.define([
 			this.oMetadata.loaded().then(this._initializeMetadata.bind(this));
 			if (!this.oMetadata.isLoaded()) {
 				this.oMetadata.attachFailed(this.onMetadataFailed);
-			} else if (this.oMetadata.isFailed()){
-				this.refreshMetadata();
 			}
 
 
