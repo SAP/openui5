@@ -50,7 +50,6 @@
 }
 
 .sapMGTLineMode .sapMGTActionsContainer .sapMGTRemoveButton {
-	border: 1px solid @sapUiButtonBorderColor;
 	background-color: @sapUiButtonBackground;
 	color: @sapUiButtonTextColor;
 
@@ -90,7 +89,7 @@
 	}
 }
 .sapUiMedia-GenericTileDeviceSet-large {
-	.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+	&.sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 		&:hover .sapMGTLineStyleHelperInner {
 			background: fade(@sapUiShellHoverBackground, 10);
 		}
