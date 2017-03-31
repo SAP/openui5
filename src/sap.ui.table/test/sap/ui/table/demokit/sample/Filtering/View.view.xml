@@ -49,7 +49,7 @@
 						filterProperty="Name">
 						<m:Label text="Product Name" />
 						<template>
-							<m:Text text="{Name}"/>
+							<m:Text text="{Name}" wrapping="false" />
 						</template>
 					</Column>
 					<Column
@@ -58,7 +58,7 @@
 						defaultFilterOperator="StartsWith">
 						<m:Label text="Category" />
 						<template>
-							<m:Text text="{Category}"/>
+							<m:Text text="{Category}" wrapping="false" />
 						</template>
 					</Column>
 					<Column width="9rem">

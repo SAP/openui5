@@ -20,7 +20,7 @@
 					<Column width="11rem">
 						<m:Label text="Product Name" />
 						<template>
-							<m:Text text="{Name}"/>
+							<m:Text text="{Name}" wrapping="false" />
 						</template>
 					</Column>
 					<Column width="11rem">
