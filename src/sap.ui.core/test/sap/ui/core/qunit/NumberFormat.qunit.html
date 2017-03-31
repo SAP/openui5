@@ -620,6 +620,13 @@
 			precision: 2
 		});
 		equal(oFormat.format(fNum), "12,346", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			precision: 5,
+			decimals: 3
+		});
+
+		equal(oFormat.format(100), "100.00", "100 formatted with precision 5 and decimals 3");
 	});
 
 	test("Priority of properties (short style): maxFractionDigits, decimals, shortDecimals, precision", function() {
