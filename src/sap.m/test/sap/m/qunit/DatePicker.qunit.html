@@ -656,6 +656,27 @@
 			});
 
 			module("ARIA");
+
+			test("aria-ownes and aria-expanded correctly set", function() {
+				var oDP = new sap.m.DatePicker("DP", {}).placeAt("uiArea4");
+				sap.ui.getCore().applyChanges();
+
+				//before opening the popup
+				strictEqual(oDP.$("inner").attr("type"), "text", "DP input has correct type 'text'");
+				ok(!oDP.$("inner").attr("aria-owns"), "DP input does not have 'aria-owns' until the picker gets open");
+				equal(oDP.$("inner").attr("aria-expanded"), "false", "DP input has 'aria-expand' set to false when the picker is not open");
+
+				// open DatePicker
+				oDP.focus();
+				qutils.triggerEvent("click", "DP-icon");
+
+				//after opening popup
+				equal(oDP.$("inner").attr("aria-owns"), "DP-cal", "DP input has correct 'aria-owns' when the picker is open");
+				equal(oDP.$("inner").attr("aria-expanded"), "true", "DP input has 'aria-expand' set to true when the picker is open");
+
+				oDP.destroy();
+			});
+
 			test("Tooltip and date annoncement should be set correctly at the described by", function() {
 				var sTooltip = "tooltip";
 				var sPlaceholder = "placeholder";
