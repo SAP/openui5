@@ -306,7 +306,7 @@ sap.ui.require([
 				var oPassedFlexData1 = oPayload[1];
 				assert.equal(oPassedFlexData1.reference, sReference2 + " - " + sAppVersion1);
 				var oPassedFlexData1 = oPayload[2];
-				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + sDefaultAppVersion);
+				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + "Version independent");
 				var oPassedFlexData2 = oPayload[3];
 				assert.equal(oPassedFlexData2.reference, sReference1 + " - " + sAppVersion2);
 				var oPassedFlexData2 = oPayload[4];

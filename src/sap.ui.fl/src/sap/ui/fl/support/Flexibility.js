@@ -117,8 +117,8 @@ sap.ui.define([
 
 				var oResult = [];
 				var aPendingPromises = [];
-				var aComponents = [];
-				var aAppVersions = [];
+				var aComponents;
+				var aAppVersions;
 
 				aComponents = Object.keys(oCacheEntries);
 				aComponents.sort();
@@ -149,6 +149,9 @@ sap.ui.define([
 					});
 					aAppVersions.forEach(function(sAppVersion) {
 						var oEntry = oCacheEntries[sFlexReference][sAppVersion];
+						if (sAppVersion === Utils.DEFAULT_APP_VERSION) {
+							sAppVersion = "Version independent";
+						}
 						var aChanges = oEntry.file.changes.changes.slice(0);
 						var aContexts = oEntry.file.changes.contexts.slice(0);
 
