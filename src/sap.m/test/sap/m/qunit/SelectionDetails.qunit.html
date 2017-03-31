@@ -20,9 +20,9 @@
 
 <script>
 	var aDependencies = [
-		"sap/m/NavContainer", "sap/m/ResponsivePopover", "sap/m/Page", "sap/m/OverflowToolbar",
-		"sap/m/ToolbarSpacer", "sap/m/Button", "sap/m/List", "sap/m/StandardListItem", "sap/m/VBox",
-		"sap/m/FlexItemData", "sap/m/ScrollContainer"
+		'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', "sap/m/Toolbar", 'sap/m/OverflowToolbar',
+		'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',
+		'sap/m/VBox', 'sap/m/FlexItemData', 'sap/m/ScrollContainer', "sap/m/Title"
 	];
 	var aHandlePressLazyArgs;
 	QUnit.config.autostart = false;
@@ -30,7 +30,6 @@
 		aHandlePressLazyArgs = jQuery.makeArray(arguments);
 		QUnit.start();
 	});
-
 
 	QUnit.module("Default values", {
 		beforeEach : function() {
@@ -170,37 +169,60 @@
 			this.oSelectionDetails = new sap.m.SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			sinon.spy(sap.m, "ResponsivePopover");
+			sinon.spy(sap.m, "Page");
+			sinon.spy(sap.m, "List");
+			sinon.spy(sap.m, "ScrollContainer");
+			sinon.spy(sap.m, "NavContainer");
+			this._aGetPopoverArgs = [
+				sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Toolbar, sap.m.ToolbarSpacer, sap.m.Page,
+				sap.m.List, sap.m.VBox, sap.m.FlexItemData, sap.m.ScrollContainer, sap.m.Title
+			];
 		},
 		afterEach: function() {
+			sap.m.ResponsivePopover.restore();
+			sap.m.Page.restore();
+			sap.m.List.restore();
+			sap.m.ScrollContainer.restore();
+			sap.m.NavContainer.restore();
+
 			this.oSelectionDetails.destroy();
 			this.oSelectionDetails = null;
+			this._aGetPopoverArgs = null;
 		}
 	});
 
 	QUnit.test("Function _getPopover only creates Popover and its contents once", function(assert) {
 		//Arrange
-		sinon.spy(sap.m, "ResponsivePopover");
-		sinon.spy(sap.m, "Page");
-		sinon.spy(sap.m, "List");
-		sinon.spy(sap.m, "ScrollContainer");
-		sinon.spy(sap.m, "NavContainer");
-		var oPopover = this.oSelectionDetails._getPopover(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.List, sap.m.VBox, sap.m.FlexItemData, sap.m.ScrollContainer);
+		var oPopover = this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
 
 		//Act
 		//Assert
-		assert.deepEqual(this.oSelectionDetails._getPopover(sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Page, sap.m.List, sap.m.VBox, sap.m.FlexItemData, sap.m.ScrollContainer), oPopover, "Return value is correct.");
+		assert.deepEqual(this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs), oPopover, "Return value is correct.");
 		assert.equal(sap.m.ResponsivePopover.callCount, 1, "Constructor for ResponsivePopover has been called only once.");
 		assert.equal(sap.m.Page.callCount, 1, "Constructor for Page has been called only once.");
 		assert.equal(sap.m.List.callCount, 2, "Constructor for List has been called twice.");
 		assert.equal(sap.m.ScrollContainer.callCount, 1, "Constructor for ScrollContainer has been called only once.");
 		assert.equal(sap.m.NavContainer.callCount, 1, "Constructor for NavContainer has been called only once.");
+	});
+
+	QUnit.test("Initial page has header with close button on phones", function(assert) {
+		//Arrange
+		var bOriginalPhone = sap.ui.Device.system.phone;
+		sap.ui.Device.system.phone = true;
+
+		//Act
+		this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
+
+		//Assert
+		var oButton = this.oSelectionDetails._oInitialPage.getCustomHeader().getContent()[3];
+		assert.equal(this.oSelectionDetails._oInitialPage.getShowHeader(), true, "The initial page shows its header.");
+		assert.ok(this.oSelectionDetails._oInitialPage.getCustomHeader().hasStyleClass("sapMSDPageHeader"), "The new toolbar has the 'sapMSDPageHeader' class.");
+		assert.ok(oButton, "The toolbar contains a close button.");
 
 		//Cleanup
-		sap.m.ResponsivePopover.restore();
-		sap.m.Page.restore();
-		sap.m.List.restore();
-		sap.m.ScrollContainer.restore();
-		sap.m.NavContainer.restore();
+		sap.ui.Device.system.phone = bOriginalPhone;
 	});
 
 	QUnit.test("ActionGroup List's showNoData is false", function(assert) {
@@ -245,10 +267,15 @@
 			});
 			sinon.stub(this.oPopover, "isOpen").returns(true);
 			this.oSelectionDetails.setAggregation("_popover", this.oPopover, true);
+			this.oSelectionDetails._oNavContainer = this.oNavContainer;
 			this.sTitle = "newPageTitle";
 			this.oContent = new sap.ui.core.Control();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			this.aHandleNavLazyArgs = [
+				sap.m.Page, sap.m.Toolbar, sap.m.ToolbarSpacer, sap.m.Title, sap.m.Button
+			];
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -263,14 +290,24 @@
 		}
 	});
 
+	QUnit.test("Method 'navTo' returns reference to 'this'", function(assert) {
+		//Arrange
+		this.oPopover.isOpen.returns(false);
+		var oReturn = this.oSelectionDetails.navTo();
+
+		//Act
+		//Assert
+		assert.deepEqual(oReturn, this.oSelectionDetails, "The correct reference to 'this' has been returned to allow method chaining.");
+	});
+
 	QUnit.test("Method 'navTo' creates page with given content and title", function(assert) {
 		// Arrange
 		// Act
-		var oReturn = this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+
 		// Assert
-		assert.deepEqual(this.oNavContainer.getPages()[0].getContent()[0], this.oContent, "Content is wrapped in page. The page is set as current page in NavContainer");
-		assert.deepEqual(this.oNavContainer.getPages()[0].getTitle(), this.sTitle, "Page has correct title");
-		assert.deepEqual(oReturn, this.oSelectionDetails, "Page has correct title");
+		assert.deepEqual(this.oNavContainer.getPages()[0].getContent()[0], this.oContent, "Content is wrapped in page. The page is set as current page in NavContainer.");
+		assert.equal(this.oNavContainer.getPages()[0].getCustomHeader().getContent()[2].getText(), this.sTitle, "Page has the correct title.");
 	});
 
 	QUnit.test("Method 'navTo' results in navigation to the page with correct ID if Popover is open", function(assert) {
@@ -278,41 +315,93 @@
 		var oToSpy = sinon.spy(this.oNavContainer, "to"),
 			oAddPageSpy = sinon.spy(this.oNavContainer, "addPage"),
 			sPageId = this.oSelectionDetails.getId() + "-page-for-" + this.oContent.getId();
+
 		// Act
-		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+
 		// Assert
 		assert.equal(oAddPageSpy.callCount, 1, "called the method addPage that has been overwritten in NavContainer");
 		assert.equal(oToSpy.args[0], sPageId, "Navigation occurs with correct page ID");
 	});
 
-	QUnit.test("Method 'navTo' does not result in navigation if Popover has not been opened", function(assert) {
+	QUnit.test("Method 'navTo' loads dependencies", function(assert) {
 		// Arrange
-		this.oPopover.isOpen.returns(false);
-		var oSpy = sinon.spy(this.oNavContainer, "to");
+		var oRequireStub = sinon.stub(sap.ui, "require");
+
 		// Act
-		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		this.oSelectionDetails.navTo();
+
 		// Assert
-		assert.equal(this.oNavContainer.getPages().length, 0, "No pages has been created");
-		assert.equal(oSpy.callCount, 0, "Navigation did not occur");
+		assert.equal(oRequireStub.callCount, 1, "sap.ui.require has been called once.");
+
+		//Cleanup
+		oRequireStub.restore();
 	});
 
-	QUnit.test("The 'back' method of navContainer is executed in the handler for the 'navButtonPress' event of the Page", function(assert) {
+	QUnit.test("Method 'navTo' does not result in dependency loading and navigation if Popover has not been opened", function(assert) {
 		// Arrange
-		var oSpy = sinon.spy(this.oNavContainer, "back");
-		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		this.oPopover.isOpen.returns(false);
+		var oRequireSpy = sinon.spy(sap.ui, "require");
+
 		// Act
-		this.oNavContainer.getCurrentPage().fireNavButtonPress();
+		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+
 		// Assert
-		assert.equal(oSpy.callCount, 1, "Backward navigation occured");
+		assert.equal(oRequireSpy.callCount, 0, "Navigation did not occur.");
+
+		//Cleanup
+		oRequireSpy.restore();
+	});
+
+	QUnit.test("Method 'navTo' builds a new toolbar for the popover", function(assert) {
+		// Arrange
+		//Act
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+
+		//Assert
+		var aToolbarContent = this.oNavContainer.getPages()[0].getCustomHeader().getContent();
+		assert.ok(aToolbarContent.length > 0, "The new page has a toolbar with content.");
+	});
+
+	QUnit.test("New toolbar shows close button on phones", function(assert) {
+		// Arrange
+		var bOriginalPhone = sap.ui.Device.system.phone;
+		sap.ui.Device.system.phone = true;
+		var oGetCloseButtonSpy = sinon.spy(this.oSelectionDetails, "_getCloseButton");
+		var oAddAggregationSpy = sinon.spy(sap.m.Toolbar.prototype, "addAggregation");
+
+		//Act
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+
+		//Assert
+		assert.equal(oGetCloseButtonSpy.callCount, 1, "A new close button has been created.");
+		assert.equal(oAddAggregationSpy.withArgs("content", oGetCloseButtonSpy.returnValues[0]).callCount, 1, "The same new close button has been added to the toolbar.");
+
+		//Cleanup
+		sap.ui.Device.system.phone = bOriginalPhone;
+	});
+
+	QUnit.test("The 'back' method of navContainer is executed in the back button's press handler", function(assert) {
+		// Arrange
+		var oBackSpy = sinon.spy(this.oNavContainer, "back");
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+
+		// Act
+		this.oNavContainer.getPages()[0].getCustomHeader().getContent()[0].firePress();
+
+		// Assert
+		assert.equal(oBackSpy.callCount, 1, "Backward navigation occured.");
 	});
 
 	QUnit.test("Successive forward and backward navigation results in the first page opened", function(assert) {
 		// Arrange
 		var oFirstPage = new sap.m.Page();
 		this.oNavContainer.addPage(oFirstPage);
-		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+
 		// Act
-		this.oNavContainer.getCurrentPage().fireNavButtonPress();
+		this.oNavContainer.getPages()[1].getCustomHeader().getContent()[0].firePress();
+
 		// Assert
 		assert.deepEqual(this.oNavContainer.getCurrentPage(), oFirstPage, "Forward and backward navigation results in first page opened");
 	});
