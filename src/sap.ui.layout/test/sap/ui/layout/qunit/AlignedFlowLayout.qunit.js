@@ -28,7 +28,11 @@ sap.ui.require([
 			oRm.writeControlData(oControl);
 			oRm.addStyle("width", oControl.getWidth());
 			oRm.addStyle("height", oControl.getHeight());
+
+			// normalize user agent stylesheet
+			oRm.addStyle("border-width", "2px");
 			oRm.addStyle("box-sizing", "border-box");
+			oRm.addStyle("vertical-align", "top");
 			oRm.writeStyles();
 			oRm.write("></input>");
 		}
@@ -77,7 +81,12 @@ sap.ui.require([
 			oRm.writeControlData(oControl);
 			oRm.addStyle("width", oControl.getWidth());
 			oRm.addStyle("height", oControl.getHeight());
+
+			// normalize user agent stylesheet
 			oRm.addStyle("box-sizing", "border-box");
+			oRm.addStyle("vertical-align", "top");
+			oRm.addStyle("margin", "0");
+			oRm.addStyle("padding", "0");
 			oRm.writeStyles();
 			oRm.write(">");
 			oRm.write("</textarea>");
@@ -145,7 +154,7 @@ sap.ui.require([
 		if (!Device.browser.phantomJS) {
 			assert.strictEqual(oStyles.flexGrow, "1", 'it should set the "flex-grow" CSS property to "1"');
 			assert.strictEqual(oStyles.flexShrink, "0", 'it should set the "flex-shrink" CSS property to "0"');
-			assert.strictEqual(oStyles.flexBasis, "240px", 'it should set the "flex-basis" CSS property to "240px"');
+			assert.strictEqual(oItemDomRef.style.flexBasis, "15rem", 'it should set the "flex-basis" CSS property to "15rem"');
 		}
 
 		assert.strictEqual(oStyles.maxWidth, "480px", 'it should set the "max-width" CSS property to "480px"');

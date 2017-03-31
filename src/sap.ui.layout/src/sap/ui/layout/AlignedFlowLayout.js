@@ -203,7 +203,11 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 			}
 
 			// if the items fits into a single line, sets a CSS class to turns off the display of the spacer elements
-			oDomRef.classList.toggle(CSS_CLASS_ONE_LINE, (!this.checkItemsWrapping(oDomRef) && bEnoughSpaceForEndItem));
+			if (!this.checkItemsWrapping(oDomRef) && bEnoughSpaceForEndItem) {
+				oDomRef.classList.add(CSS_CLASS_ONE_LINE);
+			} else {
+				oDomRef.classList.remove(CSS_CLASS_ONE_LINE);
+			}
 		};
 
 		/*
