@@ -381,6 +381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
+		oFormat.oOriginalFormatOptions = oFormatOptions;
 
 		// If a pattern is defined in the format option, parse it and add options
 		if (oFormatOptions) {
@@ -557,6 +558,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			bNegative = oValue < 0,
 			iDotPos = -1,
 			oOptions = jQuery.extend({}, this.oFormatOptions),
+			oOrigOptions = this.oOriginalFormatOptions,
 			aPatternParts,
 			oShortFormat;
 
@@ -579,6 +581,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 				if (oOptions.shortDecimals !== undefined) {
 					oOptions.minFractionDigits = oOptions.shortDecimals;
 					oOptions.maxFractionDigits = oOptions.shortDecimals;
+				} else {
+					if (oOrigOptions.minFractionDigits === undefined
+						&& oOrigOptions.maxFractionDigits === undefined
+						&& oOrigOptions.decimals === undefined
+						&& oOrigOptions.precision === undefined
+						&& oOrigOptions.pattern === undefined) {
+						// if none of the options which can affect the decimal digits is set, the default precision is set to 2
+						oOptions.precision = 2;
+					}
+
+					if (oOrigOptions.maxFractionDigits === undefined) {
+						// overwrite the default setting of Integer instance because
+						// Integer with short format could have fraction part
+						oOptions.maxFractionDigits = 99;
+					}
 				}
 				// Always use HALF_AWAY_FROM_ZERO for short formats
 				oOptions.roundingMode = NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
@@ -587,8 +604,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 
 		// Must be done after calculating the short value, as it depends on the value
 		if (oOptions.precision !== undefined) {
-			oOptions.minFractionDigits = 0;
-			oOptions.maxFractionDigits = getDecimals(oValue, oOptions.precision);
+			// the number of decimal digits is calculated using (precision - number of integer digits)
+			// the maxFractionDigits is adapted if the calculated value is smaller than the maxFractionDigits
+			oOptions.maxFractionDigits = Math.min(oOptions.maxFractionDigits, getDecimals(oValue, oOptions.precision));
+
+			// if the minFractionDigits is greater than the maxFractionDigits, adapt the minFractionDigits with
+			// the same value of the maxFractionDigits
+			oOptions.minFractionDigits = Math.min(oOptions.minFractionDigits, oOptions.maxFractionDigits);
 		}
 
 		if (oOptions.type == mNumberType.PERCENT) {
