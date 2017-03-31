@@ -113,8 +113,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		},
 		aggregations : {
 			/**
-			 * Aggregation which holds data about the LightBox's image and its description. Although multiple LightBoxItems
-			 * may be added to this aggregation only the first one in the list will be taken into account.
+			 * A <code>sap.m.LightBox</code> instance, that will be opened automatically when the user interacts with the image.
+			 *
+			 * The <code>tap</code> event will still be fired.
 			 * @public
 			 */
 			detailBox: {type: 'sap.m.LightBox', multiple: false, bindable: "bindable"}
