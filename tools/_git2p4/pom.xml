@@ -1,110 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 
-	<!--**************************************************************************
-	* POM SECTION: Maven Model Version Settings
-	***************************************************************************-->
+  <!--**************************************************************************
+  * POM SECTION: Maven Model Version Settings
+  ***************************************************************************-->
 
-	<modelVersion>4.0.0</modelVersion>
-
-
-	<!--**************************************************************************
-	* POM SECTION: Parent POM Settings
-	***************************************************************************-->
-
-	<parent>
-		<groupId>com.sap.ui5.tools</groupId>
-		<artifactId>tools-reactor</artifactId>
-		<version>1.0.0</version>
-	</parent>
+  <modelVersion>4.0.0</modelVersion>
 
 
-	<!--**************************************************************************
-	* POM SECTION: Maven Settings
-	***************************************************************************-->
+  <!--**************************************************************************
+  * POM SECTION: Parent POM Settings
+  ***************************************************************************-->
 
-	<artifactId>git2p4-tool</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
-	
-
-	<!--**************************************************************************
-	* POM SECTION: Properties Settings
-	***************************************************************************-->
-
-	<properties>
-
-		<!-- set the default source encoding to UTF-8 (as long as MNG-2216 is not fixed) -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-	</properties>
+  <parent>
+    <groupId>com.sap.ui5.tools</groupId>
+    <artifactId>tools-reactor</artifactId>
+    <version>1.0.0</version>
+  </parent>
 
 
-	<!--**************************************************************************
-	* POM SECTION: Maven Settings
-	***************************************************************************-->
+  <!--**************************************************************************
+  * POM SECTION: Maven Settings
+  ***************************************************************************-->
 
-	<build>
-		<plugins>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.7.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<createDependencyReducedPom>false</createDependencyReducedPom>
-							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.sap.ui5.tools.infra.git2p4.Git2P4Main</mainClass>
-								</transformer>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
-		</plugins>
-	</build>
-	
-	
-	<!--**************************************************************************
-	* POM SECTION: Dependencies Settings
-	***************************************************************************-->
+  <artifactId>git2p4-tool</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  
 
-	<dependencies>
-	
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
+  <!--**************************************************************************
+  * POM SECTION: Properties Settings
+  ***************************************************************************-->
 
-		<dependency>
-			<groupId>com.sap.ui5.tools</groupId>
-			<artifactId>version-tool</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
-		</dependency>
+  <properties>
 
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.2.4</version>
-		</dependency>
+    <!-- set the default source encoding to UTF-8 (as long as MNG-2216 is not fixed) -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-		</dependency>
-		
-	</dependencies>
-	
+  </properties>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Settings
+  ***************************************************************************-->
+
+  <build>
+    <plugins>     
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.7.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.sap.ui5.tools.infra.git2p4.Git2P4Main</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>     
+    </plugins>
+  </build>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Dependencies Settings
+  ***************************************************************************-->
+
+  <dependencies>  
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sap.ui5.tools</groupId>
+      <artifactId>version-tool</artifactId>
+      <version>1.0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sap.ui5.tools</groupId>
+      <artifactId>version-tool</artifactId>
+      <version>1.0.1-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+    </dependency>   
+  </dependencies> 
 </project>

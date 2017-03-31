@@ -2,7 +2,6 @@ package com.sap.ui5.tools.infra.git2p4;
 
 import com.sap.ui5.tools.maven.*;
 
-import com.sap.ui5.tools.maven.FileUtils;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.anyVararg;
@@ -29,6 +28,7 @@ import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes;
 import com.sap.ui5.tools.maven.MvnClient;
 import com.sap.ui5.tools.maven.MyReleaseButton;
 import com.sap.ui5.tools.maven.MyReleaseButton.ReleaseOperation;
+import com.sap.ui5.tools.maven.test.FileUtils;
 import com.sap.ui5.tools.maven.test.TestConversions;
 
 public class TestG2P4Main {
@@ -148,7 +148,7 @@ public class TestG2P4Main {
     String repoSet = null;
     String command = null;
     String branch = null;
-    String gitDir = "C:\\Users\\I331214\\git\\sapui5.misc\\tools\\_git2p4\\target\\tests\\";
+    String gitDir = new File("target/tests").getAbsolutePath()+File.separator;
 
     switch (relOpScenario) {
       case RuntimePatchRelease:

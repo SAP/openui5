@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import com.sap.ui5.tools.maven.MyReleaseButton;
 import com.sap.ui5.tools.maven.MyReleaseButton.ReleaseOperation;
-import com.sap.ui5.tools.maven.FileUtils;
 
 /**
  * This is currently only a collection of test ideas:

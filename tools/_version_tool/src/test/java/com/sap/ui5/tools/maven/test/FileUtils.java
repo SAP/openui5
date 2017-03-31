@@ -6,10 +6,12 @@
  * information and shall use it only in accordance with the terms
  * of the license agreement you entered into with SAP.
  */
-package com.sap.ui5.tools.maven;
+package com.sap.ui5.tools.maven.test;
 
 import java.io.File;
 import java.io.IOException;
+
+import com.sap.ui5.tools.maven.MyReleaseButton;
 
 import junit.framework.Assert;
 
