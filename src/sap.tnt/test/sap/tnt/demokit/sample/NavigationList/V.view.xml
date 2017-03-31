@@ -4,9 +4,9 @@
         xmlns="sap.tnt"
         xmlns:m="sap.m"
         height="100%">
-    <m:Button text="Toggle Collapse/Exapand"
+    <m:Button text="Toggle Collapse/Expand"
               icon="sap-icon://menu2"
-              press="onCollapseExapandPress" />
+              press="onCollapseExpandPress" />
     <NavigationList id="navigationList" width="320px">
         <NavigationListItem
                 text="Item 1"

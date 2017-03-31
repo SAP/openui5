@@ -7,7 +7,7 @@
         class="side-navigation-demo">
     <m:Button text="Toggle Collapse/Expand"
               icon="sap-icon://menu2"
-              press="onCollapseExapandPress" />
+              press="onCollapseExpandPress" />
     <SideNavigation id="sideNavigation">
         <item>
             <NavigationList>
