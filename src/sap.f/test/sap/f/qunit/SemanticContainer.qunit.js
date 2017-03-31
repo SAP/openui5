@@ -790,28 +790,4 @@
 			this.oActionSheet = null;
 		}
 	});
-
-	QUnit.test("test Semantic Actions have been destroyed", function (assert) {
-		var oSendMessageAction = oFactory.getSendMessageAction(),
-			oSaveAsTileAction = oFactory.getAction(),
-			sSendMessageActionType = "sap.f.semantic.SendMessageAction",
-			sSaveAsTileActionType = "saveAsTileAction";
-
-		// Act
-		// Add two semantic actions in the ShareMenu.
-
-		this.oSemanticShareMenu.addContent(oSaveAsTileAction,
-			oSemanticConfiguration.getPlacement(sSaveAsTileActionType));
-
-		this.oSemanticShareMenu.addContent(oSendMessageAction,
-			oSemanticConfiguration.getPlacement(sSendMessageActionType));
-
-		// Destroy the Share Menu
-		this.oSemanticShareMenu.destroy();
-
-		// Assert
-		// Check if the semantic actions are destroyed.
-		assert.ok(oSendMessageAction.bIsDestroyed, "The action has been destroyed.");
-		assert.ok(oSaveAsTileAction.bIsDestroyed, "The action has been destroyed.");
-	});
 })(jQuery, QUnit, sinon);

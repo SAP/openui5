@@ -139,16 +139,6 @@ sap.ui.define([
 	* @returns {sap.f.semantic.SemanticFooter}
 	*/
 	SemanticFooter.prototype.destroy = function() {
-		this._aSemanticLeftContent.forEach(function(oControl) {
-			oControl.destroy();
-		});
-
-		this._aSemanticRightContent.forEach(function(oControl) {
-			oControl.destroy();
-		});
-
-		this.destroyCustomActions();
-
 		this._aCustomContent = null;
 		this._aSemanticLeftContent = null;
 		this._aSemanticRightContent = null;
