@@ -22,7 +22,7 @@
 	var aDependencies = [
 		'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', "sap/m/Toolbar", 'sap/m/OverflowToolbar',
 		'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',
-		'sap/m/VBox', 'sap/m/FlexItemData', 'sap/m/ScrollContainer', "sap/m/Title"
+		'sap/ui/layout/FixFlex', 'sap/m/FlexItemData', 'sap/m/ScrollContainer', "sap/m/Title"
 	];
 	var aHandlePressLazyArgs;
 	QUnit.config.autostart = false;
@@ -173,18 +173,18 @@
 			sinon.spy(sap.m, "ResponsivePopover");
 			sinon.spy(sap.m, "Page");
 			sinon.spy(sap.m, "List");
-			sinon.spy(sap.m, "ScrollContainer");
+			sinon.spy(sap.ui.layout, "FixFlex");
 			sinon.spy(sap.m, "NavContainer");
 			this._aGetPopoverArgs = [
 				sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Toolbar, sap.m.ToolbarSpacer, sap.m.Page,
-				sap.m.List, sap.m.VBox, sap.m.FlexItemData, sap.m.ScrollContainer, sap.m.Title
+				sap.m.List, sap.ui.layout.FixFlex, sap.m.FlexItemData, sap.m.ScrollContainer, sap.m.Title
 			];
 		},
 		afterEach: function() {
 			sap.m.ResponsivePopover.restore();
 			sap.m.Page.restore();
 			sap.m.List.restore();
-			sap.m.ScrollContainer.restore();
+			sap.ui.layout.FixFlex.restore();
 			sap.m.NavContainer.restore();
 
 			this.oSelectionDetails.destroy();
@@ -203,7 +203,7 @@
 		assert.equal(sap.m.ResponsivePopover.callCount, 1, "Constructor for ResponsivePopover has been called only once.");
 		assert.equal(sap.m.Page.callCount, 1, "Constructor for Page has been called only once.");
 		assert.equal(sap.m.List.callCount, 2, "Constructor for List has been called twice.");
-		assert.equal(sap.m.ScrollContainer.callCount, 1, "Constructor for ScrollContainer has been called only once.");
+		assert.equal(sap.ui.layout.FixFlex.callCount, 1, "Constructor for FixFlex has been called only once.");
 		assert.equal(sap.m.NavContainer.callCount, 1, "Constructor for NavContainer has been called only once.");
 	});
 
@@ -274,7 +274,8 @@
 			sap.ui.getCore().applyChanges();
 
 			this.aHandleNavLazyArgs = [
-				sap.m.Page, sap.m.Toolbar, sap.m.ToolbarSpacer, sap.m.Title, sap.m.Button
+				this.sTitle, this.oContent,
+				sap.m.Page, sap.m.Toolbar, sap.m.ToolbarSpacer, sap.m.Title
 			];
 		},
 		afterEach : function() {
@@ -303,7 +304,7 @@
 	QUnit.test("Method 'navTo' creates page with given content and title", function(assert) {
 		// Arrange
 		// Act
-		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
 
 		// Assert
 		assert.deepEqual(this.oNavContainer.getPages()[0].getContent()[0], this.oContent, "Content is wrapped in page. The page is set as current page in NavContainer.");
@@ -317,7 +318,7 @@
 			sPageId = this.oSelectionDetails.getId() + "-page-for-" + this.oContent.getId();
 
 		// Act
-		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
 
 		// Assert
 		assert.equal(oAddPageSpy.callCount, 1, "called the method addPage that has been overwritten in NavContainer");
@@ -326,16 +327,23 @@
 
 	QUnit.test("Method 'navTo' loads dependencies", function(assert) {
 		// Arrange
-		var oRequireStub = sinon.stub(sap.ui, "require");
+		var oRequireStub = sinon.spy(sap.ui, "require");
+		var oContent = this.oContent;
+		var done = assert.async();
+
+		this.oSelectionDetails._handleNavLazy = function() {
+			// Assert
+			assert.equal(oRequireStub.callCount, 1, "sap.ui.require has been called once.");
+			assert.equal(arguments[0], "newPageTitle", "The first parameter of callback is correct.");
+			assert.deepEqual(arguments[1], oContent, "The second parameter of callback is correct.");
+
+			//Cleanup
+			oRequireStub.restore();
+			done();
+		};
 
 		// Act
-		this.oSelectionDetails.navTo();
-
-		// Assert
-		assert.equal(oRequireStub.callCount, 1, "sap.ui.require has been called once.");
-
-		//Cleanup
-		oRequireStub.restore();
+		this.oSelectionDetails.navTo(this.sTitle, this.oContent);
 	});
 
 	QUnit.test("Method 'navTo' does not result in dependency loading and navigation if Popover has not been opened", function(assert) {
@@ -356,7 +364,7 @@
 	QUnit.test("Method 'navTo' builds a new toolbar for the popover", function(assert) {
 		// Arrange
 		//Act
-		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
 
 		//Assert
 		var aToolbarContent = this.oNavContainer.getPages()[0].getCustomHeader().getContent();
@@ -371,7 +379,7 @@
 		var oAddAggregationSpy = sinon.spy(sap.m.Toolbar.prototype, "addAggregation");
 
 		//Act
-		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
 
 		//Assert
 		assert.equal(oGetCloseButtonSpy.callCount, 1, "A new close button has been created.");
@@ -384,7 +392,7 @@
 	QUnit.test("The 'back' method of navContainer is executed in the back button's press handler", function(assert) {
 		// Arrange
 		var oBackSpy = sinon.spy(this.oNavContainer, "back");
-		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
 
 		// Act
 		this.oNavContainer.getPages()[0].getCustomHeader().getContent()[0].firePress();
@@ -397,7 +405,7 @@
 		// Arrange
 		var oFirstPage = new sap.m.Page();
 		this.oNavContainer.addPage(oFirstPage);
-		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, [ this.sTitle, this.oContent ].concat(this.aHandleNavLazyArgs));
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
 
 		// Act
 		this.oNavContainer.getPages()[1].getCustomHeader().getContent()[0].firePress();

@@ -4,18 +4,34 @@
 /* ========================================== */
 
 .sapMSDItem {
-	flex-wrap: wrap;
+	display: block;
 	padding: 0px;
 }
 
 .sapMSDItem > .sapMLIBContent {
 	padding: 0.5rem 0px;
 	box-sizing: border-box;
+	width: 100%;
+
+	display: -webkit-box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	display: -webkit-flex;
+	display: flex;
+	align-items: center;
+}
+
+.sapMSDItem .sapMSDItemLines {
+	-webkit-box-flex: 1;
+	-webkit-flex: 1 1;
+	flex: 1 1;
 	max-width: ~"calc(100% - 3rem)";
 }
 
 .sapMSDItem .sapMSDItemActions {
 	width: 100%;
+	-webkit-flex: 0 0 100%;
+	flex: 0 0 100%;
 
 	.sapMTB {
 		border-bottom: none;
@@ -25,6 +41,7 @@
 .sapMSDItem:not(.sapMLIBTypeNavigation) {
 
 	.sapMSDItemActions {
+		-webkit-flex-basis:  ~"calc(100% + 2rem)";
 		flex-basis: ~"calc(100% + 2rem)";
 	}
 }
@@ -34,16 +51,23 @@
 }
 
 .sapMSDItemLine {
+	display: -webkit-box;
+	display: -webkit-flex;
 	display: flex;
+	overflow: hidden;
 }
 
 .sapMSDItem .sapMSDItemLineMarkerContainer {
+	-webkit-box-flex: 0;
+	-webkit-flex: 0 0 3rem;
 	flex: 0 0 3rem;
 	box-sizing: border-box;
 }
 
 .sapMSDItem .sapMSDItemLineLabel,
 .sapMSDItem .sapMSDItemLineValue {
+	-webkit-box-flex: 1;
+	-webkit-flex: 1 1;
 	flex: 1 1;
 
 	padding: 0.25rem;
