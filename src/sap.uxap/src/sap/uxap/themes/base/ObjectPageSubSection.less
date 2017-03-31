@@ -121,18 +121,12 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 }
 
 /* remove the padding of form content, since form itself is already in a grid-cell that provides the required extra spacing */
-/* (1) remove the padding of direct children: */
-.sapUxAPBlockContainer .sapUiFormResGrid > div {
-	padding-left: 0;
-	padding-top: 0;
-}
-
-/* (2) if the direct child is a form container with a title, a more specific selector is needed: */
+/* (1) if the direct child is a form container with a title, a more specific selector is needed: */
 .sapUxAPBlockContainer .sapUiFormResGrid > div.sapUiFormContainerTitle {
 	padding-top: 0;
 }
 
-/* (3) if the direct child is a form container with a title, a more specific selector is needed for the title itself: */
+/* (2) if the direct child is a form container with a title, a more specific selector is needed for the title itself: */
 .sapUxAPBlockContainer .sapUiFormResGrid > div.sapUiFormContainerTitle > .sapUiFormTitle {
 	line-height: 2rem;
 	margin-bottom: 0;
