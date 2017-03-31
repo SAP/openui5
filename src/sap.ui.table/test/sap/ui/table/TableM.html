@@ -12,7 +12,7 @@
 <script id="sap-ui-bootstrap"
 		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
 		src="../../../../resources/sap-ui-core.js"></script>
-		
+
 <script src="Settings.js"></script>
 
 <script>
@@ -101,7 +101,7 @@ oControl = new sap.m.Select({items: [
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Select"}), template: oControl, width: "150px"});
 oTable.addColumn(oColumn);
 
-// sap.m.Select
+// sap.m.ComboBox
 oControl = new sap.m.ComboBox({items: [
 	new sap.ui.core.Item({key: "v1", text: "Value 1"}),
 	new sap.ui.core.Item({key: "v2", text: "Value 2"}),
@@ -112,7 +112,7 @@ oControl = new sap.m.ComboBox({items: [
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.ComboBox"}), template: oControl, width: "150px"});
 oTable.addColumn(oColumn);
 
-// sap.m.Select
+// sap.m.MultiComboBox
 oControl = new sap.m.MultiComboBox({items: [
 	new sap.ui.core.Item({key: "v1", text: "Value 1"}),
 	new sap.ui.core.Item({key: "v2", text: "Value 2"}),
