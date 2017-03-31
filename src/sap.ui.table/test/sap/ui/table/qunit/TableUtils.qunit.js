@@ -574,6 +574,19 @@ QUnit.test("isNoDataVisible", function(assert) {
 	testNoDataVisibility(false, 0, true, true, false);
 });
 
+QUnit.test("isBusyIndicatorVisible", function(assert) {
+	oTable.setBusyIndicatorDelay(0);
+
+	assert.ok(!TableUtils.isBusyIndicatorVisible(), "Invalid parameter passed: Returned false");
+	assert.ok(!TableUtils.isBusyIndicatorVisible(null), "Invalid parameter passed: Returned false");
+	assert.ok(!TableUtils.isBusyIndicatorVisible(oTable), "The busy indicator is not visible: Returned false");
+
+	oTable.setBusy(true);
+	sap.ui.getCore().applyChanges();
+
+	assert.ok(TableUtils.isBusyIndicatorVisible(oTable), "The busy indicator is visible: Returned true");
+});
+
 QUnit.test("hasPendingRequest", function(assert) {
 	assert.ok(!TableUtils.hasPendingRequest(), "No parameters passed: Returned false");
 	assert.ok(!TableUtils.hasPendingRequest(null), "Passed 'null': Returned false");
