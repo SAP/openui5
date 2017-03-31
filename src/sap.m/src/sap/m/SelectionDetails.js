@@ -779,6 +779,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	SelectionDetails.prototype.detachSelectionHandler = function () {
 		if (this._oChangeHandler) {
 			this._oChangeHandler.listener.detachEvent(this._oChangeHandler.eventId, this._handleSelectionChange, this);
+			this._oChangeHandler = null;
 		}
 		return this;
 	};

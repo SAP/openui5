@@ -909,6 +909,21 @@
 		assert.deepEqual(this.oSelectionDetails._oChangeHandler, oExpected, "Parameters are saved");
 	});
 
+	QUnit.test("Attach new event after detaching the old event", function(assert) {
+		//Arrange
+		var oNewControl = new sap.ui.core.Control();
+		var oExpected = {
+			eventId: "newEventName",
+			listener: oNewControl
+		};
+		//Act
+		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
+		this.oSelectionDetails.detachSelectionHandler();
+		this.oSelectionDetails.attachSelectionHandler("newEventName", oNewControl);
+		//Assert
+		assert.deepEqual(this.oSelectionDetails._oChangeHandler, oExpected, "Change handler has been correctly updated.");
+	});
+
 	QUnit.test("Event listener is attached to listener object", function(assert) {
 		//Act
 		this.oSelectionDetails.attachSelectionHandler("myEventName", this.oDummyControl);
