@@ -2418,6 +2418,104 @@
 				// Cleanup
 				oContainer.destroy();
 			});
+
+			QUnit.module("IconTabHeader Selected Key",{
+				beforeEach: function () {
+
+					var aTabItems = [];
+					for (var i = 0; i < 30; i++) {
+						aTabItems.push(new sap.m.IconTabFilter({
+							key: i.toString(),
+							text : 'Tab ' + i,
+							content: new sap.m.Text({
+								text: 'Content ' + i
+							})
+						}));
+					}
+
+					var oIconTabHeader = new sap.m.IconTabHeader({
+						items: aTabItems,
+						selectedKey : 'invalidKey'
+					});
+
+					this.oIconTabHeader = oIconTabHeader;
+					this.oIconTabHeader.placeAt('qunit-fixture');
+
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.oIconTabHeader.destroy();
+					this.oIconTabHeader = null;
+				}
+			});
+
+			QUnit.test("Selection", function (assert) {
+				assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBSelected').length, 0, "No tab is selected");
+
+				this.oIconTabHeader.setSelectedKey('');
+				sap.ui.getCore().applyChanges();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBSelected').length, 1, "A tab is selected");
+
+				this.oIconTabHeader.setSelectedKey('InvalidKey');
+				sap.ui.getCore().applyChanges();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBSelected').length, 0, "No tab is selected");
+			});
+
+			QUnit.module("IconTabBar Selected Key",{
+				beforeEach: function () {
+
+					var aTabItems = [];
+					for (var i = 0; i < 30; i++) {
+						aTabItems.push(new sap.m.IconTabFilter({
+							key: i.toString(),
+							text : 'Tab ' + i,
+							content: new sap.m.Text({
+								text: 'Content ' + i
+							})
+						}));
+					}
+
+					var oIconTabBar = new sap.m.IconTabBar({
+						items: aTabItems,
+						expandable: false,
+						selectedKey : 'invalidKey'
+					});
+
+					this.oIconTabBar = oIconTabBar;
+					this.oIconTabBar.placeAt('qunit-fixture');
+
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.oIconTabBar.destroy();
+					this.oIconTabBar = null;
+				}
+			});
+
+			QUnit.test("Selection", function (assert) {
+				assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
+
+				this.oIconTabBar.setSelectedKey('');
+				sap.ui.getCore().applyChanges();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
+
+				this.oIconTabBar.setSelectedKey('InvalidKey');
+				sap.ui.getCore().applyChanges();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
+			});
+
 		</script>
 
 

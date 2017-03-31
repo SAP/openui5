@@ -416,7 +416,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	IconTabHeader.prototype.onBeforeRendering = function() {
 		var aItems = this.getItems(),
 			sSelectedKey = this.getSelectedKey(),
-			i = 0;
+			i = 0,
+			oParent = this.getParent(),
+			bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
 
 		if (this._sResizeListenerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
@@ -436,7 +438,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 
 				// no key and no item, we set the first visible item as selected
-				if (!this.oSelectedItem) {
+				if (!this.oSelectedItem && (bIsParentIconTabBar || !sSelectedKey)) {
 					for (i = 0; i < aItems.length; i++) { // tab item
 						if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i].getVisible()) {
 							this.oSelectedItem = aItems[i];
@@ -477,7 +479,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	IconTabHeader.prototype.setSelectedKey = function (sKey) {
 		var aItems = this.getTabFilters(),
-			i = 0;
+			i = 0,
+			oParent = this.getParent(),
+			bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar,
+			bSelectedItemFound;
 
 		if (aItems.length > 0) {
 			sKey = sKey || aItems[0]._getNonEmptyKey();
@@ -488,8 +493,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			for (; i < aItems.length; i++) {
 				if (aItems[i]._getNonEmptyKey() === sKey) {
 					this.setSelectedItem(aItems[i], true);
+					bSelectedItemFound = true;
 					break;
 				}
+			}
+
+			if (!bSelectedItemFound && !bIsParentIconTabBar && sKey) {
+				this.setSelectedItem(null);
 			}
 		}
 
@@ -508,6 +518,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	IconTabHeader.prototype.setSelectedItem = function(oItem, bAPIchange) {
 
 		if (!oItem || !oItem.getEnabled()) {
+
+			if (this.oSelectedItem) {
+				this.oSelectedItem.$().removeClass("sapMITBSelected");
+				this.oSelectedItem = null;
+			}
+
 			return this;
 		}
 
