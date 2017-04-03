@@ -103,6 +103,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 			if (bEndItemAndContent) {
 				var oLayoutComputedStyle = window.getComputedStyle(oDomRef, null),
+					iLayoutPaddingTop = oLayoutComputedStyle.getPropertyValue("padding-top"),
 					mEndItemStyle = oEndItemDomRef.style;
 
 				// adapt the position of the absolute-positioned end item in case a standard CSS class is added
@@ -112,7 +113,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					mEndItemStyle.right = oLayoutComputedStyle.getPropertyValue("padding-right");
 				}
 
-				mEndItemStyle.bottom = oLayoutComputedStyle.getPropertyValue("padding-top");
+				mEndItemStyle.bottom = iLayoutPaddingTop;
 			}
 
 			this._onResize(null, oDomRef, oEndItemDomRef);
