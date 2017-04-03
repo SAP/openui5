@@ -103,12 +103,7 @@ sap.ui.define([
 		this._oContextMenuControl.setMenuItems(this._aMenuItems, oTargetOverlay);
 		this._oContextMenuControl.setOverlayDomRef(oTargetOverlay);
 		this._oContextMenuControl.attachItemSelect(this._onItemSelected, this);
-
-		this._oContextMenuControl.openMenu({
-			pageX: oOriginalEvent.pageX,
-			pageY: oOriginalEvent.pageY
-		});
-
+		this._oContextMenuControl.openMenu(oOriginalEvent, oTargetOverlay);
 		this.fireOpenedContextMenu();
 	};
 
