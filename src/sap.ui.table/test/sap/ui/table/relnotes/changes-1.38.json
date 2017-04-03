@@ -942,5 +942,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.20": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "920879d385b668f34d31580661dc1dfc3c43745e",
+        "type": "FIX",
+        "text": " Correct cell gets the focus when leaving the action mode",
+        "references": []
+      },
+      {
+        "id": "23b2216ed30c236c410e671c640c0ff6eb423730",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: altGr+A incorrectly selects all table cells",
+        "references": []
+      }
+    ]
   }
 }

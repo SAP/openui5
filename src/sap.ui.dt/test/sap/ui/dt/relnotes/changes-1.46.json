@@ -66,5 +66,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "ff817797c42e0a11cffe321c6d70ac6e1f41660f",
+        "type": "FIX",
+        "text": " Context menu can be called during rename and throws error",
+        "references": []
+      },
+      {
+        "id": "8fd1dd6ac7eb736f324a2141a45e4b7c1507413c",
+        "type": "FIX",
+        "text": " sap.ui.dt: Support dependents aggregation when handling overlays",
+        "references": []
+      }
+    ]
   }
 }

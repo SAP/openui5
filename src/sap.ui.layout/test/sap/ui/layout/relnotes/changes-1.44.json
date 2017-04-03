@@ -156,5 +156,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "5079f3bd13883c3f0aa3d284708f73e6947ae7d3",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Calcuation after resizing is wrong",
+        "references": []
+      }
+    ]
   }
 }

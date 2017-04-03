@@ -1940,5 +1940,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.20": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "fa730ca7ef8d682664f84abe1d36d026581226d4",
+        "type": "FIX",
+        "text": " Fragment, Customizing: ensure viewModification support",
+        "references": []
+      },
+      {
+        "id": "845a0ecb74d215b069769e01770afbcb103848f7",
+        "type": "FIX",
+        "text": " core.Popup|m.Dialog: consider window scroll for positioning",
+        "references": []
+      }
+    ]
   }
 }

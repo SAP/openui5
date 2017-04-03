@@ -519,5 +519,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "32501b34670e965c5214da9fa043bcbf32ff697a",
+        "type": "FIX",
+        "text": " Table: Resizing in interactive mode on touch devices",
+        "references": []
+      },
+      {
+        "id": "ff67c0cb3e7a5846baf51b4e36010209af99c558",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid error while reorder columns via D\u0026D",
+        "references": []
+      }
+    ]
   }
 }

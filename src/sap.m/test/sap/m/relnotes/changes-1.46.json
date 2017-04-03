@@ -1842,5 +1842,202 @@
         "references": []
       }
     ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "f7f6d77031d8af761433e07bec4e351751aeb1ef",
+        "type": "FIX",
+        "text": " ActionListItem: hover and active bugs fixed",
+        "references": []
+      },
+      {
+        "id": "961b0c95740202beb0d66b40fb6fc55cb1c0086f",
+        "type": "FIX",
+        "text": " P13nChartSelectionPanel - \"Invalide Dimension role: undefined\" is shown in console after \u0027Restore\u0027",
+        "references": []
+      },
+      {
+        "id": "c9a918c19fcfe411d26bb32807b798096d44c7cd",
+        "type": "FIX",
+        "text": " Select: fix duplicate IDs of items in the DOM",
+        "references": []
+      },
+      {
+        "id": "8d5e445d2fae1414f86de3397c6781e0a3319bf2",
+        "type": "FIX",
+        "text": " sap.m.ActionListItem: Double focus issue is fixed.",
+        "references": []
+      },
+      {
+        "id": "5ea4aafae765e5c4d5b6293ffa59fc37dead38f8",
+        "type": "FIX",
+        "text": " sap.m.BusyIndicator: Fixes position in sap.m.Bar",
+        "references": []
+      },
+      {
+        "id": "8291f70dcb2927f718974f84306d61c958ca2fc5",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Generates valid HTML",
+        "references": []
+      },
+      {
+        "id": "e00f90f0e67496c910040734665467d0ca1c1abc",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Reset button tooltip corrected",
+        "references": []
+      },
+      {
+        "id": "757896d050b6cc3f6c5121da31e17a7fdac1fd47",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Issue with ResizeHandler fixed",
+        "references": []
+      },
+      {
+        "id": "c23fc6f83a7b8b29df99389774685f90ee8e111c",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: QUnit test improved",
+        "references": []
+      },
+      {
+        "id": "f9780568377c1e2e7346dc8d1e29887def322f6c",
+        "type": "FIX",
+        "text": " sap.m.Input: maxSuggestionWidth property is now working correctly",
+        "references": []
+      },
+      {
+        "id": "2ef705923037808386630a81f5116bae3aa9b045",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Popover\u0027s height is now adjusted properly on container resize",
+        "references": []
+      },
+      {
+        "id": "3b34122faf4a1156eaa45f4f0af7e56e127a90be",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Overstyling of text field does not affect combobox",
+        "references": []
+      },
+      {
+        "id": "664c4585271a92091356e06109b9d05625cecae6",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Suggestions are now correctly open on paste",
+        "references": []
+      },
+      {
+        "id": "f4fa170603008836331d0cfda015bc62589e79af",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: When MultiInput.enabled\u003dfalse, tokens can\u0027t be removed any more",
+        "references": []
+      },
+      {
+        "id": "9b5f3bb693f119eca7b69808ab7d2fa95ee04cbe",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Generates valid HTML",
+        "references": []
+      },
+      {
+        "id": "d25a332afde24e83dc9a874f071542031c7d076c",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: responsive header supports tooltip",
+        "references": []
+      },
+      {
+        "id": "b27a8825fa651ca7889e7c3dff220c74d64132bb",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Empty object attributes are not used as aria labels",
+        "references": []
+      },
+      {
+        "id": "b176de53fab9f8e69c4c25d66f42cdacfd1ff19d",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: ObjectNumber has correct color when list is active",
+        "references": []
+      },
+      {
+        "id": "d6f94510f1467c6cc3014d9e36342ca560b0fea7",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: When the Unit is empty no span element is rendered",
+        "references": []
+      },
+      {
+        "id": "8c6be9f939060071c7b16ee3b5c1f9f3ccad5698",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Text occupies only the needed space",
+        "references": []
+      },
+      {
+        "id": "3a56cdae1aa79cdb9a4a2e6f4a5db105bfe45619",
+        "type": "FIX",
+        "text": " sap.m.Page: Footer border in HCB and bluecrystal corrected",
+        "references": []
+      },
+      {
+        "id": "159fe2aebb0ca0ac9bba7ae1b7213e8464864e8a",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Explored samples fixed",
+        "references": []
+      },
+      {
+        "id": "f5252d8b0c240072cc5bcdf4ea9ddaba26aadcd1",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Belize HCW / HCB contrast ratio update for focus on range handle",
+        "references": []
+      },
+      {
+        "id": "ec02d035c76f37f10a6bdf9dcb25595c03f78150",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Corrected value binding",
+        "references": []
+      },
+      {
+        "id": "8ceda6d5430b8603c3247a8e8c97a45af9a8d2b6",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Outline removed",
+        "references": []
+      },
+      {
+        "id": "ed045fef64a73b8d63dc4014e251986368eeb0c9",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Clone works as expected",
+        "references": []
+      },
+      {
+        "id": "ea8992a01c246fd4c015f93b63ae460b0dc0675f",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Deatil view is showing now correctly",
+        "references": []
+      },
+      {
+        "id": "163139a74a1cb8c5bad50d5750109b2cf583a1b0",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selection works",
+        "references": []
+      },
+      {
+        "id": "335167517cfca0bee449fec2bee373eaca6f7d4d",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Navigation through the tokens is now correct",
+        "references": []
+      },
+      {
+        "id": "ac11d794bf323b16955a7010bc1ce20656009e97",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Delete button issue fixed",
+        "references": []
+      },
+      {
+        "id": "e52c79b24311637c31b757bb0d73cb41d7a78486",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Drag and drop event handlers improved",
+        "references": []
+      },
+      {
+        "id": "4202dcf826d0bf357f8a446352cace723dbb96c5",
+        "type": "FIX",
+        "text": " sap.m.Wizard - destroySteps() now longer throws an error",
+        "references": []
+      }
+    ]
   }
 }

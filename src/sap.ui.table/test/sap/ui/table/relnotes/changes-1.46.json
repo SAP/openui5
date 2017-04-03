@@ -396,5 +396,46 @@
         "references": []
       }
     ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "d610df1524b159dda2aef22d55f741a8796e4343",
+        "type": "FIX",
+        "text": " Table: Issues with zooming in Chrome",
+        "references": []
+      },
+      {
+        "id": "05342796aedd1430b62072b4244c401e6721dc7b",
+        "type": "FIX",
+        "text": " Table: Navigation while the busy indicator is shown",
+        "references": []
+      },
+      {
+        "id": "20c4affe56cca2408c8820f7bdd414ce3460a41c",
+        "type": "FIX",
+        "text": " Table: Resizing in interactive mode on touch devices",
+        "references": []
+      },
+      {
+        "id": "4707e839a8cfe7e14fdb6f9ad0a1742aaab6fb95",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid error when cell control does not provide an accessibility info.",
+        "references": []
+      },
+      {
+        "id": "25abd888967d77adca8785aad99779f8e0f2e91c",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid error while reorder columns via D\u0026D",
+        "references": []
+      },
+      {
+        "id": "ad4114edb65b8eb6210f7a7f28f066408a575f50",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix scrollbar alignment on touch enabled laptops (combi devices)",
+        "references": []
+      }
+    ]
   }
 }

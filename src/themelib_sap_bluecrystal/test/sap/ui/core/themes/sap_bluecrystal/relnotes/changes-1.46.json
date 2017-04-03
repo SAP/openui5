@@ -193,5 +193,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "3a56cdae1aa79cdb9a4a2e6f4a5db105bfe45619",
+        "type": "FIX",
+        "text": " sap.m.Page: Footer border in HCB and bluecrystal corrected",
+        "references": []
+      }
+    ]
   }
 }

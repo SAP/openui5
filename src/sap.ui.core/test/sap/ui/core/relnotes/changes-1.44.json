@@ -792,5 +792,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "9317d84f1fff48f4ceb5fbd5c0f7f11eb05f1519",
+        "type": "FIX",
+        "text": " Component Models: Add sap-language/sap-client URI params",
+        "references": []
+      },
+      {
+        "id": "5dba67ed9e9f927d59b2fb4d60c5772a7ffb5429",
+        "type": "FIX",
+        "text": " Configuration: getSAPParam(\"sap-language\") after language change",
+        "references": []
+      }
+    ]
   }
 }

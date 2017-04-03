@@ -606,5 +606,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "f7f6d77031d8af761433e07bec4e351751aeb1ef",
+        "type": "FIX",
+        "text": " ActionListItem: hover and active bugs fixed",
+        "references": []
+      },
+      {
+        "id": "f5252d8b0c240072cc5bcdf4ea9ddaba26aadcd1",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Belize HCW / HCB contrast ratio update for focus on range handle",
+        "references": []
+      }
+    ]
   }
 }

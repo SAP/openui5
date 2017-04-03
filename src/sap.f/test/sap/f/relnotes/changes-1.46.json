@@ -56,5 +56,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "ff0b49efa345a2259dab7212ba8d63e1ed311aba",
+        "type": "FEATURE",
+        "text": " sap.f.SemanticPage: saveAsTileAction aggregation added",
+        "references": []
+      }
+    ]
   }
 }

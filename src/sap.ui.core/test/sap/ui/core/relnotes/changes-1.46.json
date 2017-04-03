@@ -670,5 +670,46 @@
         "references": []
       }
     ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "f5b228aa1dc4e5156552f0b459a0e8989a39414a",
+        "type": "FIX",
+        "text": " Component Models: Add sap-language/sap-client URI params",
+        "references": []
+      },
+      {
+        "id": "2dfcbcc8fcb52c340ce6d755e19c8dd45c51fc1a",
+        "type": "FIX",
+        "text": " Configuration: getSAPParam(\"sap-language\") after language change",
+        "references": []
+      },
+      {
+        "id": "a241407c90002d068022c26b599027fceec332e6",
+        "type": "FIX",
+        "text": " Messaging: Validation messages not removed",
+        "references": []
+      },
+      {
+        "id": "efa274056d54069a81850c14a0fb9acf59b336e1",
+        "type": "FIX",
+        "text": " ODataTreeBindingFlat: Reduce number of requests in certain paging scenarios",
+        "references": []
+      },
+      {
+        "id": "6bd6e0cfa0ce853dfdd83d93632a7c77bafacbf7",
+        "type": "FIX",
+        "text": " core.BusyIndicator: should consider window scroll position in placement",
+        "references": []
+      },
+      {
+        "id": "0f02a92161fccf4bb979705cfd76f24bcef74c69",
+        "type": "FIX",
+        "text": " v2.ODataModel: Normalize keys on cache read",
+        "references": []
+      }
+    ]
   }
 }
