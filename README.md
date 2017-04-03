@@ -31,6 +31,7 @@ Get started!
 Try the [Hello World](http://openui5.org/getstarted.html), read
 the [Developer Guide](https://openui5.hana.ondemand.com/#docs/guide/Documentation.html)
 and refer to the [API Reference](https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html).
+Use [App Templates](https://openui5.hana.ondemand.com/#docs/guide/a460a7348a6c431a8bd967ab9fb8d918.html)s as a foundation for your developments (available in SAP Web IDE or here on [github](https://github.com/SAP?utf8=✓&q=openui5-worklist-app%20OR%20openui5-masterdetail-app%20OR%20openui5-sample-app)).
 Check out the [SCN Forum](http://scn.sap.com/community/developer-center/front-end/content) and
 [stackoverflow](http://stackoverflow.com/questions/tagged/sapui5) (use the tag "sapui5") to discuss code-related
 problems and questions.
