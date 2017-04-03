@@ -94,6 +94,7 @@
 			  strictEqual(1, tabs.length);
 
 			  t1 = tabs[0];
+			  t1.onAfterRendering();
 		  },
 		  teardown: function() {
 			  ts1 = null;
