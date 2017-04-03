@@ -12,29 +12,22 @@ sap.ui.define(['jquery.sap.global'],
 	 * ColorPicker renderer.
 	 * @namespace
 	 */
-	var ColorPickerRenderer = {
-	};
-
+	var ColorPickerRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ColorPickerRenderer.render = function(oRm, oControl){
-
-		// write the HTML into the render manager
-		oRm.write("<div");   // Outer DIV
+		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.writeClasses();
-		oRm.write(">"); // <DIV> element
+		oRm.write(">");
 		oRm.renderControl(oControl.getAggregation("_grid"));
-		oRm.write("</div>");  // outer DIV
-
+		oRm.write("</div>");
 	};
-
-
 
 	return ColorPickerRenderer;
 
