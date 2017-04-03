@@ -279,7 +279,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		"attachNavigate", "detachNavigate",
 		"attachActionPress", "detachActionPress",
 		"addAction", "removeAction",
-		"addGroupAction", "removeGroupAction",
+		"addActionGroup", "removeActionGroup",
 		"navTo"
 	];
 
