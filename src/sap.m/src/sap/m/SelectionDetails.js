@@ -346,7 +346,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	SelectionDetails.prototype._onToolbarButtonPress = function() {
 		sap.ui.require([
 			'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', "sap/m/Toolbar", 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',
-			'sap/m/VBox', 'sap/m/FlexItemData', 'sap/m/ScrollContainer', "sap/m/Title"
+			'sap/ui/layout/FixFlex', 'sap/m/FlexItemData', 'sap/m/ScrollContainer', "sap/m/Title"
 		], this._handlePressLazy.bind(this));
 	};
 
@@ -361,16 +361,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {function} Button The constructor of sap.m.OverflowToolbarButton
 	 * @param {function} List The constructor of sap.m.List
 	 * @param {function} StandardListItem The constructor of sap.m.StandardListItem
-	 * @param {function} VBox The constructor of sap.m.VBox
+	 * @param {function} FixFlex The constructor of sap.ui.layout.FixFlex
 	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
 	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
 	 * @param {function} Title The constructor of sap.m.Title
 	 * @private
 	 */
 	SelectionDetails.prototype._handlePressLazy =
-		function(NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem, VBox, FlexItemData, ScrollContainer, Title) {
+		function(NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem, FixFlex, FlexItemData, ScrollContainer, Title) {
 
-		var oPopover = this._getPopover(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, VBox, FlexItemData, ScrollContainer, Title);
+		var oPopover = this._getPopover(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, FixFlex, FlexItemData, ScrollContainer, Title);
 
 		if (this._oItemFactory) {
 			this._callFactory();
@@ -456,20 +456,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {function} ToolbarSpacer The constructor of sap.m.ToolbarSpacer
 	 * @param {function} Page The constructor of sap.m.Page
 	 * @param {function} List The constructor of sap.m.List
-	 * @param {function} VBox The constructor of sap.m.VBox
+	 * @param {function} FixFlex The constructor of sap.ui.layout.FixFlex
 	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
 	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
 	 * @param {function} Title The constructor of sap.m.Title
 	 * @returns {sap.m.ResponsivePopover} The newly created or existing popover.
 	 * @private
 	 */
-	SelectionDetails.prototype._getPopover = function(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, VBox, FlexItemData, ScrollContainer, Title) {
+	SelectionDetails.prototype._getPopover = function(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, FixFlex, FlexItemData, ScrollContainer, Title) {
 		var oPopover = this.getAggregation("_popover"),
 			oNavContainer,
 			oPage,
 			oMainContainer,
-			oMainListContainer,
-			oActionGroupList;
+			oActionGroupList,
+			oMainList;
 
 		if (!oPopover) {
 			oPopover = new ResponsivePopover({
@@ -485,13 +485,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			//build popover contents
 			oPage = this._getInitialPage(Page, Toolbar, ToolbarSpacer, Title);
 			oActionGroupList = this._getActionGroupList(List);
-
 			oNavContainer = this._getNavContainer(NavContainer);
-			oMainContainer = this._createMainContainer(VBox);
-			oMainListContainer = this._createMainListContainer(ScrollContainer, List, VBox, FlexItemData);
+			oMainList = this._getMainList(List);
 
-			oMainContainer.addAggregation("items", oMainListContainer, true);
-			oMainContainer.addAggregation("items", oActionGroupList, true);
+			oMainContainer = this._createMainContainer(FixFlex);
+
+			oMainContainer.setAggregation("flexContent", oMainList, true);
+			oMainContainer.addAggregation("fixContent", oActionGroupList, true);
 
 			oPage.addAggregation("content", oMainContainer, true);
 			// NavContainer adds necessary styles in its overwritten addPage function.
@@ -508,44 +508,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	/**
 	 * Add the List that contains SelectionDetailsListItems based on the items aggregation.
-	 * @param {function} VBox The constructor of sap.m.VBox
+	 * @param {function} FixFlex The constructor of sap.m.VBox
 	 * @returns {sap.m.VBox} The newly created or existing main container VBox
 	 * @private
 	 */
-	SelectionDetails.prototype._createMainContainer = function(VBox) {
-		return new VBox(this.getId() + "-mainContainer", {
-			fitContainer: true
-		});
-	};
-
-	/**
-	 * Creates a new layout of VBox and ScrollContainer to make the internal content scrollable and to make the ScrollContainer responsive.
-	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
-	 * @param {function} List The constructor of sap.m.List
-	 * @param {function} VBox The constructor of sap.m.VBox
-	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
-	 * @returns {sap.m.VBox} The newly created VBox with a ScrollContainer as its content
-	 * @private
-	 */
-	SelectionDetails.prototype._createMainListContainer = function(ScrollContainer, List, VBox, FlexItemData) {
-		var oMainList = this._getMainList(List);
-
-		var oScrollContainer = new ScrollContainer(this.getId() + "-scrollContainer", {
-			horizontal: false,
-			vertical: true,
-			height: "100%",
-			width: "100%",
-			content: oMainList,
-			layoutData: new FlexItemData({
-				growFactor: 1,
-				shrinkFactor: 1
-			})
-		});
-
-		return new VBox(this.getId() + "-listContainer", {
-			height: "100%",
-			width: "100%",
-			items: oScrollContainer
+	SelectionDetails.prototype._createMainContainer = function(FixFlex) {
+		return new FixFlex(this.getId() + "-mainContainer", {
+			fixFirst: false
 		});
 	};
 
