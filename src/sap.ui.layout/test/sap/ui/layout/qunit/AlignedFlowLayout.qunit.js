@@ -97,7 +97,10 @@ sap.ui.require([
 		beforeEach: function(assert) {
 
 			// act
-			this.oAlignedFlowLayout = new AlignedFlowLayout();
+			this.oAlignedFlowLayout = new AlignedFlowLayout({
+				minItemWidth: "15rem",
+				maxItemWidth: "30rem"
+			});
 			this.oContentDomRef = document.getElementById(CONTENT_ID);
 
 			// arrange
@@ -342,7 +345,10 @@ sap.ui.require([
 		beforeEach: function(assert) {
 
 			// act
-			this.oAlignedFlowLayout = new AlignedFlowLayout();
+			this.oAlignedFlowLayout = new AlignedFlowLayout({
+				minItemWidth: "15rem",
+				maxItemWidth: "30rem"
+			});
 			this.oContentDomRef = document.getElementById(CONTENT_ID);
 			this.CSS_CLASS_ONE_LINE = this.oAlignedFlowLayout.getRenderer().CSS_CLASS + "OneLine";
 		},

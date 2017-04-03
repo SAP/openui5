@@ -47,7 +47,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					 */
 					minItemWidth: {
 						type: "sap.ui.core.AbsoluteCSSSize",
-						defaultValue: "15rem" // TODO: Reasonable default?
+						defaultValue: "12rem"
 					},
 
 					/**
@@ -56,7 +56,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					 */
 					maxItemWidth: {
 						type: "sap.ui.core.AbsoluteCSSSize",
-						defaultValue: "30rem"
+						defaultValue: "24rem"
 					}
 				},
 				defaultAggregation: "content",
