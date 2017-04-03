@@ -5636,8 +5636,8 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 	}).length;
 	var iLastColumnIndex = iColumnCount + Math.max(0, iActionItemCount - 1); // Action items are treated as columns in this test.
 	var iRowCount = oTable._getRowCount();
-	var iDelayAfterInRowTabbing = 0;
-	var iDelayAfterScrollTabbing = 100;
+	var iDelayAfterInRowTabbing = sap.ui.Device.browser.msie ? 50 : 0;
+	var iDelayAfterScrollTabbing = sap.ui.Device.browser.msie ? 300 : 100;
 	var oElem, i, j;
 
 	if (bShowInfo == null) {
