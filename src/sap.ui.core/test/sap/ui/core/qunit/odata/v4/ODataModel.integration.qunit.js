@@ -110,7 +110,7 @@ sap.ui.require([
 					: {source : "metadata_zui5_epm_sample.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
-			this.oLogMock.expects("warning").never();
+//			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			// {map<string, string[]>}

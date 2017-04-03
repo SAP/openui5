@@ -41,6 +41,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	* The "Pull Down to Refresh" arrow icon is animated and spins to signal that the user should release it.
 	*
 	* @extends sap.ui.core.Control
+	* @implements sap.ui.core.IFormContent
 	* @author SAP SE
 	* @version ${version}
 	*
@@ -51,6 +52,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	*/
 	var SearchField = Control.extend("sap.m.SearchField", /** @lends sap.m.SearchField.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
 		properties : {
 

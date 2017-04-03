@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * If the configured text value contains HTML code or script tags, those will be escaped.<br>
 	 * <b>Note: </b>Line breaks (\r\n, \n\r, \r, \n) will always be visualized except when the <code>wrapping</code> property is set to <code>false</code>.
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IShrinkable
+	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -31,7 +31,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	var Text = Control.extend("sap.m.Text", /** @lends sap.m.Text.prototype */ { metadata : {
 
 		interfaces : [
-			"sap.ui.core.IShrinkable"
+			"sap.ui.core.IShrinkable",
+			"sap.ui.core.IFormContent"
 		],
 		library : "sap.m",
 		properties : {

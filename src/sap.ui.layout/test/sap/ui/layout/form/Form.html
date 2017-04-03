@@ -87,11 +87,15 @@
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "Info",
-							fields: [new sap.m.Text({text:"Test"})]
+							fields: [new sap.m.Link({text: "Test", href: "http://www.sap.com"})]
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "A label with an extremely long text to see if the truncation works and the : is still visible after the ellipsis",
-							fields: [new sap.m.Text({text:"Test"})]
+							fields: [new sap.m.Text({text: "Test"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Image",
+							fields: [new sap.m.Image({src:"../../commons/images/SAPLogo.gif"})]
 						})
 						]
 				}),

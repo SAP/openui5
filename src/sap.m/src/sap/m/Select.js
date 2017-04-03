@@ -15,6 +15,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * @class
 		 * The <code>sap.m.Select</code> control provides a list of items that allows users to select an item.
 		 * @extends sap.ui.core.Control
+		 * @implements sap.ui.core.IFormContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -26,6 +27,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 */
 		var Select = Control.extend("sap.m.Select", /** @lends sap.m.Select.prototype */ {
 			metadata: {
+				interfaces: ["sap.ui.core.IFormContent"],
 				library: "sap.m",
 				properties: {
 

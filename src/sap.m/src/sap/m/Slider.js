@@ -62,6 +62,7 @@ sap.ui.define([
 		 * </ul>
 		 *
 		 * @extends sap.ui.core.Control
+		 * @implements sap.ui.core.IFormContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -73,6 +74,7 @@ sap.ui.define([
 		 */
 		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata: {
 
+			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.m",
 			properties: {
 

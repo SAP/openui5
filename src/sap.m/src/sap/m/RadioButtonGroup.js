@@ -31,6 +31,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * <li>Do not put two radio button groups right next to each other as it is difficult to determine which buttons belong to which group.</li>
 			 * </ul>
 			 * @extends sap.ui.core.Control
+			 * @implements sap.ui.core.IFormContent
 			 *
 			 * @author SAP SE
 			 * @version ${version}
@@ -43,6 +44,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			var RadioButtonGroup = Control.extend("sap.m.RadioButtonGroup", /** @lends sap.m.RadioButtonGroup.prototype */ { metadata : {
 
+				interfaces : ["sap.ui.core.IFormContent"],
 				library : "sap.m",
 				properties : {
 

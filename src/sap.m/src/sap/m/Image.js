@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * From version 1.30, new image mode sap.m.ImageMode.Background is added. When this mode is set, the src property is set using the css style 'background-image'. The properties 'backgroundSize', 'backgroundPosition', 'backgroundRepeat' have effect only when image is in sap.m.ImageMode.Background mode. In order to make the high density image correctly displayed, the 'backgroundSize' should be set to the dimension of the normal density version.
 	 *
 	 * @extends sap.ui.core.Control
+	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -36,6 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	var Image = Control.extend("sap.m.Image", /** @lends sap.m.Image.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
 		properties : {
 
@@ -614,6 +616,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			focusable: bHasPressListeners
 		};
 	};
+
+	/*
+	 * Image must not be stretched in Form because should have its original size.
+	 */
+	Image.prototype.getFormShouldNotAdjustWidth = function() {
+		return true;
+	};
+
 
 	return Image;
 
