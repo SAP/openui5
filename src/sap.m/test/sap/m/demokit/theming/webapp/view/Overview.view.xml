@@ -1,0 +1,144 @@
+<mvc:View
+	controllerName="sap.ui.demo.theming.controller.Overview"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:semantic="sap.m.semantic"
+	xmlns:mylib="sap.ui.demo.theming.control">
+
+	<semantic:FullscreenPage
+		id="page"
+		showFooter="false"
+		title="{i18n>semanticFullscreenPageTitle}">
+		<semantic:content>
+			<IconTabBar>
+				<items>
+					<IconTabFilter
+						text="{i18n>IconTabFilterText}"
+						tooltip="{i18n>IconTabFilterTooltip}"/>
+				</items>
+				<content>
+					<l:ResponsiveSplitter id="splitter" defaultPane="default">
+						<l:PaneContainer>
+							<l:SplitPane requiredParentWidth="400" id="default">
+								<ScrollContainer>
+									<OverFlowToolbar>
+												<SearchField
+												width="auto"
+												id="searchField"
+												tooltip="{i18n>masterSearchTooltip}"
+												liveChange="onSearch">
+												<layoutData>
+													<OverflowToolbarLayoutData/>
+												</layoutData>
+												</SearchField>
+												<ComboBox
+												width="auto"
+												id="comboBox"
+												items="{/items}"
+												change="onThemeChange"
+												placeholder="{i18n>ComboBoxPlaceholder}"
+												tooltip="{i18n>ComboBoxTooltip}">
+													<core:Item key="{key}" text="{text}"/>
+													<layoutData>
+													<OverflowToolbarLayoutData />
+												</layoutData>
+												</ComboBox>
+										<ToolbarSpacer/>
+											<ToggleButton  type="Transparent" id="tbColor" press="onPressColor" icon="sap-icon://palette" text="{i18n>ToggleButtonColorText}" />
+											<ToggleButton  type="Transparent" id="tbDimension" press="onPressDimension"  icon="sap-icon://dimension" text="{i18n>ToggleButtonDimensionText}" />
+											<ToggleButton  type="Transparent" id="tbImage" press="onPressImage"  icon="sap-icon://background" text="{i18n>ToggleButtonImageText}" />
+											<ToggleButton  type="Transparent" id="tbOpacity" press="onPressOpacity"  icon="sap-icon://customize" text="{i18n>ToggleButtonOpacityText}" />
+										<ToolbarSeparator/>
+											<ToggleButton type="Transparent" id="tbExpert" press="onPressExpert"  text="{i18n>ToggleButtonExpertText}" />
+											<ToggleButton type="Transparent" id="tbQuick" press="onPressQuick"  text="{i18n>ToggleButtonQuickText}" />
+									</OverFlowToolbar>
+
+									<Table id="oTable"
+									       inset="false"
+								   	       items="{path: '/Data'}">
+										<headerToolbar>
+											<OverflowToolbar>
+												<Title id="title" text="">
+												</Title>
+												<ToolbarSpacer/>
+												<ToggleButton  type="Transparent" id="tbButton" press="onPressButton"  text="{i18n>ToggleButtonButtonText}" />
+												<ToggleButton  type="Transparent" id="tbChart" press="onPressChart"  text="{i18n>ToggleButtonChartText}" />
+												<ToggleButton  type="Transparent" id="tbContent" press="onPressContent"  text="{i18n>ToggleButtonContentText}" />
+												<ToggleButton  type="Transparent" id="tbField" press="onPressField"  text="{i18n>ToggleButtonFieldText}" />
+												<ToggleButton  type="Transparent" id="tbGroup" press="onPressGroup"  text="{i18n>ToggleButtonGroupText}" />
+												<ToggleButton  type="Transparent" id="tbLink" press="onPressLink"  text="{i18n>ToggleButtonLinkText}" />
+												<ToggleButton  type="Transparent" id="tbList" press="onPressList"  text="{i18n>ToggleButtonListText}" />
+												<ToggleButton  type="Transparent" id="tbPage" press="onPressPage"  text="{i18n>ToggleButtonPageText}" />
+												<ToggleButton  type="Transparent" id="tbScrollbar" press="onPressScrollbar"  text="{i18n>ToggleButtonScrollbarText}" />
+												<ToggleButton  type="Transparent" id="tbShell" press="onPressShell"  text="{i18n>ToggleButtonShellText}" />
+												<ToggleButton  type="Transparent" id="tbTile" press="onPressTile"  text="{i18n>ToggleButtonTileText}" />
+												<ToggleButton  type="Transparent" id="tbToolbar" press="onPressToolbar"  text="{i18n>ToggleButtonToolbarText}" />
+												<ToggleButton  icon="sap-icon://sort" tooltip="Sort Class" press="sortClass"/>
+										</OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true">
+												<Text text="{i18n>TableColumnPreviewText}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true">
+												<Text text="{i18n>TableColumnUI5ParameterText}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true">
+												<Text text="{i18n>TableColumnHexValueText}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true">
+												<Text text="{i18n>TableColumnControlgroupText}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true">
+												<Text text="{i18n>TableColumnCharacteristicText}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true">
+												<Text text="{i18n>TableColumnThemingText}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true">
+												<Text text="{i18n>TableColumnClassText}" />
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem id="oTableItem" vAlign="Middle" >
+												<cells>
+													<mylib:ColorPreview id="ColorPreview" color="{colors}"/>
+													<Text text="{name}"/>
+													<Text text="{color}"/>
+													<Text text="{controlgroup}"/>
+													<Text text="{parameter}"/>
+													<Text text="{theming}"/>
+													<Text text= "{
+																path: 'class',
+																formatter: '.formatter.addClass'
+															}"/>
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</ScrollContainer>
+							</l:SplitPane>
+						</l:PaneContainer>
+					</l:ResponsiveSplitter>
+				</content>
+			</IconTabBar>
+		</semantic:content>
+	</semantic:FullscreenPage>
+</mvc:View>
