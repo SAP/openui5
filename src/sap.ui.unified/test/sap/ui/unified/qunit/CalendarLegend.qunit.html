@@ -150,6 +150,61 @@
 		equal($Leg[13].textContent,specialDates[9].getTooltip(),"Type10 matches");
 
 	});
+
+	QUnit.module("items", {
+		beforeEach: function() {
+			this.oLegend = new sap.ui.unified.CalendarLegend({
+				items: [
+					new sap.ui.unified.CalendarLegendItem({ text: "1 none", type: sap.ui.unified.CalendarDayType.None }),
+					new sap.ui.unified.CalendarLegendItem({ text: "1 without type" }),
+					new sap.ui.unified.CalendarLegendItem({ text: "2 none", type: sap.ui.unified.CalendarDayType.None }),
+					new sap.ui.unified.CalendarLegendItem({ text: "3 none", type: sap.ui.unified.CalendarDayType.None }),
+					new sap.ui.unified.CalendarLegendItem({ text: "2 without type" }),
+					new sap.ui.unified.CalendarLegendItem({ text: "Type01", type: sap.ui.unified.CalendarDayType.Type01 }),
+					new sap.ui.unified.CalendarLegendItem({ text: "Type02", type: sap.ui.unified.CalendarDayType.Type02 }),
+					new sap.ui.unified.CalendarLegendItem({ text: "Type03", type: sap.ui.unified.CalendarDayType.Type03 }),
+					new sap.ui.unified.CalendarLegendItem({ text: "Type05", type: sap.ui.unified.CalendarDayType.Type05 }),
+					new sap.ui.unified.CalendarLegendItem({ text: "Type07", type: sap.ui.unified.CalendarDayType.Type07 }),
+					new sap.ui.unified.CalendarLegendItem({ text: "Type08", type: sap.ui.unified.CalendarDayType.Type08 }),
+					new sap.ui.unified.CalendarLegendItem({ text: "Type09", type: sap.ui.unified.CalendarDayType.Type09 }),
+					new sap.ui.unified.CalendarLegendItem({ text: "Type10", type: sap.ui.unified.CalendarDayType.Type10 })
+				]
+			});
+		},
+		afterEach: function() {
+			this.oLegend.destroy();
+			this.oLegend = null;
+		}
+	});
+
+	QUnit.test("_getItemType", function(assert) {
+		var aLegendItems = this.oLegend.getItems();
+
+		assert.equal(this.oLegend._getItemType(aLegendItems[0]), "Type04", 'item has the correct type');
+		assert.equal(this.oLegend._getItemType(aLegendItems[1]), "Type06", 'item has the correct type');
+		assert.equal(this.oLegend._getItemType(aLegendItems[2]), "Type11", 'item has the correct type');
+	});
+
+	QUnit.test("_getItemByType", function(assert) {
+		var aLegendItems = this.oLegend.getItems();
+
+		assert.equal(this.oLegend._getItemByType("Type12"), aLegendItems[3], 'item is correct');
+		assert.equal(this.oLegend._getItemByType("Type09"), aLegendItems[11], 'item is correct');
+		assert.equal(this.oLegend._getItemByType("Type06"), aLegendItems[1], 'item is correct');
+	});
+
+	QUnit.test("_getUnusedItemTypes", function(assert) {
+		assert.equal(this.oLegend._getUnusedItemTypes()[0], "Type04", "unused item types are correct");
+		assert.equal(this.oLegend._getUnusedItemTypes()[1], "Type06", "unused item types are correct");
+	});
+
+	QUnit.test("getTypeAriaText", function(assert) {
+		var oInvisibleText = sap.ui.unified.CalendarLegend.getTypeAriaText("Type03");
+
+		assert.ok(oInvisibleText, "there is a label created");
+		assert.equal(sap.ui.unified.CalendarLegend.getTypeAriaText("Type03").getId(), oInvisibleText.getId(), "the label is static");
+		assert.ok(oInvisibleText.getDomRef(), "the label is in the dom");
+	});
 </script>
 
 </head>
