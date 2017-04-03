@@ -3492,6 +3492,31 @@ QUnit.asyncTest("Shift+Tab", function(assert) {
 	oTable.setModel(new sap.ui.model.json.JSONModel());
 });
 
+QUnit.module("TableKeyboardDelegate2 - Navigation > BusyIndicator", {
+	beforeEach: function() {
+		setupTest();
+
+		oTable.setBusyIndicatorDelay(0);
+		oTable.setBusy(true);
+		sap.ui.getCore().applyChanges();
+	},
+	afterEach: function() {
+		teardownTest();
+	}
+});
+
+QUnit.test("Tab", function(assert) {
+	var oElem = setFocusOutsideOfTable("Focus1");
+	simulateTabEvent(oElem, false);
+	checkFocus(jQuery.sap.domById("Focus2"), assert);
+});
+
+QUnit.test("Shift+Tab", function(assert) {
+	var oElem = setFocusOutsideOfTable("Focus2");
+	simulateTabEvent(oElem, true);
+	checkFocus(jQuery.sap.domById("Focus1"), assert);
+});
+
 QUnit.module("TableKeyboardDelegate2 - Navigation > Special Cases", {
 	beforeEach: function() {
 		setupTest();
