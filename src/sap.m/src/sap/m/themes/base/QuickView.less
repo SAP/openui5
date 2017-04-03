@@ -252,10 +252,10 @@ html.sap-tablet .sapMQuickViewPage .sapMLnk:focus {
   outline: none;
 }
 
-html.sap-phone {
-	.sapMPanel {
-		.sapMQuickViewCard {
-			overflow-y: scroll;
-		}
-	}
+html.sap-phone .sapMPanel .sapMQuickViewCard {
+	overflow-y: scroll;
+}
+
+html.sap-tablet.sap-ios .sapMPanel .sapMQuickViewCard {
+	-webkit-overflow-scrolling: auto;
 }
