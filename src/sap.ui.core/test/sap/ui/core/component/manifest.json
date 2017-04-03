@@ -1,0 +1,18 @@
+{
+	"sap.app": {
+		"id": "test3",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"resources": {
+			"css": [
+				{
+					"uri": "style3.css"
+				}
+			]
+		}
+	}
+}

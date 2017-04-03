@@ -197,12 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @private
 	 */
 	ComponentMetadata.prototype.onInitComponent = function() {
-		var oUI5Manifest = this.getManifestEntry("sap.ui5", true),
-			mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
-		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {
-			var CustomizingConfiguration = sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
-			CustomizingConfiguration.activateForComponent(this._sComponentName);
-		}
+		this.getManifestObject().onInitComponent();
 		this._iInstanceCount++;
 	};
 
@@ -213,11 +208,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @private
 	 */
 	ComponentMetadata.prototype.onExitComponent = function() {
+		this.getManifestObject().onExitComponent();
 		this._iInstanceCount = Math.max(this._iInstanceCount - 1, 0);
-		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-		if (this._iInstanceCount === 0 && CustomizingConfiguration) {
-			CustomizingConfiguration.deactivateForComponent(this._sComponentName);
-		}
 	};
 
 	/**
