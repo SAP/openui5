@@ -236,6 +236,17 @@
 				this.oButton1.destroy();
 			});
 
+			QUnit.test("when the element inside of the DesignTime is moved to 'dependents' aggregation", function(assert) {
+				var done = assert.async();
+
+				this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
+						assert.strictEqual(oEvent.getParameter("overlay").getElementInstance(), this.oButton1, "overlay for button is destroyed");
+						done();
+				}, this);
+
+				this.oInnerLayout.addDependent(this.oButton1);
+			});
+
 			QUnit.test("when the overlay is selected inside of the DesignTime", function(assert) {
 				var done = assert.async();
 				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1);
