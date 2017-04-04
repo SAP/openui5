@@ -1264,15 +1264,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		function overwritePopover(oPopover, oInput) {
 			// overwrite the internal properties to not to show the arrow in popover.
-			oPopover._marginTop = 0;
-			oPopover._marginLeft = 0;
-			oPopover._marginRight = 0;
-			oPopover._marginBottom = 0;
-			oPopover._arrowOffset = 0;
-			oPopover._offsets = [ "0 0", "0 0", "0 0", "0 0" ];
-			oPopover._myPositions = [ "begin bottom", "begin center", "begin top", "end center" ];
-			oPopover._atPositions = [ "begin top", "end center", "begin bottom", "begin center" ];
-
+			oPopover._bShowArrow = false;
 			oPopover.open = function() {
 				this.openBy(oInput, false, true);
 			};
