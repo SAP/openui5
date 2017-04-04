@@ -359,9 +359,11 @@ sap.ui.require([
 					},
 					sPath : "/ProductList",
 					applyParameters : function () {}
-				});
+				}),
+				oBindingMock = this.mock(oBinding);
 
-			this.mock(oBinding).expects("applyParameters")
+			oBindingMock.expects("hasPendingChanges").returns(false);
+			oBindingMock.expects("applyParameters")
 				.withExactArgs(oFixture.mExpectedParameters, ChangeReason.Change);
 
 			// code under test
@@ -370,19 +372,63 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("changeParameters: with undefined map", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			});
+
+		this.mock(oBinding).expects("applyParameters").never();
+
+		// code under test
+		assert.throws(function () {
+			oBinding.changeParameters(undefined);
+		}, new Error("Missing map of binding parameters"));
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("changeParameters: with binding parameters", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oModel : {},
 				mParameters : {},
-				sPath : "/EMPLOYEES"
-			});
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("applyParameters").never();
+		oBindingMock.expects("hasPendingChanges").returns(false);
 
 		//code under test
 		assert.throws(function () {
-			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)",
-				"$$groupId" : "newGroupId"});
+			oBinding.changeParameters({
+				"$filter" : "filter(Amount gt 3)",
+				"$$groupId" : "newGroupId"
+			});
 		}, new Error("Unsupported parameter: $$groupId"));
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
 
+	//*********************************************************************************************
+	QUnit.test("changeParameters: with pending changes", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("applyParameters").never();
+		oBindingMock.expects("hasPendingChanges").returns(true);
+
+		assert.throws(function () {
+			//code under test
+			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)"});
+		}, new Error("Cannot change parameters due to pending changes"));
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
 	});
 
@@ -392,29 +438,14 @@ sap.ui.require([
 				oModel : {},
 				sPath : "/EMPLOYEES",
 				applyParameters : function () {}
-			});
+			}),
+			oBindingMock = this.mock(oBinding);
 
-
-		this.mock(oBinding).expects("applyParameters").never();
+		oBindingMock.expects("hasPendingChanges").returns(false);
+		oBindingMock.expects("applyParameters").never();
 
 		// code under test
 		oBinding.changeParameters({});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: with undefined map", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oModel : {},
-				mParameters : {},
-				sPath : "/EMPLOYEES"
-			});
-
-		// code under test
-		assert.throws(function () {
-			oBinding.changeParameters(undefined);
-		}, new Error("Missing map of binding parameters"));
-
-		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
 	});
 
 	//*********************************************************************************************
@@ -424,6 +455,8 @@ sap.ui.require([
 				mParameters : {},
 				sPath : "/EMPLOYEES"
 			});
+
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 
 		// code under test
 		oBinding.changeParameters({$apply: undefined});
@@ -443,9 +476,11 @@ sap.ui.require([
 					},
 					sPath : "/EMPLOYEES",
 					applyParameters : function () {}
-				});
+				}),
+			oBindingMock = this.mock(oBinding);
 
-		this.mock(oBinding).expects("applyParameters").never();
+		oBindingMock.expects("hasPendingChanges").returns(false);
+		oBindingMock.expects("applyParameters").never();
 
 		// code under test
 		oBinding.changeParameters(mParameters);
@@ -492,6 +527,8 @@ sap.ui.require([
 					}
 				}
 			};
+
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 
 		// code under test
 		oBinding.changeParameters(mParameters);

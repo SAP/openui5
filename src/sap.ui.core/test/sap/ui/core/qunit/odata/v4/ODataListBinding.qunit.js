@@ -3386,6 +3386,7 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined, "noCache");
 
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(_SyncPromise.resolve("/TEAMS('42')/TEAM_2_EMPLOYEES"));
 

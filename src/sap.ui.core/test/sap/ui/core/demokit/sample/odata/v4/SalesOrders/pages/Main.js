@@ -456,6 +456,14 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				sortBySalesOrderID  : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "sortBySalesOrderID",
+						viewName : sViewName
+					});
+				},
 				// Uses #changeParameters() to delete the 'Note' entry of the $select query option,
 				// in order to achieve that the edit text note is not shown anymore
 				unselectSODetailsNoteWithChangeParameters : function () {

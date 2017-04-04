@@ -57,6 +57,23 @@ sap.ui.define([
 				"headerContext");
 		},
 
+		_setNextSortOrder : function (bDescending) {
+			var sNewIcon;
+
+			// choose next sort order: no sort -> ascending -> descending -> no sort
+			if (bDescending === undefined) {
+				sNewIcon = "sap-icon://sort-ascending";
+				bDescending = false;
+			} else if (bDescending === false) {
+				sNewIcon = "sap-icon://sort-descending";
+				bDescending = true;
+			} else {
+				sNewIcon = "";
+				bDescending = undefined;
+			}
+			return {bDescending : bDescending, sNewIcon : sNewIcon};
+		},
+
 		onBeforeRendering : function () {
 			var oView = this.getView();
 
@@ -451,9 +468,9 @@ sap.ui.define([
 		onSortByGrossAmount : function () {
 			var oView = this.getView(),
 				oBinding = oView.byId("SalesOrders").getBinding("items"),
-				sNewIcon,
 				oUIModel = oView.getModel("ui"),
-				bDescending = oUIModel.getProperty("/bSortGrossAmountDescending");
+				bDescending = oUIModel.getProperty("/bSortGrossAmountDescending"),
+				oSortOrder;
 
 			if (oBinding.hasPendingChanges()) {
 				MessageBox.error("Cannot sort due to unsaved changes"
@@ -462,21 +479,13 @@ sap.ui.define([
 			}
 
 			// choose next sort order: no sort -> ascending -> descending -> no sort
-			if (bDescending === undefined) {
-				sNewIcon = "sap-icon://sort-ascending";
-				bDescending = false;
-			} else if (bDescending === false) {
-				sNewIcon = "sap-icon://sort-descending";
-				bDescending = true;
-			} else {
-				sNewIcon = "";
-				bDescending = undefined;
-			}
-			oUIModel.setProperty("/bSortGrossAmountDescending", bDescending);
-			oUIModel.setProperty("/sSortGrossAmountIcon", sNewIcon);
-			oBinding.sort(bDescending === undefined
+			oSortOrder = this._setNextSortOrder(bDescending);
+
+			oUIModel.setProperty("/bSortGrossAmountDescending", oSortOrder.bDescending);
+			oUIModel.setProperty("/sSortGrossAmountIcon", oSortOrder.sNewIcon);
+			oBinding.sort(oSortOrder.bDescending === undefined
 				? undefined
-				: new Sorter("GrossAmount", bDescending)
+				: new Sorter("GrossAmount", oSortOrder.bDescending)
 			);
 
 			// reset contexts for Supplier Details and remove Sales Oder Line Items selection
@@ -484,6 +493,32 @@ sap.ui.define([
 			oView.byId("SalesOrderLineItems").removeSelections();
 			oView.byId("SupplierContactData").setBindingContext(undefined);
 			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
+		},
+
+		onSortBySalesOrderID : function () {
+			var oView = this.getView(),
+				oBinding = oView.byId("SalesOrders").getBinding("items"),
+				oUIModel = oView.getModel("ui"),
+				bDescending = oUIModel.getProperty("/bSortSalesOrderIDDescending"),
+				oParameters = {},
+				oSortOrder;
+
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error("Cannot change parameters due to unsaved changes"
+					+ "; save or reset changes before sorting");
+				return;
+			}
+
+			// choose next sort order: no sort -> ascending -> descending -> no sort
+			oSortOrder = this._setNextSortOrder(bDescending);
+			if (oSortOrder.bDescending === undefined) {
+				oParameters.$orderby = undefined;
+			} else {
+				oParameters.$orderby = "SalesOrderID" + (oSortOrder.bDescending ? " desc" : "");
+			}
+			oBinding.changeParameters(oParameters);
+			oUIModel.setProperty("/bSortSalesOrderIDDescending", oSortOrder.bDescending);
+			oUIModel.setProperty("/sSortSalesOrderIDIcon", oSortOrder.sNewIcon);
 		},
 
 		/**

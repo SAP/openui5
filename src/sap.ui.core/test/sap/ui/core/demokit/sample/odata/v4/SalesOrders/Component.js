@@ -188,7 +188,9 @@ sap.ui.define([
 							bScheduleSelected : false,
 							bSelectedSalesOrderTransient : false,
 							bSortGrossAmountDescending : undefined,
-							sSortGrossAmountIcon : ""
+							bSortSalesOrderIDDescending : undefined,
+							sSortGrossAmountIcon : "",
+							sSortSalesOrderIDIcon : ""
 						}
 				)},
 				type : ViewType.XML,
