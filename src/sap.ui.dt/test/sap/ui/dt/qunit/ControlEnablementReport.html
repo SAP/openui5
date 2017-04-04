@@ -10,18 +10,18 @@
 				data-sap-ui-xx-bindingSyntax="complex"
 				data-sap-ui-preload="async"
 				data-sap-ui-compatVersion="edge"
-				data-sap-ui-libs="sap.ui.fl,sap.m,sap.ui.layout,sap.ui.comp,sap.ui.dt"
+				data-sap-ui-libs="sap.ui.fl,sap.ui.table,sap.ui.core, sap.m,sap.ui.layout,sap.ui.comp,sap.ui.dt"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<script>
 
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
-				'sap/ui/dt/test/report/ControlEnablementTable',
-				'sap/ui/dt/test/report/Statistic',
 				'sap/ui/dt/test/ElementEnablementTest2',
-				'sap/ui/dt/test/LibraryEnablementTest2'
-			], function (Table, Statistic, ElementEnablementTest2, LibraryEnablementTest2) {
+				'sap/ui/dt/test/LibraryEnablementTest2',
+				'sap/ui/core/util/Export',
+				'sap/ui/core/util/ExportTypeCSV'
+			], function (ElementEnablementTest2, LibraryEnablementTest2, Export, ExportTypeCSV) {
 
 
 				var aLibs = sap.ui.getVersionInfo().libraries.filter(function(sLib) {
@@ -43,7 +43,6 @@
 				});
 
 				var oMultiComboBox = new sap.m.MultiComboBox("combobox", {
-					width : "1700px",
 					items : {
 						path : "/libs",
 						sorter : { path : "Name" },
@@ -69,7 +68,6 @@
 						var oReport;
 						var aLibraries = oMultiComboBox.getSelectedKeys();
 
-						
 						oStaticReport = sap.ui.getCore().byId("statistic");
 						if (oStaticReport) {
 							oStaticReport.destroy();
@@ -79,21 +77,81 @@
 							oReport.destroy();
 						}
 
-		 				var oLibraryEnablementTest2 = new LibraryEnablementTest2();
-	
-		 				oLibraryEnablementTest2.run(aLibraries).then(function(oData) {
-		 					var oStatisticReport = new Statistic("statistic", {
-		 						data: oData
-		 					});
-		 					oStatisticReport.placeAt("content");
+						var oLibraryEnablementTest2 = new LibraryEnablementTest2();
 
-		 					var oReport = new Table("table", {
-		 						data: oData
-		 					});
-		 					oReport.placeAt("content");
+						oLibraryEnablementTest2.run(aLibraries).then(function(oData) {
+							var oModel;
+							if (oData) {
+								oModel = new sap.ui.model.json.JSONModel(oData);
+							} else {
+								oModel = null;
+							}
+
+							var fnExportToExcel = function(oEvent) {
+								var oExport = new Export({
+									exportType : new ExportTypeCSV({
+										separatorChar : ";"
+									}),
+									models : oModel,
+									rows : {
+										path : "/results"
+									},
+									columns : [
+										{
+											name : "Name",
+											template : {
+												content : "{name}"
+											}
+										},
+										{
+											name : "Actions",
+											template : {
+												content : "{actions}"
+											}
+										}
+									]
+								});
+
+								oExport.saveFile().catch(function(oError) {
+									MessageBox.error("Error when downloading data. Browser might not be supported!\n\n" + oError);
+								}).then(function() {
+									oExport.destroy();
+								});
+							};
+
+							var oHeaderToolbar = new sap.m.Toolbar("toolbar", {
+								content : [
+//									new sap.m.ToolbarSpacer("toolbar-spacer"),
+									new sap.m.Button("toolbar-export-button", {
+										text : "Export to Excel",
+										press : fnExportToExcel
+									})
+								]
+							});
+							var oReport = new sap.ui.table.Table("table", {
+								extension : [oHeaderToolbar],
+								columns : [
+									new sap.ui.table.Column("table-column-name", {
+										label : "Name",
+										width : "30em",
+										sorted : true,
+										template : new sap.m.Text({
+											text : "{name}"
+										})
+									}),
+									new sap.ui.table.Column("table-column-actions", {
+										label : "Actions",
+										template : new sap.m.Text({
+											text : "{actions}"
+										})
+									})
+								],
+								rows : "{path:'/results'}"
+							}).setModel(oModel);
+							oReport.placeAt("content");
 						});
 					},
-					clear : function(oEvent)  {
+					clear : function(oEvent) {
 						oMultiComboBox.clearSelection();
 					}
 				});
@@ -105,16 +163,14 @@
 
 				oVLayout.placeAt("selection");
 
-
-
 			});
-	});
+		});
 
 
 		</script>
 	</head>
 	<body class="sapUiBody">
-		<h1>Control Enablement Test Report</h1>
+		<h1>Control Enablement Report</h1>
 		
 		
 		<div id="selection"></div>
