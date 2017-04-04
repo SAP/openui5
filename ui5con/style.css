@@ -99,7 +99,7 @@ li {
  h2{
  	margin-bottom: 0px;
  	font-size: 30px;
- 	font-weight: 300;
+ 	font-weight: 200;
  	color: #FFFFFF;
  }
  
@@ -212,21 +212,6 @@ li {
 	font-size: 12px;
 }
 
-.formatbox1{
-	height: 250px;
-	background-color: #323130;
-}
-
-.formatbox2{
-	height: 250px;
-	background-color: #2a2a29;
-}
-
-.formatbox3{
-	height: 250px;
-	background-color: #272625;
-}
-
 .format{
 	margin-top: 20px;
 	text-align: justify;
@@ -289,12 +274,6 @@ li {
 	}
 }
 
-@media (max-width: 1500px) {
-	.formatbox1, .formatbox2, .formatbox3{
-		height: 320px;
-	}
-}
-
 @media (max-width: 1210px) {
 	header{
 		height: 540px;
@@ -313,9 +292,6 @@ li {
 		padding-left: 5%;
 		padding-right: 5%;
 	}
-	.formatbox1, .formatbox2, .formatbox3{
-		height: 350px;
-	}
 	.readtext{
 		padding-left: 5%;
 		padding-right: 5%;
@@ -331,6 +307,9 @@ li {
 	.disclaimer {
 		margin: 0px;
 	}
+	.ui5communityimg {
+		height: 100px;
+	}
 }
 
 @media (max-width: 390px) {
@@ -343,9 +322,9 @@ li {
 	p {
 		font-size: 15px;
 	}
-	.formatbox1, .formatbox2, .formatbox3{
-		height: 450px;
-	}
+	.disclaimer {
+		border: none;
+	}	
 	.readtext{
 		padding-left: 5%;
 		padding-right: 5%;
