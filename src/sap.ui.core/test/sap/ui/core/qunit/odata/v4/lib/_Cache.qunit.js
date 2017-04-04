@@ -1056,6 +1056,95 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#create: Promise as vPostPath", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = new _Cache(oRequestor),
+			oPostPathPromise = _SyncPromise.resolve("TEAMS");
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs("$cached", "")
+			.returns(_SyncPromise.resolve([]));
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "TEAMS", "updateGroup", null, /*oPayload*/sinon.match.object,
+				/*fnSubmit*/sinon.match.func, /*fnCancel*/sinon.match.func)
+			.returns(_SyncPromise.resolve({}));
+
+		// code under test
+		return oCache.create("updateGroup", oPostPathPromise, "", {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#create: with given sPath", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = new _Cache(oRequestor),
+			oCacheDataForParent = {
+				TEAM_2_EMPLOYEES : []
+			},
+			oCacheMock = this.mock(oCache),
+			oCountChangeListener = {onChange : sinon.spy()},
+			oCreatePromise,
+			oIdChangeListener = {onChange : sinon.spy()},
+			sPathInCache = "0/TEAM_2_EMPLOYEES",
+			oPostPathPromise = _SyncPromise.resolve("TEAMS('0')/TEAM_2_EMPLOYEES");
+
+		oCache.fetchValue = function () {};
+		oCacheDataForParent.TEAM_2_EMPLOYEES.$count = 0;
+		oCacheMock.expects("fetchValue")
+			.withExactArgs("$cached", "0")
+			.returns(_SyncPromise.resolve(oCacheDataForParent));
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "TEAMS('0')/TEAM_2_EMPLOYEES", "updateGroup", null,
+				/*oPayload*/sinon.match.object, /*fnSubmit*/sinon.match.func,
+				/*fnCancel*/sinon.match.func)
+			.returns(_SyncPromise.resolve(Promise.resolve({
+				ID : "7",
+				Name : "John Doe"
+			})));
+
+		// code under test
+		oCreatePromise = oCache.create("updateGroup", oPostPathPromise, sPathInCache,
+			{ID : "", Name : "John Doe"});
+
+		// initial data is synchronously available
+		assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES[-1].Name, "John Doe");
+		assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES[-1].ID, "");
+		assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES.$count, 0);
+
+		oCache.registerChange(sPathInCache + "/-1/Name", function () {
+			assert.notOk(true, "No change event for Name");
+		});
+		oCache.registerChange(sPathInCache + "/-1/ID", oIdChangeListener);
+		oCache.registerChange(sPathInCache + "/$count", oCountChangeListener);
+		return oCreatePromise.then(function () {
+			assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES[-1].ID, "7", "from Server");
+			assert.strictEqual(oIdChangeListener.onChange.callCount, 1);
+			assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES.$count, 1);
+			assert.strictEqual(oCountChangeListener.onChange.callCount, 1);
+		});
+	});
+
+	//*********************************************************************************************
+	[undefined, {}].forEach(function(oCacheData, i) {
+		QUnit.test("_Cache#create: allowed for collections only - " + i, function (assert) {
+			var oRequestor = _Requestor.create("/~/"),
+				oCache = new _Cache(oRequestor),
+				sPathInCache = "0/TEAM_2_MANAGER";
+
+			oCache.fetchValue = function () {};
+			this.mock(oCache).expects("fetchValue")
+				.withExactArgs("$cached", "0")
+				.returns(_SyncPromise.resolve({TEAM_2_MANAGER : oCacheData}));
+
+			// code under test
+			assert.throws(function () {
+				oCache.create("updateGroup", "TEAMS('01')/TEAM_2_MANAGER", sPathInCache, {});
+			}, new Error("Create is only supported for collections; '" + sPathInCache
+				+ "' does not reference a collection"));
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("CollectionCache: query params", function (assert) {
 		var oCache,
 			mQueryParams = {},
@@ -1895,6 +1984,16 @@ sap.ui.require([
 		// code under test
 		assert.throws(function () {
 			oCache._delete();
+		}, new Error("Unsupported"));
+	});
+
+	//**********************************************W***********************************************
+	QUnit.test("PropertyCache#create", function (assert) {
+		var oCache = _Cache.createProperty({/*requestor*/}, "foo");
+
+		// code under test
+		assert.throws(function () {
+			oCache.create();
 		}, new Error("Unsupported"));
 	});
 

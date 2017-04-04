@@ -1450,7 +1450,7 @@ sap.ui.require([
 		oCache = oCache1;
 		that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 		that.mock(that.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
+			.withExactArgs(sinon.match.same(oBinding), true)
 			.returns([]);
 		oBinding.mCacheByContext = {}; // would have been set by fetchCache
 
@@ -1462,15 +1462,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshInternal: dependent bindings with transient contexts", function (assert) {
+	QUnit.test("refreshInternal: dependent bindings", function (assert) {
 		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oChild0 = {
 				getContext : getContextMock.bind(undefined, false),
-				refreshInternal : function () {}
-			},
-			oChild1 = {
-				getContext : getContextMock.bind(undefined, true),
 				refreshInternal : function () {}
 			},
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
@@ -1490,10 +1486,9 @@ sap.ui.require([
 		return oReadPromise.then(function () {
 			that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 			that.mock(that.oModel).expects("getDependentBindings")
-				.withExactArgs(sinon.match.same(oBinding))
-				.returns([oChild0, oChild1]);
+				.withExactArgs(sinon.match.same(oBinding), true)
+				.returns([oChild0]);
 			that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", false);
-			that.mock(oChild1).expects("refreshInternal").never();
 
 			//code under test
 			oBinding.refreshInternal("myGroup");
@@ -2647,32 +2642,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: error callback", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
-			oError = new Error(),
-			oExpectation,
-			oInitialData = {};
-
-		this.mock(oBinding).expects("getUpdateGroupId").returns("update");
-
-		oExpectation = this.mock(oBinding.oCachePromise.getResult()).expects("create")
-			.withExactArgs("update", "EMPLOYEES", "", sinon.match.same(oInitialData),
-				/*fnCancelCallback*/sinon.match.func, /*fnErrorCallback*/sinon.match.func)
-			// we only want to observe fnErrorCallback, hence we neither resolve, nor reject
-			.returns(new Promise(function () {}));
-
-		// code under test
-		oBinding.create(oInitialData);
-
-		this.mock(this.oModel).expects("reportError").withExactArgs(
-			"POST on 'EMPLOYEES' failed; will be repeated automatically",
-			sClassName, sinon.match.same(oError));
-
-		// code under test
-		oExpectation.args[0][5](oError); // call fnErrorCallback to simulate error
-	});
-
-	//*********************************************************************************************
 	[{
 		sTitle : "create: absolute",
 		sUpdateGroupId : "update"
@@ -2740,27 +2709,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: cache not yet resolved", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES");
+	QUnit.test("create: relative binding", function (assert) {
+		var oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/1", 1),
+			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
+			oInitialData = {},
+			oExpectation;
 
-		oBinding.oCachePromise = _SyncPromise.resolve(Promise.resolve({}));
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs("/TEAMS('02')", "TEAM_2_EMPLOYEES")
+			.returns("/TEAMS('02')/TEAM_2_EMPLOYEES");
+		this.mock(oContext).expects("fetchCanonicalPath")
+			.withExactArgs()
+			.returns(_SyncPromise.resolve("/TEAMS('02')"));
+		this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
+		oExpectation = this.mock(oBinding).expects("createInCache")
+			.withExactArgs("updateGroup", /*vPostPath*/sinon.match.object, "", oInitialData,
+				sinon.match.func)
+			.returns(_SyncPromise.resolve());
 
-		//code under test
-		assert.throws(function () {
-			oBinding.create();
-		}, new Error("Create on this binding is not supported"));
+		// code under test
+		oContext = oBinding.create(oInitialData);
+
+		return oContext.created().then(function () {
+			assert.strictEqual(oExpectation.args[0][1].getResult(), "TEAMS('02')/TEAM_2_EMPLOYEES");
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: relative", function (assert) {
+	QUnit.test("create: relative binding not yet resolved", function (assert) {
 		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES");
 
 		//code under test
 		assert.throws(function () {
 			oBinding.create();
-		}, new Error("Create on this binding is not supported"));
+		}, new Error("Binding is not yet resolved: " + oBinding.toString()));
 	});
-	// TODO allow relative binding, use createInCache to forward to the binding owning a cache
 
 	//*********************************************************************************************
 	QUnit.test("getContexts after create", function (assert) {

@@ -21,7 +21,7 @@ sap.ui.require([
 	//*****************************************************************************
 	opaTest("Create, modify and delete", function (Given, When, Then) {
 		var oExpectedLog = {
-				component : "sap.ui.model.odata.v4.ODataListBinding",
+				component : "sap.ui.model.odata.v4.ODataParentBinding",
 				level : jQuery.sap.log.Level.ERROR,
 				message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 			},
@@ -134,7 +134,7 @@ sap.ui.require([
 		// Create a sales order, press "cancel sales order changes" w/o saving
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
-		When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+		When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 		When.onTheMainPage.firstSalesOrderIsAtPos0();
 		if (!bRealOData) {
 			Then.onTheMainPage.checkSalesOrdersCount(10);
@@ -151,7 +151,7 @@ sap.ui.require([
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
-			When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 			When.onTheMainPage.firstSalesOrderIsAtPos0();
 			// Create a sales order with invalid note, save, update note, save -> success
 			When.onTheMainPage.pressCreateSalesOrdersButton();

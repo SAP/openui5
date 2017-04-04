@@ -509,4 +509,27 @@ sap.ui.require([
 
 		assert.strictEqual(fnRequest.apply(oContext, aArguments), oResult);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("toString", function (assert) {
+		var oPromise;
+
+		assert.strictEqual(_SyncPromise.resolve("/EMPLOYEES").toString(), "/EMPLOYEES");
+		assert.strictEqual(_SyncPromise.resolve().toString(), "undefined");
+		assert.strictEqual(_SyncPromise.resolve(null).toString(), "null");
+		assert.strictEqual(_SyncPromise.resolve(42).toString(), "42");
+
+		assert.strictEqual(_SyncPromise.all([
+				_SyncPromise.resolve(42),
+				"Foo",
+				true
+			]).toString(), "42,Foo,true");
+
+		oPromise = _SyncPromise.resolve(Promise.reject(new Error("rejected")));
+
+		assert.strictEqual(oPromise.toString(), "SyncPromise: pending");
+		return oPromise["catch"](function () {
+			assert.strictEqual(oPromise.toString(), "Error: rejected");
+		});
+	});
 });
