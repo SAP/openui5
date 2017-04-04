@@ -290,6 +290,55 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		/**
+		 * Handles highlighting of items after filtering.
+		 *
+		 * @param {string} sValue
+		 * @private
+		 * @since 1.48
+		 */
+		ComboBox.prototype._highlightList = function(sValue) {
+			var aItems = this.getVisibleItems(),
+				oRegex = new RegExp("^" + sValue, "i");
+
+			aItems.forEach(function (oItem) {
+				var oItemDomRef = oItem.getDomRef(),
+					oItemAdditionalTextRef, oItemTextRef;
+
+				// when loadItems is used the items are not rendered but picker is opened
+				if (oItemDomRef === null) {
+					return;
+				}
+				oItemAdditionalTextRef = oItemDomRef.children[1];
+				oItemTextRef = Array.prototype.filter.call(oItemDomRef.children, function(oChildRef) {
+					return oChildRef.tagName.toLowerCase() !== "b";
+				})[0] || oItemDomRef;
+
+				oItemTextRef.innerHTML = this._boldItemRef(oItem.getText(), oRegex, sValue);
+
+				if (oItemAdditionalTextRef) {
+					oItemAdditionalTextRef.innerHTML = this._boldItemRef(oItem.getAdditionalText(), oRegex, sValue);
+				}
+			}, this);
+		};
+
+		/**
+		 * Handles bolding of innerHTML of items.
+		 *
+		 * @param {string} sItemText
+		 * @param {RegExp} oRegex
+		 * @param {string} sValue
+		 *
+		 * @returns {string}
+		 * @private
+		 * @since 1.48
+		 */
+		ComboBox.prototype._boldItemRef = function (sItemText, oRegex, sValue) {
+			var sTextReplacement = "<b>" + sItemText.slice(0, sValue.length) + "</b>";
+
+			return sItemText.replace(oRegex, sTextReplacement);
+		};
+
+		/**
 		 * Sets the selected item by its index.
 		 *
 		 * @param {int} iIndex
@@ -423,6 +472,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			this.bOpenValueStateMessage = true;
 			this._sValueBeforeOpen = "";
 
+			// stores the value of the input before opening the picker
+			this._sInputValueBeforeOpen = "";
+
 			// the last selected item before opening the picker
 			this._oSelectedItemBeforeOpen = null;
 
@@ -489,6 +541,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			var oList = this.getList(),
 				oFocusDomRef = this.getFocusDomRef();
 
+			this._highlightList(this._sInputValueBeforeOpen);
+
 			if (oList) {
 				oList.setBusy(false);
 			}
@@ -547,12 +601,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 							oControl.updateDomValue(this._oFirstItemTextMatched.getText());
 							this.setSelection(this._oFirstItemTextMatched);
 						} else if (bSearchBoth) {
+
 							if (bTextMatched) {
 								oControl.updateDomValue(oFirstVisibleItem.getText());
 							} else {
 								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText());
 							}
-
 							this.setSelection(oFirstVisibleItem);
 						} else {
 							oControl.updateDomValue(oFirstVisibleItem.getText());
@@ -582,6 +636,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 							selectedItem: this.getSelectedItem()
 						});
 					}
+				}
+
+				this._sInputValueBeforeOpen = sValue;
+
+				if (this.isOpen()) {
+					this._highlightList(sValue);
 				}
 
 				if (bItemsVisible) {
@@ -755,6 +815,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			// notice that to prevent flickering, the filter is cleared
 			// after the close animation is completed
 			this.clearFilter();
+
+			this._sInputValueBeforeOpen = "";
 
 			// if the focus is back to the input after closing the picker,
 			// the value state message should be reopen
