@@ -393,7 +393,8 @@
 				var oHelper = sap.ui.unified.ColorPickerHelper,
 					oFactory = oHelper.factory,
 					oRBGroup,
-					oSlider;
+					oSlider,
+					oInput;
 
 				// Assert - Properties
 				oAssert.strictEqual(oHelper.isResponsive(), false, "Helper should be in responsive mode");
@@ -403,8 +404,11 @@
 				oAssert.ok(oFactory.createLabel() instanceof sap.ui.commons.Label,
 					"Factory label control should be instance of sap.ui.commons.Label");
 
-				oAssert.ok(oFactory.createInput() instanceof sap.ui.commons.TextField,
+				oInput = oFactory.createInput("MYCUSTOMINPUTID");
+				oAssert.ok(oInput instanceof sap.ui.commons.TextField,
 					"Factory input control should be instance of sap.ui.commons.TextField");
+				oAssert.strictEqual(oInput.getId(), "MYCUSTOMINPUTID",
+					"Factory input control should have 'MYCUSTOMINPUTID' assigned as ID");
 
 				// RadioButton group and RadioButtonItem
 				oRBGroup = oFactory.createRadioButtonGroup({
@@ -419,12 +423,14 @@
 					"sap.ui.core.Item");
 
 				// Slider
-				oSlider = oFactory.createSlider({
+				oSlider = oFactory.createSlider("MYCUSTOMSLIDERID", {
 					// Keep in mind that we are using the "step" property here
 					step: 0.1
 				});
 				oAssert.ok(oSlider instanceof sap.ui.commons.Slider,
 					"Factory Slider control should be instance of sap.ui.commons.Slider");
+				oAssert.strictEqual(oSlider.getId(), "MYCUSTOMSLIDERID",
+					"Factory Slider control should have 'MYCUSTOMSLIDERID' assigned as ID");
 				oAssert.strictEqual(oSlider.getSmallStepWidth(), 0.1, 'used "step" property should be ' +
 					'propagated to the "smallStepWidth" property during creation');
 			});

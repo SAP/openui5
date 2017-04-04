@@ -602,6 +602,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// Handle
 			oRm.write("<div");
+			oRm.writeAttribute("id", oControl.getId() + "-cpCur");
 			oRm.addClass(CONSTANTS.CPCircleClass);
 			oRm.writeClasses();
 			oRm.write("></div>");
@@ -734,8 +735,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ColorPicker.prototype._createInteractionControls = function () {
+		var sId = this.getId();
+
 		// Create the internal ColorPickerBox control
-		this.oCPBox = new ColorPickerBox({
+		this.oCPBox = new ColorPickerBox(sId + "-cpBox", {
 			// Attach to the select event
 			select: this._handleCPBoxSelectEvent.bind(this),
 			// Attach to the resize event
@@ -747,47 +750,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			ontouchend: this._handleCPBoxTouchEndEvent.bind(this)
 		});
 
-		this.oHexField = oFactory.createInput({
+		this.oHexField = oFactory.createInput(sId + "-hxF", {
 			value: this.Color.hex.substr(1),
 			change: this._handleHexValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.HEXClass);
 
-		this.oRedField = oFactory.createInput({
+		this.oRedField = oFactory.createInput(sId + "-rF", {
 			value: this.Color.r,
 			change: this._handleRedValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oGreenField = oFactory.createInput({
+		this.oGreenField = oFactory.createInput(sId + "-gF", {
 			value: this.Color.g,
 			change: this._handleGreenValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oBlueField = oFactory.createInput({
+		this.oBlueField = oFactory.createInput(sId + "-bF", {
 			value: this.Color.b,
 			change: this._handleBlueValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oHueField = oFactory.createInput({
+		this.oHueField = oFactory.createInput(sId + "-hF", {
 			value: this.Color.h,
 			change: this._handleHueValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oSatField = oFactory.createInput({
+		this.oSatField = oFactory.createInput(sId + "-sF", {
 			value: this.Color.s,
 			change: this._handleSatValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oLitField = oFactory.createInput({
+		this.oLitField = oFactory.createInput(sId + "-lF", {
 			value: this.Color.l,
 			change: this._handleLitValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oAlphaField = oFactory.createInput({
+		this.oAlphaField = oFactory.createInput(sId + "-aF", {
 			value: this.Color.a,
 			change: this._handleAlphaValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oValField = oFactory.createInput({
+		this.oValField = oFactory.createInput(sId + "-vF", {
 			value: this.Color.v,
 			change: this._handleValValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
@@ -804,7 +807,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}).addStyleClass(CONSTANTS.OutputSelectorClass);
 
 		// Slider
-		this.oSlider = oFactory.createSlider({
+		this.oSlider = oFactory.createSlider(sId + "-hSLD", {
 			max: 360,
 			step: 1,
 			tooltip: oRb.getText("COLORPICKER_HUE"),
@@ -816,7 +819,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oSlider.attachEvent("change", "change", this._handleSliderChange.bind(this));
 
 		// Alpha Slider
-		this.oAlphaSlider = oFactory.createSlider({
+		this.oAlphaSlider = oFactory.createSlider(sId + "-aSLD", {
 			max: 1,
 			value: 1,
 			step: 0.01,
