@@ -118,10 +118,10 @@ sap.ui.define([	"sap/ui/dt/ElementOverlay",
 				done();
 			}.bind(this);
 
-			if (!sap.ui.Device.browser.phantomJS) {
+			if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.edge && !sap.ui.Device.browser.msie) {
 				this.oPage.$().on("animationend webkitAnimationEnd oanimationend", fnCheckSize);
 			} else {
-				// phantomjs doesn't support animation end events
+				// phantomjs, MSIE & MS Edge don't support animation end events
 				setTimeout(fnCheckSize, 1000);
 			}
 
