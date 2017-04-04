@@ -104,7 +104,6 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog > .sapMBar.sapMHea
 /* ====== ====== ===== */
 .sapMActionSheetPopover.sapMPopover {
 	box-shadow: @sapUiShadowLevel1;
-	padding: 0.25rem 0.5rem;
 }
 
 .sapMActionSheetPopover .sapMActionSheetButton {
@@ -112,9 +111,20 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog > .sapMBar.sapMHea
 	width: 100%;
 }
 
-.sapUiSizeCompact .sapMActionSheetPopover.sapMPopover {
-	padding: 0.1875rem 0.375rem;
+.sapMActionSheetPopover.sapMPopover .sapMPopoverCont {
+	padding: 0.25rem 0.5rem;
+	max-height: calc(~"100% - 0.5rem");
 }
+
+.sapUiSizeCompact .sapMActionSheetPopover.sapMPopover  .sapMPopoverCont {
+	padding: 0.1875rem 0.375rem;
+	max-height: calc(~"100% - 0.375rem");
+}
+
+.sapMActionSheetPopover.sapMPopover .sapMPopoverCont::-webkit-scrollbar {
+	background-color: transparent;
+}
+
 /* ====== END ====== */
 /*Style for ActionSheet shown as a Popover*/
 /* ====== ====== ===== */
