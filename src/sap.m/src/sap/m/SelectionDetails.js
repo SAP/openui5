@@ -203,6 +203,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	SelectionDetails.prototype._handleNavLazy = function(pageTitle, content, Page, Toolbar, ToolbarSpacer, Title, Button) {
 		var sPageId = this.getId() + "-page-for-" + content.getId();
 
+		// Navigate to the page directly when the page already exists in the NavContainer
+		var aPages = this._oNavContainer.getPages();
+		for (var i = 0; i < aPages.length; i++) {
+			if (sPageId === aPages[i].getId()) {
+				this._oNavContainer.to(sPageId);
+				return;
+			}
+		}
+
 		var oPage = new Page(sPageId, {
 			customHeader: this._getPageToolbar(Toolbar, ToolbarSpacer, Title, true, pageTitle),
 			content: [ content ]
