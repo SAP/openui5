@@ -610,6 +610,38 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_app_setShortTitle", function(assert) {
+		var _oDescriptorInlineChange;
+		var _oDescriptorVariant;
+		var mParameter = {
+				"type" : "XTIT",
+				"maxLength" : 30,
+				"comment" : "comment on shorttitle",
+				"value" : {
+					"" : "Default Shorttitle",
+					"en":"English Shorttitle",
+					"de":"Deutscher Kurztitel",
+					"en_US":"English Shorttitle in en_US"
+				}
+			};
+		return DescriptorInlineChangeFactory.create_app_setShortTitle(mParameter).then(function(oDescriptorInlineChange) {
+			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
+			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setShortTitle");
+			return DescriptorVariantFactory.createNew({
+					"id" : "a.id",
+					"reference": "a.reference"
+			});
+		}).then(function(oDescriptorVariant){
+			_oDescriptorVariant = oDescriptorVariant;
+			return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
+		}).then(function(){
+			assert.ok(_oDescriptorVariant._content[0].texts['a.id_sap.app.shortTitle'], 'Initial empty text key replaced');
+			assert.ok(!_oDescriptorVariant._content[0].texts[''], 'Initial empty text key removed ');
+			assert.deepEqual(_oDescriptorVariant._content[0].texts['a.id_sap.app.shortTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+		});
+	});
+
 	QUnit.test("create_app_setDescription", function(assert) {
 		var _oDescriptorInlineChange;
 		var _oDescriptorVariant;
