@@ -433,7 +433,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		if (!oDomRef) {
 			var oDesignTimeMetadata = this.getDesignTimeMetadata();
 			if (!oDesignTimeMetadata) {
-				return;
+				return undefined;
 			}
 			var fnGetDomRef = oDesignTimeMetadata.getDomRef();
 			if (typeof fnGetDomRef === "function") {
@@ -444,6 +444,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		if (oDomRef) {
 			return jQuery(oDomRef);
 		}
+		return undefined;
 	};
 
 	/**
@@ -637,9 +638,11 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {string} sAggregationName name of aggregation to be created
+	 * @returns {object} aggregation overlay
 	 * @private
 	 */
-	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName, bInHiddenTree) {
+	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName) {
 		var oAggregationDesignTimeMetadata = this.getDesignTimeMetadata().createAggregationDesignTimeMetadata(sAggregationName);
 
 		this._handleDesigntimePropagation(oAggregationDesignTimeMetadata);
@@ -647,8 +650,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		var oAggregationOverlay = new AggregationOverlay({
 			aggregationName : sAggregationName,
 			element : this.getElementInstance(),
-			designTimeMetadata : oAggregationDesignTimeMetadata,
-			inHiddenTree : bInHiddenTree
+			designTimeMetadata : oAggregationDesignTimeMetadata
 		});
 		this._mAggregationOverlays[sAggregationName] = oAggregationOverlay;
 		this.addAggregation("aggregationOverlays", oAggregationOverlay);
@@ -680,7 +682,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			mAggregationsWithOverlay[sAggregationName] = !bIgnored;
 			// create aggregation overlays which are not ignored in the DT Metadata
 			if (!bIgnored) {
-				this._createAggregationOverlay(sAggregationName, this.isInHiddenTree());
+				this._createAggregationOverlay(sAggregationName);
 			}
 		}.bind(this));
 
@@ -691,11 +693,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			if (mAggregationsWithOverlay[sAggregationName] === undefined) {
 				bIgnored = oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName);
 				if (!bIgnored) {
-					// this is needed to point out, that a control is both in public and private tree, so that it has a "public" parent, which can be different from a getParent()
-					// flag is needed so that parents could have possibility to handle actions for the children. The better solution yet to come: probably, propagation of metadata from parents to children
-					var oAggregationMetadata = mAggregationsMetadata[sAggregationName];
-					var bIsInHiddenTree = oAggregationMetadata.inHiddenTree;
-					this._createAggregationOverlay(sAggregationName, bIsInHiddenTree);
+					this._createAggregationOverlay(sAggregationName);
 				}
 			}
 		}, this);
@@ -732,6 +730,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
 	ElementOverlay.prototype._onAggregationVisibleChanged = function(oEvent) {
@@ -768,6 +767,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {boolean} bVisible visible attribute
 	 * @protected
 	 */
 	ElementOverlay.prototype.setVisible = function(bVisible) {
@@ -777,6 +777,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {string} sAggregationName name of the aggregation
+	 * @param {boolean} bSuppressInvalidate suppress invalidate
 	 * @protected
 	 */
 	ElementOverlay.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
@@ -796,7 +798,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 		var sAggregationName = oEvent.getParameters().name;
 		if (sAggregationName) {
-			this.sync();
 			var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
 			// private aggregations are also skipped
 			var bAggregationOverlayVisible = oAggregationOverlay && oAggregationOverlay.isVisible();
@@ -811,6 +812,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
 	ElementOverlay.prototype._onDomChanged = function(oEvent) {
@@ -949,34 +951,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			return false;
 		}
 
-	};
-
-	/**
-	 * Returns agrregation overlay of public parent, which is an ancestor of this overlay
-	 *
-	 * @return {sap.ui.dt.Overlay} Overlay public parent
-	 * @public
-	 */
-	ElementOverlay.prototype.getPublicParentAggregationOverlay = function() {
-		var oAggregationOverlay = this.getParentAggregationOverlay();
-		var oParentElementOverlay = this.getParentElementOverlay();
-		while (oParentElementOverlay && ElementUtil.isInstanceOf(oParentElementOverlay, "sap.ui.dt.ElementOverlay") && oParentElementOverlay.isInHiddenTree()) {
-			oAggregationOverlay = oParentElementOverlay.getParentAggregationOverlay();
-			oParentElementOverlay = oParentElementOverlay.getParentElementOverlay();
-		}
-		return oAggregationOverlay;
-	};
-
-	/**
-	 * Returns first ancestor overlay not flagged as inHiddenTree
-	 * @return {sap.ui.dt.ElementOverlay} ElementOverlay public parent
-	 * @public
-	 */
-	ElementOverlay.prototype.getPublicParentElementOverlay = function() {
-		var oPublicParentAggregationOverlay = this.getPublicParentAggregationOverlay();
-		if (oPublicParentAggregationOverlay) {
-			return oPublicParentAggregationOverlay.getParent();
-		}
 	};
 
 	/**
