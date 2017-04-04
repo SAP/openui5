@@ -127,6 +127,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Delegate keyboard processing to ItemNavigation, see commons.SegmentedButton
 		this._oItemNavigation = new ItemNavigation();
 		this._oItemNavigation.setCycling(false);
+		//this way we do not hijack the browser back/forward navigation
+		this._oItemNavigation.setDisabledModifiers({
+			sapnext: ["alt"],
+			sapprevious: ["alt"]
+		});
 		this.addDelegate(this._oItemNavigation);
 
 		//Make sure when a button gets removed to reset the selected button
