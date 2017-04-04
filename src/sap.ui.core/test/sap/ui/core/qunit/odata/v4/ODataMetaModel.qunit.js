@@ -2257,10 +2257,9 @@ sap.ui.require([
 			sPath = "foo",
 			oValue = {};
 
-		//TODO call fetchObject instead once lazy loading is implemented?
-		this.mock(this.oMetaModel).expects("getProperty")
+		this.mock(this.oMetaModel).expects("fetchObject")
 			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
-			.returns(oValue);
+			.returns(_SyncPromise.resolve(oValue));
 
 		// code under test
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
@@ -2282,6 +2281,54 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#_getValue (sync)", function (assert) {
+		var oBinding,
+			oContext = {},
+			mParameters = {},
+			sPath = "foo",
+			oValue = {};
+
+		// Called twice: the first time in the initialization, the second time as code under test
+		this.mock(this.oMetaModel).expects("fetchObject").twice()
+			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
+			.returns(_SyncPromise.resolve(oValue));
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		assert.strictEqual(oBinding._getValue(), oValue);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#_getValue (async)", function (assert) {
+		var that = this,
+			oBinding,
+			oContext = {},
+			oMetaModelMock = this.mock(this.oMetaModel),
+			mParameters = {},
+			sPath = "foo",
+			oValue = {},
+			oPromise = _SyncPromise.resolve(Promise.resolve()).then(function () {
+				that.mock(oBinding).expects("checkUpdate").withExactArgs();
+				return oValue;
+			});
+
+		// respond synchronously during the initialization
+		oMetaModelMock.expects("fetchObject").returns(_SyncPromise.resolve(oValue));
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+
+		this.mock(oBinding).expects("_fireChange").never();
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
+			.returns(oPromise);
+
+		// code under test
+		assert.strictEqual(oBinding._getValue(), undefined);
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
 	QUnit.test("ODataMetaPropertyBinding#checkUpdate", function (assert) {
 		var oBinding,
 			oBindingMock,
@@ -2290,9 +2337,9 @@ sap.ui.require([
 			oValue1 = {},
 			oValue2 = {};
 
-		this.mock(this.oMetaModel).expects("getProperty")
+		this.mock(this.oMetaModel).expects("fetchObject")
 			.withExactArgs(sPath, sinon.match.same(oContext), undefined)
-			.returns(oValue1);
+			.returns(_SyncPromise.resolve(oValue1));
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext);
 		oBindingMock = this.mock(oBinding);
 		oBindingMock.expects("_getValue").withExactArgs().returns(oValue1);
@@ -2402,7 +2449,7 @@ sap.ui.require([
 			aSorters = [];
 
 		// avoid request to backend during initialization
-		this.mock(this.oMetaModel).expects("getObject");
+		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
 
 		// code under test
 		oBinding = this.oMetaModel.bindList(sPath, oContext, aSorters, aFilters);
@@ -2416,7 +2463,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaListBinding#update", function (assert) {
+	QUnit.test("ODataMetaListBinding#setContexts", function (assert) {
 		var oBinding,
 			oBindingMock,
 			oContext = this.oMetaModel.getContext("/EMPLOYEES"),
@@ -2424,22 +2471,75 @@ sap.ui.require([
 			sPath = "path";
 
 		// avoid request to backend during initialization
-		this.mock(this.oMetaModel).expects("getObject");
+		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
 
 		oBinding = this.oMetaModel.bindList(sPath, oContext);
 		oBindingMock = this.mock(oBinding);
 
-		oBindingMock.expects("_getContexts").withExactArgs().returns(aContexts);
 		oBindingMock.expects("updateIndices").withExactArgs();
 		oBindingMock.expects("applyFilter").withExactArgs();
 		oBindingMock.expects("applySort").withExactArgs();
 		oBindingMock.expects("_getLength").withExactArgs().returns(42);
 
 		// code under test
-		oBinding.update();
+		oBinding.setContexts(aContexts);
 
 		assert.strictEqual(oBinding.oList, aContexts);
 		assert.strictEqual(oBinding.iLength, 42);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaListBinding#update (sync)", function (assert) {
+		var oBinding,
+			oBindingMock,
+			oContext = this.oMetaModel.getContext("/EMPLOYEES"),
+			aContexts = [{}],
+			sPath = "path";
+
+		// avoid request to backend during initialization
+		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
+
+		oBinding = this.oMetaModel.bindList(sPath, oContext);
+		oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("fetchContexts").withExactArgs()
+			.returns(_SyncPromise.resolve(aContexts));
+		oBindingMock.expects("setContexts").withExactArgs(sinon.match.same(aContexts));
+		oBindingMock.expects("_fireChange").never();
+
+		// code under test
+		oBinding.update();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaListBinding#update (async)", function (assert) {
+		var oBinding,
+			oBindingMock,
+			oContext = this.oMetaModel.getContext("/EMPLOYEES"),
+			aContexts = [{}],
+			sPath = "path",
+			oFetchPromise = _SyncPromise.resolve(Promise.resolve()).then(function () {
+				// This is expected to happen after the promise is resolved
+				oBindingMock.expects("setContexts").withExactArgs(sinon.match.same(aContexts));
+				oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+				return aContexts;
+			});
+
+		// avoid request to backend during initialization
+		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
+
+		oBinding = this.oMetaModel.bindList(sPath, oContext);
+		oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("fetchContexts").withExactArgs().returns(oFetchPromise);
+		oBindingMock.expects("setContexts").withExactArgs([]);
+		oBindingMock.expects("_fireChange").never(); // initially
+
+		// code under test
+		oBinding.update();
+
+		return oFetchPromise;
 	});
 
 	//*********************************************************************************************
@@ -2451,7 +2551,7 @@ sap.ui.require([
 			sPath = "";
 
 		// avoid request to backend during initialization
-		this.mock(this.oMetaModel).expects("getObject");
+		this.mock(this.oMetaModel).expects("fetchObject").returns(_SyncPromise.resolve());
 
 		oBinding = oMetaModel.bindList(sPath, oContext);
 		oBindingMock = this.mock(oBinding);
@@ -2609,18 +2709,18 @@ sap.ui.require([
 		result : [],
 		warning : ["Unknown child Unknown of tea_busi.DefaultContainer", "/Unknown/"]
 	}].forEach(function (oFixture) {
-		var sResolvedPath = oFixture.contextPath
+		var sPath = oFixture.contextPath
 			? oFixture.contextPath + "|"/*make cut more visible*/ + oFixture.metaPath
 			: oFixture.metaPath;
 
-		QUnit.test("ODataMetaListBinding#_getContexts: " + sResolvedPath, function (assert) {
+		QUnit.test("ODataMetaListBinding#fetchContexts (sync): " + sPath, function (assert) {
 			var oBinding,
 				oMetaModel = this.oMetaModel,
 				oContext = oFixture.contextPath && oMetaModel.getContext(oFixture.contextPath);
 
 			if (oFixture.warning) {
-				// Note that update is called twice in this test: once from bindList via the
-				// constructor, once from _getContexts
+				// Note that _getContexts is called twice in this test: once from bindList via the
+				// constructor, once directly from the test
 				this.oLogMock.expects("isLoggable").twice()
 					.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel)
 					.returns(true);
@@ -2631,18 +2731,35 @@ sap.ui.require([
 				.returns(_SyncPromise.resolve(mScope));
 			oBinding = this.oMetaModel.bindList(oFixture.metaPath, oContext);
 
-			assert.deepEqual(oBinding._getContexts().map(function (oContext) {
+			assert.deepEqual(oBinding.fetchContexts().getResult().map(function (oContext) {
 				assert.strictEqual(oContext.getModel(), oMetaModel);
 				return oContext.getPath();
 			}), oFixture.result);
 		});
 	});
+
+
+	QUnit.test("ODataMetaListBinding#fetchContexts (async)", function (assert) {
+		var oBinding,
+			oMetaModel = this.oMetaModel,
+			sPath = "/foo";
+
+		// Note that fetchObject is called twice in this test: once from bindList via the
+		// constructor, once from fetchContexts
+		this.mock(this.oMetaModel).expects("fetchObject").twice()
+			.withExactArgs(sPath + "/")
+			.returns(_SyncPromise.resolve(Promise.resolve({bar: "", baz: ""})));
+		oBinding = this.oMetaModel.bindList(sPath);
+
+		return oBinding.fetchContexts().then(function (oResult) {
+			assert.deepEqual(oResult.map(function (oContext) {
+				assert.strictEqual(oContext.getModel(), oMetaModel);
+				return oContext.getPath();
+			}), ["/foo/bar", "/foo/baz"]);
+		});
+	});
 	//TODO iterate mix of inline and external targeting annotations
 	//TODO iterate annotations like "foo@..." for our special cases, e.g. annotations of annotation
-	//TODO Avoid copies of objects? Makes sense only after we get rid of JSONListBinding which
-	// makes copies itself. If we get rid of it, we might become smarter in updateIndices and
-	// learn from the path which collection to iterate: sPath = "", "$", or "@", oContext holds
-	// the resolved path. Could we support setContext() then?
 
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
