@@ -618,7 +618,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._setMergeError = function () {
-		return FlexSettings.getInstance(this.getComponentName(), this.getAppVersion()).then(function (oSettings) {
+		return FlexSettings.getInstance().then(function (oSettings) {
 			oSettings.setMergeErrorOccured(true);
 		});
 	};

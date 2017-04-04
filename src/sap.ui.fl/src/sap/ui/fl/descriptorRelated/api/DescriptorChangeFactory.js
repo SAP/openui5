@@ -202,8 +202,7 @@ sap.ui.define([
 		}
 
 		var mChangeFile = Change.createInitialFileContent(mPropertyBag );
-		//TODO: add a correct application component name and app version
-		return Settings.getInstance("dummy").then(function(oSettings) {
+		return Settings.getInstance().then(function(oSettings) {
 			return Promise.resolve( new DescriptorChange(mChangeFile, oInlineChange, oSettings) );
 		});
 	};

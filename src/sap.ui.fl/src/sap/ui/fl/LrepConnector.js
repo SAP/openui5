@@ -361,7 +361,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Connector.prototype.loadChanges = function(oComponent, mPropertyBag) {
-		var sUri, oPromise;
+		var sUri;
 		var mOptions = {};
 		var that = this;
 		var sComponentClassName = oComponent.name;
@@ -428,25 +428,40 @@ sap.ui.define([
 		// Replace first & with ?
 		sUri = sUri.replace("&", "?");
 
-		oPromise = this.send(sUri, undefined, undefined, mOptions);
-		return oPromise.then(function(oResponse) {
-			if (oResponse.response) {
+		return this.send(sUri, undefined, undefined, mOptions)
+			.then(function(oResponse) {
 				return {
 					changes: oResponse.response,
 					messagebundle: oResponse.response.messagebundle,
 					componentClassName: sComponentClassName
 				};
-			} else {
-				return Promise.reject("response is empty");
-			}
-		}, function(oError) {
-			if (oError.code === 404 || oError.code === 405) {
-				// load changes based old route, because new route is not implemented
-				return that._loadChangesBasedOnOldRoute(sComponentClassName);
-			} else {
-				throw (oError);
-			}
-		});
+			}, function(oError) {
+				if (oError.code === 404 || oError.code === 405) {
+					// load changes based old route, because new route is not implemented
+					return that._loadChangesBasedOnOldRoute(sComponentClassName);
+				} else {
+					throw (oError);
+				}
+			});
+	};
+
+	/**
+	 * Loads flexibility settings.
+	 *
+	 * @returns {Promise} Returns a Promise with the flexibility settings content
+	 * @public
+	 */
+	Connector.prototype.loadSettings = function() {
+		var sUri = "/sap/bc/lrep/flex/settings";
+
+		if (this._sClient) {
+			sUri += "?sap-client=" + this._sClient;
+		}
+
+		return this.send(sUri, undefined, undefined, {})
+			.then(function(oResponse) {
+				return oResponse.response;
+			});
 	};
 
 	Connector.prototype._loadChangesBasedOnOldRoute = function(sComponentClassName) {
