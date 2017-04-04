@@ -2100,13 +2100,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						promises.push(oPromise);
 					}
 				},
-				collectAfterModelPreload = function(fnCreatePromise) {
-					if (oManifest && mOptions.createModels && jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-first") === "true") {
-						collect(oManifest.then(fnCreatePromise));
-					} else {
-						collect(fnCreatePromise());
-					}
-				},
 				identity = function($) { return $; };
 
 			if (oManifest && mOptions.createModels) {
@@ -2171,17 +2164,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// load any required preload bundles
 			if ( Array.isArray(hints.preloadBundles) ) {
 				hints.preloadBundles.forEach(function(vBundle) {
-					collectAfterModelPreload(function() {
-						return jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true);
-					});
+					collect(jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true));
 				});
 			}
 
 			// preload required libraries
 			if ( Array.isArray(hints.libs) ) {
-				collectAfterModelPreload(function() {
-					return sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) );
-				});
+				collect(sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) ));
 			}
 
 			// preload the component itself
@@ -2225,9 +2214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
 				jQuery.each(hints.components, function(i, vComp) {
-					collectAfterModelPreload(function() {
-						return preload(processOptions(vComp), true);
-					});
+					collect(preload(processOptions(vComp), true));
 				});
 			}
 
