@@ -359,8 +359,9 @@ sap.ui.define([
 						// now the server has one more element
 						addToCount(that.mChangeListeners, sPath, aCollection, 1);
 						// update the cache with the POST response
-						_Helper.updateCache(that.mChangeListeners, _Helper.buildPath(sPath, "-1"),
-							oEntityData, oResult);
+						_Helper.updateAfterPost(that.mChangeListeners,
+								_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
+								_Helper.getSelectForPath(that.mQueryOptions, sPath));
 					}, function (oError) {
 						if (oError.canceled) {
 							// for cancellation no error is reported via fnErrorCallback
@@ -388,8 +389,6 @@ sap.ui.define([
 		}
 		aCollection[-1] = oEntityData;
 
-		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
-		oEntityData["@odata.etag"] = undefined;
 		return request(sGroupId);
 	};
 
@@ -668,7 +667,6 @@ sap.ui.define([
 
 	// make CollectionCache a Cache
 	CollectionCache.prototype = Object.create(Cache.prototype);
-
 
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
