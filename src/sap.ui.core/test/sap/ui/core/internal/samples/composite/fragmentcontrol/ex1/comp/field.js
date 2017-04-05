@@ -20,13 +20,13 @@ sap.ui.define([
                 value:
                 {
                     type: "string",
-                    defaultValue: "Default Value Input",
+                    defaultValue: "Default Value Input"
                 },
                 textFirst:
                 {
                     type: "string",
                     defaultValue: "y",
-                    invalidate: FragmentControlMetadata.INVALIDATION_MODE.TEMPLATE
+                    invalidate: FragmentControlMetadata.InvalidationMode.Template
                 }
             }
         },

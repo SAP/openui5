@@ -2,17 +2,23 @@
 <html>
 
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible"
+	    content="IE=edge" />
 	<meta charset="UTF-8">
 	<title>ExcelInfoButton - sap.ui.core</title>
 	<base href="../../../../../../../../..">
-	<script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-bindingSyntax="complex" src="resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{"xml": "./test-resources/sap/ui/core/internal/samples/composite/fragmentcontrol/misc/xml"}'>
+	<script id="sap-ui-bootstrap"
+	    data-sap-ui-libs="sap.m"
+	    data-sap-ui-theme="sap_bluecrystal"
+	    data-sap-ui-bindingSyntax="complex"
+	    src="resources/sap-ui-core.js"
+	    data-sap-ui-resourceroots='{"xml": "./test-resources/sap/ui/core/internal/samples/composite/fragmentcontrol/misc/xml"}'>
 	</script>
 
 	<script>
 		//jQuery.sap.require("sap.ui.mdc.model.GenericType");
 		jQuery.sap.require("sap.ui.core.FragmentControl");
+		jQuery.sap.require("sap.ui.core.FragmentControlMetadata");
 
 		// definition
 		var ExcelInfoButton = sap.ui.core.FragmentControl.extend("ExcelInfoButton", {
@@ -25,17 +31,17 @@
 					buttonText: {
 						type: "string",
 						defaultValue: "",
-						invalidate: "RENDER"
+						invalidate: sap.ui.core.FragmentControlMetadata.Render
 					},
 					excelDownloadText: {
 						type: "string",
 						defaultValue: "",
-						invalidate: "RENDER"
+						invalidate: sap.ui.core.FragmentControlMetadata.Render
 					},
 					infoText: {
 						type: "string",
 						defaultValue: "",
-						invalidate: "RENDER"
+						invalidate: sap.ui.core.FragmentControlMetadata.Render
 					}
 				},
 				events: {
@@ -77,7 +83,8 @@
 	</script>
 </head>
 
-<body id="body" class="sapUiBody">
+<body id="body"
+    class="sapUiBody">
 </body>
 
 </html>

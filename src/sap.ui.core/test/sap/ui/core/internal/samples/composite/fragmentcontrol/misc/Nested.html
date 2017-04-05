@@ -2,7 +2,8 @@
 <html>
 
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible"
+	    content="IE=edge" />
 	<meta charset="UTF-8">
 
 	<title>One FragmentControl nested in another - sap.ui.core</title>
@@ -10,14 +11,18 @@
 	<base href="../../../../../../../../..">
 
 
-	<script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-bindingSyntax="complex"
-			src="resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{"xml": "./test-resources/sap/ui/core/internal/samples/composite/fragmentcontrol/misc/xml"}'>
+	<script id="sap-ui-bootstrap"
+	    data-sap-ui-libs="sap.m"
+	    data-sap-ui-theme="sap_bluecrystal"
+	    data-sap-ui-bindingSyntax="complex"
+	    src="resources/sap-ui-core.js"
+	    data-sap-ui-resourceroots='{"xml": "./test-resources/sap/ui/core/internal/samples/composite/fragmentcontrol/misc/xml"}'>
 	</script>
 
 	<script>
 		//jQuery.sap.require("sap.ui.mdc.model.GenericType");
 		jQuery.sap.require("sap.ui.core.FragmentControl");
+		jQuery.sap.require("sap.ui.core.FragmentControlMetadata");
 		jQuery.sap.declare("sap.mdc.InfoButton");
 
 		//TODO: move to another file !
@@ -36,7 +41,7 @@
 					infoText: {
 						type: "string",
 						defaultValue: "y",
-						invalidate: "RENDER"
+						invalidate: sap.ui.core.FragmentControlMetadata.Render
 					}
 				}
 			},
@@ -87,7 +92,8 @@
 	</script>
 </head>
 
-<body id="body" class="sapUiBody">
+<body id="body"
+    class="sapUiBody">
 </body>
 
 </html>
