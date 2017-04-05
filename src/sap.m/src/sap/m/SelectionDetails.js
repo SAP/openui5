@@ -324,10 +324,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype._updateButton = function (count) {
 		var sText,
-				oButton = this.getAggregation("_button");
+			oButton = this.getAggregation("_button");
+
 		if (jQuery.type(count) !== "number") {
 			count = this.getItems().length;
 		}
+
 		if (count > 0) {
 			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT_WITH_NUMBER", [ count ]);
 			oButton.setProperty("text", sText, true);
@@ -345,8 +347,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype._onToolbarButtonPress = function() {
 		sap.ui.require([
-			'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', "sap/m/Toolbar", 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',
-			'sap/ui/layout/FixFlex', 'sap/m/FlexItemData', 'sap/m/ScrollContainer', "sap/m/Title"
+			'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', "sap/m/Toolbar", 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer',
+			'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem', 'sap/ui/layout/FixFlex', 'sap/m/ScrollContainer', "sap/m/Title"
 		], this._handlePressLazy.bind(this));
 	};
 
@@ -362,19 +364,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {function} List The constructor of sap.m.List
 	 * @param {function} StandardListItem The constructor of sap.m.StandardListItem
 	 * @param {function} FixFlex The constructor of sap.ui.layout.FixFlex
-	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
 	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
 	 * @param {function} Title The constructor of sap.m.Title
 	 * @private
 	 */
 	SelectionDetails.prototype._handlePressLazy =
-		function(NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem, FixFlex, FlexItemData, ScrollContainer, Title) {
+		function(NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem, FixFlex, ScrollContainer, Title) {
 
-		var oPopover = this._getPopover(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, FixFlex, FlexItemData, ScrollContainer, Title);
+		var oPopover = this._getPopover(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, FixFlex, ScrollContainer, Title);
 
 		if (this._oItemFactory) {
 			this._callFactory();
 		}
+
+		this.fireBeforeOpen();
 
 		this._addMainListItems();
 		this._addActionGroupListItems(StandardListItem);
@@ -431,7 +434,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 			if (Device.system.phone) {
 				this._oInitialPage.setProperty("showHeader", true, true);
-				this._oInitialPage.setAggregation("customHeader", this._getPageToolbar(Toolbar, ToolbarSpacer, Title));
+				this._oInitialPage.setAggregation("customHeader", this._getPageToolbar(Toolbar, ToolbarSpacer, Title), true);
 			}
 		}
 
@@ -457,13 +460,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {function} Page The constructor of sap.m.Page
 	 * @param {function} List The constructor of sap.m.List
 	 * @param {function} FixFlex The constructor of sap.ui.layout.FixFlex
-	 * @param {function} FlexItemData The constructor of sap.m.FlexItemData
 	 * @param {function} ScrollContainer The constructor of sap.m.ScrollContainer
 	 * @param {function} Title The constructor of sap.m.Title
 	 * @returns {sap.m.ResponsivePopover} The newly created or existing popover.
 	 * @private
 	 */
-	SelectionDetails.prototype._getPopover = function(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, FixFlex, FlexItemData, ScrollContainer, Title) {
+	SelectionDetails.prototype._getPopover = function(NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page, List, FixFlex, ScrollContainer, Title) {
 		var oPopover = this.getAggregation("_popover"),
 			oNavContainer,
 			oPage,
@@ -478,8 +480,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 				showHeader: false,
 				contentWidth: "25rem",
 				contentHeight: "31.25rem",
-				beforeOpen: [ this._delegatePopoverEvent, this ],
-				beforeClose: [ this._delegatePopoverEvent, this ]
+				beforeClose: this.fireBeforeClose.bind(this)
 			}).addStyleClass("sapMSD");
 
 			//build popover contents
@@ -658,18 +659,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		this.fireNavigate({
 			item: oEvent.getSource()
 		});
-	};
-
-	/**
-	 * Delegates the popover event to the corresponding SelectioNDetails event
-	 * @param {sap.ui.base.Event} oEvent Event object of popover
-	 */
-	SelectionDetails.prototype._delegatePopoverEvent = function (oEvent) {
-		if (oEvent.sId === "beforeOpen") {
-			this.fireBeforeOpen();
-		} else if (oEvent.sId === "beforeClose") {
-			this.fireBeforeClose();
-		}
 	};
 
 	/**
