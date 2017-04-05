@@ -529,6 +529,79 @@
 				}, 500)
 			});
 
+			QUnit.test('Alt+Left/Right keyboard handling', function(assert){
+				var done = assert.async();
+				var oSystem = {
+					desktop: true,
+					phone: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				var oButton = new sap.m.Button({
+					text : "Open ActionSheet",
+					press : function() {
+						oActionSheet.openBy(this);
+					}
+				});
+
+				var oActionSheet = new sap.m.ActionSheet({
+					showCancelButton: true,
+					buttons: [
+						new sap.m.Button({
+							id: 'oButton1',
+							type: sap.m.ButtonType.Reject,
+							text: "Reject Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Accept,
+							text: "Accept Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton6',
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton7',
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						})
+					]
+				});
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				setTimeout(function(){
+					var oModifiers = oActionSheet._oItemNavigation.getDisabledModifiers();
+					assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+					assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+					assert.equal(oModifiers["sapnext"][0], "alt", "alt is not handled when right is pressed");
+					assert.equal(oModifiers["sapprevious"][0], "alt", "alt is not handled when left is pressed");
+
+					done();
+					oActionSheet.close();
+
+					oButton.destroy();
+					oActionSheet.destroy();
+				}, 500)
+			});
+
+
+
 			QUnit.module("Screen reader");
 
 			QUnit.test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function(assert) {
