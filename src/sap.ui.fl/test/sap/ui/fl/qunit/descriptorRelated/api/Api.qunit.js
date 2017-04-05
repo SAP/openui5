@@ -924,6 +924,54 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			});
 		});
 	});
+	
+	QUnit.test("getJson", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference",
+			"isAppVariantRoot":	false
+		}).then(function(oDescriptorVariant) {
+			var mExpectedJson = {
+					"id" : "a.id",
+					"reference": "a.reference",
+					"fileName":	"manifest",
+					"fileType":	"appdescr_variant",
+					"isAppVariantRoot":	false,
+					"layer": "CUSTOMER",
+					"namespace": "apps/a.reference/changes/a.id/",
+					"packageName": "$TMP",
+					"content": []
+			};
+			var mJsonResult = oDescriptorVariant.getJson();
+			assert.ok(mJsonResult);
+			assert.deepEqual(mJsonResult, mExpectedJson);
+			//with an inline change
+			return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+				return oDescriptorVariant.addDescriptorInlineChange(oDescriptorInlineChange).then(function() {
+					var mExpectedJsonWithContent = {
+							"id" : "a.id",
+							"reference": "a.reference",
+							"fileName":	"manifest",
+							"fileType":	"appdescr_variant",
+							"isAppVariantRoot":	false,
+							"layer": "CUSTOMER",
+							"namespace": "apps/a.reference/changes/a.id/",
+							"packageName": "$TMP",
+							"content": [{
+								"changeType": "changeType",
+								"content": {
+									"param":"value"
+								},
+								"texts": {"a": "b"}
+							}]
+					};
+					var mJsonResultWithContent = oDescriptorVariant.getJson();
+					assert.ok(mJsonResultWithContent);
+					assert.deepEqual(mJsonResultWithContent, mExpectedJsonWithContent);
+				});
+			});
+		});
+	});
 
 
 	QUnit.module("DescriptorVariantFactory", {
