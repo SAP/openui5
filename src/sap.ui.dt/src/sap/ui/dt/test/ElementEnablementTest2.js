@@ -113,6 +113,7 @@ function(jQuery, ManagedObject, ElementTest, ChangeRegistry) {
 	ElementEnablementTest2.prototype._testActions = function(oData) {
 
 		var sActionsResult;
+		var sPropagate;
 		var mActions = [];
 		var aActions = [];
 		var bActions = false;
@@ -127,8 +128,7 @@ function(jQuery, ManagedObject, ElementTest, ChangeRegistry) {
 					aActions[i] = sAction;
 						mActions[i] = {
 							action : sAction,
-							aggregation : "self",
-							status : ""
+							aggregation : "self"
 						};
 					i = i + 1;
 				}
@@ -138,7 +138,9 @@ function(jQuery, ManagedObject, ElementTest, ChangeRegistry) {
 			if (oData.aggregations) {
 				for (var sAggregation in oData.aggregations) {
 					var oAggr = oData.aggregations[sAggregation];
-					var sPropagate = (oAggr.propagateRelevantContainer || oAggr.propagateMetadata) ? "propagates Action" : "";
+					if (oAggr.propagateMetadata) {
+						sPropagate = (sPropagate) ? sPropagate + ", " + sAggregation : "propagate (" + sAggregation;
+					}
 					for (var sAction in oAggr.actions) {
 						i = aActions.indexOf(sAction);
 						if (i === -1) {
@@ -146,12 +148,10 @@ function(jQuery, ManagedObject, ElementTest, ChangeRegistry) {
 							i = aActions.indexOf(sAction);
 							mActions[i] = {
 								action : sAction,
-								aggregation : sAggregation,
-								status : sPropagate
+								aggregation : sAggregation
 							};
 						} else {
 							mActions[i].aggregation = mActions[i].aggregation + ", " + sAggregation;
-							mActions[i].status = sPropagate;
 						}
 						bAggregations = true;
 					}
@@ -165,12 +165,13 @@ function(jQuery, ManagedObject, ElementTest, ChangeRegistry) {
 
 			mActions.forEach(function(oAction) {
 				sActionsResult = (sActionsResult) ? sActionsResult + ", " : "";
-				if (oAction.status !== "") {
-					sActionsResult = sActionsResult + oAction.action + " (" + oAction.aggregation + " + " + oAction.status + ")";
-				} else {
-					sActionsResult = sActionsResult + oAction.action + " (" + oAction.aggregation + ")";
-				}
+				sActionsResult = sActionsResult + oAction.action + " (" + oAction.aggregation + ")";
 			});
+
+			if (sPropagate) {
+				sPropagate = sPropagate + ")";
+				sActionsResult = sActionsResult + " + " + sPropagate;
+			}
 
 			return sActionsResult;
 		}
