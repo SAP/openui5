@@ -283,6 +283,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		TabContainer.prototype._moveToNextItem = function (bSetAsSelected) {
+			if (!this._getTabStrip()._oItemNavigation) {
+				return;
+			}
+
 			var iItemsCount = this.getItems().length,
 					iCurrentFocusedIndex = this._getTabStrip()._oItemNavigation.getFocusedIndex(),
 					iNextIndex = iItemsCount === iCurrentFocusedIndex ? --iCurrentFocusedIndex : iCurrentFocusedIndex,
