@@ -34,6 +34,24 @@
 
 
 	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- Node.js settings -->
+		<node.version>0.12.4</node.version>
+		<node.gav>gav:org.nodejs.download.node:node</node.gav>
+		<node.location>${node.gav}</node.location>
+
+		<!-- NPM settings -->
+		<npm.version>2.11.3</npm.version>
+		<npm.registry>http://nexus:8081/nexus/content/groups/build.milestones.npm</npm.registry>
+
+	</properties>
+
+
+	<!--**************************************************************************
 	* POM SECTION: Build Settings
 	***************************************************************************-->
 
@@ -71,6 +89,10 @@
 				<version>1.0.1</version>
 				<configuration>
 					<nodeType>SHARED</nodeType>
+					<nodeVersion>${node.version}</nodeVersion>
+					<nodeLocation>${node.location}</nodeLocation>
+					<npmRegistry>${npm.registry}</npmRegistry>
+					<npmVersion>${npm.version}</npmVersion>
 				</configuration>
 				<executions>
 					<execution>
@@ -111,6 +133,52 @@
 		</plugins>
 
 	</build>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Profiles Settings
+	***************************************************************************-->
+
+	<profiles>
+
+		<profile>
+			<id>customer.release</id>
+			<activation>
+				<property>
+					<name>ldi.releaseType</name>
+					<value>customer</value>
+				</property>
+			</activation>
+			<properties>
+				<npm.registry>http://nexus:8081/nexus/content/groups/build.releases.npm</npm.registry>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>linux</id>
+			<activation>
+				<os>
+					<family>unix</family>
+				</os>
+			</activation>
+			<properties>
+				<node.gav>gav:org.nodejs.download.node:node:${node.version}:tar.gz:linux-x64</node.gav>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>mac</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<node.gav>gav:org.nodejs.download.node:node:${node.version}:tar.gz:darwin-x64</node.gav>
+			</properties>
+		</profile>
+
+	</profiles>
 
 
 </project>
