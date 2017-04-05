@@ -1453,6 +1453,40 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					});
 		});
 	});
+	
+	QUnit.test("getJson", function(assert) {
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			new DescriptorChangeFactory().createNew(
+					"a.reference",
+					oDescriptorInlineChange,
+					'CUSTOMER'
+					).then(function(oDescriptorChange) {
+						var mExpectedPartJson = {
+								"reference": "a.reference",
+								"fileType":	"change",
+								"layer": "CUSTOMER",
+								"namespace": "apps/a.reference/changes/",
+								"packageName": "$TMP",
+								"changeType": "changeType",
+								"content": {
+									"param":"value"
+								},
+								"texts": {"a": "b"}
+						};
+						var mJsonResult = oDescriptorChange.getJson();
+						assert.ok(mJsonResult);
+						assert.equal(mJsonResult.reference, mExpectedPartJson.reference);
+						assert.equal(mJsonResult.fileType, mExpectedPartJson.fileType);
+						assert.equal(mJsonResult.layer, mExpectedPartJson.layer);
+						assert.equal(mJsonResult.namespace, mExpectedPartJson.namespace);
+						assert.equal(mJsonResult.packageName, mExpectedPartJson.packageName);
+						assert.equal(mJsonResult.changeType, mExpectedPartJson.changeType);
+						assert.deepEqual(mJsonResult.content, mExpectedPartJson.content);
+						assert.deepEqual(mJsonResult.texts, mExpectedPartJson.texts);
+					});
+		});
+	});
+
 
 	QUnit.module("DescriptorChangeFactory", {
 		beforeEach: function(assert) {
@@ -1460,7 +1494,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		afterEach: function() {
 		}
 	});
-
+	
 	QUnit.test("createNew", function(assert) {
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
 			new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange).then(function(oDescriptorChange) {
