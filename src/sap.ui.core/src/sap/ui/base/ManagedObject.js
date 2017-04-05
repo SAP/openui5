@@ -1091,6 +1091,9 @@ sap.ui.define([
 				"newValue": oValue
 			});
 		}
+		if (this._observer) {
+			this._observer.propertyChange(this, sPropertyName, oOldValue, oValue);
+		}
 
 		// reset suppress invalidate flag
 		if (bSuppressInvalidate) {
@@ -1303,9 +1306,13 @@ sap.ui.define([
 		if (bSuppressInvalidate) {
 			this.iSuppressInvalidate++;
 		}
-
+		if (this._observer && this.mAssociations[sAssociationName] != null) {
+			this._observer.associationChange(this, sAssociationName, "remove", this.mAssociations[sAssociationName]);
+		}
 		this.mAssociations[sAssociationName] = sId;
-
+		if (this._observer && this.mAssociations[sAssociationName] != null) {
+			this._observer.associationChange(this, sAssociationName, "insert", sId);
+		}
 		if (!this.isInvalidateSuppressed()) {
 			this.invalidate();
 		}
@@ -1402,7 +1409,9 @@ sap.ui.define([
 		} else {
 			aIds.push(sId);
 		}
-
+		if (this._observer) {
+			this._observer.associationChange(this, sAssociationName, "insert", sId);
+		}
 		if (!this.isInvalidateSuppressed()) {
 			this.invalidate();
 		}
@@ -1473,6 +1482,9 @@ sap.ui.define([
 			} else {
 				sId = aIds[vObject];
 				aIds.splice(vObject, 1);
+				if (this._observer) {
+					this._observer.associationChange(this, sAssociationName, "remove", sId);
+				}
 				if (!this.isInvalidateSuppressed()) {
 					this.invalidate();
 				}
@@ -1515,6 +1527,9 @@ sap.ui.define([
 		}
 
 		delete this.mAssociations[sAssociationName];
+		if (this._observer) {
+			this._observer.associationChange(this, sAssociationName, "remove", aIds);
+		}
 		if (!this.isInvalidateSuppressed()) {
 			this.invalidate();
 		}
@@ -2031,6 +2046,9 @@ sap.ui.define([
 			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
 			// FIXME DESTROY: no more need to fire event here when destroy ever should be fixed
 			this._fireModifyAggregation && this._fireModifyAggregation("remove", sAggregationName, aChildren);
+			if (this._observer) {
+				this._observer.aggregationChange(this, sAggregationName, "remove", aChildren);
+			}
 		} else if (Array.isArray(aChildren)) {
 			for (i = aChildren.length - 1; i >= 0; i--) {
 				aChild = aChildren[i];
@@ -2040,6 +2058,9 @@ sap.ui.define([
 
 					//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
 					this._fireModifyAggregation && this._fireModifyAggregation("remove", sAggregationName, aChild);
+					if (this._observer) {
+						this._observer.aggregationChange(this, sAggregationName, "remove", aChild);
+					}
 				}
 			}
 		}
@@ -2181,6 +2202,9 @@ sap.ui.define([
 			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
 			if (this.oParent) {
 				this.oParent._fireModifyAggregation && this.oParent._fireModifyAggregation("remove", this.sParentAggregationName, this);
+				if (this.oParent._observer) {
+					this.oParent._observer.aggregationChange(this.oParent, this.sParentAggregationName, "remove", this);
+				}
 			}
 
 			this.oParent = null;
@@ -2278,7 +2302,9 @@ sap.ui.define([
 
 		//fire aggregation lifecycle event on the new parent
 		oParent._fireModifyAggregation && oParent._fireModifyAggregation("insert", sAggregationName, this);
-
+		if (oParent._observer) {
+			oParent._observer.aggregationChange(oParent, sAggregationName, "insert", this);
+		}
 		return this;
 	};
 
