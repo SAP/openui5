@@ -298,8 +298,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @protected
 	 */
 	SelectionDetails.prototype.getFacade = function() {
-		var oFacade = new Interface(this, SelectionDetails.prototype._aFacadeMethods);
-
+		var oFacade = new Interface(this, SelectionDetails.prototype._aFacadeMethods, true);
 		oFacade.getItems = this._getItemFacades.bind(this);
 
 		this.getFacade = jQuery.sap.getter(oFacade);
