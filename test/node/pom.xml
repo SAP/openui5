@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.5</version>
+		<relativePath></relativePath>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.ui5.tools.maven.test</groupId>
+	<artifactId>node</artifactId>
+	<version>1.0.1</version>
+	<packaging>pom</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>node</directory>
+						</fileset>
+						<fileset>
+							<directory>node_modules</directory>
+						</fileset>
+						<fileset>
+							<directory>etc</directory>
+						</fileset>
+						<fileset>
+							<directory>${project.basedir}</directory>
+							<includes>
+								<inlude>npm-debug*.*</inlude>
+							</includes>>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.sap.ui5.tools.maven</groupId>
+				<artifactId>node-maven-plugin</artifactId>
+				<version>1.0.1</version>
+				<configuration>
+					<nodeType>SHARED</nodeType>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install-node-and-npm</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>install</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>npm-install</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<args>
+								<arg>install</arg>
+							</args>
+						</configuration>
+					</execution>
+					<execution>
+						<id>execute-jsdoc</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>node</goal>
+						</goals>
+						<configuration>
+							<allowedExitCodes>0,1</allowedExitCodes>
+							<args>
+								<arg>node_modules/jsdoc/jsdoc.js</arg>
+							</args>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+
+</project>

@@ -1,0 +1,9 @@
+{
+  "name": "merged-jsdoc",
+  "version": "0.0.0",
+  "description": "JSDoc 3",
+  "author": "SAP SE",
+  "dependencies": {
+    "jsdoc": "^3.4.0"
+  }
+}
