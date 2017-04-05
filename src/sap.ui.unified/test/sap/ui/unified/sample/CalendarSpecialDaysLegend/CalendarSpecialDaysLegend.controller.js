@@ -13,6 +13,7 @@ sap.ui.define([
 			var oCal2 = this.getView().byId("calendar2");
 			var oLeg2 = this.getView().byId("legend2");
 			var bPressed = oEvent.getParameter("pressed");
+
 			if (bPressed) {
 				var oRefDate = new Date();
 				for (var i = 1; i <= 10; i++) {
@@ -33,6 +34,7 @@ sap.ui.define([
 						type : sType,
 						tooltip : "Placeholder " + i
 					}));
+
 					oLeg1.addItem(new CalendarLegendItem({
 						text : "Placeholder " + i
 					}));
@@ -40,6 +42,18 @@ sap.ui.define([
 						text : "Placeholder " + i
 					}));
 				}
+
+				oCal1.addSpecialDate(new DateTypeRange({
+					startDate : new Date(oRefDate.setDate(11)),
+					endDate : new Date(oRefDate.setDate(21)),
+					type : sap.ui.unified.CalendarDayType.NonWorking
+				}));
+
+				oCal1.addSpecialDate(new DateTypeRange({
+					startDate : new Date(oRefDate.setDate(25)),
+					type : sap.ui.unified.CalendarDayType.NonWorking
+				}));
+
 			} else {
 				oCal1.destroySpecialDates();
 				oCal2.destroySpecialDates();

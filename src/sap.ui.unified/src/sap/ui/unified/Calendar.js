@@ -64,6 +64,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * If set, the provided weekdays are displayed as non-working days.
 			 * Valid values inside the array are 0 to 6.
 			 * If not set, the weekend defined in the locale settings is displayed as non-working days.
+			 *
+			 * <b>Note:</b> Keep in mind that this property sets only weekly-recurring days
+			 * as non-working. If you need specific dates or dates ranges, such as national
+			 * holidays, use the <code>specialDates</code> aggregation to set them.
+			 * Both the non-working days (from property) and dates (from aggregation) are
+			 * visualized the same.
+			 *
 			 * @since 1.28.9
 			 */
 			nonWorkingDays : {type : "int[]", group : "Appearance", defaultValue : null},
@@ -118,19 +125,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		aggregations : {
 
 			/**
-			 * Date Ranges for selected dates of the DatePicker
+			 * Dates or date ranges for selected dates.
+			 *
+			 * To set a single date (instead of a range), set only the <code>startDate</code> property
+			 * of the {@link sap.ui.unified.DateRange} class.
 			 */
 			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"},
 
 			/**
-			 * Date Range with type to visualize special days in the Calendar.
+			 * Dates or date ranges with type, to visualize special days in the <code>Calendar</code>.
 			 * If one day is assigned to more than one Type, only the first one will be used.
+			 *
+			 * To set a single date (instead of a range), set only the <code>startDate</code> property
+			 * of the {@link sap.ui.unified.DateRange} class.
+			 *
+			 * <b>Note:</b> Keep in mind that the <code>NonWorking</code> type is for marking specific
+			 * dates or date ranges as non-working, where if you need a weekly-reccuring non-working days
+			 * (weekend), you should use the <code>nonWorkingDays</code> property. Both the non-working
+			 * days (from property) and dates (from aggregation) are visualized the same.
+			 *
 			 * @since 1.24.0
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
 			/**
-			 * Date Ranges for disabled dates
+			 * Dates or date ranges for disabled dates.
+			 *
+			 * To set a single date (instead of a range), set only the <code>startDate</code> property
+			 * of the {@link sap.ui.unified.DateRange} class.
+			 *
 			 * @since 1.38.0
 			 */
 			disabledDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "disabledDate"},
