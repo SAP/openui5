@@ -24,8 +24,9 @@
 	text-align: center;
 	padding: 0.5rem;
 	min-height: 100px;
-	border-bottom: 0;
 	cursor: pointer;
+	border-width: 1px;
+	border-style: solid;
 }
 
 /* design for the visual tab cell */
@@ -33,7 +34,8 @@
 	text-align: center;
 	padding: 0.5rem;
 	min-height: 325px;
-	border-bottom: 0;
+	border-width: 1px;
+	border-style: solid;
 	cursor: pointer;
 }
 
@@ -75,4 +77,28 @@
 .sapUiSizeCompact .sapUiDemoIconExplorer .sapUiCopyIcon > span {
 	font-size: 1rem;
 	padding-right: 0.5rem;
+}
+
+.sapUiDemoIconExplorer .previewIcon {
+	font-size: 100px;
+	display: inline-block;
+	width: 100%;
+}
+
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)
+.sapUiDemoIconExplorer .previewIcon {
+	background-color: #116464;
+	color: #ffffff;
+}
+
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)
+.sapUiDemoIconExplorer .gridLayoutCell,
+.sapUiDemoIconExplorer .visualLayoutCell {
+	border-color: #bfbfbf;
+}
+
+@media (max-width:599px) {
+	.sapUiDemoIconExplorer .previewIcon {
+		font-size: 50px;
+	}
 }
