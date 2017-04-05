@@ -180,6 +180,18 @@ sap.ui.define([
 		return oLREPConnector.send(sRoute, sMethod, mMap);
 	};
 
+	/**
+	 * Returns a copy of the JSON object of the descriptor variant
+	 *
+	 * @return {object} copy of JSON object of the descriptor variant
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorVariant.prototype.getJson = function() {
+		return jQuery.extend(true, {}, this._getMap());
+	};
+
 	DescriptorVariant.prototype._getMap = function() {
 		switch (this._mode) {
 			case 'NEW':
