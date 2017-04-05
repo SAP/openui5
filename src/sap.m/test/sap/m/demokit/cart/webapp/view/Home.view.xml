@@ -19,9 +19,9 @@
 			<Toolbar id="searchBar">
 				<SearchField
 					id="searchField"
+					liveChange="onSearch"
 					showRefreshButton="{device>/isNoTouch}"
 					placeholder="{i18n>homeSearchPlaceholder}"
-					search="onSearch"
 					tooltip="{i18n>homeSearchTooltip}"
 					width="100%">
 				</SearchField>
