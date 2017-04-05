@@ -131,12 +131,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * EndButton is supported by both variants. It is always show in the right part (left part in RTL mode) of the footer which is located at the bottom of the ResponsivePopover. If buttons need to be displayed in header, please use customHeader instead.
 			 */
-			endButton : {type : "sap.m.Button", multiple : false},
-
-			/**
-			 * The internal popup instance which is either a dialog on phone or a popover on the rest of platforms
-			 */
-			_popup : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
+			endButton : {type : "sap.m.Button", multiple : false}
 		},
 		associations : {
 
@@ -253,8 +248,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	ResponsivePopover.prototype.init = function(){
 		var that = this;
 
-		this._bAppendedToUIArea = false;
-
 		var settings = {
 			resizable: that.getResizable(),
 			beforeOpen: function(oEvent){
@@ -280,9 +273,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._oControl = new Popover(this.getId() + "-popover", settings);
 		}
 
-		this.setAggregation("_popup", this._oControl);
-
 		this._oControl.addStyleClass("sapMResponsivePopover");
+
+		// the inner popup control should propagate the properties which are
+		// available on the responsive popover when the responsive popover is
+		// added as a dependent on some other control
+		this._oControl._getPropertiesToPropagate = function() {
+			return that._getPropertiesToPropagate();
+		};
 
 		this._oDelegate = {
 			onBeforeRendering: function(){
@@ -366,13 +364,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ResponsivePopover.prototype.openBy = function(oParent){
-		if (!this._bAppendedToUIArea && !this.getParent()) {
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
-			oStatic.addContent(this, true);
-			this._bAppendedToUIArea = true;
-		}
-
 		if (sap.ui.Device.system.phone) {
 			return this._oControl.open();
 		} else {
@@ -429,11 +420,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 */
 	ResponsivePopover.prototype.clone = function(){
 		var oClone = Control.prototype.clone.apply(this, arguments),
-			aContent = this.getAggregation('_popup').getContent();
+			oClonedControl = this._oControl.clone();
 
-		for (var i = 0; i < aContent.length; i++) {
-			oClone.addContent(aContent[i].clone());
-		}
+		oClone._oControl = oClonedControl;
 
 		return oClone;
 	};
@@ -536,9 +525,27 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		return this;
 	};
 
+	ResponsivePopover.prototype._oldGetModel = ResponsivePopover.prototype.getModel;
+	ResponsivePopover.prototype.getModel = function(sName) {
+		var oModel;
+
+		if (this._oControl) {
+			oModel = this._oControl.getModel(sName);
+		}
+
+		if (!oModel) {
+			oModel = this._oldGetModel(sName);
+		}
+
+		return oModel;
+	};
+
 	ResponsivePopover.prototype._oldSetModel = ResponsivePopover.prototype.setModel;
-	ResponsivePopover.prototype.setModel = function(oModel, sName){
-		this._oControl.setModel(oModel, sName);
+	ResponsivePopover.prototype.setModel = function(oModel, sName) {
+		if (this._oControl) {
+			this._oControl.setModel(oModel, sName);
+		}
+
 		return this._oldSetModel(oModel, sName);
 	};
 
@@ -679,7 +686,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	["bindAggregation", "validateAggregation", "setAggregation", "getAggregation", "indexOfAggregation", "insertAggregation",
 		"addAggregation", "removeAggregation", "removeAllAggregation", "destroyAggregation", "setAssociation", "getAssociation",
 		"addAssociation", "removeAssociation", "removeAllAssociation"].forEach(function(sName){
-			ResponsivePopover.prototype[sName] = function(){
+			ResponsivePopover.prototype[sName] = function() {
+				// the private "_popup" aggregation is deleted but already used in
+				// many other controls, such as sap.m.MessagePopvoer, sap.m.QuickView
+				// therefore a special return has to be implemented here in order to
+				// make the other controls still work
+				if (sName === "getAggregation" && arguments[0] === "_popup") {
+					return this._oControl;
+				}
+
 				var iLastUpperCase = this._lastIndexOfUpperCaseLetter(sName),
 					sMethodName, res;
 				if (jQuery.type(arguments[0]) === "string") {
@@ -700,8 +715,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	});
 
 	// forward the other necessary methods to the inner instance, but do not check the existence of generated methods like (addItem)
-	["invalidate", "close", "isOpen", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass",
-		"getDomRef", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay"].forEach(function(sName){
+	["invalidate", "close", "isOpen",
+		"addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass",
+		"getDomRef", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay",
+		"propagateProperties"].forEach(function(sName){
 			ResponsivePopover.prototype[sName] = function() {
 				if (this._oControl && this._oControl[sName]) {
 					var res = this._oControl[sName].apply(this._oControl ,arguments);
