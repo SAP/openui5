@@ -411,7 +411,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					return null;
 				}
 
-				this.aRBs[iIndex].destroy();
 				this.aRBs.splice(iIndex, 1);
 
 				if (!this._bUpdateButtons) {
