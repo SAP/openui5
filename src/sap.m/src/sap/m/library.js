@@ -3900,11 +3900,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			createLabel: function (mConfig) {
 				return new sap.m.Label(mConfig);
 			},
-			createInput: function (mConfig) {
-				return new sap.m.InputBase(mConfig);
+			createInput: function (sId, mConfig) {
+				return new sap.m.InputBase(sId, mConfig);
 			},
-			createSlider: function (mConfig) {
-				return new sap.m.Slider(mConfig);
+			createSlider: function (sId, mConfig) {
+				return new sap.m.Slider(sId, mConfig);
 			},
 			createRadioButtonGroup: function (mConfig) {
 				return new sap.m.RadioButtonGroup(mConfig);

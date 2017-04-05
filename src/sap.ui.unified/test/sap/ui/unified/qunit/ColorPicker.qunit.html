@@ -34,6 +34,7 @@
 					var oHelper = sap.ui.unified.ColorPickerHelper,
 						oFactory = oHelper.factory,
 						oRBGroup,
+						oInput,
 						oSlider;
 
 					// Assert - Properties
@@ -44,8 +45,11 @@
 					oAssert.ok(oFactory.createLabel() instanceof sap.m.Label,
 						"Factory label control should be instance of sap.m.Label");
 
-					oAssert.ok(oFactory.createInput() instanceof sap.m.InputBase,
+					oInput = oFactory.createInput("MYCUSTOMINPUTID");
+					oAssert.ok(oInput instanceof sap.m.InputBase,
 						"Factory input control should be instance of sap.m.InputBase");
+					oAssert.strictEqual(oInput.getId(), "MYCUSTOMINPUTID",
+						"Factory input control should have 'MYCUSTOMINPUTID' assigned as ID");
 
 					// RadioButton group and RadioButtonItem
 					oRBGroup = oFactory.createRadioButtonGroup({
@@ -59,8 +63,10 @@
 						"sap.m.RadioButton");
 
 					// Slider
-					oSlider = oFactory.createSlider({step: 0.1});
+					oSlider = oFactory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
 					oAssert.ok(oSlider instanceof sap.m.Slider, "Factory Slider control should be instance of sap.m.Slider");
+					oAssert.strictEqual(oSlider.getId(), "MYCUSTOMSLIDERID",
+						"Factory Slider control should have 'MYCUSTOMSLIDERID' assigned as ID");
 				});
 
 				QUnit.module("API", {

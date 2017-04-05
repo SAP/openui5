@@ -1192,15 +1192,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 				createLabel: function (mConfig) {
 					return new sap.ui.commons.Label(mConfig);
 				},
-				createInput: function (mConfig) {
-					return new sap.ui.commons.TextField(mConfig);
+				createInput: function (sId, mConfig) {
+					return new sap.ui.commons.TextField(sId, mConfig);
 				},
-				createSlider: function (mConfig) {
+				createSlider: function (sId, mConfig) {
 					if (mConfig && mConfig.step) {
 						mConfig.smallStepWidth = mConfig.step;
 						delete mConfig.step;
 					}
-					return new sap.ui.commons.Slider(mConfig);
+					return new sap.ui.commons.Slider(sId, mConfig);
 				},
 				createRadioButtonGroup: function (mConfig) {
 					if (mConfig && mConfig.buttons) {
