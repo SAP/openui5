@@ -450,6 +450,8 @@ sap.ui.define([
 		this._setSectionsFocusValues();
 
 		this._restoreScrollPosition();
+
+		sap.ui.getCore().getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
 	};
 
 	/**
