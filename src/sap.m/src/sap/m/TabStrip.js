@@ -634,6 +634,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @private
 		 */
 		TabStrip.prototype._moveToNextItem = function (bSetAsSelected) {
+			if (!this._oItemNavigation) {
+				return;
+			}
+
 			var iItemsCount = this.getItems().length,
 				iCurrentFocusedIndex = this._oItemNavigation.getFocusedIndex(),
 				iNextIndex = iItemsCount === iCurrentFocusedIndex ? --iCurrentFocusedIndex : iCurrentFocusedIndex,
