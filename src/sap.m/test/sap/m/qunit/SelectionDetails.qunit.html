@@ -22,7 +22,7 @@
 	var aDependencies = [
 		'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', "sap/m/Toolbar", 'sap/m/OverflowToolbar',
 		'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',
-		'sap/ui/layout/FixFlex', 'sap/m/FlexItemData', 'sap/m/ScrollContainer', "sap/m/Title"
+		'sap/ui/layout/FixFlex', 'sap/m/ScrollContainer', "sap/m/Title"
 	];
 	var aHandlePressLazyArgs;
 	QUnit.config.autostart = false;
@@ -177,7 +177,7 @@
 			sinon.spy(sap.m, "NavContainer");
 			this._aGetPopoverArgs = [
 				sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Toolbar, sap.m.ToolbarSpacer, sap.m.Page,
-				sap.m.List, sap.ui.layout.FixFlex, sap.m.FlexItemData, sap.m.ScrollContainer, sap.m.Title
+				sap.m.List, sap.ui.layout.FixFlex, sap.m.ScrollContainer, sap.m.Title
 			];
 		},
 		afterEach: function() {
@@ -858,19 +858,15 @@
 		}
 	});
 
-	QUnit.test("Popover event 'beforeOpen' is delegated", function(assert) {
+	QUnit.test("Popover event 'beforeOpen' is called on button press", function(assert) {
 		//Arrange
 		var oSpyBeforeOpen = sinon.spy(this.oSelectionDetails, "fireBeforeOpen");
-		var oSpyBeforeClose = sinon.spy(this.oSelectionDetails, "fireBeforeClose");
 
 		//Act
-		this.oSelectionDetails._delegatePopoverEvent({
-			sId: "beforeOpen"
-		});
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
 		//Assert
-		assert.ok(oSpyBeforeOpen.calledOnce, "Popover event 'beforeOpen' delegated.");
-		assert.notOk(oSpyBeforeClose.calledOnce, "Popover event 'beforeClose' not delegated.");
+		assert.equal(oSpyBeforeOpen.callCount, 1, "Event 'beforeOpen' is triggered on button press.");
 	});
 
 	QUnit.module("Change Handler", {
