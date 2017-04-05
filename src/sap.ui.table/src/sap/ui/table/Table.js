@@ -813,7 +813,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Determines the row heights of the fixed and scroll area.
+	 * Determines the row heights. For every row in the table the maximum height of all <code>tr</code> elements in the fixed and
+	 * scrollable column areas is returned.
+	 *
+	 * @return {int[]} The row heights
 	 * @private
 	 */
 	Table.prototype._collectRowHeights = function() {
@@ -823,22 +826,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		var iDefaultRowHeight = this._getDefaultRowHeight();
+		var aRowsInFixedColumnsArea = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr");
+		var aRowsInScrollableColumnsArea = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr");
+		var iRowCount = this.getRows().length;
+		var aRowHeights = [];
+		var bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
 
-		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr");
-		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr");
-		var aRowItemHeights = [];
-		for (var i = 0; i < aScrollRowItems.length; i++) {
-			var iFixedRowHeight = 0;
-			if (aFixedRowItems[i]) {
-				iFixedRowHeight = aFixedRowItems[i].getBoundingClientRect().height;
+		for (var i = 0; i < iRowCount; i++) {
+			var nFixedColumnsAreaRowHeight = aRowsInFixedColumnsArea[i] == null ? 0 : aRowsInFixedColumnsArea[i].getBoundingClientRect().height;
+			var nScrollableColumnsAreaRowHeight = aRowsInScrollableColumnsArea[i] == null ? 0 : aRowsInScrollableColumnsArea[i].getBoundingClientRect().height;
+			var nRowHeight = Math.max(nFixedColumnsAreaRowHeight, nScrollableColumnsAreaRowHeight);
+
+			if (bIsZoomedInChrome) {
+				var nHeightDeviation = iDefaultRowHeight - nRowHeight;
+
+				// In Chrome with zoom != 100% the height of table rows can slightly differ from the height of divs (row selectors).
+				// See https://bugs.chromium.org/p/chromium/issues/detail?id=661991
+
+				// Allow the row height to be slightly smaller than the default row height.
+				if (nHeightDeviation > 0 && nHeightDeviation < 1) {
+					aRowHeights.push(Math.max(nRowHeight, iDefaultRowHeight - 1));
+					continue;
+				}
 			}
 
-			var iRowHeight = aScrollRowItems[i].getBoundingClientRect().height;
-
-			aRowItemHeights.push(Math.max(iFixedRowHeight, iRowHeight, iDefaultRowHeight));
+			aRowHeights.push(Math.max(nRowHeight, iDefaultRowHeight));
 		}
 
-		return aRowItemHeights;
+		return aRowHeights;
 	};
 
 	/**
@@ -2496,6 +2511,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (TableUtils.isVariableRowHeightEnabled(this) && this._getRowCount() < this.getVisibleRowCount()) {
 			return 0;
 		} else {
+			// If there are 2 scrollable rows of 50 pixels height, the scrollbar should have a scroll range of 100 pixels. If zoomed in Chrome,
+			// the heights of elements can be slightly lower (below 1 pixel) than their original value, so the scroll range could be only 99.2 pixels.
+			// In this case the scrolling logic would not determine that the rows should be scrolled to the end.
+			// Therefore we need to check if the scroll position is at its maximum by reading the DOM.
+			if (Device.browser.chrome && window.devicePixelRatio != 1) {
+				var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+
+				if (oVSb != null) {
+					var nDeviationFromMaximumScrollPosition = this._getVirtualScrollRange() - oVSb.scrollTop;
+
+					// When there is less than 1 pixel left until the calculated value for the maximum scroll position is reached, we can
+					// consider the table to be scrolled to the end.
+					if (nDeviationFromMaximumScrollPosition < 1) {
+						return this._getMaxRowIndex();
+					}
+				}
+			}
+
 			var iFirstVisibleRow = Math.floor(iScrollTop / this._getScrollingPixelsForRow());
 			return Math.min(this._getMaxRowIndex(), iFirstVisibleRow);
 		}
@@ -4711,9 +4744,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._getDefaultRowHeight = function() {
-		var sContentDensity = TableUtils.getContentDensity(this);
-		// +1 for the border
-		return this.getRowHeight() || TableUtils.CONTENT_DENSITY_ROW_HEIGHTS[sContentDensity] + 1;
+		var iRowHeight = this.getRowHeight();
+
+		if (iRowHeight > 0) {
+			return iRowHeight;
+		} else {
+			var sContentDensity = TableUtils.getContentDensity(this);
+			return TableUtils.CONTENT_DENSITY_ROW_HEIGHTS[sContentDensity];
+		}
 	};
 
 	/**
