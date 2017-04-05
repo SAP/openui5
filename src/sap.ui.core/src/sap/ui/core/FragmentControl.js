@@ -18,7 +18,7 @@
  */
 sap.ui.define([
     'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/FragmentControlMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-    'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', './FragmentProxy'
+    'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/core/FragmentProxy'
 ], function(jQuery, Control, FragmentControlMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, Proxy) {
     "use strict";
 

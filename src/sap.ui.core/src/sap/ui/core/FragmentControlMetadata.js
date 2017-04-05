@@ -16,12 +16,14 @@ sap.ui.define([
 ], function(jQuery, ElementMetadata, XMLTemplateProcessor) {
     "use strict";
 
-    var INVALIDATION_MODE = {
-        RENDER: "render",
-        TEMPLATE: "template",
-        NONE: "none"
+    var InvalidationMode = {
+        Render: "Render",
+        Template: "Template",
+        None: "None"
     };
-    /**
+
+    /*
+     *
      * Creates a new metadata object that describes a subclass of FragmentControl.
      *
      * @param {string} sClassName fully qualified name of the described class
@@ -43,11 +45,26 @@ sap.ui.define([
         }
 
         ElementMetadata.apply(this, arguments);
-        if (!oClassInfo.fragment && sClassName !== "sap.ui.core.FragmentControl") {
-            oClassInfo.fragment = sClassName;
-        }
-        if (!this._fragment && oClassInfo.fragment) {
-            this._fragment = XMLTemplateProcessor.loadTemplate(oClassInfo.fragment, "control");
+        var bClassIsAbstract = this._bAbstract; //notice we cannot use this.getMetadata().isAbstract() yet ...
+        if (!bClassIsAbstract) {
+            // class is not abstract so we try to load accompanying xml
+            if (!oClassInfo.fragment && sClassName !== "sap.ui.core.FragmentControl") {
+                oClassInfo.fragment = sClassName;
+                oClassInfo.fragmentUnspecified = true;
+            }
+            if (!this._fragment && oClassInfo.fragment) {
+                try {
+                    this._fragment = XMLTemplateProcessor.loadTemplate(oClassInfo.fragment, "control");
+                } catch (e) {
+                    if (!oClassInfo.fragmentUnspecified) {
+                        // fragment xml was explicitly specified so we expect to find something !
+                        throw (e);
+                    } else {
+                        // should the class perhaps have been abstract ...
+                        jQuery.sap.log.warning("Implicitly inferred fragment xml " + oClassInfo.fragment + " not found. " + sClassName + " is not abstract!");
+                    }
+                }
+            }
         }
 
         this._sCompositeAggregation = oClassInfo.metadata ? oClassInfo.metadata.compositeAggregation || null : null;
@@ -55,9 +72,10 @@ sap.ui.define([
         this._createPrivateAggregationAccessors();
         this._applyAggregationSettings();
     };
+
     FragmentControlMetadata.prototype = Object.create(ElementMetadata.prototype);
     FragmentControlMetadata.uid = ElementMetadata.uid;
-    FragmentControlMetadata.INVALIDATION_MODE = INVALIDATION_MODE;
+    FragmentControlMetadata.InvalidationMode = InvalidationMode;
 
     FragmentControlMetadata.prototype.getCompositeAggregationName = function() {
         return this._sCompositeAggregation || "_content";
@@ -98,18 +116,18 @@ sap.ui.define([
         }
         if (!oMember.appData) {
             oMember.appData = {};
-            oMember.appData.invalidate = INVALIDATION_MODE.NONE;
+            oMember.appData.invalidate = InvalidationMode.None;
         } else if (oMember.appData.invalidate === true) {
-            oMember.appData.invalidate = INVALIDATION_MODE.RENDER;
+            oMember.appData.invalidate = InvalidationMode.Render;
         }
-        if (oMember && oMember.appData && oMember.appData.invalidate === INVALIDATION_MODE.RENDER) {
+        if (oMember && oMember.appData && oMember.appData.invalidate === InvalidationMode.Render) {
             return false;
         }
-        return true; // i.e. invalidate = INVALIDATION_MODE.NONE || INVALIDATION_MODE.TEMPLATE
+        return true; // i.e. invalidate = InvalidationMode.None || InvalidationMode.Template
     };
 
     FragmentControlMetadata.prototype._requestFragmentRetemplatingCheck = function(oControl, oMember, bForce) {
-        if (!oControl._bIsInitializing && oMember && oMember.appData && oMember.appData.invalidate === INVALIDATION_MODE.TEMPLATE &&
+        if (!oControl._bIsInitializing && oMember && oMember.appData && oMember.appData.invalidate === InvalidationMode.Template &&
             !oControl._requestFragmentRetemplatingPending) {
             if (oControl.requestFragmentRetemplating) {
                 oControl._requestFragmentRetemplatingPending = true;

@@ -12,17 +12,17 @@ sap.ui.define([
 				header: {
 					type: "string",
 					defaultValue: "Test",
-					invalidate: true
+					invalidate: FragmentControlMetadata.InvalidationMode.Render
 				},
 				type: {
 					type: "string",
 					defaultValue: "ResponsiveTable",
-					invalidate: "template"
+					invalidate: FragmentControlMetadata.InvalidationMode.Template
 				},
 				editable: {
 					type: "boolean",
 					defaultValue: false,
-					invalidate: true
+					invalidate: FragmentControlMetadata.InvalidationMode.Render
 				}
 			},
 			events: {
@@ -32,7 +32,7 @@ sap.ui.define([
 				list: {
 					type: "TemplateMetadataContext",
 					mandatory: true,
-					invalidate: "template"
+					invalidate: FragmentControlMetadata.InvalidationMode.Template
 				}
 			},
 
