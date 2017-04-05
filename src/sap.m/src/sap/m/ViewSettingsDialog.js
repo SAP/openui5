@@ -1750,7 +1750,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		// add none item to preset filter list
 		if (aPresetFilterItems.length) {
 			oListItem = new sap.m.StandardListItem({
-				id: "none" + LIST_ITEM_SUFFIX,
+				id: this._presetFilterList.getId() + "-none" + LIST_ITEM_SUFFIX,
 				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
 				selected : !!this.getSelectedPresetFilterItem()
 			});
