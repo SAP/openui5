@@ -1323,6 +1323,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._truncateFileName = function(oItem) {
+		if (!oItem) {
+			return;
+		}
+
 		if (oItem._status === "Edit") {
 			var sItemId = oItem.getId() + "-cli";
 			this.$().find("#" + sItemId).find(".sapMUCObjectMarkerContainer").attr("style", "display: none");// the markers are not displayed in edit mode
@@ -1860,10 +1864,33 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._fillList = function(aItems) {
-		var that = this;
-		var iMaxIndex = aItems.length - 1;
+		var that = this,
+			iMaxIndex = aItems.length - 1,
+			oItemsBinding = this.getBinding("items"),
+			bGroupCreated = false,
+			sGroupKey,
+			fnGroupHeader = this.getBindingInfo("items") ? this.getBindingInfo("items").groupHeaderFactory : null;
+		var fnGroup = function(oItem) {
+			return oItem.getBindingContext() ? oItemsBinding.getGroup(oItem.getBindingContext()) : null;
+		};
+		var fnGroupKey = function(oItem) {
+			return fnGroup(oItem).key;
+		};
 
 		jQuery.each(aItems, function (iIndex, oItem) {
+			// grouping
+			if (oItemsBinding && oItemsBinding.isGrouped() && oItem) {
+				if (!bGroupCreated || sGroupKey !== fnGroupKey(oItem)) {
+					if (fnGroupHeader) {
+						that._oList.addItemGroup(fnGroup(oItem), fnGroupHeader(fnGroup(oItem)), true);
+					} else if (fnGroup(oItem)) {
+						that._oList.addItemGroup(fnGroup(oItem), null, true);
+						bGroupCreated = true;
+						sGroupKey = fnGroupKey(oItem);
+					}
+				}
+			}
+
 			if (!oItem._status) {
 				//Set default status value -> UploadCollection._displayStatus
 				oItem._status = UploadCollection._displayStatus;
