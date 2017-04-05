@@ -108,6 +108,15 @@
 				"config": "test-resources/sap/m/demokit/iconExplorer/demoapp.json"
 			},
 			{
+				"icon": "palette",
+				"text": "Theme Parameter Toolbox",
+				"desc": "Search, filter and preview semantic theme parameters",
+				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
+				"category": "Showcase",
+				"teaser": "test-resources/sap/m/demokit/theming/demoappteaser",
+				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
+			},
+			{
 				"icon": "retail-store-manager",
 				"text": "Browse Orders",
 				"desc": "Master-detail app for browsing orders",

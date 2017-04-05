@@ -1,0 +1,8 @@
+.myColorPreview {
+	display:block;
+	padding: 8px;
+}
+.myColorPreviewBorder {
+	border-width:1px;
+	border-style: solid;
+}

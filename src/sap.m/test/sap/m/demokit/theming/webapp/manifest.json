@@ -1,0 +1,117 @@
+{
+	"_version": "1.2.0",
+
+	"sap.app": {
+		"_version": "1.2.0",
+		"id": "sap.ui.demo.theming",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui": {
+		"_version": "1.2.0",
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://image-viewer",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_belize"
+		]
+	},
+
+	"sap.ui5": {
+		"_version": "1.2.0",
+		"rootView": {
+			"viewName": "sap.ui.demo.theming.view.App",
+			"type": "XML",
+			"id": "app"
+		},
+
+		"dependencies": {
+			"minUI5Version": "1.36.0",
+			"libs": {
+				"sap.ui.core": {
+					"minVersion": "1.36.0"
+				},
+				"sap.m": {
+					"minVersion": "1.36.0"
+				},
+				"sap.ui.layout" : {
+					"minVersion": "1.36.0"
+				}
+			}
+		},
+
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.theming.i18n.i18n"
+				}
+			}
+		},
+
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.theming.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"bypassed": {
+					"target": ["notFound"]
+				},
+				"async": true
+			},
+
+			"routes": [
+				{
+					"pattern": ":?query:",
+					"name": "overview",
+					"target": ["overview"]
+				}
+			],
+
+			"targets": {
+				"overview": {
+					"viewName": "Overview",
+					"viewId": "overview",
+					"viewLevel": 1
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFound"
+				}
+			}
+		}
+	}
+}
