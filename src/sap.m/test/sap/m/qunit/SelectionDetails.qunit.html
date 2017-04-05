@@ -311,6 +311,17 @@
 		assert.equal(this.oNavContainer.getPages()[0].getCustomHeader().getContent()[2].getText(), this.sTitle, "Page has the correct title.");
 	});
 
+	QUnit.test("Method 'navTo' does not create new page if the page of given content exists in NavContainer", function(assert) {
+		// Arrange
+		var oPage = new sap.m.Page(this.oSelectionDetails.getId() + "-page-for-" + this.oContent.getId());
+		this.oNavContainer.addPage(oPage);
+		var oAddPageSpy = sinon.spy(this.oNavContainer, "addPage");
+		// Act
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
+		// Assert
+		assert.ok(oAddPageSpy.notCalled, "The method addPage has not been called if the page already exists in NavContainer");
+	});
+
 	QUnit.test("Method 'navTo' results in navigation to the page with correct ID if Popover is open", function(assert) {
 		// Arrange
 		var oToSpy = sinon.spy(this.oNavContainer, "to"),

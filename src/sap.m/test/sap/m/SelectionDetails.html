@@ -150,6 +150,15 @@
 				key: "2",
 				text: "action group 2"
 			}
+		],
+		contentActionItems: [
+			{
+				text: "Reject"
+			}, {
+				text: "Accept"
+			}, {
+				text: "Cancel"
+			}
 		]
 	});
 
@@ -166,6 +175,17 @@
 		text: "{text}"
 	});
 
+	var oActionGroupsListTemplate = new sap.m.ActionListItem({
+		text: "{text}"
+	});
+
+	var oActionGroupsList = new sap.m.List("actionGroupsList", {
+		items: {
+			path: "/contentActionItems",
+			template: oActionGroupsListTemplate
+		}
+	});
+
 	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails", {
 		items: aItems,
 		actions: {
@@ -179,6 +199,9 @@
 		actionPress: function(oEvent) {
 			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("items").length + " items selected"
 					+ "\n level is: " + oEvent.getParameter("level"));
+			if (oEvent.getParameter("level") === "Group") {
+				oSelectionDetails.navTo(oEvent.getSource().getId() + " first level of navigation", oActionGroupsList);
+			}
 		},
 		navigate: function(oEvent) {
 			sap.m.MessageToast.show("Event 'navigate' triggered originating from " + oEvent.getParameter("item").getId() + " item");
