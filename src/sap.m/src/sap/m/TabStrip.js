@@ -629,12 +629,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @private
 		 */
 		TabStrip.prototype._moveToNextItem = function (bSetAsSelected) {
+			if (!this._oItemNavigation) {
+				return;
+			}
+
 			var iItemsCount = this.getItems().length,
 				iCurrentFocusedIndex = this._oItemNavigation.getFocusedIndex(),
 				iNextIndex = iItemsCount === iCurrentFocusedIndex ? --iCurrentFocusedIndex : iCurrentFocusedIndex,
 				oNextItem = this.getItems()[iNextIndex],
 				fnFocusCallback = function () {
-					this._oItemNavigation.focusItem(iNextIndex);
+					if (this._oItemNavigation) {
+						this._oItemNavigation.focusItem(iNextIndex);
+					}
 				};
 
 
@@ -1015,24 +1021,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				return;
 			}
 
-			oSelectItem = new sap.m.TabStripItem({
+			oSelectItem = new TabStripItem({
 				id: oTabStripItem.getId() + TabStrip.SELECT_ITEMS_ID_SUFFIX,
 				text: oTabStripItem.getText(),
 				modified: oTabStripItem.getModified(),
 				itemClosePressed: function (oEvent) {
 					this._handleItemClosePressed(oEvent);
 				}.bind(this)
-			}).addEventDelegate({
+			});
+
+			oSelectItem.addEventDelegate({
 				ontap: function (oEvent) {
 					var oTarget = oEvent.srcControl;
-					if (oTarget instanceof AccButton) {
-						oTarget.fireItemClosePressed({item: oTarget});
-					} else if (oTarget instanceof sap.ui.core.Icon) {
-						oTarget = oTarget.getParent && oTarget.getParent().getParent && oTarget.getParent().getParent();
-						oTarget.fireItemClosePressed({item: oTarget});
+					if ((oTarget instanceof AccButton || oTarget instanceof sap.ui.core.Icon)) {
+						this.fireItemClosePressed({item: this});
 					}
 				}
-			});
+			}, oSelectItem);
 
 			return oSelectItem;
 		};
