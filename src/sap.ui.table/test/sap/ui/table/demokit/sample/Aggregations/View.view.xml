@@ -70,19 +70,19 @@
 					<Column width="11rem">
 						<m:Label text="Product Name" />
 						<template>
-							<m:Text text="{Name}"/>
+							<m:Text text="{Name}" wrapping="false" />
 						</template>
 					</Column>
 					<Column width="11rem">
 						<m:Label text="Category" />
 						<template>
-							<m:Text text="{Category}"/>
+							<m:Text text="{Category}" wrapping="false" />
 						</template>
 					</Column>
 					<Column width="12rem">
 						<m:Label text="Supplier" />
 						<template>
-							<m:Text text="{SupplierName}"/>
+							<m:Text text="{SupplierName}" wrapping="false" />
 						</template>
 					</Column>
 					<Column width="9rem">

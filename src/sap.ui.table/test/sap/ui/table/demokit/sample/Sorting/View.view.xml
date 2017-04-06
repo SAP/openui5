@@ -43,7 +43,7 @@
 						sortProperty="Name">
 						<m:Label text="Product Name" />
 						<template>
-							<m:Text text="{Name}"/>
+							<m:Text text="{Name}" wrapping="false" />
 						</template>
 					</Column>
 					<Column
@@ -53,7 +53,7 @@
 						sortProperty="Category">
 						<m:Label text="Category" />
 						<template>
-							<m:Text text="{Category}"/>
+							<m:Text text="{Category}" wrapping="false" />
 						</template>
 					</Column>
 					<Column width="9rem">
@@ -85,7 +85,7 @@
 								path: 'DeliveryDateStr',
 								type: 'sap.ui.model.type.Date',
 								formatOptions: {source: {pattern: 'dd/MM/yyyy'}, style: 'long'}
-							}"/>
+							}" wrapping="false" />
 						</template>
 					</Column>
 				</columns>

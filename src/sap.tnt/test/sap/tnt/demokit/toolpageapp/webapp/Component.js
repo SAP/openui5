@@ -13,14 +13,6 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 			// create the views based on the url/hash
 			this.getRouter().initialize();
-			// set data model
-			var oData = {
-				recipient: {
-					name: "World"
-				}
-			};
-			var oModel = new JSONModel(oData);
-			this.setModel(oModel);
 		},
 
 		getContentDensityClass: function () {

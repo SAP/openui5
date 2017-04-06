@@ -22,7 +22,8 @@ sap.ui.define([
 	/**
 	 * Retrieves changes (LabelChange, etc.) for a sap.ui.core.mvc.View and applies these changes
 	 *
-	 * @param {string} sComponentName - the component name the flexibility controller is responsible for
+	 * @param {string} sComponentName - Component name the flexibility controller is responsible for
+	 * @param {string} sAppVersion - Current version of the application
 	 * @constructor
 	 * @class
 	 * @alias sap.ui.fl.FlexController
@@ -30,10 +31,11 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var FlexController = function (sComponentName) {
+	var FlexController = function (sComponentName, sAppVersion) {
 		this._oChangePersistence = undefined;
 		this._sComponentName = sComponentName || "";
-		if (this._sComponentName) {
+		this._sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
+		if (this._sComponentName && this._sAppVersion) {
 			this._createChangePersistence();
 		}
 	};
@@ -60,6 +62,16 @@ sap.ui.define([
 	 */
 	FlexController.prototype.getComponentName = function () {
 		return this._sComponentName;
+	};
+
+	/**
+	 * Returns the application version of the FlexController
+	 *
+	 * @returns {String} Application version
+	 * @public
+	 */
+	FlexController.prototype.getAppVersion = function () {
+		return this._sAppVersion;
 	};
 
 	/**
@@ -110,23 +122,19 @@ sap.ui.define([
 			oChangeSpecificData.selector.idIsLocal = false;
 		}
 
-		var oAppDescr = Utils.getAppDescriptor(oAppComponent);
-		var sComponentName = this.getComponentName();
-		oChangeSpecificData.reference = sComponentName; //in this case the component name can also be the value of sap-app-id
 
+		oChangeSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
 		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
-
 		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
 
 		//fallback in case no application descriptor is available (e.g. during unit testing)
+		var sAppVersion = this.getAppVersion();
 		var oValidAppVersions = {
-			creation: "",
-			from: ""
+			creation: sAppVersion,
+			from: sAppVersion
 		};
-		//TODO: Replacing long statement with an Utis function to get application version
-		if (oAppDescr && oAppDescr["sap.app"] && oAppDescr["sap.app"]["applicationVersion"]) {
-			oValidAppVersions.creation = oAppDescr["sap.app"]["applicationVersion"]["version"];
-			oValidAppVersions.from = oAppDescr["sap.app"]["applicationVersion"]["version"];
+		if (sAppVersion && oChangeSpecificData.developerMode) {
+			oValidAppVersions.to = sAppVersion;
 		}
 
 		oChangeSpecificData.validAppVersions = oValidAppVersions;
@@ -551,7 +559,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._createChangePersistence = function () {
-		this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.getComponentName());
+		this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.getComponentName(), this.getAppVersion());
 		return this._oChangePersistence;
 	};
 
@@ -610,7 +618,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._setMergeError = function () {
-		return FlexSettings.getInstance(this.getComponentName()).then(function (oSettings) {
+		return FlexSettings.getInstance(this.getComponentName(), this.getAppVersion()).then(function (oSettings) {
 			oSettings.setMergeErrorOccured(true);
 		});
 	};
@@ -667,7 +675,7 @@ sap.ui.define([
 			for (var i = 0; i < Object.keys(mDependencies).length; i++) {
 				var sDependencyKey = Object.keys(mDependencies)[i];
 				var oDependency = mDependencies[sDependencyKey];
-				if (oDependency.dependencies.length === 0 && oDependency[FlexController.PENDING]) {
+				if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0) {
 					oDependency[FlexController.PENDING]();
 					aDependenciesToBeDeleted.push(sDependencyKey);
 					aAppliedChanges.push(oDependency.changeObject.getKey());

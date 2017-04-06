@@ -219,8 +219,9 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 		 * @param {string} oPropertyBag.parameters.operator - Comparison method
 		 * @param {Object} oPropertyBag.parameters.value - Value passed to the comparison
 		 * @param {Object} oPropertyBag.validAppVersions - Application versions (format: major.minor.patch) where the context is active
-		 * @param {String} oPropertyBad.validAppVersions.creation - application version when it was created
-		 * @param {String} oPropertyBad.validAppVersions.from - Minimum application version
+		 * @param {String} oPropertyBag.validAppVersions.creation - Original application version
+		 * @param {String} oPropertyBag.validAppVersions.from - Minimum application version
+		 * @param {String} oPropertyBag.validAppVersions.to - Maximum application version
 		 */
 		createOrUpdateContextObject: function (oPropertyBag) {
 			if (!oPropertyBag.reference) {

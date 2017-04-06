@@ -7,9 +7,10 @@ sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/core/support/Plugin",
 		"sap/ui/core/support/Support",
-		"sap/ui/model/json/JSONModel"
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/fl/Utils"
 	],
-	function (jQuery, Plugin, Support, JSONModel) {
+	function (jQuery, Plugin, Support, JSONModel, Utils) {
 		"use strict";
 
 		/**
@@ -116,39 +117,73 @@ sap.ui.define([
 
 				var oResult = [];
 				var aPendingPromises = [];
+				var aComponents;
+				var aAppVersions;
 
-				jQuery.each(oCacheEntries, function (sFlexReference, oEntry) {
-					var aChanges = oEntry.file.changes.changes.slice(0);
-					var aContexts = oEntry.file.changes.contexts.slice(0);
+				aComponents = Object.keys(oCacheEntries);
+				aComponents.sort();
+				aComponents.forEach(function (sFlexReference) {
+					aAppVersions = Object.keys(oCacheEntries[sFlexReference]);
+					aAppVersions.sort(function (sAppVersion1, sAppVersion2) {
+						var fnNormalize = function(sAppVersion) {
+							if (sAppVersion === Utils.DEFAULT_APP_VERSION) {
+								return "000000000";
+							}
+							var aParts = sAppVersion.split(".");
+							var sNormalizedAppVersion = "";
+							aParts.forEach(function(sPart){
+								sNormalizedAppVersion += ("000" + sPart).substring(sPart.length);
+							});
+							return sNormalizedAppVersion;
+						};
+						var sNormalizedAppVersion1 = fnNormalize(sAppVersion1);
+						var sNormalizedAppVersion2 = fnNormalize(sAppVersion2);
+						if (sNormalizedAppVersion1 < sNormalizedAppVersion2) {
+							return -1;
+						}
+						if (sNormalizedAppVersion1 > sNormalizedAppVersion2) {
+							return 1;
+						}
 
-					if (aContexts.length > 0) {
-						var oPromise = sap.ui.fl.context.ContextManager.getActiveContexts(aContexts).then(function (aActiveContexts) {
-							aContexts.forEach(function (oContext) {
-								oContext.isActive = aActiveContexts.indexOf(oContext.id) !== -1;
+						return 0;
+					});
+					aAppVersions.forEach(function(sAppVersion) {
+						var oEntry = oCacheEntries[sFlexReference][sAppVersion];
+						if (sAppVersion === Utils.DEFAULT_APP_VERSION) {
+							sAppVersion = "Version independent";
+						}
+						var aChanges = oEntry.file.changes.changes.slice(0);
+						var aContexts = oEntry.file.changes.contexts.slice(0);
+
+						if (aContexts.length > 0) {
+							var oPromise = sap.ui.fl.context.ContextManager.getActiveContexts(aContexts).then(function (aActiveContexts) {
+								aContexts.forEach(function (oContext) {
+									oContext.isActive = aActiveContexts.indexOf(oContext.id) !== -1;
+								});
+
+								aChanges.forEach(function (oChange) {
+									oChange.isActive = !oChange.context || aActiveContexts.indexOf(oChange.context) !== -1;
+								});
+							});
+							oResult.push({
+								reference: sFlexReference + " - " + sAppVersion,
+								changes: aChanges,
+								contexts: aContexts
 							});
 
+							aPendingPromises.push(oPromise);
+						} else {
 							aChanges.forEach(function (oChange) {
-								oChange.isActive = !oChange.context || aActiveContexts.indexOf(oChange.context) !== -1;
+								oChange.isActive = !oChange.context;
 							});
-						});
-						oResult.push({
-							reference: sFlexReference,
-							changes: aChanges,
-							contexts: aContexts
-						});
 
-						aPendingPromises.push(oPromise);
-					} else {
-						aChanges.forEach(function (oChange) {
-							oChange.isActive = !oChange.context;
-						});
-
-						oResult.push({
-							reference: sFlexReference,
-							changes: aChanges,
-							contexts: aContexts
-						});
-					}
+							oResult.push({
+								reference: sFlexReference + " - " + sAppVersion,
+								changes: aChanges,
+								contexts: aContexts
+							});
+						}
+					});
 				});
 
 				Promise.all(aPendingPromises).then(function () {

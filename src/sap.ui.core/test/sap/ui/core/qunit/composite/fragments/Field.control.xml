@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns:m="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="fragments">
+    <m:HBox>
+        <f:SimpleText text="{$this>text}" />
+        <m:Input value="{$this>value}" />
+    </m:HBox>
+</core:FragmentDefinition>

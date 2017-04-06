@@ -402,6 +402,19 @@
 						}
 					});
 					return count;
+				};
+				var oHead = window.document.getElementsByTagName("head")[0];
+				var _fnOriginalAppendChild = oHead.appendChild;
+
+				this.callsFakeAppendChild = function(){};
+				this.oAppendChildStub = sinon.stub(oHead, "appendChild", function(oElement) {
+					this.callsFakeAppendChild(oElement);
+					_fnOriginalAppendChild.apply(oHead, arguments);
+				}.bind(this));
+			},
+			afterEach: function() {
+				if (this.oAppendChildStub) {
+					this.oAppendChildStub.restore();
 				}
 			}
 		});
@@ -411,9 +424,10 @@
 			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/library-preload.js");
 			return p.then(function() {
 				assert.ok(true, "promise should succeed");
+				assert.equal(this.oAppendChildStub.callCount, 1 , "should have been called once");
 				assert.ok(jQuery.sap.isResourceLoaded('testlibs/scenario1/lib1/library-preload.js'), "resource should have been loaded");
 				assert.equal(that.scriptsWith(/scenario1\/lib1\/library-preload\.js$/), 1, "script tag for lib should exist");
-			}, function() {
+			}.bind(this), function() {
 				assert.ok(false, "promise should not fail");
 			});
 
@@ -424,7 +438,8 @@
 			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/non-existing.js");
 			return p.then(function() {
 				assert.ok(false, "promise must not succeed");
-			}, function() {
+				assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
+			}.bind(this), function() {
 				assert.ok(true, "promise should fail");
 				assert.equal(that.scriptsWith(/scenario1\/lib1\/non-existing\.js$/), 1, "script tag should exist");
 			});
@@ -436,8 +451,48 @@
 			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/non-existing-ignored.js", true);
 			return p.then(function() {
 				assert.ok(true, "promise should succeed");
+				assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
 				assert.equal(that.scriptsWith(/scenario1\/lib1\/non-existing-ignored\.js$/), 1, "script tag should exist");
-			}, function() {
+			}.bind(this), function() {
+				assert.ok(false, "promise must not fail");
+			});
+
+		});
+
+		QUnit.test("first call fails, second call passes", function(assert) {
+			var that = this;
+
+			//when the desired script tag is added to the head,
+			// fire an ErrorEvent for the first call,
+			// let the second call pass
+			//in order to simulate an SSO scenario in which the first call to a script fails, but the second succeeds
+			var bFirstFailure = true;
+			this.callsFakeAppendChild = function(oElement) {
+				if (oElement instanceof HTMLScriptElement) {
+					if (oElement.src.indexOf("scenario9/lib1/library-preload.js") > -1) {
+						if (bFirstFailure) {
+							bFirstFailure = false;
+							oElement.dispatchEvent(new ErrorEvent('error'));
+
+							//check the module state
+							var oModule = jQuery.sap.isResourceLoaded("testlibs/scenario9/lib1/library-preload.js");
+							var LOADING = 1;
+							assert.equal(LOADING, oModule.state, "Module should be in loading state");
+						}
+					}
+				}
+			};
+
+
+
+			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario9/lib1/library-preload.js");
+			return p.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
+				assert.notOk(bFirstFailure, "there should be one failed try to load the module");
+				assert.ok(jQuery.sap.isResourceLoaded('testlibs/scenario9/lib1/library-preload.js'), "resource should have been loaded");
+				assert.equal(that.scriptsWith(/scenario9\/lib1\/library-preload\.js$/), 1, "script tag for lib should exist");
+			}.bind(this), function() {
 				assert.ok(false, "promise must not fail");
 			});
 
@@ -461,7 +516,8 @@
 			});
 			return Promise.all([p1,p2]).then(function() {
 				assert.equal(that.scriptsWith(/scenario1\/lib3\/library-preload\.js$/), 1, "only one script tag for lib should exist");
-			});
+				assert.equal(this.oAppendChildStub.callCount, 1 , "should have been called twice");
+			}.bind(this));
 		});
 
 		QUnit.test("multiple calls (failing)", function(assert) {
@@ -480,7 +536,8 @@
 			});
 			return Promise.all([p1,p2]).then(function() {
 				assert.equal(that.scriptsWith(/scenario1\/lib3\/library-preload\.js$/), 1, "only one script tag for lib should exist");
-			});
+				assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
+			}.bind(this));
 		});
 
 		//****************************************************

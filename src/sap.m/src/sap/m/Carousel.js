@@ -450,6 +450,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		jQuery.sap.log.debug("sap.m.Carousel: firing pageChanged event: old page: " + sOldActivePageId
 				+ ", new page: " + sNewActivePageId);
 
+		// close the soft keyboard
+		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+			jQuery(document.activeElement).blur();
+		}
+
 		this.firePageChanged( { oldActivePageId: sOldActivePageId,
 			newActivePageId: sNewActivePageId});
 
@@ -457,8 +462,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (document.getElementById(sId)) {
 			document.getElementById(sId).innerHTML = sNewPageNumber;
 		}
-
-
 	};
 
 	/**

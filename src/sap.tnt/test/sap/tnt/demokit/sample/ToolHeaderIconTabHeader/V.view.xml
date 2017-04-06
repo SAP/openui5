@@ -5,7 +5,15 @@
         xmlns:tnt="sap.tnt"
         height="100%">
     <tnt:ToolHeader>
-        <IconTabHeader showOverflowSelectList="true"
+        <Button icon="sap-icon://home" type="Transparent" press="onHomePress">
+            <layoutData>
+                <OverflowToolbarLayoutData priority="NeverOverflow" />
+            </layoutData>
+        </Button>
+        <IconTabHeader id="iconTabHeader"
+                       selectedKey="invalidKey"
+                       select="onSelectTab"
+                       showOverflowSelectList="true"
                        backgroundDesign="Transparent"
                        mode="Inline">
             <layoutData>
@@ -55,4 +63,7 @@
         </MenuButton>
 
     </tnt:ToolHeader>
+    <Panel>
+        <Label id="labelId" text="Home Screen"></Label>
+    </Panel>
 </mvc:View>

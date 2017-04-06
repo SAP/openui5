@@ -173,7 +173,8 @@ sap.ui.define([
 			var vOriginalReturn = that._fnOriginalSetParent.apply(this, arguments);
 			if (bFireModified && !this.__bSapUiDtSupressParentChangeEvent) {
 				this._bInSetParent = false;
-				if (oCurrentParent !== oParent) {
+				// "dependents" is used to store some removed elements (e.g. from Combine)
+				if (oCurrentParent !== oParent || sAggregationName === "dependents") {
 					that.fireModified({
 						type: "setParent",
 						value: oParent,

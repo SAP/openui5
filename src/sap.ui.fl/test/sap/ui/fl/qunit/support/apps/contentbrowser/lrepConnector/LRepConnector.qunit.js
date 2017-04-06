@@ -20,7 +20,7 @@ sap.ui.define([
 
 	QUnit.test("gives a specific suffix if a request for a layer is prepared", function(assert) {
 		var sCalculatedLayerSuffix = LRepConnector._getLayerSuffix("VENDOR");
-		assert.equal(sCalculatedLayerSuffix, "?sLayer=VENDOR", "the layer suffix should point to the VENDOR layer");
+		assert.equal(sCalculatedLayerSuffix, "?layer=VENDOR", "the layer suffix should point to the VENDOR layer");
 	});
 
 	QUnit.test("the context suffix should start with '?' if no layer suffix is present", function(assert) {
@@ -30,7 +30,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("the context suffix should start with '&' if a layer Suffix is presented", function(assert) {
-		var sLayerSuffix = "?sLayer=VENDOR";
+		var sLayerSuffix = "?layer=VENDOR";
 		var sCalculatedContextSuffix = LRepConnector._getContextSuffix(sLayerSuffix, undefined, undefined);
 		assert.equal(sCalculatedContextSuffix[0], "&", "the suffix should start with &");
 	});

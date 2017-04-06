@@ -1169,19 +1169,24 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	/**
 	 * Usage counters for the different UID tokens
 	 */
-	var mUIDCounts = {};
+	var mUIDCounts = {},
+		sUIDPrefix;
 
 	function uid(sId) {
 		jQuery.sap.assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
 
-		sId = sap.ui.getCore().getConfiguration().getUIDPrefix() + sId;
+		//read prefix from configuration only once
+		sId = (sUIDPrefix || (sUIDPrefix = sap.ui.getCore().getConfiguration().getUIDPrefix())) + sId;
 
-		// initialize counter
-		mUIDCounts[sId] = mUIDCounts[sId] || 0;
+		// read counter (or initialize it)
+		var iCount = mUIDCounts[sId] || 0;
+
+		// increment counter
+		mUIDCounts[sId] = iCount + 1;
 
 		// combine prefix + counter
 		// concatenating sId and a counter is only safe because we don't allow trailing numbers in sId!
-		return (sId + mUIDCounts[sId]++);
+		return sId + iCount;
 	}
 
 	/**
@@ -1224,6 +1229,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		return uid(sId);
 	};
 
+	var rGeneratedUID;
+
 	/**
 	 * Test whether a given ID looks like it was automatically generated.
 	 *
@@ -1249,13 +1256,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @public
 	 */
 	ManagedObjectMetadata.isGeneratedId = function(sId) {
-		var sPrefix = jQuery.sap.escapeRegExp(sap.ui.getCore().getConfiguration().getUIDPrefix());
+		sUIDPrefix = sUIDPrefix || sap.ui.getCore().getConfiguration().getUIDPrefix();
+		rGeneratedUID = rGeneratedUID || new RegExp( "(^|-{1,3})" + jQuery.sap.escapeRegExp(sUIDPrefix) );
 
-		var rIsGenerated = new RegExp(
-			"(^|-{1,3})" + sPrefix
-		);
-
-		return rIsGenerated.test(sId);
+		return rGeneratedUID.test(sId);
 	};
 
 	return ManagedObjectMetadata;

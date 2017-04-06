@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<HBox id="vbox">
+		<Button text="{$this>/buttonText}" press="onPressButton"></Button>
+		<Button text="{$this>/excelDownloadText}" press="onPressExcelDownload"></Button>
+		<Text text="{$this>/infoText}"></Text>
+	</HBox>
+</core:FragmentDefinition>
+<!-- also works with ".<handler>" instead of "<handler>"
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<HBox id="vbox">
+		<Button text="{$this>/buttonText}" press=".onPress"></Button>
+		<Button text="Excel download" press=".excelDownload"></Button>
+		<Text text="{$this>/infoText}"></Text>
+	</HBox>
+</core:FragmentDefinition> -->

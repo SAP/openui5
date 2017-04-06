@@ -1,0 +1,18 @@
+{
+	"cwd": "test-resources/sap/m/demokit/theming/webapp/",
+	"files" : [
+		"Component.js",
+		"controller/App.controller.js",
+		"controller/BaseController.js",
+		"controller/ErrorHandler.js",
+		"controller/Overview.controller.js",
+		"css/style.css",
+		"i18n/i18n.properties",
+		"index.html",
+		"manifest.json",
+		"model/formatter.js",
+		"model/models.js",
+		"view/App.view.xml",
+		"view/Overview.view.xml"
+	]
+}

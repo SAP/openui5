@@ -172,6 +172,34 @@
 			}
 		});
 
+		//BCP:1770122667
+		QUnit.test("removeItem works before rendering", function(assert) {
+			//arrange
+			var bException = false,
+				oItem = new sap.m.TabContainerItem({
+					name: 'name1',
+					key: 'key1'
+				}),
+				oTabContainer = new sap.m.TabContainer({
+					items: [oItem]
+				});
+
+			//act
+			try{
+				oTabContainer.removeItem(oItem);
+			}catch(e){
+
+				bException = true;
+				throw e;
+			}
+
+			//assert
+			assert.ok(!bException, "removeItem doesn't throw an exception");
+
+			//clean
+			oTabContainer.destroy();
+		});
+
 		QUnit.test("Initialization without parameters", function (assert) {
 			var oTabContainer = new sap.m.TabContainer();
 			assert.strictEqual(typeof oTabContainer === 'object', true, 'Sucessfully initialized.');

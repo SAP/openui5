@@ -5,23 +5,25 @@
 // Provides control sap.ui.unified.ColorPicker.
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/HTML', "sap/ui/core/ResizeHandler",
 	"sap/ui/layout/Grid", "sap/ui/layout/GridData", "sap/ui/layout/VerticalLayout", "sap/ui/layout/HorizontalLayout",
-	"sap/ui/core/Icon"],
-	function(jQuery, library, Control, HTML, ResizeHandler, Grid, GridData, VLayout, HLayout, Icon) {
+	"sap/ui/core/Icon", "sap/ui/core/theming/Parameters"],
+	function(jQuery, Library, Control, HTML, ResizeHandler, Grid, GridData, VLayout, HLayout, Icon, Parameters) {
 	"use strict";
 
 
 
 	/**
-	 * Constructor for a new ColorPicker.
+	 * Constructor for a new <code>ColorPicker</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This control gives the user the opportunity to choose a color. The color can be defined using HEX-, RGB- or HSV-values or a CSS colorname.
-	 * <b>Note:</b> Keep in mind that this control needs either <code>sap.m</code> or
-	 * <code>sap.ui.commons</code> library to be loaded in order to work, because it depends on controls
-	 * available in one or the other library.
+	 * Enables the user to select a color.
+	 * The color can be defined using HEX, RGB, or HSV values or a CSS color name.
+	 *
+	 * <b>Note:</b> Keep in mind that this control needs either <code>sap.m</code>
+	 * or <code>sap.ui.commons</code> library to be loaded in order to work as
+	 * it depends on controls available in one or the other library.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -39,22 +41,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * This is the import-parameter of the ColorPicker.
-			 * As input-parameter, it can be a Hexadecimal string (#FFFFFF), a RGB-string rgb(255,255,255), a HSV-string hsv(360,100,100) or a CSS-colorname 'red'.
-			 * As output-parameter it is a RGB-string containing the current color.
+			 * Determines the input parameter that can be a string of type HEX, RGB, HSV, or a CSS color name:
+			 * <ul>
+			 * <li>HEX - #FFFFFF</li>
+			 * <li>RGB - rgb(255,255,255)</li>
+			 * <li>HSV - hsv(360,100,100)</li>
+			 * <li>CSS - red</li>
+			 * </ul>
+			 * <b>Note:</b> The output parameter is an RGB string of the current color.
 			 * @since 1.48.0
 			 */
 			colorString : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Determines the mode the ColorPicker works with - Hue Saturation and Value (HSV) or Hue Saturation and Lightness (HSL)
+			 * Determines the color mode of the <code>ColorPicker</code>.
 			 * @since 1.48.0
 			 */
 			mode : {type : "sap.ui.unified.ColorPickerMode", group : "Appearance", defaultValue : sap.ui.unified.ColorPickerMode.HSV}
 		},
 		aggregations: {
 			/**
-			 * Aggregation used to hold the control layout
+			 * Holds the control layout.
 			 * @private
 			 * @since 1.48.0
 			 */
@@ -63,108 +70,114 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events : {
 
 			/**
-			 * Value was changed. This event is fired if the value has changed by an user action.
+			 * Fired when the value is changed by user action.
+			 *
+			 * <b>Note:</b> When the user action is mouse dragging, the
+			 * <code>change</code> event fires on the mouseup event.
 			 * @since 1.48.0
 			 */
 			change : {
 				parameters : {
 
 					/**
-					 * Parameter containing the RED value (0-255)
+					 * Parameter containing the RED value (0-255).
 					 */
 					r : {type : "int"},
 
 					/**
-					 * Parameter containing the GREEN value (0-255)
+					 * Parameter containing the GREEN value (0-255).
 					 */
 					g : {type : "int"},
 
 					/**
-					 * Parameter containing the BLUE value (0-255)
+					 * Parameter containing the BLUE value (0-255).
 					 */
 					b : {type : "int"},
 
 					/**
-					 * Parameter containing the HUE value (0-360)
+					 * Parameter containing the HUE value (0-360).
 					 */
 					h : {type : "int"},
 
 					/**
-					 * Parameter containing the SATURATION value (0-100)
+					 * Parameter containing the SATURATION value (0-100).
 					 */
 					s : {type : "int"},
 
 					/**
-					 * Parameter containing the VALUE value (0-100)
+					 * Parameter containing the VALUE value (0-100).
 					 */
 					v : {type : "int"},
 
 					/**
-					 * Parameter containing the LIGHTNESS value (0-100)
+					 * Parameter containing the LIGHTNESS value (0-100).
 					 */
 					l : {type : "int"},
 
 					/**
-					 * Parameter containing the Hexadecimal string (#FFFFFF)
+					 * Parameter containing the Hexadecimal string (#FFFFFF).
 					 */
 					hex : {type : "string"},
 
 					/**
-					 * Parameter containing the alpha value (transparency)
+					 * Parameter containing the alpha value (transparency).
 					 */
 					alpha : {type : "string"}
 				}
 			},
 
 			/**
-			 * Value was changed. This event is fired during the mouse move. The normal change event ist only fired by mouseup.
+			 * Fired when the value is changed during the mouse move.
+			 *
+			 * <b>Note:</b> When the user action is mouse move, the <code>liveChange</code>
+			 * event is fired during the mousedown event.
 			 * @since 1.48.0
 			 */
 			liveChange : {
 				parameters : {
 
 					/**
-					 * Parameter containing the RED value (0-255)
+					 * Parameter containing the RED value (0-255).
 					 */
 					r : {type : "int"},
 
 					/**
-					 * Parameter containing the GREEN value (0-255)
+					 * Parameter containing the GREEN value (0-255).
 					 */
 					g : {type : "int"},
 
 					/**
-					 * Parameter containing the BLUE value (0-255)
+					 * Parameter containing the BLUE value (0-255).
 					 */
 					b : {type : "int"},
 
 					/**
-					 * Parameter containing the HUE value (0-360)
+					 * Parameter containing the HUE value (0-360).
 					 */
 					h : {type : "int"},
 
 					/**
-					 * Parameter containing the SATURATION value (0-100)
+					 * Parameter containing the SATURATION value (0-100).
 					 */
 					s : {type : "int"},
 
 					/**
-					 * Parameter containing the VALUE value (0-100)
+					 * Parameter containing the VALUE value (0-100).
 					 */
 					v : {type : "int"},
 
 					/**
-					 * Parameter containing the LIGHTNESS value (0-100)
+					 * Parameter containing the LIGHTNESS value (0-100).
 					 */
 					l : {type : "int"},
 
 					/**
-					 * Parameter containing the Hexadecimal string (#FFFFFF)
+					 * Parameter containing the Hexadecimal string (#FFFFFF).
 					 */
 					hex : {type : "string"},
 
 					/**
-					 * Parameter containing the alpha value (transparency)
+					 * Parameter containing the alpha value (transparency).
 					 */
 					alpha : {type : "string"}
 				}
@@ -180,7 +193,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// get resource bundle
 		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 		// Library Helper
-		oHelper = library.ColorPickerHelper,
+		oHelper = Library.ColorPickerHelper,
 		// Factory
 		oFactory = oHelper.factory,
 		// Constants object
@@ -188,8 +201,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	// Create truly immutable constant properties
 	Object.defineProperties(CONSTANTS, {
-		RGB: {value: "RGB"},
-		HSL: {value: "HSL"},
 		CPResponsiveClass: {value: "sapUnifiedColorPicker"},
 		CPMatrixClass: {value: "sapUiColorPicker-ColorPickerMatrix"},
 		HSLClass: {value: "sapUiColorPickerHSL"},
@@ -210,14 +221,163 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		OldColorClass: {value: "sapUiColorPicker-ColorPickerOldColor"},
 		NewColorClass: {value: "sapUiColorPicker-ColorPickerNewColor"},
 		SwatchesClass: {value: "sapUiColorPicker-swatches"},
-		ArrowClass: {value: "sapUiColorPicker-Arrow"}
+		ArrowClass: {value: "sapUiColorPicker-Arrow"},
+		Colors: {value: {
+			aliceblue: 'f0f8ff',
+			antiquewhite: 'faebd7',
+			aqua: '00ffff',
+			aquamarine: '7fffd4',
+			azure: 'f0ffff',
+			beige: 'f5f5dc',
+			bisque: 'ffe4c4',
+			black: '000000',
+			blanchedalmond: 'ffebcd',
+			blue: '0000ff',
+			blueviolet: '8a2be2',
+			brown: 'a52a2a',
+			burlywood: 'deb887',
+			cadetblue: '5f9ea0',
+			chartreuse: '7fff00',
+			chocolate: 'd2691e',
+			coral: 'ff7f50',
+			cornflowerblue: '6495ed',
+			cornsilk: 'fff8dc',
+			crimson: 'dc143c',
+			cyan: '00ffff',
+			darkblue: '00008b',
+			darkcyan: '008b8b',
+			darkgoldenrod: 'b8860b',
+			darkgray: 'a9a9a9',
+			darkgrey: 'a9a9a9',
+			darkgreen: '006400',
+			darkkhaki: 'bdb76b',
+			darkmagenta: '8b008b',
+			darkolivegreen: '556b2f',
+			darkorange: 'ff8c00',
+			darkorchid: '9932cc',
+			darkred: '8b0000',
+			darksalmon: 'e9967a',
+			darkseagreen: '8fbc8f',
+			darkslateblue: '483d8b',
+			darkslategray: '2f4f4f',
+			darkslategrey: '2f4f4f',
+			darkturquoise: '00ced1',
+			darkviolet: '9400d3',
+			deeppink: 'ff1493',
+			deepskyblue: '00bfff',
+			dimgray: '696969',
+			dimgrey: '696969',
+			dodgerblue: '1e90ff',
+			firebrick: 'b22222',
+			floralwhite: 'fffaf0',
+			forestgreen: '228b22',
+			fuchsia: 'ff00ff',
+			gainsboro: 'dcdcdc',
+			ghostwhite: 'f8f8ff',
+			gold: 'ffd700',
+			goldenrod: 'daa520',
+			gray: '808080',
+			grey: '808080',
+			green: '008000',
+			greenyellow: 'adff2f',
+			honeydew: 'f0fff0',
+			hotpink: 'ff69b4',
+			indianred: 'cd5c5c',
+			indigo: '4b0082',
+			ivory: 'fffff0',
+			khaki: 'f0e68c',
+			lavender: 'e6e6fa',
+			lavenderblush: 'fff0f5',
+			lawngreen: '7cfc00',
+			lemonchiffon: 'fffacd',
+			lightblue: 'add8e6',
+			lightcoral: 'f08080',
+			lightcyan: 'e0ffff',
+			lightgoldenrodyellow: 'fafad2',
+			lightgray: 'd3d3d3',
+			lightgrey: 'd3d3d3',
+			lightgreen: '90ee90',
+			lightpink: 'ffb6c1',
+			lightsalmon: 'ffa07a',
+			lightseagreen: '20b2aa',
+			lightskyblue: '87cefa',
+			lightslategray: '778899',
+			lightslategrey: '778899',
+			lightsteelblue: 'b0c4de',
+			lightyellow: 'ffffe0',
+			lime: '00ff00',
+			limegreen: '32cd32',
+			linen: 'faf0e6',
+			magenta: 'ff00ff',
+			maroon: '800000',
+			mediumaquamarine: '66cdaa',
+			mediumblue: '0000cd',
+			mediumorchid: 'ba55d3',
+			mediumpurple: '9370db',
+			mediumseagreen: '3cb371',
+			mediumslateblue: '7b68ee',
+			mediumspringgreen: '00fa9a',
+			mediumturquoise: '48d1cc',
+			mediumvioletred: 'c71585',
+			midnightblue: '191970',
+			mintcream: 'f5fffa',
+			mistyrose: 'ffe4e1',
+			moccasin: 'ffe4b5',
+			navajowhite: 'ffdead',
+			navy: '000080',
+			oldlace: 'fdf5e6',
+			olive: '808000',
+			olivedrab: '6b8e23',
+			orange: 'ffa500',
+			orangered: 'ff4500',
+			orchid: 'da70d6',
+			palegoldenrod: 'eee8aa',
+			palegreen: '98fb98',
+			paleturquoise: 'afeeee',
+			palevioletred: 'db7093',
+			papayawhip: 'ffefd5',
+			peachpuff: 'ffdab9',
+			peru: 'cd853f',
+			pink: 'ffc0cb',
+			plum: 'dda0dd',
+			powderblue: 'b0e0e6',
+			purple: '800080',
+			red: 'ff0000',
+			rosybrown: 'bc8f8f',
+			royalblue: '4169e1',
+			saddlebrown: '8b4513',
+			salmon: 'fa8072',
+			sandybrown: 'f4a460',
+			seagreen: '2e8b57',
+			seashell: 'fff5ee',
+			sienna: 'a0522d',
+			silver: 'c0c0c0',
+			skyblue: '87ceeb',
+			slateblue: '6a5acd',
+			slategray: '708090',
+			slategrey: '708090',
+			snow: 'fffafa',
+			springgreen: '00ff7f',
+			steelblue: '4682b4',
+			tan: 'd2b48c',
+			teal: '008080',
+			thistle: 'd8bfd8',
+			tomato: 'ff6347',
+			turquoise: '40e0d0',
+			violet: 'ee82ee',
+			wheat: 'f5deb3',
+			white: 'ffffff',
+			whitesmoke: 'f5f5f5',
+			yellow: 'ffff00',
+			yellowgreen: '9acd32',
+			transparent: '00000000'
+		}}
 	});
 
 	/**
-	 * Initialization hook... creating composite parts
+	 * Initialization hook creating composite parts.
 	 */
 	ColorPicker.prototype.init = function() {
-
 		// set gradient prefix depending of the browser
 		if (sap.ui.Device.browser.firefox) {
 			sBrowserPrefix = "-moz-linear-gradient";
@@ -229,54 +389,64 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sBrowserPrefix = "linear-gradient";
 		}
 
-		//	declare global variable for the ColorObject
+		// declare global variable for the ColorObject
 		this.Color = {
-				r   :  255,
-				g   :  255,
-				b   :  255,
-				h   :  0,
-				s   :  0,
-				l   :  100,
-				v   :  100,
-				a   :  1,
-				a_old: 1,
-				hex :  "#ffffff",
-				old :  "#ffffff"
+				r: 255,
+				g: 255,
+				b: 255,
+				h: 0,
+				s: 0,
+				l: 100,
+				v: 100,
+				a: 1,
+				oldA: 1,
+				hex: "#ffffff",
+				old: "#ffffff"
 		};
 
-		//	create global variables
-		this.HexString = "ffffff";
-		this.rgbString = "";
-		this.$cpBox = null;
-		this.$cpCur = null;
-		this.RGB = {
-				r : 0,
-				g : 0,
-				b : 0
-		};
+		// create global variables
+		this.sHexString = "ffffff";
+		this.$CPBox = null;
+		this.$CPCur = null;
+		this.RGB = {r: 0, g: 0, b: 0};
 
-		//	check if we are in RTL mode
-		this.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
+		// check if we are in RTL mode
+		this.bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
 		// Get if control should be in responsive mode
 		this.bResponsive = oHelper.isResponsive();
+
+		// Color picker cursor size in px obtained from less parameter. Keep in mind width and height are the same.
+		this._iCPCursorSize = parseInt(Parameters.get("_sap_ui_unified_ColorPickerCircleSize"), 10);
+
+		// Init _processChanges and _bHSLMode according to default control mode
+		this._processChanges = this._processHSVChanges;
+		this._bHSLMode = false;
 	};
 
 	/**
-	 * Internal ColorPickerBox control
+	 * Internal <code>ColorPickerBox</code> control.
 	 */
 	var ColorPickerBox = Control.extend("sap.ui.unified._ColorPickerBox", {
 		metadata: {
 			events: {
 				/**
-				 * Fired on interaction with the color picker box
+				 * Fired on interaction with the <code>ColorPickerBox<code>.
 				 */
 				select: {
 					parameters: {
 						value: {type: "int"},
 						saturation: {type: "int"}
+					}
+				},
+				/**
+				 * Fired on size change of the <code>ColorPickerBox<code>.
+				 */
+				resize: {
+					parameters: {
+						size: {type: "int"}
 					}
 				}
 			}
@@ -284,8 +454,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		init: function () {
 			this.bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		},
+		exit: function () {
+			if (this._sResizeListener) {
+				ResizeHandler.deregister(this._sResizeListener);
+			}
+		},
 		/**
-		 * @returns {int} width of rendered control
+		 * @returns {int} Width of the rendered control
 		 */
 		getWidth: function () {
 			return this.$().width();
@@ -296,44 +471,63 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		getOffset: function () {
 			return this.$().offset();
 		},
+		onBeforeRendering: function () {
+			if (this._sResizeListener) {
+				ResizeHandler.deregister(this._sResizeListener);
+			}
+		},
 		onAfterRendering: function () {
 			this._handle = this.$().find("> div." + CONSTANTS.CPCircleClass);
+
+			// Attach resize listener
+			this._sResizeListener = ResizeHandler.register(this.getDomRef(), this.handleResize.bind(this));
 		},
 		/**
-		 * @returns {object} Dom reference of the handle
+		 * Updates cached <code>ColorPickerBox</code> size so that it's not needed
+		 * to calculate box width/height on every cursor move.
+		 *
+		 * <b>Note:</b> Keep in mind that the <code>ColorPickerBox</code> width
+		 * and height should always be equal.
+		 * @param {object} oEvent event
+		 */
+		handleResize: function (oEvent) {
+			this.fireResize({size: oEvent.size.width});
+		},
+		/**
+		 * @returns {object} DOM reference of the handle
 		 */
 		getHandle: function () {
 			return this._handle;
 		},
 		/**
-		 * Called when touch|mouse interaction starts
+		 * Called when touch/mouse interaction starts.
 		 * @override
-		 * @param oEvent {event}
+		 * @param {object} oEvent event object
 		 */
 		ontouchstart: function (oEvent) {
 			// React on first touch|click event
 			this.handleTouch(oEvent);
 		},
 		/**
-		 * Called when touch|mouse interaction ends
+		 * Called when touch/mouse interaction ends.
 		 * @override
-		 * @param oEvent {event}
+		 * @param {object} oEvent event object
 		 */
 		ontouchend: function (oEvent) {
 			// React on the last position of the handle
 			this.handleTouch(oEvent);
 		},
 		/**
-		 * Called during touch|mouse drag interaction
+		 * Called during touch/mouse drag interaction.
 		 * @override
-		 * @param oEvent {event}
+		 * @param {object} oEvent event object
 		 */
 		ontouchmove: function (oEvent) {
 			this.handleTouch(oEvent);
 		},
 		/**
-		 * Handle touch|click|mouse drag interaction
-		 * @param oEvent {event}
+		 * Handles touch/click/mouse drag interaction.
+		 * @param {object} oEvent event object
 		 */
 		handleTouch: function (oEvent) {
 			var oValues = this.calculateValuesFromEvent(oEvent);
@@ -343,8 +537,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		},
 		/**
-		 * Calculate 'value' and 'saturation' from event XY coordinates related to color picker box coordinates
-		 * @param oEvent {event}
+		 * Calculates the <code>value</code> and <code>saturation</code> from event XY coordinates related to the
+		 * <code>ColorPickerBox</code> coordinates.
+		 * @param {object} oEvent event object
 		 * @returns {object|false} with 'value' and 'saturation' properties
 		 */
 		calculateValuesFromEvent: function (oEvent) {
@@ -407,6 +602,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// Handle
 			oRm.write("<div");
+			oRm.writeAttribute("id", oControl.getId() + "-cpCur");
 			oRm.addClass(CONSTANTS.CPCircleClass);
 			oRm.writeClasses();
 			oRm.write("></div>");
@@ -417,12 +613,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	});
 
 	/**
-	 * Create input row with label and unit if passed
-	 * @param oInput {Input} control
-	 * @param sTooltipID {string} text id from resource bundle
-	 * @param sLabelText {string} title label text
-	 * @param [sUnit=undefined] {string} Unit of measure
-	 * @return {sap.ui.layout.HorizontalLayout} holding the input control and the label's
+	 * Create input with label and unit measures label as a suffix after the input fields.
+	 * @param {Input} oInput control
+	 * @param {string} sTooltipID text id from resource bundle
+	 * @param {string} sLabelText title label text
+	 * @param {string} [sUnit=undefined] Unit of measure
+	 * @returns{sap.ui.layout.HorizontalLayout} Holding the input control and the label's
 	 * @private
 	 */
 	ColorPicker.prototype._createRowFromInput = function (oInput, sTooltipID, sLabelText, sUnit) {
@@ -454,105 +650,99 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Private method used to handle internal ColorPickerBox select event
-	 * @param oEvent {event}
+	 * Updates the <code>colorString</code> property and fires the <code>change</code> and <code>liveChange</code> events.
+	 * @param {boolean} [bFireChange=false] If <code>change</code> event should be fired on this update
+	 * @param {boolean} [bFireLiveChange=false] if <code>liveChange</code> event should be fired on this update
 	 * @private
 	 */
-	ColorPicker.prototype._handleCPBoxSelectEvent = function (oEvent) {
-		var valValue = oEvent.getParameter("value"),
-			satValue = oEvent.getParameter("saturation"),
-			_sRGBString;
-
-		this.oSatField.setValue(satValue);
-
-		if (this.getMode() === "HSL") {
-			this.oLitField.setValue(valValue);
-			//	process changes
-			this._processHSLchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
+	ColorPicker.prototype._updateColorStringProperty = function (bFireChange, bFireLiveChange) {
+		var sRGBString = this._getCSSColorString();
+		this.setProperty('colorString', sRGBString, true);
+		if (bFireLiveChange) {
 			this.fireLiveChange({
 				r: this.Color.r,
 				g: this.Color.g,
 				b: this.Color.b,
 				h: this.Color.h,
 				s: this.Color.s,
+				v: this.Color.v,
 				l: this.Color.l,
 				alpha: this.Color.a,
 				hex: this.Color.hex,
 				formatHSL: this.Color.formatHSL,
-				colorString: _sRGBString
+				colorString: sRGBString
 			});
-		} else {
-			this.oValField.setValue(valValue);
-			//	process changes
-			this._processHSVchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({
+		}
+		if (bFireChange) {
+			this.fireChange({
 				r: this.Color.r,
 				g: this.Color.g,
 				b: this.Color.b,
 				h: this.Color.h,
 				s: this.Color.s,
 				v: this.Color.v,
-				alpha: this.Color.a,
-				hex: this.Color.hex,
-				colorString: _sRGBString
-			});
-		}
-	};
-
-	/**
-	 * Private method used to handle internal ColorPickerBox ontouchend event
-	 * @param oEvent {event}
-	 * @private
-	 */
-	ColorPicker.prototype._handleCPBoxTouchEndEvent = function (oEvent) {
-		var _sRGBString = this._getRGBString();
-		if (this.getMode() === "HSL") {
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireChange({
-				r:this.Color.r,
-				g:this.Color.g,
-				b:this.Color.b,
-				h:this.Color.h,
-				s:this.Color.s,
-				l:this.Color.l,
+				l: this.Color.l,
 				alpha: this.Color.a,
 				hex: this.Color.hex,
 				formatHSL: this.Color.formatHSL,
-				colorString: _sRGBString
-			});
-		} else {
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireChange({
-				r: this.Color.r,
-				g: this.Color.g,
-				b: this.Color.b,
-				h: this.Color.h,
-				s: this.Color.s,
-				v: this.Color.v,
-				alpha: this.Color.a,
-				hex: this.Color.hex,
-				colorString: _sRGBString
+				colorString: sRGBString
 			});
 		}
 	};
 
 	/**
-	 * Creates all internal interaction controls needed for displaying the ColorPicker
+	 * Handles the internal <code>ColorPickerBox</code> select event.
+	 * @param {object} oEvent event object
+	 * @private
+	 */
+	ColorPicker.prototype._handleCPBoxSelectEvent = function (oEvent) {
+		var valValue = oEvent.getParameter("value"),
+			satValue = oEvent.getParameter("saturation");
+
+		this.oSatField.setValue(satValue);
+
+		if (this._bHSLMode) {
+			this.oLitField.setValue(valValue);
+		} else {
+			this.oValField.setValue(valValue);
+		}
+
+		this._processChanges();
+		this._updateColorStringProperty(false, true);
+	};
+
+	/**
+	 * Handles the internal <code>ColorPickerBox</code> resize event.
+	 * @param {object} oEvent event object
+	 * @private
+	 */
+	ColorPicker.prototype._handleCPBoxResizeEvent = function (oEvent) {
+		this._iCPBoxSize = oEvent.getParameter("size");
+		this._updateCursorPosition();
+	};
+
+	/**
+	 * Handles the internal <code>ColorPickerBox</code> <code>onTouchEnd</code> event.
+	 * @param {object} oEvent event object
+	 * @private
+	 */
+	ColorPicker.prototype._handleCPBoxTouchEndEvent = function (oEvent) {
+		this._updateColorStringProperty(true, false);
+	};
+
+	/**
+	 * Creates all internal interaction controls needed for displaying the <code>ColorPicker</code>.
 	 * @private
 	 */
 	ColorPicker.prototype._createInteractionControls = function () {
+		var sId = this.getId();
+
 		// Create the internal ColorPickerBox control
-		this.oCPBox = new ColorPickerBox({
+		this.oCPBox = new ColorPickerBox(sId + "-cpBox", {
 			// Attach to the select event
-			select: this._handleCPBoxSelectEvent.bind(this)
+			select: this._handleCPBoxSelectEvent.bind(this),
+			// Attach to the resize event
+			resize: this._handleCPBoxResizeEvent.bind(this)
 		});
 
 		// Execute after ColorPickerBox "ontouchend" event so we can handle local ColorPicker events
@@ -560,47 +750,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			ontouchend: this._handleCPBoxTouchEndEvent.bind(this)
 		});
 
-		this.oHexField = oFactory.createInput({
+		this.oHexField = oFactory.createInput(sId + "-hxF", {
 			value: this.Color.hex.substr(1),
 			change: this._handleHexValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.HEXClass);
 
-		this.oRedField = oFactory.createInput({
+		this.oRedField = oFactory.createInput(sId + "-rF", {
 			value: this.Color.r,
 			change: this._handleRedValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oGreenField = oFactory.createInput({
+		this.oGreenField = oFactory.createInput(sId + "-gF", {
 			value: this.Color.g,
 			change: this._handleGreenValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oBlueField = oFactory.createInput({
+		this.oBlueField = oFactory.createInput(sId + "-bF", {
 			value: this.Color.b,
 			change: this._handleBlueValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oHueField = oFactory.createInput({
+		this.oHueField = oFactory.createInput(sId + "-hF", {
 			value: this.Color.h,
 			change: this._handleHueValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oSatField = oFactory.createInput({
+		this.oSatField = oFactory.createInput(sId + "-sF", {
 			value: this.Color.s,
 			change: this._handleSatValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oLitField = oFactory.createInput({
+		this.oLitField = oFactory.createInput(sId + "-lF", {
 			value: this.Color.l,
 			change: this._handleLitValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oAlphaField = oFactory.createInput({
+		this.oAlphaField = oFactory.createInput(sId + "-aF", {
 			value: this.Color.a,
 			change: this._handleAlphaValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oValField = oFactory.createInput({
+		this.oValField = oFactory.createInput(sId + "-vF", {
 			value: this.Color.v,
 			change: this._handleValValueChange.bind(this)
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
@@ -609,37 +799,41 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oRGBorHSLRBGroup = oFactory.createRadioButtonGroup({
 			columns: 2,
 			buttons: [
-				oFactory.createRadioButtonItem({text: CONSTANTS.RGB}),
-				oFactory.createRadioButtonItem({text: CONSTANTS.HSL})
+				oFactory.createRadioButtonItem({text: Library.ColorPickerMode.RGB}),
+				oFactory.createRadioButtonItem({text: Library.ColorPickerMode.HSL})
 			],
 			select: this._handleRGBorHSLValueChange.bind(this),
 			selectedIndex: (this.Color.formatHSL ? 1 : 0 )
 		}).addStyleClass(CONSTANTS.OutputSelectorClass);
 
 		// Slider
-		this.oSlider = oFactory.createSlider({
+		this.oSlider = oFactory.createSlider(sId + "-hSLD", {
 			max: 360,
 			step: 1,
 			tooltip: oRb.getText("COLORPICKER_HUE"),
-			value: parseInt(this.oHueField.getValue(), 10),
-			liveChange: this._handleSliderLiveChange.bind(this),
-			change: this._handleSliderChange.bind(this)
+			value: parseInt(this.oHueField.getValue(), 10)
 		}).addStyleClass(CONSTANTS.SliderClass);
 
+		// Attaching events with parameter passed so the handler will know in which mode to execute
+		this.oSlider.attachEvent("liveChange", "liveChange", this._handleSliderChange.bind(this));
+		this.oSlider.attachEvent("change", "change", this._handleSliderChange.bind(this));
+
 		// Alpha Slider
-		this.oAlphaSlider = oFactory.createSlider({
+		this.oAlphaSlider = oFactory.createSlider(sId + "-aSLD", {
 			max: 1,
 			value: 1,
 			step: 0.01,
-			tooltip: oRb.getText("COLORPICKER_ALPHA"),
-			liveChange: this._handleAlphaSliderLiveChange.bind(this),
-			change: this._handleAlphaSliderChange.bind(this)
+			tooltip: oRb.getText("COLORPICKER_ALPHA")
 		}).addStyleClass(CONSTANTS.AlphaSliderClass);
+
+		// Attaching events with parameter passed so the handler will know in which mode to execute
+		this.oAlphaSlider.attachEvent("liveChange", "liveChange", this._handleAlphaSliderChange.bind(this));
+		this.oAlphaSlider.attachEvent("change", "change", this._handleAlphaSliderChange.bind(this));
 	};
 
 	/**
-	 * This method is used to create the controls and the layout needed to build the ColorPicker.
-	 * Controls will be created only once during the lifecycle of the control
+	 * Creates the controls and the layout needed to build the <code>ColorPicker</code>.
+	 * Controls will be created only once during the lifecycle of the control.
 	 * @private
 	 */
 	ColorPicker.prototype._createLayout = function () {
@@ -693,7 +887,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				// Old and New color swatches
 				new HLayout({
 					content: [
-						//	HTML-Control containing the Old Color Box
+						// HTML-Control containing the Old Color Box
 						new HTML({
 							content: ["<div id='", sId, "-ocBox' class='", CONSTANTS.OldColorClass, "'></div>"].join("")
 						}),
@@ -703,7 +897,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 							src: "sap-icon://arrow-right",
 							tooltip: oRb.getText("COLORPICKER_NEW_OLD_COLOR")
 						}).addStyleClass(CONSTANTS.HideForHSVClass).addStyleClass(CONSTANTS.ArrowClass),
-						//	HTML-Control containing the New Color Box
+						// HTML-Control containing the New Color Box
 						new HTML({
 							content: ["<div id='", sId, "-ncBox' class='", CONSTANTS.NewColorClass, "'></div>"].join("")
 						})
@@ -769,44 +963,71 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Adapt the control visual state depending on mode currently used
+	 * Adapts the control visual state depending on the currently used mode.
 	 * @private
 	 */
 	ColorPicker.prototype._updateControlVisualState = function () {
-		var oGrid = this.getAggregation("_grid"),
-			sMode = this.getMode();
+		var oGrid = this.getAggregation("_grid");
 
 		// If controls are not created there is nothing to update
 		if (!this._bLayoutControlsCreated) {
 			return;
 		}
-
 		if (this.bResponsive) {
 			// Responsive control mode
-			if (sMode === "HSV") {
-				oGrid.removeStyleClass(CONSTANTS.HSLClass);
-				this._oLayoutData.swatches.setSpanM(3).setLinebreak(false);
-			} else {
-				// HSL mode
+			if (this._bHSLMode) {
 				oGrid.addStyleClass(CONSTANTS.HSLClass);
 				this._oLayoutData.swatches.setSpanM(4).setLinebreak(true);
+			} else {
+				// HSV mode
+				oGrid.removeStyleClass(CONSTANTS.HSLClass);
+				this._oLayoutData.swatches.setSpanM(3).setLinebreak(false);
 			}
 		} else {
 			// Legacy control mode
-			if (sMode === "HSV") {
-				oGrid.removeStyleClass(CONSTANTS.HSLClass);
-				this._oLayoutData.swatches.setSpanS(3).setLinebreak(false);
-			} else {
-				// HSL mode
+			if (this._bHSLMode) {
 				oGrid.addStyleClass(CONSTANTS.HSLClass);
 				this._oLayoutData.swatches.setSpanS(4).setLinebreak(true);
+			} else {
+				// HSV mode
+				oGrid.removeStyleClass(CONSTANTS.HSLClass);
+				this._oLayoutData.swatches.setSpanS(3).setLinebreak(false);
 			}
 		}
 	};
 
 	/**
-	 * Event before rendering the page
+	 * Refers to either <code>_processHSLChanges</code> or <code>_processHSVChanges</code> method
+	 * depending on the current control mode.
+	 * @private
 	 */
+	ColorPicker.prototype._processChanges = jQuery.noop;
+
+	/**
+	 * Setter for <code>mode</code> property.
+	 * @param {sap.ui.unified.ColorPickerMode} sMode control mode enum
+	 * @param {boolean} bSuppressInvalidate should control invalidation be suppressed
+	 * @public
+	 * @override
+	 */
+	ColorPicker.prototype.setMode = function (sMode, bSuppressInvalidate) {
+		// Assign internal _processChanges method reference depending on current control mode
+		switch (sMode) {
+			case Library.ColorPickerMode.HSL:
+				this._processChanges = this._processHSLChanges;
+				break;
+			case Library.ColorPickerMode.HSV:
+				this._processChanges = this._processHSVChanges;
+				break;
+			default:
+				jQuery.sap.log.error("Control must have a valid mode set to work correct");
+				break;
+		}
+
+		this._bHSLMode = sMode === Library.ColorPickerMode.HSL;
+		return this.setProperty("mode", sMode, bSuppressInvalidate);
+	};
+
 	ColorPicker.prototype.onBeforeRendering = function() {
 		// Create the layout controls
 		this._createLayout();
@@ -819,13 +1040,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ColorPicker.prototype._updateColorString = function () {
-		var _sRGBString;
-
-		//	parse string; get the color object
+		// parse string; get the color object
 		this._parseColorString(this.getColorString());
-		_sRGBString = this._getRGBString();
 
-		//	update UI
+		// update UI
 		this.oHexField.setValue(this.Color.hex.substr(1));
 		this.oRedField.setValue(this.Color.r);
 		this.oGreenField.setValue(this.Color.g);
@@ -833,482 +1051,261 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oHueField.setValue(this.Color.h);
 		this.oSatField.setValue(this.Color.s);
 
-		if (this.getMode() === "HSL") {
+		if (this._bHSLMode) {
 			this.oLitField.setValue(this.Color.l);
 			this.oAlphaField.setValue(this.Color.a);
 			this.oSlider.setValue(this.Color.h);
 			this.oAlphaSlider.setValue(this.Color.a);
 			this.oRGBorHSLRBGroup.setSelectedIndex(this.Color.formatHSL ? 1 : 0 );
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
 		} else {
 			this.oValField.setValue(this.Color.v);
 			this.oSlider.setValue(this.Color.h);
 			this.oAlphaSlider.setValue(this.Color.a);
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
+			this.oAlphaField.setValue(this.Color.a);
 		}
-	};
 
-	/*
-	 * Evaluate parameter values
-	 */
-	ColorPicker.prototype.isColor = function(iColorString) {
-
-		//	parse string; only check
-		return this._parseColorString(iColorString, true);
+		this._updateColorStringProperty(true, true);
 	};
 
 	/**
-	 * Event handler for Slider LIVE changes
+	 * Checks the validity of the CSS color string.
+	 * @param {string} sColorString CSS color string to be validated
+	 * @returns {boolean} If the passed string is a valid CSS color string
+	 * @public
+	 * @since 1.48.0
 	 */
-	ColorPicker.prototype._handleSliderLiveChange = function() {
-		var _sRGBString;
-		//	get the new value
-		var sliderValue = parseInt(this.oSlider.getValue(),10);
-
-		//	set the new hue value in the hue inut field
-		this.oHueField.setValue(sliderValue);
-
-		if (this.getMode() === "HSL") {
-			//	process changes
-			this._processHSLchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-			//	process changes
-			this._processHSVchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
+	ColorPicker.prototype.isColor = function(sColorString) {
+		// parse string; only check
+		return this._parseColorString(sColorString, true);
 	};
 
-
-
 	/**
-	 * Event handler for Slider changes
+	 * Event handler for Slider changes.
+	 * @param {object} oEvent event object
+	 * @param {object} oData object passed with the event initially registered on attachEvent
+	 * @private
 	 */
-	ColorPicker.prototype._handleSliderChange = function() {
-		var _sRGBString;
-		//	get the new value
-		var sliderValue = parseInt(this.oSlider.getValue(),10);
-
-		//	set the new hue value in the hue inut field
-		this.oHueField.setValue(sliderValue);
-
-		if (this.getMode() === "HSL") {
-			//	process changes
-			this._processHSLchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-			//	process changes
-			this._processHSVchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire Change event
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
-	};
-
-
-
-	/**
-	* Event handler for Alpha-Slider LIVE changes
-	*/
-	ColorPicker.prototype._handleAlphaSliderLiveChange = function() {
-		var _sRGBString;
+	ColorPicker.prototype._handleSliderChange = function(oEvent, oData) {
 		// get the new value
-		this.Color.a = this.oAlphaSlider.getValue();
+		var sliderValue = parseInt(this.oSlider.getValue(), 10);
 
-		if (this.getMode() === "HSL") {
-			//	set the new hue value in the hue input field
-			this.oAlphaField.setValue(this.Color.a);
+		// set the new hue value in the hue input field
+		this.oHueField.setValue(sliderValue);
 
-			//	process changes
-			this._processHSLchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-			//	process changes
-			this._processHSVchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
+		this._processChanges();
+		this._updateColorStringProperty(oData === "change", oData === "liveChange");
 	};
 
-
 	/**
-	 * Event handler for Alpha-Slider changes
+	 * Event handler for Alpha-Slider changes.
+	 * @param {object} oEvent event object
+	 * @param {object} oData object passed with the event initially registered on attachEvent
+	 * @private
 	 */
-	ColorPicker.prototype._handleAlphaSliderChange = function() {
-		var _sRGBString;
-		//	get the new value
+	ColorPicker.prototype._handleAlphaSliderChange = function(oEvent, oData) {
+		// update the new value
 		this.Color.a = this.oAlphaSlider.getValue();
 
-		if (this.getMode() === "HSL") {
-			//	set the new hue value in the hue input field
+		// Update Alpha Field if needed - it's visible only in HSL mode
+		if (this._bHSLMode) {
 			this.oAlphaField.setValue(this.Color.a);
-
-			//	process changes
-			this._processHSLchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire Change event
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-			//	process changes
-			this._processHSVchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire Change event
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
 		}
+
+		// process changes
+		if (!this.Color.formatHSL) {
+			this._processRGBChanges();
+		} else {
+			this._processChanges();
+		}
+		this._updateColorStringProperty(oData === "change", oData === "liveChange");
 	};
 
+	/**
+	 * Checks whether the value belongs within a range. If the value belongs, returns the same value.
+	 * If the value is below the min or above the max, returns the range's min or max respectively.
+	 * @param {number} iValue The value that should be kept in range
+	 * @param {number} iMin The minimum value in the range
+	 * @param {number} iMax The maximum value of the range
+	 * @returns {number} in the defined by iMin and iMax range
+	 * @private
+	 */
+	ColorPicker.prototype._getValueInRange = function (iValue, iMin, iMax) {
+		if (isNaN(iValue)) {
+			iValue = 0;
+		}
+		return Math.min(Math.max(iValue, iMin), iMax);
+	};
 
 	/**
-	 * Event handler for changes of alpha input field
+	 * Event handler for changes of alpha input field.
+	 *
+	 * <b>Note:</b> This input is available only in HSL mode.
+	 * @private
 	 */
 	ColorPicker.prototype._handleAlphaValueChange = function() {
-		var _sRGBString;
-		//	get the new value
-		var alphaValue = parseFloat(this.oAlphaField.getValue(),10);
+		// get the new value
+		var alphaValue = parseFloat(this.oAlphaField.getValue(), 10);
 
-		//	check for correct value (0-1.0)
-		if (alphaValue < 0 || isNaN(alphaValue)) {
-			alphaValue = 0;
-		}
-		if (alphaValue > 1.0) {
-			alphaValue = 1;
-		}
+		alphaValue = this._getValueInRange(alphaValue, 0, 1);
 
-		//	set the new value
+		// set the new value
 		this.Color.a = alphaValue;
 
-		//	set the new value (maybe the value has been changed in the above lines)
+		// set the new value (maybe the value has been changed in the above lines)
 		this.oAlphaField.setValue(alphaValue);
 		this.oAlphaSlider.setValue(alphaValue);
 
-		//	process Changes
-		this._processHSLchanges();
-		_sRGBString = this._getRGBString();
+		if (!this.Color.formatHSL) {
+			this._processRGBChanges();
+		} else {
+			this._processChanges();
+		}
 
-		//	update property & fire events
-		this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
+		this._updateColorStringProperty(true, true);
 	};
 
-
 	/**
-	 * Event handler for changes of RGB or HSL radio button field
+	 * Event handler for changes of RGB or HSL radio button field.
 	 */
 	ColorPicker.prototype._handleRGBorHSLValueChange = function() {
-		var _sRGBString = this._getRGBString();
 		// store new value
 		this.Color.formatHSL = (this.oRGBorHSLRBGroup.getSelectedIndex() === 1);
-
-		this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-
-		// fire events & update property
-		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
+		this._updateColorStringProperty(true, true);
 	};
 
-
 	/**
-	 * Event handler for changes of hue input field
+	 * Event handler for changes of Hue input field.
+	 * @private
 	 */
 	ColorPicker.prototype._handleHueValueChange = function() {
-		var _sRGBString;
-		//	get the new value
-		var hueValue = parseInt(this.oHueField.getValue(),10);
+		// get the new value
+		var hueValue = parseInt(this.oHueField.getValue(), 10);
+		hueValue = this._getValueInRange(hueValue, 0, 360);
 
-		//	check for correct value (0 - 360)
-		if (hueValue < 0 || isNaN(hueValue)) {
-			hueValue = 0;
-		}
-		if (hueValue > 360) {
-			hueValue = 359.9;
-		}
-
-		//	set the new value (maybe the value has been changed in the above lines)
+		// set the new value (maybe the value has been changed in the above lines)
 		this.oHueField.setValue(hueValue);
 
-		//	update slider value
+		// update slider value
 		this.oSlider.setValue(hueValue);
 
-		if (this.getMode() === "HSL") {
-			//	process Changes
-			this._processHSLchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-			//	process Changes
-			this._processHSVchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
+		this._processChanges();
+		this._updateColorStringProperty(true, true);
 	};
 
-
 	/**
-	 * Event handler for changes of saturation input field
+	 * Event handler for changes of Saturation input field.
+	 * @private
 	 */
 	ColorPicker.prototype._handleSatValueChange = function() {
-		var _sRGBString;
-		//	get the new value
+		// get the new value
 		var satValue = parseInt(this.oSatField.getValue(),10);
+		satValue = this._getValueInRange(satValue, 0, 100);
 
-		//	check for correct value (0-100)
-		if (satValue < 0 || isNaN(satValue)) {
-			satValue = 0;
-		}
-		if (satValue > 100) {
-			satValue = 100;
-		}
-
-		//	set the new value (maybe the value has been changed in the above lines)
+		// set the new value (maybe the value has been changed in the above lines)
 		this.oSatField.setValue(satValue);
 
-		if (this.getMode() === "HSL") {
-			//	process Changes
-			this._processHSLchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-
-		} else {
-			//	process Changes
-			this._processHSVchanges();
-			_sRGBString = this._getRGBString();
-
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
+		this._processChanges();
+		this._updateColorStringProperty(true, true);
 	};
 
 
 	/**
-	 * Event handler for changes of value  input field
+	 * Event handler for changes of value input field.
+	 * @private
 	 */
 	ColorPicker.prototype._handleValValueChange = function() {
-		var _sRGBString;
-		//	get the new value
-		var valValue = parseInt(this.oValField.getValue(),10);
+		// get the new value
+		var valValue = parseInt(this.oValField.getValue(), 10);
+		valValue = this._getValueInRange(valValue, 0, 100);
 
-		//	check for correct value (0-100)
-		if (valValue < 0 || isNaN(valValue)) {
-			valValue = 0;
-		}
-		if (valValue > 100) {
-			valValue = 100;
-		}
-
-		//	set the new value (maybe the value has been changed in the above lines)
+		// set the new value (maybe the value has been changed in the above lines)
 		this.oValField.setValue(valValue);
 
-		//	process Changes
-		this._processHSVchanges();
-		_sRGBString = this._getRGBString();
-
-		//	fire events & update property
-		this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
+		// process Changes
+		this._processHSVChanges();
+		this._updateColorStringProperty(true, true);
 	};
 
-
 	/**
-	 * Event handler for changes of lightness input field
+	 * Event handler for changes of Lightness input field.
+	 * @private
 	 */
 	ColorPicker.prototype._handleLitValueChange = function() {
-		var _sRGBString;
-		//	get the new value
+		// get the new value
 		var litValue = parseInt(this.oLitField.getValue(), 10);
+		litValue = this._getValueInRange(litValue, 0, 100);
 
-		//	check for correct value (0-100)
-		if (litValue < 0 || isNaN(litValue)) {
-			litValue = 0;
-		}
-		if (litValue > 100) {
-			litValue = 100;
-		}
-
-		//	set the new value (maybe the value has been changed in the above lines)
+		// set the new value (maybe the value has been changed in the above lines)
 		this.oLitField.setValue(litValue);
 
-		//	process Changes
-		this._processHSLchanges();
-		_sRGBString = this._getRGBString();
-
-		//	fire events & update property
-		this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
+		// process Changes
+		this._processHSLChanges();
+		this._updateColorStringProperty(true, true);
 	};
 
 
 	/**
-	 * Event handler for changes of RED input field
+	 * Event handler for changes of RED input field.
+	 * @private
 	 */
 	ColorPicker.prototype._handleRedValueChange = function() {
-		var _sRGBString;
-		//	get the new value
-		var redValue = parseInt(this.oRedField.getValue(),10);
+		// get the new value
+		var redValue = parseInt(this.oRedField.getValue(), 10);
+		redValue = this._getValueInRange(redValue, 0, 255);
 
-		//	check for correct value (0-255)
-		if (redValue < 0 || isNaN(redValue)) {
-			redValue = 0;
-		}
-		if (redValue > 255) {
-			redValue = 255;
-		}
-
-		//	set the new value (maybe the value has been changed in the above lines)
+		// set the new value (maybe the value has been changed in the above lines)
 		this.oRedField.setValue(redValue);
 
-		//	process changes
-		this._processRGBchanges();
-		_sRGBString = this._getRGBString();
-
-		if (this.getMode() === "HSL") {
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
+		this._processRGBChanges();
+		this._updateColorStringProperty(true, true);
 	};
 
 	/**
-	 * Event handler for changes of GREEN input field
+	 * Event handler for changes of GREEN input field.
+	 * @private
 	 */
 	ColorPicker.prototype._handleGreenValueChange = function() {
-		var _sRGBString;
+		// get the new value
+		var greenValue = parseInt(this.oGreenField.getValue(), 10);
+		greenValue = this._getValueInRange(greenValue, 0, 255);
 
-		//	get the new value
-		var greenValue = parseInt(this.oGreenField.getValue(),10);
-
-		//	check for correct value
-		if (greenValue < 0 || isNaN(greenValue)) {
-			greenValue = 0;
-		}
-		if (greenValue > 255) {
-			greenValue = 255;
-		}
-
-		//	set the new value (maybe the value has been changed in the above lines)
+		// set the new value (maybe the value has been changed in the above lines)
 		this.oGreenField.setValue(greenValue);
 
-		//	process changes
-		this._processRGBchanges();
-		_sRGBString = this._getRGBString();
-
-		if (this.getMode() === "HSL") {
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-		//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
+		// process changes
+		this._processRGBChanges();
+		this._updateColorStringProperty(true, true);
 	};
 
-
 	/**
-	 * Event handler for changes of BLUE input field
+	 * Event handler for changes of BLUE input field.
+	 * @private
 	 */
 	ColorPicker.prototype._handleBlueValueChange = function() {
-		var _sRGBString;
-		//	get the new value
-		var blueValue = parseInt(this.oBlueField.getValue(),10);
+		// get the new value
+		var blueValue = parseInt(this.oBlueField.getValue(), 10);
+		blueValue = this._getValueInRange(blueValue, 0, 255);
 
-		//	check for correct value
-		if (blueValue < 0 || isNaN(blueValue)) {
-			blueValue = 0;
-		}
-		if (blueValue > 255) {
-			blueValue = 255;
-		}
-
-		//	set the new value (maybe the value has been changed in the above lines)
+		// set the new value (maybe the value has been changed in the above lines)
 		this.oBlueField.setValue(blueValue);
 
-		//	process changes
-		this._processRGBchanges();
-		_sRGBString = this._getRGBString();
-
-		if (this.getMode() === "HSL") {
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-		//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
+		// process changes
+		this._processRGBChanges();
+		this._updateColorStringProperty(true, true);
 	};
 
 
 	/**
-	 * Process changes of Hue, Value and Saturation
+	 * Processes changes of Hue, Value, and Saturation values.
+	 * @private
 	 */
-	ColorPicker.prototype._processHSVchanges = function() {
+	ColorPicker.prototype._processHSVChanges = function() {
+		// get HSV-values
+		var hueValue = parseInt(this.oHueField.getValue(), 10);
+		var satValue = parseInt(this.oSatField.getValue(), 10);
+		var valValue = parseInt(this.oValField.getValue(), 10);
 
-		//	get HSV-values
-		var hueValue   = parseInt(this.oHueField.getValue(),10);
-		var satValue   = parseInt(this.oSatField.getValue(),10);
-		var valValue   = parseInt(this.oValField.getValue(),10);
-
-		//	calculate and set new RGB-values
+		// calculate and set new RGB-values
 		this._calculateRGB(hueValue, satValue, valValue);
 		this.Color.r = this.RGB.r;
 		this.Color.g = this.RGB.g;
@@ -1317,12 +1314,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oGreenField.setValue(this.Color.g);
 		this.oBlueField.setValue(this.Color.b);
 
-		//	calculate and set HEX-values from the RGB-values
+		// calculate and set HEX-values from the RGB-values
 		this._calculateHEX(this.Color.r,this.Color.g,this.Color.b);
-		this.oHexField.setValue(this.HexString);
-		this.Color.hex =  "#" + this.oHexField.getValue();
+		this.oHexField.setValue(this.sHexString);
+		this.Color.hex = "#" + this.oHexField.getValue();
 
-		//	set HSV-values
+		// set HSV-values
 		this.Color.h = hueValue;
 		this.Color.s = satValue;
 		this.Color.v = valValue;
@@ -1330,29 +1327,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oSatField.setValue(this.Color.s);
 		this.oValField.setValue(this.Color.v);
 
-		//	update gradient box background
 		this._updateGradientBoxBackground(this.Color.h);
-
-		//	update cursor position
 		this._updateCursorPosition();
-
-		//	update selected color background
 		this._updateSelColorBackground();
 	};
 
-
 	/**
-	 * Process changes of Hue, Lightness and Saturation
+	 * Processes changes of Hue, Lightness, and Saturation values.
+	 * @private
 	 */
-	ColorPicker.prototype._processHSLchanges = function() {
+	ColorPicker.prototype._processHSLChanges = function() {
+		// get HSL-values
+		var iHueValue = parseInt(this.oHueField.getValue(), 10),
+			iSatValue = parseInt(this.oSatField.getValue(), 10),
+			iLitValue = parseInt(this.oLitField.getValue(), 10);
 
-		//	get HSL-values
-		var hueValue   = parseInt(this.oHueField.getValue(),10) % 360;
-		var satValue   = parseInt(this.oSatField.getValue(),10);
-		var litValue   = parseInt(this.oLitField.getValue(),10);
+		if (iHueValue > 360) {
+			iHueValue %= 360;
+		}
 
-		//	calculate and set new RGB-values
-		this._calculateRGB(hueValue, satValue, litValue);
+		// calculate and set new RGB-values
+		this._calculateRGB(iHueValue, iSatValue, iLitValue);
 		this.Color.r = this.RGB.r;
 		this.Color.g = this.RGB.g;
 		this.Color.b = this.RGB.b;
@@ -1360,90 +1355,88 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oGreenField.setValue(this.Color.g);
 		this.oBlueField.setValue(this.Color.b);
 
-		//	calculate and set HEX-values from the RGB-values
+		// calculate and set HEX-values from the RGB-values
 		this._calculateHEX(this.Color.r,this.Color.g,this.Color.b);
-		this.oHexField.setValue(this.HexString);
-		this.Color.hex =  "#" + this.oHexField.getValue();
+		this.oHexField.setValue(this.sHexString);
+		this.Color.hex = "#" + this.oHexField.getValue();
 
-		//	set HSL-values
-		this.Color.h = hueValue;
-		this.Color.s = satValue;
-		this.Color.l = litValue;
+		// set HSL-values
+		this.Color.h = iHueValue;
+		this.Color.s = iSatValue;
+		this.Color.l = iLitValue;
 		this.oHueField.setValue(this.Color.h);
 		this.oSatField.setValue(this.Color.s);
 		this.oLitField.setValue(this.Color.l);
 
-		//	update gradient box background
 		this._updateGradientBoxBackground(this.Color.h);
-
-		//	update cursor position
 		this._updateCursorPosition();
-
-		// update alpha slider background
 		this._updateAlphaBackground();
-
-		//	update selected color background
 		this._updateSelColorBackground();
 	};
 
-
 	/**
-	 * Process changes of Red, Green and Blue values
+	 * Processes changes of Red, Green, and Blue values.
+	 * @private
 	 */
-	ColorPicker.prototype._processRGBchanges = function() {
+	ColorPicker.prototype._processRGBChanges = function() {
+		// calculate and set HEX-value from the RGB-values
+		var redValue   = Math.round(parseInt(this.oRedField.getValue(),10)),
+			greenValue = Math.round(parseInt(this.oGreenField.getValue(),10)),
+			blueValue  = Math.round(parseInt(this.oBlueField.getValue(),10));
 
-		//	calculate and set HEX-value from the RGB-values
-		var redValue   = Math.round(parseInt(this.oRedField.getValue(),10));
-		var greenValue = Math.round(parseInt(this.oGreenField.getValue(),10));
-		var blueValue  = Math.round(parseInt(this.oBlueField.getValue(),10));
 		this._calculateHEX(redValue, greenValue, blueValue);
-		this.oHexField.setValue(this.HexString);
+		this.oHexField.setValue(this.sHexString);
 
-		//	calculate and set HSV-values from the RGB-values
-		this._calculateHSV(redValue, greenValue, blueValue);
-		this.oHueField.setValue(this.Color.h);
-		this.oSatField.setValue(this.Color.s);
-
-		if (this.getMode() === "HSL") {
+		if (this._bHSLMode) {
+			this._calculateHSL(redValue, greenValue, blueValue);
 			this.oLitField.setValue(this.Color.l);
 		} else {
+			this._calculateHSV(redValue, greenValue, blueValue);
 			this.oValField.setValue(this.Color.v);
 		}
 
-		//	update slider value
+		// calculate and set HSV-values from the RGB-values
+		this.oHueField.setValue(this.Color.h);
+		this.oSatField.setValue(this.Color.s);
+
+		// update slider value
 		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
 
-		//	store the values in variable
-		this.Color.r   = redValue;
-		this.Color.g   = greenValue;
-		this.Color.b   = blueValue;
-		this.Color.hex =  "#" + this.oHexField.getValue();
+		// store the values in variable
+		this.Color.r = redValue;
+		this.Color.g = greenValue;
+		this.Color.b = blueValue;
+		this.Color.hex = "#" + this.oHexField.getValue();
 
-		//	update gradient box background
 		this._updateGradientBoxBackground(this.Color.h);
-
-		//	update cursor position
 		this._updateCursorPosition();
-
-		//	update selected color background
 		this._updateSelColorBackground();
 	};
 
-
 	/**
-	 * Event handler for changes of HEX input field
+	 * Event handler for changes of HEX input field.
+	 * @private
 	 */
 	ColorPicker.prototype._handleHexValueChange = function() {
-		var _sRGBString;
-		//	get the new value
-		var hexValue = this.oHexField.getValue().toLowerCase();
+		// get the new value
+		var sHexValue = this.oHexField.getValue().toLowerCase(),
+			flAlphaValue = 1,
+			re;
 
-		//	check for correct value
-		if (hexValue.substr(0, 1) === '#') {
-			hexValue = hexValue.substr(1);
+		// check for correct value
+		if (sHexValue.substr(0, 1) === '#') {
+			sHexValue = sHexValue.substr(1);
 		}
-		var re = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-		if (re.test(hexValue) === false) {
+
+		// parse #RRGGBBAA
+		re = /^([0-9a-fA-F]{8})$/;
+		if (re.test(sHexValue) !== false) {
+			flAlphaValue = Number((parseInt(sHexValue.substr(6, 2), 16) / 255).toFixed(2));
+			sHexValue = sHexValue.substr(0,6);
+		}
+
+		re = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+		if (re.test(sHexValue) === false) {
 			this.oHexField.setValueState(sap.ui.core.ValueState.Error);
 			this.oSlider.setEnabled(false);
 			this.oAlphaSlider.setEnabled(false);
@@ -1453,13 +1446,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.oBlueField.setEnabled(false);
 			this.oSatField.setEnabled(false);
 
-			if (this.getMode() === "HSL") {
+			if (this._bHSLMode) {
 				this.oLitField.setEnabled(false);
 				this.oAlphaField.setEnabled(false);
 			} else {
 				this.oValField.setEnabled(false);
 			}
-			return false;
+			return;
 		} else if (this.oHexField.getValueState() === sap.ui.core.ValueState.Error) {
 			this.oHexField.setValueState(sap.ui.core.ValueState.None);
 			this.oSlider.setEnabled(true);
@@ -1470,7 +1463,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.oBlueField.setEnabled(true);
 			this.oSatField.setEnabled(true);
 
-			if (this.getMode() === "HSL") {
+			if (this._bHSLMode) {
 				this.oLitField.setEnabled(true);
 				this.oAlphaField.setEnabled(true);
 			} else {
@@ -1478,83 +1471,66 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
-		//	convert from short to long hex (if needed)
-		if (hexValue.length === 3) {
-			var tempValue = hexValue.charAt(0) + hexValue.charAt(0) + hexValue.charAt(1) + hexValue.charAt(1) + hexValue.charAt(2) + hexValue.charAt(2);
-			hexValue = tempValue;
+		// convert from short to long hex (if needed)
+		if (sHexValue.length === 3) {
+			sHexValue = sHexValue.charAt(0) + sHexValue.charAt(0) + sHexValue.charAt(1) + sHexValue.charAt(1) + sHexValue.charAt(2) + sHexValue.charAt(2);
 		}
 
-		//	process Changes
-		this._processHexChanges(hexValue);
+		// process Changes
+		this._processHexChanges(sHexValue);
 
-		//	update UI
-		this.oHexField.setValue(hexValue);
+		// update UI
+		this.oHexField.setValue(sHexValue);
 		this.oRedField.setValue(this.Color.r);
 		this.oGreenField.setValue(this.Color.g);
 		this.oBlueField.setValue(this.Color.b);
 		this.oHueField.setValue(this.Color.h);
 		this.oSatField.setValue(this.Color.s);
 
-		if (this.getMode() === "HSL") {
+		if (this._bHSLMode) {
 			this.oLitField.setValue(this.Color.l);
+			this.oAlphaField.setValue(1);
 		} else {
 			this.oValField.setValue(this.Color.v);
 		}
 		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
-		this.oAlphaSlider.setValue(1);
+		this.oAlphaSlider.setValue(flAlphaValue);
+		this.Color.a = flAlphaValue;
 
-		if (this.getMode() === "HSL") {
-			this.oAlphaField.setValue(1);
+		if (this._bHSLMode) {
+			this.oAlphaField.setValue(flAlphaValue);
 		}
 
-		//	update gradient box background
 		this._updateGradientBoxBackground(this.Color.h);
-
-		//	update cursor position
 		this._updateCursorPosition();
-
-		//	update selected color background
 		this._updateSelColorBackground();
-
-		_sRGBString = this._getRGBString();
-
-		if (this.getMode() === "HSL") {
-			//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL, colorString: _sRGBString});
-		} else {
-		//	fire events & update property
-			this.setProperty('colorString', _sRGBString, true); // No re-rendering!
-			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex, colorString: _sRGBString});
-		}
+		this._updateColorStringProperty(true, true);
 	};
 
-
 	/**
-	 * Hex-Values have changed ==> process changes
+	 * Processes changes of HEX values.
+	 * @param {string} sHexValue color value
+	 * @private
 	 */
-	ColorPicker.prototype._processHexChanges = function (ihexValue) {
+	ColorPicker.prototype._processHexChanges = function (sHexValue) {
+		// convert RGB-values
+		this._convertRGB(sHexValue);
 
-		//	convert RGB-values
-		this._convertRGB(ihexValue);
-
-		if (this.getMode() === "HSL") {
-			//	calculate and set HSL-values from the RGB-values
+		if (this._bHSLMode) {
+			// calculate and set HSL-values from the RGB-values
 			this._calculateHSL(this.Color.r, this.Color.g, this.Color.b);
 		} else {
-			//	calculate and set HSV-values from the RGB-values
+			// calculate and set HSV-values from the RGB-values
 			this._calculateHSV(this.Color.r, this.Color.g, this.Color.b);
 		}
 
-		//	all values except hex set; set the hex value
-		this.Color.hex = "#" + ihexValue.toLowerCase();
+		// all values except hex set; set the hex value
+		this.Color.hex = "#" + sHexValue.toLowerCase();
 	};
 
-
 	/**
-	 * Update background of alpha slider
+	 * Update background color of alpha slider.
+	 * @private
 	 */
 	ColorPicker.prototype._updateAlphaBackground = function() {
 		var sRGB = [this.Color.r, this.Color.g, this.Color.b].join(","),
@@ -1565,180 +1541,212 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				.css("background-image", newBG); // stop flicker
 
 			// cache last value to prevent flicker
-			this.lastOpacitySliderGradient = newBG;
+			this.lastAlphaSliderGradient = newBG;
 		}
 	};
 
-
 	/**
-	 * Update Cursor position in the ColorPicker Box
+	 * Updates the cursor position in the <code>ColorPickerBox</code>.
+	 * @private
 	 */
 	ColorPicker.prototype._updateCursorPosition = function() {
-		var x;
-		//	get the width & height
-		var cpCurWidth  = this.$cpCur.outerWidth();
-		var cpCurHeight = this.$cpCur.outerHeight();
-		var cpBoxWidth  = this.$cpBox.width();
-		var cpBoxHeight = this.$cpBox.height();
+		var iX,
+			iY;
 
-		//	get the saturation and value
-		var satValue = this.oSatField.getValue();
-
-		if (this.getMode() === "HSL") {
-			var litValue = this.oLitField.getValue();
-			// calculate the x and y values
-			x = Math.round(litValue * cpBoxWidth / 100.0);
-		} else {
-			var valValue = this.oValField.getValue();
-			// calculate the x and y values
-			x = Math.round(valValue * cpBoxWidth / 100.0);
-		}
-
-		//	calculate x if we are in RTL mode
-		if (this.bRtl) {
-			var rX = cpBoxWidth - x;
-			x = rX;
-		}
-		var y = Math.round((1 - satValue / 100.0) * cpBoxHeight);
-		x = Math.round(Math.max(x, 0) - cpCurWidth / 2.0 - 1.0);
-		y = Math.round(Math.max(y, 0) - cpCurHeight / 2.0 - 1.0);
-
-		//	set the new cursor position
-		this.$cpCur.css("left", x).css("top", y);
-	};
-
-
-	/**
-	 * Calculate RGB-Values from Hue/Saturation/Value
-	 */
-	ColorPicker.prototype._calculateRGB = function(hue, sat, val) {
-
-		if (this.getMode() === "HSL") {
-			this._calculateRGB_Advanced(hue, sat, val);
+		// If there is no size available yet we don't do any adaptation
+		if (!this._iCPBoxSize) {
 			return;
 		}
-		//hue value is cyclic, so 360 = 0
-		if (hue === 360) {
-			hue = 0;
+
+		// get the width & height
+		if (this._bHSLMode) {
+			// calculate the x and y values
+			iX = Math.round(this.oLitField.getValue() * this._iCPBoxSize / 100.0);
+		} else {
+			// calculate the x and y values
+			iX = Math.round(this.oValField.getValue() * this._iCPBoxSize / 100.0);
 		}
-		hue /= 60;
-		sat /= 100;
-		val /= 100;
+
+		// calculate x if we are in RTL mode
+		if (this.bRtl) {
+			iX = this._iCPBoxSize - iX;
+		}
+		iY = Math.round((1 - this.oSatField.getValue() / 100.0) * this._iCPBoxSize);
+		iX = Math.round(Math.max(iX, 0) - this._iCPCursorSize / 2.0 - 1.0);
+		iY = Math.round(Math.max(iY, 0) - this._iCPCursorSize / 2.0 - 1.0);
+
+		// set the new cursor position
+		this.$CPCur.css("left", iX).css("top", iY);
+	};
+
+	/**
+	 * Calculates RGB values from Hue/Saturation/Value.
+	 * @param {int} iHue Hue color value
+	 * @param {int} iSat Saturation color value
+	 * @param {int} iVal Value color value
+	 * @private
+	 */
+	ColorPicker.prototype._calculateRGB = function(iHue, iSat, iVal) {
+		var iRedValue,
+			iGreenValue,
+			iBlueValue,
+			iM,
+			iX,
+			iC,
+			i;
+
+		if (this._bHSLMode) {
+			this._calculateRGBAdvanced(iHue, iSat, iVal);
+			return;
+		}
+		// hue value is cyclic, so 360 = 0
+		iHue %= 360;
+
+		iHue /= 60;
+		iSat /= 100;
+		iVal /= 100;
 
 		//Formula taken from http://www.rapidtables.com/convert/color/hsv-to-rgb.htm
-		var c = val * sat;
-		var x = c * (1 - Math.abs(hue % 2 - 1));
-		var m = val - c;
+		iC = iVal * iSat;
+		iX = iC * (1 - Math.abs(iHue % 2 - 1));
+		iM = iVal - iC;
 
 		// calculate values
-		var redValue = 0, greenValue = 0, blueValue = 0;
-		var i = Math.floor(hue);
+		iRedValue = 0;
+		iGreenValue = 0;
+		iBlueValue = 0;
+		i = Math.floor(iHue);
 
 		switch (i) {
 			case 0:
-				redValue   = c;
-				greenValue = x;
+				iRedValue = iC;
+				iGreenValue = iX;
 				break;
 			case 1:
-				redValue   = x;
-				greenValue = c;
+				iRedValue = iX;
+				iGreenValue = iC;
 				break;
 			case 2:
-				greenValue = c;
-				blueValue  = x;
+				iGreenValue = iC;
+				iBlueValue = iX;
 				break;
 			case 3:
-				greenValue = x;
-				blueValue  = c;
+				iGreenValue = iX;
+				iBlueValue = iC;
 				break;
 			case 4:
-				redValue   = x;
-				blueValue  = c;
+				iRedValue = iX;
+				iBlueValue = iC;
 				break;
 			case 5:
-				redValue   = c;
-				blueValue  = x;
+				iRedValue = iC;
+				iBlueValue = iX;
+				break;
+			default:
+				iRedValue = 0;
+				iBlueValue = 0;
+				iGreenValue = 0;
 				break;
 		}
 
-		this.RGB.r = Math.floor((redValue + m) * 255);
-		this.RGB.g = Math.floor((greenValue + m) * 255);
-		this.RGB.b = Math.floor((blueValue + m) * 255);
+		this.RGB.r = Math.floor((iRedValue + iM) * 255);
+		this.RGB.g = Math.floor((iGreenValue + iM) * 255);
+		this.RGB.b = Math.floor((iBlueValue + iM) * 255);
 	};
 
-
 	/**
-	 * Calculate RGB-Values from Hue/Saturation/Lightness
+	 * Calculates RGB values from Hue/Saturation/Lightness.
+	 * @param {int} iHue Hue color value
+	 * @param {int} iSat Saturation color value
+	 * @param {int} iLit Lightness color value
+	 * @private
 	 */
-	ColorPicker.prototype._calculateRGB_Advanced = function( hue, sat, lit) {
-		var redValue, greenValue, blueValue;
+	ColorPicker.prototype._calculateRGBAdvanced = function(iHue, iSat, iLit) {
+		var iRedValue,
+			iGreenValue,
+			iBlueValue,
+			iM255d,
+			iM255x,
+			iX,
+			iM,
+			iD,
+			i;
 
-		if (hue < 0) {
-			hue = 0;
-		} else if (hue > 360) { hue = 360; }
-		if (sat > 100) {
-			sat = 1;
-		} else if (sat < 0) { sat = 0; } else { sat = sat / 100; }
-		if (lit > 100) {
-			lit = 1;
-		} else if (lit < 0) { lit = 0; } else { lit = lit / 100; }
+		iHue = this._getValueInRange(iHue, 0, 360);
 
-		var d = sat * (1 - Math.abs(2 * lit - 1));
-		var m = 255 * (lit - 0.5 * d);
-		var x = d * (1 - Math.abs((hue / 60) % 2 - 1));
+		if (iSat > 100) {
+			iSat = 1;
+		} else if (iSat < 0) {
+			iSat = 0;
+		} else {
+			iSat = iSat / 100;
+		}
 
-		var i = Math.floor(hue / 60);
+		if (iLit > 100) {
+			iLit = 1;
+		} else if (iLit < 0) {
+			iLit = 0;
+		} else {
+			iLit = iLit / 100;
+		}
 
-		var m255x = m + 255 * x;
-		var m255d = m + 255 * d;
+		iD = iSat * (1 - Math.abs(2 * iLit - 1));
+		iM = 255 * (iLit - 0.5 * iD);
+		iX = iD * (1 - Math.abs((iHue / 60) % 2 - 1));
+
+		i = Math.floor(iHue / 60);
+
+		iM255x = iM + 255 * iX;
+		iM255d = iM + 255 * iD;
 
 		switch (i) {
-		case 0:
-			redValue   = m255d;
-			greenValue = m255x;
-			blueValue  = m;
-			break;
-		case 1:
-			redValue   = m255x;
-			greenValue = m255d;
-			blueValue  = m;
-			break;
-		case 2:
-			redValue   = m;
-			greenValue = m255d;
-			blueValue  = m255x;
-			break;
-		case 3:
-			redValue   = m;
-			greenValue = m255x;
-			blueValue  = m255d;
-			break;
-		case 4:
-			redValue   = m255x;
-			greenValue = m;
-			blueValue  = m255d;
-			break;
-		case 5:
-			redValue   = m255d;
-			greenValue = m;
-			blueValue  = m255x;
-			break;
-		default:
-			redValue   = 0;
-			greenValue = 0;
-			blueValue  = 0;
-		break;
+			case 0:
+				iRedValue = iM255d;
+				iGreenValue = iM255x;
+				iBlueValue = iM;
+				break;
+			case 1:
+				iRedValue = iM255x;
+				iGreenValue = iM255d;
+				iBlueValue = iM;
+				break;
+			case 2:
+				iRedValue = iM;
+				iGreenValue = iM255d;
+				iBlueValue = iM255x;
+				break;
+			case 3:
+				iRedValue = iM;
+				iGreenValue = iM255x;
+				iBlueValue = iM255d;
+				break;
+			case 4:
+				iRedValue = iM255x;
+				iGreenValue = iM;
+				iBlueValue = iM255d;
+				break;
+			case 5:
+				iRedValue = iM255d;
+				iGreenValue = iM;
+				iBlueValue = iM255x;
+				break;
+			default:
+				iRedValue = 0;
+				iGreenValue = 0;
+				iBlueValue = 0;
+				break;
 		}
-		this.RGB.r = Math.round(redValue);
-		this.RGB.g = Math.round(greenValue);
-		this.RGB.b = Math.round(blueValue);
+		this.RGB.r = Math.round(iRedValue);
+		this.RGB.g = Math.round(iGreenValue);
+		this.RGB.b = Math.round(iBlueValue);
 	};
 
-
 	/**
-	 * Get RGB-String from the current RGB-Values
+	 * Getter for the CSS color string.
+	 * @private
+	 * @returns{string} CSS Color String
 	 */
-	ColorPicker.prototype._getRGBString = function() {
+	ColorPicker.prototype._getCSSColorString = function() {
 		if (this.Color.formatHSL) {
 			if (this.Color.a < 1) {
 				return "hsla(" + this.Color.h + "," + this.Color.s + "%," + this.Color.l + "%, " + this.Color.a + ")";
@@ -1754,85 +1762,92 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-
 	/**
-	 * Calculate HEX-Values when RGB-values change
+	 * Calculates the HEX values when the RGB values change.
+	 * @param {int} iRed red color value
+	 * @param {int} iGreen green color value
+	 * @param {int} iBlue blue color value
+	 * @private
 	 */
-	ColorPicker.prototype._calculateHEX = function(red,green,blue) {
+	ColorPicker.prototype._calculateHEX = function(iRed, iGreen, iBlue) {
+		// convert values
+		var sRedStr = iRed.toString(16),
+			sGreenStr = iGreen.toString(16),
+			sBlueStr = iBlue.toString(16);
 
-		//	convert values
-		var redStr     = red.toString(16);
-		var greenStr   = green.toString(16);
-		var blueStr    = blue.toString(16);
-		if (redStr.length === 1)   {
-			redStr   = '0' + redStr;
+		// Pad strings if needed
+		if (sRedStr.length === 1)   {
+			sRedStr   = '0' + sRedStr;
 		}
-		if (greenStr.length === 1) {
-			greenStr = '0' + greenStr;
+		if (sGreenStr.length === 1) {
+			sGreenStr = '0' + sGreenStr;
 		}
-		if (blueStr.length === 1)  {
-			blueStr  = '0' + blueStr;
+		if (sBlueStr.length === 1)  {
+			sBlueStr  = '0' + sBlueStr;
 		}
 
-		//	return the HexValue
-		this.HexString = (redStr + greenStr + blueStr).toLowerCase();
+		// return the HexValue
+		this.sHexString = (sRedStr + sGreenStr + sBlueStr).toLowerCase();
 	};
 
-
 	/**
-	 * Calculate HSV-Values from RGB-values
+	 * Calculates HSV values from RGB values.
+	 * @param {int} iRed red color value
+	 * @param {int} iGreen green color value
+	 * @param {int} iBlue blue color value
+	 * @private
 	 */
-	ColorPicker.prototype._calculateHSV = function(red, green, blue) {
+	ColorPicker.prototype._calculateHSV = function(iRed, iGreen, iBlue) {
+		// calculate values
+		var max = Math.max(Math.max(iRed, iGreen), iBlue),
+			min = Math.min(Math.min(iRed, iGreen), iBlue),
+			delta = max - min,
+			valValue = Math.round(max * 100 / 255),
+			satValue = max === 0.0 ? 0 : (100 * delta / max),
+			hueValue = 0;
 
-		//	calculate values
-		var max			= Math.max(Math.max(red, green), blue);
-		var min			= Math.min(Math.min(red, green), blue);
-		var delta		= (max - min);
-		var valValue	= Math.round(max * 100 / 255);
-		var satValue = (max === 0.0) ? 0 : (100 * delta / max);
-		var hueValue = 0;
 		if (satValue === 0) {
 			hueValue = 0;
-		} else if (red === max)   {
-			hueValue = 60.0 * (green - blue) / delta;
-		} else if (green === max) {
-			hueValue = 120.0 + 60.0 * (blue - red) / delta;
-		} else if (blue === max)  {
-			hueValue = 240.0 + 60.0 * (red - green) / delta;
+		} else if (iRed === max)   {
+			hueValue = 60.0 * (iGreen - iBlue) / delta;
+		} else if (iGreen === max) {
+			hueValue = 120.0 + 60.0 * (iBlue - iRed) / delta;
+		} else if (iBlue === max)  {
+			hueValue = 240.0 + 60.0 * (iRed - iGreen) / delta;
 		}
 		if (hueValue < 0.0) {
 			hueValue += 359.9;
 		}
+
 		hueValue = Math.round(hueValue);
 		satValue = Math.round(satValue);
 
-		//	store the new values
+		// store the new values
 		this.Color.h = hueValue;
 		this.Color.s = satValue;
 		this.Color.v = valValue;
 	};
 
-
 	/**
-	 * Calculate HSL-Values from RGB-values
+	 * Calculates HSL values from RGB values.
+	 * @param {int} iRed color
+	 * @param {int} iGreen color
+	 * @param {int} iBlue color
 	 */
-	ColorPicker.prototype._calculateHSL = function(red, green, blue) {
-
-		//	calculate values
-		var max			= Math.max(red, green, blue);
-		var min			= Math.min(red, green, blue);
-		var d			= (max - min) / 255;
-
-		var litValue = (max + min) / 510;
-		var denominator = 1 - Math.abs(2 * litValue - 1);
-		var lVal = (litValue === 0.0) ? 0 : d / denominator;
-		var satValue = (denominator != 0) ? lVal : 0;
-		var hueValue = 0;
+	ColorPicker.prototype._calculateHSL = function(iRed, iGreen, iBlue) {
+		var max = Math.max(iRed, iGreen, iBlue),
+			min = Math.min(iRed, iGreen, iBlue),
+			d = (max - min) / 255,
+			litValue = (max + min) / 510,
+			denominator = 1 - Math.abs(2 * litValue - 1),
+			lVal = (litValue === 0.0) ? 0 : d / denominator,
+			satValue = (denominator !== 0) ? lVal : 0,
+			hueValue = 0;
 
 		litValue = Math.round(litValue * 100);
 		satValue = Math.round(satValue * 100);
 
-		if (litValue === 0 || satValue === 0 || (red + green + blue === 765)) {
+		if (litValue === 0 || satValue === 0 || (iRed + iGreen + iBlue === 765)) {
 			hueValue = 0;
 		} else {
 
@@ -1840,14 +1855,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// method hexagon begin
 			var C = max - min;
-			if (max === red) {
-				hueValue = ((green - blue) / C) % 6;
+			if (max === iRed) {
+				hueValue = ((iGreen - iBlue) / C) % 6;
 			}
-			if (max === green) {
-				hueValue = (blue - red) / C + 2;
+			if (max === iGreen) {
+				hueValue = (iBlue - iRed) / C + 2;
 			}
-			if (max === blue) {
-				hueValue = (red - green) / C + 4;
+			if (max === iBlue) {
+				hueValue = (iRed - iGreen) / C + 4;
 			}
 			if (C === 0) {
 				hueValue = 0;
@@ -1860,666 +1875,358 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// method hexagon end
 		}
 
-		//	store the new values
+		// store the new values
 		this.Color.h = Math.round(hueValue);
 		this.Color.s = satValue;
 		this.Color.l = litValue;
 	};
 
-
 	/**
-	 * Convert HEX-Value to RGB-Values
+	 * Converts HEX value to internal RGB value.
+	 * @param {string} sHex HEX CSS string
+	 * @private
 	 */
-	ColorPicker.prototype._convertRGB = function(hex) {
-
-		//	calculate the new values
-		var red   = parseInt(hex.substr(0, 2), 16);
-		var green = parseInt(hex.substr(2, 2), 16);
-		var blue  = parseInt(hex.substr(4, 2), 16);
-
-		//	return the new values
-		this.Color.r = red;
-		this.Color.g = green;
-		this.Color.b = blue;
+	ColorPicker.prototype._convertRGB = function(sHex) {
+		// Convert values
+		this.Color.r = parseInt(sHex.substr(0, 2), 16);
+		this.Color.g = parseInt(sHex.substr(2, 2), 16);
+		this.Color.b = parseInt(sHex.substr(4, 2), 16);
 	};
 
-
 	/**
-	 * Update GradientBox Background
+	 * Updates the <code>GradientBox</code> background color.
+	 * @param {int} iHue hue color value
+	 * @private
 	 */
-	ColorPicker.prototype._updateGradientBoxBackground = function(hue) {
-
+	ColorPicker.prototype._updateGradientBoxBackground = function(iHue) {
 		// calculate RGB-values
-		if (this.getMode() === "HSL") {
-			this._calculateRGB_Advanced(hue, 100, 50);
+		if (this._bHSLMode) {
+			this._calculateRGBAdvanced(iHue, 100, 50);
 		} else {
-			this._calculateRGB(hue, 100, 100);
+			this._calculateRGB(iHue, 100, 100);
 		}
 
-		//	calculate Hex-value
-		this._calculateHEX(this.RGB.r,this.RGB.g,this.RGB.b);
+		// calculate Hex-value
+		this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
 
-		//	set backgroundColor
-		this.$cpBox.css('background-color','rgb(' + this.RGB.r + ', '  + this.RGB.g + ', ' + this.RGB.b + ')');
+		// set backgroundColor
+		this.$CPBox.css('background-color', 'rgb(' + [this.RGB.r, this.RGB.g, this.RGB.b].join(",") + ')');
 	};
 
-
 	/**
-	 * Update background of "new color box"
+	 * Updates the background color of new color box.
+	 * @private
 	 */
 	ColorPicker.prototype._updateSelColorBackground = function() {
-
-		//	set the new color
-		this.$("ncBox").css('background-color',this._getRGBString());
-
+		this.$("ncBox").css('background-color', this._getCSSColorString());
 	};
 
-
 	/**
-	 * Parse Input Parameter; evaluate color
+	 * Parses the input parameter and checks the validity of the CSS color.
+	 * @param {string} sColor CSS HSL color string allowed input formats is hsv(360,100,100); hsv360,100,100;
+	 * @param {boolean} bCheckOnly check only
+	 * @returns {boolean} if string is a valid CSS color
+	 * @private
 	 */
-	ColorPicker.prototype._parseColorString = function(iColorString, bCheckOnly) {
-		var hexValue = "";
+	ColorPicker.prototype._parseColorString = function(sColor, bCheckOnly) {
+		var hexValue;
 
-		//delete #, trim
-		if (iColorString.substr(0, 1) === '#') {
-			iColorString = iColorString.substr(1);
+		// delete #, trim and lowercase
+		if (sColor.substr(0, 1) === '#') {
+			sColor = sColor.substr(1);
 		}
+		sColor = sColor.trim().toLowerCase();
 
-		iColorString = iColorString.replace(/ /g, '');
-		iColorString = iColorString.toLowerCase();
-		hexValue = this._parseColorName(iColorString);
-
-		if (hexValue != "") {
+		// Color name
+		hexValue = this._parseColorName(sColor);
+		if (hexValue) {
 			if (bCheckOnly) {
 				return true;
 			}
+
+			if (hexValue.length === 8) {
+				this.Color.a = this.Color.oldA = Number((parseInt(hexValue.substr(6, 2), 16) / 255).toFixed(2));
+				hexValue = hexValue.substring(0, 6);
+			}
+
 			this._processHexChanges(hexValue);
 			this.Color.old = this.Color.hex;
-			if (this.getMode() === "HSL") {
+
+
+			if (this._bHSLMode) {
 				this.Color.formatHSL = false;
 			}
 			return true;
 		}
 
-		var r = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-		if (r.test(iColorString) === true) {
+		if (/^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(sColor)) {
 			if (bCheckOnly) {
 				return true;
 			}
-			if (iColorString.length == 3) {
-				hexValue = iColorString.charAt(0) + iColorString.charAt(0) + iColorString.charAt(1) + iColorString.charAt(1) + iColorString.charAt(2) + iColorString.charAt(2);
+			if (sColor.length === 3) {
+				hexValue = sColor[0] + sColor[0] + sColor[1] + sColor[1] + sColor[2] + sColor[2];
 			} else {
-				hexValue = iColorString;
+				hexValue = sColor;
 			}
 			this._processHexChanges(hexValue);
 			this.Color.old = this.Color.hex;
-			if (this.getMode() === "HSL") {
+			if (this._bHSLMode) {
 				this.Color.formatHSL = false;
 			}
 			return true;
 		}
-		if (iColorString.substr(0, 4) === 'rgba') {
-			return this._parseRGBA(iColorString, bCheckOnly);
+		if (sColor.substr(0, 3) === 'rgb') {
+			return this._parseRGB(sColor, bCheckOnly);
 		}
-		if (iColorString.substr(0, 3) === 'rgb') {
-			return this._parseRGB(iColorString, bCheckOnly);
-		}
-		if (this.getMode() == "HSL") {
-			if (iColorString.substr(0, 4) === 'hsla') {
-				return this._parseHSLA(iColorString, bCheckOnly);
-			}
-			if (iColorString.substr(0, 3) === 'hsl') {
-				return this._parseHSL(iColorString, bCheckOnly);
-			}
-		} else {
-			if (iColorString.substr(0, 3) === 'hsv') {
-				return this._parseHSV(iColorString, bCheckOnly);
-			} else {
-				return false;
-			}
+		if (this._bHSLMode) {
+			return this._parseHSL(sColor, bCheckOnly);
+		} else if (sColor.substr(0, 3) === 'hsv') {
+			return this._parseHSV(sColor, bCheckOnly);
 		}
 		return false;
 	};
 
 	/**
-	 * Parses HSV string
+	 * Parses CSS HSV string.
+	 * @param {string} sColor CSS HSL color string allowed input formats are hsv(360,100,100) and hsv360,100,100;
+	 * @param {boolean} bCheckOnly check only
+	 * @returns {boolean} If string is a valid RGB CSS string
+	 * @private
 	 */
-	ColorPicker.prototype._parseHSV = function(iColorString) {
-		//	parse HSV
-		//	allowed input: hsv(360,100,100); hsv360,100,100; [hsv(360,0.5,0.5); hsv360,0.5,0.5 later]
+	ColorPicker.prototype._parseHSV = function(sColor, bCheckOnly) {
+		// allowed input: hsv(360,100,100); hsv360,100,100; [hsv(360,0.5,0.5); hsv360,0.5,0.5 later]
+		var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),)(((\d{1,2})|(100)),)((\d{1,2})|(100))$/,
+			aHSVColor,
+			iH,
+			iS,
+			iV;
+
 		// remove hsv, "(", ")" and blanks
-		iColorString = iColorString.substr(3);
-		iColorString = iColorString.replace("(",'');
-		iColorString = iColorString.replace(")",'');
-		iColorString = iColorString.split(' ').join('');
-		var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(((\d{1,2})|(100)),){1}((\d{1,2})|(100)){1}$/;
-		if (re.test(iColorString) === true) {
-			//it's a hsv string, get the values
-			var HSVColor = iColorString.split(",");
-			//get RGB values
-			this._calculateRGB(parseInt(HSVColor[0], 10), parseInt(HSVColor[1], 10), parseInt(HSVColor[2], 10));
-			//get Hex values
-			this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
-			//store the values
-			this.Color.r   = this.RGB.r;
-			this.Color.g   = this.RGB.g;
-			this.Color.b   = this.RGB.b;
-			this.Color.h   = parseInt(HSVColor[0], 10);
-			this.Color.s   = parseInt(HSVColor[1], 10);
-			this.Color.v   = parseInt(HSVColor[2], 10);
-			this.Color.hex = "#" + this.HexString;
-			this.Color.old = this.Color.hex;
-		}
-	};
-
-	/**
-	 * Parses HSL string
-	 */
-	ColorPicker.prototype._parseHSL = function(iColorString, bCheckOnly) {
-		//	parse HSL
-		//	allowed input: hsl(360,100,100); hsl360,100,100; [hsl(360,0.5,0.5); hsl360,0.5,0.5 later]
-		// remove hsl, "(", ")" and blanks
-		iColorString = iColorString.substr(3);
-		iColorString = iColorString.replace("(",'');
-		iColorString = iColorString.replace(")",'');
-		iColorString = iColorString.split(' ').join('');
-		var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(((\d{1,2})|(100))%,){1}(((\d{1,2})|(100))%){1}$/;
-
-		if (re.test(iColorString) === true) {
+		sColor = sColor.substr(3).replace("(",'').replace(")",'').split(' ').join('');
+		if (re.test(sColor) === true) {
+			// If we are in check only mode we don't do any control adaptation
 			if (bCheckOnly) {
 				return true;
 			}
-			//it's a hsl string, get the values
-			var HSLColor = iColorString.split(",");
+
+			// it's a hsv string, get the values
+			aHSVColor = sColor.split(",");
+			iH = parseInt(aHSVColor[0], 10);
+			iS = parseInt(aHSVColor[1], 10);
+			iV = parseInt(aHSVColor[2], 10);
+
 			//get RGB values
-			this._calculateRGB(parseInt(HSLColor[0], 10), parseInt(HSLColor[1], 10), parseInt(HSLColor[2], 10));
+			this._calculateRGB(iH, iS, iV);
 			//get Hex values
 			this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
 			//store the values
-			this.Color.r   = this.RGB.r;
-			this.Color.g   = this.RGB.g;
-			this.Color.b   = this.RGB.b;
-			this.Color.h   = parseInt(HSLColor[0], 10);
-			this.Color.s   = parseInt(HSLColor[1], 10);
-			this.Color.l   = parseInt(HSLColor[2], 10);
-			this.Color.hex = "#" + this.HexString;
+			this.Color.r = this.RGB.r;
+			this.Color.g = this.RGB.g;
+			this.Color.b = this.RGB.b;
+			this.Color.h = iH;
+			this.Color.s = iS;
+			this.Color.v = iV;
+			this.Color.hex = "#" + this.sHexString;
 			this.Color.old = this.Color.hex;
-			this.Color.a = this.Color.a_old = 1;
-			this.Color.formatHSL = true;
-			return true;
-		} else {
-			var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(((\d{1,2})|(100))%,){1}([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}$/;
-			if (re.test(iColorString) == true) {
-				if (bCheckOnly) {
-					return true;
-				}
-				//it's a hsl string, get the values
-				var HSLColor = iColorString.split(",");
-				//get RGB values
-				this._calculateRGB(parseInt(HSLColor[0], 10), parseInt(HSLColor[1], 10), parseFloat(HSLColor[2]) * 100);
-				//get Hex values
-				this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
-				//store the values
-				this.Color.r   = this.RGB.r;
-				this.Color.g   = this.RGB.g;
-				this.Color.b   = this.RGB.b;
-				this.Color.h   = parseInt(HSLColor[0], 10);
-				this.Color.s   = parseInt(HSLColor[1], 10);
-				this.Color.l   = parseFloat(HSLColor[2]) * 100;
-				this.Color.hex = "#" + this.HexString;
-				this.Color.old = this.Color.hex;
-				this.Color.a = this.Color.a_old = 1;
-				this.Color.formatHSL = true;
-				return true;
-			} else {
-			var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]),){1}([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}$/;
 
-				if (re.test(iColorString) == true) {
-					if (bCheckOnly) {
-						return true;
-					}
-					//it's a hsl string, get the values
-					var HSLColor = iColorString.split(",");
-					//get RGB values
-					this._calculateRGB(parseInt(HSLColor[0], 10), parseFloat(HSLColor[1]) * 100, parseFloat(HSLColor[2]) * 100);
-					//get Hex values
-					this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
-					//store the values
-					this.Color.r   = this.RGB.r;
-					this.Color.g   = this.RGB.g;
-					this.Color.b   = this.RGB.b;
-					this.Color.h   = parseInt(HSLColor[0], 10);
-					this.Color.s   = parseFloat(HSLColor[1]) * 100;
-					this.Color.l   = parseFloat(HSLColor[2]) * 100;
-					this.Color.hex = "#" + this.HexString;
-					this.Color.old = this.Color.hex;
-					this.Color.a = this.Color.a_old = 1;
-					this.Color.formatHSL = true;
-					return true;
-				} else {
-					var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]),){1}(((\d{1,2})|(100))%){1}$/;
-					if (re.test(iColorString) == true) {
-						if (bCheckOnly) {
-							return true;
-						}
-						//it's a hsl string, get the values
-						var HSLColor = iColorString.split(",");
-						//get RGB values
-						this._calculateRGB(parseInt(HSLColor[0], 10), parseFloat(HSLColor[1]) * 100, parseInt(HSLColor[2], 10));
-						//get Hex values
-						this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
-						//store the values
-						this.Color.r   = this.RGB.r;
-						this.Color.g   = this.RGB.g;
-						this.Color.b   = this.RGB.b;
-						this.Color.h   = parseInt(HSLColor[0], 10);
-						this.Color.s   = parseFloat(HSLColor[1]) * 100;
-						this.Color.l   = parseInt(HSLColor[2], 10);
-						this.Color.hex = "#" + this.HexString;
-						this.Color.old = this.Color.hex;
-						this.Color.a = this.Color.a_old = 1;
-						this.Color.formatHSL = true;
-						return true;
-					} else {
-						return false;
-					}
-				}
-			}
+			return true;
 		}
+
+		return false;
 	};
 
 	/**
-	 * Parses HSLA string
+	 * Parses CSS HSL or HSLA string.
+	 * @param {string} sColor CSS HSL color string Allowed input formats are hsl|a(360,100,100); hsl|a360,100,100;
+	 * [hsl|a(360,0.5,0.5); hsl|a360,0.5,0.5 later]
+	 * @param {boolean} bCheckOnly check only
+	 * @returns {boolean} If string is a valid RGB CSS string
+	 * @private
 	 */
-	ColorPicker.prototype._parseHSLA = function(iColorString, bCheckOnly) {
-		//	parse HSLA
-		//	allowed input: hsla(360,100%,100%,0.5) etc.
-		//	check if the string begins with "rgb"
-		// remove hsla, "(", ")" and blanks
-		iColorString = iColorString.substr(4);
-		iColorString = iColorString.replace("(",'');
-		iColorString = iColorString.replace(")",'');
-		iColorString = iColorString.split(' ').join('');
-		var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(((\d{1,2})|(100))%,){1}(((\d{1,2})|(100))%){1},([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}$/;
-		if (re.test(iColorString) == true) {
+	ColorPicker.prototype._parseHSL = function(sColor, bCheckOnly) {
+		var aHSLColor,
+			sBeginning = sColor.substr(0, 4),
+			bHSLA,
+			iH,
+			iS,
+			iL,
+			fA;
+
+		if (sBeginning === "hsla") {
+			bHSLA = true;
+		} else if (sBeginning === "hsl(") {
+			bHSLA = false;
+		} else {
+			// This is not a valid HSL|A String and we fail ignoring the bCheckOnly state
+			return false;
+		}
+
+		// remove hsl|a, "(", ")" and blanks
+		sColor = sColor.substr(bHSLA ? 4 : 3).replace("(",'').replace(")",'').split(' ').join('');
+
+		// split string to array of values
+		aHSLColor = sColor.split(",");
+
+		iH = parseInt(aHSLColor[0], 10);
+		// Parsing iS and iL as floats as they could be of both float or int type
+		iS = parseFloat(aHSLColor[1]);
+		iL = parseFloat(aHSLColor[2]);
+
+		// We default alpha to 1 in HSL mode
+		if (bHSLA) {
+			fA = parseFloat(aHSLColor[3]);
+		} else {
+			// If we have a 4th color parameter in HSL mode we fail ignoring bCheckOnly state
+			if (aHSLColor[3] && parseFloat(aHSLColor[3]) >= 0) {
+				return false;
+			}
+			fA = 1;
+		}
+
+		// Normalize iS and iL if needed
+		// Note - this is for legacy implementation as Saturation and Lightness should be in percent
+		// so value of 1 will be treated as 1% and not 1.0 (100%);
+		iS = (iS < 1 && iS > 0) ? iS * 100 : iS;
+		iL = (iL < 1 && iL > 0) ? iL * 100 : iL;
+
+		// Check for valid values
+		if ((iH >= 0 && iH <= 360) &&
+			(iS >= 0 && iS <= 100) &&
+			(iL >= 0 && iL <= 100) &&
+			(fA >= 0 && fA <= 1)) {
+
+			// If we are in check only mode we don't do any control adaptation
 			if (bCheckOnly) {
 				return true;
 			}
-			//it's a hsl string, get the values
-			var HSLColor = iColorString.split(",");
-			//get RGB values
-			this._calculateRGB(parseInt(HSLColor[0], 10), parseInt(HSLColor[1], 10), parseInt(HSLColor[2], 10));
-			//get Hex values
+
+			// get RGB values
+			this._calculateRGB(iH, iS, iL);
+			// get Hex values
 			this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
-			//store the values
-			this.Color.r   = this.RGB.r;
-			this.Color.g   = this.RGB.g;
-			this.Color.b   = this.RGB.b;
-			this.Color.h   = parseInt(HSLColor[0],10);
-			this.Color.s   = parseInt(HSLColor[1],10);
-			this.Color.l   = parseInt(HSLColor[2],10);
-			this.Color.hex = "#" + this.HexString;
+			// store the values
+			this.Color.r = this.RGB.r;
+			this.Color.g = this.RGB.g;
+			this.Color.b = this.RGB.b;
+			this.Color.h = iH;
+			this.Color.s = iS;
+			this.Color.l = iL;
+			this.Color.hex = "#" + this.sHexString;
 			this.Color.old = this.Color.hex;
-			this.Color.a = this.Color.a_old = parseFloat(HSLColor[3]);
+			this.Color.a = this.Color.oldA = fA;
 			this.Color.formatHSL = true;
-			return true;
 		} else {
-			var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(((\d{1,2})|(100))%,){1}([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1},([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}$/;
-			if (re.test(iColorString) == true) {
-				if (bCheckOnly) {
-					return true;
-				}
-				//it's a hsl string, get the values
-				var HSLColor = iColorString.split(",");
-				//get RGB values
-				this._calculateRGB(parseInt(HSLColor[0], 10), parseInt(HSLColor[1], 10), parseFloat(HSLColor[2]) * 100);
-				//get Hex values
-				this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
-				//store the values
-				this.Color.r   = this.RGB.r;
-				this.Color.g   = this.RGB.g;
-				this.Color.b   = this.RGB.b;
-				this.Color.h   = parseInt(HSLColor[0], 10);
-				this.Color.s   = parseInt(HSLColor[1], 10);
-				this.Color.l   = parseFloat(HSLColor[2]) * 100;
-				this.Color.hex = "#" + this.HexString;
-				this.Color.old = this.Color.hex;
-				this.Color.a = this.Color.a_old = parseFloat(HSLColor[3]);
-				this.Color.formatHSL = true;
-				return true;
-			} else {
-				var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}([0]|(([0]\.[0-9]+)|(\.[0-9]+)|[1]),){1}([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1},([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}$/;
-				if (re.test(iColorString) == true) {
-					if (bCheckOnly) {
-						return true;
-					}
-					//it's a hsl string, get the values
-					var HSLColor = iColorString.split(",");
-					//get RGB values
-					this._calculateRGB(parseInt(HSLColor[0], 10), parseFloat(HSLColor[1]) * 100, parseFloat(HSLColor[2]) * 100);
-					//get Hex values
-					this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
-					//store the values
-					this.Color.r   = this.RGB.r;
-					this.Color.g   = this.RGB.g;
-					this.Color.b   = this.RGB.b;
-					this.Color.h   = parseInt(HSLColor[0], 10);
-					this.Color.s   = parseFloat(HSLColor[1]) * 100;
-					this.Color.l   = parseFloat(HSLColor[2]) * 100;
-					this.Color.hex = "#" + this.HexString;
-					this.Color.old = this.Color.hex;
-					this.Color.a = this.Color.a_old = parseFloat(HSLColor[3]);
-					this.Color.formatHSL = true;
-					return true;
-				} else {
-					var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}(((\d{1,2})|(100))%){1},([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}$/;
-					if (re.test(iColorString) == true) {
-						if (bCheckOnly) {
-							return true;
-						}
-						//it's a hsl string, get the values
-						var HSLColor = iColorString.split(",");
-						//get RGB values
-						this._calculateRGB(parseInt(HSLColor[0], 10), parseFloat(HSLColor[1]) * 100, parseInt(HSLColor[2], 10));
-						//get Hex values
-						this._calculateHEX(this.RGB.r, this.RGB.g, this.RGB.b);
-						//store the values
-						this.Color.r   = this.RGB.r;
-						this.Color.g   = this.RGB.g;
-						this.Color.b   = this.RGB.b;
-						this.Color.h   = parseInt(HSLColor[0], 10);
-						this.Color.s   = parseFloat(HSLColor[1]) * 100;
-						this.Color.l   = parseInt(HSLColor[2], 10);
-						this.Color.hex = "#" + this.HexString;
-						this.Color.old = this.Color.hex;
-						this.Color.a = this.Color.a_old = parseFloat(HSLColor[3]);
-						this.Color.formatHSL = true;
-						return true;
-					} else {
-						return false;
-					}
-				}
-			}
+			// We did not manage to parse a valid values from the string passed
+			return false;
 		}
+
+		return true;
 	};
 
 	/**
-	 * Parses RGB string
+	 * Parses CSS RGB and RGBA color string.
+	 * @param {string} sColor RGB|A color string
+	 * @param {boolean} bCheckOnly check only
+	 * @returns {boolean} If string is a valid RGB|A CSS color string
 	 */
-	ColorPicker.prototype._parseRGB = function(iColorString, bCheckOnly) {
-		// remove rgb, "(", ")" and blanks
-		iColorString = iColorString.substr(3);
-		iColorString = iColorString.replace("(",'');
-		iColorString = iColorString.replace(")",'');
-		iColorString = iColorString.split(' ').join('');
-		var re = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){2}(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))){1}$/;
+	ColorPicker.prototype._parseRGB = function(sColor, bCheckOnly) {
+		var aValues,
+			sBeginning,
+			bRGBA,
+			re;
 
-		if (re.test(iColorString) == true) {
+		// Detect RGB|RGBA mode
+		sBeginning = sColor.substring(0, 4);
+		if (sBeginning === "rgba") {
+			re = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){2}(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),)([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1])$/;
+			bRGBA = true;
+		} else if (sBeginning.substring(0, 3) === "rgb") {
+			re = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){2}(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])))$/;
+			bRGBA = false;
+		} else {
+			// This is not a valid RGB|A String and we fail ignoring the bCheckOnly state
+			return false;
+		}
 
-			if (this.getMode() == "HSL" && bCheckOnly) {
+		// remove rgb|a, "(", ")" and blanks
+		sColor = sColor.substr(bRGBA ? 4 : 3).replace("(",'').replace(")",'').split(' ').join('');
+
+		if (re.test(sColor)) {
+			if (bCheckOnly) {
 				return true;
 			}
-			//it's a rgb string, get the values and convert to Hex
-			var RGBColor = iColorString.split(",");
-			this._calculateHEX(parseInt(RGBColor[0],10), parseInt(RGBColor[1],10), parseInt(RGBColor[2],10));
-			//get HSV values
-			this._processHexChanges(this.HexString);
+			// it's a rgb string, get the values and convert to Hex
+			aValues = sColor.split(",");
+			this._calculateHEX(parseInt(aValues[0], 10), parseInt(aValues[1], 10), parseInt(aValues[2], 10));
+			// get HSV values
+			this._processHexChanges(this.sHexString);
 			this.Color.old = this.Color.hex;
-		}
-		if (this.getMode() == "HSL") {
-			this.Color.formatHSL = false;
+			if (bRGBA) {
+				this.Color.a = this.Color.oldA = parseFloat(aValues[3]);
+			}
 			return true;
 		}
-	};
-
-	/**
-	 * Parses RGBA string
-	 */
-	ColorPicker.prototype._parseRGBA = function(iColorString, bCheckOnly) {
-		// remove rgba, "(", ")" and blanks
-		iColorString = iColorString.substr(4);
-		iColorString = iColorString.replace("(",'');
-		iColorString = iColorString.replace(")",'');
-		iColorString = iColorString.split(' ').join('');
-
-		var re = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){2}(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){1}([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}$/;
-
-		if (re.test(iColorString) == true) {
-
-			if (this.getMode() == "HSL" && bCheckOnly) {
-				return true;
-			}
-			//it's a rgba string, get the values and convert to Hex
-			var RGBColor = iColorString.split(",");
-			var sAlpha = iColorString.substr(iColorString.lastIndexOf(",") + 1, (iColorString.length - iColorString.lastIndexOf(",")));
-			this._calculateHEX(parseInt(RGBColor[0],10), parseInt(RGBColor[1],10), parseInt(RGBColor[2],10));
-			//get HSV values
-			this._processHexChanges(this.HexString);
-			this.Color.old = this.Color.hex;
-			this.Color.a = this.Color.a_old = parseFloat(sAlpha);
-		}
-		if (this.getMode() == "HSL") {
+		if (this._bHSLMode) {
 			this.Color.formatHSL = false;
-			return true;
 		}
+		return false;
 	};
 
 	/**
-	 * Check if the given string is predefined color
+	 * Parses a color name and if valid, generates a HEX string representing the color.
+	 * @param {string} sColor color name that the method will try to map to hex format
+	 * @returns{string} HEX representation of a color
+	 * @private
 	 */
-	ColorPicker.prototype._parseColorName = function(iColorString) {
-		var searchKey = "";
-		var hexValue = "";
-
-		var colorNames = {
-				aliceblue: 				'f0f8ff',
-				antiquewhite: 			'faebd7',
-				aqua: 					'00ffff',
-				aquamarine: 			'7fffd4',
-				azure: 					'f0ffff',
-				beige: 					'f5f5dc',
-				bisque: 				'ffe4c4',
-				black: 					'000000',
-				blanchedalmond:			'ffebcd',
-				blue: 					'0000ff',
-				blueviolet:				'8a2be2',
-				brown:					'a52a2a',
-				burlywood: 				'deb887',
-				cadetblue: 				'5f9ea0',
-				chartreuse: 			'7fff00',
-				chocolate: 				'd2691e',
-				coral: 					'ff7f50',
-				cornflowerblue: 		'6495ed',
-				cornsilk: 				'fff8dc',
-				crimson: 				'dc143c',
-				cyan: 					'00ffff',
-				darkblue: 				'00008b',
-				darkcyan: 				'008b8b',
-				darkgoldenrod: 			'b8860b',
-				darkgray: 				'a9a9a9',
-				darkgrey: 				'a9a9a9',
-				darkgreen: 				'006400',
-				darkkhaki: 				'bdb76b',
-				darkmagenta: 			'8b008b',
-				darkolivegreen: 		'556b2f',
-				darkorange: 			'ff8c00',
-				darkorchid: 			'9932cc',
-				darkred: 				'8b0000',
-				darksalmon: 			'e9967a',
-				darkseagreen: 			'8fbc8f',
-				darkslateblue: 			'483d8b',
-				darkslategray: 			'2f4f4f',
-				darkturquoise: 			'00ced1',
-				darkviolet: 			'9400d3',
-				deeppink: 				'ff1493',
-				deepskyblue: 			'00bfff',
-				dimgray: 				'696969',
-				dodgerblue: 			'1e90ff',
-				feldspar: 				'd19275',
-				firebrick: 				'b22222',
-				floralwhite: 			'fffaf0',
-				forestgreen: 			'228b22',
-				fuchsia: 				'ff00ff',
-				gainsboro: 				'dcdcdc',
-				ghostwhite: 			'f8f8ff',
-				gold: 					'ffd700',
-				goldenrod: 				'daa520',
-				gray: 					'808080',
-				green: 					'008000',
-				greenyellow: 			'adff2f',
-				honeydew: 				'f0fff0',
-				hotpink: 				'ff69b4',
-				indianred : 			'cd5c5c',
-				indigo : 				'4b0082',
-				ivory: 					'fffff0',
-				khaki: 					'f0e68c',
-				lavender: 				'e6e6fa',
-				lavenderblush: 			'fff0f5',
-				lawngreen: 				'7cfc00',
-				lemonchiffon: 			'fffacd',
-				lightblue: 				'add8e6',
-				lightcoral: 			'f08080',
-				lightcyan: 				'e0ffff',
-				lightgoldenrodyellow:	'fafad2',
-				lightgray: 				'd3d3d3',
-				lightgrey: 				'd3d3d3',
-				lightgreen: 			'90ee90',
-				lightpink: 				'ffb6c1',
-				lightsalmon: 			'ffa07a',
-				lightseagreen: 			'20b2aa',
-				lightskyblue: 			'87cefa',
-				lightslateblue: 		'8470ff',
-				lightslategray: 		'778899',
-				lightslategrey: 		'778899',
-				lightsteelblue: 		'b0c4de',
-				lightyellow: 			'ffffe0',
-				lime: 					'00ff00',
-				limegreen: 				'32cd32',
-				linen: 					'faf0e6',
-				magenta: 				'ff00ff',
-				maroon: 				'800000',
-				mediumaquamarine: 		'66cdaa',
-				mediumblue: 			'0000cd',
-				mediumorchid: 			'ba55d3',
-				mediumpurple: 			'9370db',
-				mediumseagreen: 		'3cb371',
-				mediumslateblue: 		'7b68ee',
-				mediumspringgreen: 		'00fa9a',
-				mediumturquoise: 		'48d1cc',
-				mediumvioletred:		'c71585',
-				midnightblue: 			'191970',
-				mintcream: 				'f5fffa',
-				mistyrose: 				'ffe4e1',
-				moccasin: 				'ffe4b5',
-				navajowhite: 			'ffdead',
-				navy: 					'000080',
-				oldlace: 				'fdf5e6',
-				olive: 					'808000',
-				olivedrab: 				'6b8e23',
-				orange: 				'ffa500',
-				orangered: 				'ff4500',
-				orchid: 				'da70d6',
-				palegoldenrod: 			'eee8aa',
-				palegreen: 				'98fb98',
-				paleturquoise: 			'afeeee',
-				palevioletred: 			'db7093',
-				papayawhip: 			'ffefd5',
-				peachpuff: 				'ffdab9',
-				peru: 					'cd853f',
-				pink: 					'ffc0cb',
-				plum: 					'dda0dd',
-				powderblue: 			'b0e0e6',
-				purple: 				'800080',
-				red: 					'ff0000',
-				rosybrown: 				'bc8f8f',
-				royalblue: 				'4169e1',
-				saddlebrown: 			'8b4513',
-				salmon: 				'fa8072',
-				sandybrown: 			'f4a460',
-				seagreen: 				'2e8b57',
-				seashell: 				'fff5ee',
-				sienna: 				'a0522d',
-				silver: 				'c0c0c0',
-				skyblue: 				'87ceeb',
-				slateblue: 				'6a5acd',
-				slategray: 				'708090',
-				slategrey: 				'708090',
-				snow: 					'fffafa',
-				springgreen: 			'00ff7f',
-				steelblue: 				'4682b4',
-				tan: 					'd2b48c',
-				teal: 					'008080',
-				thistle: 				'd8bfd8',
-				tomato: 				'ff6347',
-				turquoise: 				'40e0d0',
-				violet: 				'ee82ee',
-				violetred: 				'd02090',
-				wheat: 					'f5deb3',
-				white: 					'ffffff',
-				whitesmoke: 			'f5f5f5',
-				yellow: 				'ffff00',
-				yellowgreen: 			'9acd32'
-		};
-
-		for (searchKey in colorNames) {
-			if (iColorString == searchKey) {
-				hexValue = colorNames[searchKey].toLowerCase();
-				return hexValue;
-			}
-		}
-
-		return hexValue;
+	ColorPicker.prototype._parseColorName = function(sColor) {
+		return CONSTANTS.Colors[sColor];
 	};
 
-
 	/**
-	 * Event after rendering the page
+	 * Event after rendering the control.
+	 * @override
 	 */
 	ColorPicker.prototype.onAfterRendering = function() {
-		var _sRGBString = this._getRGBString();
+		var sRGBString = this._getCSSColorString();
 
 		// get the jQuery-Object for oCPBox and cpCur
-		this.$cpBox = this.oCPBox.$();
-		this.$cpCur = this.oCPBox.getHandle();
+		this.$CPBox = this.oCPBox.$();
+		this.$CPCur = this.oCPBox.getHandle();
 
-		//	set the background color of the Color Boxes
-		this.$("ncBox").css('background-color', _sRGBString);
-		this.$("ocBox").css('background-color', _sRGBString);
+		// set the background color of the Color Boxes
+		this.$("ncBox").css('background-color', sRGBString);
+		this.$("ocBox").css('background-color', sRGBString);
 
-		//	update the background color of the 'new color box'
+		// update the background color of the 'new color box'
 		this._updateGradientBoxBackground(this.Color.h);
 
-		//	update cursor position
+		// Initial ColorPickerBox size and fire cursor position update - this is needed if ColorPicker is used
+		// inside a Dialog
+		this._iCPBoxSize = this.oCPBox.getWidth();
 		this._updateCursorPosition();
 
-		if (this.getMode() == "HSL") {
-			// update alpha slider background
+		// update alpha slider background only in HSL mode
+		if (this._bHSLMode) {
 			this._updateAlphaBackground();
 		}
 		this.oSlider.iShiftGrip =  Math.round(jQuery(this.oSlider.oGrip).outerWidth() / 2);
 		this.oAlphaSlider.iShiftGrip =  Math.round(jQuery(this.oAlphaSlider.oGrip).outerWidth() / 2);
 	};
 
-
 	/**
-	 * Deliver current RGB-values.
-	 *
-	 * @name sap.ui.unified.ColorPicker#getRGB
-	 * @function
-	 * @type object
+	 * Gets current RGB values.
+	 * @returns {object} Containing current RGB values
 	 * @public
 	 * @since 1.48.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ColorPicker.prototype.getRGB = function() {
-
 		return {r:this.Color.r, g:this.Color.g, b:this.Color.b};
-
 	};
 
 	/**
-	 * Method is used only for qUnit testing to get the CONSTANTS object
+	 * Method is used only for qUnit testing to get the CONSTANTS object.
+	 * @returns {object} CONSTANTS object
 	 * @private
 	 */
 	ColorPicker.prototype._getConstants = function () {

@@ -78,10 +78,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 			this._oListItem.destroy();
 			this._oListItem = null;
 		}
-		if (this._oToolbar) {
-			this._oToolbar.destroy();
-			this._oToolbar = null;
-		}
 	};
 
 	/**
@@ -89,7 +85,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
 	 * @protected
 	 */
-	SelectionDetailsItem.prototype._aFacadeMethods = ["setEnableNav"];
+	SelectionDetailsItem.prototype._aFacadeMethods = [
+		"addCustomData", "getCustomData", "indexOfCustomData", "insertCustomData",
+		"removeCustomData", "removeAllCustomData", "destroyCustomData",
+		"data",
+		"addEventDelegate", "removeEventDelegate",
+		"setEnableNav", "getEnableNav",
+		"addAction", "removeAction"
+	];
 	SelectionDetailsItem.prototype.getFacade = function() {
 		var oFacade = new Interface(this, SelectionDetailsItem.prototype._aFacadeMethods);
 		this.getFacade = jQuery.sap.getter(oFacade);
@@ -126,21 +129,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @private
 	 */
 	SelectionDetailsItem.prototype._addOverflowToolbar = function() {
-		var aListItemActions = this.getActions(), i, oButton;
-		this._oToolbar = this.getAggregation("_overflowToolbar");
+		var aListItemActions = this.getActions(),
+			i,
+			oButton;
+
+		this.destroyAggregation("_overflowToolbar");
+
 		if (aListItemActions.length === 0) {
-			if (this._oToolbar) {
-				this._oToolbar.destroy();
-				this._oToolbar = null;
-			}
 			return;
 		}
 
-		if (!this._oToolbar) {
-			this._oToolbar = new OverflowToolbar(this.getId() + "-action-toolbar");
-		}
-		this._oToolbar.destroyAggregation("content", true);
-		this._oToolbar.addAggregation("content", new ToolbarSpacer(), true);
+		var oToolbar = new OverflowToolbar(this.getId() + "-action-toolbar");
+		this.setAggregation("_overflowToolbar", oToolbar, true);
+
+		oToolbar.addAggregation("content", new ToolbarSpacer(), true);
 
 		for (i = 0; i < aListItemActions.length; i++) {
 			oButton = new Button(this.getId() + "-action-" + i, {
@@ -149,9 +151,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 				enabled: aListItemActions[i].getEnabled(),
 				press: [aListItemActions[i], this._onActionPress, this]
 			});
-			this._oToolbar.addAggregation("content", oButton, true);
+			oToolbar.addAggregation("content", oButton, true);
 		}
-		this.setAggregation("_overflowToolbar", this._oToolbar, true);
 	};
 
 	/**

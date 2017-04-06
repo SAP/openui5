@@ -38,7 +38,7 @@ sap.ui.define([
 		"unstashControl": UnstashControl
 	};
 
-	ChangeRegistry.prototype._mTechnicalChangeHandlers = {
+	ChangeRegistry.prototype._mDeveloperModeChangeHandlers = {
 		"propertyChange": {
 			changeHandler: PropertyChange
 		},
@@ -48,8 +48,8 @@ sap.ui.define([
 	};
 
 	ChangeRegistry.prototype.initDeveloperModeChangeHandlers = function () {
-		Object.keys(this._mTechnicalChangeHandlers).forEach(function(sChangeType) {
-			var oChangeHandler = this._mTechnicalChangeHandlers[sChangeType].changeHandler;
+		Object.keys(this._mDeveloperModeChangeHandlers).forEach(function(sChangeType) {
+			var oChangeHandler = this._mDeveloperModeChangeHandlers[sChangeType].changeHandler;
 			var oLayers = this._oSettings.getDeveloperModeLayerPermissions();
 			var oSimpleChangeObject = {
 				changeType: sChangeType,
@@ -139,7 +139,7 @@ sap.ui.define([
 	 */
 	ChangeRegistry.prototype._getChangeHandler = function (sChangeType, vChangeHandler) {
 		var oResult = {};
-		var aTechnicalChangeHandlers = Object.keys(this._mTechnicalChangeHandlers);
+		var aDeveloperModeChangeHandlers = Object.keys(this._mDeveloperModeChangeHandlers);
 		if (!vChangeHandler.changeHandler) {
 			oResult.changeHandler = vChangeHandler;
 		} else {
@@ -147,8 +147,8 @@ sap.ui.define([
 		}
 		if (oResult.changeHandler === "default") {
 			oResult.changeHandler = this._oDefaultChangeHandlers[sChangeType];
-		} else if (aTechnicalChangeHandlers.indexOf(sChangeType) > -1) {
-			throw new Error("You can't use a custom change handler for the following technical change types: " + aTechnicalChangeHandlers.toString() + ". Please use 'default' instead.");
+		} else if (aDeveloperModeChangeHandlers.indexOf(sChangeType) > -1) {
+			throw new Error("You can't use a custom change handler for the following Developer Mode change types: " + aDeveloperModeChangeHandlers.toString() + ". Please use 'default' instead.");
 		}
 		return oResult;
 	};
@@ -379,8 +379,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the Flex Settings.
-	 *
+	 * Retrieves settings for SAPUI5 flexibility.
 	 *
 	 * @private
 	 */

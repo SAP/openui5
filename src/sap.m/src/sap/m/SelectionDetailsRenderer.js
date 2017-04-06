@@ -23,7 +23,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ButtonRendere
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.write(">");
-		oButton.getRenderer().render(oRm, oButton);
+
+		oRm.renderControl(oButton);
+
 		oRm.write("</div>");
 	};
 

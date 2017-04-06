@@ -532,7 +532,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 			// and add them again later, so the check if the control is dettached from root element's tree is delayed
 			setTimeout(function() {
 				if (!this.bIsDestroyed) {
-					this._checkIfOverlayShouldBeDestroyed(oParams.target, oParams.value);
+					this._checkIfOverlayShouldBeDestroyed(oParams.target);
 				}
 			}.bind(this), 0);
 		}
@@ -549,18 +549,21 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 			if (!oChildElementOverlay) {
 				var bIsInHiddenTree = OverlayRegistry.getOverlay(oParent).getAggregationOverlay(sAggregationName).isInHiddenTree();
 				this._createElementOverlay(oChild, bIsInHiddenTree);
+			} else {
+				oChildElementOverlay.setDesignTimeMetadata(oChildElementOverlay._oOriginalDesignTimeMetadata);
 			}
 		}
 	};
 
 	/**
-	 * @param {sap.ui.core.Element} oElement which parent was changed
-	 * @param {sap.ui.core.Element} oParent new parent
+	 * @param {sap.ui.core.Element} oElement which was modified
 	 * @private
 	 */
-	DesignTime.prototype._checkIfOverlayShouldBeDestroyed = function(oElement, oParent) {
+	DesignTime.prototype._checkIfOverlayShouldBeDestroyed = function(oElement) {
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
-		if (oElementOverlay && !this._isElementInRootElements(oElement)) {
+		// Overlays of elements in "dependents" aggregation or not in root elements should be destroyed
+		if (oElementOverlay &&
+			(!this._isElementInRootElements(oElement) || oElement.sParentAggregationName === "dependents")) {
 			oElementOverlay.destroy();
 		}
 	};

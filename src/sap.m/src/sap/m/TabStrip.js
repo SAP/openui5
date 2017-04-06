@@ -337,6 +337,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			this._oItemNavigation.setItemDomRefs(aTabDomRefs);
 			this._oItemNavigation.setCycling(false);
 			this._oItemNavigation.setPageSize(5);
+			//alt+right/left is used for browser navigation
+			this._oItemNavigation.setDisabledModifiers({
+				sapnext: ["alt"],
+				sapprevious: ["alt"]
+			});
 
 			//Attach ItemNavigation to the control delegate queue
 			this.addDelegate(this._oItemNavigation);
@@ -629,6 +634,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @private
 		 */
 		TabStrip.prototype._moveToNextItem = function (bSetAsSelected) {
+			if (!this._oItemNavigation) {
+				return;
+			}
+
 			var iItemsCount = this.getItems().length,
 				iCurrentFocusedIndex = this._oItemNavigation.getFocusedIndex(),
 				iNextIndex = iItemsCount === iCurrentFocusedIndex ? --iCurrentFocusedIndex : iCurrentFocusedIndex,

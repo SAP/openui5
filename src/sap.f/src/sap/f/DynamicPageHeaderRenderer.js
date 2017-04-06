@@ -20,7 +20,9 @@ sap.ui.define([], function () {
 	 */
 	DynamicPageHeaderRenderer.render = function (oRm, oDynamicPageHeader) {
 		var aContent = oDynamicPageHeader.getContent(),
-			bHeaderPinnable = oDynamicPageHeader.getPinnable();
+			bHeaderHasContent = aContent.length > 0,
+			bPhone = sap.ui.Device.system.phone,
+			bHeaderPinnable = oDynamicPageHeader.getPinnable() && bHeaderHasContent && !bPhone;
 
 		// Dynamic Page Layout Header Root DOM Element.
 		oRm.write("<header");
@@ -30,6 +32,9 @@ sap.ui.define([], function () {
 		});
 		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapFDynamicPageHeader");
+		if (bHeaderHasContent) {
+			oRm.addClass("sapFDynamicPageHeaderWithContent");
+		}
 		if (bHeaderPinnable) {
 			oRm.addClass("sapFDynamicPageHeaderPinnable");
 		}
@@ -37,7 +42,7 @@ sap.ui.define([], function () {
 		oRm.write(">");
 
 		// Header Content
-		if (aContent.length > 0) {
+		if (bHeaderHasContent) {
 			oRm.write("<div");
 			oRm.addClass("sapFDynamicPageHeaderContent");
 			oRm.writeClasses();
@@ -45,7 +50,7 @@ sap.ui.define([], function () {
 			aContent.forEach(oRm.renderControl);
 			oRm.write("</div>");
 
-			if (bHeaderPinnable && !sap.ui.Device.system.phone) {
+			if (bHeaderPinnable) {
 				DynamicPageHeaderRenderer._renderPinUnpinArea(oDynamicPageHeader, oRm);
 			}
 		}

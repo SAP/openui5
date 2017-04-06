@@ -12,7 +12,7 @@ sap.ui.define([
 
 		},
 
-		onCollapseExapandPress: function (event) {
+		onCollapseExpandPress: function (event) {
 			var sideNavigation = this.getView().byId('sideNavigation');
 			var expanded = !sideNavigation.getExpanded();
 

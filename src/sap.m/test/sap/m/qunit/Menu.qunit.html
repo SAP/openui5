@@ -848,6 +848,141 @@
             assert.strictEqual(this.sut._hasSubItems(), false, "false when it has no associated MenuItem");
         });
 
+		QUnit.module("Custom style class support", {
+			beforeEach: function () {
+				this.oMenu = new sap.m.Menu();
+			},
+			afterEach: function () {
+				this.oMenu.destroy();
+				this.oMenu = null;
+			},
+			addMenuItems: function () {
+				this.oMenu.addItem(new sap.m.MenuItem({
+					text: "fridge",
+					icon: "sap-icon://fridge",
+					tooltip: "it's cold in here",
+					items: [
+						new sap.m.MenuItem({
+							text: "accidental leave",
+							icon: "sap-icon://accidental-leave",
+							items: [
+								new sap.m.MenuItem({
+									icon: "sap-icon://factory",
+									text: "factory"
+								})
+							]
+						}),
+						new sap.m.MenuItem({
+							text: "accidental leave",
+							icon: "sap-icon://accidental-leave"
+						})
+					]
+				}));
+			},
+			getDialog: function () {
+				var oDialog = this.oMenu._getDialog();
+				if (!oDialog) {
+					this.oMenu._initDialog();
+					oDialog = this.oMenu._getDialog();
+				}
+				return oDialog;
+			}
+		});
+
+		QUnit.test("No renderer", function (oAssert) {
+			try {
+				this.oMenu.getMetadata().getRenderer()
+			} catch (e) {
+				oAssert.ok(true, "The menu has no renderer. If this changes you can remove this test only if you change " +
+					"the way the synchronization of CustomStyleClassSupport is handled between " +
+					"the sap.m.Menu and the sap.ui.unified.Menu");
+			}
+		});
+
+		QUnit.test("Internal Dialog", function (oAssert) {
+			// Arrange
+			var oDialog = this.getDialog();
+
+			// Act - add style class to the menu control
+			this.oMenu.addStyleClass("MYCUSTOMSTYLECLASS");
+
+			// Assert
+			oAssert.strictEqual(oDialog.hasStyleClass("MYCUSTOMSTYLECLASS"), true,
+				"The style is propagated to the dialog control");
+			oAssert.strictEqual(this.oMenu.hasStyleClass("MYCUSTOMSTYLECLASS"), true,
+				"The style class is also applied to the control itself");
+
+			// Act - remove style class
+			this.oMenu.removeStyleClass("MYCUSTOMSTYLECLASS");
+
+			// Assert
+			oAssert.strictEqual(oDialog.hasStyleClass("MYCUSTOMSTYLECLASS"), false,
+				"The style class should not be available in the dialog");
+
+			// Act - toggle style class - true bAdd parameter
+			this.oMenu.toggleStyleClass("MYCUSTOMSTYLECLASS", true);
+
+			// Assert
+			oAssert.strictEqual(oDialog.hasStyleClass("MYCUSTOMSTYLECLASS"), true,
+				"The style is propagated to the dialog control");
+
+			// Act - toggle style class - false bAdd parameter
+			this.oMenu.toggleStyleClass("MYCUSTOMSTYLECLASS", false);
+
+			// Assert
+			oAssert.strictEqual(oDialog.hasStyleClass("MYCUSTOMSTYLECLASS"), false,
+				"The style class should not be available in the dialog");
+		});
+
+		QUnit.test("Unified Menu", function (oAssert) {
+			var iLength,
+				i;
+
+			// Arrange
+			this.addMenuItems();
+			this.oMenu._initAllMenuItems();
+
+			var aSubMenuList = this.oMenu.findAggregatedObjects(true, function (oObject) {
+				return oObject.getMetadata().getName() === "sap.ui.unified.Menu";
+			});
+
+			// Assert
+			oAssert.strictEqual(aSubMenuList.length, 3, "There are 3 sub menu's found");
+
+			// Act
+			this.oMenu.addStyleClass("MYCUSTOMSTYLECLASS");
+
+			// Assert
+			oAssert.strictEqual(this.oMenu.hasStyleClass("MYCUSTOMSTYLECLASS"), true,
+				"The class is applied to the control itself");
+
+			for (i = 0, iLength = aSubMenuList.length; i < iLength; i++) {
+				oAssert.strictEqual(aSubMenuList[i].hasStyleClass("MYCUSTOMSTYLECLASS"), true,
+					"The style class 'MYCUSTOMSTYLECLASS' should be propagated to sub menu: " + i);
+
+				oAssert.strictEqual(aSubMenuList[i].hasStyleClass("sapMMenu"), true,
+					"The style class 'sapMMenu' should be propagated to sub menu: " + i);
+
+				oAssert.strictEqual(aSubMenuList[i].aCustomStyleClasses, this.oMenu.aCustomStyleClasses,
+					"Both object properties are reference to the same object so mimic mode is possible");
+
+				oAssert.strictEqual(aSubMenuList[i].mCustomStyleClassMap, this.oMenu.mCustomStyleClassMap,
+					"Both object properties are reference to the same object so mimic mode is possible");
+			}
+
+			// Act
+			this.oMenu.removeStyleClass("MYCUSTOMSTYLECLASS");
+
+			// Assert
+			oAssert.strictEqual(this.oMenu.hasStyleClass("MYCUSTOMSTYLECLASS"), false,
+				"The class is removed from the control itself");
+
+			for (i = 0, iLength = aSubMenuList.length; i < iLength; i++) {
+				oAssert.strictEqual(aSubMenuList[i].hasStyleClass("MYCUSTOMSTYLECLASS"), false,
+					"The style class 'MYCUSTOMSTYLECLASS' should be propagated to sub menu: " + i);
+			}
+		});
+
     </script>
 
 </head>

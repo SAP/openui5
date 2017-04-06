@@ -14,7 +14,7 @@
 	color: @sapUiContentContrastTextColor;
 }
 
-/************************ LINE MODE COZY ********************/
+/************************ LINE MODE LIST VIEW ********************/
 
 .sapMGT.sapMGTLineMode {
 	transition: background 0.2s;
@@ -50,7 +50,6 @@
 }
 
 .sapMGTLineMode .sapMGTActionsContainer .sapMGTRemoveButton {
-	border: 1px solid @sapUiButtonBorderColor;
 	background-color: @sapUiButtonBackground;
 	color: @sapUiButtonTextColor;
 
@@ -71,10 +70,10 @@
 	}
 }
 
-/************************ LINE MODE COMPACT *****************/
+/************************ LINE MODE FLOATING VIEW *****************/
 
-.sapUiSizeCompact {
-	.sap-desktop & .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+.sapUiMedia-GenericTileDeviceSet-large.sap-desktop {
+	.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 		&:focus, &.sapMGTLineModePress {
 			.sapMGTLineStyleHelperInner:before {
 				content: "";
@@ -87,12 +86,14 @@
 				border: 1px dotted @sapUiContentFocusColor;
 			}
 		}
-
+	}
+}
+.sapUiMedia-GenericTileDeviceSet-large {
+	&.sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 		&:hover .sapMGTLineStyleHelperInner {
 			background: fade(@sapUiShellHoverBackground, 10);
 		}
 	}
-
 	.sapMGT.sapMGTLineMode {
 		font-size: @sapMFontMediumSize;
 

@@ -408,6 +408,14 @@
 			assert.strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
+		QUnit.test("alt + right/left is not handled", function(assert) {
+			var oModifiers = this.sut._oItemNavigation.getDisabledModifiers();
+			assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+			assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+			assert.equal(oModifiers["sapnext"][0], "alt", "alt is not handled when right is pressed");
+			assert.equal(oModifiers["sapprevious"][0], "alt", "alt is not handled when left is pressed");
+		});
+
 		QUnit.module("Scrolling", {
 			beforeEach: function () {
 				this.sut = new sap.m.TabStrip({

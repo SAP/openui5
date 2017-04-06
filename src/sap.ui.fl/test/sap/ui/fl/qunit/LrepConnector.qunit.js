@@ -340,7 +340,7 @@
 
 		var that = this;
 		sComponentClassName = "smartFilterBar.Component";
-		return this.oLrepConnector.loadChanges(sComponentClassName).then(function(oResult) {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}).then(function(oResult) {
 			assert.equal(oResult.changes.changes.length, 0);
 			assert.equal(oResult.changes.settings.isKeyUser, true);
 			assert.equal(oResult.changes.componentClassName, that.sComponentClassName);
@@ -368,7 +368,7 @@
 		var mPropertyBag = {
 				appDescriptor: oAppDescriptor
 			};
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function(oResult) {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(that.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
 			assert.ok(that.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
 			assert.equal(that.server.requests[0].requestHeaders["X-LRep-AppDescriptor-Id"], "sap.ui.smartFormOData", "Request header shall contain appDescriptorId");
@@ -390,7 +390,7 @@
 				siteId: "dummyId4711"
 			};
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function(oResult) {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(that.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
 			assert.ok(that.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
 			assert.equal(that.server.requests[0].requestHeaders["X-LRep-Site-Id"], mPropertyBag.siteId, "Request header shall contain siteId");
@@ -411,7 +411,7 @@
 
 		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 			var oCall = oSendStub.getCall(0);
@@ -434,7 +434,7 @@
 
 		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 			var oCall = oSendStub.getCall(0);
@@ -456,7 +456,7 @@
 
 		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 			var oCall = oSendStub.getCall(0);
@@ -468,9 +468,7 @@
 
 	QUnit.test("when requested, loadChanges adds appVersion parameter to the request URL", function(assert) {
 		var sComponentClassName = "smartFilterBar.Component";
-		var mPropertyBag = {
-			appVersion: "1.2.3"
-		};
+		var sAppVersion = "1.2.3";
 
 		var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName + "?appVersion=1.2.3";
 
@@ -480,12 +478,33 @@
 
 		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
 
 			var oCall = oSendStub.getCall(0);
 			var aCallArguments = oCall.args;
 			assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was included");
+		});
+	});
+
+	QUnit.test("loadChanges ignores appVersion parameter to the request URL in case of default app version", function(assert) {
+		var sComponentClassName = "smartFilterBar.Component";
+		var sAppVersion = sap.ui.fl.Utils.DEFAULT_APP_VERSION;
+
+		var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName;
+
+		var oFakeResponse = {
+			response: {}
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+
+		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).then(function() {
+			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
+
+			var oCall = oSendStub.getCall(0);
+			var aCallArguments = oCall.args;
+			assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was not included");
 		});
 	});
 

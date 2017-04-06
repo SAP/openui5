@@ -28,7 +28,11 @@ sap.ui.require([
 			oRm.writeControlData(oControl);
 			oRm.addStyle("width", oControl.getWidth());
 			oRm.addStyle("height", oControl.getHeight());
+
+			// normalize user agent stylesheet
+			oRm.addStyle("border-width", "2px");
 			oRm.addStyle("box-sizing", "border-box");
+			oRm.addStyle("vertical-align", "top");
 			oRm.writeStyles();
 			oRm.write("></input>");
 		}
@@ -77,7 +81,12 @@ sap.ui.require([
 			oRm.writeControlData(oControl);
 			oRm.addStyle("width", oControl.getWidth());
 			oRm.addStyle("height", oControl.getHeight());
+
+			// normalize user agent stylesheet
 			oRm.addStyle("box-sizing", "border-box");
+			oRm.addStyle("vertical-align", "top");
+			oRm.addStyle("margin", "0");
+			oRm.addStyle("padding", "0");
 			oRm.writeStyles();
 			oRm.write(">");
 			oRm.write("</textarea>");
@@ -88,7 +97,11 @@ sap.ui.require([
 		beforeEach: function(assert) {
 
 			// act
-			this.oAlignedFlowLayout = new AlignedFlowLayout();
+			this.oAlignedFlowLayout = new AlignedFlowLayout({
+				minItemWidth: "15rem",
+				maxItemWidth: "30rem"
+			});
+			this.oContentDomRef = document.getElementById(CONTENT_ID);
 
 			// arrange
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
@@ -144,7 +157,7 @@ sap.ui.require([
 		if (!Device.browser.phantomJS) {
 			assert.strictEqual(oStyles.flexGrow, "1", 'it should set the "flex-grow" CSS property to "1"');
 			assert.strictEqual(oStyles.flexShrink, "0", 'it should set the "flex-shrink" CSS property to "0"');
-			assert.strictEqual(oStyles.flexBasis, "240px", 'it should set the "flex-basis" CSS property to "240px"');
+			assert.strictEqual(oItemDomRef.style.flexBasis, "15rem", 'it should set the "flex-basis" CSS property to "15rem"');
 		}
 
 		assert.strictEqual(oStyles.maxWidth, "480px", 'it should set the "max-width" CSS property to "480px"');
@@ -196,7 +209,7 @@ sap.ui.require([
 			this.oAlignedFlowLayout.addEndContent(oTextArea);
 
 			// arrange
-			document.getElementById(CONTENT_ID).style.width = "1280px";
+			this.oContentDomRef.style.width = "1280px";
 			this.oAlignedFlowLayout.addStyleClass("sapUiLargeMargin"); // add margin to detect overflow
 			this.oAlignedFlowLayout.setMinItemWidth("200px");
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
@@ -207,6 +220,51 @@ sap.ui.require([
 			assert.strictEqual(oItemDomRef.offsetTop, 0, "the end item should not overflow its container");
 		});
 	}
+
+	QUnit.test("it should set the maximum width of items", function(assert) {
+
+		// system under test
+		var oInput1 = new Input();
+		var oInput2 = new Input();
+
+		// arrange
+		this.oContentDomRef.style.width = "1000px";
+		this.oAlignedFlowLayout.addContent(oInput1);
+		this.oAlignedFlowLayout.addContent(oInput2);
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		var iExpectedWidth = 500;
+
+		// act
+		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+	});
+
+	QUnit.test("the maximum width win over the minimum width", function(assert) {
+
+		// system under test
+		var oInput1 = new Input();
+		var oInput2 = new Input();
+
+		// arrange
+		this.oContentDomRef.style.width = "1000px";
+		this.oAlignedFlowLayout.addContent(oInput1);
+		this.oAlignedFlowLayout.addContent(oInput2);
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		var iExpectedWidth = 500;
+
+		// act
+		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
+		this.oAlignedFlowLayout.setMinItemWidth((iExpectedWidth + 10) + "px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+	});
 
 	QUnit.test("getLastItemDomRef should return the last item DOM reference", function(assert) {
 
@@ -287,7 +345,10 @@ sap.ui.require([
 		beforeEach: function(assert) {
 
 			// act
-			this.oAlignedFlowLayout = new AlignedFlowLayout();
+			this.oAlignedFlowLayout = new AlignedFlowLayout({
+				minItemWidth: "15rem",
+				maxItemWidth: "30rem"
+			});
 			this.oContentDomRef = document.getElementById(CONTENT_ID);
 			this.CSS_CLASS_ONE_LINE = this.oAlignedFlowLayout.getRenderer().CSS_CLASS + "OneLine";
 		},
@@ -493,6 +554,33 @@ sap.ui.require([
 			assert.strictEqual(oItemDomRef.offsetTop, 20, "the end item should not overlap the items on the first line");
 		});
 	}
+
+	QUnit.test("it should adapt the position of the absolute-positioned end item when a standard CSS padding class is added", function(assert) {
+
+		// system under test
+		var oInput = new Input();
+		var oButton = new Button({
+			text: "lorem ipsum"
+		});
+
+		// arrange
+		this.oContentDomRef.style.width = "600px";
+		this.oAlignedFlowLayout.setMinItemWidth("200px");
+		this.oAlignedFlowLayout.addContent(oInput);
+		this.oAlignedFlowLayout.addEndContent(oButton);
+		this.oAlignedFlowLayout.addStyleClass("sapUiAFLayoutWithPadding"); // add a padding of 30px
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		sap.ui.getCore().applyChanges();
+		var oEndItemComputedStyle = window.getComputedStyle(oButton.getDomRef().parentElement, null);
+
+		// assert
+		if (sap.ui.getCore().getConfiguration().getRTL()) {
+			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("left"), "30px");
+		} else {
+			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("right"), "30px");
+		}
+		assert.strictEqual(oEndItemComputedStyle.getPropertyValue("bottom"), "30px");
+	});
 
 	QUnit.test("it should wrap the items onto multiple lines", function(assert) {
 

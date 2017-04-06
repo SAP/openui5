@@ -48,7 +48,7 @@
 		visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Auto
 	});
 
-	var oControl = new sap.m.Text().bindProperty("text", "lastName");
+	var oControl = new sap.m.Text({wrapping: false}).bindProperty("text", "lastName");
 	oTable.addColumn(new sap.ui.table.Column({label: new sap.m.Label({text: "Text"}), template: oControl }));
 	oControl = new sap.m.Label().bindProperty("text", "name");
 	oTable.addColumn(new sap.ui.table.Column({label: new sap.m.Label({text: "Label"}), template: oControl }));

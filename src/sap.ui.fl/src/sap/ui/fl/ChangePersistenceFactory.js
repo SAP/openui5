@@ -21,20 +21,30 @@ sap.ui.define([
 
 	/**
 	 * Creates or returns an instance of the ChangePersistence
-	 * @param {String} sComponentName The name of the component
-	 * @returns {sap.ui.fl.ChangePersistence} instance
+	 * @param {String} sComponentName - Name of the component
+	 * @param {String} sAppVersion - Current running version of application
+	 * @returns {sap.ui.fl.ChangePersistence} <code>ChangePersistence<code> instance
 	 *
 	 * @public
 	 */
-	ChangePersistenceFactory.getChangePersistenceForComponent = function(sComponentName) {
+	ChangePersistenceFactory.getChangePersistenceForComponent = function(sComponentName, sAppVersion) {
 		var oChangePersistence;
+		sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
+		var oComponent = {
+			name : sComponentName,
+			appVersion : sAppVersion
+		};
 
 		if (!ChangePersistenceFactory._instanceCache[sComponentName]) {
-			oChangePersistence = new ChangePersistence(sComponentName);
-			ChangePersistenceFactory._instanceCache[sComponentName] = oChangePersistence;
+			ChangePersistenceFactory._instanceCache[sComponentName] = {};
+		}
+		oChangePersistence = ChangePersistenceFactory._instanceCache[sComponentName][sAppVersion];
+		if (!oChangePersistence) {
+			oChangePersistence = new ChangePersistence(oComponent);
+			ChangePersistenceFactory._instanceCache[sComponentName][sAppVersion] = oChangePersistence;
 		}
 
-		return ChangePersistenceFactory._instanceCache[sComponentName];
+		return oChangePersistence;
 	};
 
 	/**
@@ -48,7 +58,8 @@ sap.ui.define([
 	ChangePersistenceFactory.getChangePersistenceForControl = function(oControl) {
 		var sComponentId;
 		sComponentId = this._getComponentClassNameForControl(oControl);
-		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentId);
+		var sAppVersion = Utils.getAppVersionFromManifest(Utils.getAppComponentForControl(oControl).getManifest());
+		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentId, sAppVersion);
 	};
 
 	/**
@@ -85,6 +96,7 @@ sap.ui.define([
 	ChangePersistenceFactory._doLoadComponent = function (oConfig, oManifest) {
 		var oChangePersistenceWrapper = {oChangePersistence: {}, oRequestOptions: {}};
 		var sComponentName = Utils.getFlexReference(oManifest);
+		var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
 		var sMaxLayer, oStartupParameters;
 
 		if (oConfig && oConfig.componentData && oConfig.componentData.startupParameters){
@@ -112,7 +124,7 @@ sap.ui.define([
 		Utils.setMaxLayerParameter(sMaxLayer);
 
 		oChangePersistenceWrapper.oRequestOptions.siteId = Utils.getSiteIdByComponentData(oConfig.componentData);
-		oChangePersistenceWrapper.oChangePersistence = this.getChangePersistenceForComponent(sComponentName);
+		oChangePersistenceWrapper.oChangePersistence = this.getChangePersistenceForComponent(sComponentName, sAppVersion);
 
 		return oChangePersistenceWrapper;
 	};

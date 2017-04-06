@@ -145,6 +145,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 			BaseObject.apply(this, arguments);
 
+			// create a unique id per manifest
+			this._uid = jQuery.sap.uid();
+
 			// apply the manifest related values
 			this._oRawManifest = oManifest;
 			this._bProcess = !(mOptions && mOptions.process === false);
@@ -358,7 +361,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 					if (oCSSResource.uri) {
 						var sCssUrl = this.resolveUri(new URI(oCSSResource.uri)).toString();
 						jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading CSS: \"" + sCssUrl + "\"");
-						jQuery.sap.includeStyleSheet(sCssUrl, oCSSResource.id);
+						jQuery.sap.includeStyleSheet(sCssUrl, {
+							id: oCSSResource.id,
+							"data-sap-ui-manifest-uid": this._uid
+						});
+					}
+				}
+			}
+
+		},
+
+		/**
+		 * Removes the included CSS resources.
+		 *
+		 * @private
+		 */
+		removeIncludes: function() {
+
+			var mResources = this.getEntry("/sap.ui5/resources");
+
+			if (!mResources) {
+				return;
+			}
+
+			var sComponentName = this.getComponentName();
+
+			// remove CSS files
+			var aCSSResources = mResources["css"];
+			if (aCSSResources) {
+				for (var j = 0; j < aCSSResources.length; j++) {
+					var oCSSResource = aCSSResources[j];
+					if (oCSSResource.uri) {
+						var sCssUrl = this.resolveUri(new URI(oCSSResource.uri)).toString();
+						jQuery.sap.log.info("Component \"" + sComponentName + "\" is removing CSS: \"" + sCssUrl + "\"");
+						jQuery("link[data-sap-ui-manifest-uid='" + this._uid + "'][href='" + sCssUrl + "']" + (oCSSResource.id ? "[id='" + oCSSResource.id + "']" : "")).remove();
 					}
 				}
 			}
@@ -478,11 +514,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			//    in the manifest!
 			this.defineResourceRoots();
 
-			// first the dependencies have to be loaded (other UI5 libraries)
+			// load the component the dependencies (other UI5 libraries)
 			this.loadDependencies();
-
-			// then load the custom scripts and CSS files
-			this.loadIncludes();
 
 		},
 
@@ -492,6 +525,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 */
 		exit: function() {
 			// TODO: implement unload of CSS, ...
+		},
+
+		_iInstanceCount: 0,
+
+		onInitComponent: function() {
+			if (this._iInstanceCount === 0) {
+				// load the custom scripts and CSS files
+				this.loadIncludes();
+				// activate the customizing configuration
+				var oUI5Manifest = this.getEntry("sap.ui5", true),
+					mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
+				if (!jQuery.isEmptyObject(mExtensions)) {
+					var CustomizingConfiguration = sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
+					CustomizingConfiguration.activateForComponent(this.getComponentName());
+				}
+
+			}
+			this._iInstanceCount++;
+		},
+
+		onExitComponent: function() {
+			this._iInstanceCount = Math.max(this._iInstanceCount - 1, 0);
+			if (this._iInstanceCount === 0) {
+				// remove the CSS includes
+				this.removeIncludes();
+				// deactivate the customizing configuration
+				var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+				if (CustomizingConfiguration) {
+					CustomizingConfiguration.deactivateForComponent(this.getComponentName());
+				}
+
+			}
 		}
 
 

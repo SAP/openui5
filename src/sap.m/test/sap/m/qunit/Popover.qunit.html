@@ -1518,7 +1518,7 @@
 				_fPopoverBorderRight: 10
 			});
 
-			assert.equal(iMaxContentWidth, "460px", "Popover maxContentWidth should be equal to the documentWidth minus left and right margins and borders");
+			assert.equal(iMaxContentWidth, 460, "Popover maxContentWidth should be equal to the documentWidth minus left and right margins and borders");
 
 			oPopover.destroy();
 		});
@@ -1550,7 +1550,7 @@
 					stubPopoverMaxContentHeight = sinon.stub(oPopover, "_getMaxContentHeight").returns(400),
 					stubjQueryHeight = sinon.stub(jQuery.fn, "height").returns(300),
 					oExpectedDimensions = {
-						"max-width": 500,
+						"max-width": "500px",
 						"max-height": "400px",
 						"height": ""
 					};
@@ -1575,7 +1575,7 @@
 					stubPopoverMaxContentHeight = sinon.stub(oPopover, "_getMaxContentHeight").returns(400),
 					stubjQueryHeight = sinon.stub(jQuery.fn, "height").returns(300),
 					oExpectedDimensions = {
-						"max-width": 400,
+						"max-width": "400px",
 						"height": "300px"
 					};
 
@@ -1779,11 +1779,11 @@
 			oPopover.destroy();
 		});
 
-		QUnit.test("Popover should use compact arrow offset if a theme sets less variable sapMPopoverForceCompactArrowOffset to true", function (assert){
+		QUnit.test("Popover should use compact arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to true", function (assert){
 			var stubGetParameters = sinon.stub(sap.ui.core.theming.Parameters, "get"),
 				oPopover = new sap.m.Popover();
 
-			stubGetParameters.withArgs("sapMPopoverForceCompactArrowOffset").returns("true");
+			stubGetParameters.withArgs("_sap_m_Popover_ForceCompactArrowOffset").returns("true");
 			oPopover.openBy(oButton2);
 
 			assert.equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
@@ -1793,11 +1793,11 @@
 			oPopover.destroy();
 		});
 
-		QUnit.test("Popover should use normal arrow offset if a theme sets less variable sapMPopoverForceCompactArrowOffset to be false", function (assert){
+		QUnit.test("Popover should use normal arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to be false", function (assert){
 			var stubGetParameters = sinon.stub(sap.ui.core.theming.Parameters, "get"),
 				oPopover = new sap.m.Popover();
 
-			stubGetParameters.withArgs("sapMPopoverForceCompactArrowOffset").returns("false");
+			stubGetParameters.withArgs("_sap_m_Popover_ForceCompactArrowOffset").returns("false");
 			oPopover.openBy(oButton2);
 
 			assert.equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");

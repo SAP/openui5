@@ -93,6 +93,7 @@
 			  assert.strictEqual(1, tabs.length);
 
 			  t1 = tabs[0];
+			  t1.onAfterRendering();
 		  },
 		  afterEach: function() {
 			  ts1 = null;

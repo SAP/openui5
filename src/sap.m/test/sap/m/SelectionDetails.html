@@ -32,16 +32,44 @@
 				new sap.ui.core.Item("item_action_1", {
 					key: "1",
 					text: "item action 1"
-				}), new sap.ui.core.Item("item_action_2", {
+				}),
+				new sap.ui.core.Item("item_action_2", {
 					key: "2",
 					text: "item action 2"
-				}), new sap.ui.core.Item("item_action_3", {
+				}),
+				new sap.ui.core.Item("item_action_3", {
 					key: "3",
 					text: "item action 3"
-				}), new sap.ui.core.Item("item_action_4", {
+				}),
+				new sap.ui.core.Item("item_action_4", {
 					key: "4",
 					text: "item action 4"
 				})],
+			enableNav: true
+		}),
+		new sap.m.SelectionDetailsItem({
+			lines: {
+				path: "/lines/0",
+				factory: fnCreateLine
+			},
+			actions: [
+				new sap.ui.core.Item("item_action_21", {
+					key: "21",
+					text: "item action 21"
+				}),
+				new sap.ui.core.Item("item_action_22", {
+					key: "22",
+					text: "item action 22"
+				}),
+				new sap.ui.core.Item("item_action_23", {
+					key: "23",
+					text: "item action 23"
+				}),
+				new sap.ui.core.Item("item_action_24", {
+					key: "24",
+					text: "item action 24"
+				})
+			],
 			enableNav: true
 		}),
 		new sap.m.SelectionDetailsItem({
@@ -122,6 +150,15 @@
 				key: "2",
 				text: "action group 2"
 			}
+		],
+		contentActionItems: [
+			{
+				text: "Reject"
+			}, {
+				text: "Accept"
+			}, {
+				text: "Cancel"
+			}
 		]
 	});
 
@@ -138,6 +175,17 @@
 		text: "{text}"
 	});
 
+	var oActionGroupsListTemplate = new sap.m.ActionListItem({
+		text: "{text}"
+	});
+
+	var oActionGroupsList = new sap.m.List("actionGroupsList", {
+		items: {
+			path: "/contentActionItems",
+			template: oActionGroupsListTemplate
+		}
+	});
+
 	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails", {
 		items: aItems,
 		actions: {
@@ -149,11 +197,28 @@
 			template: oActionGroupTemplate
 		},
 		actionPress: function(oEvent) {
-			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("items").length + " items"
+			sap.m.MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("items").length + " items selected"
 					+ "\n level is: " + oEvent.getParameter("level"));
+			if (oEvent.getParameter("level") === "Group") {
+				oSelectionDetails.navTo(oEvent.getSource().getId() + " first level of navigation", oActionGroupsList);
+			}
 		},
 		navigate: function(oEvent) {
 			sap.m.MessageToast.show("Event 'navigate' triggered originating from " + oEvent.getParameter("item").getId() + " item");
+			var oSelectionDetails = oEvent.getParameter("item").getParent();
+			var sId = oEvent.getParameter("item").getId();
+			oSelectionDetails.navTo(sId + " first level of navigation",
+				new sap.m.Button({
+					text: "go further",
+					press: function() {
+						oSelectionDetails.navTo(sId + " second level of navigation",
+							new sap.m.Label({
+								text: "some text"
+							})
+						);
+					}
+				})
+			);
 		},
 		beforeOpen: function () {
 			sap.m.MessageToast.show("Event 'beforeOpen' triggered");
@@ -170,6 +235,11 @@
 		})
 	});
 	oApp.placeAt("content");
+
+	//set the contrast class for belize plus
+	if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize_plus") {
+		oApp.addStyleClass("sapContrastPlus");
+	}
 </script>
 </head>
 

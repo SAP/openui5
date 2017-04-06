@@ -50,20 +50,44 @@ function (jQuery, DesignTimeMetadata) {
 		}
 	};
 
+	AggregationDesignTimeMetadata.prototype.getPropagation = function(oElement, callback) {
+		var mData = this.getData();
+		if (!mData.propagationInfos) {
+			return false;
+		}
+		mData.propagationInfos.some(function(oPropagatedInfo){
+			return callback(oPropagatedInfo);
+		});
+	};
+
 	AggregationDesignTimeMetadata.prototype.getRelevantContainerForPropagation = function(oElement) {
 		var mData = this.getData();
 		var vRelevantContainerElement = false;
-		if (!mData.propagateRelevantContainer) {
+		if (!mData.propagationInfos) {
 			return false;
 		}
-		mData.propagateRelevantContainer.some(function(oPropagatedObj){
-			if (oPropagatedObj.propagationFunction &&
-				oPropagatedObj.propagationFunction(oElement)) {
-				vRelevantContainerElement = oPropagatedObj.propagateRelevantContainerElement;
+
+		this.getPropagation(oElement, function(oPropagatedInfo){
+			if (oPropagatedInfo.relevantContainerFunction &&
+				oPropagatedInfo.relevantContainerFunction(oElement)) {
+				vRelevantContainerElement = oPropagatedInfo.relevantContainerElement;
 				return true;
 			}
 		});
-		return vRelevantContainerElement;
+
+		return vRelevantContainerElement ? vRelevantContainerElement : false;
+	};
+
+	AggregationDesignTimeMetadata.prototype.getMetadataForPropagation = function(oElement) {
+		var vReturnMetadata = false;
+
+		this.getPropagation(oElement, function(oPropagatedInfo) {
+			if (oPropagatedInfo.metadataFunction) {
+				vReturnMetadata = oPropagatedInfo.metadataFunction(oElement, oPropagatedInfo.relevantContainerElement);
+				return vReturnMetadata ? true : false;
+			}
+		});
+		return vReturnMetadata ? vReturnMetadata : false;
 	};
 
 	return AggregationDesignTimeMetadata;

@@ -245,6 +245,29 @@
 
 			QUnit.module("Accessibility");
 
+			QUnit.test("aria-expanded correctly set", function(assert) {
+				var done = assert.async(),
+					oDTP = new sap.m.DateTimePicker("DP", {}).placeAt("uiArea8");
+
+				sap.ui.getCore().applyChanges();
+
+				//before opening the popup
+				assert.equal(oDTP.$("inner").attr("aria-expanded"), "false", "DP input has 'aria-expand' set to false when the picker is not open");
+
+				// open DatePicker
+				oDTP.focus();
+				qutils.triggerEvent("click", "DP-icon");
+
+				sap.ui.getCore().applyChanges();
+				setTimeout(function(){
+					//after opening popup
+					assert.equal(oDTP.$("inner").attr("aria-expanded"), "true", "DP input has 'aria-expand' set to true when the picker is open");
+
+					oDTP.destroy();
+					done();
+				}, 400);
+			});
+
 			QUnit.test("getAccessibilityInfo", function(assert) {
 				var oInput = new sap.m.DateTimePicker({
 					value: "Value",
@@ -324,5 +347,7 @@
 		<div id="uiArea6"></div>
 		<br>
 		<div id="uiArea7"></div>
+		<br>
+		<div id="uiArea8"></div>
 	</body>
 </html>

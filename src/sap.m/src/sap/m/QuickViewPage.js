@@ -450,10 +450,6 @@ sap.ui.define([
 						continue;
 					}
 
-					if (oCurrentGroupElementValue instanceof Link) {
-						oCurrentGroupElementValue.addAriaLabelledBy(oCurrentGroupElementValue);
-					}
-
 					oLabel.setLabelFor(oCurrentGroupElementValue.getId());
 
 					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.pageLink) {

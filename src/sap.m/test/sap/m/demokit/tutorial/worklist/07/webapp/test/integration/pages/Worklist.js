@@ -244,14 +244,14 @@ sap.ui.define([
 						id: sTableId,
 						viewName: sViewName,
 						matchers: function(oTable) {
-							var iThreshold = oTable.getGrowingThreshold();
+							var iThreshold = Math.min(14, oTable.getGrowingThreshold());
 							return new AggregationLengthEquals({
 								name: "items",
 								length: iThreshold
 							}).isMatching(oTable);
 						},
 						success: function(oTable) {
-							var iGrowingThreshold = oTable.getGrowingThreshold();
+							var iGrowingThreshold = Math.min(14, oTable.getGrowingThreshold());
 							Opa5.assert.strictEqual(oTable.getItems().length, iGrowingThreshold, "The growing Table has " + iGrowingThreshold + " items");
 						},
 						errorMessage: "Table does not have all entries."
@@ -294,7 +294,7 @@ sap.ui.define([
 						id: sTableId,
 						viewName: sViewName,
 						matchers: function(oTable) {
-							iExpectedNumberOfItems = oTable.getGrowingThreshold() * 2;
+							iExpectedNumberOfItems = Math.min(14, oTable.getGrowingThreshold() * 2);
 							return new AggregationLengthEquals({
 								name: "items",
 								length: iExpectedNumberOfItems

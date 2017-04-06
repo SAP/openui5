@@ -20,7 +20,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		var oChangePersistence = new ChangePersistence(sFlexReference, {});
+		var oChangePersistence = new ChangePersistence({name: sFlexReference});
 		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create");
 		this.stub(oChangePersistence, "getCacheKey").returns(ChangePersistence.NOTAG);
 		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent");
@@ -39,7 +39,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			componentId: sFlexReference
 		};
 
-		var oChangePersistence = new ChangePersistence(sFlexReference);
+		var oChangePersistence = new ChangePersistence({name: sFlexReference});
 		this.stub(Utils, "getComponentClassName").returns(sFlexReference);
 		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 		this.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sCacheKey));

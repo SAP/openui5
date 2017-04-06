@@ -127,8 +127,8 @@ html.sap-tablet .sapMQuickViewPage > section {
 		height: 3rem;
 		background-color: @sapUiContentImagePlaceholderBackground;
 		color: @sapUiContentImagePlaceholderForegroundColor;
-	}	
-} 
+	}
+}
 
 .sapMQuickViewPage .sapUiHLayout {
 	margin-bottom: 2rem;
@@ -157,7 +157,7 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 }
 
 .sapMQuickViewPage .sapUiVltCell:first-child {
-	max-height: 3rem;
+	max-height: 2.25rem;
 	margin-bottom: 0.5rem;
 	overflow: hidden;
 }
@@ -250,4 +250,12 @@ html.sap-tablet .sapMQuickViewHeader {
 html.sap-phone .sapMQuickViewPage .sapMLnk:focus,
 html.sap-tablet .sapMQuickViewPage .sapMLnk:focus {
   outline: none;
+}
+
+html.sap-phone .sapMPanel .sapMQuickViewCard {
+	overflow-y: scroll;
+}
+
+html.sap-tablet.sap-ios .sapMPanel .sapMQuickViewCard {
+	-webkit-overflow-scrolling: auto;
 }

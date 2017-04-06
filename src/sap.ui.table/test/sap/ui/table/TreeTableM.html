@@ -29,7 +29,7 @@ var oTable = new sap.ui.table.TreeTable({
 	groupHeaderProperty: "name",
 	selectionMode: sap.ui.table.SelectionMode.MultiToggle,
 	columns: [
-		new sap.ui.table.Column({label: "Name", template: new sap.m.Text({text: "{name}"}), filterProperty: "name", sortProperty: "name"}),
+		new sap.ui.table.Column({label: "Name", template: new sap.m.Text({text: "{name}", wrapping: false}), filterProperty: "name", sortProperty: "name"}),
 		new sap.ui.table.Column({label: "Description", template: "description", sortProperty: "description"}),
 		new sap.ui.table.Column({label: "Available", template: new sap.m.CheckBox({selected: "{checked}"})})
 	]

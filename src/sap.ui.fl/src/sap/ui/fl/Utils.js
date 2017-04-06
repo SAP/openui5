@@ -34,6 +34,7 @@ sap.ui.define([
 		_mLayersIndex : mLayersIndex,
 		_sTopLayer : aLayers[aLayers.length - 1],
 		_sMaxLayer : aLayers[aLayers.length - 1],
+		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
 		/**
 		 * log object exposes available log functions
 		 *
@@ -879,6 +880,36 @@ sap.ui.define([
 			}
 			this.log.warning("No Manifest received.");
 			return "";
+		},
+
+		/**
+		 * Returns the semantic application version using format: "major.minor.patch".
+		 *
+		 * @param {object} oManifest - Manifest of the component
+		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
+		 * @public
+		 */
+		getAppVersionFromManifest: function (oManifest) {
+			var sVersion = "";
+			if (oManifest){
+				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
+				if (oSapApp && oSapApp.applicationVersion && oSapApp.applicationVersion.version){
+					sVersion = oSapApp.applicationVersion.version;
+				}
+			} else {
+				this.log.warning("No Manifest received.");
+			}
+			return sVersion;
+		},
+
+		/**
+		 * Returns whether provided layer is a customer dependent layer
+		 *
+		 * @returns {boolean} true if provided layer is customer dependent layer else false
+		 * @public
+		 */
+		isCustomerDependentLayer : function(sLayerName) {
+			return (["CUSTOMER", "CUSTOMER_BASE"].indexOf(sLayerName) > -1);
 		}
 	};
 	return Utils;

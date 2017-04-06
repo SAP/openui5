@@ -99,26 +99,27 @@ sap.ui.define([
 	 * Returns a settings instance after reading the settings from the back end if not already done. There is only one instance of settings during a
 	 * session.
 	 *
-	 * @param {string} sComponentName - Current UI5 component name
-	 * @param {map} [mPropertyBag] - Contains additional data that are needed for reading of changes
-	 * @param {object} [mPropertyBag.appDescriptor] - <code>appDescriptor<code> that belongs to actual component
-	 * @param {string} [mPropertyBag.siteId] - <code>siteId<code> that belongs to actual component
+	 * @param {string} sComponentName - Current SAPUI5 component name
+	 * @param {string} [sAppVersion] - Current application version
+	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
+	 * @param {object} [mPropertyBag.appDescriptor] - App descriptor belonging to actual component
+	 * @param {string} [mPropertyBag.siteId] - Side ID that belongs to actual component
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @public
 	 */
-	Settings.getInstance = function(sComponentName, mPropertyBag) {
+	Settings.getInstance = function(sComponentName, sAppVersion, mPropertyBag) {
 		if (Settings._instance) {
 			return Promise.resolve(Settings._instance);
 		}
-
-		return Cache.getChangesFillingCache(LrepConnector.createConnector(), sComponentName, mPropertyBag)
+		sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
+		return Cache.getChangesFillingCache(LrepConnector.createConnector(), { name: sComponentName, appVersion: sAppVersion }, mPropertyBag)
 			.then(Settings._storeInstance.bind(Settings));
 	};
 
 	/**
 	 * Writes the data received from the back end or cache into an internal map and then returns the settings object within a Promise.
 	 *
-	 * @param oFileContent - data received from the back end or cache
+	 * @param oFileContent - Data received from the back end or cache
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @protected
 	 *

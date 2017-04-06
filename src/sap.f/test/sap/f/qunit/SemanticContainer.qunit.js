@@ -794,4 +794,16 @@
 		oSendMessageAction.destroy();
 		oSaveAsTileAction.destroy();
 	});
+
+	QUnit.module("SemanticShareMenu destroy", {
+		beforeEach: function () {
+			this.oActionSheet = oFactory.getActionSheet();
+			this.oSemanticShareMenu = oFactory.getSemanticShareMenu(this.oActionSheet);
+		},
+		afterEach: function () {
+			this.oActionSheet.destroy();
+			this.oSemanticShareMenu = null;
+			this.oActionSheet = null;
+		}
+	});
 })(jQuery, QUnit, sinon);

@@ -17,8 +17,7 @@ sap.ui.define([], function() {
 		// Assertions
 		Then.onTheObjectPage.iShouldSeeTheObjectViewsBusyIndicator().
 		and.theObjectViewsBusyIndicatorDelayIsRestored().
-		and.iShouldSeeTheRememberedObject().
-		and.theObjectViewShouldContainOnlyFormattedUnitNumbers().and.iTeardownMyAppFrame();
+		and.iShouldSeeTheRememberedObject().and.iTeardownMyAppFrame();
 	});
 
 });

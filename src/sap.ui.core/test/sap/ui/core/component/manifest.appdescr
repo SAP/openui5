@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "test3-variant",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"componentName": "test3",
+		"resources": {
+			"css": [
+				{
+					"uri": "style4.css"
+				}
+			]
+		},
+		"extends": {
+			"component": "test3",
+			"extensions": {
+				"sap.ui.viewExtensions": {
+					"": {}
+				}
+			}
+		}
+	}
+}

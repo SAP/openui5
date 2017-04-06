@@ -61,6 +61,26 @@
 		oSegmentedButton.destroy();
 	});
 
+	QUnit.test("clone", function(assert) {
+		//arrange
+		var oSB = new sap.m.SegmentedButton({
+				items: [
+					new sap.m.SegmentedButtonItem({ text: 'a' }),
+					new sap.m.SegmentedButtonItem({ text: 'b' })
+				]
+			}),
+			oSBClone;
+
+		oSB.setSelectedButton(oSB.getButtons()[1]);
+
+		//act
+		oSBClone = oSB.clone();
+
+		//assert
+		assert.equal(oSBClone.getButtons().length, oSB.getButtons().length, "cloning has the same number of buttons");
+		assert.equal(oSBClone.getSelectedButton(), oSBClone.getButtons()[1].getId(), "cloning has the same button selected");
+	});
+
 	/* =========================================================== */
 	/* Render module                                               */
 	/* =========================================================== */
@@ -2133,6 +2153,25 @@
 	});
 
 	QUnit.module("Keyboard handling");
+
+	QUnit.test("alt + right/left is not handled", function(assert) {
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({ text: 'a'}),
+				new sap.m.SegmentedButtonItem({ text: 'b'}),
+				new sap.m.SegmentedButtonItem({ text: 'c'})
+			]
+		}).placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		var oModifiers = oSegmentedButton._oItemNavigation.getDisabledModifiers();
+		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+		assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+		assert.equal(oModifiers["sapnext"][0], "alt", "alt is not handled when right is pressed");
+		assert.equal(oModifiers["sapprevious"][0], "alt", "alt is not handled when left is pressed");
+
+		oSegmentedButton.destroy();
+	});
 
 	function checkKeyboardEventhandling(sTestName, oOptions) {
 		QUnit.test(sTestName, function(assert) {

@@ -72,7 +72,11 @@
 	var oChangeButton = new sap.m.Button({
 		text: "Trigger Change",
 		press: function (oEvt) {
-			this.fireEvent("_selectionDetails", _selectionDetailsEventData);
+			var oSelectionData = jQuery.extend(true, {}, _selectionDetailsEventData);
+			for (var i = 0; i < Math.random() * 10; i++) {
+				oSelectionData.data.push(jQuery.extend(true, {}, _selectionDetailsEventData.data[Math.ceil(Math.random())]));
+			}
+			this.fireEvent("_selectionDetails", oSelectionData);
 		}
 	});
 
@@ -85,6 +89,15 @@
 	});
 
 	var oSelectionDetails = new sap.m.SelectionDetails("selectionDetails");
+
+	var oResetActionsButton = new sap.m.Button({
+		text: "Reset Actions",
+		press: function (oEvt) {
+			oSelectionDetails.destroyActions();
+			oSelectionDetails.destroyActionGroups();
+		}
+	});
+
 	oSelectionDetails.registerSelectionDetailsItemFactory(["MyFirstData", "MySecondData"],
 		function (aDisplayData, aData, oData) {
 			var aLines = [];
@@ -121,7 +134,6 @@
 		sap.m.MessageToast.show("Event 'afterUpdate' triggered");
 	});
 
-	//Not yet implemented
 	oSelectionDetails.attachSelectionHandler("_selectionDetails", oChangeButton);
 
 	var oApp = new sap.m.App({
@@ -131,6 +143,11 @@
 		})
 	});
 	oApp.placeAt("content");
+
+	//set the contrast class for belize plus
+	if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize_plus") {
+		oApp.addStyleClass("sapContrastPlus");
+	}
 </script>
 </head>
 

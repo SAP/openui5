@@ -34,6 +34,7 @@
 					var oHelper = sap.ui.unified.ColorPickerHelper,
 						oFactory = oHelper.factory,
 						oRBGroup,
+						oInput,
 						oSlider;
 
 					// Assert - Properties
@@ -44,8 +45,11 @@
 					oAssert.ok(oFactory.createLabel() instanceof sap.m.Label,
 						"Factory label control should be instance of sap.m.Label");
 
-					oAssert.ok(oFactory.createInput() instanceof sap.m.InputBase,
+					oInput = oFactory.createInput("MYCUSTOMINPUTID");
+					oAssert.ok(oInput instanceof sap.m.InputBase,
 						"Factory input control should be instance of sap.m.InputBase");
+					oAssert.strictEqual(oInput.getId(), "MYCUSTOMINPUTID",
+						"Factory input control should have 'MYCUSTOMINPUTID' assigned as ID");
 
 					// RadioButton group and RadioButtonItem
 					oRBGroup = oFactory.createRadioButtonGroup({
@@ -59,8 +63,136 @@
 						"sap.m.RadioButton");
 
 					// Slider
-					oSlider = oFactory.createSlider({step: 0.1});
+					oSlider = oFactory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
 					oAssert.ok(oSlider instanceof sap.m.Slider, "Factory Slider control should be instance of sap.m.Slider");
+					oAssert.strictEqual(oSlider.getId(), "MYCUSTOMSLIDERID",
+						"Factory Slider control should have 'MYCUSTOMSLIDERID' assigned as ID");
+				});
+
+				QUnit.module("API", {
+					beforeEach: function () {
+						this.oCP = new sap.ui.unified.ColorPicker();
+					},
+					afterEach: function () {
+						this.oCP.destroy();
+						this.oCP = null;
+					}
+				});
+
+				QUnit.test("mode property", function (oAssert) {
+					// Assert
+					oAssert.strictEqual(this.oCP.getMode(), sap.ui.unified.ColorPickerMode.HSV,
+						"By default the control should be in HSV mode");
+
+					// Act - change mode to HSL
+					this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+
+					// Assert
+					oAssert.strictEqual(this.oCP.getMode(), sap.ui.unified.ColorPickerMode.HSL,
+						"Control mode property should be set to HSL");
+				});
+
+				QUnit.test("colorString property with 'transparent' string case handling", function (oAssert) {
+					// Arrange
+					this.oCP.placeAt("qunit-fixture");
+
+					// Act
+					this.oCP.setColorString("transparent");
+					applyChanges();
+
+					// Assert
+					oAssert.strictEqual(this.oCP.oAlphaSlider.getValue(), 0,
+						"The alpha slider value should be 0 - transparent");
+					oAssert.strictEqual(this.oCP.oAlphaField.getValue(), "0",
+						"The alpha field value should be '0' - transparent");
+					oAssert.strictEqual(this.oCP.oHexField.getValue(), "000000",
+						"The hex field value should be '000000'");
+				});
+
+				QUnit.module("Internals", {
+					beforeEach: function () {
+						this.oCP = new sap.ui.unified.ColorPicker();
+					},
+					afterEach: function () {
+						this.oCP.destroy();
+						this.oCP = null;
+					}
+				});
+
+				QUnit.test("_bHSLMode size property", function (oAssert) {
+					// Assert
+					oAssert.strictEqual(this.oCP._bHSLMode, false, "Internal _bHSLMode property should be set to false");
+
+					// Act - change mode to HSL
+					this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+
+					// Assert
+					oAssert.strictEqual(this.oCP._bHSLMode, true, "Internal _bHSLMode property should be set to true");
+				});
+
+				QUnit.test("_iCPCursorSize size property", function (oAssert) {
+					// Assert
+					oAssert.ok(this.oCP._iCPCursorSize, "Internal _iCPCursorSize property should be set");
+				});
+
+				QUnit.test("RTL flag", function (oAssert) {
+					// Arrange
+					var bFrameworkRtlMode = sap.ui.getCore().getConfiguration().getRTL();
+
+					// Assert
+					oAssert.strictEqual(this.oCP.bRtl, bFrameworkRtlMode,
+						"Boolean flag should be set to '" + bFrameworkRtlMode + "'");
+				});
+
+				QUnit.test("_processChanges method replaced with a valid method", function (oAssert) {
+					// Assert
+					oAssert.notStrictEqual(this.oCP._processChanges, jQuery.noop, "Method is not a reference ot jQuery.noop");
+					oAssert.strictEqual(this.oCP._processChanges, this.oCP._processHSVChanges,
+						"By default method should be a reference to _processHSVChanges");
+
+					// Act - change control mode
+					this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+
+					// Assert
+					oAssert.strictEqual(this.oCP._processChanges, this.oCP._processHSLChanges,
+						"When control is in HSL mode the method should be a reference to _processHSLChanges");
+				});
+
+				QUnit.test("_handleAlphaSliderChange - Color conversion related to output mode", function (oAssert) {
+					// Arrange
+					var oPHSLCSpy = sinon.spy(this.oCP, "_processHSLChanges"),
+						oPRGBCSpy = sinon.spy(this.oCP, "_processRGBChanges");
+
+					this.oCP.setColorString("427cac");
+					this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+					this.oCP.Color.formatHSL = false; // Mock RGB output mode
+					this.oCP.placeAt("qunit-fixture");
+					applyChanges();
+
+					// Act - change slider value and fire the event handler.
+					// Keep in mind that we are calling the event handler manually because setters should not call events.
+					this.oCP.oAlphaSlider.setValue(0.5);
+					this.oCP._handleAlphaSliderChange();
+
+					// Assert
+					oAssert.strictEqual(this.oCP.oHexField.getValue(), "427cac",
+						"The hex value won't change when changing the Alpha slider in RGB output mode");
+					oAssert.strictEqual(oPHSLCSpy.callCount, 0, "_processHSLChanges should not be called");
+					oAssert.strictEqual(oPRGBCSpy.callCount, 1, "_processRGBChanges should be called once");
+
+					// Arrange
+					oPRGBCSpy.reset();
+					this.oCP.Color.formatHSL = true; // Mock HSL output mode
+
+					// Act - change slider value and fire the event handler.
+					this.oCP.oAlphaSlider.setValue(0.2);
+					this.oCP._handleAlphaSliderChange();
+
+					// Assert
+					oAssert.strictEqual(this.oCP.oHexField.getValue(), "427dae",
+						"The hex value will change when changing the Alpha slider in HSL output mode");
+					oAssert.strictEqual(oPHSLCSpy.callCount, 1, "_processHSLChanges should be called once");
+					oAssert.strictEqual(oPRGBCSpy.callCount, 0, "_processRGBChanges should not be called");
 				});
 
 				QUnit.module("Private methods", {
@@ -71,6 +203,43 @@
 						this.oCP.destroy();
 						this.oCP = null;
 					}
+				});
+
+				QUnit.test("_updateColorStringProperty", function (oAssert) {
+					// Assert
+					oAssert.strictEqual(this.oCP.getColorString(), "",
+						"Before the method is called by default no color string is available");
+
+					// Arrange - attach events with always failing asserts
+					this.oCP.attachChange(function () {
+						oAssert.ok(false, "Change event should not be called with no parameters passed to method");
+					});
+					this.oCP.attachLiveChange(function () {
+						oAssert.ok(false, "Live change event should not be called with no parameters passed to method");
+					});
+
+					// Act - call method with no parametes
+					this.oCP._updateColorStringProperty();
+
+					// Assert
+					oAssert.strictEqual(this.oCP.getColorString(), "rgb(255,255,255)",
+						"After update the value of the ColorString property should be equal to RGB white color");
+				});
+
+				QUnit.test("_updateColorStringProperty - firing events", 2, function (oAssert) {
+					// Arrange
+					var fnDone = oAssert.async();
+
+					this.oCP.attachLiveChange(function () {
+						oAssert.ok(true, "Live change event is fired and its fired before change event");
+					});
+					this.oCP.attachChange(function () {
+						oAssert.ok(true, "Change event is fired");
+						fnDone(); // Live change should be fired first if not the test will fail - 2 assertions expected!
+					});
+
+					// Act - call method with true for firing both events
+					this.oCP._updateColorStringProperty(true, true);
 				});
 
 				QUnit.test("_updateControlVisualState", function (oAssert) {
@@ -280,6 +449,65 @@
 					}.bind(this));
 				});
 
+				QUnit.test("getRGB method", function (oAssert) {
+					// Arrange
+					this.oCP.placeAt("qunit-fixture");
+
+					// Assert
+					oAssert.deepEqual(this.oCP.getRGB(), {r: 255, g: 255, b: 255},
+						"The returned object should contain the default white color values for RGB");
+
+					// Act
+					this.oCP.setColorString("rgb(255,0,0)");
+					applyChanges();
+
+					// Assert
+					oAssert.deepEqual(this.oCP.getRGB(), {r: 255, g: 0, b: 0},
+						"The returned object should contain the color values for RED color");
+				});
+
+				QUnit.test("_parseRGB method validation only", function (oAssert) {
+					// Assert
+					oAssert.strictEqual(this.oCP._parseRGB("rgb(255, 255, 255)", true), true,
+						"The parsed string is a valid RGB CSS Color");
+
+					oAssert.strictEqual(this.oCP._parseRGB("rgba(255, 255, 255, 0.5)", true), true,
+						"The parsed string is a valid RGBA CSS Color string");
+
+					oAssert.strictEqual(this.oCP._parseRGB("hsl(10, 10, 10)", true), false,
+						"The parsed string is not a valid RGB|A CSS Color string");
+
+					oAssert.strictEqual(this.oCP._parseRGB("rgb(255, 255, 255, 0)", true), false,
+						"The passed string is not a valid RGB CSS Color string");
+
+					oAssert.strictEqual(this.oCP._parseRGB("rgba(255, 255, 255)", true), false,
+						"The passed string is not a valid RGBA CSS Color string");
+
+					oAssert.strictEqual(this.oCP._parseRGB("rgb(-255, -255, -255)", true), false,
+						"The passed string is not a valid RGB CSS Color string");
+				});
+
+				QUnit.test("_parseHSL method validation only", function (oAssert) {
+					// Assert
+					oAssert.strictEqual(this.oCP._parseHSL("hsl(360, 100, 100)", true), true,
+						"The parsed string is a valid HSL CSS Color");
+
+					oAssert.strictEqual(this.oCP._parseHSL("hsla(360, 100, 100, 0.5)", true), true,
+						"The parsed string is a valid HSLA CSS Color string");
+
+					oAssert.strictEqual(this.oCP._parseHSL("rgb(10, 10, 10)", true), false,
+						"The parsed string is not a valid HSL|A CSS Color string");
+
+					oAssert.strictEqual(this.oCP._parseHSL("hsl(360, 100, 100, 0)", true), false,
+						"The passed string is not a valid HSL CSS Color string");
+
+					oAssert.strictEqual(this.oCP._parseHSL("hsla(360, 100, 100)", true), false,
+						"The passed string is not a valid HSLA CSS Color string");
+
+					oAssert.strictEqual(this.oCP._parseHSL("hsl(-360, -255, -255)", true), false,
+						"The passed string is not a valid HSL CSS Color string");
+				});
+
 				QUnit.module("sap.ui.unified._ColorPickerBox", {
 					beforeEach: function () {
 						this.oCPBox = new sap.ui.unified._ColorPickerBox();
@@ -347,6 +575,23 @@
 
 					// Act
 					this.oCPBox.ontouchmove({offsetX: 10, offsetY: 10});
+				});
+
+				QUnit.test("resize event", 2, function (oAssert) {
+					// Arrange
+					var fnDone = oAssert.async();
+					this.oCPBox.attachResize(function (oEvent) {
+						// Assert
+						oAssert.ok(true, "Resize event is fired");
+						oAssert.ok(jQuery.isNumeric(oEvent.getParameter("size")),
+							"The returned event has a parameter 'size' and it's a number");
+						fnDone();
+					});
+					this.oCPBox.placeAt("qunit-fixture");
+					applyChanges();
+
+					// Act - change width so event will be fired
+					this.oCPBox.$().width("500px");
 				});
 
 				QUnit.test("ontouchstart and ontouchend events", function (oAssert) {
@@ -500,6 +745,5 @@
 	<body class="sapUiBody" role="application">
 		<h1 id="qunit-header">QUnit tests: sap.ui.unified.calendar.Month</h1>
 		<div id="qunit-fixture"></div>
-	<div id="test"></div>
 	</body>
 </html>

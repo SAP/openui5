@@ -43,6 +43,10 @@ sap.ui.define([
       this.register(/^the user '<USER>' has been given <NUMBER> cups of coffee$/i, function() {
         assert.ok(false, "we expect this step to never run, which will cause this test to fail if it's run anyway");
       });
+
+      this.register(/^(.*?) pays on average (.*?) for a cup of coffee$/i, function(sPerson, sAmount) {
+        assert.ok(true, "Verified: woah, " + sPerson + " pays a lot of money for coffee");
+      });
     }
   });
 

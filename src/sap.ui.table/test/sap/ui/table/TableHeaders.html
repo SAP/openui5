@@ -25,9 +25,9 @@
         // 1st column with multilabels
         oTable.addColumn(new sap.ui.table.Column({
             multiLabels: [
-                new sap.m.Text({text: "Row:1, Column:1 with a long description"}),
-                new sap.m.Text({text: "Row:2, Column:1"}),
-                new sap.m.Text({text: "Row:3, Column:1"})
+                new sap.m.Text({text: "Row:1, Column:1 with a long description", wrapping: false}),
+                new sap.m.Text({text: "Row:2, Column:1", wrapping: false}),
+                new sap.m.Text({text: "Row:3, Column:1", wrapping: false})
             ],
             headerSpan: [3, 1, 1],
             template: new sap.m.Text({text: "{lastName}"}),
@@ -42,9 +42,9 @@
         // 2nd column with multilabels
         oTable.addColumn(new sap.ui.table.Column({
             multiLabels: [
-                new sap.m.Text({text: "Row:1, Column:2 with a long description"}),
-                new sap.m.Text({text: "Row:2, Column:2"}),
-                new sap.m.Text({text: "Row:3, Column:2"})
+                new sap.m.Text({text: "Row:1, Column:2 with a long description", wrapping: false}),
+                new sap.m.Text({text: "Row:2, Column:2", wrapping: false}),
+                new sap.m.Text({text: "Row:3, Column:2", wrapping: false})
             ],
 			headerSpan: [1, 2, 1],
 			template: new sap.m.Label({text: "{name}"}),
@@ -59,9 +59,9 @@
         // 3rd column with multilabels
         oTable.addColumn(new sap.ui.table.Column({
             multiLabels: [
-                new sap.m.Label({text: "Row:1, Column:3 - long text"}),
-                new sap.m.Text({text: "Row:2, Column:3"}),
-                new sap.m.Text({text: "Row:3, Column:3"})
+                new sap.m.Label({text: "Row:1, Column:3 - long text", wrapping: false}),
+                new sap.m.Text({text: "Row:2, Column:3", wrapping: false}),
+                new sap.m.Text({text: "Row:3, Column:3", wrapping: false})
             ],
             template: new sap.m.ObjectStatus({text: "{objStatusText}", state: "{objStatusState}"}),
             sortProperty: "objStatusState",

@@ -2,8 +2,9 @@
 sinon.config.useFakeTimers = false;
 jQuery.sap.require("sap.ui.fl.registry.Settings");
 jQuery.sap.require("sap.ui.fl.Cache");
+jQuery.sap.require("sap.ui.fl.Utils");
 
-(function(Settings, Cache) {
+(function(Settings, Cache, Utils) {
 	"use strict";
 
 	var bPresetFlexChangeMode, bFlexibilityAdaptationButtonAllowed;
@@ -62,7 +63,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		QUnit.equal(bIsAtoEnabled, false);
 	});
 
-	QUnit.test("load from cache", function(assert) {
+	QUnit.test("load from cache without app version", function(assert) {
 		var done = assert.async();
 
 		var oFileContent = {
@@ -73,13 +74,39 @@ jQuery.sap.require("sap.ui.fl.Cache");
 				}
 			}
 		};
-		Cache._entries['testcomponent'] = {
+		Cache._entries['testcomponent'] = {};
+		Cache._entries['testcomponent'][Utils.DEFAULT_APP_VERSION] = {
 			promise: Promise.resolve(oFileContent)
 		};
 		Settings.getInstance('testcomponent').then(function(oSettings) {
 			QUnit.equal(oSettings.isKeyUser(), true);
 			QUnit.equal(oSettings.isModelS(), true);
-			Settings.getInstance('testcomponent').then(function(oSettings2) {
+			Settings.getInstance('anotherComponent').then(function(oSettings2) {
+				QUnit.equal(oSettings, oSettings2);
+				done();
+			});
+		});
+	});
+
+	QUnit.test("load from cache with app version", function(assert) {
+		var done = assert.async();
+
+		var oFileContent = {
+			changes: {
+				settings: {
+					isKeyUser: true,
+					isAtoAvailable: true
+				}
+			}
+		};
+		Cache._entries['testcomponent'] = {};
+		Cache._entries['testcomponent']["1.2.3"] = {
+			promise: Promise.resolve(oFileContent)
+		};
+		Settings.getInstance('testcomponent', '1.2.3').then(function(oSettings) {
+			QUnit.equal(oSettings.isKeyUser(), true);
+			QUnit.equal(oSettings.isModelS(), true);
+			Settings.getInstance('anotherComponent').then(function(oSettings2) {
 				QUnit.equal(oSettings, oSettings2);
 				done();
 			});
@@ -97,7 +124,8 @@ jQuery.sap.require("sap.ui.fl.Cache");
 				}
 			}
 		};
-		Cache._entries['testcomponent'] = {
+		Cache._entries['testcomponent'] = {};
+		Cache._entries['testcomponent'][Utils.DEFAULT_APP_VERSION] = {
 			promise: Promise.resolve(oFileContent)
 		};
 		var oSettings0 = Settings.getInstanceOrUndef();
@@ -228,4 +256,4 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		sap.ui.fl.registry.Settings.setFlexibilityAdaptationButtonAllowed(false);
 	});
 
-}(sap.ui.fl.registry.Settings, sap.ui.fl.Cache));
+}(sap.ui.fl.registry.Settings, sap.ui.fl.Cache, sap.ui.fl.Utils));

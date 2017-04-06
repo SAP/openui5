@@ -979,6 +979,7 @@
 									}
 
 									applySettingsSnapshot(TABLESETTINGS.table, TABLESETTINGS.storedSettings.Default);
+									saveAppliedSettingsKey("Default");
 								}
 							})
 						]
@@ -994,6 +995,7 @@
 									var sNewSettingsKey = oNewSettingsInput.getValue();
 
 									saveSettingsSnapshot(sNewSettingsKey, createSettingsSnapshot(TABLESETTINGS.table));
+									saveAppliedSettingsKey(sNewSettingsKey);
 									TABLESETTINGS.storedSettings = loadSettingsSnapshots();
 
 									function createSelectItems() {
@@ -1113,7 +1115,10 @@
 
 			if (oSettings.isPublicProperty) {
 				var sSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
-				oTable[sSetterName](oSettings.value);
+
+				if (oTable.hasOwnProperty(sSetterName)) {
+					oTable[sSetterName](oSettings.value);
+				}
 			} else if (oSettings.isPrivateProperty) {
 				oTable[sPropertyName] = oSettings.value;
 			}
@@ -1156,7 +1161,7 @@
 
 	function saveAppliedSettingsKey(sKey) {
 		if (sKey == null || sKey === "") {
-			return
+			return;
 		}
 
 		window.localStorage.setItem("TableSettingsAppliedKey", sKey);

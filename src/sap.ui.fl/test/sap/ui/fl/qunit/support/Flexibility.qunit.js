@@ -29,7 +29,7 @@ sap.ui.require([
 			}
 		});
 
-		QUnit.test("sends an empty object to the support window if the ibility cache is not filled", function (assert) {
+		QUnit.test("sends an empty object to the support window if the flexibility cache is not filled", function (assert) {
 			var done = assert.async();
 			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
@@ -44,8 +44,10 @@ sap.ui.require([
 		QUnit.test("sends the data to the support window for a reference without contexts", function (assert) {
 			var done = assert.async();
 			var sReference = "ref1";
+			var sAppVersion = "1.1.1";
 			var oChange = {};
-			Cache._entries[sReference] = {
+			Cache._entries[sReference] = {};
+			Cache._entries[sReference][sAppVersion] = {
 				file: {
 					changes: {
 						changes: [oChange],
@@ -60,9 +62,9 @@ sap.ui.require([
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 1, "one object was passed");
 				var oPassedFlexData = oPayload[0];
-				assert.equal(oPassedFlexData.reference, sReference);
+				assert.equal(oPassedFlexData.reference, sReference + " - " + sAppVersion);
 				assert.equal(oPassedFlexData.changes.length, 1, "a change was passed");
-				assert.equal(oPassedFlexData.contexts.length, 0, "no context was passed");
+				assert.equal(oPassedFlexData.contexts.length, 0, "no contexts were passed");
 				done();
 			});
 
@@ -72,10 +74,12 @@ sap.ui.require([
 		QUnit.test("sends the data to the support window for a reference with contexts", function (assert) {
 			var done = assert.async();
 			var sReference = "ref1";
+			var sAppVersion = "1.1.1";
 			var oChange = {};
 			var oContext1 = {};
 			var oContext2 = {};
-			Cache._entries[sReference] = {
+			Cache._entries[sReference] = {};
+			Cache._entries[sReference][sAppVersion] = {
 				file: {
 					changes: {
 						changes: [oChange],
@@ -92,7 +96,7 @@ sap.ui.require([
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 1, "one object was passed");
 				var oPassedFlexData = oPayload[0];
-				assert.equal(oPassedFlexData.reference, sReference);
+				assert.equal(oPassedFlexData.reference, sReference + " - " + sAppVersion);
 				assert.equal(oPassedFlexData.changes.length, 1, "a change was passed");
 				assert.equal(oPassedFlexData.contexts.length, 2, "a context was passed");
 				done();
@@ -104,10 +108,12 @@ sap.ui.require([
 		QUnit.test("sends the data to the support window for multiple reference with and without contexts", function (assert) {
 			var done = assert.async();
 			var sReference1 = "ref1";
+			var sAppVersion = "1.1.1";
 			var oChange1_1 = {};
 			var oContext1_1 = {};
 			var oContext1_2 = {};
-			Cache._entries[sReference1] = {
+			Cache._entries[sReference1] = {};
+			Cache._entries[sReference1][sAppVersion] = {
 				file: {
 					changes: {
 						changes: [oChange1_1],
@@ -119,7 +125,8 @@ sap.ui.require([
 			var oChange2_1 = {};
 			var oChange2_2 = {};
 			var oContext2_1 = {};
-			Cache._entries[sReference2] = {
+			Cache._entries[sReference2] = {};
+			Cache._entries[sReference2][sAppVersion] = {
 				file: {
 					changes: {
 						changes: [oChange2_1, oChange2_2],
@@ -136,13 +143,174 @@ sap.ui.require([
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 2, "two object were passed");
 				var oPassedFlexData1 = oPayload[0];
-				assert.equal(oPassedFlexData1.reference, sReference1);
+				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + sAppVersion);
 				assert.equal(oPassedFlexData1.changes.length, 1, "a change was passed");
 				assert.equal(oPassedFlexData1.contexts.length, 2, "two contexts were passed");
 				var oPassedFlexData2 = oPayload[1];
-				assert.equal(oPassedFlexData2.reference, sReference2);
+				assert.equal(oPassedFlexData2.reference, sReference2 + " - " + sAppVersion);
 				assert.equal(oPassedFlexData2.changes.length, 2, "two changes were passed");
 				assert.equal(oPassedFlexData2.contexts.length, 1, "a context was passed");
+				done();
+			});
+
+			this.oFlexibility.onsapUiSupportFlexibilityGetChanges();
+		});
+
+		QUnit.test("sends the data to the support window for multiple reference and multiple versions with and without contexts", function (assert) {
+			var done = assert.async();
+			var sReference1 = "ref1";
+			var sAppVersion1 = "1.1.1";
+			var sAppVersion2 = "2.2.2";
+			var oChange1_1 = {};
+			var oChange1_2 = {};
+			var oContext1_1 = {};
+			var oContext1_2 = {};
+			Cache._entries[sReference1] = {};
+			Cache._entries[sReference1][sAppVersion1] = {
+				file: {
+					changes: {
+						changes: [oChange1_1],
+						contexts: [oContext1_1, oContext1_2]
+					}
+				}
+			};
+			Cache._entries[sReference1][sAppVersion2] = {
+				file: {
+					changes: {
+						changes: [oChange1_1, oChange1_2],
+						contexts: []
+					}
+				}
+			};
+
+			var sReference2 = "ref2";
+			var oChange2_1 = {};
+			var oChange2_2 = {};
+			var oChange2_3 = {};
+			var oContext2_1 = {};
+			Cache._entries[sReference2] = {};
+			Cache._entries[sReference2][sAppVersion1] = {
+				file: {
+					changes: {
+						changes: [oChange2_1, oChange2_2],
+						contexts: [oContext2_1]
+					}
+				}
+			};
+			Cache._entries[sReference2][sAppVersion2] = {
+				file: {
+					changes: {
+						changes: [oChange2_1, oChange2_2, oChange2_3],
+						contexts: [oContext2_1]
+					}
+				}
+			};
+			sandbox.stub(ContextManager, "getActiveContexts", function () {
+				return Promise.resolve([]);
+			});
+
+			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
+				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
+				assert.equal(Object.keys(oPayload).length, 4, "four object were passed");
+				var oPassedFlexData1 = oPayload[0];
+				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + sAppVersion1);
+				assert.equal(oPassedFlexData1.changes.length, 1, "a change was passed");
+				assert.equal(oPassedFlexData1.contexts.length, 2, "two contexts were passed");
+				var oPassedFlexData1 = oPayload[1];
+				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + sAppVersion2);
+				assert.equal(oPassedFlexData1.changes.length, 2, "two changes was passed");
+				assert.equal(oPassedFlexData1.contexts.length, 0, "no contexts were passed");
+				var oPassedFlexData2 = oPayload[2];
+				assert.equal(oPassedFlexData2.reference, sReference2 + " - " + sAppVersion1);
+				assert.equal(oPassedFlexData2.changes.length, 2, "two changes were passed");
+				assert.equal(oPassedFlexData2.contexts.length, 1, "a context was passed");
+				var oPassedFlexData2 = oPayload[3];
+				assert.equal(oPassedFlexData2.reference, sReference2 + " - " + sAppVersion2);
+				assert.equal(oPassedFlexData2.changes.length, 3, "three changes were passed");
+				assert.equal(oPassedFlexData2.contexts.length, 1, "a context was passed");
+				done();
+			});
+
+			this.oFlexibility.onsapUiSupportFlexibilityGetChanges();
+		});
+
+		QUnit.test("sorting works for multiple reference and multiple versions", function (assert) {
+			var done = assert.async();
+			var sReference1 = "ref1";
+			var sAppVersion1 = "1.2.02";
+			var sAppVersion2 = "1.2.1";
+			var sDefaultAppVersion = "DEFAULT_APP_VERSION";
+			var oChange1_1 = {};
+			var oChange1_2 = {};
+			var oContext1_1 = {};
+			var oContext1_2 = {};
+			Cache._entries[sReference1] = {};
+			Cache._entries[sReference1][sAppVersion1] = {
+				file: {
+					changes: {
+						changes: [oChange1_1],
+						contexts: []
+					}
+				}
+			};
+			Cache._entries[sReference1][sAppVersion2] = {
+				file: {
+					changes: {
+						changes: [oChange1_1, oChange1_2],
+						contexts: []
+					}
+				}
+			};
+			Cache._entries[sReference1][sDefaultAppVersion] = {
+				file: {
+					changes: {
+						changes: [oChange1_1, oChange1_2],
+						contexts: []
+					}
+				}
+			};
+
+			var sReference2 = "ref02";
+			var oChange2_1 = {};
+			var oChange2_2 = {};
+			var oChange2_3 = {};
+			var oContext2_1 = {};
+			Cache._entries[sReference2] = {};
+			Cache._entries[sReference2][sAppVersion1] = {
+				file: {
+					changes: {
+						changes: [oChange2_1, oChange2_2],
+						contexts: []
+					}
+				}
+			};
+			Cache._entries[sReference2][sAppVersion2] = {
+				file: {
+					changes: {
+						changes: [oChange2_1, oChange2_2, oChange2_3],
+						contexts: []
+					}
+				}
+			};
+			sandbox.stub(ContextManager, "getActiveContexts", function () {
+				return Promise.resolve([]);
+			});
+
+			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
+				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
+				assert.equal(Object.keys(oPayload).length, 5, "five object were passed");
+				var oPassedFlexData1 = oPayload[0];
+				assert.equal(oPassedFlexData1.reference, sReference2 + " - " + sAppVersion2);
+				var oPassedFlexData1 = oPayload[1];
+				assert.equal(oPassedFlexData1.reference, sReference2 + " - " + sAppVersion1);
+				var oPassedFlexData1 = oPayload[2];
+				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + "Version independent");
+				var oPassedFlexData2 = oPayload[3];
+				assert.equal(oPassedFlexData2.reference, sReference1 + " - " + sAppVersion2);
+				var oPassedFlexData2 = oPayload[4];
+				assert.equal(oPassedFlexData2.reference, sReference1 + " - " + sAppVersion1);
 				done();
 			});
 

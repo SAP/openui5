@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate'],
-	function(jQuery, CalendarUtils, UniversalDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarLegend'],
+	function(jQuery, CalendarUtils, UniversalDate, CalendarLegend) {
 	"use strict";
 
 
@@ -242,7 +242,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				sId: oMonth.getId(),
 				oFormatLong: oMonth._getFormatLong(),
 				sSecondaryCalendarType: oMonth._getSecondaryCalendarType(),
-				aTypes: []
+				oLegend: undefined
 			};
 
 		sLegendId = oMonth.getLegend();
@@ -250,10 +250,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		if (sLegendId && typeof sLegendId === "string") {
 			oLegend = sap.ui.getCore().byId(sLegendId);
 			if (oLegend) {
-				if (!(oLegend instanceof sap.ui.unified.CalendarLegend)) {
+				if (!(oLegend instanceof CalendarLegend)) {
 					throw new Error(oLegend + " is not a sap.ui.unified.CalendarLegend. " + oMonth);
 				}
-				oHelper.aTypes = oLegend.getItems();
+				oHelper.oLegend = oLegend;
 			} else {
 				jQuery.sap.log.warning("CalendarLegend " + sLegendId + " does not exist!", oMonth);
 			}
@@ -365,7 +365,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 					break;
 				}
 			}
-		}else	if ((iWeekDay >= oHelper.iWeekendStart && iWeekDay <= oHelper.iWeekendEnd) ||
+		} else if ((iWeekDay >= oHelper.iWeekendStart && iWeekDay <= oHelper.iWeekendEnd) ||
 				( oHelper.iWeekendEnd < oHelper.iWeekendStart && ( iWeekDay >= oHelper.iWeekendStart || iWeekDay <= oHelper.iWeekendEnd))) {
 			oRm.addClass("sapUiCalItemWeekEnd");
 		}
@@ -378,13 +378,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		mAccProps["label"] = mAccProps["label"] + oHelper.oFormatLong.format(oDay, true);
 
 		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
+			var sTypeLabelId,
+				oStaticLabel;
+
 			// as legend must not be rendered add text of type
-			for (i = 0; i < oHelper.aTypes.length; i++) {
-				var oLegendType = oHelper.aTypes[i];
-				if (oLegendType.getType() == oType.type) {
-					mAccProps["label"] = mAccProps["label"] + "; " + oLegendType.getText();
-					break;
+			if (oHelper.oLegend) {
+				var oLegendItem = oHelper.oLegend._getItemByType(oType.type);
+				if (oLegendItem) {
+					sTypeLabelId = oLegendItem.getId() + "-Text";
 				}
+			}
+
+			if (!sTypeLabelId) {
+				//use static invisible labels - "Type 1", "Type 2"
+				oStaticLabel = CalendarLegend.getTypeAriaText(oType.type);
+				if (oStaticLabel) {
+					sTypeLabelId = oStaticLabel.getId();
+				}
+			}
+
+			if (sTypeLabelId) {
+				mAccProps["describedby"] += " " + sTypeLabelId;
 			}
 		}
 		if (oHelper.sSecondaryCalendarType) {

@@ -9,8 +9,8 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	/**
 	 * Constructor for a new sap.m.FeedContent control.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class Displays a tile containing the text of the feed, a subheader, and a numeric value.
 	 * @extends sap.ui.core.Control
@@ -21,7 +21,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	 *
 	 * @public
 	 * @alias sap.m.FeedContent
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FeedContent = Control.extend("sap.m.FeedContent", /** @lends sap.m.FeedContent.prototype */ {
 		metadata : {
@@ -70,7 +70,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 			},
 			events : {
 				/**
-				 * The event is fired when the user chooses the feed content.
+				 * The event is triggered when the feed content is pressed.
 				 */
 				"press" : {}
 			}
@@ -189,10 +189,10 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	/**
 	 * Handler for tap event
 	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	FeedContent.prototype.ontap = function(oEvent) {
-		if (sap.ui.Device.browser.internet_explorer) {
+		if (sap.ui.Device.browser.msie) {
 			this.$().focus();
 		}
 		this.firePress();
@@ -201,7 +201,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	/**
 	 * Handler for keydown event
 	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	FeedContent.prototype.onkeydown = function(oEvent) {
 		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
@@ -214,7 +214,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	 * Attaches an event handler to the event with the given identifier for the current control
 	 *
 	 * @param {string} eventId The identifier of the event to listen for
-	 * @param {object} [data] An object that will be passed to the handler along with the event object when the event is fired
+	 * @param {object} [data] An object that will be passed to the handler along with the event object when the event is triggered
 	 * @param {function} functionToCall The handler function to call when the event occurs.
 	 * This function will be called in the context of the oListener instance (if present) or on the event provider instance.
 	 * The event object (sap.ui.base.Event) is provided as first argument of the handler.

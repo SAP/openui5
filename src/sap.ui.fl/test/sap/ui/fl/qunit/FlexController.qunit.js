@@ -64,7 +64,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 	QUnit.module("sap.ui.fl.FlexController", {
 		beforeEach: function () {
-			this.oFlexController = new FlexController("testScenarioComponent");
+			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oControl = new sap.ui.core.Control("existingId");
 			this.oChange = new Change(labelChangeContent);
 		},
@@ -305,7 +305,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.ok(oChange);
 
 
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController._sAppVersion);
 		var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
 		assert.strictEqual(aDirtyChanges.length, 1);
@@ -324,21 +324,12 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		fChangeHandler.completeChangeContent = sinon.stub();
 		sinon.stub(this.oFlexController, "_getChangeHandler").returns(fChangeHandler);
 
-		this.stub(Utils,"getAppDescriptor").returns({
-			"sap.app":{
-				id: "testScenarioComponent",
-				applicationVersion: {
-					version: "1.0.0"
-				}
-			}
-		});
-
 		//Call CUT
 		var oChange = this.oFlexController.addChange({}, oControl);
 		assert.ok(oChange);
 
 
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
 		var oCreateStub = sinon.stub();
 		oCreateStub.returns(Promise.resolve());
 		var oLrepConnectorMock = {
@@ -350,8 +341,8 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 		oChangePersistence.saveDirtyChanges();
 
-		assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.creation, "1.0.0");
-		assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.from, "1.0.0");
+		assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.creation, "1.2.3");
+		assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.from, "1.2.3");
 	});
 
 	QUnit.test("addChange shall add a change using the local id with respect to the root component as selector", function(assert) {
@@ -378,7 +369,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.ok(oChange);
 
 
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController._sAppVersion);
 		var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
 		assert.strictEqual(aDirtyChanges.length, 1);

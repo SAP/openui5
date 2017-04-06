@@ -149,10 +149,13 @@ function (EnterText, Press, Opa5) {
 								});
 							if (aExpected) {
 								aExpected.forEach(function (oExpected) {
-								Opa5.assert.ok(false,
-									"Expected warning or error not logged: " + oExpected.component
-									+ " Level: " + oExpected.level
-									+ " Message: " + oExpected.message );
+									var bIsLoggable = jQuery.sap.log.isLoggable(oExpected.level,
+											oExpected.component);
+									Opa5.assert.notOk(bIsLoggable,
+										"Expected warning or error not logged: "
+											+ oExpected.component
+											+ " Level: " + oExpected.level
+											+ " Message: " + oExpected.message );
 								});
 							}
 							Opa5.assert.ok(true, "Log checked");

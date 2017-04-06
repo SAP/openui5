@@ -138,7 +138,10 @@ sap.ui.define([
 	 * @private
 	 */
 	LrepConnector._getLayerSuffix = function (sLayer) {
-		return sLayer !== "All" ? "?sLayer=" + sLayer : "";
+		if (sLayer === "All"){
+			return "";
+		}
+		return "?layer=" + sLayer;
 	};
 
 	/**

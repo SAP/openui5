@@ -44,7 +44,7 @@
 						width="11rem">
 						<m:Label text="{/#Product/Name/@sap:label}" />
 						<template>
-							<m:Text text="{Name}"/>
+							<m:Text text="{Name}" wrapping="false" />
 						</template>
 					</Column>
 					<Column
@@ -54,7 +54,7 @@
 						width="6rem">
 						<m:Label text="{/#Product/ProductID/@sap:label}" />
 						<template>
-							<m:Text text="{ProductID}"/>
+							<m:Text text="{ProductID}" wrapping="false" />
 						</template>
 					</Column>
 					<Column
@@ -64,7 +64,7 @@
 						width="11rem">
 						<m:Label text="{/#Product/Category/@sap:label}" />
 						<template>
-							<m:Text text="{Category}"/>
+							<m:Text text="{Category}" wrapping="false" />
 						</template>
 					</Column>
 					<Column
@@ -74,7 +74,7 @@
 						width="12rem">
 						<m:Label text="{/#Product/SupplierName/@sap:label}" />
 						<template>
-							<m:Text text="{SupplierName}"/>
+							<m:Text text="{SupplierName}" wrapping="false" />
 						</template>
 					</Column>
 					<Column
@@ -94,7 +94,7 @@
 						width="9rem">
 						<m:Label text="{/#Product/Width/@sap:label}" />
 						<template>
-							<m:Text text="{Width}x{Height}x{Depth} {DimUnit}"/>
+							<m:Text text="{Width}x{Height}x{Depth} {DimUnit}" wrapping="false" />
 						</template>
 					</Column>
 				</columns>

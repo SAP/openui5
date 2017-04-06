@@ -108,6 +108,15 @@
 				"config": "test-resources/sap/m/demokit/iconExplorer/demoapp.json"
 			},
 			{
+				"icon": "palette",
+				"text": "Theme Parameter Toolbox",
+				"desc": "Search, filter and preview semantic theme parameters",
+				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
+				"category": "Showcase",
+				"teaser": "test-resources/sap/m/demokit/theming/demoappteaser",
+				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
+			},
+			{
 				"icon": "retail-store-manager",
 				"text": "Browse Orders",
 				"desc": "Master-detail app for browsing orders",
@@ -265,7 +274,7 @@
 		  "category": "User Input",
 		  "since": "1.22",
 		  "formFactors": "L",
-		  "samples": ["sap.m.sample.DatePicker"]
+		  "samples": ["sap.m.sample.DatePicker", "sap.m.sample.DatePickerMassEdit"]
 		},
 		{
 		  "id": "sap.m.DateRangeSelection",
@@ -1797,6 +1806,11 @@
 		  "description": "The Date Picker is an extension of the Input control and is dedicated to Date."
 		},
 		{
+		  "id": "sap.m.sample.DatePickerMassEdit",
+		  "name": "Date Picker Mass Editing Scenario",
+		  "description": "Using calendar in a dialog for changing dates in mass editing scenario."
+		},
+		{
 		  "id": "sap.m.sample.DateTimeInput",
 		  "name": "Date Time Input",
 		  "description": "The Date & Time Input control allows input of dates and times using date and time pickers. [Deprecated since 1.32.8]"
@@ -2488,8 +2502,8 @@
 		},
 		{
 		  "id": "sap.m.sample.UploadCollectionSortingFiltering",
-		  "name": "With Sorting and Filtering Feature",
-		  "description": "Shows the UploadCollection with sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
+		  "name": "With Grouping, Sorting and Filtering Feature",
+		  "description": "Shows the UploadCollection with grouping, sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",

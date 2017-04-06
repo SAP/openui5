@@ -102,13 +102,6 @@ sap.ui.define([
 					});
 				},
 
-				theObjectViewShouldContainOnlyFormattedUnitNumbers: function() {
-					return this.theUnitNumbersShouldHaveTwoDecimals("sap.m.ObjectHeader",
-						sViewName,
-						"Object header are properly formatted",
-						"Object view has no entries which can be checked for their formatting");
-				},
-
 				theShareTileButtonShouldContainTheRememberedObjectName: function() {
 					return this.waitFor({
 						id: "shareTile",
