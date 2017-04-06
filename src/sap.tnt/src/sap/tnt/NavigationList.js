@@ -86,6 +86,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			this.addEventDelegate(this._itemNavigation);
 
 			this._itemNavigation.setPageSize(10);
+			this._itemNavigation.setDisabledModifiers({
+				sapnext : ["alt", "meta"],
+				sapprevious : ["alt", "meta"]
+			});
 
 			this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
