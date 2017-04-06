@@ -359,9 +359,11 @@ sap.ui.require([
 					},
 					sPath : "/ProductList",
 					applyParameters : function () {}
-				});
+				}),
+				oBindingMock = this.mock(oBinding);
 
-			this.mock(oBinding).expects("applyParameters")
+			oBindingMock.expects("hasPendingChanges").returns(false);
+			oBindingMock.expects("applyParameters")
 				.withExactArgs(oFixture.mExpectedParameters, ChangeReason.Change);
 
 			// code under test
@@ -370,19 +372,63 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("changeParameters: with undefined map", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			});
+
+		this.mock(oBinding).expects("applyParameters").never();
+
+		// code under test
+		assert.throws(function () {
+			oBinding.changeParameters(undefined);
+		}, new Error("Missing map of binding parameters"));
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("changeParameters: with binding parameters", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oModel : {},
 				mParameters : {},
-				sPath : "/EMPLOYEES"
-			});
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("applyParameters").never();
+		oBindingMock.expects("hasPendingChanges").returns(false);
 
 		//code under test
 		assert.throws(function () {
-			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)",
-				"$$groupId" : "newGroupId"});
+			oBinding.changeParameters({
+				"$filter" : "filter(Amount gt 3)",
+				"$$groupId" : "newGroupId"
+			});
 		}, new Error("Unsupported parameter: $$groupId"));
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
 
+	//*********************************************************************************************
+	QUnit.test("changeParameters: with pending changes", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("applyParameters").never();
+		oBindingMock.expects("hasPendingChanges").returns(true);
+
+		assert.throws(function () {
+			//code under test
+			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)"});
+		}, new Error("Cannot change parameters due to pending changes"));
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
 	});
 
@@ -392,29 +438,14 @@ sap.ui.require([
 				oModel : {},
 				sPath : "/EMPLOYEES",
 				applyParameters : function () {}
-			});
+			}),
+			oBindingMock = this.mock(oBinding);
 
-
-		this.mock(oBinding).expects("applyParameters").never();
+		oBindingMock.expects("hasPendingChanges").returns(false);
+		oBindingMock.expects("applyParameters").never();
 
 		// code under test
 		oBinding.changeParameters({});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: with undefined map", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oModel : {},
-				mParameters : {},
-				sPath : "/EMPLOYEES"
-			});
-
-		// code under test
-		assert.throws(function () {
-			oBinding.changeParameters(undefined);
-		}, new Error("Missing map of binding parameters"));
-
-		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
 	});
 
 	//*********************************************************************************************
@@ -424,6 +455,8 @@ sap.ui.require([
 				mParameters : {},
 				sPath : "/EMPLOYEES"
 			});
+
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 
 		// code under test
 		oBinding.changeParameters({$apply: undefined});
@@ -443,9 +476,11 @@ sap.ui.require([
 					},
 					sPath : "/EMPLOYEES",
 					applyParameters : function () {}
-				});
+				}),
+			oBindingMock = this.mock(oBinding);
 
-		this.mock(oBinding).expects("applyParameters").never();
+		oBindingMock.expects("hasPendingChanges").returns(false);
+		oBindingMock.expects("applyParameters").never();
 
 		// code under test
 		oBinding.changeParameters(mParameters);
@@ -492,6 +527,8 @@ sap.ui.require([
 					}
 				}
 			};
+
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 
 		// code under test
 		oBinding.changeParameters(mParameters);
@@ -705,11 +742,24 @@ sap.ui.require([
 						sPath : oFixture.sPath,
 						bRelative : bRelative
 					}),
-					oDependent0 = {checkUpdate : function () {}},
-					oDependent1 = {checkUpdate : function () {}};
+					fnGetContext = function () {
+						return {
+							created : function () {
+								return;
+							}
+						};
+					},
+					oDependent0 = {
+						checkUpdate : function () {},
+						getContext : fnGetContext
+					},
+					oDependent1 = {
+						checkUpdate : function () {},
+						getContext : fnGetContext
+					};
 
 				this.mock(oBinding.oModel).expects("getDependentBindings")
-					.withExactArgs(sinon.match.same(oBinding))
+					.withExactArgs(sinon.match.same(oBinding), true)
 					.returns([oDependent0, oDependent1]);
 				this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 				this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -741,11 +791,24 @@ sap.ui.require([
 				sPath : "TEAM_2_MANAGER",
 				bRelative : true
 			}),
-			oDependent0 = {checkUpdate : function () {}},
-			oDependent1 = {checkUpdate : function () {}};
+			fnGetContext = function () {
+				return {
+					created : function () {
+						return;
+					}
+				};
+			},
+			oDependent0 = {
+				checkUpdate : function () {},
+				getContext : fnGetContext
+			},
+			oDependent1 = {
+				checkUpdate : function () {},
+				getContext : fnGetContext
+			};
 
 		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
+			.withExactArgs(sinon.match.same(oBinding), true)
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -798,14 +861,27 @@ sap.ui.require([
 				refreshInternal : function () {},
 				bRelative : true
 			}),
-			oDependent0 = {checkUpdate : function () {}},
-			oDependent1 = {checkUpdate : function () {}},
+			fnGetContext = function () {
+				return {
+					created : function () {
+						return;
+					}
+				};
+			},
+			oDependent0 = {
+				checkUpdate : function () {},
+				getContext : fnGetContext
+			},
+			oDependent1 = {
+				checkUpdate : function () {},
+				getContext : fnGetContext
+			},
 			oPathPromise = Promise.resolve(sPath);
 
 		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(_SyncPromise.resolve(oPathPromise));
 		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
+			.withExactArgs(sinon.match.same(oBinding), true)
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -846,5 +922,101 @@ sap.ui.require([
 		oBinding.checkUpdate();
 
 		return oPathPromise.then(undefined, function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createInCache: with cache", function (assert) {
+		var oCache = {
+				create : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(oCache)
+			}),
+			oResult = {},
+			oCreatePromise = _SyncPromise.resolve(oResult),
+			fnCancel = function () {},
+			oInitialData = {};
+
+		this.mock(oCache).expects("create")
+			.withExactArgs("updateGroupId", "EMPLOYEES", "", sinon.match.same(oInitialData),
+				sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
+			.returns(oCreatePromise);
+
+		// code under test
+		assert.strictEqual(oBinding.createInCache("updateGroupId", "EMPLOYEES", "", oInitialData,
+			fnCancel).getResult(), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createInCache: binding w/o cache", function (assert) {
+		var oParentBinding = {
+				createInCache : function () {}
+			},
+			oContext = {
+				getBinding : function () {
+					return oParentBinding;
+				},
+				iIndex : 42
+			},
+			oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				oContext : oContext,
+				//getUpdateGroupId : function () {},
+				sPath : "SO_2_SCHEDULE"
+			}),
+			fnCancel = {},
+			oResult = {},
+			oCreatePromise = _SyncPromise.resolve(oResult),
+			oInitialData = {};
+
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs(42, "SO_2_SCHEDULE", "")
+			.returns("~");
+		this.mock(oParentBinding).expects("createInCache")
+			.withExactArgs("updateGroupId", "SalesOrderList('4711')/SO_2_SCHEDULE", "~",
+				oInitialData, sinon.match.same(fnCancel))
+			.returns(oCreatePromise);
+
+		assert.strictEqual(oBinding.createInCache("updateGroupId",
+			"SalesOrderList('4711')/SO_2_SCHEDULE", "", oInitialData, fnCancel).getResult(),
+			oResult);
+	});
+
+	//*********************************************************************************************
+	[
+		"EMPLOYEES",
+		_SyncPromise.resolve(Promise.resolve("EMPLOYEES"))
+	].forEach(function (vPostPath, i) {
+		QUnit.test("createInCache: error callback: " + i, function (assert) {
+			var oCache = {
+					create : function () {}
+				},
+				oBinding = new ODataParentBinding({
+					oCachePromise : _SyncPromise.resolve(oCache),
+					oModel : {
+						reportError : function () {}
+					}
+				}),
+				fnCancel = function () {},
+				oError = new Error(),
+				oExpectation,
+				oInitialData = {};
+
+			oExpectation = this.mock(oCache).expects("create")
+				.withExactArgs("updateGroupId", vPostPath, "", sinon.match.same(oInitialData),
+					sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
+				// we only want to observe fnErrorCallback, hence we neither resolve, nor reject
+				.returns(new Promise(function () {}));
+
+			// code under test
+			oBinding.createInCache("updateGroupId", vPostPath, "", oInitialData, fnCancel);
+
+			this.mock(oBinding.oModel).expects("reportError")
+				.withExactArgs("POST on 'EMPLOYEES' failed; will be repeated automatically",
+					"sap.ui.model.odata.v4.ODataParentBinding", sinon.match.same(oError));
+
+			// code under test
+			oExpectation.args[0][5](oError); // call fnErrorCallback to simulate error
+		});
 	});
 });

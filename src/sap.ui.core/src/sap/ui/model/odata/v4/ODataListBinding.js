@@ -297,7 +297,8 @@ sap.ui.define([
 	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
 	 * contains an entity created via this function, you cannot create another entity. This is only
 	 * possible after the creation of the entity has been successfully sent to the server and you
-	 * have called {@link #refresh} at the binding or the new entity is deleted in between.
+	 * have called {@link #refresh} at the (parent) binding, which is absolute or not relative to a
+	 * {@link sap.ui.model.odata.v4.Context}, or the new entity is deleted in between.
 	 *
 	 * For creating the new entity, the binding's update group ID is used, see binding parameter
 	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}.
@@ -318,40 +319,44 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity
 	 * @throws {Error}
-	 *   If the binding already contains an entity created via this function, or {@link #create} on
-	 *   this binding is not supported.
+	 *   If a relative binding is not yet resolved or if the binding already contains an entity
+	 *   created via this function
 	 *
 	 * @public
 	 * @since 1.43.0
 	 */
 	ODataListBinding.prototype.create = function (oInitialData) {
-		var oCache = this.oCachePromise.getResult(),
-			oContext,
-			sCreatePath,
-			sResolvedPath,
+		var oContext,
+			vCreatePath, // {string|SyncPromise}
+			oCreatePromise,
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
+
+		if (!sResolvedPath) {
+			throw new Error("Binding is not yet resolved: " + this);
+		}
 
 		if (this.aContexts[-1]) {
 			throw new Error("Must not create twice");
 		}
-		if (!oCache || !this.oCachePromise.isFulfilled()) {
-			throw new Error("Create on this binding is not supported");
+
+		vCreatePath = sResolvedPath.slice(1);
+		if (this.bRelative && this.oContext.fetchCanonicalPath) {
+			vCreatePath = this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+				return _Helper.buildPath(sCanonicalPath, that.sPath).slice(1);
+			});
 		}
-		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-		sCreatePath = sResolvedPath.slice(1);
-		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1,
-			oCache.create(this.getUpdateGroupId(), sCreatePath, "", oInitialData, function () {
+
+		oCreatePromise = this.createInCache(this.getUpdateGroupId(), vCreatePath, "", oInitialData,
+			function () {
 				// cancel callback
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
-			}, function (oError) {
-				// error callback
-				that.oModel.reportError("POST on '" + sCreatePath
-					+ "' failed; will be repeated automatically", sClassName, oError);
 			}).then(function () {
 				that.iMaxLength += 1;
-			}));
+			});
+		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1, oCreatePromise);
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});
@@ -1251,14 +1256,14 @@ sap.ui.define([
 				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				if (!oDependentBinding.getContext().created()) {
-					// Property bindings should not check for updates yet, otherwise they will cause
-					// a "Failed to drill down..." when the row is no longer part of the collection.
-					// They get another update request in createContexts, when the context for the
-					// row is reused.
-					oDependentBinding.refreshInternal(sGroupId, false);
-				}
+			// Skip bindings that have been created via ODataListBinding#create because after
+			// refresh the newly created context is gone. Avoid "Failed to drill down..." errors.
+			that.oModel.getDependentBindings(that, true).forEach(function (oDependentBinding) {
+				// Call refreshInternal with bCheckUpdate = false because property bindings should
+				// not check for updates yet, otherwise they will cause a "Failed to drill down..."
+				// when the row is no longer part of the collection. They get another update request
+				// in createContexts, when the context for the row is reused.
+				oDependentBinding.refreshInternal(sGroupId, false);
 			});
 		});
 	};

@@ -25,19 +25,38 @@
 					'demokit/sample/ViewTemplate/types/Opa.qunit.html'
 				];
 
+			// Adds the script tag that embeds the page into the Testrunner
+			function addScript() {
+				var oScriptElement = document.createElement("script");
+				oScriptElement.setAttribute("src",
+					sBase + "resources/sap/ui/qunit/qunit-redirect.js");
+				document.head.appendChild(oScriptElement);
+			}
+
+			// Filters aTests so that only tests w/o realOData=true remain
+			function filterTests() {
+				var mFiltered = {};
+
+				aTests.forEach(function (sTest) {
+					mFiltered[sTest.replace(/[?&]realOData=true/, "")] = true;
+				});
+				return Object.keys(mFiltered);
+			}
+
+			// For the onload handler and the button "Run"
 			window.runTests = function () {
 				var oLoginRequest = new XMLHttpRequest();
 
+				if (window !== parent) {
+					return; // We're already framed
+				}
 				// send a request to the service document from the v4 sample service to ensure that
 				// the credentials are known before running the test suite.
-				oLoginRequest.open("GET", sBase + "proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/"
-					+ "IWBEP/V4_GW_SAMPLE_BASIC/0001/");
+				oLoginRequest.open("GET", sBase + "proxy/sap/opu/odata4/sap/zui5_testv4/default/"
+					+ "sap/zui5_epm_sample/0001/");
 				oLoginRequest.addEventListener("load", function (oEvent) {
 					if (oLoginRequest.status === 200) {
-						var oScriptElement = document.createElement("script");
-						oScriptElement.setAttribute("src",
-							sBase + "resources/sap/ui/qunit/qunit-redirect.js");
-						document.head.appendChild(oScriptElement);
+						addScript();
 					} else {
 						alert("Could not access the real OData server: "
 							+ oLoginRequest.status + " " + oLoginRequest.statusText);
@@ -46,11 +65,21 @@
 				oLoginRequest.send();
 			}
 
+			// For the button "w/o realOData"
+			window.runWithoutRealOData = function () {
+				// inform the framed page that realOData tests are not wanted
+				location.href = location.href + "#noRealOData";
+				addScript();
+			}
+
 			window.addEventListener("load", runTests);
 
+			// Called from the Testrunner
 			window.suite = function () {
-				var oSuite = new parent.jsUnitTestSuite();
-				aTests.forEach(function (sUrl) {
+				var oSuite = new parent.jsUnitTestSuite(),
+					aSuiteTests = /#noRealOData/.test(location.href) ? filterTests() : aTests;
+
+				aSuiteTests.forEach(function (sUrl) {
 					oSuite.addTestPage(sTestRunnerBase + sTestPrefix + sUrl);
 				});
 				return oSuite;
@@ -61,6 +90,7 @@
 	<body>
 		<h1>UI Services Before Push Tests</h1>
 
-		<p><input type="button" value="Run" onclick="runTests()"></p>
+		<p><input type="button" value="Run" onclick="runTests()">
+		   <input type="button" value="w/o realOData" onclick="runWithoutRealOData()"></p>
 	</body>
 </html>

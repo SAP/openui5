@@ -468,7 +468,7 @@ sap.ui.require([
 		QUnit.test("Integration test for formatLiteral", function (assert) {
 			var done = assert.async(),
 			sResolvedServiceUrl = TestUtils.proxy(
-				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/");
 
 			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
 				+ "$filter=CompanyName eq + " + _Helper.formatLiteral("Becker Berlin", "Edm.String")
@@ -591,9 +591,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("namespace", function (assert) {
 		assert.strictEqual(_Helper.namespace("Products"), "");
-		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.Products"), "GW_SAMPLE_BASIC");
-		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.v1.Products"), "GW_SAMPLE_BASIC.v1");
-		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.v1.Products/Category/type.cast"),
-			"GW_SAMPLE_BASIC.v1");
+		assert.strictEqual(_Helper.namespace("zui5_epm_sample.Products"), "zui5_epm_sample");
+		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products"), "zui5_epm_sample.v1");
+		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products/Category/type.cast"),
+			"zui5_epm_sample.v1");
 	});
 });

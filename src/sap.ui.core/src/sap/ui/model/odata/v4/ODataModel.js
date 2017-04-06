@@ -724,17 +724,21 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Binding|sap.ui.model.Context} oParent
 	 *   The parent binding or context
+	 * @param {boolean} bSkipCreatedEntities
+	 *   Whether to skip bindings with a context that has been created by ODataListBinding#create
 	 * @returns {sap.ui.model.Binding[]}
 	 *   A list of all dependent bindings, never <code>null</code>
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.getDependentBindings = function (oParent) {
+	ODataModel.prototype.getDependentBindings = function (oParent, bSkipCreatedEntities) {
 		return this.aAllBindings.filter(function (oBinding) {
+			var oContext = oBinding.getContext();
+
 			return oBinding.isRelative()
-				&& (oBinding.getContext() === oParent
-						|| oBinding.getContext() && oBinding.getContext().getBinding
-							&& oBinding.getContext().getBinding() === oParent
+				&& !(bSkipCreatedEntities && oContext && oContext.created && oContext.created())
+				&& (oContext === oParent
+						|| oContext && oContext.getBinding && oContext.getBinding() === oParent
 					);
 		});
 	};

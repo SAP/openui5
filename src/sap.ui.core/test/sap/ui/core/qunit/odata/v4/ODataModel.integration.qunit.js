@@ -57,7 +57,7 @@ sap.ui.require([
 	 */
 	function createSalesOrdersModel(mModelParameters) {
 		return createModel(
-			"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/",
 			mModelParameters);
 	}
 
@@ -68,8 +68,10 @@ sap.ui.require([
 			TestUtils.setupODataV4Server(this.oSandbox, {
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "metadata.xml"},
-				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/$metadata"
-					: {source : "metadata_GW_SAMPLE_BASIC.xml"}
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
+					: {source : "metadata_tea_busi_product.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/$metadata"
+					: {source : "metadata_zui5_epm_sample.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
@@ -208,7 +210,7 @@ sap.ui.require([
 						: that.mListChanges[sControlId][i],
 					sVisibleId = i === undefined ? sControlId : sControlId + "[" + i + "]";
 
-				if (!aExpectedValues.length) {
+				if (!aExpectedValues || !aExpectedValues.length) {
 					assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
 				} else  {
 					assert.strictEqual(sValue, aExpectedValues.shift(),
@@ -218,7 +220,9 @@ sap.ui.require([
 			}
 
 			this.oModel = oModel || createTeaBusiModel();
-			this.stub(this.oModel.oRequestor, "request", checkRequest);
+			if (this.oModel.oRequestor.request) {
+				this.stub(this.oModel.oRequestor, "request", checkRequest);
+			}
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			this.oView = sap.ui.xmlview({
 				viewContent : '<mvc:View xmlns="sap.m" xmlns:form="sap.ui.layout.form" '
@@ -233,7 +237,10 @@ sap.ui.require([
 			});
 			Object.keys(this.mListChanges).forEach(function (sControlId) {
 				that.oView.byId(sControlId).getBindingInfo("text").formatter = function (sValue) {
-					checkValue(sValue, sControlId, this.getBindingContext().getIndex());
+					checkValue(sValue, sControlId,
+						this.getBindingContext().getIndex
+							? this.getBindingContext().getIndex()
+							: this.getBindingContext().getPath());
 				};
 			});
 
@@ -256,18 +263,26 @@ sap.ui.require([
 		 * this.expectChange("foo", "bar"); // expect value "bar" for the control with id "foo"
 		 * this.expectChange("foo"); // listen to changes for the control with id "foo", but do not
 		 *                           // expect a change (in createView)
+		 * this.expectChange("foo", false); // listen to changes for the control with id "foo", but
+		 *                                 // do not expect a change (in createView). To be used if
+		 *                                 // the control is a template within a table.
 		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
 		 *                                       // id "foo"
 		 * this.expectChange("foo", "c", 2); // expect value "c" for control with id "foo" in row 2
+		 * this.expectChange("foo", "d", "/MyEntitySet/ID");
+		 *                                 // expect value "d" for control with id "foo" in a
+		 *                                 // metamodel table on "/MyEntitySet/ID"
 		 * this.expectChange("foo", "bar").expectChange("foo", "baz"); // expect 2 changes for "foo"
 		 *
 		 * @param {string} sControlId The control ID
-		 * @param {string|string[]} [vValue] The expected value or a list of expected values
-		 * @param {number} [iRow] The row index in case that a change is expected for a single row
-		 *   of a list (in this case <code>vValue</code> must be a string)
+		 * @param {string|string[]|boolean} [vValue] The expected value, a list of expected values
+		 *   or <code>false</code> to enforce listening to a template control.
+		 * @param {number|string} [vRow] The row index (for the model) or the path of its parent
+		 *   context (for the metamodel) in case that a change is expected for a single row of a
+		 *   list (in this case <code>vValue</code> must be a string).
 		 * @returns {object} The test instance for chaining
 		 */
-		expectChange : function (sControlId, vValue, iRow) {
+		expectChange : function (sControlId, vValue, vRow) {
 			var aExpectations, i;
 
 			// Ensures that oObject[vProperty] is an array and returns it
@@ -283,7 +298,9 @@ sap.ui.require([
 				}
 			} else if (arguments.length === 3) {
 				// This may create a sparse array this.mListChanges[sControlId]
-				array(array(this.mListChanges, sControlId), iRow).push(vValue);
+				array(array(this.mListChanges, sControlId), vRow).push(vValue);
+			} else if (vValue === false) {
+				array(this.mListChanges, sControlId);
 			} else {
 				aExpectations = array(this.mChanges, sControlId);
 				if (arguments.length > 1) {
@@ -1179,6 +1196,146 @@ sap.ui.require([
 	QUnit.test("reset invalid data state via model", function (assert) {
 		return this.checkResetInvalidDataState(assert, function (oView) {
 			return oView.getModel();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Metadata access to Manager which is not loaded yet.
+	QUnit.test("Metadata: Manager", function (assert) {
+		var sView = '\
+<Table id="table" items="{/MANAGERS}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="item" text="{@sapui.name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createTeaBusiModel().getMetaModel(),
+			that = this;
+
+		this.expectChange("item", false);
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("item", "ID", "/MANAGERS/ID")
+				.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
+				.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Metadata access to Product which resides in an include
+	QUnit.test("Metadata: Product", function (assert) {
+		var sView = '\
+<Table id="table" items="{/Equipments/EQUIPMENT_2_PRODUCT}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="item" text="{@sapui.name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createTeaBusiModel().getMetaModel(),
+			that = this;
+
+		return oModel.requestObject("/Equipments").then(function () {
+			that.expectChange("item", false);
+			return that.createView(assert, sView, oModel);
+		}).then(function () {
+			that.expectChange("item", "ID", "/Equipments/EQUIPMENT_2_PRODUCT/ID")
+				.expectChange("item", "Name", "/Equipments/EQUIPMENT_2_PRODUCT/Name")
+				.expectChange("item", "SupplierIdentifier",
+					"/Equipments/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
+				.expectChange("item", "PRODUCT_2_CATEGORY",
+					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY")
+				.expectChange("item", "PRODUCT_2_SUPPLIER",
+					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Metadata property access to product name. It should be empty initially, but later
+	// updated via a change event.
+	QUnit.test("Metadata: Product name", function (assert) {
+		var sView = '<Text id="product" text="{/Equipments/EQUIPMENT_2_PRODUCT/@sapui.name}" />',
+			oModel = createTeaBusiModel().getMetaModel(),
+			that = this;
+
+		oModel.setDefaultBindingMode("OneWay");
+		return oModel.requestObject("/Equipments").then(function () {
+			that.expectChange("product", undefined);
+			return that.createView(assert, sView, oModel);
+		}).then(function () {
+			that.expectChange("product",
+					"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Metadata property access to product name. It should be empty initially, but later
+	// updated via a change event.
+	QUnit.test("Metadata: Product name via form", function (assert) {
+		var sView = '\
+<form:SimpleForm binding="{/Equipments/EQUIPMENT_2_PRODUCT/}">\
+	<Text id="product" text="{@sapui.name}" />\
+</form:SimpleForm>',
+			oModel = createTeaBusiModel().getMetaModel(),
+			that = this;
+
+		oModel.setDefaultBindingMode("OneWay");
+		return oModel.requestObject("/Equipments").then(function () {
+			that.expectChange("product", undefined);
+			return that.createView(assert, sView, oModel);
+		}).then(function () {
+			that.expectChange("product",
+					"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Metadata access to Managers which is not loaded yet. The binding is unresolved
+	// initially and gets a context later. Then switch to Products (becoming asynchronous again).
+	QUnit.test("Metadata: Manager", function (assert) {
+		var sView = '\
+<Table id="table" items="{}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="item" text="{@sapui.name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createTeaBusiModel().getMetaModel(),
+			that = this;
+
+		oModel.setDefaultBindingMode("OneWay");
+		this.expectChange("item", false);
+		this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("item", "ID", "/MANAGERS/ID")
+				.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
+				.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
+
+			that.oView.byId("table").setBindingContext(oModel.getContext("/MANAGERS"));
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("item", "ID", "/Equipments/EQUIPMENT_2_PRODUCT/ID")
+				.expectChange("item", "Name", "/Equipments/EQUIPMENT_2_PRODUCT/Name")
+				.expectChange("item", "SupplierIdentifier",
+					"/Equipments/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
+				.expectChange("item", "PRODUCT_2_CATEGORY",
+					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY")
+				.expectChange("item", "PRODUCT_2_SUPPLIER",
+					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER");
+
+			that.oView.byId("table")
+				.setBindingContext(oModel.getContext("/Equipments/EQUIPMENT_2_PRODUCT"));
+			return that.waitForChanges(assert);
 		});
 	});
 	//TODO $batch?

@@ -19,9 +19,28 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
+		SOITEM_NOTE_COLUMN_INDEX = 9,
 		ITEM_COLUMN_INDEX = 1,
 		sLastNewNoteValue,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+
+	/*
+	 * Search for the control with the given ID, extract the number and compare with the expected
+	 * count.
+	 */
+	function checkCount(oOpa, iExpectedCount, sTitleId) {
+		return oOpa.waitFor({
+			id : sTitleId,
+			success : function (oTitle) {
+				Opa5.assert.strictEqual(
+					// extract number from title
+					Number(oTitle.getText().split(" ")[0]),
+					iExpectedCount,
+					"Expected count for " + sTitleId + ": " + iExpectedCount);
+			},
+			viewName : sViewName
+		});
+	}
 
 	function handleMessageBox(oOpa, sTitle, bConfirm, sLog) {
 		return oOpa.waitFor({
@@ -158,11 +177,33 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				changeSalesOrderLineItemNote : function (iRow, sNewNoteValue) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderTable) {
+							var oRow = oSalesOrderTable.getItems()[iRow];
+
+							oRow.getCells()[SOITEM_NOTE_COLUMN_INDEX].setValue(sNewNoteValue);
+							Opa5.assert.ok(true,
+								"SO Item Note of row " + iRow + " set to " + sNewNoteValue);
+						},
+						viewName : sViewName
+					});
+				},
 				deleteSelectedSalesOrder : function () {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "deleteSalesOrder",
+						viewName : sViewName
+					});
+				},
+				deleteSelectedSalesOrderLineItem : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "deleteSalesOrderLineItem",
 						viewName : sViewName
 					});
 				},
@@ -254,13 +295,24 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
-				pressCancelSalesOrdersChangesButton : function () {
+				pressCancelSalesOrderChangesButton : function () {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
-						id : "cancelSalesOrdersChanges",
-						success : function (oCreateSalesOrderButton) {
-							Opa5.assert.ok(true, "Cancel Sales Orders Changes button pressed");
+						id : "cancelSalesOrderChanges",
+						success : function (oCancelSalesOrderChangesButton) {
+							Opa5.assert.ok(true, "Cancel Sales Order Changes button pressed");
+						},
+						viewName : sViewName
+					});
+				},
+				pressCancelSalesOrderListChangesButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "cancelSalesOrderListChanges",
+						success : function (oCancelSalesOrderListChangesButton) {
+							Opa5.assert.ok(true, "Cancel Sales Order List Changes button pressed");
 						},
 						viewName : sViewName
 					});
@@ -272,6 +324,17 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						id : "confirmSalesOrder",
 						success : function (oCreateSalesOrderButton) {
 							Opa5.assert.ok(true, "Confirm Sales Order button pressed");
+						},
+						viewName : sViewName
+					});
+				},
+				pressCreateSalesOrderItemButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "createSalesOrderLineItem",
+						success : function (oCreateSalesOrderLineItemButton) {
+							Opa5.assert.ok(true, "Create Sales Order Line Item button pressed");
 						},
 						viewName : sViewName
 					});
@@ -306,6 +369,14 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						success : function (aControls) {
 							Opa5.assert.ok(true, "Refresh Sales Orders pressed");
 						},
+						viewName : sViewName
+					});
+				},
+				pressSaveSalesOrderButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "saveSalesOrder",
 						viewName : sViewName
 					});
 				},
@@ -382,6 +453,14 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "sortByGrossAmount",
+						viewName : sViewName
+					});
+				},
+				sortBySalesOrderID  : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "sortBySalesOrderID",
 						viewName : sViewName
 					});
 				},
@@ -513,6 +592,9 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 				checkLog : function (aExpected) {
 					return this.waitFor({
 						success : function (oControl) {
+							var aLogEntries = jQuery.sap.log.getLogEntries(),
+								iStartIndex = sap.ui.test.Opa.getContext().iNextLogIndex;
+
 							function isExpected(oLog) {
 								if (!aExpected) {
 									return false;
@@ -527,26 +609,26 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 								});
 							}
 
-							jQuery.sap.log.getLogEntries()
-								.forEach(function (oLog) {
-									var sComponent = oLog.component || "";
+							sap.ui.test.Opa.getContext().iNextLogIndex = aLogEntries.length;
+							aLogEntries.splice(iStartIndex).forEach(function (oLog) {
+								var sComponent = oLog.component || "";
 
-									if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
-											|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
-											&& oLog.level <= jQuery.sap.log.Level.WARNING) {
-										if (isExpected(oLog)) {
-											Opa5.assert.ok(true,
-												"Expected Warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-										} else {
-											Opa5.assert.ok(false,
-												"Unexpected warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-										}
+								if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
+										|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
+										&& oLog.level <= jQuery.sap.log.Level.WARNING) {
+									if (isExpected(oLog)) {
+										Opa5.assert.ok(true,
+											"Expected Warning or error found: " + sComponent
+											+ " Level: " + oLog.level
+											+ " Message: " + oLog.message );
+									} else {
+										Opa5.assert.ok(false,
+											"Unexpected warning or error found: " + sComponent
+											+ " Level: " + oLog.level
+											+ " Message: " + oLog.message );
 									}
-								});
+								}
+							});
 							if (aExpected) {
 								aExpected.forEach(function (oExpected) {
 								Opa5.assert.ok(false,
@@ -571,6 +653,16 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 							Opa5.assert.strictEqual(oRow.getCells()[NOTE_COLUMN_INDEX].getValue(),
 								sExpectedNote,
 								"Note of row " + iRow + " as expected " + sExpectedNote);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrderDetailsNote: function () {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "Note",
+						success : function (oSONote) {
+							Opa5.assert.strictEqual(oSONote.getValue(), "");
 						},
 						viewName : sViewName
 					});
@@ -612,26 +704,11 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
-				checkSalesOrderDetailsNote: function () {
-					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : "Note",
-						success : function (oSONote) {
-							Opa5.assert.strictEqual(oSONote.getValue(), "");
-						},
-						viewName : sViewName
-					});
+				checkSalesOrderItemsCount : function (iExpectedCount) {
+					return checkCount(this, iExpectedCount, "SalesOrderLineItemsTitle");
 				},
 				checkSalesOrdersCount : function (iExpectedCount) {
-					return this.waitFor({
-						controlType : "sap.m.Text",
-						id : "SalesOrdersTitle",
-						success : function (oText) {
-							Opa5.assert.strictEqual(oText.getText(),
-								iExpectedCount + " Sales Orders", iExpectedCount + " Sales Orders");
-						},
-						viewName : sViewName
-					});
+					return checkCount(this, iExpectedCount, "SalesOrdersTitle");
 				},
 				checkSalesOrderSelected : function (iRow) {
 					return this.waitFor({
@@ -657,6 +734,19 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				checkTableLength : function (iExpectedLength, sTableId) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : sTableId,
+						success : function (oTable) {
+							Opa5.assert.strictEqual(oTable.getBinding("items").getLength(),
+								iExpectedLength,
+								"Expected length for table with ID " + sTableId + ": "
+									+ iExpectedLength);
+						},
+						viewName : sViewName
+					});
+				},
 				cleanUp : function() {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -674,6 +764,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 									{"If-Match" : "*"}));
 								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
 							});
+							sap.ui.test.Opa.getContext().aOrderIds = [];
 							oRequestor.submitBatch("Cleanup").then(function () {
 								Opa5.assert.ok(true, "Cleanup finished");
 								bCleanUpFinished = true;
@@ -721,6 +812,27 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						success : function (aControls) {
 							aControls[0].getButtons()[0].$().tap(); // confirm deletion
 							Opa5.assert.ok(true, "Confirm Delete Sales Order");
+						}
+					});
+				}
+			},
+			assertions : {}
+		},
+		/*
+		 * Actions and assertions for the "Sales Order Deletion" confirmation dialog
+		 */
+		onTheSalesOrderLineItemDeletionConfirmation : {
+			actions : {
+				cancel : function () {
+					return handleMessageBox(this, "Sales Order Line Item Deletion", false);
+				},
+				confirm : function () {
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						matchers : new Properties({title : "Sales Order Line Item Deletion"}),
+						success : function (aControls) {
+							aControls[0].getButtons()[0].$().tap(); // confirm deletion
+							Opa5.assert.ok(true, "Confirm Delete Sales Line Item Order");
 						}
 					});
 				}

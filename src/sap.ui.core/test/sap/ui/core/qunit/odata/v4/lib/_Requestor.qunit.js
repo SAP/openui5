@@ -14,7 +14,7 @@ sap.ui.require([
 
 	var sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		sSampleServiceUrl
-			= "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/";
+			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/";
 
 	/**
 	 * Creates a mock for jQuery's XHR wrapper.
@@ -1424,6 +1424,16 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(_Requestor.cleanBatch(aRequests), aRequests);
 		assert.deepEqual(aRequests, aResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: $cached as groupId", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		assert.throws(function(){
+			//code under test
+			oRequestor.request("GET", "/FOO", "$cached");
+		},  new Error("Unexpected request: GET /FOO"));
 	});
 
 	//*********************************************************************************************
