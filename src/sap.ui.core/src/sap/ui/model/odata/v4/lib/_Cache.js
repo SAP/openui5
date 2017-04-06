@@ -311,6 +311,89 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
+	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
+	 * with an Error object, the POST request is automatically added again to the same batch
+	 * group (for application group IDs) or parked (for '$auto' or '$direct'). Parked POST requests
+	 * are repeated with the next update of the entity data.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string|SyncPromise} vPostPath
+	 *   The path for the POST request or a SyncPromise that resolves with that path
+	 * @param {string} sPath
+	 *   The entity's path within the cache
+	 * @param {string} [oEntityData={}]
+	 *   The initial entity data
+	 * @param {function} fnCancelCallback
+	 *   A function which is called after a transient entity has been canceled from the cache
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an Error object each time a POST request fails
+	 * @returns {Promise}
+	 *   A promise which is resolved without data when the POST request has been successfully sent
+	 *   and the entity has been marked as non-transient
+	 */
+	Cache.prototype.create = function (sGroupId, vPostPath, sPath, oEntityData,
+			fnCancelCallback, fnErrorCallback) {
+		var vCacheData, aCollection, sNavigationProperty, aSegments, that = this;
+
+		// Clean-up when the create has been canceled.
+		function cleanUp() {
+			delete aCollection[-1];
+			fnCancelCallback();
+		}
+
+		// Sets a marker that the create request is pending, so that update and delete fail.
+		function setCreatePending() {
+			oEntityData["@$ui5.transient"] = true;
+		}
+
+		function request(sPostGroupId) {
+			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
+			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
+				sPostPath += Cache.buildQueryString(that.mQueryOptions, true);
+				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
+						setCreatePending, cleanUp)
+					.then(function (oResult) {
+						delete oEntityData["@$ui5.transient"];
+						// now the server has one more element
+						addToCount(that.mChangeListeners, sPath, aCollection, 1);
+						// update the cache with the POST response
+						_Helper.updateCache(that.mChangeListeners, _Helper.buildPath(sPath, "-1"),
+							oEntityData, oResult);
+					}, function (oError) {
+						if (oError.canceled) {
+							// for cancellation no error is reported via fnErrorCallback
+							throw oError;
+						}
+						if (fnErrorCallback) {
+							fnErrorCallback(oError);
+						}
+						return request(sPostGroupId === "$auto" || sPostGroupId === "$direct"
+							? "$parked." + sPostGroupId : sPostGroupId);
+				});
+			});
+		}
+
+		// clone data to avoid modifications outside the cache
+		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
+
+		aSegments = sPath.split("/");
+		sNavigationProperty = aSegments.pop();
+		vCacheData = this.fetchValue("$cached", aSegments.join("/")).getResult();
+		aCollection = sNavigationProperty ? vCacheData[sNavigationProperty] : vCacheData;
+		if (!Array.isArray(aCollection)) {
+			throw new Error("Create is only supported for collections; '" + sPath
+					+ "' does not reference a collection");
+		}
+		aCollection[-1] = oEntityData;
+
+		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
+		oEntityData["@odata.etag"] = undefined;
+		return request(sGroupId);
+	};
+
+	/**
 	 * Deregisters the given change listener.
 	 *
 	 * @param {string} sPath
@@ -586,76 +669,6 @@ sap.ui.define([
 	// make CollectionCache a Cache
 	CollectionCache.prototype = Object.create(Cache.prototype);
 
-	/**
-	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
-	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
-	 * with an Error object, the POST request is automatically added again to the same batch
-	 * group (for application group IDs) or parked (for '$auto' or '$direct'). Parked POST requests
-	 * are repeated with the next update of the entity data.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {string} sPostPath
-	 *   The path for the POST request
-	 * @param {string} sPath
-	 *   The entity's path within the cache
-	 * @param {string} [oEntityData={}]
-	 *   The initial entity data
-	 * @param {function} fnCancelCallback
-	 *   A function which is called after a transient entity has been canceled from the cache
-	 * @param {function} fnErrorCallback
-	 *   A function which is called with an Error object each time a POST request fails
-	 * @returns {Promise}
-	 *   A promise which is resolved without data when the POST request has been successfully sent
-	 *   and the entity has been marked as non-transient
-	 */
-	CollectionCache.prototype.create = function (sGroupId, sPostPath, sPath, oEntityData,
-			fnCancelCallback, fnErrorCallback) {
-		var that = this;
-
-		// Clean-up when the create has been canceled.
-		function cleanUp() {
-			delete that.aElements[-1];
-			fnCancelCallback();
-		}
-
-		// Sets a marker that the create request is pending, so that update and delete fail.
-		function setCreatePending() {
-			oEntityData["@$ui5.transient"] = true;
-		}
-
-		function request(sPostGroupId) {
-			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
-			return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
-					setCreatePending, cleanUp)
-				.then(function (oResult) {
-					delete oEntityData["@$ui5.transient"];
-					// now the server has one more element
-					addToCount(that.mChangeListeners, "", that.aElements, 1);
-					// update the cache with the POST response
-					_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
-				}, function (oError) {
-					if (oError.canceled) {
-						// for cancellation no error is reported via fnErrorCallback
-						throw oError;
-					}
-					if (fnErrorCallback) {
-						fnErrorCallback(oError);
-					}
-					return request(sPostGroupId === "$auto" || sPostGroupId === "$direct"
-						? "$parked." + sPostGroupId : sPostGroupId);
-				});
-		}
-
-		// clone data to avoid modifications outside the cache
-		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
-
-		this.aElements[-1] = oEntityData;
-		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
-		oEntityData["@odata.etag"] = undefined;
-		sPostPath += Cache.buildQueryString(this.mQueryOptions, true);
-		return request(sGroupId);
-	};
 
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
@@ -840,6 +853,16 @@ sap.ui.define([
 	 *   Deletion of a property is not supported.
 	 */
 	PropertyCache.prototype._delete = function () {
+		throw new Error("Unsupported");
+	};
+
+	/**
+	 * Not supported.
+	 *
+	 * @throws {Error}
+	 *   Creation of a property is not supported.
+	 */
+	PropertyCache.prototype.create = function () {
 		throw new Error("Unsupported");
 	};
 

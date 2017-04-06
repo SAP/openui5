@@ -26,16 +26,24 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
-	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
-	 * according to the given map of parameters: Parameters with an <code>undefined</code> value are
-	 * removed, the other parameters are set, and missing parameters remain unchanged.
+	 * Changes this binding's parameters and refreshes the binding.
+	 *
+	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
+	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
+	 * {@link #changeParameters}.
+	 *
+	 * The parameters are changed according to the given map of parameters: Parameters with an
+	 * <code>undefined</code> value are removed, the other parameters are set, and missing
+	 * parameters remain unchanged.
 	 *
 	 * @param {object} mParameters
 	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 * @throws {Error}
-	 *   If <code>mParameters</code> is missing, contains binding-specific or unsupported
-	 *   parameters, or contains unsupported values.
+	 *   If there are pending changes or if <code>mParameters</code> is missing,
+	 *   contains binding-specific or unsupported parameters, or contains unsupported values.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -47,6 +55,9 @@ sap.ui.define([
 
 		if (!mParameters) {
 			throw new Error("Missing map of binding parameters");
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot change parameters due to pending changes");
 		}
 
 		for (sKey in mParameters) {
@@ -83,7 +94,10 @@ sap.ui.define([
 
 		function updateDependents() {
 			// Do not fire a change event in ListBinding, there is no change in the list of contexts
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+			// Skip bindings that have been created via ODataListBinding#create: context with index
+			// -1 does not exist any more after a refresh and updates via cache directly notify the
+			// bindings
+			that.oModel.getDependentBindings(that, true).forEach(function (oDependentBinding) {
 				oDependentBinding.checkUpdate();
 			});
 		}
@@ -108,6 +122,46 @@ sap.ui.define([
 			} else {
 				updateDependents();
 			}
+		});
+	};
+
+	/**
+	 * Creates the entity in the cache. If the binding doesn't have a cache, it forwards to the
+	 * parent binding adjusting <code>sPathInCache</code>.
+	 *
+	 * @param {string} sUpdateGroupId
+	 *   The group ID to be used for the POST request
+	 * @param {string|SyncPromise} vCreatePath
+	 *   The path for the POST request or a SyncPromise that resolves with that path
+	 * @param {string} sPathInCache
+	 *   The path within the cache where to create the entity
+	 * @param {object} oInitialData
+	 *   The initial data for the created entity
+	 * @param {function} fnCancelCallback
+	 *   A function which is called after a transient entity has been canceled from the cache
+	 * @returns {SyncPromise}
+	 *   The create Promise which is resolved without data when the POST request has been
+	 *   successfully sent and the entity has been marked as non-transient
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.createInCache = function (sUpdateGroupId, vCreatePath,
+			sPathInCache, oInitialData, fnCancelCallback) {
+		var that = this;
+
+		return this.oCachePromise.then(function (oCache) {
+			if (oCache) {
+				return oCache.create(sUpdateGroupId, vCreatePath, sPathInCache, oInitialData,
+					fnCancelCallback, function (oError) {
+						// error callback
+						that.oModel.reportError("POST on '" + vCreatePath
+								+ "' failed; will be repeated automatically",
+							"sap.ui.model.odata.v4.ODataParentBinding", oError);
+				});
+			}
+			return that.oContext.getBinding().createInCache(sUpdateGroupId, vCreatePath,
+				_Helper.buildPath(that.oContext.iIndex, that.sPath, sPathInCache), oInitialData,
+				fnCancelCallback);
 		});
 	};
 

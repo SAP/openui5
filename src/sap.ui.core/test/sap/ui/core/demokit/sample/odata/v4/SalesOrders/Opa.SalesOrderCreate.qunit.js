@@ -21,7 +21,7 @@ sap.ui.require([
 	//*****************************************************************************
 	opaTest("Create, modify and delete", function (Given, When, Then) {
 		var oExpectedLog = {
-				component : "sap.ui.model.odata.v4.ODataListBinding",
+				component : "sap.ui.model.odata.v4.ODataParentBinding",
 				level : jQuery.sap.log.Level.ERROR,
 				message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 			},
@@ -134,7 +134,7 @@ sap.ui.require([
 		// Create a sales order, press "cancel sales order changes" w/o saving
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
-		When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+		When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 		When.onTheMainPage.firstSalesOrderIsAtPos0();
 		if (!bRealOData) {
 			Then.onTheMainPage.checkSalesOrdersCount(10);
@@ -151,7 +151,7 @@ sap.ui.require([
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
-			When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 			When.onTheMainPage.firstSalesOrderIsAtPos0();
 			// Create a sales order with invalid note, save, update note, save -> success
 			When.onTheMainPage.pressCreateSalesOrdersButton();
@@ -191,6 +191,11 @@ sap.ui.require([
 			When.onTheMainPage.sortByGrossAmount();
 			When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(1);
 			Then.onTheMainPage.checkSalesOrderItemInRow(0);
+			// Sort via changeParameters
+			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID ascending
+			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
+			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID descending
+			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
 			// Change SalesOrderDetails $select via API
 			When.onTheMainPage.unselectSODetailsNoteWithChangeParameters();
 			Then.onTheMainPage.checkSalesOrderDetailsNote();
@@ -224,8 +229,8 @@ sap.ui.require([
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
 		Then.onTheMainPage.checkLog(bRealOData
-				? [oExpectedLog, oExpectedLog, oExpectedLog, oExpectedLogChangeParameters]
-				: undefined);
+			? [oExpectedLog, oExpectedLog, oExpectedLog, oExpectedLogChangeParameters]
+			: undefined);
 		Then.iTeardownMyUIComponent();
 	});
 });

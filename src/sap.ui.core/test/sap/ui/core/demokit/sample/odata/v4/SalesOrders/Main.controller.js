@@ -17,7 +17,7 @@ sap.ui.define([
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
-		sServiceNamespace = "com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.";
+		sServiceNamespace = "com.sap.gateway.default.zui5_epm_sample.v0001.";
 
 //	function onRejected(oError) {
 //		jQuery.sap.log.error(oError.message, oError.stack);
@@ -52,6 +52,26 @@ sap.ui.define([
 			oView.byId("SalesOrderLineItemsTitle").setBindingContext(
 				oView.byId("SalesOrderLineItems").getBinding("items").getHeaderContext(),
 				"headerContext");
+			oView.byId("SalesOrderSchedulesTitle").setBindingContext(
+				oView.byId("SalesOrderSchedules").getBinding("items").getHeaderContext(),
+				"headerContext");
+		},
+
+		_setNextSortOrder : function (bDescending) {
+			var sNewIcon;
+
+			// choose next sort order: no sort -> ascending -> descending -> no sort
+			if (bDescending === undefined) {
+				sNewIcon = "sap-icon://sort-ascending";
+				bDescending = false;
+			} else if (bDescending === false) {
+				sNewIcon = "sap-icon://sort-descending";
+				bDescending = true;
+			} else {
+				sNewIcon = "";
+				bDescending = undefined;
+			}
+			return {bDescending : bDescending, sNewIcon : sNewIcon};
 		},
 
 		onBeforeRendering : function () {
@@ -61,16 +81,16 @@ sap.ui.define([
 				oView.byId("SalesOrders").getBinding("items").getHeaderContext());
 		},
 
-		onCancelSalesOrder : function (oEvent) {
+		onCancelSalesOrderChanges : function (oEvent) {
 			this.getView().getModel().resetChanges("SalesOrderUpdateGroup");
+		},
+
+		onCancelSalesOrderListChanges : function (oEvent) {
+			this.getView().getModel().resetChanges();
 		},
 
 		onCancelSalesOrderSchedules : function (oEvent) {
 			this.getView().byId("SalesOrderSchedulesDialog").close();
-		},
-
-		onCancelSalesOrderList : function (oEvent) {
-			this.getView().getModel().resetChanges();
 		},
 
 		onConfirmSalesOrder : function () {
@@ -110,24 +130,27 @@ sap.ui.define([
 						// TODO where to get initial values from to avoid "failed to drill-down"
 						// and "Not all properties provided while creation or update was executed."
 						// $select?
+						// key
 						"SalesOrderID" : "",
-						"Note" : null, // set to null to provoke server error if no note is entered
-						"NoteLanguage" : "E",
-						"BuyerID" : "0100000000",
-						"BuyerName" : "",
-						"CurrencyCode" : "EUR",
-						"GrossAmount" : "0.00",
-						"NetAmount" : "0.00",
-						"TaxAmount" : "0.00",
-						"LifecycleStatus" : "N",
-						"LifecycleStatusDesc" : "New",
+						// properties
 						"BillingStatus" : "",
 						"BillingStatusDesc" : "",
+						"BuyerID" : "0100000000",
+						"BuyerName" : "",
+						"ChangedAt" : "1970-01-01T00:00:00Z",
+						"CreatedAt" : "1970-01-01T00:00:00Z",
+						"CurrencyCode" : "EUR",
 						"DeliveryStatus" : "",
 						"DeliveryStatusDesc" : "",
-						"CreatedAt" : "1970-01-01T00:00:00Z",
-						"ChangedAt" : "1970-01-01T00:00:00Z",
+						"GrossAmount" : "0.00",
+						"LifecycleStatus" : "N",
+						"LifecycleStatusDesc" : "New",
+						"NetAmount" : "0.00",
+						"Note" : null, // set to null to provoke server error if no note is entered
+						"NoteLanguage" : "E",
+						"TaxAmount" : "0.00",
 						"SOItemCount" : 0,
+						// navigation property
 						"SO_2_BP" : null
 					}),
 				oCreateSalesOrderDialog = oView.byId("CreateSalesOrderDialog"),
@@ -151,6 +174,43 @@ sap.ui.define([
 			}, function (oError) {
 				// delete of transient entity
 				oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
+			});
+		},
+
+		onCreateSalesOrderLineItem : function (oEvent) {
+			var oContext,
+				oDeliveryDate = new Date(),
+				oView = this.getView();
+
+			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
+			oDeliveryDate.setMilliseconds(0);
+			oContext = oView.byId("SalesOrderLineItems").getBinding("items").create({
+				// keys
+				"ItemPosition" : "",
+				"SalesOrderID" : oView.byId("ObjectPage").getElementBinding().getBoundContext()
+					.getProperty("SalesOrderID"),
+				// properties
+				"CurrencyCode" : "EUR",
+				"DeliveryDate" : oDeliveryDate.toJSON(),
+				"GrossAmount" : "1137.64",
+				"NetAmount" : "956",
+				"Note" : "",
+				"NoteLanguage" : "E",
+				"Product" : {
+					"ProductID" : "HT-1000",
+					"ProductName" : "Notebook Basic 15"
+				},
+				"Quantity" : "1.000",
+				"QuantityUnit" : "EA",
+				"TaxAmount" : "181.64",
+				// navigation properties
+				"SOITEM_2_PRODUCT" : null
+			});
+			// Note: this promise fails only if the transient entity is deleted
+			oContext.created().then(function () {
+				MessageBox.success("Line item created: " + oContext.getProperty("ItemPosition"));
+			}, function (oError) {
+				// delete of transient entity, nothing to do
 			});
 		},
 
@@ -214,6 +274,32 @@ sap.ui.define([
 				+ ", Gross Amount: " + oSalesOrderContext.getProperty("GrossAmount", true)
 				+ " " + oSalesOrderContext.getProperty("CurrencyCode", true) + "?";
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
+		},
+
+		onDeleteSalesOrderLineItem : function () {
+			var sMessage,
+				sSalesOrderLineItem,
+				oTable = this.getView().byId("SalesOrderLineItems"),
+				oSOLineItemContext = oTable.getSelectedItem().getBindingContext();
+
+			function onConfirm(sCode) {
+				if (sCode !== 'OK') {
+					return;
+				}
+				// Use "$auto" or "$direct" just like selected when creating the model
+				oSOLineItemContext["delete"](oSOLineItemContext.getModel().getGroupId())
+					.then(function () {
+						MessageBox.success("Deleted Sales Order " + sSalesOrderLineItem);
+					}, function (oError) {
+						MessageBox.error("Could not delete Sales Order " + sSalesOrderLineItem
+							+ ": " + oError.message);
+					});
+			}
+
+			sSalesOrderLineItem = oSOLineItemContext.getProperty("SalesOrderID", true)
+				+ "/" + oSOLineItemContext.getProperty("ItemPosition", true);
+			sMessage = "Do you really want to delete: " + sSalesOrderLineItem + "?";
+			MessageBox.confirm(sMessage, onConfirm, "Sales Order Line Item Deletion");
 		},
 
 		onDeleteSalesOrderSchedules : function (oEvent) {
@@ -382,9 +468,9 @@ sap.ui.define([
 		onSortByGrossAmount : function () {
 			var oView = this.getView(),
 				oBinding = oView.byId("SalesOrders").getBinding("items"),
-				sNewIcon,
 				oUIModel = oView.getModel("ui"),
-				bDescending = oUIModel.getProperty("/bSortGrossAmountDescending");
+				bDescending = oUIModel.getProperty("/bSortGrossAmountDescending"),
+				oSortOrder;
 
 			if (oBinding.hasPendingChanges()) {
 				MessageBox.error("Cannot sort due to unsaved changes"
@@ -393,21 +479,13 @@ sap.ui.define([
 			}
 
 			// choose next sort order: no sort -> ascending -> descending -> no sort
-			if (bDescending === undefined) {
-				sNewIcon = "sap-icon://sort-ascending";
-				bDescending = false;
-			} else if (bDescending === false) {
-				sNewIcon = "sap-icon://sort-descending";
-				bDescending = true;
-			} else {
-				sNewIcon = "";
-				bDescending = undefined;
-			}
-			oUIModel.setProperty("/bSortGrossAmountDescending", bDescending);
-			oUIModel.setProperty("/sSortGrossAmountIcon", sNewIcon);
-			oBinding.sort(bDescending === undefined
+			oSortOrder = this._setNextSortOrder(bDescending);
+
+			oUIModel.setProperty("/bSortGrossAmountDescending", oSortOrder.bDescending);
+			oUIModel.setProperty("/sSortGrossAmountIcon", oSortOrder.sNewIcon);
+			oBinding.sort(oSortOrder.bDescending === undefined
 				? undefined
-				: new Sorter("GrossAmount", bDescending)
+				: new Sorter("GrossAmount", oSortOrder.bDescending)
 			);
 
 			// reset contexts for Supplier Details and remove Sales Oder Line Items selection
@@ -415,6 +493,32 @@ sap.ui.define([
 			oView.byId("SalesOrderLineItems").removeSelections();
 			oView.byId("SupplierContactData").setBindingContext(undefined);
 			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
+		},
+
+		onSortBySalesOrderID : function () {
+			var oView = this.getView(),
+				oBinding = oView.byId("SalesOrders").getBinding("items"),
+				oUIModel = oView.getModel("ui"),
+				bDescending = oUIModel.getProperty("/bSortSalesOrderIDDescending"),
+				oParameters = {},
+				oSortOrder;
+
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error("Cannot change parameters due to unsaved changes"
+					+ "; save or reset changes before sorting");
+				return;
+			}
+
+			// choose next sort order: no sort -> ascending -> descending -> no sort
+			oSortOrder = this._setNextSortOrder(bDescending);
+			if (oSortOrder.bDescending === undefined) {
+				oParameters.$orderby = undefined;
+			} else {
+				oParameters.$orderby = "SalesOrderID" + (oSortOrder.bDescending ? " desc" : "");
+			}
+			oBinding.changeParameters(oParameters);
+			oUIModel.setProperty("/bSortSalesOrderIDDescending", oSortOrder.bDescending);
+			oUIModel.setProperty("/sSortSalesOrderIDIcon", oSortOrder.sNewIcon);
 		},
 
 		/**

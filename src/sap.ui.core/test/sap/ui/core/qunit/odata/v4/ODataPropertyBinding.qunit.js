@@ -25,7 +25,7 @@ sap.ui.require([
 
 	var aAllowedBindingParameters = ["$$groupId", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-		sServiceUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
+		sServiceUrl = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataPropertyBinding", {
 			metadata : {
 				properties : {
