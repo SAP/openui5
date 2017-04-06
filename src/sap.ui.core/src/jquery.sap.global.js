@@ -2873,6 +2873,7 @@
 			this.name = name;
 			this.state = INITIAL;
 			this.url =
+			this.loaded =
 			this.data =
 			this.group = null;
 			this.content = NOT_YET_DETERMINED;
@@ -4624,43 +4625,59 @@
 		 */
 		jQuery.sap._loadJSResourceAsync = function(sResource, bIgnoreErrors) {
 
-			return new Promise(function(resolve,reject) {
+			var oModule = Module.get(sResource);
 
-				var oModule = Module.get(sResource);
-				var sUrl = oModule.url = getResourcePath(sResource);
-				oModule.state = LOADING;
+			if ( !oModule.loaded ) {
 
-				var oScript = window.document.createElement('SCRIPT');
-				oScript.src = sUrl;
-				oScript.setAttribute("data-sap-ui-module", sResource); // IE9/10 don't support dataset :-(
-				// oScript.setAttribute("data-sap-ui-module-error", '');
-				oScript.addEventListener('load', function(e) {
-					jQuery.sap.log.info("Javascript resource loaded: " + sResource);
-// TODO either find a cross-browser solution to detect and assign execution errros or document behavior
-//					var error = e.target.dataset.sapUiModuleError;
-//					if ( error ) {
-//						oModule.state = FAILED;
-//						oModule.error = JSON.parse(error);
-//						jQuery.sap.log.error("failed to load Javascript resource: " + sResource + ":" + error);
-//						reject(oModule.error);
-//					}
-					oModule.state = READY;
-					// TODO oModule.data = ?
-					resolve();
-				});
-				oScript.addEventListener('error', function(e) {
-					jQuery.sap.log.error("failed to load Javascript resource: " + sResource);
-					oModule.state = FAILED;
-					// TODO oModule.error = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
-					if ( bIgnoreErrors ) {
+				oModule.loaded = new Promise(function(resolve,reject) {
+
+					function onload(e) {
+						jQuery.sap.log.info("Javascript resource loaded: " + sResource);
+						// TODO either find a cross-browser solution to detect and assign execution errors or document behavior
+						//var error = e.target.dataset.sapUiModuleError;
+						//if ( error ) {
+						//	oModule.state = FAILED;
+						//	oModule.error = JSON.parse(error);
+						//	jQuery.sap.log.error("failed to load Javascript resource: " + sResource + ":" + error);
+						//	reject(oModule.error);
+						//}
+						oScript.removeEventListener('load', onload);
+						oScript.removeEventListener('error', onerror);
+						oModule.state = READY;
+						// TODO oModule.data = ?
 						resolve();
-					} else {
+					}
+
+					function onerror(e) {
+						jQuery.sap.log.error("failed to load Javascript resource: " + sResource);
+						oScript.removeEventListener('load', onload);
+						oScript.removeEventListener('error', onerror);
+						oModule.state = FAILED;
+						// TODO oModule.error = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
 						reject();
 					}
-				});
-				appendHead(oScript);
-			});
 
+					var sUrl = oModule.url = getResourcePath(sResource);
+					oModule.state = LOADING;
+
+					var oScript = window.document.createElement('SCRIPT');
+					oScript.src = sUrl;
+					oScript.setAttribute("data-sap-ui-module", sResource); // IE9/10 don't support dataset :-(
+					// oScript.setAttribute("data-sap-ui-module-error", '');
+					oScript.addEventListener('load', onload);
+					oScript.addEventListener('error', onerror);
+					appendHead(oScript);
+				});
+
+			}
+
+			if ( bIgnoreErrors ) {
+				return oModule.loaded.catch(function() {
+					return undefined;
+				});
+			}
+
+			return oModule.loaded;
 		};
 
 		return function() {
