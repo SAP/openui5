@@ -176,6 +176,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns whether the busy indicator is visible. It is considered as visible when the busy indicator element exists in the DOM as
+		 * a child of the table element. It is not checked whether the indicator is actually visible on the screen.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @returns {boolean} Returns <code>true</code>, if the busy indicator is visible.
+		 * @private
+		 */
+		isBusyIndicatorVisible: function(oTable) {
+			if (oTable == null || oTable.getDomRef() == null) {
+				return false;
+			}
+
+			return oTable.getDomRef().querySelector(".sapUiLocalBusyIndicator") != null;
+		},
+
+		/**
 		 * Returns whether a request is currently in process by the binding.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.

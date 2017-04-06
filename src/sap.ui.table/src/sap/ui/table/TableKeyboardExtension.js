@@ -45,7 +45,12 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 		_forward : function(oTable, oEvent) {
 			var oIN = oTable._getItemNavigation();
-			if (oIN && !oTable._getKeyboardExtension()._itemNavigationSuspended && !oEvent.isMarked("sapUiTableSkipItemNavigation")) {
+
+			if (oIN != null
+				&& !oTable._getKeyboardExtension()._isItemNavigationSuspended()
+				&& !oEvent.isMarked("sapUiTableSkipItemNavigation")
+				&& !TableUtils.isBusyIndicatorVisible(oTable)) {
+
 				oIN["on" + oEvent.type](oEvent);
 			}
 		},
@@ -111,6 +116,11 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		 */
 		_initItemNavigation : function(oExtension) {
 			var oTable = oExtension.getTable();
+
+			if (TableUtils.isBusyIndicatorVisible(oTable)) {
+				return;
+			}
+
 			var $Table = oTable.$();
 			var iColumnCount = TableUtils.getVisibleColumnCount(oTable);
 			var iTotalColumnCount = iColumnCount;
