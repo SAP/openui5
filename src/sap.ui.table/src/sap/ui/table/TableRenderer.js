@@ -682,9 +682,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.write(">");
 
 		var aCols = oTable.getColumns();
+		var aColParams = new Array(iEndColumn);
+		var iCol;
+		var oColumn;
+		var bHasPercentageWidths = false;
+
+		var bRenderDummyColumn = !bFixedTable && iEndColumn > iStartColumn;
+
+		for (iCol = iStartColumn; iCol < iEndColumn; iCol++) {
+			oColumn = aCols[iCol];
+			var oColParam = {
+				shouldRender: !!(oColumn && oColumn.shouldRender())
+			};
+			if (oColParam.shouldRender) {
+				var sWidth = oColumn.getWidth();
+				if (TableUtils.isVariableWidth(sWidth)) {
+					// if some of the columns have variable width, they serve as the dummy column
+					// and take available place. Do not render a dummy column in this case.
+					bRenderDummyColumn = false;
+					// in fixed area, use stored fixed width or 10rem:
+					if (bFixedTable) {
+						sWidth = (oColumn._iFixWidth || 160) + "px";
+					} else if (sWidth && sWidth.indexOf("%") > 0) {
+						bHasPercentageWidths = true;
+					}
+				}
+				oColParam.width = sWidth;
+			}
+			aColParams[iCol] = oColParam;
+		}
+
+
 		if (TableUtils.hasRowHeader(oTable) && !bHeader) { // not needed for column headers
 			rm.write("<th");
-			rm.addStyle("width", "0px");
+			if (bHasPercentageWidths) {
+				// Edge and IE - 0px width is not respected if some other columns have width in %
+				rm.addStyle("width", "0%");
+			} else {
+				rm.addStyle("width", "0px");
+			}
 			rm.writeStyles();
 			if (iStartRow == 0) {
 				oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TH");
@@ -702,34 +738,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			}
 		}
 
-		// never render the dummy column if the table is empty or it is the fixed columns table
-		var bRenderDummyColumn = !bFixedTable && iEndColumn > iStartColumn;
+		for (iCol = iStartColumn; iCol < iEndColumn; iCol++) {
 
-		for (var col = iStartColumn; col < iEndColumn; col++) {
-			var oColumn = aCols[col];
-			var sWidth = oColumn.getWidth();
-			if (TableUtils.isVariableWidth(sWidth)) {
-				// if some of the columns have variable width, they serve as the dummy column
-				// and take available place. Do not render a dummy column in this case.
-				bRenderDummyColumn = false;
-				// in fixed area, use stored fixed width or 10rem:
-				if (bFixedTable) {
-					sWidth = (oColumn._iFixWidth || 160) + "px";
-				}
-			}
+			suffix = bHeader ? "_hdr" : "_col";
+			oColumn = aCols[iCol];
+			oColParam = aColParams[iCol];
 
-			var suffix = bHeader ? "_hdr" : "_col";
-			if (oColumn && oColumn.shouldRender()) {
+			if (oColParam.shouldRender) {
 				rm.write("<th");
-				if (sWidth) {
-					rm.addStyle("width", sWidth);
+				if (oColParam.width) {
+					rm.addStyle("width", oColParam.width);
 					rm.writeStyles();
 				}
 				if (iStartRow == 0) {
 					oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TH", {column: oColumn});
-					rm.writeAttribute("id", oTable.getId() + suffix + col);
+					rm.writeAttribute("id", oTable.getId() + suffix + iCol);
 				}
-				rm.writeAttribute("data-sap-ui-headcolindex", col);
+				rm.writeAttribute("data-sap-ui-headcolindex", iCol);
 				rm.writeAttribute("data-sap-ui-colid", oColumn.getId());
 				rm.write(">");
 				if (iStartRow == 0 && TableUtils.getHeaderRowCount(oTable) == 0 && !bHeader) {
@@ -762,8 +787,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		// render the table rows
 		var aRows = oTable.getRows();
+		var row;
+		var count;
 		if (bHeader) {
-			for (var row = iStartRow, count = iEndRow; row < count; row++) {
+			for (row = iStartRow, count = iEndRow; row < count; row++) {
 				this.renderColumnHeaderRow(rm, oTable, row, bFixedTable, iStartColumn, iEndColumn, bRenderDummyColumn);
 			}
 		} else {
@@ -772,7 +799,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 			// check whether the row can be clicked to change the selection
 			var bSelectOnCellsAllowed = TableUtils.isRowSelectionAllowed(oTable);
-			for (var row = iStartRow, count = iEndRow; row < count; row++) {
+			for (row = iStartRow, count = iEndRow; row < count; row++) {
 				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bRenderDummyColumn, mTooltipTexts, bSelectOnCellsAllowed);
 			}
 		}
