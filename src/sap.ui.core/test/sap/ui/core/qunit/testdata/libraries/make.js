@@ -223,3 +223,6 @@ makeLibWith("lib2", {json:true});
 makeLibWith("lib3", {js:true});
 makeLibWith("lib4", {json:true});
 makeLibWith("lib5", {js:true});
+
+scenario("scenario9");
+makeLibWith("lib1", {js:true});
