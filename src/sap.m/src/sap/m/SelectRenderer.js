@@ -130,14 +130,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.writeStyles();
 			oRm.writeClasses();
 			oRm.write(">");
-			oRm.writeEscaped(oSelectedItem ? oSelectedItem.getText() : "");
-			oRm.write('</label>');
+
+			// write the text of the selected item only if it has not been removed or destroyed
+			oRm.writeEscaped((oSelectedItem && oSelectedItem.getParent()) ? oSelectedItem.getText() : "");
+
+			oRm.write("</label>");
 		};
 
 		/**
 		 * Renders the select's arrow, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 * @private
 		 */
 		SelectRenderer.renderArrow = function(oRm, oSelect) {
@@ -150,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		 * Renders the select's icon, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {string} oSelect
+		 * @param {string} oSelect An object representation of the control that should be rendered.
 		 * @private
 		 */
 		SelectRenderer.renderIcon = function(oRm, oSelect) {
