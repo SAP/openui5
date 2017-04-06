@@ -13,13 +13,11 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The <code>AlignedFlowLayout</code> arranges its child controls evenly across the available horizontal space,
-		 * each item gets the same width and grows and shrinks in response to the layout width.
-		 * Items not fitting into a row when considering the configured <code>minItemWidth</code> property, wrap into
-		 * the next row (like in a regular flow layout). However, those wrapped items have the same flexible widths as
+		 * The <code>AlignedFlowLayout</code> control arranges its child controls evenly across the horizontal space available.
+		 * Each item takes up the same width and grows and shrinks in response to the layout width.
+		 * Items not fitting into a row with the configured <code>minItemWidth</code> property wrap into
+		 * the next row (like in a regular flow layout). However, those wrapped items have the same flexible width as
 		 * the items in the rows above, so they are aligned.
-		 * In addition, there is a special <code>endContent</code> area which is positioned at the bottom right of the
-		 * entire layout control.
 		 *
 		 * @extends sap.ui.core.Control
 		 *
@@ -42,7 +40,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					/**
 					 * Sets the minimum width of items.
 					 * It prevents items from becoming smaller than the value specified.
-					 * <b>Note:</b> if the <code>minItemWidth</code> is greater than <code>maxItemWidth</code>, the
+					 * <b>Note:</b> If <code>minItemWidth</code> is greater than <code>maxItemWidth</code>,
 					 * <code>maxItemWidth</code> wins.
 					 */
 					minItemWidth: {
@@ -64,7 +62,8 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 					/**
 					 * Defines the content contained within this control.
-					 * Flow layouts are typically used to arrange input controls such as text input fields, labels, buttons, images, etc.
+					 * Flow layouts are typically used to arrange input controls, such as text input fields, but also
+					 * buttons, images, etc.
 					 */
 					content: {
 						type: "sap.ui.core.Control",
@@ -72,7 +71,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					},
 
 					/**
-					 * Defines the end content contained within this control.
+					 * Defines the area which is positioned at the bottom on the right of the entire layout control.
 					 */
 					endContent: {
 						type: "sap.ui.core.Control",
