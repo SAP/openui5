@@ -13,7 +13,6 @@
 			src="../../../resources/sap-ui-core.js">
 	</script>
 
-
 	<script type="text/javascript">
 		jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
 
@@ -46,7 +45,7 @@
 				return "my.own.controller";
 			},
 			createContent: function(oController) {
-				return [ new sap.m.Toolbar({
+				return [new sap.m.Toolbar({
 					id: "toolbar1",
 					content: [
 						new sap.m.MenuButton({
@@ -125,7 +124,9 @@
 									press: function () {
 										var oRta = new sap.ui.rta.RuntimeAuthoring({
 											rootControl: sap.ui.getCore().byId("idMain1"),
-											layer: "VENDOR"
+											flexSettings: {
+												layer: "VENDOR"
+											}
 										});
 										oRta.start();
 									}

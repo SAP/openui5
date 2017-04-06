@@ -344,7 +344,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-
 				"sap.m.InputBase": {
 					"hideControl": "default",
 					"unhideControl": "default"
@@ -380,6 +379,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.OverflowToolbar": {
 					"moveControls": "default"
 				},
+				"sap.m.MenuButton": "sap/m/flexibility/MenuButton",
 				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.Panel": "sap/m/flexibility/Panel",
 				"sap.m.RadioButton": "sap/m/flexibility/RadioButton",
