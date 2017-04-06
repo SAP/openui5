@@ -113,7 +113,6 @@
 				"desc": "Search, filter and preview semantic theme parameters",
 				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
 				"category": "Showcase",
-				"teaser": "test-resources/sap/m/demokit/theming/demoappteaser",
 				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
 			},
 			{
