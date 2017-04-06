@@ -2404,6 +2404,26 @@
 				done();
 			}.bind(this), 500);
 		});
+
+		QUnit.module("misc");
+
+		QUnit.test("none preset filter item has unique id", function(assert) {
+			//arrange
+			var oVSD1 = new sap.m.ViewSettingsDialog(),
+				aVSD1Items;
+
+			oVsdConfig.addPresetFilterItems(oVSD1);
+
+			//act
+			oVSD1.open();
+			aVSD1Items = oVSD1._presetFilterList.getItems();
+
+			//assert
+			assert.ok(aVSD1Items[aVSD1Items.length - 1].getId(), oVSD1._presetFilterList.getId() + "-none-list-item", "none preset filter item has correct id");
+
+			//clean
+			oVSD1.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
