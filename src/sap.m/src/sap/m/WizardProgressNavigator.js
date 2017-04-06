@@ -309,6 +309,10 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 		var that = this;
 		this._anchorNavigation = new ItemNavigation();
 		this._anchorNavigation.setCycling(false);
+		this._anchorNavigation.setDisabledModifiers({
+			sapnext: ["alt"],
+			sapprevious: ["alt"]
+		});
 		this._anchorNavigation.attachEvent("AfterFocus", function (params) {
 			var event = params.mParameters.event;
 			if (!event || !event.relatedTarget || jQuery(event.relatedTarget).hasClass(WizardProgressNavigator.CLASSES.ANCHOR)) {
