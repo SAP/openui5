@@ -1874,7 +1874,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			return oItem.getBindingContext() ? oItemsBinding.getGroup(oItem.getBindingContext()) : null;
 		};
 		var fnGroupKey = function(oItem) {
-			return fnGroup(oItem).key;
+			return fnGroup(oItem) && fnGroup(oItem).key;
 		};
 
 		jQuery.each(aItems, function (iIndex, oItem) {
@@ -1885,12 +1885,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 						that._oList.addItemGroup(fnGroup(oItem), fnGroupHeader(fnGroup(oItem)), true);
 					} else if (fnGroup(oItem)) {
 						that._oList.addItemGroup(fnGroup(oItem), null, true);
-						bGroupCreated = true;
-						sGroupKey = fnGroupKey(oItem);
 					}
+					bGroupCreated = true;
+					sGroupKey = fnGroupKey(oItem);
 				}
 			}
-
 			if (!oItem._status) {
 				//Set default status value -> UploadCollection._displayStatus
 				oItem._status = UploadCollection._displayStatus;
