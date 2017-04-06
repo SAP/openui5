@@ -1196,6 +1196,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	/**
 	 * Load and returns the design time metadata asynchronously.
 	 *
+	 * Be aware that ManagedObjects do not ensure to have unique IDs. This may lead to
+	 * issues if you would like to persist DesignTime based information. In that case
+	 * you need to take care of identification yourself.
+	 *
 	 * @return {Promise} A promise which will return the loaded design time metadata
 	 * @private
 	 * @sap-restricted sap.ui.fl com.sap.webide
@@ -1208,7 +1212,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			var oWhenParentLoaded;
 			var oParent = this.getParent();
 			// check if the mixin is applied to the parent
-			if (oParent && oParent.loadDesignTime) {
+			if (oParent instanceof ManagedObjectMetadata) {
 				oWhenParentLoaded = oParent.loadDesignTime();
 			} else {
 				oWhenParentLoaded = Promise.resolve(null);
