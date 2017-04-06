@@ -12,7 +12,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 
 		var ValueState = sap.ui.core.ValueState;
-		var isTheCurrentBrowserIENine = Device.browser.internet_explorer && (Device.browser.version < 10);
 
 		/**
 		 * Constructor for a new Dialog.
@@ -671,12 +670,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			// because of display = "none" in the same call stack before.
 			jQuery.sap.delayedCall(0, this, function(){$Ref.addClass("sapMDialogOpen");});
 
-			if (isTheCurrentBrowserIENine) {
-				$Ref.fadeIn(200, fnOpened);
-			} else {
-				$Ref.css("display", "block");
-				setTimeout(fnOpened, 210); // the time should be longer the longest transition in the CSS, because of focusing and transition relate issues
-			}
+			$Ref.css("display", "block");
+			setTimeout(fnOpened, 300); // the time should be longer the longest transition in the CSS (200ms), because of focusing and transition relate issues especially in IE where 200ms transition sometimes seems to last a little longer
 		};
 
 		/**
@@ -689,11 +684,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {
 			$Ref.removeClass("sapMDialogOpen");
 
-			if (isTheCurrentBrowserIENine) {
-				$Ref.fadeOut(200, fnClose);
-			} else {
-				setTimeout(fnClose, 210);
-			}
+			setTimeout(fnClose, 300);
 		};
 
 		/**
