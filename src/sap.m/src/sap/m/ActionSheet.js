@@ -168,6 +168,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._oItemNavigation.setItemDomRefs(aDomRefs);
 			this._oItemNavigation.setSelectedIndex(0);
 			this._oItemNavigation.setPageSize(5);
+
+			this._oItemNavigation.setDisabledModifiers({
+				sapnext: ["alt"],
+				sapprevious: ["alt"]
+			});
+
 		}
 	};
 
