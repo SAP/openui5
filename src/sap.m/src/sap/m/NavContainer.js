@@ -41,6 +41,16 @@ sap.ui.define([
 				 * Determines whether the initial focus is set automatically on first rendering and after navigating to a new page.
 				 * This is useful when on touch devices the keyboard pops out due to the focus being automatically set on an input field.
 				 * If necessary the "afterShow" event can be used to focus another element.
+				 *
+				 * <b>Note:</b>  The following scenarios are possible, depending on where the focus
+				 * was before navigation to a new page:
+				 * <ul><li>If <code>autoFocus<code> is set to <code>true<code> and the focus was
+				 * inside the current page, the focus will be moved automatically on the new page.</li>
+				 * <li>If <code>autoFocus<code> is set to <code>false<code> and the focus was inside
+				 * the current page, the focus will disappear.
+				 * <li>If the focus was outside the current page, after the navigation it will remain
+				 * unchanged regardless of what is set to the <code>autoFocus<code> property.</li></ul>
+				 *
 				 * @since 1.30
 				 */
 				autoFocus: {type: "boolean", group: "Behavior", defaultValue: true},
@@ -480,6 +490,11 @@ sap.ui.define([
 			bAutoFocus = this.getAutoFocus(),
 			bNavigatingBackToPreviousLocation = oNavInfo.isBack || oNavInfo.isBackToPage || oNavInfo.isBackToTop;
 
+		// BCP: 1780071998 - If focus is not inside the From page we don't do any focus manipulation
+		if (!oNavInfo.bFocusInsideFromPage) {
+			return;
+		}
+
 		// check navigation type (backward or forward)
 		if (bNavigatingBackToPreviousLocation) {
 			// set focus to the remembered focus object if available
@@ -567,6 +582,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Check if the current focused element is a HTML child element of the control passed.
+	 * @param {sap.ui.core.Control} oControl instance of control
+	 * @returns {boolean} If the focus is in one of the control's child HTML elements
+	 * @private
+	 */
+	NavContainer.prototype._isFocusInControl = function (oControl) {
+		return jQuery(document.activeElement).closest(oControl.$()).length > 0;
+	};
+
+	/**
 	 * Navigates to the next page (with drill-down semantic) with the given (or default) animation. This creates a new history item inside the NavContainer and allows going back.
 	 *
 	 * Note that any modifications to the target page (like setting its title, or anything else that could cause a re-rendering) should be done BEFORE calling to(), in order to avoid unwanted side effects, e.g. related to the page animation.
@@ -650,9 +675,6 @@ sap.ui.define([
 				return this;
 			}
 
-			// remember the focused object in "from page"
-			this._mFocusObject[oFromPage.getId()] = document.activeElement;
-
 			var oNavInfo = {
 				from: oFromPage,
 				fromId: oFromPage.getId(),
@@ -663,8 +685,15 @@ sap.ui.define([
 				isBack: false,
 				isBackToTop: false,
 				isBackToPage: false,
-				direction: "to"
+				direction: "to",
+				bFocusInsideFromPage: this._isFocusInControl(oFromPage)
 			};
+
+			if (oNavInfo.bFocusInsideFromPage) {
+				// remember the focused object in "from page"
+				this._mFocusObject[oFromPage.getId()] = document.activeElement;
+			}
+
 			var bContinue = this.fireNavigate(oNavInfo);
 			if (bContinue) { // ok, let's do the navigation
 
@@ -906,7 +935,8 @@ sap.ui.define([
 				isBack: (sType === "back"),
 				isBackToPage: (sType === "backToPage"),
 				isBackToTop: (sType === "backToTop"),
-				direction: sType
+				direction: sType,
+				bFocusInsideFromPage: this._isFocusInControl(oFromPage)
 			};
 			var bContinue = this.fireNavigate(oNavInfo);
 			if (bContinue) { // ok, let's do the navigation
