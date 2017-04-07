@@ -163,16 +163,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return false;
 			}
 
+			return !TableUtils.hasData(oTable);
+		},
+
+		/**
+		 * Returns whether the table currently has data.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {boolean}
+		 * @private
+		 */
+		hasData : function(oTable) {
 			var oBinding = oTable.getBinding("rows"),
-				iBindingLength = oTable._getRowCount(),
-				bHasData = oBinding ? !!iBindingLength : false;
+			iBindingLength = oTable._getRowCount(),
+			bHasData = oBinding ? !!iBindingLength : false;
 
 			if (oBinding && oBinding.providesGrandTotal) { // Analytical Binding
 				var bHasTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
 				bHasData = (bHasTotal && iBindingLength < 2) || (!bHasTotal && iBindingLength === 0) ? false : true;
 			}
 
-			return !bHasData;
+			return bHasData;
 		},
 
 		/**
