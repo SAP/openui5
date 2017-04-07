@@ -677,7 +677,7 @@ sap.ui.require([
 		 */
 		expectFetchEntityContainer : function (mScope) {
 			mScope = clone(mScope);
-			this.oMetaModel.validate("n/a", mScope); // fill mSchema2ReferenceUri!
+			this.oMetaModel.validate("n/a", mScope); // fill mSchema2MetadataUrl!
 			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(_SyncPromise.resolve(mScope));
 		}
@@ -1405,11 +1405,10 @@ sap.ui.require([
 				.returns(Promise.resolve(mMostlyEmptyScope));
 
 			expectDebug("Namespace tea_busi_product.v0001. found in $Include"
-				+ " of ../../../../default/iwbep/tea_busi_product/0001/$metadata"
+				+ " of /a/default/iwbep/tea_busi_product/0001/$metadata"
 				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
 				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name");
-			expectDebug("Reading ../../../../default/iwbep/tea_busi_product/0001/$metadata"
-				+ " from /a/default/iwbep/tea_busi_product/0001/$metadata"
+			expectDebug("Reading /a/default/iwbep/tea_busi_product/0001/$metadata"
 				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
 				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name");
 			expectDebug("Waiting for tea_busi_product.v0001."
@@ -1442,32 +1441,30 @@ sap.ui.require([
 
 			expectDebug("Namespace empty. found in $Include of /empty/$metadata",
 				"/empty.DefaultContainer");
-			expectDebug("Reading /empty/$metadata from /empty/$metadata",
-				"/empty.DefaultContainer");
+			expectDebug("Reading /empty/$metadata", "/empty.DefaultContainer");
 			expectDebug("Waiting for empty.",
 				"/empty.DefaultContainer");
 			codeUnderTest("/empty.DefaultContainer", mMostlyEmptyScope["empty.DefaultContainer"]);
 
 			// Note: these are logged asynchronously!
 			expectDebug("Including tea_busi_product.v0001."
-				+ " from ../../../../default/iwbep/tea_busi_product/0001/$metadata"
+				+ " from /a/default/iwbep/tea_busi_product/0001/$metadata"
 				+ " at /tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT/$Type",
 				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/Name");
 			expectDebug("Including empty. from /empty/$metadata",
 				"/empty.DefaultContainer");
 			expectDebug("Namespace tea_busi_supplier.v0001. found in $Include"
-				+ " of ../../../../default/iwbep/tea_busi_supplier/0001/$metadata"
+				+ " of /a/default/iwbep/tea_busi_supplier/0001/$metadata"
 				+ " at /tea_busi_product.v0001.Product/PRODUCT_2_SUPPLIER/$Type",
 				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
-			expectDebug("Reading ../../../../default/iwbep/tea_busi_supplier/0001/$metadata"
-				+ " from /a/default/iwbep/tea_busi_supplier/0001/$metadata"
+			expectDebug("Reading /a/default/iwbep/tea_busi_supplier/0001/$metadata"
 				+ " at /tea_busi_product.v0001.Product/PRODUCT_2_SUPPLIER/$Type",
 				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
 			expectDebug("Waiting for tea_busi_supplier.v0001."
 				+ " at /tea_busi_product.v0001.Product/PRODUCT_2_SUPPLIER/$Type",
 				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
 			expectDebug("Including tea_busi_supplier.v0001."
-				+ " from ../../../../default/iwbep/tea_busi_supplier/0001/$metadata"
+				+ " from /a/default/iwbep/tea_busi_supplier/0001/$metadata"
 				+ " at /tea_busi_product.v0001.Product/PRODUCT_2_SUPPLIER/$Type",
 				"/EQUIPM€NTS/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name");
 
@@ -1589,7 +1586,7 @@ sap.ui.require([
 					// now check that "not.found." does not trigger another read(),
 					// does finish synchronously and logs a warning
 					that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-						.withExactArgs("../../../../default/iwbep/tea_busi_product/0001/$metadata"
+						.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata"
 							+ " does not contain not.found.",
 							"/not.found.", sODataMetaModel);
 					that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
@@ -2686,7 +2683,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("validate: mSchema2ReferenceUri", function (assert) {
+	QUnit.test("validate: mSchema2MetadataUrl", function (assert) {
 		var mScope = {
 				"$Version" : "4.0",
 				"$Reference" : {
@@ -2699,24 +2696,30 @@ sap.ui.require([
 						"$Include" : [
 							"B.", "B.B."
 						]
+					},
+					"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
+						"$Include" : [
+							"tea_busi_product."
+						]
 					}
 				}
 			},
 			sUrl = "/~/$metadata";
 
-		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {});
+		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {});
 
 		// simulate a previous reference to a schema with the _same_ reference URI --> allowed!
-		this.oMetaModel.mSchema2ReferenceUri["A."] = "/A/$metadata";
+		this.oMetaModel.mSchema2MetadataUrl["A."] = "/A/$metadata";
 
 		// code under test
 		assert.strictEqual(this.oMetaModel.validate(sUrl, mScope), mScope);
 
-		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {
+		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
 			"A." : "/A/$metadata",
 			"A.A." : "/A/$metadata",
 			"B." : "/B/$metadata",
-			"B.B." : "/B/$metadata"
+			"B.B." : "/B/$metadata",
+			"tea_busi_product." : "/a/default/iwbep/tea_busi_product/0001/$metadata"
 		});
 	});
 
@@ -2776,7 +2779,7 @@ sap.ui.require([
 			}
 		}
 	}, {
-		message : "A schema cannot span more than one document: forbidden."
+		message : "A schema cannot span more than one document: existing."
 			+ " - expected reference URI /$metadata but instead saw /B/$metadata",
 		scope : {
 			"$Version" : "4.0",
@@ -2788,7 +2791,7 @@ sap.ui.require([
 				},
 				"/B/$metadata" : {
 					"$Include" : [
-						"baz.", "forbidden."
+						"baz.", "existing."
 					]
 				}
 			}
@@ -2810,8 +2813,8 @@ sap.ui.require([
 
 				this.oMetaModel.bSupportReferences = bSupportReferences;
 				// simulate a schema that has been loaded or referenced before
-				this.oMetaModel.mSchema2ReferenceUri = {
-					"forbidden." : "/$metadata"
+				this.oMetaModel.mSchema2MetadataUrl = {
+					"existing." : "/$metadata" // simulate schema from root service's $metadata
 				};
 				if (bSupportReferences) {
 					this.oLogMock.expects("error")
@@ -2873,7 +2876,7 @@ sap.ui.require([
 
 		this.oMetaModelMock.expects("validate")
 			.withExactArgs(this.oMetaModel.sUrl, mScope);
-		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {});
+		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {});
 
 		// code under test
 		this.oMetaModel._mergeAnnotations(mScope, []);
@@ -2882,7 +2885,7 @@ sap.ui.require([
 			"$Annotations have been shifted and merged from schemas to root");
 		assert.notOk("$Annotations" in mScope["A."], "$Annotations removed from schema");
 		assert.notOk("$Annotations" in mScope["B."], "$Annotations removed from schema");
-		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {
+		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
 			"A." : this.oMetaModel.sUrl,
 			"B." : this.oMetaModel.sUrl
 		});
@@ -3119,7 +3122,7 @@ sap.ui.require([
 			.withExactArgs("/URI/1", mAnnotationScope1);
 		this.oMetaModelMock.expects("validate")
 			.withExactArgs("/URI/2", mAnnotationScope2);
-		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {});
+		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {});
 
 		// code under test
 		this.oMetaModel._mergeAnnotations(mScope0, [mAnnotationScope1, mAnnotationScope2]);
@@ -3128,7 +3131,7 @@ sap.ui.require([
 		assert.strictEqual(mScope0["tea_busi."].$Annotations, undefined);
 		assert.strictEqual(mAnnotationScope1["foo."].$Annotations, undefined);
 		assert.strictEqual(mAnnotationScope2["bar."].$Annotations, undefined);
-		assert.deepEqual(this.oMetaModel.mSchema2ReferenceUri, {
+		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
 			"bar." : "/URI/2",
 			"foo." : "/URI/1",
 			"tea_busi." : this.oMetaModel.sUrl
