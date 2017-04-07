@@ -717,6 +717,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		} else {
 			this._setFileUploaderVisibility(uploadButtonInvisible);
 		}
+
+		if (this._bDragDropEnabled) {
+			this._unbindDragEnterLeave();
+			this._bDragDropEnabled = false;
+		} else {
+			this._bindDragEnterLeave();
+		}
 		return this;
 	};
 
@@ -1068,7 +1075,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._bindDragEnterLeave = function() {
-		this._bDragDropEnabled = this.getUploadEnabled();
+		this._bDragDropEnabled = this._isDragAndDropAllowed();
 		if (!this._bDragDropEnabled) {
 			return;
 		}
@@ -1224,6 +1231,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 
 		return false;
+	};
+
+	/**
+	 * Checks if drag and drop is allowed.
+	 * @returns {boolean}
+	 * @private
+	 */
+	UploadCollection.prototype._isDragAndDropAllowed = function() {
+		return this.getUploadEnabled() && !this.getUploadButtonInvisible();
 	};
 
 	/**
