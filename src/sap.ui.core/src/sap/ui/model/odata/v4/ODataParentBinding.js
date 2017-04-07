@@ -324,6 +324,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise on the binding's query options. In auto-$expand/$select mode the $select is
+	 * enriched with the key properties if there was a $select before.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used
+	 * @returns {SyncPromise}
+	 *   A promise resolving with the binding's query options
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.fetchQueryOptionsWithKeys = function (oContext) {
+		var oMetaModel,
+			sMetaPath,
+			sResolvedPath = this.oModel.resolve(this.sPath, oContext),
+			that = this;
+
+		if (!sResolvedPath || !this.oModel.bAutoExpandSelect) {
+			return _SyncPromise.resolve(this.mQueryOptions);
+		}
+		oMetaModel = this.oModel.getMetaModel();
+		sMetaPath = oMetaModel.getMetaPath(sResolvedPath);
+		return oMetaModel.fetchObject(sMetaPath + "/").then(function (oType) {
+			var aSelect = that.mQueryOptions && that.mQueryOptions.$select;
+
+			if (aSelect && oType.$Key) {
+				oType.$Key.forEach(function (sKey) {
+					if (aSelect.indexOf(sKey) < 0) {
+						aSelect.push(sKey);
+					}
+				});
+			}
+			return that.mQueryOptions;
+		});
+	};
+
+	/**
 	 * Returns the query options for the given path relative to this binding. Uses the options
 	 * resulting from the binding parameters or the options inherited from the parent binding by
 	 * using {@link Context#getQueryOptionsForPath}.

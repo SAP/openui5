@@ -3426,9 +3426,11 @@ sap.ui.require([
 		oBindingMock.expects("fetchFilter")
 			.withExactArgs(sinon.match.same(oContext), "staticFilter")
 			.returns(_SyncPromise.resolve("resolvedFilter"));
+		oBindingMock.expects("fetchQueryOptionsWithKeys")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns(_SyncPromise.resolve("queryOptionsWithKey"));
 		oBindingMock.expects("mergeQueryOptions")
-			.withExactArgs(sinon.match.same(oBinding.mQueryOptions), "resolvedOrderby",
-				"resolvedFilter")
+			.withExactArgs("queryOptionsWithKey", "resolvedOrderby", "resolvedFilter")
 			.returns(mQueryOptions);
 
 		// code under test
