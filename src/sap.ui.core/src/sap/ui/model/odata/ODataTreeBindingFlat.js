@@ -293,7 +293,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		};
 
 		/**
-		 * Traverses an re-inserted or newly added subtree.
+		 * Traverses a re-inserted or newly added subtree.
 		 * This can be a combination of flat and deep trees.
 		 *
 		 * Decides if the traversal has to branche over to a flat or a deep part of the tree.
@@ -2868,7 +2868,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 *  1. it's not a manually expanded node.
 	 *  2. it's not contained in the range of another collapsed node
 	 *
-	 * A expanded node contributes to the delta when it meets the following conditions:
+	 * An expanded node contributes to the delta when it meets the following conditions:
 	 *  1. it's not expanded with the initial call which means it's either initially collapsed or manually loaded
 	 *  2. none of its ancestor it's collapsed.
 	 */

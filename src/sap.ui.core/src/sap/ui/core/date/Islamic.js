@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		}
 
 		if ((sDateFormat && !oCustomizationJSON.length) || (!sDateFormat && oCustomizationJSON.length)) {
-			jQuery.sap.log.warning("There is a inconsistency between customization data [" + JSON.stringify(oCustomizationJSON) +
+			jQuery.sap.log.warning("There is an inconsistency between customization data [" + JSON.stringify(oCustomizationJSON) +
 			"] and the date format [" + sDateFormat + "]. Calendar customization won't be used.");
 			return;
 		}

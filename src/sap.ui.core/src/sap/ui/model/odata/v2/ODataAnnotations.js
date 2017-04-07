@@ -642,7 +642,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Parses a source as xml an returns a promise that resolves when the source's <code>xml</code> property string could be
+	 * Parses a source as XML and returns a promise that resolves when the source's <code>xml</code> property string could be
 	 * successfully parsed as an XML document.
 	 *
 	 * @param {ODataAnnotations~Source} mSource The source that should be parsed with its <code>xml</code> property set to a string

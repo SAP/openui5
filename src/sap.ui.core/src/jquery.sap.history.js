@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'],
 		 *
 		 */
 		$.sap.history = function(mSettings){
-			//if mSetting is not a object map, return
+			//if mSetting is not an object map, return
 			if (!jQuery.isPlainObject(mSettings)) {
 				return;
 			}

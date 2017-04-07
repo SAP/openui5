@@ -321,7 +321,7 @@ sap.ui.define([
 		 *  if <code>true</code> and <code>oResult.result</code> is "binding", type and constraint
 		 *  information is written to the resulting binding string
 		 * @returns {string}
-		 *   the resulting string to embed into an composite binding or a binding expression
+		 *   the resulting string to embed into a composite binding or a binding expression
 		 */
 		resultToString : function (oResult, bExpression, bWithType) {
 			var vValue = oResult.value;

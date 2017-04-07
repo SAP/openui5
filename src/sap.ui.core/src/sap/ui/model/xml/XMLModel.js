@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @param {object} oData either the URL where to load the XML from or a XML
+	 * @param {object} oData either the URL where to load the XML from or an XML
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.xml.XMLModel

@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 		} else if (Array.isArray(sBaseUrl) && bBatch) {
 
 			// BATCH MODE: send all base urls via POST request to the server
-			//   -> server returns an JSON object for containing the index for
+			//   -> server returns a JSON object for containing the index for
 			//      different base urls.
 			//
 			// returns e.g.:

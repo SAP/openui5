@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	"use strict";
 
 	/**
-	 * Constructs and initializes an UI Element with the given <code>sId</code> and settings.
+	 * Constructs and initializes a UI Element with the given <code>sId</code> and settings.
 	 *
 	 * If the optional <code>mSettings</code> are given, they must be a JSON-like object (object literal)
 	 * that defines values for properties, aggregations, associations or events keyed by their name.
@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	}, /* Metadata constructor */ ElementMetadata);
 
 	/**
-	 * Creates metadata for an UI Element by extending the Object Metadata.
+	 * Creates metadata for a UI Element by extending the Object Metadata.
 	 *
 	 * @param {string} sClassName name of the class to build the metadata for
 	 * @param {object} oStaticInfo static information used to build the metadata

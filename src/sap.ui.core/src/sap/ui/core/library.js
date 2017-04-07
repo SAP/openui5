@@ -1147,7 +1147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * Orientation of an UI element
+	 * Orientation of a UI element
 	 *
 	 * @enum {string}
 	 * @public

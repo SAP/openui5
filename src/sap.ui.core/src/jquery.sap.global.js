@@ -431,7 +431,7 @@
 									return fnHandler.call(oProxy, oEvent);
 								}
 							}
-							// If this is a asynchronous request and a sync request is ongoing,
+							// If this is an asynchronous request and a sync request is ongoing,
 							// the execution of all following handler calls needs to be delayed
 							if (!bSync && bSyncRequestOngoing) {
 								bDelay = true;
@@ -454,7 +454,7 @@
 						return deactivate(fnHandler.wrappedHandler);
 					}
 
-					// When a event handler is removed synchronously, it needs to be deactivated
+					// When an event handler is removed synchronously, it needs to be deactivated
 					// to avoid the situation, where the handler has been triggered while
 					// the sync request was ongoing, but removed afterwards.
 					function deactivate(fnWrappedHandler) {
@@ -2688,7 +2688,7 @@
 		 * Whether sap.ui.define calls could be executed asynchronously in the current context.
 		 *
 		 * The initial value is determined by the preload flag. This is necessary to make
-		 * hard coded script tags work when their scripts include a sap.ui.define call and if
+		 * hard coded script tags work when their scripts include an sap.ui.define call and if
 		 * some later incline script expects the results of sap.ui.define.
 		 * Most prominent example: unit tests that include QUnitUtils as a script tag and use qutils
 		 * in one of their inline scripts.
@@ -3972,7 +3972,7 @@
 		 *         // use a function from the dependency 'Helper' in the same package (e.g. 'sap/mylib/Helper' )
 		 *         var mSettings = Helper.foo();
 		 *
-		 *         // create and return a sap.m.Bar (using its local name 'Bar')
+		 *         // create and return an sap.m.Bar (using its local name 'Bar')
 		 *         return new Bar(mSettings);
 		 *
 		 *     }

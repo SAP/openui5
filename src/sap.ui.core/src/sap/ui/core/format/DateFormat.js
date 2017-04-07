@@ -1131,7 +1131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 
 
 	/**
-	 * Parse the date pattern string and create an format array from it, which can be
+	 * Parse the date pattern string and create a format array from it, which can be
 	 * used for parsing and formatting the date
 	 *
 	 * @param sPattern the CLDR date pattern string
