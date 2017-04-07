@@ -18,7 +18,6 @@
 	<script>
 		//jQuery.sap.require("sap.ui.mdc.model.GenericType");
 		jQuery.sap.require("sap.ui.core.FragmentControl");
-		jQuery.sap.require("sap.ui.core.FragmentControlMetadata");
 
 		// definition
 		var ExcelInfoButton = sap.ui.core.FragmentControl.extend("ExcelInfoButton", {
@@ -31,17 +30,17 @@
 					buttonText: {
 						type: "string",
 						defaultValue: "",
-						invalidate: sap.ui.core.FragmentControlMetadata.Render
+						invalidate: true
 					},
 					excelDownloadText: {
 						type: "string",
 						defaultValue: "",
-						invalidate: sap.ui.core.FragmentControlMetadata.Render
+						invalidate: true
 					},
 					infoText: {
 						type: "string",
 						defaultValue: "",
-						invalidate: sap.ui.core.FragmentControlMetadata.Render
+						invalidate: true
 					}
 				},
 				events: {
