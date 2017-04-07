@@ -129,6 +129,9 @@ sap.ui.define([
 
 		function iStartMyAppInAFrame (sSource, iTimeout) {
 			// merge appParams over sSource search params
+			if (sSource && typeof sSource !== "string") {
+				sSource = sSource.toString();
+			}
 			var uri = new URI(sSource);
 			uri.search($.extend(
 				uri.search(true),Opa.config.appParams));
