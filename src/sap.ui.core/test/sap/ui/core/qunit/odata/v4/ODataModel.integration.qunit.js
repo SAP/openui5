@@ -1316,7 +1316,7 @@ sap.ui.require([
 
 		oModel.setDefaultBindingMode("OneWay");
 		this.expectChange("item", false);
-		this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("item", "ID", "/MANAGERS/ID")
 				.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
 				.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
