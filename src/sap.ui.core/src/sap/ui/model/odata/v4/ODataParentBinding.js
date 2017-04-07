@@ -297,7 +297,10 @@ sap.ui.define([
 			aPromises,
 			that = this;
 
-		// Cache is not yet created
+		if (sChildPath === "$count") {
+			return _SyncPromise.resolve(true);
+		}
+
 		sBaseMetaPath = this.oModel.oMetaModel.getMetaPath(oContext.getPath());
 		sChildMetaPath = this.oModel.oMetaModel.getMetaPath("/" + sChildPath).slice(1);
 		aPromises = [
@@ -460,9 +463,10 @@ sap.ui.define([
 		 * @param {object} mAggregatedQueryOptions The aggregated query options
 		 * @param {object} mQueryOptions The query options to merge into the aggregated query
 		 *   options
+		 * @param {boolean} bInsideExpand Whether the given query options are inside a $expand
 		 * @returns {boolean} Whether the query options could be merged
 		 */
-		function merge(mAggregatedQueryOptions, mQueryOptions) {
+		function merge(mAggregatedQueryOptions, mQueryOptions, bInsideExpand) {
 			var mExpandValue,
 				aSelectValue;
 
@@ -474,7 +478,7 @@ sap.ui.define([
 			function mergeExpandPath(sExpandPath) {
 				if (mAggregatedQueryOptions.$expand[sExpandPath]) {
 					return merge(mAggregatedQueryOptions.$expand[sExpandPath],
-						mQueryOptions.$expand[sExpandPath]);
+						mQueryOptions.$expand[sExpandPath], true);
 				}
 				mAggregatedQueryOptions.$expand[sExpandPath] = mExpandValue[sExpandPath];
 				return true;
@@ -501,7 +505,8 @@ sap.ui.define([
 			}
 			return Object.keys(mQueryOptions).concat(Object.keys(mAggregatedQueryOptions))
 				.every(function (sName) {
-					if (sName === "$count" || sName === "$expand" || sName === "$select") {
+					if (sName === "$count" || sName === "$expand" || sName === "$select"
+						|| !bInsideExpand && !(sName in mQueryOptions)) {
 						return true;
 					}
 					return mQueryOptions[sName] === mAggregatedQueryOptions[sName];

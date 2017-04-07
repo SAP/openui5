@@ -144,9 +144,7 @@ sap.ui.define([
 		}
 
 		// auto-$expand/$select: Use parent binding's cache if possible
-		if (this.oModel.bAutoExpandSelect
-				//TODO Exclude list binding as parent: It does not yet support auto-$expand/$select
-				&& oContext.getBinding().aChildCanUseCachePromises) {
+		if (this.oModel.bAutoExpandSelect) {
 			bHasNonSystemQueryOptions = that.mParameters
 				&& Object.keys(that.mParameters).some(function (sKey) {
 					return sKey[0] !== "$" || sKey[1] == "$";

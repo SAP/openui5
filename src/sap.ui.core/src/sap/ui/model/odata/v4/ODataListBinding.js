@@ -114,7 +114,10 @@ sap.ui.define([
 
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.oCachePromise = _SyncPromise.resolve();
-				this.sChangeReason = undefined;
+				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
+				// auto-$expand/$select: promises to wait until child bindings have provided
+				// their path and query options
+				this.aChildCanUseCachePromises = [];
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.mPreviousContextsByPath = {};
@@ -875,6 +878,7 @@ sap.ui.define([
 			oRange,
 			bRefreshEvent = !!this.sChangeReason,
 			iStartInModel, // in model coordinates
+			oVirtualContext,
 			that = this;
 
 		jQuery.sap.log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
@@ -898,6 +902,23 @@ sap.ui.define([
 
 		sChangeReason = this.sChangeReason || ChangeReason.Change;
 		this.sChangeReason = undefined;
+
+		if (sChangeReason === "AddVirtualContext") {
+			// Note: this task is queued _before_ any $auto submit task!
+			sap.ui.getCore().addPrerenderingTask(function () {
+				// Note: first result of getContexts after refresh is ignored
+				that.sChangeReason = "RemoveVirtualContext";
+				that._fireChange({reason : ChangeReason.Change});
+				that.reset(ChangeReason.Refresh);
+			}, true);
+			oVirtualContext = Context.create(this.oModel, this,
+				this.oModel.resolve(this.sPath, this.oContext) + "/-2", -2);
+			return [oVirtualContext];
+		}
+
+		if (sChangeReason === "RemoveVirtualContext") {
+			return [];
+		}
 
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;

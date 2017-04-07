@@ -407,7 +407,7 @@ sap.ui.require([
 		//code under test
 		assert.throws(function () {
 			oBinding.changeParameters({
-				"$filter" : "filter(Amount gt 3)",
+				"$filter" : "Amount gt 3",
 				"$$groupId" : "newGroupId"
 			});
 		}, new Error("Unsupported parameter: $$groupId"));
@@ -429,7 +429,7 @@ sap.ui.require([
 
 		assert.throws(function () {
 			//code under test
-			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)"});
+			oBinding.changeParameters({"$filter" : "Amount gt 3"});
 		}, new Error("Cannot change parameters due to pending changes"));
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
 	});
@@ -704,6 +704,26 @@ sap.ui.require([
 		aggregatedQueryOptions : {$count : false},
 		childQueryOptions : {$count : true},
 		expectedQueryOptions : {$count : true}
+	}, {
+		aggregatedQueryOptions : {$orderby : "Category"},
+		childQueryOptions : {$orderby : "Category"},
+		expectedQueryOptions : {$orderby : "Category"}
+	}, {
+		aggregatedQueryOptions : {$apply : "filter(Amount gt 3)"},
+		childQueryOptions : {},
+		expectedQueryOptions : {$apply : "filter(Amount gt 3)"}
+	}, {
+		aggregatedQueryOptions : {$filter : "Amount gt 3"},
+		childQueryOptions : {},
+		expectedQueryOptions : {$filter : "Amount gt 3"}
+	}, {
+		aggregatedQueryOptions : {$orderby : "Category"},
+		childQueryOptions : {},
+		expectedQueryOptions : {$orderby : "Category"}
+	}, {
+		aggregatedQueryOptions : {$search : "Foo NOT Bar"},
+		childQueryOptions : {},
+		expectedQueryOptions : {$search : "Foo NOT Bar"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("aggregateQueryOptions returns true: " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
@@ -719,6 +739,7 @@ sap.ui.require([
 		});
 	});
 
+	//*********************************************************************************************
 	[{ // conflict: parent has $orderby, but child has different $orderby value
 		aggregatedQueryOptions : {$orderby : "Category"},
 		childQueryOptions : {$orderby : "Category desc"}
@@ -728,12 +749,64 @@ sap.ui.require([
 			$orderby : "Category desc",
 			$select : ["Name"]
 		}
+	}, { // conflict: parent has $apply, but child does not
+		aggregatedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$apply : "filter(Amount gt 3)"
+				}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {}
+			}
+		}
+	}, { // conflict: parent has $filter, but child does not
+		aggregatedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$filter : "Amount gt 3"
+				}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {}
+			}
+		}
 	}, { // conflict: parent has $orderby, but child does not
-		aggregatedQueryOptions : {$orderby : "Category"},
-		childQueryOptions : {$select : ["Name"]}
+		aggregatedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$orderby : "Category"
+				}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {}
+			}
+		}
+	}, { // conflict: parent has $search, but child does not
+		aggregatedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$search : "Foo NOT Bar"
+				}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {}
+			}
+		}
 	}, { // conflict: parent has no $orderby, but child has $orderby
 		aggregatedQueryOptions : {},
 		childQueryOptions : {$orderby : "Category", $select : ["Name"]}
+	}, {
+		aggregatedQueryOptions : {$filter : "Amount gt 3"},
+		childQueryOptions : {$filter : "Price gt 300"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("aggregateQueryOptions returns false: " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
@@ -900,6 +973,15 @@ sap.ui.require([
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, mOriginalAggregatedQueryOptions);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchIfChildCanUseCache: child path is $count", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		// code under test
+		assert.strictEqual(oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
+		//TODO make it work for EMPLOYEE_2_EQUIPMENTS/$count
 	});
 
 	//*********************************************************************************************

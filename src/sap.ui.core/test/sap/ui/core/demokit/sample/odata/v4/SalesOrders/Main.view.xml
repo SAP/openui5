@@ -88,20 +88,21 @@
 				</Dialog>
 			</dependents>
 		</Toolbar>
+		<!-- Note: 'BuyerID' is selected below because it is used when creating new entries -->
 		<Table growing="true" growingThreshold="5" id="SalesOrders"
 			items="{
 					path : '/SalesOrderList',
 					filters: {path: 'SalesOrderID', operator: 'GE', value1: '0500000000'},
 					parameters : {
 						$count : true,
-						$expand : 'SO_2_BP',
 						$filter : 'BuyerName ge \'M\'',
-						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID'
+						$select : 'BuyerID'
 					},
 					events : {
 						dataReceived : '.onDataEvents',
 						dataRequested : '.onDataEvents'
-					}
+					},
+					templateShareable : false
 				}"
 			mode="SingleSelectMaster" selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
@@ -212,11 +213,6 @@
 					},
 					path : '',
 					parameters : {
-						$expand : {
-							SO_2_SCHDL : {
-								$select : 'ScheduleKey,DeliveryDate'
-							}
-						},
 						$$updateGroupId : 'SalesOrderUpdateGroup'
 					}
 				}">

@@ -178,7 +178,7 @@ sap.ui.require([
 		When.onTheMainPage.pressSetBindingContextButton();
 		Then.onTheMainPage.checkFavoriteProductID();
 
-		if (bRealOData) {
+		if (false/*bRealOData*/) { //TODO re-enable once CPOUI5UISERVICESV3-591 is done
 			// Filter and then sort: filter is not lost on sort
 			When.onTheMainPage.filterGrossAmount("1000");
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
@@ -220,9 +220,10 @@ sap.ui.require([
 			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
 			Then.onTheMainPage.checkSupplierPhoneNumber("0622734567");
-			When.onTheMainPage.filterSalesOrderItemsByProductID("HT-1001");
-			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000020");
-			Then.onTheMainPage.checkSupplierPhoneNumber("3088530");
+			//TODO re-enable once CPOUI5UISERVICESV3-591 is done
+//			When.onTheMainPage.filterSalesOrderItemsByProductID("HT-1001");
+//			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000020");
+//			Then.onTheMainPage.checkSupplierPhoneNumber("3088530");
 		}
 
 		// delete the last created SalesOrder again

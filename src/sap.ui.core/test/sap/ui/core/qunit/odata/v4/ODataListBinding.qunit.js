@@ -269,12 +269,28 @@ sap.ui.require([
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
+		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.deepEqual(oBinding.aFilters, []);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
 		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
 		assert.strictEqual(oBinding.aSorters, aSorters);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAutoExpandSelect) {
+		QUnit.test("c'tor: AddVirtualContext = " + bAutoExpandSelect, function (assert) {
+			var oBinding;
+
+			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+
+			// code under test
+			oBinding = this.oModel.bindList("/EMPLOYEES");
+
+			assert.strictEqual(oBinding.sChangeReason,
+				bAutoExpandSelect ? "AddVirtualContext" : undefined);
+		});
 	});
 
 	//*********************************************************************************************
@@ -765,6 +781,58 @@ sap.ui.require([
 					assert.deepEqual(aContexts.diff, []);
 				}
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts: virtual context", function (assert) {
+		var oAddPrerenderingTaskSpy,
+			oParentContext = Context.create(this.oModel, {}, "/TEAMS('4711')"),
+			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oParentContext),
+			bChangeFired,
+			aContexts,
+			oResetSpy,
+			sResolvedPath = "/TEAMS('4711')/TEAM_2_EMPLOYEES",
+			oVirtualContext = {};
+
+		oBinding.sChangeReason = "AddVirtualContext";
+		this.mock(this.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oParentContext))
+			.returns(sResolvedPath);
+		this.mock(Context).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				sResolvedPath + "/-2", -2)
+			.returns(oVirtualContext);
+		oAddPrerenderingTaskSpy = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func, true);
+		oResetSpy = this.mock(oBinding).expects("reset")
+			.withExactArgs(ChangeReason.Refresh);
+		oBinding.attachEventOnce("change", function (oEvent) {
+			bChangeFired = true;
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+			assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
+			assert.strictEqual(oResetSpy.callCount, 0, "not yet!");
+
+			// code under test
+			aContexts = oBinding.getContexts(0, 5);
+
+			assert.deepEqual(aContexts, []);
+			assert.strictEqual(oBinding.sChangeReason, undefined);
+		});
+
+		// code under test
+		aContexts = oBinding.getContexts(0, 5);
+
+		assert.deepEqual(aContexts, [oVirtualContext]);
+		assert.strictEqual(aContexts[0], oVirtualContext);
+		assert.strictEqual(oBinding.sChangeReason, undefined);
+		assert.notOk(bChangeFired, "not yet!");
+
+
+		return Promise.resolve().then(function () {
+			// call 1st call's 1st arg
+			oAddPrerenderingTaskSpy.args[0][0]();
+			assert.ok(bChangeFired);
 		});
 	});
 
