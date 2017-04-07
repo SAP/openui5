@@ -925,5 +925,39 @@
         "references": []
       }
     ]
+  },
+  "1.38.19": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "cd098f439f1c2b0b571c6badcebb84a781c83795",
+        "type": "FIX",
+        "text": " Consider a horizontal scroll bar for available height calculation",
+        "references": []
+      },
+      {
+        "id": "217fb44e95dec71e0e2e45b368d1a852fe31150a",
+        "type": "FIX",
+        "text": " Enter action mode when clicking on a focusable control in a cell",
+        "references": []
+      }
+    ]
+  },
+  "1.38.20": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "920879d385b668f34d31580661dc1dfc3c43745e",
+        "type": "FIX",
+        "text": " Correct cell gets the focus when leaving the action mode",
+        "references": []
+      },
+      {
+        "id": "23b2216ed30c236c410e671c640c0ff6eb423730",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: altGr+A incorrectly selects all table cells",
+        "references": []
+      }
+    ]
   }
 }

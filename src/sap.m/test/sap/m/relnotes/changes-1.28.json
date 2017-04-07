@@ -1925,12 +1925,6 @@
         "references": []
       },
       {
-        "id": "03ca285f8de9eddb2ce44ebb8aa270e6d8fa101f",
-        "type": "FIX",
-        "text": "sap.m.IconTabBar: Invalidation flow corrected",
-        "references": []
-      },
-      {
         "id": "ea387946e3f60ec99512c4f66fb2f43842491490",
         "type": "FIX",
         "text": "sap.m.IconTabBar: The first text is no longer clipped on mobile devices when the first filter is \"showAll:true\"",
@@ -4374,6 +4368,40 @@
         "id": "b425f5d9c14fde62e63499aefda4097c15500fa1",
         "type": "FIX",
         "text": " sap.m.UploadCollectionItem: JSDoc for property enableDelete fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.44": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "aef3ab24e39c50e1da3693a51b695362ad383f32",
+        "type": "FIX",
+        "text": " sap.m.Switch: extend translation field in messagebundle",
+        "references": []
+      }
+    ]
+  },
+  "1.28.45": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "200e7a3985aefb174e263a770cc910683c36f295",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: works correct on combi devices",
+        "references": []
+      },
+      {
+        "id": "8be21cb1c34f1298ceba9f15ba31f547380bf858",
+        "type": "FIX",
+        "text": " sap.m.FlexBox: qUnits under Chrome have been fixed",
+        "references": []
+      },
+      {
+        "id": "4fc3c2080cd5c73d52cbfee01f82583cf0b9e704",
+        "type": "FIX",
+        "text": " sap.m.Page: Avoid rendering issue IE 11 when in RTL mode",
         "references": []
       }
     ]

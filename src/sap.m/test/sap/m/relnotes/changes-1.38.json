@@ -3094,5 +3094,165 @@
         "references": []
       }
     ]
+  },
+  "1.38.19": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "574a726a16b8065bd54d1064d0116756b20286ba",
+        "type": "FIX",
+        "text": " MultiInput: tokenChange event fires properly for cloned instances",
+        "references": []
+      },
+      {
+        "id": "209fe1b46cb02ee5fb7b3768083109b108e645f4",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Prevent exception when control is used with ACC off",
+        "references": []
+      },
+      {
+        "id": "fd5c41f33e37658f2b220f38bfadc7f1d9dbc917",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selection of items with accented chars corrected",
+        "references": []
+      },
+      {
+        "id": "ba71365b5b07dfaabca8224d013635c092368fe3",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Use of HTML control corrected",
+        "references": []
+      },
+      {
+        "id": "6e7c0a3e93549a020a435a183df89cdd73f8cc32",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Visibility of content in Header Mode corrected",
+        "references": []
+      },
+      {
+        "id": "5c8d156c5d241c5ae25c330cddfdd29650416986",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Rendering optimization",
+        "references": []
+      },
+      {
+        "id": "ed95163ff671aa0e514730f672478f20344bd15f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "f5b134038e67ac259a90f816d2ded14ec5bce029",
+        "type": "FIX",
+        "text": " sap.m.Slider: Global keyboard handling interruption fixed",
+        "references": []
+      },
+      {
+        "id": "1e85823f32e6b9dad86e6de00ed406cac500b262",
+        "type": "FIX",
+        "text": " sap.m.SuggestionItem: Documentation \"extends\" information corrected",
+        "references": []
+      },
+      {
+        "id": "6db4d6fdce6e38ff8aadfc0533974b0a88f2f6ca",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjusting height after rendering fixed",
+        "references": []
+      },
+      {
+        "id": "7fcf724f84fc2a6516722310cd969a55295b6401",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Fill list with deleted item improved",
+        "references": []
+      },
+      {
+        "id": "9861980190af4bf2858c66143a782300ee9b5e5d",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Issue with incorrect document display fixed",
+        "references": []
+      },
+      {
+        "id": "f3a81a0e1132a763393d62025ba5564f2de5db32",
+        "type": "FIX",
+        "text": " sap.m: Use mvc namespace instead of core namespace in Explored page",
+        "references": []
+      }
+    ]
+  },
+  "1.38.20": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "845a0ecb74d215b069769e01770afbcb103848f7",
+        "type": "FIX",
+        "text": " core.Popup|m.Dialog: consider window scroll for positioning",
+        "references": []
+      },
+      {
+        "id": "5325949d06086da6552e80616ecc5cfeb9a3efb2",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: model with non-default sizeLimit is now supported.",
+        "references": []
+      },
+      {
+        "id": "68200007bf56649c6d763c070774589557fbb2ef",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Tile content visibility independent of Generic Tile Mode",
+        "references": []
+      },
+      {
+        "id": "a46fdcb7a371e7c35cfa1f3e2baf388a0b500494",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Popover\u0027s height is now adjusted properly on container resize",
+        "references": []
+      },
+      {
+        "id": "e10eb29ebeac30786386cc2cee5c96bc4ce225a9",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: ARIA role for container corrected",
+        "references": []
+      },
+      {
+        "id": "2be77c510430fd0302bc4d8f6edda1d29cadb4de",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: displays correctly on combi device",
+        "references": []
+      },
+      {
+        "id": "dadd0e8936da3f7a5cf70bf6b9799c05e00970b9",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Text occupies only the needed space",
+        "references": []
+      },
+      {
+        "id": "130ac60c462dbb5380663f1e4c2fb893e66ed749",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Decimal precision in tooltips fixed.",
+        "references": []
+      },
+      {
+        "id": "abceeddd592ea1e12d46b5038630fe96edcc72db",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Data binding with sap.ui.model.odata.type.Time now works correctly",
+        "references": []
+      },
+      {
+        "id": "0ce18e7ee0c779da6343148c0ddeaf2da71f21c3",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Delete button issue fixed",
+        "references": []
+      },
+      {
+        "id": "170248618811752ff301962e0253a521f6f85f9e",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: selectionChange event call corrected",
+        "references": []
+      },
+      {
+        "id": "6ccc5cc5471fd06718a452a3139558fa343739d8",
+        "type": "FIX",
+        "text": " sap.m.Wizard: on scrolling is showing only active steps",
+        "references": []
+      }
+    ]
   }
 }

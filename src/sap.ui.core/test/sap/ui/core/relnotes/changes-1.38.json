@@ -1899,5 +1899,63 @@
         "references": []
       }
     ]
+  },
+  "1.38.19": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "1033305fe0b8b38d56ec0e38b9c6748fd3059fc4",
+        "type": "FEATURE",
+        "text": " UniversalDate: Implement getWeek/setWeek",
+        "references": []
+      },
+      {
+        "id": "cb26e53ac483900420bd7c8d539f70d649a005e4",
+        "type": "FIX",
+        "text": " core.format.DateFormat: format and parse the DayNumberOfWeek",
+        "references": []
+      },
+      {
+        "id": "752159ab25e61ab21098c6476fa13ac8c59de0c1",
+        "type": "FIX",
+        "text": " core.testsuite.opa.qunit: remove noglobals from the Press.qunit.html",
+        "references": []
+      },
+      {
+        "id": "b298d062892b414ee5285624794378b29cc196c4",
+        "type": "FIX",
+        "text": " sap.ui.core.Icon: provide theme dependent color for IconColor.Default",
+        "references": []
+      },
+      {
+        "id": "6eeb18b930a41df5d0ce2fd64ccbe2426e390a1e",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: fix the check for multi level wrapped popups",
+        "references": []
+      },
+      {
+        "id": "cda2957a17827765b4e4a471458c653dbc6ea8cb",
+        "type": "FIX",
+        "text": " v2.ODataModel: eTag not updated correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.38.20": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "fa730ca7ef8d682664f84abe1d36d026581226d4",
+        "type": "FIX",
+        "text": " Fragment, Customizing: ensure viewModification support",
+        "references": []
+      },
+      {
+        "id": "845a0ecb74d215b069769e01770afbcb103848f7",
+        "type": "FIX",
+        "text": " core.Popup|m.Dialog: consider window scroll for positioning",
+        "references": []
+      }
+    ]
   }
 }
