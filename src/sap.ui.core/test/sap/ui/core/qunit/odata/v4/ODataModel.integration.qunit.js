@@ -1503,6 +1503,12 @@ sap.ui.require([
 			// code under test
 			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
 			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
+			assert.throws(function () {
+				that.oView.byId("form").bindElement("/TEAMS(43)",
+					{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
+			}, new Error("setContext on relative binding is forbidden if created entity" +
+				" exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS(42)|TEAM_2_EMPLOYEES"));
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -1530,7 +1536,8 @@ sap.ui.require([
 					.expectChange("text", "Frederic Fall", 1);
 
 				oNewContext = oTeam2EmployeesBinding.create({"ID" : null, "Name" : "John Doe"});
-				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(), "binding has pending changes");
+				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(),
+					"binding has pending changes");
 				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
 				return that.waitForChanges(assert);
 			}).then(function () {

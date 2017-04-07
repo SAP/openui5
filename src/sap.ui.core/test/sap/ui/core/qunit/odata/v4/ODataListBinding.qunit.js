@@ -2710,6 +2710,18 @@ sap.ui.require([
 				oBinding.create();
 			}, new Error("Must not create twice"));
 
+			if (oFixture.bRelative) {
+				assert.throws(function () {
+					// code under test
+					oBinding.setContext({}/*some different context*/);
+				}, new Error("setContext on relative binding is forbidden if created entity " +
+				"exists: sap.ui.model.odata.v4.ODataListBinding: /|EMPLOYEES"));
+			}
+			assert.throws(function () {
+				// code under test
+				oBinding.create();
+			}, new Error("Must not create twice"));
+
 			return oContext.created().then(function () {
 				assert.strictEqual(oContext.isTransient(), false);
 				assert.strictEqual(oBinding.iMaxLength, 43, "persisted contexts are counted");
@@ -2741,6 +2753,11 @@ sap.ui.require([
 
 		return oContext.created().then(function () {
 			assert.strictEqual(oExpectation.args[0][1].getResult(), "TEAMS('02')/TEAM_2_EMPLOYEES");
+			assert.throws(function () {
+				// code under test
+				oBinding.setContext({}/*some different context*/);
+			}, new Error("setContext on relative binding is forbidden if created entity " +
+				"exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS/1[1]|TEAM_2_EMPLOYEES"));
 		});
 	});
 

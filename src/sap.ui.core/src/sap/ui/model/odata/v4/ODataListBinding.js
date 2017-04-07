@@ -1313,6 +1313,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
+	 * @throws {Error}
+	 *   For relative bindings containing created entities
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#setContext
@@ -1326,6 +1328,12 @@ sap.ui.define([
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
+				if (this.aContexts && this.aContexts[-1]) {
+					// to allow switching the context for new created entities (transient or not)
+					// we first have to implement a store/restore mechanism for the -1 entry
+					throw new Error("setContext on relative binding is forbidden if created " +
+						"entity exists: " + this);
+				}
 				this.reset();
 				this.fetchCache(oContext);
 				if (oContext) {
