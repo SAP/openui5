@@ -122,6 +122,37 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Should start an IFrame with app params and non-string uri", function(assert) {
+		// System under Test
+		var fnDone = assert.async();
+		var oOpa5 = new Opa5();
+
+		Opa5.extendConfig({
+			appParams: {
+				key: "value"
+			}
+		});
+
+		oOpa5.iStartMyAppInAFrame(["../testdata/emptySite.html"]);
+
+		oOpa5.waitFor({
+			success: function () {
+				// should not check for while appParams object
+				// as the test itself could be started with some params
+				var oUriParams = new URI(Opa5.getWindow().location.href).search(true);
+				assert.strictEqual(oUriParams.key, "value",
+					"App param should be presented");
+			}
+		});
+
+		oOpa5.iTeardownMyApp();
+
+		Opa5.emptyQueue().done(function () {
+			Opa5.resetConfig();
+			fnDone();
+		});
+	});
+
 	var aAutoWaiterStubs = [];
 
 	function stubAutoWaiter () {
