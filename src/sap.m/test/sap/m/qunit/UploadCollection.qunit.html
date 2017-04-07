@@ -1258,6 +1258,51 @@
 		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(':hidden'), "The drag and drop icon is hidden");
 	});
 
+	QUnit.test("Private function _isDragAndDropAllowed: success case", function(assert) {
+		var bDragAndDropAllowed;
+		//Arrange
+		//Act
+		bDragAndDropAllowed = this.oUploadCollection._isDragAndDropAllowed();
+		//Assert
+		assert.ok(bDragAndDropAllowed, "Function returns true when both uploadEnabled is set to true and uploadButtonInvisible is set to false");
+	});
+
+	QUnit.test("Private function _isDragAndDropAllowed: failure case", function(assert) {
+		var bDragAndDropAllowed;
+		//Arrange
+		this.oUploadCollection.setUploadEnabled(false);
+		//Act
+		bDragAndDropAllowed = this.oUploadCollection._isDragAndDropAllowed();
+		//Assert
+		assert.notOk(bDragAndDropAllowed, "Function returns false when uploadEnabled is set to false");
+	});
+
+	QUnit.test("Drag and drop is not allowed", function(assert) {
+		var $DragDropArea;
+		//Arrange
+		this.oUploadCollection.setUploadButtonInvisible(true);
+		this.oUploadCollection.rerender();
+		$DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		//Act
+		$DragDropArea.trigger("dragenter");
+		//Assert
+		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "Drag and drop is not possible when either upload is disabled or the upload button is invisible");
+	});
+
+	QUnit.test("Change of uploadButtonInvisible property", function(assert) {
+		var oBindSpy,
+			oUnBindSpy;
+		//Arrange
+		oBindSpy = sinon.spy(this.oUploadCollection, "_bindDragEnterLeave");
+		oUnBindSpy = sinon.spy(this.oUploadCollection, "_unbindDragEnterLeave");
+		//Act
+		this.oUploadCollection.setUploadButtonInvisible(true);
+		this.oUploadCollection.setUploadButtonInvisible(false);
+		//Assert
+		assert.ok(oUnBindSpy.calledOnce, "The change of uploadButtonInvisible to true leads to an unbind of the dragEnterLeave event");
+		assert.ok(oBindSpy.calledOnce, "The change of uploadButtonInvisible to false leads to a bind of the dragEnterLeave event");
+	});
+
 	QUnit.test("Check for files with files", function(assert) {
 		var bActual,
 			oEvent;
@@ -1958,7 +2003,7 @@
 					assert.deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), oPropertyValue, "Propagation to FileUploader");
 			}
 		}
-	}
+	};
 
 	QUnit.test("Default values", function(assert) {
 		var sFileType,
