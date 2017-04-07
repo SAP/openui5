@@ -303,7 +303,9 @@ sap.ui.define([
 				this.byId("preview").bindElement({
 					path: this.getModel().getIconPath(sIcon)
 				});
-				this.byId("previewCopyIcon").setHtmlText("<span>" + this.getModel().getUnicodeHTML(sIcon) + "</span>" +  sIcon);
+
+				var sIconSymbol = this.getModel().getUnicodeHTML(sIcon);
+				this.byId("previewCopyIcon").setHtmlText("<span>" + sIconSymbol + "</span>" + sIcon);
 
 				// update the group information with a timeout as this task takes some time to calculate
 				setTimeout(function () {
@@ -374,9 +376,13 @@ sap.ui.define([
 					var sFragmentName = formatter.uppercaseFirstLetter(oQuery.tab);
 
 					// add new content to the end of result container
-					var oResultsFragment = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.demo.iconexplorer.view.browse." + sFragmentName, this);
+					var oResultsFragment = sap.ui.xmlfragment(
+						this.getView().getId(),
+						"sap.ui.demo.iconexplorer.view.browse." + sFragmentName, this);
 					this.byId("resultContainer").addContent(oResultsFragment);
-					this.byId("categorySelection").setVisible(oQuery.tab !== "favorites");
+
+					var bCategoriesVisible = !(sap.ui.Device.system.phone || oQuery.tab == "favorites");
+					this.byId("categorySelection").setVisible(bCategoriesVisible);
 				}
 
 				// icon
