@@ -945,7 +945,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @classdesc A string type representing an Id or a name.
 	 *
 	 * Allowed is a sequence of characters (capital/lowercase), digits, underscores, dashes, points and/or colons.
-	 * It may start with a character, number or underscore only.
+	 * It may start with a character or underscore only.
 	 *
 	 * @final
 	 * @namespace
