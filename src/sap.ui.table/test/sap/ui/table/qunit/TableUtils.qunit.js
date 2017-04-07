@@ -523,7 +523,7 @@ QUnit.test("getNoDataText", function(assert) {
 	assert.equal(TableUtils.getNoDataText(oTable), oString);
 });
 
-QUnit.test("isNoDataVisible", function(assert) {
+QUnit.test("isNoDataVisible / hasData", function(assert) {
 	function createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals) {
 		return {
 			getShowNoData: function() {
