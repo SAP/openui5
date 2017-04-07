@@ -822,13 +822,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._onResize = function () {
 			var $dialog = this.$(),
 				$dialogContent = this.$('cont'),
+				dialogClientWidth = $dialogContent[0].clientWidth,
 				dialogContentScrollTop,
 				sContentHeight = this.getContentHeight(),
+				sContentWidth = this.getContentWidth(),
 				iDialogHeight,
-				BORDER_THICKNESS = 2; // solves Scrollbar issue in IE when Table is in Dialog
+				maxDialogWidth =  Math.floor(window.innerWidth * 0.9), //90% of the max screen size
+				BORDER_THICKNESS = 2, // solves Scrollbar issue in IE when Table is in Dialog
+				oBrowser = sap.ui.Device.browser;
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {
+				$dialogContent.css({
+					width: 'auto'
+				});
 				return;
 			}
 
@@ -846,6 +853,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				$dialogContent.height(Math.round( iDialogHeight));
 
 				$dialogContent.scrollTop(dialogContentScrollTop);
+			}
+
+			// IE and EDGE have specific container behavior (e.g. div with 500px width is about 15px smaller when it has vertical scrollbar
+			if ((oBrowser.internet_explorer || oBrowser.edge) &&		// apply width only:
+				(!sContentWidth || sContentWidth == 'auto') &&			// - when the developer hasn't set it explicitly
+				!this.getStretch() && 									// - when the dialog is not stretched
+				dialogClientWidth <  $dialogContent[0].scrollWidth &&	// - if dialog width is smaller than scroll width
+				$dialogContent.width() < maxDialogWidth) {				// - if the dialog can't grow anymore
+				var iVerticalScrollBarWidth = $dialogContent.width() - dialogClientWidth;
+				$dialogContent.css({
+					width: Math.min($dialogContent.width() + iVerticalScrollBarWidth, maxDialogWidth) + "px"
+				});
 			}
 
 			if (!this.getStretch() && !this._oManuallySetSize && !this._bDisableRepositioning) {
@@ -1730,15 +1749,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					var minWidth = parseInt(that._$dialog.css('min-width'), 10);
 					var maxLeftOffset = initial.x + initial.width - minWidth;
 
-					// BCP: 1680048166 remove inline set height so that the content resizes together with the mouse pointer
-					that.$('cont').height('');
-
 					var handleOffsetX = $target.width() - e.offsetX;
 					var handleOffsetY = $target.height() - e.offsetY;
 
 					$w.on("mousemove", function (event) {
 						fnMouseMoveHandler(function () {
 							that._bDisableRepositioning = true;
+							// BCP: 1680048166 remove inline set height and width so that the content resizes together with the mouse pointer
+							that.$('cont').height('').width('');
 
 							if (event.pageY + handleOffsetY > windowHeight) {
 								event.pageY = windowHeight - handleOffsetY;
