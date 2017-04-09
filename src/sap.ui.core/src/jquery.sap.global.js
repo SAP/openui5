@@ -1214,18 +1214,6 @@
 				return (iLevel == null ? DEBUG : iLevel) <= level(sComponent || sDefaultComponent);
 			};
 
-			/**
-			 * Enables or disables whether additional support information is logged in a trace.
-			 * If enabled, logging methods like error, warning, info and debug are calling the additional
-			 * optional callback parameter fnSupportInfo and store the returned object in the log entry property supportInfo.
-			 *
-			 * @param {boolean} bEnabled true if the support information should be logged
-			 * @private
-			 * @since 1.46.0
-			 */
-			this.logSupportInfo = function logSupportInfo(bEnabled) {
-				bLogSupportInfo = bEnabled;
-			};
 		}
 
 		/**
@@ -1407,6 +1395,20 @@
 			removeLogListener : function(oListener) {
 				listener().detach(this, oListener);
 				return this;
+			},
+
+			/**
+			 * Enables or disables whether additional support information is logged in a trace.
+			 * If enabled, logging methods like error, warning, info and debug are calling the additional
+			 * optional callback parameter fnSupportInfo and store the returned object in the log entry property supportInfo.
+			 *
+			 * @param {boolean} bEnabled true if the support information should be logged
+			 * @private
+			 * @static
+			 * @since 1.46.0
+			 */
+			logSupportInfo: function logSupportInfo(bEnabled) {
+				bLogSupportInfo = bEnabled;
 			}
 
 		});
@@ -3808,7 +3810,7 @@
 		 * @sap-restricted sap.ui.core
 		 */
 		jQuery.sap.isResourceLoaded = function isResourceLoaded(sResourceName) {
-			return mModules[sResourceName];
+			return !!mModules[sResourceName];
 		};
 
 		/**
