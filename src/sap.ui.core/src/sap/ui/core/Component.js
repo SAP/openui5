@@ -552,32 +552,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 */
 	Component.prototype._initCompositeSupport = function(mSettings) {
 
-		if (this._oManifest) {
-
-			// activate the instance specific customizing if available
-			var oManifest = this.getManifest();
-			var oUI5 = oManifest && oManifest["sap.ui5"];
-			var oExtends = oUI5 && oUI5["extends"];
-			var oExtensions = oExtends && oExtends["extensions"];
-			if (oExtensions) {
-				var CustomizingConfiguration = sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
-				CustomizingConfiguration.activateForComponentInstance(this);
-			}
-
-		}
-
-		// register the component instance
-		if (this._isVariant()) {
-			this._oManifest.onInitComponent();
-		} else {
-			this.getMetadata().onInitComponent();
-		}
-
 		// make user specific data available during component instantiation
 		this.oComponentData = mSettings && mSettings.componentData;
 
-		// static initialization
-		this.getMetadata().init();
+		// static initialization (loading dependencies, includes, ... / register customzing)
+		//   => either init the static or the instance manifest
+		if (!this._isVariant()) {
+			this.getMetadata().init();
+		} else {
+			this._oManifest.init(this);
+		}
 
 		// init the component models
 		this.initComponentModels();
@@ -650,19 +634,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// unregister for messaging (on MessageManager)
 		sap.ui.getCore().getMessageManager().unregisterObject(this);
 
-		// deactivate the instance specific customizing
-		if (this._oManifest) {
-			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-			if (CustomizingConfiguration) {
-				CustomizingConfiguration.deactivateForComponentInstance(this);
-			}
-		}
-
-		// unregister the component instance
-		if (this._isVariant()) {
-			this._oManifest.onExitComponent();
+		// static initialization (unload includes, ... / unregister customzing)
+		//   => either exit the static or the instance manifest
+		if (!this._isVariant()) {
+			this.getMetadata().exit();
 		} else {
-			this.getMetadata().onExitComponent();
+			this._oManifest.exit(this);
 		}
 
 	};
