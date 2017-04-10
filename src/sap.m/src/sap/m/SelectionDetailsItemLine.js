@@ -17,6 +17,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", 'sap/ui/base/Interfac
 	 * This Element provides a means to fill an {@link sap.m.SelectionDetailsItem} with content.
 	 * It is used for a form-like display of a label followed by a value with an optional unit.
 	 * If the unit is used, the value is displayed bold.
+	 * <b><i>Note:<i></b>It is protected and should ony be used within the framework itself.
 	 *
 	 * @extends sap.ui.core.Element
 	 *
@@ -24,9 +25,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", 'sap/ui/base/Interfac
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
+	 * @protected
 	 * @alias sap.m.SelectionDetailsItemLine
 	 * @experimental Since 1.48 This control is still under development and might change at any point in time.
+	 * @since 1.48.0
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectionDetailsItemLine = Element.extend("sap.m.SelectionDetailsItemLine", /** @lends sap.m.SelectionDetailsItemLine.prototype */ {
@@ -57,18 +59,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", 'sap/ui/base/Interfac
 			}
 		}
 	});
-
-	/**
-	 * Returns the public facade of the SelectionDetailsItemLine for non inner framework usages.
-	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
-	 * @protected
-	 */
-	SelectionDetailsItemLine.prototype._aFacadeMethods = ["setLabel"];
-	SelectionDetailsItemLine.prototype.getFacade = function() {
-		var oFacade = new Interface(this, SelectionDetailsItemLine.prototype._aFacadeMethods);
-		this.getFacade = jQuery.sap.getter(oFacade);
-		return oFacade;
-	};
 
 	return SelectionDetailsItemLine;
 });
