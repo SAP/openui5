@@ -5703,5 +5703,82 @@
         "references": []
       }
     ]
+  },
+  "1.40.18": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "6ef371096ccbbd759328e55313c510d6cc858451",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selection of items with accented chars corrected",
+        "references": []
+      },
+      {
+        "id": "f062ab5c418e0c2f52136836663e36cd17947147",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Tile content visibility independent of Generic Tile Mode",
+        "references": []
+      },
+      {
+        "id": "9553d4de1c1ca36a7dae0092e960d320b73bce12",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Use of HTML control corrected",
+        "references": []
+      },
+      {
+        "id": "c38d171c7eb1f4cad80493df4106912a59c7de71",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Suggestions are now correctly open on paste",
+        "references": []
+      },
+      {
+        "id": "6047ba00dcd72e45d7b5fcc843c9870c5d374d86",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: When MultiInput.enabled\u003dfalse, tokens can\u0027t be removed any more",
+        "references": []
+      },
+      {
+        "id": "c40dd6cb5cc00482967ff8d3cf238164c58c7edd",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "8e992da5165c1bf4c9b344145f6015da3261ac86",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selection works",
+        "references": []
+      },
+      {
+        "id": "69e9bef9d9bfb88643d0e4133f788ac8a234cad8",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjusting height after rendering fixed",
+        "references": []
+      },
+      {
+        "id": "4d09d0f1b7d108250a51bc5967d07b51e7d646d0",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: setTokens function now properly destroying overriden tokens",
+        "references": []
+      },
+      {
+        "id": "579f11a638391a6e6d60425173e8f1f4e02e277b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Fill list with deleted item improved",
+        "references": []
+      },
+      {
+        "id": "08c74ec5de98d14992abc39f4ec269ec8a34185c",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Issue with incorrect document display fixed",
+        "references": []
+      },
+      {
+        "id": "3b72fff911680456cd97d1c04bddcccebb54b4c1",
+        "type": "FIX",
+        "text": " sap.m: Use mvc namespace instead of core namespace in Explored page",
+        "references": []
+      }
+    ]
   }
 }

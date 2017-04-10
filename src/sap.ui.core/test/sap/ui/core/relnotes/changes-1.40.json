@@ -3665,5 +3665,22 @@
         "references": []
       }
     ]
+  },
+  "1.40.18": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "b0ef6f9c817bb1bef781532771268a769b2eb407",
+        "type": "FIX",
+        "text": " sap.ui.core.Icon: provide theme dependent color for IconColor.Default",
+        "references": []
+      },
+      {
+        "id": "7e227abc407381bc38bf644d392255926678b492",
+        "type": "FIX",
+        "text": " v2.ODataModel: eTag not updated correctly",
+        "references": []
+      }
+    ]
   }
 }

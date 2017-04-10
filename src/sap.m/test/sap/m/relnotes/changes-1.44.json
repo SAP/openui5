@@ -1949,5 +1949,76 @@
         "references": []
       }
     ]
+  },
+  "1.44.11": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "bfc520669961dd9a9592f34ad9a78834f0f12b88",
+        "type": "FIX",
+        "text": " Select: fix duplicate IDs of items in the DOM",
+        "references": []
+      },
+      {
+        "id": "5b38f0eb1c7cb1f1b9768aac19883ce473086461",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Generates valid HTML",
+        "references": []
+      },
+      {
+        "id": "a53a01e8df561641d4a8f3fff1d1c9e55e67bfc6",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Issue with ResizeHandler fixed",
+        "references": []
+      },
+      {
+        "id": "23b07a6f7420e71dd8e38285d533b1bfd49efe57",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Generates valid HTML",
+        "references": []
+      },
+      {
+        "id": "81b7a6fb1e0a4c6926179ca8aedefaa70901c8df",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: ObjectNumber has correct color when list is active",
+        "references": []
+      },
+      {
+        "id": "e10bbf739800c3480d0308322881de74852ee896",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Clone works as expected",
+        "references": []
+      },
+      {
+        "id": "c8272c803b30f1dafcbb6cf0d42707c5a66146cf",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Deatil view is showing now correctly",
+        "references": []
+      },
+      {
+        "id": "6d64ef5ab5b439798518272e74bc4aeb3530dfd6",
+        "type": "FIX",
+        "text": " sap.m.Token: Tokens in cosy mode can be deleted",
+        "references": []
+      },
+      {
+        "id": "767d788f47b9368c85f4e83b29283c176cda1c29",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Unique id for none preset filter item",
+        "references": []
+      },
+      {
+        "id": "7bbd2db9d66f69feb7bcf75f76bbbc5b61ec3450",
+        "type": "FIX",
+        "text": " sap.m.Wizard - Improved step rendering order in branched mode.",
+        "references": []
+      },
+      {
+        "id": "d397d6308c8e3277be6a6cd7fece72185e9b4de6",
+        "type": "FIX",
+        "text": " sap.m.Wizard - destroySteps() now longer throws an error",
+        "references": []
+      }
+    ]
   }
 }

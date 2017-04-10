@@ -809,5 +809,46 @@
         "references": []
       }
     ]
+  },
+  "1.44.11": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "d7261e4be44ebd847d909b4c3ff8203f1b7d502b",
+        "type": "FIX",
+        "text": " Messaging: Validation messages not removed",
+        "references": []
+      },
+      {
+        "id": "9192e3c554462c11fbfc8924f7868b0c1a0814f2",
+        "type": "FIX",
+        "text": " core.BusyIndicator: should consider window scroll position in placement",
+        "references": []
+      },
+      {
+        "id": "d8ffee171ff1ee356e5edead5f19176e8bd1d14c",
+        "type": "FIX",
+        "text": " core.NumberFormat: adapt decimals when number of integer isn\u0027t sufficient",
+        "references": []
+      },
+      {
+        "id": "d022727fa2bff3064c983704cb0e887f46d4bad9",
+        "type": "FIX",
+        "text": " jQuery.sap.global: Firefox sync XHR/Promise",
+        "references": []
+      },
+      {
+        "id": "5d4ae430e754a4f445a0e075b98e263916a56377",
+        "type": "FIX",
+        "text": " jQuery.sap.global: Improve Firefox XHR proxy compatibility",
+        "references": []
+      },
+      {
+        "id": "e67f756c5304b4d272773f6a498bce46eeece695",
+        "type": "FIX",
+        "text": " v2.ODataAnnotations.js: Improve robustness of the annotations loaded method",
+        "references": []
+      }
+    ]
   }
 }
