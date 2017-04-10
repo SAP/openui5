@@ -205,6 +205,53 @@
 			assert.ok(oSut.isDateLastInMonth(oLastDateInTheMonth), "Jan 31st is the last date of the month");
 			assert.ok(!oSut.isDateLastInMonth(oNotLastDateInTheMonth), "Jan 15th is not the last date of the month");
 		});
+
+
+		QUnit.module("Handling year and date check");
+
+		test("Check if Year is in the valid range", function (assert) {
+
+			CalendarUtils._checkYearInValidRange(2017);
+			ok(true, "year 2017 is in the correct range 1 - 9999");
+
+			assert.throws(function () {
+				CalendarUtils._checkYearInValidRange(-1);
+			}, "Year is less then 1");
+
+			assert.throws(function () {
+				CalendarUtils._checkYearInValidRange(100000);
+			}, "Year is more then 9999");
+
+			assert.throws(function () {
+				CalendarUtils._checkYearInValidRange();
+			}, "Year is undefined");
+
+			assert.throws(function () {
+				CalendarUtils._checkYearInValidRange(null);
+			}, "Year is null");
+
+			assert.throws(function () {
+				CalendarUtils._checkYearInValidRange("test");
+			}, "Year is not a number");
+		});
+
+		test("Check if the given date is valid JavaScript date object", function (assert) {
+
+			CalendarUtils._checkJSDateObject(new Date());
+			ok(true, "given date is JavaScript date object");
+
+			assert.throws(function () {
+				CalendarUtils._checkJSDateObject("test some invalid date");
+			}, "Date is not valid JS date Object");
+
+			assert.throws(function () {
+				CalendarUtils._checkJSDateObject();
+			}, "Date is undefined");
+
+			assert.throws(function () {
+				CalendarUtils._checkJSDateObject(null);
+			}, "Date is null");
+		});
 	</script>
 
 </head>
