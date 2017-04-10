@@ -32,6 +32,24 @@ sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 's
 					}
 				}
 			}
+		},
+		actions: {
+			remove: {
+				changeType: "hideControl"
+			},
+			rename: {
+				changeType: "renameField",
+				domRef: function (oControl) {
+					return oControl.getLabelControl().getDomRef();
+				}
+			},
+			reveal: {
+				changeType: "unhideControl"
+			}
+		},
+		name: {
+			singular: "FIELD_CONTROL_NAME",
+			plural: "FIELD_CONTROL_NAME_PLURAL"
 		}
 	};
 

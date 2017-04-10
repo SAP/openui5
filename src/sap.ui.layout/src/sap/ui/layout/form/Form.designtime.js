@@ -9,8 +9,22 @@ sap.ui.define([],
 
 	return {
 		aggregations : {
+			title : {
+				ignore : true
+			},
+			toolbar : {
+				ignore : function(oForm){
+					return !oForm.getToolbar();
+				},
+				domRef : function(oForm){
+					return oForm.getToolbar().getDomRef();
+				}
+			},
 			formContainers : {
-
+				domRef: ":sap-domref",
+				actions: {
+					move: "moveControls"
+				}
 			}
 		}
 	};
