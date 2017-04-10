@@ -261,6 +261,17 @@ sap.ui.define([	"sap/ui/dt/ElementOverlay",
 			}
 		});
 
+		QUnit.test("When the overlay and it's aggregations are rendered", function(assert) {
+			var oContentOverlay = this.oOverlay.getAggregationOverlay("content");
+			var oHeaderOverlay = this.oOverlay.getAggregationOverlay("customHeader");
+
+			var aAggregationOverlays = this.oOverlay.getAggregationOverlays();
+			var iIndexOfContentOverlay = aAggregationOverlays.indexOf(oContentOverlay);
+			var iIndexOfHeaderOverlay = aAggregationOverlays.indexOf(oHeaderOverlay);
+
+			assert.ok(iIndexOfContentOverlay > iIndexOfHeaderOverlay, "overlay for header aggregation is above section aggregation (according to dom order)");
+		});
+
 		QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
 			beforeEach : function(assert) {
 				var that = this;

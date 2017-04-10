@@ -197,6 +197,97 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	/**
 	 * @override
 	 */
+	ElementOverlay.prototype.applyStyles = function() {
+		Overlay.prototype.applyStyles.apply(this, arguments);
+
+		var oGeometry = this.getGeometry();
+		if (oGeometry && oGeometry.visible) {
+			this._sortAggregationOverlaysInDomOrder();
+		}
+	};
+
+	/**
+	 * Sorts aggregation overlays in there UI order
+	 * @private
+	 */
+	ElementOverlay.prototype._sortAggregationOverlaysInDomOrder = function() {
+		var bOrderSwitched = false;
+
+		// compares two aggregations domRefs and returns 1, if first aggregation should be bellow in dom order
+		var fnCompareAggregations = function(oAggregationOverlay1, oAggregationOverlay2) {
+			var oGeometry1 = oAggregationOverlay1.getGeometry();
+			var oGeometry2 = oAggregationOverlay2.getGeometry();
+			var oPosition1 = oGeometry1 && oGeometry1.position;
+			var oPosition2 = oGeometry2 && oGeometry2.position;
+
+			if (oPosition1 && oPosition2) {
+				var iBottom1 = oPosition1.top + oGeometry1.size.height;
+				var iBottom2 = oPosition2.top + oGeometry2.size.height;
+
+				if (oPosition1.top < oPosition2.top) {
+					if (iBottom1 >= iBottom2 && oPosition2.left < oPosition1.left) {
+						/*  Example:
+							            +--------------+
+							+------+    |              |
+							|  2   |    |       1      |
+							+------+    |              |
+							            +--------------+
+							Despites 1st overlay's top is above 2nd element,
+							the order should be switched, since 2nd element
+							is shorter and is more to the left
+						 */
+						bOrderSwitched = true;
+						return 1;
+					} else {
+						return -1; // do not switch order
+					}
+				} else
+
+				if (oPosition1.top === oPosition2.top) {
+					if (oPosition1.left <= oPosition2.left) {
+						return -1; // order is correct
+					} else {
+						bOrderSwitched = true;
+						return 1; // switch order
+					}
+				} else
+
+				// if (oPosition1.top > oPosition2.top)
+				 if (iBottom1 <= iBottom2 && oPosition2.left > oPosition1.left) {
+					/* see picture above, but switch 1 and 2 - order is correct */
+					return -1;
+				} else {
+					bOrderSwitched = true;
+					/*  Example:
+						            +--------------+
+						+------+    |       2      |
+						|  1   |    +--------------+
+						|      |
+						+------+
+
+						Since 1st overlay's both top and bottom coordinates are
+						bellow in dom, then top and bottom of 2nd, they should be switched
+					 */
+					return 1;
+				}
+			}
+		};
+
+		var aSortedAggregationOverlays = this.getAggregationOverlays().sort(fnCompareAggregations);
+
+		if (bOrderSwitched) {
+			// insert in sorted order & suppress invalidate to prevent rerendering
+			this.removeAllAggregation("aggregationOverlays", true);
+			aSortedAggregationOverlays.forEach(function(oAggregationOverlay) {
+				// suppress invalidate to prevent rerendering
+				this.addAggregation("aggregationOverlays", oAggregationOverlay, true);
+			}.bind(this));
+		}
+	};
+
+	/**
+	 * @override
+	 */
 	ElementOverlay.prototype.setLazyRendering = function(bLazyRendering) {
 		Overlay.prototype.setLazyRendering.apply(this, arguments);
 
