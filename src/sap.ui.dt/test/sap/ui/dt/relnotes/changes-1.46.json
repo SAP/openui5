@@ -81,6 +81,12 @@
         "type": "FIX",
         "text": " sap.ui.dt: Support dependents aggregation when handling overlays",
         "references": []
+      },
+      {
+        "id": "ebabec27b2311b4acb9cd42a4b70b4236930d0a1",
+        "type": "FIX",
+        "text": " sap.ui.dt.Designtime - fix destroy overlay error after combine",
+        "references": []
       }
     ]
   }

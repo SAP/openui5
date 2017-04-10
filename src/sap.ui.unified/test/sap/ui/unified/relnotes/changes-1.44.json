@@ -166,5 +166,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.11": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "081127a73bd39d64889ef5ee256864507a092cbe",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: displayed correctly in Japanese and Chinese",
+        "references": []
+      },
+      {
+        "id": "c1cda60fe3fece6683cc5ec09ed2c0951ea0b3ff",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Special dates have aria labels as texts in the associated legend",
+        "references": []
+      }
+    ]
   }
 }

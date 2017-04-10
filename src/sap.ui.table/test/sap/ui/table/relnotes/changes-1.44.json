@@ -536,5 +536,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.11": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "067ed969d6465face56db888e56d4c36c2dc4f65",
+        "type": "FIX",
+        "text": " Table: Issues with zooming in Chrome",
+        "references": []
+      },
+      {
+        "id": "9ed82075da2aa4b06f42c6972155b75245f74ea2",
+        "type": "FIX",
+        "text": " Table: Navigation while the busy indicator is shown",
+        "references": []
+      },
+      {
+        "id": "0290c60922e1142c7c51441a59d81c2c59a3fb7c",
+        "type": "FIX",
+        "text": " Table: The firstVisibleRow property can no longer be less than 0",
+        "references": []
+      },
+      {
+        "id": "36dc1b177f9cfc231117e5254482752e81366eec",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid error when cell control does not provide an accessibility info.",
+        "references": []
+      }
+    ]
   }
 }
