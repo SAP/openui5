@@ -401,7 +401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 	};
 
-  /**
+	/**
 	 * Check whether expanded list data is available and can be used
 	 *
 	 * @private
@@ -415,16 +415,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		if (!bResolves || oRef === undefined) {
 			this.bUseExpandedList = false;
-			this.aExpandedRefs = undefined;
+			this.aExpandRefs = undefined;
 			return false;
 		} else {
 			this.bUseExpandedList = true;
-			this.aExpandedRefs = oRef;
+			this.aExpandRefs = oRef;
 			if (Array.isArray(oRef)) {
 				// For performance, only check first and last entry, whether reload is needed
 				if (this.oModel._isReloadNeeded("/" + oRef[0]) || this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1])) {
 					this.bUseExpandedList = false;
-					this.aExpandedRefs = undefined;
+					this.aExpandRefs = undefined;
 					return false;
 				}
 				this.aAllKeys = oRef;
@@ -441,6 +441,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				this.bDataAvailable = true;
 			}
 			return true;
+		}
+	};
+
+	/**
+	 * In case the list is cucrently based on expanded data, update the original data array
+	 * if new data has been loaded
+	 *
+	 * @private
+	 * @param {array} aKeys the new key array
+	 */
+	ODataListBinding.prototype.updateExpandedList = function(aKeys) {
+		if (this.aExpandRefs) {
+			for (var i = 0; i < aKeys.length; i++) {
+				this.aExpandRefs[i] = aKeys[i];
+			}
+			this.aExpandRefs.length = aKeys.length;
 		}
 	};
 
@@ -581,6 +597,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 			// For clientside sorting filtering store all keys separately and set length to final
 			if (that.useClientMode()) {
+				that.updateExpandedList(that.aKeys);
 				that.aAllKeys = that.aKeys.slice();
 				that.iLength = that.aKeys.length;
 				that.bLengthFinal = true;
@@ -896,7 +913,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			// - set the new keys
 			// - trigger clientside filter/sorter
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
-			bRefChanged = Array.isArray(oRef) && !jQuery.sap.equal(oRef,this.aExpandRefs);
+			bRefChanged = Array.isArray(oRef) && !jQuery.sap.equal(oRef, this.aExpandRefs);
 			this.aExpandRefs = oRef;
 			if (bRefChanged) {
 				this.aAllKeys = oRef;
