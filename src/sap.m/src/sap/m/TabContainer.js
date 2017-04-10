@@ -292,7 +292,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					iNextIndex = iItemsCount === iCurrentFocusedIndex ? --iCurrentFocusedIndex : iCurrentFocusedIndex,
 					oNextItem = this.getItems()[iNextIndex],
 					fnFocusCallback = function () {
-						this._getTabStrip()._oItemNavigation.focusItem(iNextIndex);
+						if (this._getTabStrip()._oItemNavigation) {
+							this._getTabStrip()._oItemNavigation.focusItem(iNextIndex);
+						}
 					};
 
 			// Selection (causes invalidation)
