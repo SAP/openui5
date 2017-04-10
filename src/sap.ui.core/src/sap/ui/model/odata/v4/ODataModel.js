@@ -186,8 +186,8 @@ sap.ui.define([
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters, function (sGroupId) {
 							if (sGroupId === "$auto") {
-								sap.ui.getCore()
-									.addPrerenderingTask(that._submitBatch.bind(that, sGroupId));
+								sap.ui.getCore().addPrerenderingTask(
+									that._submitBatch.bind(that, sGroupId));
 							}
 						});
 
