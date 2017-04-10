@@ -709,6 +709,18 @@
         "type": "FIX",
         "text": " v2.ODataModel: Normalize keys on cache read",
         "references": []
+      },
+      {
+        "id": "97f6c78e515555aa4f4e963e1e9706a6986afad0",
+        "type": "FIX",
+        "text": " jQuery.sap.global: Firefox sync XHR/Promise",
+        "references": []
+      },
+      {
+        "id": "ec35b71baa0d5909882432c3d1a17abf7f019449",
+        "type": "FIX",
+        "text": " jQuery.sap.global: Improve Firefox XHR proxy compatibility",
+        "references": []
       }
     ]
   }
