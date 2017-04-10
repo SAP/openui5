@@ -97,13 +97,12 @@ sap.ui.define([
 		var oChangePersistenceWrapper = {oChangePersistence: {}, oRequestOptions: {}};
 		var sComponentName = Utils.getFlexReference(oManifest);
 		var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
-		var sMaxLayer, oStartupParameters;
+		var sMaxLayer, oStartupParameters, oTechnicalParameters;
 
-		if (oConfig && oConfig.componentData && oConfig.componentData.startupParameters){
-			oStartupParameters = oConfig.componentData.startupParameters;
-		}
+		oStartupParameters = oConfig && oConfig.componentData && oConfig.componentData.startupParameters || {};
+		oTechnicalParameters = oConfig && oConfig.componentData && oConfig.componentData.technicalParameters;
 
-		if (oStartupParameters && oStartupParameters["sap-app-id"] && oStartupParameters["sap-app-id"].length === 1) {
+		if (oStartupParameters["sap-app-id"] && oStartupParameters["sap-app-id"].length === 1) {
 			// deprecated app variant id support with no caching
 			sComponentName = oStartupParameters["sap-app-id"][0];
 		} else {
@@ -117,9 +116,10 @@ sap.ui.define([
 				}
 			}
 		}
-		//Checks startup parameter for sap-ui-fl-max-layer value
-		if (oStartupParameters && oStartupParameters["sap-ui-fl-max-layer"] && oStartupParameters["sap-ui-fl-max-layer"].length === 1) {
-			sMaxLayer = oStartupParameters["sap-ui-fl-max-layer"][0];
+		//Checks technicalParameters/startup (old) parameter for sap-ui-fl-max-layer value
+		var oMaxLayerParameters = oTechnicalParameters || oStartupParameters;
+		if (oMaxLayerParameters && oMaxLayerParameters["sap-ui-fl-max-layer"] && oMaxLayerParameters["sap-ui-fl-max-layer"].length === 1) {
+			sMaxLayer = oMaxLayerParameters["sap-ui-fl-max-layer"][0];
 		}
 		Utils.setMaxLayerParameter(sMaxLayer);
 
