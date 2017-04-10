@@ -1111,12 +1111,12 @@
 			var cell;
 
 			if (aSortedColumns.length === 2) {
-				cell = aSortedColumns[0].$().find(".sapUiTableColCell");
+				cell = aSortedColumns[0].$();
 				assert.ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
 				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "sort icon is ascending");
 
-				cell = aSortedColumns[1].$().find(".sapUiTableColCell");
+				cell = aSortedColumns[1].$();
 				assert.ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
 				assert.ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
