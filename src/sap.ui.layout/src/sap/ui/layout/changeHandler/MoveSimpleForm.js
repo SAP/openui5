@@ -19,8 +19,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD = "moveSimpleFormField";
 			MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP = "moveSimpleFormGroup";
 			MoveSimpleForm.sTypeTitle = "sap.ui.core.Title";
+			MoveSimpleForm.sTypeMTitle = "sap.m.Title";
 			MoveSimpleForm.sTypeToolBar = "sap.m.Toolbar";
+			MoveSimpleForm.sTypeOverflowToolBar = "sap.m.OverflowToolbar";
 			MoveSimpleForm.sTypeLabel = "sap.m.Label";
+			MoveSimpleForm.sTypeSmartLabel = "sap.ui.comp.smartfield.SmartLabel";
 			MoveSimpleForm.CONTENT_AGGREGATION = "content";
 
 			/**
@@ -91,7 +94,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 
 				} else if (oChangeWrapper.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
 
-					var aStopGroupToken = [MoveSimpleForm.sTypeTitle, MoveSimpleForm.sTypeToolBar];
+					var aStopGroupToken = [MoveSimpleForm.sTypeTitle,
+											MoveSimpleForm.sTypeToolBar,
+											MoveSimpleForm.sTypeMTitle,
+											MoveSimpleForm.sTypeOverflowToolBar];
 					// !important : element was used in 1.40, do not remove for compatibility!
 					var oMovedGroup = oModifier.bySelector(mMovedElement.elementSelector || mMovedElement.element, oAppComponent, oView);
 					var iMovedGroupIndex = aContent.indexOf(oMovedGroup);
@@ -193,7 +199,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 					return true;
 				}
 				var sType = aElements[iIndex].getMetadata().getName();
-				return (MoveSimpleForm.sTypeTitle === sType || MoveSimpleForm.sTypeToolBar === sType);
+				return (MoveSimpleForm.sTypeTitle === sType
+						|| MoveSimpleForm.sTypeToolBar === sType
+						|| MoveSimpleForm.sTypeMTitle === sType
+						|| MoveSimpleForm.sTypeOverflowToolBar === sType);
 			};
 
 			var fnMeasureLengthOfSequenceUntilStopToken = function(oModifier, iMovedElementIndex, aContent, aStopToken) {
@@ -208,8 +217,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			};
 
 			var fnGetFieldLength = function(oModifier, aElements, iIndex) {
-				return fnMeasureLengthOfSequenceUntilStopToken(oModifier, iIndex, aElements, [MoveSimpleForm.sTypeTitle,
-						MoveSimpleForm.sTypeToolBar, MoveSimpleForm.sTypeLabel]);
+				return fnMeasureLengthOfSequenceUntilStopToken(oModifier, iIndex, aElements,
+					[MoveSimpleForm.sTypeTitle,
+					MoveSimpleForm.sTypeMTitle,
+					MoveSimpleForm.sTypeToolBar,
+					MoveSimpleForm.sTypeOverflowToolBar,
+					MoveSimpleForm.sTypeLabel,
+					MoveSimpleForm.sTypeSmartLabel
+					]);
 			};
 
 			var fnMapFieldIndexToContentAggregationIndex = function(oModifier, aContent, iGroupStart, iFieldIndex, bUp) {
