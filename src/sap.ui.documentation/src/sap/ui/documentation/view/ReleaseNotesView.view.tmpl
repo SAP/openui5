@@ -1,0 +1,11 @@
+<div class="sapUiSmallMargin">
+	{{#each path="notes"}}
+	<ul style="margin-left:1rem;margin-right:1rem;padding:0;font-size:0.875rem;">
+		<li><b>[{{text path="type"}}]</b> {{text path="text"}}
+			{{#each path="references"}}
+				<b>({{text path="type"}} : {{text path="reference"}})</b>
+			{{/each}}
+		</li>
+	</ul>
+	{{/each}}
+</div>

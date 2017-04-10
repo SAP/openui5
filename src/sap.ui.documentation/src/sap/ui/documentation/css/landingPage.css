@@ -1,0 +1,61 @@
+.colorPatternA {
+	background-color: #ffffff;
+}
+
+.colorPatternB {
+	background-color: #eff4f9;
+}
+
+.colorPatternBContrast {
+	background-color: #3F5161;
+}
+
+.colorPatternC {
+	background-color: #d5e2ef;
+}
+
+.colorPatternD {
+	background-color: #cadbeb;
+}
+
+.colorPatternE {
+	background-color: #bbd0e6;
+}
+
+.colorPatternFContrast {
+	background-color: #2f3c48;
+}
+
+.contentBlock .sapUiBlockCellContent {
+	/*padding: 1rem 2rem 1rem 2rem;*/
+}
+
+.groupTitleBlock {
+	height: 6rem;
+}
+
+.whiteText {
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.brightIcon {
+	color: #CAE4FB;
+}
+
+.brightLink.sapMLnk,
+.brightLink.sapMLnk:hover {
+	color: #7ed0ff;
+}
+
+.smallerText {
+	font-size: 0.8rem;
+}
+/*
+.pageFooterCell {
+	padding: 2rem 3rem 2rem 3rem;
+}
+*/
+.bigImageContainer .sapUiBlockCellContent{
+	padding: 2rem
+}

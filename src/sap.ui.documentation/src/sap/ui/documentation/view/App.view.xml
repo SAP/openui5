@@ -1,0 +1,111 @@
+<mvc:View
+		controllerName="sap.ui.documentation.controller.App"
+		xmlns="sap.m"
+		xmlns:tnt="sap.tnt"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		displayBlock="true"
+		busy="{appView>/busy}"
+		busyIndicatorDelay="{appView>/delay}">
+	<Page
+        showHeader="false"
+        enableScrolling="false"
+		showNavButton="false" >
+		<content>
+			<tnt:ToolHeader id="headerToolbar">
+				<Image id="sap_logo" src="./resources/sap/ui/documentation/images/sap_logo.png" 
+					visible="{=!${appView>/bPhoneSize}}" 
+					height="2rem" 
+					class="sapLogo"
+					decorative="false"
+					press="navigateToSection" />
+				<core:ExtensionPoint name="customStartLinks" />
+				<IconTabHeader id="tabHeader"
+						showOverflowSelectList="true"
+						backgroundDesign="Transparent"
+						mode="Inline"
+						select="navigateToSection">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
+					</layoutData>
+					<items>
+						<IconTabFilter id="welcomeTab" text="Home" key="">
+						</IconTabFilter>
+						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic">
+						</IconTabFilter>
+						<IconTabFilter id="controlsMasterTab" text="Explored" key="controlsMaster">
+						</IconTabFilter>
+						<IconTabFilter id="apiMasterTab" text="API Reference" key="api">
+						</IconTabFilter>
+						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
+						</IconTabFilter>
+					</items>
+				</IconTabHeader>
+
+				<ToolbarSpacer>
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px" />
+					</layoutData>
+				</ToolbarSpacer>
+				<SearchField id="searchField" search="onSearch" showSearchButton="false" width="20%" class="sdkHeaderSearchField" visible="false">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</SearchField>
+				<ToggleButton id="search" icon="sap-icon://search" class="sdkHeaderSearchButton" type="Transparent" press="switchHeaderControlsVisibility">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</ToggleButton>
+				<Button icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize}}" press="feedbackDialogOpen">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
+
+				<MenuButton icon="sap-icon://hint" type="Transparent">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+					<menu>
+						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
+							<items>
+								<MenuItem text="Version {appView>/version}" />
+								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
+								<MenuItem text="About" />
+								<MenuItem text="Legal" visible="{appView>/isOpenUI5}"/> <!-- should be NOT here -->
+								<MenuItem text="Privacy" visible="{appView>/isOpenUI5}"/> <!-- should be NOT here -->
+								<MenuItem text="Terms of Use" visible="{appView>/isOpenUI5}"> <!-- should be NOT here -->
+									<items>
+										<MenuItem text="Terms of Use" />
+										<MenuItem text="Copyright" />
+										<MenuItem text="Trademark" />
+										<MenuItem text="Disclaimer" />
+									</items>
+								</MenuItem>
+							</items>
+						</Menu>
+					</menu>
+				</MenuButton>
+				<core:ExtensionPoint name="customLinks" />
+			</tnt:ToolHeader>
+
+			<core:ExtensionPoint name="customControls" />
+			<ScrollContainer
+					id="contentId"
+					width="100%"
+					height="calc(100% - 2rem)"
+					horizontal="false"
+					vertical="false">
+				<SplitApp id="splitApp"
+						  mode="HideMode"
+						  defaultTransitionNameDetail="fade"
+						  defaultTransitionNameMaster="fade">
+				</SplitApp>
+			</ScrollContainer>
+		</content>
+		<footer>
+			<core:ExtensionPoint name="footer" />
+		</footer>
+	</Page>
+</mvc:View>

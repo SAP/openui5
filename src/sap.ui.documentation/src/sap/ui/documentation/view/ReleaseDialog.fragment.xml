@@ -1,0 +1,19 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
+	<Dialog
+			id="releaseDialog"
+			resizable="true"
+			draggable="true"
+			title="Change log for: {/library}"
+			contentWidth="40%"
+			contentHeight="40%"
+			stretch="{appView>/bPhoneSize}">
+			<Text text="{/noDataMessage}" class="sapUiSmallMargin" visible="{=!!${/noDataMessage}}"/>
+		<beginButton>
+			<Button text="Close" press="onReleaseDialogClose"/>
+		</beginButton>
+	</Dialog>
+
+</core:FragmentDefinition>

@@ -1,0 +1,212 @@
+<mvc:View
+		height="100%"
+		width="100%"
+		xmlns="sap.m"
+		xmlns:f="sap.f"
+		xmlns:l="sap.ui.layout"
+		xmlns:mvc="sap.ui.core.mvc">
+	<Page id="topicDetailPage"
+		  showHeader="false"
+		  class="sapUiNoContentPadding">
+		<l:BlockLayout
+				background="Accent">
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell class="sapUiNoContentPadding">
+					<Image
+							src="./resources/sap/ui/documentation/images/M_and_L_Cropped_274847.png"
+							width="100%"/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="Quick Access to the Documentation Sections">
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="What's New?"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Read All about the latest updates for each new release of SAPUI5."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell>
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="Read Me First"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Complete explanaitions of all the things you need to know before diving into UI5."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell
+						width="2">
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="Tutorials"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="The SAPUI5 tutorials introduce you all major development paradigms of SAPUI5 using practical examples in an interactive format."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						width="2">
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="Developing Apps"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="This section contains the practical part, details and best practises that will help you while developing your apps, and what pitfalls you should look out for along the way."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell>
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="... with SAP Fiori Elements"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Developing SAP Fiori apps using SAP Fiori elements, and how to use them to save time and development costs."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell>
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="... with Analysis Path Framework"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Build and enhance interactive analytical Web applications"
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="Essentials"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="This sections explains the development concepts of SAPUI5."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell>
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="More About Controls"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Detailed information about UI5 controls and the libraries they live in."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell>
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="Extending Apps"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Adapt or replace views, extend or replace controllers and so much more."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell>
+					<l:VerticalLayout
+							width="100%">
+						<Title
+								text="Developing Content"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Learn more about creating your own controls or contributing to UI5."
+								class="sapUiLargeMarginBottom"/>
+						<Link
+								text="View Documentation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="colorPatternFContrast">
+					<Image
+							src="./resources/sap/ui/documentation/images/SAP_grad_R_min.png"
+							height="2.5rem">
+					</Image>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						class="colorPatternFContrast">
+					<HBox
+							width="100%"
+							justifyContent="End">
+						<Link
+								class="brightLink sapUiLargeMarginEnd"
+								text="Legal Disclosure"/>
+						<Link
+								class="brightLink sapUiLargeMarginEnd"
+								text="Privacy"/>
+						<Link
+								class="brightLink"
+								text="Terms of use"/>
+					</HBox>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
+	</Page>
+</mvc:View>

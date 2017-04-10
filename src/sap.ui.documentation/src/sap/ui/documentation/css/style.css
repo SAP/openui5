@@ -1,0 +1,427 @@
+.sapMBarChild.sapMImg.sapLogo {
+	margin-left: 1rem;
+}
+
+.aboutLink {
+	vertical-align: text-bottom;
+}
+
+.rateButton.sapMBtn span {
+    border-radius: 0;
+}
+
+.fs0875 {
+    font-size: 0.875rem;
+}
+
+.fs0875 pre {
+    white-space: pre-wrap;
+}
+
+.fs0875 > p {
+    margin-top: 0.6em;
+    margin-bottom: 0.6em;
+}
+
+.fs0875 > p:first-child {
+    margin-top: 0.5rem;
+}
+
+.fs0875 > p:last-child {
+    margin-bottom: 0.5rem;
+}
+
+.sapMListTbl .sapUiVlt .sapMText,
+.sapMListTbl .sapUiVlt .sapMLabel {
+    padding-top: 0.5rem;
+    margin-left: -0.5rem;
+}
+
+.sapMListTbl .sapUiVlt .sapMHBox .sapMFlexItem:first-child {
+    padding-right: .25rem;
+}
+
+#content {
+    padding-left: 0;
+}
+
+.sapMBarChild.sapMSF.sdkHeaderSearchField {
+    margin-right: 0;
+}
+
+.sapMBtn.sdkHeaderSearchButton {
+    margin-left: 0;
+}
+
+.docuPage section {
+    background-color: #fff;
+}
+
+.sapMPage .sapMOHR.sapMOHRBgTranslucent {
+    background: #f2f8fc;
+}
+
+.sapMListTblCell .sapMText,
+.sapMListTblCell .sapMLnk {
+	padding-top: 0.5rem;
+	padding-right: 1rem;
+}
+
+/********************************************* Documentation page styles *********************************************/
+.hidden {
+    display: none;
+}
+
+#d4h5-main-container {
+    padding: 0 2rem;
+}
+
+#d4h5-main-container .p {
+    box-sizing: border-box;
+    color: #333;
+    margin: 1.25rem 0;
+    font-size: .875rem;
+    font-family: BentonSansRegular, Arial, sans-serif;
+    line-height: 1.375rem;
+    orphans: 2;
+    padding: 0;
+    widows: 2;
+    word-wrap: break-word;
+}
+
+#d4h5-main-container .content-body p {
+    line-height: 1.5rem;
+    padding: 0;
+}
+
+#d4h5-main-container aside,
+#d4h5-main-container div.note,
+#d4h5-main-container pre.codeblock,
+#d4h5-main-container blockquote,
+#d4h5-main-container div.syntax {
+    background-color: #f0f0f0;
+    border-left: 1.75rem solid #008fd3;
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+    border-top: 0;
+    border-bottom: 0;
+    border-right: 0;
+    display: block;
+    box-sizing: border-box;
+    font-size: .875rem;
+    font-family: 'Benton Sans', Arial, sans-serif;
+    margin: 1.25rem 0;
+    word-wrap: break-word;
+}
+
+#d4h5-main-container aside > p:first-of-type {
+    margin-bottom: 0;
+}
+
+#d4h5-main-container aside > p:last-of-type {
+    margin-top: 0;
+}
+
+#d4h5-main-container div.caution,
+#d4h5-main-container aside.caution,
+#d4h5-main-container aside.restriction {
+    border-left: 1.75rem solid #e35500;
+}
+
+#d4h5-main-container aside .title,
+#d4h5-main-container div.note .cautiontitle,
+#d4h5-main-container .syntaxtitle,
+#d4h5-main-container .notetitle {
+    color: #bbb;
+    font-size: 1.25rem;
+    line-height: 1.875rem;
+    margin: .375rem 0 .375rem -2.75rem;
+    display: block;
+    padding-left: 1.75rem;
+    background-repeat: no-repeat;
+    background-position: left top;
+    padding-left: 2.5rem;
+    font-weight: 300;
+    color: #000;
+    font-family: 'Benton Sans', Arial, sans-serif;
+}
+
+#d4h5-main-container .restriction .title:before,
+#d4h5-main-container .caution .cautiontitle:before,
+#d4h5-main-container .note.caution .title:before,
+#d4h5-main-container .note .title:before,
+#d4h5-main-container .notetitle:before,
+#d4h5-main-container .recommendation .title:before,
+#d4h5-main-container .remember .title:before,
+#d4h5-main-container .tip .title:before,
+#d4h5-main-container .tiptitle:before,
+#d4h5-main-container .samplecode .title:before,
+#d4h5-main-container .codesyntax .title:before,
+#d4h5-main-container .syntaxtitle .title:before,
+#d4h5-main-container .outputcodeblock .title:before,
+#d4h5-main-container .sourcecodeblock .title:before,
+#d4h5-main-container .example .title:before {
+    font-family: sap-icons;
+    color: #fff;
+    font-size: 1.375rem;
+}
+
+#d4h5-main-container .restriction .title:before {
+    content: '\e094';
+    margin-left: -1.75rem;
+    margin-right: 1.3125em;
+}
+
+#d4h5-main-container .caution .cautiontitle:before,
+#d4h5-main-container .note.caution .title:before {
+    content: '\e201';
+    margin-left: -2.3125rem;
+    margin-right: 1.125rem;
+}
+
+#d4h5-main-container .note .title:before,
+#d4h5-main-container .notetitle:before,
+#d4h5-main-container .recommendation .title:before {
+    content: '\e05c';
+    margin-left: -1.75rem;
+    margin-right: 1.3125em;
+}
+
+#d4h5-main-container .remember .title:before,
+#d4h5-main-container .tip .title:before,
+#d4h5-main-container .tiptitle:before {
+    content: '\e0e3';
+    margin-left: -2.3125rem;
+    margin-right: 1.125rem;
+}
+
+#d4h5-main-container .samplecode .title:before,
+#d4h5-main-container .codesyntax .title:before,
+#d4h5-main-container .syntaxtitle .title:before,
+#d4h5-main-container .outputcodeblock .title:before,
+#d4h5-main-container .sourcecodeblock .title:before {
+    content: '\e139';
+    margin-left: -2.3125rem;
+    margin-right: 1.125rem;
+}
+
+#d4h5-main-container .example .title:before {
+    content: '\e16d';
+    margin-left: -2.3125rem;
+    margin-right: 1.125rem;
+}
+
+#d4h5-main-container a,
+#d4h5-main-container a:visited {
+    color: #008fd3;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#d4h5-main-container h2 {
+    break-after: avoid;
+    break-inside: avoid;
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-weight: 600;
+    color: #4a4a4a;
+    font-size: 1.25rem;
+    line-height: 1.25rem;
+    margin: 2.125rem 0 1.25rem 0;
+    word-wrap: break-word;
+}
+
+#d4h5-main-container em,
+#d4h5-main-container span.uicontrol,
+#d4h5-main-container span.uinolabel,
+#d4h5-main-container .emphasis,
+#d4h5-main-container strong {
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-weight: 600;
+}
+
+#d4h5-main-container span.uicontrol,
+#d4h5-main-container span.uinolabel {
+    color: #314971;
+}
+
+code, kbd, pre, samp {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+#d4h5-main-container pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    display: block;
+    padding: .625rem;
+    margin: 0 0 .625rem;
+    font-size: .8125rem;
+    line-height: 1.125rem;
+    color: #333;
+    word-break: break-all;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: .25rem;
+}
+
+#d4h5-main-container pre.codeblock {
+    border-radius: .125rem;
+    padding: .625rem;
+    font-family: "Courier New", Courier, monospace;
+    overflow: auto;
+    line-height: 1.25rem;
+    color: #333;
+    word-break: break-all;
+}
+
+#d4h5-main-container aside pre.codeblock,
+#d4h5-main-container div.note pre.codeblock,
+#d4h5-main-container div.syntax pre {
+    border-left: 0;
+    padding: 0;
+}
+
+#d4h5-main-container table {
+    border: 0;
+    border-collapse: collapse;
+    display: block;
+    width: 100%;
+    margin: 1.25rem 0;
+    text-align: left;
+    font-size: .75rem;
+    table-layout: fixed;
+    border-spacing: 0;
+}
+
+#d4h5-main-container .tablecap {
+    color: #666;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    white-space: nowrap;
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: .625rem;
+    font-weight: 300 !important;
+    margin-left: .125rem;
+}
+
+#d4h5-main-container th {
+    border: none;
+    border-bottom: 1px solid #999;
+    border-collapse: collapse;
+    font-weight: 300 !important;
+    color: #181818;
+    letter-spacing: -1px;
+    font-family: 'Benton Sans', Arial, sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    padding: 1rem 1rem .5rem 0;
+}
+
+#d4h5-main-container th .p {
+    margin: 0;
+    font-size: 1rem;
+    font-family: 'Benton Sans', Arial, sans-serif;
+}
+
+#d4h5-main-container td {
+    border: none;
+    border-bottom: 1px solid #999;
+    border-collapse: collapse;
+    padding: 1rem .75rem 1rem 0;
+    font-size: 1rem;
+    vertical-align: top;
+    text-align: left;
+    line-height: 1.75rem;
+}
+
+#d4h5-main-container td p:first-child {
+    margin-top: 0;
+}
+
+#d4h5-main-container td p:last-child {
+    margin-bottom: 0;
+}
+
+#d4h5-main-container td .p {
+    font-size: .8125rem;
+}
+
+#d4h5-main-container span.figcap {
+    font-size: .5625rem;
+    font-family: 'Open Sans';
+}
+
+#d4h5-main-container ol,
+#d4h5-main-container ul {
+    margin-top: 0;
+    margin-bottom: .625rem;
+}
+
+#d4h5-main-container li {
+    font-family: BentonSansRegular, Arial, sans-serif;
+    font-size: .875rem;
+    line-height: 1.375rem;
+    margin: .625rem;
+}
+
+#d4h5-main-container kbd {
+    background: none;
+    color: #333;
+    box-shadow: none;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    padding: .125rem .25rem;
+}
+
+#d4h5-main-container img {
+    max-width: 100%;
+}
+
+/******************************************************* FONTS *******************************************************/
+
+@font-face {
+    font-family: Benton Sans;
+    src: url('./fonts/BentonSans-Regular.woff');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: Benton Sans;
+    src: url('./fonts/BentonSans-Light.woff');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: Open Sans;
+    src: url('./fonts/OpenSans-Regular.eot'); /* IE */
+    src: url('./fonts/OpenSans-Regular.woff'); /* Non-IE */
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: Open Sans;
+    src: url('./fonts/OpenSans-Light.eot'); /* IE */
+    src: url('./fonts/OpenSans-Light.woff'); /* Non-IE */
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: Open Sans;
+    src: url('./fonts/OpenSans-Semibold.eot'); /* IE */
+    src: url('./fonts/OpenSans-Semibold.ttf'); /* Non-IE */
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: sap-icofonts;
+    src: url('./fonts/sap-icofonts.ttf');
+}
+
+@font-face {
+    font-family: sap-icons;
+    src: url('./fonts/sap-icons.ttf');
+}
