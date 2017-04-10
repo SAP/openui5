@@ -280,10 +280,21 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 			this.oChangeWrapper = new sap.ui.fl.Change(oChange);
 			this.oChangeHandler = sap.ui.layout.changeHandler.HideSimpleForm;
+			this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
 		},
 
 		afterEach: function () {
 			this.oSimpleForm.destroy();
+			this.oLabel0.destroy();
+			this.oLabel1.destroy();
+			this.oInput0.destroy();
+			this.oInput1.destroy();
+			this.oToolbar0.destroy();
+			this.oToolbar1.destroy();
+			this.oLabel10.destroy();
+			this.oLabel11.destroy();
+			this.oInput10.destroy();
+			this.oInput11.destroy();
 		}
 	});
 
@@ -298,6 +309,33 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		assert.notOk(this.oLabel11.getVisible(), "the label of second FormElement is hidden");
 		assert.notOk(this.oInput10.getVisible(), "the input of second FormElement is hidden");
 		assert.notOk(this.oInput11.getVisible(), "the input of second FormElement is hidden");
+	});
+
+	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars using XmlTreeModifier", function (assert) {
+		var oXmlString =
+		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:layout='sap.ui.layout' xmlns='sap.m'>" +
+		"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+		"<layout:content>" +
+		"<Toolbar id='Toolbar0' text='Title 0' visible='true' />" +
+		"<Label id='Label0' text='Label 0' visible='true' />" +
+		"<Input id='Input0' visible='true' />" +
+		"<Label id='Label1' text='Label 1' visible='true' />" +
+		"<Input id='Input1' visible='true' />" +
+		"</layout:content>" +
+		"</layout:SimpleForm>" +
+		"</mvc:View>";
+
+		var oDOMParser = new DOMParser();
+		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+
+		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
+		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
+
+		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
+			modifier : this.oXmlTreeModifier,
+			view : this.oXmlDocument
+		}), "no errors occur");
+		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.HideSimpleForm with a simpleform with toolbar", {
