@@ -558,7 +558,8 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	DesignTime.prototype._checkIfOverlayShouldBeDestroyed = function(oElement, oParent) {
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		// Overlays of elements in "dependents" aggregation or not in root elements should be destroyed
-		if (oElementOverlay && !this._isElementInRootElements(oElement) || oElement.sParentAggregationName === "dependents") {
+		if (oElementOverlay &&
+			(!this._isElementInRootElements(oElement) || oElement.sParentAggregationName === "dependents")) {
 			oElementOverlay.destroy();
 		}
 	};
