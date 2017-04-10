@@ -487,30 +487,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("changeParameters: adding not allowed parameter", function (assert) {
-		var mParameters = {
-				$apply: "filter(Amount gt 3)"
-			},
-			oBinding = new ODataParentBinding({
-				oModel : {},
-				mParameters : mParameters,
-				sPath : "/EMPLOYEES",
-				applyParameters : function () {}
-			}),
-			mNewParameters = {
-				$apply: "filter(Amount gt 5)",
-				$foo: "bar"
-			};
-
-		// code under test
-		assert.throws(function () {
-			oBinding.changeParameters(mNewParameters);
-		}, new Error("System query option $foo is not supported"));
-		assert.deepEqual(oBinding.mParameters, mParameters, "parameters unchanged on error");
-		// TODO do we need this test?
-	});
-
-	//*********************************************************************************************
 	QUnit.test("changeParameters: cloning mParameters", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oModel : {},
