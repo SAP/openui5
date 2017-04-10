@@ -1351,7 +1351,7 @@
 		}
 	}
 
-	var oCustom = new sap.m.Text({text: "Some custom no data control"});
+	var oCustom;
 	var oEmptyModel = new sap.ui.model.json.JSONModel();
 
 	function switchNoData(oTable, sState) {
@@ -1365,6 +1365,9 @@
 			case "CUSTOM":
 				oNoDataConfig.setData(oTable, true);
 				oTable.setShowNoData(true);
+				if (!oCustom) {
+					oCustom = new sap.m.Text({text: "Some custom no data control"});
+				}
 				oTable.setNoData(oCustom);
 				break;
 			case "EMPTYCELLS":
