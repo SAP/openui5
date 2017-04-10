@@ -93,48 +93,48 @@
 		equal(oFormat.format(12), "12", "12 formatted");
 		equal(oFormat.format(123), "123", "123 formatted");
 		equal(oFormat.format(999), "1\xa0Tsd.", "999 formatted");
-		equal(oFormat.format(1234), "1\xa0Tsd.", "1234 formatted");
+		equal(oFormat.format(1234), "1,2\xa0Tsd.", "1234 formatted");
 		equal(oFormat.format(9999), "10\xa0Tsd.", "9999 formatted");
 		equal(oFormat.format(12345), "12\xa0Tsd.", "12345 formatted");
 		equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
 		equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
 		equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
-		equal(oFormat.format(1234567), "1\xa0Mio.", "1234567 formatted");
+		equal(oFormat.format(1234567), "1,2\xa0Mio.", "1234567 formatted");
 		equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
 		equal(oFormat.format(12345678), "12\xa0Mio.", "12345678 formatted");
 		equal(oFormat.format(99999999), "100\xa0Mio.", "99999999 formatted");
 		equal(oFormat.format(123456789), "123\xa0Mio.", "123456789 formatted");
 		equal(oFormat.format(999999999), "1\xa0Mrd.", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1\xa0Mrd.", "1234567890 formatted");
+		equal(oFormat.format(1234567890), "1,2\xa0Mrd.", "1234567890 formatted");
 		equal(oFormat.format(9999999999), "10\xa0Mrd.", "9999999999 formatted");
 		equal(oFormat.format(12345678901), "12\xa0Mrd.", "12345678901 formatted");
 		equal(oFormat.format(99999999999), "100\xa0Mrd.", "99999999999 formatted");
 		equal(oFormat.format(123456789012), "123\xa0Mrd.", "123456789012 formatted");
 		equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1\xa0Bio.", "1234567890123 formatted");
+		equal(oFormat.format(1234567890123), "1,2\xa0Bio.", "1234567890123 formatted");
 		equal(oFormat.format(-1), "-1", "-1 formatted");
 		equal(oFormat.format(-12), "-12", "-12 formatted");
 		equal(oFormat.format(-123), "-123", "-123 formatted");
 		equal(oFormat.format(-999), "-1\xa0Tsd.", "-999 formatted");
-		equal(oFormat.format(-1234), "-1\xa0Tsd.", "-1234 formatted");
+		equal(oFormat.format(-1234), "-1,2\xa0Tsd.", "-1234 formatted");
 		equal(oFormat.format(-9999), "-10\xa0Tsd.", "-9999 formatted");
 		equal(oFormat.format(-12345), "-12\xa0Tsd.", "-12345 formatted");
 		equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
 		equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
 		equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
-		equal(oFormat.format(-1234567), "-1\xa0Mio.", "-1234567 formatted");
+		equal(oFormat.format(-1234567), "-1,2\xa0Mio.", "-1234567 formatted");
 		equal(oFormat.format(-9999999), "-10\xa0Mio.", "-9999999 formatted");
 		equal(oFormat.format(-12345678), "-12\xa0Mio.", "-12345678 formatted");
 		equal(oFormat.format(-99999999), "-100\xa0Mio.", "-99999999 formatted");
 		equal(oFormat.format(-123456789), "-123\xa0Mio.", "-123456789 formatted");
 		equal(oFormat.format(-999999999), "-1\xa0Mrd.", "-999999999 formatted");
-		equal(oFormat.format(-1234567890), "-1\xa0Mrd.", "-1234567890 formatted");
+		equal(oFormat.format(-1234567890), "-1,2\xa0Mrd.", "-1234567890 formatted");
 		equal(oFormat.format(-9999999999), "-10\xa0Mrd.", "-9999999999 formatted");
 		equal(oFormat.format(-12345678901), "-12\xa0Mrd.", "-12345678901 formatted");
 		equal(oFormat.format(-99999999999), "-100\xa0Mrd.", "-99999999999 formatted");
 		equal(oFormat.format(-123456789012), "-123\xa0Mrd.", "-123456789012 formatted");
 		equal(oFormat.format(-999999999999), "-1\xa0Bio.", "-999999999999 formatted");
-		equal(oFormat.format(-1234567890123), "-1\xa0Bio.", "-1234567890123 formatted");
+		equal(oFormat.format(-1234567890123), "-1,2\xa0Bio.", "-1234567890123 formatted");
 
 		equal(oFormat.parse("1"), 1, "\"1\" parsed");
 		equal(oFormat.parse("12"), 12, "\"12\" parsed");
@@ -243,25 +243,25 @@
 		equal(oFormat.format(12), "12", "12 formatted");
 		equal(oFormat.format(123), "123", "123 formatted");
 		equal(oFormat.format(999), "1 Tausend", "999 formatted");
-		equal(oFormat.format(1234), "1 Tausend", "1234 formatted");
+		equal(oFormat.format(1234), "1,2 Tausend", "1234 formatted");
 		equal(oFormat.format(9999), "10 Tausend", "9999 formatted");
 		equal(oFormat.format(12345), "12 Tausend", "12345 formatted");
 		equal(oFormat.format(99999), "100 Tausend", "99999 formatted");
 		equal(oFormat.format(123456), "123 Tausend", "123456 formatted");
 		equal(oFormat.format(999999), "1 Million", "999999 formatted");
-		equal(oFormat.format(1234567), "1 Million", "1234567 formatted");
+		equal(oFormat.format(1234567), "1,2 Million", "1234567 formatted");
 		equal(oFormat.format(9999999), "10 Millionen", "9999999 formatted");
 		equal(oFormat.format(12345678), "12 Millionen", "12345678 formatted");
 		equal(oFormat.format(99999999), "100 Millionen", "99999999 formatted");
 		equal(oFormat.format(123456789), "123 Millionen", "123456789 formatted");
 		equal(oFormat.format(999999999), "1 Milliarde", "999999999 formatted");
-		equal(oFormat.format(1234567890), "1 Milliarde", "1234567890 formatted");
+		equal(oFormat.format(1234567890), "1,2 Milliarde", "1234567890 formatted");
 		equal(oFormat.format(9999999999), "10 Milliarden", "9999999999 formatted");
 		equal(oFormat.format(12345678901), "12 Milliarden", "12345678901 formatted");
 		equal(oFormat.format(99999999999), "100 Milliarden", "99999999999 formatted");
 		equal(oFormat.format(123456789012), "123 Milliarden", "123456789012 formatted");
 		equal(oFormat.format(999999999999), "1 Billion", "999999999999 formatted");
-		equal(oFormat.format(1234567890123), "1 Billion", "1234567890123 formatted");
+		equal(oFormat.format(1234567890123), "1,2 Billion", "1234567890123 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long", precision: 3, shortLimit: 100000}, oLocale);
 
@@ -316,6 +316,113 @@
 		equal(oFormat.parse("1"), 1, "'1' is parsed as 1");
 		equal(oFormat.parse("9999"), 9999, "'9999' is parsed as 9999");
 		equal(oFormat.parse("1万"), 10000, "'1万' is parsed as 10000");
+	});
+
+	test("Priority of properties (normal style): maxFractionDigits, decimals, shortDecimals, precision", function() {
+		var fNum = 12345.678901;
+
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			minFractionDigits: 5,
+			maxFractionDigits: 6
+		});
+		equal(oFormat.format(fNum), "12,345.678901", fNum +" with minFractionDigits and maxFractionDigits");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			minFractionDigits: 5,
+			maxFractionDigits: 6,
+			decimals: 4
+		});
+		equal(oFormat.format(fNum), "12,345.6789", fNum + " with minFractionDigits, maxFractionDigits and decimals");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			minFractionDigits: 5,
+			maxFractionDigits: 6,
+			decimals: 4,
+			// shortDecimals shouldn't have effect on normal style formatter
+			shortDecimals: 3
+		});
+		equal(oFormat.format(fNum), "12,345.6789", fNum + " with minFractionDigits, maxFractionDigits, decimals and shortDecimals");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			minFractionDigits: 5,
+			maxFractionDigits: 6,
+			decimals: 4,
+			// shortDecimals shouldn't have effect on normal style formatter
+			shortDecimals: 3,
+			precision: 7
+		});
+		equal(oFormat.format(fNum), "12,345.68", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			minFractionDigits: 5,
+			maxFractionDigits: 6,
+			decimals: 4,
+			// shortDecimals shouldn't have effect on normal style formatter
+			shortDecimals: 3,
+			precision: 2
+		});
+		equal(oFormat.format(fNum), "12,346", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			precision: 5,
+			decimals: 3
+		});
+
+		equal(oFormat.format(100), "100.00", "100 formatted with precision 5 and decimals 3");
+	});
+
+	test("Priority of properties (short style): maxFractionDigits, decimals, shortDecimals, precision", function() {
+		var fNum = 3456.678901;
+
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short"
+		});
+		equal(oFormat.format(fNum), "3.5K", fNum +" with no setting");
+
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short",
+			minFractionDigits: 5,
+			maxFractionDigits: 6
+		});
+		equal(oFormat.format(fNum), "3.456679K", fNum +" with minFractionDigits and maxFractionDigits");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short",
+			minFractionDigits: 5,
+			maxFractionDigits: 6,
+			decimals: 4
+		});
+		equal(oFormat.format(fNum), "3.4567K", fNum + " with minFractionDigits, maxFractionDigits and decimals");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short",
+			minFractionDigits: 5,
+			maxFractionDigits: 6,
+			decimals: 4,
+			shortDecimals: 3
+		});
+		equal(oFormat.format(fNum), "3.457K", fNum + " with minFractionDigits, maxFractionDigits, decimals and shortDecimals");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short",
+			minFractionDigits: 5,
+			maxFractionDigits: 6,
+			decimals: 4,
+			shortDecimals: 3,
+			precision: 1
+		});
+		equal(oFormat.format(fNum), "3K", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short",
+			minFractionDigits: 5,
+			maxFractionDigits: 6,
+			decimals: 4,
+			shortDecimals: 3,
+			precision: 1
+		});
+		equal(oFormat.format(123456.678901), "123K", fNum + " with minFractionDigits, maxFractionDigits, decimals, shortDecimals and precision (precision set with a number less than the number of integer digits)");
 	});
 
 	test("float default format", function(){
