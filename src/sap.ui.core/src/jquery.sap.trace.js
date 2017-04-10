@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 			// creates optional FESR header string
 			function createFESRopt(oInteraction) {
 				return [
-					format(oInteraction.component, 20, true), // application_name
+					format(oInteraction.component, 20, true), // application_name, trimmed from left
 					format(oInteraction.trigger + "_" + oPendingInteraction.event, 20, true), // step_name
 					"", // 1 empty field
 					format(CLIENT_MODEL, 20), // client_model
@@ -207,7 +207,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 					oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
 					"", "", "", "", // 4 empty fields
 					format(oInteraction.busyDuration, 16), // busy duration
-					"", "", "", "" // 4 empty fields
+					"", "", "", // 3 empty fields
+					format(oInteraction.component, 70, true) // application_name with 70 characters, trimmed from left
 				].join(",");
 			}
 
@@ -311,6 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 
 						// update pending interaction infos
 						oPendingInteraction = oPI ? oPI : oPendingInteraction;
+						// we do not create FESR headers if no requests have been performed
 						if (bFesrActive && oFinshedInteraction && oFinshedInteraction.requests.length > 0) {
 							// create FESR from completed interaction
 							sFESR = createFESR(oFinshedInteraction);
