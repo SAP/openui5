@@ -1321,6 +1321,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	IconTabHeader.prototype._moveVisibleTabs = function() {
 
+		if (!this._oScroller) {
+			return;
+		}
+
 		var iScrollLeft = this._oScroller.getScrollLeft(),
 			$head = this.$('head'),
 			iHeadPaddingWidth = $head.innerWidth() - $head.width(),
