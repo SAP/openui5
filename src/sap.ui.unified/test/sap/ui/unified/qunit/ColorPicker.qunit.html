@@ -195,6 +195,40 @@
 					oAssert.strictEqual(oPRGBCSpy.callCount, 0, "_processRGBChanges should not be called");
 				});
 
+				QUnit.test("Accessibility", function (oAssert) {
+					// Arrange
+					var aInvisibleTexts,
+						oInvisibleHueText,
+						oInvisibleAlphaText;
+
+					this.oCP.placeAt("qunit-fixture");
+					applyChanges();
+
+					aInvisibleTexts = this.oCP.getAggregation("_invisibleTexts");
+					oInvisibleHueText = aInvisibleTexts[0];
+					oInvisibleAlphaText = aInvisibleTexts[1];
+
+					// Assert
+					oAssert.strictEqual(aInvisibleTexts.length, 2, "We have 2 invisible texts in the aggregation");
+
+					// Assert - HUE Slider
+					oAssert.strictEqual(this.oCP.oSlider.getAriaLabelledBy()[0], oInvisibleHueText.getId(),
+						"Invisible text is added as association to HUE slider");
+					oAssert.strictEqual(oInvisibleHueText.$().length, 1,
+						"Invisible text for Hue slider is rendered in the DOM");
+
+					// Assert - Alpha Slider
+					oAssert.strictEqual(this.oCP.oAlphaSlider.getAriaLabelledBy()[0], oInvisibleAlphaText.getId(),
+						"Invisible text is added as association to Alpha slider");
+					oAssert.strictEqual(oInvisibleAlphaText.$().length, 1,
+						"Invisible text for Alpha slider is rendered in the DOM");
+
+					// Assert Output RadioButton group
+					oAssert.ok(this.oCP.$().find('[labelFor="' + this.oCP.oRGBorHSLRBGroup.getId() + '"]'),
+						"There is a label with labelFor set for the output RadioButton group");
+
+				});
+
 				QUnit.module("Private methods", {
 					beforeEach: function () {
 						this.oCP = new sap.ui.unified.ColorPicker();
@@ -321,13 +355,13 @@
 					// Arrange - Label
 					oLabel = oHL.getContent()[0];
 
-
 					// Assert
 					oAssert.strictEqual(oLabel.getText(), "Static label", "Label text should match the argument passed");
 					oAssert.strictEqual(oLabel.getTooltip(), sTooltipResult,
 						"Tooltip applied to the label control should match the returned from the resource bundle");
 					oAssert.ok(oLabel.hasStyleClass(CONSTANTS.LabelClass),
 						'Label class "' + CONSTANTS.LabelClass + '" should be applied to the label');
+					oAssert.strictEqual(oLabel.getLabelFor(), oInput.getId(), "Label for must point to the input ID");
 
 					// Arrange - Unit Label
 					oUnitLabel = oHL.getContent()[2];
@@ -338,6 +372,7 @@
 						'Class "' + CONSTANTS.LabelClass + '" should be applied to the unit label');
 					oAssert.ok(oUnitLabel.hasStyleClass(CONSTANTS.UnitLabelClass),
 						'Class "' + CONSTANTS.UnitLabelClass + '" should be applied to the unit	 label');
+					oAssert.strictEqual(oUnitLabel.getLabelFor(), oInput.getId(), "Unit label for must point to the input ID");
 
 					// Act - using only 2 arguments
 					oHL = this.oCP._createRowFromInput(oInput, sTooltipID, "Static label");
