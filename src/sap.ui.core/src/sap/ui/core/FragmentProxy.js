@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
     /**
      * Handler for the updateModelContext event of a parent control that contains forwarded controls in
      * one of its aggregations. The method overwrites the getter for the aggregation and returns the collected
-     * result of a appropriate list binding.
+     * result of an appropriate list binding.
      *
      * @private
      */

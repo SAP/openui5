@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * In case of the version info file is not available an error will occur when
 	 * calling this function.
 	 *
-	 * @param {string|object} [mOptions] name of the library (e.g. "sap.ui.core") or a object map (see below)
+	 * @param {string|object} [mOptions] name of the library (e.g. "sap.ui.core") or an object map (see below)
 	 * @param {boolean} [mOptions.library] name of the library (e.g. "sap.ui.core")
 	 * @param {boolean} [mOptions.async=false] whether "sap-ui-version.json" should be loaded asynchronously
 	 * @param {boolean} [mOptions.failOnError=true] whether to propagate load errors or not (not relevant for async loading)

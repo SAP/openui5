@@ -214,7 +214,7 @@
 		},
 
 		/**
-		 * Prepares the data from a XMLHttpRequest for saving into an har file. All needed data to replay the request
+		 * Prepares the data from an XMLHttpRequest for saving into an har file. All needed data to replay the request
 		 * is collected (e.g. time, headers, response, status).
 		 *
 		 * @param {Object} oXhr The finished XMLHttpRequest, from which the data for the har file is extracted.

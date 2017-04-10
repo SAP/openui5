@@ -318,8 +318,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 			if (oBinding.getBindingMode() == BindingMode.OneTime) {
 				oBinding.detachChange(that.fChangeHandler);
 			}
-			/*bForceUpdate true gets lost (e.g. checkupdate(true) on model); But if a embedded binding fires a change we could
-			 * call checkupdate(true) so we handle both cases: a value change of the binding and a checkupdate(true)
+			/*bForceUpdate true gets lost (e.g. checkUpdate(true) on model); But if an embedded binding fires a change we could
+			 * call checkUpdate(true) so we handle both cases: a value change of the binding and a checkUpdate(true)
 			 */
 			that.checkUpdate(true);
 		};

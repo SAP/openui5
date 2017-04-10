@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/li
 	 *
 	 * <strong>Note</strong>: when an object literal is given, it might be modified during view construction.
 	 *
-	 * The controller property can hold an controller instance. If a controller instance is given,
+	 * The controller property can hold a controller instance. If a controller instance is given,
 	 * it overrides the controller defined in the view.
 	 *
 	 * Like with any other control, an id is optional and will be created when missing.

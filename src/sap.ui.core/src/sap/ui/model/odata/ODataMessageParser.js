@@ -153,7 +153,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
 	} else {
 		// In case no message processor is attached, at least log to console.
-		// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
+		// TODO: Maybe we should just output an error and do nothing, since this is not how messages are meant to be used like?
 		this._outputMesages(aMessages);
 	}
 };
@@ -295,7 +295,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 };
 
 /**
- * Creates a sap.ui.core.message.Message from the given JavaScript object
+ * Creates an sap.ui.core.message.Message from the given JavaScript object
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL

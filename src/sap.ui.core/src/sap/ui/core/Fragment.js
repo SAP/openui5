@@ -309,7 +309,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 * To instantiate a Fragment and optionally directly give the XML definition instead of loading it from a file,
 	 * call this method as:
 	 *     sap.ui.xmlfragment(oFragmentConfig, [oController]);
-	 * The oFragmentConfig object can have a either a "fragmentName" or a "fragmentContent" property.
+	 * The oFragmentConfig object can either have a "fragmentName" or a "fragmentContent" property.
 	 * fragmentContent is optional and can hold the Fragment definition as XML string; if not
 	 * given, fragmentName must be given and the Fragment content definition is loaded by the module system.
 	 * Again, if oController is given, the methods referenced in the Fragment will be called on this controller.
@@ -421,7 +421,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 * To instantiate a Fragment and optionally directly give the HTML definition instead of loading it from a file,
 	 * call this method as:
 	 *     sap.ui.htmlfragment(oFragmentConfig, [oController]);
-	 * The oFragmentConfig object can have a either a "fragmentName" or a "fragmentContent" property.
+	 * The oFragmentConfig object can either have a "fragmentName" or a "fragmentContent" property.
 	 * fragmentContent is optional and can hold the Fragment definition as XML string; if not
 	 * given, fragmentName must be given and the Fragment content definition is loaded by the module system.
 	 * Again, if oController is given, the methods referenced in the Fragment will be called on this controller.

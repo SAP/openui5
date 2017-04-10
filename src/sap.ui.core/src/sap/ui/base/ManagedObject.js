@@ -2043,7 +2043,7 @@ sap.ui.define([
 			// FIXME DESTROY: this._removeChild(aChildren, sAggregationName, bSuppressInvalidate); // (optional, done by destroy())
 			aChildren.destroy(bSuppressInvalidate);
 
-			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
+			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a new parent
 			// FIXME DESTROY: no more need to fire event here when destroy ever should be fixed
 			this._fireModifyAggregation && this._fireModifyAggregation("remove", sAggregationName, aChildren);
 			if (this._observer) {
@@ -2056,7 +2056,7 @@ sap.ui.define([
 					// FIXME DESTROY: this._removeChild(aChild, sAggregationName, bSuppressInvalidate); // (optional, done by destroy())
 					aChild.destroy(bSuppressInvalidate);
 
-					//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
+					//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a new parent
 					this._fireModifyAggregation && this._fireModifyAggregation("remove", sAggregationName, aChild);
 					if (this._observer) {
 						this._observer.aggregationChange(this, sAggregationName, "remove", aChild);
@@ -2166,8 +2166,8 @@ sap.ui.define([
 	/**
 	 * Checks whether object <code>a</code> is an inclusive descendant of object <code>b</code>.
 	 *
-	 * @param {sap.ui.base.ManaagedObject} a Object that should be checked for being a descendant
-	 * @param {sap.ui.base.ManaagedObject} b Object that should be checked for having a descendant
+	 * @param {sap.ui.base.ManagedObject} a Object that should be checked for being a descendant
+	 * @param {sap.ui.base.ManagedObject} b Object that should be checked for having a descendant
 	 * @returns {boolean} Whether <code>a</code> is a descendant of (or the same as) <code>b</code>
 	 * @private
 	 */
@@ -2199,7 +2199,7 @@ sap.ui.define([
 
 		if ( !oParent ) {
 
-			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
+			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a new parent
 			if (this.oParent) {
 				this.oParent._fireModifyAggregation && this.oParent._fireModifyAggregation("remove", this.sParentAggregationName, this);
 				if (this.oParent._observer) {
@@ -3057,7 +3057,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Generic method which is called, whenever an property binding is changed.
+	 * Generic method which is called, whenever a property binding is changed.
 	 * This method gets the external format from the property binding and applies
 	 * it to the setter.
 	 *
@@ -3776,7 +3776,7 @@ sap.ui.define([
 	 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
 	 * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name.
 	 *
-	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of an UIArea.
+	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @param {sap.ui.model.Context} oContext the new binding context for this object
 	 * @param {string} [sModelName] the name of the model to set the context for or <code>undefined</code>
@@ -3826,7 +3826,7 @@ sap.ui.define([
 			oBindingInfo,
 			i;
 
-		// find models that need an context update
+		// find models that need a context update
 		if (bUpdateAll) {
 			for (sModelName in this.oModels) {
 				if ( this.oModels.hasOwnProperty(sModelName) ) {
@@ -3906,7 +3906,7 @@ sap.ui.define([
 	 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
 	 * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name.
 	 *
-	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of an UIArea.
+	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @param {string} [sModelName] the name of the model or <code>undefined</code>
 	 * @return {sap.ui.model.Context} The binding context of this object
@@ -3968,7 +3968,7 @@ sap.ui.define([
 	 * Note: By design, it is not possible to hide an inherited model by setting a <code>null</code> or
 	 * <code>undefined</code> model. Applications can set an empty model to achieve the same.
 	 *
-	 * Note: A ManagedObject inherits models from the Core only when it is a descendant of an UIArea.
+	 * Note: A ManagedObject inherits models from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
 	 * @param {string} [sName] the name of the model or <code>undefined</code>
@@ -4177,7 +4177,7 @@ sap.ui.define([
 	/**
 	 * Check if any model is set to the ManagedObject or to one of its parents (including UIArea and Core).
 	 *
-	 * Note: A ManagedObject inherits models from the Core only when it is a descendant of an UIArea.
+	 * Note: A ManagedObject inherits models from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @return {boolean} whether a model reference exists or not
 	 * @public
@@ -4464,7 +4464,7 @@ sap.ui.define([
 
 	/**
 	 * Fires the internal _modifyAggregation event for registered aggregations.
-	 * The event is fired whenever a object is set, added, inserted to an aggregation
+	 * The event is fired whenever an object is set, added, inserted to an aggregation
 	 * or removed, destroyed from an aggregation.
 	 * The objects parent might not be set or reset if the event is fired.
 	 *

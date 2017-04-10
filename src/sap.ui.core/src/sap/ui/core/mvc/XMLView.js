@@ -42,14 +42,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		specialSettings : {
 
 			/**
-			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
+			 * If an XMLView instance is used to represent an HTML subtree of another XMLView,
 			 * then that other XMLView is provided with this setting to be able to delegate
 			 * View functionality (createId, getController) to that 'real' view.
 			 */
 			containingView : { type: 'sap.ui.core.mvc.XMLView', visibility: 'hidden' },
 
 			/**
-			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
+			 * If an XMLView instance is used to represent an HTML subtree of another XMLView,
 			 * that subtree is provided with this setting.
 			 */
 			xmlNode : { type: 'Element', visibility: 'hidden' },
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * still an experimental feature and may experience slight changes of the invalidation parameters or the cache
 		 * key format.
 		 *
-		 * The controller property can hold an controller instance. If a controller instance is given,
+		 * The controller property can hold a controller instance. If a controller instance is given,
 		 * it overrides the controller defined in the view.
 		 *
 		 * Like with any other control, ID is optional and one will be created automatically.

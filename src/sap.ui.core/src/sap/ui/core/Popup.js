@@ -595,7 +595,7 @@ sap.ui.define([
 			this._bContentAddedToStatic = true;
 		}
 
-		// Check if the content isn't connected properly to an UI-area. This could cause strange behavior of events and rendering.
+		// Check if the content isn't connected properly to a UIArea. This could cause strange behavior of events and rendering.
 		// To find a Popup issue in this case a warning should be logged to the console.
 		//
 		// E.g. if the content has a different UI-area than its parent -> warning is thrown if 'sap.ui.core.Popup._bEnableUIAreaCheck'
@@ -604,7 +604,7 @@ sap.ui.define([
 			var oArea = this.oContent.getUIArea();
 
 			if (oArea === null) {
-				jQuery.sap.log.warning("The Popup content is NOT connected with an UIArea and may not work properly!");
+				jQuery.sap.log.warning("The Popup content is NOT connected with a UIArea and may not work properly!");
 			} else if (Popup._bEnableUIAreaCheck && oArea.getRootNode().id !== oStatic.getRootNode().id) {
 
 				// the variable 'sap.ui.core.Popup._bEnableUIAreaCheck' isn't defined anywhere. To enable this check this variable
@@ -1270,7 +1270,7 @@ sap.ui.define([
 		var _oPreviousFocus = null;
 		var focusedControlId = sap.ui.getCore().getCurrentFocusedControlId();
 		if (focusedControlId) {
-			// a SAPUI5 control was focused before
+			// an SAPUI5 control was focused before
 			var oFocusedControl = sap.ui.getCore().byId(focusedControlId);
 			_oPreviousFocus = {
 				'sFocusId' : focusedControlId,
@@ -1278,7 +1278,7 @@ sap.ui.define([
 				'oFocusInfo' : oFocusedControl ? oFocusedControl.getFocusInfo() : {}
 			};
 		} else {
-			// not a SAPUI5 control... but if something has focus, save as much information about it as available
+			// not an SAPUI5 control... but if something has focus, save as much information about it as available
 			try {
 				var oElement = document.activeElement;
 
@@ -1330,7 +1330,7 @@ sap.ui.define([
 			var oFocusedControl = sap.ui.getCore().byId(oPreviousFocus.sFocusId);
 			if (oFocusedControl) {
 
-				// if a SAPUI5 control had been focused, just re-focus it
+				// if an SAPUI5 control had been focused, just re-focus it
 				oFocusedControl.applyFocusInfo(oPreviousFocus.oFocusInfo);
 			} else {
 
@@ -1560,7 +1560,7 @@ sap.ui.define([
 	 * Calculates the rect information of the given parameter.
 	 *
 	 * @param {String| DomNode | jQuery |sap.ui.core.Element | Event | jQuery.Event} oOf the DOM Element, UI Element instance on which the calculation is done
-	 * @returns {object} the rect infomartion which contains the top, left, width, height of the given object. If Event or jQuery.Event type parameter is given, null is returned because there's no way to calculate the rect info based on a event object.
+	 * @returns {object} the rect information which contains the top, left, width, height of the given object. If Event or jQuery.Event type parameter is given, null is returned because there's no way to calculate the rect info based on an event object.
 	 * @private
 	 */
 	Popup.prototype._calcOfRect = function(oOf){
@@ -1710,7 +1710,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * If the reference element is specified as a sap.ui.core.Element, then it is resolved to a DOM node.
+	 * If the reference element is specified as an sap.ui.core.Element, then it is resolved to a DOM node.
 	 *
 	 * @param {object} oPosition position info object describing the desired position of the popup.
 	 * @returns {object} resolved position info
@@ -2262,7 +2262,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sChannel channel of the EventBus
 	 * @param {string} sEvent name of the event
-	 * @param {Object} oFocusable object with an id-property and if a autoClose machanism should occur
+	 * @param {Object} oFocusable object with an id-property and if an autoClose mechanism should occur
 	 * @since 1.17.0
 	 * @private
 	 */
@@ -2685,7 +2685,7 @@ sap.ui.define([
 		var oThis = oThat ? oThat : this;
 
 		// if oThis is an element use its DOM-ref to look for a Popup. Else
-		// 'oThis' is an DOM-ref therefore simply use it
+		// 'oThis' is a DOM-ref therefore simply use it
 		var $This = jQuery(oThis instanceof Element ? oThis.getDomRef() : oThis);
 
 		// look up if there is a Popup above used DOM-ref

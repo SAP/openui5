@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	/**
 	 * Base Class for UIComponent.
 	 *
-	 * If you are extending an UIComponent make sure you read the {@link #.extend} documentation since the metadata is special.
+	 * If you are extending a UIComponent make sure you read the {@link #.extend} documentation since the metadata is special.
 	 *
 	 * @class
 	 * Creates and initializes a new UIComponent with the given <code>sId</code> and
@@ -118,7 +118,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 *             "controlId": "App",
 	 *             "controlAggregation": "pages",
 	 *             "viewNamespace": "myApplication.namespace",
-	 *             // If you are using the mobile library, you have to use a sap.m.Router, to get support for
+	 *             // If you are using the mobile library, you have to use an sap.m.Router, to get support for
 	 *             // the controls sap.m.App, sap.m.SplitApp, sap.m.NavContainer and sap.m.SplitContainer.
 	 *             "routerClass": "sap.m.routing.Router"
 	 *             // What happens if no route matches the hash?

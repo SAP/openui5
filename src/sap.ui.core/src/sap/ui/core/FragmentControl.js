@@ -124,7 +124,7 @@ sap.ui.define([
     }
 
     /**
-     * Fragment Control is the base class for composite controls that use a XML fragment representation
+     * Fragment Control is the base class for composite controls that use an XML fragment representation
      * for their visual parts. From a user perspective such controls appear as any other control, but internally the
      * rendering part is added as a fragment.
      * The fragment that is used should appear in the same folder as the control's JS implementation with the file extension
@@ -725,7 +725,7 @@ sap.ui.define([
 
         //Annotation Helper to bind an aggregation
         runtimeListBinding: function(oContext, vValue) {
-            //if the value is an array, this is an resolved list binding and the binding needs to be as string
+            //if the value is an array, this is a resolved list binding and the binding needs to be as string
             if (jQuery.isArray(vValue)) {
                 var oBinding = oContext.getModel().getProperty(oContext.getPath() + "/@binding");
                 if (oBinding) {
