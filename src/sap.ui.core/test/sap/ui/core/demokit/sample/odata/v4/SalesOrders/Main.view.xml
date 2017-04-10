@@ -220,7 +220,6 @@
 								$select : 'ScheduleKey,DeliveryDate'
 							}
 						},
-						$select : 'ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID',
 						$$updateGroupId : 'SalesOrderUpdateGroup'
 					}
 				}">

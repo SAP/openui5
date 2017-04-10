@@ -166,6 +166,57 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates the query options for a child binding with the meta path given by its base
+	 * meta path and relative meta path. Requires that meta data for the meta path is already
+	 * loaded so that synchronous access to all prefixes of the relative meta path is possible.
+	 * If the relative meta path contains segments which are not a structural property or a
+	 * navigation property, the child query options cannot be created and the method returns
+	 * undefined.
+	 *
+	 * @param {string} sBaseMetaPath The meta path which is the starting point for the relative
+	 *   meta path
+	 * @param {string} sChildMetaPath The relative meta path
+	 *
+	 * @returns {object} The query options for the child binding or undefined in case the query
+	 *   options cannot be created
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.createChildQueryOptions = function (sBaseMetaPath,
+			sChildMetaPath) {
+		var sExpandSelectPath = "",
+			i,
+			aMetaPathSegments = sChildMetaPath.split("/"),
+			oMetaModel = this.oModel.oMetaModel,
+			oProperty,
+			sPropertyMetaPath = sBaseMetaPath,
+			mQueryOptions = {},
+			mQueryOptionsForPathPrefix = mQueryOptions;
+
+		if (sChildMetaPath === "") {
+			return {};
+		}
+
+		for (i = 0; i < aMetaPathSegments.length; i += 1) {
+			sPropertyMetaPath = _Helper.buildPath(sPropertyMetaPath, aMetaPathSegments[i]);
+			sExpandSelectPath = _Helper.buildPath(sExpandSelectPath, aMetaPathSegments[i]);
+			oProperty = oMetaModel.getObject(sPropertyMetaPath);
+			if (oProperty.$kind === "NavigationProperty") {
+				mQueryOptionsForPathPrefix.$expand = {};
+				mQueryOptionsForPathPrefix = mQueryOptionsForPathPrefix.$expand[sExpandSelectPath]
+					= {};
+				sExpandSelectPath = "";
+			} else if (oProperty.$kind !== "Property") {
+				return undefined;
+			}
+		}
+		if (oProperty.$kind === "Property") {
+			mQueryOptionsForPathPrefix.$select = [sExpandSelectPath];
+		}
+		return mQueryOptions;
+	};
+
+	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
@@ -211,47 +262,65 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether a child binding with the given context, path and query options can
-	 * use the cache of this binding or one of its ancestor bindings.
+	 * Determines whether a child binding with the given context and path can use
+	 * the cache of this binding or one of its ancestor bindings. If this is the case, enhances
+	 * the aggregated query options of this binding with the query options computed from the child
+	 * binding's path; the aggregated query options initially hold the binding's local query
+	 * options.
 	 *
 	 * @param {sap.ui.model.Context} oContext The child binding's context
-	 * @param {string} sPath The child binding's binding path
-	 * @param {object} mQueryOptions The child binding's query options merged with the query options
-	 *   of its dependent bindings
-	 * @returns {SyncPromise} A promise resolved with a truthy or falsy value indicating whether the
-	 *   child binding can use this binding's or an ancestor binding's cache.
+	 * @param {string} sChildPath The child binding's binding path
+	 * @returns {SyncPromise} A promise resolved with a boolean value indicating whether the child
+	 *   binding can use this binding's or an ancestor binding's cache.
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.fetchIfChildCanUseCache = function (oContext, sPath,
-			mQueryOptions) {
-		var bCanUseCache;
+	ODataParentBinding.prototype.fetchIfChildCanUseCache = function (oContext, sChildPath) {
+		var sBaseMetaPath,
+			oCanUseCachePromise,
+			sChildMetaPath,
+			aPromises,
+			that = this;
 
-		// Determines whether the given options contain sPath in their "$select" array.
-		function containsPathInSelect(mOptions) {
-			return mOptions && mOptions.$select && mOptions.$select.indexOf(sPath) >= 0;
-		}
+		// Cache is not yet created
+		sBaseMetaPath = this.oModel.oMetaModel.getMetaPath(oContext.getPath());
+		sChildMetaPath = this.oModel.oMetaModel.getMetaPath("/" + sChildPath).slice(1);
+		aPromises = [
+			this.doFetchQueryOptions(this.oContext),
+			// After access to complete meta path of property, the metadata of all prefix paths
+			// is loaded so that synchronous access in createChildQueryOptions via getObject is
+			// possible
+			this.oModel.oMetaModel.fetchObject(_Helper.buildPath(sBaseMetaPath, sChildMetaPath))
+		];
+		oCanUseCachePromise = _SyncPromise.all(aPromises).then(function (aResult) {
+			var mChildQueryOptions,
+				mLocalQueryOptions = aResult[0],
+				oProperty = aResult[1];
 
-		if (this.oCachePromise.isFulfilled()) {
-			bCanUseCache = containsPathInSelect(this.mDependentQueryOptions);
-			if (!bCanUseCache) {
-				return this.fetchQueryOptionsForOwnCache(undefined)
-					.then(function (mOwnQueryOptions) {
-						return containsPathInSelect(mOwnQueryOptions);
-					});
+			// this.mAggregatedQueryOptions contains the aggregated query options of all child
+			// bindings which can use the cache of this binding or an ancestor binding merged
+			// with this binding's local query options
+			that.mAggregatedQueryOptions = that.mAggregatedQueryOptions ||
+				jQuery.extend(true, {}, mLocalQueryOptions);
+			if (oProperty && (oProperty.$kind === "Property"
+					|| oProperty.$kind === "NavigationProperty")) {
+				mChildQueryOptions = that.createChildQueryOptions(sBaseMetaPath, sChildMetaPath);
+				if (mChildQueryOptions){
+					that.mergeChildQueryOptions(mChildQueryOptions);
+					return true;
+				}
+				return false;
 			}
-		} else {
-			// this.mDependentQueryOptions contains the aggregated query options of all child
-			// bindings which can use the cache of this binding or an ancestor binding
-			this.mDependentQueryOptions = this.mDependentQueryOptions || {};
-			this.mDependentQueryOptions.$select = this.mDependentQueryOptions.$select || [];
-			if (!containsPathInSelect(this.mDependentQueryOptions)) {
-				this.mDependentQueryOptions.$select.push(sPath);
-			}
-			bCanUseCache = true;
-		}
-
-		return _SyncPromise.resolve(bCanUseCache);
+			jQuery.sap.log.error("Failed to enhance query options for "
+					+ "auto-$expand/$select as the child binding's path '"
+					+  sChildPath
+					+ "' does not point to a property",
+				JSON.stringify(oProperty),
+				"sap.ui.model.odata.v4.ODataParentBinding");
+			return false;
+		});
+		that.aChildCanUseCachePromises.push(oCanUseCachePromise);
+		return oCanUseCachePromise;
 	};
 
 	/**
@@ -311,6 +380,52 @@ sap.ui.define([
 		if (!this.bRelative || this.oContext) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
+	};
+
+	/**
+	 * Merges the given child query options into this binding's aggregated query options.
+	 *
+	 * Note: * is an item in $select and $expand just as others, that is it must be part of the
+	 * array of items and one must not ignore the other items if * is provided. See
+	 * "5.1.2 System Query Option $expand" and "5.1.3 System Query Option $select" in specification
+	 * "OData Version 4.0 Part 2: URL Conventions".
+	 *
+	 * @param {object} mChildQueryOptions The map of child query options
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.mergeChildQueryOptions = function (mChildQueryOptions) {
+		/*
+		 * Recursively merges the given query options into the given aggregated query options.
+		 */
+		function merge(mAggregatedQueryOptions, mQueryOptions) {
+			var mExpandChild,
+				aSelectChild;
+
+			mExpandChild = mQueryOptions && mQueryOptions.$expand;
+			if (mExpandChild) {
+				mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
+				Object.keys(mExpandChild).forEach(function (sExpandPath) {
+					if (mAggregatedQueryOptions.$expand[sExpandPath]) {
+						merge(mAggregatedQueryOptions.$expand[sExpandPath],
+							mQueryOptions.$expand[sExpandPath]);
+					} else {
+						mAggregatedQueryOptions.$expand[sExpandPath] = mExpandChild[sExpandPath];
+					}
+				});
+			}
+			aSelectChild = mQueryOptions && mQueryOptions.$select;
+			if (aSelectChild) {
+				mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
+				aSelectChild.forEach(function (sSelectPath) {
+					if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
+						mAggregatedQueryOptions.$select.push(sSelectPath);
+					}
+				});
+			}
+		}
+
+		merge(this.mAggregatedQueryOptions, mChildQueryOptions);
 	};
 
 	/**

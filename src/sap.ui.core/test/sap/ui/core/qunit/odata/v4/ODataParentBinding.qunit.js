@@ -4,11 +4,13 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding"
-], function (jQuery, ChangeReason, _Helper, _SyncPromise, ODataModel, asODataParentBinding) {
+], function (jQuery, ChangeReason, Context, _Helper, _SyncPromise, ODataModel,
+		asODataParentBinding) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
@@ -515,63 +517,356 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchIfChildCanUseCache: cache not yet created", function (assert) {
-		var oBinding = new ODataParentBinding({
-				bRelative : false,
-				// cache will be created, waiting for child bindings
-				oCachePromise : _SyncPromise.resolve(Promise.resolve())
-			}),
-			mQueryOptions = {},
-			oContext = {};
+	[{
+		childPath : "Property",
+		expected : {$select : ["Property"]}
+	}, {
+		childPath : "NavigationProperty/Property",
+		expected : {
+			$expand : {
+				"NavigationProperty" : {
+					$select: ["Property"]
+				}
+			}
+		}
+	}, {
+		childPath : "Property/NavigationProperty",
+		expected : {
+			$expand : {
+				"Property/NavigationProperty" : {}
+			}
+		}
+	}, {
+		childPath : "Property_1/Property_2",
+		expected : {$select : ["Property_1/Property_2"]}
+	}, {
+		childPath : "NavigationProperty_1/NavigationProperty_2",
+		expected : {
+			$expand : {
+				"NavigationProperty_1" : {
+					$expand : {
+						"NavigationProperty_2" : {}
+					}
+				}
+			}
+		}
+	}, {
+		childPath : "",
+		expected : {}
+	}].forEach(function (oFixture) {
+		QUnit.test("createChildQueryOptions, " + oFixture.childPath, function (assert) {
+			var oMetaModel = {
+					getObject : function () {}
+				},
+				aMetaPathSegments = oFixture.childPath === ""
+					? []
+					: oFixture.childPath.split("/"),
+				oBinding = new ODataParentBinding({
+					oModel : {oMetaModel : oMetaModel}
+				}),
+				mChildQueryOptions,
+				oMetaModelMock = this.mock(oMetaModel);
 
-		// code under test
-		oBinding.fetchIfChildCanUseCache(oContext, "Name", mQueryOptions)
-			.then(function (bUseCache) {
-				assert.strictEqual(bUseCache, true);
-				assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name"]});
+			aMetaPathSegments.forEach(function (sSegment, j, aMetaPathSegments) {
+				var sPropertyMetaPath = "/EMPLOYEES/" + aMetaPathSegments.slice(0, j + 1).join("/");
+
+				oMetaModelMock.expects("getObject")
+					.withExactArgs(sPropertyMetaPath)
+					.returns({$kind : sSegment.split("_")[0]});
 			});
 
-		// code under test
-		oBinding.fetchIfChildCanUseCache(oContext, "ID", mQueryOptions).then(function (bUseCache) {
-			assert.strictEqual(bUseCache, true);
-			assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "ID"]});
+			// code under test
+			mChildQueryOptions = oBinding.createChildQueryOptions("/EMPLOYEES", oFixture.childPath);
+
+			assert.deepEqual(mChildQueryOptions, oFixture.expected);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchIfChildCanUseCache: cache already created", function (assert) {
+	QUnit.test("createChildQueryOptions, child path with bound function", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oModel : {oMetaModel : oMetaModel}
+			});
+
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("/EMPLOYEES/name.space.boundFunction")
+			.returns({$kind : "Function"});
+
+		// code under test
+		assert.strictEqual(
+			oBinding.createChildQueryOptions("/EMPLOYEES", "name.space.boundFunction/Property"),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	[{
+		aggregatedQueryOptions : {},
+		childQueryOptions : {},
+		expectedQueryOptions : {}
+	}, {
+		aggregatedQueryOptions : {$select : ["Name"]},
+		childQueryOptions : {$select : ["ID"]},
+		expectedQueryOptions : {$select : ["Name", "ID"]}
+	}, {
+		aggregatedQueryOptions : {},
+		childQueryOptions : {$select : ["ID"]},
+		expectedQueryOptions : {$select : ["ID"]}
+	}, {
+		aggregatedQueryOptions : {$select : ["Name"]},
+		childQueryOptions : {},
+		expectedQueryOptions : {$select : ["Name"]}
+	}, {
+		aggregatedQueryOptions : {$select : ["ID", "Name"]},
+		childQueryOptions : {$select : ["ID"]},
+		expectedQueryOptions : {$select : ["ID", "Name"]}
+	}, {
+		aggregatedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {$select : ["Team_Id", "Name"]}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$expand : {
+						TEAM_2_MANAGER : {$select : ["Name"]}
+					},
+					$select : ["Team_Id", "MEMBER_COUNT"]
+				}
+			},
+			$select : ["ID"]
+		},
+		expectedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$expand : {
+						TEAM_2_MANAGER : {$select : ["Name"]}
+					},
+					$select : ["Team_Id", "Name", "MEMBER_COUNT"]
+				}
+			},
+			$select : ["ID"]
+		}
+	}, {
+		aggregatedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : { $select : ["Team_Id"] }
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : { $select : ["*"] }
+			}
+		},
+		expectedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : { $select : ["Team_Id", "*"] }
+			}
+		}
+	}, {
+		aggregatedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : { $select : ["*"] }
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : { $select : ["Team_Id"] }
+			}
+		},
+		expectedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : { $select : ["*", "Team_Id"] }
+			}
+		}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("mergeChildQueryOptions: " + i, function (assert) {
+			var oBinding = new ODataParentBinding({
+					mAggregatedQueryOptions : oFixture.aggregatedQueryOptions
+				});
+
+			// code under test
+			oBinding.mergeChildQueryOptions(oFixture.childQueryOptions);
+
+			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.expectedQueryOptions);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		aggregatedQueryOptions : undefined,
+		hasChildQueryOptions : true,
+		$kind : "Property"
+	}, {
+		aggregatedQueryOptions : {},
+		hasChildQueryOptions : true,
+		$kind : "Property"
+	}, {
+		aggregatedQueryOptions : undefined,
+		hasChildQueryOptions : true,
+		$kind : "NavigationProperty"
+	}, {
+		aggregatedQueryOptions : {},
+		hasChildQueryOptions : true,
+		$kind : "NavigationProperty"
+	}, {
+		aggregatedQueryOptions : {},
+		hasChildQueryOptions : false, // child path has segments which are no properties
+		$kind : "Property"
+	}, {
+		aggregatedQueryOptions : {},
+		hasChildQueryOptions : false, // child path has segments which are no properties
+		isUnresolved : true, // unresolved binding: fulfilled cache promise resolving with undefined
+		$kind : "Property"
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchIfChildCanUseCache, multiple calls aggregate query options, no cache yet: "
+				+ JSON.stringify(oFixture),
+			function (assert) {
+				var mAggregatedQueryOptions = oFixture.aggregatedQueryOptions || {},
+					oMetaModel = {
+						fetchObject : function () {},
+						getMetaPath : function () {}
+					},
+					oBinding = new ODataParentBinding({
+						mAggregatedQueryOptions : oFixture.aggregatedQueryOptions,
+						// cache will be created, waiting for child bindings
+						oCachePromise : _SyncPromise.resolve(oFixture.isUnresolved
+							? undefined : Promise.resolve()),
+						aChildCanUseCachePromises : [],
+						oContext : {},
+						createChildQueryOptions : function () {},
+						doFetchQueryOptions : function () {},
+						mergeChildQueryOptions : function () {},
+						oModel : {oMetaModel : oMetaModel}
+					}),
+					oBindingMock = this.mock(oBinding),
+					mChildQueryOptions = oFixture.hasChildQueryOptions ? {} : undefined,
+					oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')"),
+					mLocalQueryOptions = {},
+					oMetaModelMock = this.mock(oMetaModel),
+					oPromise;
+
+				oMetaModelMock.expects("getMetaPath")
+					.withExactArgs("/EMPLOYEES('2')")
+					.returns("/EMPLOYEES");
+				oMetaModelMock.expects("getMetaPath")
+					.withExactArgs("/childPath")
+					.returns("/childMetaPath");
+				oBindingMock.expects("doFetchQueryOptions")
+					.withExactArgs(sinon.match.same(oBinding.oContext))
+					.returns(_SyncPromise.resolve(mLocalQueryOptions));
+				this.mock(jQuery).expects("extend")
+					.exactly(oFixture.aggregatedQueryOptions ? 0 : 1)
+					.withExactArgs(true, {}, sinon.match.same(mLocalQueryOptions))
+					.returns(mAggregatedQueryOptions);
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/EMPLOYEES/childMetaPath")
+					.returns(_SyncPromise.resolve({$kind : oFixture.$kind}));
+				oBindingMock.expects("createChildQueryOptions")
+					.withExactArgs("/EMPLOYEES", "childMetaPath")
+					.returns(mChildQueryOptions);
+				oBindingMock.expects("mergeChildQueryOptions")
+					.exactly(oFixture.hasChildQueryOptions ? 1 : 0)
+					.withExactArgs(sinon.match.same(mChildQueryOptions));
+
+				// code under test
+				oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath");
+
+				return oPromise.then(function (bUseCache) {
+					assert.strictEqual(bUseCache, oFixture.hasChildQueryOptions);
+					assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
+					assert.strictEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
+				});
+			}
+		);
+	});
+
+	//*********************************************************************************************
+	[{$kind : "notAProperty"}, undefined].forEach(function (oNotAProperty, i) {
+		QUnit.test("fetchIfChildCanUseCache, error handling, " + i, function (assert) {
+			var oMetaModel = {
+					fetchObject : function () {},
+					getMetaPath : function () {}
+				},
+				mOriginalAggregatedQueryOptions = {$expand : { "foo" : {$select : ["bar"]}}},
+				oBinding = new ODataParentBinding({
+					mAggregatedQueryOptions : mOriginalAggregatedQueryOptions,
+					// cache will be created, waiting for child bindings
+					oCachePromise : _SyncPromise.resolve(Promise.resolve()),
+					doFetchQueryOptions : function () {
+						return _SyncPromise.resolve({});
+					},
+					oModel : {oMetaModel : oMetaModel},
+					aChildCanUseCachePromises : [],
+					bRelative : false
+				}),
+				oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')"),
+				oMetaModelMock = this.mock(oMetaModel),
+				oPromise;
+
+			oMetaModelMock.expects("getMetaPath")
+				.withExactArgs("/EMPLOYEES('2')")
+				.returns("/EMPLOYEES");
+			oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/EMPLOYEE_2_TEAM/INVALID")
+			.returns("/EMPLOYEE_2_TEAM/INVALID");
+			oMetaModelMock.expects("fetchObject")
+				.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/INVALID")
+				.returns(_SyncPromise.resolve(oNotAProperty));
+			this.oLogMock.expects("error").withExactArgs(
+				"Failed to enhance query options for auto-$expand/$select as the child "
+					+ "binding's path 'EMPLOYEE_2_TEAM/INVALID' does not point to a property",
+				JSON.stringify(oNotAProperty),
+				"sap.ui.model.odata.v4.ODataParentBinding");
+
+			// code under test
+			oPromise = oBinding.fetchIfChildCanUseCache(oContext,"EMPLOYEE_2_TEAM/INVALID");
+
+			return oPromise.then(function (bUseCache) {
+				assert.strictEqual(bUseCache, false);
+				assert.deepEqual(oBinding.mAggregatedQueryOptions, mOriginalAggregatedQueryOptions);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	//TODO The below test is incomplete; the "cache already created" case is to be implemented
+	//  later for CPOUI5UISERVICESV3-588
+	QUnit.skip("fetchIfChildCanUseCache: cache already created", function (assert) {
 		var oBinding = new ODataParentBinding({
 				bRelative : false,
 				// cache is already created
 				oCachePromise : _SyncPromise.resolve({})
 			}),
 			oBindingMock = this.mock(oBinding),
-			mQueryOptions = {},
 			oContext = {};
 
-		oBinding.mDependentQueryOptions = {$select : ["Name", "AGE"]};
+		oBinding.mAggregatedQueryOptions = {$select : ["Name", "AGE"]};
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined).twice()
 			.returns(_SyncPromise.resolve({$select : ["ID"]})); // parent binding has own cache
 
 		// code under test
-		oBinding.fetchIfChildCanUseCache(oContext, "Name", mQueryOptions)
+		oBinding.fetchIfChildCanUseCache(oContext, "Name")
 			.then(function (bUseCache) {
 				assert.strictEqual(bUseCache, true);
-				assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "AGE"]});
+				assert.deepEqual(oBinding.mAggregatedQueryOptions, {$select : ["Name", "AGE"]});
 			});
 
 		// code under test
-		oBinding.fetchIfChildCanUseCache(oContext, "ROOM_ID", mQueryOptions)
+		oBinding.fetchIfChildCanUseCache(oContext, "ROOM_ID")
 			.then(function (bUseCache) {
 				assert.strictEqual(bUseCache, false);
-				assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "AGE"]});
+				assert.deepEqual(oBinding.mAggregatedQueryOptions, {$select : ["Name", "AGE"]});
 			});
 
 		// code under test
-		oBinding.fetchIfChildCanUseCache(oContext, "ID", mQueryOptions).then(function (bUseCache) {
+		oBinding.fetchIfChildCanUseCache(oContext, "ID").then(function (bUseCache) {
 			assert.strictEqual(bUseCache, true);
-			assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "AGE"]});
+			assert.deepEqual(oBinding.mAggregatedQueryOptions, {$select : ["Name", "AGE"]});
 		});
 
 		// parent binding has own cache and no own query options
@@ -579,15 +874,14 @@ sap.ui.require([
 			.returns(_SyncPromise.resolve({}));
 
 		// code under test
-		oBinding.fetchIfChildCanUseCache(oContext, "TEAM_ID", mQueryOptions)
+		oBinding.fetchIfChildCanUseCache(oContext, "TEAM_ID")
 			.then(function (bUseCache) {
 				assert.strictEqual(!!bUseCache, false);
-				assert.deepEqual(oBinding.mDependentQueryOptions, {$select : ["Name", "AGE"]});
+				assert.deepEqual(oBinding.mAggregatedQueryOptions, {$select : ["Name", "AGE"]});
 			}).catch(function (oError) { // ensure fetchIfChildCanUseCache has no script error
 				assert.ok(false, oError);
 			});
 	});
-//TODO propagate to parent binding in case the current binding does not have an own cache
 
 	//*********************************************************************************************
 	["$auto", undefined].forEach(function (sGroupId) {
