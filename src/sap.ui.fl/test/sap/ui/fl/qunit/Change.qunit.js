@@ -209,6 +209,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			content: {something: "createNewVariant"},
 			isVariant: true,
 			packageName: "/UIF/LREP",
+			namespace: "apps/smartFilterBar/adapt/oil/changes/",
 			selector: {"persistenceKey": "control1"},
 			id: "0815_1",
 			dependentSelector: {
@@ -234,7 +235,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oCreatedFile.fileName, "0815_1");
 		assert.equal(oCreatedFile.changeType, "filterVariant");
 		assert.equal(oCreatedFile.fileType, "variant");
-		assert.equal(oCreatedFile.namespace, "apps/smartFilterBar/changes/");
+		assert.equal(oCreatedFile.namespace, "apps/smartFilterBar/adapt/oil/changes/");
 		assert.equal(oCreatedFile.packageName, "/UIF/LREP");
 		assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
 		assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});

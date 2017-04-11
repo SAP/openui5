@@ -616,6 +616,7 @@ sap.ui.define([
 	 * @param {Object}  [oPropertyBag.dependentSelector] List of selectors saved under an alias for creating the dependencies between changes
 	 * @param {Object}  [oPropertyBag.validAppVersions] Application versions where the change is active
 	 * @param {String}  [oPropertyBag.reference] Application component name
+	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -637,7 +638,7 @@ sap.ui.define([
 			selector: oPropertyBag.selector || {},
 			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
-			namespace: Utils.createNamespace(oPropertyBag, "changes"),
+			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 			creation: "",
 			originalLanguage: Utils.getCurrentLanguage(),
 			conditions: {},
