@@ -8,8 +8,8 @@
 		busy="{appView>/busy}"
 		busyIndicatorDelay="{appView>/delay}">
 	<Page
-        showHeader="false"
-        enableScrolling="false"
+		showHeader="false"
+		enableScrolling="false"
 		showNavButton="false" >
 		<content>
 			<tnt:ToolHeader id="headerToolbar">

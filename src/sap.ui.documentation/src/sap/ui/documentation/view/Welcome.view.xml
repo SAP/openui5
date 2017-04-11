@@ -1,168 +1,168 @@
 <mvc:View
-        controllerName="sap.ui.documentation.controller.Welcome"
-        xmlns="sap.m"
-        xmlns:l="sap.ui.layout"
-        xmlns:core="sap.ui.core"
-        xmlns:mvc="sap.ui.core.mvc"
+		controllerName="sap.ui.documentation.controller.Welcome"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:html="http://www.w3.org/1999/xhtml">
 
-    <Page showHeader="false">
-        <l:BlockLayout>
-            <l:BlockLayoutRow>
-                <l:BlockLayoutCell class="sapUiNoContentPadding">
-                    <Image
-                            src="./resources/sap/ui/documentation/images/L_and_M_landingPage_280279_v2.png"
-                            width="100%"/>
-                </l:BlockLayoutCell>
-            </l:BlockLayoutRow>
+	<Page showHeader="false">
+		<l:BlockLayout>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell class="sapUiNoContentPadding">
+					<Image
+							src="./resources/sap/ui/documentation/images/L_and_M_landingPage_280279_v2.png"
+							width="100%"/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
-            <l:BlockLayoutRow>
-                <l:BlockLayoutCell
-                        class="colorPatternA groupTitleBlock"
-                        title="Learn About UI5"
-                        titleAlignment="Center"/>
-            </l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="colorPatternA groupTitleBlock"
+						title="Learn About UI5"
+						titleAlignment="Center"/>
+			</l:BlockLayoutRow>
 
-            <l:BlockLayoutRow>
-                <l:BlockLayoutCell
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
 					class="colorPatternE contentBlock">
-                    <l:VerticalLayout
+					<l:VerticalLayout
 						width="100%">
-                        <core:Icon
-                                src="sap-icon://course-book"
-                                size="2.5rem"
-                                color="#346187"/>
-                        <Title
-                                text="Developer Guidelines"
-                                titleStyle="H2"
-                                class="sapUiTinyMarginTopBottom"/>
-                        <Text
-                                text="The UI5 core offers a solid foundation that simplifies development by managing many aspects of modern development behind the scenes. It comes with built in support for architectual concepts like MVC, message handling, data binding, routing and many more."
-                                class="sapUiMediumMarginBottom"/>
-                        <Link text="Visit the developer guide"/>
-                    </l:VerticalLayout>
-                </l:BlockLayoutCell>
-                <l:BlockLayoutCell
+						<core:Icon
+								src="sap-icon://course-book"
+								size="2.5rem"
+								color="#346187"/>
+						<Title
+								text="Developer Guidelines"
+								titleStyle="H2"
+								class="sapUiTinyMarginTopBottom"/>
+						<Text
+								text="The UI5 core offers a solid foundation that simplifies development by managing many aspects of modern development behind the scenes. It comes with built in support for architectual concepts like MVC, message handling, data binding, routing and many more."
+								class="sapUiMediumMarginBottom"/>
+						<Link text="Visit the developer guide"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
 						class="colorPatternD sapUiTinyPaddingBottom contentBlock">
-                    <l:VerticalLayout
+					<l:VerticalLayout
 						width="100%">
-                        <core:Icon
-                                src="sap-icon://explorer"
-                                size="2.5rem"
-                                color="#346187"/>
-                        <Title
-                                text="Explore the controls"
-                                titleStyle="H2"
-                                class="sapUiTinyMarginTopBottom"/>
-                        <Text
-                                text="More than 400 UI controls are included in UI5, ranging from basic elements to complex UI patterns. You can use them straight out of the box, or extend and tweak them so they meet your requirements."
-                                class="sapUiMediumMarginBottom"/>
-                        <Link text="Visit the developer guide"/>
-                    </l:VerticalLayout>
-                </l:BlockLayoutCell>
-                <l:BlockLayoutCell
+						<core:Icon
+								src="sap-icon://explorer"
+								size="2.5rem"
+								color="#346187"/>
+						<Title
+								text="Explore the controls"
+								titleStyle="H2"
+								class="sapUiTinyMarginTopBottom"/>
+						<Text
+								text="More than 400 UI controls are included in UI5, ranging from basic elements to complex UI patterns. You can use them straight out of the box, or extend and tweak them so they meet your requirements."
+								class="sapUiMediumMarginBottom"/>
+						<Link text="Visit the developer guide"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
 					class="colorPatternC contentBlock">
-                    <l:VerticalLayout
+					<l:VerticalLayout
 						width="100%">
-                        <core:Icon
-                                src="sap-icon://developer-settings"
-                                size="2.5rem"
-                                color="#346187"/>
-                        <Title
-                                text="API's for Feature-rich UI controls"
-                                titleStyle="H2"
-                                class="sapUiTinyMarginTopBottom"/>
-                        <Text
-                                text="More than 400 UI controls are included in UI5, ranging from basic elements to complex UI patterns. You can use them straight out of the box, or extend and tweak them so they meet your requirements."
-                                class="sapUiMediumMarginBottom"/>
-                        <Link text="Explore the controls"/>
-                    </l:VerticalLayout>
-                </l:BlockLayoutCell>
-                <l:BlockLayoutCell
+						<core:Icon
+								src="sap-icon://developer-settings"
+								size="2.5rem"
+								color="#346187"/>
+						<Title
+								text="API's for Feature-rich UI controls"
+								titleStyle="H2"
+								class="sapUiTinyMarginTopBottom"/>
+						<Text
+								text="More than 400 UI controls are included in UI5, ranging from basic elements to complex UI patterns. You can use them straight out of the box, or extend and tweak them so they meet your requirements."
+								class="sapUiMediumMarginBottom"/>
+						<Link text="Explore the controls"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
 					class="colorPatternB contentBlock">
-                    <l:VerticalLayout
+					<l:VerticalLayout
 						width="100%">
-                        <core:Icon
-                                src="sap-icon://hello-world"
-                                size="2.5rem"
-                                color="#346187"/>
-                        <Title
-                                text="Demos and Walkthroughs"
-                                titleStyle="H2"
-                                class="sapUiTinyMarginTopBottom"/>
-                        <Text
-                                text="Familiar with JavaScript and common web standards? Than it's super-easy for you to get started with UI5. Make use of the ready-to-use app templates as a starting point for your app developing. They include generic application functionality and tests that can be easily extended with custom functionality if needed."
-                                class="sapUiTinyMarginBottom"/>
-                        <Link text="View the Demo applications"/>
-                    </l:VerticalLayout>
-                </l:BlockLayoutCell>
-            </l:BlockLayoutRow>
+						<core:Icon
+								src="sap-icon://hello-world"
+								size="2.5rem"
+								color="#346187"/>
+						<Title
+								text="Demos and Walkthroughs"
+								titleStyle="H2"
+								class="sapUiTinyMarginTopBottom"/>
+						<Text
+								text="Familiar with JavaScript and common web standards? Than it's super-easy for you to get started with UI5. Make use of the ready-to-use app templates as a starting point for your app developing. They include generic application functionality and tests that can be easily extended with custom functionality if needed."
+								class="sapUiTinyMarginBottom"/>
+						<Link text="View the Demo applications"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
-            <l:BlockLayoutRow>
-                <l:BlockLayoutCell
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
 				class="colorPatternBContrast contentBlock">
-                    <l:Grid
-                        defaultSpan="L5 M12 S12">
-                            <l:VerticalLayout
+					<l:Grid
+						defaultSpan="L5 M12 S12">
+							<l:VerticalLayout
 								width="100%">
-                                <l:HorizontalLayout
-                                    class="sapUiTinyMarginBottom">
-                                    <HBox alignItems="End">
-                                        <core:Icon
-                                                src="sap-icon://iphone"
-                                                size="3rem"
+								<l:HorizontalLayout
+									class="sapUiTinyMarginBottom">
+									<HBox alignItems="End">
+										<core:Icon
+												src="sap-icon://iphone"
+												size="3rem"
 												width="2rem"
-                                                class="brightIcon"/>
-                                        <core:Icon
-                                                src="sap-icon://ipad-2"
-                                                size="3rem"
+												class="brightIcon"/>
+										<core:Icon
+												src="sap-icon://ipad-2"
+												size="3rem"
 												width="4rem"
-                                                class="brightIcon sapUiTinyMarginBegin"/>
-                                        <core:Icon
-                                                src="sap-icon://sys-monitor"
-                                                size="3rem"
-                                                class="brightIcon sapUiTinyMarginBegin"/>
-                                    </HBox>
-                                </l:HorizontalLayout>
-                                <Title
-                                        text="Adaptive UI for any size"
-                                        titleStyle="H2"
-                                        class="whiteText sapUiTinyMarginTopBottom"/>
-                                <Text
-                                        text="No need to worry about device specifics! UI5 applications run on smartphones, tables and desktops. The UI controls autoamtically adapt themselves to each device's capabilities and make the most of the real estate available."
-                                        class="whiteText sapUiTinyMarginBottom"/>
-                                <Link
+												class="brightIcon sapUiTinyMarginBegin"/>
+										<core:Icon
+												src="sap-icon://sys-monitor"
+												size="3rem"
+												class="brightIcon sapUiTinyMarginBegin"/>
+									</HBox>
+								</l:HorizontalLayout>
+								<Title
+										text="Adaptive UI for any size"
+										titleStyle="H2"
+										class="whiteText sapUiTinyMarginTopBottom"/>
+								<Text
+										text="No need to worry about device specifics! UI5 applications run on smartphones, tables and desktops. The UI controls autoamtically adapt themselves to each device's capabilities and make the most of the real estate available."
+										class="whiteText sapUiTinyMarginBottom"/>
+								<Link
 										class="brightLink"
 										text="See how flexible UI5 controls really are!"/>
-                            </l:VerticalLayout>
-                            <Image
-                                src="./resources/sap/ui/documentation/images/demoAppsTeaser.png"
-                                width="100%">
-                                <layoutData>
-                                    <l:GridData span="L7 M12 S12"/>
-                                </layoutData>
-                            </Image>
-                    </l:Grid>
-                </l:BlockLayoutCell>
-                <l:BlockLayoutCell
+							</l:VerticalLayout>
+							<Image
+								src="./resources/sap/ui/documentation/images/demoAppsTeaser.png"
+								width="100%">
+								<layoutData>
+									<l:GridData span="L7 M12 S12"/>
+								</layoutData>
+							</Image>
+					</l:Grid>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
 					class="colorPatternE contentBlock">
-                    <l:Grid
-                        defaultSpan="L6 M12 S12">
-                        <l:VerticalLayout
+					<l:Grid
+						defaultSpan="L6 M12 S12">
+						<l:VerticalLayout
 							width="100%">
-                            <core:Icon
-                                    src="sap-icon://video"
-                                    size="2.5rem"
-                                    color="#346187"/>
-                            <Title
-                                    text="Join the community"
-                                    titleStyle="H2"
-                                    class="sapUiTinyMarginTopBottom"/>
-                            <Text
-                                    text="UI5 applications benefit from a consistent design language and predefined UX patterns across all fronend features. Use a predefined theme or the UI theme designer to create your own one."
-                                    class="sapUiTinyMarginBottom"/>
-                            <Link text="Visit the UI5 YouTube Channel"/>
-                        </l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://video"
+									size="2.5rem"
+									color="#346187"/>
+							<Title
+									text="Join the community"
+									titleStyle="H2"
+									class="sapUiTinyMarginTopBottom"/>
+							<Text
+									text="UI5 applications benefit from a consistent design language and predefined UX patterns across all fronend features. Use a predefined theme or the UI theme designer to create your own one."
+									class="sapUiTinyMarginBottom"/>
+							<Link text="Visit the UI5 YouTube Channel"/>
+						</l:VerticalLayout>
 						<l:VerticalLayout
 							width="100%">
 							<html:iframe width="70%" height="50%" src="https://www.youtube.com/embed/rDuEum-s6Cg" frameborder="0"></html:iframe>
@@ -171,15 +171,15 @@
 									text="Disclaimer: This video Information published on non-SAP site is not part of the SAP product documentation. Please read the legal disclaimer for video links before viewing this video." />
 						</l:VerticalLayout>
 					</l:Grid>
-                </l:BlockLayoutCell>
-            </l:BlockLayoutRow>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
-            <l:BlockLayoutRow>
-                <l:BlockLayoutCell
-                        class="colorPatternA groupTitleBlock"
-                        title="The User Experience"
-                        titleAlignment="Center"/>
-            </l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="colorPatternA groupTitleBlock"
+						title="The User Experience"
+						titleAlignment="Center"/>
+			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
@@ -413,6 +413,6 @@
 					</HBox>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
-        </l:BlockLayout>
-    </Page>
+		</l:BlockLayout>
+	</Page>
 </mvc:View>

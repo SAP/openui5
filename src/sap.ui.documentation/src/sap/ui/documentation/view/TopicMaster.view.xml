@@ -24,7 +24,7 @@
 						text="{text}"
 						ref="{key}"
 						expanded="{expanded}"
-					    isSelected="{isSelected}">
+						isSelected="{isSelected}">
 				</documentation:SimpleTreeNode>
 			</documentation:SimpleTree>
 
