@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableMenuUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/core/Popup', './library'],
-	function(jQuery, Device, Menu, MenuItem, Popup, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/core/Popup'],
+	function(jQuery, Device, Menu, MenuItem, Popup) {
 		"use strict";
 
 		// Table uses z-indices, ensure that popups starts their z-indices at least with 20.
@@ -68,14 +68,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 				}
 
 				var oCellInfo = MenuUtils.TableUtils.getCellInfo($TableCell);
+				var iColumnIndex;
+				var bExecuteDefault;
 
 				if (oCellInfo.type === MenuUtils.TableUtils.CELLTYPES.COLUMNHEADER) {
-					var iColumnIndex = MenuUtils.TableUtils.getColumnHeaderCellInfo($TableCell).index;
 					var bCellHasMenuButton = $TableCell.find(".sapUiTableColDropDown").length > 0;
+
+					iColumnIndex = MenuUtils.TableUtils.getColumnHeaderCellInfo($TableCell).index;
 
 					if (Device.system.desktop || bCellHasMenuButton) {
 						MenuUtils.removeColumnHeaderCellMenu(oTable, iColumnIndex);
-						var bExecuteDefault = true;
+						bExecuteDefault = true;
 
 						if (bFireEvent) {
 							bExecuteDefault = oTable.fireColumnSelect({
@@ -93,8 +96,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 				} else if (oCellInfo.type === MenuUtils.TableUtils.CELLTYPES.DATACELL) {
 					var oCellIndices = MenuUtils.TableUtils.getDataCellInfo(oTable, $TableCell);
 					var iRowIndex = oCellIndices.rowIndex;
-					var iColumnIndex = oCellIndices.columnIndex;
-					var bExecuteDefault = true;
+
+					bExecuteDefault = true;
+					iColumnIndex = oCellIndices.columnIndex;
 
 					if (bFireEvent) {
 						var oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, iRowIndex, iColumnIndex, true);
@@ -272,7 +276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 					var $Cell =  MenuUtils.TableUtils.getParentDataCell(oTable, oCell.getDomRef());
 
 					if ($Cell !== null && !MenuUtils.TableUtils.Grouping.isInGroupingRow($Cell)) {
-						var oCell = $Cell[0];
+						oCell = $Cell[0];
 
 						var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== oCell;
 						if (bMenuOpenAtAnotherDataCell) {
