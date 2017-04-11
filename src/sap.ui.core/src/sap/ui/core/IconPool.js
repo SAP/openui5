@@ -180,7 +180,10 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				'master-task-triangle': 0xe258, 'master-task-triangle-2': 0xe259, 'program-triangles': 0xe25a, 'program-triangles-2': 0xe25b,
 				'mirrored-task-circle': 0xe25c, 'mirrored-task-circle-2': 0xe25d, 'checklist-item': 0xe25e, 'checklist-item-2': 0xe25f,
 				'checklist': 0xe260, 'checklist-2': 0xe261, 'chart-table-view': 0xe262, 'filter-analytics': 0xe263, 'filter-facets': 0xe264,
-				'filter-fields': 0xe265, 'indent': 0xe266, 'outdent': 0xe267, 'heading1': 0x1e268, 'heading2': 0x1e269, 'heading3': 0x1e26a,
+				'filter-fields': 0xe265, 'indent': 0xe266, 'outdent': 0xe267, 'add-folder': 0xe26e, 'away': 0xe26f,
+				'busy': 0xe270, 'appear-offline': 0xe271, 'blur': 0xe272, 'pixelate': 0xe273,
+				'horizontal-combination-chart': 0xe274, 'add-employee': 0xe275, 'text-color': 0x1e276,
+				'browse-folder': 0xe277, 'heading1': 0x1e268, 'heading2': 0x1e269, 'heading3': 0x1e26a,
 				'decrease-line-height': 0xe26b, 'increase-line-height': 0xe26c, 'fx': 0x1e26d
 			}
 		};
