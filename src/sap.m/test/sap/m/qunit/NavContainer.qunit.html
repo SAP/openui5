@@ -169,7 +169,8 @@
 
 			nc._applyAutoFocus({
 				isTo: true,
-				toId: this.pageId
+				toId: this.pageId,
+				bFocusInsideFromPage: true
 			});
 
 			assert.ok(this.spy.calledWith(this.pageId));
@@ -178,7 +179,8 @@
 
 			nc._applyAutoFocus({
 				isBack: true,
-				toId: this.pageId
+				toId: this.pageId,
+				bFocusInsideFromPage: true
 			});
 
 			assert.ok(this.spy.calledWith(this.pageId));
@@ -187,7 +189,8 @@
 
 			nc._applyAutoFocus({
 				isBackToPage: true,
-				toId: this.pageId
+				toId: this.pageId,
+				bFocusInsideFromPage: true
 			});
 
 			assert.ok(this.spy.calledWith(this.pageId));
@@ -196,7 +199,8 @@
 
 			nc._applyAutoFocus({
 				isBackToTop: true,
-				toId: this.pageId
+				toId: this.pageId,
+				bFocusInsideFromPage: true
 			});
 
 			assert.ok(this.spy.calledWith(this.pageId));
@@ -205,7 +209,8 @@
 
 			nc._applyAutoFocus({
 				isTo: false,
-				toId: this.pageId
+				toId: this.pageId,
+				bFocusInsideFromPage: true
 			});
 
 			assert.ok(!this.spy.calledWith(this.pageId));
@@ -228,6 +233,67 @@
 			var oNavContainer = new sap.m.NavContainer();
 			new sap.m.Popover({content: new sap.m.Page({content: [oNavContainer]})});
 			assert.ok(oNavContainer._isInsideAPopup(), "NavContainer detects that it's nested inside a popup");
+		});
+
+		QUnit.test("_applyAutoFocusTo method should't be called when the focus was not on from page", function (oAssert) {
+			// Act
+			nc._applyAutoFocus({
+				isTo: true,
+				toId: this.pageId,
+				bFocusInsideFromPage: false // We emulate focus not inside the current page
+			});
+
+			// Assert
+			oAssert.strictEqual(this.spy.callCount, 0,
+				"The method should not be called when focus is not inside the current page");
+
+			// Act
+			nc._applyAutoFocus({
+				isTo: true,
+				toId: this.pageId,
+				bFocusInsideFromPage: true // We emulate focus inside the current page
+			});
+
+			// Assert
+			oAssert.strictEqual(this.spy.callCount, 1,
+				"The method should be called when focus is inside the current page");
+		});
+
+		QUnit.test("Auto focus should't be modified when the focus was not inside the current page", function (oAssert) {
+			// Arrange
+			var fnDone = oAssert.async(),
+				oOutsideButton = new sap.m.Button({text: "Outside Button"}).placeAt("content"),
+				oInsideButton = new sap.m.Button({text: "Inside Button"}),
+				oNavContainer = new sap.m.NavContainer({
+					pages : [
+						new sap.m.Page("firstPage"),
+						new sap.m.Page("secondPage", { content : [oInsideButton] })
+					]
+				}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			oNavContainer.attachNavigate(function (oEvent) {
+				// Assert
+				oAssert.strictEqual(oEvent.getParameter("bFocusInsideFromPage"), false,
+					"The bFocusInsideFromPage parameter should be false as focus is outside the current page");
+
+				oAssert.strictEqual(document.activeElement, oOutsideButton.getDomRef(),
+					"The focus should remain on the outside button");
+
+				oAssert.notStrictEqual(document.activeElement, oInsideButton.getDomRef(),
+					"The focus should not be moved to the inside button");
+
+				fnDone();
+			});
+
+			// Act - place focus outside the Nav container current page and navigate to second page
+			oOutsideButton.$().focus();
+			oNavContainer.to("secondPage");
+
+			// Cleanup
+			oOutsideButton.destroy();
+			oNavContainer.destroy();
 		});
 
 		QUnit.module("Page change");
@@ -1684,7 +1750,45 @@
 			localNc.to(page2.getId());
 		});
 
+		QUnit.module("Internal methods", {
+			beforeEach: function () {
+				this.nc = new sap.m.NavContainer();
+			},
+			afterEach: function () {
+				this.nc.destroy();
+				this.nc = null;
+			}
+		});
 
+		QUnit.test("_isFocusInControl", function (oAssert) {
+			// Arrange
+			var oInsideButton = new sap.m.Button({text: "Inside Button"}),
+				oOutsideButton = new sap.m.Button({text: "Outside Button"}).placeAt("content"),
+				oPage = new sap.m.Page({
+					content: [
+						oInsideButton
+					]
+				}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			oInsideButton.$().focus();
+
+			// Assert
+			oAssert.strictEqual(this.nc._isFocusInControl(oPage), true, "A child of the page control is focused");
+
+			// Act
+			oOutsideButton.$().focus();
+
+			// Assert
+			oAssert.strictEqual(this.nc._isFocusInControl(oPage), false, "A child of the page control is not focused");
+
+			// Cleanup
+			oOutsideButton.destroy();
+			oInsideButton.destroy();
+			oPage.destroy();
+		});
 
 	</script>
 
