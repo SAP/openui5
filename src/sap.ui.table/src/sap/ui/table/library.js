@@ -40,7 +40,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 			"sap.ui.table.AnalyticalColumn",
 			"sap.ui.table.Column",
 			"sap.ui.table.Row",
-			"sap.ui.table.RowActionItem"
+			"sap.ui.table.RowActionItem",
+			"sap.ui.table.RowSettings"
 		],
 		extensions: {
 			flChangeHandlers: {
@@ -57,7 +58,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 		}
 	});
 
-	/* eslint-disable no-undef */
 	/**
 	 * Table-like controls, mainly for desktop scenarios.
 	 *
@@ -68,7 +68,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 	 * @public
 	 */
 	var thisLib = sap.ui.table;
-	/* eslint-enable no-undef */
 
 	/**
 	 * Navigation mode of the table

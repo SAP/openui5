@@ -25,8 +25,8 @@
 					"sap.ui.table.sample.MultiHeader",
 					"sap.ui.table.sample.OData",
 					"sap.ui.table.sample.OData2",
-					"sap.ui.table.sample.RowAction"
-
+					"sap.ui.table.sample.RowAction",
+					"sap.ui.table.sample.RowHighlights"
 				]
 			},
 		  	{
@@ -102,6 +102,10 @@
 				"id": "sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding",
 				"name": "OData Annotations TreeBinding",
 				"description": "Illustrates how to bind to data from an OData model using $metadata annotations."
+			},{
+				"id": "sap.ui.table.sample.RowHighlights",
+				"name": "Row Highlights",
+				"description": "Shows how row highlights can be used."
 			}
 		]
 	}
