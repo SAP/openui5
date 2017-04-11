@@ -511,6 +511,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag
 	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component, needed to retrieve the control from the selector
+	 * @param {Node} mPropertyBag.view - only for xml processing: the xml node of the view
 	 *
 	 * @returns {array | object} dependent selector list in format selectorPropertyName:selectorPropertyValue or the selector saved under the alias
 	 *
@@ -536,11 +537,11 @@ sap.ui.define([
 		oDependentSelector = this._oDefinition.dependentSelector[sAlias];
 		if (Array.isArray(oDependentSelector)) {
 			oDependentSelector.forEach(function (oSelector) {
-				aDependentControls.push(oModifier.bySelector(oSelector, oAppComponent));
+				aDependentControls.push(oModifier.bySelector(oSelector, oAppComponent, mPropertyBag.view));
 			});
 			return aDependentControls;
 		} else {
-			return oModifier.bySelector(oDependentSelector, oAppComponent);
+			return oModifier.bySelector(oDependentSelector, oAppComponent, mPropertyBag.view);
 		}
 	};
 
