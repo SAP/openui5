@@ -593,7 +593,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 					return this.waitFor({
 						success : function (oControl) {
 							var aLogEntries = jQuery.sap.log.getLogEntries(),
-								iStartIndex = sap.ui.test.Opa.getContext().iNextLogIndex;
+								iStartIndex = sap.ui.test.Opa.getContext().iNextLogIndex || 0;
 
 							function isExpected(oLog) {
 								if (!aExpected) {

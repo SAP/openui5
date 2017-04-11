@@ -71,6 +71,28 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache basics", function (assert) {
+		var mQueryOptions = {},
+			oRequestor = {},
+			sResourcePath = "~",
+			oCache;
+
+		this.mock(_Cache).expects("buildQueryString").withExactArgs(mQueryOptions)
+			.returns("?foo=bar");
+
+		// code under test
+		oCache = new _Cache(oRequestor, sResourcePath, mQueryOptions);
+
+		assert.strictEqual(oCache.bActive, true);
+		assert.deepEqual(oCache.mChangeListeners, {});
+		assert.deepEqual(oCache.mPatchRequests, {});
+		assert.deepEqual(oCache.mPostRequests, {});
+		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
+		assert.strictEqual(oCache.oRequestor, oRequestor);
+		assert.strictEqual(oCache.sResourcePath, "~?foo=bar");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_Cache hierarchy", function (assert) {
 		assert.ok(_Cache.create() instanceof _Cache);
 		assert.ok(_Cache.createSingle() instanceof _Cache);
@@ -291,25 +313,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#hasPendingChangesForPath", function (assert) {
-		var oCache = new _Cache();
+	[true, false].forEach(function (bPatch) {
+		QUnit.test("_Cache#hasPendingChangesForPath: bPatch = " + bPatch, function (assert) {
+			var oCache = new _Cache();
 
-		oCache.mPatchRequests["foo/bar/baz"] = [{}];
+			oCache[bPatch ? "mPatchRequests" : "mPostRequests"]["foo/bar/baz"] = [{}];
 
-		assert.strictEqual(oCache.hasPendingChangesForPath("bar"), false);
-		assert.strictEqual(oCache.hasPendingChangesForPath(""), true);
-		assert.strictEqual(oCache.hasPendingChangesForPath("foo"), true);
-		assert.strictEqual(oCache.hasPendingChangesForPath("foo/ba"), false);
-		assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar"), true);
-		assert.strictEqual(oCache.hasPendingChangesForPath("foo/bars"), false);
-		assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/ba"), false);
-		assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz"), true);
-		assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baze"), false);
-		assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz/qux"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath("bar"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath(""), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("foo"), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("foo/ba"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar"), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bars"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/ba"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz"), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baze"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz/qux"), false);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#resetChangesForPath", function (assert) {
+	QUnit.test("_Cache#resetChangesForPath: PATCHes", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = new _Cache(oRequestor),
 			oCall1,
@@ -343,6 +367,48 @@ sap.ui.require([
 		oCache.resetChangesForPath("");
 
 		assert.deepEqual(oCache.mPatchRequests, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#resetChangesForPath: POSTs", function (assert) {
+		var oBody0 = {"@$ui5.transient" : "update"},
+			oBody1 = {"@$ui5.transient" : "update2"},
+			oBody2 = {"@$ui5.transient" : "update"},
+			oBody3 = {"@$ui5.transient" : "update"},
+			oBody4 = {"@$ui5.transient" : "update"},
+			oCall1,
+			oCall2,
+			oRequestor = _Requestor.create("/~/"),
+			oRequestorMock = this.mock(oRequestor),
+			oCache = new _Cache(oRequestor);
+
+		oCache.mPostRequests = {
+			"foo/ba" : [oBody0],
+			"foo/bar" : [oBody1, oBody2],
+			"foo/bars" : [oBody3],
+			"foo/bar/baz" : [oBody4]
+		};
+
+		oCall1 = oRequestorMock.expects("removePost").withExactArgs("update", oBody2);
+		oCall2 = oRequestorMock.expects("removePost").withExactArgs("update2", oBody1);
+		oRequestorMock.expects("removePost").withExactArgs("update", oBody4);
+
+		// code under test
+		oCache.resetChangesForPath("foo/bar");
+
+		sinon.assert.callOrder(oCall1, oCall2);
+		assert.deepEqual(oCache.mPostRequests, {
+			"foo/ba" : [oBody0],
+			"foo/bars" : [oBody3]
+		});
+
+		oRequestorMock.expects("removePost").withExactArgs("update", oBody0);
+		oRequestorMock.expects("removePost").withExactArgs("update", oBody3);
+
+		// code under test
+		oCache.resetChangesForPath("");
+
+		assert.deepEqual(oCache.mPostRequests, {});
 	});
 
 	//*********************************************************************************************
@@ -1076,7 +1142,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#create: with given sPath", function (assert) {
-		var oRequestor = _Requestor.create("/~/"),
+		var oBody,
+			oRequestor = _Requestor.create("/~/"),
 			oCache = new _Cache(oRequestor),
 			oCacheDataForParent = {
 				TEAM_2_EMPLOYEES : []
@@ -1093,9 +1160,13 @@ sap.ui.require([
 		oCacheMock.expects("fetchValue")
 			.withExactArgs("$cached", "0")
 			.returns(_SyncPromise.resolve(oCacheDataForParent));
+		sinon.spy(oCache, "addByPath");
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "TEAMS('0')/TEAM_2_EMPLOYEES", "updateGroup", null,
-				/*oPayload*/sinon.match.object, /*fnSubmit*/sinon.match.func,
+				sinon.match(function (oPayload) {
+					oBody = oPayload;
+					return true;
+				}), /*fnSubmit*/sinon.match.func,
 				/*fnCancel*/sinon.match.func)
 			.returns(_SyncPromise.resolve(Promise.resolve({
 				ID : "7",
@@ -1111,16 +1182,73 @@ sap.ui.require([
 		assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES[-1].ID, "");
 		assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES.$count, 0);
 
+		// request is added to mPostRequests
+		sinon.assert.calledWithExactly(oCache.addByPath, oCache.mPostRequests, sPathInCache, oBody);
+
 		oCache.registerChange(sPathInCache + "/-1/Name", function () {
 			assert.notOk(true, "No change event for Name");
 		});
 		oCache.registerChange(sPathInCache + "/-1/ID", oIdChangeListener);
 		oCache.registerChange(sPathInCache + "/$count", oCountChangeListener);
+		sinon.spy(oCache, "removeByPath");
 		return oCreatePromise.then(function () {
 			assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES[-1].ID, "7", "from Server");
 			assert.strictEqual(oIdChangeListener.onChange.callCount, 1);
 			assert.strictEqual(oCacheDataForParent.TEAM_2_EMPLOYEES.$count, 1);
 			assert.strictEqual(oCountChangeListener.onChange.callCount, 1);
+			sinon.assert.calledWithExactly(oCache.removeByPath, oCache.mPostRequests, sPathInCache,
+				oBody);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#create: with given sPath and delete before submit", function (assert) {
+		var oBody,
+			oRequestor = _Requestor.create("/~/"),
+			oCache = new _Cache(oRequestor),
+			oCacheDataForParent = {
+				TEAM_2_EMPLOYEES : []
+			},
+			oCacheMock = this.mock(oCache),
+			fnCancelCallback = sinon.spy(),
+			oCreatePromise,
+			fnDeleteCallback = sinon.spy(),
+			sPathInCache = "0/TEAM_2_EMPLOYEES",
+			oPostPathPromise = _SyncPromise.resolve("TEAMS('0')/TEAM_2_EMPLOYEES");
+
+		oCache.fetchValue = function () {};
+		oCacheMock.expects("fetchValue")
+			.withExactArgs("$cached", "0")
+			.returns(_SyncPromise.resolve(oCacheDataForParent));
+		sinon.spy(oCache, "addByPath");
+		sinon.spy(oRequestor, "request");
+
+		// code under test
+		oCreatePromise = oCache.create("updateGroup", oPostPathPromise, sPathInCache,
+			{ID : "", Name : "John Doe"}, fnCancelCallback);
+
+		sinon.assert.calledWithExactly(oRequestor.request, "POST", "TEAMS('0')/TEAM_2_EMPLOYEES",
+			"updateGroup", null, /*oPayload*/sinon.match.object, /*fnSubmit*/sinon.match.func,
+			/*fnCancel*/sinon.match.func);
+		oBody = oRequestor.request.args[0][4];
+		// request is added to mPostRequests
+		sinon.assert.calledWithExactly(oCache.addByPath, oCache.mPostRequests, sPathInCache, oBody);
+		sinon.spy(oCache, "removeByPath");
+
+		oCacheMock.expects("fetchValue")
+			.withExactArgs("updateGroup", sPathInCache)
+			.returns(_SyncPromise.resolve(oCacheDataForParent.TEAM_2_EMPLOYEES));
+
+		// code under test
+		oCache._delete("updateGroup",  "TEAMS('0')/TEAM_2_EMPLOYEES", sPathInCache + "/-1",
+			fnDeleteCallback);
+
+		sinon.assert.calledWithExactly(oCache.removeByPath, oCache.mPostRequests, sPathInCache,
+			oBody);
+		return oCreatePromise.then(function () {
+			assert.notOk(true, "unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError.canceled, true);
 		});
 	});
 
@@ -1605,32 +1733,6 @@ sap.ui.require([
 					assert.strictEqual(oResult, "bar");
 				})
 		]);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("CollectionCache#resetChangesForPath: POST requests", function (assert) {
-		var oEntity = {"@$ui5.transient" : "groupId"},
-			oRequestor = _Requestor.create("/"),
-			oCache = _Cache.create(oRequestor, "/SalesOrderList"),
-			oRequestorMock = this.mock(oRequestor);
-
-		oCache.aElements[-1] = oEntity;
-		oRequestorMock.expects("removePost").never();
-
-		// code under test - don't call removePost on root if resetChanges is called with a path
-		oCache.resetChangesForPath("any/Path");
-
-		oRequestorMock.expects("removePost").withExactArgs("groupId", oEntity);
-
-		// code under test
-		oCache.resetChangesForPath("");
-
-		// element at index -1 is not transient (does not have @$ui5.transient property)
-		oCache.aElements[-1] = {};
-		oRequestorMock.expects("removePost").never();
-
-		// code under test
-		oCache.resetChangesForPath("");
 	});
 
 	//*********************************************************************************************
