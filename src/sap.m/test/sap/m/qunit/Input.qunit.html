@@ -306,7 +306,7 @@
 		assert.strictEqual(oInput.$().find("label").css("padding-right"), "12px", "Placeholder label has right padding of 12px when value help icon is enabled");
 
 		// event check
-		oInput._oValueHelpIcon.firePress();
+		oInput.getAggregation("_valueHelpIcon").firePress();
 		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
 
@@ -554,24 +554,6 @@
 		$Input = oInput.$();
 
 		assert.strictEqual($Input.length, 0, "After destroy input DOM node is removed");
-	});
-
-	QUnit.test("Destroy ValueHelpIcon", function(assert) {
-		var oInput = new sap.m.Input({
-			showValueHelp: true
-		}),
-		$Input
-		sInputId = oInput.getId();
-
-		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		$Input = oInput.$();
-
-		var oValueHelpIcon = oInput._oValueHelpIcon;
-		var sValueHelpIconId = oValueHelpIcon.getId();
-		assert.strictEqual(oValueHelpIcon instanceof sap.ui.core.Icon, true, "Value Help Indicator icon is set before destroy call");
-		oInput.destroy();
-		assert.strictEqual(sap.ui.getCore().byId(sValueHelpIconId), undefined, "Value Help Indicator icon is also destroyed");
 	});
 
 	QUnit.test("Destroy Suggestion List and Popup", function(assert) {

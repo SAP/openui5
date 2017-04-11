@@ -1038,7 +1038,27 @@
 			press : function() {
 				oMultiInput9.setEditable(!oMultiInput9.getEditable());
 			}
-		})
+		});
+
+		var oSelectDialog = new sap.m.SelectDialog();
+			var openSelectDialog = function() {
+				oSelectDialog.open();
+			};
+
+		var multiInputWithSelectDialog = new sap.m.MultiInput({
+			valueHelpRequest: openSelectDialog,
+			enableMultiLineMode: true,
+			tokens: [
+				new sap.m.Token("testtoken", {
+					key: "Key1",
+					text: "Text1"
+				}),
+				new sap.m.Token("secondtesttoken", {
+					key: "Key2",
+					text: "Text2"
+				})
+			]
+		});
 	   //******************************************
 		var app = new sap.m.App("myApp");
 
@@ -1088,7 +1108,9 @@
 					new sap.m.Label({text:"MultiInput with maximum three tokens"}),
 					oMultiInput8,
 					oMultiInput9,
-					readOnlyButton
+					readOnlyButton,
+					new sap.m.Label({text : "MultiInput with SelectDialog", width: "100%"}),
+					multiInputWithSelectDialog
 			],
 			showNavButton: true,
 			navButtonPress: function(){ app.to("page2"); }
