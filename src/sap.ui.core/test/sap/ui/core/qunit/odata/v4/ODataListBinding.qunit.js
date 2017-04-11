@@ -253,13 +253,14 @@ sap.ui.require([
 			aSorters = [],
 			vSorters = {};
 
-		oHelperMock.expects("toArray").withExactArgs(vFilters).returns(aFilters);
-		oHelperMock.expects("toArray").withExactArgs(vSorters).returns(aSorters);
+		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vFilters)).returns(aFilters);
+		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vSorters)).returns(aSorters);
 		this.mock(jQuery).expects("extend")
 			.withExactArgs(true, {}, sinon.match.same(mParameters))
 			.returns(mParametersClone);
-		oODataListBindingMock.expects("applyParameters").withExactArgs(mParametersClone);
-		oODataListBindingMock.expects("setContext").withExactArgs(oContext);
+		oODataListBindingMock.expects("applyParameters")
+			.withExactArgs(sinon.match.same(mParametersClone));
+		oODataListBindingMock.expects("setContext").withExactArgs(sinon.match.same(oContext));
 
 		// code under test
 		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", oContext, vSorters, vFilters,
@@ -299,9 +300,10 @@ sap.ui.require([
 			sUpdateGroupId = "update foo";
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(mParameters, ["$$groupId", "$$operationMode", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters),
+				["$$groupId", "$$operationMode", "$$updateGroupId"])
 			.returns(mBindingParameters);
-		oModelMock.expects("buildQueryOptions").withExactArgs(mParameters, true)
+		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
 			.returns(mQueryOptions);
 		this.mock(oBinding).expects("reset").withExactArgs(undefined);
 
@@ -350,10 +352,11 @@ sap.ui.require([
 
 		oBinding.mCacheByContext = {}; //mCacheByContext must be reset before fetchCache
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(mParameters, ["$$groupId", "$$operationMode", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters),
+				["$$groupId", "$$operationMode", "$$updateGroupId"])
 			.returns({$$operationMode : OperationMode.Server});
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(mParameters, true).returns(mQueryOptions);
+			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oBinding.oContext));
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change);
@@ -1023,12 +1026,13 @@ sap.ui.require([
 
 		oBindingMock.expects("reset").twice().withExactArgs();
 		this.mock(Context).expects("create")
-			.withExactArgs(this.oModel, oBinding, "/bar/Suppliers")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				"/bar/Suppliers")
 			.returns(oHeaderContext);
 		this.mock(this.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, oContext)
+			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 			.returns("/bar/Suppliers");
-		oBindingMock.expects("fetchCache").withExactArgs(oContext);
+		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
 		oBindingMock.expects("_fireChange").twice()
 			.withExactArgs({reason : ChangeReason.Context});
 
@@ -1059,10 +1063,11 @@ sap.ui.require([
 			oHeaderContext = Context.create(this.oModel, oBinding, "/bar/Suppliers");
 
 		this.mock(Context).expects("create")
-			.withExactArgs(this.oModel, oBinding, "/bar/Suppliers")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				"/bar/Suppliers")
 			.returns(oHeaderContext);
 		oBindingMock.expects("fetchCache").withExactArgs(null);
-		oBindingMock.expects("fetchCache").twice().withExactArgs(oContext);
+		oBindingMock.expects("fetchCache").twice().withExactArgs(sinon.match.same(oContext));
 		oBinding.setContext(oContext);
 		assert.strictEqual(oBinding.getHeaderContext(), oHeaderContext);
 		this.mock(oBinding.getHeaderContext()).expects("destroy").never();
@@ -1588,7 +1593,7 @@ sap.ui.require([
 
 		this.mock(_Helper).expects("buildPath").withExactArgs(42, "bar").returns("~");
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs(undefined, "~", undefined, oListener)
+			.withExactArgs(undefined, "~", undefined, sinon.match.same(oListener))
 			.returns(_SyncPromise.resolve(oReadResult));
 
 		oPromise = oBinding.fetchValue("bar", oListener, 42);
@@ -1805,7 +1810,7 @@ sap.ui.require([
 			oReturn = {};
 
 		this.mock(ListBinding.prototype).expects("attachEvent")
-			.withExactArgs("change", mEventParameters).returns(oReturn);
+			.withExactArgs("change", sinon.match.same(mEventParameters)).returns(oReturn);
 
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 
@@ -1831,7 +1836,8 @@ sap.ui.require([
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oModelMock.expects("buildBindingParameters").withExactArgs(mParameters, aAllowed)
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), aAllowed)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1839,7 +1845,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.sOperationMode, "Server");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oModelMock.expects("buildBindingParameters").withExactArgs(mParameters, aAllowed)
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), aAllowed)
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1847,7 +1854,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.sOperationMode, undefined);
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oModelMock.expects("buildBindingParameters").withExactArgs(mParameters, aAllowed)
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), aAllowed)
 			.returns({});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1855,7 +1863,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		// buildBindingParameters also called for relative binding
-		oModelMock.expects("buildBindingParameters").withExactArgs(mParameters, aAllowed)
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), aAllowed)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		oPrototypeMock = this.mock(ODataListBinding.prototype);
 		oPrototypeMock.expects("applyParameters").withExactArgs(mParameters); // called by c'tor
@@ -2723,8 +2732,8 @@ sap.ui.require([
 			.returns(_SyncPromise.resolve("/TEAMS('02')"));
 		this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
 		oExpectation = this.mock(oBinding).expects("createInCache")
-			.withExactArgs("updateGroup", /*vPostPath*/sinon.match.object, "", oInitialData,
-				sinon.match.func)
+			.withExactArgs("updateGroup", /*vPostPath*/sinon.match.object, "",
+				sinon.match.same(oInitialData), sinon.match.func)
 			.returns(_SyncPromise.resolve());
 
 		// code under test
@@ -2819,7 +2828,7 @@ sap.ui.require([
 			.withExactArgs(-1, 3, "$auto", sinon.match.func)
 			.returns(_SyncPromise.resolve(oResult));
 		this.mock(oBinding).expects("getDiff")
-			.withExactArgs(oResult.value, -1)
+			.withExactArgs(sinon.match.same(oResult.value), -1)
 			.returns(aDiffResult);
 
 		// code under test
@@ -2923,7 +2932,7 @@ sap.ui.require([
 			oMetaModelMock.expects("getMetaContext")
 				.withExactArgs(oBinding.sPath).returns(oMetaContext);
 			oMetaModelMock.expects("fetchObject")
-				.withExactArgs("SupplierName", oMetaContext)
+				.withExactArgs("SupplierName", sinon.match.same(oMetaContext))
 				.returns(_SyncPromise.resolve(oPropertyMetadata));
 			oHelperMock.expects("formatLiteral").withExactArgs("SAP", "Edm.String")
 				.returns("'SAP'");
@@ -3506,7 +3515,7 @@ sap.ui.require([
 			oCache = {};
 
 			this.mock(oBinding).expects("getQueryOptionsForPath")
-				.withExactArgs("", oContext)
+				.withExactArgs("", sinon.match.same(oContext))
 				.returns(oFixture.mInheritedQueryOptions);
 			this.mock(_Cache).expects("create")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
