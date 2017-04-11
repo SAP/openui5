@@ -658,6 +658,22 @@
 		}
 	});
 
+	var oButtonBdiLTR = new sap.m.Button("myButtonBdiLtr", {
+		text: "BDI tag when text is in LTR language (Next button is only in RTL 123)"
+	});
+
+	var oButtonBdiRTL = new sap.m.Button("myButtonBdiRtl", {
+		text: "עברית (עברית 123)"
+	});
+
+	var oButtonBdi = new sap.m.Button("myButtonBdi", {
+		text: "Here we have both LTR and RTL languages 123 (עברית  456)"
+	});
+
+	var oButtonBdi2 = new sap.m.Button("myButtonBdi2", {
+		text: "עברית 123 (now English in the brackets 456)"
+	});
+
 	oPage1.addContent(oBar2)
 	      .addContent(new sap.ui.core.HTML("myEmptyLine1", {content: "<br>"}))
 				.addContent(new sap.ui.core.HTML("myHtmlBarDefault", {content: ""}))
@@ -763,7 +779,15 @@
 				.addContent(new sap.ui.core.HTML("myHtmlResetText", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonResetText)
 				.addContent(new sap.ui.core.HTML("myHtmlToggleTextDirection", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
-				.addContent(oButtonToggleTextDirection);
+				.addContent(oButtonToggleTextDirection)
+				.addContent(new sap.ui.core.HTML("myDividerLine4", {content: "<br><hr style='border:solid #000000; border-width: 5px 0 0;'>"}))
+				.addContent(oButtonBdiLTR)
+				.addContent(new sap.ui.core.HTML("myHtmloButtonBdiLTR", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonBdiRTL)
+				.addContent(new sap.ui.core.HTML("myHtmloButtonBdi", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonBdi)
+				.addContent(new sap.ui.core.HTML("myHtmloButtonBdi2", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonBdi2);
 
 	oApp.addPage(oPage1);
 	oApp.placeAt("body");

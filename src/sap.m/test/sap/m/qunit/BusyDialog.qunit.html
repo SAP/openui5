@@ -109,7 +109,7 @@
 				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have CancelButton button rendered.');
 
 				//test the close button text
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'Abort', 'should have CancelButton text set properly.');
+				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'Abort', 'should have CancelButton text set properly.');
 			});
 
 			// =========================================================================================================
@@ -191,7 +191,7 @@
 
 				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should have footer after being set.');
 				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have CancelButton after setShowCancelButton being set.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'test', 'should have a button with string that is previously set.');
+				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test', 'should have a button with string that is previously set.');
 
 
 				this.busyDialog.setCancelButtonText('');
@@ -205,7 +205,7 @@
 
 				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should render the footer if the CancelButtonText is changed from an empty string.');
 				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have rendered CancelButton.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'test2', 'should have rendered CancelButton with the new text value.');
+				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test2', 'should have rendered CancelButton with the new text value.');
 			});
 
 			QUnit.test('Setting BusyIndicator properties', function (assert) {
