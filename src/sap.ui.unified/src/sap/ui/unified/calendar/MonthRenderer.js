@@ -80,10 +80,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	MonthRenderer.getClass = function(oMonth){
 
-		var sClasses = "sapUiCalMonthView";
-		var sCalendarType = oMonth.getPrimaryCalendarType();
+		var sClasses = "sapUiCalMonthView",
+			sCalendarType = oMonth.getPrimaryCalendarType(),
+			bShowWeekNumbers = oMonth.getShowWeekNumbers();
 
-		if (sCalendarType == sap.ui.core.CalendarType.Islamic) {
+		if (sCalendarType == sap.ui.core.CalendarType.Islamic || !bShowWeekNumbers) {
 			// on Islamic calendar week numbers are not used
 			sClasses = sClasses + " sapUiCalNoWeekNum";
 		}
@@ -195,7 +196,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			aDays,
 			iLength,
 			oHelper,
-			i;
+			i,
+			bShowWeekNumbers;
 
 		if (!oDate) {
 			oDate = oMonth._getFocusedDate();
@@ -209,7 +211,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		oHelper = this.getDayHelper(oMonth, oDate);
 
 		aDays = oMonth._getVisibleDays(oDate, true);
-		bWeekNum = oMonth.getPrimaryCalendarType() !== sap.ui.core.CalendarType.Islamic; // on Islamic calendar week numbers are not used
+
+		bShowWeekNumbers = oMonth.getShowWeekNumbers();
+
+		bWeekNum = oMonth.getPrimaryCalendarType() !== sap.ui.core.CalendarType.Islamic && bShowWeekNumbers; // on Islamic calendar week numbers are not used
 
 		iLength = aDays.length;
 		for (i = 0; i < iLength; i++) {

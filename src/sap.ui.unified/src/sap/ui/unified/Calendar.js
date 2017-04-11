@@ -4,8 +4,8 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils',
-               './calendar/Header', './calendar/Month', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/core/date/UniversalDate', './library'],
-               function(jQuery, Control, LocaleData, Date1, CalendarUtils, Header, Month, MonthPicker, YearPicker, UniversalDate, library) {
+			   './calendar/Header', './calendar/Month', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/core/date/UniversalDate', './library'],
+			   function(jQuery, Control, LocaleData, Date1, CalendarUtils, Header, Month, MonthPicker, YearPicker, UniversalDate, library) {
 	"use strict";
 
 	/*
@@ -112,7 +112,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * the <code>minDate</code> is set to the begin of the month of the <code>maxDate</code>.
 			 * @since 1.38.0
 			 */
-			maxDate : {type : "object", group : "Misc", defaultValue : null}
+			maxDate : {type : "object", group : "Misc", defaultValue : null},
+
+			/**
+			 * Determines whether the week numbers in the months are displayed.
+			 *
+			 * <b>Note:</b> For Islamic calendars, the week numbers are not displayed
+			 * regardless of what is set to this property.
+			 * @since 1.48
+			 */
+			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true}
 
 		},
 		aggregations : {
@@ -253,7 +262,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	Calendar.prototype._createMonth = function(sId){
-
 		var oMonth = new Month(sId, {width: "100%"});
 
 		return oMonth;
@@ -287,6 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oDisplayDate = oFocusedDate;
 			}
 			aMonths[i].displayDate(CalendarUtils._createLocalDate(oDisplayDate));
+			aMonths[i].setShowWeekNumbers(this.getShowWeekNumbers());
 		}
 
 		this._updateHeader(oDate);

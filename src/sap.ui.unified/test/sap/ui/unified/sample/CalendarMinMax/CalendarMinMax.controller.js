@@ -13,8 +13,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 				minDate: new Date(2000, 0, 1),
 				maxDate: new Date(2050, 11, 31),
 				disabled: [{start: new Date(2016, 0, 4), end: new Date(2016, 0, 10)},
-				           {start: new Date(2016, 0, 15)}
-				          ]
+						   {start: new Date(2016, 0, 15)}
+						  ]
 			});
 			this.getView().setModel(oModel);
 
@@ -31,6 +31,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			} else {
 				oText.setValue("No Date Selected");
 			}
+		},
+
+		handleShowWeekNumbers: function(oEvent) {
+			var oCalendar = this.getView().byId('calendar');
+			var bShowWeekNumbers = oEvent.getParameter("state");
+
+			oCalendar.setShowWeekNumbers(bShowWeekNumbers);
 		}
 
 	});
