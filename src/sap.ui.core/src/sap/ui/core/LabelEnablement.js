@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	};
 
 	function checkRequired(oElem) {
-		return !!(oElem && oElem.getMetadata().getProperty("required") && oElem.getRequired());
+		return !!(oElem && oElem.getRequired && oElem.getRequired());
 	}
 
 	/**
