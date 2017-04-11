@@ -340,9 +340,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @private
 	 */
 	SelectionDetails.prototype._updateButton = function () {
-		var sText,
-			oButton = this.getAggregation("_button"),
-			iCount = this._oSelectionData && this._oSelectionData.length || this.getItems().length;
+		var sText, iCount, oButton = this.getAggregation("_button");
+		if (this._oSelectionData && this._oSelectionData.length >= 0) {
+			iCount = this._oSelectionData.length;
+		} else {
+			iCount = this.getItems().length;
+		}
 
 		if (iCount > 0) {
 			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT_WITH_NUMBER", [ iCount ]);

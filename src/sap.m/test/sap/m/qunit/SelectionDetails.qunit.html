@@ -972,7 +972,9 @@
 
 	QUnit.module("Selection change handling", {
 		beforeEach : function() {
-			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails = new sap.m.SelectionDetails({
+				items: [new sap.m.SelectionDetailsItem()]
+			});
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
