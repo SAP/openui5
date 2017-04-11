@@ -1,0 +1,277 @@
+<mvc:View
+		controllerName="sap.ui.documentation.controller.Controls"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
+	<ScrollContainer
+			width="100%"
+			height="100%"
+			horizontal="false"
+			vertical="true">
+			<l:BlockLayout
+					background="Light">
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell class="sapUiNoContentPadding">
+						<Image
+								src="./resources/sap/ui/documentation/images/M_and_L_Cropped_274115.png"
+								width="100%"/>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow
+						rowColorSet="ColorSet1">
+					<l:BlockLayoutCell
+							title="Featured Control Groups">
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow
+						rowColorSet="ColorSet1">
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://edit"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Input Controls"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Simple yet powerful controls to enable users to enter and interact with data."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Input field"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Combobox"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://list"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="List and Tree"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Lists make it possible to represent data in very flexible ways."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Standard List item"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Tree"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://table-view"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Tables"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Tables can be simple or complex depending on your requirements."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Responsive Table"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Grid Table"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://popup-window"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Popups"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Popups like dialogs and popovers."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Dialog"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Popover"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow
+						rowColorSet="ColorSet1">
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://grid"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Generic Tiles"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Some small descriptive text to explain the controls."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Generic Tile"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Slide Tile"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://message-popup"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Messaging"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Some small descriptive text to explain the controls."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Message Strip"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Message Dialog"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://header"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Bars"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Some small descriptive text to explain the controls."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Headers and Footers"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Responsive Toolbar"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://action"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Actions"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Some small descriptive text to explain the controls."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Button"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Action Sheet"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+							title="Layout &amp; Page Controls">
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow
+						rowColorSet="ColorSet1">
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://header"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Actions"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Some small descriptive text to explain the controls."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Button"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Action Sheet"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://screen-split-three"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Flexible Column Layout"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Allows the viewing of multiple objects on one screen."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Link to Control"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://chart-table-view"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Dynamic Page"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="This dynamic layout comes complete with snapping headers."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Link to Control"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout>
+							<core:Icon
+									src="sap-icon://screen-split-one"
+									size="2rem"
+									class="sapUiSmallMarginBottom"/>
+							<Title
+									text="Master Detail"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Sometimes the simple layout is the better layout."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="Link to Control"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+			</l:BlockLayout>
+	</ScrollContainer>
+</mvc:View>

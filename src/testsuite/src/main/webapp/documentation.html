@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>OpenUI5 Explored</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
+
+	<script
+			id='sap-ui-bootstrap'
+			type='text/javascript'
+			src='resources/sap-ui-core.js'
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-theme='sap_bluecrystal'
+			data-sap-ui-libs='sap.ui.layout, sap.ui.demokit, sap.m'
+			data-sap-ui-compatVersion="1.16"
+			data-sap-ui-resourceroots='{
+			"sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/"
+		}' >
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require(['sap/ui/documentation/controller/util/APIInfo'], function(APIInfo) {
+				//APIInfo._setRoot("http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/test-resources/");
+				APIInfo._setRoot("http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/test-resources/");
+			});
+
+			sap.ui.require(['sap/ui/documentation/Component'], function(Comp) {
+				Comp.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = "./resources/sap/ui/documentation/model/data/guide/";
+			});
+
+			sap.ui.require([
+				"sap/m/Page",
+				"sap/ui/core/ComponentContainer"
+			], function (Page, ComponentContainer) {
+				// initialize the UI component
+				new Page({
+					showHeader: false,
+					content: new ComponentContainer({
+						height : "100%",
+						name : "sap.ui.documentation"
+					})
+				}).placeAt("content");
+			});
+		});
+	</script>
+</head>
+<body class='sapUiBody' id='content'>
+</body>
+</html>

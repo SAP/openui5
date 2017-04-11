@@ -1,0 +1,69 @@
+<mvc:View
+		controllerName="sap.ui.documentation.controller.ControlsMaster"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		class="sapContrast sapContrastPlus">
+	<Page
+			id="exploredMasterPage"
+			showFooter="false"
+			navButtonPress="onNavBack"
+			showNavButton="false">
+
+		<!-- Header -->
+		<customHeader>
+			<Toolbar>
+				<Title text="UI5 Explored" />
+				<ToolbarSpacer/>
+			</Toolbar>
+		</customHeader>
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<SearchField
+						id="searchField"
+						placeholder="Filter"
+						width="100%"
+                        liveChange="hadnleListFilter">
+				</SearchField>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://drop-down-list" press="handleListSettings" />
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://action-settings" press="handleSettings" />
+			</Toolbar>
+		</subHeader>
+
+		<!-- Navigation List -->
+		<content>
+			<List id="exploredMasterList"
+				  mode="{device>/listMode}"
+				  selectionChange="onNavToEntity"
+				  items="{path: '/entities',
+				  groupHeaderFactory: '.getGroupHeader',
+				  sorter: [{
+						path: 'category',
+						descending: false,
+						group: true
+					},{
+						path: 'name',
+						descending: false
+					}]}">
+				<infoToolbar>
+					<Toolbar id="vsFilterBar"
+							active="true"
+							visible="false"
+							press="handleListSettings">
+						<Label id="vsFilterLabel" />
+					</Toolbar>
+				</infoToolbar>
+				<items>
+					<StandardListItem
+							title="{name}"
+							counter="{sampleCount}"
+							type="{device>/listItemType}"
+							press="onNavToEntity" />
+				</items>
+			</List>
+		</content>
+	</Page>
+</mvc:View>

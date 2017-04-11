@@ -1,0 +1,328 @@
+<mvc:View
+		controllerName="sap.ui.documentation.controller.ApiDetail"
+		xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:demokit="sap.ui.demokit"
+		xmlns:layout="sap.ui.layout">
+
+		<m:Page
+			id="apiDetailPage"
+			navButtonPress="onNavBack"
+			showHeader="{device>/orientation/portrait}"
+			showSubHeader="false"
+			showFooter="false"
+			showNavButton="{device>/system/phone}"
+			busy="true"
+			busyIndicatorDelay="0">
+
+		<m:content>
+			<ObjectPageLayout id="apiDetailObjectPage"
+							  enableLazyLoading="false"
+							  visible="false">
+				<headerTitle>
+					<ObjectPageHeader id="title" objectTitle="{topics>/kind} {topics>/name}"
+									  objectSubtitle="{ parts : [{path: 'topics>/deprecated'}],
+                                                                                                                                                                                                                                formatter: '.formatSubtitle'}">
+						<actions>
+							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
+						</actions>
+					</ObjectPageHeader>
+					<core:ExtensionPoint name="customTitle" />
+				</headerTitle>
+
+
+				<sections>
+					<ObjectPageSection id="overview" title="Overview">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<layout:VerticalLayout>
+										<core:HTML content="{parts: [{path: 'topics>/description'}],
+																	  formatter: '.formatDescription'}"/>
+										<m:Text text="Since: {topics>/since}" visible="{= ${topics>/since} !== undefined}"/>
+									</layout:VerticalLayout>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="properties"
+									   title="Properties"
+									   visible="{topics>/hasProperties}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'topics>/properties'}"
+											 showSeparators="Inner"
+											 fixedLayout="false">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+												<m:Label text="Description"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
+												<m:cells>
+													<m:Text text="{topics>name}" wrapping="false"/>
+													<core:HTML content="{parts: [{path: 'topics>description'},
+																			{path: 'topics>deprecated/text'},
+																			{path: 'topics>deprecated/since'}],
+																		 formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="constructor"
+									   title="Constructor"
+									   visible="{topics>/hasConstructor}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<layout:VerticalLayout>
+										<core:HTML content="{parts: [{path: 'topics>/constructor/description'}],
+																	  formatter: '.formatDescription'}{}"/>
+										<demokit:CodeViewer	visible="{topics>/hasConstructor}"
+															lineNumbering="true"
+															source="{parts: [{path: 'topics>/name' },
+																			 {path: 'topics>/constructor/parameters' }],
+																	 		  formatter: '.formatConstructor'}"/>
+									</layout:VerticalLayout>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="controlProperties"
+									   title="Properties"
+									   visible="{topics>/hasControlProperties}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'topics>/ui5-metadata/properties'}"
+											 showSeparators="Inner"
+											 fixedLayout="false">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Default Value"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+												<m:Label text="Description"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem>
+												<m:cells>
+													<m:Text text="{topics>name}" wrapping="false"/>
+													<m:Link text="{topics>type}"
+															enabled="{parts: [{path: 'topics>type'}],
+																		  formatter: '.formatLinkEnabled'}"
+															press="onTypeLinkPress"/>
+													<m:Text text="{parts: [{path: 'topics>defaultValue'}],
+																	   formatter: '.formatDefaultValue'}"
+															wrapping="false"/>
+													<core:HTML content="{parts: [{path: 'topics>description'},
+																					 {path: 'topics>deprecated/text'},
+																					 {path: 'topics>deprecated/since'}],
+																			 	  formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="events"
+									   title="Events"
+									   visible="{topics>/hasEvents}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'events>/events'}"
+											 showSeparators="Inner"
+											 fixedLayout="false">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+												<m:Label text="Description"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem>
+												<m:cells>
+													<m:Text text="{ parts: [{path: 'events>'}],
+																	formatter: '.formatEventsName'}"
+															wrapping="false"/>
+													<m:Text text="{ parts: [{path: 'events>'}],
+																	formatter: '.formatEventsParam'}"
+															wrapping="false"/>
+													<m:Link text="{ parts: [{path: 'events>'}],
+																	formatter: '.formatEventsType'}"
+															enabled="{parts: [{path: 'events>'}],
+																	  formatter: '.formatEventLinkEnabled'}"
+															press="onTypeLinkPress"/>
+													<core:HTML content="{parts: [{path: 'events>description'},
+																			{path: 'events>deprecated/text'},
+																			{path: 'events>deprecated/since'}],
+																		 formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="methods"
+									   title="Methods"
+									   visible="{topics>/hasMethods}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'methods>/methods'}"
+											 showSeparators="Inner"
+											 fixedLayout="false">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+												<m:Label text="Description"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem>
+												<m:cells>
+													<m:Text text="{parts: [{path: 'methods>'}],
+																   formatter: '.formatMethodsName'}"
+															wrapping="false"/>
+													<m:Text text="{parts: [{path: 'methods>'}],
+																   formatter: '.formatMethodsParam'}"
+															wrapping="false"/>
+
+													<layout:VerticalLayout content="{methods>returnType/type}">
+														<m:HBox>
+															<m:items>
+																<m:Link text="{methods>value}"
+																		enabled="{parts: [{path: 'methods>value'}],
+																				  formatter: '.formatLinkEnabled'}"
+																		press="onTypeLinkPress"/>
+																<m:Text text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
+															</m:items>
+														</m:HBox>
+													</layout:VerticalLayout>
+
+													<core:HTML content="{parts: [{path: 'methods>description'},
+																				 {path: 'methods>deprecated/text'},
+																		   		 {path: 'methods>deprecated/since'}],
+																	  	 formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="aggregations"
+									   title="Aggregations"
+									   visible="{topics>/hasAggregations}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'topics>/ui5-metadata/aggregations'}"
+											 showSeparators="Inner"
+											 fixedLayout="false">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Cardinality"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column  minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+												<m:Label text="Description"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
+												<m:cells>
+													<m:Text text="{topics>name}" wrapping="false"/>
+													<m:Text text="{topics>cardinality}" wrapping="false"/>
+													<m:Link text="{topics>type}"
+															enabled="{parts: [{path: 'topics>type'}],
+																      formatter: '.formatLinkEnabled'}"
+															press="onTypeLinkPress"/>
+													<core:HTML content="{parts: [{path: 'topics>description'},
+																				 {path: 'topics>deprecated/text'},
+																				 {path: 'topics>deprecated/since'}],
+																		 formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="associations"
+									   title="Associations"
+									   visible="{topics>/hasAssociations}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'topics>/ui5-metadata/associations'}"
+											 showSeparators="Inner"
+											 fixedLayout="false">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Cardinality"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+												<m:Label text="Description"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem visible="{topics>visibility === 'public'}">
+												<m:cells>
+													<m:Text text="{topics>name}" wrapping="false"/>
+													<m:Text text="{topics>cardinality}" wrapping="false"/>
+													<m:Link text="{topics>type}"
+															enabled="{parts: [{path: 'topics>type'}],
+																	  formatter: '.formatLinkEnabled'}"
+															press="onTypeLinkPress"/>
+													<core:HTML content="{parts: [{path: 'topics>description'},
+																				 {path: 'topics>deprecated/text'},
+																				 {path: 'topics>deprecated/since'}],
+																		 formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<core:ExtensionPoint name="customSections" />
+
+				</sections>
+
+			</ObjectPageLayout>
+
+		</m:content>
+
+	</m:Page>
+
+</mvc:View>

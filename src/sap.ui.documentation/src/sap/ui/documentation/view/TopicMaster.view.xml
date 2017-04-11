@@ -1,0 +1,39 @@
+<mvc:View
+		controllerName="sap.ui.documentation.controller.TopicMaster"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:documentation="sap.ui.documentation.controls"
+		xmlns="sap.m"
+		class="sapContrast sapContrastPlus">
+
+	<Page
+			id="page"
+			enableScrolling="false"
+			showHeader="false"
+			showSubHeader="false"
+			showFooter="false"
+			navButtonPress="onNavBack"
+			showNavButton="false">
+		<content>
+
+			<documentation:SimpleTree
+					title="User Guide"
+					id="tree"
+					height="100%"
+					nodes="{ path: '/' }">
+				<documentation:SimpleTreeNode selected="onNodeSelect"
+						text="{text}"
+						ref="{key}"
+						expanded="{expanded}"
+					    isSelected="{isSelected}">
+				</documentation:SimpleTreeNode>
+			</documentation:SimpleTree>
+
+			<PullToRefresh
+					id="pullToRefresh"
+					visible="{device>/support/touch}"
+					refresh="onRefresh" />
+		</content>
+
+	</Page>
+
+</mvc:View>

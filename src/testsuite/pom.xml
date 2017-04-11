@@ -111,6 +111,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>sap.ui.documentation</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>sap.ui.dt</artifactId>
 			<version>${project.version}</version>
 		</dependency>

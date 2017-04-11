@@ -1,0 +1,70 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<Dialog
+		title="Give Feedback"
+		class="sapUiContentPadding"
+		id="feedbackDialog"
+		resizable="true"
+		draggable="true"
+		contentHeight="35rem"
+		contentWidth="25rem"
+		verticalScrolling="false"
+		stretch="{appView>/bPhoneSize}"
+		showHeader="true">
+		<content>
+		<VBox>
+			<HBox justifyContent="SpaceBetween">
+				<items>
+					<Label text="Rate your experience:" required="true"/>
+					<ObjectStatus id="ratingStatus" text="" state="None"/>
+				</items>
+			</HBox>
+			<HBox id="feedbackButtons" class="sapUiTinyMarginBottom rateButton" >
+				<items>
+					<ToggleButton id="excellent" width="100%" press="onPressRatingButton" icon="sap-icon://FeedbackRatingFaces/icon-face-very-happy" class="rateButton">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</ToggleButton>
+					<ToggleButton id="good" width="100%" press="onPressRatingButton" icon="sap-icon://FeedbackRatingFaces/icon-face-happy" class="rateButton">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</ToggleButton>
+					<ToggleButton id="average" width="100%" press="onPressRatingButton" icon="sap-icon://FeedbackRatingFaces/icon-face-neutral" class="rateButton">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</ToggleButton>
+					<ToggleButton id="poor" width="100%" press="onPressRatingButton" icon="sap-icon://FeedbackRatingFaces/icon-face-bad" class="rateButton">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</ToggleButton>
+					<ToggleButton id="veryPoor" width="100%" press="onPressRatingButton" icon="sap-icon://FeedbackRatingFaces/icon-face-very-bad" class="rateButton">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</ToggleButton>
+				</items>
+			</HBox>
+			<TextArea id="feedbackInput" width="100%" placeholder="Describe what you like or what needs to be improved.You can share your feedback for the overall Demokit experience or for the specific page you are currently viewing."
+						rows="8" class="sapUiTinyMarginBottom"/>
+			<CheckBox id="pageContext" text="Feedback is related to the current page" selected="true" class="sapUiTinyMarginBottom" select="onContextSelect"/>
+			<Link text="Show context Data" class="sapUiSmallMarginBottom" press="onShowHideContextData"/>
+			<Text id="contextData" text="Details/ descriptive text..." visible="false" class="sapUiSmallMarginBottom"/>
+			<Text text="Your feedback is anonymous, we do not collect any personal data. For more information see the following links" class="sapUiTinyMarginBottom"/>
+			<Link text="Privacy" class="sapUiTinyMarginBottom"/>
+			<Link text="Term of Use" class="sapUiTinyMarginBottom"/>
+			<Link text="Legal Agreement" class="sapUiTinyMarginBottom"/>
+		</VBox>
+		</content>
+		<beginButton>
+			<Button id="sendButton" text="Send"  press="onFeedbackDialogSend" enabled="false"/>
+		</beginButton>
+		<endButton>
+			<Button id="cancelButton" text="Cancel" press="onFeedbackDialogCancel"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

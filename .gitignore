@@ -40,3 +40,6 @@ web.config
 # Ignore yarn files
 yarn.lock
 *yarn
+
+# Ignore documentation artifacts
+src/sap.ui.documentation/src/sap/ui/documentation/model/data/guide/
