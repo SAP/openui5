@@ -27,8 +27,7 @@ sap.ui.define(['./library'],
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 		 */
 		AlignedFlowLayoutRenderer.render = function (oRm, oControl) {
-			var aContent = oControl.getContent(),
-				iContentLength = aContent.length;
+			var aContent = oControl.getContent();
 
 			oRm.write("<ul");
 			oRm.writeControlData(oControl);
@@ -38,10 +37,7 @@ sap.ui.define(['./library'],
 
 			this.renderItems(oRm, oControl, aContent);
 			this.renderEndItem(oRm, oControl);
-
-			if (iContentLength) {
-				this.renderSpacers(oRm, oControl, iContentLength);
-			}
+			this.renderSpacers(oRm, oControl);
 
 			oRm.write("</ul>");
 		};
@@ -139,23 +135,17 @@ sap.ui.define(['./library'],
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
-		 * @param {int} iVisibleItems The number of items that should be visible
 		 */
-		AlignedFlowLayoutRenderer.renderSpacers = function(oRm, oControl, iVisibleItems) {
-			var sMinItemWidth = oControl.getMinItemWidth(),
+		AlignedFlowLayoutRenderer.renderSpacers = function(oRm, oControl) {
+			var iSpacers = oControl.getNumberOfSpacers(),
+				sMinItemWidth = oControl.getMinItemWidth(),
 				sMaxItemWidth = oControl.getMaxItemWidth(),
 				CSS_CLASS = AlignedFlowLayoutRenderer.CSS_CLASS;
 
-			// We never need more than (windowWidth/minItemWidth). They just need to fill one row.
-			iVisibleItems = Math.max(1, iVisibleItems - 2);
-
-			// TODO: limit the iVisibleItems in case there are very many items. First try:
-			iVisibleItems = Math.min(iVisibleItems, 100); // FIXME: magic number... let's assume there are never more than 100 items in the first row.
-
-			for (var i = 0; i < iVisibleItems; i++) {
+			for (var i = 0; i < iSpacers; i++) {
 				oRm.write("<li");
 
-				if (i === (iVisibleItems - 1)) {
+				if (i === (iSpacers - 1)) {
 					oRm.writeAttribute("id", oControl.getId() + "-last");
 				}
 
