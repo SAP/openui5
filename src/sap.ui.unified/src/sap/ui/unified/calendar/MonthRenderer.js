@@ -341,9 +341,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		}
 
 		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
-			oRm.addClass("sapUiCalItem" + oType.type);
-			if (oType.tooltip) {
-				oRm.writeAttributeEscaped('title', oType.tooltip);
+			if (oType.type === sap.ui.unified.CalendarDayType.NonWorking) {
+				oRm.addClass("sapUiCalItemWeekEnd");
+			} else {
+				oRm.addClass("sapUiCalItem" + oType.type);
+				if (oType.tooltip) {
+					oRm.writeAttributeEscaped('title', oType.tooltip);
+				}
 			}
 		}
 

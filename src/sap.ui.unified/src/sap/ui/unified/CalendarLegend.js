@@ -110,7 +110,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if (aFreeTypes[iNoTypeItemIndex]) {
 			sType = aFreeTypes[iNoTypeItemIndex];
 		} else {
-			sType = "Type" + (Object.keys(sap.ui.unified.CalendarDayType).length + iNoTypeItemIndex - aFreeTypes.length); // event type is not defined, maybe application styled it
+			// Till 1.48 there were Type01-Type10 and type "None". Type "None" is the first element in the array, so
+			// it does not count in the calculations needed below but with the new enum type "NonWorking" we have to
+			// subtract 1 in order to find the correct "Type" number.
+			sType = "Type" + (Object.keys(sap.ui.unified.CalendarDayType).length + iNoTypeItemIndex - aFreeTypes.length - 1); // event type is not defined, maybe application styled it
 		}
 
 		return sType;
@@ -149,6 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			i;
 
 		delete oFreeTypes[sap.ui.unified.CalendarDayType.None];
+		delete oFreeTypes[sap.ui.unified.CalendarDayType.NonWorking];
 
 		//remove types that are used
 		for (i = 0; i < aItems.length; i++) {
