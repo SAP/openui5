@@ -5220,7 +5220,7 @@
 			assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 			assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
 			assert.ok(!bSuccess, "Success handler should not be called");
-			assert.ok(iAbort === 3, "3 aborted inner requests");
+			assert.equal(iAbort, 3, "3 aborted inner requests");
 			done();
 		});
 	});
@@ -5268,7 +5268,7 @@
 		oModel.attachBatchRequestSent(this, function(oEvent) {
 			setTimeout(function() {
 				oAbort1.abort();
-  			oAbort2.abort();
+  				oAbort2.abort();
 			}, 0);
 		});
 
