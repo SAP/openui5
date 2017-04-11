@@ -156,12 +156,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 					return;
 				}
 
-				// If column menus of other columns are open, close them.
+				// Close all menus.
 				for (var i = 0; i < oColumns.length; i++) {
+					// If column menus of other columns are open, close them.
 					if (oColumns[i] !== oColumn) {
 						MenuUtils.closeColumnContextMenu(oTable, i);
 					}
 				}
+				MenuUtils.closeDataCellContextMenu(oTable);
 
 				oColumn._openMenu(oCell && oCell[0] || oColumn.getDomRef(), bHoverFirstMenuItem);
 			},
@@ -275,6 +277,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 						var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== oCell;
 						if (bMenuOpenAtAnotherDataCell) {
 							MenuUtils.closeDataCellContextMenu(oTable);
+						}
+
+						for (var i = 0; i < oColumns.length; i++) {
+							MenuUtils.closeColumnContextMenu(oTable, i);
 						}
 
 						oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell, "none none");
