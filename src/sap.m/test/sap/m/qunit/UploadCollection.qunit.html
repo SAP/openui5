@@ -1568,7 +1568,7 @@
 	QUnit.test("uploadComplete", function(assert) {
 		var oFileUploaderEventMock = {
 			fileName : "file1",
-			reponse : { "propertyOne" : "ValueOne" },
+			response : { "propertyOne" : "ValueOne" },
 			readyStateXHR : 4,
 			status : 200,
 			responseRaw : '{ "propertyOne" : "ValueOne" }',
@@ -1580,12 +1580,13 @@
 		function uploadComplete(oEvent) {
 			// Deprecated
 			assert.equal(oEvent.getParameters().getParameter("fileName"), "file1", "Correct file1 name in complete event");
-			assert.equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "Correct reponse in complete event");
+			assert.equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "Correct response in complete event");
 			assert.equal(oEvent.getParameters().getParameter("readyStateXHR"), oFileUploaderEventMock.readyStateXHR, "Correct readyStateXHR in complete event");
 			assert.equal(oEvent.getParameters().getParameter("status"), oFileUploaderEventMock.status, "Correct status in complete event");
 			// check for properly provided parameters
 			assert.equal(oEvent.getParameter("files")[0].fileName, "file1", "Correct file1 name in complete event");
 			assert.equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "Correct response in complete event");
+			assert.equal(oEvent.getParameter("files")[0].reponse, oFileUploaderEventMock.response, "Correct reponse in complete event - deprecated event property");
 			assert.equal(oEvent.getParameter("files")[0].status, oFileUploaderEventMock.status, "Correct status in complete event");
 			assert.equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "Correct raw response in complete event");
 			assert.equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "Correct headers in complete event");
