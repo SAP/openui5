@@ -632,7 +632,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	/**
-	 * Function adds an validation callback called before any new token gets added to the tokens aggregation
+	 * Function adds a validation callback called before any new token gets added to the tokens aggregation
 	 *
 	 * @param {function} fValidator
 	 * @public
@@ -642,7 +642,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	/**
-	 * Function removes an validation callback
+	 * Function removes a validation callback
 	 *
 	 * @param {function} fValidator
 	 * @public
@@ -675,7 +675,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		var oFocusedElement = jQuery(document.activeElement).control()[0];
 
 		if (!oFocusedElement) {
-			// we cannot rule out that the focused element does not correspond to a SAPUI5 control in which case oFocusedElement
+			// we cannot rule out that the focused element does not correspond to an SAPUI5 control in which case oFocusedElement
 			// is undefined
 			return;
 		}
@@ -689,7 +689,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	/**
-	 * Function is called on keyboard backspace, if cursor is in front of an token, token gets selected and deleted
+	 * Function is called on keyboard backspace, if cursor is in front of a token, token gets selected and deleted
 	 *
 	 * @private
 	 * @param {jQuery.event}
@@ -909,7 +909,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			if (oEvent.srcControl === this) {
 				Tokenizer.prototype.onsapprevious.apply(this._tokenizer, arguments);
 
-				// we need this otherwise navigating with the left arrow key will trigger a scroll an the Tokens
+				// we need this otherwise navigating with the left arrow key will trigger a scroll of the Tokens
 				oEvent.preventDefault();
 			}
 		}

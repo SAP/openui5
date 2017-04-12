@@ -381,7 +381,7 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the currently displayed page-level control. Note: it is not necessarily an instance of sap.m.Page, but it could also be a sap.ui.core.View, sap.m.Carousel, or whatever is aggregated.
+	 * Returns the currently displayed page-level control. Note: it is not necessarily an instance of sap.m.Page, but it could also be an sap.ui.core.View, sap.m.Carousel, or whatever is aggregated.
 	 *
 	 * Returns undefined if no page has been added yet.
 	 *

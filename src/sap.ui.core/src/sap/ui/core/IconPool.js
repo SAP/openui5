@@ -413,7 +413,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		/**
 		 * Returns whether the given <code>uri</code> is an icon URI.
 		 *
-		 * A string is an icon URI when it can be parsed as an URI and when it has one of the two forms
+		 * A string is an icon URI when it can be parsed as a URI and when it has one of the two forms
 		 * <ul>
 		 * <li>sap-icon://collectionName/iconName</li>
 		 * <li>sap-icon://iconName</li>

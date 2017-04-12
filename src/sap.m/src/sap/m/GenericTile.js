@@ -506,7 +506,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	/**
 	 * Trigger and update the hover style of the tile in List View (small screens) in LineMode.
 	 * Also attaches the UIArea's transitionend and animationend events to an event handler in order for
-	 * the tile's hover style to be updated after e.g. a sap.m.NavContainer causes the whole page to be flipped.
+	 * the tile's hover style to be updated after e.g. an sap.m.NavContainer causes the whole page to be flipped.
 	 * This is done in order to avoid miscalculations.
 	 *
 	 * @param {boolean} forceUpdate If set to true, the tile's hover style is updated even if the data has not changed.

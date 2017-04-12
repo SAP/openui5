@@ -249,7 +249,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				return [];
 			}
 
-			// as an empty list can not have an history or an searchHelp just clear List
+			// as an empty list can not have a history or a searchHelp just clear List
 			ComboBox.prototype.removeAllItems.apply(this, arguments);
 
 			this.__aItems = [];
@@ -321,7 +321,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		if (bDelayed) {
 			// Items are updated by binding. As items can be "reused" and have same IDSs,
 			// only one check at the end of all changes is needed
-			// only clear if really from an delayed call
+			// only clear if really from a delayed call
 			this._sHandleItemsChanged = null;
 			this._bNoItemCheck = undefined;
 		}
@@ -1351,7 +1351,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * Handle the sapfocusleave pseudo event and ensure that when the focus moves to the list box,
 	 * the check change functionality (incl. fireChange) is not triggered.
 	 * Before the change event the value must be checked again if it fits to the items, because
-	 * it might be manipulated using DOM manipulation or a IME tool for entering foreign characters
+	 * it might be manipulated using DOM manipulation or an IME tool for entering foreign characters
 	 * @protected
 	 */
 	DropdownBox.prototype.onsapfocusleave = function(oEvent) {

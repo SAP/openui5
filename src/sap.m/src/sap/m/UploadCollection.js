@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			change : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileDeleted : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			filenameLengthExceed : {
 				parameters : {
 					/**
-					* An unique Id of the attached document.
+					* A unique Id of the attached document.
 					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					*/
@@ -307,7 +307,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileRenamed : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					 */
 					fileName : {type : "string"},
 					/**
-					 * The renamed UI element as a UploadCollectionItem.
+					 * The renamed UI element as an UploadCollectionItem.
 					 * Since version 1.28.0.
 					 */
 					item : {type : "sap.m.UploadCollectionItem"}
@@ -333,7 +333,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileSizeExceed : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
@@ -359,7 +359,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			typeMissmatch : {
 				parameters : {
 					/**
-					* An unique Id of the attached document.
+					* A unique Id of the attached document.
 					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. Use parameter files instead.
 					*/
@@ -784,7 +784,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Sets a UploadCollectionItem to be selected by id. In single mode, the method removes the previous selection.
+	 * @description Sets an UploadCollectionItem to be selected by id. In single mode, the method removes the previous selection.
 	 * @param {string} id The id of the item whose selection to be changed.
 	 * @param {boolean} select Sets selected status of the item. Default value is true.
 	 * @returns {sap.m.UploadCollection} The current UploadCollection
@@ -1588,7 +1588,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Gets a file name which is a sap.m.Link in display mode and a sap.m.Input with a description (file extension) in edit mode
+	 * @description Gets a file name which is an sap.m.Link in display mode and an sap.m.Input with a description (file extension) in edit mode
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {object} that Context
 	 * @return {sap.m.Link | sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode

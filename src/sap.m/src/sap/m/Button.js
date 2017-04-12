@@ -513,7 +513,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sTooltip = this.getTooltip_AsString();
 
 		if (!sTooltip && !this.getText()) {
-			// get icon-font info. will return null if the icon is a image
+			// get icon-font info. will return null if the icon is an image
 			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
 
 			// add tooltip if available

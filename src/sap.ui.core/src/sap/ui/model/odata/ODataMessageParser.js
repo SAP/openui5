@@ -170,7 +170,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
  *
  * @param {string} sParentEntity - The path of the parent entity in which to search for the NavigationProperty
  * @param {string} sPropertyName - The name of the property which should be checked whether it is a NavigationProperty
- * @returns {boolean} Returns true if the given property is an NavigationProperty
+ * @returns {boolean} Returns true if the given property is a NavigationProperty
  * @private
  */
 ODataMessageParser.prototype._isNavigationProperty = function(sParentEntity, sPropertyName) {

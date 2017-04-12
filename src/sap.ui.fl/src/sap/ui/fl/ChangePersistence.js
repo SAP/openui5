@@ -45,7 +45,7 @@ sap.ui.define([
 		};
 
 		if (!this._oComponent || !this._oComponent.name) {
-			Utils.log.error("The Control does not belong to a SAPUI5 component. Personalization and changes for this control might not work as expected.");
+			Utils.log.error("The Control does not belong to an SAPUI5 component. Personalization and changes for this control might not work as expected.");
 			throw new Error("Missing component name.");
 		}
 

@@ -598,7 +598,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates and returns a instance of change instance
+	 * Creates and returns an instance of change instance
 	 *
 	 * @param {Object}  [oPropertyBag] property bag
 	 * @param {String}  [oPropertyBag.service] name of the OData service

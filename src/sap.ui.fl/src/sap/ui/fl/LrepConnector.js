@@ -498,7 +498,7 @@ sap.ui.define([
 
 		if (this._sLanguage) {
 			// Add mandatory "sap-language" URL parameter.
-			// Only use sap-language if there is a sap-language parameter in the original URL.
+			// Only use sap-language if there is an sap-language parameter in the original URL.
 			// If sap-language is not added, the browser language might be used as back-end login language instead of sap-language.
 			aParams.push({
 				name: "sap-language",

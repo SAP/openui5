@@ -99,7 +99,7 @@ function(jQuery, Test, DesignTime, ElementTest) {
 			var mElementTest = this.addGroup(
 				this._mResult.children,
 				this.getType(),
-				"Given that an DesignTime is created for " + this.getType()
+				"Given that a DesignTime is created for " + this.getType()
 			);
 
 			this._testAggregations(mElementTest.children);

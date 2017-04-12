@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				};
 
 				/**
-				 * Creates and displays a sap.m.Dialog with type sap.m.DialogType.Message with the given text and buttons, and optionally other parts.
+				 * Creates and displays an sap.m.Dialog with type sap.m.DialogType.Message with the given text and buttons, and optionally other parts.
 				 * After the user has tapped a button, the <code>onClose</code> function is invoked when given.
 				 *
 				 * The only mandatory parameter is <code>vMessage</code>. Either a string with the corresponding text or even
@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 *   function (oAction);
 				 *
 				 * where <code>oAction</code> is the button that the user has tapped. For example, when the user has pressed the close button,
-				 * a sap.m.MessageBox.Action.Close is returned.
+				 * an sap.m.MessageBox.Action.Close is returned.
 				 *
 				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMassage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)

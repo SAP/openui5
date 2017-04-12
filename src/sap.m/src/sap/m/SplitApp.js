@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './SplitContainer', './library'],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * A container control that is used to display a master-detail view in an application.
 	 * @class
-	 * SplitApp is another possible root element of a SAPUI5 mobile application besides {@link sap.m.App}. It contains two NavContainers if running on tablet or desktop,  and one on phone.
+	 * SplitApp is another possible root element of an SAPUI5 mobile application besides {@link sap.m.App}. It contains two NavContainers if running on tablet or desktop,  and one on phone.
 	 * The display of master NavContainer depends on the portrait/landscape mode of the device and the mode of SplitApp.
 	 * <h3>Structure</h3>
 	 * The SplitApp divides the screen into two areas:

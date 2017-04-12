@@ -27,7 +27,7 @@ sap.ui.define([
 
 		this._sComponentName = Utils.getComponentClassName(oControl);
 		if (!this._sComponentName) {
-			Utils.log.error("The Control does not belong to a SAPUI5 component. Variants and Changes for this control might not work as expected.");
+			Utils.log.error("The Control does not belong to an SAPUI5 component. Variants and Changes for this control might not work as expected.");
 		}
 		this._oAppDescriptor = Utils.getAppDescriptor(oControl);
 		this._sAppVersion = Utils.getAppVersionFromManifest(this._oAppDescriptor);

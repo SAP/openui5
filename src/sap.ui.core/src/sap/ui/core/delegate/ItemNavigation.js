@@ -324,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 				if ($Item.data("sap.INRoot") && i != this.iFocusedIndex) {
 
-					// item is root of an nested ItemNavigation -> set tabindexes from its items to -1
+					// item is root of a nested ItemNavigation -> set tabindexes from its items to -1
 					$Item.data("sap.INRoot").setNestedItemsTabindex();
 				}
 			}

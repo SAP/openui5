@@ -129,7 +129,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the class name of the application component owning the passed component or the component name itself if
-		 * this is already a application component.
+		 * this is already an application component.
 		 *
 		 * @param {sap.ui.base.Component} oComponent - SAPUI5 component
 		 * @returns {String} The component class name, ending with ".Component"

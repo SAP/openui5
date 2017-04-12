@@ -51,7 +51,7 @@ sap.ui.define([
 			var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
 
 			if (!oComponent) {
-				Utils.log.warning("View is generated without an component. Flexibility features are not possible.");
+				Utils.log.warning("View is generated without a component. Flexibility features are not possible.");
 				return Promise.resolve(oView);
 			}
 

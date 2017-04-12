@@ -379,7 +379,7 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 
 			if (this._bMobile) {
 				// fire change event i changed via native DatePicker
-				// but check if valid, because we don't know if on some devices maybe an keyboard input is possible
+				// but check if valid, because we don't know if on some devices maybe a keyboard input is possible
 				var oInput = this.getInputDomRef();
 				var sNewValue = oInput && oInput.value;
 				if (sNewValue) {

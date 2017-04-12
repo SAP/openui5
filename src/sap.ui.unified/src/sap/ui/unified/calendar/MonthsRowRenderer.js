@@ -159,7 +159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			var oLegend = sap.ui.getCore().byId(sLegendId);
 			if (oLegend) {
 				if (!(oLegend instanceof sap.ui.unified.CalendarLegend)) {
-					throw new Error(oLegend + " is not a sap.ui.unified.CalendarLegend. " + oMonthsRow);
+					throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + oMonthsRow);
 				}
 				oHelper.aTypes = oLegend.getItems();
 			} else {

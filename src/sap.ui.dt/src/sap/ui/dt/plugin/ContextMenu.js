@@ -108,7 +108,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when an context menu item gets selected by user
+	 * Called when a context menu item gets selected by user
 	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @override

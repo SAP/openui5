@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events : {
 
 			/**
-			 * Value was changed. This event is fired if the value has changed by an user action.
+			 * Value was changed. This event is fired if the value has changed by a user action.
 			 */
 			change : {
 				parameters : {

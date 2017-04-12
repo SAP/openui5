@@ -30,7 +30,7 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon", "./ObjectImageHelper"],
 		oRm.addClass('sapUxAPObjectPageHeaderDesign-' + oControl.getHeaderDesign());
 		oRm.writeClasses();
 		oRm.write(">");
-		// if an navigationBar has been provided display it
+		// if a navigationBar has been provided display it
 
 		if (oNavigationBar) {
 			oRm.write("<div");

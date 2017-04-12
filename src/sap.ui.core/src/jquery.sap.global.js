@@ -3539,7 +3539,7 @@
 		}
 
 		/**
-		 * Constructs an URL to load the module with the given name and file type (suffix).
+		 * Constructs a URL to load the module with the given name and file type (suffix).
 		 *
 		 * Searches the longest prefix of the given module name for which a registration
 		 * exists (see {@link jQuery.sap.registerModulePath}) and replaces that prefix
@@ -3574,7 +3574,7 @@
 		 * <b>Unified Resource Names</b><br>
 		 * Several UI5 APIs use <i>Unified Resource Names (URNs)</i> as naming scheme for resources that
 		 * they deal with (e.h. Javascript, CSS, JSON, XML, ...). URNs are similar to the path
-		 * component of an URL:
+		 * component of a URL:
 		 * <ul>
 		 * <li>they consist of a non-empty sequence of name segments</li>
 		 * <li>segments are separated by a forward slash '/'</li>
@@ -3614,7 +3614,7 @@
 		jQuery.sap.getResourcePath = getResourcePath;
 
 		/**
-		 * Registers an URL prefix for a module name prefix.
+		 * Registers a URL prefix for a module name prefix.
 		 *
 		 * Before a module is loaded, the longest registered prefix of its module name
 		 * is searched for and the associated URL prefix is used as a prefix for the request URL.
@@ -3657,7 +3657,7 @@
 		};
 
 		/**
-		 * Registers an URL prefix for a resource name prefix.
+		 * Registers a URL prefix for a resource name prefix.
 		 *
 		 * Before a resource is loaded, the longest registered prefix of its unified resource name
 		 * is searched for and the associated URL prefix is used as a prefix for the request URL.

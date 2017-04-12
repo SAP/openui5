@@ -209,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		},
 
 		/**
-		 * Returns whether the given cell is located in a analytical summary row.
+		 * Returns whether the given cell is located in an analytical summary row.
 		 * @param {Object} oCellRef DOM reference of table cell
 		 * @return {boolean}
 		 * @private
