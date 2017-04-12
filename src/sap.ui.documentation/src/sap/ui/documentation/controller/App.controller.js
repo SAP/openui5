@@ -22,6 +22,8 @@ sap.ui.define([
 						busy : false,
 						delay : 0,
 						bPhoneSize: false,
+						bLandscape: Device.orientation.landscape,
+						bHasMaster: false,
 						version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor(),
 						fullVersion: sap.ui.version,
 						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
@@ -82,9 +84,50 @@ sap.ui.define([
 				var sRouteName = oEvent.getParameter("name"),
 					sTabId = this.oRouter.getRoute(sRouteName)._oConfig.target[0] + "Tab",
 					oTabToSelect = this._oView.byId(sTabId),
-					sKey = oTabToSelect ? oTabToSelect.getKey() : "home";
+					sKey = oTabToSelect ? oTabToSelect.getKey() : "home",
+					bPhone = Device.system.phone,
+					oViewModel = this.getModel("appView"),
+					bHasMaster = this.getOwnerComponent().getConfigUtil().hasMasterView(sRouteName),
+					oMasterView,
+					sMasterViewId;
 
 				this.oTabNavigation.setSelectedKey(sKey);
+
+				oViewModel.setProperty("/bHasMaster", bHasMaster);
+
+				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for mavigation)
+					oMasterView = this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName);
+					sMasterViewId = oMasterView && oMasterView.getId();
+					oViewModel.setProperty("/sMasterViewId", sMasterViewId);
+				}
+
+				// hide master on route change
+				this.getView().byId("splitApp").hideMaster();
+				oViewModel.setProperty("/bIsShownMaster", false);
+			},
+
+			toggleMaster: function(oEvent) {
+				var bPressed = oEvent.getParameter("pressed"),
+					bPhone = Device.system.phone,
+					oSplitApp = this.getView().byId("splitApp"),
+					sSplitMode = oSplitApp.getMode(),
+					sMasterViewId = this.getModel("appView").getProperty("/sMasterViewId"),
+					fnToggle;
+
+				if (!bPhone && sSplitMode === sap.m.SplitAppMode.ShowHideMode) {
+					fnToggle = (bPressed) ? oSplitApp.showMaster : oSplitApp.hideMaster;
+					fnToggle.call(oSplitApp);
+					return;
+				}
+
+				/* on phone there is no master-detail pair, but a single navContainer => so navigate within this navContainer: */
+				if (bPhone) {
+					if (bPressed) {
+						oSplitApp.to(sMasterViewId);
+					} else {
+						oSplitApp.backDetail();
+					}
+				}
 			},
 
 			navigateToSection : function (oEvent) {
@@ -416,6 +459,7 @@ sap.ui.define([
 					oViewModel = this.getModel("appView"),
 					bPhoneSize = Device.system.phone || iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 				oViewModel.setProperty("/bPhoneSize", bPhoneSize);
+				oViewModel.setProperty("/bLandscape", Device.orientation.landscape);
 			},
 
 			switchHeaderControlsVisibility : function () {

@@ -8,8 +8,9 @@ sap.ui.define([
 		"sap/ui/documentation/model/models",
 		"sap/ui/documentation/controller/ErrorHandler",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/util/DocumentationRouter"
-	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter) {
+		"sap/ui/documentation/util/DocumentationRouter",
+		"sap/ui/documentation/controller/util/ConfigUtil"
+	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil) {
 		"use strict";
 
 		return UIComponent.extend("sap.ui.documentation.Component", {
@@ -62,6 +63,8 @@ sap.ui.define([
 			 */
 			destroy : function () {
 				this._oErrorHandler.destroy();
+				this._oConfigUtil.destroy();
+				this._oConfigUtil = null;
 				// call the base component's destroy function
 				UIComponent.prototype.destroy.apply(this, arguments);
 			},
@@ -85,8 +88,13 @@ sap.ui.define([
 					}
 				}
 				return this._sContentDensityClass;
+			},
+			getConfigUtil: function() {
+				if (!this._oConfigUtil) {
+					this._oConfigUtil = new ConfigUtil(this);
+				}
+				return this._oConfigUtil;
 			}
-
 		});
 
 	}

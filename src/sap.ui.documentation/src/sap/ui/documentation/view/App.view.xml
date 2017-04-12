@@ -13,6 +13,11 @@
 		showNavButton="false" >
 		<content>
 			<tnt:ToolHeader id="headerToolbar">
+				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; ( ${appView>/bPhoneSize} || !${appView>/bLandscape} ) }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</ToggleButton>
 				<Image id="sap_logo" src="./resources/sap/ui/documentation/images/sap_logo.png"
 					visible="{=!${appView>/bPhoneSize}}"
 					height="2rem"
