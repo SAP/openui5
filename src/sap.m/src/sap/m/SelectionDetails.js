@@ -251,7 +251,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 		if (showBackButton) {
 			var oBackButton = new Button({
-				type: library.ButtonType.Transparent,
 				icon: "sap-icon://nav-back",
 				press: this._oNavContainer.back.bind(this._oNavContainer)
 			});
@@ -642,7 +641,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			oButton = new Button(this.getId() + "-action-" + i, {
 				text: oAction.getText(),
 				enabled: oAction.getEnabled(),
-				type : library.ButtonType.Transparent,
 				press: [{
 					action: oAction,
 					level: library.SelectionDetailsActionLevel.List
