@@ -144,8 +144,8 @@
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarMinMax",
-				"name": "calendar - min., max. and disabled",
-				"description": "Calendar with minimum date 2000-01-01 and maximum date 2050-12-31 and some disabled days (in January 2016)."
+				"name": "calendar - min., max., disabled and show/hide week numbers",
+				"description": "Calendar with minimum date 2000-01-01 and maximum date 2050-12-31, some disabled days (in January 2016) and ability to show or hide week numbers."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",

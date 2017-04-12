@@ -90,7 +90,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * Width of Month
 			 * @since 1.38.0
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * Determines whether the week numbers in the months are displayed.
+			 *
+			 * <b>Note:</b> For Islamic calendars, the week numbers are not displayed
+			 * regardless of what is set to this property.
+			 * @since 1.48
+			 */
+			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true}
+
 		},
 		aggregations : {
 
