@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
@@ -11,11 +12,10 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/matchers/Properties"
 ],
-function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath,
-		Interactable, Properties, TestUtils) {
+function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press,
+	BindingPath, Interactable, Properties) {
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
@@ -85,11 +85,10 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 				},
 				pressValueHelpOnCurrencyCode : function () {
 					return this.waitFor({
-						actions : new Press(),
 						controlType : "sap.ui.core.sample.common.ValueHelp",
-						matchers : new Interactable(),
 						id : "NewCurrencyCode",
 						success : function (oValueHelp) {
+							oValueHelp.onValueHelp();
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
 						},
 						viewName : sViewName
@@ -396,6 +395,37 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				pressValueHelpOnProductCategory : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Input",
+						matchers : new BindingPath({path : "/SalesOrderList/0/SO_2_SOITEM/0"}),
+						id : /-field/,
+						success : function (oValueHelp) {
+							Opa5.assert.ok(true, "ValueHelp on Product.Category pressed");
+							return this.waitFor({
+								controlType : "sap.m.Popover",
+								success : function (aControls) {
+									aControls[0].close();
+									Opa5.assert.ok(true, "ValueHelp Popover closed");
+								}
+							});
+						},
+						viewName : sViewName
+					});
+				},
+				pressValueHelpOnProductTypeCode : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.ComboBox",
+						matchers : new BindingPath({path : "/SalesOrderList/0/SO_2_SOITEM/0"}),
+						id : /-field/,
+						success : function (oValueHelp) {
+							Opa5.assert.ok(true, "ValueHelp on Product.TypeCode pressed");
+						},
+						viewName : sViewName
+					});
+				},
 				rememberCreatedSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -602,7 +632,9 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 								return aExpected.some(function (oExpected, i) {
 									if (oLog.component === oExpected.component &&
 											oLog.level === oExpected.level &&
-											oLog.message.indexOf(oExpected.message) >= 0) {
+											oLog.message.indexOf(oExpected.message) >= 0 &&
+											(!oExpected.details ||
+												oLog.details.indexOf(oExpected.details) >= 0 )) {
 										aExpected.splice(i, 1);
 										return true;
 									}
@@ -613,19 +645,19 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 							aLogEntries.splice(iStartIndex).forEach(function (oLog) {
 								var sComponent = oLog.component || "";
 
-								if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
-										|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
-										&& oLog.level <= jQuery.sap.log.Level.WARNING) {
+								if (Helper.isRelevantLog(oLog)) {
 									if (isExpected(oLog)) {
 										Opa5.assert.ok(true,
 											"Expected Warning or error found: " + sComponent
 											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message );
+											+ " Message: " + oLog.message
+											+ (oLog.details ? " Details: " + oLog.details : ""));
 									} else {
 										Opa5.assert.ok(false,
 											"Unexpected warning or error found: " + sComponent
 											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message );
+											+ " Message: " + oLog.message
+											+ (oLog.details ? " Details: " + oLog.details : ""));
 									}
 								}
 							});
@@ -634,7 +666,8 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 								Opa5.assert.ok(false,
 									"Expected warning or error not logged: " + oExpected.component
 									+ " Level: " + oExpected.level
-									+ " Message: " + oExpected.message );
+									+ " Message: " + oExpected.message
+									+ (oExpected.details ? " Details: " + oExpected.details : ""));
 								});
 							}
 							Opa5.assert.ok(true, "Log checked");
@@ -793,6 +826,23 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 				},
 				confirm : function() {
 					return handleMessageBox(this, "Refresh", true, "Confirm 'pending changes'");
+				}
+			},
+			assertions : {}
+		},
+		/*
+		 * Actions and assertions for the "ValueHelp" Popover
+		 */
+		onTheValueHelpPopover : {
+			actions : {
+				close : function () {
+					return this.waitFor({
+						controlType : "sap.m.Popover",
+						success : function (aControls) {
+							aControls[0].close();
+							Opa5.assert.ok(true, "ValueHelp Popover closed");
+						}
+					});
 				}
 			},
 			assertions : {}

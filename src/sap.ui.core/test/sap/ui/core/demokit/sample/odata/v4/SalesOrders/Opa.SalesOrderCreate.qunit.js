@@ -39,11 +39,18 @@ sap.ui.require([
 		if (!bRealOData) {
 			Then.onTheMainPage.checkSalesOrdersCount(10);
 		}
+
+		// check value helps within sales order line items
+		When.onTheMainPage.selectFirstSalesOrder();
+		When.onTheMainPage.pressValueHelpOnProductCategory();
+		When.onTheMainPage.pressValueHelpOnProductTypeCode();
+
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		Then.onTheCreateNewSalesOrderDialog.checkNewBuyerId("0100000000");
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote();
 		Then.onTheCreateNewSalesOrderDialog.checkCurrencyCodeIsValueHelp();
 		When.onTheCreateNewSalesOrderDialog.pressValueHelpOnCurrencyCode();
+		When.onTheValueHelpPopover.close();
 		Then.onTheMainPage.checkNote(0);
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote);
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);
