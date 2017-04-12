@@ -197,6 +197,48 @@ QUnit.test("hasRowHeader", function(assert) {
 	assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionBehavior 'RowOnly'");
 });
 
+QUnit.test("hasRowHighlights", function(assert) {
+	assert.ok(!TableUtils.hasRowHighlights(), "No table instance passed: Returned false");
+
+	oTable.setRowSettingsTemplate(null);
+	assert.ok(!TableUtils.hasRowHighlights(oTable), "No row settings configured: Returned false");
+
+	oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		highlight: null
+	}));
+	assert.ok(!TableUtils.hasRowHighlights(oTable), "No row highlight configured: Returned false");
+
+	oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		highlight: sap.ui.core.MessageType.None
+	}));
+	assert.ok(!TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'None': Returned false");
+
+	oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		highlight: sap.ui.core.MessageType.Success
+	}));
+	assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Success': Returned true");
+
+	oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		highlight: sap.ui.core.MessageType.Warning
+	}));
+	assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Warning': Returned true");
+
+	oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		highlight: sap.ui.core.MessageType.Error
+	}));
+	assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Error': Returned true");
+
+	oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		highlight: sap.ui.core.MessageType.Information
+	}));
+	assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Information': Returned true");
+
+	oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		highlight: "{bindingPath}"
+	}));
+	assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is bound: Returned true");
+});
+
 QUnit.test("getVisibleColumnCount", function(assert) {
 	assert.equal(TableUtils.getVisibleColumnCount(oTable), iNumberOfCols, "All columns visible");
 

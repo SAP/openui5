@@ -460,6 +460,53 @@
 		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
 	});
 
+	QUnit.test("Row Settings Template", function(assert) {
+		var oOnAfterRenderingEventListener = this.spy();
+		var oRowSettings;
+
+		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
+
+		assert.ok(oTable.getRowSettingsTemplate() == null, "Initially the table has no row settings template");
+		assert.ok(oTable.getRows()[0].getAggregation("_settings") == null, "Initially the rows have no settings");
+
+		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings());
+		sap.ui.getCore().applyChanges();
+		assert.ok(oTable.getRowSettingsTemplate() != null, "The table has a row settings template");
+		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Setting the row settings template caused the table to re-render");
+
+		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
+		assert.ok(oRowSettings != null, "The rows have a settings template clone");
+
+		oOnAfterRenderingEventListener.reset();
+		oTable.getRowSettingsTemplate().setHighlight(sap.ui.core.MessageType.Success);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oOnAfterRenderingEventListener.notCalled, "Changing the highlight property of the template did not cause the table to re-render");
+
+		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
+		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.None,
+			"Changing the highlight property of the template did not change the highlight property of the template clones in the rows");
+
+		oOnAfterRenderingEventListener.reset();
+		oTable.getRowSettingsTemplate().invalidate();
+		sap.ui.getCore().applyChanges();
+		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Invalidating the template caused the table to re-render");
+
+		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
+		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.None,
+			"Invalidating the template did not change the highlight property of the template clones in the rows");
+
+		oOnAfterRenderingEventListener.reset();
+		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+			highlight: sap.ui.core.MessageType.Warning
+		}));
+		sap.ui.getCore().applyChanges();
+		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Changing the template caused the table to re-render");
+
+		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
+		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.Warning,
+			"Changing the template changed the highlight property of the template clones in the rows");
+	});
+
 	QUnit.test("Localization Change", function(assert) {
 		var bInvalidated = false;
 		var sChange = "";
@@ -479,45 +526,104 @@
 			return sap.ui.table.Table.prototype.invalidate.apply(this, arguments);
 		};
 
+		function initObjectsUnderTest() {
+			oTable._bRtlMode = null;
+			oTable._oCellContextMenu = new sap.ui.core.Control();
+			oTable.getRows().forEach(function(oRow) {
+				oRow.getAggregation("_rowAction")._oResBundle = null;
+				oRow.getAggregation("_settings")._oResBundle = null;
+			});
+			oTable.getColumns().forEach(function(oColumn) {
+				oColumn.getMenu()._oResBundle = null;
+			});
+
+			bInvalidated = false;
+			sChange = "";
+		}
+
+		function assertLocalizationUpdates(bRTLChanged, bLanguageChanged) {
+			var sChangesTestMessage;
+			var sExpectedChanges;
+			var bTableInvalidated = bRTLChanged || bLanguageChanged;
+
+			if (bRTLChanged && bLanguageChanged) {
+				sChangesTestMessage = "Direction and language changes have been processed";
+				sExpectedChanges = "RTLLANG";
+			} else if (bRTLChanged) {
+				sChangesTestMessage = "Direction change has been processed";
+				sExpectedChanges = "RTL";
+			} else if (bLanguageChanged) {
+				sChangesTestMessage = "Language change has been processed";
+				sExpectedChanges = "LANG";
+			} else {
+				sChangesTestMessage = "Other localization changes have been processed";
+				sExpectedChanges = "";
+			}
+
+			assert.strictEqual(bInvalidated, bTableInvalidated, sChangesTestMessage
+																+ ": The table was " + (bTableInvalidated ? "" : " not") + " invalidated");
+
+			assert.strictEqual(sChange, sExpectedChanges, sChangesTestMessage);
+
+			assert.strictEqual(oTable._bRtlMode !== null, bRTLChanged,
+				"The flag _bRtlMode of the table"
+				+ " has" + (bRTLChanged ? "" : " not") + " been updated");
+
+			assert.strictEqual(oTable._oCellContextMenu === null, bLanguageChanged,
+				"The cell context menu has"
+				+ " has" + (bLanguageChanged ? "" : " not") + " been updated");
+
+			oTable.getRows().forEach(function(oRow, iIndex) {
+				assert.strictEqual(oRow.getAggregation("_rowAction")._oResBundle !== null, bLanguageChanged,
+					"The resource bundle of the actions template clone of row " + iIndex
+					+ " has" + (bLanguageChanged ? "" : " not") + " been updated");
+			});
+
+			oTable.getRows().forEach(function(oRow, iIndex) {
+				assert.strictEqual(oRow.getAggregation("_settings")._oResBundle !== null, bLanguageChanged,
+					"The resource bundle of the settings template clone of row " + iIndex
+					+ " has" + (bLanguageChanged ? "" : " not") + " been updated");
+			});
+
+			oTable.getColumns().forEach(function(oColumn, iIndex) {
+				assert.strictEqual(oColumn.getMenu()._oResBundle !== null, bLanguageChanged,
+					"The resource bundle of the menu of column " + iIndex
+					+ " has" + (bLanguageChanged ? "" : " not") + " been updated");
+			});
+		}
+
 		var oRowAction = new sap.ui.table.RowAction();
 		oRowAction.addItem(new sap.ui.table.RowActionItem({type: "Navigation"}));
 		oTable.setRowActionTemplate(oRowAction);
+		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings());
+		oTable.setVisibleRowCount(2);
+		oTable.getColumns().forEach(function(oColumn, iIndex) {
+			if (iIndex > 1) {
+				oTable.removeColumn(oColumn);
+			}
+		});
 		sap.ui.getCore().applyChanges();
 
-		//RTL + Language
+		// RTL + Language
+		initObjectsUnderTest();
 		oTable.onlocalizationChanged({changes : {rtl: "", language: ""}});
-		assert.ok(bInvalidated, "Table was invalidated on RTL and Language change");
-		assert.equal(sChange, "RTLLANG", "Change type");
-		sap.ui.getCore().applyChanges();
-		bInvalidated = false;
-		sChange = "";
+		assertLocalizationUpdates(true, true);
 
-		//RTL
+		// RTL
+		initObjectsUnderTest();
 		oTable.onlocalizationChanged({changes : {rtl: ""}});
-		assert.ok(bInvalidated, "Table was invalidated on RTL change");
-		assert.equal(sChange, "RTL", "Change type");
-		sap.ui.getCore().applyChanges();
-		bInvalidated = false;
-		sChange = "";
+		assertLocalizationUpdates(true, false);
 
-		//Language
+		// Language
+		initObjectsUnderTest();
 		oTable.onlocalizationChanged({changes : {language: ""}});
-		assert.ok(bInvalidated, "Table was invalidated on Language change");
-		assert.equal(sChange, "LANG", "Change type");
-		sap.ui.getCore().applyChanges();
-		bInvalidated = false;
-		sChange = "";
+		assertLocalizationUpdates(false, true);
 
-		//Other localization event
+		// Other localization event
+		initObjectsUnderTest();
 		oTable.onlocalizationChanged({changes : {}});
-		assert.ok(!bInvalidated, "Table was not invalidated on other localization event");
-		assert.equal(sChange, "", "Change type");
-		sap.ui.getCore().applyChanges();
-		bInvalidated = false;
-		sChange = "";
+		assertLocalizationUpdates(false, false);
 	});
-
-
 
 	QUnit.module("Column operations", {
 		beforeEach: function() {

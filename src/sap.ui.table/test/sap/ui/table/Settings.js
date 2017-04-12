@@ -1,31 +1,32 @@
 (function() {
+	"use strict";
 
 	window.TABLESETTINGS = {};
-
+	var TABLESETTINGS = window.TABLESETTINGS;
 
 	// Test data
 
 	window.TABLESETTINGS.listTestData = [
-		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning"},
-		{lastName: "Mann", name: "Sarah", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-04-01", currency: "EUR", objStatusText: "Name not OK Text", objStatusTitle: "Name not OK Title", objStatusState: "Error"},
-		{lastName: "Berry", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 4, money: 1.1, birthday: "2001-05-09", currency: "USD", objStatusText: "Status unknown Text", objStatusTitle: "Status unknown Title", objStatusState: "None"},
-		{lastName: "Open", name: "Jenny", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 2, money: 55663.1, birthday: "1953-03-03", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Dewit", name: "Stanley", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 34.23, birthday: "1957-02-07", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Zar", name: "Louise", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 1, money: 123, birthday: "1965-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Burr", name: "Timothy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 678.45, birthday: "1978-05-08", currency: "DEM", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Hughes", name: "Trisha", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 123.45, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Town", name: "Mike", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 678.90, birthday: "1968-06-06", currency: "JPY", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Case", name: "Josephine", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 3, money: 8756.2, birthday: "1968-03-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Time", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 4, money: 836.4, birthday: "1968-04-02", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Barr", name: "Susan", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 9.3, birthday: "1968-03-02", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Poole", name: "Gerry", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 1, money: 6344.21, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Ander", name: "Corey", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 563.2, birthday: "1968-04-01", currency: "JPY", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Early", name: "Boris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 8564.4, birthday: "1968-07-07", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Noring", name: "Cory", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "female", rating: 4, money: 3563, birthday: "1968-01-01", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "O'Lantern", name: "Jacob", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-06-09", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Tress", name: "Matthew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-		{lastName: "Summer", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"}
+		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
+		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning", highlightState: "Warning"},
+		{lastName: "Mann", name: "Sarah", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-04-01", currency: "EUR", objStatusText: "Name not OK Text", objStatusTitle: "Name not OK Title", objStatusState: "Error", highlightState: "Error"},
+		{lastName: "Berry", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 4, money: 1.1, birthday: "2001-05-09", currency: "USD", objStatusText: "Status unknown Text", objStatusTitle: "Status unknown Title", objStatusState: "None", highlightState: "Information"},
+		{lastName: "Open", name: "Jenny", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 2, money: 55663.1, birthday: "1953-03-03", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "None", highlightState: "None"},
+		{lastName: "Dewit", name: "Stanley", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 34.23, birthday: "1957-02-07", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
+		{lastName: "Zar", name: "Louise", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 1, money: 123, birthday: "1965-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
+		{lastName: "Burr", name: "Timothy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 678.45, birthday: "1978-05-08", currency: "DEM", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
+		{lastName: "Hughes", name: "Trisha", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 123.45, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
+		{lastName: "Town", name: "Mike", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 678.90, birthday: "1968-06-06", currency: "JPY", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Information"},
+		{lastName: "Case", name: "Josephine", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 3, money: 8756.2, birthday: "1968-03-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
+		{lastName: "Time", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 4, money: 836.4, birthday: "1968-04-02", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Warning"},
+		{lastName: "Barr", name: "Susan", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 9.3, birthday: "1968-03-02", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Error"},
+		{lastName: "Poole", name: "Gerry", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 1, money: 6344.21, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Error"},
+		{lastName: "Ander", name: "Corey", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 563.2, birthday: "1968-04-01", currency: "JPY", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
+		{lastName: "Early", name: "Boris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 8564.4, birthday: "1968-07-07", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
+		{lastName: "Noring", name: "Cory", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "female", rating: 4, money: 3563, birthday: "1968-01-01", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
+		{lastName: "O'Lantern", name: "Jacob", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-06-09", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
+		{lastName: "Tress", name: "Matthew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
+		{lastName: "Summer", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Information"}
 	];
 
 	var aOrgData = jQuery.extend(true, [], window.TABLESETTINGS.listTestData);
@@ -44,65 +45,78 @@
 			name: "root",
 			description: "moep moep",
 			checked: false,
+			highlightState: "Success",
 			0: {
 				name: "Rock",
 				description: "Rockmusik",
 				checked: true,
+				highlightState: "Information",
 				0: { //children as object references
 					name: "Rock'n'Roll",
 					description: "late 1940s",
 					checked: true,
+					highlightState: "Warning",
 					children: [ // Children inside an array
 						{
 							name: "Elvis Presley",
 							description: "*1935 - +1977",
-							checked: true
+							checked: true,
+							highlightState: "Error"
 						},
 						{
 							name: "Chuck Berry",
 							description: "*1926",
-							checked: true
+							checked: true,
+							highlightState: "None"
 						}
 					],
 					"flup": { // mixed with arrays and objects
 						name: "Keith Richards",
 						description: "*1943",
-						checked: true
+						checked: true,
+						highlightState: "None"
 					}
 				},
 				1: {
 					name: "Heavy Metal",
 					description: "late 1960s",
 					checked: true,
+					highlightState: "Success",
 					0: {
 						name: "Black Sabbath",
 						description: "founded 1968",
-						checked: true
+						checked: true,
+						highlightState: "Success"
 					},
 					1: {
 						name: "Judas Priest",
 						description: "founded 1969",
-						checked: true
+						checked: true,
+						highlightState: "None"
 					}
 				},
 				2: {
 					name: "Grunge",
 					description: "Mid-1980s",
 					checked: true,
+					highlightState: "None",
 					0: {
 						name: "Nirvana",
 						description: "1987",
-						checked: true
+						checked: true,
+						highlightState: "None"
 					},
 					1: {
 						name: "Soundgarden",
 						description: "1984",
-						checked: true
+						checked: true,
+						highlightState: "None"
 					},
 					2: {
 						name: "Alice in Chains",
 						description: "1987",
-						checked: true
+						checked: true,
+						highlightState: "Success"
 					}
 				}
 			},
@@ -110,49 +124,59 @@
 				name: "Hip-Hop",
 				description: "Hip-Hop",
 				checked: true,
+				highlightState: "Information",
 				0: {
 					name: "Old-School",
 					description: "Mid 1970s",
 					checked: true,
+					highlightState: "Information",
 					0: {
 						name: "The Sugarhill Gang",
 						description: "1973",
-						checked: true
+						checked: true,
+						highlightState: "None"
 					},
 					1: {
 						name: "Grandmaster Flash and the Furious Five",
 						description: "1978",
-						checked: true
+						checked: true,
+						highlightState: "Error"
 					}
 				},
 				1: {
 					name: "Rap-Rock",
 					description: "early 1980s",
 					checked: true,
+					highlightState: "Error",
 					0: {
 						name: "Run-D.M.C.",
 						description: "1981 - 2002",
-						checked: true
+						checked: true,
+						highlightState: "Warning"
 					},
 					1: {
 						name: "Beastie Boys",
 						description: "1981 - 2012",
-						checked: true
+						checked: true,
+						highlightState: "Warning"
 					}
 				},
 				2: {
 					name: "Gangsta rap",
 					description: "mid 1980s",
 					checked: true,
+					highlightState: "Error",
 					0: {
 						name: "2Pac",
 						description: "1971 - 1996",
-						checked: true
+						checked: true,
+						highlightState: "Success"
 					},
 					1: {
 						name: "N.W.A",
 						description: "1986 - 1991, 1998 - 2002",
-						checked: true
+						checked: true,
+						highlightState: "Success"
 					}
 				}
 			},
@@ -160,26 +184,31 @@
 				name: "Swing/Big Band",
 				description: "1930s",
 				checked: true,
+				highlightState: "Warning",
 				0: {
 					name: "Frank Sinatra",
 					description: "1915 - 1998",
-					checked: true
+					checked: true,
+					highlightState: "None"
 				},
 				1: {
 					name: "Count Basie",
 					description: "1904 - 1984",
-					checked: true
+					checked: true,
+					highlightState: "None"
 				}
 			},
 			3: {
 				name: "Some Item",
 				description: "None",
-				checked: true
+				checked: true,
+				highlightState: "Success"
 			},
 			4: {
 				name: "Some other Item",
 				description: "None",
-				checked: true
+				checked: true,
+				highlightState: "Error"
 			}
 		}
 	};
@@ -188,11 +217,10 @@
 		window.TABLESETTINGS.treeTestData.root[4][i] = {
 			name: "subitem4-" + i,
 			description: "subitem4-" + i + " description",
-			checked: false
+			checked: false,
+			highlightState: "None"
 		};
 	}
-
-
 
 	// Settings
 
@@ -456,8 +484,8 @@
 				return oTable.getBusy();
 			},
 			input: "boolean",
-			action: function(
-				oTable, bValue) {oTable.setBusy(bValue);
+			action: function(oTable, bValue) {
+				oTable.setBusy(bValue);
 			}
 		},
 		CELLFILTER: {
@@ -580,7 +608,7 @@
 						NAVIGATION : {
 							text: "Navigation",
 							action: function(oTable) {
-								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey ="NAVIGATION";
+								DEFAULTACTIONS.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATION";
 								var oTemplate = new sap.ui.table.RowAction({items: [
 									new sap.ui.table.RowActionItem({
 										type: "Navigation",
@@ -682,6 +710,29 @@
 				}
 			}
 		},
+		ROWSETTINGS: {
+			text: "Row Settings",
+			group: {
+				HIGHLIGHTS: {
+					text: "Highlights",
+					value: function(oTable) {
+						return sap.ui.table.TableUtils.hasRowHighlights(oTable);
+					},
+					input: "boolean",
+					action: function(oTable, bValue) {
+						if (bValue) {
+							oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+								highlight: "{highlightState}"
+							}));
+						} else {
+							oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+								highlight: sap.ui.core.MessageType.None
+							}));
+						}
+					}
+				}
+			}
+		},
 		GROUPING: {
 			text: "Grouping",
 			value: function(oTable) {
@@ -761,6 +812,18 @@
 
 	function initMenu(mActions) {
 		var oMenu = new sap.ui.unified.Menu();
+
+		function onSelectTextFieldItem(oEvent) {
+			var oTFItem = oEvent.getParameter("item");
+			oTFItem._action(TABLESETTINGS.table, oTFItem._boolean ? !!oTFItem.getValue() : oTFItem.getValue());
+			setReopenTimer();
+		}
+
+		function onSelectMenuItem(oEvent) {
+			oEvent.getParameter("item")._action(TABLESETTINGS.table);
+			setReopenTimer();
+		}
+
 		for (var item in mActions) {
 			var oItem;
 			if (mActions[item].input) {
@@ -771,26 +834,19 @@
 				if (bIsBoolean) {
 					sValue = oActionValue ? "X" : null;
 				} else {
-					sValue = oActionValue != null ? (oActionValue + "") : null
+					sValue = oActionValue != null ? (oActionValue + "") : null;
 				}
 				oItem = new sap.ui.unified.MenuTextFieldItem({value: sValue, label: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				oItem._action = mActions[item].action;
 				oItem._boolean = bIsBoolean;
-				oItem.attachSelect(function(oEvent) {
-					var oTFItem = oEvent.getParameter("item");
-					oTFItem._action(TABLESETTINGS.table, oTFItem._boolean ? !!oTFItem.getValue() : oTFItem.getValue());
-					setReopenTimer();
-				});
+				oItem.attachSelect(onSelectTextFieldItem);
 			} else {
 				oItem = new sap.ui.unified.MenuItem({text: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				if (mActions[item].choice || mActions[item].group) {
 					oItem.setSubmenu(initMenu(mActions[item].choice || mActions[item].group));
 				} else {
 					oItem._action = mActions[item].action;
-					oItem.attachSelect(function(oEvent) {
-						oEvent.getParameter("item")._action(TABLESETTINGS.table);
-						setReopenTimer();
-					});
+					oItem.attachSelect(onSelectMenuItem);
 				}
 			}
 			oMenu.addItem(oItem);
@@ -1077,14 +1133,42 @@
 
 	function createSettingsSnapshot(oTable) {
 		var mTableSnapshot = {};
+		var sPublicPropertyName;
 
-		for (var sPublicPropertyName in oTable.mProperties) {
+		// Public table properties.
+		for (sPublicPropertyName in oTable.mProperties) {
 			mTableSnapshot[sPublicPropertyName] = {};
-			mTableSnapshot[sPublicPropertyName].value = oTable.mProperties[sPublicPropertyName];
 			mTableSnapshot[sPublicPropertyName].isPublicProperty = true;
 			mTableSnapshot[sPublicPropertyName].isPrivateProperty = false;
+			mTableSnapshot[sPublicPropertyName].isBound = oTable.isBound(sPublicPropertyName);
+
+			if (mTableSnapshot[sPublicPropertyName].isBound) {
+				mTableSnapshot[sPublicPropertyName].value = oTable.getBindingPath(sPublicPropertyName);
+			} else {
+				mTableSnapshot[sPublicPropertyName].value = oTable.mProperties[sPublicPropertyName];
+			}
 		}
 
+		// Public row settings properties
+		var oRowSettings = oTable.getRowSettingsTemplate();
+		if (oRowSettings != null) {
+			mTableSnapshot["RowSettings"] = {};
+
+			for (sPublicPropertyName in oRowSettings.mProperties) {
+				mTableSnapshot["RowSettings"][sPublicPropertyName] = {};
+				mTableSnapshot["RowSettings"][sPublicPropertyName].isPublicProperty = true;
+				mTableSnapshot["RowSettings"][sPublicPropertyName].isPrivateProperty = false;
+				mTableSnapshot["RowSettings"][sPublicPropertyName].isBound = oRowSettings.isBound(sPublicPropertyName);
+
+				if (mTableSnapshot["RowSettings"][sPublicPropertyName].isBound) {
+					mTableSnapshot["RowSettings"][sPublicPropertyName].value = oRowSettings.getBindingPath(sPublicPropertyName);
+				} else {
+					mTableSnapshot["RowSettings"][sPublicPropertyName].value = oRowSettings.mProperties[sPublicPropertyName];
+				}
+			}
+		}
+
+		// Private table properties
 		var aPrivatePropertyNames = [
 			"_bLargeDataScrolling", "_bVariableRowHeightEnabled"
 		];
@@ -1094,7 +1178,7 @@
 
 			mTableSnapshot[sPrivatePropertyName] = {};
 			mTableSnapshot[sPrivatePropertyName].value = oTable[sPrivatePropertyName];
-			mTableSnapshot[sPublicPropertyName].isPublicProperty = false;
+			mTableSnapshot[sPrivatePropertyName].isPublicProperty = false;
 			mTableSnapshot[sPrivatePropertyName].isPrivateProperty = true;
 		}
 
@@ -1103,6 +1187,9 @@
 
 	function applySettingsSnapshot(oTable, sSnapshot) {
 		var mSettings;
+		var sPropertyName;
+		var oSetting;
+		var sSetterName;
 
 		try {
 			mSettings = JSON.parse(sSnapshot);
@@ -1110,19 +1197,51 @@
 			return;
 		}
 
-		for (var sPropertyName in mSettings) {
-			var oSettings = mSettings[sPropertyName];
+		// Public and private table properties.
+		for (sPropertyName in mSettings) {
+			oSetting = mSettings[sPropertyName];
 
-			if (oSettings.isPublicProperty) {
-				var sSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
+			if (oSetting.isPublicProperty) {
+				if (oSetting.isBound) {
+					oTable.bindProperty(sPropertyName, oSetting.value);
+				} else {
+					sSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
 
-				if (oTable.hasOwnProperty(sSetterName)) {
-					oTable[sSetterName](oSettings.value);
+					if (oTable[sSetterName] != null) {
+						oTable[sSetterName](oSetting.value);
+					}
 				}
-			} else if (oSettings.isPrivateProperty) {
-				oTable[sPropertyName] = oSettings.value;
+			} else if (oSetting.isPrivateProperty) {
+				oTable[sPropertyName] = oSetting.value;
 			}
 		}
+
+		// Public and private row settings properties.
+		var oRowSettings = null;
+
+		if (mSettings.hasOwnProperty("RowSettings")) {
+			oRowSettings = new sap.ui.table.RowSettings();
+
+			for (sPropertyName in mSettings["RowSettings"]) {
+				oSetting = mSettings["RowSettings"][sPropertyName];
+
+				if (oSetting.isPublicProperty) {
+					if (oSetting.isBound) {
+						oRowSettings.bindProperty(sPropertyName, oSetting.value);
+					} else {
+						sSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
+
+						if (oRowSettings[sSetterName] != null) {
+							oRowSettings[sSetterName](oSetting.value);
+						}
+					}
+				} else if (oSetting.isPrivateProperty) {
+					oRowSettings[sPropertyName] = oSetting.value;
+				}
+			}
+		}
+
+		oTable.setRowSettingsTemplate(oRowSettings);
 
 		oTable.invalidate(); // In case only private properties have been set, like _largeDataScrolling.
 	}
