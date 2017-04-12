@@ -416,6 +416,12 @@
 
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
+			decimals: 0
+		});
+		assert.equal(oFormat.format(fNum), "3K", fNum + " with decimals: 0");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short",
 			minFractionDigits: 5,
 			maxFractionDigits: 6,
 			decimals: 4,
