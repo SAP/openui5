@@ -217,13 +217,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		_updateHeader.call(this);
 
-		oMonthsRow.setDate(CalendarUtils._createLocalDate(oDate));
-
+		//Do not focus the date. If this is needed after the control rendering, the MonthsRow.applyFocusInto will focus it.
+		oMonthsRow.displayDate(CalendarUtils._createLocalDate(oDate));
 	};
-
-//	CalendarMonthInterval.prototype.onAfterRendering = function(){
-
-//	};
 
 	CalendarMonthInterval.prototype.setStartDate = function(oStartDate){
 

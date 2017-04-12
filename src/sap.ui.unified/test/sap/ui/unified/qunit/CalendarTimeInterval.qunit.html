@@ -50,6 +50,14 @@
 				bStartDateChanged = true;
 			};
 
+			var _assertFocus = function(oTarget, sMsg) {
+				var $activeElement = document.activeElement;
+				assert.ok($activeElement, "There should be an active element. " +  sMsg);
+				if ($activeElement) {
+					assert.strictEqual($activeElement.id, oTarget.id, "Element with id: [" + oTarget.id + "] should be focused. " + sMsg);
+				}
+			};
+
 			var oCal1 = new sap.ui.unified.CalendarTimeInterval("Cal1",{
 				select: handleSelect,
 				startDateChange: handleStartDateChange
@@ -267,6 +275,47 @@
 				aItems = $TimesRow.find(".sapUiCalItem");
 				assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201504110800", "Calendar2: new start item rendered");
 				assert.equal(jQuery(aItems[1]).attr("tabindex"), "0", "Calendar2: second item still has focus");
+			});
+
+
+			QUnit.test("After Rerendering, last focused hour is still focused", function(assert) {
+				//Prepare
+				var oCalendarTimeInt = new sap.ui.unified.CalendarTimeInterval();
+				oCalendarTimeInt.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+
+				var $timesRow = oCalendarTimeInt.getAggregation("timesRow").$();
+				var aTimes = $timesRow.find(".sapUiCalItem");
+				aTimes[1].focus();
+
+				//Act
+				oCalendarTimeInt.rerender();
+
+				//Assert
+				_assertFocus(aTimes[1], "Calendar: after rerendering  second hour still has focus");
+				oCalendarTimeInt.destroy();
+			});
+
+			QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
+
+				//Prepare
+				var oCalendarTimeInt = new sap.ui.unified.CalendarTimeInterval(),
+						oExternalControl = new sap.ui.unified.CalendarTimeInterval("extControl");
+
+				oCalendarTimeInt.placeAt("uiArea");
+				oExternalControl.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+
+				oExternalControl.$().focus();
+				_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' (another MonthInterval) should be focused");
+
+				//Act
+				oCalendarTimeInt.rerender();
+
+				//Assert
+				_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl' (TimeInterval)");
+				oCalendarTimeInt.destroy();
+				oExternalControl.destroy();
 			});
 
 			QUnit.module("Day Picker");
@@ -689,6 +738,8 @@
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<div id="qunit-fixture"></div>
+		<br>
+		<div id="uiArea"></div>
 		<ol id="qunit-tests"></ol>
 		<br>
 		<div id="uiArea1"></div>
