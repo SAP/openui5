@@ -591,7 +591,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 						oOptions.precision = 2;
 					}
 
-					if (oOrigOptions.maxFractionDigits === undefined) {
+					if (oOrigOptions.maxFractionDigits === undefined && oOrigOptions.decimals === undefined) {
 						// overwrite the default setting of Integer instance because
 						// Integer with short format could have fraction part
 						oOptions.maxFractionDigits = 99;
