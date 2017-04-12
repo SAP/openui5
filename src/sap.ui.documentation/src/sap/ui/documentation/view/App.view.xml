@@ -13,14 +13,15 @@
 		showNavButton="false" >
 		<content>
 			<tnt:ToolHeader id="headerToolbar">
-				<Image id="sap_logo" src="./resources/sap/ui/documentation/images/sap_logo.png" 
-					visible="{=!${appView>/bPhoneSize}}" 
-					height="2rem" 
+				<Image id="sap_logo" src="./resources/sap/ui/documentation/images/sap_logo.png"
+					visible="{=!${appView>/bPhoneSize}}"
+					height="2rem"
 					class="sapLogo"
 					decorative="false"
 					press="navigateToSection" />
 				<core:ExtensionPoint name="customStartLinks" />
 				<IconTabHeader id="tabHeader"
+						selectedKey="home"
 						showOverflowSelectList="true"
 						backgroundDesign="Transparent"
 						mode="Inline"
@@ -29,7 +30,7 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
 					</layoutData>
 					<items>
-						<IconTabFilter id="welcomeTab" text="Home" key="">
+						<IconTabFilter id="welcomeTab" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
 						</IconTabFilter>
 						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic">
 						</IconTabFilter>

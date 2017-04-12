@@ -82,7 +82,7 @@ sap.ui.define([
 				var sRouteName = oEvent.getParameter("name"),
 					sTabId = this.oRouter.getRoute(sRouteName)._oConfig.target[0] + "Tab",
 					oTabToSelect = this._oView.byId(sTabId),
-					sKey = oTabToSelect ? oTabToSelect.getKey() : "";
+					sKey = oTabToSelect ? oTabToSelect.getKey() : "home";
 
 				this.oTabNavigation.setSelectedKey(sKey);
 			},
@@ -91,11 +91,11 @@ sap.ui.define([
 				var sKey = oEvent.getParameter("key");
 
 				oEvent.preventDefault();
-				if (sKey) {
+				if (sKey && sKey !== "home") {
 					this.getRouter().navTo(sKey, {}, true);
 				} else {
 					this.getRouter().navTo("", {}, true);
-					this.oTabNavigation.setSelectedKey("");
+					this.oTabNavigation.setSelectedKey("home");
 				}
 			},
 
