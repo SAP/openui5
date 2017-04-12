@@ -814,7 +814,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 					} else {
 						oPointerExtension._bHideMenu = true;
 					}
-
 				} else if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
 					var bMenuOpen = this._oCellContextMenu && this._oCellContextMenu.bOpen;
 					var bMenuOpenedAtAnotherDataCell = bMenuOpen && this._oCellContextMenu.oOpenerRef !== $Cell[0];
@@ -824,6 +823,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 					} else {
 						oPointerExtension._bHideMenu = true;
 					}
+				} else {
+					oPointerExtension._bShowDefaultMenu = true;
 				}
 			}
 		},
