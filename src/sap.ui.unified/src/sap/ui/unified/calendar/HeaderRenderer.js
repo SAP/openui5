@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.unified.calendar.Header} oHead an object representation of the control that should be rendered
 	 */
 	HeaderRenderer.render = function(oRm, oHead){
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sLanguage = sap.ui.getCore().getConfiguration().getLocale().getLanguage();
 		var sTooltip = oHead.getTooltip_AsString();
 		var sId = oHead.getId();
 		var mAccProps = {};
@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		for (i = 0; i < 3; i++) {
 			// for Chinese and Japanese the date should be displayed in year, month, day order
-			if (sLanguage === "ja" || sLanguage === "zh") {
+			if (sLanguage.toLowerCase() === "ja" || sLanguage.toLowerCase() === "zh") {
 				iBtn = 2 - i;
 			} else {
 				iBtn = i;
