@@ -746,7 +746,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.sort
 	 * @param {sap.ui.model.Sorter|array}
-	 *            aSorter an sorter object or an array of sorter objects which define the sort order.
+	 *            aSorter a sorter object or an array of sorter objects which define the sort order.
 	 * @return {sap.ui.model.analytics.AnalyticalBinding}
 	 *            returns <code>this</code> to facilitate method chaining.
 	 *

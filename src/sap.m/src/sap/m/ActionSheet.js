@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * ActionSheet is a special kind of control which contains one or more sap.m.Button(s) and the ActionSheet will be closed when one of the buttons is tapped. It looks similar as a sap.m.Dialog in iPhone and Android while as a sap.m.Popover in iPad.
+	 * ActionSheet is a special kind of control which contains one or more sap.m.Button(s) and the ActionSheet will be closed when one of the buttons is tapped. It looks similar as an sap.m.Dialog in iPhone and Android while as an sap.m.Popover in iPad.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		properties : {
 
 			/**
-			 * The ActionSheet behaves as a sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom. The default value is sap.m.PlacementType.Bottom.
+			 * The ActionSheet behaves as an sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom. The default value is sap.m.PlacementType.Bottom.
 			 */
 			placement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : sap.m.PlacementType.Bottom},
 
@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * Calling this method will make the ActionSheet visible on the screen.
 	 *
 	 * @param {object} oControl
-	 *         The ActionSheet behaves as a sap.m.Popover in iPad and the control parameter is the object to which the popover will be placed. It can be not only a UI5 control, but also an existing dom reference. The side of the placement depends on the placement property set in the popover. In other platforms, ActionSheet behaves as a standard dialog and this parameter is ignored because dialog is aligned to the screen.
+	 *         The ActionSheet behaves as an sap.m.Popover in iPad and the control parameter is the object to which the popover will be placed. It can be not only a UI5 control, but also an existing dom reference. The side of the placement depends on the placement property set in the popover. In other platforms, ActionSheet behaves as a standard dialog and this parameter is ignored because dialog is aligned to the screen.
 	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

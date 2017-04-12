@@ -19,7 +19,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		 * <ul>
 		 * <li> Type, title, subtitle and description </li>
 		 * <li> If the description contains markup, the <code>markupDescription</code> needs to be set to true, to ensure it is interpreted correctly. </li>
-		 * <li> If the long text description can be specified by an URL by setting, the <code>longtextUrl</code> property. </li>
+		 * <li> If the long text description can be specified by a URL by setting, the <code>longtextUrl</code> property. </li>
 		 * <li> The message item can have a single {@link sap.m.Link} after the description. It is stored in the <code>link</code> aggregation. </li>
 		 * <h3>Usage</h3>
 		 * <b>Note:</b> The MessageItem control replaces {@link sap.m.MessagePopoverItem} as a more generic wrapper for messages.
@@ -84,7 +84,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 				aggregations: {
 
 					/**
-					 * Adds a sap.m.Link control which will be displayed at the end of the description of a message.
+					 * Adds an sap.m.Link control which will be displayed at the end of the description of a message.
 					 */
 					link: { type: "sap.m.Link", multiple: false, singularName: "link" }
 				}

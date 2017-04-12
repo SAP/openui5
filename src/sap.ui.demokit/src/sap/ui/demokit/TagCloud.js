@@ -65,7 +65,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		}
 	}});
 
-	//Called by a tag when a onclick event is triggered there.
+	//Called by a tag when an onclick event is triggered there.
 	//The event is forwarded to the application coding.
 	TagCloud.prototype.firePressEvent = function(tag){
 	  this.firePress({tagId:tag.getId()});

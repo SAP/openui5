@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 	"use strict";
 
 	/**
-	 * Constructor for a sap.m.semantic.Segment.
+	 * Constructor for an sap.m.semantic.Segment.
 	 *
 	 * @class Abstraction for a segment in a SegmentedContainer
 	 * @version ${version}

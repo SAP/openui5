@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	/*global Promise */
 
 	/**
-	 * Utility function which adds SAP-specific parameters to an URI instance
+	 * Utility function which adds SAP-specific parameters to a URI instance
 	 *
 	 * @param {URI} oUri URI.js instance
 	 * @private

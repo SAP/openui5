@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * A substitute for an UIArea that can be embedded in the control tree.
+	 * A substitute for a UIArea that can be embedded in the control tree.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *

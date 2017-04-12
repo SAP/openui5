@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a sap.f.FlexibleColumnLayoutSemanticHelper.
+	 * Constructor for an sap.f.FlexibleColumnLayoutSemanticHelper.
 	 *
 	 * @class
 	 * Helper class, facilitating the implementation of the recommended UX design of a <code>sap.f.FlexibleColumnLayout</code>-based app.

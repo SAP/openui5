@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @class
 	 * <h3>Overview</h3>
 	 * A SelectDialog is a dialog containing a list, search functionality to filter it and a confirmation/cancel button.
-	 * The list used in the dialog is a growing list and can be filled with a any kind of list item.
+	 * The list used in the dialog is a growing list and can be filled with any kind of list item.
 	 * <h3>Structure</h3>
 	 * <h4>Dialog structure</h4>
 	 * The select dialog has the following components:

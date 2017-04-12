@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			/**
 			 * Id of the selected item. If the value has no corresponding item, the <code>selectedItemId</code> is empty.
 			 *
-			 * If the <code>selectedItemId</code> is set to an not existing item, it will not be changed.
+			 * If the <code>selectedItemId</code> is set to a not existing item, it will not be changed.
 			 */
 			selectedItemId : {type : "string", group : "Data", defaultValue : null}
 		},
@@ -1180,7 +1180,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		if (bDelayed) {
 			// Items are updated by binding. As items can be "reused" and have same IDSs,
 			// only one check at the end of all changes is needed
-			// only clear if really from an delayed call
+			// only clear if really from a delayed call
 			this._sHandleItemsChanged = null;
 			this._bNoItemCheck = undefined;
 		}

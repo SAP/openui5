@@ -406,7 +406,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		Begin : "Begin"
 	};
 
-	// factory for Form to create labels an buttons to be overwritten by commons and mobile library
+	// factory for Form to create labels and buttons to be overwritten by commons and mobile library
 	if (!sap.ui.layout.form.FormHelper) {
 		sap.ui.layout.form.FormHelper = {
 			createLabel: function(sText){ throw new Error("no Label control available!"); }, /* must return a Label control */

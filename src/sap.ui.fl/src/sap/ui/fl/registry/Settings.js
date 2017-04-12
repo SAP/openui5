@@ -72,7 +72,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * attaches an callback to an event on the event provider of Settings
+	 * attaches a callback to an event on the event provider of Settings
 	 *
 	 * @param {string} sEventId name of the event
 	 * @param {function} oCallback
@@ -84,7 +84,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * detaches an callback to an event on the event provider of Settings
+	 * detaches a callback to an event on the event provider of Settings
 	 *
 	 * @param {string} sEventId name of the event
 	 * @param {function} oCallback
@@ -337,7 +337,7 @@ sap.ui.define([
 		this._hasMergeErrorOccoured = bErrorOccured;
 	};
 	/**
-	 * Checks if an merge error occured during merging changes into the view on startup
+	 * Checks if a merge error occured during merging changes into the view on startup
 	 */
 	Settings.prototype.hasMergeErrorOccured = function() {
 		return this._hasMergeErrorOccured;

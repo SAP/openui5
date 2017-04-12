@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 		* @param {object} mAdditionalSelectorInformation additional mapped data which is added to the selector
 		* @param {Node} oView - only for xml processing: the xml node of the view
 		* @returns {sap.ui.core.Control} - control targeted within the selector
-		* @throws {Exception} oException - in case no control could be determined a error is thrown
+		* @throws {Exception} oException - in case no control could be determined an error is thrown
 		* @public
 		*/
 		bySelector: function (oSelector, oAppComponent, oView) {
@@ -33,7 +33,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 		* @param {boolean} oSelector.isLocalId - true if the id within the selector is a local id or a global id
 		* @param {sap.ui.core.UIComponent} oAppComponent
 		* @returns {sap.ui.core.Control} - control targeted within the selector
-		* @throws {Exception} oException - in case no control could be determined a error is thrown
+		* @throws {Exception} oException - in case no control could be determined an error is thrown
 		* @public
 		*/
 		getControlIdBySelector: function (oSelector, oAppComponent) {
@@ -83,7 +83,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 		 * @returns {string} - oSelector.id id used for determination of the flexibility target
 		 * @returns {boolean} - oSelector.idIsLocal flag if the selector.id has to be concatenated with the application component id
 		 * while applying the change.
-		 * @throws {Exception} oException - in case no control could be determined a error is thrown
+		 * @throws {Exception} oException - in case no control could be determined an error is thrown
 		 * @public
 		 */
 		getSelector: function (vControl, oAppComponent, mAdditionalSelectorInformation) {

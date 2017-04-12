@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 	"use strict";
 
 	/**
-	 * Constructor for a sap.m.semantic.SemanticConfiguration.
+	 * Constructor for an sap.m.semantic.SemanticConfiguration.
 	 *
 	 * @class Defines the visual properties and positioning for each supported semantic type
 	 * @version ${version}

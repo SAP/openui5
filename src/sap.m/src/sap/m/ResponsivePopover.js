@@ -547,7 +547,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 
 	/**
-	 * Creates a sap.m.Toolbar for a footer of the ResponsivePopover
+	 * Creates an sap.m.Toolbar for a footer of the ResponsivePopover
 	 * @returns {sap.m.Toolbar} Toolbar with ToolbarSpacer in the content aggregation
 	 * @private
 	 */
@@ -672,7 +672,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Getter for endButton aggregation
-	 * @returns {sap.m.Button} The button that is set as a endButton aggregation
+	 * @returns {sap.m.Button} The button that is set as an endButton aggregation
 	 * @public
 	 */
 	ResponsivePopover.prototype.getEndButton = function(){

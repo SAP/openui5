@@ -138,21 +138,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 			/**
 			 * Icon to be displayed as graphical element within the button.
-			 * This can be an URI to an image or an icon font URI.
+			 * This can be a URI to an image or an icon font URI.
 			 * @since 1.26.0
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
 			/**
 			 * Icon to be displayed as graphical element within the button when it is hovered (only if also a base icon was specified). If not specified the base icon is used.
-			 * If a icon font icon is used, this property is ignored.
+			 * If an icon font icon is used, this property is ignored.
 			 * @since 1.26.0
 			 */
 			iconHovered : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
 			/**
 			 * Icon to be displayed as graphical element within the button when it is selected (only if also a base icon was specified). If not specified the base or hovered icon is used.
-			 * If a icon font icon is used, this property is ignored.
+			 * If an icon font icon is used, this property is ignored.
 			 * @since 1.26.0
 			 */
 			iconSelected : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
@@ -704,7 +704,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	FileUploader.prototype.setValueState = function(sValueState) {
 
 		this.setProperty("valueState", sValueState, true);
-		//as of 1.23.1 oFilePath can be a sap.ui.commons.TextField or a sap.m.Input, which both have a valueState
+		//as of 1.23.1 oFilePath can be an sap.ui.commons.TextField or an sap.m.Input, which both have a valueState
 		if (this.oFilePath.setValueState) {
 			this.oFilePath.setValueState(sValueState);
 		}

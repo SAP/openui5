@@ -164,7 +164,7 @@ sap.ui.define([
 	 * @param {string} oManifest."sap.app".type - type of the component (i.e. "application").
 	 * @param {object} oComponent Component instance
 	 * The processing is only done for components of the type "application"
-	 * @returns {Promise} Promise resolving after the changes are loaded with an getter to retrieve the mapped changes.
+	 * @returns {Promise} Promise resolving after the changes are loaded with a getter to retrieve the mapped changes.
 	 * @since 1.43
 	 * @private
 	 */

@@ -339,7 +339,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 
-	//factory for table to create labels an textviews to be overwritten by commons and mobile library
+	//factory for table to create labels and textviews to be overwritten by commons and mobile library
 	if (!thisLib.TableHelper) {
 		thisLib.TableHelper = {
 			addTableClass: function(){ return ""; }, /* must return some additional CSS class */

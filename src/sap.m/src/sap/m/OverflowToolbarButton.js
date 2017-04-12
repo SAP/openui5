@@ -16,7 +16,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Represents a {@link sap.m.Button} that shows its text only when in the overflow area of a {@link sap.m.OverflowToolbar}.
+	 * Represents an {@link sap.m.Button} that shows its text only when in the overflow area of an {@link sap.m.OverflowToolbar}.
 	 *
 	 * <b>Note:</b> This control is intended to be used exclusively in the context of the <code>OverflowToolbar</code>, whenever it is required
 	 * to have buttons that show only an icon in the toolbar, but icon and text in the overflow menu.

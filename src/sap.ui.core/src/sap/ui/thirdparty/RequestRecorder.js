@@ -70,7 +70,7 @@
 		},
 
 		/**
-		 * Tries to load a har file from the given location URL. If no the file could not be loaded, the
+		 * Tries to load an har file from the given location URL. If no the file could not be loaded, the
 		 * function returns null. This is used to determine if the RequestRecorder tries to record instead.
 		 *
 		 * If a har file is loaded, the major version is validated to match the specifications.
@@ -391,7 +391,7 @@
 		},
 
 		/**
-		 * Checks an URL against an array of regex if its filtered.
+		 * Checks a URL against an array of regex if its filtered.
 		 * If the RequestRecorder is paused, the URL is filtered, too.
 		 *
 		 * @param {string} sUrl URL to check.

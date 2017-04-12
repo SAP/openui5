@@ -783,7 +783,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 			}
 			oLegend = sap.ui.getCore().byId(sId);
 			if (oLegend && !(oLegend instanceof sap.ui.unified.CalendarLegend)) {
-				throw new Error(oLegend + " is not a sap.ui.unified.CalendarLegend. " + this);
+				throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + this);
 			}
 		}
 

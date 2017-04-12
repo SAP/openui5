@@ -171,7 +171,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 		/**
 		 * Checks a single condition of a context object. Returns true if the condition matches the current runtime context.
 		 *
-		 * @param {Object} oParameter - context within a sap.ui.fl.Change
+		 * @param {Object} oParameter - context within an sap.ui.fl.Change
 		 * @param {string} oParameter.selector - key of a runtime context
 		 * @param {string} oParameter.operator - determine which comparison has to be executed
 		 * @param {string} oParameter.value - value which has to be matched within the key

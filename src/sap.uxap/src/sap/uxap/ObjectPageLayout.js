@@ -1940,7 +1940,7 @@ sap.ui.define([
 
 	// use type 'object' because Metamodel doesn't know ScrollEnablement
 	/**
-	 * Returns a sap.ui.core.delegate.ScrollEnablement object used to handle scrolling
+	 * Returns an sap.ui.core.delegate.ScrollEnablement object used to handle scrolling
 	 *
 	 * @type object
 	 * @public

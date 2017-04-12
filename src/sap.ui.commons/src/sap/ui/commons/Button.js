@@ -63,19 +63,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Icon to be displayed as graphical element within the button.
-			 * This can be an URI to an image or an icon font URI.
+			 * This can be a URI to an image or an icon font URI.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
 			/**
 			 * Icon to be displayed as graphical element within the button when it is hovered (only if also a base icon was specified). If not specified the base icon is used.
-			 * If a icon font icon is used, this property is ignored.
+			 * If an icon font icon is used, this property is ignored.
 			 */
 			iconHovered : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
 			/**
 			 * Icon to be displayed as graphical element within the button when it is selected (only if also a base icon was specified). If not specified the base or hovered icon is used.
-			 * If a icon font icon is used, this property is ignored.
+			 * If an icon font icon is used, this property is ignored.
 			 */
 			iconSelected : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
