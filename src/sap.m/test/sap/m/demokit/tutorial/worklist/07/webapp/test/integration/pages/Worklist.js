@@ -85,7 +85,8 @@ sap.ui.define([
 					return this.waitFor(createWaitForItemAtPosition({
 						position: iPosition,
 						success: function(oTableItem) {
-							this.getContext().currentItem = oTableItem;
+							this.getContext().currentItemBindingPath = oTableItem.getBindingContext().getPath();
+							this.getContext().currentItemId = oTableItem.getBindingContext().getProperty("ProductID");
 						}
 					}));
 				},
