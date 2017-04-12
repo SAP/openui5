@@ -1159,7 +1159,7 @@ sap.ui.require([
 	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
 </form:SimpleForm>';
 
-		this.expectRequest("EMPLOYEES('2')?$select=AGE,ROOM_ID,Name,LOCATION/City/CITYNAME", {
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ROOM_ID,ID,Name,LOCATION/City/CITYNAME", {
 				"Name" : "Frederic Fall",
 				"LOCATION" : {"City" : {"CITYNAME" : "Walldorf"}}
 			})
@@ -1183,7 +1183,7 @@ sap.ui.require([
 </form:SimpleForm>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=AGE,Name", {
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
 				"Name" : "Jonathan Smith"
 			})
 // TODO unexpected change
@@ -1193,7 +1193,7 @@ sap.ui.require([
 		return this.createView(
 			assert, sView, createTeaBusiModel({autoExpandSelect : true})
 		).then(function () {
-			that.expectRequest("EMPLOYEES('2')?$select=AGE,Name", {
+			that.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
 					"Name" : "Jonathan Schmidt"
 				})
 				.expectChange("name", "Jonathan Schmidt");
@@ -1398,7 +1398,7 @@ sap.ui.require([
 </form:SimpleForm>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM"
-					+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=TEAM_ID))&$select=AGE",
+				+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=TEAM_ID))&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_TEAM": {
@@ -1440,7 +1440,7 @@ sap.ui.require([
 //TODO Check dependent binding's query options are considered:
 //  ...EMPLOYEE_2_TEAM... -> ...EMPLOYEE_2_TEAM($select=Name)...
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
-					+ "($select=ID),EMPLOYEE_2_TEAM&$select=AGE",
+					+ "($select=ID),EMPLOYEE_2_TEAM&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_MANAGER": {

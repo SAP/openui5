@@ -1289,4 +1289,137 @@ sap.ui.require([
 			oExpectation.args[0][5](oError); // call fnErrorCallback to simulate error
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchQueryOptionsWithKeys: unresolved", function(assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					bAutoExpandSelect : true,
+					resolve : function () {}
+				},
+				sPath : "EMPLOYEE_2_TEAM",
+				mQueryOptions : {"$select" : "foo"}
+			});
+
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, undefined)
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(oBinding.fetchQueryOptionsWithKeys(undefined).getResult(),
+			oBinding.mQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchQueryOptionsWithKeys: no auto-$expand/$select", function(assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					bAutoExpandSelect : false,
+					resolve : function () {}
+				},
+				sPath : "EMPLOYEE_2_TEAM",
+				mQueryOptions : {"$select" : "foo"}
+			}),
+			oContext = {};
+
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
+			.returns("~resolved~");
+
+		// code under test
+		assert.strictEqual(oBinding.fetchQueryOptionsWithKeys(oContext).getResult(),
+			oBinding.mQueryOptions);
+	});
+
+	//*********************************************************************************************
+	[{
+		title: "no query options",
+		key : ["key1", "key2"],
+		result: undefined, // TODO change when system properties of dependents are aggregated
+//		result : {
+//			$select : ["key1", "key2"]
+//		}
+	}, {
+		title: "no $select",
+		key : ["key1", "key2"],
+		queryOptions : {foo: "bar"},
+		result: undefined, // TODO change when system properties of dependents are aggregated
+//		result : {
+//			foo : "bar",
+//			$select : ["key1", "key2"]
+//		}
+	}, {
+		title: "extend $select",
+		key : ["key1", "key2"],
+		queryOptions : {
+			foo: "bar",
+			$select : ["nonkey1", "nonkey2"]
+		},
+		result : {
+			foo : "bar",
+			$select : ["nonkey1", "nonkey2", "key1", "key2"]
+		}
+	}, {
+		title: "extend $select with key",
+		key : ["key1", "key2"],
+		queryOptions : {
+			foo: "bar",
+			$select : ["key1", "nonkey"]
+		},
+		result : {
+			foo : "bar",
+			$select : ["key1", "nonkey", "key2"]
+		}
+	}, {
+		title: "$select with only keys",
+		key : ["key1", "key2"],
+		queryOptions : {
+			foo: "bar",
+			$select : ["key1", "key2"]
+		}
+	}, {
+		title: "no key",
+		queryOptions : {
+			foo: "bar",
+			$select : ["nonkey1", "nonkey2"]
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchQueryOptionsWithKeys: " + oFixture.title, function(assert) {
+			var oMetaModel = {
+					fetchObject : function () {},
+					getMetaPath: function () {}
+				},
+				oBinding = new ODataParentBinding({
+					oModel : {
+						bAutoExpandSelect : true,
+						getMetaModel : function () {return oMetaModel;},
+						resolve : function () {}
+					},
+					sPath : "EMPLOYEE_2_TEAM",
+					mQueryOptions : oFixture.queryOptions
+				}),
+				oContext = {},
+				mOriginalQueryOptions = oFixture.queryOptions
+					&& JSON.parse(JSON.stringify(oFixture.queryOptions)),
+				oType = oFixture.key ? {$Key : oFixture.key} : {};
+
+			this.mock(oBinding.oModel).expects("resolve")
+				.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
+				.returns("~resolved~");
+			this.mock(oMetaModel).expects("getMetaPath")
+				.withExactArgs("~resolved~")
+				.returns("~meta~");
+			this.mock(oMetaModel).expects("fetchObject")
+				.withExactArgs("~meta~/")
+				.returns(Promise.resolve(oType));
+
+			// code under test
+			return oBinding.fetchQueryOptionsWithKeys(oContext).then(function (oResult) {
+				assert.strictEqual(oResult, oBinding.mQueryOptions, "binding options returned");
+				if (oFixture.result) {
+					assert.deepEqual(oResult, oFixture.result, "added key properties");
+				}
+			});
+		});
+	});
 });
