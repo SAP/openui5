@@ -957,9 +957,12 @@ sap.ui.require([
 				"TEAM_2_MANAGER" : true,
 				"TEAM_2_EMPLOYEES" : null,
 				"FOO1" : 42,
-				"FOO2" : false
+				"FOO2" : false,
 //TODO undefined values are removed by jQuery.extend, but should also be normalized to {}
 				//"FOO3" : undefined
+				"FOO4" : {
+					$count : false
+				}
 			}
 		},
 		bSystemQueryOptionsAllowed : true,
@@ -968,10 +971,39 @@ sap.ui.require([
 				"TEAM_2_MANAGER" : {},
 				"TEAM_2_EMPLOYEES" : {},
 				"FOO1" : {},
-				"FOO2" : {}
+				"FOO2" : {},
 //				"FOO3" : {}
+				"FOO4" : {}
 			}
 		}
+	}, {
+		bSystemQueryOptionsAllowed : true,
+		mParameters : {
+			$count : "true"
+		},
+		expected : {
+			$count : true
+		}
+	}, {
+		bSystemQueryOptionsAllowed : true,
+		mParameters : {
+			$count : "false"
+		},
+		expected : {}
+	}, {
+		bSystemQueryOptionsAllowed : true,
+		mParameters : {
+			$count : "TrUe"
+		},
+		expected : {
+			$count : true
+		}
+	}, {
+		bSystemQueryOptionsAllowed : true,
+		mParameters : {
+			$count : false
+		},
+		expected : {}
 	}].forEach(function (oFixture) {
 		QUnit.test("buildQueryOptions success " + JSON.stringify(oFixture), function (assert) {
 			var mOptions,
@@ -1033,6 +1065,18 @@ sap.ui.require([
 	}, {
 		mOptions : {"sap-foo" : "300"},
 		error : "Custom query option sap-foo is not supported"
+	}, {
+		mOptions : {"$count" : "foo"},
+		bSystemQueryOptionsAllowed : true,
+		error : "Invalid value for $count: foo"
+	}, {
+		mOptions : {"$count" : {}},
+		bSystemQueryOptionsAllowed : true,
+		error : "Invalid value for $count: [object Object]"
+	}, {
+		mOptions : {"$count" : undefined},
+		bSystemQueryOptionsAllowed : true,
+		error : "Invalid value for $count: undefined"
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
 			assert.throws(function () {

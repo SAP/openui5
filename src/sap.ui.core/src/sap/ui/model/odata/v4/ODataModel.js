@@ -555,6 +555,23 @@ sap.ui.define([
 						parseAndValidateSystemQueryOption(mExpandOptions, sExpandOptionName);
 					}
 				}
+			} else if (sOptionName === "$count" ) {
+				if (typeof vValue  === "boolean") {
+					if (!vValue) {
+						delete mOptions.$count;
+					}
+				} else {
+					switch (typeof vValue === "string" && vValue.toLowerCase()) {
+						case "false":
+							delete mOptions.$count;
+							break;
+						case "true":
+							mOptions.$count = true;
+							break;
+						default:
+							throw new Error("Invalid value for $count: " + vValue);
+					}
+				}
 			}
 		}
 
