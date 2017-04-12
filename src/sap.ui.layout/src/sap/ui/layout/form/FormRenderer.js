@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("<div");
 		rm.writeControlData(oForm);
 		rm.addClass("sapUiForm");
+		rm.addClass("sapUiFormLblColon"); // to always have the ":" at the Labels
 		rm.writeAttribute("data-sap-ui-customfastnavgroup", "true");
 
 		var sClass = sap.ui.layout.form.FormHelper.addFormClass();
