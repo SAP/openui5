@@ -211,8 +211,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @private
 	 */
 	ElementOverlay.prototype._sortAggregationOverlaysInDomOrder = function() {
-		var bOrderSwitched = false;
-
 		// compares two aggregations domRefs and returns 1, if first aggregation should be bellow in dom order
 		var fnCompareAggregations = function(oAggregationOverlay1, oAggregationOverlay2) {
 			var oGeometry1 = oAggregationOverlay1.getGeometry();
@@ -236,7 +234,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 							the order should be switched, since 2nd element
 							is shorter and is more to the left
 						 */
-						bOrderSwitched = true;
 						return 1;
 					} else {
 						return -1; // do not switch order
@@ -244,10 +241,11 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				} else
 
 				if (oPosition1.top === oPosition2.top) {
-					if (oPosition1.left <= oPosition2.left) {
+					if (oPosition1.left === oPosition2.left) {
+						return 0;
+					} else if (oPosition1.left < oPosition2.left) {
 						return -1; // order is correct
 					} else {
-						bOrderSwitched = true;
 						return 1; // switch order
 					}
 				} else
@@ -257,7 +255,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 					/* see picture above, but switch 1 and 2 - order is correct */
 					return -1;
 				} else {
-					bOrderSwitched = true;
 					/*  Example:
 						            +--------------+
 						+------+    |       2      |
@@ -274,6 +271,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		};
 
 		var aSortedAggregationOverlays = this.getAggregationOverlays().sort(fnCompareAggregations);
+
+		var bOrderSwitched = this.getAggregationOverlays().some(function(oOverlay, index) {
+			if (oOverlay.getId() !== aSortedAggregationOverlays[index].getId()) {
+				return true;
+			}
+		});
 
 		if (bOrderSwitched) {
 			// insert in sorted order & suppress invalidate to prevent rerendering
@@ -793,6 +796,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 		var sAggregationName = oEvent.getParameters().name;
 		if (sAggregationName) {
+			this.sync();
 			var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
 			// private aggregations are also skipped
 			var bAggregationOverlayVisible = oAggregationOverlay && oAggregationOverlay.isVisible();
