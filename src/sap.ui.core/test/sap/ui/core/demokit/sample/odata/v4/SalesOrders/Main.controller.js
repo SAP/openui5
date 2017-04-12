@@ -57,6 +57,25 @@ sap.ui.define([
 				"headerContext");
 		},
 
+		_setSalesOrderLineItemBindingContext : function (oSalesOrderLineItemContext) {
+			var oView = this.getView(),
+				oSalesOrderLineItemsTable = oView.byId("SalesOrderLineItems"),
+				oUIModel = oView.getModel("ui");
+
+			oUIModel.setProperty("/bLineItemSelected", !!oSalesOrderLineItemContext);
+
+			if (!oSalesOrderLineItemContext) {
+				oSalesOrderLineItemsTable.removeSelections();
+			} else if (oSalesOrderLineItemContext.isTransient()) {
+				// TODO: eliminate this workaround:
+				// to ensure that no dependent data for the newly created SO is fetched
+				// unless it is persisted in backend (see: CPOUI5UISERVICESV3-649)
+				oSalesOrderLineItemContext = undefined;
+			}
+			oView.byId("SupplierContactData").setBindingContext(oSalesOrderLineItemContext);
+			oView.byId("SupplierDetailsForm").setBindingContext(oSalesOrderLineItemContext);
+		},
+
 		_setNextSortOrder : function (bDescending) {
 			var sNewIcon;
 
@@ -187,8 +206,7 @@ sap.ui.define([
 			oContext = oView.byId("SalesOrderLineItems").getBinding("items").create({
 				// keys
 				"ItemPosition" : "",
-				"SalesOrderID" : oView.byId("ObjectPage").getElementBinding().getBoundContext()
-					.getProperty("SalesOrderID"),
+				"SalesOrderID" : "",
 				// properties
 				"CurrencyCode" : "EUR",
 				"DeliveryDate" : oDeliveryDate.toJSON(),
@@ -206,8 +224,16 @@ sap.ui.define([
 				// navigation properties
 				"SOITEM_2_PRODUCT" : null
 			});
+
+			this._setSalesOrderLineItemBindingContext(oContext);
+
 			// Note: this promise fails only if the transient entity is deleted
 			oContext.created().then(function () {
+				// TODO: we can't set the oContext for dependent BusinessPartner/Contact data form
+				// because it would produce a new request (without expand for BP_2_CONTACT).
+				// What we need would be a complete refresh for the selected sales order and all its
+				// dependents
+				// that._setSalesOrderLineItemBindingContext(oContext);
 				MessageBox.success("Line item created: " + oContext.getProperty("ItemPosition"));
 			}, function (oError) {
 				// delete of transient entity, nothing to do
@@ -426,12 +452,9 @@ sap.ui.define([
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
-			var oView = this.getView(),
-				oSalesOrderLineItemContext = oEvent.getParameters().listItem.getBindingContext();
-
-			oView.byId("SupplierContactData").setBindingContext(oSalesOrderLineItemContext);
-			oView.byId("SupplierDetailsForm").setBindingContext(oSalesOrderLineItemContext);
-			oView.getModel("ui").setProperty("/bLineItemSelected", true);
+			this._setSalesOrderLineItemBindingContext(
+				oEvent.getParameters().listItem.getBindingContext()
+			);
 		},
 
 		onSalesOrderScheduleSelect : function (oEvent) {
