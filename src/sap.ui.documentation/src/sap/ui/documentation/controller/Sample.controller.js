@@ -7,8 +7,10 @@ sap.ui.define([
 		"sap/ui/documentation/controller/BaseController",
 		"sap/ui/model/json/JSONModel", "sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/controller/util/ControlsInfo",
-		"sap/ui/documentation/util/ToggleFullScreenHandler"
-	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler) {
+		"sap/ui/documentation/util/ToggleFullScreenHandler",
+		"sap/ui/fl/FakeLrepConnectorLocalStorage",
+		"sap/ui/fl/Utils"
+	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, FakeLrepConnectorLocalStorage, Utils) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.controller.Sample", {
@@ -24,6 +26,10 @@ sap.ui.define([
 					showNavButton : true,
 					showNewTab: false
 				});
+
+				this._initFakeLREP();
+				this._loadRuntimeAuthoring();
+
 				this.getView().setModel(this._viewModel);
 
 				var that = this;
@@ -51,6 +57,10 @@ sap.ui.define([
 
 			_onSampleMatched: function (event) {
 				this._sId = event.getParameter("arguments").id;
+
+				if (this._oRTA && jQuery.sap.byId("RTA-Toolbar")[0]) {
+					this._oRTA.stop(true);
+				}
 
 				this._loadSample();
 			},
@@ -202,6 +212,44 @@ sap.ui.define([
 
 			onToggleFullScreen : function (oEvt) {
 				ToggleFullScreenHandler.updateMode(oEvt, this.getView(), this);
+			},
+			_oRTA : null,
+			_initFakeLREP : function(){
+				// fake stable IDs
+				Utils.checkControlId = function() {
+					return true;
+				};
+
+				FakeLrepConnectorLocalStorage.enableFakeConnector({
+					"isKeyUser": true,
+					"isAtoAvailable": false,
+					"isProductiveSystem": true
+				});
+			},
+
+			/*
+			* Loades runtime authoring asynchronously (will fail if the rta library is not loaded)
+			*/
+			_loadRuntimeAuthoring : function() {
+				try {
+					sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function (RuntimeAuthoring) {
+						this._oRTA = new RuntimeAuthoring();
+						this.getView().byId("toggleRTA").setVisible(true);
+					}.bind(this));
+				} catch (oException) {
+					jQuery.sap.log.info("sap.ui.rta.RuntimeAuthoring could not be loaded, UI adaptation mode is disabled");
+				}
+			},
+
+			onToggleAdaptationMode : function (oEvt) {
+				var oRTA = this._oRTA;
+				if (oRTA) {
+					oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+					oRTA.start();
+					setTimeout(function() {
+						oRTA._oToolsMenu._oButtonPublish.setVisible(false);
+					}, 0);
+				}
 			}
 		});
 	}
