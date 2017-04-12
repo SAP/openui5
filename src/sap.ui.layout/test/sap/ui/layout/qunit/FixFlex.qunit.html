@@ -218,6 +218,35 @@
 			jQuery.support.hasFlexBoxSupport = false;
 		}
 	});
+
+	QUnit.test("Flexible part Scrolling", function(assert) {
+		var oFlexLabel = new sap.m.Label({
+					text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
+				}),
+				oFixLabel = new sap.m.Label({text: "Ninja!"});
+
+		var oFixFlex = new sap.ui.layout.FixFlex({
+			flexContent: oFlexLabel,
+			fixContent: [oFixLabel]
+		});
+
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var $flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
+
+		// Assert
+		assert.equal($flexible.css('overflow'), 'hidden', 'Overflow is hidden.');
+
+		oFixFlex.setMinFlexSize(100);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal($flexible.css('overflow'), 'auto', 'Overflow is auto.');
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
 </script>
 </head>
 <body>
