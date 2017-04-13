@@ -220,40 +220,87 @@ QUnit.test("_isKeyCombination", function(assert) {
 
 QUnit.test("_isElementGroupToggler", function(assert) {
 	initRowActions(oTable, 2, 2);
-	initRowActions(oTreeTable, 2, 2);
 
-	// GridTable
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getCell(0, 0)[0]), "Returned False: Pressing a key on a normal data cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, TableKeyboardDelegate2._getInteractiveElements(getCell(0, 0))[0]), "Returned False: Pressing a key on an interactive element inside a normal data cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowHeader(0)[0]), "Returned False: Pressing a key on a normal row header cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowAction(0)[0]), "Returned False: Pressing a key on a normal row action cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getColumnHeader(0)[0]), "Returned False: Pressing a key on a column header cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getSelectAll()[0]), "Returned False: Pressing a key on the SelectAll cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getCell(0, 0)[0]),
+		"Returned False: Pressing a key on a normal data cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, TableKeyboardDelegate2._getInteractiveElements(getCell(0, 0))[0]),
+		"Returned False: Pressing a key on an interactive element inside a normal data cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowHeader(0)[0]),
+		"Returned False: Pressing a key on a normal row header cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowAction(0)[0]),
+		"Returned False: Pressing a key on a normal row action cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getColumnHeader(0)[0]),
+		"Returned False: Pressing a key on a column header cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getSelectAll()[0]),
+		"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
 
 	oTable.setEnableGrouping(true);
 	oTable.setGroupBy(oTable.getColumns()[0]);
 	sap.ui.getCore().applyChanges();
 
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getCell(0, 1)[0]), "Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowHeader(0)[0]), "Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowAction(0)[0]), "Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getCell(0, 1)[0]),
+		"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowHeader(0)[0]),
+		"Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowAction(0)[0]),
+		"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
+});
 
-	// TreeTable
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getCell(0, 0, null, null, oTreeTable)[0]), "Returned True: Pressing a key on a normal data cell can not toggle a group");
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, TableKeyboardDelegate2._getInteractiveElements(getCell(0, 0, null, null, oTreeTable))[0]), "Returned True: Pressing a key on the tree icon can toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, TableKeyboardDelegate2._getInteractiveElements(getCell(0, 0, null, null, oTreeTable))[1]), "Returned False: Pressing a key on an interactive element inside a cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]), "Returned False: Pressing a key on a normal row header cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]), "Returned False: Pressing a key on a normal row action cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getColumnHeader(0, null, null, oTreeTable)[0]), "Returned False: Pressing a key on a column header cell can not toggle a group");
-	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getSelectAll(null, null, oTreeTable)[0]), "Returned False: Pressing a key on the SelectAll cell can not toggle a group");
+QUnit.test("_isElementGroupToggler - TreeTable", function(assert) {
+	initRowActions(oTreeTable, 2, 2);
+
+	var oTreeIconCell = getCell(0, 0, null, null, oTreeTable)[0];
+	var sTreeIconOpenClass = "sapUiTableTreeIconNodeOpen";
+	var sTreeIconClosedClass = "sapUiTableTreeIconNodeClosed";
+	var sTreeIconLeafClass = "sapUiTableTreeIconLeaf";
+
+	// Closed node
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		"Returned True: Pressing a key on a tree icon cell of a closed node can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, TableKeyboardDelegate2._getInteractiveElements(oTreeIconCell)[0]),
+		"Returned True: Pressing a key on a close node element can toggle a group");
+
+	// Open node
+	oTreeIconCell.classList.remove(sTreeIconClosedClass);
+	oTreeIconCell.classList.add(sTreeIconOpenClass);
+
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		"Returned True: Pressing a key on a tree icon cell of a open node can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, TableKeyboardDelegate2._getInteractiveElements(oTreeIconCell)[0]),
+		"Returned True: Pressing a key on a open node element can toggle a group");
+
+	// Leaf node
+	oTreeIconCell.classList.remove(sTreeIconOpenClass);
+	oTreeIconCell.classList.add(sTreeIconLeafClass);
+
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		"Returned True: Pressing a key on a tree icon cell of a leaf node can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, TableKeyboardDelegate2._getInteractiveElements(oTreeIconCell)[0]),
+		"Returned True: Pressing a key on a leaf node element can toggle a group");
+
+	// Other elements
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, TableKeyboardDelegate2._getInteractiveElements(oTreeIconCell)[1]),
+		"Returned False: Pressing a key on an interactive element inside a cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
+		"Returned False: Pressing a key on a normal row header cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
+		"Returned False: Pressing a key on a normal row action cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getColumnHeader(0, null, null, oTreeTable)[0]),
+		"Returned False: Pressing a key on a column header cell can not toggle a group");
+	assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getSelectAll(null, null, oTreeTable)[0]),
+		"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
 
 	oTreeTable.setUseGroupMode(true);
 	sap.ui.getCore().applyChanges();
 
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getCell(0, 0, null, null, oTreeTable)[0]), "Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getCell(0, 1, null, null, oTreeTable)[0]), "Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]), "Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
-	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]), "Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getCell(0, 0, null, null, oTreeTable)[0]),
+		"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getCell(0, 1, null, null, oTreeTable)[0]),
+		"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
+		"Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
+	assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
+		"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 });
 
 //***************************************************************************
@@ -272,14 +319,14 @@ QUnit.module("Interactive elements", {
 					index: iNumberOfCols,
 					visible: true,
 					tabbable: bTabbable
-				})
+				});
 			} else {
 				oControlTemplate = new TestInputControl({
 					text: "{" + sText + "}",
 					index: iNumberOfCols,
 					visible: true,
 					tabbable: bTabbable
-				})
+				});
 			}
 
 			oTable.addColumn(new sap.ui.table.Column({
@@ -312,21 +359,27 @@ QUnit.test("_isInteractiveElement", function(assert) {
 	$NoFocus[0].tabIndex = 0;
 	var $NoTab = getCell(0, iNumberOfCols - 1).find("input");
 	var $FullyInteractive = getCell(0, iNumberOfCols - 2).find("input");
-	var $TreeIcon = jQuery('<div class="sapUiTableTreeIcon"></div>');
+	var $TreeIconOpen = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconNodeOpen"></div>');
+	var $TreeIconClosed = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconNodeClosed"></div>');
+	var $TreeIconLeaf = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconLeaf"></div>');
 	var $RowActionIcon = getRowAction(0).find(".sapUiTableActionIcon");
 
 	assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab), "(jQuery) Not focusable and not tabbable element is not interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoFocus), "(jQuery) Not focusable and tabbable element is interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoTab), "(jQuery) Focusable and not tabbable input element is interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($FullyInteractive), "(jQuery) Focusable and tabbable input element is interactive");
-	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIcon), "(jQuery) TreeIcon is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen), "(jQuery) TreeIcon of open node is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed), "(jQuery) TreeIcon of closed node is interactive");
+	assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf), "(jQuery) TreeIcon of leaf node is not interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon), "(jQuery) ActionItem is interactive");
 
 	assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab[0]), "(HTMLElement) Not focusable and not tabbable element is not interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoFocus[0]), "(HTMLElement) Not focusable and tabbable element is interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoTab[0]), "(HTMLElement) Focusable and not tabbable input element is interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($FullyInteractive[0]), "(HTMLElement) Focusable and tabbable input element is interactive");
-	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIcon[0]), "(HTMLElement) TreeIcon is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen[0]), "(HTMLElement) TreeIcon of open node is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed[0]), "(HTMLElement) TreeIcon of closed node is interactive");
+	assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf[0]), "(HTMLElement) TreeIcon of leaf node is not interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon[0]), "(HTMLElement) ActionItem is interactive");
 
 	assert.ok(!TableKeyboardDelegate2._isElementInteractive(), "No parameter passed: False was returned");
@@ -335,19 +388,19 @@ QUnit.test("_isInteractiveElement", function(assert) {
 QUnit.test("_getInteractiveElements", function(assert) {
 	var $InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 1));
 	assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Data cell with focusable element: One element was returned");
-	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "(HTMLElement) Data cell with focusable element: The correct element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "(JQuery) Data cell with focusable element: The correct element was returned");
 
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 1)[0]);
-	assert.strictEqual($InteractiveElements.length, 1, "(DOM) Data cell with focusable element: One element was returned");
-	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "(DOM) Data cell with focusable element: The correct element was returned");
+	assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Data cell with focusable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "(HTMLElement) Data cell with focusable element: The correct element was returned");
 
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2));
-	assert.strictEqual($InteractiveElements.length, 1, "(jQuery Data cell with focusable & tabbable element: One element was returned");
-	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "(jQuery Data cell with focusable & tabbable element: The correct element was returned");
+	assert.strictEqual($InteractiveElements.length, 1, "(jQuery) Data cell with focusable & tabbable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "(jQuery) Data cell with focusable & tabbable element: The correct element was returned");
 
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2)[0]);
-	assert.strictEqual($InteractiveElements.length, 1, "(DOM) Data cell with focusable & tabbable element: One element was returned");
-	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "(DOM) Data cell with focusable & tabbable element: The correct element was returned");
+	assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Data cell with focusable & tabbable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "(HTMLElement) Data cell with focusable & tabbable element: The correct element was returned");
 
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 3));
 	assert.strictEqual($InteractiveElements, null, "Data cell without interactive element: Null was returned");
@@ -360,9 +413,9 @@ QUnit.test("_getInteractiveElements", function(assert) {
 	assert.strictEqual($InteractiveElements[1], $RowActionIcons[1], "(jQuery) The second returned element is the correct row action icon");
 
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($RowActionCell[0]);
-	assert.strictEqual($InteractiveElements.length, 2, "(DOM) Row Action cell with 2 action items: Two elements have been returned");
-	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(DOM) The first returned element is the correct row action icon");
-	assert.strictEqual($InteractiveElements[1], $RowActionIcons[1], "(DOM) The second returned element is the correct row action icon");
+	assert.strictEqual($InteractiveElements.length, 2, "(HTMLElement) Row Action cell with 2 action items: Two elements have been returned");
+	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(HTMLElement) The first returned element is the correct row action icon");
+	assert.strictEqual($InteractiveElements[1], $RowActionIcons[1], "(HTMLElement) The second returned element is the correct row action icon");
 
 	initRowActions(oTable, 1, 1);
 	$RowActionCell = getRowAction(0);
@@ -372,8 +425,8 @@ QUnit.test("_getInteractiveElements", function(assert) {
 	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(jQuery) The returned element is the correct row action icon");
 
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($RowActionCell[0]);
-	assert.strictEqual($InteractiveElements.length, 1, "(DOM) Row Action cell with 1 action item: One elements was returned");
-	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(DOM) The first returned element is the correct row action icon");
+	assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Row Action cell with 1 action item: One elements was returned");
+	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(HTMLElement) The first returned element is the correct row action icon");
 
 	initRowActions(oTable, 1, 0);
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getRowAction(0));
@@ -393,6 +446,48 @@ QUnit.test("_getInteractiveElements", function(assert) {
 
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements();
 	assert.strictEqual($InteractiveElements, null, "No parameter passed: Null was returned");
+});
+
+QUnit.test("_getInteractiveElements - TreeTable Icon Cell", function(assert) {
+	var $TreeIconCell = getCell(0, 0, null, null, oTreeTable);
+	var sTreeIconOpenClass = "sapUiTableTreeIconNodeOpen";
+	var sTreeIconClosedClass = "sapUiTableTreeIconNodeClosed";
+	var sTreeIconLeafClass = "sapUiTableTreeIconLeaf";
+
+	// Closed node
+	var $InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell);
+	assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Tree icon cell of closed node: One element was returned");
+	assert.ok($InteractiveElements[0].classList.contains(sTreeIconClosedClass),
+		"(JQuery) Tree icon cell of closed node: The correct closed node element was returned");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Tree icon cell of closed node: One element was returned");
+	assert.ok($InteractiveElements[0].classList.contains(sTreeIconClosedClass),
+		"(HTMLElement) Tree icon cell of closed node: The correct closed node element was returned");
+
+	// Open node
+	$InteractiveElements[0].classList.remove(sTreeIconClosedClass);
+	$InteractiveElements[0].classList.add(sTreeIconOpenClass);
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell);
+	assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Tree icon cell of open node: One element was returned");
+	assert.ok($InteractiveElements[0].classList.contains(sTreeIconOpenClass),
+		"(JQuery) Tree icon cell of open node: The correct open node element was returned");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Tree icon cell of open node: One element was returned");
+	assert.ok($InteractiveElements[0].classList.contains(sTreeIconOpenClass),
+		"(HTMLElement) Tree icon cell of open node: The correct open node element was returned");
+
+	// Leaf node
+	$InteractiveElements[0].classList.remove(sTreeIconOpenClass);
+	$InteractiveElements[0].classList.add(sTreeIconLeafClass);
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell);
+	assert.strictEqual($InteractiveElements, null, "(JQuery) Tree icon cell of leaf node: No element was returned");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell[0]);
+	assert.strictEqual($InteractiveElements, null, "(HTMLElement) Tree icon cell of leaf node: No element was returned");
 });
 
 QUnit.test("_getFirstInteractiveElement", function(assert) {
