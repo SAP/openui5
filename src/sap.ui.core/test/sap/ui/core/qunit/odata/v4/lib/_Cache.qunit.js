@@ -1334,7 +1334,8 @@ sap.ui.require([
 			oPatchPromise1,
 			oPatchPromise2,
 			oPostResult = {},
-			oPostPromise;
+			oPostPromise,
+			aSelect = [];
 
 		function transientCacheData(oCacheValue) {
 			return oCache.aElements[-1] === oCacheValue;
@@ -1349,9 +1350,12 @@ sap.ui.require([
 			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
 				{bar : "baz"});
 		// called from the POST's success handler
-		oHelperMock.expects("updateCache")
+		oHelperMock.expects("getSelectForPath")
+			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "")
+			.returns(aSelect);
+		oHelperMock.expects("updateAfterPost")
 			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
-				sinon.match.same(oPostResult));
+				sinon.match.same(oPostResult), sinon.match.same(aSelect));
 
 		// code under test
 		oPostPromise = oCache.create("updateGroup", "Employees", "", oEntityData);
@@ -1363,8 +1367,7 @@ sap.ui.require([
 		assert.notStrictEqual(oCache.aElements[-1], oEntityData, "'create' copies initial data");
 		assert.deepEqual(oCache.aElements[-1], {
 			name : "John Doe",
-			"@$ui5.transient" : "updateGroup",
-			"@odata.etag" : undefined
+			"@$ui5.transient" : "updateGroup"
 		});
 
 		// code under test
@@ -1540,8 +1543,7 @@ sap.ui.require([
 		oCache.create("updateGroup", "Employees", "");
 
 		assert.deepEqual(oCache.aElements[-1], {
-			"@$ui5.transient" : "updateGroup",
-			"@odata.etag" : undefined
+			"@$ui5.transient" : "updateGroup"
 		});
 	});
 
