@@ -238,7 +238,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		_updateHeader.call(this);
 
-		oTimesRow.setDate(CalendarUtils._createLocalDate(oDate, true));
+		//Do not focus the date. If this is needed after the control rendering, the TimesRow.applyFocusInto will focus it.
+		oTimesRow.displayDate(CalendarUtils._createLocalDate(oDate, true));
 
 	};
 
