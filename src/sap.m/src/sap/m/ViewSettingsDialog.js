@@ -1732,12 +1732,14 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			this._filterDetailList.addItem(oListItem);
 		}
 
+		this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
+		this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
+		// add this css style for recognizing when after the sap.m.Bar is SearchField, so we can remove the bar border
+		this._getPage2().getCustomHeader().addStyleClass('sapMVSDBarWithSearch');
+
 		if (bMultiSelectMode) {
-			this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
 			this._selectAllCheckBox = this._createSelectAllCheckbox(aSubFilters, this._filterDetailList);
-			this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
-			// add this css style for recognizing when after the sap.m.Bar is SearchField, so we can remove the bar border
-			this._getPage2().getCustomHeader().addStyleClass('sapMVSDBarWithSearch');
+
 			this._filterDetailList.setHeaderToolbar(new Toolbar({
 				content: [ this._selectAllCheckBox ]
 			}).addStyleClass('sapMVSDFilterHeaderToolbar'));
