@@ -1566,6 +1566,33 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect on an operation
+	QUnit.test("Auto-$expand/$select: Function import", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<form:SimpleForm id="function" binding="{/GetEmployeeByID(...)}">\
+	<Text id="name" text="{Name}" />\
+</form:SimpleForm>',
+			that = this;
+
+		this.expectChange("name");
+		return this.createView(assert, sView, oModel).then(function () {
+// TODO the query options for the function import are not enhanced
+//			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+					"Name" : "Jonathan Smith"
+				})
+				.expectChange("name", "Jonathan Smith")
+				.expectChange("name", "Jonathan Smith"); // TODO unexpected 2nd change
+
+			that.oView.byId("function").getObjectBinding()
+				.setParameter("EmployeeID", "1")
+				.execute();
+			return that.waitForChanges(assert);
+		});
+	});
 	//TODO $batch?
 	//TODO test bound action
 	//TODO test delete
