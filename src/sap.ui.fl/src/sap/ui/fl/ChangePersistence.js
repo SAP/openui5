@@ -154,8 +154,8 @@ sap.ui.define([
 		return Cache.getChangesFillingCache(this._oConnector, this._oComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
 			this._bHasLoadedChangesFromBackEnd = true;
 
-			if (!oWrappedChangeFileContent.dummy) {
-				Settings._storeInstance(oWrappedChangeFileContent);
+			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
+				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
 			}
 
 			if (!oWrappedChangeFileContent.changes || !oWrappedChangeFileContent.changes.changes) {
