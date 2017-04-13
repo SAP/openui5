@@ -213,9 +213,6 @@
 					path : '',
 					parameters : {
 						$expand : {
-							SO_2_BP : {
-								$select : 'BusinessPartnerID,CompanyName,PhoneNumber,Address'
-							},
 							SO_2_SCHDL : {
 								$select : 'ScheduleKey,DeliveryDate'
 							}

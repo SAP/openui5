@@ -600,11 +600,13 @@ sap.ui.require([
 	QUnit.test("fetchQueryOptionsForOwnCache, auto-$expand/$select: can use parent binding cache",
 		function (assert) {
 			var oBinding = new ODataBinding({
+					mAggregatedQueryOptions : {},
 					aChildCanUseCachePromises : [],
 					oModel : {bAutoExpandSelect : true},
 					sPath : "relative",
 					bRelative : true
 				}),
+				oExpectation,
 //TODO remove aChildCanUseCachePromises when list binding supports auto-$expand, also in below tests
 				oParentBinding = {
 					aChildCanUseCachePromises : [],
@@ -613,8 +615,8 @@ sap.ui.require([
 				oContext = Context.create({}, oParentBinding, "/v4Context"),
 				oQueryOptionsForOwnCachePromise;
 
-			this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
-				.withExactArgs(sinon.match.same(oContext), "relative")
+			oExpectation = this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
+				.withArgs(sinon.match.same(oContext), "relative")
 				.returns(_SyncPromise.resolve(true));
 
 			// code under test
@@ -622,8 +624,12 @@ sap.ui.require([
 
 			return oQueryOptionsForOwnCachePromise.then(function (mQueryOptionsForOwnCache) {
 				assert.strictEqual(mQueryOptionsForOwnCache, undefined);
+				return oExpectation.firstCall.args[2].then(function (mAggregatedQueryOptions) {
+					assert.strictEqual(mAggregatedQueryOptions, oBinding.mAggregatedQueryOptions,
+						"fetchIfChildCanUseCache called with oQueryOptionsPromise");
+				});
 			});
-	});
+		});
 
 	//*********************************************************************************************
 	QUnit.test("fetchQueryOptionsForOwnCache, auto-$expand/$select: can't use parent binding cache",
@@ -644,7 +650,7 @@ sap.ui.require([
 				oQueryOptionsForOwnCachePromise;
 
 			this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
-				.withExactArgs(sinon.match.same(oContext), "relative")
+				.withArgs(sinon.match.same(oContext), "relative")
 				.returns(_SyncPromise.resolve(false));
 
 			// code under test
@@ -681,15 +687,17 @@ sap.ui.require([
 						aChildCanUseCachePromises : [],
 						fetchIfChildCanUseCache : function () {}
 					},
+					oQueryOptionsPromise = _SyncPromise.resolve(mLocalQueryOptions),
 					oContext = Context.create({}, oParentBinding, "/v4Context"),
 					oQueryOptionsForOwnCachePromise;
 
 				oBinding.doFetchQueryOptions = function () {};
 				this.mock(oBinding).expects("doFetchQueryOptions")
 					.withExactArgs(sinon.match.same(oContext))
-					.returns(_SyncPromise.resolve(mLocalQueryOptions));
+					.returns(oQueryOptionsPromise);
 				this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
-					.withExactArgs(sinon.match.same(oContext), "relative")
+					.withExactArgs(sinon.match.same(oContext), "relative",
+						sinon.match.same(oQueryOptionsPromise))
 					.returns(_SyncPromise.resolve(bCanUseCache));
 
 				// code under test

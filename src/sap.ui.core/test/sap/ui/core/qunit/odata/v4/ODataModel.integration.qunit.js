@@ -1419,8 +1419,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings
-	// The SalesOrders application does not have such a scenario.
+	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings. The inner
+	// ODataContextBinding can use its parent binding's cache => it creates no own request.
 	QUnit.test("Auto-$expand/$select: Nested ODCB",
 			function (assert) {
 		var sView = '\
@@ -1437,10 +1437,8 @@ sap.ui.require([
 	</form:SimpleForm>\
 </form:SimpleForm>';
 
-//TODO Check dependent binding's query options are considered:
-//  ...EMPLOYEE_2_TEAM... -> ...EMPLOYEE_2_TEAM($select=Name)...
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
-					+ "($select=ID),EMPLOYEE_2_TEAM&$select=AGE,ID",
+					+ "($select=ID),EMPLOYEE_2_TEAM($select=Name)&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_MANAGER": {
@@ -1591,6 +1589,73 @@ sap.ui.require([
 				.execute();
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings. The inner
+	// ODataContextBinding *cannot* use its parent binding's cache due to conflicting query options
+	// => it creates an own cache and request.
+	QUnit.test("Auto-$expand/$select: Nested ODCB with own request",
+			function (assert) {
+		var sView = '\
+<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+			parameters : {\
+				$expand : {\
+					EMPLOYEE_2_MANAGER : {$select : \'ID\'},\
+					EMPLOYEE_2_TEAM : {\
+						$expand : {\
+							TEAM_2_EMPLOYEES : {\
+								$orderby : \'AGE\'\
+							}\
+						}\
+					}\
+				}\
+			}\
+		}">\
+	<form:SimpleForm binding="{path : \'EMPLOYEE_2_TEAM\',\
+		parameters : {\
+			$expand : {\
+				TEAM_2_EMPLOYEES : {\
+					$orderby : \'AGE desc\'\
+				}\
+			}\
+		}\
+	}">\
+		<Text id="name" text="{Name}" />\
+	</form:SimpleForm>\
+	<Text id="age" text="{AGE}" />\
+</form:SimpleForm>';
+
+		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
+					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name",
+				{
+					"Name": "SAP NetWeaver Gateway Content",
+					"TEAM_2_EMPLOYEES": [
+						{ "AGE" : 32},
+						{ "AGE" : 29}
+					]
+				})
+			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
+					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE",
+				{
+					"AGE": 32,
+					"EMPLOYEE_2_MANAGER": {
+						"ID": "2"
+					},
+					"EMPLOYEE_2_TEAM": {
+						"TEAM_2_EMPLOYEES": [
+							{ "AGE" : 29},
+							{ "AGE" : 32}
+						]
+					}
+				})
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+			.expectChange("age", "32")
+// TODO unexpected changes
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+			.expectChange("age", "32");
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
 	//TODO $batch?
 	//TODO test bound action

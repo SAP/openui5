@@ -155,7 +155,7 @@ sap.ui.define([
 				return oQueryOptionsPromise;
 			}
 			return oContext.getBinding()
-				.fetchIfChildCanUseCache(oContext, that.sPath)
+				.fetchIfChildCanUseCache(oContext, that.sPath, oQueryOptionsPromise)
 				.then(function (bCanUseCache) {
 					return bCanUseCache ? undefined : oQueryOptionsPromise;
 				});
