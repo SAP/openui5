@@ -350,7 +350,7 @@
                 assert.ok(!this.oPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
             });
 
-            QUnit.test("Header is not collapsed if non-empty", function(assert) {
+            QUnit.test("Header is not collapsed if it contains visible content", function(assert) {
                 this.oPage.addHeaderContent(new sap.m.Button({text:"HDRBTN"}));
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true};
                 this.oPage.setTitle("Test");
@@ -362,6 +362,71 @@
                 assert.ok(!this.oPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
             });
 
+            QUnit.test("Header is collapsed if it contains hidden non adaptable content", function(assert) {
+
+                var oAdaptOptions = {bCollapseHeader: true},
+                    oModel = new sap.ui.model.json.JSONModel({show: false}),
+                    oContentBegin = new sap.m.Button({text: "HDRBTN", visible:"{/show}"}),
+                    oContentMiddle = new sap.m.Text({text: "HDRTXT", visible:"{/show}"}),
+                    oContentEnd = new sap.m.Button({text: "HDRBTN", visible:"{/show}"});
+
+                this.oPage.setCustomHeader(new sap.m.Bar({
+                    contentLeft: oContentBegin,
+                    contentMiddle: oContentMiddle,
+                    contentRight: oContentEnd
+                }));
+                this.oPage.setModel(oModel);
+
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                assert.strictEqual(this.oPage.hasStyleClass("sapF2CollapsedHeader"), true , "header is collapsed");
+            });
+
+            QUnit.test("Header is adapted dynamically based on content visibility", function(assert) {
+
+                var oAdaptOptions = {bCollapseHeader: true, bHideBackButton: true},
+                    oModel = new sap.ui.model.json.JSONModel({showButton: false}),
+                    oBackButton = new sap.m.Button("newBackButton", {type: "Back", visible: "{/showButton}"}),
+                    oDetectedBackButton,
+                    fnViewListener = function(oEvent) {
+                        oDetectedBackButton = oEvent.getParameter("oBackButton");
+                    },
+                    oSpy = sinon.spy(fnViewListener);
+
+                this.oPage.setCustomHeader(new sap.m.Bar({
+                    contentLeft: [oBackButton]
+                }));
+                this.oPage.setModel(oModel);
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                assert.strictEqual(this.oPage.hasStyleClass("sapF2CollapsedHeader"), true , "header is collapsed");
+                assert.strictEqual(oSpy.called, false, "spy is not called");
+
+                oSpy.reset();
+                oModel.setProperty("/showButton", true);
+                sap.ui.getCore().applyChanges();
+
+                assert.strictEqual(this.oPage.hasStyleClass("sapF2CollapsedHeader"), true , "header is still collapsed");
+                assert.ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
+                assert.strictEqual(oSpy.calledOnce, true, "spy is called");
+                assert.strictEqual(oDetectedBackButton.getId(), oBackButton.getId(), "back button is detected");
+
+                oSpy.reset();
+                oDetectedBackButton = null;
+                oModel.setProperty("/showButton", false);
+                sap.ui.getCore().applyChanges();
+
+                assert.strictEqual(this.oPage.hasStyleClass("sapF2CollapsedHeader"), true , "header is still collapsed");
+                assert.ok(!oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is not adapted");
+                assert.strictEqual(oSpy.calledOnce, true, "spy is called");
+                assert.strictEqual(oDetectedBackButton, undefined, "back button is detected");
+            });
 
             QUnit.module("Fiori2 post adaptation of page header", {
                 beforeEach: function () {
