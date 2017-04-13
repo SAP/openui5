@@ -1476,7 +1476,6 @@ sap.ui.require([
 					url : "TEAMS(42)/TEAM_2_EMPLOYEES",
 					payload : {
 						"@$ui5.transient": "update",
-						"@odata.etag": undefined,
 						"ID" : null,
 						"Name" : "John Doe"
 					}
