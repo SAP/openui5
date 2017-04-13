@@ -49,6 +49,14 @@
 				iStartDateChanged++;
 			};
 
+			var _assertFocus = function(oTarget, sMsg) {
+				var $activeElement = document.activeElement;
+				ok($activeElement, "There should be an active element. " +  sMsg);
+				if ($activeElement) {
+					strictEqual($activeElement.id, oTarget.id, "Element with id: [" + oTarget.id + "] should be focused. " + sMsg);
+				}
+			};
+
 			var oCal1 = new sap.ui.unified.CalendarDateInterval("Cal1",{
 				select: handleSelect,
 				startDateChange: handleStartDateChange
@@ -167,6 +175,46 @@
 				aDays = $DatesRow.find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150410", "Calendar1: new start date");
 				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day still has focus");
+			});
+
+			test("After Rerendering, last focused day is still focused", function(assert) {
+				//Prepare
+				var oCalendarDateInt = new sap.ui.unified.CalendarDateInterval();
+				oCalendarDateInt.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+
+				var $datesRow = oCalendarDateInt.getAggregation("month")[0].$();
+				var aDates = $datesRow.find(".sapUiCalItem");
+				aDates[1].focus();
+
+				//Act
+				oCalendarDateInt.rerender();
+
+				//Assert
+				_assertFocus(aDates[1], "Calendar: after rerendering  second day still has focus");
+				oCalendarDateInt.destroy();
+			});
+
+			test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
+
+				//Prepare
+				var oCalendarDateInt = new sap.ui.unified.CalendarDateInterval(),
+						oExternalControl = new sap.ui.unified.CalendarDateInterval("extControl");
+
+				oCalendarDateInt.placeAt("uiArea");
+				oExternalControl.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+
+				oExternalControl.$().focus();
+				_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' (another DateInterval) should be focused");
+
+				//Act
+				oCalendarDateInt.rerender();
+
+				//Assert
+				_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl' (another MonthInterval)");
+				oCalendarDateInt.destroy();
+				oExternalControl.destroy();
 			});
 
 			module("MonthPicker");
@@ -351,6 +399,8 @@
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiArea"></div>
 		<br>
 		<div id="uiArea1"></div>
 		<br>

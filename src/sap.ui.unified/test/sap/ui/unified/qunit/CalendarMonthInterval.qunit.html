@@ -45,6 +45,14 @@
 				bStartDateChanged = true;
 			};
 
+			var _assertFocus = function(oTarget, sMsg) {
+				var $activeElement = document.activeElement;
+				ok($activeElement, "There should be an active element. " +  sMsg);
+				if ($activeElement) {
+					strictEqual($activeElement.id, oTarget.id, "Element with id: [" + oTarget.id + "] should be focused. " + sMsg);
+				}
+			};
+
 			var oCal1 = new sap.ui.unified.CalendarMonthInterval("Cal1",{
 				select: function(oEvent){
 					bSelectFired = true;
@@ -196,6 +204,46 @@
 				equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second month still has focus");
 			});
 
+			test("After Rerendering, last focused month is still focused", function(assert) {
+				//Prepare
+				var oCalendarMonthInt = new sap.ui.unified.CalendarMonthInterval();
+				oCalendarMonthInt.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+
+				var $MonthsRow = oCalendarMonthInt.getAggregation("monthsRow").$();
+				var aMonths = $MonthsRow.find(".sapUiCalItem");
+				aMonths[1].focus();
+
+				//Act
+				oCalendarMonthInt.rerender();
+
+				//Assert
+				_assertFocus(aMonths[1], "Calendar: after rerendering  second month still has focus");
+				oCalendarMonthInt.destroy();
+			});
+
+			test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
+
+				//Prepare
+				var oCalendarMonthInt = new sap.ui.unified.CalendarMonthInterval(),
+						oExternalControl =new sap.ui.unified.CalendarMonthInterval("extControl");
+
+				oCalendarMonthInt.placeAt("uiArea");
+				oExternalControl.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+
+				oExternalControl.$().focus();
+				_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' (another MonthInterval) should be focused");
+
+				//Act
+				oCalendarMonthInt.rerender();
+
+				//Assert
+				_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl' (another MonthInterval)");
+				oCalendarMonthInt.destroy();
+				oExternalControl.destroy();
+			});
+
 			module("YearPicker");
 			test("displayed years", function() {
 				ok(!jQuery("#Cal1--YP").get(0), "Calendar1: Year picker not initial rendered");
@@ -332,6 +380,8 @@
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiArea"></div>
 		<br>
 		<div id="uiArea1"></div>
 		<br>
