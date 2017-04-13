@@ -309,7 +309,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		for ( var i = 0; i < aFields.length; i++) {
 			var oField = aFields[i];
-			if (oField.getRequired && oField.getRequired() === true) {
+			if (oField.getRequired && oField.getRequired() === true &&
+					(!oField.getEditable || oField.getEditable())) {
 				return true;
 			}
 		}
