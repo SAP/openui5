@@ -18,14 +18,7 @@ sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 's
 					// method thus don't need design-time dom ref definition
 					if (oLayout instanceof ResponsiveGridLayout) {
 						var aFields = oFormElement.getFields();
-						var oLabel = oFormElement.getLabel();
-						if (typeof (oLabel) === "string"){
-							if (oFormElement.getLabelControl){
-								oLabel = oFormElement.getLabelControl();
-							} else { // can't retrieve label object
-								oLabel = null;
-							}
-						}
+						var oLabel = oFormElement.getLabelControl();
 						if (oLabel) {
 							aFields.unshift(oLabel);
 						}
