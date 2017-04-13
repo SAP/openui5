@@ -46,7 +46,7 @@ describe('sap.m.Dialog', function() {
     it('should open dialog with content with fixed size and no horizontal scrollbar', function() {
         element(by.id('dialogWithFixedSizeContentButton')).click();
         var dialogWithFixedSizeContent = element(by.id('dialogWithFixedSizeContent'));
-        expect(takeScreenshot(dialogWithFixedSizeContent).toLookAs('dialog-with-fixed-size-content'));
+        expect(takeScreenshot(dialogWithFixedSizeContent)).toLookAs('dialog-with-fixed-size-content');
         element(by.id('dialogWithFixedSizeContentCloseButton')).click();
     });
 });
