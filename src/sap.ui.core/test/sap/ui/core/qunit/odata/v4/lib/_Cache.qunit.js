@@ -960,18 +960,22 @@ sap.ui.require([
 		assert.deepEqual(_Cache.convertQueryOptions({
 			foo : "bar",
 			$apply : "filter(Price gt 100)",
-			$count : true,
+			$count : "true",
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
+			$foo : "bar", // to show that any system query option is accepted
+			$levels : "5",
 			$orderby : "GrossAmount asc",
 			$search : "EUR",
 			$select : ["select1", "select2"]
 		}), {
 			foo : "bar",
 			$apply : "filter(Price gt 100)",
-			$count : true,
+			$count : "true",
 			$expand : "expand",
 			$filter : "BuyerName eq 'SAP'",
+			$foo : "bar",
+			$levels : "5",
 			$orderby : "GrossAmount asc",
 			$search : "EUR",
 			$select : "select1,select2"
@@ -999,16 +1003,6 @@ sap.ui.require([
 		});
 
 		assert.strictEqual(_Cache.convertQueryOptions(undefined), undefined);
-
-		["$format", "$id", "$inlinecount", "$skip", "$skiptoken", "$top"
-		].forEach(function (sSystemOption) {
-			assert.throws(function () {
-				var mQueryOptions = {};
-
-				mQueryOptions[sSystemOption] = "foo";
-				_Cache.convertQueryOptions(mQueryOptions);
-			}, new RegExp("Unsupported system query option \\" + sSystemOption));
-		});
 	});
 
 	//*********************************************************************************************

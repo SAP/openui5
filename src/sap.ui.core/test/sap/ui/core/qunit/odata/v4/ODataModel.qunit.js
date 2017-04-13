@@ -905,7 +905,21 @@ sap.ui.require([
 	});
 
 	[{
-		mParameters : {"$expand" : {"foo" : {}}, "$select" : ["bar"], "custom" : "baz"},
+		mParameters : {
+			"$expand" : {
+				"foo" : {
+					"$count" : true,
+					"$expand" : {"bar" : {}},
+					"$filter" : "baz eq 0",
+					"$levels" : "max",
+					"$orderby" : "qux",
+					"$search" : "key",
+					"$select" : ["*"]
+				}
+			},
+			"$select" : ["bar"],
+			"custom" : "baz"
+		},
 		bSystemQueryOptionsAllowed : true
 	}, {
 		mParameters : {
@@ -1030,6 +1044,22 @@ sap.ui.require([
 		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option select is not supported"
+	}, {
+		mOptions : {"$levels" : 2},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $levels is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$apply" : "bar"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $apply is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$skip" : "10"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $skip is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$top" : "10"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $top is not supported"
 	}, {
 		mOptions : {"sap-foo" : "300"},
 		error : "Custom query option sap-foo is not supported"
