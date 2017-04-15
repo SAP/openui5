@@ -5012,7 +5012,7 @@
 			try {
 				if ( e.shiftKey && e.altKey && e.ctrlKey ) {
 					if ( e.keyCode === 80 ) { // 'P'
-						sap.ui.require(['sap/ui/debug/TechnicalInfo'], function(TechnicalInfo) {
+						sap.ui.require(['sap/ui/core/support/techinfo/TechnicalInfo'], function(TechnicalInfo) {
 							TechnicalInfo.open(function() {
 								var oInfo = getModuleSystemInfo();
 								return { modules : oInfo.modules, prefixes : oInfo.prefixes, config: oCfgData };
@@ -5028,7 +5028,7 @@
 						});
 					}
 				}
-			} catch (err) {
+			} catch (oException) {
 				// ignore any errors
 			}
 		});
