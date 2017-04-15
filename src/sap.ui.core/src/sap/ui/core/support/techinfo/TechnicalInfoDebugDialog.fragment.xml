@@ -1,0 +1,79 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+
+	<Dialog
+		id="Dialog"
+		resizable="true"
+		contentWidth="600px"
+		class="sapUiNoContentPadding">
+		<customHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title
+					text="{
+						parts: [
+							'i18n>TechInfo.DebugModulesConfigPopup.SelectionCounter',
+							'view>/DebugModuleSelectionCount'
+						],
+						formatter: 'jQuery.sap.formatMessage'
+					}"
+					class="sapUiTinyMarginLeft"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</customHeader>
+		<subHeader>
+			<Toolbar>
+				<Label
+					design="Bold"
+					width="6.5rem"
+					class="sapUiTinyMargin"
+					text="sap-ui-debug ="/>
+				<Input
+					id="customDebugValue"
+					width="100%"
+					value="{
+						path : 'view>/CustomDebugMode',
+						type : '.CustomTypeMode'
+					}"
+					change="onChangeCustomDebugMode"
+					valueStateText="{i18n>TechInfo.DebugModulesConfigPopup.ModeValidationMessage}"/>
+				<ToolbarSpacer/>
+				<Button
+					icon="sap-icon://copy"
+					tooltip="{i18n>TechInfo.DebugModulesCopy.Tooltip}"
+					press="onConfigureDebugModulesCopyToClipboard"/>
+				<Button
+					icon="sap-icon://reset"
+					tooltip="{i18n>TechInfo.DebugModulesReset.Tooltip}"
+					press="onConfigureDebugModulesReset"/>
+			</Toolbar>
+		</subHeader>
+		<content>
+			<VBox>
+				<Tree
+					id="tree"
+					items="{view>/DebugModules}"
+					mode="MultiSelect"
+					selectionChange="onConfigureDebugModuleSelect"
+					includeItemInSelection="true">
+					<StandardTreeItem
+						title="{view>text}"
+						selected="{view>selected}"/>
+				</Tree>
+			</VBox>
+		</content>
+		<buttons>
+			<Button
+				text="{i18n>TechInfo.DebugModulesConfigPopup.Confirm}"
+				press="onConfigureDebugModulesConfirm"
+				type="Emphasized"/>
+			<Button
+				text="{i18n>CLOSE}"
+				press="onConfigureDebugModulesClose"
+				type="Emphasized"/>
+		</buttons>
+	</Dialog>
+
+</core:FragmentDefinition>
