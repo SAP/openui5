@@ -55,6 +55,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			selected : {type : "boolean", defaultValue : false},
 
 			/**
+			 * Defines the enabled state of the list items.
+			 */
+			enabled : {type : "boolean", defaultValue : true},
+
+			/**
 			 * Defines the counter value of the list items.
 			 */
 			counter : {type : "int", group : "Misc", defaultValue : null},
@@ -471,7 +476,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			id : this.getId() + "-selectSingle",
 			groupName : this.getListProperty("id") + "_selectGroup",
 			activeHandling : false,
-			selected : this.getSelected()
+			selected : this.getSelected(),
+			enabled : this.getEnabled()
 		}).setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this.setSelected(bSelected);
@@ -495,7 +501,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oMultiSelectControl = new sap.m.CheckBox({
 			id : this.getId() + "-selectMulti",
 			activeHandling : false,
-			selected : this.getSelected()
+			selected : this.getSelected(),
+			enabled : this.getEnabled()
 		}).setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this.setSelected(bSelected);
