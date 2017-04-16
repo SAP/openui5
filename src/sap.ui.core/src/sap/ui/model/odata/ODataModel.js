@@ -899,8 +899,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 					}
 				} else if (oCurrentEntry && oCurrentEntry["__list"]) {
 					jQuery.each(oCurrentEntry["__list"], function(j, sEntry) {
-						var oChildEntry = that._getObject("/" + oCurrentEntry["__list"][j]);
-						jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " +  oCurrentEntry["__list"][j] + " not found!");
+						var oChildEntry = that._getObject("/" + sEntry);
+						jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " +  sEntry + " not found!");
 						if (oChildEntry) {
 							aResults.push(oChildEntry);
 							// check recursively for found child entries
