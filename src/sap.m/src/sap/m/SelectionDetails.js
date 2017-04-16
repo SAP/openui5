@@ -660,7 +660,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 		this.fireActionPress({
 			action: oData && oData.action || oEvent.getParameter("action"),
-			items: this.getItems(),
+			items: oData && oData.items || this.getItems(),
 			level: oData && oData.level || oEvent.getParameter("level")
 		});
 	};

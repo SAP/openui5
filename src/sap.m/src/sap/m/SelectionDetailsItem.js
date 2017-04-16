@@ -166,7 +166,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	SelectionDetailsItem.prototype._onActionPress = function(oEvent, oAction) {
 		this.fireEvent("_actionPress", {
 			action: oAction,
-			items: [this],
+			items: [ this ],
 			level: library.SelectionDetailsActionLevel.Item
 		});
 	};
