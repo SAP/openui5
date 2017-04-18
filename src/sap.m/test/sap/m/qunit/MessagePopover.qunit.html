@@ -1039,6 +1039,8 @@
 					"target": "/Headers(NodeKey=guid'e41d2de5-37a0-1ee6-8784-60396f9b5305',State='01')/InvoicingParty"
 				}]));
 
+				this.oButton2.addDependent(this.oMessagepopover2);
+
 				this.oButton2.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
@@ -1097,6 +1099,34 @@
 			assert.ok(this.oMessagepopover2.getItems().length);
 
 			tempObject = null;
+		});
+
+		QUnit.test("Do not invalidate when not rendered", function (assert) {
+			var tempObject = {
+				"message": "test"
+			};
+
+			var parent = this.oMessagepopover2.getParent();
+			var parentInvalidateSpy = sinon.spy();
+			parent.invalidate = parentInvalidateSpy;
+
+			this.oMessagepopover2.getModel().setData(null);
+			sap.ui.getCore().applyChanges();
+
+			this.oMessagepopover2.getModel().setData(tempObject);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(parentInvalidateSpy.callCount, 0, "Parent should not be invalidated if not shown");
+
+			this.oMessagepopover2.openBy(this.oButton2);
+
+			this.oMessagepopover2.getModel().setData(null);
+			sap.ui.getCore().applyChanges();
+
+			this.oMessagepopover2.getModel().setData(tempObject);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(parentInvalidateSpy.callCount, 2, "Parent should be invalidated because shown");
 		});
 	</script>
 </head>
