@@ -531,7 +531,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype._createMainContainer = function(FixFlex) {
 		return new FixFlex(this.getId() + "-mainContainer", {
-			fixFirst: false
+			fixFirst: false,
+			minFlexSize: -1 // use -1 to enable scrolling. If minFlexSize is not set, scrolling is disabled
 		});
 	};
 
