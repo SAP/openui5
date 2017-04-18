@@ -72,19 +72,19 @@ sap.ui.require([
 	function prepareTestForCreateOnRelativeBinding(oTest, assert) {
 		var oModel = createTeaBusiModel({updateGroupId : "update"}),
 			sView = '\
-<form:SimpleForm id="form" binding="{path : \'/TEAMS(42)\',\
+<VBox id="vbox" binding="{path : \'/TEAMS(42)\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
-<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="id" text="{ID}" />\
-				<Text id="text" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
-</Table>\
-</form:SimpleForm>';
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="id" text="{ID}" />\
+					<Text id="text" text="{Name}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</VBox>';
 
 		oTest.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 				"TEAM_2_EMPLOYEES" : [
@@ -539,7 +539,7 @@ sap.ui.require([
 	// Scenario: Nested list binding with own parameters causes a second request.
 	// This scenario is similar to the "Sales Order Line Items" in the SalesOrders application.
 	testViewStart("Absolute ODCB with parameters and relative ODLB with parameters", '\
-<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
+<VBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$select : \'Category\'}}">\
 		<items>\
@@ -550,7 +550,7 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</form:SimpleForm>',
+</VBox>',
 		{
 			"EMPLOYEES('2')?$select=Name" : {"Name" : "Frederic Fall"},
 			"EMPLOYEES('2')/EMPLOYEE_2_EQUIPMENTS?$select=Category&$skip=0&$top=100" :
@@ -584,8 +584,8 @@ sap.ui.require([
 	// In this test dynamic filters are used instead of dynamic sorters
 	QUnit.test("Relative ODLB inherits parent OBCB's query options on filter", function (assert) {
 		var sView = '\
-<form:SimpleForm binding="{path : \'/TEAMS(42)\',\
-		parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
+<VBox binding="{path : \'/TEAMS(42)\',\
+	parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<items>\
 			<ColumnListItem>\
@@ -595,7 +595,7 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</form:SimpleForm>',
+</VBox>',
 			that = this;
 
 		this.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
@@ -1087,7 +1087,7 @@ sap.ui.require([
 	// The key point is that the parent of the list is a ContextBinding.
 	QUnit.test("ODLB: refresh via parent context binding, shared cache", function (assert) {
 		var sView = '\
-<form:SimpleForm id="form" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
+<VBox id="vbox" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
 		<items>\
@@ -1098,7 +1098,7 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</form:SimpleForm>',
+</VBox>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)",
@@ -1142,7 +1142,7 @@ sap.ui.require([
 				.expectChange("item", "0000000030", 1);
 
 			// code under test
-			that.oView.byId("form").getObjectBinding().refresh();
+			that.oView.byId("vbox").getObjectBinding().refresh();
 
 			return that.waitForChanges(assert);
 		});
@@ -1467,7 +1467,7 @@ sap.ui.require([
 
 		return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
-			oTeamBinding = that.oView.byId("form").getObjectBinding();
+			oTeamBinding = that.oView.byId("vbox").getObjectBinding();
 			that.expectRequest({
 					headers : null,
 					method : "POST",
@@ -1501,7 +1501,7 @@ sap.ui.require([
 			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
 			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
 			assert.throws(function () {
-				that.oView.byId("form").bindElement("/TEAMS(43)",
+				that.oView.byId("vbox").bindElement("/TEAMS(43)",
 					{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
 			}, new Error("setContext on relative binding is forbidden if created entity" +
 				" exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS(42)|TEAM_2_EMPLOYEES"));
@@ -1523,7 +1523,7 @@ sap.ui.require([
 
 			return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
 				oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
-				oTeamBinding = that.oView.byId("form").getObjectBinding();
+				oTeamBinding = that.oView.byId("vbox").getObjectBinding();
 
 				// restore requestor to test proper cancel handling without simulating the requestor
 				that.oModel.oRequestor.request.restore();
