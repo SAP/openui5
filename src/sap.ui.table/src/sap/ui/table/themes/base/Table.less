@@ -484,16 +484,17 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: normal;
+	position: relative;
 	padding: 0 0.5rem;
 }
 
-.sapUiTableCol.sapUiTableColSorted,
-.sapUiTableCol.sapUiTableColFiltered {
-	padding-right: 1rem;
+.sapUiTableColSorted,
+.sapUiTableColFiltered {
+	padding-right: 1.5rem;
 }
 
-.sapUiTableCol.sapUiTableColSorted.sapUiTableColFiltered {
-	padding-right: 2rem;
+.sapUiTableColSorted.sapUiTableColFiltered {
+	padding-right: 2.5rem;
 }
 
 .sapUiTableColSF::after {
@@ -511,12 +512,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableColSF:active::after {
 	color: @sapUiListActiveTextColor;
-}
-
-/* IE does not calculate % of height correctly */
-html[data-sap-ui-browser^="ie"] .sapUiTableColSF::after {
-	top: 0;
-	transform: none;
 }
 
 .sapUiSizeCozy .sapUiTableColSF::after {
