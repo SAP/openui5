@@ -37,28 +37,12 @@
 	}
 }
 
-.sapUiResponsiveSplitterPaginatorButton:hover {
-	background-color: @sapUiButtonLiteHoverBackground;
-
-	&:after {
-		background-color: @sapUiContentIconColor;
-	}
-}
-
 .sapUiResponsiveSplitterPaginatorButton {
 	width: 2.5rem;
-	height: 2.5rem;
+	height: 2.375rem;
 	cursor: pointer;
 	background-color: transparent;
 	display: inline-block;
-
-	&:active {
-		background-color: @sapUiButtonLiteActiveBackground;
-
-		&:after {
-			background-color: @sapUiContentContrastIconColor;
-		}
-	};
 
 	&:after {
 		content: "";
@@ -78,31 +62,14 @@
 	&:focus:before {
 		content: "";
 		position: absolute;
-		border: 1px dotted @sapUiContentFocusColor;
 		width: 2.125rem;
 		height: 2.125rem;
-		margin: 2px 0 0 2px;
+		margin: 1px 0 0 2px;
 	}
 }
 
 .sapUiResponsiveSplitterPaginatorButton:first-child {
 	margin-left: 0;
-}
-
-.sapUiResponsiveSplitterPaginatorSelectedButton {
-	background-color: transparent;
-
-	&:hover {
-		background-color: @sapUiButtonLiteHoverBackground;
-
-		&:after {
-			background-color: @sapUiSelected;
-		}
-	}
-
-	&:after {
-		background-color: @sapUiSelected;
-	}
 }
 
 .sapUiResponsiveSplitterHiddenElement {
@@ -111,7 +78,7 @@
 
 .sapUiResponsiveSplitterPaginatorNavButton {
 	width: 2.5rem;
-    height: 2.5rem;
+    height: 2.375rem;
 	font-family: 'SAP-icons';
 	cursor: pointer;
 
@@ -140,18 +107,6 @@
 	background-color: @sapUiSelected;
 }
 
-.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar {
-	background-color: @sapUiGlobalBackgroundColor;
-
-	&:hover {
-		background-color: @sapUiHighlight;
-	}
-
-	&:active {
-		background-color: @sapUiHighlight;
-	}
-}
-
 html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
 html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
 html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
@@ -171,23 +126,13 @@ html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUi
 		content: "";
 		width: 1.25rem;
 		height: 1.25rem;
-		border-color: @sapUiContentIconColor;
 		border-width: 0.125rem;
-		background-color: @sapUiGlobalBackgroundColor;
 		border-radius: 50%;
 		border-style: solid;
 		display: block;
 		position: relative;
 		left: 25%;
 		top: 25%;
-	}
-}
-
-html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
-html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
-	& .sapUiLoSplitterBarIcon:after {
-		border-color: @sapUiContentIconColor;
-		background-color: @sapUiHighlight;
 	}
 }
 
