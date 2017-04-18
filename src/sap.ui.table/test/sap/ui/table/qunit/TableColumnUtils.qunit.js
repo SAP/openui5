@@ -298,7 +298,7 @@ QUnit.test("getHeaderSpan", function(assert) {
 	assert.equal(ColumnUtils.getHeaderSpan(aColumns[0], 0), 3, "Span OK for c1, level 0");
 	assert.equal(ColumnUtils.getHeaderSpan(aColumns[0], 1), 1, "Span OK for c1, level 1");
 	assert.equal(ColumnUtils.getHeaderSpan(aColumns[0], 2), 1, "Span OK for c1, level 2");
-	assert.equal(ColumnUtils.getHeaderSpan(aColumns[0], 3), 3, "Span OK for c1, level 3, Level too high");
+	assert.equal(ColumnUtils.getHeaderSpan(aColumns[0], 3), 1, "Span OK for c1, level 3, Level too high");
 
 	assert.equal(ColumnUtils.getHeaderSpan(aColumns[1], 0), 1, "Span OK for c2, level 0");
 	assert.equal(ColumnUtils.getHeaderSpan(aColumns[1], 1), 2, "Span OK for c2, level 1");
