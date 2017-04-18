@@ -1204,7 +1204,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			DescriptorVariantFactory.createNew({
 				"id" : "a.id",
 				"reference" : "a.reference",
-				"layer" : "PARTNER"	//"VENDOR" or "PARTNER" expected
+				"layer" : "USER"	//"USER" not supported
 			})
 		}.bind(this));
 
@@ -1227,6 +1227,16 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			"layer": "CUSTOMER_BASE"
 		}).then(function(oDescriptorVariant) {
 			assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER_BASE');
+		});
+	});
+	
+	QUnit.test("createNew - layer - set to PARTNER", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference",
+			"layer": "PARTNER"
+		}).then(function(oDescriptorVariant) {
+			assert.equal(oDescriptorVariant._getMap().layer, 'PARTNER');
 		});
 	});
 
@@ -1474,6 +1484,18 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					'CUSTOMER_BASE'
 					).then(function(oDescriptorChange) {
 						assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE' );
+					});
+		});
+	});
+
+	QUnit.test("createNew - with layer PARTNER", function(assert) {
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			new DescriptorChangeFactory().createNew(
+					"a.reference",
+					oDescriptorInlineChange,
+					'PARTNER'
+					).then(function(oDescriptorChange) {
+						assert.equal(oDescriptorChange._mChangeFile.layer, 'PARTNER' );
 					});
 		});
 	});
