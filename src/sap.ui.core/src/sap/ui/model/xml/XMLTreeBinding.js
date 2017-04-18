@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 * @param {object} [oContext=null] the context object for this binding (optional)
 	 * @param {array} [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object} [mParameters=null] additional model specific parameters (optional)
+	 * @protected
 	 * @alias sap.ui.model.xml.XMLTreeBinding
 	 * @extends sap.ui.model.ClientTreeBinding
 	 */
