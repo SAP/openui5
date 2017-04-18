@@ -74,6 +74,26 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   }
 }
 
+/*
+* workaround on Windows Mobile to disable bouncing / overscroll
+*/
+html[data-sap-ui-os^="winphone"][data-sap-ui-browser^="ie"] {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	-ms-scroll-translation: vertical-to-horizontal;
+	overflow: hidden;
+
+	body {
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		-ms-scroll-translation: vertical-to-horizontal;
+		-ms-content-zooming: none;
+	}
+}
+
+
 /* ============================================= */
 /* CSS for displaying the Footer/Header controls at the correct position */
 /* ============================================= */
