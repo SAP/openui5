@@ -155,7 +155,51 @@
 
 			QUnit.test("Header in Japaneese", function(assert) {
 				var sCurrentLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-				sap.ui.getCore().getConfiguration().setLanguage("ja");
+				sap.ui.getCore().getConfiguration().setLanguage("ja_JP");
+
+				var oCalJ = new sap.ui.unified.CalendarTimeInterval("CalJ",{
+					startDate: new Date("2015", "7", "13", "8", "57", "10")
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var oHeader = sap.ui.getCore().byId("CalJ--Head").$()[0];
+				assert.ok(oHeader.children[1].id, "#CalJ--Head-B2", "Calendar: year button is shown first");
+				assert.ok(oHeader.children[2].id, "#CalJ--Head-B1", "Calendar: month button is shown second");
+				assert.ok(oHeader.children[3].id, "#CalJ--Head-B0", "Calendar: day button is shown third");
+
+				assert.equal(jQuery("#CalJ--Head-B0").text(), "13日", "Calendar: 13日 as day shown");
+				assert.equal(jQuery("#CalJ--Head-B1").text(), "8月", "Calendar: 8月 (August) as month shown");
+				assert.equal(jQuery("#CalJ--Head-B2").text(), "2015年", "Calendar: year 2015年  shown");
+
+				oCalJ.destroy();
+				sap.ui.getCore().getConfiguration().setLanguage(sCurrentLanguage);
+			});
+
+			QUnit.test("Header in Chinese", function(assert) {
+				var sCurrentLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+				sap.ui.getCore().getConfiguration().setLanguage("zh_CN");
+
+				var oCalJ = new sap.ui.unified.CalendarTimeInterval("CalJ",{
+					startDate: new Date("2015", "7", "13", "8", "57", "10")
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var oHeader = sap.ui.getCore().byId("CalJ--Head").$()[0];
+				assert.ok(oHeader.children[1].id, "#CalJ--Head-B2", "Calendar: year button is shown first");
+				assert.ok(oHeader.children[2].id, "#CalJ--Head-B1", "Calendar: month button is shown second");
+				assert.ok(oHeader.children[3].id, "#CalJ--Head-B0", "Calendar: day button is shown third");
+
+				assert.equal(jQuery("#CalJ--Head-B0").text(), "13日", "Calendar: 13日 as day shown");
+				assert.equal(jQuery("#CalJ--Head-B1").text(), "八月", "Calendar: 八月 (August) as month shown");
+				assert.equal(jQuery("#CalJ--Head-B2").text(), "2015年", "Calendar: year 2015年  shown");
+
+				oCalJ.destroy();
+				sap.ui.getCore().getConfiguration().setLanguage(sCurrentLanguage);
+			});
+
+			QUnit.test("Japaneese language none case sensitive test", function(assert) {
+				var sCurrentLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+				sap.ui.getCore().getConfiguration().setLanguage("JA");
 
 				var oCalJ = new sap.ui.unified.CalendarTimeInterval("CalJ",{
 					startDate: new Date("2015", "7", "13", "8", "57", "10")
