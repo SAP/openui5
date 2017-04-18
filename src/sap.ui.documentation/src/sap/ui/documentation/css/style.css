@@ -425,3 +425,22 @@ code, kbd, pre, samp {
 	font-family: sap-icons;
 	src: url('./fonts/sap-icons.ttf');
 }
+
+/* Replaces the search icon with a filter icon */
+.sapUiDocumentationFilterField .sapMSFS:after {
+	content: "\e076";
+}
+
+/* TODO: remove this after sap.m.Tree selection is corrected */
+.sapUiTheme-sap_belize .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
+	background: #e8eff6;
+}
+.sapUiTheme-sap_belize_plus .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
+	background: #496b8a;
+}
+.sapUiTheme-sap_belize_hcb .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
+	background: #0f5d94;
+}
+.sapUiTheme-sap_belize_hcw .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
+	background: #8fb5ff;
+}

@@ -4,17 +4,13 @@
 
 /*global history */
 sap.ui.define([
-		"sap/ui/documentation/controller/BaseController",
+		"sap/ui/documentation/controller/MasterTreeBaseController",
 		"sap/ui/documentation/controller/util/APIInfo",
 		"sap/ui/model/json/JSONModel"
-	], function (BaseController, APIInfo, JSONModel) {
+	], function (MasterTreeBaseController, APIInfo, JSONModel) {
 		"use strict";
 
-		return BaseController.extend("sap.ui.documentation.controller.TopicMaster", {
-
-			/* =========================================================== */
-			/* lifecycle methods                                           */
-			/* =========================================================== */
+		return MasterTreeBaseController.extend("sap.ui.documentation.controller.TopicMaster", {
 
 			/**
 			 * Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
@@ -24,6 +20,8 @@ sap.ui.define([
 				this.oJSONContent = this._fetchDocuIndex();
 				var oModel = new JSONModel(this.oJSONContent);
 				this.getView().setModel(oModel);
+
+				this._initTreeUtil("key", "links");
 
 				this.getRouter().getRoute("topic").attachPatternMatched(this._onMatched, this);
 				this.getRouter().getRoute("topicId").attachPatternMatched(this._onTopicMatched, this);
@@ -40,61 +38,38 @@ sap.ui.define([
 
 				this._topicId = event.getParameter("arguments").id;
 
-				for (var i = 0; i < this.oJSONContent.length; i++) {
-					this._findNodeByKey(this.oJSONContent[i], this._topicId);
-				}
-				var treeModel = this.byId("tree").getModel();
-				treeModel.refresh();
+				this._expandTreeToNode(this._topicId);
 			},
 
 			_onMatched: function () {
 				var splitApp = this.getView().getParent().getParent();
 				splitApp.setMode(sap.m.SplitAppMode.ShowHideMode);
+
+				// When no particular topic is selected, expand the first node of the tree only
+				this._expandFirstNodeOnly();
 			},
 
 			_fetchDocuIndex : function () {
-				return jQuery.sap.syncGetJSON(this.getConfig().docuPath + "index.json").data.links;
-			},
+				var oData = jQuery.sap.syncGetJSON(this.getConfig().docuPath + "index.json").data.links;
 
-			_findNodeByKey: function (oNode, sKey) {
-				if (oNode.key === sKey) {
-					oNode.isSelected = true;
-				} else {
-					oNode.isSelected = false;
-				}
-				if (oNode.links) {
-					for (var i = 0; i < oNode.links.length; i++) {
-						this._findNodeByKey(oNode.links[i], sKey);
-					}
-				}
-			},
-
-			/* =========================================================== */
-			/* event handlers                                              */
-			/* =========================================================== */
-
-			/**
-			 * After list data is available, this handler method updates the
-			 * master list counter and hides the pull to refresh control, if
-			 * necessary.
-			 * @param {sap.ui.base.Event} oEvent the update finished event
-			 * @public
-			 */
-			onUpdateFinished : function (oEvent) {
-				// update the master list object counter after new data is loaded
-				// this._updateListItemCount(oEvent.getParameter("total"));
-				// hide pull to refresh if necessary
-				this.byId("pullToRefresh").hide();
+				// Remove all top-level entries with an empty text property
+				return oData.filter(function (oEntry) {
+					return oEntry.text !== "";
+				});
 			},
 
 			onNodeSelect : function (oEvent) {
-				var node = oEvent.getSource();
-				var ref = node.getRef();
+				var node = oEvent.getParameter("listItem");
+				var topicId = node.getCustomData()[0].getValue();
 
-				this._currentId = ref;
+				if (!topicId) {
+					jQuery.sap.log.warning("Missing key for entity: " + node.getId() + " - cannot navigate to topic");
+					return;
+				}
 
-				this.getRouter().navTo("topicId", {id : ref}, false);
+				this.getRouter().navTo("topicId", {id : topicId}, false);
 			}
+
 		});
 	}
 );

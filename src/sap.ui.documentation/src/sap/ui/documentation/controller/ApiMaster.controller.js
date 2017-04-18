@@ -4,21 +4,17 @@
 
 /*global history */
 sap.ui.define([
-		"sap/ui/documentation/controller/BaseController",
+		"sap/ui/documentation/controller/MasterTreeBaseController",
 		"sap/ui/documentation/controller/util/APIInfo",
 		"sap/ui/model/json/JSONModel"
-	], function (BaseController, APIInfo, JSONModel) {
+	], function (MasterTreeBaseController, APIInfo, JSONModel) {
 		"use strict";
 
 		var aTreeContent = [],
 			oLibsData = {},
 			iTreeModelLimit = 1000000;
 
-		return BaseController.extend("sap.ui.documentation.controller.ApiMaster", {
-
-			/* =========================================================== */
-			/* lifecycle methods                                           */
-			/* =========================================================== */
+		return MasterTreeBaseController.extend("sap.ui.documentation.controller.ApiMaster", {
 
 			/**
 			 * Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
@@ -29,6 +25,8 @@ sap.ui.define([
 				this._parseLibrariesData();
 				this._bindAllLibsModel(oLibsData);
 				this._bindTreeModel(tree, aTreeContent);
+
+				this._initTreeUtil("name", "nodes");
 
 				this.getRouter().getRoute("api").attachPatternMatched(this._onMatched, this);
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
@@ -45,9 +43,17 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (event) {
+
+				try {
+					this.showMasterSide();
+				} catch (e) {
+					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
+					jQuery.sap.log.error(e);
+				}
+
 				this._topicId = event.getParameter("arguments").id;
-				this._updateTreeSelection();
-				this.showMasterSide();
+
+				this._expandTreeToNode(this._topicId);
 			},
 
 			/**
@@ -58,31 +64,6 @@ sap.ui.define([
 			_onMatched: function () {
 				var splitApp = this.getView().getParent().getParent();
 				splitApp.setMode(sap.m.SplitAppMode.ShowHideMode);
-			},
-
-			_updateTreeSelection: function () {
-				var treeModel = this.byId("tree").getModel(),
-					treeModelData = treeModel.getData();
-
-				for (var i = 0; i < treeModelData.length; i++) {
-					this._selectNodeByKey(treeModelData[i], this._topicId);
-				}
-				treeModel.refresh();
-			},
-
-			_selectNodeByKey: function (oNode, sKey) {
-				var sNodeKey = oNode.ref.substring(oNode.ref.lastIndexOf("/") + 1, oNode.ref.length);
-
-				if (sNodeKey === sKey) {
-					oNode.isSelected = true;
-				} else {
-					oNode.isSelected = false;
-				}
-				if (oNode.nodes) {
-					for (var i = 0; i < oNode.nodes.length; i++) {
-						this._selectNodeByKey(oNode.nodes[i], sKey);
-					}
-				}
 			},
 
 			_parseLibrariesData : function () {
@@ -151,6 +132,8 @@ sap.ui.define([
 				newModel.setSizeLimit(iTreeModelLimit);
 				tree.setModel(newModel);
 				oldModel.destroy();
+
+				this._expandTreeToNode(this._topicId);
 			},
 
 			_sortTreeContent : function () {
@@ -286,32 +269,18 @@ sap.ui.define([
 				oTree.setModel(treeModel);
 			},
 
-			/* =========================================================== */
-			/* event handlers                                              */
-			/* =========================================================== */
-
-			/**
-			 * After list data is available, this handler method updates the
-			 * master list counter and hides the pull to refresh control, if
-			 * necessary.
-			 * @param {sap.ui.base.Event} oEvent the update finished event
-			 * @public
-			 */
-			onUpdateFinished : function (oEvent) {
-				// update the master list object counter after new data is loaded
-				// this._updateListItemCount(oEvent.getParameter("total"));
-				// hide pull to refresh if necessary
-				this.byId("pullToRefresh").hide();
-			},
-
 			onNodeSelect : function (oEvent) {
-				var node = oEvent.getSource();
-				var ref = node.getRef().replace("#/api/", "");
+				var node = oEvent.getParameter("listItem");
+				var apiId = node.getCustomData()[0].getValue();
 
-				this._currentId = ref;
+				if (!apiId) {
+					jQuery.sap.log.warning("Missing name for entity: " + node.getId() + " - cannot navigate to API ref");
+					return;
+				}
 
-				this.getRouter().navTo("apiId", {id : ref}, false);
+				this.getRouter().navTo("apiId", {id : apiId}, false);
 			}
+
 		});
 	}
 );

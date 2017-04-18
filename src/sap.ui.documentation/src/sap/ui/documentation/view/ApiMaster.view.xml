@@ -1,38 +1,41 @@
 <mvc:View
 		controllerName="sap.ui.documentation.controller.ApiMaster"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:core="sap.ui.core"
-		xmlns:documentation="sap.ui.documentation.controls"
 		xmlns="sap.m"
-		xmlns:semantic="sap.m.semantic"
+		xmlns:core="sap.ui.core"
 		class="sapContrast sapContrastPlus">
 
 	<Page
 			id="page"
-			enableScrolling="false"
-			showHeader="false"
-			showSubHeader="false"
+			enableScrolling="true"
 			showFooter="false"
 			navButtonPress="onNavBack"
 			showNavButton="false">
+
+		<customHeader>
+			<Toolbar width="100%">
+				<SearchField placeholder="Filter" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"></SearchField>
+				<Button icon="sap-icon://expand-group" press="onTreeExpandAll"></Button>
+				<Button icon="sap-icon://collapse-group" press="onTreeCollapseAll"></Button>
+			</Toolbar>
+		</customHeader>
+
 		<content>
 
-			<documentation:SimpleTree
-					title="API Reference"
+			<Tree
 					id="tree"
-					height="100%"
-					nodes="{ path: '/' }">
-				<documentation:SimpleTreeNode selected="onNodeSelect"
-						text="{text}"
-						ref="{ref}"
-						isSelected="{isSelected}">
-				</documentation:SimpleTreeNode>
-			</documentation:SimpleTree>
+					mode="SingleSelectMaster"
+					selectionChange="onNodeSelect"
+					items="{ path: '/' }">
+				<StandardTreeItem
+						title="{text}"
+						selected="{isSelected}">
+					<customData>
+						<core:CustomData key="nodeId" value="{name}" />
+					</customData>
+				</StandardTreeItem>
+			</Tree>
 
-			<PullToRefresh
-					id="pullToRefresh"
-					visible="{device>/support/touch}"
-					refresh="onRefresh" />
 		</content>
 
 	</Page>

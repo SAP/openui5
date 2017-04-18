@@ -28,12 +28,8 @@ sap.ui.define(['jquery.sap.global',
 		dependencies : ['sap.ui.core','sap.m'],
 		types: [],
 		interfaces: [],
-		controls: [
-			"sap.ui.documentation.controls.SimpleTree"
-		],
-		elements: [
-			"sap.ui.documentation.controls.SimpleTreeNode"
-		]
+		controls: [],
+		elements: []
 	});
 
 	var thisLibrary = sap.ui.documentation;
