@@ -10,6 +10,7 @@ When a file is consistently not following these rules and adhering to the rules 
 1.  [JavaScript Coding Guidelines](#javascript-coding-guidelines)
     *  [Code Formatting](#code-formatting)
     *  [Naming Conventions](#naming-conventions)
+    	*  [Static and Additional Prototype Functions](#Static and Additional Prototype Functions)
     *  [Creating Classes](#creating-classes)
     *  [Documentation (JSDoc)](#documentation-jsdoc)
 1.  [UI5 Control Development Guidelines](#ui5-control-development-guidelines)
@@ -121,6 +122,10 @@ But do NOT use hungarian notation for API method parameters: the documentation w
 | `sap-ui-static`          | ID of the static popup area of UI5                 |
 | `sap-ui-TraceWindowRoot` | ID of the `TraceWindowRoot`                        |
 | `sap-ui-xmldata`         | ID of the `XML Data Island`                        |
+
+#### Static and Additional Prototype Functions
+Besides the *fn*-prefix for anonymous function a function that returns a boolean value should be prefixed with *is*. For example <code>isOpen</code>.<br>
+This isn't necessary for functions that are created through the metadata for a control due to a boolean property, but for static functions and functions that are attached to the prototype like <code>Control.prototype.isOpen = function()</code>.
 
 ### Creating Classes
 
