@@ -909,7 +909,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 	/**
 	 * Creates a nested component that is declared in the <code>sap.ui5/componentUsages</code> section of
-	 * the descriptor (manifest.json) as follows:
+	 * the descriptor (manifest.json). The following snippet shows the declaration:
 	 * <pre>
 	 * {
 	 *   [...]
