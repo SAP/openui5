@@ -230,13 +230,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	Panel.prototype.setExpanded = function (bExpanded) {
-		if (bExpanded === this.getExpanded()) {
-			return this;
-		}
+		var bPrevExpanded = this.getExpanded();
 
 		this.setProperty("expanded", bExpanded, true);
 
-		if (!this.getExpandable()) {
+		bExpanded = this.getExpanded();
+
+		if (!this.getExpandable() || bExpanded === bPrevExpanded) {
 			return this;
 		}
 
