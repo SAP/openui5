@@ -8,6 +8,7 @@
  * @version @version@
  */
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/m/HBox",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/mvc/ViewType",
@@ -17,8 +18,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (HBox, View, ViewType, BaseComponent, JSONModel, OperationMode, ODataModel, TestUtils,
-		URI) {
+], function (jQuery, HBox, View, ViewType, BaseComponent, JSONModel, OperationMode, ODataModel,
+		TestUtils, URI) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -195,6 +196,12 @@ sap.ui.define([
 			// simulate a Fiori Elements app, where the view is only created after
 			// $metadata has been loaded
 			oModel.getMetaModel().requestObject("/SalesOrderList/").then(function () {
+				var oLastModified = oModel.getMetaModel().getLastModified();
+
+				jQuery.sap.log.debug("Last-Modified: " + oLastModified,
+					oLastModified && oLastModified.toISOString(),
+					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
+
 				oLayout.addItem(sap.ui.view({
 					async : true,
 					id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
