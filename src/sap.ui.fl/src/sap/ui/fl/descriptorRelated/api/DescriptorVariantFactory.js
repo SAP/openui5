@@ -266,9 +266,9 @@ sap.ui.define([
 		} else {
 			Utils.checkParameterAndType(mParameters, "layer", "string");
 			//TODO: is this necessary? already checked in Utils-method? -> checks only type
-			if (mParameters.layer != 'VENDOR' && !FlexUtils.isCustomerDependentLayer(mParameters.layer)) {
+			if (mParameters.layer != 'VENDOR' && mParameters.layer != 'PARTNER' && !FlexUtils.isCustomerDependentLayer(mParameters.layer)) {
 				//TODO: this should do a reject 	return Promise.reject(oError);
-				throw new Error("Parameter \"layer\" needs to be 'VENDOR' or customer dependent");
+				throw new Error("Parameter \"layer\" needs to be 'VENDOR', 'PARTNER' or customer dependent");
 			}
 		}
 

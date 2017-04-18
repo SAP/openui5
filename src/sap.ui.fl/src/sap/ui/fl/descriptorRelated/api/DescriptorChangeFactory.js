@@ -195,8 +195,8 @@ sap.ui.define([
 			//default to 'CUSTOMER'
 			mPropertyBag.layer = 'CUSTOMER';
 		} else {
-			if (sLayer != 'VENDOR' && !FlexUtils.isCustomerDependentLayer(sLayer)) {
-				throw new Error("Parameter \"sLayer\" needs to be 'VENDOR' or customer dependent");
+			if (sLayer != 'VENDOR' && sLayer != 'PARTNER' && !FlexUtils.isCustomerDependentLayer(sLayer)) {
+				throw new Error("Parameter \"layer\" needs to be 'VENDOR', 'PARTNER' or customer dependent");
 			}
 			mPropertyBag.layer = sLayer;
 		}
