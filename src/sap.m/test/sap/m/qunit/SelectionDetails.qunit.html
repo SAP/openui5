@@ -536,6 +536,7 @@
 			});
 
 		this.oSelectionDetails.addItem(oSelectionDetailsItem1).addItem(oSelectionDetailsItem2);
+		this.oSelectionDetails.attachActionPress(onActionPress);
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
@@ -549,6 +550,9 @@
 		assert.deepEqual(oSpy.getCall(0).args[0].items[0], oSelectionDetailsItem2, "Event triggered in correct context");
 		assert.equal(oSpy.getCall(0).args[0].level, "Item", "Event triggered with correct level parameter");
 		assert.equal(oSpy.getCall(0).args[0].action.getId(), "item2Action", "Event triggered with correct action parameter");
+		function onActionPress (oEvent) {
+			assert.deepEqual(oEvent.getParameter("items")[0], oSelectionDetailsItem2, "Event parameter items returns correctly");
+		}
 	});
 
 	QUnit.test("Press on the button results in action Press event", function(assert) {
