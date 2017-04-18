@@ -75,6 +75,7 @@
 												placeholder="{i18n>overviewSelectCategoryPlaceholder}"
 												tooltip="{i18n>overviewSelectCategoryTooltip}"
 												change="onSelectCategory"
+												visible="{= ${device>/system/phone} ? false : true}"
 												width="100%">
 												<layoutData>
 													<FlexItemData growFactor="1"/>
@@ -86,7 +87,7 @@
 
 									<OverflowToolbar
 										id="tagSelection"
-										visible="{= ${view>/iconFilterCount} !== 0 }"
+										visible="{= ${view>/iconFilterCount} !== 0 &amp;&amp; (${device>/system/phone} ? false : true)}"
 										width="auto"
 										design="Transparent"
 										content="{
@@ -103,45 +104,42 @@
 								<ScrollContainer id="preview" visible="false">
 									<layoutData><l:SplitterLayoutData size="350px"/></layoutData>
 									<l:VerticalLayout width="100%" class="sapUiContentPadding">
-										<Panel id="previewCopy" headerText="{i18n>previewCopyTitle}">
-											<FlexBox>
-												<items>
+										<Panel id="previewCopy" headerText="{i18n>previewCopyTitle}" class="previewCopy">
+											<l:FixFlex fixFirst="false" vertical="false">
+												<l:flexContent>
 													<Input
 														id="previewCopyCode"
 														editable="false"
-														value="sap-icon://{name}">
-														<layoutData>
-															<FlexItemData growFactor="1"/>
-														</layoutData>
-													</Input>
+														value="sap-icon://{name}"
+														class="sapUiCopyCode"/>
+												</l:flexContent>
+												<l:fixContent>
 													<Button
 														icon="sap-icon://copy"
 														type="Emphasized"
-														tooltip="{i18n>previewCopyCodeToClipboard}"
+														tooltip="{i18n>previewCopyToClipboard}"
 														press="onCopyCodeToClipboard"
 														class="sapUiTinyMarginBegin"/>
-												</items>
-											</FlexBox>
-											<FlexBox>
-												<items>
+												</l:fixContent>
+											</l:FixFlex>
+											<l:FixFlex fixFirst="false" vertical="false">
+												<l:flexContent>
 													<FormattedText
 														id="previewCopyIcon"
 														htmlText=""
-														class="sapUiCopyIcon sapMInputBaseReadonlyInner">
-														<layoutData>
-															<FlexItemData growFactor="1"/>
-														</layoutData>
-													</FormattedText>
+														class="sapUiCopyIcon sapMInputBaseReadonlyInner"/>
+												</l:flexContent>
+												<l:fixContent>
 													<Button
 														icon="sap-icon://copy"
 														type="Emphasized"
-														tooltip="{i18n>previewCopyIconToClipboard}"
+														tooltip="{i18n>previewCopyToClipboard}"
 														press="onCopyIconToClipboard"
 														class="sapUiTinyMarginBegin"/>
-												</items>
-											</FlexBox>
+												</l:fixContent>
+											</l:FixFlex>
 										</Panel>
-										<Panel headerText="{i18n>previewIconTitle}" backgroundDesign="Solid">
+										<Panel headerText="{i18n>previewIconTitle}" backgroundDesign="Solid" class="sapUiContentPadding">
 											<content>
 												<core:Icon id="previewIcon" src="sap-icon://{name}" class="previewIcon" />
 											</content>
