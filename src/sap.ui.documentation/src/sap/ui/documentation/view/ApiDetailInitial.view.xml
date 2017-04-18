@@ -17,15 +17,13 @@
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow
-						rowColorSet="ColorSet1">
+				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							title="UI5 Library Namespaces">
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow
-						rowColorSet="ColorSet1">
+				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							width="2">
 						<l:VerticalLayout
@@ -103,8 +101,7 @@
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow
-						rowColorSet="ColorSet1">
+				<l:BlockLayoutRow>
 					<l:BlockLayoutCell>
 						<l:VerticalLayout
 								width="100%">
@@ -182,8 +179,7 @@
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow
-						rowColorSet="ColorSet1">
+				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							width="2">
 						<l:VerticalLayout
