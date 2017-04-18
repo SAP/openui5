@@ -1281,6 +1281,14 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			return this._oPopover && this._oPopover.getAggregation("_popup").getDomRef(sSuffix);
 		};
 
+		// Prevent invalidation which will bubble up the parent chain
+		// if _oPopover is not shown
+		MessagePopover.prototype.invalidate = function () {
+			if (this._oPopover && this._oPopover.isOpen()) {
+				Control.prototype.invalidate.apply(this, arguments);
+			}
+		};
+
 		["addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
 			"setBusyIndicatorDelay", "getVisible", "setVisible", "getBusy", "setBusy"].forEach(function(sName){
 				MessagePopover.prototype[sName] = function() {
