@@ -111,7 +111,7 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-
+				this.mAggregatedQueryOptions = {};
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.oCachePromise = _SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;

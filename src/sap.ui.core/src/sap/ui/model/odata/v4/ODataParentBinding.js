@@ -43,7 +43,9 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 * @throws {Error}
 	 *   If there are pending changes or if <code>mParameters</code> is missing,
-	 *   contains binding-specific or unsupported parameters, or contains unsupported values.
+	 *   contains binding-specific or unsupported parameters, contains unsupported values, or
+	 *   contains the property "$expand" or "$select" when the model is in auto-$expand/$select
+	 *   mode.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -51,11 +53,22 @@ sap.ui.define([
 	ODataParentBinding.prototype.changeParameters = function (mParameters) {
 		var mBindingParameters = jQuery.extend(true, {}, this.mParameters),
 			bChanged = false,
-			sKey;
+			sKey,
+			that = this;
+
+		function checkExpandSelect(sName) {
+			if (that.oModel.bAutoExpandSelect && sName in mParameters) {
+				throw new Error("Cannot change $expand or $select parameter in "
+					+ "auto-$expand/$select mode: "
+					+ sName + "=" + JSON.stringify(mParameters[sName]));
+			}
+		}
 
 		if (!mParameters) {
 			throw new Error("Missing map of binding parameters");
 		}
+		checkExpandSelect("$expand");
+		checkExpandSelect("$select");
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot change parameters due to pending changes");
 		}
@@ -320,8 +333,9 @@ sap.ui.define([
 			// this.mAggregatedQueryOptions contains the aggregated query options of all child
 			// bindings which can use the cache of this binding or an ancestor binding merged
 			// with this binding's local query options
-			that.mAggregatedQueryOptions = that.mAggregatedQueryOptions ||
-				jQuery.extend(true, {}, mLocalQueryOptions);
+			if (Object.keys(that.mAggregatedQueryOptions).length === 0) {
+				that.mAggregatedQueryOptions = jQuery.extend(true, {}, mLocalQueryOptions);
+			}
 			if (oProperty && (oProperty.$kind === "Property"
 					|| oProperty.$kind === "NavigationProperty")) {
 				mWrappedChildQueryOptions = that.wrapChildQueryOptions(sBaseMetaPath,
@@ -518,6 +532,35 @@ sap.ui.define([
 			this.mAggregatedQueryOptions = mAggregatedQueryOptions;
 		}
 		return bCanMerge;
+	};
+
+	/**
+	 * Updates the aggregated query options of this binding with the values from the given
+	 * query options except the values for "$select" and "$expand" as these are computed by
+	 * auto-$expand/$select and must not be changed later on.
+	 * Note: If the aggregated query options contain a key which is not contained in the given
+	 * query options, it is deleted from the aggregated query options.
+	 *
+	 * @param {object} mNewQueryOptions
+	 *   The query options to update the aggregated query options
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.updateAggregatedQueryOptions = function (mNewQueryOptions) {
+		var aAllKeys = Object.keys(mNewQueryOptions)
+				.concat(Object.keys(this.mAggregatedQueryOptions)),
+			that = this;
+
+		aAllKeys.forEach(function (sName) {
+			if (sName === "$select" || sName === "$expand") {
+				return;
+			}
+			if (mNewQueryOptions[sName] === undefined) {
+				delete that.mAggregatedQueryOptions[sName];
+			} else {
+				that.mAggregatedQueryOptions[sName] = mNewQueryOptions[sName];
+			}
+		});
 	};
 
 	/**

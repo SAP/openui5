@@ -72,6 +72,7 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("sRefreshGroupId"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 		assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
 	});
 
