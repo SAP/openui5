@@ -191,6 +191,8 @@
 	});
 
 	asyncTest("metadata failed handling", function(){
+		expect(3);
+
 		var that = this;
 		var mOptions = {
 				json : true,
@@ -204,9 +206,9 @@
 			var oModel2 = initModel("/DOESNOTEXIST", mOptions);
 			oModel2.attachMetadataFailed(function(){
 				ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
+				start();
 			});
 			oModel.detachMetadataFailed(handleFailed);
-			start();
  		};
 		oModel.attachMetadataFailed(handleFailed);
 	});
