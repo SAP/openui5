@@ -384,10 +384,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	display: none;
 }
 
-.sapUiTableRowHighlights .sapUiTableColRowHdrIco {
-	left: @_sap_ui_table_Table_RowHighlightWidth;
-}
-
 .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled .sapUiTableColRowHdrIco {
 	display: block;
 }
@@ -443,6 +439,10 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 		height: 20px;
 	}
 
+}
+
+.sapUiTableRowHighlights .sapUiTableColRowHdrIco::after {
+	left: @_sap_ui_table_Table_RowHighlightWidth;
 }
 
 .sapUiTableColHdrScr {
