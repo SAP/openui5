@@ -224,6 +224,42 @@
 						key: "myValueFilter",
 						text: "Empty Filter"
 					}));
+
+					oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
+						key: "myNameFilter2",
+						text: "Name with no multiselect",
+						multiSelect: false,
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "name21",
+								text: "Headphone"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name22",
+								text: "Mousepad"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name23",
+								text: "Monitor"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name24",
+								text: "Backpack"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name25",
+								text: "Printer"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name26",
+								text: "Optic Mouse"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name27",
+								text: "Dock Station"
+							})
+						]
+					}));
 				},
 
 				addPresetFilterItems: function(oVsdInst) {
@@ -1390,6 +1426,28 @@
 
 				//Assert
 				equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
+
+				done();
+			}, 1000);
+		});
+
+		QUnit.test("Query filter search field works correctly when the FilterItem has multiSelect set to false", function (assert) {
+			var done = assert.async(),
+					that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[5]); // name2 details page
+
+			setTimeout(function() {
+				var oSearchField = that.oVSD._filterSearchField,
+						aFilteredItems;
+
+				//Assert
+				assert.ok(oSearchField, "There is a search field when multiSelect is set to false");
 
 				done();
 			}, 1000);
