@@ -28,13 +28,14 @@
 <script language="javascript" charset="utf-8"> // IE needs this :-/
 
 	var oModel;
-	var oInput1, oInput2, oInput3, oLabel1, oLabel2, oStreet, oZip, oNr;
+	var oInput1, oInput2, oInput3, oInput4, oLabel1, oLabel2, oStreet, oZip, oNr;
 
 	function createControls() {
 		// create some control for testing
 		oInput1 = new sap.m.Input({value:"{path:'/form/firstname'}"});
 		oInput2 = new sap.m.Input({value:"{/form/lastname}"});
 		oInput3 = new sap.m.Input({value:"{path:'/form/firstname'}"});
+		oInput4 = new sap.m.Input({value:"{path:'/form/firstname'}"});
 
 		oLabel1 = new sap.m.Label({text: "First name"});
 		oLabel1.setLabelFor(oInput1);
@@ -59,6 +60,7 @@
 		oInput1.placeAt("content");
 		oInput2.placeAt("content");
 		oInput3.placeAt("content");
+		oInput4.placeAt("content");
 		oZip.placeAt("content");
 		oStreet.placeAt("content");
 		oNr.placeAt("content");
@@ -68,6 +70,7 @@
 		oInput1.destroy();
 		oInput2.destroy();
 		oInput3.destroy();
+		oInput4.destroy();
 		oLabel1.destroy();
 		oLabel2.destroy();
 		oZip.destroy();
@@ -317,6 +320,57 @@
 		});
 
 		oMessageManager.addMessages(oMessage);
+	});
+
+	QUnit.test("multiple addMessage with type 'Information' and 'Error'", function(assert) {
+		var done = assert.async();
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+
+		var oMessageError = createMessage();
+		var oMessageInfo = createMessage(undefined, undefined, "Information");
+
+		// third input field for the same property "firstname", this label is taken
+		var oLabel4 = new sap.m.Label({text: "Nickname"});
+		oLabel4.setLabelFor(oInput4);
+
+		spyDataState(oInput4, function(sName, oDataState) {
+				assert.ok(oDataState.getMessages().length == 2, 'Message propagated to control: 2');
+				assert.ok(oInput1.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly to Error, Information is ignored');
+
+				oLabel4.destroy();
+				done();
+			}
+		);
+
+		// adding an Information type message should not break anymore
+		oMessageManager.addMessages(oMessageInfo);
+		oMessageManager.addMessages(oMessageError);
+	});
+
+	QUnit.test("single addMessage with type 'Information'", function(assert) {
+		var done = assert.async();
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+
+		var oMessageError = createMessage();
+		var oMessageInfo = createMessage(undefined, undefined, "Information");
+
+		// third input field for the same property "firstname", this label is taken
+		var oLabel4 = new sap.m.Label({text: "Nickname"});
+		oLabel4.setLabelFor(oInput4);
+
+		spyDataState(oInput4, function(sName, oDataState) {
+				assert.ok(oDataState.getMessages().length == 1, 'Message propagated to control: 1');
+				assert.ok(oInput1.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState is still None --> Nothing has changed!');
+
+				oLabel4.destroy();
+				done();
+			}
+		);
+
+		// adding an Information type message should not break anymore
+		oMessageManager.addMessages(oMessageInfo);
 	});
 
 	module("Bugfixes");
