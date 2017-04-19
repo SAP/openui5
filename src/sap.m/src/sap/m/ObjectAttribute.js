@@ -10,13 +10,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 
 	/**
-	 * Constructor for a new ObjectAttribute.
+	 * Constructor for a new <code>ObjectAttribute</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The ObjectAttribute control displays a text field that can be normal or active. The ObjectAttribute fires a press event when the user selects active text.
+	 * The <code>ObjectAttribute</code> control displays a text field that can be normal or active.
+	 * The <code>ObjectAttribute</code> fires a <code>press</code> event when the user chooses the active text.
+	 *
+	 * <b>Note:</b> If property <code>active</code> is set to <code>true</code>, only the value of the
+	 * <code>text</code> property is styled and acts as a link. In this case the <code>text</code>
+	 * property must also be set, as otherwise there will be no link displayed for the user.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *

@@ -89,7 +89,7 @@ sap.ui.define([
 				// Check for rendering updates
 				var sName = oParent.getMetadata().getName();
 				if (sName === "sap.ui.core.UIArea" && oParent.bNeedsRerendering) {
-					this._oLogger.debug("The control " + oControl + " is currently in an ui area that needs a new rendering");
+					this._oLogger.debug("The control " + oControl + " is currently in a UIArea that needs a new rendering");
 					return false;
 				}
 

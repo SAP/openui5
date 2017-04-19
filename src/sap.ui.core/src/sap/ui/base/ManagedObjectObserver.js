@@ -130,7 +130,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Observer.aggregationChange = function(oManagedObject, sName, sMutation, vObjects) {
-		//managed object does a aggregationChange.call(this, sName, sMutation, vObjects)
+		//managed object does an aggregationChange.call(this, sName, sMutation, vObjects)
 		handleChange("aggregations", oManagedObject, sName, function() {
 			return {
 				type: "aggregation",
@@ -150,7 +150,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Observer.associationChange = function(oManagedObject, sName, sMutation, vIds) {
-		//managed object does a associationChange.call(this, sName, sMutation, vIds)
+		//managed object does an associationChange.call(this, sName, sMutation, vIds)
 		handleChange("associations", oManagedObject, sName, function() {
 			return {
 				type: "association",

@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 					} else {
 
-						// assumption: an ELEMENT_NODE with non-XHTML namespace is a SAPUI5 control and the namespace equals the library name
+						// assumption: an ELEMENT_NODE with non-XHTML namespace is an SAPUI5 control and the namespace equals the library name
 						var aChildren = createControlOrExtension(xmlNode);
 
 						for (var i = 0; i < aChildren.length; i++) {

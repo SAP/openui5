@@ -123,14 +123,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	YearPicker.prototype.setDate = function(oDate){
 
-		if (oDate && !(oDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		// check the given object if it's a JS Date object
+		// null is a default value so it should not throw error but set it instead
+		oDate && CalendarUtils._checkJSDateObject(oDate);
 
 		var iYear = oDate.getFullYear();
-		if (iYear < 1 || iYear > 9999) {
-			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-		}
+		CalendarUtils._checkYearInValidRange(iYear);
 
 		var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
 		oUTCDate.setUTCMonth(0, 1); // start of year

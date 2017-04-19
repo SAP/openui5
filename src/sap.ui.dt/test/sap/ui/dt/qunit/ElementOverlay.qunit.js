@@ -261,6 +261,17 @@ sap.ui.define([	"sap/ui/dt/ElementOverlay",
 			}
 		});
 
+		QUnit.test("When the overlay and it's aggregations are rendered", function(assert) {
+			var oContentOverlay = this.oOverlay.getAggregationOverlay("content");
+			var oHeaderOverlay = this.oOverlay.getAggregationOverlay("customHeader");
+
+			var aAggregationOverlays = this.oOverlay.getAggregationOverlays();
+			var iIndexOfContentOverlay = aAggregationOverlays.indexOf(oContentOverlay);
+			var iIndexOfHeaderOverlay = aAggregationOverlays.indexOf(oHeaderOverlay);
+
+			assert.ok(iIndexOfContentOverlay > iIndexOfHeaderOverlay, "overlay for header aggregation is above section aggregation (according to dom order)");
+		});
+
 		QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
 			beforeEach : function(assert) {
 				var that = this;
@@ -635,93 +646,6 @@ sap.ui.define([	"sap/ui/dt/ElementOverlay",
 
 			var oAggregationOverlay = this.oOverlay.getAggregationOverlay("content");
 			assert.notOk(oAggregationOverlay, "the aggregation overlay is not created");
-		});
-
-		QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored and inHiddenTree", {
-			beforeEach : function() {
-				this.oSimpleForm = new SimpleForm({
-					content : [
-						new Label({text : "Label"})
-					]
-				});
-				this.oOverlay = new ElementOverlay({
-					designTimeMetadata : new ElementDesignTimeMetadata({
-						data : {
-							aggregations: {
-								form: {
-									ignore : false,
-									inHiddenTree : true
-								}
-							}
-						}
-					})
-				});
-				this.oOverlay.placeInOverlayContainer();
-				this.oOverlay.setElement(this.oSimpleForm);
-				this.oSimpleForm.placeAt("content");
-				// Render Controls
-				sap.ui.getCore().applyChanges();
-				this.oFormOverlay = new ElementOverlay({
-					element : this.oSimpleForm.getAggregation("form")
-				});
-				this.oFormOverlay.placeAt("content");
-				sap.ui.getCore().applyChanges();
-			},
-			afterEach : function() {
-				this.oSimpleForm.destroy();
-				this.oOverlay.destroy();
-			}
-		});
-
-		QUnit.test("then...", function(assert) {
-			var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
-			assert.strictEqual(oAggregationOverlay.isVisible(), true, "the aggregation overlay is marked as invisible");
-			assert.strictEqual(oAggregationOverlay.isInHiddenTree(), true, "the aggregation overlay is marked as inHiddenTree");
-			assert.strictEqual(oAggregationOverlay.hasStyleClass("sapUiDtOverlayInHiddenTree"), true, "the Overlay has the right StyleClass");
-
-			assert.strictEqual(this.oFormOverlay.getPublicParentElementOverlay(), this.oOverlay, "getPublicParentElementOverlay for hidden Form returns SimpleForm control");
-			assert.strictEqual(this.oFormOverlay.getPublicParentAggregationOverlay(), this.oOverlay.getAggregationOverlay("form"), "getPublicParentAggregationOverlay for hidden Form returns form aggregation overlay");
-		});
-
-		QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored and not inHiddenTree", {
-			beforeEach : function() {
-				this.oSimpleForm = new SimpleForm({
-					content : [
-						new Label({text : "Label"})
-					]
-				});
-				this.oOverlay = new ElementOverlay({
-					designTimeMetadata : new ElementDesignTimeMetadata({
-						data : {
-							aggregations: {
-								form: {
-									ignore : false
-								}
-							}
-						}
-					})
-				});
-				this.oOverlay.placeInOverlayContainer();
-				this.oOverlay.setElement(this.oSimpleForm);
-				this.oSimpleForm.placeAt("content");
-				// Render Controls
-				sap.ui.getCore().applyChanges();
-				this.oFormOverlay = new ElementOverlay({
-					element : this.oSimpleForm.getAggregation("form")
-				});
-				this.oFormOverlay.placeAt("content");
-				sap.ui.getCore().applyChanges();
-			},
-			afterEach : function() {
-				this.oSimpleForm.destroy();
-				this.oOverlay.destroy();
-			}
-		});
-
-		QUnit.test("then...", function(assert) {
-			var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
-			assert.strictEqual(oAggregationOverlay.isInHiddenTree(), false, "the aggregation overlay is marked as inHiddenTree");
-			assert.strictEqual(oAggregationOverlay.hasStyleClass("sapUiDtOverlayInHiddenTree"), false, "the Overlay has the right StyleClass");
 		});
 
 		QUnit.module("Given that an Overlay is created for a control with copyDom:true in the designtime Metadata", {

@@ -223,6 +223,42 @@
 						key: "myValueFilter",
 						text: "Empty Filter"
 					}));
+
+					oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
+						key: "myNameFilter2",
+						text: "Name with no multiselect",
+						multiSelect: false,
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "name21",
+								text: "Headphone"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name22",
+								text: "Mousepad"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name23",
+								text: "Monitor"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name24",
+								text: "Backpack"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name25",
+								text: "Printer"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name26",
+								text: "Optic Mouse"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name27",
+								text: "Dock Station"
+							})
+						]
+					}));
 				},
 
 				addPresetFilterItems: function(oVsdInst) {
@@ -1325,7 +1361,7 @@
 			setTimeout(function() {
 				assert.strictEqual(this.oVSD._filterDetailList.getItems()[0].getSelected(),  true, 'The first item is initially selected');
 
-//				//Act
+				//Act
 				this.oVSD._filterDetailList.getItems()[0].$().trigger('tap');
 
 				setTimeout(function () {
@@ -1392,6 +1428,7 @@
 					return oItem.getVisible();
 				};
 
+				
 			this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 			this.oVSD.open();
@@ -1455,7 +1492,6 @@
 				//Assert
 				assert.equal(aFilteredItems.length, 7, "Empty query in filter search shows all items.");
 
-
 				//Act
 				oSearchField.fireLiveChange({ newValue: "1" }); // Matches: none
 
@@ -1463,12 +1499,33 @@
 				console.log(that.oVSD._createSelectAllCheckbox(), that.oVSD._createSelectAllCheckbox().getSelected());
 				assert.equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
 
-
 				//Act
 				that.oVSD._switchToPage(3, that.oVSD.getFilterItems()[4]); // empty page
 
 				//Assert
 				assert.equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
+
+				done();
+			}, 1000);
+		});
+
+		QUnit.test("Query filter search field works correctly when the FilterItem has multiSelect set to false", function (assert) {
+			var done = assert.async(),
+				that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[5]); // name2 details page
+
+			setTimeout(function() {
+				var oSearchField = that.oVSD._filterSearchField,
+					aFilteredItems;
+
+				//Assert
+				assert.ok(oSearchField, "There is a search field when multiSelect is set to false");
 
 				done();
 			}, 1000);
@@ -1505,7 +1562,6 @@
 					oCallbackSpy.args.push([ arguments[0], arguments[1] ]);
 					return true;
 				};
-
 
 			this.oVSD.setSelectedFilterKeys(this.oFilterState);
 			this.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.Contains);
@@ -2540,6 +2596,26 @@
 				this.checkItemFocus(sItemToSelect + "-list-item");
 				done();
 			}.bind(this), 500);
+		});
+
+		QUnit.module("misc");
+
+		QUnit.test("none preset filter item has unique id", function(assert) {
+			//arrange
+			var oVSD1 = new sap.m.ViewSettingsDialog(),
+				aVSD1Items;
+
+			oVsdConfig.addPresetFilterItems(oVSD1);
+
+			//act
+			oVSD1.open();
+			aVSD1Items = oVSD1._presetFilterList.getItems();
+
+			//assert
+			assert.ok(aVSD1Items[aVSD1Items.length - 1].getId(), oVSD1._presetFilterList.getId() + "-none-list-item", "none preset filter item has correct id");
+
+			//clean
+			oVSD1.destroy();
 		});
 		</script>
 	</head>

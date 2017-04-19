@@ -198,24 +198,23 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		var oTargetParentInformation = OverlayUtil.getParentInformation(oTargetElementOverlay);
 		var oAggregationDesignTimeMetadata;
 
-		var oFirstHiddenAggregationOverlay = oMovedOverlay.getFirstHiddenAggregationOverlay();
-		var oFirstHiddenAggregationElement = oFirstHiddenAggregationOverlay.getElementInstance();
-		var oPublicParentElementOverlay = oMovedOverlay.getPublicParentElementOverlay();
+		var oParentAggregationOverlay = oMovedOverlay.getParentAggregationOverlay();
+		var oRelevantContainerElement = oMovedOverlay.getRelevantContainer();
+		var oParentElementOverlay = oMovedOverlay.getParentElementOverlay();
 
-		if (oFirstHiddenAggregationOverlay && oPublicParentElementOverlay) {
-			var sAggregationName = oFirstHiddenAggregationOverlay.getAggregationName();
-			oAggregationDesignTimeMetadata = oPublicParentElementOverlay.getDesignTimeMetadata().getAggregation(sAggregationName);
+		if (oParentAggregationOverlay && oParentElementOverlay) {
+			var sAggregationName = oParentAggregationOverlay.getAggregationName();
+			oAggregationDesignTimeMetadata = oParentElementOverlay.getDesignTimeMetadata().getAggregation(sAggregationName);
 		}
 
 		if (oTargetParentInformation.index !== -1) {
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
-				oAggregationDesignTimeMetadata.beforeMove(oFirstHiddenAggregationElement, oMovedElement);
+				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}
-			ElementUtil
-					.insertAggregation(oTargetParentInformation.parent, oTargetParentInformation.aggregation,
-						oMovedElement, oTargetParentInformation.index);
+			ElementUtil.insertAggregation(oTargetParentInformation.parent, oTargetParentInformation.aggregation,
+				oMovedElement, oTargetParentInformation.index);
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove){
-				oAggregationDesignTimeMetadata.afterMove(oFirstHiddenAggregationElement, oMovedElement);
+				oAggregationDesignTimeMetadata.afterMove(oRelevantContainerElement, oMovedElement);
 			}
 		}
 	};
@@ -233,24 +232,24 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		var oTargetParentElement = oTargetAggregationOverlay.getElementInstance();
 		var oAggregationDesignTimeMetadata;
 
-		var oFirstHiddenAggregationOverlay = oMovedOverlay.getFirstHiddenAggregationOverlay();
-		var oFirstHiddenAggregationElement = oFirstHiddenAggregationOverlay.getElementInstance();
-		var oPublicParentElementOverlay = oMovedOverlay.getPublicParentElementOverlay();
+		var oParentAggregationOverlay = oMovedOverlay.getParentAggregationOverlay();
+		var oRelevantContainerElement = oMovedOverlay.getRelevantContainer();
+		var oParentElementOverlay = oMovedOverlay.getParentElementOverlay();
 
-		if (oFirstHiddenAggregationOverlay && oPublicParentElementOverlay) {
-			var sAggregationName = oFirstHiddenAggregationOverlay.getAggregationName();
-			oAggregationDesignTimeMetadata = oPublicParentElementOverlay.getDesignTimeMetadata().getAggregation(sAggregationName);
+		if (oParentAggregationOverlay && oParentElementOverlay) {
+			var sAggregationName = oParentAggregationOverlay.getAggregationName();
+			oAggregationDesignTimeMetadata = oParentElementOverlay.getDesignTimeMetadata().getAggregation(sAggregationName);
 		}
 
 		var oSourceAggregationOverlay = oMovedOverlay.getParent();
 		if (oTargetAggregationOverlay !== oSourceAggregationOverlay) {
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
-				oAggregationDesignTimeMetadata.beforeMove(oFirstHiddenAggregationElement, oMovedElement);
+				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}
 			var sTargetAggregationName = oTargetAggregationOverlay.getAggregationName();
 			ElementUtil.addAggregation(oTargetParentElement, sTargetAggregationName, oMovedElement);
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove){
-				oAggregationDesignTimeMetadata.afterMove(oFirstHiddenAggregationElement, oMovedElement);
+				oAggregationDesignTimeMetadata.afterMove(oRelevantContainerElement, oMovedElement);
 			}
 		}
 	};

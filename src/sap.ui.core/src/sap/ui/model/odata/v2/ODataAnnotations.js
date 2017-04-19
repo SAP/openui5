@@ -171,12 +171,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * An annotation source, containing either an URL to be loaded or an XML string to be parsed.
+	 * An annotation source, containing either a URL to be loaded or an XML string to be parsed.
 	 *
 	 * @typedef {map} ODataAnnotations~Source
 	 * @property {string} type The source type. Either "url" or "xml".
 	 * @property {string|Promise} data Either the data or a Promise that resolves with the data string as argument.
-	 *           In case the type is set to "url" the data must be an URL, in case it is set to "xml" the data must be
+	 *           In case the type is set to "url" the data must be a URL, in case it is set to "xml" the data must be
 	 *           an XML string.
 	 * @property {string} [xml] (Set internally, available in event-callback) The XML string of the annotation source
 	 * @property {Document} [document] (Set internally, available in event-callback) The parsed XML document of the annotation source
@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * (loaded,) parsed and merged into the annotation data.
 	 * The following parameters will be set on the event object that is given to the callback function:
 	 *   <code>source</code> - A map containing the properties <code>type</code> - containing either "url" or "xml" - and <code>data</code> containing
-	 *              the data given as source, either an URL or an XML string depending on how the source was added.
+	 *              the data given as source, either a URL or an XML string depending on how the source was added.
 	 *
 	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 	 * @param {function} fnFunction The event callback. This function will be called in the context of the oListener
@@ -324,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * merged into the annotation data.
 	 * The following parameters will be set on the event object that is given to the callback function:
 	 *   <code>source</code> - A map containing the properties <code>type</code> - containing either "url" or "xml" - and <code>data</code> containing
-	 *              the data given as source, either an URL or an XML string depending on how the source was added.
+	 *              the data given as source, either a URL or an XML string depending on how the source was added.
 	 *   <code>error</code>  - An Error object describing the problem that occurred
 	 *
 	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
@@ -642,7 +642,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Parses a source as xml an returns a promise that resolves when the source's <code>xml</code> property string could be
+	 * Parses a source as XML and returns a promise that resolves when the source's <code>xml</code> property string could be
 	 * successfully parsed as an XML document.
 	 *
 	 * @param {ODataAnnotations~Source} mSource The source that should be parsed with its <code>xml</code> property set to a string

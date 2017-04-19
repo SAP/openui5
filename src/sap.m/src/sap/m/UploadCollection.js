@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			change : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileDeleted : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			filenameLengthExceed : {
 				parameters : {
 					/**
-					* An unique Id of the attached document.
+					* A unique Id of the attached document.
 					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					*/
@@ -307,7 +307,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileRenamed : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					 */
 					fileName : {type : "string"},
 					/**
-					 * The renamed UI element as a UploadCollectionItem.
+					 * The renamed UI element as an UploadCollectionItem.
 					 * Since version 1.28.0.
 					 */
 					item : {type : "sap.m.UploadCollectionItem"}
@@ -333,7 +333,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileSizeExceed : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
@@ -359,7 +359,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			typeMissmatch : {
 				parameters : {
 					/**
-					* An unique Id of the attached document.
+					* A unique Id of the attached document.
 					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. Use parameter files instead.
 					*/
@@ -409,6 +409,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					 * A list of uploaded files. Each entry contains the following members.
 					 * fileName	: The name of a file to be uploaded.
 					 * response	: Response message which comes from the server. On the server side, this response has to be put within the 'body' tags of the response document of the iFrame. It can consist of a return code and an optional message. This does not work in cross-domain scenarios.
+					 * reponse	: deprecated Since version 1.48.0. This parameter is deprecated, use parameter response instead.
 					 * responseRaw : HTTP-Response which comes from the server. This property is not supported by Internet Explorer Versions lower than 9.
 					 * status	: Status of the XHR request. This property is not supported by Internet Explorer 9 and lower.
 					 * headers : HTTP-Response-Headers which come from the server. Provided as a JSON-map, i.e. each header-field is reflected by a property in the header-object, with the property value reflecting the header-field's content. This property is not supported by Internet Explorer 9 and lower.
@@ -717,6 +718,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		} else {
 			this._setFileUploaderVisibility(uploadButtonInvisible);
 		}
+
+		if (this._bDragDropEnabled) {
+			this._unbindDragEnterLeave();
+			this._bDragDropEnabled = false;
+		} else {
+			this._bindDragEnterLeave();
+		}
 		return this;
 	};
 
@@ -776,7 +784,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Sets a UploadCollectionItem to be selected by id. In single mode, the method removes the previous selection.
+	 * @description Sets an UploadCollectionItem to be selected by id. In single mode, the method removes the previous selection.
 	 * @param {string} id The id of the item whose selection to be changed.
 	 * @param {boolean} select Sets selected status of the item. Default value is true.
 	 * @returns {sap.m.UploadCollection} The current UploadCollection
@@ -1068,7 +1076,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._bindDragEnterLeave = function() {
-		this._bDragDropEnabled = this.getUploadEnabled();
+		this._bDragDropEnabled = this._isDragAndDropAllowed();
 		if (!this._bDragDropEnabled) {
 			return;
 		}
@@ -1224,6 +1232,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 
 		return false;
+	};
+
+	/**
+	 * Checks if drag and drop is allowed.
+	 * @returns {boolean}
+	 * @private
+	 */
+	UploadCollection.prototype._isDragAndDropAllowed = function() {
+		return this.getUploadEnabled() && !this.getUploadButtonInvisible();
 	};
 
 	/**
@@ -1571,7 +1588,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Gets a file name which is a sap.m.Link in display mode and a sap.m.Input with a description (file extension) in edit mode
+	 * @description Gets a file name which is an sap.m.Link in display mode and an sap.m.Input with a description (file extension) in edit mode
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {object} that Context
 	 * @return {sap.m.Link | sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
@@ -1874,7 +1891,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			return oItem.getBindingContext() ? oItemsBinding.getGroup(oItem.getBindingContext()) : null;
 		};
 		var fnGroupKey = function(oItem) {
-			return fnGroup(oItem).key;
+			return fnGroup(oItem) && fnGroup(oItem).key;
 		};
 
 		jQuery.each(aItems, function (iIndex, oItem) {
@@ -1885,12 +1902,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 						that._oList.addItemGroup(fnGroup(oItem), fnGroupHeader(fnGroup(oItem)), true);
 					} else if (fnGroup(oItem)) {
 						that._oList.addItemGroup(fnGroup(oItem), null, true);
-						bGroupCreated = true;
-						sGroupKey = fnGroupKey(oItem);
 					}
+					bGroupCreated = true;
+					sGroupKey = fnGroupKey(oItem);
 				}
 			}
-
 			if (!oItem._status) {
 				//Set default status value -> UploadCollection._displayStatus
 				oItem._status = UploadCollection._displayStatus;
@@ -2679,7 +2695,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				files : [{
 					fileName : oEvent.getParameter("fileName") || sUploadedFile,
 					responseRaw : oEvent.getParameter("responseRaw"),
-					reponse : oEvent.getParameter("response"),
+					reponse : oEvent.getParameter("response"), // deprecated event property
+					response : oEvent.getParameter("response"),
 					status : oEvent.getParameter("status"),
 					headers : oEvent.getParameter("headers")
 				}]

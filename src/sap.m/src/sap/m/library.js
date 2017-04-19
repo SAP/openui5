@@ -695,7 +695,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Time : "Time",
 
 		/**
-		 * >An input control for specifying a Integer value
+		 * >An input control for specifying an Integer value
 		 * @public
 		 */
 		Integer : "Integer",
@@ -3139,7 +3139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			$TouchTarget = jQuery(oTouchList[i].target);
 
 			//	If the current target have only one HTML element or
-			//	have a HTML element antecessor that match with the given element id.
+			//	have an HTML element antecessor that match with the given element id.
 			if ((iElementChildrenL === 0  && $TouchTarget.is(vElement)) ||
 				(vElement[0].contains($TouchTarget[0]))) {
 
@@ -3611,7 +3611,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	}());
 
 	/**
-	 * Suggestion helper for sap.m.Input fields: Creates a multi column suggest list for a sap.m.Input field based on a ValueList
+	 * Suggestion helper for sap.m.Input fields: Creates a multi column suggest list for an sap.m.Input field based on a ValueList
 	 * annotation. The ValueList annotation will be resolved via the binding information of the Input field.
 	 *
 	 * If the annotation describes multiple input parameter the suggest provider will resolve all of these relative to the

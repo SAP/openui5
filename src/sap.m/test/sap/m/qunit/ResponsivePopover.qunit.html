@@ -231,7 +231,7 @@
 			// Assert
 			assert.strictEqual(this.oResponsivePopover instanceof sap.m.ResponsivePopover, true, "Should return a new instance of ResponsivePopover");
 			assert.notEqual(this.oResponsivePopover.getContent(), oClone.getContent(), "The conents of the clone and original ResponsivePopover should not be same(e.g different IDs)");
-			assert.strictEqual(oClone.getContent()[0].getParent(), oClone._oControl, "Cloned content parent should be the clone instance");
+			assert.strictEqual(oClone.getContent()[0].getParent().getParent(), oClone, "Cloned content parent should be the clone instance");
 			assert.strictEqual(oClone.getContent()[0] instanceof sap.m.List, true, "The first control in the content should be a list");
 		});
 
@@ -327,7 +327,7 @@
 				assert.ok(true, "This is expected to pass because custom property is only set on ResponsivePopover itself and not on aggregated controls");
 		});
 
-		QUnit.test("ResponsivePopover should pass the data from the bound model to the inner control", function (assert) {
+		QUnit.test("ResponsivePopover should pass the data from the binded model to the inner control", function (assert) {
 			// Arrange
 			this.oResponsivePopover = new sap.m.ResponsivePopover();
 			this.oResponsivePopover.setModel(oSimpleJSONModel);
@@ -342,27 +342,6 @@
 
 			// Assert
 			assert.equal(this.oResponsivePopover._oControl.getTitle(), "Title", "Title should be passed to inner popover");
-		});
-
-		QUnit.test("ResponsivePopover should propagate model to the inner control when it's added as a dependent", function(assert) {
-			var oContentText = new sap.m.Text({
-				text: "{titleName}"
-			});
-			this.oResponsivePopover = new sap.m.ResponsivePopover({
-				content: [oContentText]
-			});
-			this.oResponsivePopover.bindProperty("title", "titleName");
-
-			var oText = new sap.m.Text();
-			oText.setModel(oSimpleJSONModel);
-			oText.bindElement({
-				path: "/data/0"
-			});
-			oText.addDependent(this.oResponsivePopover);
-
-			assert.equal(this.oResponsivePopover.getTitle(), "Title", "Title binding should be resolved");
-			assert.equal(oContentText.getText(), "Title", "Text Binding in the content area is resolved");
-			oText.destroy();
 		});
 
 		QUnit.test("ResponsivePopover with ariaLabelledBy", function (assert) {

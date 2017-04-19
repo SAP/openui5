@@ -227,6 +227,9 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.onAfterRendering = function () {
+
+		var bShouldSnapWithScroll;
+
 		if (this._preserveHeaderStateOnScroll()) {
 			// Ensure that in this tick DP and it's aggregations are rendered
 			jQuery.sap.delayedCall(0, this, this._overridePreserveHeaderStateOnScroll);
@@ -241,6 +244,19 @@ sap.ui.define([
 		this._updateScrollBar();
 		this._attachPageChildrenAfterRenderingDelegates();
 		this._resetPinButtonState();
+
+		if (!this.getHeaderExpanded()) {
+			this._snapHeader(false);
+
+			bShouldSnapWithScroll = this.getHeader() && !this.getPreserveHeaderStateOnScroll() && this._canSnapHeaderOnScroll();
+
+			if (bShouldSnapWithScroll) {
+				this._setScrollPosition(this._getSnappingHeight());
+			} else {
+				this._toggleHeaderVisibility(false);
+				this._moveHeaderToTitleArea();
+			}
+		}
 	};
 
 	DynamicPage.prototype.exit = function () {
@@ -259,22 +275,21 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.setHeaderExpanded = function (bHeaderExpanded) {
+		if (this._bPinned) { // operation not allowed
+			return this;
+		}
+
 		if (this.getHeaderExpanded() === bHeaderExpanded) {
 			return this;
 		}
 
-		this._titleExpandCollapseWhenAllowed();
-		return this;
-	};
-
-	DynamicPage.prototype.setPreserveHeaderStateOnScroll = function (bPreserveHeaderStateOnScroll) {
-		var vResult = this.setProperty("preserveHeaderStateOnScroll", bPreserveHeaderStateOnScroll, false);
-
-		if (bPreserveHeaderStateOnScroll || this._shouldExpand()) {
-			this.setHeaderExpanded(true);
+		if (this.getDomRef()) {
+			this._titleExpandCollapseWhenAllowed();
 		}
 
-		return vResult;
+		this.setProperty("headerExpanded", bHeaderExpanded, true);
+
+		return this;
 	};
 
 	DynamicPage.prototype.setToggleHeaderOnTitleClick = function (bToggleHeaderOnTitleClick) {
@@ -316,7 +331,13 @@ sap.ui.define([
 		}
 
 		this._headerBiggerThanAllowedHeight = true;
-		this._moveHeaderToContentArea(true);
+
+		//move the header to content
+		if (this.getHeaderExpanded()) {
+			this._moveHeaderToContentArea(true);
+		} else {
+			this._adjustSnap(); // moves the snapped header to content if possible
+		}
 		this._updateScrollBar();
 	};
 
@@ -525,8 +546,7 @@ sap.ui.define([
 
 		var iOffset = this.getHeader().$().outerHeight(),
 			iCurrentScrollPosition = Math.ceil(this._getScrollPosition()),
-			iNewScrollPosition,
-			bSuppressSnap = this._bHeaderInTitleArea;
+			iNewScrollPosition;
 
 		if (!iOffset) {
 			return;
@@ -538,15 +558,7 @@ sap.ui.define([
 
 		iNewScrollPosition = Math.max(iNewScrollPosition, 0);
 
-		this._setScrollPosition(iNewScrollPosition, bSuppressSnap);
-	};
-
-	/**
-	 * Scrolls the content to the snap point(header`s height + 1).
-	 * @private
-	 */
-	DynamicPage.prototype._scrollToSnapHeader = function () {
-		this._setScrollPosition(this._getSnappingHeight() + 1);
+		this._setScrollPosition(iNewScrollPosition, true /* suppress toggle header on scroll */);
 	};
 
 	/**
@@ -641,7 +653,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getScrollPosition = function () {
-		return exists(this.$wrapper) ? this.$wrapper.scrollTop() : 0;
+		return this.getScrollDelegate().getScrollTop();
 	};
 
 	/**
@@ -664,7 +676,14 @@ sap.ui.define([
 			this._bSuppressToggleHeaderOnce = true;
 		}
 
-		this.$wrapper.scrollTop(iNewScrollPosition);
+		if (!this.getScrollDelegate()._$Container) {
+			// workaround for the problem that the scrollEnablement obtains this reference only after its hook to onAfterRendering of the dynamicPage is called
+			this.getScrollDelegate()._$Container = this.$wrapper;
+		}
+		// we need to scroll via the scrollEnablement
+		// in order to let it know of the latest scroll position in the earliest,
+		// otherwise it will revert the operation on its own refresh
+		this.getScrollDelegate().scrollTo(0, iNewScrollPosition);
 	};
 
 	/**
@@ -673,7 +692,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._shouldSnap = function () {
-		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() > this._getSnappingHeight()
+		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() >= this._getSnappingHeight()
 			&& this.getHeaderExpanded() && !this._bPinned;
 	};
 
@@ -683,7 +702,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._shouldExpand = function () {
-		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() <= this._getSnappingHeight()
+		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() < this._getSnappingHeight()
 			&& !this.getHeaderExpanded() && !this._bPinned;
 	};
 
@@ -693,7 +712,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._headerScrolledOut = function () {
-		return this._getScrollPosition() > this._getSnappingHeight();
+		return this._getScrollPosition() >= this._getSnappingHeight();
 	};
 
 	/**
@@ -712,7 +731,12 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._canSnapHeaderOnScroll = function () {
-		return this._getMaxScrollPosition() > (this._getSnappingHeight() + 1);
+		var iMaxScrollPosition = this._getMaxScrollPosition();
+
+		if (this._bHeaderInTitleArea) { // when snapping with scroll, the header will be in the content area
+			iMaxScrollPosition += this._getHeaderHeight();
+		}
+		return iMaxScrollPosition > this._getSnappingHeight();
 	};
 
 	/**
@@ -815,9 +839,10 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._measureScrollBarOffsetHeight = function () {
 		var iHeight = 0,
-			bSnapped = !this.getHeaderExpanded();
+			bSnapped = !this.getHeaderExpanded(),
+			bHeaderInTitle = this._bHeaderInTitleArea;
 
-		if (this._preserveHeaderStateOnScroll() || this._bPinned) {
+		if (this._preserveHeaderStateOnScroll() || this._bPinned || (!bSnapped && this._bHeaderInTitleArea)) {
 			iHeight = this._getTitleAreaHeight();
 			jQuery.sap.log.debug("DynamicPage :: preserveHeaderState is enabled or header pinned :: title area height" + iHeight, this);
 			return iHeight;
@@ -833,8 +858,8 @@ sap.ui.define([
 
 		iHeight = this._getTitleHeight();
 
-		if (this._shouldExpand() && !bSnapped) {
-			this._expandHeader();
+		if (!bSnapped) { // restore expanded state
+			this._expandHeader(bHeaderInTitle); // restore header position
 		}
 
 		jQuery.sap.log.debug("DynamicPage :: snapped mode :: title height " + iHeight, this);
@@ -1049,6 +1074,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Toggles between the two possible snapping modes:
+	 * (1) snapping with scrolling-out the header - when enough content is available to allow snap header on scroll
+	 * (2) snapping with hiding the header - when not enough content is available to allow snap header on scroll
+	 * @private
+	 */
+	DynamicPage.prototype._adjustSnap = function () {
+		var oDynamicPageHeader = this.getHeader(),
+			bIsSnapped = !this.getHeaderExpanded(),
+			bCanSnapWithScroll,
+			bIsSnappedWithoutScroll;
+
+		if (!oDynamicPageHeader || !bIsSnapped) {
+			return; //no adjustment needed
+		}
+
+		bCanSnapWithScroll = !this._preserveHeaderStateOnScroll() && this._canSnapHeaderOnScroll();
+		bIsSnappedWithoutScroll = bIsSnapped && oDynamicPageHeader.$().hasClass("sapFDynamicPageHeaderHidden");
+
+		if (bCanSnapWithScroll
+			&& bIsSnappedWithoutScroll) {
+
+			// switch to snapping *with* scroll
+			this._toggleHeaderVisibility(true);
+			this._moveHeaderToContentArea(true);
+
+		} else if (!bCanSnapWithScroll
+			&& !bIsSnappedWithoutScroll) {
+
+			// switch to snapping *without* scroll
+			this._moveHeaderToTitleArea(true);
+			this._toggleHeaderVisibility(false);
+		}
+	};
+
+	/**
 	 * EVENT HANDLERS
 	 */
 
@@ -1091,6 +1151,8 @@ sap.ui.define([
 			this._updateFitContainer(bNeedsVerticalScrollbar);
 		}
 
+		this._adjustSnap();
+
 		if (!this._bExpandingWithAClick) {
 			this._updateScrollBar();
 		}
@@ -1116,6 +1178,8 @@ sap.ui.define([
 				this._togglePinButtonVisibility(true);
 			}
 		}
+
+		this._adjustSnap();
 
 		this._updateScrollBar();
 		this._updateMedia(oEvent.size.width);
@@ -1166,6 +1230,7 @@ sap.ui.define([
 		} else if (this._shouldExpand()) {
 
 			this._expandHeader();
+			this._toggleHeaderVisibility(true);
 			this._updateHeaderARIAState(true);
 
 		} else if (!this._bPinned && this._bHeaderInTitleArea) {
@@ -1185,7 +1250,7 @@ sap.ui.define([
 		}
 
 		this.allowCustomScroll = true;
-		this.$wrapper.scrollTop(this._getScrollBar().getScrollPosition());
+		this._setScrollPosition(this._getScrollBar().getScrollPosition());
 	};
 
 	/**
@@ -1203,8 +1268,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._titleExpandCollapseWhenAllowed = function () {
+		if (this._bPinned) { // operation not allowed
+			return this;
+		}
 		// Header scrolling is not allowed or there is no enough content scroll bar to appear
-		if (this._preserveHeaderStateOnScroll() || !this._needsVerticalScrollBar()) {
+		if (this._preserveHeaderStateOnScroll() || !this._canSnapHeaderOnScroll() || !this.getHeader()) {
 			if (!this.getHeaderExpanded()) {
 				// Show header, pushing the content down
 				this._expandHeader(false);
@@ -1221,16 +1289,11 @@ sap.ui.define([
 			this._expandHeader(true);
 			this._bExpandingWithAClick = false;
 
-		} else if (this._headerSnapAllowed()) {
-
-			if (this._bHeaderInTitleArea) {
-				// Header is scrolled out completely, then snap
-				this._snapHeader(true);
-			} else if (this._canSnapHeaderOnScroll()){
-				// Header is not scrolled out completely, then scroll to snap
-				this._scrollToSnapHeader();
-			} else {
-				jQuery.sap.log.warning("DynamicPage :: couldn't snap header. There isn't enough content to be scrolled", this);
+		} else { //should snap
+			var bMoveHeaderToContent = this._bHeaderInTitleArea;
+			this._snapHeader(bMoveHeaderToContent);
+			if (!bMoveHeaderToContent) {
+				this._setScrollPosition(this._getSnappingHeight());
 			}
 		}
 	};

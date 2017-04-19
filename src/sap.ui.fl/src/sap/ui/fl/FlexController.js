@@ -20,7 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Retrieves changes (LabelChange, etc.) for a sap.ui.core.mvc.View and applies these changes
+	 * Retrieves changes (LabelChange, etc.) for an sap.ui.core.mvc.View and applies these changes
 	 *
 	 * @param {string} sComponentName - Component name the flexibility controller is responsible for
 	 * @param {string} sAppVersion - Current version of the application
@@ -177,7 +177,7 @@ sap.ui.define([
 
 	/**
 	 * Adds an already prepared change to the flex persistence (not yet saved). This method will not call
-	 * createChange again, but expects an fully computed and appliable change.
+	 * createChange again, but expects a fully computed and appliable change.
 	 * Will be saved with #saveAll.
 	 *
 	 * @param {object} oChange property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
@@ -618,7 +618,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._setMergeError = function () {
-		return FlexSettings.getInstance(this.getComponentName(), this.getAppVersion()).then(function (oSettings) {
+		return FlexSettings.getInstance().then(function (oSettings) {
 			oSettings.setMergeErrorOccured(true);
 		});
 	};

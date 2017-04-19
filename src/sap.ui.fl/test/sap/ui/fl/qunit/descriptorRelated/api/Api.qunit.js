@@ -975,6 +975,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 						"reference": "a.reference"
 					})
 			}));
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1128,6 +1136,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"reference": "a.reference"
 				})
 			}));
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1188,7 +1204,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			DescriptorVariantFactory.createNew({
 				"id" : "a.id",
 				"reference" : "a.reference",
-				"layer" : "PARTNER"	//"VENDOR" or "PARTNER" expected
+				"layer" : "USER"	//"USER" not supported
 			})
 		}.bind(this));
 
@@ -1211,6 +1227,16 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			"layer": "CUSTOMER_BASE"
 		}).then(function(oDescriptorVariant) {
 			assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER_BASE');
+		});
+	});
+	
+	QUnit.test("createNew - layer - set to PARTNER", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference",
+			"layer": "PARTNER"
+		}).then(function(oDescriptorVariant) {
+			assert.equal(oDescriptorVariant._getMap().layer, 'PARTNER');
 		});
 	});
 
@@ -1314,6 +1340,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 						"reference": "a.reference"
 					})
 			}));
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1453,6 +1487,18 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					});
 		});
 	});
+
+	QUnit.test("createNew - with layer PARTNER", function(assert) {
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			new DescriptorChangeFactory().createNew(
+					"a.reference",
+					oDescriptorInlineChange,
+					'PARTNER'
+					).then(function(oDescriptorChange) {
+						assert.equal(oDescriptorChange._mChangeFile.layer, 'PARTNER' );
+					});
+		});
+	});
 	
 	QUnit.test("getJson", function(assert) {
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
@@ -1490,8 +1536,19 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 
 	QUnit.module("DescriptorChangeFactory", {
 		beforeEach: function(assert) {
+			this._oSandbox = sinon.sandbox.create();
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
+			this._oSandbox.restore();
+			delete this._oSandbox;
 		}
 	});
 	
@@ -1517,7 +1574,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"layer": "CUSTOMER"
 				})
 			}));
-
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1573,12 +1637,12 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 				})
 			}));
 			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
-					new Settings({
-							"isKeyUser":false,
-							"isAtoAvailable":false,
-							"isAtoEnabled":true,
-							"isProductiveSystem":false
-					})
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
 			));
 
 		},
@@ -1634,6 +1698,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"reference": "a.reference"
 				})
 			}));
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();

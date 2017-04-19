@@ -26,6 +26,7 @@ sap.ui.require([
 	jQuery.sap.require("fragments.TextList");
 	jQuery.sap.require("fragments.ForwardText");
 	jQuery.sap.require("fragments.Field");
+    jQuery.sap.require("fragments.TemplateTest");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.FragmentControl",
@@ -43,9 +44,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 
+    QUnit.test("Test to check if we have an invalidate setting in the core", function(assert) {
+        var oTemplateTest = new fragments.TemplateTest();
+        oTemplateTest.placeAt("content");
+        var oMetadataPropertyText = oTemplateTest.getMetadata().getProperty("text");
+        strictEqual(oMetadataPropertyText.appData.invalidate, "template", "This test should fail once core also has an invalidate");
+    });
+
 	QUnit.test("Simple Text Fragment Control - properties", function(assert)
 	{
-
 		//create a SimpleText FragmentControl
 		var oSimpleText = new fragments.SimpleText();
 		oSimpleText.placeAt("content");

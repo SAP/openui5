@@ -680,7 +680,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 					this._getDialog().close();
 				}
 			} else {
-				// try to find and update a unified menu item corresponding to the source instance on which a property was changed
+				// try to find and update an unified menu item corresponding to the source instance on which a property was changed
 				var sUnifiedMenuItemId = this._generateUnifiedMenuItemId(oEvent.getSource().getId());
 				!!sUnifiedMenuItemId && sap.ui.getCore().byId(sUnifiedMenuItemId).setProperty(sPropertyKey, oPropertyValue);
 			}

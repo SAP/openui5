@@ -400,7 +400,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 
 	/**
-	 * Removes an collection from the aggregation named <code>collections</code>.
+	 * Removes a collection from the aggregation named <code>collections</code>.
 	 *
 	 * @param {int | string | sap.ui.ux3.Collection} vCollection the collection to remove or its index or id
 	 * @return {sap.ui.ux3.Collection} the removed collection or null
@@ -496,7 +496,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 
 	/**
-	 * Removes an content from the aggregation named <code>content</code>.
+	 * Removes a content from the aggregation named <code>content</code>.
 	 *
 	 * @param {int | string | sap.ui.core.Control} vContent the content to remove or its index or id
 	 * @return {sap.ui.core.Control} the removed content or null

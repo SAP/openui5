@@ -27,10 +27,13 @@
 			var sHeaderContent;
 			aHeaders.forEach(function(_aHeaderFields) {
 				if (_aHeaderFields[0] === sHeaderName) {
-					oHeaderContent = _aHeaderFields[1];
+					sHeaderContent = _aHeaderFields[1];
 				}
 			});
-			return oHeaderContent;
+			if (!sHeaderContent) {
+				throw new Error(sHeaderName + " header was not found!");
+			}
+			return sHeaderContent;
 		}
 
 		QUnit.module("Activation", {
@@ -215,6 +218,8 @@
 				assert.ok(aFESRopt[8].length <= 16, "client_processing_time - length");
 				assert.ok(!isNaN(aFESRopt[8]), "client_processing_time is a number");
 				assert.ok(aFESRopt[9] === "X" || !aFESRopt[9], "compressed");
+				assert.ok(!isNaN(aFESRopt[14]), "global busy indicator duration is a number");
+				assert.ok(aFESRopt[18].length <= 70, "application_name 70 chars - length");
 			});
 
 
@@ -379,25 +384,56 @@
 			});
 
 			QUnit.module("component integration", {
-				afterEach: function() {
+				beforeEach: function() {
+					jQuery.sap.fesr.setActive(true);
+					jQuery.sap.interaction.notifyStepStart(null, true);
+  				}, afterEach: function() {
+					jQuery.sap.interaction.notifyStepEnd();
 					jQuery.sap.measure.endInteraction(true);
+					jQuery.sap.fesr.setActive(false);
 					jQuery.sap.measure.clearInteractionMeasurements();
-				}
+  				}
 			});
 
 			QUnit.test("named component", function(assert) {
-				jQuery.sap.fesr.setActive(true);
-				jQuery.sap.interaction.notifyStepStart(null, true);
+				var sName = "foo.sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js";
+
 				try {
 					// mock a component initialization
-					sap.ui.component({name:"foo"});
+					sap.ui.component({name:sName});
 				} catch(e) {/* we do not really want to load the component */}
-				jQuery.sap.interaction.notifyStepEnd();
-				jQuery.sap.interaction.notifyStepStart(null, true);
-				var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-				assert.equal(oMeasurement.component, "foo");
-				jQuery.sap.interaction.notifyStepEnd();
-				jQuery.sap.fesr.setActive(false);
+
+				var fnSpy = this.spy;
+				var done = assert.async();
+				var oReq = new XMLHttpRequest();
+				oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now());
+				oReq.send();
+
+				// we need to use the timeout here, as the request-timing is not found otherwise
+				setTimeout(function() {
+
+					jQuery.sap.interaction.notifyStepEnd();
+					jQuery.sap.interaction.notifyStepStart(null, true);
+
+					var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+					assert.strictEqual(oMeasurement.component, sName);
+
+					oReq = new XMLHttpRequest();
+					var spy = fnSpy(oReq, "setRequestHeader");
+					oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now());
+					oReq.send();
+
+					var aHeaderValues = getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",");
+					var sComponentName20Chars = aHeaderValues[0];
+					assert.strictEqual(sComponentName20Chars.length, 20);
+					assert.strictEqual(sComponentName20Chars, "racters.Component.js");
+					var sComponentName70Chars = aHeaderValues[18];
+					assert.strictEqual(sComponentName70Chars.length, 70);
+					assert.strictEqual(sComponentName70Chars, "sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js");
+					done();
+
+					spy.restore();
+				}, 100);
 			});
 		}
 	</script>

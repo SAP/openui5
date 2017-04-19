@@ -65,6 +65,9 @@ function _modifyTables() {
 	oColumn.setSortOrder("Ascending");
 	oColumn.setSorted(true);
 	oColumn.setFiltered(true);
+	oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		highlight: "Success"
+	}));
 	sap.ui.getCore().applyChanges();
 }
 
@@ -128,6 +131,10 @@ function testAriaLabelsForFocusedDataCell($Cell, iRow, iCol, assert, mParams) {
 	if (bSum) {
 		aLabels.push(oTable.getId() + "-ariagrouptotallabel");
 		aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
+	}
+
+	if (!bGroup && !bSum) {
+		aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
 	}
 
 	aLabels.push(oColumn.getId());
@@ -567,6 +574,7 @@ function testAriaLabelsForRowHeader($Cell, iRow, assert, mParams) {
 			aLabels.push(oTable.getId() + "-ariagrouptotallabel");
 		} else {
 			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-rowselecttext");
+			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
 		}
 	}
 
@@ -724,6 +732,9 @@ function testAriaLabelsForRowAction($Cell, iRow, assert, mParams) {
 		aLabels.push(oTable.getId() + "-rowacthdr");
 		if (iRow == 0) {
 			aLabels.push(oTable.getId() + "-ariarowselected");
+		}
+		if (!bGroup && !bSum) {
+			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
 		}
 		if (bGroup) {
 			aLabels.push(oTable.getId() + "-ariarowgrouplabel");
@@ -1083,6 +1094,66 @@ QUnit.test("HiddenTexts", function(assert) {
 		assert.strictEqual($T.attr("aria-hidden"), "true" , "aria-hidden " + sId);
 		assert.ok($T.hasClass("sapUiInvisibleText"), "sapUiInvisibleText " + sId);
 	});
+});
+
+QUnit.test("Highlight texts", function(assert) {
+	var aVisibleHighlights = [
+		sap.ui.core.MessageType.Success,
+		sap.ui.core.MessageType.Warning,
+		sap.ui.core.MessageType.Error,
+		sap.ui.core.MessageType.Information
+	];
+
+	var aInvisibleHighlights = [
+		sap.ui.core.MessageType.None,
+		null
+	];
+
+	var i, j;
+	var sHighlight;
+
+	function assertHighlightTexts(bTextExists, sText) {
+		var aRows = oTable.getRows();
+
+		for (j = 0; j < aRows.length; j++) {
+			var oRow = aRows[j];
+			var oHighlightTextElement = oRow.getDomRef("highlighttext");
+
+			var sMessage = "Row " + (j + 1) + ": "
+						   + (bTextExists ? "The highlight text element exists in the DOM" : "The highlight text element does not exist in the DOM");
+			assert.strictEqual(oHighlightTextElement != null, bTextExists, sMessage);
+
+			if (oHighlightTextElement != null) {
+				assert.strictEqual(oHighlightTextElement.innerHTML, sText, "The highlight text is correct: " + sText);
+			}
+		}
+	}
+
+	oTable.setRowSettingsTemplate(null);
+	sap.ui.getCore().applyChanges();
+	assertHighlightTexts(false);
+
+	for (i = 0; i < aVisibleHighlights.length; i++) {
+		sHighlight = aVisibleHighlights[i];
+
+		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+			highlight: sHighlight
+		}));
+		sap.ui.getCore().applyChanges();
+
+		assertHighlightTexts(true, sHighlight);
+	}
+
+	for (i = 0; i < aInvisibleHighlights.length; i++) {
+		sHighlight = aInvisibleHighlights[i];
+
+		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+			highlight: sHighlight
+		}));
+		sap.ui.getCore().applyChanges();
+
+		assertHighlightTexts(false);
+	}
 });
 
 QUnit.test("Scrolling", function(assert) {

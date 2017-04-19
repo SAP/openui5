@@ -8,7 +8,7 @@
 	<l:Grid
 		hSpacing="0"
 		defaultSpan="L6 M12 S12">
-		<l:VerticalLayout class="sapUiTinyMarginEnd">
+		<l:VerticalLayout class="sapUiTinyMarginEnd" width="100%">
 			<core:Icon
 				src="{icon}"
 				size="2rem"

@@ -44,7 +44,12 @@ sap.ui.define([
 					oModifier.setVisible(oField, true);
 				}
 				if (iStart >= 0 && index > iStart) {
-					if ((oModifier.getControlType(oField) === "sap.m.Label") || (oModifier.getControlType(oField) === "sap.ui.core.Title")) {
+					if ((oModifier.getControlType(oField) === "sap.m.Label")
+						|| (oModifier.getControlType(oField) === "sap.ui.comp.smartfield.SmartLabel")
+						|| (oModifier.getControlType(oField) === "sap.ui.core.Title")
+						|| (oModifier.getControlType(oField) === "sap.m.Title")
+						|| (oModifier.getControlType(oField) === "sap.m.Toolbar")
+						|| (oModifier.getControlType(oField) === "sap.m.OverflowToolbar")) {
 						return true;
 					} else {
 						oModifier.setVisible(oField, true);

@@ -318,7 +318,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.createDropdown = function() {
 			var that = this;
 			var oDropdown = new Popover(this.getDropdownSettings());
-			oDropdown.setInitialFocus(this.isPlatformTablet() ? oDropdown : this);
+			oDropdown.setInitialFocus(this);
+
 			oDropdown.open = function() {
 				return this.openBy(that);
 			};

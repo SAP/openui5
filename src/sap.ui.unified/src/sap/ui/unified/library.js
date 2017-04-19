@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global',
 
 
 	/**
-	 * Type of a calendar day used for visualization.
+	 * Types of a calendar day used for visualization.
 	 *
 	 * @enum {string}
 	 * @public
@@ -83,67 +83,73 @@ sap.ui.define(['jquery.sap.global',
 	sap.ui.unified.CalendarDayType = {
 
 		/**
-		 * None: No special type is used
+		 * No special type is used.
 		 * @public
 		 */
 		None : "None",
 
 		/**
-		 * Type 01: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * Non-working dates.
+		 * @public
+		 */
+		NonWorking : "NonWorking",
+
+		/**
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type01 : "Type01",
 
 		/**
-		 * Type 02: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type02 : "Type02",
 
 		/**
-		 * Type 03: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type03 : "Type03",
 
 		/**
-		 * Type 04: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type04 : "Type04",
 
 		/**
-		 * Type 05: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type05 : "Type05",
 
 		/**
-		 * Type 06: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type06 : "Type06",
 
 		/**
-		 * Type 07: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type07 : "Type07",
 
 		/**
-		 * Type 08: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type08 : "Type08",
 
 		/**
-		 * Type 09: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type09 : "Type09",
 
 		/**
-		 * Type 10: The semantic meaning must be defined by the application. It can be shown in a legend.
+		 * The semantic meaning must be defined by the app. It can be displayed in a legend.
 		 * @public
 		 */
 		Type10 : "Type10"

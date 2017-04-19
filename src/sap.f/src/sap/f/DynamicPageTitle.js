@@ -137,7 +137,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 		if (!this.getAggregation("_overflowToolbar")) {
 			this.setAggregation("_overflowToolbar", new OverflowToolbar({
 				id: this.getId() + "-overflowToolbar"
-			}).addStyleClass("sapFDynamicPageTitleOverflowToolbar"));
+			}).addStyleClass("sapFDynamicPageTitleOverflowToolbar"), true); // suppress invalidate, as this is always called onBeforeRendering
 		}
 
 		return this.getAggregation("_overflowToolbar");

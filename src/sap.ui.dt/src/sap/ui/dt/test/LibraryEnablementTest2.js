@@ -13,7 +13,7 @@ function(jQuery, ManagedObject, ElementEnablementTest2) {
 
 
 	/**
-	 * Constructor for an LibraryEnablementTest.
+	 * Constructor for a LibraryEnablementTest.
 	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object

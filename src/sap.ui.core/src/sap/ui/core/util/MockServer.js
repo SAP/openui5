@@ -93,7 +93,7 @@ sap.ui
 						 * <br>
 						 * <code>xhr.respondJSON(iStatusCode, mHeaders, oJsonObjectOrString)</code>. By default a JSON header is set for response header
 						 * <br>
-						 * <code>xhr.respondXML(iStatusCode, mHeaders, sXmlString)</code>. By default a XML header is set for response header
+						 * <code>xhr.respondXML(iStatusCode, mHeaders, sXmlString)</code>. By default an XML header is set for response header
 						 * <br>
 						 * <code>xhr.respondFile(iStatusCode, mHeaders, sFileUrl)</code>. By default the mime type of the file is set for response header
 						 * </li>

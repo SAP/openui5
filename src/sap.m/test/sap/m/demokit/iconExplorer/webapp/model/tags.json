@@ -1,6 +1,6 @@
 {
-	"pharmacy":{
-		"tags":[
+	"pharmacy": {
+		"tags": [
 			"medicine",
 			"pills",
 			"drugs",
@@ -9,8 +9,8 @@
 			"medication"
 		]
 	},
-	"message-success":{
-		"tags":[
+	"message-success": {
+		"tags": [
 			"message",
 			"success",
 			"positive",
@@ -18,8 +18,8 @@
 			"status"
 		]
 	},
-	"hr-approval":{
-		"tags":[
+	"hr-approval": {
+		"tags": [
 			"person",
 			"accept",
 			"approval",
@@ -28,8 +28,8 @@
 			"human resources"
 		]
 	},
-	"sales-order":{
-		"tags":[
+	"sales-order": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -40,15 +40,15 @@
 			"quote"
 		]
 	},
-	"share-2":{
-		"tags":[
+	"share-2": {
+		"tags": [
 			"share",
 			"distribute",
 			"share with connections"
 		]
 	},
-	"customer-and-contacts":{
-		"tags":[
+	"customer-and-contacts": {
+		"tags": [
 			"customer",
 			"user",
 			"person",
@@ -59,16 +59,16 @@
 			"e-mail"
 		]
 	},
-	"horizontal-waterfall-chart":{
-		"tags":[
+	"horizontal-waterfall-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"question-mark":{
-		"tags":[
+	"question-mark": {
+		"tags": [
 			"message",
 			"question mark",
 			"neutral",
@@ -76,8 +76,8 @@
 			"status"
 		]
 	},
-	"collections-management":{
-		"tags":[
+	"collections-management": {
+		"tags": [
 			"calculator",
 			"counting",
 			"simulate",
@@ -86,23 +86,23 @@
 			"accounting"
 		]
 	},
-	"cargo-train":{
-		"tags":[
+	"cargo-train": {
+		"tags": [
 			"train",
 			"cargo",
 			"delivery",
 			"transit"
 		]
 	},
-	"search":{
-		"tags":[
+	"search": {
+		"tags": [
 			"search",
 			"magnifier",
 			"glass"
 		]
 	},
-	"sales-order-item":{
-		"tags":[
+	"sales-order-item": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -113,8 +113,8 @@
 			"quote"
 		]
 	},
-	"multiple-radar-chart":{
-		"tags":[
+	"multiple-radar-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -122,8 +122,8 @@
 			"multiple radar chart"
 		]
 	},
-	"business-card":{
-		"tags":[
+	"business-card": {
+		"tags": [
 			"business card",
 			"contact",
 			"networking",
@@ -135,16 +135,16 @@
 			"profile"
 		]
 	},
-	"warning2":{
-		"tags":[
+	"warning2": {
+		"tags": [
 			"warning",
 			"to be reviewed",
 			"indicator",
 			"information"
 		]
 	},
-	"role":{
-		"tags":[
+	"role": {
+		"tags": [
 			"person",
 			"individual",
 			"user",
@@ -157,14 +157,14 @@
 			"unlocked"
 		]
 	},
-	"paging":{
-		"tags":[
+	"paging": {
+		"tags": [
 			"paging",
 			"navigation"
 		]
 	},
-	"video":{
-		"tags":[
+	"video": {
+		"tags": [
 			"camera",
 			"recorder",
 			"video",
@@ -172,16 +172,16 @@
 			"clip"
 		]
 	},
-	"collision":{
-		"tags":[
+	"collision": {
+		"tags": [
 			"car",
 			"crash",
 			"accident",
 			"damage"
 		]
 	},
-	"create-form":{
-		"tags":[
+	"create-form": {
+		"tags": [
 			"create",
 			"form",
 			"new",
@@ -192,8 +192,8 @@
 			"more"
 		]
 	},
-	"message-error":{
-		"tags":[
+	"message-error": {
+		"tags": [
 			"message",
 			"error",
 			"negative",
@@ -201,8 +201,8 @@
 			"status"
 		]
 	},
-	"cart-approval":{
-		"tags":[
+	"cart-approval": {
+		"tags": [
 			"cart",
 			"trolley",
 			"basket",
@@ -214,8 +214,8 @@
 			"check"
 		]
 	},
-	"image-viewer":{
-		"tags":[
+	"image-viewer": {
+		"tags": [
 			"image",
 			"placeholder",
 			"picture",
@@ -227,8 +227,8 @@
 			"lightbox"
 		]
 	},
-	"manager-insight":{
-		"tags":[
+	"manager-insight": {
+		"tags": [
 			"manager",
 			"insight",
 			"company",
@@ -239,8 +239,8 @@
 			"report"
 		]
 	},
-	"microphone":{
-		"tags":[
+	"microphone": {
+		"tags": [
 			"microphone",
 			"mic",
 			"keynote",
@@ -252,15 +252,15 @@
 			"record"
 		]
 	},
-	"duplicate":{
-		"tags":[
+	"duplicate": {
+		"tags": [
 			"duplicate",
 			"objects",
 			"arrow"
 		]
 	},
-	"sort-descending":{
-		"tags":[
+	"sort-descending": {
+		"tags": [
 			"sort",
 			"descending",
 			"down",
@@ -268,16 +268,16 @@
 			"aggregate"
 		]
 	},
-	"theater":{
-		"tags":[
+	"theater": {
+		"tags": [
 			"theater",
 			"show",
 			"play",
 			"masks"
 		]
 	},
-	"doc-attachment":{
-		"tags":[
+	"doc-attachment": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -286,15 +286,15 @@
 			"text"
 		]
 	},
-	"header":{
-		"tags":[
+	"header": {
+		"tags": [
 			"maximize",
 			"header",
 			"screen"
 		]
 	},
-	"sound-loud":{
-		"tags":[
+	"sound-loud": {
+		"tags": [
 			"sound",
 			"audio",
 			"audio",
@@ -303,23 +303,23 @@
 			"louder"
 		]
 	},
-	"lead-outdated":{
-		"tags":[
+	"lead-outdated": {
+		"tags": [
 			"lead outdated",
 			"circle",
 			"dollar"
 		]
 	},
-	"fallback":{
-		"tags":[
+	"fallback": {
+		"tags": [
 			"folder",
 			"fallback",
 			"marked",
 			"object"
 		]
 	},
-	"blank-tag":{
-		"tags":[
+	"blank-tag": {
+		"tags": [
 			"tag",
 			"label",
 			"marker",
@@ -327,8 +327,8 @@
 			"blank"
 		]
 	},
-	"horizontal-bar-chart":{
-		"tags":[
+	"horizontal-bar-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -337,16 +337,16 @@
 			"horizontal"
 		]
 	},
-	"per-diem":{
-		"tags":[
+	"per-diem": {
+		"tags": [
 			"euro",
 			"time",
 			"per diem",
 			"calendar"
 		]
 	},
-	"multiple-line-chart":{
-		"tags":[
+	"multiple-line-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -354,8 +354,8 @@
 			"multiple line chart"
 		]
 	},
-	"paste":{
-		"tags":[
+	"paste": {
+		"tags": [
 			"paste",
 			"document",
 			"clipboards",
@@ -363,20 +363,20 @@
 			"text"
 		]
 	},
-	"toaster-down":{
-		"tags":[
+	"toaster-down": {
+		"tags": [
 			"toaster",
 			"down",
 			"details"
 		]
 	},
-	"business-by-design":{
-		"tags":[
+	"business-by-design": {
+		"tags": [
 			"business by design"
 		]
 	},
-	"activity-individual":{
-		"tags":[
+	"activity-individual": {
+		"tags": [
 			"activity",
 			"activities",
 			"tasks",
@@ -386,8 +386,8 @@
 			"person"
 		]
 	},
-	"add-document":{
-		"tags":[
+	"add-document": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -400,30 +400,30 @@
 			"more"
 		]
 	},
-	"inbox":{
-		"tags":[
+	"inbox": {
+		"tags": [
 			"inbox",
 			"in",
 			"arrow"
 		]
 	},
-	"full-screen":{
-		"tags":[
+	"full-screen": {
+		"tags": [
 			"full",
 			"screen",
 			"arrow"
 		]
 	},
-	"batch-payments":{
-		"tags":[
+	"batch-payments": {
+		"tags": [
 			"folder",
 			"open",
 			"money",
 			"documents"
 		]
 	},
-	"feeder-arrow":{
-		"tags":[
+	"feeder-arrow": {
+		"tags": [
 			"feeder",
 			"arrow",
 			"input",
@@ -432,15 +432,15 @@
 			"send"
 		]
 	},
-	"sap-logo-shape":{
-		"tags":[
+	"sap-logo-shape": {
+		"tags": [
 			"sap",
 			"logo",
 			"shape"
 		]
 	},
-	"travel-expense":{
-		"tags":[
+	"travel-expense": {
+		"tags": [
 			"plane",
 			"dollar",
 			"money",
@@ -456,8 +456,8 @@
 			"payments"
 		]
 	},
-	"status-negative":{
-		"tags":[
+	"status-negative": {
+		"tags": [
 			"negative",
 			"attention",
 			"led",
@@ -466,8 +466,8 @@
 			"lifecycle"
 		]
 	},
-	"photo-voltaic":{
-		"tags":[
+	"photo-voltaic": {
+		"tags": [
 			"photovoltaic",
 			"voltaic",
 			"electricity",
@@ -477,8 +477,8 @@
 			"sun"
 		]
 	},
-	"cancel-maintenance":{
-		"tags":[
+	"cancel-maintenance": {
+		"tags": [
 			"wrench",
 			"control",
 			"configuration",
@@ -487,8 +487,8 @@
 			"cancel maintenance"
 		]
 	},
-	"sys-find-next":{
-		"tags":[
+	"sys-find-next": {
+		"tags": [
 			"find",
 			"binoculars",
 			"look up",
@@ -499,8 +499,8 @@
 			"more"
 		]
 	},
-	"text-align-justified":{
-		"tags":[
+	"text-align-justified": {
+		"tags": [
 			"align",
 			"text",
 			"justified",
@@ -508,8 +508,8 @@
 			"rich-text"
 		]
 	},
-	"map":{
-		"tags":[
+	"map": {
+		"tags": [
 			"map",
 			"pin",
 			"loaction",
@@ -517,8 +517,8 @@
 			"area"
 		]
 	},
-	"internet-browser":{
-		"tags":[
+	"internet-browser": {
+		"tags": [
 			"screen",
 			"internet",
 			"website",
@@ -529,8 +529,8 @@
 			"html"
 		]
 	},
-	"bubble-chart":{
-		"tags":[
+	"bubble-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -538,8 +538,8 @@
 			"bubble chart"
 		]
 	},
-	"meeting-room":{
-		"tags":[
+	"meeting-room": {
+		"tags": [
 			"meeting",
 			"room",
 			"collaborate",
@@ -548,16 +548,16 @@
 			"peer to peer"
 		]
 	},
-	"synchronize":{
-		"tags":[
+	"synchronize": {
+		"tags": [
 			"synchronize",
 			"reload",
 			"refresh",
 			"arrow"
 		]
 	},
-	"org-chart":{
-		"tags":[
+	"org-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -568,8 +568,8 @@
 			"tree"
 		]
 	},
-	"tags":{
-		"tags":[
+	"tags": {
+		"tags": [
 			"tag",
 			"label",
 			"marker",
@@ -577,8 +577,8 @@
 			"detail"
 		]
 	},
-	"trend-down":{
-		"tags":[
+	"trend-down": {
+		"tags": [
 			"trend",
 			"down",
 			"diagonal",
@@ -587,8 +587,8 @@
 			"arrow"
 		]
 	},
-	"value-help":{
-		"tags":[
+	"value-help": {
+		"tags": [
 			"value",
 			"help",
 			"popup",
@@ -596,8 +596,8 @@
 			"multi input"
 		]
 	},
-	"developer-settings":{
-		"tags":[
+	"developer-settings": {
+		"tags": [
 			"settings",
 			"cogwheel",
 			"configuration",
@@ -609,16 +609,16 @@
 			"runtime authoring"
 		]
 	},
-	"time-account":{
-		"tags":[
+	"time-account": {
+		"tags": [
 			"time",
 			"account",
 			"clock",
 			"list"
 		]
 	},
-	"rhombus-milestone":{
-		"tags":[
+	"rhombus-milestone": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -629,8 +629,8 @@
 			"milestone"
 		]
 	},
-	"add-contact":{
-		"tags":[
+	"add-contact": {
+		"tags": [
 			"person",
 			"contact",
 			"business card",
@@ -645,8 +645,8 @@
 			"more"
 		]
 	},
-	"pushpin-on":{
-		"tags":[
+	"pushpin-on": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -662,8 +662,8 @@
 			"on"
 		]
 	},
-	"full-stacked-column-chart":{
-		"tags":[
+	"full-stacked-column-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -671,8 +671,8 @@
 			"full stacked column chart"
 		]
 	},
-	"history":{
-		"tags":[
+	"history": {
+		"tags": [
 			"time",
 			"clock",
 			"history",
@@ -680,15 +680,15 @@
 			"chronicle"
 		]
 	},
-	"drop-down-list":{
-		"tags":[
+	"drop-down-list": {
+		"tags": [
 			"dropdown",
 			"list",
 			"arrow"
 		]
 	},
-	"target-group":{
-		"tags":[
+	"target-group": {
+		"tags": [
 			"arrow",
 			"dart",
 			"dartboard",
@@ -698,8 +698,8 @@
 			"specific"
 		]
 	},
-	"travel-itinerary":{
-		"tags":[
+	"travel-itinerary": {
+		"tags": [
 			"travel",
 			"airplane",
 			"plane",
@@ -711,8 +711,8 @@
 			"drive"
 		]
 	},
-	"legend":{
-		"tags":[
+	"legend": {
+		"tags": [
 			"legend",
 			"description",
 			"colors",
@@ -722,8 +722,8 @@
 			"calendar"
 		]
 	},
-	"background":{
-		"tags":[
+	"background": {
+		"tags": [
 			"image",
 			"placeholder",
 			"picture",
@@ -732,23 +732,23 @@
 			"sun"
 		]
 	},
-	"notes":{
-		"tags":[
+	"notes": {
+		"tags": [
 			"notes",
 			"marks",
 			"info",
 			"draft"
 		]
 	},
-	"menu2":{
-		"tags":[
+	"menu2": {
+		"tags": [
 			"menu",
 			"hamburger menu",
 			"main menu"
 		]
 	},
-	"business-objects-mobile":{
-		"tags":[
+	"business-objects-mobile": {
+		"tags": [
 			"business objects mobile",
 			"analytics",
 			"chart",
@@ -756,8 +756,8 @@
 			"data"
 		]
 	},
-	"settings":{
-		"tags":[
+	"settings": {
+		"tags": [
 			"cogwheels",
 			"configuration",
 			"settings",
@@ -766,16 +766,16 @@
 			"customize"
 		]
 	},
-	"switch-views":{
-		"tags":[
+	"switch-views": {
+		"tags": [
 			"switch",
 			"views",
 			"objects",
 			"arrange"
 		]
 	},
-	"vds-file":{
-		"tags":[
+	"vds-file": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -785,16 +785,16 @@
 			"vds"
 		]
 	},
-	"lead":{
-		"tags":[
+	"lead": {
+		"tags": [
 			"money",
 			"dollar",
 			"currency",
 			"payment"
 		]
 	},
-	"add-equipment":{
-		"tags":[
+	"add-equipment": {
+		"tags": [
 			"wrench",
 			"control",
 			"configuration",
@@ -807,8 +807,8 @@
 			"more"
 		]
 	},
-	"wallet":{
-		"tags":[
+	"wallet": {
+		"tags": [
 			"money",
 			"wallet",
 			"purse",
@@ -821,8 +821,8 @@
 			"notes"
 		]
 	},
-	"doctor":{
-		"tags":[
+	"doctor": {
+		"tags": [
 			"doctor",
 			"medical",
 			"cross",
@@ -830,13 +830,13 @@
 			"hospital"
 		]
 	},
-	"pause":{
-		"tags":[
+	"pause": {
+		"tags": [
 			"pause"
 		]
 	},
-	"idea-wall":{
-		"tags":[
+	"idea-wall": {
+		"tags": [
 			"idea",
 			"wall",
 			"collaborate",
@@ -849,15 +849,15 @@
 			"improve"
 		]
 	},
-	"media-reverse":{
-		"tags":[
+	"media-reverse": {
+		"tags": [
 			"reverse",
 			"media",
 			"arrow"
 		]
 	},
-	"vertical-stacked-chart":{
-		"tags":[
+	"vertical-stacked-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -865,8 +865,8 @@
 			"vertical stacked chart"
 		]
 	},
-	"future":{
-		"tags":[
+	"future": {
+		"tags": [
 			"time",
 			"clock",
 			"arrow",
@@ -874,8 +874,8 @@
 			"hereafter"
 		]
 	},
-	"measurement-document":{
-		"tags":[
+	"measurement-document": {
+		"tags": [
 			"measure",
 			"weight",
 			"scale",
@@ -886,8 +886,8 @@
 			"calculation"
 		]
 	},
-	"jam":{
-		"tags":[
+	"jam": {
+		"tags": [
 			"sap",
 			"logo",
 			"jam",
@@ -896,16 +896,16 @@
 			"share"
 		]
 	},
-	"sys-help":{
-		"tags":[
+	"sys-help": {
+		"tags": [
 			"system",
 			"help",
 			"circle",
 			"question"
 		]
 	},
-	"clinical-order":{
-		"tags":[
+	"clinical-order": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -914,8 +914,8 @@
 			"clinical"
 		]
 	},
-	"wrench":{
-		"tags":[
+	"wrench": {
+		"tags": [
 			"wrench",
 			"control",
 			"configuration",
@@ -923,16 +923,16 @@
 			"tool"
 		]
 	},
-	"key":{
-		"tags":[
+	"key": {
+		"tags": [
 			"key",
 			"data",
 			"lock",
 			"important"
 		]
 	},
-	"umbrella":{
-		"tags":[
+	"umbrella": {
+		"tags": [
 			"rain",
 			"umbrella",
 			"brolly",
@@ -940,8 +940,8 @@
 			"keep dry"
 		]
 	},
-	"display":{
-		"tags":[
+	"display": {
+		"tags": [
 			"display",
 			"details",
 			"inspect",
@@ -949,8 +949,8 @@
 			"glasses"
 		]
 	},
-	"navigation-down-arrow":{
-		"tags":[
+	"navigation-down-arrow": {
+		"tags": [
 			"navigation",
 			"down",
 			"collapse",
@@ -959,47 +959,47 @@
 			"arrow"
 		]
 	},
-	"screen-split-two":{
-		"tags":[
+	"screen-split-two": {
+		"tags": [
 			"screen",
 			"split",
 			"two",
 			"half"
 		]
 	},
-	"media-play":{
-		"tags":[
+	"media-play": {
+		"tags": [
 			"play",
 			"media",
 			"arrow"
 		]
 	},
-	"co":{
-		"tags":[
+	"co": {
+		"tags": [
 			"co pilot",
 			"mnemonics",
 			"assistant",
 			"launchpad"
 		]
 	},
-	"lightbulb":{
-		"tags":[
+	"lightbulb": {
+		"tags": [
 			"lightbulb",
 			"light",
 			"lamp",
 			"idea"
 		]
 	},
-	"overflow":{
-		"tags":[
+	"overflow": {
+		"tags": [
 			"overflow",
 			"dots",
 			"ellipsis",
 			"more"
 		]
 	},
-	"drill-down":{
-		"tags":[
+	"drill-down": {
+		"tags": [
 			"drill down",
 			"arrow",
 			"detail",
@@ -1007,24 +1007,24 @@
 			"level"
 		]
 	},
-	"capital-projects":{
-		"tags":[
+	"capital-projects": {
+		"tags": [
 			"capital projects",
 			"building",
 			"dollar",
 			"money"
 		]
 	},
-	"factory":{
-		"tags":[
+	"factory": {
+		"tags": [
 			"factory",
 			"production",
 			"supplier",
 			"manufacturing"
 		]
 	},
-	"paper-plane":{
-		"tags":[
+	"paper-plane": {
+		"tags": [
 			"send",
 			"flight",
 			"paper",
@@ -1035,16 +1035,16 @@
 			"folded"
 		]
 	},
-	"pdf-reader":{
-		"tags":[
+	"pdf-reader": {
+		"tags": [
 			"pdf reader",
 			"document",
 			"display",
 			"file"
 		]
 	},
-	"example":{
-		"tags":[
+	"example": {
+		"tags": [
 			"example",
 			"dots",
 			"cicles",
@@ -1052,8 +1052,8 @@
 			"odd"
 		]
 	},
-	"curriculum":{
-		"tags":[
+	"curriculum": {
+		"tags": [
 			"folder",
 			"curriculum",
 			"learning",
@@ -1061,8 +1061,8 @@
 			"content"
 		]
 	},
-	"washing-machine":{
-		"tags":[
+	"washing-machine": {
+		"tags": [
 			"washing",
 			"machine",
 			"laundry",
@@ -1071,8 +1071,8 @@
 			"purify"
 		]
 	},
-	"locate-me":{
-		"tags":[
+	"locate-me": {
+		"tags": [
 			"arrow",
 			"locate",
 			"me",
@@ -1082,8 +1082,8 @@
 			"navigation"
 		]
 	},
-	"simulate":{
-		"tags":[
+	"simulate": {
+		"tags": [
 			"calculator",
 			"calculate",
 			"count",
@@ -1099,8 +1099,8 @@
 			"mathematics"
 		]
 	},
-	"measure":{
-		"tags":[
+	"measure": {
+		"tags": [
 			"measure",
 			"weight",
 			"scale",
@@ -1111,14 +1111,14 @@
 			"calculation"
 		]
 	},
-	"date-time":{
-		"tags":[
+	"date-time": {
+		"tags": [
 			"date",
 			"time"
 		]
 	},
-	"ipad":{
-		"tags":[
+	"ipad": {
+		"tags": [
 			"ipad",
 			"tablet",
 			"portrait",
@@ -1127,8 +1127,8 @@
 			"cozy"
 		]
 	},
-	"horizontal-stacked-chart":{
-		"tags":[
+	"horizontal-stacked-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -1136,8 +1136,8 @@
 			"horizontal stacked chart"
 		]
 	},
-	"sales-document":{
-		"tags":[
+	"sales-document": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -1146,16 +1146,16 @@
 			"money"
 		]
 	},
-	"collapse-group":{
-		"tags":[
+	"collapse-group": {
+		"tags": [
 			"collapse",
 			"group",
 			"move to top",
 			"arrow"
 		]
 	},
-	"education":{
-		"tags":[
+	"education": {
+		"tags": [
 			"education",
 			"course",
 			"learning",
@@ -1167,8 +1167,8 @@
 			"college"
 		]
 	},
-	"lab":{
-		"tags":[
+	"lab": {
+		"tags": [
 			"lab",
 			"chemicals",
 			"liquid",
@@ -1178,8 +1178,8 @@
 			"laboratory"
 		]
 	},
-	"course-book":{
-		"tags":[
+	"course-book": {
+		"tags": [
 			"education",
 			"course",
 			"learning",
@@ -1191,21 +1191,21 @@
 			"program"
 		]
 	},
-	"system-exit-2":{
-		"tags":[
+	"system-exit-2": {
+		"tags": [
 			"system",
 			"exit"
 		]
 	},
-	"response":{
-		"tags":[
+	"response": {
+		"tags": [
 			"reply",
 			"response",
 			"arrow"
 		]
 	},
-	"write-new":{
-		"tags":[
+	"write-new": {
+		"tags": [
 			"write",
 			"new",
 			"create",
@@ -1213,8 +1213,8 @@
 			"pen"
 		]
 	},
-	"numbered-text":{
-		"tags":[
+	"numbered-text": {
+		"tags": [
 			"numbered",
 			"text",
 			"1, 2, 3",
@@ -1222,23 +1222,23 @@
 			"rich-text"
 		]
 	},
-	"endoscopy":{
-		"tags":[
+	"endoscopy": {
+		"tags": [
 			"endoscopy",
 			"medical",
 			"procedure"
 		]
 	},
-	"pull-down":{
-		"tags":[
+	"pull-down": {
+		"tags": [
 			"navigation",
 			"pull down",
 			"refresh",
 			"arrow"
 		]
 	},
-	"employee":{
-		"tags":[
+	"employee": {
+		"tags": [
 			"user",
 			"person",
 			"employee",
@@ -1247,8 +1247,8 @@
 			"representative"
 		]
 	},
-	"table-view":{
-		"tags":[
+	"table-view": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -1260,13 +1260,13 @@
 			"rows"
 		]
 	},
-	"calendar":{
-		"tags":[
+	"calendar": {
+		"tags": [
 			"calendar"
 		]
 	},
-	"eam-work-order":{
-		"tags":[
+	"eam-work-order": {
+		"tags": [
 			"enterprise asset management",
 			"work",
 			"order",
@@ -1275,8 +1275,8 @@
 			"tick mark"
 		]
 	},
-	"course-program":{
-		"tags":[
+	"course-program": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -1293,8 +1293,8 @@
 			"program"
 		]
 	},
-	"edit":{
-		"tags":[
+	"edit": {
+		"tags": [
 			"pencil",
 			"pen",
 			"write",
@@ -1303,24 +1303,24 @@
 			"text"
 		]
 	},
-	"sonography":{
-		"tags":[
+	"sonography": {
+		"tags": [
 			"sonography",
 			"medical",
 			"ultrasound",
 			"ultrasonography"
 		]
 	},
-	"bar-chart":{
-		"tags":[
+	"bar-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"minimize":{
-		"tags":[
+	"minimize": {
+		"tags": [
 			"minimize",
 			"screen",
 			"window",
@@ -1328,8 +1328,8 @@
 			"hide"
 		]
 	},
-	"add-filter":{
-		"tags":[
+	"add-filter": {
+		"tags": [
 			"filter",
 			"organise",
 			"aggregate",
@@ -1341,15 +1341,15 @@
 			"more"
 		]
 	},
-	"dimension":{
-		"tags":[
+	"dimension": {
+		"tags": [
 			"dimension",
 			"layers",
 			"stacked"
 		]
 	},
-	"detail-view":{
-		"tags":[
+	"detail-view": {
+		"tags": [
 			"search",
 			"form",
 			"look up",
@@ -1358,8 +1358,8 @@
 			"detial"
 		]
 	},
-	"status-inactive":{
-		"tags":[
+	"status-inactive": {
+		"tags": [
 			"inactive",
 			"neutral",
 			"information",
@@ -1369,8 +1369,8 @@
 			"lifecycle"
 		]
 	},
-	"inspect-down":{
-		"tags":[
+	"inspect-down": {
+		"tags": [
 			"cancel",
 			"x",
 			"close",
@@ -1378,8 +1378,8 @@
 			"popup"
 		]
 	},
-	"person-placeholder":{
-		"tags":[
+	"person-placeholder": {
+		"tags": [
 			"person",
 			"individual",
 			"user",
@@ -1389,8 +1389,8 @@
 			"me"
 		]
 	},
-	"visits":{
-		"tags":[
+	"visits": {
+		"tags": [
 			"user",
 			"arrow",
 			"door",
@@ -1399,8 +1399,8 @@
 			"entry"
 		]
 	},
-	"it-system":{
-		"tags":[
+	"it-system": {
+		"tags": [
 			"server",
 			"it",
 			"machine",
@@ -1410,8 +1410,8 @@
 			"system"
 		]
 	},
-	"zoom-out":{
-		"tags":[
+	"zoom-out": {
+		"tags": [
 			"zoom",
 			"out",
 			"glass",
@@ -1420,15 +1420,15 @@
 			"smaller"
 		]
 	},
-	"subway-train":{
-		"tags":[
+	"subway-train": {
+		"tags": [
 			"subway train",
 			"underground",
 			"tube"
 		]
 	},
-	"trend-up":{
-		"tags":[
+	"trend-up": {
+		"tags": [
 			"trend",
 			"up",
 			"diagonal",
@@ -1437,8 +1437,8 @@
 			"arrow"
 		]
 	},
-	"insurance-life":{
-		"tags":[
+	"insurance-life": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -1447,15 +1447,15 @@
 			"life"
 		]
 	},
-	"sys-minus":{
-		"tags":[
+	"sys-minus": {
+		"tags": [
 			"minus",
 			"remove",
 			"subtract"
 		]
 	},
-	"manager":{
-		"tags":[
+	"manager": {
+		"tags": [
 			"manager",
 			"company",
 			"overview",
@@ -1469,8 +1469,8 @@
 			"presentation"
 		]
 	},
-	"sap-box":{
-		"tags":[
+	"sap-box": {
+		"tags": [
 			"container",
 			"box",
 			"work load",
@@ -1482,8 +1482,8 @@
 			"storage"
 		]
 	},
-	"time-entry-request":{
-		"tags":[
+	"time-entry-request": {
+		"tags": [
 			"time",
 			"entry",
 			"request",
@@ -1491,8 +1491,8 @@
 			"list"
 		]
 	},
-	"insurance-car":{
-		"tags":[
+	"insurance-car": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -1501,8 +1501,8 @@
 			"car"
 		]
 	},
-	"increase-line-height":{
-		"tags":[
+	"increase-line-height": {
+		"tags": [
 			"increase",
 			"line height",
 			"leading",
@@ -1515,15 +1515,15 @@
 			"arrows"
 		]
 	},
-	"exit-full-screen":{
-		"tags":[
+	"exit-full-screen": {
+		"tags": [
 			"exit",
 			"fullscreen",
 			"arrow"
 		]
 	},
-	"receipt":{
-		"tags":[
+	"receipt": {
+		"tags": [
 			"money",
 			"bill",
 			"details",
@@ -1532,8 +1532,8 @@
 			"receipt"
 		]
 	},
-	"chart-axis":{
-		"tags":[
+	"chart-axis": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -1543,8 +1543,8 @@
 			"directions"
 		]
 	},
-	"activate":{
-		"tags":[
+	"activate": {
+		"tags": [
 			"activate",
 			"ignite",
 			"initiate",
@@ -1553,8 +1553,8 @@
 			"spark"
 		]
 	},
-	"cart-2":{
-		"tags":[
+	"cart-2": {
+		"tags": [
 			"cart",
 			"trolley",
 			"basket",
@@ -1567,8 +1567,8 @@
 			"arrow"
 		]
 	},
-	"vertical-bar-chart":{
-		"tags":[
+	"vertical-bar-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -1577,15 +1577,15 @@
 			"vertical"
 		]
 	},
-	"generate-shortcut":{
-		"tags":[
+	"generate-shortcut": {
+		"tags": [
 			"generate",
 			"shortcut",
 			"arrow"
 		]
 	},
-	"time-overtime":{
-		"tags":[
+	"time-overtime": {
+		"tags": [
 			"time",
 			"overtime",
 			"clock",
@@ -1593,16 +1593,16 @@
 			"hours"
 		]
 	},
-	"expand-group":{
-		"tags":[
+	"expand-group": {
+		"tags": [
 			"expand",
 			"group",
 			"move to bottom",
 			"arrow"
 		]
 	},
-	"cart-4":{
-		"tags":[
+	"cart-4": {
+		"tags": [
 			"cart",
 			"trolley",
 			"basket",
@@ -1618,8 +1618,8 @@
 			"more"
 		]
 	},
-	"employee-rejections":{
-		"tags":[
+	"employee-rejections": {
+		"tags": [
 			"person",
 			"x",
 			"rejections",
@@ -1628,8 +1628,8 @@
 			"human resources"
 		]
 	},
-	"cart-3":{
-		"tags":[
+	"cart-3": {
+		"tags": [
 			"cart",
 			"trolley",
 			"basket",
@@ -1642,8 +1642,8 @@
 			"arrow"
 		]
 	},
-	"pending":{
-		"tags":[
+	"pending": {
+		"tags": [
 			"time",
 			"clock",
 			"pend",
@@ -1653,15 +1653,15 @@
 			"unsettled"
 		]
 	},
-	"reset":{
-		"tags":[
+	"reset": {
+		"tags": [
 			"reset",
 			"x",
 			"cancel"
 		]
 	},
-	"cart-5":{
-		"tags":[
+	"cart-5": {
+		"tags": [
 			"cart",
 			"trolley",
 			"basket",
@@ -1670,46 +1670,46 @@
 			"sap"
 		]
 	},
-	"activities":{
-		"tags":[
+	"activities": {
+		"tags": [
 			"activities",
 			"tasks",
 			"to do",
 			"list"
 		]
 	},
-	"border":{
-		"tags":[
+	"border": {
+		"tags": [
 			"border",
 			"square",
 			"outline"
 		]
 	},
-	"bus-public-transport":{
-		"tags":[
+	"bus-public-transport": {
+		"tags": [
 			"bus",
 			"public",
 			"traffic",
 			"vehicle"
 		]
 	},
-	"nav-back":{
-		"tags":[
+	"nav-back": {
+		"tags": [
 			"navigation",
 			"back",
 			"previous",
 			"arrow"
 		]
 	},
-	"refresh":{
-		"tags":[
+	"refresh": {
+		"tags": [
 			"reload",
 			"refresh",
 			"arrow"
 		]
 	},
-	"move":{
-		"tags":[
+	"move": {
+		"tags": [
 			"move",
 			"relocate",
 			"left",
@@ -1718,8 +1718,8 @@
 			"down"
 		]
 	},
-	"employee-lookup":{
-		"tags":[
+	"employee-lookup": {
+		"tags": [
 			"customer",
 			"user",
 			"person",
@@ -1730,15 +1730,15 @@
 			"search"
 		]
 	},
-	"navigation-up-arrow":{
-		"tags":[
+	"navigation-up-arrow": {
+		"tags": [
 			"navigation",
 			"up",
 			"arrow"
 		]
 	},
-	"back-to-top":{
-		"tags":[
+	"back-to-top": {
+		"tags": [
 			"back to top",
 			"jump",
 			"beginning",
@@ -1746,14 +1746,14 @@
 			"up"
 		]
 	},
-	"menu":{
-		"tags":[
+	"menu": {
+		"tags": [
 			"menu",
 			"list"
 		]
 	},
-	"text-align-left":{
-		"tags":[
+	"text-align-left": {
+		"tags": [
 			"align",
 			"text",
 			"left",
@@ -1761,8 +1761,8 @@
 			"rich-text"
 		]
 	},
-	"bar-code":{
-		"tags":[
+	"bar-code": {
+		"tags": [
 			"bar code",
 			"document",
 			"file",
@@ -1770,16 +1770,16 @@
 			"verify"
 		]
 	},
-	"document-text":{
-		"tags":[
+	"document-text": {
+		"tags": [
 			"document",
 			"page",
 			"file",
 			"text"
 		]
 	},
-	"tag-cloud-chart":{
-		"tags":[
+	"tag-cloud-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -1789,8 +1789,8 @@
 			"cloud"
 		]
 	},
-	"scissors":{
-		"tags":[
+	"scissors": {
+		"tags": [
 			"cut",
 			"scissors",
 			"document",
@@ -1799,8 +1799,8 @@
 			"text"
 		]
 	},
-	"burglary":{
-		"tags":[
+	"burglary": {
+		"tags": [
 			"money",
 			"thief",
 			"loss",
@@ -1812,8 +1812,8 @@
 			"bank"
 		]
 	},
-	"lateness":{
-		"tags":[
+	"lateness": {
+		"tags": [
 			"time",
 			"timer",
 			"waiting",
@@ -1824,51 +1824,51 @@
 			"out of time"
 		]
 	},
-	"x-ray":{
-		"tags":[
+	"x-ray": {
+		"tags": [
 			"x ray",
 			"procedure",
 			"scan",
 			"medical"
 		]
 	},
-	"comment":{
-		"tags":[
+	"comment": {
+		"tags": [
 			"speech",
 			"bubble",
 			"comment",
 			"discussion"
 		]
 	},
-	"business-one":{
-		"tags":[
+	"business-one": {
+		"tags": [
 			"business one"
 		]
 	},
-	"newspaper":{
-		"tags":[
+	"newspaper": {
+		"tags": [
 			"newspaper",
 			"headlines",
 			"latest",
 			"updates"
 		]
 	},
-	"incident":{
-		"tags":[
+	"incident": {
+		"tags": [
 			"incident",
 			"question",
 			"message"
 		]
 	},
-	"outbox":{
-		"tags":[
+	"outbox": {
+		"tags": [
 			"outbox",
 			"out",
 			"arrow"
 		]
 	},
-	"home":{
-		"tags":[
+	"home": {
+		"tags": [
 			"home",
 			"house",
 			"index",
@@ -1877,23 +1877,23 @@
 			"main"
 		]
 	},
-	"family-care":{
-		"tags":[
+	"family-care": {
+		"tags": [
 			"family",
 			"protection",
 			"people",
 			"family"
 		]
 	},
-	"waiver":{
-		"tags":[
+	"waiver": {
+		"tags": [
 			"waiver",
 			"money bag",
 			"percentage"
 		]
 	},
-	"ui-notifications":{
-		"tags":[
+	"ui-notifications": {
+		"tags": [
 			"notify",
 			"ui",
 			"notifications",
@@ -1901,13 +1901,13 @@
 			"launchpad"
 		]
 	},
-	"retail-store-manager":{
-		"tags":[
+	"retail-store-manager": {
+		"tags": [
 			"retail store manager"
 		]
 	},
-	"attachment-photo":{
-		"tags":[
+	"attachment-photo": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -1916,8 +1916,8 @@
 			"image"
 		]
 	},
-	"paid-leave":{
-		"tags":[
+	"paid-leave": {
+		"tags": [
 			"paid leave",
 			"money",
 			"dollar",
@@ -1925,8 +1925,8 @@
 			"approved"
 		]
 	},
-	"slim-arrow-left":{
-		"tags":[
+	"slim-arrow-left": {
+		"tags": [
 			"slim",
 			"thin",
 			"skinny",
@@ -1935,15 +1935,15 @@
 			"scroll left"
 		]
 	},
-	"sys-back-2":{
-		"tags":[
+	"sys-back-2": {
+		"tags": [
 			"system",
 			"back",
 			"arrows"
 		]
 	},
-	"expense-report":{
-		"tags":[
+	"expense-report": {
+		"tags": [
 			"expense",
 			"report",
 			"documents",
@@ -1951,16 +1951,16 @@
 			"dollar"
 		]
 	},
-	"dropdown":{
-		"tags":[
+	"dropdown": {
+		"tags": [
 			"dropdown",
 			"menu",
 			"menu button",
 			"arrow"
 		]
 	},
-	"decision":{
-		"tags":[
+	"decision": {
+		"tags": [
 			"hand shake",
 			"decision",
 			"hands",
@@ -1969,14 +1969,14 @@
 			"contract"
 		]
 	},
-	"upload":{
-		"tags":[
+	"upload": {
+		"tags": [
 			"upload",
 			"arrow"
 		]
 	},
-	"family-protection":{
-		"tags":[
+	"family-protection": {
+		"tags": [
 			"family",
 			"protection",
 			"people",
@@ -1985,8 +1985,8 @@
 			"family"
 		]
 	},
-	"monitor-payments":{
-		"tags":[
+	"monitor-payments": {
+		"tags": [
 			"report",
 			"bill",
 			"billing",
@@ -2000,16 +2000,16 @@
 			"monitor payments"
 		]
 	},
-	"sys-cancel":{
-		"tags":[
+	"sys-cancel": {
+		"tags": [
 			"clear",
 			"remove",
 			"cancel",
 			"x"
 		]
 	},
-	"fob-watch":{
-		"tags":[
+	"fob-watch": {
+		"tags": [
 			"fob watch",
 			"time",
 			"stop watch",
@@ -2017,8 +2017,8 @@
 			"countdown"
 		]
 	},
-	"ipad-2":{
-		"tags":[
+	"ipad-2": {
+		"tags": [
 			"ipad",
 			"landscape",
 			"tablet",
@@ -2027,30 +2027,30 @@
 			"cozy"
 		]
 	},
-	"restart":{
-		"tags":[
+	"restart": {
+		"tags": [
 			"restart",
 			"process",
 			"play"
 		]
 	},
-	"hello-world":{
-		"tags":[
+	"hello-world": {
+		"tags": [
 			"bubble",
 			"ui5",
 			"hello",
 			"world"
 		]
 	},
-	"sys-monitor":{
-		"tags":[
+	"sys-monitor": {
+		"tags": [
 			"screen",
 			"monitor",
 			"tv"
 		]
 	},
-	"product":{
-		"tags":[
+	"product": {
+		"tags": [
 			"product",
 			"commodity",
 			"goods",
@@ -2059,8 +2059,8 @@
 			"package"
 		]
 	},
-	"flight":{
-		"tags":[
+	"flight": {
+		"tags": [
 			"plane",
 			"trip",
 			"travel",
@@ -2071,8 +2071,8 @@
 			"shipment"
 		]
 	},
-	"crossed-line-chart":{
-		"tags":[
+	"crossed-line-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2080,8 +2080,8 @@
 			"crossed line chart"
 		]
 	},
-	"wounds-doc":{
-		"tags":[
+	"wounds-doc": {
+		"tags": [
 			"wounds",
 			"doc",
 			"injury",
@@ -2094,8 +2094,8 @@
 			"cross"
 		]
 	},
-	"filter-facets":{
-		"tags":[
+	"filter-facets": {
+		"tags": [
 			"analytics",
 			"filter",
 			"organise",
@@ -2105,8 +2105,8 @@
 			"data"
 		]
 	},
-	"gantt-bars":{
-		"tags":[
+	"gantt-bars": {
+		"tags": [
 			"calendar",
 			"gantt",
 			"bars",
@@ -2115,35 +2115,35 @@
 			"schedule"
 		]
 	},
-	"account":{
-		"tags":[
+	"account": {
+		"tags": [
 			"user",
 			"menu",
 			"settings"
 		]
 	},
-	"arrow-bottom":{
-		"tags":[
+	"arrow-bottom": {
+		"tags": [
 			"arrow bottom",
 			"down"
 		]
 	},
-	"repost":{
-		"tags":[
+	"repost": {
+		"tags": [
 			"post again",
 			"circulate"
 		]
 	},
-	"warning":{
-		"tags":[
+	"warning": {
+		"tags": [
 			"warning",
 			"exclamation mark",
 			"indicator",
 			"information"
 		]
 	},
-	"cause":{
-		"tags":[
+	"cause": {
+		"tags": [
 			"get",
 			"reason",
 			"incoming",
@@ -2152,8 +2152,8 @@
 			"take"
 		]
 	},
-	"offsite-work":{
-		"tags":[
+	"offsite-work": {
+		"tags": [
 			"offsite work",
 			"external",
 			"company",
@@ -2161,8 +2161,8 @@
 			"outside"
 		]
 	},
-	"save":{
-		"tags":[
+	"save": {
+		"tags": [
 			"save",
 			"diskette",
 			"floppy disc",
@@ -2170,8 +2170,8 @@
 			"hard disc"
 		]
 	},
-	"energy-saving-lightbulb":{
-		"tags":[
+	"energy-saving-lightbulb": {
+		"tags": [
 			"lightbulb",
 			"light",
 			"lamp",
@@ -2180,8 +2180,8 @@
 			"energy saving"
 		]
 	},
-	"palette":{
-		"tags":[
+	"palette": {
+		"tags": [
 			"palette",
 			"paint",
 			"color",
@@ -2192,8 +2192,8 @@
 			"design"
 		]
 	},
-	"program-triangles-2":{
-		"tags":[
+	"program-triangles-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2204,8 +2204,8 @@
 			"program"
 		]
 	},
-	"choropleth-chart":{
-		"tags":[
+	"choropleth-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2216,8 +2216,8 @@
 			"world"
 		]
 	},
-	"notification-2":{
-		"tags":[
+	"notification-2": {
+		"tags": [
 			"speech",
 			"bubble",
 			"comment",
@@ -2225,8 +2225,8 @@
 			"notification"
 		]
 	},
-	"checklist":{
-		"tags":[
+	"checklist": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2236,8 +2236,8 @@
 			"checklist"
 		]
 	},
-	"attachment-video":{
-		"tags":[
+	"attachment-video": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -2247,16 +2247,16 @@
 			"movie"
 		]
 	},
-	"soccor":{
-		"tags":[
+	"soccor": {
+		"tags": [
 			"soccer",
 			"ball",
 			"football",
 			"world cup"
 		]
 	},
-	"create-leave-request":{
-		"tags":[
+	"create-leave-request": {
+		"tags": [
 			"holiday",
 			"vacation",
 			"leave",
@@ -2271,16 +2271,16 @@
 			"more"
 		]
 	},
-	"Chart-Tree-Map":{
-		"tags":[
+	"Chart-Tree-Map": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"request":{
-		"tags":[
+	"request": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -2293,8 +2293,8 @@
 			"request"
 		]
 	},
-	"goalseek":{
-		"tags":[
+	"goalseek": {
+		"tags": [
 			"goal",
 			"goalseek",
 			"target",
@@ -2303,8 +2303,8 @@
 			"aim"
 		]
 	},
-	"action":{
-		"tags":[
+	"action": {
+		"tags": [
 			"actions",
 			"collection",
 			"share options",
@@ -2313,8 +2313,8 @@
 			"arrow"
 		]
 	},
-	"outgoing-call":{
-		"tags":[
+	"outgoing-call": {
+		"tags": [
 			"call",
 			"communicate",
 			"phone",
@@ -2323,16 +2323,16 @@
 			"arrow"
 		]
 	},
-	"sap-ui5":{
-		"tags":[
+	"sap-ui5": {
+		"tags": [
 			"ui5",
 			"framework",
 			"development",
 			"sap"
 		]
 	},
-	"sys-first-page":{
-		"tags":[
+	"sys-first-page": {
+		"tags": [
 			"system",
 			"first",
 			"page",
@@ -2341,8 +2341,8 @@
 			"arrows"
 		]
 	},
-	"radar-chart":{
-		"tags":[
+	"radar-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2350,8 +2350,8 @@
 			"radar-chart"
 		]
 	},
-	"table-chart":{
-		"tags":[
+	"table-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2363,8 +2363,8 @@
 			"view"
 		]
 	},
-	"study-leave":{
-		"tags":[
+	"study-leave": {
+		"tags": [
 			"study",
 			"education",
 			"graduate",
@@ -2374,8 +2374,8 @@
 			"qualification"
 		]
 	},
-	"heading2":{
-		"tags":[
+	"heading2": {
+		"tags": [
 			"heading",
 			"header",
 			"h2",
@@ -2386,8 +2386,8 @@
 			"rich-text"
 		]
 	},
-	"bed":{
-		"tags":[
+	"bed": {
+		"tags": [
 			"bed",
 			"sleep",
 			"ill",
@@ -2399,8 +2399,8 @@
 			"night"
 		]
 	},
-	"heading1":{
-		"tags":[
+	"heading1": {
+		"tags": [
 			"heading",
 			"header",
 			"h1",
@@ -2411,8 +2411,8 @@
 			"rich-text"
 		]
 	},
-	"customer-history":{
-		"tags":[
+	"customer-history": {
+		"tags": [
 			"person",
 			"history",
 			"customer",
@@ -2421,8 +2421,8 @@
 			"account"
 		]
 	},
-	"heading3":{
-		"tags":[
+	"heading3": {
+		"tags": [
 			"heading",
 			"header",
 			"h3",
@@ -2433,8 +2433,8 @@
 			"rich-text"
 		]
 	},
-	"general-leave-request":{
-		"tags":[
+	"general-leave-request": {
+		"tags": [
 			"holiday",
 			"vacation",
 			"leave",
@@ -2445,8 +2445,8 @@
 			"create"
 		]
 	},
-	"machine":{
-		"tags":[
+	"machine": {
+		"tags": [
 			"machine",
 			"factory",
 			"production",
@@ -2454,16 +2454,16 @@
 			"technical"
 		]
 	},
-	"vertical-bullet-chart":{
-		"tags":[
+	"vertical-bullet-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"open-command-field":{
-		"tags":[
+	"open-command-field": {
+		"tags": [
 			"open command field",
 			"navigation",
 			"right",
@@ -2472,14 +2472,14 @@
 			"arrow"
 		]
 	},
-	"business-objects-explorer":{
-		"tags":[
+	"business-objects-explorer": {
+		"tags": [
 			"business objects explorer",
 			"compass"
 		]
 	},
-	"approvals":{
-		"tags":[
+	"approvals": {
+		"tags": [
 			"form",
 			"details",
 			"text",
@@ -2488,16 +2488,16 @@
 			"checkmark"
 		]
 	},
-	"flag":{
-		"tags":[
+	"flag": {
+		"tags": [
 			"flag",
 			"mark",
 			"marker",
 			"important"
 		]
 	},
-	"underline-text":{
-		"tags":[
+	"underline-text": {
+		"tags": [
 			"underline",
 			"text",
 			"format",
@@ -2506,8 +2506,8 @@
 			"rich-text"
 		]
 	},
-	"appointment-2":{
-		"tags":[
+	"appointment-2": {
+		"tags": [
 			"date picker",
 			"calendar",
 			"month",
@@ -2516,15 +2516,15 @@
 			"appointment"
 		]
 	},
-	"overlay":{
-		"tags":[
+	"overlay": {
+		"tags": [
 			"overlay",
 			"circle",
 			"dot"
 		]
 	},
-	"attachment-audio":{
-		"tags":[
+	"attachment-audio": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -2533,8 +2533,8 @@
 			"sound"
 		]
 	},
-	"redo":{
-		"tags":[
+	"redo": {
+		"tags": [
 			"redo",
 			"arrow",
 			"previous state",
@@ -2542,16 +2542,16 @@
 			"forwards"
 		]
 	},
-	"arobase":{
-		"tags":[
+	"arobase": {
+		"tags": [
 			"at",
 			"@",
 			"email",
 			"address"
 		]
 	},
-	"sys-enter":{
-		"tags":[
+	"sys-enter": {
+		"tags": [
 			"system",
 			"enter",
 			"correct",
@@ -2559,8 +2559,8 @@
 			"affirmative"
 		]
 	},
-	"line-chart-dual-axis":{
-		"tags":[
+	"line-chart-dual-axis": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2569,14 +2569,14 @@
 			"dual axis"
 		]
 	},
-	"create-session":{
-		"tags":[
+	"create-session": {
+		"tags": [
 			"create",
 			"session"
 		]
 	},
-	"headset":{
-		"tags":[
+	"headset": {
+		"tags": [
 			"headset",
 			"call",
 			"help",
@@ -2586,16 +2586,16 @@
 			"listen"
 		]
 	},
-	"heatmap-chart":{
-		"tags":[
+	"heatmap-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"checklist-item":{
-		"tags":[
+	"checklist-item": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2606,8 +2606,8 @@
 			"item"
 		]
 	},
-	"rhombus-milestone-2":{
-		"tags":[
+	"rhombus-milestone-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2618,8 +2618,8 @@
 			"milestone"
 		]
 	},
-	"key-user-settings":{
-		"tags":[
+	"key-user-settings": {
+		"tags": [
 			"settings",
 			"cogwheel",
 			"configuration",
@@ -2632,8 +2632,8 @@
 			"runtime authoring"
 		]
 	},
-	"vertical-grip":{
-		"tags":[
+	"vertical-grip": {
+		"tags": [
 			"vertical",
 			"grip",
 			"move left",
@@ -2641,8 +2641,8 @@
 			"splitter"
 		]
 	},
-	"add":{
-		"tags":[
+	"add": {
+		"tags": [
 			"add",
 			"plus",
 			"additional",
@@ -2653,15 +2653,15 @@
 			"add item"
 		]
 	},
-	"mri-scan":{
-		"tags":[
+	"mri-scan": {
+		"tags": [
 			"mri",
 			"scan",
 			"medical"
 		]
 	},
-	"slim-arrow-down":{
-		"tags":[
+	"slim-arrow-down": {
+		"tags": [
 			"slim",
 			"thin",
 			"skinny",
@@ -2672,8 +2672,8 @@
 			"multi combobox"
 		]
 	},
-	"chart-table-view":{
-		"tags":[
+	"chart-table-view": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2685,8 +2685,8 @@
 			"view"
 		]
 	},
-	"it-host":{
-		"tags":[
+	"it-host": {
+		"tags": [
 			"server",
 			"it",
 			"machine",
@@ -2696,8 +2696,8 @@
 			"host"
 		]
 	},
-	"grid":{
-		"tags":[
+	"grid": {
+		"tags": [
 			"grid",
 			"layout",
 			"boxes",
@@ -2705,8 +2705,8 @@
 			"modular"
 		]
 	},
-	"line-chart":{
-		"tags":[
+	"line-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2714,8 +2714,8 @@
 			"line chart"
 		]
 	},
-	"outdent":{
-		"tags":[
+	"outdent": {
+		"tags": [
 			"outdent",
 			"paragraph",
 			"move left",
@@ -2726,15 +2726,15 @@
 			"arrows"
 		]
 	},
-	"less":{
-		"tags":[
+	"less": {
+		"tags": [
 			"less",
 			"minus",
 			"subract"
 		]
 	},
-	"my-sales-order":{
-		"tags":[
+	"my-sales-order": {
+		"tags": [
 			"document",
 			"page",
 			"sales",
@@ -2746,8 +2746,8 @@
 			"invoice"
 		]
 	},
-	"puzzle":{
-		"tags":[
+	"puzzle": {
+		"tags": [
 			"puzzle",
 			"pieces",
 			"fit",
@@ -2758,8 +2758,8 @@
 			"challenge"
 		]
 	},
-	"building":{
-		"tags":[
+	"building": {
+		"tags": [
 			"building",
 			"company",
 			"firm",
@@ -2767,16 +2767,16 @@
 			"office"
 		]
 	},
-	"crm-service-manager":{
-		"tags":[
+	"crm-service-manager": {
+		"tags": [
 			"crm service manager",
 			"task",
 			"dropdown",
 			"list"
 		]
 	},
-	"task":{
-		"tags":[
+	"task": {
+		"tags": [
 			"clipboard",
 			"task",
 			"checkbox",
@@ -2785,28 +2785,28 @@
 			"checkmark"
 		]
 	},
-	"play":{
-		"tags":[
+	"play": {
+		"tags": [
 			"play"
 		]
 	},
-	"list":{
-		"tags":[
+	"list": {
+		"tags": [
 			"list",
 			"text",
 			"ordered"
 		]
 	},
-	"hint":{
-		"tags":[
+	"hint": {
+		"tags": [
 			"information",
 			"hint",
 			"about",
 			"details"
 		]
 	},
-	"message-warning":{
-		"tags":[
+	"message-warning": {
+		"tags": [
 			"message",
 			"warning",
 			"critical",
@@ -2814,8 +2814,8 @@
 			"status"
 		]
 	},
-	"past":{
-		"tags":[
+	"past": {
+		"tags": [
 			"time",
 			"clock",
 			"past",
@@ -2824,8 +2824,8 @@
 			"late"
 		]
 	},
-	"provision":{
-		"tags":[
+	"provision": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2839,8 +2839,8 @@
 			"customize"
 		]
 	},
-	"print":{
-		"tags":[
+	"print": {
+		"tags": [
 			"print",
 			"printer",
 			"send to print",
@@ -2851,8 +2851,8 @@
 			"file"
 		]
 	},
-	"database":{
-		"tags":[
+	"database": {
+		"tags": [
 			"database",
 			"big data",
 			"cube",
@@ -2863,8 +2863,8 @@
 			"backend"
 		]
 	},
-	"multiselect-none":{
-		"tags":[
+	"multiselect-none": {
+		"tags": [
 			"multi select",
 			"list",
 			"table",
@@ -2873,8 +2873,8 @@
 			"deselected"
 		]
 	},
-	"web-cam":{
-		"tags":[
+	"web-cam": {
+		"tags": [
 			"web cam",
 			"camera",
 			"live",
@@ -2882,8 +2882,8 @@
 			"visual"
 		]
 	},
-	"opportunity":{
-		"tags":[
+	"opportunity": {
+		"tags": [
 			"chart",
 			"line",
 			"star",
@@ -2894,8 +2894,8 @@
 			"trade"
 		]
 	},
-	"mirrored-task-circle":{
-		"tags":[
+	"mirrored-task-circle": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2907,8 +2907,8 @@
 			"task"
 		]
 	},
-	"journey-depart":{
-		"tags":[
+	"journey-depart": {
+		"tags": [
 			"journey",
 			"depart",
 			"arrow",
@@ -2916,8 +2916,8 @@
 			"placement"
 		]
 	},
-	"sorting-ranking":{
-		"tags":[
+	"sorting-ranking": {
+		"tags": [
 			"sort",
 			"ranking",
 			"ascending",
@@ -2925,8 +2925,8 @@
 			"arrow"
 		]
 	},
-	"text-align-center":{
-		"tags":[
+	"text-align-center": {
+		"tags": [
 			"align",
 			"text",
 			"center",
@@ -2934,8 +2934,8 @@
 			"rich-text"
 		]
 	},
-	"user-edit":{
-		"tags":[
+	"user-edit": {
+		"tags": [
 			"user",
 			"edit",
 			"person",
@@ -2943,16 +2943,16 @@
 			"pen"
 		]
 	},
-	"step":{
-		"tags":[
+	"step": {
+		"tags": [
 			"process",
 			"flow",
 			"step",
 			"arrow"
 		]
 	},
-	"master-task-triangle-2":{
-		"tags":[
+	"master-task-triangle-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -2964,8 +2964,8 @@
 			"master"
 		]
 	},
-	"discussion":{
-		"tags":[
+	"discussion": {
+		"tags": [
 			"speech",
 			"bubble",
 			"comment",
@@ -2973,8 +2973,8 @@
 			"blank"
 		]
 	},
-	"resize-horizontal":{
-		"tags":[
+	"resize-horizontal": {
+		"tags": [
 			"resize",
 			"horizontal",
 			"column",
@@ -2988,24 +2988,24 @@
 			"side to side"
 		]
 	},
-	"display-more":{
-		"tags":[
+	"display-more": {
+		"tags": [
 			"display",
 			"details",
 			"more",
 			"arrow"
 		]
 	},
-	"bo-strategy-management":{
-		"tags":[
+	"bo-strategy-management": {
+		"tags": [
 			"bo strategy management",
 			"business",
 			"object",
 			"circle"
 		]
 	},
-	"customer":{
-		"tags":[
+	"customer": {
+		"tags": [
 			"person",
 			"individual",
 			"user",
@@ -3016,8 +3016,8 @@
 			"me"
 		]
 	},
-	"attachment-zip-file":{
-		"tags":[
+	"attachment-zip-file": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -3025,8 +3025,8 @@
 			"compressed"
 		]
 	},
-	"temperature":{
-		"tags":[
+	"temperature": {
+		"tags": [
 			"temperature",
 			"hot",
 			"heat",
@@ -3038,8 +3038,8 @@
 			"medical"
 		]
 	},
-	"unlocked":{
-		"tags":[
+	"unlocked": {
+		"tags": [
 			"unlocked",
 			"open padlock",
 			"open",
@@ -3049,20 +3049,20 @@
 			"unrestricted"
 		]
 	},
-	"hide":{
-		"tags":[
+	"hide": {
+		"tags": [
 			"hide",
 			"eye"
 		]
 	},
-	"forward":{
-		"tags":[
+	"forward": {
+		"tags": [
 			"forward",
 			"arrow"
 		]
 	},
-	"status-critical":{
-		"tags":[
+	"status-critical": {
+		"tags": [
 			"critical",
 			"in process",
 			"warning",
@@ -3072,8 +3072,8 @@
 			"lifecycle"
 		]
 	},
-	"incoming-call":{
-		"tags":[
+	"incoming-call": {
+		"tags": [
 			"call",
 			"communicate",
 			"incoming",
@@ -3082,8 +3082,8 @@
 			"arrow"
 		]
 	},
-	"home-share":{
-		"tags":[
+	"home-share": {
+		"tags": [
 			"globe",
 			"world",
 			"goegraphical",
@@ -3094,23 +3094,23 @@
 			"arrow"
 		]
 	},
-	"journey-arrive":{
-		"tags":[
+	"journey-arrive": {
+		"tags": [
 			"journey",
 			"arrive",
 			"arrow",
 			"placement"
 		]
 	},
-	"navigation-left-arrow":{
-		"tags":[
+	"navigation-left-arrow": {
+		"tags": [
 			"navigation",
 			"left",
 			"arrow"
 		]
 	},
-	"opportunities":{
-		"tags":[
+	"opportunities": {
+		"tags": [
 			"user",
 			"person",
 			"dollar",
@@ -3118,8 +3118,8 @@
 			"opportunity"
 		]
 	},
-	"upstacked-chart":{
-		"tags":[
+	"upstacked-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -3127,16 +3127,16 @@
 			"upstacked"
 		]
 	},
-	"donut-chart":{
-		"tags":[
+	"donut-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"supplier":{
-		"tags":[
+	"supplier": {
+		"tags": [
 			"supplier",
 			"package",
 			"product",
@@ -3150,16 +3150,16 @@
 			"inventory"
 		]
 	},
-	"signature":{
-		"tags":[
+	"signature": {
+		"tags": [
 			"pencil",
 			"pen",
 			"signature",
 			"sign"
 		]
 	},
-	"circle-task":{
-		"tags":[
+	"circle-task": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -3170,8 +3170,8 @@
 			"task"
 		]
 	},
-	"copy":{
-		"tags":[
+	"copy": {
+		"tags": [
 			"copy",
 			"document",
 			"file",
@@ -3179,8 +3179,8 @@
 			"text"
 		]
 	},
-	"close-command-field":{
-		"tags":[
+	"close-command-field": {
+		"tags": [
 			"close command field",
 			"navigation",
 			"left",
@@ -3189,8 +3189,8 @@
 			"arrow"
 		]
 	},
-	"activity-2":{
-		"tags":[
+	"activity-2": {
+		"tags": [
 			"activity",
 			"activities",
 			"tasks",
@@ -3202,23 +3202,23 @@
 			"tick mark"
 		]
 	},
-	"windows-doors":{
-		"tags":[
+	"windows-doors": {
+		"tags": [
 			"window",
 			"door",
 			"entry"
 		]
 	},
-	"bookmark":{
-		"tags":[
+	"bookmark": {
+		"tags": [
 			"bookmark",
 			"later",
 			"marker",
 			"save"
 		]
 	},
-	"mileage":{
-		"tags":[
+	"mileage": {
+		"tags": [
 			"mileage",
 			"tank",
 			"petrol",
@@ -3228,15 +3228,15 @@
 			"station"
 		]
 	},
-	"fax-machine":{
-		"tags":[
+	"fax-machine": {
+		"tags": [
 			"fax",
 			"machine",
 			"communicate"
 		]
 	},
-	"pdf-attachment":{
-		"tags":[
+	"pdf-attachment": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -3244,15 +3244,15 @@
 			"pdf"
 		]
 	},
-	"sys-find":{
-		"tags":[
+	"sys-find": {
+		"tags": [
 			"find",
 			"binoculars",
 			"look up"
 		]
 	},
-	"master-task-triangle":{
-		"tags":[
+	"master-task-triangle": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -3264,8 +3264,8 @@
 			"master"
 		]
 	},
-	"text-align-right":{
-		"tags":[
+	"text-align-right": {
+		"tags": [
 			"align",
 			"text",
 			"right",
@@ -3273,8 +3273,8 @@
 			"rich-text"
 		]
 	},
-	"learning-assistant":{
-		"tags":[
+	"learning-assistant": {
+		"tags": [
 			"education",
 			"course",
 			"learning",
@@ -3291,45 +3291,45 @@
 			"professor"
 		]
 	},
-	"favorite":{
-		"tags":[
+	"favorite": {
+		"tags": [
 			"favorite",
 			"favourite",
 			"star"
 		]
 	},
-	"log":{
-		"tags":[
+	"log": {
+		"tags": [
 			"log",
 			"logout",
 			"log on",
 			"log off"
 		]
 	},
-	"loan":{
-		"tags":[
+	"loan": {
+		"tags": [
 			"money bag",
 			"bank",
 			"dollar",
 			"tag"
 		]
 	},
-	"toaster-top":{
-		"tags":[
+	"toaster-top": {
+		"tags": [
 			"toaster",
 			"top",
 			"details"
 		]
 	},
-	"download-from-cloud":{
-		"tags":[
+	"download-from-cloud": {
+		"tags": [
 			"download",
 			"cloud",
 			"arrow"
 		]
 	},
-	"sys-enter-2":{
-		"tags":[
+	"sys-enter-2": {
+		"tags": [
 			"system",
 			"enter",
 			"correct",
@@ -3337,8 +3337,8 @@
 			"affirmative"
 		]
 	},
-	"sys-last-page":{
-		"tags":[
+	"sys-last-page": {
+		"tags": [
 			"system",
 			"last",
 			"page",
@@ -3347,15 +3347,15 @@
 			"arrows"
 		]
 	},
-	"to-be-reviewed":{
-		"tags":[
+	"to-be-reviewed": {
+		"tags": [
 			"to be reviewed",
 			"indicator",
 			"information"
 		]
 	},
-	"electrocardiogram":{
-		"tags":[
+	"electrocardiogram": {
+		"tags": [
 			"electrocardiogram",
 			"heart",
 			"scan",
@@ -3363,8 +3363,8 @@
 			"medical"
 		]
 	},
-	"marketing-campaign":{
-		"tags":[
+	"marketing-campaign": {
+		"tags": [
 			"marketing campaign",
 			"loud speaker",
 			"megaphone",
@@ -3373,8 +3373,8 @@
 			"public address"
 		]
 	},
-	"timesheet":{
-		"tags":[
+	"timesheet": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -3386,8 +3386,8 @@
 			"workday"
 		]
 	},
-	"horizontal-bar-chart-2":{
-		"tags":[
+	"horizontal-bar-chart-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -3395,8 +3395,8 @@
 			"horizontal bar chart"
 		]
 	},
-	"navigation-right-arrow":{
-		"tags":[
+	"navigation-right-arrow": {
+		"tags": [
 			"navigation",
 			"right",
 			"expand",
@@ -3405,8 +3405,8 @@
 			"arrow"
 		]
 	},
-	"sort":{
-		"tags":[
+	"sort": {
+		"tags": [
 			"sort",
 			"aggregate",
 			"ascending",
@@ -3414,16 +3414,16 @@
 			"arrow"
 		]
 	},
-	"taxi":{
-		"tags":[
+	"taxi": {
+		"tags": [
 			"car",
 			"taxi",
 			"cab",
 			"transportation"
 		]
 	},
-	"sys-next-page":{
-		"tags":[
+	"sys-next-page": {
+		"tags": [
 			"system",
 			"next",
 			"page",
@@ -3431,8 +3431,8 @@
 			"arrows"
 		]
 	},
-	"full-stacked-chart":{
-		"tags":[
+	"full-stacked-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -3440,15 +3440,15 @@
 			"full stacked chart"
 		]
 	},
-	"sys-back":{
-		"tags":[
+	"sys-back": {
+		"tags": [
 			"system",
 			"back",
 			"arrows"
 		]
 	},
-	"multiselect-all":{
-		"tags":[
+	"multiselect-all": {
+		"tags": [
 			"multi select",
 			"list",
 			"table",
@@ -3457,8 +3457,8 @@
 			"selected"
 		]
 	},
-	"collections-insight":{
-		"tags":[
+	"collections-insight": {
+		"tags": [
 			"collections",
 			"insight",
 			"report",
@@ -3473,21 +3473,21 @@
 			"money"
 		]
 	},
-	"attachment-text-file":{
-		"tags":[
+	"attachment-text-file": {
+		"tags": [
 			"document",
 			"page",
 			"file",
 			"text"
 		]
 	},
-	"arrow-right":{
-		"tags":[
+	"arrow-right": {
+		"tags": [
 			"arrow right"
 		]
 	},
-	"source-code":{
-		"tags":[
+	"source-code": {
+		"tags": [
 			"source",
 			"code",
 			"develop",
@@ -3495,8 +3495,8 @@
 			"syntax"
 		]
 	},
-	"leads":{
-		"tags":[
+	"leads": {
+		"tags": [
 			"user",
 			"person",
 			"leads",
@@ -3504,8 +3504,8 @@
 			"equal to"
 		]
 	},
-	"document":{
-		"tags":[
+	"document": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -3514,8 +3514,8 @@
 			"new"
 		]
 	},
-	"column-chart-dual-axis":{
-		"tags":[
+	"column-chart-dual-axis": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -3524,8 +3524,8 @@
 			"dual axis"
 		]
 	},
-	"syringe":{
-		"tags":[
+	"syringe": {
+		"tags": [
 			"medical",
 			"emergency",
 			"hospital",
@@ -3535,8 +3535,8 @@
 			"injection"
 		]
 	},
-	"switch-classes":{
-		"tags":[
+	"switch-classes": {
+		"tags": [
 			"switch",
 			"views",
 			"objects",
@@ -3544,16 +3544,16 @@
 			"classes"
 		]
 	},
-	"thing-type":{
-		"tags":[
+	"thing-type": {
+		"tags": [
 			"popup",
 			"speech",
 			"bubble",
 			"thing-type"
 		]
 	},
-	"initiative":{
-		"tags":[
+	"initiative": {
+		"tags": [
 			"initiative",
 			"initiate",
 			"begin",
@@ -3563,8 +3563,8 @@
 			"circle"
 		]
 	},
-	"documents":{
-		"tags":[
+	"documents": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -3572,8 +3572,8 @@
 			"documents"
 		]
 	},
-	"unpaid-leave":{
-		"tags":[
+	"unpaid-leave": {
+		"tags": [
 			"unpaid leave",
 			"money",
 			"dollar",
@@ -3581,8 +3581,8 @@
 			"rejected"
 		]
 	},
-	"checklist-2":{
-		"tags":[
+	"checklist-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -3592,8 +3592,8 @@
 			"checklist"
 		]
 	},
-	"clinical-tast-tracker":{
-		"tags":[
+	"clinical-tast-tracker": {
+		"tags": [
 			"clinical",
 			"task",
 			"tracker",
@@ -3603,19 +3603,19 @@
 			"check boxes"
 		]
 	},
-	"arrow-left":{
-		"tags":[
+	"arrow-left": {
+		"tags": [
 			"arrow left"
 		]
 	},
-	"up":{
-		"tags":[
+	"up": {
+		"tags": [
 			"up",
 			"triangle"
 		]
 	},
-	"functional-location":{
-		"tags":[
+	"functional-location": {
+		"tags": [
 			"arrow",
 			"locate",
 			"me",
@@ -3626,8 +3626,8 @@
 			"functional"
 		]
 	},
-	"vehicle-repair":{
-		"tags":[
+	"vehicle-repair": {
+		"tags": [
 			"car",
 			"crash",
 			"accident",
@@ -3638,22 +3638,22 @@
 			"vehicle"
 		]
 	},
-	"inventory":{
-		"tags":[
+	"inventory": {
+		"tags": [
 			"inventory",
 			"truck",
 			"wrench",
 			"tools"
 		]
 	},
-	"basket":{
-		"tags":[
+	"basket": {
+		"tags": [
 			"basket",
 			"shopping"
 		]
 	},
-	"end-user-experience-monitoring":{
-		"tags":[
+	"end-user-experience-monitoring": {
+		"tags": [
 			"end user experience monitoring",
 			"gauge",
 			"measure",
@@ -3661,22 +3661,22 @@
 			"monitor"
 		]
 	},
-	"down":{
-		"tags":[
+	"down": {
+		"tags": [
 			"down",
 			"triangle"
 		]
 	},
-	"pipeline-analysis":{
-		"tags":[
+	"pipeline-analysis": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"competitor":{
-		"tags":[
+	"competitor": {
+		"tags": [
 			"competitor",
 			"winner",
 			"prize",
@@ -3685,8 +3685,8 @@
 			"cup"
 		]
 	},
-	"world":{
-		"tags":[
+	"world": {
+		"tags": [
 			"globe",
 			"world",
 			"goegraphical",
@@ -3696,8 +3696,8 @@
 			"global"
 		]
 	},
-	"customer-briefing":{
-		"tags":[
+	"customer-briefing": {
+		"tags": [
 			"customer",
 			"user",
 			"person",
@@ -3709,8 +3709,8 @@
 			"briefing"
 		]
 	},
-	"add-activity-2":{
-		"tags":[
+	"add-activity-2": {
+		"tags": [
 			"activity",
 			"activities",
 			"tasks",
@@ -3727,8 +3727,8 @@
 			"more"
 		]
 	},
-	"iphone-2":{
-		"tags":[
+	"iphone-2": {
+		"tags": [
 			"iphone",
 			"phone",
 			"smart phone",
@@ -3739,8 +3739,8 @@
 			"cozy"
 		]
 	},
-	"cancel":{
-		"tags":[
+	"cancel": {
+		"tags": [
 			"unable",
 			"forbidden",
 			"do not",
@@ -3749,8 +3749,8 @@
 			"not allowed"
 		]
 	},
-	"pushpin-off":{
-		"tags":[
+	"pushpin-off": {
+		"tags": [
 			"pin",
 			"pushpin",
 			"stick",
@@ -3762,21 +3762,21 @@
 			"on"
 		]
 	},
-	"download":{
-		"tags":[
+	"download": {
+		"tags": [
 			"download",
 			"arrow"
 		]
 	},
-	"inspection":{
-		"tags":[
+	"inspection": {
+		"tags": [
 			"search",
 			"document",
 			"inspect"
 		]
 	},
-	"scatter-chart":{
-		"tags":[
+	"scatter-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -3784,16 +3784,16 @@
 			"scatter chart"
 		]
 	},
-	"retail-store":{
-		"tags":[
+	"retail-store": {
+		"tags": [
 			"shop",
 			"store",
 			"retail",
 			"market"
 		]
 	},
-	"crop":{
-		"tags":[
+	"crop": {
+		"tags": [
 			"crop",
 			"clip",
 			"snip",
@@ -3804,8 +3804,8 @@
 			"obect"
 		]
 	},
-	"contacts":{
-		"tags":[
+	"contacts": {
+		"tags": [
 			"customers",
 			"contacts",
 			"address",
@@ -3817,14 +3817,14 @@
 			"companies"
 		]
 	},
-	"folder-full":{
-		"tags":[
+	"folder-full": {
+		"tags": [
 			"folder",
 			"full"
 		]
 	},
-	"filter-fields":{
-		"tags":[
+	"filter-fields": {
+		"tags": [
 			"analytics",
 			"filter",
 			"organise",
@@ -3834,8 +3834,8 @@
 			"data"
 		]
 	},
-	"unwired":{
-		"tags":[
+	"unwired": {
+		"tags": [
 			"unwired",
 			"gauge",
 			"measure",
@@ -3844,8 +3844,8 @@
 			"performance"
 		]
 	},
-	"bbyd-active-sales":{
-		"tags":[
+	"bbyd-active-sales": {
+		"tags": [
 			"business by design",
 			"active",
 			"sales",
@@ -3855,16 +3855,16 @@
 			"book"
 		]
 	},
-	"expand":{
-		"tags":[
+	"expand": {
+		"tags": [
 			"expand all",
 			"plus",
 			"group all",
 			"arrow"
 		]
 	},
-	"card":{
-		"tags":[
+	"card": {
+		"tags": [
 			"image",
 			"placeholder",
 			"picture",
@@ -3874,8 +3874,8 @@
 			"card"
 		]
 	},
-	"blank-tag-2":{
-		"tags":[
+	"blank-tag-2": {
+		"tags": [
 			"tag",
 			"label",
 			"marker",
@@ -3883,24 +3883,24 @@
 			"blank"
 		]
 	},
-	"instance":{
-		"tags":[
+	"instance": {
+		"tags": [
 			"instance",
 			"process",
 			"clock",
 			"chevron"
 		]
 	},
-	"collapse":{
-		"tags":[
+	"collapse": {
+		"tags": [
 			"collapse all",
 			"minus",
 			"ungroup all",
 			"arrow"
 		]
 	},
-	"draw-rectangle":{
-		"tags":[
+	"draw-rectangle": {
+		"tags": [
 			"draw",
 			"rectangle",
 			"resize",
@@ -3908,16 +3908,16 @@
 			"create"
 		]
 	},
-	"physical-activity":{
-		"tags":[
+	"physical-activity": {
+		"tags": [
 			"physical activity",
 			"runing",
 			"run",
 			"jogging"
 		]
 	},
-	"address-book":{
-		"tags":[
+	"address-book": {
+		"tags": [
 			"customers",
 			"contacts",
 			"addresses",
@@ -3929,16 +3929,16 @@
 			"at"
 		]
 	},
-	"multi-select":{
-		"tags":[
+	"multi-select": {
+		"tags": [
 			"multi select",
 			"list",
 			"table",
 			"data"
 		]
 	},
-	"add-activity":{
-		"tags":[
+	"add-activity": {
+		"tags": [
 			"activity",
 			"activities",
 			"tasks",
@@ -3951,16 +3951,16 @@
 			"more"
 		]
 	},
-	"customer-view":{
-		"tags":[
+	"customer-view": {
+		"tags": [
 			"customer",
 			"view",
 			"analytics",
 			"overview"
 		]
 	},
-	"technical-object":{
-		"tags":[
+	"technical-object": {
+		"tags": [
 			"technical",
 			"object",
 			"wrench",
@@ -3972,16 +3972,16 @@
 			"component"
 		]
 	},
-	"cart":{
-		"tags":[
+	"cart": {
+		"tags": [
 			"cart",
 			"trolley",
 			"basket",
 			"shopping"
 		]
 	},
-	"collaborate":{
-		"tags":[
+	"collaborate": {
+		"tags": [
 			"group",
 			"team",
 			"people",
@@ -3996,8 +3996,8 @@
 			"project"
 		]
 	},
-	"message-information":{
-		"tags":[
+	"message-information": {
+		"tags": [
 			"message",
 			"information",
 			"neutral",
@@ -4005,22 +4005,22 @@
 			"status"
 		]
 	},
-	"arrow-top":{
-		"tags":[
+	"arrow-top": {
+		"tags": [
 			"arrow top",
 			"up"
 		]
 	},
-	"bell":{
-		"tags":[
+	"bell": {
+		"tags": [
 			"bell",
 			"alarm",
 			"notify",
 			"alerts"
 		]
 	},
-	"syntax":{
-		"tags":[
+	"syntax": {
+		"tags": [
 			"source",
 			"code",
 			"develop",
@@ -4028,8 +4028,8 @@
 			"syntax"
 		]
 	},
-	"checklist-item-2":{
-		"tags":[
+	"checklist-item-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4040,8 +4040,8 @@
 			"item"
 		]
 	},
-	"project-definition-triangle-2":{
-		"tags":[
+	"project-definition-triangle-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4053,8 +4053,8 @@
 			"definition"
 		]
 	},
-	"email":{
-		"tags":[
+	"email": {
+		"tags": [
 			"envelope",
 			"email",
 			"e-mail",
@@ -4063,16 +4063,16 @@
 			"correspondence"
 		]
 	},
-	"sound":{
-		"tags":[
+	"sound": {
+		"tags": [
 			"sound",
 			"audio",
 			"audio",
 			"speaker"
 		]
 	},
-	"edit-outside":{
-		"tags":[
+	"edit-outside": {
+		"tags": [
 			"pencil",
 			"pen",
 			"write",
@@ -4083,14 +4083,14 @@
 			"arrow"
 		]
 	},
-	"Netweaver-business-client":{
-		"tags":[
+	"Netweaver-business-client": {
+		"tags": [
 			"netweaver business client",
 			"bird"
 		]
 	},
-	"user-settings":{
-		"tags":[
+	"user-settings": {
+		"tags": [
 			"settings",
 			"cogwheel",
 			"configuration",
@@ -4103,8 +4103,8 @@
 			"runtime authoring"
 		]
 	},
-	"credit-card":{
-		"tags":[
+	"credit-card": {
+		"tags": [
 			"credit card",
 			"master-card",
 			"money",
@@ -4116,8 +4116,8 @@
 			"book online"
 		]
 	},
-	"check-availability":{
-		"tags":[
+	"check-availability": {
+		"tags": [
 			"date picker",
 			"calendar",
 			"month",
@@ -4131,8 +4131,8 @@
 			"find"
 		]
 	},
-	"employee-pane":{
-		"tags":[
+	"employee-pane": {
+		"tags": [
 			"user",
 			"person",
 			"employee",
@@ -4143,8 +4143,8 @@
 			"me"
 		]
 	},
-	"nutrition-activity":{
-		"tags":[
+	"nutrition-activity": {
+		"tags": [
 			"apple",
 			"nutrition",
 			"activity",
@@ -4152,8 +4152,8 @@
 			"fruit"
 		]
 	},
-	"alphabetical-order":{
-		"tags":[
+	"alphabetical-order": {
+		"tags": [
 			"function",
 			"alphabet",
 			"letters",
@@ -4163,23 +4163,23 @@
 			"order"
 		]
 	},
-	"along-stacked-chart":{
-		"tags":[
+	"along-stacked-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"passenger-train":{
-		"tags":[
+	"passenger-train": {
+		"tags": [
 			"train",
 			"public transportation",
 			"passenger"
 		]
 	},
-	"group-2":{
-		"tags":[
+	"group-2": {
+		"tags": [
 			"group",
 			"data",
 			"aggregate",
@@ -4187,8 +4187,8 @@
 			"table"
 		]
 	},
-	"personnel-view":{
-		"tags":[
+	"personnel-view": {
+		"tags": [
 			"view",
 			"person",
 			"profile",
@@ -4196,8 +4196,8 @@
 			"overview"
 		]
 	},
-	"complete":{
-		"tags":[
+	"complete": {
+		"tags": [
 			"complete",
 			"checkmark",
 			"tick",
@@ -4206,8 +4206,8 @@
 			"finish"
 		]
 	},
-	"performance":{
-		"tags":[
+	"performance": {
+		"tags": [
 			"gauge",
 			"measure",
 			"speed",
@@ -4215,8 +4215,8 @@
 			"performance"
 		]
 	},
-	"feed":{
-		"tags":[
+	"feed": {
+		"tags": [
 			"feed",
 			"messages",
 			"input",
@@ -4226,16 +4226,16 @@
 			"real-time"
 		]
 	},
-	"broken-link":{
-		"tags":[
+	"broken-link": {
+		"tags": [
 			"unlink",
 			"broken",
 			"chain",
 			"hyperlink"
 		]
 	},
-	"mirrored-task-circle-2":{
-		"tags":[
+	"mirrored-task-circle-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4247,8 +4247,8 @@
 			"task"
 		]
 	},
-	"globe":{
-		"tags":[
+	"globe": {
+		"tags": [
 			"globe",
 			"world",
 			"goegraphical",
@@ -4258,8 +4258,8 @@
 			"global"
 		]
 	},
-	"e-care":{
-		"tags":[
+	"e-care": {
+		"tags": [
 			"e care",
 			"digital customer care",
 			"service",
@@ -4272,8 +4272,8 @@
 			"environment"
 		]
 	},
-	"eraser":{
-		"tags":[
+	"eraser": {
+		"tags": [
 			"pencil",
 			"pen",
 			"erase",
@@ -4282,8 +4282,8 @@
 			"text"
 		]
 	},
-	"sound-off":{
-		"tags":[
+	"sound-off": {
+		"tags": [
 			"sound",
 			"audio",
 			"off",
@@ -4293,8 +4293,8 @@
 			"cancel"
 		]
 	},
-	"camera":{
-		"tags":[
+	"camera": {
+		"tags": [
 			"camera",
 			"photograph",
 			"device",
@@ -4302,15 +4302,15 @@
 			"snap shot"
 		]
 	},
-	"attachment":{
-		"tags":[
+	"attachment": {
+		"tags": [
 			"attach",
 			"file",
 			"paper clip"
 		]
 	},
-	"write-new-document":{
-		"tags":[
+	"write-new-document": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -4322,8 +4322,8 @@
 			"pen"
 		]
 	},
-	"iphone":{
-		"tags":[
+	"iphone": {
+		"tags": [
 			"iphone",
 			"phone",
 			"smart phone",
@@ -4334,8 +4334,8 @@
 			"cozy"
 		]
 	},
-	"vertical-bar-chart-2":{
-		"tags":[
+	"vertical-bar-chart-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4343,8 +4343,8 @@
 			"vertical bar chart"
 		]
 	},
-	"appointment":{
-		"tags":[
+	"appointment": {
+		"tags": [
 			"date picker",
 			"calendar",
 			"month",
@@ -4353,16 +4353,16 @@
 			"appointment"
 		]
 	},
-	"upload-to-cloud":{
-		"tags":[
+	"upload-to-cloud": {
+		"tags": [
 			"save",
 			"upload",
 			"cloud",
 			"arrow"
 		]
 	},
-	"message-popup":{
-		"tags":[
+	"message-popup": {
+		"tags": [
 			"message",
 			"popup",
 			"speech",
@@ -4372,8 +4372,8 @@
 			"status"
 		]
 	},
-	"circle-task-2":{
-		"tags":[
+	"circle-task-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4384,8 +4384,8 @@
 			"task"
 		]
 	},
-	"kpi-managing-my-area":{
-		"tags":[
+	"kpi-managing-my-area": {
+		"tags": [
 			"user",
 			"person",
 			"kpi",
@@ -4393,8 +4393,8 @@
 			"equal to"
 		]
 	},
-	"project-definition-triangle":{
-		"tags":[
+	"project-definition-triangle": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4406,8 +4406,8 @@
 			"definition"
 		]
 	},
-	"widgets":{
-		"tags":[
+	"widgets": {
+		"tags": [
 			"widgets",
 			"random",
 			"star",
@@ -4417,8 +4417,8 @@
 			"apps"
 		]
 	},
-	"cursor-arrow":{
-		"tags":[
+	"cursor-arrow": {
+		"tags": [
 			"cursor",
 			"arrow",
 			"mouse",
@@ -4426,15 +4426,15 @@
 			"select"
 		]
 	},
-	"work-history":{
-		"tags":[
+	"work-history": {
+		"tags": [
 			"folder",
 			"person",
 			"work history"
 		]
 	},
-	"bold-text":{
-		"tags":[
+	"bold-text": {
+		"tags": [
 			"bold",
 			"fat",
 			"bulk",
@@ -4446,8 +4446,8 @@
 			"rich-text"
 		]
 	},
-	"accept":{
-		"tags":[
+	"accept": {
+		"tags": [
 			"accept",
 			"approve",
 			"correct",
@@ -4456,8 +4456,8 @@
 			"affirmative"
 		]
 	},
-	"tag":{
-		"tags":[
+	"tag": {
+		"tags": [
 			"tag",
 			"label",
 			"marker",
@@ -4465,22 +4465,22 @@
 			"detail"
 		]
 	},
-	"media-pause":{
-		"tags":[
+	"media-pause": {
+		"tags": [
 			"pause",
 			"media",
 			"arrow"
 		]
 	},
-	"resize-corner":{
-		"tags":[
+	"resize-corner": {
+		"tags": [
 			"resize",
 			"dialog",
 			"corner"
 		]
 	},
-	"customize":{
-		"tags":[
+	"customize": {
+		"tags": [
 			"settings",
 			"configuration",
 			"settings",
@@ -4490,8 +4490,8 @@
 			"fine tune"
 		]
 	},
-	"tree":{
-		"tags":[
+	"tree": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4502,8 +4502,8 @@
 			"tree"
 		]
 	},
-	"area-chart":{
-		"tags":[
+	"area-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4511,8 +4511,8 @@
 			"area"
 		]
 	},
-	"attachment-html":{
-		"tags":[
+	"attachment-html": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -4522,15 +4522,15 @@
 			"website"
 		]
 	},
-	"laptop":{
-		"tags":[
+	"laptop": {
+		"tags": [
 			"laptop",
 			"device",
 			"computer"
 		]
 	},
-	"accounting-document-verification":{
-		"tags":[
+	"accounting-document-verification": {
+		"tags": [
 			"document",
 			"approve",
 			"verify",
@@ -4539,16 +4539,16 @@
 			"coins"
 		]
 	},
-	"shelf":{
-		"tags":[
+	"shelf": {
+		"tags": [
 			"shelf",
 			"storage",
 			"drawers",
 			"compartments"
 		]
 	},
-	"add-photo":{
-		"tags":[
+	"add-photo": {
+		"tags": [
 			"camera",
 			"photograph",
 			"device",
@@ -4561,24 +4561,24 @@
 			"more"
 		]
 	},
-	"vertical-waterfall-chart":{
-		"tags":[
+	"vertical-waterfall-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"dishwasher":{
-		"tags":[
+	"dishwasher": {
+		"tags": [
 			"dishwasher",
 			"dish",
 			"wash",
 			"appliance"
 		]
 	},
-	"bullet-text":{
-		"tags":[
+	"bullet-text": {
+		"tags": [
 			"bullet",
 			"text",
 			"dots",
@@ -4586,8 +4586,8 @@
 			"rich-text"
 		]
 	},
-	"projector":{
-		"tags":[
+	"projector": {
+		"tags": [
 			"beamer",
 			"projector",
 			"show",
@@ -4596,8 +4596,8 @@
 			"keynote"
 		]
 	},
-	"horizontal-grip":{
-		"tags":[
+	"horizontal-grip": {
+		"tags": [
 			"horizontal",
 			"grip",
 			"move up",
@@ -4605,8 +4605,8 @@
 			"splitter"
 		]
 	},
-	"media-rewind":{
-		"tags":[
+	"media-rewind": {
+		"tags": [
 			"rewind",
 			"media",
 			"arrow",
@@ -4614,15 +4614,15 @@
 			"back"
 		]
 	},
-	"form":{
-		"tags":[
+	"form": {
+		"tags": [
 			"form",
 			"details",
 			"text"
 		]
 	},
-	"customer-financial-fact-sheet":{
-		"tags":[
+	"customer-financial-fact-sheet": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -4633,8 +4633,8 @@
 			"money"
 		]
 	},
-	"alert":{
-		"tags":[
+	"alert": {
+		"tags": [
 			"message",
 			"warning",
 			"critical",
@@ -4642,8 +4642,8 @@
 			"status"
 		]
 	},
-	"compare":{
-		"tags":[
+	"compare": {
+		"tags": [
 			"compare",
 			"law",
 			"justice",
@@ -4655,8 +4655,8 @@
 			"comparison"
 		]
 	},
-	"favorite-list":{
-		"tags":[
+	"favorite-list": {
+		"tags": [
 			"favorite",
 			"favourite",
 			"star",
@@ -4664,8 +4664,8 @@
 			"list"
 		]
 	},
-	"clear-filter":{
-		"tags":[
+	"clear-filter": {
+		"tags": [
 			"filter",
 			"organise",
 			"aggregate",
@@ -4676,8 +4676,8 @@
 			"cancel"
 		]
 	},
-	"commission-check":{
-		"tags":[
+	"commission-check": {
+		"tags": [
 			"commission check",
 			"coins",
 			"stack",
@@ -4686,8 +4686,8 @@
 			"money"
 		]
 	},
-	"create":{
-		"tags":[
+	"create": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -4696,8 +4696,8 @@
 			"new"
 		]
 	},
-	"goal":{
-		"tags":[
+	"goal": {
+		"tags": [
 			"goal",
 			"target",
 			"result",
@@ -4705,8 +4705,8 @@
 			"aim"
 		]
 	},
-	"attachment-e-pub":{
-		"tags":[
+	"attachment-e-pub": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -4715,8 +4715,8 @@
 			"e book"
 		]
 	},
-	"discussion-2":{
-		"tags":[
+	"discussion-2": {
+		"tags": [
 			"speech",
 			"bubble",
 			"comment",
@@ -4724,13 +4724,13 @@
 			"text"
 		]
 	},
-	"record":{
-		"tags":[
+	"record": {
+		"tags": [
 			"record"
 		]
 	},
-	"accidental-leave":{
-		"tags":[
+	"accidental-leave": {
+		"tags": [
 			"accidental",
 			"leave",
 			"medical",
@@ -4740,8 +4740,8 @@
 			"hospital"
 		]
 	},
-	"present":{
-		"tags":[
+	"present": {
+		"tags": [
 			"time",
 			"clock",
 			"star",
@@ -4749,8 +4749,8 @@
 			"present"
 		]
 	},
-	"travel-request":{
-		"tags":[
+	"travel-request": {
+		"tags": [
 			"bubble",
 			"question",
 			"exclamation",
@@ -4759,8 +4759,8 @@
 			"help"
 		]
 	},
-	"text-formatting":{
-		"tags":[
+	"text-formatting": {
+		"tags": [
 			"customize",
 			"text",
 			"format",
@@ -4770,8 +4770,8 @@
 			"rich-text"
 		]
 	},
-	"it-instance":{
-		"tags":[
+	"it-instance": {
+		"tags": [
 			"server",
 			"it",
 			"machine",
@@ -4781,8 +4781,8 @@
 			"instance"
 		]
 	},
-	"locked":{
-		"tags":[
+	"locked": {
+		"tags": [
 			"locked",
 			"padlock",
 			"private",
@@ -4793,8 +4793,8 @@
 			"safe"
 		]
 	},
-	"addresses":{
-		"tags":[
+	"addresses": {
+		"tags": [
 			"customers",
 			"contacts",
 			"addresses",
@@ -4806,8 +4806,8 @@
 			"homes"
 		]
 	},
-	"shield":{
-		"tags":[
+	"shield": {
+		"tags": [
 			"authority",
 			"legitimate",
 			"official",
@@ -4817,8 +4817,8 @@
 			"security"
 		]
 	},
-	"inspect":{
-		"tags":[
+	"inspect": {
+		"tags": [
 			"inspect",
 			"dialog",
 			"popup",
@@ -4826,8 +4826,8 @@
 			"arrow"
 		]
 	},
-	"italic-text":{
-		"tags":[
+	"italic-text": {
+		"tags": [
 			"itlalic",
 			"slanted",
 			"leaning",
@@ -4838,23 +4838,23 @@
 			"rich-text"
 		]
 	},
-	"thumb-down":{
-		"tags":[
+	"thumb-down": {
+		"tags": [
 			"thumbs",
 			"down",
 			"dislike",
 			"negative"
 		]
 	},
-	"cancel-share":{
-		"tags":[
+	"cancel-share": {
+		"tags": [
 			"cancel share",
 			"cancel distribution",
 			"do not share with connections"
 		]
 	},
-	"cart-full":{
-		"tags":[
+	"cart-full": {
+		"tags": [
 			"cart",
 			"trolley",
 			"basket",
@@ -4864,8 +4864,8 @@
 			"load"
 		]
 	},
-	"private":{
-		"tags":[
+	"private": {
+		"tags": [
 			"person",
 			"individual",
 			"user",
@@ -4879,8 +4879,8 @@
 			"forbidden"
 		]
 	},
-	"geographic-bubble-chart":{
-		"tags":[
+	"geographic-bubble-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -4891,8 +4891,8 @@
 			"world"
 		]
 	},
-	"media-forward":{
-		"tags":[
+	"media-forward": {
+		"tags": [
 			"forward",
 			"media",
 			"arrow",
@@ -4900,8 +4900,8 @@
 			"finish"
 		]
 	},
-	"journey-change":{
-		"tags":[
+	"journey-change": {
+		"tags": [
 			"journey",
 			"change",
 			"direction",
@@ -4909,15 +4909,15 @@
 			"placement"
 		]
 	},
-	"color-fill":{
-		"tags":[
+	"color-fill": {
+		"tags": [
 			"square",
 			"filled",
 			"color"
 		]
 	},
-	"decrease-line-height":{
-		"tags":[
+	"decrease-line-height": {
+		"tags": [
 			"decrease",
 			"line height",
 			"leading",
@@ -4930,16 +4930,16 @@
 			"arrows"
 		]
 	},
-	"delete":{
-		"tags":[
+	"delete": {
+		"tags": [
 			"bin",
 			"trash can",
 			"rubbish",
 			"delete"
 		]
 	},
-	"screen-split-one":{
-		"tags":[
+	"screen-split-one": {
+		"tags": [
 			"screen",
 			"split",
 			"two",
@@ -4948,8 +4948,8 @@
 			"split app"
 		]
 	},
-	"workflow-tasks":{
-		"tags":[
+	"workflow-tasks": {
+		"tags": [
 			"calendar",
 			"workflow",
 			"task",
@@ -4958,14 +4958,14 @@
 			"project"
 		]
 	},
-	"system-exit":{
-		"tags":[
+	"system-exit": {
+		"tags": [
 			"system",
 			"exit"
 		]
 	},
-	"crm-sales":{
-		"tags":[
+	"crm-sales": {
+		"tags": [
 			"crm sales",
 			"customer",
 			"relationship",
@@ -4976,24 +4976,24 @@
 			"list"
 		]
 	},
-	"disconnected":{
-		"tags":[
+	"disconnected": {
+		"tags": [
 			"plug",
 			"disconnected",
 			"unplug",
 			"state"
 		]
 	},
-	"post":{
-		"tags":[
+	"post": {
+		"tags": [
 			"speech",
 			"bubble",
 			"comment",
 			"post"
 		]
 	},
-	"car-rental":{
-		"tags":[
+	"car-rental": {
+		"tags": [
 			"car",
 			"auto",
 			"rental",
@@ -5003,16 +5003,16 @@
 			"transportation"
 		]
 	},
-	"screen-split-three":{
-		"tags":[
+	"screen-split-three": {
+		"tags": [
 			"screen",
 			"split",
 			"three",
 			"columns"
 		]
 	},
-	"action-settings":{
-		"tags":[
+	"action-settings": {
+		"tags": [
 			"settings",
 			"cogwheel",
 			"configuration",
@@ -5021,8 +5021,8 @@
 			"customize"
 		]
 	},
-	"money-bills":{
-		"tags":[
+	"money-bills": {
+		"tags": [
 			"money",
 			"cash",
 			"payment",
@@ -5030,8 +5030,8 @@
 			"dollar"
 		]
 	},
-	"resize-vertical":{
-		"tags":[
+	"resize-vertical": {
+		"tags": [
 			"resize",
 			"vertical",
 			"row",
@@ -5045,8 +5045,8 @@
 			"up and down"
 		]
 	},
-	"drill-up":{
-		"tags":[
+	"drill-up": {
+		"tags": [
 			"drill up",
 			"arrow",
 			"detail",
@@ -5054,8 +5054,8 @@
 			"level"
 		]
 	},
-	"popup-window":{
-		"tags":[
+	"popup-window": {
+		"tags": [
 			"computer",
 			"dialog",
 			"popup",
@@ -5064,8 +5064,8 @@
 			"popout"
 		]
 	},
-	"heating-cooling":{
-		"tags":[
+	"heating-cooling": {
+		"tags": [
 			"temperature",
 			"air conditioning",
 			"ac",
@@ -5075,22 +5075,22 @@
 			"snowflake"
 		]
 	},
-	"process":{
-		"tags":[
+	"process": {
+		"tags": [
 			"process",
 			"flow",
 			"arrow",
 			"chevron"
 		]
 	},
-	"folder":{
-		"tags":[
+	"folder": {
+		"tags": [
 			"folder",
 			"details"
 		]
 	},
-	"chevron-phase":{
-		"tags":[
+	"chevron-phase": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5101,8 +5101,8 @@
 			"phase"
 		]
 	},
-	"thumb-up":{
-		"tags":[
+	"thumb-up": {
+		"tags": [
 			"thumbs",
 			"up",
 			"like",
@@ -5110,8 +5110,8 @@
 			"positive"
 		]
 	},
-	"cloud":{
-		"tags":[
+	"cloud": {
+		"tags": [
 			"cloud",
 			"platform",
 			"storage",
@@ -5119,8 +5119,8 @@
 			"sap"
 		]
 	},
-	"sales-quote":{
-		"tags":[
+	"sales-quote": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -5132,8 +5132,8 @@
 			"quote"
 		]
 	},
-	"badge":{
-		"tags":[
+	"badge": {
+		"tags": [
 			"badge",
 			"insignia",
 			"star",
@@ -5147,15 +5147,15 @@
 			"rank"
 		]
 	},
-	"sales-notification":{
-		"tags":[
+	"sales-notification": {
+		"tags": [
 			"bubble",
 			"sales",
 			"notification"
 		]
 	},
-	"trip-report":{
-		"tags":[
+	"trip-report": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5166,15 +5166,15 @@
 			"business trip"
 		]
 	},
-	"unfavorite":{
-		"tags":[
+	"unfavorite": {
+		"tags": [
 			"remove",
 			"unfavorite",
 			"star"
 		]
 	},
-	"phone":{
-		"tags":[
+	"phone": {
+		"tags": [
 			"phone",
 			"telephone",
 			"landline",
@@ -5183,8 +5183,8 @@
 			"dial"
 		]
 	},
-	"ppt-attachment":{
-		"tags":[
+	"ppt-attachment": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -5193,8 +5193,8 @@
 			"powerpoint"
 		]
 	},
-	"undo":{
-		"tags":[
+	"undo": {
+		"tags": [
 			"undo",
 			"arrow",
 			"previous state",
@@ -5202,16 +5202,16 @@
 			"backwards"
 		]
 	},
-	"connected":{
-		"tags":[
+	"connected": {
+		"tags": [
 			"plug",
 			"connected",
 			"on",
 			"state"
 		]
 	},
-	"decline":{
-		"tags":[
+	"decline": {
+		"tags": [
 			"reject",
 			"close",
 			"remove",
@@ -5219,8 +5219,8 @@
 			"x"
 		]
 	},
-	"quality-issue":{
-		"tags":[
+	"quality-issue": {
+		"tags": [
 			"quality issue",
 			"warning",
 			"problem",
@@ -5229,22 +5229,22 @@
 			"details"
 		]
 	},
-	"show":{
-		"tags":[
+	"show": {
+		"tags": [
 			"show",
 			"eye"
 		]
 	},
-	"line-charts":{
-		"tags":[
+	"line-charts": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"official-service":{
-		"tags":[
+	"official-service": {
+		"tags": [
 			"official",
 			"service",
 			"government",
@@ -5255,8 +5255,8 @@
 			"official"
 		]
 	},
-	"citizen-connect":{
-		"tags":[
+	"citizen-connect": {
+		"tags": [
 			"citizen connect",
 			"people",
 			"colleagues",
@@ -5270,28 +5270,28 @@
 			"project"
 		]
 	},
-	"resize":{
-		"tags":[
+	"resize": {
+		"tags": [
 			"resize",
 			"bigger",
 			"smaller"
 		]
 	},
-	"accelerated":{
-		"tags":[
+	"accelerated": {
+		"tags": [
 			"calendar",
 			"time",
 			"speed"
 		]
 	},
-	"explorer":{
-		"tags":[
+	"explorer": {
+		"tags": [
 			"explorer",
 			"compass"
 		]
 	},
-	"stethoscope":{
-		"tags":[
+	"stethoscope": {
+		"tags": [
 			"stethoscope",
 			"medical",
 			"health",
@@ -5300,8 +5300,8 @@
 			"nurse"
 		]
 	},
-	"nurse":{
-		"tags":[
+	"nurse": {
+		"tags": [
 			"nurse",
 			"medical",
 			"cross",
@@ -5309,8 +5309,8 @@
 			"hospital"
 		]
 	},
-	"zoom-in":{
-		"tags":[
+	"zoom-in": {
+		"tags": [
 			"zoom",
 			"in",
 			"magnify",
@@ -5320,8 +5320,8 @@
 			"bigger"
 		]
 	},
-	"survey":{
-		"tags":[
+	"survey": {
+		"tags": [
 			"survey",
 			"form",
 			"checklist",
@@ -5331,8 +5331,8 @@
 			"x"
 		]
 	},
-	"map-2":{
-		"tags":[
+	"map-2": {
+		"tags": [
 			"map",
 			"card",
 			"navigation",
@@ -5341,15 +5341,15 @@
 			"location"
 		]
 	},
-	"weather-proofing":{
-		"tags":[
+	"weather-proofing": {
+		"tags": [
 			"weather",
 			"proofing",
 			"protection"
 		]
 	},
-	"map-3":{
-		"tags":[
+	"map-3": {
+		"tags": [
 			"map",
 			"card",
 			"x marks the spot",
@@ -5361,8 +5361,8 @@
 			"location"
 		]
 	},
-	"chevron-phase-2":{
-		"tags":[
+	"chevron-phase-2": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5373,14 +5373,14 @@
 			"phase"
 		]
 	},
-	"positive":{
-		"tags":[
+	"positive": {
+		"tags": [
 			"plus",
 			"positive"
 		]
 	},
-	"business-objects-experience":{
-		"tags":[
+	"business-objects-experience": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5388,8 +5388,8 @@
 			"business objects experience"
 		]
 	},
-	"order-status":{
-		"tags":[
+	"order-status": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -5398,8 +5398,8 @@
 			"status"
 		]
 	},
-	"activity-assigned-to-goal":{
-		"tags":[
+	"activity-assigned-to-goal": {
+		"tags": [
 			"activity",
 			"activities",
 			"tasks",
@@ -5409,8 +5409,8 @@
 			"objective"
 		]
 	},
-	"indent":{
-		"tags":[
+	"indent": {
+		"tags": [
 			"indent",
 			"paragraph",
 			"move right",
@@ -5421,8 +5421,8 @@
 			"arrows"
 		]
 	},
-	"my-view":{
-		"tags":[
+	"my-view": {
+		"tags": [
 			"my view",
 			"person",
 			"profile",
@@ -5434,8 +5434,8 @@
 			"user"
 		]
 	},
-	"letter":{
-		"tags":[
+	"letter": {
+		"tags": [
 			"letter",
 			"mail",
 			"post",
@@ -5446,8 +5446,8 @@
 			"correspondence"
 		]
 	},
-	"create-entry-time":{
-		"tags":[
+	"create-entry-time": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -5465,8 +5465,8 @@
 			"more"
 		]
 	},
-	"slim-arrow-up":{
-		"tags":[
+	"slim-arrow-up": {
+		"tags": [
 			"slim",
 			"thin",
 			"skinny",
@@ -5474,8 +5474,8 @@
 			"up"
 		]
 	},
-	"filter-analytics":{
-		"tags":[
+	"filter-analytics": {
+		"tags": [
 			"analytics",
 			"filter",
 			"organise",
@@ -5485,8 +5485,8 @@
 			"data"
 		]
 	},
-	"permission":{
-		"tags":[
+	"permission": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -5498,8 +5498,8 @@
 			"unlocked"
 		]
 	},
-	"payment-approval":{
-		"tags":[
+	"payment-approval": {
+		"tags": [
 			"sales",
 			"simple payment",
 			"money",
@@ -5511,8 +5511,8 @@
 			"checkmark"
 		]
 	},
-	"add-process":{
-		"tags":[
+	"add-process": {
+		"tags": [
 			"process",
 			"add",
 			"plus",
@@ -5521,8 +5521,8 @@
 			"more"
 		]
 	},
-	"pie-chart":{
-		"tags":[
+	"pie-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5531,8 +5531,8 @@
 			"segments"
 		]
 	},
-	"compare-2":{
-		"tags":[
+	"compare-2": {
+		"tags": [
 			"compare",
 			"law",
 			"justice",
@@ -5544,8 +5544,8 @@
 			"comparison"
 		]
 	},
-	"sys-prev-page":{
-		"tags":[
+	"sys-prev-page": {
+		"tags": [
 			"system",
 			"previous",
 			"page",
@@ -5553,14 +5553,14 @@
 			"arrows"
 		]
 	},
-	"open-folder":{
-		"tags":[
+	"open-folder": {
+		"tags": [
 			"folder",
 			"open"
 		]
 	},
-	"excel-attachment":{
-		"tags":[
+	"excel-attachment": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -5570,8 +5570,8 @@
 			"accounting"
 		]
 	},
-	"picture":{
-		"tags":[
+	"picture": {
+		"tags": [
 			"picture",
 			"photo",
 			"photograph",
@@ -5579,15 +5579,15 @@
 			"image"
 		]
 	},
-	"chain-link":{
-		"tags":[
+	"chain-link": {
+		"tags": [
 			"link",
 			"chain",
 			"hyperlink"
 		]
 	},
-	"shipping-status":{
-		"tags":[
+	"shipping-status": {
+		"tags": [
 			"shipping status",
 			"truck",
 			"products",
@@ -5599,8 +5599,8 @@
 			"shipment"
 		]
 	},
-	"add-product":{
-		"tags":[
+	"add-product": {
+		"tags": [
 			"product",
 			"box",
 			"package",
@@ -5613,8 +5613,8 @@
 			"more"
 		]
 	},
-	"kpi-corporate-performance":{
-		"tags":[
+	"kpi-corporate-performance": {
+		"tags": [
 			"chart",
 			"line",
 			"kpi",
@@ -5622,8 +5622,8 @@
 			"performance"
 		]
 	},
-	"e-learning":{
-		"tags":[
+	"e-learning": {
+		"tags": [
 			"education",
 			"course",
 			"e learning",
@@ -5637,16 +5637,16 @@
 			"screen"
 		]
 	},
-	"filter":{
-		"tags":[
+	"filter": {
+		"tags": [
 			"filter",
 			"organise",
 			"aggregate",
 			"data"
 		]
 	},
-	"program-triangles":{
-		"tags":[
+	"program-triangles": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5657,23 +5657,23 @@
 			"program"
 		]
 	},
-	"call":{
-		"tags":[
+	"call": {
+		"tags": [
 			"call",
 			"communicate",
 			"phone",
 			"telephone"
 		]
 	},
-	"stop":{
-		"tags":[
+	"stop": {
+		"tags": [
 			"stop",
 			"process",
 			"play"
 		]
 	},
-	"sys-add":{
-		"tags":[
+	"sys-add": {
+		"tags": [
 			"add",
 			"plus",
 			"additional",
@@ -5684,8 +5684,8 @@
 			"add item"
 		]
 	},
-	"multiple-pie-chart":{
-		"tags":[
+	"multiple-pie-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5694,8 +5694,8 @@
 			"pie chart"
 		]
 	},
-	"simple-payment":{
-		"tags":[
+	"simple-payment": {
+		"tags": [
 			"sales",
 			"simple payment",
 			"money",
@@ -5704,8 +5704,8 @@
 			"quote"
 		]
 	},
-	"sort-ascending":{
-		"tags":[
+	"sort-ascending": {
+		"tags": [
 			"sort",
 			"ascending",
 			"up",
@@ -5713,8 +5713,8 @@
 			"aggregate"
 		]
 	},
-	"email-read":{
-		"tags":[
+	"email-read": {
+		"tags": [
 			"mail",
 			"letter",
 			"e-mail",
@@ -5723,8 +5723,8 @@
 			"read"
 		]
 	},
-	"chalkboard":{
-		"tags":[
+	"chalkboard": {
+		"tags": [
 			"chalkboard",
 			"education",
 			"teaching",
@@ -5734,8 +5734,8 @@
 			"college"
 		]
 	},
-	"arrow-down":{
-		"tags":[
+	"arrow-down": {
+		"tags": [
 			"arrow",
 			"circle",
 			"down",
@@ -5745,14 +5745,14 @@
 			"options"
 		]
 	},
-	"bbyd-dashboard":{
-		"tags":[
+	"bbyd-dashboard": {
+		"tags": [
 			"business by design",
 			"dashboard"
 		]
 	},
-	"customer-order-entry":{
-		"tags":[
+	"customer-order-entry": {
+		"tags": [
 			"sign",
 			"signature",
 			"order",
@@ -5762,45 +5762,45 @@
 			"agreement"
 		]
 	},
-	"horizontal-bullet-chart":{
-		"tags":[
+	"horizontal-bullet-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
 			"data"
 		]
 	},
-	"shortcut":{
-		"tags":[
+	"shortcut": {
+		"tags": [
 			"shortcut",
 			"redirect",
 			"arrow"
 		]
 	},
-	"toaster-up":{
-		"tags":[
+	"toaster-up": {
+		"tags": [
 			"toaster",
 			"up",
 			"details"
 		]
 	},
-	"share":{
-		"tags":[
+	"share": {
+		"tags": [
 			"share",
 			"reshare",
 			"distribute",
 			"arrow"
 		]
 	},
-	"pool":{
-		"tags":[
+	"pool": {
+		"tags": [
 			"pool",
 			"basin",
 			"swim"
 		]
 	},
-	"add-favorite":{
-		"tags":[
+	"add-favorite": {
+		"tags": [
 			"favorite",
 			"favourite",
 			"star",
@@ -5811,8 +5811,8 @@
 			"more"
 		]
 	},
-	"customer-and-supplier":{
-		"tags":[
+	"customer-and-supplier": {
+		"tags": [
 			"customer and supplier",
 			"package",
 			"product",
@@ -5825,8 +5825,8 @@
 			"inventory"
 		]
 	},
-	"meal":{
-		"tags":[
+	"meal": {
+		"tags": [
 			"meal",
 			"knife and fork",
 			"dinner",
@@ -5836,8 +5836,8 @@
 			"expenses"
 		]
 	},
-	"insurance-house":{
-		"tags":[
+	"insurance-house": {
+		"tags": [
 			"document",
 			"page",
 			"file",
@@ -5846,8 +5846,8 @@
 			"house"
 		]
 	},
-	"employee-approvals":{
-		"tags":[
+	"employee-approvals": {
+		"tags": [
 			"person",
 			"accept",
 			"approval",
@@ -5856,8 +5856,8 @@
 			"human resources"
 		]
 	},
-	"error":{
-		"tags":[
+	"error": {
+		"tags": [
 			"message",
 			"error",
 			"negative",
@@ -5866,8 +5866,8 @@
 			"solid"
 		]
 	},
-	"electronic-medical-record":{
-		"tags":[
+	"electronic-medical-record": {
+		"tags": [
 			"electronic medical record",
 			"medical",
 			"cross",
@@ -5875,8 +5875,8 @@
 			"hospital"
 		]
 	},
-	"suitcase":{
-		"tags":[
+	"suitcase": {
+		"tags": [
 			"travel",
 			"suitcase",
 			"business trip",
@@ -5887,16 +5887,16 @@
 			"collection"
 		]
 	},
-	"enter-more":{
-		"tags":[
+	"enter-more": {
+		"tags": [
 			"enter",
 			"details",
 			"more",
 			"arrow"
 		]
 	},
-	"tools-opportunity":{
-		"tags":[
+	"tools-opportunity": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5907,8 +5907,8 @@
 			"tree"
 		]
 	},
-	"measuring-point":{
-		"tags":[
+	"measuring-point": {
+		"tags": [
 			"measure",
 			"point",
 			"scale",
@@ -5916,8 +5916,8 @@
 			"arrow"
 		]
 	},
-	"activity-items":{
-		"tags":[
+	"activity-items": {
+		"tags": [
 			"activity",
 			"activities",
 			"tasks",
@@ -5926,16 +5926,16 @@
 			"items"
 		]
 	},
-	"sys-help-2":{
-		"tags":[
+	"sys-help-2": {
+		"tags": [
 			"system",
 			"help",
 			"circle",
 			"question"
 		]
 	},
-	"add-coursebook":{
-		"tags":[
+	"add-coursebook": {
+		"tags": [
 			"education",
 			"course",
 			"learning",
@@ -5952,8 +5952,8 @@
 			"more"
 		]
 	},
-	"overview-chart":{
-		"tags":[
+	"overview-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -5963,8 +5963,8 @@
 			"org"
 		]
 	},
-	"status-positive":{
-		"tags":[
+	"status-positive": {
+		"tags": [
 			"positive",
 			"completed",
 			"on track",
@@ -5974,29 +5974,29 @@
 			"lifecycle"
 		]
 	},
-	"folder-blank":{
-		"tags":[
+	"folder-blank": {
+		"tags": [
 			"folder",
 			"blank"
 		]
 	},
-	"begin":{
-		"tags":[
+	"begin": {
+		"tags": [
 			"begin",
 			"start",
 			"arrows"
 		]
 	},
-	"line-chart-time-axis":{
-		"tags":[
+	"line-chart-time-axis": {
+		"tags": [
 			"chart",
 			"line",
 			"time",
 			"axis"
 		]
 	},
-	"slim-arrow-right":{
-		"tags":[
+	"slim-arrow-right": {
+		"tags": [
 			"slim",
 			"thin",
 			"skinny",
@@ -6005,15 +6005,15 @@
 			"scroll right"
 		]
 	},
-	"number-sign":{
-		"tags":[
+	"number-sign": {
+		"tags": [
 			"number sign",
 			"hash",
 			"#'"
 		]
 	},
-	"travel-expense-report":{
-		"tags":[
+	"travel-expense-report": {
+		"tags": [
 			"report",
 			"bill",
 			"billing",
@@ -6025,8 +6025,8 @@
 			"invoice"
 		]
 	},
-	"fridge":{
-		"tags":[
+	"fridge": {
+		"tags": [
 			"fridge",
 			"refrigerator",
 			"icebox",
@@ -6035,8 +6035,8 @@
 			"appliance"
 		]
 	},
-	"multiple-bar-chart":{
-		"tags":[
+	"multiple-bar-chart": {
+		"tags": [
 			"analytics",
 			"chart",
 			"display",
@@ -6044,8 +6044,8 @@
 			"multiple bar chart"
 		]
 	},
-	"company-view":{
-		"tags":[
+	"company-view": {
+		"tags": [
 			"view",
 			"group",
 			"company",
@@ -6054,16 +6054,16 @@
 			"overview"
 		]
 	},
-	"negative":{
-		"tags":[
+	"negative": {
+		"tags": [
 			"minus",
 			"remove",
 			"subtract",
 			"negative"
 		]
 	},
-	"group":{
-		"tags":[
+	"group": {
+		"tags": [
 			"group",
 			"team",
 			"people",
@@ -6080,12 +6080,138 @@
 			"category"
 		]
 	},
-	"sys-cancel-2":{
-		"tags":[
+	"sys-cancel-2": {
+		"tags": [
 			"clear",
 			"remove",
 			"cancel",
 			"x"
+		]
+	},
+	"add-folder": {
+		"tags": [
+			"folder",
+			"add",
+			"directory",
+			"additional",
+			"library"
+		]
+	},
+	"away": {
+		"tags": [
+			"time",
+			"clock",
+			"away",
+			"availability",
+			"chronicle",
+			"be right back",
+			"appear away",
+			"off work",
+			"me"
+		]
+	},
+	"busy": {
+		"tags": [
+			"busy",
+			"unavailable",
+			"not responsive",
+			"blocked",
+			"circle",
+			"dot",
+			"me",
+			"working"
+		]
+	},
+	"appear-offline": {
+		"tags": [
+			"appear-offline",
+			"offline",
+			"hide",
+			"blocked",
+			"circle",
+			"me"
+		]
+	},
+	"blur": {
+		"tags": [
+			"blur",
+			"tool",
+			"screenshot",
+			"image",
+			"edit",
+			"modify",
+			"distort",
+			"smudge",
+			"blurry",
+			"filter",
+			"effects"
+		]
+	},
+	"pixelate": {
+		"tags": [
+			"pixel",
+			"tool",
+			"screenshot",
+			"image",
+			"edit",
+			"modify",
+			"distort",
+			"pixelate",
+			"sqaures",
+			"dots",
+			"resolution",
+			"noise"
+		]
+	},
+	"horizontal-combination-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"combination",
+			"line-chart",
+			"bar",
+			"horizontal"
+		]
+	},
+	"add-employee": {
+		"tags": [
+			"customer",
+			"user",
+			"person",
+			"individual",
+			"contacts",
+			"add",
+			"additional",
+			"employee",
+			"hr",
+			"human resources",
+			"plus"
+		]
+	},
+	"text-color": {
+		"tags": [
+			"color",
+			"formatting",
+			"edit",
+			"colour",
+			"letters",
+			"rich",
+			"rich-text",
+			"options"
+		]
+	},
+	"browse-folder": {
+		"tags": [
+			"browse folder",
+			"search",
+			"look up",
+			"folder",
+			"browse",
+			"directory",
+			"library",
+			"find"
 		]
 	}
 }

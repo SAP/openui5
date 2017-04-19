@@ -197,6 +197,100 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	/**
 	 * @override
 	 */
+	ElementOverlay.prototype.applyStyles = function() {
+		Overlay.prototype.applyStyles.apply(this, arguments);
+
+		var oGeometry = this.getGeometry();
+		if (oGeometry && oGeometry.visible) {
+			this._sortAggregationOverlaysInDomOrder();
+		}
+	};
+
+	/**
+	 * Sorts aggregation overlays in there UI order
+	 * @private
+	 */
+	ElementOverlay.prototype._sortAggregationOverlaysInDomOrder = function() {
+		// compares two aggregations domRefs and returns 1, if first aggregation should be bellow in dom order
+		var fnCompareAggregations = function(oAggregationOverlay1, oAggregationOverlay2) {
+			var oGeometry1 = oAggregationOverlay1.getGeometry();
+			var oGeometry2 = oAggregationOverlay2.getGeometry();
+			var oPosition1 = oGeometry1 && oGeometry1.position;
+			var oPosition2 = oGeometry2 && oGeometry2.position;
+
+			if (oPosition1 && oPosition2) {
+				var iBottom1 = oPosition1.top + oGeometry1.size.height;
+				var iBottom2 = oPosition2.top + oGeometry2.size.height;
+
+				if (oPosition1.top < oPosition2.top) {
+					if (iBottom1 >= iBottom2 && oPosition2.left < oPosition1.left) {
+						/*  Example:
+							            +--------------+
+							+------+    |              |
+							|  2   |    |       1      |
+							+------+    |              |
+							            +--------------+
+							Despites 1st overlay's top is above 2nd element,
+							the order should be switched, since 2nd element
+							is shorter and is more to the left
+						 */
+						return 1;
+					} else {
+						return -1; // do not switch order
+					}
+				} else
+
+				if (oPosition1.top === oPosition2.top) {
+					if (oPosition1.left === oPosition2.left) {
+						return 0;
+					} else if (oPosition1.left < oPosition2.left) {
+						return -1; // order is correct
+					} else {
+						return 1; // switch order
+					}
+				} else
+
+				// if (oPosition1.top > oPosition2.top)
+				 if (iBottom1 <= iBottom2 && oPosition2.left > oPosition1.left) {
+					/* see picture above, but switch 1 and 2 - order is correct */
+					return -1;
+				} else {
+					/*  Example:
+						            +--------------+
+						+------+    |       2      |
+						|  1   |    +--------------+
+						|      |
+						+------+
+
+						Since 1st overlay's both top and bottom coordinates are
+						bellow in dom, then top and bottom of 2nd, they should be switched
+					 */
+					return 1;
+				}
+			}
+		};
+
+		var aSortedAggregationOverlays = this.getAggregationOverlays().sort(fnCompareAggregations);
+
+		var bOrderSwitched = this.getAggregationOverlays().some(function(oOverlay, index) {
+			if (oOverlay.getId() !== aSortedAggregationOverlays[index].getId()) {
+				return true;
+			}
+		});
+
+		if (bOrderSwitched) {
+			// insert in sorted order & suppress invalidate to prevent rerendering
+			this.removeAllAggregation("aggregationOverlays", true);
+			aSortedAggregationOverlays.forEach(function(oAggregationOverlay) {
+				// suppress invalidate to prevent rerendering
+				this.addAggregation("aggregationOverlays", oAggregationOverlay, true);
+			}.bind(this));
+		}
+	};
+
+	/**
+	 * @override
+	 */
 	ElementOverlay.prototype.setLazyRendering = function(bLazyRendering) {
 		Overlay.prototype.setLazyRendering.apply(this, arguments);
 
@@ -339,7 +433,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		if (!oDomRef) {
 			var oDesignTimeMetadata = this.getDesignTimeMetadata();
 			if (!oDesignTimeMetadata) {
-				return;
+				return undefined;
 			}
 			var fnGetDomRef = oDesignTimeMetadata.getDomRef();
 			if (typeof fnGetDomRef === "function") {
@@ -350,6 +444,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		if (oDomRef) {
 			return jQuery(oDomRef);
 		}
+		return undefined;
 	};
 
 	/**
@@ -543,9 +638,11 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {string} sAggregationName name of aggregation to be created
+	 * @returns {object} aggregation overlay
 	 * @private
 	 */
-	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName, bInHiddenTree) {
+	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName) {
 		var oAggregationDesignTimeMetadata = this.getDesignTimeMetadata().createAggregationDesignTimeMetadata(sAggregationName);
 
 		this._handleDesigntimePropagation(oAggregationDesignTimeMetadata);
@@ -553,8 +650,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		var oAggregationOverlay = new AggregationOverlay({
 			aggregationName : sAggregationName,
 			element : this.getElementInstance(),
-			designTimeMetadata : oAggregationDesignTimeMetadata,
-			inHiddenTree : bInHiddenTree
+			designTimeMetadata : oAggregationDesignTimeMetadata
 		});
 		this._mAggregationOverlays[sAggregationName] = oAggregationOverlay;
 		this.addAggregation("aggregationOverlays", oAggregationOverlay);
@@ -586,7 +682,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			mAggregationsWithOverlay[sAggregationName] = !bIgnored;
 			// create aggregation overlays which are not ignored in the DT Metadata
 			if (!bIgnored) {
-				this._createAggregationOverlay(sAggregationName, this.isInHiddenTree());
+				this._createAggregationOverlay(sAggregationName);
 			}
 		}.bind(this));
 
@@ -597,11 +693,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			if (mAggregationsWithOverlay[sAggregationName] === undefined) {
 				bIgnored = oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName);
 				if (!bIgnored) {
-					// this is needed to point out, that a control is both in public and private tree, so that it has a "public" parent, which can be different from a getParent()
-					// flag is needed so that parents could have possibility to handle actions for the children. The better solution yet to come: probably, propagation of metadata from parents to children
-					var oAggregationMetadata = mAggregationsMetadata[sAggregationName];
-					var bIsInHiddenTree = oAggregationMetadata.inHiddenTree;
-					this._createAggregationOverlay(sAggregationName, bIsInHiddenTree);
+					this._createAggregationOverlay(sAggregationName);
 				}
 			}
 		}, this);
@@ -638,6 +730,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
 	ElementOverlay.prototype._onAggregationVisibleChanged = function(oEvent) {
@@ -674,6 +767,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {boolean} bVisible visible attribute
 	 * @protected
 	 */
 	ElementOverlay.prototype.setVisible = function(bVisible) {
@@ -683,6 +777,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {string} sAggregationName name of the aggregation
+	 * @param {boolean} bSuppressInvalidate suppress invalidate
 	 * @protected
 	 */
 	ElementOverlay.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
@@ -702,7 +798,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 		var sAggregationName = oEvent.getParameters().name;
 		if (sAggregationName) {
-			this.sync();
 			var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
 			// private aggregations are also skipped
 			var bAggregationOverlayVisible = oAggregationOverlay && oAggregationOverlay.isVisible();
@@ -717,6 +812,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
 	ElementOverlay.prototype._onDomChanged = function(oEvent) {
@@ -855,34 +951,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			return false;
 		}
 
-	};
-
-	/**
-	 * Returns agrregation overlay of public parent, which is an ancestor of this overlay
-	 *
-	 * @return {sap.ui.dt.Overlay} Overlay public parent
-	 * @public
-	 */
-	ElementOverlay.prototype.getPublicParentAggregationOverlay = function() {
-		var oAggregationOverlay = this.getParentAggregationOverlay();
-		var oParentElementOverlay = this.getParentElementOverlay();
-		while (oParentElementOverlay && ElementUtil.isInstanceOf(oParentElementOverlay, "sap.ui.dt.ElementOverlay") && oParentElementOverlay.isInHiddenTree()) {
-			oAggregationOverlay = oParentElementOverlay.getParentAggregationOverlay();
-			oParentElementOverlay = oParentElementOverlay.getParentElementOverlay();
-		}
-		return oAggregationOverlay;
-	};
-
-	/**
-	 * Returns first ancestor overlay not flagged as inHiddenTree
-	 * @return {sap.ui.dt.ElementOverlay} ElementOverlay public parent
-	 * @public
-	 */
-	ElementOverlay.prototype.getPublicParentElementOverlay = function() {
-		var oPublicParentAggregationOverlay = this.getPublicParentAggregationOverlay();
-		if (oPublicParentAggregationOverlay) {
-			return oPublicParentAggregationOverlay.getParent();
-		}
 	};
 
 	/**

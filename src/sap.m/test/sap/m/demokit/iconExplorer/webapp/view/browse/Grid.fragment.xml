@@ -7,7 +7,7 @@
 			id="results"
 			visible="{= ${view>/iconFilterCount} !== 0 }"
 			width="auto"
-			class="sapUiSmallMargin sapUiNoContentPadding"
+			class="sapUiTinyMargin sapUiNoContentPadding"
 			content="{
 				path: '/groups/0/icons',
 				length: '50',
@@ -21,7 +21,7 @@
 			}">
 			<l:VerticalLayout
 				width="130px"
-				class="sapThemeBaseBG-asBackgroundColor sapUiSmallMarginEnd sapUiSmallMarginBottom gridLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
+				class="sapThemeBaseBG-asBackgroundColor sapUiTinyMargin gridLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
 				<core:Icon size="2.5rem" src="sap-icon://{name}" color="Default"/>
 				<Label design="Bold" text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
 				<ToggleButton

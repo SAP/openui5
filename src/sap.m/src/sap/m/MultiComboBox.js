@@ -1542,7 +1542,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	};
 
 	/**
-	 * Function is called on keyboard backspace, if cursor is in front of an token, token gets selected and deleted
+	 * Function is called on keyboard backspace, if cursor is in front of a token, token gets selected and deleted
 	 *
 	 * @private
 	 * @param {jQuery.event} oEvent
@@ -1602,7 +1602,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 		if (!oFocusedElement) {
 
-			// we cannot rule out that the focused element does not correspond to a SAPUI5 control in which case oFocusedElement
+			// we cannot rule out that the focused element does not correspond to an SAPUI5 control in which case oFocusedElement
 			// is undefined
 			return;
 		}

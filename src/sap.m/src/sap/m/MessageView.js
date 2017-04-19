@@ -664,7 +664,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Map an MessageType to the Icon URL.
+	 * Map a MessageType to the Icon URL.
 	 *
 	 * @param {sap.ui.core.ValueState} sIcon Type of Error
 	 * @returns {string | null} Icon string

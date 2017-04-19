@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		 * @param {object} [mSettings] Initial settings for the new element
 		 *
 		 * @class
-		 * VisibleItem is a item enhanced with a visible property.
+		 * VisibleItem is an item enhanced with a visible property.
 		 * @extends sap.ui.core.Item
 		 *
 		 * @author SAP SE

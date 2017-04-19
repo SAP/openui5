@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		var oUIArea;
 		if ( this.bOutput && (oUIArea = this.getUIArea()) ) {
 			// if this control has been rendered before (bOutput)
-			// and if it is contained in an UIArea (!!oUIArea)
+			// and if it is contained in a UIArea (!!oUIArea)
 			// then control re-rendering can be used (see UIArea.rerender() for details)
 			//
 			// The check for bOutput is necessary as the control
@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				//       they have been omitted for better performance.
 				//
 				// If this control has a parent but either
-				//  - has produced output before ('this.bOutput') but is not part of an UIArea (!this.getUIArea())
+				//  - has produced output before ('this.bOutput') but is not part of a UIArea (!this.getUIArea())
 				//  - or if it didn't produce output (!this.bOutput') before and is/became visible
 				// then invalidate the parent to request re-rendering
 				//
@@ -420,7 +420,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 *
 	 * First it is checked whether <code>oRef</code> is a container element / control (has a
 	 * multiple aggregation with type <code>sap.ui.core.Control</code> and name 'content') or is an Id String
-	 * of such an container.
+	 * of such a container.
 	 * If this is not the case <code>oRef</code> can either be a Dom Reference or Id String of the UIArea
 	 * (if it does not yet exist implicitly a new UIArea is created),
 	 *

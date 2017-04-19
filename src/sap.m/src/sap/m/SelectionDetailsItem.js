@@ -29,9 +29,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This Element provides an item for {@link sap.m.SelectionDetails} that is shown inside a list.
+	 * This protected Element provides an item for {@link sap.m.SelectionDetails} that is shown inside a list.
 	 * The item includes SelectionDetailsItemLine as its lines that are displayed in one block above the optional actions.
-	 * It is intended to be used only in the sap.m.SelectionDetails control.
+	 * <b><i>Note:<i></b>It is protected and should ony be used within the framework itself.
 	 *
 	 * @extends sap.ui.core.Element
 	 *
@@ -39,9 +39,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
+	 * @protected
 	 * @alias sap.m.SelectionDetailsItem
 	 * @experimental Since 1.48 This control is still under development and might change at any point in time.
+	 * @since 1.48.0
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectionDetailsItem = Element.extend("sap.m.SelectionDetailsItem", /** @lends sap.m.SelectionDetailsItem.prototype */ {
@@ -80,11 +81,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 		}
 	};
 
-	/**
-	 * Returns the public facade of the SelectionDetailsItem for non inner framework usages.
-	 * @returns {sap.ui.base.Interface} the reduced facade for outer framework usages.
-	 * @protected
-	 */
 	SelectionDetailsItem.prototype._aFacadeMethods = [
 		"addCustomData", "getCustomData", "indexOfCustomData", "insertCustomData",
 		"removeCustomData", "removeAllCustomData", "destroyCustomData",
@@ -93,6 +89,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 		"setEnableNav", "getEnableNav",
 		"addAction", "removeAction"
 	];
+
+	/**
+	 * Returns the public facade of the SelectionDetailsItem for non inner framework usages.
+	 * @returns {sap.ui.base.Interface} The reduced facade for outer framework usages.
+	 * @protected
+	 */
 	SelectionDetailsItem.prototype.getFacade = function() {
 		var oFacade = new Interface(this, SelectionDetailsItem.prototype._aFacadeMethods);
 		this.getFacade = jQuery.sap.getter(oFacade);
@@ -164,7 +166,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	SelectionDetailsItem.prototype._onActionPress = function(oEvent, oAction) {
 		this.fireEvent("_actionPress", {
 			action: oAction,
-			items: [this],
+			items: [ this ],
 			level: library.SelectionDetailsActionLevel.Item
 		});
 	};

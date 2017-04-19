@@ -61,7 +61,7 @@ sap.ui.define([
 	 */
 	function createModelData (aLibs, oDocIndicies) {
 		// generate the global model structure
-		var aCategories = ["Showcase", "Tutorial", "Template", "Misc"];
+		var aCategories = ["Showcase", "Tutorial", "Template", "RTA", "Misc"];
 		var oDemoAppsByCategory = {};
 
 		// create a helper structure for demo apps by category

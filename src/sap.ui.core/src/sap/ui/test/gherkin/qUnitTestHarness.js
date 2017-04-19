@@ -37,7 +37,7 @@ sap.ui.define([
      * Dynamically generates and executes QUnit tests
      *
      * @param {object} args - the arguments to the function
-     * @param {string} args.featurePath - the path to the Gherkin feature file to parse, as a SAPUI5 module path. The
+     * @param {string} args.featurePath - the path to the Gherkin feature file to parse, as an SAPUI5 module path. The
      *                                    ".feature" extension is assumed and should not be included. See
      *                                    {@link jQuery.sap.registerModulePath}
      * @param {function} args.steps - the constructor function of type {@link sap.ui.test.gherkin.StepDefinitions}

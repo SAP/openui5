@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 		oLI.getContent().forEach(function(oContent) {
 
-			// if not already exists add the label as an labelledby association whenever possible
+			// if not already exists add the label as a labelledby association whenever possible
 			if (sLabelId &&
 				oContent.addAriaLabelledBy &&
 				oContent.getAriaLabelledBy().indexOf(sLabelId) == -1) {

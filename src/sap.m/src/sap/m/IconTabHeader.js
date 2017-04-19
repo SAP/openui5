@@ -142,6 +142,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oItemNavigation = new ItemNavigation().setCycling(false);
 		this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusLeave, this._onItemNavigationFocusLeave, this);
 		this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemNavigationAfterFocus, this);
+		this._oItemNavigation.setDisabledModifiers({
+			sapnext : ["alt", "meta"],
+			sapprevious : ["alt", "meta"]
+		});
 		this.addDelegate(this._oItemNavigation);
 
 		this._oScroller = new ScrollEnablement(this, this.getId() + "-head", {
@@ -1316,6 +1320,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	IconTabHeader.prototype._moveVisibleTabs = function() {
+
+		if (!this._oScroller) {
+			return;
+		}
 
 		var iScrollLeft = this._oScroller.getScrollLeft(),
 			$head = this.$('head'),

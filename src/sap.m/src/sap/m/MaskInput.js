@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 				 * for digits, has the characters '2' and '0' as immutable).
 				 * 2. Adding a rule corresponding to the <code>placeholderSymbol</code> is not recommended and would lead to an unpredictable behavior.
 				 * 3. You can use the special escape character '^' called "Caret" prepending a rule character to make it immutable.
-				 * Use the double escape '^^' if you want to make use of the escape character as a immutable one.
+				 * Use the double escape '^^' if you want to make use of the escape character as an immutable one.
 				 */
 				mask: {type: "string", group: "Misc", defaultValue: null}
 			},

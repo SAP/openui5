@@ -60,8 +60,13 @@
 				width: "400px",
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2011", "0", "10"), endDate: new Date("2011", "0", "13")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "1"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-							   new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"}),
-								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "5"), type: sap.ui.unified.CalendarDayType.Type04})],
+	new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"}),
+								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "5"), type: sap.ui.unified.CalendarDayType.Type04}),
+								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "6"),
+									endDate: new Date("2011", "0", "10"), type: sap.ui.unified.CalendarDayType.NonWorking}),
+								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "21"), type:
+									sap.ui.unified.CalendarDayType.NonWorking})
+				],
 				legend: "Legend1",
 				startDateChange: handleStartDateChange
 			}).placeAt("uiArea2");
@@ -287,6 +292,27 @@
 
 				sDescribingDomTextId = sap.ui.unified.CalendarLegend.typeARIATexts["Type04"].getId();
 				assert.ok(jQuery("#Cal2--Month0-20110105").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a static label");
+
+				assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
+						"20110106 is date of type 'NonWorking' as part of a date range");
+				assert.ok(jQuery("#Cal2--Month0-20110108").hasClass("sapUiCalItemWeekEnd"),
+						"20110108 is date of type 'NonWorking' as part of a date range");
+				assert.ok(jQuery("#Cal2--Month0-20110110").hasClass("sapUiCalItemWeekEnd"),
+						"20110110 is date of type 'NonWorking' as part of a date range");
+				assert.ok(!jQuery("#Cal2--Month0-20110111").hasClass("sapUiCalItemWeekEnd"),
+						"20110111 is a regular working date");
+				assert.ok(jQuery("#Cal2--Month0-20110121").hasClass("sapUiCalItemWeekEnd"),
+						"20110121 is date of type 'NonWorking' as part of a single date");
+
+				//act
+				oCal2.addSpecialDate(new sap.ui.unified.DateTypeRange({
+					type: sap.ui.unified.CalendarDayType.NonWorking,
+					startDate: new Date(2011, 0, 22)
+				}));
+
+				//assert
+				assert.ok(jQuery("#Cal2--Month0-20110122").hasClass("sapUiCalItemWeekEnd"), "20110122 is a date of type 'NonWorking'");
+
 			});
 
 			QUnit.test("primaryCalendarType", function(assert) {
@@ -674,6 +700,46 @@
 
 				//clean
 				oCal.destroy();
+			});
+
+			QUnit.test("setShowWeekNumbers should forward the property value to the connected months", function(assert) {
+				var oCalendar = new sap.ui.unified.Calendar({
+					months: 1
+				}), oMonth = oCalendar.getAggregation("month")[0];
+
+				oCalendar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(oMonth.getShowWeekNumbers(), "Week numbers should be shown by default");
+
+				oCalendar.setShowWeekNumbers(false);
+				sap.ui.getCore().applyChanges();
+
+				assert.notOk(oMonth.getShowWeekNumbers(), "Week numbers should not be shown");
+
+				oCalendar.destroy();
+			});
+
+			QUnit.test("setShowWeekNumbers should forward the property value to the connected months", function(assert) {
+				var oCalendar = new sap.ui.unified.Calendar({
+					months: 2
+				}), aMonths = oCalendar.getAggregation("month");
+
+				oCalendar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				aMonths.forEach(function(oMonth) {
+					assert.ok(oMonth.getShowWeekNumbers(), "Week numbers should be shown by default");
+				});
+
+				oCalendar.setShowWeekNumbers(false);
+				sap.ui.getCore().applyChanges();
+
+				aMonths.forEach(function(oMonth) {
+					assert.notOk(oMonth.getShowWeekNumbers(), "Week numbers should not be shown by default");
+				});
+
+				oCalendar.destroy();
 			});
 
 			QUnit.module("Focus", {

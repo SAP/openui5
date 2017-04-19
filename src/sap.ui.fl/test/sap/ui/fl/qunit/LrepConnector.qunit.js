@@ -329,6 +329,24 @@
 		assert.equal(this.oLrepConnector._aSentRequestListeners[1], fFunction3, "the third function should be still in the list of attached functions");
 	});
 
+	QUnit.test("loadSettings", function(assert) {
+		this.oLrepConnector._sClient = "123";
+		var sExpectedCallUrl = "/sap/bc/lrep/flex/settings" + "?sap-client=" + this.oLrepConnector._sClient;
+
+		var oFakeResponse = {
+			response: {}
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+
+		return this.oLrepConnector.loadSettings().then(function() {
+			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+			var oCall = oSendStub.getCall(0);
+			var aCallArguments = oCall.args;
+			assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly built");
+		});
+	});
+
 	QUnit.test("loadChanges", function(assert) {
 		var sComponentClassName;
 		this.server = sinon.fakeServer.create();

@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './TableColumnUtils', './TableMenuUtils', 'sap/ui/Device', './library'],
-	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, TableMenuUtils, Device, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/MessageType', './TableGrouping', './TableColumnUtils', './TableMenuUtils', 'sap/ui/Device', './library'],
+	function(jQuery, Control, ResizeHandler, MessageType, TableGrouping, TableColumnUtils, TableMenuUtils, Device, library) {
 	"use strict";
 
 	// Shortcuts
@@ -94,6 +94,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns whether the table has row highlights.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {boolean} Returns <code>true</code>, if the table has row highlights
+		 * @private
+		 */
+		hasRowHighlights: function(oTable) {
+			if (oTable == null) {
+				return false;
+			}
+
+			var oRowSettingsTemplate = oTable.getRowSettingsTemplate();
+
+			if (oRowSettingsTemplate == null) {
+				return false;
+			}
+
+			var sHighlight = oRowSettingsTemplate.getHighlight();
+
+			return oRowSettingsTemplate.isBound("highlight")
+				   || (sHighlight != null && sHighlight !== MessageType.None);
+		},
+
+		/**
 		 * Returns the number of row actions in case the tahe has a row action column, <code>0</code> otherwise
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @return {int}
@@ -163,16 +187,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return false;
 			}
 
+			return !TableUtils.hasData(oTable);
+		},
+
+		/**
+		 * Returns whether the table currently has data.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {boolean}
+		 * @private
+		 */
+		hasData : function(oTable) {
 			var oBinding = oTable.getBinding("rows"),
-				iBindingLength = oTable._getRowCount(),
-				bHasData = oBinding ? !!iBindingLength : false;
+			iBindingLength = oTable._getRowCount(),
+			bHasData = oBinding ? !!iBindingLength : false;
 
 			if (oBinding && oBinding.providesGrandTotal) { // Analytical Binding
 				var bHasTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
 				bHasData = (bHasTotal && iBindingLength < 2) || (!bHasTotal && iBindingLength === 0) ? false : true;
 			}
 
-			return !bHasData;
+			return bHasData;
+		},
+
+		/**
+		 * Returns whether the busy indicator is visible. It is considered as visible when the busy indicator element exists in the DOM as
+		 * a child of the table element. It is not checked whether the indicator is actually visible on the screen.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @returns {boolean} Returns <code>true</code>, if the busy indicator is visible.
+		 * @private
+		 */
+		isBusyIndicatorVisible: function(oTable) {
+			if (oTable == null || oTable.getDomRef() == null) {
+				return false;
+			}
+
+			return oTable.getDomRef().querySelector(".sapUiLocalBusyIndicator") != null;
 		},
 
 		/**

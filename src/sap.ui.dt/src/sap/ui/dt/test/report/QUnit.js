@@ -14,7 +14,7 @@ function(jQuery, ManagedObject) {
 
 
 	/**
-	 * Constructor for an QUnit.
+	 * Constructor for a QUnit.
 	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object

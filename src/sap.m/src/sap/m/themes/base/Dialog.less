@@ -34,15 +34,6 @@
 		-webkit-filter: blur(0);
 		filter: blur(0);
 	}
-
-	&:not(.sapMDialogResizeHandler) {
-		.sapMDialogScroll {
-			.sapMDialogScrollCont {
-				-ms-overflow-x: hidden;
-				overflow-x: hidden;
-			}
-		}
-	}
 }
 
 //the rtl will change the transform-translate from (-50% -50%) to (50% -50%)
@@ -197,15 +188,6 @@ html.sap-desktop .sapMDialog {
 	/* display: none; */
 	/* visibility need to be used instead of display none, because some control inside dialog may need to do calculation */
 	visibility: hidden;
-}
-
-.sapMDialogSliding {
-	transition-duration: 0.3s;
-	-webkit-transition-duration: 0.3s;
-
-	/* The style without prefix needs to be put to the end because Firefox browser recognize the 'transition-property' but can't interpret the value 'transform' and it needs '-webkit-transform' instead */
-	-webkit-transition-property: -webkit-transform;
-	transition-property: transform;
 }
 
 .sapMDialogBlockLayer {
@@ -504,7 +486,6 @@ html.sap-desktop .sapMDialog {
 //remove transition when animation is off
 html[data-sap-ui-animation='off'] {
 	.sapMDialog,
-	.sapMDialogSliding,
 	.sapMDialogBlockLayerAnimation {
 		transition: none;
 	}

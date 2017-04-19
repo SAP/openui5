@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		 * Two new SpecialSettings and belonging methods are added to the controls prototype. <code>stashed</code> Controls are not
 		 * created and added to the Control tree, but remain uncreated. Although they are not instances of their actual
 		 * class, a surrogate is created which serves as id holder. That means it is availyble with <code>sap.ui.getCore().byId</code>
-		 * and unstashable. Currently this is a one-time operation. A once unstashed control cannot be re-stashed again.
+		 * and unstashable. Currently this is a one-time operation. Once unstashed, a control cannot be re-stashed again.
 		 *
 		 * Parts of the code here are commented out, as the SpecialSetting <code>stashed</code> may change to be Property lateron.
 		 *

@@ -240,19 +240,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 				var vHeaderSpans = oColumn.getHeaderSpan();
 				var iHeaderSpan;
 
+				if (!vHeaderSpans) {
+					return 1;
+				}
+
+				if (!Array.isArray(vHeaderSpans)) {
+					vHeaderSpans = (vHeaderSpans + "").split(",");
+				}
+
 				function getSpan(sSpan) {
 					var result = parseInt(sSpan, 10);
 					return isNaN(result) ? 1 : result;
 				}
 
-				if (jQuery.isArray(vHeaderSpans)) {
-					if (isNaN(iLevel)) { // find max value of all spans in the header
-						iHeaderSpan = Math.max.apply(null, vHeaderSpans.map(getSpan));
-					} else {
-						iHeaderSpan = getSpan(vHeaderSpans[iLevel]);
-					}
+				if (isNaN(iLevel)) { // find max value of all spans in the header
+					iHeaderSpan = Math.max.apply(null, vHeaderSpans.map(getSpan));
 				} else {
-					iHeaderSpan = getSpan(vHeaderSpans);
+					iHeaderSpan = getSpan(vHeaderSpans[iLevel]);
 				}
 
 				return Math.max(iHeaderSpan, 1);
@@ -308,7 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 					// get the direct relations for all collected columns
 					// columns have a logical relation with each other, if they are spanned by other column headers or
 					// of they by itself are spanning other columns. Since those columns are logically tightly coupled,
-					// they can be seen as a immutable block of columns.
+					// they can be seen as an immutable block of columns.
 					for (i = 0; i < aNewRelations.length; i++) {
 						oColumn = mColumns[aNewRelations[i]];
 						aDirectRelations = aDirectRelations.concat(TableColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()));

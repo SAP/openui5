@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	/*global Promise */
 
 	/**
-	 * Utility function which adds SAP-specific parameters to an URI instance
+	 * Utility function which adds SAP-specific parameters to a URI instance
 	 *
 	 * @param {URI} oUri URI.js instance
 	 * @private
@@ -471,7 +471,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * <strong>Note</strong>: Ownership for objects is only checked by the framework at the time
 	 * when they are created. It is not checked or updated afterwards. And it can only be detected
 	 * while the {@link sap.ui.core.Component#runAsOwner Component.runAsOwner} function is executing.
-	 * Without further action, this is only the case while the content of an UIComponent is
+	 * Without further action, this is only the case while the content of a UIComponent is
 	 * {@link sap.ui.core.UIComponent#createContent constructed} or when a
 	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
 	 *
@@ -909,7 +909,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 	/**
 	 * Creates a nested component that is declared in the <code>sap.ui5/componentUsages</code> section of
-	 * the descriptor (manifest.json) as follows:
+	 * the descriptor (manifest.json). The following snippet shows the declaration:
 	 * <pre>
 	 * {
 	 *   [...]
@@ -1021,7 +1021,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * Initializes the Component instance after creation.
 	 *
 	 * Applications must not call this hook method directly, it is called by the
-	 * framework while the constructor of an Component is executed.
+	 * framework while the constructor of a Component is executed.
 	 *
 	 * Subclasses of Component should override this hook to implement any necessary
 	 * initialization.
@@ -2100,13 +2100,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						promises.push(oPromise);
 					}
 				},
-				collectAfterModelPreload = function(fnCreatePromise) {
-					if (oManifest && mOptions.createModels && jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-first") === "true") {
-						collect(oManifest.then(fnCreatePromise));
-					} else {
-						collect(fnCreatePromise());
-					}
-				},
 				identity = function($) { return $; };
 
 			if (oManifest && mOptions.createModels) {
@@ -2171,17 +2164,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// load any required preload bundles
 			if ( Array.isArray(hints.preloadBundles) ) {
 				hints.preloadBundles.forEach(function(vBundle) {
-					collectAfterModelPreload(function() {
-						return jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true);
-					});
+					collect(jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true));
 				});
 			}
 
 			// preload required libraries
 			if ( Array.isArray(hints.libs) ) {
-				collectAfterModelPreload(function() {
-					return sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) );
-				});
+				collect(sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) ));
 			}
 
 			// preload the component itself
@@ -2225,9 +2214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
 				jQuery.each(hints.components, function(i, vComp) {
-					collectAfterModelPreload(function() {
-						return preload(processOptions(vComp), true);
-					});
+					collect(preload(processOptions(vComp), true));
 				});
 			}
 

@@ -51,17 +51,19 @@
 		sap.m.MessageToast.show("The news content is pressed.");
 	};
 
-	var oTC = new sap.m.TileContent({
-		content: new sap.m.NewsContent("configurable-news-content-", {
-			contentText : "{/contentText}",
-			subheader : "{/subheader}",
-			tooltip : "{/tooltip}",
-			press : fnPress
-		})
+	var oNewsContent = new sap.m.NewsContent("configurable-news-content-", {
+		contentText : "{/contentText}",
+		subheader : "{/subheader}",
+		tooltip : "{/tooltip}",
+		press : fnPress
+	});
+
+	var oTileContent = new sap.m.TileContent({
+		content : oNewsContent
 	}).addStyleClass("sapUiSmallMargin");
 
 	var oFlexBox = new sap.m.FlexBox("flexbox", {
-		items : [oTC],
+		items : [oTileContent],
 		alignItems: "Start",
 		justifyContent: "SpaceAround"
 	});
@@ -110,9 +112,9 @@
 		name : "QuickView tooltip",
 		change : function(oEvent) {
 			var bState = oEvent.getParameter("state");
-			oNC.setTooltip(bState ? new sap.ui.ux3.QuickView({
+			oNewsContent.setTooltip(bState ? new sap.ui.ux3.QuickView({
 				content : new sap.m.Text({
-					text : oTooltipInput.getValue().split("{AltText}").join(oNC.getAltText())
+					text : oTooltipInput.getValue().split("{AltText}").join(oNewsContent.getAltText())
 				})
 			}) : oTooltipInput.getValue());
 		}
@@ -129,9 +131,9 @@
 		change : function(oEvent) {
 			var bState = oEvent.getParameter("state");
 			if (bState) {
-				oNC.attachPress(fnPress);
+				oTileContent.attachPress(fnPress);
 			} else {
-				oNC.detachPress(fnPress);
+				oTileContent.detachPress(fnPress);
 			}
 		}
 	});

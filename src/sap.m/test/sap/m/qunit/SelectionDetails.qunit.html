@@ -536,6 +536,7 @@
 			});
 
 		this.oSelectionDetails.addItem(oSelectionDetailsItem1).addItem(oSelectionDetailsItem2);
+		this.oSelectionDetails.attachActionPress(onActionPress);
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
@@ -549,6 +550,9 @@
 		assert.deepEqual(oSpy.getCall(0).args[0].items[0], oSelectionDetailsItem2, "Event triggered in correct context");
 		assert.equal(oSpy.getCall(0).args[0].level, "Item", "Event triggered with correct level parameter");
 		assert.equal(oSpy.getCall(0).args[0].action.getId(), "item2Action", "Event triggered with correct action parameter");
+		function onActionPress (oEvent) {
+			assert.deepEqual(oEvent.getParameter("items")[0], oSelectionDetailsItem2, "Event parameter items returns correctly");
+		}
 	});
 
 	QUnit.test("Press on the button results in action Press event", function(assert) {
@@ -892,7 +896,7 @@
 		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
 	});
 
-	QUnit.test("A call with wrong paramter does not have any effect", function(assert) {
+	QUnit.test("A call with wrong parameter does not have any effect", function(assert) {
 		//Act
 		var oResult = this.oSelectionDetails.attachSelectionHandler({}, "");
 
@@ -972,7 +976,9 @@
 
 	QUnit.module("Selection change handling", {
 		beforeEach : function() {
-			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails = new sap.m.SelectionDetails({
+				items: [new sap.m.SelectionDetailsItem()]
+			});
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -1005,7 +1011,7 @@
 		assert.equal(this.oSelectionDetails._oSelectionData, oExpected.data, "Event data is saved");
 	});
 
-	QUnit.test("Misleading event parameters ends in nothing", function(assert) {
+	QUnit.test("Unrecognized event parameters are ignored", function(assert) {
 		//Arrange
 		var oEventParam = {
 			otto: [],
@@ -1020,7 +1026,7 @@
 		});
 
 		//Assert
-		assert.notOk(this.oSelectionDetails._oSelectionData, "Misleading event parameter object ends in nothing");
+		assert.notOk(this.oSelectionDetails._oSelectionData, "No selection data has been set.");
 	});
 
 	QUnit.test("Selection data updates button text - add items", function(assert) {
@@ -1076,6 +1082,18 @@
 		//Assert
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details", "The button text is up to date");
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), false, "The button is disabled");
+	});
+
+	QUnit.test("Button is updated with selection data if it exists", function(assert) {
+		//Arrange
+		this.oSelectionDetails._oSelectionData = new Array(10);
+
+		//Act
+		this.oSelectionDetails.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(this.oSelectionDetails.getAggregation("_button").getText().indexOf("(10)") > -1, "The button text contains the correct number.");
 	});
 
 	QUnit.module("Factory integration", {
