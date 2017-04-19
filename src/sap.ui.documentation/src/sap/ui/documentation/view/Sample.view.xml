@@ -34,6 +34,13 @@
 					tooltip="{i18n>sampleFullScreenTooltip}"
 					press="onToggleFullScreen" />
 			<Button
+					id="toggleRTA"
+					icon="sap-icon://wrench"
+					class="sapUiHideOnPhone"
+					tooltip="{i18n>sampleAdaptationTooltip}"
+					press="onToggleAdaptationMode"
+					visible="false" />
+			<Button
 					id="code"
 					icon="sap-icon://syntax"
 					tooltip="{i18n>sampleShowCodeTooltip}"
