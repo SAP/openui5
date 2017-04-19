@@ -525,8 +525,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @public
 	 */
 	sap.ui.model.Binding.prototype.destroy = function() {
+		this.bIsBeingDestroyed = true;
 		sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
 		sap.ui.base.EventProvider.prototype.destroy.apply(this, arguments);
+		this.bIsBeingDestroyed = false;
 	};
 
 	return Binding;
