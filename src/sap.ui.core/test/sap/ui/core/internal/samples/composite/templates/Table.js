@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/FragmentControl', 'sap/ui/core/FragmentControlMetadata', 'sap/ui/base/ManagedObject',
-], function(jQuery, FragmentControl, FragmentControlMetadata, ManagedObject) {
+	'jquery.sap.global', 'sap/ui/core/FragmentControl'
+], function(jQuery, FragmentControl) {
 	"use strict";
 	var Table = FragmentControl.extend("sap.ui.mdc.sample.templates.Table", /* @lends sap.ui.mdc.sample.templates.Table.prototype */ {
 		metadata: {
@@ -12,17 +12,17 @@ sap.ui.define([
 				header: {
 					type: "string",
 					defaultValue: "Test",
-					invalidate: FragmentControlMetadata.InvalidationMode.Render
+					invalidate: true
 				},
 				type: {
 					type: "string",
 					defaultValue: "ResponsiveTable",
-					invalidate: FragmentControlMetadata.InvalidationMode.Template
+					invalidate: "template"
 				},
 				editable: {
 					type: "boolean",
 					defaultValue: false,
-					invalidate: FragmentControlMetadata.InvalidationMode.Render
+					invalidate: true
 				}
 			},
 			events: {
@@ -32,10 +32,9 @@ sap.ui.define([
 				list: {
 					type: "TemplateMetadataContext",
 					mandatory: true,
-					invalidate: FragmentControlMetadata.InvalidationMode.Template
+					invalidate: "template"
 				}
 			},
-
 			publicMethods: []
 		},
 		alias: "controlroot",
