@@ -89,11 +89,16 @@ sap.ui.require([
 				return null;
 			}
 		},
-		assertColor: function(assert, iRowIndex, sRGBBackgroundColor) {
+		assertColor: function(assert, iRowIndex, sExpectedBackgroundColor) {
 			var oRow = oTable.getRows()[iRowIndex];
 			var oHighlightElement = oRow.getDomRef("highlight");
+			var sActualBackgroundColor = getComputedStyle(oHighlightElement).backgroundColor;
 
-			assert.strictEqual(getComputedStyle(oHighlightElement).backgroundColor, sRGBBackgroundColor,
+			if (sActualBackgroundColor === "rgba(0, 0, 0, 0)") {
+				sActualBackgroundColor = "transparent";
+			}
+
+			assert.strictEqual(sActualBackgroundColor, sExpectedBackgroundColor,
 				"The highlight element of row " + (iRowIndex + 1) + " has the correct background color");
 		},
 		assertColors: function(assert) {
@@ -121,7 +126,7 @@ sap.ui.require([
 							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiHighlight"));
 							break;
 						default:
-							sRGBBackgroundColor = "rgba(0, 0, 0, 0)"; // transparent
+							sRGBBackgroundColor = "transparent"; // transparent
 					}
 
 					this.assertColor(assert, iRowIndex, sRGBBackgroundColor);
