@@ -1829,6 +1829,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	Table.prototype._onBindingLengthChange = function(sReason) {
+		if (sReason === ChangeReason.Refresh) {
+			return;
+		}
+
 		// update visualization of fixed bottom row
 		this._updateFixedBottomRows();
 		this._toggleVSb();
@@ -1878,12 +1882,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				});
 			}
 			// request contexts from binding
-			var sUpdateReason;
 			if (sReason == ChangeReason.Filter || sReason == ChangeReason.Sort) {
-				sUpdateReason = "skipNoDataUpdate";
+				sReason = "skipNoDataUpdate";
 				this.setFirstVisibleRow(0);
 			}
-			this._updateBindingContexts(true, iRowsToDisplay, sUpdateReason);
+			this._updateBindingContexts(true, iRowsToDisplay, sReason);
 		}
 	};
 
