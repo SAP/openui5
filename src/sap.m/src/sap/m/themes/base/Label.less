@@ -163,6 +163,11 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
 }
 
+.sapMIBar-CTX.sapMTB-Info-CTX .sapMLabel {
+  	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+  	text-shadow: none;
+}
+
 .sapMTB-Info-CTX .sapMLabel.sapMLabelTBHeader {
 	text-shadow: none;
 }
@@ -176,6 +181,11 @@ html[dir=rtl] .sapMTB-Info-CTX .sapMLabel {
 	font-weight: @sapUiFontHeaderWeight;
 	font-family: @sapUiFontHeaderFamily;
 	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMIBar-CTX.sapMTB-Transparent-CTX .sapMLabel {
+  	color: @sapUiGroupTitleTextColor;
+  	text-shadow: none;
 }
 
 /* ================================ */
