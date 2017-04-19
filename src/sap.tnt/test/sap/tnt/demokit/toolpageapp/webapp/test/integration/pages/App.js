@@ -160,7 +160,7 @@ sap.ui.define([
 
 					iShouldSeeTheUserPopover: function () {
 						this.waitFor({
-							id: "userMessagePopover",
+							id: "userMessageActionSheet",
 							viewName: sViewName,
 							success: function () {
 								Opa5.assert.ok(sViewName,"The user popover message was displayed");
