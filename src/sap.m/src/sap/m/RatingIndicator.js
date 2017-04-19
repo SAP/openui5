@@ -245,7 +245,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this._iPxIconSize = this._toPx(this.getIconSize()) || 16;
-		this._iPxPaddingSize = this._toPx(Parameters.get("_sap_m_RatingIndicator_IconPadding" + this._getIconSizeLabel(this._iPxIconSize))) || 2;
+		this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding" + this._getIconSizeLabel(this._iPxIconSize))) || 2;
 	};
 
 	/**
